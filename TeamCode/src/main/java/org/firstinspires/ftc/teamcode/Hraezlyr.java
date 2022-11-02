@@ -71,7 +71,7 @@ public class Hraezlyr {
         Orientation angles = IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         return(angles.thirdAngle);
     }
-    // TODO: doesn't work need fix
+
     public double resetIMU(){
         Orientation reset = IMU.getAngularOrientation();
 

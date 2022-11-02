@@ -29,7 +29,7 @@ public class Drive extends Control {
         boolean DpadPressed;
         double rightTurn = 0;
         double leftTurn = 0;
-        double reset = 0;
+        double resetIMU = 0;
 
         // changes power based on direction of turn to turn robot instead of strafe
         if (rightX > 0) {
@@ -40,10 +40,10 @@ public class Drive extends Control {
         }
 
         if (start) {
-            reset = hraezlyr.resetIMU();
+            resetIMU = hraezlyr.resetIMU();
         }
         // angle of controller stick
-        double angle = Math.atan2(leftY, leftX) - hraezlyr.getHeading() - reset;
+        double angle = Math.atan2(leftY, leftX) - hraezlyr.getHeading() - resetIMU;
         // scope orientation
         // distance is the power of the controller stick
         double distance = Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2));
@@ -59,6 +59,8 @@ public class Drive extends Control {
         hraezlyr.bottomLeft.setPower(powerGroup2 - rightTurn + leftTurn);
         hraezlyr.bottomRight.setPower(powerGroup1 - leftTurn + rightTurn);
 
+        telemetry.addData("Drive power1", powerGroup1);
+        telemetry.addData("Drive power2", powerGroup2);
         telemetry.addData("Cascade Height", hraezlyr.cascadeMotor1.getCurrentPosition());
         telemetry.update();
 

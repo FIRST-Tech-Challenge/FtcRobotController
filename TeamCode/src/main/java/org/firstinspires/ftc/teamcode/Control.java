@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public abstract class Control extends OpMode {
+    public boolean isStopRequested = false;
     Hraezlyr hraezlyr;
     enum Level {
         GROUND,
@@ -16,7 +17,13 @@ public abstract class Control extends OpMode {
     public void init() {
         hraezlyr = new Hraezlyr(hardwareMap);
     }
+    @Override
+    public void stop(){
+        if(isStopRequested) return;
 
+        isStopRequested = true;
+
+    }
     public void cascadeLift(Level zHeight){
         switch(zHeight){
             case GROUND:
@@ -34,4 +41,5 @@ public abstract class Control extends OpMode {
                 hraezlyr.cascadeMotor2.setTargetPosition(3000);
         }
     }
+
 }
