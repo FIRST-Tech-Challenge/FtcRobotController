@@ -10,10 +10,10 @@ public class Drive extends Control {
     public void init() {
         super.init();
 
-        haezler.cascadeMotor1.setPower(0);
-        haezler.cascadeMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        haezler.cascadeMotor2.setPower(0);
-        haezler.cascadeMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hraezlyr.cascadeMotor1.setPower(0);
+        hraezlyr.cascadeMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hraezlyr.cascadeMotor2.setPower(0);
+        hraezlyr.cascadeMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
@@ -40,10 +40,10 @@ public class Drive extends Control {
         }
 
         if (start) {
-            reset = haezler.resetIMU();
+            reset = hraezlyr.resetIMU();
         }
         // angle of controller stick
-        double angle = Math.atan2(leftY, leftX) - haezler.getHeading() - reset;
+        double angle = Math.atan2(leftY, leftX) - hraezlyr.getHeading() - reset;
         // scope orientation
         // distance is the power of the controller stick
         double distance = Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2));
@@ -54,12 +54,12 @@ public class Drive extends Control {
         double powerGroup2 = (Math.sin(angle) + Math.cos(angle)) * distance;
 
         // Power for drivetrain
-        haezler.topLeft.setPower(powerGroup1 - leftTurn + rightTurn);
-        haezler.topRight.setPower(powerGroup2 - rightTurn + leftTurn);
-        haezler.bottomLeft.setPower(powerGroup2 - rightTurn + leftTurn);
-        haezler.bottomRight.setPower(powerGroup1 - leftTurn + rightTurn);
+        hraezlyr.topLeft.setPower(powerGroup1 - leftTurn + rightTurn);
+        hraezlyr.topRight.setPower(powerGroup2 - rightTurn + leftTurn);
+        hraezlyr.bottomLeft.setPower(powerGroup2 - rightTurn + leftTurn);
+        hraezlyr.bottomRight.setPower(powerGroup1 - leftTurn + rightTurn);
 
-        telemetry.addData("Cascade Height", haezler.cascadeMotor1.getCurrentPosition());
+        telemetry.addData("Cascade Height", hraezlyr.cascadeMotor1.getCurrentPosition());
         telemetry.update();
 
         //System for cascade system lift
@@ -89,7 +89,8 @@ public class Drive extends Control {
                     zHeight = Level.GROUND;
             }
             cascadeLift(zHeight);
-        }
-    }
+
+
+    }   }
 
 }

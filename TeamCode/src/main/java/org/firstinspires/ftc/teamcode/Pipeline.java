@@ -153,6 +153,7 @@ public class Pipeline extends OpenCvPipeline{
 
 
 
+
         return output;
     }
     public int getRectHeight(){return maxRect.height;}

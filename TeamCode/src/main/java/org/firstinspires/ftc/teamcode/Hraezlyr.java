@@ -18,9 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
-public class Haezler {
+public class Hraezlyr {
     public DcMotor topLeft;
     public DcMotor topRight;
     public DcMotor bottomLeft;
@@ -32,7 +31,7 @@ public class Haezler {
     public BNO055IMU IMU;
 
 
-    public Haezler(HardwareMap hwmap){
+    public Hraezlyr(HardwareMap hwmap){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -72,12 +71,17 @@ public class Haezler {
         Orientation angles = IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         return(angles.thirdAngle);
     }
-    // doesn't work need fix
+    // TODO: doesn't work need fix
     public double resetIMU(){
         Orientation reset = IMU.getAngularOrientation();
 
         return(reset.thirdAngle);
     }
-
+    public void setMotorsMode(DcMotor.RunMode runMode){
+        topLeft.setMode(runMode);
+        topRight.setMode(runMode);
+        bottomLeft.setMode(runMode);
+        bottomRight.setMode(runMode);
+    }
 
 }
