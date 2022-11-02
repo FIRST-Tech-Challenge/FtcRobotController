@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.opmodes.base;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
+import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
 import org.firstinspires.ftc.teamcode.params.DriveParams;
@@ -17,6 +19,7 @@ public abstract class BaseOpMode extends OpMode {
 
     protected DriveSystem driveSystem;
     protected PixyCam pixycam;
+    protected ArmSystem armSystem;
     protected int step = 0;
     int distanceOffset;
 
@@ -25,6 +28,12 @@ public abstract class BaseOpMode extends OpMode {
     public void init(){
         setDriveSystem();
         pixycam = hardwareMap.get(PixyCam.class, "pixy");
+        armSystem = new ArmSystem(
+                hardwareMap.get(DcMotor.class, "arm_right"),
+                hardwareMap.get(DcMotor.class, "arm_left"),
+                hardwareMap.get(DcMotor.class, "intake"),
+                hardwareMap.get(DigitalChannel.class, "beam")
+        );
     }
 
     private void setDriveSystem() {
