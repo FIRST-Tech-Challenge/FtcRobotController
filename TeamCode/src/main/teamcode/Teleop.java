@@ -19,22 +19,22 @@ public abstract class Teleop extends LinearOpMode {
 //  boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;  //   (see processDpadDriveMode() below)
 //  boolean gamepad1_dpad_left_last,  gamepad1_dpad_left_now  = false;
 //  boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
-//  boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;  // gamepad1 bumpers used live/realtime
-//  boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;  //  (see processCollectorControls() below)
-    boolean gamepad1_touchpad_last,   gamepad1_touchpad_now   = false;  // autodrive to shared hub
+//  boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;
+//  boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;
+    boolean gamepad1_touchpad_last,   gamepad1_touchpad_now   = false;  // autodrive to cone storage area
 
-    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  //
-    boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Virtual DR4B (Transport height)
-    boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // Virtual DR4B (Collect height)
-    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // 
-    boolean gamepad2_dpad_up_last,    gamepad2_dpad_up_now    = false;  // Virtual DR4B (Junction-High)
-    boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // Virtual DR4B (Junction-Low)
-    boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // Virtual DR4B (Junction-Medium)
-    boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Virtual DR4B (Junction-Ground)
-    boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // (unused)
-    boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // collector (release)
+    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  // Raise lift to TRANSPORT position
+    boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Flip intake (toggle)
+    boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // Lower lift to COLLECT position
+    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // UNUSED
+    boolean gamepad2_dpad_up_last,    gamepad2_dpad_up_now    = false;  // Lift to HIGH junction
+    boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // Lift to MEDIUM junction
+    boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // Lift to LOW junction
+    boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Lower to GROUND junction
+    boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // Collect cone (intake cone)
+    boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // Deposit cone (eject cone)
     boolean gamepad2_touchpad_last,   gamepad2_touchpad_now   = false;  // UNUSED
-    boolean gamepad2_share_last,      gamepad2_share_now      = false;  // PROBLEM!! reset arm controls
+    boolean gamepad2_share_last,      gamepad2_share_now      = false;  // UNUSED
 
     double  yTranslation, xTranslation, rotation;                  /* Driver control inputs */
     double  rearLeft, rearRight, frontLeft, frontRight, maxPower;  /* Motor power levels */
@@ -58,8 +58,13 @@ public abstract class Teleop extends LinearOpMode {
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
 
-    boolean   turretTweaked = false;  // Reminder to zero power when input stops
-    boolean   liftTweaked = false;    // Reminder to zero power when input stops
+    boolean   turretTweaked = false;     // Reminder to zero power when input stops
+    boolean   liftTweaked = false;       // Reminder to zero power when input stops
+    boolean   collectorFlipped = false;  // Collector has been flipped to upside down orientation
+
+    ElapsedTime grabberRunTimer = new ElapsedTime();
+    boolean     grabberIntake   = true;
+    boolean     grabberRunning  = false;
 
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
@@ -127,10 +132,10 @@ public abstract class Teleop extends LinearOpMode {
             // Process all the driver/operator inputs
             processTurretControls();
             processLiftControls();
-            
+            processGrabberControls();
+
             // Execute any automatic movements
             // <<TBD>>
-
 
 /* DISABLE DRIVER-CENTRIC MODE FOR THIS SEASON
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
@@ -192,8 +197,8 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Odometry (L/R)", "%d %d cts",  robot.leftOdometerCount, robot.rightOdometerCount );
             telemetry.addData("Turret", "%d cts  %.1f deg  %.2f mA",
                     robot.turretMotorPos, robot.turretAngle, robot.turretMotorAmps );
-            telemetry.addData("Lift",   "%d cts  %.1f deg  %.2f mA",
-                    robot.liftMotorPos,   robot.liftAngle,   robot.liftMotorAmps );
+            telemetry.addData("Lift",   "%.1f deg  %.2f pwr  %.2f mA",
+                    robot.liftAngle, robot.liftMotorPwr, robot.liftMotorAmps );
             if( rangeSensorsEnabled ) {
                telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f in", sonarRangeL/2.54, sonarRangeR/2.54 );
                telemetry.addData("Sonar Range (F/B)", "%.1f  %.1f in", sonarRangeF/2.54, sonarRangeB/2.54 );
@@ -220,7 +225,7 @@ public abstract class Teleop extends LinearOpMode {
 //      gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
 //      gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
 //      gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
-        gamepad1_touchpad_last   = gamepad1_touchpad_now;    gamepad1_touchpad_now   = gamepad1.touchpad;
+//      gamepad1_touchpad_last   = gamepad1_touchpad_now;    gamepad1_touchpad_now   = gamepad1.touchpad;
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
@@ -235,8 +240,8 @@ public abstract class Teleop extends LinearOpMode {
         gamepad2_dpad_right_last = gamepad2_dpad_right_now;  gamepad2_dpad_right_now = gamepad2.dpad_right;
         gamepad2_l_bumper_last   = gamepad2_l_bumper_now;    gamepad2_l_bumper_now   = gamepad2.left_bumper;
         gamepad2_r_bumper_last   = gamepad2_r_bumper_now;    gamepad2_r_bumper_now   = gamepad2.right_bumper;
-        gamepad2_touchpad_last   = gamepad2_touchpad_now;    gamepad2_touchpad_now   = gamepad2.touchpad;
-        gamepad2_share_last      = gamepad2_share_now;       gamepad2_share_now      = gamepad2.share;
+  //    gamepad2_touchpad_last   = gamepad2_touchpad_now;    gamepad2_touchpad_now   = gamepad2.touchpad;
+  //    gamepad2_share_last      = gamepad2_share_now;       gamepad2_share_now      = gamepad2.share;
     } // captureGamepad2Buttons
 
     /*---------------------------------------------------------------------------------*/
@@ -401,17 +406,14 @@ public abstract class Teleop extends LinearOpMode {
     void processStandardDriveMode() {
         // Retrieve X/Y and ROTATION joystick input
         if( controlMultSegLinear ) {
-//          yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
-//          xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
-//          rotation     = multSegLinearRot( -gamepad1.right_stick_x );
+            yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
+            xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
+            rotation     = multSegLinearRot( -gamepad1.right_stick_x );
+        }
+        else {
             yTranslation = -gamepad1.left_stick_y * 1.00;
             xTranslation =  gamepad1.left_stick_x * 1.25;
             rotation     = -gamepad1.right_stick_x * 0.50;
-        }
-        else {
-            yTranslation = -gamepad1.left_stick_y;
-            xTranslation = gamepad1.left_stick_x;
-            rotation = -gamepad1.right_stick_x;
         }
         // If BACKWARD drive control, reverse the operator inputs
         if( backwardDriveControl ) {
@@ -526,7 +528,7 @@ public abstract class Teleop extends LinearOpMode {
         // only send one ping per control cycle (left, right, front, or back)
         switch( sensorNum ) {
             case 1 : sonarRangeL = robot.updateSonarRangeL(); break;
-            case 3 : sonarRangeR = robot.updateSonarRangeR(); break;
+            case 3 : /* sonarRangeR = robot.updateSonarRangeR(); */ break;
             case 5 : sonarRangeF = robot.updateSonarRangeF(); break;
             case 7 : sonarRangeB = robot.updateSonarRangeB(); break;
             default : break;
@@ -544,7 +546,7 @@ public abstract class Teleop extends LinearOpMode {
         // internal array from which we return the new MEDIAN value.
         for( int i=0; i<5; i++ ) {
           sonarRangeL = robot.updateSonarRangeL();
-          sonarRangeR = robot.updateSonarRangeR();
+//        sonarRangeR = robot.updateSonarRangeR();
           sonarRangeF = robot.updateSonarRangeF();
           sonarRangeB = robot.updateSonarRangeB();
         }
@@ -560,12 +562,14 @@ public abstract class Teleop extends LinearOpMode {
         if( manual_turret_control || turretTweaked ) {
             // Does user want to rotate turret LEFT (negative joystick input)
             if( safeToManuallyLeft && (gamepad2_left_stick < -0.05) ) {
-                robot.turretMotor.setPower( 0.50 * gamepad2_left_stick );   // 0% to -50%
+                double motorPower = multSegLinearRot( gamepad2_left_stick ); // NEGATIVE
+                robot.turretMotor.setPower( motorPower );   // 0% to -100%
                 turretTweaked = true;
             }
             // Does user want to rotate turret RIGHT (positive joystick input)
             else if( safeToManuallyRight && (gamepad2_left_stick > 0.05) ) {
-                robot.turretMotor.setPower( 0.50 * gamepad2_left_stick );   // 0% to +50%
+                double motorPower = multSegLinearRot( gamepad2_left_stick ); // POSITIVE
+                robot.turretMotor.setPower( motorPower );   // 0% to +100%
                 turretTweaked = true;
             }
             // No more input?  Time to stop turret movement!
@@ -579,38 +583,83 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processLiftControls() {
-        boolean safeToManuallyLower = (robot.liftMotorPos > robot.LIFT_LIMIT_LO);
-        boolean safeToManuallyRaise = (robot.liftMotorPos < robot.LIFT_LIMIT_HI);
-        double  gamepad2_right_stick = -gamepad2.right_stick_y;  // push FWD returns NEGATIVE values!
+        boolean safeToManuallyLower = (robot.liftAngle > robot.LIFT_ANGLE_MAX);
+        boolean safeToManuallyRaise = (robot.liftAngle < robot.LIFT_ANGLE_MIN);
+        double  gamepad2_right_stick = gamepad2.right_stick_y;
         boolean manual_lift_control = ( Math.abs(gamepad2_right_stick) > 0.05 );
-/*
+
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad2 CROSS button
+        if( gamepad2_cross_now && !gamepad2_cross_last)
+        {   // Lower lift to COLLECT position and adjust collector tilt horizontal
+            robot.grabberStop();
+            robot.grabberSetTilt( robot.GRABBER_TILT_GRAB );
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
+        else if( gamepad2_circle_now && !gamepad2_circle_last )
+        {   // Flip intake (toggle)
+            if( collectorFlipped ) {
+                robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
+                collectorFlipped = false;
+            }
+            else {
+                robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
+                collectorFlipped = true;
+            }
+        }
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad2 LEFT BUMPER
+        else if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last )
+        {   // intake cone
+            grabberRunTimer.reset();
+            robot.grabberCollect();
+            grabberRunning  = true;
+            grabberIntake   = true;
+            // start slowly lowering onto cone
+            robot.liftMotor.setPower( -0.10 );
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
+        else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last )
+        {   // eject cone
+            grabberRunTimer.reset();
+            robot.grabberRelease();
+            grabberRunning  = true;
+            grabberIntake   = false;
+        }
+        //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
-        if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
-        {
+        else if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
+        {   // Raise lift to HIGH junction
+            robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+            robot.grabberStop();
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
-        {
+        {   // Raise lift to MEDIUM junction
+           robot.grabberCollect();
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
-        {
+        {   // Raise lift to LOW junction
+           robot.grabberRelease();
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
-        {
+        {   // Lower to GROUND junction
         }
         else if( manual_lift_control || liftTweaked ) {
-*/
-        if( manual_lift_control || liftTweaked ) {
             // Does user want to rotate lift toward more NEGATIVE counts (negative joystick input)
             if( safeToManuallyRaise && (gamepad2_right_stick > 0.05) ) {
-                robot.liftMotor.setPower( 0.75 * gamepad2_right_stick );   // 0% to +75%
+                double motorPower = multSegLinearRot( gamepad2_right_stick ); // POSITIVE
+                if( motorPower > 1.00 ) motorPower = 1.00;
+                robot.liftMotor.setPower( motorPower );
                 liftTweaked = true;
             }
             // Does user want to rotate lift toward more POSITIVE counts (positive joystick input)
             else if( safeToManuallyLower && (gamepad2_right_stick < -0.05) ) {
-                robot.liftMotor.setPower( 0.75 * gamepad2_right_stick );   // 0% to -75%
+                double motorPower = multSegLinearRot( gamepad2_right_stick ); // NEGATIVE
+                if( motorPower < -1.00 ) motorPower = -1.00;
+                robot.liftMotor.setPower( motorPower );
                 liftTweaked = true;
             }
             // No more input?  Time to stop lift movement!
@@ -621,5 +670,32 @@ public abstract class Teleop extends LinearOpMode {
         } // manual_lift_control
 
     } // processLiftControls
+
+    /*---------------------------------------------------------------------------------*/
+    void processGrabberControls() {
+        // Anything to process?
+        if( grabberRunning ) {
+            // Current on an INTAKE cycle?
+            if (grabberIntake) {
+                // Is cycle complete?
+                if( grabberRunTimer.milliseconds() >= 500 ) {
+                    // stop lowering
+                    robot.liftMotor.setPower( 0.0 );
+                    // stop collecting
+                    robot.grabberStop();
+                    grabberRunning = false;
+                }
+            } // intake
+            // Currently on an EJECTION cycle?
+            else {
+                // Is cycle complete?
+                if( grabberRunTimer.milliseconds() >= 750 ) {
+                    // stop ejecting cone
+                    robot.grabberStop();
+                    grabberRunning = false;
+                }
+            } // ejection
+        } // grabberRunning
+    } // processGrabberControls
 
 } // Teleop

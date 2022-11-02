@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -88,6 +89,7 @@ public class HardwareSlimbot
     protected double WHEEL_DIAMETER_INCHES = 3.77953; // (96mm) -- for computing circumference
     protected double COUNTS_PER_INCH       = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION * MECANUM_SLIPPAGE) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
+    //====== MOTORS FOR GAMEPLAY MECHANISMS (turret / lift) =====
     protected DcMotorEx turretMotor        = null;
     public int          turretMotorTgt     = 0;       // RUN_TO_POSITION target encoder count
     public int          turretMotorPos     = 0;       // current encoder count
@@ -102,36 +104,70 @@ public class HardwareSlimbot
     public int          TURRET_LIMIT_RIGHT = +999;    // encoder count at maximum rotation RIGHT
 
     protected DcMotorEx liftMotor          = null;
-    public int          liftMotorTgt       = 0;       // RUN_TO_POSITION target encoder count
-    public int          liftMotorPos       = 0;       // current encoder count
-    public double       liftMotorVel       = 0.0;     // encoder counts per second
+    public boolean      liftMotorAuto      = false;   // Automatic movement in progress
+    public int          liftMotorCycles    = 0;       // Automatic movement cycle count
+    public int          liftMotorWait      = 0;       // Automatic movement wait count (truly there! not just passing thru)
+    public double       liftMotorPwr       = 0.0;     // motor power setpoint (-1.0 to +1.0)
     public double       liftMotorAmps      = 0.0;     // current power draw (Amps)
-
+    public boolean      liftMotorRamp      = false;   // motor power setting is ramping down
+    
     protected AnalogInput liftEncoder      = null;    // US Digital absolute magnetic encoder (MA3)
     public double       liftAngle          = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
-    public double       liftAngleOffset    = 300.0;   // allows us to adjust the 0-360 deg range
+    public double       liftAngleOffset    = 148.5;   // allows us to adjust the 0-360 deg range
+    public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)
 
-    public int          LIFT_LIMIT_LO      = -9999;   // encoder count at maximum rotation LO
-    public int          LIFT_LIMIT_HI      = +9999;   // encoder count at maximum rotation HI
-    // NOTE: the motor doesn't stop immediately, so a limit of 750 halts motion around 900 counts
+    public double       LIFT_ANGLE_MAX     = 115.0;   // absolute encoder angle at maximum rotation FRONT
+    public double       LIFT_ANGLE_MIN     = -20.0;   // absolute encoder angle at maximum rotation REAR
+    // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
 
+    // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
+    // motor performance we store data to memory until the movement is complete, then dump to a file.
+    public boolean          liftMotorLogging   = false; // only enable during development!!
+    public final static int LIFTMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
+    protected double[]      liftMotorLogTime   = new double[LIFTMOTORLOG_SIZE];  // msec
+    protected double[]      liftMotorLogAngle  = new double[LIFTMOTORLOG_SIZE];  // Angle [degrees]
+    protected double[]      liftMotorLogPwr    = new double[LIFTMOTORLOG_SIZE];  // Power
+    protected double[]      liftMotorLogAmps   = new double[LIFTMOTORLOG_SIZE];  // mAmp
+    protected boolean       liftMotorLogEnable = false;
+    protected int           liftMotorLogIndex  = 0;
+    protected ElapsedTime   liftMotorTimer     = new ElapsedTime();
+    
     //====== ENCODER RESET FLAG ======
     static private boolean transitionFromAutonomous = false;  // reset 1st time, plus anytime we do teleop-to-teleop
 
     //====== ODOMETRY ENCODERS (encoder values only!) =====
     protected DcMotorEx rightOdometer      = null;
-    public int          rightOdometerCount = 0;           // current encoder count
-    public int          rightOdometerPrev  = 0;           // previous encoder count
+    public int          rightOdometerCount = 0;       // current encoder count
+    public int          rightOdometerPrev  = 0;       // previous encoder count
 
     protected DcMotorEx leftOdometer       = null;
-    public int          leftOdometerCount  = 0;           // current encoder count
-    public int          leftOdometerPrev   = 0;           // previous encoder count
+    public int          leftOdometerCount  = 0;       // current encoder count
+    public int          leftOdometerPrev   = 0;       // previous encoder count
 
     protected DcMotorEx strafeOdometer      = null;
-    public int          strafeOdometerCount = 0;          // current encoder count
-    public int          strafeOdometerPrev  = 0;          // previous encoder count
+    public int          strafeOdometerCount = 0;      // current encoder count
+    public int          strafeOdometerPrev  = 0;      // previous encoder count
 
-    //====== NAVIGATION DISTANCE SENSORS =====
+    //====== SERVOS FOR CONE GRABBER ====================================================================
+    public Servo        leftTiltServo       = null;   // tilt GRABBER up/down (left arm)
+    public Servo        rightTiltServo      = null;   // tilt GRABBER up/down (right arm)
+
+    public double       GRABBER_TILT_MAX    =  0.50;  // 0.5 (max) is up; -0.5 (min) is down
+    public double       GRABBER_TILT_STORE  =  0.50;
+    public double       GRABBER_TILT_INIT   =  0.35;
+    public double       GRABBER_TILT_GRAB   =  0.20;
+    public double       GRABBER_TILT_MIN    = -0.50;
+
+    public Servo        rotateServo         = null;   // rotate GRABBER left/right
+    public double       GRABBER_ROTATE_UP   = 0.335;  // normal (upright) orientation
+    public double       GRABBER_ROTATE_DOWN = 1.000;  // flipped (upside-down) orientation
+
+    public CRServo      leftSpinServo       = null;   // continuous rotation/spin (left side)
+    public CRServo      rightSpinServo      = null;   // continuous rotation/spin (right side)
+    public double       GRABBER_PULL_POWER  = +0.50;
+    public double       GRABBER_PUSH_POWER  = -0.50;
+
+    //====== NAVIGATION DISTANCE SENSORS ================================================================
     private MaxSonarI2CXL sonarRangeL = null;   // Must include MaxSonarI2CXL.java in teamcode folder
     private MaxSonarI2CXL sonarRangeR = null;
     private MaxSonarI2CXL sonarRangeF = null;
@@ -246,6 +282,22 @@ public class HardwareSlimbot
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftEncoder = hwMap.get(AnalogInput.class, "liftMA3");
 
+        // Initialize servos
+        leftTiltServo = hwMap.servo.get("leftTilt");      // servo port 0 (Control Hub)
+        rightTiltServo = hwMap.servo.get("rightTilt");    // servo port 1 (Control Hub)
+        grabberSetTilt( GRABBER_TILT_INIT );
+
+        rotateServo = hwMap.servo.get("rotator");         // servo port 3 (Control Hub)
+        rotateServo.setPosition( GRABBER_ROTATE_UP );
+
+        leftSpinServo = hwMap.crservo.get("leftSpin");    // servo port 4 (Control Hub)
+        leftSpinServo.setDirection( CRServo.Direction.REVERSE );
+        leftSpinServo.setPower( 0.0 );
+
+        rightSpinServo = hwMap.crservo.get("rightSpin");  // servo port 5 (Control Hub)
+        rightSpinServo.setDirection( CRServo.Direction.FORWARD );
+        rightSpinServo.setPower( 0.0 );
+
         // Initialize REV Expansion Hub IMU
         initIMU();
 
@@ -253,7 +305,7 @@ public class HardwareSlimbot
         sonarRangeL = hwMap.get( MaxSonarI2CXL.class, "leftUltrasonic" );   // I2C Bus 0
         sonarRangeB = hwMap.get( MaxSonarI2CXL.class, "backUltrasonic" );   // I2C Bus 1
         sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "frontUltrasonic" );  // I2C Bus 2
-        sonarRangeR = hwMap.get( MaxSonarI2CXL.class, "rightUltrasonic" );  // I2C Bus 3
+//      sonarRangeR = hwMap.get( MaxSonarI2CXL.class, "rightUltrasonic" );  // I2C Bus 3
 
         // Make a note that we just finished autonomous setup
         transitionFromAutonomous = (isAutonomous)? true:false;
@@ -348,9 +400,10 @@ public class HardwareSlimbot
         turretMotorPos     = turretMotor.getCurrentPosition();
         turretMotorVel     = turretMotor.getVelocity();
         turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
-        liftMotorPos       = liftMotor.getCurrentPosition();
-        liftMotorVel       = liftMotor.getVelocity();
         liftMotorAmps      = liftMotor.getCurrent(MILLIAMPS);
+        double liftMotorPwrPrior = liftMotorPwr;
+        liftMotorPwr       = liftMotor.getPower();
+        liftMotorRamp      = isPwrRampingDown( liftMotorPwrPrior, liftMotorPwr );
         // Parse right odometry encoder
         rightOdometerPrev  = rightOdometerCount;
         rightOdometerCount = rightOdometer.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
@@ -360,6 +413,18 @@ public class HardwareSlimbot
         // Parse rear odometry encoder
         strafeOdometerPrev  = strafeOdometerCount;
 //      strafeOdometerCount = strafeOdometer.getCurrentPosition();
+
+        // Do we need to capture lift motor instrumentation data?
+        if( liftMotorLogEnable ) {
+            liftMotorLogTime[liftMotorLogIndex] = liftMotorTimer.milliseconds();
+            liftMotorLogAngle[liftMotorLogIndex] = liftAngle;
+            liftMotorLogPwr[liftMotorLogIndex]  = liftMotorPwr;
+            liftMotorLogAmps[liftMotorLogIndex] = liftMotorAmps;
+            // If the log is now full, disable further logging
+            if( ++liftMotorLogIndex >= LIFTMOTORLOG_SIZE )
+                liftMotorLogEnable = false;
+        } // liftMotorLogEnable
+
     } // readBulkData
 
     /*--------------------------------------------------------------------------------------------*/
@@ -416,6 +481,146 @@ public class HardwareSlimbot
         rearLeftMotor.setMode(   DcMotor.RunMode.RUN_TO_POSITION );
         rearRightMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
     } // setRunToPosition
+
+    /*--------------------------------------------------------------------------------------------*/
+    public void grabberSetTilt( double tiltAmount )
+    {
+        // Range-check the requested value
+        if( tiltAmount >  0.50 ) tiltAmount =  0.50;
+        if( tiltAmount < -0.50 ) tiltAmount = -0.50;
+        // Rotate the two servos in opposite direction
+        leftTiltServo.setPosition(  0.5 + tiltAmount );
+        rightTiltServo.setPosition( 0.5 - tiltAmount );
+    } // grabberSetTilt
+
+    /*--------------------------------------------------------------------------------------------*/
+    public void grabberCollect()
+    {
+       leftSpinServo.setPower(  GRABBER_PULL_POWER );
+       rightSpinServo.setPower( GRABBER_PULL_POWER );
+    } // grabberCollect
+
+    public void grabberRelease()
+    {
+       leftSpinServo.setPower(  GRABBER_PUSH_POWER );
+       rightSpinServo.setPower( GRABBER_PUSH_POWER );
+    } // grabberRelease
+
+    public void grabberStop()
+    {
+       leftSpinServo.setPower(  0.0 );
+       rightSpinServo.setPower( 0.0 );
+    } // grabberStop
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* liftPosInit()                                                                              */
+    /* - newAngle = desired lift angle                                                            */
+    public void liftPosInit( double newAngle )
+    {
+        // Current distance from target (degrees)
+        double degreesToGo = newAngle - liftAngle;
+
+        // Are we ALREADY at the specified angle?
+        if( Math.abs(degreesToGo) < 2.0 )
+            return;
+
+        // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
+        liftMotor.setPower( 0.0 );
+
+        // Establish a new target angle & reset counters
+        liftMotorAuto   = true;
+        liftAngleTarget = newAngle;
+        liftMotorCycles = 0;
+        liftMotorWait   = 0;
+
+        // If logging instrumentation, begin a new dataset now:
+        if( liftMotorLogging ) {
+            liftMotorLogIndex  = 0;
+            liftMotorLogEnable = true;
+            liftMotorTimer.reset();
+        }
+
+    } // liftPosInit
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* liftPosRun()                                                                               */
+    public void liftPosRun()
+    {
+        // Has an automatic movement been initiated?
+        if( liftMotorAuto ) {
+            // Keep track of how long we've been doing this
+            liftMotorCycles++;
+            // Current distance from target (angle degrees)
+            double degreesToGo = liftAngleTarget - liftAngle;
+            // Have we achieved the target?
+            if( Math.abs(degreesToGo) < 1.0 ) {
+                liftMotor.setPower( 0.0 );
+                if( ++liftMotorWait >= 5 ) {
+                    liftMotorAuto = false;
+                    writeLiftLog();
+                }
+            }
+            // No, still not within tolerance of desired target
+            else {
+                double minPower, maxPower, liftMotorPower;
+                // Reset the wait count back to zero
+                liftMotorWait = 0;
+                // Determine our max power (don't go straight to 100% power on start-up)
+                switch( liftMotorCycles ) {
+                    case 1  : maxPower=0.33; break;
+                    case 2  : maxPower=0.66; break;
+                    default : maxPower=1.00;
+                }
+                // Determine our min power:
+                // - Current ramping down implies lift is coming to a stop (allow low power)
+                // - Current at zero or increasing means lift won't move unless given enough power
+                minPower = (liftMotorRamp)? 0.30 : 0.40;
+                // Compute motor power (automatically reduce as we approach target)
+                liftMotorPower = degreesToGo / 100.0;  // 1.0 degree error = 1% motor power (0.01)
+                liftMotorPower = Math.copySign( Math.min(Math.abs(liftMotorPower), maxPower), liftMotorPower );
+                liftMotorPower = Math.copySign( Math.max(Math.abs(liftMotorPower), minPower), liftMotorPower );
+                liftMotor.setPower( liftMotorPower );
+            }
+        } // liftMotorAuto
+    } // liftPosRun
+
+    /*--------------------------------------------------------------------------------------------*/
+    public void writeLiftLog() {
+        // Are we even logging these events?
+        if( !liftMotorLogging) return;
+        // Movement must be complete (disable further logging to memory)
+        liftMotorLogEnable = false;
+        // Create a subdirectory based on DATE
+        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String directoryPath = Environment.getExternalStorageDirectory().getPath() + "//FIRST//LiftMotor//" + dateString;
+        // Ensure that directory path exists
+        File directory = new File(directoryPath);
+        directory.mkdirs();
+        // Create a filename based on TIME
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String filePath = directoryPath + "/" + "lift_" + timeString + ".txt";
+        // Open the file
+        FileWriter liftLog;
+        try {
+            liftLog = new FileWriter(filePath, false);
+            liftLog.write("LiftMotor\r\n");
+            liftLog.write("Target Angle," + liftAngleTarget + "\r\n");
+            // Log Column Headings
+            liftLog.write("msec,pwr,mAmp,angle\r\n");
+            // Log all the data recorded
+            for( int i=0; i<liftMotorLogIndex; i++ ) {
+                String msecString = String.format("%.3f, ", liftMotorLogTime[i] );
+                String pwrString  = String.format("%.3f, ", liftMotorLogPwr[i]  );
+                String ampString  = String.format("%.0f, ", liftMotorLogAmps[i] );
+                String degString  = String.format("%d\r\n", liftMotorLogAngle[i]  );
+                liftLog.write( msecString + pwrString + ampString + degString );
+            }
+            liftLog.flush();
+            liftLog.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } // writeLiftLog()
 
     /*--------------------------------------------------------------------------------------------*/
     /* NOTE ABOUT RANGE SENSORS:                                                                  */
