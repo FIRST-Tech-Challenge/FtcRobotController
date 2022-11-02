@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.Logging;
 import org.firstinspires.ftc.teamcode.Reno.HardwareRobot;
 import org.firstinspires.ftc.teamcode.Reno.RobotLocation;
 
@@ -50,6 +51,8 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
     // They can/should be tweaked to suit the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.5;     // Max driving speed for better distance accuracy.
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
+
+    private ElapsedTime     runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -70,31 +73,59 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         telemetry.setMsTransmissionInterval(50);
         waitForStart();
 
-        driveStraight(DRIVE_SPEED, 24.0 * 2);
+        this.driveClosedLoop();
+        //this.navigate(12, 12);
+        sleep(1000);  // Pause to display last telemetry message.
+    }
+
+    private void driveClosedLoop()
+    {
+        //drive forward to form a loop
+        driveStraight(DRIVE_SPEED, 24.0);
         turnHeading(-90.0 );
         driveStraight(DRIVE_SPEED, 24.0);
         turnHeading( -90);
-        driveStraight(DRIVE_SPEED, 24.0 * 2);
+        driveStraight(DRIVE_SPEED, 24.0);
         turnHeading( -90);
         driveStraight(DRIVE_SPEED, 24.0);
         turnHeading( -90);
 
-        sleep(1000);  // Pause to display last telemetry message.
+        sleep(1000);
+        //drive backward
+        turnHeading(90);
+        driveStraight(DRIVE_SPEED, -24.0);
+
+    }
+
+    private RobotLocation getRobotLocation()
+    {
+        ElapsedTime     timer = new ElapsedTime();
+        RobotLocation robotLocation;
+        double origAngle = robot.getRawHeading();
+        do {
+            robotLocation = robot.getRobotLocationOnField();
+            this.turnHeading(45);
+        }while (robotLocation == null && timer.milliseconds() < 1000);
+
+        if(origAngle != robot.getRawHeading())
+        {
+            this.turnHeading(origAngle);
+        }
+
+        return robotLocation;
     }
 
     public void navigate(double destX, double destY)
     {
-        RobotLocation robotLocation;
-
-       do {
-           robotLocation = robot.getRobotLocationOnField();
-           this.turnHeading(45);
-       }while (robotLocation == null);
+        Logging.log(String.format("navigate to ... (5.2f, 5.2f)", destX, destY));
+        RobotLocation robotLocation = this.getRobotLocation();
 
         if(robotLocation != null) {
             double distanceX = destX - robotLocation.x;
             double distanceY = destY - robotLocation.y;
 
+            Logging.log(String.format(" distance on X axis 5.2f", distanceX));
+            Logging.log(String.format(" distance on Y axis 5.2f", distanceY));
             this.driveStraight(DRIVE_SPEED, distanceX);
             this.turnHeading(90);
             this.driveStraight(DRIVE_SPEED, distanceY);
@@ -159,15 +190,18 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         turnToHeading(angle+ robot.getRawHeading());
     }
 
-    public void turnToHeading(double targetAngle) {
+    public void turnToHeading(double targetAngle)
+    {
 
+        ElapsedTime timer = new ElapsedTime();
         robot.setDriveForward();
         robot.disableEncoder();
         targetHeading = targetAngle;
         ConceptTurnPidController pid = new ConceptTurnPidController(targetAngle, 0.01, 0, 0.003);
 
         // Checking lastSlope to make sure that it's not oscillating when it quits
-        while (Math.abs(targetAngle - robot.getRawHeading()) > HEADING_THRESHOLD) {
+        while (Math.abs(targetAngle - robot.getRawHeading()) > HEADING_THRESHOLD && timer.milliseconds() < 1000)
+        {
             double turnPower = pid.getValue(robot.getRawHeading());
             //robot.setMotorPower(-turnPower, turnPower, -turnPower, turnPower);
             robot.drive(0, turnPower);

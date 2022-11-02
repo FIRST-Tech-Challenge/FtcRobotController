@@ -29,6 +29,10 @@
 
 package org.firstinspires.ftc.teamcode.Reno;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -49,6 +53,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.Logging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,6 +146,7 @@ public class HardwareRobot
     private float robotY = 0;
     private float robotAngle = 0;
     private VuforiaTrackableDefaultListener listener;
+    List<VuforiaTrackable> allTrackables;
 
     /* Constructor */
     public HardwareRobot(){
@@ -151,7 +157,7 @@ public class HardwareRobot
     public void init(HardwareMap hardwareMap) {
         // Save reference to Hardware map
         this.hardwareMap = hardwareMap;
-
+        Logging.log("init hardware");
         // Define and Initialize Motors
         leftDriveFront  = this.hardwareMap.get(DcMotor.class, "FrontLeft");
         rightDriveFront = this.hardwareMap.get(DcMotor.class, "FrontRight");
@@ -209,6 +215,7 @@ public class HardwareRobot
 
     public void stop()
     {
+        Logging.log("stop all motors with o power");
         this.leftDriveFront.setPower(0);
         this.leftDriveBack.setPower(0);
         this.rightDriveBack.setPower(0);
@@ -284,6 +291,9 @@ public class HardwareRobot
         //leftSpeed = Math.abs(leftSpeed);
         //rightSpeed = Math.abs(rightSpeed);
 
+        Logging.log("driving ...");
+        Logging.log(String.format("Power - LF %5.2f:LB %5.2f:RF %5.2f:RB %5.2f", leftSpeed, leftSpeed, rightSpeed, rightSpeed));
+
         leftDriveFront.setPower(leftSpeed);
         rightDriveFront.setPower(rightSpeed);
         leftDriveBack.setPower(leftSpeed);
@@ -293,6 +303,7 @@ public class HardwareRobot
 
     public void setDriveForward()
     {
+        Logging.log("set drive forward");
         leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
         rightDriveFront.setDirection(DcMotor.Direction.FORWARD);
         leftDriveBack.setDirection(DcMotor.Direction.REVERSE);
@@ -301,63 +312,17 @@ public class HardwareRobot
 
     public void setDriveBackward()
     {
+        Logging.log("set drive backward");
         leftDriveFront.setDirection(DcMotor.Direction.FORWARD);
         rightDriveFront.setDirection(DcMotor.Direction.REVERSE);
         leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
         rightDriveBack.setDirection(DcMotor.Direction.REVERSE);
     }
 
-    public void setDriveLeft()
-    {
-        leftDriveFront.setDirection(DcMotor.Direction.FORWARD);
-        rightDriveFront.setDirection(DcMotor.Direction.REVERSE);
-        leftDriveBack.setDirection(DcMotor.Direction.REVERSE);
-        rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
-    }
-    public void setDriveRight()
-    {
-        leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
-        rightDriveFront.setDirection(DcMotor.Direction.FORWARD);
-        leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
-        rightDriveBack.setDirection(DcMotor.Direction.REVERSE);
-    }
-
-    public void driveForward(double leftSpeed, double rightSpeed)
-    {
-        leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
-        rightDriveFront.setDirection(DcMotor.Direction.FORWARD);
-        leftDriveBack.setDirection(DcMotor.Direction.REVERSE);
-        rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
-        this.tankDrive(leftSpeed, rightSpeed);
-    }
-
-    public void driveBackward(double leftSpeed, double rightSpeed)
-    {
-        leftDriveFront.setDirection(DcMotor.Direction.FORWARD);
-        rightDriveFront.setDirection(DcMotor.Direction.REVERSE);
-        leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
-        rightDriveBack.setDirection(DcMotor.Direction.REVERSE);
-        this.tankDrive(leftSpeed, rightSpeed);
-    }
-    public void driveLeft(double leftSpeed, double rightSpeed)
-    {
-        leftDriveFront.setDirection(DcMotor.Direction.FORWARD);
-        rightDriveFront.setDirection(DcMotor.Direction.REVERSE);
-        leftDriveBack.setDirection(DcMotor.Direction.REVERSE);
-        rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
-        this.tankDrive(leftSpeed, rightSpeed);
-    }
-    public void driveRight(double leftSpeed, double rightSpeed)
-    {
-        leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
-        rightDriveFront.setDirection(DcMotor.Direction.FORWARD);
-        leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
-        rightDriveBack.setDirection(DcMotor.Direction.REVERSE);
-        this.tankDrive(leftSpeed, rightSpeed);
-    }
 
     public void resetEncoder()
     {
+        Logging.log("reset encoder into brake mode");
         leftDriveFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightDriveFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftDriveBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -370,22 +335,24 @@ public class HardwareRobot
 
     public void enableEncoder()
     {
+        Logging.log("enable encoder");
         leftDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void disableEncoder()
-{
-    leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    leftDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    rightDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-}
+    {
+        Logging.log("disable encoder");
+        leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
     public void setTargetPosition(double distance)
     {
-
+        Logging.log("set target position " + distance);
         int moveCounts = (int)(distance * COUNTS_PER_INCH);
         int leftFrontTarget = leftDriveFront.getCurrentPosition() + moveCounts;
         int rightFrontTarget = rightDriveFront.getCurrentPosition() + moveCounts;
@@ -401,7 +368,7 @@ public class HardwareRobot
         rightDriveFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftDriveBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightDriveBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        positionStatus =  String.format("Target Pos - LF %d:LB %d:RF %d:RB %d", leftFrontTarget, rightFrontTarget, leftBackTarget, rightBackTarget);
+        Logging.log(String.format("Target Pos - LF %d:LB %d:RF %d:RB %d", leftFrontTarget, rightFrontTarget, leftBackTarget, rightBackTarget));
     }
     public void setMotorPower(double leftFront, double rightFront, double leftBack, double rightBack){
         leftDriveFront.setPower(leftFront);
@@ -469,20 +436,20 @@ public class HardwareRobot
         targets = this.vuforia.loadTrackablesFromAsset("PowerPlay");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+        allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(targets);
 
         // Setup the target to be tracked
-        //target = identifyTarget(0, "Red Audience Wall",   -halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0,  90);
-        //identifyTarget(1, "Red Rear Wall",        halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0, -90);
-        //identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);
-        //identifyTarget(3, "Blue Rear Wall",       halfField,   oneAndHalfTile, mmTargetHeight, 90, 0, -90);
+        identifyTarget(0, "Red Audience Wall",   -halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0,  90);
+        identifyTarget(1, "Red Rear Wall",        halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0, -90);
+        identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);
+        identifyTarget(3, "Blue Rear Wall",       halfField,   oneAndHalfTile, mmTargetHeight, 90, 0, -90);
 
         target = allTrackables.get(0);
         target.setName("Red Audience Wall");
 
 
-        target.setLocation(createMatrix((0 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
+        target.setLocation(createMatrix((24 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
 
         // Set phone location on robot
         cameraLocation = createMatrix((10 * meterPerInch), (float)(-4.75 * meterPerInch), 0, 90, 0, 0);
@@ -504,24 +471,38 @@ public class HardwareRobot
 
     public RobotLocation getRobotLocationOnField()
     {
-        if (((VuforiaTrackableDefaultListener)target.getListener()).isVisible()) {
-            listener = ((VuforiaTrackableDefaultListener)target.getListener());
-            OpenGLMatrix robotLocationTransform = listener.getUpdatedRobotLocation();
-            OpenGLMatrix targetLocationTransform = listener.getVuforiaCameraFromTarget();
-            OpenGLMatrix robotLocationOnField = listener.getFtcFieldFromRobot();
-            OpenGLMatrix cameraLocationOnRobot = listener.getCameraLocationOnRobot(webcamName);
-            OpenGLMatrix targetLocationOnField = target.getFtcFieldFromTarget();
+        for (VuforiaTrackable trackable : allTrackables)
+        {
+            if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible())
+            {
+                listener = ((VuforiaTrackableDefaultListener)trackable.getListener());
+                OpenGLMatrix robotLocationTransform = listener.getUpdatedRobotLocation();
+                OpenGLMatrix targetLocationTransform = listener.getVuforiaCameraFromTarget();
+                OpenGLMatrix robotLocationOnField = listener.getFtcFieldFromRobot();
+                OpenGLMatrix cameraLocationOnRobot = listener.getCameraLocationOnRobot(webcamName);
+                OpenGLMatrix targetLocationOnField = target.getFtcFieldFromTarget();
 
-            float[] coordinates = lastLocation.getTranslation().getData();
+                float[] coordinates = robotLocationTransform.getTranslation().getData();
 
-            robotX = coordinates[0] *1000;
-            robotY = coordinates[1] * 1000;
-            robotAngle = Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
-            RobotLocation robotLocation = new RobotLocation(robotX / mmPerInch, robotY / mmPerInch, 0, robotAngle);
+                robotX = coordinates[0] * 1000;
+                robotY = coordinates[1] * 1000;
+                Orientation orientation = Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+                RobotLocation robotLocation = new RobotLocation(robotX / mmPerInch, robotY / mmPerInch, 0, orientation.firstAngle, orientation.secondAngle, orientation.thirdAngle);
 
-            return robotLocation;
+                Logging.log(robotLocation.toString());
+                return robotLocation;
+            }
         }
+        Logging.log("Robot location cannot be identified.");
         return null;
+    }
+    VuforiaTrackable    identifyTarget(int targetIndex, String targetName, float dx, float dy, float dz, float rx, float ry, float rz) {
+        VuforiaTrackable aTarget = targets.get(targetIndex);
+        aTarget.setName(targetName);
+        aTarget.setLocation(OpenGLMatrix.translation(dx, dy, dz)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, rx, ry, rz)));
+
+        return aTarget;
     }
 
 }
