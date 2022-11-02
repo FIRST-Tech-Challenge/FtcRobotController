@@ -112,12 +112,12 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void maintainHeightToGroundPositive(){
-        double baseDegree = robot.armBase.getCurrentPosition() * constants.CLICKS_PER_BASE_REV;
-        double topDegree = robot.armTop.getCurrentPosition() * constants.CLICKS_PER_TOP_REV;
+        double baseCurrent = robot.armBase.getCurrentPosition();
+        double topCurrent = robot.armTop.getCurrentPosition();
 
 
-        robot.armBase.setTargetPosition((int)((baseDegree * constants.DEGS_PER_BASE_CLICK) + (10 * constants.RATIO_CLICKS)));
-        robot.armTop.setTargetPosition((int)(topDegree * constants.DEGS_PER_TOP_CLICK) - 10);
+        robot.armBase.setTargetPosition((int)((baseCurrent + (10 * constants.RATIO_CLICKS))));
+        robot.armTop.setTargetPosition((int)(topCurrent - 10));
 
         robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armBase.setPower(power);
@@ -127,11 +127,11 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void maintainHeightToGroundNegative(){
-        double baseDegree = robot.armBase.getCurrentPosition() * constants.CLICKS_PER_BASE_REV;
-        double topDegree = robot.armTop.getCurrentPosition() * constants.CLICKS_PER_TOP_REV;
+        double baseCurrent = robot.armBase.getCurrentPosition();
+        double topCurrent = robot.armTop.getCurrentPosition();
 
-        robot.armBase.setTargetPosition((int)((baseDegree * constants.DEGS_PER_BASE_CLICK) - (10 * constants.RATIO_CLICKS)));
-        robot.armTop.setTargetPosition((int)(topDegree * constants.DEGS_PER_TOP_CLICK) + 10);
+        robot.armBase.setTargetPosition((int)((baseCurrent - (10 * constants.RATIO_CLICKS))));
+        robot.armTop.setTargetPosition((int)(topCurrent + 10));
 
         robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armBase.setPower(power);
@@ -141,14 +141,14 @@ public class ArmMotorTester extends OpMode{
     }
 
     void setArmPower(){
-//        if (gamepad1.y){
-//            setTargetPositive();
-//        } else if (gamepad1.x){
-//            setTargetNegative();
-//        } else {
-//            robot.armTop.setPower(0);
-//            robot.armBase.setPower(0);
-//        }
+        if (gamepad1.y){
+            setTargetPositive();
+        } else if (gamepad1.x){
+            setTargetNegative();
+        } else {
+            robot.armTop.setPower(0);
+            robot.armBase.setPower(0);
+        }
 //        if (x.getState() == Button.State.HELD){
 //            setTargetPositive();
 //        } else if (y.getState() == Button.State.HELD){
@@ -158,14 +158,14 @@ public class ArmMotorTester extends OpMode{
 //            robot.armBase.setPower(0);
 //        }
 
-        if (gamepad1.y){
-            maintainHeightToGroundPositive();
-        } else if (gamepad1.x){
-            maintainHeightToGroundNegative();
-        } else {
-            robot.armTop.setPower(0);
-            robot.armBase.setPower(0);
-        }
+//        if (gamepad1.y){
+//            maintainHeightToGroundPositive();
+//        } else if (gamepad1.x){
+//            maintainHeightToGroundNegative();
+//        } else {
+//            robot.armTop.setPower(0);
+//            robot.armBase.setPower(0);
+//        }
 
         if (a.getState() == Button.State.TAP){
             power += 0.1;
@@ -204,7 +204,7 @@ public class ArmMotorTester extends OpMode{
 
         if (gamepad2.dpad_up){
             //high pos
-            
+
         } else if (gamepad2.dpad_right){
             //mid pos
 
