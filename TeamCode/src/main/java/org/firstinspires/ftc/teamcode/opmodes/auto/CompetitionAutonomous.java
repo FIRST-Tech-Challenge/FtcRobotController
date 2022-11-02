@@ -32,16 +32,34 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         START, CONE_STACK
     }
 
+    public enum TeamColor {
+        BLUE,
+        RED
+    }
+
+    public enum TeamSide {
+        RIGHT,
+        LEFT
+    }
+
     private From startPosition;
     private State mCurrentState;                         // Current State Machine State.
 
-
+    protected TeamColor teamColor;
+    protected TeamSide teamSide;
+    private int sign;
     /**
      * Initializes State Machine
      */
-    public void init() {
+    public void init(TeamColor teamColor, TeamSide teamSide) {
         super.init();
-        step = 0;
+        this.teamColor = teamColor;
+        this.teamSide = teamSide;
+        if (teamSide == TeamSide.LEFT) {
+            sign = -1;
+        } else { // if teamSide is right
+            sign = 1;
+        }
         startPosition = From.START;
         newState(State.ALIGN_WITH_POLE);
     }
@@ -94,8 +112,10 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 }
                 break;
             case ALIGN_WITH_CONE:
-                if (align(PixyCam.BLUE, CONE_WIDTH)) {
-                    newState(State.END_STATE);
+
+                int color = teamColor == TeamColor.BLUE ? PixyCam.BLUE : PixyCam.RED;
+                if (align(color, CONE_WIDTH)) {
+                    newState(State.INTAKE_CONE);
                 }
                 break;
             case INTAKE_CONE:
@@ -145,7 +165,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                     }
                 }
                 if (step == 1) {
-                    if (driveSystem.turn(-45, 0.2)) {
+                    if (driveSystem.turn(-45 * sign, 0.2)) {
                         return true;
                     }
                 }
@@ -164,9 +184,8 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
             }
         }
         if (step == 1) {
-            if (driveSystem.turn(45, 0.2)) {
-                step = 0;
-                return true;
+            if (driveSystem.turn(45 * sign, 0.2)) {
+                step++;
             }
         }
         return false;
@@ -185,7 +204,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
         // Rotate
         if(step == 1){
-            if(driveSystem.turnAbsolute(90, 0.3)){
+            if(driveSystem.turn(135 * sign, 0.5)){
                 step++;
             }
 
