@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
 import org.firstinspires.ftc.teamcode.Functions.Vacuum;
 
 @TeleOp(name="MAIN 4", group="GAME")
+@Disabled
 public class Main2022 extends OpMode {
 
     private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack, armMotorRight,armMotorLeft, vaccumLeft, armMotorChain;

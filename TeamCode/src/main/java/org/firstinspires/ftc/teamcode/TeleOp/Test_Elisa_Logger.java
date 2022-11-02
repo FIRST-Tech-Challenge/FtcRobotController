@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 import java.io.IOException;
 
 @TeleOp(name="Test_Elisa_Logger", group="TEST")
-// Created by Vlad, modified by Elisa
+@Disabled
 public class Test_Elisa_Logger extends OpMode {
 
     public Move move;

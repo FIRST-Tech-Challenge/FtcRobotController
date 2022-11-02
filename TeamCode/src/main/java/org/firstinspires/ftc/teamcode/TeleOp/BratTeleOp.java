@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import   com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Functions.BratTest;
 import org.firstinspires.ftc.teamcode.Functions.Move;
 import org.firstinspires.ftc.teamcode.Functions.Rotate;
-
-@TeleOp(name = "Brat",group="TEST")
+@TeleOp(name = "TeleOp Noaptea Cercetatorilor",group="TEST")
+@Disabled
 public class BratTeleOp extends OpMode {
 
 

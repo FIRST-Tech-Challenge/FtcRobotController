@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Functions.Vacuum;
 import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 @Autonomous(name="AutonomieShowOff", group="TEST")
+@Disabled
 public class AutonomieShowOff extends LinearOpMode {
 
     private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack,vaccumLeft, armMotorChain;

@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -56,7 +57,7 @@ import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
  */
 
 @TeleOp(name = "TestJoystickDirect", group = "Concept")
-
+@Disabled
 public class MoveJoystickDirectTest extends OpMode {
 
     private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack;

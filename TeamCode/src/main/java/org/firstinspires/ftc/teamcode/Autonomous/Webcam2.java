@@ -41,7 +41,7 @@ import org.firstinspires.ftc.teamcode.Functions.CameraDetector;
 import java.util.List;
 import java.util.List;
 
-//@Disabled
+@Disabled
 public class Webcam2 extends LinearOpMode {
 
     private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack,vaccumRight,vaccumLeft, carouselMotor, leftMotorEncoder, rightMotorEncoder, leftMotorBackEncoder, rightMotorBackEncoder, armMotorChain;

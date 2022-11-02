@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Functions.MV.MVVariables;
 import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 @TeleOp(name="TestElisaUltra", group="TEST")
+@Disabled
 // Created by Elisa
 public class TestElisaUltra extends OpMode {
 

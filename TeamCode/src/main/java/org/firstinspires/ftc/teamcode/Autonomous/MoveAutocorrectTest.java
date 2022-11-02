@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
 import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 @Autonomous(name = "TestMoveAutocorrect2", group = "Concept")
-//@Disabled
+@Disabled
 public class MoveAutocorrectTest extends LinearOpMode {
     private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack, armMotorLeft, armMotorRight;
     private Move move;
