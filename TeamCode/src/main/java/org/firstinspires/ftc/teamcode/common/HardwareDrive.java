@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -122,8 +123,8 @@ public class HardwareDrive
 
 
         //Set Motor Directions
-        botL.setDirection(DcMotorEx.Direction.REVERSE); //no clue if these 2 are supposed to be FORWARD
-        topL.setDirection(DcMotorEx.Direction.REVERSE);
+        botL.setDirection(DcMotorEx.Direction.FORWARD); //no clue if these 2 are supposed to be FORWARD
+        topL.setDirection(DcMotorEx.Direction.FORWARD);
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
