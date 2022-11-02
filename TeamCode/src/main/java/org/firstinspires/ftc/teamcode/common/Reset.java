@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 public class Reset {
     HardwareDrive robot;
@@ -29,6 +29,8 @@ public class Reset {
     private void updateReset(){
         int rotateL = (robot.topL.getCurrentPosition() + robot.botL.getCurrentPosition()) / 2; //total rotation of left module
         int rotateR = (robot.topR.getCurrentPosition() + robot.botR.getCurrentPosition()) / 2; //total rotation of right module
+        //this won't work once you implement table-spinning.  Will probably need to use the GPS then.
+
 
         rotateL %= constants.CLICKS_PER_PURPLE_REV;
         rotateR %= constants.CLICKS_PER_PURPLE_REV;

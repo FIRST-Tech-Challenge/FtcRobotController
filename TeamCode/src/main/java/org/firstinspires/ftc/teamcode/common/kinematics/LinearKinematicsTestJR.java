@@ -1,68 +1,46 @@
-package org.firstinspires.ftc.teamcode.common.Kinematics;
-
-import com.qualcomm.robotcore.util.ElapsedTime;
+package org.firstinspires.ftc.teamcode.common.kinematics;
 
 import org.firstinspires.ftc.teamcode.common.Accelerator;
-import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
-public class LinearKinematicsTest extends Kinematics {
+public class LinearKinematicsTestJR extends Kinematics{
     private double lx;
     private double ly;
     private double rx;
     private double ry;
 
-//    private double joystickL = 0.0;
-//    private double prevJoystickL = 0.0;
-//    private int joystickCount = 0;
+    private double joystickL = 0.0;
+    private double prevJoystickL = 0.0;
+    private int joystickCount = 0;
 
-    private boolean firstSnap = false; //true when robot is stopped.  False while it is moving.
+    private boolean firstMovement = false; //true when robot is stopped.  False while it is moving.
 
     public enum dType{
-        LINEAR,
         SNAP,
         STOP,
         NOT_INITIALIZED
     }
-    dType dtype = dType.NOT_INITIALIZED;
+    public dType dtype = dType.NOT_INITIALIZED;
 
     Accelerator accelerator = new Accelerator();
 
-    public LinearKinematicsTest(GlobalPosSystem posSystem) {
+    public LinearKinematicsTestJR(GlobalPosSystem posSystem) {
         super(posSystem); //runs Kinematics constructor
     }
 
     public void logic(){
         if (noMovementRequests()) dtype = dType.STOP;
-        else if (shouldSnap()) dtype = dType.SNAP;
-        else dtype = dType.LINEAR;
+        else dtype = dType.SNAP;
 
         switch(dtype){
-            case LINEAR:
-                spinPower = Math.sqrt(Math.pow(lx,2) + Math.pow(ly, 2));
-                rightRotatePower = 0;
-                leftRotatePower = 0;
-
-                rightThrottle = 1;
-                leftThrottle = 1;
-
-                translationPowerPercentage = 1;
-                rotationPowerPercentage = 0;
-
-                getSpinTargetClicks();
-
-                // 7 / 8 items (missing translationPowerPercentage, but we don't set that here)
-                break;
             case SNAP:
-                if (firstSnap){
-                    firstSnap = false;
-                }
                 getRotTargetClicks();
                 //rotate modules until target is hit
                 rightThrottle = 1;
                 leftThrottle = 1;
                 translationPowerPercentage = 0.0;
                 rotationPowerPercentage = 1.0;
+
                 leftRotatePower = snapLeftWheelPID.update(rightCurrentW);
                 rightRotatePower = snapRightWheelPID.update(leftCurrentW);
                 spinPower = 0;
@@ -71,43 +49,38 @@ public class LinearKinematicsTest extends Kinematics {
                 break;
 
             case STOP: //this is NOT reset
-                stop();
+                rightThrottle = 1;
+                leftThrottle = 1;
+                spinPower = 0;
+                leftRotatePower = 0;
+                rightRotatePower = 0;
+                translationPowerPercentage = 0;
+                rotationPowerPercentage = 0;
+
+                rightRotClicks = 0;
+                leftRotClicks = 0;
+                spinClicks = 0;
+
+                translateSwitchMotors = 1;
+
+                // 6/8 items (missing switchMotors for rotation and translation, but we don't really need to change that)
                 break;
 
             default:
                 type = DriveType.STOP;
                 break;
         }
+
+        firstMovement = noMovementRequests();
     }
 
     public boolean shouldSnap(){
         return (Math.abs(leftCurrentW - leftOptimizedTargetW) >= constants.degreeTOLERANCE || Math.abs(rightCurrentW - rightOptimizedTargetW) >= constants.degreeTOLERANCE);
     }
 
-    public void stop(){
-        rightThrottle = 1;
-        leftThrottle = 1;
-
-        spinPower = 0;
-        leftRotatePower = 0;
-        rightRotatePower = 0;
-
-        translationPowerPercentage = 0;
-        rotationPowerPercentage = 0;
-
-        rightRotClicks = 0;
-        leftRotClicks = 0;
-        spinClicks = 0;
-
-        leftTurnAmountW = 0;
-        rightTurnAmountW = 0;
-
-        // 6/8 items (missing switchMotors for translation, but we should not change that)
-    }
-
     public void setPos(){
         //setting targets
-        //trackJoystickL();
+        trackJoystickL();
         double[] leftWheelTargets = wheelOptimization(lx, ly, leftCurrentW);
         double[] rightWheelTargets =  wheelOptimization(lx, ly, rightCurrentW);
         double[] robotTargets = robotHeaderOptimization(rx, ry);
@@ -161,20 +134,14 @@ public class LinearKinematicsTest extends Kinematics {
         spinClicks = 0;
     }
 
-    public void getSpinTargetClicks(){
-        spinClicks = (int)(100 * spinPower * translationPowerPercentage * translateSwitchMotors);
-        rightRotClicks = 0;
-        leftRotClicks = 0;
+    private void trackJoystickL(){
+        joystickCount++;
+        if(joystickCount > 4){
+            joystickCount = 0;
+            prevJoystickL = joystickL;
+            joystickL = Math.toDegrees(Math.atan2(lx, ly));
+        }
     }
-//
-//    private void trackJoystickL(){
-//        joystickCount++;
-//        if(joystickCount >= 3){
-//            joystickCount = 0;
-//            prevJoystickL = joystickL;
-//            joystickL = Math.toDegrees(Math.atan2(lx, ly));
-//        }
-//    }
 
     public void getGamepad(double lx, double ly, double rx, double ry){
         this.lx = lx;

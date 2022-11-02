@@ -30,15 +30,13 @@
 package org.firstinspires.ftc.teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 /**
  * This is NOT an opmode.
@@ -124,8 +122,8 @@ public class HardwareDrive
 
 
         //Set Motor Directions
-        botL.setDirection(DcMotorEx.Direction.FORWARD); //no clue if these 2 are supposed to be FORWARD
-        topL.setDirection(DcMotorEx.Direction.FORWARD);
+        botL.setDirection(DcMotorEx.Direction.REVERSE); //no clue if these 2 are supposed to be FORWARD
+        topL.setDirection(DcMotorEx.Direction.REVERSE);
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.test.driveTrain;
+package org.firstinspires.ftc.teamcode.teleop.test.drivetrain;
 
 import android.view.View;
 
@@ -7,17 +7,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.Kinematics.LinearKinematicsTestJR;
 import org.firstinspires.ftc.teamcode.common.Reset;
+import org.firstinspires.ftc.teamcode.common.kinematics.LinearKinematicsTest;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-@TeleOp(name="Rotation Test", group="Drive")
+@TeleOp(name="Linear Base Drive Test", group="Drive")
 //@Disabled
-public class RotateTest extends OpMode{
+public class LinearBaseDrive extends OpMode{
     public enum ControllerType{
         CONTOLLER,
         BUTTON,
@@ -28,7 +28,6 @@ public class RotateTest extends OpMode{
         GPS,
         TARGETS
     }
-
     telemetryType tType = telemetryType.GPS;
     ControllerType controllerType = ControllerType.NOT_INITIALIZED;
 
@@ -36,11 +35,11 @@ public class RotateTest extends OpMode{
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
     GlobalPosSystem posSystem;
-    LinearKinematicsTestJR kinematics;
-
-    Reset reset;
+    LinearKinematicsTest kinematics;
 
     private ElapsedTime runtime = new ElapsedTime();
+
+    Reset reset;
 
     Button x = new Button();
     Button y = new Button();
@@ -63,7 +62,7 @@ public class RotateTest extends OpMode{
         runtime.reset();
 
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new LinearKinematicsTestJR(posSystem);
+        kinematics = new LinearKinematicsTest(posSystem);
         posSystem.grabKinematics(kinematics);
     }
 
@@ -97,7 +96,7 @@ public class RotateTest extends OpMode{
         else if (y.getState() == Button.State.TAP) controllerType = ControllerType.BUTTON;
 
         if (x.getState() == Button.State.DOUBLE_TAP){
-            reset.reset(true);
+           reset.reset(true);
         } else{
             reset.reset(false);
             DriveTrainBase();
@@ -112,7 +111,7 @@ public class RotateTest extends OpMode{
 
         if (tType == telemetryType.TARGETS){
             telemetry.addData("X gamepad", gamepad1.left_stick_x);
-            telemetry.addData("Y gamepad", gamepad1.left_stick_y);
+            telemetry.addData("Y gamepad", -gamepad1.left_stick_y);
             telemetry.addData("Left W", posData[2]);
             telemetry.addData("Right W", posData[3]);
             telemetry.addData("Right TargetW", kinematics.getRTargetW());
@@ -121,8 +120,8 @@ public class RotateTest extends OpMode{
             telemetry.addData("Right Turn Amount", kinematics.getRTurnAmount());
             telemetry.addData("Left Turn Amount", kinematics.getLTurnAmount());
 
-            telemetry.addData("Right Optimized Target", kinematics.getROptimizedTargetW());
-            telemetry.addData("Left Optimized Target", kinematics.getLOptimizedTargetW());
+//            telemetry.addData("Right Optimized Target", kinematics.getROptimizedTargetW());
+//            telemetry.addData("Left Optimized Target", kinematics.getLOptimizedTargetW());
 
             telemetry.addData("Right Direction", kinematics.getRightDirectionW());
             telemetry.addData("Left Direction", kinematics.getLeftDirectionW());
@@ -138,7 +137,8 @@ public class RotateTest extends OpMode{
             telemetry.addData("Drive Type", kinematics.getdDriveType());
             telemetry.addData("Power Top", kinematics.getPower()[0]);
             telemetry.addData("Power Bottom", kinematics.getPower()[1]);
-            telemetry.addData("Rot Clicks", kinematics.rightRotClicks);
+            telemetry.addData("Right Rot Clicks", kinematics.rightRotClicks);
+            telemetry.addData("Left Rot Clicks", kinematics.leftRotClicks);
             telemetry.addData("Spin clicks", kinematics.spinClicks);
             telemetry.addData("topL Clicks", robot.topL.getCurrentPosition());
             telemetry.addData("botL Clicks", robot.botL.getCurrentPosition());
@@ -188,7 +188,7 @@ public class RotateTest extends OpMode{
                 break;
 
             case BUTTON:
-                kinematics.getGamepad(-1, 0, 0, 0);
+                kinematics.getGamepad(-0.5, 0, 0, 0);
 
                 kinematics.setPos();
 
@@ -222,10 +222,23 @@ public class RotateTest extends OpMode{
         robot.topR.setPower(motorPower[2] * constants.POWER_LIMITER);
         robot.botR.setPower(motorPower[3] * constants.POWER_LIMITER);
 
-//        if (motorPower[0] == 0) robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        if (motorPower[1] == 0) robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        if (motorPower[2] == 0) robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        if (motorPower[3] == 0) robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        if (motorPower[0] == 0) {
+            robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        if (motorPower[1] == 0) {
+            robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        if (motorPower[2] == 0) {
+            robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        }
+        if (motorPower[3] == 0) {
+            robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } //may or may not need BRAKE.
     }
 
     /*

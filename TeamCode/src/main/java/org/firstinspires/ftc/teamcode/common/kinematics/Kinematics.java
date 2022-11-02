@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.common.Kinematics;
+package org.firstinspires.ftc.teamcode.common.kinematics;
 
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.common.pid.LinearCorrectionPID;
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 
 public class Kinematics {
@@ -26,7 +27,7 @@ public class Kinematics {
     protected double leftThrottle = 1.0;
     protected double rightThrottle = 1.0;
     protected int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
-    protected int leftTurnDirectionW = 1;
+    protected int leftTurnDirectionW = -1;
     protected int rightTurnDirectionW = 1;
 
     //target clicks
@@ -47,6 +48,7 @@ public class Kinematics {
     protected RotateSwerveModulePID snapLeftWheelPID;
     protected RotateSwerveModulePID snapRightWheelPID;
     protected RotateSwerveModulePID tableSpinWheelPID;
+//    protected LinearCorrectionPID linearCorrectionPID;
 //    protected RotateSwerveModulePID counteractSplinePID;
 
     //targets
@@ -62,7 +64,7 @@ public class Kinematics {
     public Kinematics(GlobalPosSystem posSystem){
         snapLeftWheelPID = new RotateSwerveModulePID();
         snapRightWheelPID = new RotateSwerveModulePID();
-
+//        linearCorrectionPID = new LinearCorrectionPID();
         tableSpinWheelPID = new RotateSwerveModulePID();
 //        counteractSplinePID = new RotateSwerveModulePID();
         this.posSystem = posSystem;

@@ -1,14 +1,15 @@
-package org.firstinspires.ftc.teamcode.teleop.test.driveTrain;
+package org.firstinspires.ftc.teamcode.teleop.test.drivetrain;
 
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.kinematics.Kinematics;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -164,10 +165,10 @@ public class SwerveCode extends OpMode{
         robot.botR.setTargetPosition(posBotR + distanceBotR + rotationalBotR);
         robot.topR.setTargetPosition(posTopR + distanceTopR + rotationalTopR);
 
-        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.topL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         robot.botL.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha));
         robot.topL.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha));

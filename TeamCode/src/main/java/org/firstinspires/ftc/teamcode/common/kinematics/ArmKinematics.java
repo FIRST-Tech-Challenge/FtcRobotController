@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.common.Kinematics;
+package org.firstinspires.ftc.teamcode.common.kinematics;
 
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 public class ArmKinematics {
     protected Constants constants = new Constants();
@@ -30,14 +29,31 @@ public class ArmKinematics {
     public double findHeightToGround(double theta, double psi){
         double distance = 0; //distance from claw to ground
         double h1 = constants.ARM_BASE_RADIUS * Math.sin(theta);
-        double h2 = constants.ARM_TOP_RADIUS * Math.sin(theta + psi - 90);
+        double h2 = constants.ARM_TOP_RADIUS * Math.sin(theta - psi);
 
         distance = h1 + h2;
         return distance;
     }
 
+    public double findHorizontalDistance(double theta, double psi){
+        double distance = 0; //distance from base of arm extending horizontally to claw
+        double h1 = constants.ARM_BASE_RADIUS * Math.cos(theta);
+        double h2 = constants.ARM_TOP_RADIUS * Math.cos(theta -psi);
+        return distance;
+    }
+
+    public void maintainHeightToGround(){
+        //base motor and top motor rotate same degrees in opposite directions
+    }
+
     public void setCurrentPosition(){
         currentBase = 10;
         currentTop = 10;
+    }
+
+    public double[] setMotorClicks(double height, double horizontalDistanceFromOrigin){
+        double[] motorClicks = new double[2];
+
+        return motorClicks;
     }
 }

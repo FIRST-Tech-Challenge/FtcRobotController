@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.ConstantsPKG;
-
-import org.checkerframework.checker.units.qual.C;
+package org.firstinspires.ftc.teamcode.common.constantsPKG;
 
 public class Constants {
     public double LOOP_ITERATION_TIME = 0.025; //must test later on
@@ -25,8 +23,12 @@ public class Constants {
     public double DEGS_PER_BASE_CLICK = 5281.1 / 360; //degrees per base motor click
     public double DEGS_PER_TOP_CLICK = 288.0 / 360.0; //degrees per top motor click
     public double RATIO_CLICKS = 5281.1 / 288.0; //ratio of clicks between rev clicks to gobilda clicks
-    public double ARM_BASE_RADIUS = 440; //radius of first stage of arm(base powered by 5204 motor)
-    public double ARM_TOP_RADIUS = 400; //radius of top stage of arm(powered by rev motor)
+    public double ARM_BASE_RADIUS = 440; //radius of first stage of arm(base powered by 5204 motor) (mm)
+    public double ARM_TOP_RADIUS = 400; //radius of top stage of arm(powered by rev motor) (mm)
+    public double ARM_TOP_GEAR_REDUCTION = 16.0 / 40; //motor is geared down for more torque(40% increase of torque)
+    public double  DEGS_PER_TOP_RADIUS_CLICK = DEGS_PER_TOP_CLICK * ARM_TOP_GEAR_REDUCTION;
+
+
 
     //Swerve constants
         //module translation
@@ -37,7 +39,7 @@ public class Constants {
     //module rotation
     public double BLUE_REVS_PER_PURPLE = 85.0 / 24.0; //~3.54 Blue revs per 1 Purple rev
     public double CLICKS_PER_PURPLE_REV = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV;
-    public double CLICKS_PER_DEGREE = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV * (1/360.0);
+    public double CLICKS_PER_DEGREE = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV * (1/360.0); //1.427 clicks per degree
     public double DEGREES_PER_CLICK = 1.0 / CLICKS_PER_DEGREE;
 
     public double DEGREES_PER_INCH = CLICKS_PER_INCH * DEGREES_PER_CLICK;

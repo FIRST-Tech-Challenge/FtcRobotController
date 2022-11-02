@@ -1,13 +1,12 @@
-package org.firstinspires.ftc.teamcode.teleop.test.driveTrain;
+package org.firstinspires.ftc.teamcode.teleop.test.drivetrain;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.common.Button;
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.teleop.test.driveTrain.gearRotTest;
 
 
 @Autonomous(name = "Gear RotLop Test", group = "Routes")

@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.common.gps;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.Kinematics;
 
 import java.util.HashMap;
 
