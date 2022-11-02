@@ -149,14 +149,14 @@ public class ArmMotorTester extends OpMode{
 //            robot.armTop.setPower(0);
 //            robot.armBase.setPower(0);
 //        }
-        if (x.getState() == Button.State.HELD){
-            setTargetPositive();
-        } else if (y.getState() == Button.State.HELD){
-            setTargetNegative();
-        } else {
-            robot.armTop.setPower(0);
-            robot.armBase.setPower(0);
-        }
+//        if (x.getState() == Button.State.HELD){
+//            setTargetPositive();
+//        } else if (y.getState() == Button.State.HELD){
+//            setTargetNegative();
+//        } else {
+//            robot.armTop.setPower(0);
+//            robot.armBase.setPower(0);
+//        }
 
         if (gamepad1.y){
             maintainHeightToGroundPositive();
