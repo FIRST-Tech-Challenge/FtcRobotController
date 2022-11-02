@@ -137,8 +137,8 @@ public class LinearBaseDrive extends OpMode{
             telemetry.addData("Drive Type", kinematics.getdDriveType());
             telemetry.addData("Power Top", kinematics.getPower()[0]);
             telemetry.addData("Power Bottom", kinematics.getPower()[1]);
-            telemetry.addData("Right Rot Clicks", kinematics.rightRotClicks);
-            telemetry.addData("Left Rot Clicks", kinematics.leftRotClicks);
+            telemetry.addData("Right Rot Target Clicks", kinematics.rightRotClicks);
+            telemetry.addData("Left Rot Target Clicks", kinematics.leftRotClicks);
             telemetry.addData("Spin clicks", kinematics.spinClicks);
             telemetry.addData("topL Clicks", robot.topL.getCurrentPosition());
             telemetry.addData("botL Clicks", robot.botL.getCurrentPosition());

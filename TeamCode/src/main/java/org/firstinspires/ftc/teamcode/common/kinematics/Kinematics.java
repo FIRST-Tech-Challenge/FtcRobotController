@@ -27,7 +27,7 @@ public class Kinematics {
     protected double leftThrottle = 1.0;
     protected double rightThrottle = 1.0;
     protected int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
-    protected int leftTurnDirectionW = 1;
+    protected int leftTurnDirectionW = -1;
     protected int rightTurnDirectionW = 1;
 
     //target clicks
@@ -106,7 +106,7 @@ public class Kinematics {
             if(Math.abs(turnAmount) > 180){
                 turnAmount = 360 - Math.abs(turnAmount);
             }
-            translateSwitchMotors *= -1;
+            this.translateSwitchMotors *= -1;
         }
         directionArr[0] = Math.abs(turnAmount);
         directionArr[2] = turnDirection;
