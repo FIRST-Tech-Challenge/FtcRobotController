@@ -1,29 +1,21 @@
-package org.firstinspires.ftc.teamcode.OpMode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Functions.AccelerationDetector;
-import org.firstinspires.ftc.teamcode.Functions.DataLogger.DataLoggerRemastered;
 
 import org.firstinspires.ftc.teamcode.Functions.Move;
 import org.firstinspires.ftc.teamcode.Functions.UltraSoundSensor;
-import org.firstinspires.ftc.teamcode.Functions.Unused.XYSystem.PositionCalculator;
 import org.firstinspires.ftc.teamcode.Functions.Rotate;
 import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
-import org.firstinspires.ftc.teamcode.Functions.Unused.XYSystem.SistemXY;
-import org.firstinspires.ftc.teamcode.Functions.MV.MVTurnTowardsPoint;
 import org.firstinspires.ftc.teamcode.Functions.MV.MVVariables;
 import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
-import org.firstinspires.ftc.teamcode.Functions.UltraSoundSensor;
-
-import java.io.IOException;
 
 @TeleOp(name="TestElisaUltra", group="TEST")
 // Created by Elisa

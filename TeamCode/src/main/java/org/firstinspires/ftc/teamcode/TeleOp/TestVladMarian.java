@@ -1,27 +1,33 @@
-package org.firstinspires.ftc.teamcode.OpMode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Functions.DataLogger.DataLoggerController;
+import org.firstinspires.ftc.teamcode.Functions.AccelerationDetector;
+import org.firstinspires.ftc.teamcode.Functions.DataLogger.DataLogger22;
 import org.firstinspires.ftc.teamcode.Functions.Move;
 import org.firstinspires.ftc.teamcode.Functions.Rotate;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
-@TeleOp(name="DATA LOGGER TEST", group="TEST")
+import java.io.IOException;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 @Disabled
-// Facut de Vlad
-public class DataLoggerControllerTest extends OpMode {
+@TeleOp(name="VLAD MARIAN IL IUBESTE PE HAMILTON <3", group="Test")
+public class TestVladMarian extends OpMode {
 
+    DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack;
+    Move move;
+    Rotate rotate;
+    DataLogger22 dataLogger22;
+    RotationDetector rotationDetector;
+    VoltageReader voltageReader;
+    AccelerationDetector accelerationDetector;
 
-    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack;
-    private Move move;
-    private Rotate rotate;
-    private DataLoggerController dataLoggerController;
-    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void init() {
@@ -29,52 +35,49 @@ public class DataLoggerControllerTest extends OpMode {
         rightMotor = hardwareMap.dcMotor.get("FR");
         leftMotorBack = hardwareMap.dcMotor.get("BL");
         rightMotorBack = hardwareMap.dcMotor.get("BR");
-        VoltageSensor VS =  this.hardwareMap.voltageSensor.iterator().next();
 
-
-        dataLoggerController = new DataLoggerController("DataLoggerControllerTest", gamepad1, gamepad2, VS);
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
+        VoltageSensor VS =  this.hardwareMap.voltageSensor.iterator().next();
+        voltageReader = new VoltageReader(VS);
+        rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
+        try {
+            accelerationDetector = new AccelerationDetector(rotationDetector.ReturnGyro());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        dataLogger22 = new DataLogger22(rotationDetector,
+                VS, move, accelerationDetector, "TestVladM");
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
-    }
-
-    public void start(){
-        runtime.reset();
-        runtime.startTime();
     }
 
     @Override
     public void loop() {
+
         if(gamepad1.dpad_up) //merge in fata
         {
             move.MoveFull(1);
-            dataLoggerController.functions.gamepad1DpadUp = "merge in fata";
         }
         else if(gamepad1.dpad_down) //merge in spate
         {
             move.MoveFull(2);
-            dataLoggerController.functions.gamepad1DpadDown = "merge in spate";
         }
         else if(gamepad1.dpad_left) //merge stanga
         {
             rotate.RotateFull(1);
-            dataLoggerController.functions.gamepad1DpadLeft = "roteste in stanga";
 
         }
         else if(gamepad1.dpad_right) // merge dreapta
         {
             rotate.RotateFull(2);
-            dataLoggerController.functions.gamepad1DpadRight = "roteste in dreapta";
         }
         //miscarea stanga-dreapta:
-        else if(gamepad1.left_bumper)
-        {
-            move.MoveFull(3);
-            dataLoggerController.functions.gamepad1DpadRight = "slide in stanga";
-        }
         else if(gamepad1.right_bumper)
         {
             move.MoveFull(4);
-            dataLoggerController.functions.gamepad1DpadRight = "slide in dreapta";
+        }
+        else if(gamepad1.left_bumper)
+        {
+            move.MoveFull(3);
         }
         if(!gamepad1.dpad_down && !gamepad1.dpad_left && !gamepad1.dpad_right && !gamepad1.dpad_up && !gamepad1.right_bumper && !gamepad1.left_bumper
                 && gamepad1.left_stick_x==0 && gamepad1.left_stick_y==0 && gamepad1.right_stick_x==0 && !gamepad1.a && !gamepad1.b && gamepad1.right_stick_y==0)
@@ -82,11 +85,10 @@ public class DataLoggerControllerTest extends OpMode {
             move.MoveStop();
         }
 
-        dataLoggerController.WriteData(runtime.time());
+        telemetry.addLine(dataLogger22.WriteData(getRuntime()));
+        telemetry.update();
+
+
     }
 
-    @Override
-    public void stop(){
-        dataLoggerController.WriteEnd(runtime.time());
-    }
 }

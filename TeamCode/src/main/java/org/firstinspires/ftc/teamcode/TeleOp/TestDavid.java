@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpMode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -11,9 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Functions.Arm;
 import org.firstinspires.ftc.teamcode.Functions.ArmEncoder;
-import org.firstinspires.ftc.teamcode.Functions.CarouselMotor;
 import org.firstinspires.ftc.teamcode.Functions.ArmServos;
-import org.firstinspires.ftc.teamcode.Functions.CupServo;
 import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
 import org.firstinspires.ftc.teamcode.Functions.Vacuum;
 import org.firstinspires.ftc.teamcode.Functions.Collector;
