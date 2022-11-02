@@ -16,13 +16,13 @@ import java.util.List;
 public class Autonomous_Left extends LinearOpMode {
     int detect = 0;
     TurtleRobot robot = new TurtleRobot(this);
-    private static final String TFOD_MODEL_ASSET = "customcone.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
     private static final String[] LABELS = {
-            "Bike",
-            "Car",
-            "Turtle"
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
     };
 
     private static final String VUFORIA_KEY =
@@ -67,11 +67,11 @@ public class Autonomous_Left extends LinearOpMode {
                             double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
                             double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-                            if (recognition.getLabel()=="Bike") {detect=1;
+                            if (recognition.getLabel()=="1 Bolt") {detect=1;
                                 left(0.25, 500);
                                 straight(0.5, 200);
-                                LinearSlide(1, 500);
-                                ServoClaw(0.25, 400);
+//                                LinearSlide(1, 500);
+//                                ServoClaw(0.25, 400);
                                 straight(-0.5, 200);
                                 right(0.25, 500);
                                 strafeLeft(0.5, 1000);
@@ -80,22 +80,22 @@ public class Autonomous_Left extends LinearOpMode {
                                 stopRobot();
                                 stop();
                             }
-                            if (recognition.getLabel()=="Car") {detect=2;
+                            if (recognition.getLabel()=="2 Bulb") {detect=2;
                                 left(0.25, 500);
                                 straight(0.5, 200);
-                                LinearSlide(1, 500);
-                                ServoClaw(0.25, 400);
+//                                LinearSlide(1, 500);
+//                                ServoClaw(0.25, 400);
                                 straight(-0.5, 200);
                                 right(0.25, 500);
                                 straight(0.5, 1000);
                                 stopRobot();
                                 stop();
                             }
-                            if (recognition.getLabel()=="Turtle") {detect=3;
+                            if (recognition.getLabel()=="3 Panel") {detect=3;
                                 left(0.25, 500);
                                 straight(0.5, 200);
-                                LinearSlide(1, 500);
-                                ServoClaw(0.25, 400);
+//                                LinearSlide(1, 500);
+//                                ServoClaw(0.25, 400);
                                 straight(-0.5, 200);
                                 right(0.25, 500);
                                 strafeRight(0.5, 1000);
