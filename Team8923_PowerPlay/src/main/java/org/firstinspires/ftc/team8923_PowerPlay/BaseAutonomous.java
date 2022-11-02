@@ -88,12 +88,13 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
     }
 
     public Position detectSignalSleeve() {
-        Position position = Position.ONE;
+        Position position = Position.THREE;
         //sets parking position dependant on label
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            sleep(3000);
             if (updatedRecognitions != null) {
                 telemetry.addData("# Objects Detected", updatedRecognitions.size());
 
@@ -106,12 +107,10 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
                     double height = Math.abs(recognition.getTop() - recognition.getBottom());
 
                     if (recognition.getLabel().equals("Orange Leaves")) {
-                       // telemetry.addData("Detected Orange Leaves", de); do on tuesday!
                         position = Position.ONE;
-
                     } else if (recognition.getLabel().equals("Blue Bats")) {
                         position =  Position.TWO;
-                    } else {
+                    } else if (recognition.getLabel().equals("Pink Flowers")){
                         position = Position.THREE;
                     }
 
@@ -173,11 +172,10 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
                 (runtime.seconds() < 30) &&
                 (motorFL.isBusy() && motorFR.isBusy() && motorBL.isBusy() && motorBR.isBusy())) {
 
-            /*// Display it for the driver.
-            telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
-            telemetry.addData("Currently at",  " at %7d :%7d",
-                    leftDrive.getCurrentPosition(), rightDrive.getCurrentPosition());
-            telemetry.update();*/
+            // Display it for the driver.
+            telemetry.addData("Running to",  " %7d %7d %7d %7d", targetFL,  targetFR, targetBL, targetBR);
+            telemetry.addData("Currently at",  " at %7d %7d %7d %7d", motorFL.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorBR.getCurrentPosition());
+            telemetry.update();
         }
 
         // Stop all motion;

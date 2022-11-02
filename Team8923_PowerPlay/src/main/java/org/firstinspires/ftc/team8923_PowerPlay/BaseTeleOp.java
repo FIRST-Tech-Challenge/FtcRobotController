@@ -10,7 +10,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
     private Toggle driveSpeedToggle = new Toggle();
 
     double driveSpeed = 1.0;
-    double mechanismSpeed = 0.5;
+    double mechanismSpeed = 0.9;
 
     public void driveRobot() {
         double y = -gamepad1.left_stick_y;
