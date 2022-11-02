@@ -19,9 +19,11 @@ public class DriveConstants {
 
     /*
      * These are motor constants that should be listed online for your motors.
+     * https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
      */
     public static final double TICKS_PER_REV = 537.7;
     public static final double MAX_RPM = 312;
+    public static final double MM_TO_INCHES = 25.4;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -43,7 +45,7 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 50.0 / 25.4; // in
+    public static double WHEEL_RADIUS = 50.0 / MM_TO_INCHES; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 15.5; // in
 

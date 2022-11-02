@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.team417_PowerPlay.drive.SampleMecanumDrive;
+
 abstract public class BaseOpMode extends LinearOpMode {
 
     DcMotor motorFL;
@@ -58,20 +60,20 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBR.setPower(0);
     }
 
-    public void mecanumDrive(double Xdrive, double Ydrive, double Turningdrive) {
-        double FLPower;
-        double FRPower;
-        double BLPower;
-        double BRPower;
+    public void mecanumDrive(double x, double y, double turning) {
+        double powerFL;
+        double powerFR;
+        double powerBL;
+        double powerBR;
 
-        FLPower = Ydrive + Xdrive + Turningdrive;
-        FRPower = Ydrive - Xdrive - Turningdrive;
-        BLPower = Ydrive - Xdrive + Turningdrive;
-        BRPower = Ydrive + Xdrive - Turningdrive;
+        powerFL = y + x + turning;
+        powerFR = y - x - turning;
+        powerBL = y - x + turning;
+        powerBR = y + x - turning;
 
-        motorFL.setPower(FLPower);
-        motorFR.setPower(FRPower);
-        motorBL.setPower(BLPower);
-        motorBR.setPower(BRPower);
+        motorFL.setPower(powerFL);
+        motorFR.setPower(powerFR);
+        motorBL.setPower(powerBL);
+        motorBR.setPower(powerBR);
     }
 }

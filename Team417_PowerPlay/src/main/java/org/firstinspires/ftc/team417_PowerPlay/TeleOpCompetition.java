@@ -2,7 +2,7 @@ package org.firstinspires.ftc.team417_PowerPlay;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp (name="Encoder test teleop")
+@TeleOp (name="Teleop Competition")
 public class TeleOpCompetition extends BaseTeleOp{
 
     @Override
