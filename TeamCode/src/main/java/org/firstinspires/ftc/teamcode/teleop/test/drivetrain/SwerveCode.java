@@ -155,10 +155,10 @@ public class SwerveCode extends OpMode{
         int distanceTopR = distanceTopL;
         int distanceBotR = distanceBotL;
 
-        int rotationalTopL = (int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalBotL = (int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalTopR = rotationalTopL;
-        int rotationalBotR = rotationalBotL;
+        int rotationalTopL = -(int) (gamepad1.left_stick_x * 100 * alpha);
+        int rotationalBotL = -(int) (gamepad1.left_stick_x * 100 * alpha);
+        int rotationalTopR = -rotationalTopL;
+        int rotationalBotR = -rotationalBotL;
 
         robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
         robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);

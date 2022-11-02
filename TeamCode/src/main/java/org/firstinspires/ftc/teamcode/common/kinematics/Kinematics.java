@@ -27,7 +27,7 @@ public class Kinematics {
     protected double leftThrottle = 1.0;
     protected double rightThrottle = 1.0;
     protected int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
-    protected int leftTurnDirectionW = -1;
+    protected int leftTurnDirectionW = 1;
     protected int rightTurnDirectionW = 1;
 
     //target clicks
