@@ -19,15 +19,18 @@ public abstract class BaseOpMode extends LinearOpMode {
     public static DcMotor motorBR;
 
     //public static DcMotor motorTurntable;
-    //public static DcMotor motorLVSlides;
-    //public static DcMotor motorRVSlides;
+    public static DcMotor motorLVSlides;
+    public static DcMotor motorRVSlides;
 
     // servos
-    //public static Servo servoGrabber;
+    public static Servo servoGrabber;
 
     // IMU
     public BNO055IMU imu;
     Orientation IMUOriginalAngles; // original angle reading from imu that will be used to find unwanted angle offset during drive
+
+    // flag to say whether we should disable the correction system
+    boolean turnFlag = false;
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -38,8 +41,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
         //motorTurntable = hardwareMap.dcMotor.get("motorTurntable");
-        //motorLVSlides = hardwareMap.dcMotor.get("motorLVSlides");
-        //motorRVSlides = hardwareMap.dcMotor.get("motorRVSlides");
+        motorLVSlides = hardwareMap.dcMotor.get("motorLVSlides");
+        motorRVSlides = hardwareMap.dcMotor.get("motorRVSlides");
 
         motorFL.setDirection(DcMotor.Direction.FORWARD);
         motorFR.setDirection(DcMotor.Direction.REVERSE);
@@ -52,20 +55,24 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //motorTurntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorLVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorRVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        // temporary, delete after league 1
+        motorLVSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRVSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         //motorTurntable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //motorLVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //motorRVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // servos
-        //servoGrabber = hardwareMap.servo.get("servoGrabber");
+        servoGrabber = hardwareMap.servo.get("servoGrabber");
 
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -80,9 +87,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         // preset the IMU angles so it doesn't start on null since it will only later be read when turning
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
-
-    // flag to say whether we should disable the correction system
-    boolean turnFlag = false;
 
     public void driveWithIMU(double xPower, double yPower, double tPower)  {
 
@@ -126,17 +130,23 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBR.setPower((-yPower + xPower - tPower) * Constants.DRIVE_SPEED_MULTIPLIER);
     }
 
-    // method to open/close grabber if you set boolean to true or false
-    public void openGrabber(boolean open) {
-        if (open) {
-            //servoGrabber.setPosition(0.33); // set servo to open position
+    // this method will allow the grabber to open or close given a boolean input, with true = open and false = close
+    public void driveGrabber(boolean isOpen) {
+        if (isOpen) {
+            servoGrabber.setPosition(0.33); // set servo to open position
         } else {
-            //servoGrabber.setPosition(0.11); // set servo to closed position
+            servoGrabber.setPosition(0.11); // set servo to closed position
         }
     }
 
-    // this is a general method to turn the turntable
-    public void rotateTurntable(double power) {
-        //motorTurntable.setPower(power);
+    // this method will allow the slides to move upwards, downwards, outwards, and inwards given a specified x position, x power, y position, and y power
+    public void driveSlides(/*int xPosition, double xPower, int yPosition,*/ double yPower) {
+        motorLVSlides.setPower(yPower);
+        motorRVSlides.setPower(yPower);
+    }
+
+    // this method will allow the turntable to turn clockwise or counterclockwise given a specified power and position
+    public void driveTurntable(double power, int position) {
+
     }
 }

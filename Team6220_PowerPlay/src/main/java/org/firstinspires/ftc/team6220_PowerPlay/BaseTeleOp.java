@@ -28,9 +28,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
         // grabber open/close method attached to controller buttons
         if (xIsPressed) {  // press x to close
-            openGrabber(false);
+            driveGrabber(false);
         } else if (aIsPressed) {  // press a to open
-            openGrabber(true);
+            driveGrabber(true);
         }
     }
 }

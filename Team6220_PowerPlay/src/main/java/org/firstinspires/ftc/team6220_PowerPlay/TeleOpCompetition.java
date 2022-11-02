@@ -21,7 +21,7 @@ public class TeleOpCompetition extends BaseTeleOp {
         // get angle after startup to prevent jitter on startup
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        openGrabber(true);
+        driveGrabber(true);
 
         while (opModeIsActive()) {
             teleOpDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
