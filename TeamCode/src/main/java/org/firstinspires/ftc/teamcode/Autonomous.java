@@ -27,6 +27,8 @@ public class Autonomous extends Control {
         double angle = 0;
         double loopCounter = 0;
 
+        //TODO: code doesn't actually do much..... fix it
+
         // makes robot turn if no box is detected
         if(area == 0){
             turn = 1;
