@@ -133,16 +133,16 @@ public abstract class BaseOpMode extends LinearOpMode {
     // this method will allow the grabber to open or close given a boolean input, with true = open and false = close
     public void driveGrabber(boolean isOpen) {
         if (isOpen) {
-            servoGrabber.setPosition(0.33); // set servo to open position
+            servoGrabber.setPosition(Constants.GRABBER_OPEN_POS); // set servo to open position
         } else {
-            servoGrabber.setPosition(0.11); // set servo to closed position
+            servoGrabber.setPosition(Constants.GRABBER_CLOSE_POS); // set servo to closed position
         }
     }
 
     // this method will allow the slides to move upwards, downwards, outwards, and inwards given a specified x position, x power, y position, and y power
     public void driveSlides(/*int xPosition, double xPower, int yPosition,*/ double yPower) {
-        motorLVSlides.setPower(yPower);
-        motorRVSlides.setPower(yPower);
+        motorLVSlides.setPower(yPower * Constants.SLIDE_SPEED_MODIFIER);
+        motorRVSlides.setPower(yPower * Constants.SLIDE_SPEED_MODIFIER);
     }
 
     // this method will allow the turntable to turn clockwise or counterclockwise given a specified power and position
