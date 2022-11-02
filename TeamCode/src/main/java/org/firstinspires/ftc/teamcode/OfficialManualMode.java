@@ -23,16 +23,28 @@ public class OfficialManualMode extends LinearOpMode {
     private boolean firstTime = true;
     private ElapsedTime recentActionTime = new ElapsedTime();
     public double perStepSize = 0.01;
+    public int minTimeOfTwoOperations = 50; //milliseconds, 0.05 second
     public ArrayList<String> presetActions1 = new ArrayList<String>(Arrays.asList(
-            "wheel_forward @ 20", // wheel_left, wheel_right, wheel_back @ 20cm
-            "platform_left @ 10",
-            "shoulder_up @ 10",
-            "elbow_up @ 10"
+            "wheel_forward @10 @0.5", // wheel_left, wheel_right, wheel_back 10inch and speed is 0.5
+            "sleep @200", // sleep for 200ms
+            "wheel_back @5 @0.5",
+            "wheel_left @5 @0.5",
+            "wheel_right @5 @0.5",
+            "platform_left @20", //platform left 10 times the perStepSize
+            "shoulder_up@20",
+            "elbow_up @10"
     ));
-    public ArrayList<String> presetActions2 = new ArrayList<String>(Arrays.asList(
-            "platform_right", "platform_right", "platform_right",
-            "shoulder_down", "shoulder_down","shoulder_down",
-            "elbow_down", "elbow_down"
+    public ArrayList<String> presetActionsPad2X = new ArrayList<String>(Arrays.asList(
+            "wheel_forward @10 @0.5"
+    ));
+    public ArrayList<String> presetActionsPad2Y = new ArrayList<String>(Arrays.asList(
+            "wheel_back @5 @0.3"
+    ));
+    public ArrayList<String> presetActionsPad2A = new ArrayList<String>(Arrays.asList(
+            "wheel_left @5 @0.2"
+    ));
+    public ArrayList<String> presetActionsPad2B = new ArrayList<String>(Arrays.asList(
+            "wheel_right @5 @0.1"
     ));
 
     @Override
@@ -81,8 +93,8 @@ public class OfficialManualMode extends LinearOpMode {
             return;
         }
         if (gamepad1.b) {
-            //resetToPresetPosition(0);
-            replayActions(presetActions2);
+            resetToPresetPosition(0);
+            //replayActions(presetActions2);
             return;
         }
         if (gamepad1.x) {
@@ -215,21 +227,9 @@ public class OfficialManualMode extends LinearOpMode {
         //telemetry.addData("Platform que quiere este", prefDir);
     }
 
-    private void moveTo(String actionName, double distance) {
-        logAction(actionName);
-        if (actionName.equals("Wheel_left") || actionName.equals("left")) {
-        }
-        else if (actionName.equals("Wheel_right") || actionName.equals("right")) {
-        }
-        else if (actionName.equals("Wheel_forward") || actionName.equals("forward")) {
-        }
-        else if (actionName.equals("Wheel_back") || actionName.equals("back")) {
-        }
-    }
-
     private void playAction(String actionName, boolean ignoreRecent) {
         if (ignoreRecent) {
-            if (recentActionTime.milliseconds() < 100) {
+            if (recentActionTime.milliseconds() < minTimeOfTwoOperations) {
                 // too close to last action, ignore it
                 return;
             }
@@ -255,17 +255,16 @@ public class OfficialManualMode extends LinearOpMode {
                 _shoulder.setPosition(_shoulder.getPosition() + perStepSize);
         }
         else if (actionName.equals("x")) {
-            //_elbow.setPosition(0);
-            //_shoulder.setPosition(0.5);
+            replayActions(presetActionsPad2X);
         }
         else if (actionName.equals("a")) {
-            //_shoulder.setPosition(0.3);
+            replayActions(presetActionsPad2A);
         }
         else if (actionName.equals("b")) {
-            //_elbow.setPosition(0.5);
+            replayActions(presetActionsPad2B);
         }
         else if (actionName.equals("y")) {
-            //_elbow.setPosition(0.8);
+            replayActions(presetActionsPad2Y);
         }
         else if (actionName.equals("left_stick_button")) {
             if (_grip.getPosition() <= (1 - perStepSize))
@@ -277,12 +276,12 @@ public class OfficialManualMode extends LinearOpMode {
                 _grip.setPosition(_grip.getPosition() - perStepSize);
         }
         else if (actionName.equals("left_trigger") || actionName.equals("elbow_up")) {
-            if (_elbow.getPosition() < 0.75) {
+            if (_elbow.getPosition() < (1 - perStepSize)) {
                 _elbow.setPosition(_elbow.getPosition() + perStepSize);
             }
         }
         else if (actionName.equals("right_trigger") || actionName.equals("elbow_down")) {
-            if (_elbow.getPosition() > 0.25) {
+            if (_elbow.getPosition() > perStepSize) {
                 _elbow.setPosition(_elbow.getPosition() - perStepSize);
             }
         }
@@ -351,8 +350,8 @@ public class OfficialManualMode extends LinearOpMode {
             //"platform_left @ 10 @ 0.05"
             //
             String[] splitStrings = actionName.split("@", 3);
-            for (String split: splitStrings) {
-                split.trim();
+            for (int k = 0; k < splitStrings.length; k++) {
+                splitStrings[k].trim();
             }
             if (splitStrings.length == 0) {
                 return;
@@ -361,10 +360,12 @@ public class OfficialManualMode extends LinearOpMode {
             double localPerStepSize = perStepSize;
             int repeatTimes = 1;
             double distance = 1.0;
+            double speed = 0.5;
             if (splitStrings.length >= 3) {
                 localPerStepSize = Double.parseDouble(splitStrings[2]);
                 if (localPerStepSize <= 0 || localPerStepSize >= 1)
                     localPerStepSize = perStepSize;
+                speed = localPerStepSize;
             }
             if (splitStrings.length >= 2) {
                 if (isWheelAction)
@@ -373,18 +374,154 @@ public class OfficialManualMode extends LinearOpMode {
                     repeatTimes = Integer.parseInt(splitStrings[1]);
             }
             if (isWheelAction) {
-                moveTo(splitStrings[0], distance);
+                moveTo(splitStrings[0], distance, speed, 10);
             }
             else {
-                for (int j = 0; j < repeatTimes; j++) {
-                    playAction(splitStrings[0], false);
-                    sleep(100);
+                if (splitStrings[0].equals("sleep")) {
+                    sleep(repeatTimes);
+                }
+                else {
+                    for (int j = 0; j < repeatTimes; j++) {
+                        playAction(splitStrings[0], false);
+                        sleep(100);
+                    }
                 }
             }
         }
         telemetry.update();
     }
 
-  }
+    // Calculate the COUNTS_PER_INCH for your specific drive train.
+    // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
+    // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
+    // For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
+    // This is gearing DOWN for less speed and more torque.
+    // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
+    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
+    private ElapsedTime     wheelRunTime = new ElapsedTime();
+
+    /*
+     *  Method to perform a relative move, based on encoder counts.
+     *  Encoders are not reset as the move is based on the current position.
+     *  Move will stop if any of three conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Move runs out of time
+     *  3) Driver stops the opmode running.
+     */
+
+    public void moveTo(String direction,
+                             double distanceInches, double speed,
+                             double timeoutS) {
+        int newFrontLeftTarget;
+        int newFrontRightTarget;
+        int newRearLeftTarget;
+        int newRearRightTarget;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newFrontLeftTarget = _fl.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
+            newFrontRightTarget = _fr.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
+            newRearLeftTarget = _rl.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
+            newRearRightTarget = _rr.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
+
+            // reset the timeout time and start motion.
+            wheelRunTime.reset();
+            double frontLeftPower = speed;
+            double frontRightPower = speed;
+            double rearLeftPower = speed;
+            double rearRightPower = speed;
+
+            if (direction.equals("forward") || direction.equals("wheel_forward") ) {
+                // default
+            }
+            else if (direction.equals("back") || direction.equals("wheel_back") ) {
+                newFrontLeftTarget = _fl.getCurrentPosition() - (int)(distanceInches * COUNTS_PER_INCH);
+                newFrontRightTarget = _fr.getCurrentPosition() - (int)(distanceInches * COUNTS_PER_INCH);
+                newRearLeftTarget = _rl.getCurrentPosition() - (int)(distanceInches * COUNTS_PER_INCH);
+                newRearRightTarget = _rr.getCurrentPosition() - (int)(distanceInches * COUNTS_PER_INCH);
+
+                frontLeftPower = 0 - speed;
+                frontRightPower = 0 - speed;
+                rearLeftPower = 0 - speed;
+                rearRightPower = 0 - speed;
+            }
+            else if (direction.equals("left") || direction.equals("wheel_left") ) {
+                newFrontLeftTarget = _fl.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
+                newFrontRightTarget = _fr.getCurrentPosition() - (int)(distanceInches * COUNTS_PER_INCH);
+                newRearLeftTarget = _rl.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
+                newRearRightTarget = _rr.getCurrentPosition() - (int)(distanceInches * COUNTS_PER_INCH);
+
+                frontLeftPower = 0 - speed;
+                frontRightPower = speed;
+                rearLeftPower = speed;
+                rearRightPower = 0 - speed;
+            }
+            else if (direction.equals("right") || direction.equals("wheel_right") ) {
+                newFrontLeftTarget = _fl.getCurrentPosition() - (int)(distanceInches * COUNTS_PER_INCH);
+                newFrontRightTarget = _fr.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
+                newRearLeftTarget = _rl.getCurrentPosition() - (int)(distanceInches * COUNTS_PER_INCH);
+                newRearRightTarget = _rr.getCurrentPosition() + (int)(distanceInches * COUNTS_PER_INCH);
+
+                frontLeftPower = speed;
+                frontRightPower = 0 - speed;
+                rearLeftPower = 0 - speed;
+                rearRightPower = speed;
+            }
+
+            _fl.setTargetPosition(newFrontLeftTarget);
+            _fr.setTargetPosition(newFrontRightTarget);
+            _rl.setTargetPosition(newRearLeftTarget);
+            _rr.setTargetPosition(newRearRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            _fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            _fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            _rl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            _rr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            _fl.setPower(frontLeftPower);
+            _fr.setPower(frontRightPower);
+            _rl.setPower(rearLeftPower);
+            _rr.setPower(rearRightPower);
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (wheelRunTime.seconds() < timeoutS) &&
+                    (_fl.isBusy() && _fr.isBusy() && _rl.isBusy() && _rr.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Running to",  " %7d :%7d :%7d :%7d", newFrontLeftTarget,  newFrontRightTarget, newRearLeftTarget, newRearRightTarget);
+                telemetry.addData("Currently at",  " at %7d :%7d :%7d :%7d", _fl.getCurrentPosition(), _fr.getCurrentPosition(), _rl.getCurrentPosition(), _rr.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            _fl.setPower(0);
+            _fr.setPower(0);
+            _rl.setPower(0);
+            _rr.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            // RUN_USING_ENCODER, RUN_WITHOUT_ENCODER, RUN_TO_POSITION, STOP_AND_RESET_ENCODER
+            _fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            _fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            _rl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            _rr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            //sleep(100);   // optional pause after each move.
+        }
+    }
+ }
 
 
