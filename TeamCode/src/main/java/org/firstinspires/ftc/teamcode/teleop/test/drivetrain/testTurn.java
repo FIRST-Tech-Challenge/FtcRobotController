@@ -55,11 +55,8 @@ public class testTurn extends OpMode{
     double rightCurrentW;
     double currentR; //current robot header orientation
 
-    double lx = 0;
-    double ly = 0;
-    double rx = 0;
-    double ry = 0;
-
+    double rTrigger = 0;
+    double lTrigger = 0;
 
     Button x = new Button();
     Button y = new Button();
@@ -113,6 +110,8 @@ public class testTurn extends OpMode{
 
         telemetry.addData("X gamepad", gamepad1.left_stick_x);
         telemetry.addData("Y gamepad", -gamepad1.left_stick_y);
+        telemetry.addData("Left trigger", gamepad1.left_trigger);
+        telemetry.addData("Right trigger", -gamepad1.right_trigger);
         telemetry.addData("X", posData[0]);
         telemetry.addData("Y", posData[1]);
         telemetry.addData("Left W", posData[2]);
@@ -145,15 +144,18 @@ public class testTurn extends OpMode{
         posSystem.calculatePos();
 
         ///outputs of joysticks
-        lx = gamepad1.left_stick_x; //returns a value between [-1, 1]
-        ly = -gamepad1.left_stick_y; //returns a value between [-1, 1]
-        rx = gamepad1.right_stick_x; //returns a value between [-1, 1]
-        ry = -gamepad1.right_stick_y; //returns a value between [-1, 1]
+        rTrigger = gamepad1.right_trigger;
+        lTrigger = gamepad1.left_trigger;
 
-        logic();
+        int direction = (rTrigger > lTrigger ? 1 : -1);
+        spinDirectionL = (direction == 1 ? 1 : -1);
+        spinDirectionR = (direction == 1 ? -1 : 1);
+
+        double trigger = Math.max(rTrigger, lTrigger);
+        logic(trigger);
     }
 
-    public void logic(){
+    public void logic(double trigger){
         leftCurrentW = posSystem.getLeftWheelW();
         rightCurrentW = posSystem.getRightWheelW();
         currentR = posSystem.getPositionArr()[4];
@@ -170,11 +172,7 @@ public class testTurn extends OpMode{
 //            translatePerc = 0;
 //            rotatePerc = 0;
         } else if(shouldTurn()){
-            int turnDirection = (int)Math.signum(rx);
-            spinDirectionL = (turnDirection == 1 ? 1 : -1);
-            spinDirectionR = (turnDirection == 1 ? -1 : 1);
-
-            spinPower = Math.sqrt(Math.pow(rx,2) + Math.pow(ry, 2));;
+            spinPower = trigger;
             leftRotatePower = 0;
             rightRotatePower = 0;
 
@@ -211,15 +209,14 @@ public class testTurn extends OpMode{
         robot.botL.setPower(powerBotL * constants.POWER_LIMITER);
         robot.topR.setPower(powerTopR * constants.POWER_LIMITER);
         robot.botR.setPower(powerBotR * constants.POWER_LIMITER);
-
     }
 
     public boolean shouldTurn(){
-        return ((lx == 0 && ly == 0) && (rx != 0 || ry != 0));
+        return ((gamepad1.left_stick_x==0 && gamepad1.left_stick_y==0) && (gamepad1.right_trigger != 0 || gamepad1.left_trigger != 0));
     }
 
     public boolean noMovementRequests(){
-        return (lx==0 && ly==0 && rx==0 && ry==0);
+        return (gamepad1.left_stick_x==0 && gamepad1.left_stick_y==0 && gamepad1.right_stick_x==0 && gamepad1.right_stick_y==0 && gamepad1.right_trigger == 0 && gamepad1.left_trigger == 0);
     }
 
     public double clamp(double degrees){
