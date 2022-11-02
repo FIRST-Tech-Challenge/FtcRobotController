@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class hello_world extends LinearOpMode{
     @Override
     public void runOpMode() {
-        TurtleRobot robot = new TurtleRobot(this);
+        TurtleRobotAuto robot = new TurtleRobotAuto(this);
         robot.init(hardwareMap);
         waitForStart();
         if (opModeIsActive()) {

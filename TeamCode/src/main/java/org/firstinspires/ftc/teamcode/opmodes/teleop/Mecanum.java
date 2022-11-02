@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotTeleOp;
 //  Controls:
 // left stick forward and backward
 // right stick left and right to strafe
@@ -19,7 +19,7 @@ public class Mecanum extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        TurtleRobot robot = new TurtleRobot(this);
+        TurtleRobotTeleOp robot = new TurtleRobotTeleOp(this);
         robot.init(hardwareMap);
         waitForStart();
         if (opModeIsActive()) {

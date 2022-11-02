@@ -29,8 +29,7 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public class apriltag extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
-    TurtleRobot robot = new TurtleRobot(this);
+    TurtleRobotAuto robot = new TurtleRobotAuto(this);
 
     static final double FEET_PER_METER = 3.28084;
 

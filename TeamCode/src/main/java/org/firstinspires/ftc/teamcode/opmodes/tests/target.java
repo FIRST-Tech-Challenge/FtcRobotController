@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 
 /**
  * This OpMode illustrates using a webcam to locate and drive towards ANY Vuforia target.
@@ -42,7 +42,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 @TeleOp(name="Drive To Target", group = "Concept")
 public class target extends LinearOpMode
 {
-    TurtleRobot robot = new TurtleRobot(this);
+    TurtleRobotAuto robot = new TurtleRobotAuto(this);
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 8.0; //  this is how close the camera should get to the target (inches)
     //  The GAIN constants set the relationship between the measured position error,
@@ -82,7 +82,6 @@ public class target extends LinearOpMode
          * To get an on-phone camera preview, use the code below.
          * If no camera preview is desired, use the parameter-less constructor instead (commented out below).
          */
-        TurtleRobot robot = new TurtleRobot(this);
         robot.init(hardwareMap);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
