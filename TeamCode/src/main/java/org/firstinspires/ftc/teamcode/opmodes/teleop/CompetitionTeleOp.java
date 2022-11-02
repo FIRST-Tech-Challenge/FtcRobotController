@@ -8,18 +8,15 @@ import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.opmodes.auto.CompetitionAutonomous;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.EnumMap;
 
 /**
  * Drives a pushbot with teleop control.
  */
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Mecanum", group="TeleOp")
-public class TeleOp extends BaseOpMode {
-
-    private DriveSystem driveSystem;
-    private ArmSystem armSystem;
-
+@TeleOp(name = "Competition TeleOp", group="TeleOp")
+public class CompetitionTeleOp extends BaseOpMode {
 
     public void placeCone(int level) {
         // Levels:
@@ -42,12 +39,7 @@ public class TeleOp extends BaseOpMode {
      * Initializes a pushbot setup
      */
     public void init() {
-        // Set up drive system
-        EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
-        for (DriveSystem.MotorNames name : DriveSystem.MotorNames.values()) {
-            driveMap.put(name, hardwareMap.get(DcMotor.class, name.toString()));
-        }
-        driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
+        super.init();
     }
 
     /**
