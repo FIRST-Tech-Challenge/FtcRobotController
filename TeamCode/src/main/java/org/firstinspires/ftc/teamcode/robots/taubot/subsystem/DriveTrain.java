@@ -419,12 +419,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         right = drive - turn;
 
         // Normalize the values so neither exceed +/- 1.0
+        /*
         max = Math.max(Math.abs(left), Math.abs(right));
         if (max > 1.0)
         {
             left /= max;
             right /= max;
         }
+         */
         setMotorPowers(left,right);
     }
 

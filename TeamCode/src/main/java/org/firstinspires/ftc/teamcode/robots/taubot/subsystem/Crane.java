@@ -467,12 +467,54 @@ public class Crane implements Subsystem {
         bulbGripped = !bulbGripped;
     }
 
+    double pickupMemoryTurretHeading;
+    int pickupMemoryShoulderTick;
+    int pickupMemoryExtendTick;
+
     public void closeGripper(){
+
+        if(bulbGripped == false){
+            recordPickup();
+        }
         bulbGripped = true;
     }
+
+    private void recordPickup(){
+        pickupMemoryTurretHeading = robot.turret.getHeading();
+        pickupMemoryShoulderTick = shoulderDirectAnglePos;
+        pickupMemoryExtendTick = extendPosition;
+    }
+
+    public void goToPickup(){
+        robot.turret.setTargetHeading(pickupMemoryTurretHeading);
+        shoulderTargetPos = pickupMemoryShoulderTick;
+        extenderTargetPos = pickupMemoryExtendTick;
+    }
+
+    double dropMemoryTurretHeading;
+    int dropMemoryShoulderTick;
+    int dropMemoryExtendTick;
+
     public void openGripper(){
+
+        if(bulbGripped == true){
+            recordDrop();
+        }
         bulbGripped = false;
     }
+
+    private void recordDrop(){
+        dropMemoryTurretHeading = robot.turret.getHeading();
+        dropMemoryShoulderTick = shoulderDirectAnglePos;
+        dropMemoryExtendTick = extendPosition;
+    }
+
+    public void goToDrop(){
+        robot.turret.setTargetHeading(dropMemoryTurretHeading);
+        shoulderTargetPos = dropMemoryShoulderTick;
+        extenderTargetPos = dropMemoryExtendTick;
+    }
+
     public void setGripper(boolean g){
         bulbGripped = g;
     }

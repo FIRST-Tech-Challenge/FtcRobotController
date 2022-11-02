@@ -50,8 +50,15 @@ public class DriverControls {
         if (gamepad1.right_trigger>.05) robot.crane.adjustExtend(0.7*gamepad1.right_trigger);
         if (gamepad1.left_trigger>.05) robot.crane.adjustExtend(-0.7*gamepad1.left_trigger);
 
-        if(stickyGamepad1.x)
-            robot.crane.toggleGripper();
+        if(stickyGamepad1.a) {
+            robot.crane.closeGripper();
+            robot.crane.goToDrop();
+        }
+
+        if(stickyGamepad1.b){
+            robot.crane.openGripper();
+            robot.crane.goToPickup();
+        }
 
         //manual override of drivetrain
         if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
