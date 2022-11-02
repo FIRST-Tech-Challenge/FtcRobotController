@@ -188,6 +188,23 @@ public class ArmMotorTester extends OpMode{
         int topTarget = 0;
     }
 
+    public void positions(){
+        //positions: ground, low, mid, high
+        //clicks:
+            //ground(base, top) ()
+            //low(base, top) ()
+            //mid(base, top) ()
+            //high(base, top) ()
+
+        //button
+            //dpad up: high
+            //dpad right: mid
+            //dpad down: low
+            //dpad left: ground
+
+
+    }
+
     @Override
     public void stop() {
     }
