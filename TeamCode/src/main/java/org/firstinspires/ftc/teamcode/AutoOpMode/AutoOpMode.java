@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.AutoOpMode;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
-import static org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive.getVelocityConstraint;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -9,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 /**
@@ -125,166 +123,87 @@ public class AutoOpMode extends LinearOpMode{
         }
 
         //Initialize any other TrajectorySequences as desired
-        TrajectorySequence trajInitMoveAndTurnToConePosition;
-        TrajectorySequence trajConeToPark;
-        TrajectorySequence[] pickToTurnToDropCone = new TrajectorySequence[5];
+        TrajectorySequence trajInitToPickAndDropConeToPark;
 
         //Initialize any other Pose2d's as desired
         Pose2d initPose; //4 different poses
-        Pose2d offWallPose; //4 different poses
-        Pose2d conePose; //4 different poses
+        Pose2d midWayPose; //4 different poses
+        Pose2d pickConePose; //4 different poses
+        Pose2d dropCone; //4 different poses
         Pose2d parkPose; //4 different poses
 
         public void buildAuto(){
             if(Vision.playingAlliance == Vision.PLAYING_ALLIANCE.BLUE_ALLIANCE){
                 initPose = Vision.STARTPOS_1; //Starting pos when on blue alliance
-                offWallPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards signal cone
-                conePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                midWayPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards signal cone
+                pickConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                dropCone =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
                 parkPose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
-                //Initialize any other Pose2ds needed for maneuvering through the field in auto
+
             } else {
                 initPose = Vision.STARTPOS_2; //Starting pos when on red alliance
-                offWallPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards cone
-                conePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                midWayPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards cone
+                pickConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                dropCone =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
                 parkPose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
-                //Initialize any other Pose2ds needed for maneuvering through the field in auto
+
             }
 
-            //Sequence to move from initPose to
-            trajInitMoveAndTurnToConePosition = driveTrain.trajectorySequenceBuilder(initPose)
-                    .lineToLinearHeading(offWallPose)
-                    //Add any subsystems actions here as well
-                    //Add any other steps to take in order to move from init pose to cone detection pose
+            //Pick 5 cones and park
+            trajInitToPickAndDropConeToPark = driveTrain.trajectorySequenceBuilder(initPose)
+                    .lineToLinearHeading(midWayPose)
+                    .addTemporalMarker(0,()->{
+                        pickCone();
+                    })
+                    .lineToLinearHeading(pickConePose)
+                    .addTemporalMarker(0,() -> {
+                        turnToPole();
+                        dropCone();
+                    })
+                    .lineToLinearHeading(dropCone)
+                    .addTemporalMarker(0,()->{
+                        pickCone();
+                    })
+                    .lineToLinearHeading(pickConePose)
+                    .addTemporalMarker(0,() -> {
+                        turnToPole();
+                        dropCone();
+                    })
+                    .lineToLinearHeading(dropCone)
+                    .addTemporalMarker(0,()->{
+                        pickCone();
+                    })
+                    .lineToLinearHeading(pickConePose)
+                    .addTemporalMarker(0,() -> {
+                        turnToPole();
+                        dropCone();
+                    })
+                    .lineToLinearHeading(dropCone)
+                    .addTemporalMarker(0,()->{
+                        pickCone();
+                    })
+                    .lineToLinearHeading(pickConePose)
+                    .addTemporalMarker(0,() -> {
+                        turnToPole();
+                        dropCone();
+                    })
+                    .lineToLinearHeading(dropCone)
+                    .addTemporalMarker(0,()->{
+                        pickCone();
+                    })
+                    .lineToLinearHeading(pickConePose)
+                    .addTemporalMarker(0,() -> {
+                        turnToPole();
+                        dropCone();
+                    })
+                    .lineToLinearHeading(dropCone)
+                    .lineToLinearHeading(parkPose)
                     .build();
-
-            //Loops to pick and drop cones
-            if(Vision.playingAlliance == Vision.PLAYING_ALLIANCE.BLUE_ALLIANCE){
-                if(initPose == Vision.STARTPOS_1){
-                    for (int i = 0; i < 5; i++) {
-                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
-                                .lineToLinearHeading(conePose)
-                                //Add any subsystems actions here as well
-                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
-                                .build();
-                    }
-                } else if(initPose == Vision.STARTPOS_2){
-                    for (int i = 0; i < 5; i++) {
-                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
-                                .lineToLinearHeading(conePose)
-                                //Add any subsystems actions here as well
-                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
-                                .build();
-                    }
-                } else if(initPose == Vision.STARTPOS_3){
-                    for (int i = 0; i < 5; i++) {
-                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
-                                .lineToLinearHeading(conePose)
-                                //Add any subsystems actions here as well
-                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
-                                .build();
-                    }
-                } else {//Pose -> STARTPOS_4
-                    for (int i = 0; i < 5; i++) {
-                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
-                                .lineToLinearHeading(conePose)
-                                //Add any subsystems actions here as well
-                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
-                                .build();
-                    }
-                }
-
-            } else {//red alliance start
-                if(initPose == Vision.STARTPOS_1){
-                    for (int i = 0; i < 5; i++) {
-                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
-                                .lineToLinearHeading(conePose)
-                                //Add any subsystems actions here as well
-                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
-                                .build();
-                    }
-                } else if(initPose == Vision.STARTPOS_2){
-                    for (int i = 0; i < 5; i++) {
-                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
-                                .lineToLinearHeading(conePose)
-                                //Add any subsystems actions here as well
-                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
-                                .build();
-                    }
-                } else if(initPose == Vision.STARTPOS_3){
-                    for (int i = 0; i < 5; i++) {
-                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
-                                .lineToLinearHeading(conePose)
-                                //Add any subsystems actions here as well
-                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
-                                .build();
-                    }
-                } else {//Pose -> STARTPOS_4
-                    for (int i = 0; i < 5; i++) {
-                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
-                                .lineToLinearHeading(conePose)
-                                //Add any subsystems actions here as well
-                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
-                                .build();
-                    }
-                }
-            }
-
-            if(Vision.playingAlliance == Vision.PLAYING_ALLIANCE.BLUE_ALLIANCE){
-                if(Vision.startPosition == Vision.START_POSITION.POS1){
-                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
-                            .lineToLinearHeading(parkPose)
-                            //Add any subsystems actions here as well
-                            //Add any other steps to take in order to move
-                            .build();
-                } else if(Vision.startPosition == Vision.START_POSITION.POS2){
-                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
-                            .lineToLinearHeading(parkPose)
-                            //Add any subsystems actions here as well
-                            //Add any other steps to take in order to move
-                            .build();
-                } else if(Vision.startPosition == Vision.START_POSITION.POS3){
-                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
-                            .lineToLinearHeading(parkPose)
-                            //Add any subsystems actions here as well
-                            //Add any other steps to take in order to move to drop
-                            .build();
-                } else { //POS4
-                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
-                            .lineToLinearHeading(parkPose)
-                            //Add any subsystems actions here as well
-                            //Add any other steps to take in order to move
-                            .build();
-                }
-            } else {//Red Alliance
-                if(Vision.startPosition == Vision.START_POSITION.POS1){
-                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
-                            .lineToLinearHeading(parkPose)
-                            .build();
-                } else if(Vision.startPosition == Vision.START_POSITION.POS2){
-                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
-                            .lineToLinearHeading(parkPose)
-                            .build();
-                } else if(Vision.startPosition == Vision.START_POSITION.POS3){
-                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
-                            .lineToLinearHeading(parkPose)
-                            .build();
-                } else { //POS4
-                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
-                            .lineToLinearHeading(parkPose)
-                            .build();
-                }
-            }
-
         }
 
         public void runAuto(){
             //Write any other actions to take during auto, or any other conditions for maneuvering
-            driveTrain.followTrajectorySequence(trajInitMoveAndTurnToConePosition);
-            pickCone();
-            for (int loop = 0; loop < 5; loop++) {
-                driveTrain.followTrajectorySequence(pickToTurnToDropCone[loop]);
-                safeWait(100);
-            }
+            driveTrain.followTrajectorySequence(trajInitToPickAndDropConeToPark);
             return;
         }
 
@@ -332,28 +251,92 @@ public class AutoOpMode extends LinearOpMode{
             telemetry.addData("Enter PLaying Alliance :", "(Blue: (X),    Red: (B))");
             telemetry.update();
 
-            //Add logic to select autonomous mode based on keypad entry
-            /*
-            while (!isStopRequested()) {
-
-                if (gamepadController.gp1GetButtonBPress()) {
-                    GameField.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
-                    GameField.ALLIANCE_FACTOR = -1;
-                    telemetry.addData("Playing Alliance Selected : ", GameField.playingAlliance);
+            while(!isStopRequested()){
+                if(gamepad1.x){
+                    Vision.playingAlliance = Vision.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+                    Vision.ALLIANCE_FACTOR = -1;
+                    telemetry.addData("Playing Alliance Selected : ", Vision.playingAlliance);
                     break;
                 }
-                if (gamepadController.gp1GetButtonXPress()) {
-                    GameField.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
-                    GameField.ALLIANCE_FACTOR = 1;
-                    telemetry.addData("Playing Alliance Selected : ", GameField.playingAlliance);
+                if(gamepad1.b){
+                    Vision.playingAlliance = Vision.PLAYING_ALLIANCE.RED_ALLIANCE;
+                    Vision.ALLIANCE_FACTOR = 1;
+                    telemetry.addData("Playing Alliance Selected : ", Vision.playingAlliance);
                     break;
                 }
                 telemetry.update();
             }
             telemetry.update();
             safeWait(200);
-                 */
+
+            //******select start pose******
+            while(!isStopRequested()){
+                telemetry.addData("Enter a Start Pose:","");
+                telemetry.addData("Blue Left: (X)", "");
+                telemetry.addData("Blue Right: (Y)", "");
+                telemetry.addData("Red Left: (B)", "");
+                telemetry.addData("Red Right: (A)", "");
+                telemetry.addData("Playing Alliance Selected: ", Vision.playingAlliance);
+                if(gamepad1.x){
+                    Vision.startPosition = Vision.START_POSITION.POS1;
+                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    break;
+                }
+                if(gamepad1.y){
+                    Vision.startPosition = Vision.START_POSITION.POS2;
+                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    break;
+                }
+                if(gamepad1.b){
+                    Vision.startPosition = Vision.START_POSITION.POS3;
+                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    break;
+                }
+                if(gamepad1.a){
+                    Vision.startPosition = Vision.START_POSITION.POS4;
+                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    break;
+                }
+                telemetry.update();
             }
+            telemetry.addData("Playing Alliance Selected : ", Vision.playingAlliance);
+            telemetry.addData("StartPose : ", Vision.startPosition);
+
+            safeWait(200);
+
+            //******select start pose******
+            while(!isStopRequested()){
+                telemetry.addData("Enter a Start Pose:","");
+                telemetry.addData("Blue Left: (X)", "");
+                telemetry.addData("Blue Right: (Y)", "");
+                telemetry.addData("Red Left: (B)", "");
+                telemetry.addData("Red Right: (A)", "");
+                telemetry.addData("Playing Alliance Selected: ", Vision.playingAlliance);
+                if(gamepad1.x){
+                    Vision.startPosition = Vision.START_POSITION.POS1;
+                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    break;
+                }
+                if(gamepad1.y){
+                    Vision.startPosition = Vision.START_POSITION.POS2;
+                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    break;
+                }
+                if(gamepad1.b){
+                    Vision.startPosition = Vision.START_POSITION.POS3;
+                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    break;
+                }
+                if(gamepad1.a){
+                    Vision.startPosition = Vision.START_POSITION.POS4;
+                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    break;
+                }
+                telemetry.update();
+            }
+            telemetry.addData("Playing Alliance Selected : ", Vision.playingAlliance);
+            telemetry.addData("StartPose : ", Vision.startPosition);
+        }
 
         /**
          * Method to add debug messages. Update as telemetry.addData.
@@ -369,9 +352,9 @@ public class AutoOpMode extends LinearOpMode{
             telemetry.addData("Parking Location : ", parkingLocation);
 
 
-            telemetry.addData("GameField.playingAlliance : ", vision.playingAlliance);
-            telemetry.addData("GameField.poseSetInAutonomous : ", vision.poseSetInAutonomous);
-            telemetry.addData("GameField.currentPose : ", vision.currentPose);
+            telemetry.addData("Vision.playingAlliance : ", vision.playingAlliance);
+            telemetry.addData("Vision.poseSetInAutonomous : ", vision.poseSetInAutonomous);
+            telemetry.addData("Vision.currentPose : ", vision.currentPose);
 
             //****** Drive debug ******
             telemetry.addData("Drive Mode : ", driveTrain.driveMode);
