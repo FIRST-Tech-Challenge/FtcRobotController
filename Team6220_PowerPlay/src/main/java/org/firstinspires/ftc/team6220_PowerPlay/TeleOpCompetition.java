@@ -13,9 +13,6 @@ public class TeleOpCompetition extends BaseTeleOp {
     public void runOpMode() {
         initialize();
 
-        telemetry.addLine("START A FEW SECONDS AFTER INITIALIZING TO PREVENT START ROTATING");
-        telemetry.update();
-
         waitForStart();
 
         // get angle after startup to prevent jitter on startup

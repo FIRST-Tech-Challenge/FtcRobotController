@@ -49,8 +49,6 @@ public abstract class AprilTagDetect extends BaseAutonomous {
             }
         });
 
-        //initialize();
-
         // replaces waitForStart()
         // detects AprilTags during initialization
         while (!isStarted() && !isStopRequested()) {

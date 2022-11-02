@@ -9,11 +9,14 @@ public class AutonomousTest extends AprilTagDetect {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        int signal = detectAprilTag();
+        initialize();
+        waitForStart();
 
-        telemetry.addLine(signal + "");
-        telemetry.update();
+//        int signal = detectAprilTag();
+//
+//        telemetry.addLine(signal + "");
+//        telemetry.update();
 
-        sleep(2000);
+        driveOmniInches(0, 24);
     }
 }
