@@ -40,4 +40,5 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
     implementation 'com.github.technototes:TechnoLib:1.1.2'
     implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'org.openftc:apriltag:1.1.0'
 }
