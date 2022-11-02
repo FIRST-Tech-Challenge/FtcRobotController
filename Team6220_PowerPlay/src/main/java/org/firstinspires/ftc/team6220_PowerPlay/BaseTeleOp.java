@@ -15,10 +15,10 @@ public abstract class BaseTeleOp extends BaseOpMode {
         boolean aIsPressed = gamepad2.a;
 
         // atan2 determines angle between the two sticks
-        if (Math.abs(Math.atan2(leftYPosition, leftXPosition)) > Constants.DEADZONE_ANGLE) {
+        if (Math.abs(Math.atan2(leftYPosition, leftXPosition)) > Constants.DEADZONE_ANGLE_DEGREES) {
             // case for driving the robot left and right
             driveWithIMU(leftXPosition, 0, turnPosition);
-        } else if (Math.abs(Math.atan2(leftXPosition, leftYPosition)) > Constants.DEADZONE_ANGLE) {
+        } else if (Math.abs(Math.atan2(leftXPosition, leftYPosition)) > Constants.DEADZONE_ANGLE_DEGREES) {
             // case for driving the robot up and down
             driveWithIMU(0, leftYPosition, turnPosition);
         } else {
