@@ -95,7 +95,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 
 @TeleOp(name="TeleopColorSensor", group="Concept")
-//@Disabled
+@Disabled
 public class TeleopColorSensor extends LinearOpMode {
 
     // Declare OpMode members.

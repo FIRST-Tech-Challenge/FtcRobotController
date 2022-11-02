@@ -64,6 +64,7 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -120,7 +121,7 @@ public class TeleopDualDrivers extends LinearOpMode {
     // slider motor variables
     private DcMotor RightSliderMotor = null;
     private DcMotor LeftSliderMotor = null;
-    static final double SLIDER_MOTOR_POWER = 0.6; // slider string gets loose with too high speed
+    static final double SLIDER_MOTOR_POWER = 0.8; // slider string gets loose with too high speed
     static final int COUNTS_PER_INCH = 120; // verified by testing.
     static final int FOUR_STAGE_SLIDER_MAX_POS = 4200;  // with 312 RPM motor.
     static final int SLIDER_MIN_POS = 0;
@@ -133,7 +134,7 @@ public class TeleopDualDrivers extends LinearOpMode {
     static final int HIGH_JUNCTION_POS = (int)(COUNTS_PER_INCH * 33.5);
     static final int SLIDER_MOVE_DOWN_POSITION = COUNTS_PER_INCH * 3; // move down 6 inch to unload cone
     static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 538; // for 312 rpm motor
-    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION / 3; // set value based on testing
+    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION; // set value based on testing
     int sliderTargetPosition = 0;
 
 
@@ -159,7 +160,7 @@ public class TeleopDualDrivers extends LinearOpMode {
 
     // variables for auto load and unload cone
     static final int COUNTS_PER_FEET_DRIVE = 540; // robot drive 1 feet. Back-forth moving
-    static final int COUNTS_PER_FEET_STRAFE = 640; // robot strafe 1 feet. Left-right moving. need test
+    static final int COUNTS_PER_FEET_STRAFE = 690; // robot strafe 1 feet. Left-right moving. need test
     double robotAutoLoadMovingDistance = 0.1; // in feet
     double robotAutoUnloadMovingDistance = 0.33; // in feet
 
@@ -177,8 +178,8 @@ public class TeleopDualDrivers extends LinearOpMode {
     // sensors
     private DistanceSensor distanceSensor;
     static final double CLOSE_DISTANCE = 8.0; // Inch
-    private NormalizedColorSensor colorSensor;// best collected within 2cm of the target
-    private View relativeLayout;
+    private ColorSensor colorSensor;// best collected within 2cm of the target
+    double redRatioBg, greenRatioBg, blueRatioBg;
 
     @Override
     public void runOpMode() {
@@ -200,7 +201,7 @@ public class TeleopDualDrivers extends LinearOpMode {
         clawServo = hardwareMap.get(Servo.class, "ClawServo");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         distanceSensor = hardwareMap.get(DistanceSensor.class, "DistanceSensor");
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
+        colorSensor = hardwareMap.get(ColorSensor.class, "ColorSensor");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -241,10 +242,7 @@ public class TeleopDualDrivers extends LinearOpMode {
 
         // sensors
         boolean distanceSensorEnabled = true;
-        int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
-        relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
-
-        relativeLayout.post(() -> relativeLayout.setBackgroundColor(Color.WHITE));
+        int redBackground = 1, greenBackground = 1, blueBackground = 1;
 
         // IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -277,12 +275,6 @@ public class TeleopDualDrivers extends LinearOpMode {
         pidDrive.setOutputRange(0, CORRECTION_POWER);
         pidDrive.enable();
 
-        // Wait for the game to start (driver presses PLAY)
-        telemetry.addData("Mode", "waiting for start");
-        telemetry.update();
-        waitForStart();
-        runtime.reset();
-
         //game pad setting
         float robotMovingBackForth;
         float robotMovingRightLeft;
@@ -301,7 +293,13 @@ public class TeleopDualDrivers extends LinearOpMode {
         boolean distanceSensorOn;
 
         boolean dualDriverMode = false;
-        Gamepad myGamePad = gamepad1;
+        Gamepad myGamePad;
+
+        // Wait for the game to start (driver presses PLAY)
+        telemetry.addData("Mode", "waiting for start");
+        telemetry.update();
+        waitForStart();
+        runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -336,12 +334,12 @@ public class TeleopDualDrivers extends LinearOpMode {
             armTurnLeft = myGamePad.dpad_left;
             armTurnRight = myGamePad.dpad_right;
 
+            // sensors
             if (distanceSensorOn) {
                 distanceSensorEnabled = !distanceSensorEnabled;
             }
-
-            final float[] hsvValues = new float[3];
-            telemetry.addData("distance sensor enabled: %d", distanceSensorEnabled? 1 : 0);
+            telemetry.addData("distance sensor: ", distanceSensorEnabled? "On" : "Off");
+            telemetry.addData("Dual driver mode: ", dualDriverMode? "On" : "Off");
 
 
             // Setup a variable for each drive wheel to save power level for telemetry
@@ -357,22 +355,37 @@ public class TeleopDualDrivers extends LinearOpMode {
                 maxDrivePower = SLOW_DOWN_POWER;
             }
 
-            if (!distanceSensorEnabled) {
-                maxDrivePower = HIGH_SPEED_POWER;
-            }
-
-
             //color sensor control
-            colorSensor.setGain( (float)10.0 );
-            // Get the normalized colors from the sensor
-            NormalizedRGBA colorValues = colorSensor.getNormalizedColors();
-            Color.colorToHSV(colorValues.toColor(), hsvValues);
+            if (distanceSensor.getDistance(DistanceUnit.INCH) > CLOSE_DISTANCE) {
+                redBackground = colorSensor.red();
+                greenBackground = colorSensor.green();
+                blueBackground = colorSensor.blue();
+            }
+            redRatioBg = (double)redBackground / (redBackground + greenBackground + blueBackground);
+            greenRatioBg = (double)greenBackground / (redBackground + greenBackground + blueBackground);
+            blueRatioBg = (double)blueBackground / (redBackground + greenBackground + blueBackground);
+
+            double tmp = (double)colorSensor.red() + colorSensor.green() + colorSensor.blue();
+            double redRatioSleeve = colorSensor.red() / tmp;
+            double greenRatioSleeve = colorSensor.green() / tmp;
+            double blueRatioSleeve = colorSensor.blue() / tmp;
+
+            // send the info back to driver station using telemetry function.
             telemetry.addLine()
-                    .addData("Red", "%.3f", colorValues.red)
-                    .addData("Green", "%.3f", colorValues.green)
-                    .addData("Blue", "%.3f", colorValues.blue);
-            // Change the Robot Controller's background color to match the color detected by the color sensor.
-            relativeLayout.post(() -> relativeLayout.setBackgroundColor(Color.HSVToColor(hsvValues)));
+                    .addData("Clear", colorSensor.alpha())
+                    .addData("Red  ", colorSensor.red())
+                    .addData("Green", colorSensor.green())
+                    .addData("Blue ", colorSensor.blue());
+
+            telemetry.addData("red ratios bg = ", "%.2f", redRatioBg);
+            telemetry.addData("red ratios sleeve = ", "%.2f", redRatioSleeve);
+            telemetry.addData("green ratios bg = ", "%.2f", greenRatioBg);
+            telemetry.addData("green ratios sleeve = ", "%.2f", greenRatioSleeve);
+            telemetry.addData("blue ratios bg = ", "%.2f", blueRatioBg);
+            telemetry.addData("blue ratios sleeve =", "%.2f", blueRatioSleeve);
+            telemetry.addData("red ", (redRatioSleeve>redRatioBg)? "yes" : "no");
+            telemetry.addData("green ", (greenRatioSleeve>greenRatioBg)? "yes" : "no");
+            telemetry.addData("blue ", (blueRatioSleeve>blueRatioBg)? "yes" : "no");
 
             double drive = maxDrivePower * robotMovingBackForth;
             double turn  =  maxDrivePower * (-robotTurn);
@@ -401,12 +414,12 @@ public class TeleopDualDrivers extends LinearOpMode {
             else {
                 correction = 0.0;
             }
-            telemetry.addData("1 imu heading (%0.2f)", lastAngles.firstAngle);
-            telemetry.addData("2 global heading (%0.2f)", globalAngle);
-            telemetry.addData("3 global angle error (%0.2f)", angleError);
-            telemetry.addData("4 correction  (%0.2f)", correction);
-            telemetry.addData("5 turn rotation", rotation);
-            telemetry.addData("Distance - ", distanceSensor.getDistance(DistanceUnit.INCH));
+            telemetry.addData("1 imu heading ","%.2f", lastAngles.firstAngle);
+            telemetry.addData("2 global heading ", "%.2f", globalAngle);
+            telemetry.addData("3 global angle error ", "%.2f", angleError);
+            telemetry.addData("4 correction  ", "%.2f", correction);
+            telemetry.addData("5 turn rotation ", "%.2f", rotation);
+            telemetry.addData("Distance = ", "%.2f", distanceSensor.getDistance(DistanceUnit.INCH));
 
             FrontLeftPower  = Range.clip(-drive - turn - strafe - correction, -1, 1);
             FrontRightPower = Range.clip(-drive + turn + strafe + correction, -1, 1);
@@ -601,8 +614,7 @@ public class TeleopDualDrivers extends LinearOpMode {
     private void robotMovingDistance(double targetDistance, boolean isBackForth) {
         int countsPerFeet = isBackForth? COUNTS_PER_FEET_DRIVE : COUNTS_PER_FEET_STRAFE;
         int targetPosition = (int)(targetDistance * countsPerFeet);
-        telemetry.addData("Status", "auto driving target position %d", targetPosition);
-        telemetry.update();
+        telemetry.addData("Moving", "auto driving target position %d", targetPosition);
         setTargetPositionsToWheels(targetPosition, isBackForth);
         robotRunWithPositionModeOn(true); // turn on encoder mode
         robotDriveWithPIDControl(AUTO_DRIVE_POWER);
@@ -764,7 +776,7 @@ public class TeleopDualDrivers extends LinearOpMode {
                 power = pidRotate.performPID(getAngle()); // power will be - on right turn.
                 leftMotorSetPower(-power);
                 rightMotorSetPower(power);
-                telemetry.addData("rotate power - %.4f", power);
+                telemetry.addData("Rotate", "rotate power: %0.4f", power);
                 telemetry.update();
             } while (opModeIsActive() && !pidRotate.onAbsTarget());
         }
@@ -773,7 +785,7 @@ public class TeleopDualDrivers extends LinearOpMode {
                 power = pidRotate.performPID(getAngle()); // power will be + on left turn.
                 leftMotorSetPower(-power);
                 rightMotorSetPower(power);
-                telemetry.addData("rotate power - %.4f", power);
+                telemetry.addData("Rotate", "rotate power: %0.4f", power);
                 telemetry.update();
             } while (opModeIsActive() && !pidRotate.onAbsTarget());
 
@@ -847,15 +859,14 @@ public class TeleopDualDrivers extends LinearOpMode {
      * 6. Move robot to parking area
      */
     private void autonomousCore() {
-        int sleeveSignal = 0; // sleeve signal will be 1 for red, 2 for green, 3 for blue
-        double parkingLocation = 1.0; // distance between cone loading area to parking area, in feet
+        double backgroundColor[] = {1.0, 1.0, 1.0};
+        double sleeveColor[] = {1.0, 1.0, 1.0};
+        double parkingLocation = 0.0; // distance between cone loading area to parking area, in feet
 
-
-
+        telemetry.update();
 
         /* code for autonomous driving, must starting from right position.    */
         if (gamepad2.a) {
-
             //preload cone
             clawServo.setPosition(CLAW_CLOSE_POS);
             sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
@@ -865,45 +876,16 @@ public class TeleopDualDrivers extends LinearOpMode {
             waitMotorActionComplete(LeftSliderMotor);
             sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
             clawServoPosition = clawServo.getPosition(); // keep claw position
-
+            readColorSensor(backgroundColor);
             // drive robot to sleeve cone
             robotMovingDistance(1.66, true);
+            readColorSensor(sleeveColor); // reading sleeve signal
+            robotMovingDistance(3.0, true); // drive robot to the center of 3rd mat
+            robotMovingDistance(-0.33, true); // throw off sleeve cone
+            parkingLocation = calculateParkingLocation(sleeveColor, backgroundColor);
 
-            NormalizedRGBA colorValues = colorSensor.getNormalizedColors();
-            telemetry.addLine()
-                    .addData("Red", "%.3f", colorValues.red)
-                    .addData("Green", "%.3f", colorValues.green)
-                    .addData("Blue", "%.3f", colorValues.blue);
-            if (colorValues.red > colorValues.green && colorValues.red > colorValues.blue) {
-                sleeveSignal = 1; // red
-            }
-            if (colorValues.green > colorValues.red && colorValues.green > colorValues.blue){
-                sleeveSignal = 2; // red
-            }
-            if (colorValues.blue > colorValues.red && colorValues.blue > colorValues.green){
-                sleeveSignal = 3; // red
-            }
-
-            switch (sleeveSignal) {
-                case 1:
-                    parkingLocation = 5.0; // parking lot #1 (red), third mat
-                    break;
-                case 2:
-                    parkingLocation = 3.0; // parking lot #2 (green), third mat
-                    break;
-                case 3:
-                    parkingLocation = 1.0; // parking lot #3 (blue), third mat
-                    break;
-                default:
-                    parkingLocation = 0.0;
-            }
-            telemetry.addData("Status", "auto mode - sleeve signal (%d)," +
-                    "moving distance (%.1f) feet", sleeveSignal, parkingLocation);
+            telemetry.addData("Sleeve","moving distance (%.1f) feet", parkingLocation);
             telemetry.update();
-            sleep(3000); // 3sec for log reading
-
-            robotMovingDistance(2.66, true); // drive robot to the center of 3rd mat
-
         }
 
 
@@ -949,8 +931,78 @@ public class TeleopDualDrivers extends LinearOpMode {
         }
 
         if (gamepad2.x) {
-            robotMovingDistance(10, true); // drive robot to parking
+            robotMovingDistance(4, false); // strafe testing 8 feet
         }
 
     }
+
+    /**
+     * Calculate the destination parking area according to sleeve color.
+     * @param s three ratios values of sleeve signal color reading from color sensor
+     * @param b three ratios values of background color reading from color sensor
+     * return the distance between cone stack and parking area, in feet.
+     */
+    private double calculateParkingLocation(double[] s, double[] b) {
+        int channel = 0;
+        double parkingLocation;
+        double ratio[] = {s[0]/b[0], s[1]/b[1], s[2]/b[2]};
+
+        // find the maximum value in ratio[]
+        double maxV = ratio[0];
+        for (int i = 1; i < 3; i++) {
+            if (ratio[i] > maxV) {
+                channel = i;
+                maxV = ratio[i];
+            }
+        }
+
+        String color = "";
+        switch (channel) {
+            case 0: // red
+                parkingLocation = 5.0; // parking lot #1 (red), third mat
+                color = "red";
+                break;
+            case 1: // green
+                parkingLocation = 3.0; // parking lot #2 (green), third mat
+                color = "green";
+                break;
+            case 2: // blue
+                parkingLocation = 1.0; // parking lot #3 (blue), third mat
+                color = "blue";
+                break;
+            default:
+                parkingLocation = 0.0;
+        }
+        telemetry.addLine()
+                .addData("channal ", channel)
+                .addData("Color is ", color)
+                .addData("location ", parkingLocation);
+        telemetry.addData("color", "rgb ratio, %.2f, %.2f, %.2f", ratio[0], ratio[1], ratio[2]);
+        return parkingLocation;
+    }
+
+    /**
+     * Read color from color sensor and translate three values to relative ratio.
+     * @param colorRatio three ratios values of color reading from color sensor
+     */
+    private void readColorSensor(double[] colorRatio ) {
+        //color sensor control
+        int r = 1, g = 1, b = 1, total = 3;
+
+        r = colorSensor.red();
+        g = colorSensor.green();
+        b = colorSensor.blue();
+
+        total = r + g + b;
+        colorRatio[0] = (double)r / total;
+        colorRatio[1] = (double)g / total;
+        colorRatio[2] = (double)b / total;
+
+        telemetry.addLine()
+                .addData("Red  ", colorSensor.red())
+                .addData("Green", colorSensor.green())
+                .addData("Blue ", colorSensor.blue());
+        telemetry.addData("color", "rgb ratio, %.2f, %.2f, %.2f", colorRatio[0], colorRatio[1], colorRatio[2]);
+    }
+
 }

@@ -86,7 +86,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 @TeleOp(name="TeleopDualSlider", group="Concept")
-//@Disabled
+@Disabled
 public class TeleopDualSlider extends LinearOpMode {
 
     // Declare OpMode members.
