@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class TurtleRobot {
+public class TurtleRobotTeleOp {
     /* Public OpMode members. */
     public DcMotor rightfrontmotor = null;
     public DcMotor rightbackmotor = null;
@@ -25,7 +25,7 @@ public class TurtleRobot {
     public ElapsedTime period = new ElapsedTime();
 
     /* Constructor */
-    public TurtleRobot (LinearOpMode opmode) { myOpMode = opmode;
+    public TurtleRobotTeleOp(LinearOpMode opmode) { myOpMode = opmode;
     }
 
     /* Initialize standard Hardware interfaces */

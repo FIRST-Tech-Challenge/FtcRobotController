@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name="basic controls")
 public class basic_controls extends LinearOpMode{
-    TurtleRobot robot = new TurtleRobot(this);
+    TurtleRobotAuto robot = new TurtleRobotAuto(this);
     @Override
     public void runOpMode() {
         robot.init(hardwareMap);

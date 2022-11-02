@@ -8,14 +8,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 
 import java.util.List;
 
 @Autonomous(name = "Autoromous Right")
 public class Autonomous_Right extends LinearOpMode {
     int detect = 0;
-    TurtleRobot robot = new TurtleRobot(this);
+    TurtleRobotAuto robot = new TurtleRobotAuto(this);
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 

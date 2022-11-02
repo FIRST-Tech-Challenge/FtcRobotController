@@ -32,9 +32,8 @@ package org.firstinspires.ftc.teamcode.opmodes.tests;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -66,7 +65,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 public class encoder extends LinearOpMode {
 
     /* Declare OpMode members. */
-    TurtleRobot robot = new TurtleRobot(this);
+    TurtleRobotAuto robot = new TurtleRobotAuto(this);
     private ElapsedTime     runtime = new ElapsedTime();
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.

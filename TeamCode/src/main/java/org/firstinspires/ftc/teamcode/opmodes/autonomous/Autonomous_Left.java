@@ -10,13 +10,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 
 import java.util.List;
 
 @Autonomous(name = "Autonomous_Left")
 public class Autonomous_Left extends LinearOpMode {
     int detect = 0;
+    TurtleRobotAuto robot = new TurtleRobotAuto(this);
+
     TurtleRobot robot = new TurtleRobot(this);
     static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 
 
 /**
@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 @Autonomous(name = "10 point auto")
 public class tenpointauto extends LinearOpMode {
     int detect = 0;
-    TurtleRobot robot = new TurtleRobot(this);
+    TurtleRobotAuto robot = new TurtleRobotAuto(this);
     /*
      * Specify the source for the Tensor Flow Model.
      * If the TensorFlowLite object model is included in the Robot Controller App as an "asset",
