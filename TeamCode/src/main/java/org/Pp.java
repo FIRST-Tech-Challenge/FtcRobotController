@@ -70,7 +70,8 @@ public class Pp extends LinearOpMode{
         telemetry.update();
 
         waitForStart();
-
+        
+        //while we balling
         while(opModeIsActive()){
             // y = forward/back x = left strafe/right strafe, rx = rotation
             y = -gamepad1.left_stick_y;
