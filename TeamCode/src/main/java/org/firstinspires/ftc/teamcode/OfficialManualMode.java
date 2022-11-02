@@ -24,9 +24,10 @@ public class OfficialManualMode extends LinearOpMode {
     private ElapsedTime recentActionTime = new ElapsedTime();
     public double perStepSize = 0.01;
     public ArrayList<String> presetActions1 = new ArrayList<String>(Arrays.asList(
-            "platform_left", "platform_left", "platform_left",
-            "shoulder_up", "shoulder_up","shoulder_up",
-            "elbow_up", "elbow_up"
+            "wheel_forward @ 20", // wheel_left, wheel_right, wheel_back @ 20cm
+            "platform_left @ 10",
+            "shoulder_up @ 10",
+            "elbow_up @ 10"
     ));
     public ArrayList<String> presetActions2 = new ArrayList<String>(Arrays.asList(
             "platform_right", "platform_right", "platform_right",
@@ -214,6 +215,18 @@ public class OfficialManualMode extends LinearOpMode {
         //telemetry.addData("Platform que quiere este", prefDir);
     }
 
+    private void moveTo(String actionName, double distance) {
+        logAction(actionName);
+        if (actionName.equals("Wheel_left") || actionName.equals("left")) {
+        }
+        else if (actionName.equals("Wheel_right") || actionName.equals("right")) {
+        }
+        else if (actionName.equals("Wheel_forward") || actionName.equals("forward")) {
+        }
+        else if (actionName.equals("Wheel_back") || actionName.equals("back")) {
+        }
+    }
+
     private void playAction(String actionName, boolean ignoreRecent) {
         if (ignoreRecent) {
             if (recentActionTime.milliseconds() < 100) {
@@ -328,10 +341,46 @@ public class OfficialManualMode extends LinearOpMode {
     private void replayActions(ArrayList<String> list) {
         for (int i = 0; i < list.size(); i++) {
             String s = Integer.toString(i);
-            s += list.get(i);
+            String actionName = list.get(i);
+            s += actionName;
             telemetry.addData("replay: ", s);
-            playAction(list.get(i), false);
-            sleep(100);
+
+            //
+            //"platform_left"
+            //"platform_left@10"
+            //"platform_left @ 10 @ 0.05"
+            //
+            String[] splitStrings = actionName.split("@", 3);
+            for (String split: splitStrings) {
+                split.trim();
+            }
+            if (splitStrings.length == 0) {
+                return;
+            }
+            boolean isWheelAction = splitStrings[0].startsWith("wheel");
+            double localPerStepSize = perStepSize;
+            int repeatTimes = 1;
+            double distance = 1.0;
+            if (splitStrings.length >= 3) {
+                localPerStepSize = Double.parseDouble(splitStrings[2]);
+                if (localPerStepSize <= 0 || localPerStepSize >= 1)
+                    localPerStepSize = perStepSize;
+            }
+            if (splitStrings.length >= 2) {
+                if (isWheelAction)
+                    distance = Double.parseDouble(splitStrings[1]);
+                else
+                    repeatTimes = Integer.parseInt(splitStrings[1]);
+            }
+            if (isWheelAction) {
+                moveTo(splitStrings[0], distance);
+            }
+            else {
+                for (int j = 0; j < repeatTimes; j++) {
+                    playAction(splitStrings[0], false);
+                    sleep(100);
+                }
+            }
         }
         telemetry.update();
     }
