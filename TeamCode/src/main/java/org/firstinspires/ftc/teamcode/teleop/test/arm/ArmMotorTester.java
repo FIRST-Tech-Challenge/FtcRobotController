@@ -116,14 +116,14 @@ public class ArmMotorTester extends OpMode{
         double topDegree = robot.armTop.getCurrentPosition() * constants.CLICKS_PER_TOP_REV;
 
 
-            robot.armBase.setTargetPosition((int)((baseDegree * constants.DEGS_PER_BASE_CLICK) + (10 / constants.RATIO_CLICKS)));
-            robot.armTop.setTargetPosition((int)(topDegree * constants.DEGS_PER_TOP_CLICK) - 10);
+        robot.armBase.setTargetPosition((int)((baseDegree * constants.DEGS_PER_BASE_CLICK) + (10 / constants.RATIO_CLICKS)));
+        robot.armTop.setTargetPosition((int)(topDegree * constants.DEGS_PER_TOP_CLICK) - 10);
 
-            robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            robot.armBase.setPower(power);
+        robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armBase.setPower(power);
 
-            robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            robot.armTop.setPower(power);
+        robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armTop.setPower(power);
     }
 
     public void maintainHeightToGroundNegative(){
