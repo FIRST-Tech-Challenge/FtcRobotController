@@ -72,7 +72,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotorEx leftFront, leftRear, rightRear, rightFront, linearSlide;
     public OpenCvCamera camera;
     public WebcamName webcamName;
     private List<DcMotorEx> motors;
@@ -126,6 +126,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "back_left");
         rightRear = hardwareMap.get(DcMotorEx.class, "back_right");
         rightFront = hardwareMap.get(DcMotorEx.class, "front_right");
+        linearSlide = hardwareMap.get(DcMotorEx.class, "linearslide");
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
