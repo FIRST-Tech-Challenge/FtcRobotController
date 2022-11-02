@@ -358,7 +358,7 @@ public class Crane implements Subsystem {
     }
 
     public void adjustTurretAngle(double speed){
-        targetTurretAngle = robot.turret.getHeading() + (10 * speed);
+        targetTurretAngle = robot.turret.getHeading() + (20 * speed);
 
     }
 
@@ -492,7 +492,7 @@ public class Crane implements Subsystem {
         setExtendTargetPos((int)(dis*EXTEND_TICKS_PER_METER));
     }
     public void setShoulderPwr(double pwr){ shoulderPwr = pwr; }
-    public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX),-100)); }
+    public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX),-200)); }
     public  int getShoulderTargetPos(){ return shoulderTargetPos; }
     public  void setExtendTargetPos(int t){ extenderTargetPos = Math.min(3075,Math.max(t, 0)); }
     public boolean nearTargetShoulder(){
