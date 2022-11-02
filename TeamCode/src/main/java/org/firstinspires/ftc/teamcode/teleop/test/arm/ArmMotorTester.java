@@ -202,7 +202,19 @@ public class ArmMotorTester extends OpMode{
             //dpad down: low
             //dpad left: ground
 
+        if (gamepad2.dpad_up){
+            //high pos
+            
+        } else if (gamepad2.dpad_right){
+            //mid pos
 
+        } else if (gamepad2.dpad_down){
+            //low pos
+
+        } else if (gamepad2.dpad_left){
+            //ground pos
+
+        }
     }
 
     @Override
