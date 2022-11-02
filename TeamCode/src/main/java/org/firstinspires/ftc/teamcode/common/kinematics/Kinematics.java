@@ -86,6 +86,7 @@ public class Kinematics {
 
         //determine targets
         double target = Math.toDegrees(Math.atan2(x, y));
+        if (x==0 && y==0) target = 0;
         directionArr[1] = target;
 
         //determine how much modules must turn in which direction (optimization)
