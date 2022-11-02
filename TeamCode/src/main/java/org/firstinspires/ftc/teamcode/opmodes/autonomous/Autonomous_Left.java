@@ -68,6 +68,12 @@ public class Autonomous_Left extends LinearOpMode {
                             double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
                             if (recognition.getLabel()=="1 Bolt") {detect=1;
+
+                                left(0.25, 500);
+                                straight(0.5, 200);
+//                                LinearSlide(1, 500);
+//                                ServoClaw(0.25, 400);
+                                straight(-0.5, 200);
                                 right(0.25, 500);
                                 straight(0.5, 200);
                                 //LinearSlide(1, 500);
@@ -81,6 +87,11 @@ public class Autonomous_Left extends LinearOpMode {
                                 stop();
                             }
                             if (recognition.getLabel()=="2 Bulb") {detect=2;
+                                left(0.25, 500);
+                                straight(0.5, 200);
+//                                LinearSlide(1, 500);
+//                                ServoClaw(0.25, 400);
+                                straight(-0.5, 200);
                                 right(0.25, 500);
                                 straight(0.5, 200);
                                 //LinearSlide(1, 500);
@@ -92,6 +103,11 @@ public class Autonomous_Left extends LinearOpMode {
                                 stop();
                             }
                             if (recognition.getLabel()=="3 Panel") {detect=3;
+                                left(0.25, 500);
+                                straight(0.5, 200);
+//                                LinearSlide(1, 500);
+//                                ServoClaw(0.25, 400);
+                                straight(-0.5, 200);
                                 right(0.25, 500);
                                 straight(0.5, 200);
                                // LinearSlide(1, 500);
