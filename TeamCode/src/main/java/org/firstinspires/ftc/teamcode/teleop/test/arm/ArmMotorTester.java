@@ -145,7 +145,7 @@ public class ArmMotorTester extends OpMode{
             setTargetPositive();
         } else if (y.getState() == Button.State.HELD){
             setTargetNegative();
-        } else if (x.getState() == Button.State.TAP){
+        } else {
             robot.armTop.setPower(0);
             robot.armBase.setPower(0);
         }
@@ -154,7 +154,7 @@ public class ArmMotorTester extends OpMode{
             maintainHeightToGroundPositive();
         } else if (b.getState() == Button.State.HELD){
             maintainHeightToGroundNegative();
-        } else if (x.getState() == Button.State.TAP){
+        } else {
             robot.armTop.setPower(0);
             robot.armBase.setPower(0);
         }
