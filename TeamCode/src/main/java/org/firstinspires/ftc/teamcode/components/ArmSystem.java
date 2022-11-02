@@ -8,17 +8,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.params.DriveParams;
 
 public class ArmSystem {
-    public enum ArmLevel {
-        LOW,
-        MEDIUM,
-        HIGH,
-        FLOOR
-    }
+
     //fill in constants
-    private final int POSITION_LOW = 500;
-    private final int POSITION_MEDIUM = 800;
-    private final int POSITION_HIGH = 1100;
-    private final int FLOORCONE = 0;
+    public static final int LOW = 500;
+    public static final int MEDIUM = 800;
+    public static final int HIGH = 1100;
+    public static final int FLOOR = 0;
     private final DcMotor armLeft; //arm left is motor1
     private final DcMotor armRight;
     private Intake intake;
@@ -38,25 +33,14 @@ public class ArmSystem {
     public boolean outtake(){
         return intake.outtake();
     }
+
     public void initMotors() {
         armLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armLeft.setPower(0);
     }
-    public boolean driveToLevel(ArmLevel level, double power){
-        int targetPosition = POSITION_LOW;
-        switch (level){
-            case MEDIUM:
-                targetPosition = POSITION_MEDIUM;
-                break;
-            case HIGH:
-                targetPosition = POSITION_HIGH;
-                break;
-            case LOW:
-                targetPosition = POSITION_LOW;
-                break;
-            case FLOOR:
-                targetPosition = FLOORCONE;
-        }
+
+    public boolean driveToLevel(int targetPosition, double power){
+
         armLeft.setTargetPosition(targetPosition);
         armLeft.setPower(power);
         armRight.setTargetPosition(targetPosition);

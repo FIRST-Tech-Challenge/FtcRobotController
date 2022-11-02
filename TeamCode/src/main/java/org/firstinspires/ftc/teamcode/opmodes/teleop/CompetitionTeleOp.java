@@ -64,23 +64,23 @@ public class CompetitionTeleOp extends BaseOpMode {
 
         if (gamepad1.a) {
             // Move Bar to Low Position
-            armSystem.driveToLevel(ArmSystem.ArmLevel.LOW, 0.2);
+            armSystem.driveToLevel(ArmSystem.LOW, 0.2);
 
         }
 
         if (gamepad1.b) {
             // Move Bar to Middle Position
-            armSystem.driveToLevel(ArmSystem.ArmLevel.MEDIUM, 0.2);
+            armSystem.driveToLevel(ArmSystem.MEDIUM, 0.2);
         }
 
         if (gamepad1.y) {
             // Move Bar to High Position
-            armSystem.driveToLevel(ArmSystem.ArmLevel.HIGH, 0.2);
+            armSystem.driveToLevel(ArmSystem.HIGH, 0.2);
         }
 
         if (gamepad1.x) {
             //
-            armSystem.driveToLevel(ArmSystem.ArmLevel.FLOOR, 0.2);
+            armSystem.driveToLevel(ArmSystem.FLOOR, 0.2);
         }
 
         if (gamepad1.dpad_down) {
