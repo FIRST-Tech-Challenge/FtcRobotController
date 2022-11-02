@@ -73,8 +73,8 @@ public class LinearKinematicsTest extends Kinematics {
                 break;
 
             case STOP:
-                rightThrottle = 1;
-                leftThrottle = 1;
+                rightThrottle = 0;
+                leftThrottle = 0;
 
                 spinPower = 0;
                 leftRotatePower = 0;

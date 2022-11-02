@@ -156,10 +156,10 @@ public class HardwareDrive
             topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } else {
-            botL.setPower(0);
-            topL.setPower(0);
-            botR.setPower(0);
-            topR.setPower(0);
+            botL.setPower(power);
+            topL.setPower(power);
+            botR.setPower(power);
+            topR.setPower(power);
         }
     }
 
