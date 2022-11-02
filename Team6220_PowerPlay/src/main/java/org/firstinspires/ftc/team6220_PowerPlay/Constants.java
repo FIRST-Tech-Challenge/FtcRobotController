@@ -16,4 +16,12 @@ public class Constants {
     public static final double AM20_TICKS_PER_REVOLUTION = 537.6;
 
     public static final double CHASSIS_INCHES_PER_TICK = WHEEL_CIRCUMFERENCE_INCHES / AM20_TICKS_PER_REVOLUTION / Math.sqrt(2);
+
+    public static final double SLIDE_SPEED_MODIFIER = 0.5;
+
+    public static final double SLIDE_DEADZONE = 0.05;
+
+    public static final double GRABBER_OPEN_POS = 0.33;
+
+    public static final double GRABBER_CLOSE_POS = 0.11;
 }
