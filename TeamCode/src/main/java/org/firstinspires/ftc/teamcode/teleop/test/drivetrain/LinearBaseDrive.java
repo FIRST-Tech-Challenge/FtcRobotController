@@ -206,6 +206,24 @@ public class LinearBaseDrive extends OpMode{
             return;
         }
 
+        //        if (motorPower[0] == 0) {
+//            robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
+//        if (motorPower[1] == 0) {
+//            robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
+//        if (motorPower[2] == 0) {
+//            robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//        }
+//        if (motorPower[3] == 0) {
+//            robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        } //may or may not need BRAKE.
+
         int[] targetClicks = kinematics.getClicks();
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
         robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
@@ -221,24 +239,6 @@ public class LinearBaseDrive extends OpMode{
         robot.botL.setPower(motorPower[1] * constants.POWER_LIMITER);
         robot.topR.setPower(motorPower[2] * constants.POWER_LIMITER);
         robot.botR.setPower(motorPower[3] * constants.POWER_LIMITER);
-
-        if (motorPower[0] == 0) {
-            robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        if (motorPower[1] == 0) {
-            robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        if (motorPower[2] == 0) {
-            robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        }
-        if (motorPower[3] == 0) {
-            robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        } //may or may not need BRAKE.
     }
 
     /*
