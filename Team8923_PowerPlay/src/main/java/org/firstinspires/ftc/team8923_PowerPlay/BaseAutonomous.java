@@ -94,7 +94,7 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            sleep(3000);
+            sleep(10000);
             if (updatedRecognitions != null) {
                 telemetry.addData("# Objects Detected", updatedRecognitions.size());
 
@@ -173,9 +173,9 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
                 (motorFL.isBusy() && motorFR.isBusy() && motorBL.isBusy() && motorBR.isBusy())) {
 
             // Display it for the driver.
-            telemetry.addData("Running to",  " %7d %7d %7d %7d", targetFL,  targetFR, targetBL, targetBR);
-            telemetry.addData("Currently at",  " at %7d %7d %7d %7d", motorFL.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorBR.getCurrentPosition());
-            telemetry.update();
+            //telemetry.addData("Running to",  " %7d %7d %7d %7d", targetFL,  targetFR, targetBL, targetBR);
+            //telemetry.addData("Currently at",  " at %7d %7d %7d %7d", motorFL.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorBR.getCurrentPosition());
+            //telemetry.update();
         }
 
         // Stop all motion;

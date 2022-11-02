@@ -9,18 +9,18 @@ public class AutoDetectPark extends BaseAutonomous {
     public void runOpMode() {
         initAuto();
         waitForStart();
-        driveInches(0, 5);
+        driveInches(0, 2);
         switch (detectSignalSleeve()) {
             case ONE:
                 // Strafe left one tile.
-                driveInches(-25, 0);
+                driveInches(-27, 0);
                 break;
             case TWO:
                 // Already aligned for position two. Do nothing. :)
                 break;
             case THREE:
                 // Strafe right one tile.
-                driveInches(25, 0);
+                driveInches(27, 0);
                 break;
         }
         driveInches(0, 30);

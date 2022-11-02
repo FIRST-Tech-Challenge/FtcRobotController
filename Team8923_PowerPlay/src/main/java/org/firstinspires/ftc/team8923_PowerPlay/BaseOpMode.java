@@ -50,7 +50,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBR.setDirection(DcMotor.Direction.REVERSE);
 
         // init linear slide motors and claw servo
-        /*motorSlideLeft = hardwareMap.dcMotor.get("motorSlideLeft");
+        motorSlideLeft = hardwareMap.dcMotor.get("motorSlideLeft");
         motorSlideRight = hardwareMap.dcMotor.get("motorSlideRight");
         servoClaw = hardwareMap.servo.get("servoClaw");
 
@@ -64,7 +64,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorSlideLeft.setDirection(DcMotor.Direction.FORWARD);
-        motorSlideRight.setDirection(DcMotor.Direction.REVERSE);*/
+        motorSlideRight.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void driveMecanum(double driveAngle, double drivePower, double turnPower){
