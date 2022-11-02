@@ -55,6 +55,11 @@ public class SimplifiedKinematics {
     double rightCurrentW;
     double currentR; //current robot header orientation
 
+    //tracking joystick
+//    int joystickCount = 0;
+//    double prevJoystickL = 0;
+//    double joystickL = 0;
+
 
     Accelerator toplAccelerator = new Accelerator();
     Accelerator botlAccelerator = new Accelerator();
@@ -75,13 +80,11 @@ public class SimplifiedKinematics {
         snapRightWheelPID.setTargets(0.03, 0, 0.01);
     }
 
-    public void setCurrents(){
+    public void logic(){
         leftCurrentW = posSystem.getLeftWheelW();
         rightCurrentW = posSystem.getRightWheelW();
         currentR = posSystem.getPositionArr()[4];
-    }
 
-    public void logic(){
         target = Math.toDegrees(Math.atan2(lx, ly));
         if (lx == 0 && ly == 0) target = 0;
 
@@ -180,6 +183,15 @@ public class SimplifiedKinematics {
         this.rx = rx;
         this.ry = ry;
     }
+
+//    private void trackJoystickL(){
+//        joystickCount++;
+//        if(joystickCount >= 3){
+//            joystickCount = 0;
+//            prevJoystickL = joystickL;
+//            joystickL = Math.toDegrees(Math.atan2(lx, ly));
+//        }
+//    }
 
 
     public double[] getPower(){

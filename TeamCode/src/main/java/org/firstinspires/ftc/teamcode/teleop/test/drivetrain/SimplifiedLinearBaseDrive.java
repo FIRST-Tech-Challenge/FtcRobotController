@@ -134,7 +134,6 @@ public class SimplifiedLinearBaseDrive extends OpMode{
     private void DriveTrainMove(){
         //gps system
         posSystem.calculatePos();
-        kinematics.setCurrents();
 
         //setting targets
         setVariables();
