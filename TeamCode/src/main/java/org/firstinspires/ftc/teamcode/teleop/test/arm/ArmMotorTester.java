@@ -141,6 +141,14 @@ public class ArmMotorTester extends OpMode{
     }
 
     void setArmPower(){
+//        if (gamepad1.y){
+//            setTargetPositive();
+//        } else if (gamepad1.x){
+//            setTargetNegative();
+//        } else {
+//            robot.armTop.setPower(0);
+//            robot.armBase.setPower(0);
+//        }
         if (x.getState() == Button.State.HELD){
             setTargetPositive();
         } else if (y.getState() == Button.State.HELD){
@@ -150,9 +158,9 @@ public class ArmMotorTester extends OpMode{
             robot.armBase.setPower(0);
         }
 
-        if (a.getState() == Button.State.HELD){
+        if (gamepad1.y){
             maintainHeightToGroundPositive();
-        } else if (b.getState() == Button.State.HELD){
+        } else if (gamepad1.x){
             maintainHeightToGroundNegative();
         } else {
             robot.armTop.setPower(0);

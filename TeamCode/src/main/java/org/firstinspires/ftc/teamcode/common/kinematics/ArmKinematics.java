@@ -29,8 +29,7 @@ public class ArmKinematics {
     public double findHeightToGround(double theta, double psi){
         double distance = 0; //distance from claw to ground
         double h1 = constants.ARM_BASE_RADIUS * Math.sin(theta);
-        double h2 = constants.ARM_TOP_RADIUS * Math.sin(theta - psi);
-
+        double h2 = constants.ARM_TOP_RADIUS * Math.sin(theta + psi - 180);
         distance = h1 + h2;
         return distance;
     }
@@ -38,12 +37,13 @@ public class ArmKinematics {
     public double findHorizontalDistance(double theta, double psi){
         double distance = 0; //distance from base of arm extending horizontally to claw
         double h1 = constants.ARM_BASE_RADIUS * Math.cos(theta);
-        double h2 = constants.ARM_TOP_RADIUS * Math.cos(theta -psi);
+        double h2 = constants.ARM_TOP_RADIUS * Math.cos(theta + psi - 180);
         return distance;
     }
 
     public void maintainHeightToGround(){
         //base motor and top motor rotate same degrees in opposite directions
+
     }
 
     public void setCurrentPosition(){
@@ -56,4 +56,6 @@ public class ArmKinematics {
 
         return motorClicks;
     }
+
+
 }

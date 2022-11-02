@@ -129,7 +129,7 @@ public class HardwareDrive
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
         armBase.setDirection(DcMotorEx.Direction.REVERSE);
-        armTop.setDirection(DcMotor.Direction.REVERSE);
+        armTop.setDirection(DcMotor.Direction.FORWARD);
 
         // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
