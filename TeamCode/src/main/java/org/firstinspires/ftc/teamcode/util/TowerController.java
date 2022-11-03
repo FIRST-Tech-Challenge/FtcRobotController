@@ -111,7 +111,8 @@ public class TowerController {
         }
         if(gamepad.x) {
             uBarLevel = 3;
-        }if(gamepad.y) {
+        }
+        if(gamepad.y) {
             uBarLevel = 4;
         }
 
