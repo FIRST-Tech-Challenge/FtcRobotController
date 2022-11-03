@@ -55,9 +55,9 @@ public class ArmSystem {
         armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armRight.setPower(power);
         //add code for second motor (armRight)
-        if(armLeft.getCurrentPosition() == targetPosition && armRight.getCurrentPosition() == targetPosition){
-            armLeft.setPower(0);
-            armRight.setPower(0);
+        int offsetLeft = Math.abs(armLeft.getCurrentPosition() - targetPosition);
+        int offsetRight = Math.abs(armRight.getCurrentPosition() - targetPosition);
+        if(offsetLeft < DriveParams.TICK_TOLERANCE && offsetRight < DriveParams.TICK_TOLERANCE){
             return true;
         }
         return false;
