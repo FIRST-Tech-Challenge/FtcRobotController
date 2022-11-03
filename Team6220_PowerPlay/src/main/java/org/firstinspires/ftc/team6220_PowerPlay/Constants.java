@@ -17,7 +17,7 @@ public class Constants {
 
     public static final double CHASSIS_INCHES_PER_TICK = WHEEL_CIRCUMFERENCE_INCHES / AM20_TICKS_PER_REVOLUTION / Math.sqrt(2);
 
-    public static final double VERTICAL_SLIDE_SPEED_MULTIPLIER = 0.5;
+    public static final double VERTICAL_SLIDE_SPEED_MULTIPLIER = 1;
 
     public static final double VERTICAL_SLIDE_DEADZONE = 0.1;
 

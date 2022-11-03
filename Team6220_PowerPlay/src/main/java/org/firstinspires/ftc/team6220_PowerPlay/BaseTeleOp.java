@@ -48,8 +48,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
         }
 
         // drive slides
-        if (Math.abs(D2leftStickY) > Constants.VERTICAL_SLIDE_DEADZONE) {
-            driveSlides(D2leftStickY * D2triggerSpeedMod);
-        }
+        driveSlides((Math.abs(D2leftStickY) > Constants.VERTICAL_SLIDE_DEADZONE? D2leftStickY * D2triggerSpeedMod : 0 ));
     }
 }
