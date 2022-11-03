@@ -583,9 +583,9 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processLiftControls() {
-        boolean safeToManuallyLower = (robot.liftAngle > robot.LIFT_ANGLE_MAX);
-        boolean safeToManuallyRaise = (robot.liftAngle < robot.LIFT_ANGLE_MIN);
-        double  gamepad2_right_stick = gamepad2.right_stick_y;
+        boolean safeToManuallyLower = (robot.liftAngle < robot.LIFT_ANGLE_MAX);
+        boolean safeToManuallyRaise = (robot.liftAngle > robot.LIFT_ANGLE_MIN);
+        double  gamepad2_right_stick = -gamepad2.right_stick_y;
         boolean manual_lift_control = ( Math.abs(gamepad2_right_stick) > 0.05 );
 
         //===================================================================
@@ -616,7 +616,7 @@ public abstract class Teleop extends LinearOpMode {
             grabberRunning  = true;
             grabberIntake   = true;
             // start slowly lowering onto cone
-            robot.liftMotor.setPower( -0.10 );
+            robot.liftMotorsSetPower( -0.10 );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last )
@@ -652,19 +652,19 @@ public abstract class Teleop extends LinearOpMode {
             if( safeToManuallyRaise && (gamepad2_right_stick > 0.05) ) {
                 double motorPower = multSegLinearRot( gamepad2_right_stick ); // POSITIVE
                 if( motorPower > 1.00 ) motorPower = 1.00;
-                robot.liftMotor.setPower( motorPower );
+                robot.liftMotorsSetPower( motorPower );
                 liftTweaked = true;
             }
             // Does user want to rotate lift toward more POSITIVE counts (positive joystick input)
             else if( safeToManuallyLower && (gamepad2_right_stick < -0.05) ) {
                 double motorPower = multSegLinearRot( gamepad2_right_stick ); // NEGATIVE
                 if( motorPower < -1.00 ) motorPower = -1.00;
-                robot.liftMotor.setPower( motorPower );
+                robot.liftMotorsSetPower( motorPower );
                 liftTweaked = true;
             }
             // No more input?  Time to stop lift movement!
             else if( liftTweaked ) {
-                robot.liftMotor.setPower( 0.0 );
+                robot.liftMotorsSetPower( 0.0 );
                 liftTweaked = false;
             }
         } // manual_lift_control
@@ -680,7 +680,7 @@ public abstract class Teleop extends LinearOpMode {
                 // Is cycle complete?
                 if( grabberRunTimer.milliseconds() >= 500 ) {
                     // stop lowering
-                    robot.liftMotor.setPower( 0.0 );
+                    robot.liftMotorsSetPower( 0.0 );
                     // stop collecting
                     robot.grabberStop();
                     grabberRunning = false;

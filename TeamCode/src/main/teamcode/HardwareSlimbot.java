@@ -90,7 +90,7 @@ public class HardwareSlimbot
     protected double COUNTS_PER_INCH       = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION * MECANUM_SLIPPAGE) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
     //====== MOTORS FOR GAMEPLAY MECHANISMS (turret / lift) =====
-    protected DcMotorEx turretMotor        = null;
+    protected DcMotorEx turretMotor        = null;    // A pair of motors operated as one with a Y cable
     public int          turretMotorTgt     = 0;       // RUN_TO_POSITION target encoder count
     public int          turretMotorPos     = 0;       // current encoder count
     public double       turretMotorVel     = 0.0;     // encoder counts per second
@@ -103,12 +103,13 @@ public class HardwareSlimbot
     public int          TURRET_LIMIT_LEFT  = -999;    // encoder count at maximum rotation LEFT
     public int          TURRET_LIMIT_RIGHT = +999;    // encoder count at maximum rotation RIGHT
 
-    protected DcMotorEx liftMotor          = null;
+    protected DcMotorEx liftMotorF         = null;    // FRONT lift motor
+    protected DcMotorEx liftMotorB         = null;    // BACK lift motor
     public boolean      liftMotorAuto      = false;   // Automatic movement in progress
     public int          liftMotorCycles    = 0;       // Automatic movement cycle count
     public int          liftMotorWait      = 0;       // Automatic movement wait count (truly there! not just passing thru)
-    public double       liftMotorPwr       = 0.0;     // motor power setpoint (-1.0 to +1.0)
-    public double       liftMotorAmps      = 0.0;     // current power draw (Amps)
+    public double       liftMotorPwr       = 0.0;     // lift motors power setpoint (-1.0 to +1.0)
+    public double       liftMotorAmps      = 0.0;     // lift motors current power draw (Amps)
     public boolean      liftMotorRamp      = false;   // motor power setting is ramping down
     
     protected AnalogInput liftEncoder      = null;    // US Digital absolute magnetic encoder (MA3)
@@ -252,17 +253,17 @@ public class HardwareSlimbot
         rearRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Define and Initialize odometry pod encoders
-        leftOdometer    = hwMap.get(DcMotorEx.class,"LeftOdom");   // port0 (ideally a "REVERSE" motor port)
+    //  leftOdometer    = hwMap.get(DcMotorEx.class,"LeftOdom");   // port0 (ideally a "REVERSE" motor port)
         rightOdometer   = hwMap.get(DcMotorEx.class,"RightOdom");  // port1 (ideally a "FORWARD" motor port)
 //      strafeOdometer  = hwMap.get(DcMotorEx.class,"StrafeOdom");           // port2 (ideally a "REVERSE" motor port)
 
         rightOdometer.setDirection(DcMotor.Direction.FORWARD);
-        leftOdometer.setDirection(DcMotor.Direction.REVERSE);
+//      leftOdometer.setDirection(DcMotor.Direction.REVERSE);
 //      strafeOdometer.setDirection(DcMotor.Direction.REVERSE);
 
         // Zero all odometry encoders
         rightOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//      leftOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //      strafeOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Define and Initialize turret/lift motors
@@ -274,12 +275,15 @@ public class HardwareSlimbot
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turretEncoder = hwMap.get(AnalogInput.class, "turretMA3");
 
-        liftMotor = hwMap.get(DcMotorEx.class,"Lift");       // Expansion Hub port 2
-        liftMotor.setDirection(DcMotor.Direction.FORWARD);
-        liftMotor.setPower( 0.0 );
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotorF = hwMap.get(DcMotorEx.class,"LiftFront");   // Expansion Hub port 0
+        liftMotorB = hwMap.get(DcMotorEx.class,"LiftBack");    // Expansion Hub port 1
+        liftMotorF.setDirection(DcMotor.Direction.REVERSE);
+        liftMotorB.setDirection(DcMotor.Direction.FORWARD);
+        liftMotorsSetPower( 0.0 );
+        liftMotorF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotorB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotorF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotorB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftEncoder = hwMap.get(AnalogInput.class, "liftMA3");
 
         // Initialize servos
@@ -400,26 +404,26 @@ public class HardwareSlimbot
         turretMotorPos     = turretMotor.getCurrentPosition();
         turretMotorVel     = turretMotor.getVelocity();
         turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
-        liftMotorAmps      = liftMotor.getCurrent(MILLIAMPS);
+        liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
         double liftMotorPwrPrior = liftMotorPwr;
-        liftMotorPwr       = liftMotor.getPower();
+        liftMotorPwr       = liftMotorF.getPower();
         liftMotorRamp      = isPwrRampingDown( liftMotorPwrPrior, liftMotorPwr );
         // Parse right odometry encoder
         rightOdometerPrev  = rightOdometerCount;
         rightOdometerCount = rightOdometer.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
         // Parse left odometry encoder
         leftOdometerPrev   = leftOdometerCount;
-        leftOdometerCount  = leftOdometer.getCurrentPosition();  // Must be POSITIVE when bot moves FORWARD
+//      leftOdometerCount  = leftOdometer.getCurrentPosition();  // Must be POSITIVE when bot moves FORWARD
         // Parse rear odometry encoder
         strafeOdometerPrev  = strafeOdometerCount;
 //      strafeOdometerCount = strafeOdometer.getCurrentPosition();
 
         // Do we need to capture lift motor instrumentation data?
         if( liftMotorLogEnable ) {
-            liftMotorLogTime[liftMotorLogIndex] = liftMotorTimer.milliseconds();
+            liftMotorLogTime[liftMotorLogIndex]  = liftMotorTimer.milliseconds();
             liftMotorLogAngle[liftMotorLogIndex] = liftAngle;
-            liftMotorLogPwr[liftMotorLogIndex]  = liftMotorPwr;
-            liftMotorLogAmps[liftMotorLogIndex] = liftMotorAmps;
+            liftMotorLogPwr[liftMotorLogIndex]   = liftMotorPwr;
+            liftMotorLogAmps[liftMotorLogIndex]  = liftMotorAmps;
             // If the log is now full, disable further logging
             if( ++liftMotorLogIndex >= LIFTMOTORLOG_SIZE )
                 liftMotorLogEnable = false;
@@ -483,6 +487,13 @@ public class HardwareSlimbot
     } // setRunToPosition
 
     /*--------------------------------------------------------------------------------------------*/
+    public void liftMotorsSetPower( double motorPower )
+    {
+        liftMotorF.setPower( motorPower );
+        liftMotorB.setPower( motorPower );
+    } // liftMotorsSetPower
+
+    /*--------------------------------------------------------------------------------------------*/
     public void grabberSetTilt( double tiltAmount )
     {
         // Range-check the requested value
@@ -525,7 +536,7 @@ public class HardwareSlimbot
             return;
 
         // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
-        liftMotor.setPower( 0.0 );
+        liftMotorsSetPower( 0.0 );
 
         // Establish a new target angle & reset counters
         liftMotorAuto   = true;
@@ -554,7 +565,7 @@ public class HardwareSlimbot
             double degreesToGo = liftAngleTarget - liftAngle;
             // Have we achieved the target?
             if( Math.abs(degreesToGo) < 1.0 ) {
-                liftMotor.setPower( 0.0 );
+                liftMotorsSetPower( 0.0 );
                 if( ++liftMotorWait >= 5 ) {
                     liftMotorAuto = false;
                     writeLiftLog();
@@ -579,7 +590,7 @@ public class HardwareSlimbot
                 liftMotorPower = degreesToGo / 100.0;  // 1.0 degree error = 1% motor power (0.01)
                 liftMotorPower = Math.copySign( Math.min(Math.abs(liftMotorPower), maxPower), liftMotorPower );
                 liftMotorPower = Math.copySign( Math.max(Math.abs(liftMotorPower), minPower), liftMotorPower );
-                liftMotor.setPower( liftMotorPower );
+                liftMotorsSetPower( liftMotorPower );
             }
         } // liftMotorAuto
     } // liftPosRun
