@@ -56,7 +56,6 @@ public class LinearBaseDrive extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
-        reset = new Reset(robot);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
@@ -64,6 +63,7 @@ public class LinearBaseDrive extends OpMode{
         posSystem = new GlobalPosSystem(robot);
         kinematics = new LinearKinematicsTest(posSystem);
         posSystem.grabKinematics(kinematics);
+        reset = new Reset(robot, posSystem);
     }
 
     @Override

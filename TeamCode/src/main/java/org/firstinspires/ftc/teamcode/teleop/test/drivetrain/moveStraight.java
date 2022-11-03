@@ -50,7 +50,7 @@ public class moveStraight extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
-        reset = new Reset(robot);
+//        reset = new Reset(robot);
 
         linearCorrectionPIDRight = new LinearCorrectionPID();
         linearCorrectionPIDLeft = new LinearCorrectionPID();

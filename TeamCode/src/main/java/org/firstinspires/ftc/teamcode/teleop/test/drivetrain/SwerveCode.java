@@ -59,7 +59,7 @@ public class SwerveCode extends OpMode{
         posSystem = new GlobalPosSystem(robot);
         kinematics = new Kinematics(posSystem);
         posSystem.grabKinematics(kinematics);
-        reset = new Reset(robot);
+        reset = new Reset(robot,posSystem);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();

@@ -49,11 +49,11 @@ public class SimplifiedLinearBaseDrive extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
-        reset = new Reset(robot);
         posSystem = new GlobalPosSystem(robot);
         kinematics = new SimplifiedKinematics(posSystem);
 //        posSystem.grabKinematics(kinematics);
         //as long as you don't call posSystem.getDriveType, the posSystem does not need to grab the kinematics.
+        reset = new Reset(robot, posSystem);
 
         telemetry.addData("Say", "Hello Driver");
     }
@@ -84,7 +84,9 @@ public class SimplifiedLinearBaseDrive extends OpMode{
             tType = TelemetryType.CLICKS;
         }
 
-        if (kinematics.getDriveType() == SimplifiedKinematics.DriveType.STOP){
+        setVariables();
+
+        if (kinematics.getDriveType()== SimplifiedKinematics.DriveType.STOP){
             reset.reset(true);
         } else{
             reset.reset(false);
@@ -140,23 +142,17 @@ public class SimplifiedLinearBaseDrive extends OpMode{
     }
 
     private void DriveTrainMove(){
-        //gps system
-        posSystem.calculatePos();
-
-        //setting targets
-        setVariables();
-
         //put power into the motors
         setPower();
-
     }
 
     private void setVariables(){
+        posSystem.calculatePos();
         //outputs of joysticks
-        double left_stick_x = gamepad1.left_stick_x; //returns a value between [-1, 1]
-        double left_stick_y = -gamepad1.left_stick_y; //returns a value between [-1, 1]
-        double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
-        double right_stick_y = -gamepad1.right_stick_y; //returns a value between [-1, 1]
+        double left_stick_x = -gamepad1.left_stick_x; //returns a value between [-1, 1]
+        double left_stick_y = gamepad1.left_stick_y; //returns a value between [-1, 1]
+        double right_stick_x = -gamepad1.right_stick_x; //returns a value between [-1, 1]
+        double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
 
         kinematics.getGamepad(left_stick_x, left_stick_y, right_stick_x, right_stick_y);
 

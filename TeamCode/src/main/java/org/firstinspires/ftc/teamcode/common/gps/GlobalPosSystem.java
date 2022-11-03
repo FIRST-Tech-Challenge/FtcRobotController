@@ -123,19 +123,20 @@ public class GlobalPosSystem {
         return (Math.abs(positionArr[3]) <= 1);
     }
 
-//    public void hardResetGPS(){
-//        //Reset GPS
-//        for (int i = 0; i < 4; i++){
-//            positionArr[i] = 0;
-//        }
-//
-//        //Reset Motor Clicks
-//        for (DcMotorEx motor : robot.dtMotors){
-//            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            motorClicksPose.put(motor, motor.getCurrentPosition());
-//            prevMotorClicks.put(motor, motor.getCurrentPosition());
-//        }
-//    }
+    public void hardResetGPS(){
+        positionArr[2]=0;
+        positionArr[3]=0;
+
+        motorClicksPose.put("topR", robot.topR.getCurrentPosition());
+        motorClicksPose.put("botR", robot.botR.getCurrentPosition());
+        motorClicksPose.put("topL", robot.topL.getCurrentPosition());
+        motorClicksPose.put("botL", robot.botL.getCurrentPosition());
+
+        prevMotorClicks.put("topR", motorClicksPose.get("topR"));
+        prevMotorClicks.put("botR", motorClicksPose.get("botR"));
+        prevMotorClicks.put("topL", motorClicksPose.get("topL"));
+        prevMotorClicks.put("botL", motorClicksPose.get("botL"));
+    }
 
     public void updateHash(){
         prevMotorClicks.put("topR", motorClicksPose.get("topR"));
