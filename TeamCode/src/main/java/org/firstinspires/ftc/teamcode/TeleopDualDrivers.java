@@ -944,7 +944,7 @@ public class TeleopDualDrivers extends LinearOpMode {
      * @param b three ratios values of background color reading from color sensor
      * return the distance between cone stack and parking area, in inch.
      */
-    private double calculateParkingLocation(double[] s, double[] b) {
+    private double calculateParkingLocation(@NonNull double[] s, @NonNull double[] b) {
         int channel = 0;
         double location;
         double ratio[] = {s[0]/b[0], s[1]/b[1], s[2]/b[2]};
@@ -987,7 +987,7 @@ public class TeleopDualDrivers extends LinearOpMode {
      * Read color from color sensor and translate three values to relative ratio.
      * @param colorRatio three ratios values of color reading from color sensor
      */
-    private void readColorSensor(double[] colorRatio ) {
+    private void readColorSensor(@NonNull double[] colorRatio ) {
         //color sensor control
         int r = 1, g = 1, b = 1, total = 3;
 
