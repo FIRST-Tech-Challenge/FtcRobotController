@@ -18,7 +18,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     public static DcMotor motorBL;
     public static DcMotor motorBR;
 
-    //public static DcMotor motorTurntable;
+    public static DcMotor motorTurntable;
     public static DcMotor motorLVSlides;
     public static DcMotor motorRVSlides;
 
@@ -40,7 +40,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
-        //motorTurntable = hardwareMap.dcMotor.get("motorTurntable");
+        motorTurntable = hardwareMap.dcMotor.get("motorTurntable");
         motorLVSlides = hardwareMap.dcMotor.get("motorLVSlides");
         motorRVSlides = hardwareMap.dcMotor.get("motorRVSlides");
 
@@ -54,7 +54,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        //motorTurntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorTurntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorRVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -67,9 +67,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorLVSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRVSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //motorTurntable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //motorLVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //motorRVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorTurntable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorRVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // servos
         servoGrabber = hardwareMap.servo.get("servoGrabber");
@@ -147,6 +147,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // this method will allow the turntable to turn clockwise or counterclockwise given a specified power and position
     public void driveTurntable(double power, int position) {
-
+        motorTurntable.setPower(power);
+        motorTurntable.setDirection(position);
     }
 }

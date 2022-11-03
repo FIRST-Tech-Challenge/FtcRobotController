@@ -16,16 +16,15 @@ public abstract class BaseTeleOp extends BaseOpMode {
         // double for driver 2 left stick y value
         double D2leftStickY = -gamepad2.left_stick_y;
 
-        // driver 1 right trigger value (used for slow mode)
+        // driver 1 & 2 right trigger values respectively(used for slow mode)
         double D1rightTrigger = gamepad1.right_trigger;
-
-        // driver 2 right trigger value (used for slow mode)
         double D2rightTrigger = gamepad2.right_trigger;
 
-        // converts 0 to 1 inputs to 1 to 0.5 output modifier for driver 1
-        double D1triggerSpeedMod = (D1rightTrigger * -0.5) + 1;
+        //number for measuring turning of turntable
+        double D2rightStickX = gamepad2.right_stick_x;
 
-        // converts 0 to 1 inputs to 1 to 0.5 output modifier for driver 2
+        // converts 0 to 1 inputs to 1 to 0.5 output modifier for driver 1 & 2 respectively
+        double D1triggerSpeedMod = (D1rightTrigger * -0.5) + 1;
         double D2triggerSpeedMod = (D2rightTrigger * -0.5) + 1;
 
         // atan2 determines angle between the two sticks
@@ -49,5 +48,19 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
         // drive slides
         driveSlides((Math.abs(D2leftStickY) > Constants.VERTICAL_SLIDE_DEADZONE? D2leftStickY * D2triggerSpeedMod : 0 ));
+
+
+        //method to turn turntable
+        //COULD COMPLETELY CRASH AND BURN BEWARE THE TURNING THING CONFUSED ME WITH THIS
+        if (Math.abs(D2rightStickX) > Constants.TURNTABLE_DEADZONE_DEGREES ) {
+            driveTurntable((D2rightStickX *D2triggerSpeedMod), (int)D2rightStickX);
+        } else if (Math.abs(D2rightStickX) < Constants.TURNTABLE_DEADZONE_DEGREES){
+            driveTurntable(0,motorTurntable.getCurrentPosition());
+        }
+
+        //method to turn turntable back to storage position while in teleop
+        if (gamepad2.right_bumper && gamepad2.left_bumper) {
+            driveTurntable(1, (Constants.TURNTABLE_STOWAGE_POSITION));
+        }
     }
 }

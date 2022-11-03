@@ -24,4 +24,8 @@ public class Constants {
     public static final double GRABBER_OPEN_POSITION = 0.33;
 
     public static final double GRABBER_CLOSE_POSITION = 0.11;
+
+    public static final int TURNTABLE_STOWAGE_POSITION = 0; //in degrees
+
+    public static final double TURNTABLE_DEADZONE_DEGREES = 5;
 }

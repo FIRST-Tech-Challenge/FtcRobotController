@@ -13,6 +13,8 @@ public class TeleOpCompetition extends BaseTeleOp {
     public void runOpMode() {
         initialize();
 
+        driveTurntable(1, 45); //makes turntable return to starting position on startup
+
         waitForStart();
 
         // get angle after startup to prevent jitter on startup
