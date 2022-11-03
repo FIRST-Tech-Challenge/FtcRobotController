@@ -114,9 +114,9 @@ public class TeleopDualDrivers extends LinearOpMode {
     static final double HIGH_SPEED_POWER = 0.6;  // used to adjust driving sensitivity.
     static final double SLOW_DOWN_POWER = 0.2;
     static final double CORRECTION_POWER = 0.1;
-    static final double MIN_ROTATE_POWER = 0.06;
-    static final double AUTO_DRIVE_POWER = 0.4; // used for auto driving
-    static final double AUTO_ROTATE_POWER = 0.4; // used for auto driving
+    static final double MIN_ROTATE_POWER = 0.11;
+    static final double AUTO_DRIVE_POWER = 0.5; // used for auto driving
+    static final double AUTO_ROTATE_POWER = 0.5; // used for auto driving
 
     // slider motor variables
     private DcMotor RightSliderMotor = null;
@@ -129,12 +129,13 @@ public class TeleopDualDrivers extends LinearOpMode {
     static final int coneStack5th = (int)(COUNTS_PER_INCH * 5.2); // the 5th cone position in the cone stack. The lowest cone is the 1th one.
 
     // 10inch for low junction, 20inch for medium, and 30 for high
+    static final int WALL_POSITION = (int)(COUNTS_PER_INCH * 7);
     static final int LOW_JUNCTION_POS = (int)(COUNTS_PER_INCH * 13.5); // 13.5 inch
     static final int MEDIUM_JUNCTION_POS = (int)(COUNTS_PER_INCH * 23.5);
     static final int HIGH_JUNCTION_POS = (int)(COUNTS_PER_INCH * 33.5);
     static final int SLIDER_MOVE_DOWN_POSITION = COUNTS_PER_INCH * 3; // move down 6 inch to unload cone
     static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 538; // for 312 rpm motor
-    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION; // set value based on testing
+    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION / 3; // set value based on testing
     int sliderTargetPosition = 0;
 
 
@@ -148,7 +149,7 @@ public class TeleopDualDrivers extends LinearOpMode {
     double clawServoPosition = CLAW_OPEN_POS;
 
 
-    // arm servo variables, not used in first prototype.
+    // arm servo variables, not used in current prototype version.
     private Servo armServo = null;
     static final double ARM_INCREMENT = 0.0015;     // amount to slew servo each CYCLE_MS cycle
     static final double ARM_MAX_POS = 0.6;     // Maximum rotational position
@@ -159,10 +160,10 @@ public class TeleopDualDrivers extends LinearOpMode {
 
 
     // variables for auto load and unload cone
-    static final int COUNTS_PER_FEET_DRIVE = 540; // robot drive 1 feet. Back-forth moving
-    static final int COUNTS_PER_FEET_STRAFE = 690; // robot strafe 1 feet. Left-right moving. need test
-    double robotAutoLoadMovingDistance = 0.1; // in feet
-    double robotAutoUnloadMovingDistance = 0.33; // in feet
+    static final int COUNTS_PER_INCH_DRIVE = 45; // robot drive 1 INCH. Back-forth moving
+    static final int COUNTS_PER_INCH_STRAFE = 55; // robot strafe 1 INCH. Left-right moving. need test
+    double robotAutoLoadMovingDistance = 1.0; // in INCH
+    double robotAutoUnloadMovingDistance = 3.5; // in INCH
 
 
     // IMU related
@@ -173,7 +174,6 @@ public class TeleopDualDrivers extends LinearOpMode {
     PIDController pidRotate, pidDrive;
     boolean resetAngleFlag = false;
     static final int INERTIA_WAIT_TIME = 500; // in ms
-    double angleError = 0.0; // the angle error accumulated during auto-rotation.
 
     // sensors
     private DistanceSensor distanceSensor;
@@ -280,7 +280,7 @@ public class TeleopDualDrivers extends LinearOpMode {
         float robotMovingRightLeft;
         float robotTurn;
         float sliderUpDown;
-        boolean sliderGroundJunctionPosition;
+        boolean sliderWallPosition;
         boolean sliderLowJunctionPosition;
         boolean sliderMediumJunctionPosition;
         boolean sliderHighJunctionPosition;
@@ -292,8 +292,11 @@ public class TeleopDualDrivers extends LinearOpMode {
         boolean autoUnloadConeOn;
         boolean distanceSensorOn;
 
-        boolean dualDriverMode = false;
+        boolean dualDriverMode = true;
         Gamepad myGamePad;
+
+        // autonomous testing
+        double parkingLocation = 0.0; // distance between cone loading area to parking area, in inch
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Mode", "waiting for start");
@@ -318,21 +321,21 @@ public class TeleopDualDrivers extends LinearOpMode {
             //gamepad1 buttons
             robotMovingBackForth = gamepad1.left_stick_y;
             robotMovingRightLeft = gamepad1.left_stick_x;
-            robotTurn = gamepad1.right_stick_x;
-            autoLoadConeOn = gamepad1.left_bumper;
-            autoUnloadConeOn = gamepad1.right_bumper;
-            distanceSensorOn = gamepad1.back;
+            robotTurn            = gamepad1.right_stick_x;
+            distanceSensorOn     = gamepad1.back;
 
             // gamepad1 or gamepad2 buttons
-            sliderUpDown = myGamePad.right_stick_y;
-            sliderGroundJunctionPosition = myGamePad.x;
-            sliderLowJunctionPosition = myGamePad.a;
-            sliderMediumJunctionPosition = myGamePad.b;
-            sliderHighJunctionPosition = myGamePad.y;
-            clawClose = myGamePad.dpad_up;
-            clawOpen = myGamePad.dpad_down;
-            armTurnLeft = myGamePad.dpad_left;
-            armTurnRight = myGamePad.dpad_right;
+            sliderUpDown                = myGamePad.right_stick_y;
+            sliderWallPosition          = myGamePad.x;
+            sliderLowJunctionPosition   = myGamePad.a;
+            sliderMediumJunctionPosition= myGamePad.b;
+            sliderHighJunctionPosition  = myGamePad.y;
+            clawClose                   = myGamePad.dpad_up;
+            clawOpen                    = myGamePad.dpad_down;
+            armTurnLeft                 = myGamePad.dpad_left;
+            armTurnRight                = myGamePad.dpad_right;
+            autoLoadConeOn              = myGamePad.left_bumper;
+            autoUnloadConeOn            = myGamePad.right_bumper;
 
             // sensors
             if (distanceSensorOn) {
@@ -356,6 +359,7 @@ public class TeleopDualDrivers extends LinearOpMode {
             }
 
             //color sensor control
+            /*
             if (distanceSensor.getDistance(DistanceUnit.INCH) > CLOSE_DISTANCE) {
                 redBackground = colorSensor.red();
                 greenBackground = colorSensor.green();
@@ -386,7 +390,7 @@ public class TeleopDualDrivers extends LinearOpMode {
             telemetry.addData("red ", (redRatioSleeve>redRatioBg)? "yes" : "no");
             telemetry.addData("green ", (greenRatioSleeve>greenRatioBg)? "yes" : "no");
             telemetry.addData("blue ", (blueRatioSleeve>blueRatioBg)? "yes" : "no");
-
+            */
             double drive = maxDrivePower * robotMovingBackForth;
             double turn  =  maxDrivePower * (-robotTurn);
             double strafe = maxDrivePower * (-robotMovingRightLeft);
@@ -403,7 +407,6 @@ public class TeleopDualDrivers extends LinearOpMode {
             if (((runtime.milliseconds() - timeMS) > INERTIA_WAIT_TIME) && resetAngleFlag) {
                 resetAngleFlag = false;
                 resetAngle(); // Resets the cumulative angle tracking to zero.
-                angleError = 0.0; //reset global angle error after manual turning.
                 pidDrive.enable();
             }
 
@@ -414,12 +417,13 @@ public class TeleopDualDrivers extends LinearOpMode {
             else {
                 correction = 0.0;
             }
-            telemetry.addData("1 imu heading ","%.2f", lastAngles.firstAngle);
-            telemetry.addData("2 global heading ", "%.2f", globalAngle);
-            telemetry.addData("3 global angle error ", "%.2f", angleError);
-            telemetry.addData("4 correction  ", "%.2f", correction);
-            telemetry.addData("5 turn rotation ", "%.2f", rotation);
-            telemetry.addData("Distance = ", "%.2f", distanceSensor.getDistance(DistanceUnit.INCH));
+            telemetry.addData("imu heading ","%.2f", lastAngles.firstAngle);
+            telemetry.addData("global heading ", "%.2f", globalAngle);
+            telemetry.addData("Correction  ", "%.2f", correction);
+            telemetry.addData("Turn rotation ", "%.2f", rotation);
+            telemetry.addData("Max driving poiwer ", "%.2f", maxDrivePower);
+            telemetry.addData("Distance sensor = ", "%.2f", distanceSensor.getDistance(DistanceUnit.INCH));
+            telemetry.addData("Sleeve signal", "%.2f", parkingLocation);
 
             FrontLeftPower  = Range.clip(-drive - turn - strafe - correction, -1, 1);
             FrontRightPower = Range.clip(-drive + turn + strafe + correction, -1, 1);
@@ -449,8 +453,8 @@ public class TeleopDualDrivers extends LinearOpMode {
             }
 
             // use X button to move the slider for ground junction position
-            if (sliderGroundJunctionPosition) {
-                sliderTargetPosition = GROUND_JUNCTION_POS;
+            if (sliderWallPosition) {
+                sliderTargetPosition = WALL_POSITION;
             }
 
             // use right stick_Y to lift or down slider continuously
@@ -497,7 +501,7 @@ public class TeleopDualDrivers extends LinearOpMode {
                 // set arm, claw, slider position after grep.
                 armServoPosition = armServo.getPosition();
                 // left motor has same position with right one
-                sliderTargetPosition = RightSliderMotor.getCurrentPosition();
+                sliderTargetPosition = LOW_JUNCTION_POS;
             }
 
             //  auto driving, unload cone
@@ -550,7 +554,7 @@ public class TeleopDualDrivers extends LinearOpMode {
      */
     private void autoUnloadCone() {
         armServo.setPosition(ARM_UNLOAD_POSITION);
-        robotMovingDistance(-robotAutoUnloadMovingDistance, true); // moving back in feet
+        robotMovingDistance(-robotAutoUnloadMovingDistance, true); // moving back in inch
 
         // move down slider a little bit to unload cone
         sliderTargetPosition = RightSliderMotor.getCurrentPosition();
@@ -562,7 +566,7 @@ public class TeleopDualDrivers extends LinearOpMode {
         waitMotorActionComplete(LeftSliderMotor);
 
         clawServo.setPosition(CLAW_OPEN_POS); // unload  cone
-        sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
+        sleep(100); // wait 0.4 sec to make sure clawServo is at grep position
         clawServoPosition = clawServo.getPosition(); // keep claw position
         sliderTargetPosition = RightSliderMotor.getCurrentPosition();
         moveSlider = sliderTargetPosition + SLIDER_MOVE_DOWN_POSITION;
@@ -599,21 +603,17 @@ public class TeleopDualDrivers extends LinearOpMode {
         sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
         clawServoPosition = clawServo.getPosition(); // keep claw position
         armServo.setPosition(ARM_UNLOAD_POSITION);
-        RightSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
-        LeftSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
-        waitMotorActionComplete(RightSliderMotor);
-        waitMotorActionComplete(LeftSliderMotor);
     }
 
     /**
      * Set target position for every wheel motor, and set power to motors to move the robot.
      * Turn off encode mode after moving.
-     * @param targetDistance: Input value for the target distance in feet.
+     * @param targetDistance: Input value for the target distance in inch.
      * @param isBackForth: flag for back-forth (true) moving, or left-right moving (false)
      */
     private void robotMovingDistance(double targetDistance, boolean isBackForth) {
-        int countsPerFeet = isBackForth? COUNTS_PER_FEET_DRIVE : COUNTS_PER_FEET_STRAFE;
-        int targetPosition = (int)(targetDistance * countsPerFeet);
+        int countsPerInch = isBackForth? COUNTS_PER_INCH_DRIVE : COUNTS_PER_INCH_STRAFE;
+        int targetPosition = (int)(targetDistance * countsPerInch);
         telemetry.addData("Moving", "auto driving target position %d", targetPosition);
         setTargetPositionsToWheels(targetPosition, isBackForth);
         robotRunWithPositionModeOn(true); // turn on encoder mode
@@ -776,7 +776,7 @@ public class TeleopDualDrivers extends LinearOpMode {
                 power = pidRotate.performPID(getAngle()); // power will be - on right turn.
                 leftMotorSetPower(-power);
                 rightMotorSetPower(power);
-                telemetry.addData("Rotate", "rotate power: %0.4f", power);
+                telemetry.addData("Rotate", "rotate power: %.4f", power);
                 telemetry.update();
             } while (opModeIsActive() && !pidRotate.onAbsTarget());
         }
@@ -785,7 +785,7 @@ public class TeleopDualDrivers extends LinearOpMode {
                 power = pidRotate.performPID(getAngle()); // power will be + on left turn.
                 leftMotorSetPower(-power);
                 rightMotorSetPower(power);
-                telemetry.addData("Rotate", "rotate power: %0.4f", power);
+                telemetry.addData("Rotate", "rotate power: %.4f", power);
                 telemetry.update();
             } while (opModeIsActive() && !pidRotate.onAbsTarget());
 
@@ -800,11 +800,6 @@ public class TeleopDualDrivers extends LinearOpMode {
 
         // reset angle tracking on new heading.
         resetAngle();
-        angleError += lastAngles.firstAngle - angleBeforeRotate - degrees;
-        if (Math.abs(angleError) > 180)
-        {
-            angleError = angleError - Math.copySign(360, angleError);
-        }
     }
 
     /**
@@ -837,7 +832,7 @@ public class TeleopDualDrivers extends LinearOpMode {
             correction = pidDrive.performPID(getAngle());
             leftMotorSetPower(p - correction);
             rightMotorSetPower(p + correction);
-            sleep(50);
+            //sleep(50);
         }
         setPowerToWheels(0.0); //stop moving
     }
@@ -861,7 +856,7 @@ public class TeleopDualDrivers extends LinearOpMode {
     private void autonomousCore() {
         double backgroundColor[] = {1.0, 1.0, 1.0};
         double sleeveColor[] = {1.0, 1.0, 1.0};
-        double parkingLocation = 0.0; // distance between cone loading area to parking area, in feet
+        double parkingLocation = 0.0; // distance between cone loading area to parking area, in inch
 
         telemetry.update();
 
@@ -869,7 +864,7 @@ public class TeleopDualDrivers extends LinearOpMode {
         if (gamepad2.a) {
             //preload cone
             clawServo.setPosition(CLAW_CLOSE_POS);
-            sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
+            sleep(200); // wait 0.4 sec to make sure clawServo is at grep position
             RightSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
             LeftSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
             waitMotorActionComplete(RightSliderMotor);
@@ -878,20 +873,19 @@ public class TeleopDualDrivers extends LinearOpMode {
             clawServoPosition = clawServo.getPosition(); // keep claw position
             readColorSensor(backgroundColor);
             // drive robot to sleeve cone
-            robotMovingDistance(1.66, true);
+            robotMovingDistance(20.0, true);
             readColorSensor(sleeveColor); // reading sleeve signal
-            robotMovingDistance(3.0, true); // drive robot to the center of 3rd mat
-            robotMovingDistance(-0.33, true); // throw off sleeve cone
+            robotMovingDistance(36.0, true); // drive robot to the center of 3rd mat
+            robotMovingDistance(-4.0, true); // throw off sleeve cone
             parkingLocation = calculateParkingLocation(sleeveColor, backgroundColor);
 
-            telemetry.addData("Sleeve","moving distance (%.1f) feet", parkingLocation);
+            telemetry.addData("Sleeve","moving distance (%.1f) inch", parkingLocation);
             telemetry.update();
         }
 
-
         // move up slider
         if (gamepad2.b) {
-            robotMovingDistance(-1.0, false); // strafe robot half mat to left side
+            robotMovingDistance(-12.0, false); // strafe robot half mat to left side
             RightSliderMotor.setTargetPosition(HIGH_JUNCTION_POS);
             LeftSliderMotor.setTargetPosition(HIGH_JUNCTION_POS);
             waitMotorActionComplete(RightSliderMotor); // make sure left and right motor are complete actions
@@ -900,10 +894,14 @@ public class TeleopDualDrivers extends LinearOpMode {
         }
 
         if (gamepad2.y) {
-            robotMovingDistance(0.66, true); // drive robot half mat to high junction
+            robotMovingDistance(8.0, true); // drive robot half mat to high junction
         }
         if (gamepad2.right_bumper) {
             autoUnloadCone();
+            RightSliderMotor.setTargetPosition(WALL_POSITION);
+            LeftSliderMotor.setTargetPosition(WALL_POSITION);
+            waitMotorActionComplete(RightSliderMotor); // make sure left and right motor are complete actions
+            waitMotorActionComplete(LeftSliderMotor);
             sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
         }
 
@@ -913,10 +911,14 @@ public class TeleopDualDrivers extends LinearOpMode {
         }
 
         if (gamepad2.dpad_down) {
-            robotMovingDistance(3.0, true); // drive robot to loading area
+            robotMovingDistance(38.5, true); // drive robot to loading area
         }
         if (gamepad2.left_bumper) {
             autoLoadCone(coneStack5th); // need update to input cone height position
+            RightSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
+            LeftSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
+            waitMotorActionComplete(RightSliderMotor);
+            waitMotorActionComplete(LeftSliderMotor);
             sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
         }
 
@@ -927,11 +929,11 @@ public class TeleopDualDrivers extends LinearOpMode {
 
         if (gamepad2.dpad_up) {
             robotMovingDistance(parkingLocation, true); // drive robot to parking
-            robotMovingDistance(2.0, false); // strafe robot to parking mat
+            robotMovingDistance(24.0, false); // strafe robot to parking mat
         }
 
         if (gamepad2.x) {
-            robotMovingDistance(4, false); // strafe testing 8 feet
+            robotMovingDistance(48, false); // strafe testing 48 inch
         }
 
     }
@@ -940,11 +942,11 @@ public class TeleopDualDrivers extends LinearOpMode {
      * Calculate the destination parking area according to sleeve color.
      * @param s three ratios values of sleeve signal color reading from color sensor
      * @param b three ratios values of background color reading from color sensor
-     * return the distance between cone stack and parking area, in feet.
+     * return the distance between cone stack and parking area, in inch.
      */
     private double calculateParkingLocation(double[] s, double[] b) {
         int channel = 0;
-        double parkingLocation;
+        double location;
         double ratio[] = {s[0]/b[0], s[1]/b[1], s[2]/b[2]};
 
         // find the maximum value in ratio[]
@@ -959,26 +961,26 @@ public class TeleopDualDrivers extends LinearOpMode {
         String color = "";
         switch (channel) {
             case 0: // red
-                parkingLocation = 5.0; // parking lot #1 (red), third mat
+                location = 5.0 * 12; // parking lot #1 (red), third mat
                 color = "red";
                 break;
             case 1: // green
-                parkingLocation = 3.0; // parking lot #2 (green), third mat
+                location = 3.0 * 12; // parking lot #2 (green), third mat
                 color = "green";
                 break;
             case 2: // blue
-                parkingLocation = 1.0; // parking lot #3 (blue), third mat
+                location = 1.0 * 12; // parking lot #3 (blue), third mat
                 color = "blue";
                 break;
             default:
-                parkingLocation = 0.0;
+                location = 0.0;
         }
         telemetry.addLine()
                 .addData("channal ", channel)
                 .addData("Color is ", color)
-                .addData("location ", parkingLocation);
+                .addData("location ", location);
         telemetry.addData("color", "rgb ratio, %.2f, %.2f, %.2f", ratio[0], ratio[1], ratio[2]);
-        return parkingLocation;
+        return location;
     }
 
     /**
