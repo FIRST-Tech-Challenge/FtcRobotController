@@ -25,13 +25,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class ConeImageProcessor extends OpenCvPipeline {
 
-	enum SleeveSide {
-		Sleev1,
-		Sleev2,
-		Sleev3,
-		Unkown
-	}
-
+	//Adjustable parameters here.
 	double sleev1Peak = 119.0 ;
 	double sleev2Peak = 100.0 ;
 	double sleev3Peak = 110.0 ;
@@ -104,21 +98,24 @@ public class ConeImageProcessor extends OpenCvPipeline {
 		Mat blueConeTrd = new Mat();
 		Core.inRange(hsvImg, blueConeL, blueConeH, blueConeTrd);
 
+		//Red cone in range
 		Mat redConeTrd1 = new Mat();
 		Core.inRange(hsvImg, redConeL1, redConeH1, redConeTrd1);
 		Mat redConeTrd2 = new Mat();
 		Core.inRange(hsvImg, redConeL2, redConeH2, redConeTrd2);
 
+		//Yellow pole in range
 		Mat yellowPolTrd = new Mat ();
 		Core.inRange(hsvImg, yellowPoleL, yellowPoleH, yellowPolTrd);
 
+		//Remove background with low saturation
 		Mat backgroundTrd = new Mat();
 		Core.inRange(hsvImg, backgroundL, backgroundH, backgroundTrd);
-
+		//Remove dark backgroud
 		Mat darkTrd = new Mat();
 		Core.inRange(hsvImg, darkL, darkH, darkTrd);
 
-
+		//Combine these mask together
 		Mat tobeRemoveRev = new Mat();
 		Core.bitwise_or(blueConeTrd,redConeTrd1,tobeRemoveRev);
 		Core.bitwise_or(redConeTrd2,tobeRemoveRev,tobeRemoveRev);
@@ -126,6 +123,7 @@ public class ConeImageProcessor extends OpenCvPipeline {
 		Core.bitwise_or(backgroundTrd,tobeRemoveRev,tobeRemoveRev);
 		Core.bitwise_or(darkTrd,tobeRemoveRev,tobeRemoveRev);
 
+		//Get reversed Mask
 		Mat tobeRemove = new Mat();
 		Core.bitwise_not(tobeRemoveRev,tobeRemove);
 
@@ -139,13 +137,13 @@ public class ConeImageProcessor extends OpenCvPipeline {
 		List<Mat> hsvResultPlane = new ArrayList<>();
 		Core.split(hsvResult , hsvResultPlane);
 
+		//Calculate the Hue average
 		meanVal = calHueAvg(hsvResult);
 
 		if (debug) {
 			//Imgcodecs.imwrite( fileProcessing.getParent() + "\\result\\" + fileProcessing.getName() + "-thresh.jpg", tobeRemoveRev);
-			//Imgcodecs.imwrite(fileProcessing.getParent() + "\\result\\" + fileProcessing.getName() + "-result.jpg", result);
+			Imgcodecs.imwrite("/sdcard/FIRST/Cone-result.jpg", result);
 			//Imgcodecs.imwrite(fileProcessing.getParent() + "\\result\\" + fileProcessing.getName() + "-bgTrd.jpg", backgroundTrd);
-
 		}
 
 		return result;

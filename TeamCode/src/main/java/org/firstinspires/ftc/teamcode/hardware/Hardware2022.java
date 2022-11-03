@@ -11,13 +11,24 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+/**
+ * This is the Robot class for 2022 FTC Season
+ *
+ */
 public class Hardware2022 {
-    private Telemetry telemetry;
+
+    //Adjustable parameters  here.
     private final double CLAW_CLOSED = 1.0;
     private final double CLAW_OPEN = 0.7 ;
+    private final double xAxisCoeff = 360 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double yAxisCoeff = 360 ;  // How many degrees encoder to turn to run an inch in X Axis
+
 
     private boolean debug = true;
-
+    private Telemetry telemetry;
+    /**
+     * Robot has 2 state,  with a cone , or without a cone
+     */
     enum RobotState {
         HasCone,
         NoCone
@@ -29,6 +40,7 @@ public class Hardware2022 {
     /**
      * Constructor
      * @param m This is the HarewareMap, which is configured on the dirver stataion.
+     * @param tm  The Telemetry object, used for debug purpose.
      */
     public Hardware2022(HardwareMap m, Telemetry tm )
     {
@@ -43,23 +55,24 @@ public class Hardware2022 {
     public DcMotor wheelFrontLeft = null;
     public DcMotor wheelBackRight = null;
     public DcMotor wheelBackLeft = null;
-    public DcMotor wheelStrafe = null;
+    //public DcMotor wheelStrafe = null;
 
-    public DcMotor Slide = null;
-    public DcMotor Vertical = null;
+    public DcMotor vertical = null;
 
-    public Servo Encoders = null;
     public Servo grabberclaw = null;
     public ColorSensor sensorColor = null;
     public DistanceSensor sensorDistance = null;
 
+    /**
+     * Initialize hardware.
+     */
     public void createHardware() {
 
         wheelFrontRight = hwMap.get(DcMotor.class, "rfWheel");
         wheelFrontLeft = hwMap.get(DcMotor.class, "lfWheel");
         wheelBackRight = hwMap.get(DcMotor.class, "rrWheel");
         wheelBackLeft = hwMap.get(DcMotor.class, "lrWheel");
-        wheelStrafe = hwMap.get(DcMotor.class, "wheelStrafe");
+        //wheelStrafe = hwMap.get(DcMotor.class, "wheelStrafe");
 
         wheelFrontRight.setDirection(DcMotor.Direction.FORWARD);
         wheelBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -70,7 +83,7 @@ public class Hardware2022 {
         wheelBackRight.setPower(0);
         wheelFrontLeft.setPower(0);
         wheelBackLeft.setPower(0);
-        wheelStrafe.setPower(0);
+        //wheelStrafe.setPower(0);
 
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -78,32 +91,23 @@ public class Hardware2022 {
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        Slide = hwMap.get(DcMotor.class, "Slide");
-        Vertical = hwMap.get(DcMotor.class, "Vertical");
-
-
-        Slide.setDirection(DcMotor.Direction.FORWARD);
-        Vertical.setDirection(DcMotor.Direction.FORWARD);
-
-        Slide.setPower(0);
-        Vertical.setPower(0);
+        vertical = hwMap.get(DcMotor.class, "Vertical");
+        vertical.setDirection(DcMotor.Direction.FORWARD);
+        vertical.setPower(0);
 
         sensorColor = hwMap.get(ColorSensor.class, "clawdistance");
         sensorDistance = hwMap.get(DistanceSensor.class, "clawdistance");
 
-        Encoders = hwMap.get(Servo.class, "Encoders");
         grabberclaw = hwMap.get(Servo.class, "grabberclaw");
-
-        Encoders.setPosition(0.4);
 
     }
 
     /**
      * This operation move robot forward/backward according to the input
-     * @param distance
-     * @param power Positive value move forward, sign has to match distance or it is undefined
+     * @param distance  Distance in encoder degree , 360 for a full circle.  Always positive
+     * @param power Positive value move forward
      */
-    public void moveXAxis( int distance, double power ) {
+    private void moveXAxis( int distance, double power ) {
 
         wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -141,12 +145,21 @@ public class Hardware2022 {
     }
 
     /**
+     *
+     * @param distance  Distance in inches , 360 for a full circle.  Always positive
+     * @param power Positive value move forward
+     */
+    public void moveXAxis( double distance, double power ) {
+        moveXAxis( Math.round( (float) distance * this.xAxisCoeff ), power ) ;
+    }
+
+    /**
      * This operation move robot lef/right according to the input
-     * @param distance   Positive value, moving left ,  Negative value, moving right
-     * @param power Positive value move forward, sign has to match distance or it is undefined
+     * @param distance  Distance in encoder degree , 360 for a full circle.  Always positive
+     * @param power Positive value move right.
      */
 
-    public void moveYAxis( int distance, double power ) {
+    private void moveYAxis( int distance, double power ) {
 
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -178,6 +191,17 @@ public class Hardware2022 {
         wheelFrontLeft.setPower(0);
         wheelBackRight.setPower(0);
         wheelBackLeft.setPower(0);
+
+    }
+
+    /**
+     * This operation move robot lef/right according to the input
+     * @param distance  Distance inch ,
+     * @param power Positive value move right.
+     */
+
+    public void moveYAxis( double  distance, double power ) {
+        moveYAxis(Math.round((float) distance * yAxisCoeff), power);
 
     }
 

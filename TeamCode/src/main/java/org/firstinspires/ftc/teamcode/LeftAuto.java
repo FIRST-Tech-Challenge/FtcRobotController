@@ -15,7 +15,7 @@ public class LeftAuto extends BaseAuto {
      */
     @Override
     void movePark() {
-        hdw.moveXAxis(90,0.7);
+        hdw.moveXAxis(6.0,0.7);
 
     }
 

@@ -25,7 +25,6 @@ public class GeneralDriver extends BaseTele {
         hdw.wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hdw.wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hdw.wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hdw.Encoders.setPosition(1.0);
 
         double powerDrivePercentage = 0.5;
 
@@ -48,11 +47,10 @@ public class GeneralDriver extends BaseTele {
             if (gamepad1.start) {
             }
             if (gamepad2.dpad_up) {
-                hdw.Encoders.setPosition(1.0);
+
                 sleep(100);
             }
             if (gamepad2.dpad_down) {
-                hdw.Encoders.setPosition(0.35);
                 sleep(100);
             }
             if (gamepad1.y) {
@@ -68,14 +66,14 @@ public class GeneralDriver extends BaseTele {
             }
 
             if (gamepad1.x) {
-                hdw.moveXAxis( 2160, -0.5 );
+                hdw.moveXAxis( 10.0, -0.5 );
                 sleep(6000);
             }
 
             //Wheel takes input of gampad 1  ,  turbo is the power factor. Range 0-1 , 1 is 100%
             robotWheel.joystick(gamepad1, 1);
 
-            /* This is important for the driving to work ⬇⬇ */
+            /* Set the calcuated power to wheels according to the gampad input */
             hdw.wheelFrontRight.setPower(robotWheel.wheelFrontRightPower * powerDrivePercentage);
             hdw.wheelFrontLeft.setPower(robotWheel.wheelFrontLeftPower * powerDrivePercentage);
             hdw.wheelBackRight.setPower(robotWheel.wheelBackRightPower * powerDrivePercentage);
