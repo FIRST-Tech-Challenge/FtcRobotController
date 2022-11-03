@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
-@Autonomous(name = "Competition Autonomous", group = "Autonomous")
+@Disabled
 public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
     public static final int POLE_WIDTH = 45;
@@ -61,7 +62,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
             sign = 1;
         }
         startPosition = From.START;
-        newState(State.ALIGN_WITH_POLE);
+        newState(State.IDENTIFY_TARGET);
     }
 
     /**

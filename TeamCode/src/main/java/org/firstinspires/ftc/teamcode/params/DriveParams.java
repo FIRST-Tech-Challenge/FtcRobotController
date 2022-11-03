@@ -9,7 +9,7 @@ public class DriveParams {
     // 12.6 inches circumference of a wheel
     public static final double CIRCUMFERENCE = 12.6;
     // 1120 ticks in a revolution
-    public static final double TICKS_PER_REV = 560;
+    public static final double TICKS_PER_REV = 833;
     // Is the IMU unit vertical?
     public static final boolean IMU_VERT     = false;
 

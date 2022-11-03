@@ -26,6 +26,10 @@ public class ArmSystem {
         intake = new Intake(intakeMotor, beam);
     }
 
+    public Intake.State getState(){
+        return intake.getState();
+    }
+
     public boolean intake(){
         return intake.intake();
     }
@@ -49,9 +53,9 @@ public class ArmSystem {
         armLeft.setPower(power);
         armRight.setTargetPosition(targetPosition);
         armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armRight.setPower(armLeft.getPower());
-        //add code for secon\\d motor (armRight)
-        if(armLeft.getCurrentPosition() == targetPosition){
+        armRight.setPower(power);
+        //add code for second motor (armRight)
+        if(armLeft.getCurrentPosition() == targetPosition && armRight.getCurrentPosition() == targetPosition){
             armLeft.setPower(0);
             armRight.setPower(0);
             return true;

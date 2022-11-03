@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import static org.firstinspires.ftc.teamcode.components.ArmSystem.Intake.State.INTAKING;
+import static org.firstinspires.ftc.teamcode.components.ArmSystem.Intake.State.OUTTAKING;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
@@ -24,12 +27,15 @@ public class CompetitionTeleOp extends BaseOpMode {
         driveSystem.drive(rx, lx, ly);
         telemetry.addData("arm Left encoder ", armSystem.armLeft.getCurrentPosition());
         telemetry.addData("arm right encoder ", armSystem.armRight.getCurrentPosition());
+        telemetry.addData("arm left target",  armSystem.armLeft.getTargetPosition());
+        telemetry.addData("arm right target", armSystem.armRight.getTargetPosition());
 
-        if (gamepad1.left_trigger > 0.1f) {
+
+        if (gamepad1.left_trigger > 0 || armSystem.getState() == INTAKING) {
             armSystem.intake();
         }
 
-        if (gamepad1.right_trigger > 0) {
+        if (gamepad1.right_trigger > 0 || armSystem.getState() == OUTTAKING) {
             armSystem.outtake();
         }
 

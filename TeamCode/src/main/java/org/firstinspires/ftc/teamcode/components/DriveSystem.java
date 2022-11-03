@@ -81,11 +81,11 @@ public class DriveSystem {
             switch(name) {
                 case FRONTLEFT:
                 case BACKLEFT:
-                    motor.setDirection(DcMotorSimple.Direction.REVERSE);
+                    motor.setDirection(DcMotorSimple.Direction.FORWARD);
                     break;
                 case FRONTRIGHT:
                 case BACKRIGHT:
-                    motor.setDirection(DcMotorSimple.Direction.FORWARD);
+                    motor.setDirection(DcMotorSimple.Direction.REVERSE);
                     break;
             }
         });
@@ -196,7 +196,7 @@ public class DriveSystem {
         for (DcMotor motor : motors.values()) {
             Log.i("MOTOR", motor.getCurrentPosition() + "");
             Log.i("MOTOR_POWER", motor.getPower() + "");
-            int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
+            int offset = Math.abs(motors.get(MotorNames.FRONTRIGHT).getCurrentPosition() - mTargetTicks);
             if (offset <= DriveParams.TICK_TOLERANCE) {
                 // Shut down motors and reset target
                 stopAndReset();
