@@ -25,7 +25,6 @@ public class LeftAuton extends LinearOpMode
         telemetry.addLine(Integer.toString(finalID));
         telemetry.update();
         Auton auton = new Auton(true, finalID);
-        auton.runAutonWithConeNew(new SampleMecanumDrive(hardwareMap), hardwareMap);
-
+        auton.runAutonMain(new SampleMecanumDrive(hardwareMap), hardwareMap);
     }
 }
