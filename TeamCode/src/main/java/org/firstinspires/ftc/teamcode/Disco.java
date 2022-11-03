@@ -17,7 +17,8 @@ public class Disco extends LinearOpMode {
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("leftBack");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("rightFront");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("rightBack");
-        DcMotor armMotor = hardwareMap.dcMotor.get("arm");
+        DcMotor armMotor1 = hardwareMap.dcMotor.get("arm1");
+        DcMotor armMotor2 = hardwareMap.dcMotor.get("arm2");
 
         CRServo intake = hardwareMap.crservo.get("intake");
 
@@ -65,8 +66,8 @@ public class Disco extends LinearOpMode {
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
 
-            armMotor.setPower(armPower);
-
+            armMotor1.setPower(armPower);
+            armMotor2.setPower(-armPower);
         }
     }
 }
