@@ -4,13 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.Hardware358;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 public abstract class Driving358 extends LinearOpMode {
 
 
-    Hardware358 robot = new Hardware358();  
+    Hardware358 robot = new Hardware358();
 
     private ElapsedTime runtime = new ElapsedTime();
 
