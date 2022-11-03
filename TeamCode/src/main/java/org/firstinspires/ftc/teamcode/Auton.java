@@ -133,15 +133,15 @@ public class Auton {
         intake.setPosition(0.4);
 
         TrajectorySequence trajectorySequence = drive.trajectorySequenceBuilder(new Pose2d())
-                .strafeRight(53)
-                .strafeLeft(13.5)
+                .strafeRight(29.5)
                 .forward(1.5)
                 .addDisplacementMarker(() -> {
                     // claw open
                     // lift go down to height of top cone on stack
                 })
                 .back(1.5)
-                .strafeRight(2.5)
+                .strafeRight(13.5)
+                .strafeLeft(2.5)
                 .forward(24)
                 .addDisplacementMarker(() -> {
                     // claw close
