@@ -68,8 +68,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorRVSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorTurntable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorLVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorRVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //motorLVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //motorRVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // servos
         servoGrabber = hardwareMap.servo.get("servoGrabber");
@@ -124,10 +124,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
 
         // calculate speed and direction of each individual motor and set power of motors to speed
-        motorFL.setPower((-yPower + xPower + tPower) * Constants.DRIVE_SPEED_MULTIPLIER);
-        motorFR.setPower((-yPower - xPower - tPower) * Constants.DRIVE_SPEED_MULTIPLIER);
-        motorBL.setPower((-yPower - xPower + tPower) * Constants.DRIVE_SPEED_MULTIPLIER);
-        motorBR.setPower((-yPower + xPower - tPower) * Constants.DRIVE_SPEED_MULTIPLIER);
+        motorFL.setPower(-yPower + xPower + tPower);
+        motorFR.setPower(-yPower - xPower - tPower);
+        motorBL.setPower(-yPower - xPower + tPower);
+        motorBR.setPower(-yPower + xPower - tPower);
     }
 
     // this method will allow the grabber to open or close given a boolean input, with true = open and false = close
@@ -141,13 +141,13 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // this method will allow the slides to move upwards, downwards, outwards, and inwards given a specified x position, x power, y position, and y power
     public void driveSlides(/*int xPosition, double xPower, int yPosition,*/ double yPower) {
-        motorLVSlides.setPower(yPower * Constants.VERTICAL_SLIDE_SPEED_MULTIPLIER);
-        motorRVSlides.setPower(yPower * Constants.VERTICAL_SLIDE_SPEED_MULTIPLIER);
+        motorLVSlides.setPower(yPower);
+        motorRVSlides.setPower(yPower);
     }
 
     // this method will allow the turntable to turn clockwise or counterclockwise given a specified power and position
     public void driveTurntable(double power, int position) {
         motorTurntable.setPower(power);
-        motorTurntable.setDirection(position);
+        motorTurntable.setTargetPosition(position);
     }
 }

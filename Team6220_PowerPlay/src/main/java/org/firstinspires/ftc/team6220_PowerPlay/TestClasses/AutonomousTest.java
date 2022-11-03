@@ -12,11 +12,6 @@ public class AutonomousTest extends AprilTagDetect {
         initialize();
         waitForStart();
 
-//        int signal = detectAprilTag();
-//
-//        telemetry.addLine(signal + "");
-//        telemetry.update();
-
         driveOmniInches(0, 24);
         driveOmniInches(90, 24);
         driveOmniInches(180, 24);

@@ -71,6 +71,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
                 motorBR.setPower(motorPower - turningPower);
             }
 
+            // todo - fix distance
             distanceTraveled = Math.sqrt(Math.pow(imu.getPosition().x, 2) + Math.pow(imu.getPosition().y, 2));
 
             if (distanceTraveled - targetDistance > -1) {
