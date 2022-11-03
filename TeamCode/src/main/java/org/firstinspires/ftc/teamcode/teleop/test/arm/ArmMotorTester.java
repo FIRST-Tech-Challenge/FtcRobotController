@@ -30,6 +30,8 @@ public class ArmMotorTester extends OpMode{
     ElapsedTime resetTimer = new ElapsedTime();
     View relativeLayout;
 
+    int prevPosition;
+
     private double power = 0.5;
 
     @Override
@@ -55,6 +57,7 @@ public class ArmMotorTester extends OpMode{
 
     @Override
     public void start(){
+        prevPosition = robot.armBase.getCurrentPosition();
     }
 
     @Override
@@ -111,6 +114,34 @@ public class ArmMotorTester extends OpMode{
         robot.armTop.setPower(power);
     }
 
+    public void setTargetPositiveBase(){
+        int baseCurrent = robot.armBase.getCurrentPosition();
+        int topCurrent = robot.armTop.getCurrentPosition();
+
+        //  robot.armBase.setTargetPosition(baseCurrent + 100);
+        robot.armBase.setTargetPosition(baseCurrent + 20);
+
+        //   robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        //  robot.armBase.setPower(0.3);
+        robot.armBase.setPower(power);
+    }
+
+    public void setTargetNegativeBase(){
+        int baseCurrent = robot.armBase.getCurrentPosition();
+        int topCurrent = robot.armTop.getCurrentPosition();
+
+        //  robot.armBase.setTargetPosition(baseCurrent + 100);
+        robot.armBase.setTargetPosition(baseCurrent - 20);
+
+        //   robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        //  robot.armBase.setPower(0.3);
+        robot.armBase.setPower(power);
+    }
+
     public void maintainHeightToGroundPositive(){
         double baseCurrent = robot.armBase.getCurrentPosition();
         double topCurrent = robot.armTop.getCurrentPosition();
@@ -145,10 +176,23 @@ public class ArmMotorTester extends OpMode{
             setTargetPositive();
         } else if (gamepad1.x){
             setTargetNegative();
+        } else if(gamepad1.a){
+            setTargetPositiveBase();
+        } else if(gamepad1.b){
+            setTargetNegativeBase();
+        } else if (gamepad1.right_bumper){
+            power += 0.1;
+        } else if (gamepad1.left_bumper){
+            power -= 0.1;
+        } else if (robot.armBase.getCurrentPosition() != prevPosition){
+            robot.armBase.setTargetPosition(prevPosition);
+            robot.armBase.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.armBase.setPower(0.1);
         } else {
-            robot.armTop.setPower(0);
-            robot.armBase.setPower(0);
+            robot.armTop.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.armBase.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+        prevPosition = robot.armBase.getCurrentPosition();
 //        if (x.getState() == Button.State.HELD){
 //            setTargetPositive();
 //        } else if (y.getState() == Button.State.HELD){
