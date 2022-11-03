@@ -85,8 +85,8 @@ public class AutonomousRed extends AutonomousBase {
 		
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for team color/number
         while (!isStarted()) {
-
-            telemetry.addData("ALLIANCE", "%s", "RED (ducks)");
+            telemetry.addData("ALLIANCE", "%s", "RED (terminal)");
+            telemetry.addData("Signal Detect", "R: " + PipelinePowerPlay.avgR + " G: " + PipelinePowerPlay.avgG + " B: " + PipelinePowerPlay.avgB);
             telemetry.update();
             // Pause briefly before looping
             idle();

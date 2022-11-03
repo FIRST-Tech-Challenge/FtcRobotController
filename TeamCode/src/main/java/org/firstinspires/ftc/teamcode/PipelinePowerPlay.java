@@ -41,7 +41,7 @@ class PipelinePowerPlay extends OpenCvPipeline
      * by forgetting to call mat.release(), and it also reduces memory pressure by not
      * constantly allocating and freeing large chunks of memory.
      */
-    ArrayList<Mat> channel = new ArrayList<>(3);
+    ArrayList<Mat> channels = new ArrayList<>(3);
     private Mat r    = new Mat();
     private Mat g    = new Mat();
     private Mat b    = new Mat();
@@ -125,12 +125,12 @@ class PipelinePowerPlay extends OpenCvPipeline
     public Mat processFrame(Mat input)
     {
         // Extract the RGB channels from the image frame
-        Core.split(input, channel);
+        Core.split(input, channels);
 
         // Pull RGB data for the sample zone from the RBG channels
-        b = channel.get(0).submat(new Rect(sub1PointA,sub1PointB) );
-        g = channel.get(1).submat(new Rect(sub1PointA,sub1PointB) );
-        r = channel.get(2).submat(new Rect(sub1PointA,sub1PointB) );
+        b = channels.get(0).submat(new Rect(sub1PointA,sub1PointB) );
+        g = channels.get(1).submat(new Rect(sub1PointA,sub1PointB) );
+        r = channels.get(2).submat(new Rect(sub1PointA,sub1PointB) );
 
         // Average the three sample zones
         avgR = (int)Core.mean(r).val[0];
