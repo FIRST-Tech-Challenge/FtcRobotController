@@ -97,7 +97,7 @@ public class AutonomousRed extends AutonomousBase {
 
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
-            hubLevel = PipelinePowerPlay.hubLevel;
+            hubLevel = PipelinePowerPlay.signalZone;
             PipelinePowerPlay.saveLastAutoImage();
         }
 

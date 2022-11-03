@@ -13,6 +13,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -40,8 +41,7 @@ class PipelinePowerPlay extends OpenCvPipeline
      * by forgetting to call mat.release(), and it also reduces memory pressure by not
      * constantly allocating and freeing large chunks of memory.
      */
-    private Mat RGB = new Mat();
-    private Mat channel[3];
+    ArrayList<Mat> channel = new ArrayList<>(3);
     private Mat r    = new Mat();
     private Mat g    = new Mat();
     private Mat b    = new Mat();
@@ -68,8 +68,8 @@ class PipelinePowerPlay extends OpenCvPipeline
         directory = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//" + dateString;
         this.redAlliance = redAlliance;
         this.terminalSide = terminalSide;
-        if(redAlliance) {
-            if(terminalSide) {
+        if(this.redAlliance) {
+            if(this.terminalSide) {
                 directory += "/red_terminal";
                 sub1PointA = new Point( 42,190); // 15x15 pixels on signal sleeve
                 sub1PointB = new Point( 57,205);
@@ -79,7 +79,7 @@ class PipelinePowerPlay extends OpenCvPipeline
                 sub1PointB = new Point( 59,205);
             }
         } else {
-            if(terminalSide) {
+            if(this.terminalSide) {
                 directory += "/blue_terminal";
                 sub1PointA = new Point( 40,190); // 15x15 pixels on signal sleeve
                 sub1PointB = new Point( 55,205);
@@ -128,9 +128,9 @@ class PipelinePowerPlay extends OpenCvPipeline
         Core.split(input, channel);
 
         // Pull RGB data for the sample zone from the RBG channels
-        b = channel[0].submat(new Rect(sub1PointA,sub1PointB) );
-        g = channel[1].submat(new Rect(sub1PointA,sub1PointB) );
-        r = channel[2].submat(new Rect(sub1PointA,sub1PointB) );
+        b = channel.get(0).submat(new Rect(sub1PointA,sub1PointB) );
+        g = channel.get(1).submat(new Rect(sub1PointA,sub1PointB) );
+        r = channel.get(2).submat(new Rect(sub1PointA,sub1PointB) );
 
         // Average the three sample zones
         avgR = (int)Core.mean(r).val[0];
@@ -167,12 +167,6 @@ class PipelinePowerPlay extends OpenCvPipeline
         g = null;
         b.release();
         b = null;
-        channel[0].release();
-        channel[0] = null;
-        channel[1].release();
-        channel[1] = null;
-        channel[2].release();
-        channel[2] = null;
 
         return input;
     }
