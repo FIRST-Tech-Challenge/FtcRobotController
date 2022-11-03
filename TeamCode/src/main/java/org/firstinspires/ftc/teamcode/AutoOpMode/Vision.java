@@ -116,15 +116,15 @@ public class Vision {
         POS4
     }
 
-    //Set a default start position
+    //Set a default start and park position
     public static START_POSITION startPosition = START_POSITION.POS1;
+    public static PARKING_LOCATION parkingLocation = PARKING_LOCATION.PARKPOS1;
 
     //Define and declare Robot parking locations
     public enum PARKING_LOCATION{
-        ENDPOS1,
-        ENDPOS2,
-        ENDPOS3,
-        ENDPOS4
+        PARKPOS1,
+        PARKPOS2,
+        PARKPOS3
     }
 
     //Select the different colors on the signal sleeve, and define them here

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.AutoOpMode;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -25,7 +24,7 @@ public class AutoOpMode extends LinearOpMode{
         //public Pose2d startPose = vision.BLUE_ALLIANCE_BLUE_TERMINAL;
 
         //need to fix vision parking positions
-        public Vision.PARKING_LOCATION parkingLocation = Vision.PARKING_LOCATION.ENDPOS1;
+        public Vision.PARKING_LOCATION parkingLocation = Vision.PARKING_LOCATION.PARKPOS1;
         public int loopPickConetoDrop = 0;
         public boolean pickCone = false;
 
@@ -37,9 +36,6 @@ public class AutoOpMode extends LinearOpMode{
         int targetZoneLevel = 0;
 
         double af = Vision.ALLIANCE_FACTOR;
-
-        Trajectory traj;
-        TrajectorySequence trajSeq;
 
         @Override
         public void runOpMode() throws InterruptedException {
@@ -306,36 +302,31 @@ public class AutoOpMode extends LinearOpMode{
 
             //******select start pose******
             while(!isStopRequested()){
-                telemetry.addData("Enter a Start Pose:","");
-                telemetry.addData("Blue Left: (X)", "");
-                telemetry.addData("Blue Right: (Y)", "");
-                telemetry.addData("Red Left: (B)", "");
-                telemetry.addData("Red Right: (A)", "");
+                telemetry.addData("Enter a Park Pose:","");
+                telemetry.addData("Location 1: (X)", "");
+                telemetry.addData("Location 2: (Y)", "");
+                telemetry.addData("Location 3: (B)", "");
                 telemetry.addData("Playing Alliance Selected: ", Vision.playingAlliance);
                 if(gamepad1.x){
-                    Vision.startPosition = Vision.START_POSITION.POS1;
-                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS1;
+                    telemetry.addData("Park Position: ", Vision.parkingLocation);
                     break;
                 }
                 if(gamepad1.y){
-                    Vision.startPosition = Vision.START_POSITION.POS2;
-                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS2;
+                    telemetry.addData("Park Position: ", Vision.parkingLocation);
                     break;
                 }
                 if(gamepad1.b){
-                    Vision.startPosition = Vision.START_POSITION.POS3;
-                    telemetry.addData("Start Position: ", Vision.startPosition);
-                    break;
-                }
-                if(gamepad1.a){
-                    Vision.startPosition = Vision.START_POSITION.POS4;
-                    telemetry.addData("Start Position: ", Vision.startPosition);
+                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS3;
+                    telemetry.addData("Park Position: ", Vision.parkingLocation);
                     break;
                 }
                 telemetry.update();
             }
             telemetry.addData("Playing Alliance Selected : ", Vision.playingAlliance);
             telemetry.addData("StartPose : ", Vision.startPosition);
+            telemetry.addData("ParkPose : ", Vision.parkingLocation);
         }
 
         /**
@@ -348,7 +339,7 @@ public class AutoOpMode extends LinearOpMode{
 
 
             telemetry.addData("Playing Alliance Selected : ", vision.playingAlliance);
-            telemetry.addData("Start Position : ", vision.startPosition);
+            telemetry.addData("Start Position : ", Vision.startPosition);
             telemetry.addData("Parking Location : ", parkingLocation);
 
 
@@ -361,9 +352,7 @@ public class AutoOpMode extends LinearOpMode{
             telemetry.addData("PoseEstimate :", driveTrain.poseEstimate);
             //telemetry.addData("Battery Power", driveTrain.getBatteryVoltage(hardwareMap));
 
-            telemetry.addData("Vision targetLevelDetected : ", vision.targetLevelDetected);
             telemetry.addData("Vision detectedLabel", vision.detectedLabel);
-            telemetry.addData("Vision detectedLabelLeft :", vision.detectedLabelLeft);
             telemetry.addData("Vision targetZone :", targetZone);
             telemetry.addData("Vision targetZoneLevel :", targetZoneLevel);
 
