@@ -150,9 +150,9 @@ public class SimplifiedLinearBaseDrive extends OpMode{
         posSystem.calculatePos();
         //outputs of joysticks
         double left_stick_x = -gamepad1.left_stick_x; //returns a value between [-1, 1]
-        double left_stick_y = gamepad1.left_stick_y; //returns a value between [-1, 1]
+        double left_stick_y = -gamepad1.left_stick_y; //returns a value between [-1, 1]
         double right_stick_x = -gamepad1.right_stick_x; //returns a value between [-1, 1]
-        double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
+        double right_stick_y = -gamepad1.right_stick_y; //returns a value between [-1, 1]
 
         kinematics.getGamepad(left_stick_x, left_stick_y, right_stick_x, right_stick_y);
 

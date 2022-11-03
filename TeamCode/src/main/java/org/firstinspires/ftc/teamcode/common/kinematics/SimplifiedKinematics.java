@@ -23,6 +23,7 @@ public class SimplifiedKinematics {
         NOT_INITIALIZED
     }
     public DriveType type = DriveType.NOT_INITIALIZED;
+    DriveType prevType = type;
 
     //robot's power
     double leftRotatePower = 0.0;
@@ -38,8 +39,8 @@ public class SimplifiedKinematics {
 
     int leftTurnDirectionW = 1;
     int rightTurnDirectionW = 1;
-    int spinDirectionR = 1;
-    int spinDirectionL = 1;
+    int spinDirectionR = -1;
+    int spinDirectionL = -1;
 
     double target;
     double turnAmountL;
@@ -86,9 +87,11 @@ public class SimplifiedKinematics {
         leftCurrentW = posSystem.getLeftWheelW();
         rightCurrentW = posSystem.getRightWheelW();
         currentR = posSystem.getPositionArr()[4];
+        prevType=type;
 
         target = Math.toDegrees(Math.atan2(lx, ly));
         if (lx == 0 && ly == 0) target = 0;
+        else if (lx==0 && ly < 0) target=180;
         target=clamp(target);
 
         if (noMovementRequests()){
@@ -120,6 +123,12 @@ public class SimplifiedKinematics {
             rotatePerc=1;
         } else{
             type=DriveType.LINEAR;
+            if(type==DriveType.LINEAR && prevType==DriveType.SNAP){
+                toplAccelerator.resetTimer();
+                botlAccelerator.resetTimer();
+                toprAccelerator.resetTimer();
+                botrAccelerator.resetTimer();
+            }
             if (spinDirectionL != spinDirectionR){
                 //then something is wrong
                 spinDirectionL = spinDirectionR;
@@ -152,6 +161,8 @@ public class SimplifiedKinematics {
 //            if(Math.abs(turnAmount) > 180){
 //                turnAmount = 360 - Math.abs(turnAmount);
 //            }
+//            //this.target=currentW+turnAmount;
+//            //this.target=clamp(this.target);
 //            if (module == Module.RIGHT){
 //                spinDirectionR *= -1;
 //            } else{
