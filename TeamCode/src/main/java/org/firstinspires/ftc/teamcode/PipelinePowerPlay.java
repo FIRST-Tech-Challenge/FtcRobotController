@@ -71,24 +71,18 @@ class PipelinePowerPlay extends OpenCvPipeline
         if(this.redAlliance) {
             if(this.terminalSide) {
                 directory += "/red_terminal";
-                sub1PointA = new Point( 42,190); // 15x15 pixels on signal sleeve
-                sub1PointB = new Point( 57,205);
             } else {
                 directory += "/red_not_terminal";
-                sub1PointA = new Point( 44,190); // 15x15 pixels on signal sleeve
-                sub1PointB = new Point( 59,205);
             }
         } else {
             if(this.terminalSide) {
                 directory += "/blue_terminal";
-                sub1PointA = new Point( 40,190); // 15x15 pixels on signal sleeve
-                sub1PointB = new Point( 55,205);
             } else {
                 directory += "/blue_not_terminal";
-                sub1PointA = new Point( 57,190); // 15x15 pixels on signal sleeve
-                sub1PointB = new Point( 72,205);
             }
         }
+        sub1PointA = new Point( 150,90);  // 20x20 pixels on signal sleeve
+        sub1PointB = new Point( 170,110);
 
         // Create the directory structure to store the autonomous image used to start auto.
         File autonomousDir = new File(directory);
@@ -128,9 +122,9 @@ class PipelinePowerPlay extends OpenCvPipeline
         Core.split(input, channels);
 
         // Pull RGB data for the sample zone from the RBG channels
-        b = channels.get(0).submat(new Rect(sub1PointA,sub1PointB) );
+        r = channels.get(0).submat(new Rect(sub1PointA,sub1PointB) );
         g = channels.get(1).submat(new Rect(sub1PointA,sub1PointB) );
-        r = channels.get(2).submat(new Rect(sub1PointA,sub1PointB) );
+        b = channels.get(2).submat(new Rect(sub1PointA,sub1PointB) );
 
         // Average the three sample zones
         avgR = (int)Core.mean(r).val[0];
@@ -148,11 +142,11 @@ class PipelinePowerPlay extends OpenCvPipeline
         if(max == avgR) {
             Imgproc.circle(input, marker, 5, new Scalar(255, 0, 0), -1);
             signalZone = 1;
-        } else if(max == avgB) {
-            Imgproc.circle(input, marker, 5, new Scalar(0, 0, 255), -1);
-            signalZone = 2;
         } else if(max == avgG) {
             Imgproc.circle(input, marker, 5, new Scalar(0, 255, 0), -1);
+            signalZone = 2;
+        } else if(max == avgB) {
+            Imgproc.circle(input, marker, 5, new Scalar(0, 0, 255), -1);
             signalZone = 3;
         } else {
             signalZone = 3;

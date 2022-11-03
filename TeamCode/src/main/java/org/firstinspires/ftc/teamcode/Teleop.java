@@ -3,7 +3,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -135,7 +134,7 @@ public abstract class Teleop extends LinearOpMode {
             processGrabberControls();
 
             // Execute any automatic movements
-            // <<TBD>>
+            robot.liftPosRun();
 
 /* DISABLE DRIVER-CENTRIC MODE FOR THIS SEASON
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
@@ -582,6 +581,26 @@ public abstract class Teleop extends LinearOpMode {
     } // processTurretControls
 
     /*---------------------------------------------------------------------------------*/
+    // When the lift is at floor level (+110 degrees) it requires 0.30 minimum
+    // power just to begin lifting
+    double computeLiftMotorPower( double joystick ) {
+        double minPower, motorPower;
+        // Are we working on the front side of the robot?
+        if( robot.liftAngle > 0 ) {
+            // Are we lowering (-) or raising (+) ?
+            minPower = (joystick < 0)? -0.10 : (0.30 * (robot.liftAngle / robot.LIFT_ANGLE_MAX));
+        }
+        else {
+            // TODO: finish this once we establish operation on the back side of the bot
+            minPower = (joystick < 0)? -0.10 : 0.10;
+        }
+        motorPower = minPower + joystick;
+        if( motorPower >  1.0 ) motorPower =  1.0;
+        if( motorPower < -1.0 ) motorPower = -1.0;
+        return motorPower;
+    } // computeLiftMotorPower
+
+    /*---------------------------------------------------------------------------------*/
     void processLiftControls() {
         boolean safeToManuallyLower = (robot.liftAngle < robot.LIFT_ANGLE_MAX);
         boolean safeToManuallyRaise = (robot.liftAngle > robot.LIFT_ANGLE_MIN);
@@ -592,8 +611,9 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 CROSS button
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {   // Lower lift to COLLECT position and adjust collector tilt horizontal
-            robot.grabberStop();
+            robot.grabberSpinStop();
             robot.grabberSetTilt( robot.GRABBER_TILT_GRAB );
+            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         else if( gamepad2_circle_now && !gamepad2_circle_last )
@@ -612,17 +632,17 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last )
         {   // intake cone
             grabberRunTimer.reset();
-            robot.grabberCollect();
+            robot.grabberSpinCollect();
             grabberRunning  = true;
             grabberIntake   = true;
             // start slowly lowering onto cone
-            robot.liftMotorsSetPower( -0.10 );
+            robot.liftMotorsSetPower( -0.15 );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last )
         {   // eject cone
             grabberRunTimer.reset();
-            robot.grabberRelease();
+            robot.grabberSpinEject();
             grabberRunning  = true;
             grabberIntake   = false;
         }
@@ -630,35 +650,41 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         else if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Raise lift to HIGH junction
+            robot.grabberSpinStop();
             robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-            robot.grabberStop();
+            robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Raise lift to MEDIUM junction
-           robot.grabberCollect();
+            robot.grabberSpinStop();
+            robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+            robot.liftPosInit( robot.LIFT_ANGLE_MED );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {   // Raise lift to LOW junction
-           robot.grabberRelease();
+            robot.grabberSpinStop();
+            robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+            robot.liftPosInit( robot.LIFT_ANGLE_LOW );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Lower to GROUND junction
+            robot.grabberSpinStop();
+            robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
         }
         else if( manual_lift_control || liftTweaked ) {
             // Does user want to rotate lift toward more NEGATIVE counts (negative joystick input)
             if( safeToManuallyRaise && (gamepad2_right_stick > 0.05) ) {
-                double motorPower = multSegLinearRot( gamepad2_right_stick ); // POSITIVE
-                if( motorPower > 1.00 ) motorPower = 1.00;
+                double motorPower = computeLiftMotorPower( gamepad2_right_stick ); // POSITIVE
                 robot.liftMotorsSetPower( motorPower );
                 liftTweaked = true;
             }
             // Does user want to rotate lift toward more POSITIVE counts (positive joystick input)
             else if( safeToManuallyLower && (gamepad2_right_stick < -0.05) ) {
-                double motorPower = multSegLinearRot( gamepad2_right_stick ); // NEGATIVE
-                if( motorPower < -1.00 ) motorPower = -1.00;
+                double motorPower = computeLiftMotorPower( gamepad2_right_stick ); // NEGATIVE
                 robot.liftMotorsSetPower( motorPower );
                 liftTweaked = true;
             }
@@ -682,7 +708,7 @@ public abstract class Teleop extends LinearOpMode {
                     // stop lowering
                     robot.liftMotorsSetPower( 0.0 );
                     // stop collecting
-                    robot.grabberStop();
+                    robot.grabberSpinStop();
                     grabberRunning = false;
                 }
             } // intake
@@ -691,7 +717,7 @@ public abstract class Teleop extends LinearOpMode {
                 // Is cycle complete?
                 if( grabberRunTimer.milliseconds() >= 750 ) {
                     // stop ejecting cone
-                    robot.grabberStop();
+                    robot.grabberSpinStop();
                     grabberRunning = false;
                 }
             } // ejection

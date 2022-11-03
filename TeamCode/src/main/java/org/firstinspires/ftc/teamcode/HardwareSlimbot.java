@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.MILLIAMPS;
 import static java.lang.Thread.sleep;
 
-import android.graphics.Color;
 import android.os.Environment;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -11,14 +10,8 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,7 +19,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.HardwareDrivers.MaxSonarI2CXL;
 
@@ -36,9 +28,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.Locale;
-import java.util.Map;
 
 /*
  * Hardware class for goBilda robot (12"x15" chassis with 96mm/3.8" goBilda mecanum wheels)
@@ -117,9 +107,13 @@ public class HardwareSlimbot
     public double       liftAngleOffset    = 148.5;   // allows us to adjust the 0-360 deg range
     public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)
 
-    public double       LIFT_ANGLE_MAX     = 115.0;   // absolute encoder angle at maximum rotation FRONT
+    public double       LIFT_ANGLE_MAX     = 110.0;   // absolute encoder angle at maximum rotation FRONT
     public double       LIFT_ANGLE_MIN     = -20.0;   // absolute encoder angle at maximum rotation REAR
     // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
+    public double       LIFT_ANGLE_COLLECT = 80.0;    // lift position for collecting cones
+    public double       LIFT_ANGLE_LOW     = 60.0;    // lift position for LOW junction
+    public double       LIFT_ANGLE_MED     = 40.0;    // lift position for MEDIUM junction
+    public double       LIFT_ANGLE_HIGH    = 10.0;    // lift position for HIGH junction
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -154,7 +148,7 @@ public class HardwareSlimbot
     public Servo        rightTiltServo      = null;   // tilt GRABBER up/down (right arm)
 
     public double       GRABBER_TILT_MAX    =  0.50;  // 0.5 (max) is up; -0.5 (min) is down
-    public double       GRABBER_TILT_STORE  =  0.50;
+    public double       GRABBER_TILT_STORE  =  0.40;
     public double       GRABBER_TILT_INIT   =  0.35;
     public double       GRABBER_TILT_GRAB   =  0.20;
     public double       GRABBER_TILT_MIN    = -0.50;
@@ -505,23 +499,23 @@ public class HardwareSlimbot
     } // grabberSetTilt
 
     /*--------------------------------------------------------------------------------------------*/
-    public void grabberCollect()
+    public void grabberSpinCollect()
     {
        leftSpinServo.setPower(  GRABBER_PULL_POWER );
        rightSpinServo.setPower( GRABBER_PULL_POWER );
-    } // grabberCollect
+    } // grabberSpinCollect
 
-    public void grabberRelease()
+    public void grabberSpinEject()
     {
        leftSpinServo.setPower(  GRABBER_PUSH_POWER );
        rightSpinServo.setPower( GRABBER_PUSH_POWER );
-    } // grabberRelease
+    } // grabberSpinEject
 
-    public void grabberStop()
+    public void grabberSpinStop()
     {
        leftSpinServo.setPower(  0.0 );
        rightSpinServo.setPower( 0.0 );
-    } // grabberStop
+    } // grabberSpinStop
 
     /*--------------------------------------------------------------------------------------------*/
     /* liftPosInit()                                                                              */
@@ -564,32 +558,34 @@ public class HardwareSlimbot
             // Current distance from target (angle degrees)
             double degreesToGo = liftAngleTarget - liftAngle;
             // Have we achieved the target?
+//          if( liftMotorCycles >= 16 ) {
             if( Math.abs(degreesToGo) < 1.0 ) {
                 liftMotorsSetPower( 0.0 );
-                if( ++liftMotorWait >= 5 ) {
+                if( ++liftMotorWait >= 2 ) {
                     liftMotorAuto = false;
                     writeLiftLog();
                 }
             }
             // No, still not within tolerance of desired target
             else {
-                double minPower, maxPower, liftMotorPower;
+                double liftMotorPower;
                 // Reset the wait count back to zero
                 liftMotorWait = 0;
-                // Determine our max power (don't go straight to 100% power on start-up)
-                switch( liftMotorCycles ) {
-                    case 1  : maxPower=0.33; break;
-                    case 2  : maxPower=0.66; break;
-                    default : maxPower=1.00;
-                }
-                // Determine our min power:
-                // - Current ramping down implies lift is coming to a stop (allow low power)
-                // - Current at zero or increasing means lift won't move unless given enough power
-                minPower = (liftMotorRamp)? 0.30 : 0.40;
-                // Compute motor power (automatically reduce as we approach target)
-                liftMotorPower = degreesToGo / 100.0;  // 1.0 degree error = 1% motor power (0.01)
-                liftMotorPower = Math.copySign( Math.min(Math.abs(liftMotorPower), maxPower), liftMotorPower );
-                liftMotorPower = Math.copySign( Math.max(Math.abs(liftMotorPower), minPower), liftMotorPower );
+                // Are we LOWERING, but quite a ways from target
+                if( degreesToGo > 10.0 )
+                    liftMotorPower = -0.50;
+                // No abrupt changes when lowering, or we'll slip a gear tooth
+                else if( degreesToGo > 5.0 )
+                    liftMotorPower = -0.40;
+                // Are we LOWERING but within 5deg of target?
+                else if( degreesToGo > 0 )
+                    liftMotorPower = -0.30;
+                // Are we RAISING but within 5deg of target?
+                else if( degreesToGo > -5.0 )
+                    liftMotorPower = 0.40;
+                // Otherwise we're RAISING, but quite a ways to go
+                else
+                    liftMotorPower = 0.80;
                 liftMotorsSetPower( liftMotorPower );
             }
         } // liftMotorAuto
@@ -623,7 +619,7 @@ public class HardwareSlimbot
                 String msecString = String.format("%.3f, ", liftMotorLogTime[i] );
                 String pwrString  = String.format("%.3f, ", liftMotorLogPwr[i]  );
                 String ampString  = String.format("%.0f, ", liftMotorLogAmps[i] );
-                String degString  = String.format("%d\r\n", liftMotorLogAngle[i]  );
+                String degString  = String.format("%.2f\r\n", liftMotorLogAngle[i]  );
                 liftLog.write( msecString + pwrString + ampString + degString );
             }
             liftLog.flush();
