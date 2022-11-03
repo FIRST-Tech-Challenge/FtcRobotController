@@ -226,8 +226,7 @@ public class TeleopDualDrivers extends LinearOpMode {
         /* slider motor control */
         RightSliderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         LeftSliderMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        RightSliderMotor.setTargetPosition(sliderTargetPosition);
-        LeftSliderMotor.setTargetPosition(sliderTargetPosition);
+        setSliderPosition(sliderTargetPosition);
         // Reset slider motor encoder counts kept by the motor
         RightSliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftSliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -464,8 +463,7 @@ public class TeleopDualDrivers extends LinearOpMode {
             telemetry.addData("Status", "slider motor Target position %d",
                     sliderTargetPosition);
 
-            RightSliderMotor.setTargetPosition(sliderTargetPosition);
-            LeftSliderMotor.setTargetPosition(sliderTargetPosition);
+            setSliderPosition(sliderTargetPosition);
             RightSliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
             LeftSliderMotor.setPower(SLIDER_MOTOR_POWER);
             telemetry.addData("Status", "Right slider motor current position %d",
@@ -510,7 +508,7 @@ public class TeleopDualDrivers extends LinearOpMode {
                 // set arm, claw, slider position after grep.
                 armServoPosition = armServo.getPosition();
                 clawServoPosition = clawServo.getPosition();
-                sliderTargetPosition = RightSliderMotor.getCurrentPosition();
+                sliderTargetPosition = getSliderPosition();
             }
 
             // Show the elapsed game time and wheel power, positions.
@@ -554,30 +552,29 @@ public class TeleopDualDrivers extends LinearOpMode {
      */
     private void autoUnloadCone() {
         armServo.setPosition(ARM_UNLOAD_POSITION);
-        robotMovingDistance(-robotAutoUnloadMovingDistance, true); // moving back in inch
+        robotRunToPosition(-robotAutoUnloadMovingDistance, true); // moving back in inch
 
         // move down slider a little bit to unload cone
-        sliderTargetPosition = RightSliderMotor.getCurrentPosition();
+        sliderTargetPosition = getSliderPosition();
         int moveSlider = sliderTargetPosition - SLIDER_MOVE_DOWN_POSITION;
         moveSlider = Math.max(moveSlider, SLIDER_MIN_POS);
-        RightSliderMotor.setTargetPosition(moveSlider);
-        LeftSliderMotor.setTargetPosition(moveSlider);
-        waitMotorActionComplete(RightSliderMotor); // make sure left and right motor are complete actions
-        waitMotorActionComplete(LeftSliderMotor);
+        setSliderPosition(moveSlider);
+        waitSliderRun();
 
         clawServo.setPosition(CLAW_OPEN_POS); // unload  cone
         sleep(100); // wait 0.4 sec to make sure clawServo is at grep position
         clawServoPosition = clawServo.getPosition(); // keep claw position
-        sliderTargetPosition = RightSliderMotor.getCurrentPosition();
+        /*
+        sliderTargetPosition = getSliderPosition();
         moveSlider = sliderTargetPosition + SLIDER_MOVE_DOWN_POSITION;
-        RightSliderMotor.setTargetPosition(moveSlider);
-        LeftSliderMotor.setTargetPosition(moveSlider);
-        waitMotorActionComplete(RightSliderMotor);
-        waitMotorActionComplete(LeftSliderMotor);
-        robotMovingDistance(-robotAutoUnloadMovingDistance, true); // move out from junction
+        setSliderPosition(moveSlider);
+        waitSliderRun();
+        */
+        robotRunToPosition(-robotAutoUnloadMovingDistance, true); // move out from junction
         armServo.setPosition(ARM_LOAD_POSITION);
-        waitMotorActionComplete(FrontLeftDrive);
-        sleep(100);
+        waitRobotRun();
+        sliderTargetPosition = WALL_POSITION;
+        //sleep(100);
     }
 
     /**
@@ -594,11 +591,9 @@ public class TeleopDualDrivers extends LinearOpMode {
     private void autoLoadCone(int coneLocation) {
         clawServo.setPosition(CLAW_OPEN_POS);
         armServo.setPosition(ARM_LOAD_POSITION);
-        robotMovingDistance(-robotAutoLoadMovingDistance, true); // moving to loading position
-        RightSliderMotor.setTargetPosition(coneLocation);
-        LeftSliderMotor.setTargetPosition(coneLocation);
-        waitMotorActionComplete(RightSliderMotor);
-        waitMotorActionComplete(LeftSliderMotor);
+        robotRunToPosition(-robotAutoLoadMovingDistance, true); // moving to loading position
+        setSliderPosition(coneLocation);
+        waitSliderRun();
         clawServo.setPosition(CLAW_CLOSE_POS);
         sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
         clawServoPosition = clawServo.getPosition(); // keep claw position
@@ -611,7 +606,7 @@ public class TeleopDualDrivers extends LinearOpMode {
      * @param targetDistance: Input value for the target distance in inch.
      * @param isBackForth: flag for back-forth (true) moving, or left-right moving (false)
      */
-    private void robotMovingDistance(double targetDistance, boolean isBackForth) {
+    private void robotRunToPosition(double targetDistance, boolean isBackForth) {
         int countsPerInch = isBackForth? COUNTS_PER_INCH_DRIVE : COUNTS_PER_INCH_STRAFE;
         int targetPosition = (int)(targetDistance * countsPerInch);
         telemetry.addData("Moving", "auto driving target position %d", targetPosition);
@@ -865,18 +860,16 @@ public class TeleopDualDrivers extends LinearOpMode {
             //preload cone
             clawServo.setPosition(CLAW_CLOSE_POS);
             sleep(200); // wait 0.4 sec to make sure clawServo is at grep position
-            RightSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
-            LeftSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
-            waitMotorActionComplete(RightSliderMotor);
-            waitMotorActionComplete(LeftSliderMotor);
-            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
+            setSliderPosition(LOW_JUNCTION_POS);
+            waitSliderRun();
+            sliderTargetPosition = getSliderPosition(); // set target position to current position
             clawServoPosition = clawServo.getPosition(); // keep claw position
             readColorSensor(backgroundColor);
             // drive robot to sleeve cone
-            robotMovingDistance(20.0, true);
+            robotRunToPosition(20.0, true);
             readColorSensor(sleeveColor); // reading sleeve signal
-            robotMovingDistance(36.0, true); // drive robot to the center of 3rd mat
-            robotMovingDistance(-4.0, true); // throw off sleeve cone
+            robotRunToPosition(36.0, true); // drive robot to the center of 3rd mat
+            robotRunToPosition(-4.0, true); // throw off sleeve cone
             parkingLocation = calculateParkingLocation(sleeveColor, backgroundColor);
 
             telemetry.addData("Sleeve","moving distance (%.1f) inch", parkingLocation);
@@ -885,24 +878,20 @@ public class TeleopDualDrivers extends LinearOpMode {
 
         // move up slider
         if (gamepad2.b) {
-            robotMovingDistance(-12.0, false); // strafe robot half mat to left side
-            RightSliderMotor.setTargetPosition(HIGH_JUNCTION_POS);
-            LeftSliderMotor.setTargetPosition(HIGH_JUNCTION_POS);
-            waitMotorActionComplete(RightSliderMotor); // make sure left and right motor are complete actions
-            waitMotorActionComplete(LeftSliderMotor);
-            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
+            robotRunToPosition(-12.0, false); // strafe robot half mat to left side
+            setSliderPosition(HIGH_JUNCTION_POS);
+            waitSliderRun();
+            sliderTargetPosition = getSliderPosition(); // set target position to current position
         }
 
         if (gamepad2.y) {
-            robotMovingDistance(8.0, true); // drive robot half mat to high junction
+            robotRunToPosition(8.0, true); // drive robot half mat to high junction
         }
         if (gamepad2.right_bumper) {
             autoUnloadCone();
-            RightSliderMotor.setTargetPosition(WALL_POSITION);
-            LeftSliderMotor.setTargetPosition(WALL_POSITION);
-            waitMotorActionComplete(RightSliderMotor); // make sure left and right motor are complete actions
-            waitMotorActionComplete(LeftSliderMotor);
-            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
+            setSliderPosition(WALL_POSITION);
+            waitSliderRun(); // make sure left and right motor are complete actions
+            sliderTargetPosition = getSliderPosition(); // set target position to current position
         }
 
         if (gamepad2.dpad_right) {
@@ -911,15 +900,13 @@ public class TeleopDualDrivers extends LinearOpMode {
         }
 
         if (gamepad2.dpad_down) {
-            robotMovingDistance(38.5, true); // drive robot to loading area
+            robotRunToPosition(38.5, true); // drive robot to loading area
         }
         if (gamepad2.left_bumper) {
             autoLoadCone(coneStack5th); // need update to input cone height position
-            RightSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
-            LeftSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
-            waitMotorActionComplete(RightSliderMotor);
-            waitMotorActionComplete(LeftSliderMotor);
-            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
+            setSliderPosition(LOW_JUNCTION_POS);
+            waitSliderRun();
+            sliderTargetPosition = getSliderPosition(); // set target position to current position
         }
 
         if (gamepad2.dpad_left) {
@@ -928,12 +915,12 @@ public class TeleopDualDrivers extends LinearOpMode {
         }
 
         if (gamepad2.dpad_up) {
-            robotMovingDistance(parkingLocation, true); // drive robot to parking
-            robotMovingDistance(24.0, false); // strafe robot to parking mat
+            robotRunToPosition(parkingLocation, true); // drive robot to parking
+            robotRunToPosition(24.0, false); // strafe robot to parking mat
         }
 
         if (gamepad2.x) {
-            robotMovingDistance(48, false); // strafe testing 48 inch
+            robotRunToPosition(48, false); // strafe testing 48 inch
         }
 
     }
@@ -1005,6 +992,43 @@ public class TeleopDualDrivers extends LinearOpMode {
                 .addData("Green", colorSensor.green())
                 .addData("Blue ", colorSensor.blue());
         telemetry.addData("color", "rgb ratio, %.2f, %.2f, %.2f", colorRatio[0], colorRatio[1], colorRatio[2]);
+    }
+
+    /**
+     * Wait until robot wheel motors complete actions.
+     */
+    private void waitRobotRun() {
+        waitMotorActionComplete(FrontLeftDrive);
+        waitMotorActionComplete(FrontRightDrive);
+        waitMotorActionComplete(BackLeftDrive);
+        waitMotorActionComplete(BackRightDrive);
+    }
+
+    /**
+     * Wait until slider motors complete actions.
+     */
+    private void waitSliderRun() {
+        waitMotorActionComplete(RightSliderMotor);
+        waitMotorActionComplete(LeftSliderMotor);
+    }
+
+    /**
+     * Set slider motors position.
+     * @param sliderMotorPosition the target position for slider left motor and right motor.
+     */
+    private void setSliderPosition(int sliderMotorPosition) {
+        RightSliderMotor.setTargetPosition(sliderMotorPosition);
+        LeftSliderMotor.setTargetPosition(sliderMotorPosition);
+    }
+
+    /**
+     * Read current slider motors position. Return the mean value of left and right motor positions.
+     * return slider motor position.
+     */
+    private int getSliderPosition() {
+        int r = RightSliderMotor.getCurrentPosition();
+        int l = LeftSliderMotor.getCurrentPosition();
+        return (r+l)/2;
     }
 
 }
