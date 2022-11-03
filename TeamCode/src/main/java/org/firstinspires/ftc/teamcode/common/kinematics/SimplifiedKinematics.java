@@ -28,8 +28,8 @@ public class SimplifiedKinematics {
     double leftRotatePower = 0.0;
     double rightRotatePower = 0.0;
     double spinPower = 0.0;
-//    double translatePerc = 0.0;
-//    double rotatePerc = 0.0;
+    double translatePerc = 0.0;
+    double rotatePerc = 0.0;
 
     //target clicks
     public int rightRotClicks = 0;
@@ -99,6 +99,7 @@ public class SimplifiedKinematics {
 
 //            translatePerc = 0;
 //            rotatePerc = 0;
+            return;
         } else if(shouldSnap()){
             wheelOptimization(target, leftCurrentW, Module.LEFT);
             wheelOptimization(target, rightCurrentW, Module.RIGHT);
@@ -197,10 +198,10 @@ public class SimplifiedKinematics {
     public double[] getPower(){
         double[] motorPower = new double[4];
 
-        motorPower[0] = spinPower + leftRotatePower; //top left
-        motorPower[1] = spinPower + leftRotatePower; //bottom left
-        motorPower[2] = spinPower + rightRotatePower; //top right
-        motorPower[3] = spinPower + rightRotatePower; //bottom right
+        motorPower[0] = spinPower * translatePerc + leftRotatePower * rotatePerc; //top left
+        motorPower[1] = spinPower * translatePerc + leftRotatePower * rotatePerc; //bottom left
+        motorPower[2] = spinPower * translatePerc + rightRotatePower * rotatePerc; //top right
+        motorPower[3] = spinPower * translatePerc + rightRotatePower * rotatePerc; //bottom right
 
         toplAccelerator.update(motorPower[0]);
         botlAccelerator.update(motorPower[1]);
