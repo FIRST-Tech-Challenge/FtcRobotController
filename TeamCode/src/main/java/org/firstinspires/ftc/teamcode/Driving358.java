@@ -11,9 +11,9 @@ public abstract class Driving358 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    static final double     COUNTS_PER_MOTOR_REV    = 537.6 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 2 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 3.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_MOTOR_REV    = 537.6 ;    // eg: REV Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 1;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
@@ -36,6 +36,7 @@ public abstract class Driving358 extends LinearOpMode {
         robot.rf.setPower(0);
         robot.lb.setPower(0);
         robot.rb.setPower(0);
+        int hi=0;
         //robot.rotateLeft.setPower(0);
         //robot.rotateRight.setPower(0);
 //        robot.carousel.setPower(0);

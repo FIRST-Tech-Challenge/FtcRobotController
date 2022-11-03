@@ -74,6 +74,9 @@ import java.util.List;
 @Disabled
 public class Blue358Right extends Driving358
 {
+    //dqwhhadast
+    //dqwhhadast
+    int hello=9;
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {
             "Ball",
@@ -134,7 +137,7 @@ public class Blue358Right extends Driving358
         //=======================
         //--actual code----------
         //=======================--------------------------------------------------------
-        int duckLevel = duckDetection();
+        int duckLevel = duckDetection();   // change to todays game
         telemetry.addData("Duck Pos", duckLevel);
         telemetry.update();
         telemetry.addData("Action", "Initial Move");
