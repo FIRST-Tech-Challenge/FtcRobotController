@@ -18,5 +18,8 @@ public class AutonomousTest extends AprilTagDetect {
 //        telemetry.update();
 
         driveOmniInches(0, 24);
+        driveOmniInches(90, 24);
+        driveOmniInches(180, 24);
+        driveOmniInches(270, 24);
     }
 }
