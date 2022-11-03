@@ -25,10 +25,21 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class ConeImageProcessor extends OpenCvPipeline {
 
+	enum SleeveSide {
+		Sleev1,
+		Sleev2,
+		Sleev3,
+		Unkown
+	}
+
+	double sleev1Peak = 119.0 ;
+	double sleev2Peak = 100.0 ;
+	double sleev3Peak = 110.0 ;
+
 	File fileProcessing;
 
 	boolean debug = true;
-	Double  meanVal =new Double(0);
+	double  meanVal = 0.0;
 
 	//Blue Range for the blue cone
 	Scalar blueConeL = new Scalar(105, 100, 00 );
@@ -172,6 +183,35 @@ public class ConeImageProcessor extends OpenCvPipeline {
 	}
 
 
+	/**
+	 * THis operation get SleveSide, according to the mean value calculated.
+	 * @return
+	 */
+	public SleeveSide getSleveSide () {
+		if ( meanVal > 0  ) {
+			//Calculate the diff to peak
+			double diff1 = Math.abs(meanVal - sleev1Peak);
+			double diff2 = Math.abs(meanVal - sleev2Peak);
+			double diff3 = Math.abs(meanVal - sleev3Peak);
+
+			double smallest = Math.min(diff1, Math.min(diff2, diff3));
+			if ( smallest == diff1) {
+				return SleeveSide.Sleev1;
+			} else if (smallest == diff2 ){
+				return SleeveSide.Sleev2;
+
+			} else if ( smallest == diff3 ) {
+				return SleeveSide.Sleev3;
+			} else {
+				return SleeveSide.Unkown;
+			}
+
+
+		} else {
+			return SleeveSide.Unkown;
+		}
+
+	}
 
 
 }

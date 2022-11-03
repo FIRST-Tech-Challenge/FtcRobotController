@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware.ConeImageProcessor;
-import org.firstinspires.ftc.teamcode.hardware.Hardware2022;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -19,13 +18,13 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.hardware.Hardware9010;
+import org.firstinspires.ftc.teamcode.hardware.Hardware2022;
 import org.firstinspires.ftc.teamcode.hardware.MecanumWheels;
 
 //435 max ticks per second is 383.6
 
-@TeleOp(name = "GeneralAuto")
-public class GeneralAuto extends LinearOpMode {
+
+public abstract class BaseAuto extends LinearOpMode {
 
     OpenCvInternalCamera phoneCam;
 
@@ -37,6 +36,7 @@ public class GeneralAuto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
 
+    @Override
     public void runOpMode() {
 
         hdw = new Hardware2022(hardwareMap,telemetry ); //init hardware
@@ -84,5 +84,7 @@ public class GeneralAuto extends LinearOpMode {
 
 
     }
+
+    abstract void movePark();
 
 }
