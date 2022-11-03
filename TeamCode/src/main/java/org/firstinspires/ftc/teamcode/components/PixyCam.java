@@ -135,25 +135,6 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
 
     }
 
-    public int getAvgOffset(int desiredWidth){
-        avg = 0;
-        int ret = 0;
-        int count = 0;
-        int width = GetBiggestBlock().width;
-        arr.add(width);
-        avg += width;
-        if(arr.size() == 50){
-            avg /= 50;
-            for(int i: arr){
-                if(i > avg){
-                    count++;
-                    ret += i;
-                }
-            }
-            return desiredWidth - (ret/count);
-        }
-        return -1;
-    }
 
 
     @Override

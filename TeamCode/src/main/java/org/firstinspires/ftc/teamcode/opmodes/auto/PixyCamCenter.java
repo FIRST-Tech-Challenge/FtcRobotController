@@ -46,9 +46,9 @@ public class PixyCamCenter extends BaseOpMode {
         telemetry.addData("rotationOffset", rotationOffset);
         telemetry.addData("block", s);
         telemetry.addData("coords", coords);
-        telemetry.addData("avg", pixycam.getAvgOffset(100));
+        telemetry.addData("distanceOFfset", distanceOffset);
         Log.d("rotationOffset", rotationOffset + " ");
-        Log.d("distanceOfset", pixycam.getAvgOffset(100) + " ");
+        Log.d("distanceOfset", distanceOffset + " ");
         telemetry.update();
 
     }

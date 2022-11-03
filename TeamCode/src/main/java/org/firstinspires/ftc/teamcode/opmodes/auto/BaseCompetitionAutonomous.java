@@ -36,6 +36,7 @@ public class BaseCompetitionAutonomous extends BaseOpMode {
     public void init() {
         super.init();
         vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
+        mCurrentState = State.IDENTIFY_TARGET;
     }
 
     @Override
@@ -73,7 +74,7 @@ public class BaseCompetitionAutonomous extends BaseOpMode {
                 if (teamAsset == null) {
                     //drive forward slowly/10 inches and identify again
                     //backwards is forwards
-                    if (driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.2)) {
+                    if (driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.4)) {
                         currentPos += 100;
                         teamAsset = Sleeve.BRIAN;
                     }
@@ -96,14 +97,14 @@ public class BaseCompetitionAutonomous extends BaseOpMode {
 
     private void park() {
         if (step == 0) {
-            if (driveSystem.driveToPosition(440-currentPos, DriveSystem.Direction.BACKWARD, 0.3)) {
+            if (driveSystem.driveToPosition(440-currentPos, DriveSystem.Direction.BACKWARD, 0.4)) {
                 step++;
             }
         }
         if (step == 1) {
             if (teamAsset == Sleeve.BRIAN ||
-                    (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.3)) ||
-                    (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.3))) {
+                    (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.4)) ||
+                    (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.4))) {
                 mCurrentState = State.END_STATE;
             }
         }

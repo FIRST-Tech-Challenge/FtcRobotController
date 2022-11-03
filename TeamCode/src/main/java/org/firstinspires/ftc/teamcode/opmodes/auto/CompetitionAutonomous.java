@@ -12,6 +12,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
     public static final int POLE_WIDTH = 45;
     public static final int CONE_WIDTH = 150;
     private boolean park = false;
+    private int sign;
 
     // List of all states the robot could be in
     private enum State {
@@ -43,7 +44,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         super.init();
         step = 0;
         startPosition = From.START;
-        newState(State.ALIGN_WITH_POLE);
+        newState(State.IDENTIFY_TARGET);
     }
 
     /**
@@ -145,7 +146,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                     }
                 }
                 if (step == 1) {
-                    if (driveSystem.turn(-45, 0.2)) {
+                    if (driveSystem.turn(sign* -45, 0.2)) {
                         return true;
                     }
                 }
@@ -164,7 +165,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
             }
         }
         if (step == 1) {
-            if (driveSystem.turn(45, 0.2)) {
+            if (driveSystem.turn(sign * 45, 0.2)) {
                 step = 0;
                 return true;
             }
@@ -185,7 +186,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
         // Rotate
         if(step == 1){
-            if(driveSystem.turnAbsolute(90, 0.3)){
+            if(driveSystem.turnAbsolute(sign *90, 0.3)){
                 step++;
             }
 
@@ -212,7 +213,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         }
 
         if(step == 1){
-            if(driveSystem.turn(-135, 0.3)){
+            if(driveSystem.turn(sign* -135, 0.3)){
                 step++;
             }
         }

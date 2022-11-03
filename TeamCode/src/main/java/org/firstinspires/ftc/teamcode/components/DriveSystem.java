@@ -316,7 +316,6 @@ public class DriveSystem {
      * @param maxPower The maximum power of the motors
      * @return if on heading
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean turn(double degrees, double maxPower) {
         // If controller hub is vertical, use pitch instead of heading
         double heading = DriveParams.IMU_VERT ? imuSystem.getPitch() : imuSystem.getHeading();
@@ -349,7 +348,6 @@ public class DriveSystem {
      * @param heading current heading
      * @return if it finished its turn
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean onHeading(double speed, double heading) {
         double leftSpeed;
 

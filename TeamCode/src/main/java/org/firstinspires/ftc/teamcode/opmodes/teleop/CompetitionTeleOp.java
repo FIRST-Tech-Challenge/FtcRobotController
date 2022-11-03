@@ -22,6 +22,8 @@ public class CompetitionTeleOp extends BaseOpMode {
         float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
         driveSystem.slowDrive(gamepad1.left_trigger > 0.3f);
         driveSystem.drive(rx, lx, ly);
+        telemetry.addData("arm Left encoder ", armSystem.armLeft.getCurrentPosition());
+        telemetry.addData("arm right encoder ", armSystem.armRight.getCurrentPosition());
 
         if (gamepad1.left_trigger > 0.1f) {
             armSystem.intake();
@@ -33,18 +35,18 @@ public class CompetitionTeleOp extends BaseOpMode {
 
         if (gamepad1.a) {
             // Move Bar to Low Position
-            armSystem.driveToLevel(ArmSystem.LOW, 0.2);
+            armSystem.driveToLevel(ArmSystem.LOW, 0.4);
 
         }
 
         if (gamepad1.b) {
             // Move Bar to Middle Position
-            armSystem.driveToLevel(ArmSystem.MEDIUM, 0.2);
+            armSystem.driveToLevel(ArmSystem.MEDIUM, 0.6);
         }
 
         if (gamepad1.y) {
             // Move Bar to High Position
-            armSystem.driveToLevel(ArmSystem.HIGH, 0.2);
+            armSystem.driveToLevel(ArmSystem.HIGH, 0.8);
         }
 
         if (gamepad1.x) {

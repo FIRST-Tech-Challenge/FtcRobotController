@@ -14,8 +14,8 @@ public class ArmSystem {
     public static final int MEDIUM = 800;
     public static final int HIGH = 1100;
     public static final int FLOOR = 0;
-    private final DcMotor armLeft; //arm left is motor1
-    private final DcMotor armRight;
+    public final DcMotor armLeft; //arm left is motor1
+    public final DcMotor armRight;
     private Intake intake;
 
 
@@ -37,15 +37,20 @@ public class ArmSystem {
     public void initMotors() {
         armLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armLeft.setPower(0);
+        armLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armRight.setPower(0);
+        armRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public boolean driveToLevel(int targetPosition, double power){
-
         armLeft.setTargetPosition(targetPosition);
+        armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armLeft.setPower(power);
         armRight.setTargetPosition(targetPosition);
-        armRight.setPower(power);
-        //add code for second motor (armRight)
+        armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armRight.setPower(armLeft.getPower());
+        //add code for secon\\d motor (armRight)
         if(armLeft.getCurrentPosition() == targetPosition){
             armLeft.setPower(0);
             armRight.setPower(0);
