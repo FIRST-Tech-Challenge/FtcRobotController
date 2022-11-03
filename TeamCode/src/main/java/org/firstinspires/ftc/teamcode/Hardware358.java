@@ -50,6 +50,7 @@ public class Hardware358 {
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public Hardware358() {
+        int hello=0;
 
     }
 
