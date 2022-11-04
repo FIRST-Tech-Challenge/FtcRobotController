@@ -636,7 +636,7 @@ public abstract class Teleop extends LinearOpMode {
             grabberRunning  = true;
             grabberIntake   = true;
             // start slowly lowering onto cone
-            robot.liftMotorsSetPower( -0.15 );
+            robot.liftMotorsSetPower( -0.20 );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last )
@@ -661,19 +661,19 @@ public abstract class Teleop extends LinearOpMode {
             robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
             robot.liftPosInit( robot.LIFT_ANGLE_MED );
         }
-        // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
-        else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
+        else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Raise lift to LOW junction
             robot.grabberSpinStop();
             robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
             robot.liftPosInit( robot.LIFT_ANGLE_LOW );
         }
-        // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
-        else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
+        else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {   // Lower to GROUND junction
             robot.grabberSpinStop();
-            robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+  //        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+            robot.liftPosInit( robot.LIFT_ANGLE_GROUND );
         }
         else if( manual_lift_control || liftTweaked ) {
             // Does user want to rotate lift toward more NEGATIVE counts (negative joystick input)
@@ -704,7 +704,7 @@ public abstract class Teleop extends LinearOpMode {
             // Current on an INTAKE cycle?
             if (grabberIntake) {
                 // Is cycle complete?
-                if( grabberRunTimer.milliseconds() >= 500 ) {
+                if( grabberRunTimer.milliseconds() >= 600 ) {
                     // stop lowering
                     robot.liftMotorsSetPower( 0.0 );
                     // stop collecting

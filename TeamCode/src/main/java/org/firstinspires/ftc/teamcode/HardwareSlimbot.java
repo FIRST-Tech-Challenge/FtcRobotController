@@ -104,16 +104,17 @@ public class HardwareSlimbot
     
     protected AnalogInput liftEncoder      = null;    // US Digital absolute magnetic encoder (MA3)
     public double       liftAngle          = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
-    public double       liftAngleOffset    = 148.5;   // allows us to adjust the 0-360 deg range
+    public double       liftAngleOffset    = 157.5;   // allows us to adjust the 0-360 deg range
     public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)
 
-    public double       LIFT_ANGLE_MAX     = 110.0;   // absolute encoder angle at maximum rotation FRONT
+    public double       LIFT_ANGLE_MAX     =  92.0;   // absolute encoder angle at maximum rotation FRONT
     public double       LIFT_ANGLE_MIN     = -20.0;   // absolute encoder angle at maximum rotation REAR
     // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
-    public double       LIFT_ANGLE_COLLECT = 80.0;    // lift position for collecting cones
-    public double       LIFT_ANGLE_LOW     = 60.0;    // lift position for LOW junction
-    public double       LIFT_ANGLE_MED     = 40.0;    // lift position for MEDIUM junction
-    public double       LIFT_ANGLE_HIGH    = 10.0;    // lift position for HIGH junction
+    public double       LIFT_ANGLE_COLLECT = 89.0;    // lift position for collecting cones
+    public double       LIFT_ANGLE_GROUND  = 88.0;    // lift position for collecting cones
+    public double       LIFT_ANGLE_LOW     = 61.0;    // lift position for LOW junction
+    public double       LIFT_ANGLE_MED     = 42.0;    // lift position for MEDIUM junction
+    public double       LIFT_ANGLE_HIGH    = 12.0;    // lift position for HIGH junction
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -148,7 +149,7 @@ public class HardwareSlimbot
     public Servo        rightTiltServo      = null;   // tilt GRABBER up/down (right arm)
 
     public double       GRABBER_TILT_MAX    =  0.50;  // 0.5 (max) is up; -0.5 (min) is down
-    public double       GRABBER_TILT_STORE  =  0.40;
+    public double       GRABBER_TILT_STORE  =  0.30;
     public double       GRABBER_TILT_INIT   =  0.35;
     public double       GRABBER_TILT_GRAB   =  0.20;
     public double       GRABBER_TILT_MIN    = -0.50;
