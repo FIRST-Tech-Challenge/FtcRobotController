@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import android.view.ViewDebug;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,11 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 
 @TeleOp(name = "Official Manual Mode", group = "Match")
 public class OfficialManualMode extends LinearOpMode {
@@ -21,6 +24,7 @@ public class OfficialManualMode extends LinearOpMode {
     private boolean logMode = false;
     private ArrayList<String> logArray = new ArrayList<>();
     private boolean firstTime = true;
+
     private ElapsedTime recentActionTime = new ElapsedTime();
     public double perStepSize = 0.01;
     public int minTimeOfTwoOperations = 50; //milliseconds, 0.05 second
@@ -132,6 +136,7 @@ public class OfficialManualMode extends LinearOpMode {
             "wheel_turn_right @15.6 @0.3"
     ));
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Declare our motors
@@ -178,6 +183,7 @@ public class OfficialManualMode extends LinearOpMode {
         telemetry.addData("_grip manufacturer", _grip.getManufacturer());
         telemetry.update();
 
+
        // _elbow.scaleRange(0.2,0.8);
         waitForStart();
 
@@ -194,6 +200,7 @@ public class OfficialManualMode extends LinearOpMode {
     }
 
     private void controlWheels() {
+
         if (gamepad1.a) {
             replayActions(presetActionsPad1A);
             return;
@@ -210,6 +217,7 @@ public class OfficialManualMode extends LinearOpMode {
             setLogMode(false);
             return;
         }
+
         double y = gamepad1.left_stick_y * 0.5; // Remember, this is reversed!
         double x = -gamepad1.left_stick_x * 1.1 * 0.5; // Counteract imperfect strafing
         double rx = -gamepad1.right_stick_x * 0.5;
@@ -234,9 +242,11 @@ public class OfficialManualMode extends LinearOpMode {
         _rl.setPower(backLeftPower * speedmultiplier);
         _fr.setPower(frontRightPower * speedmultiplier);
         _rr.setPower(backRightPower * speedmultiplier);
+
         //telemetry.addData("FLSpd", frontLeftPower * speedmultiplier);
         //telemetry.addData("RRSpd", backRightPower * speedmultiplier);
         //telemetry.update();
+
     }
 
 
@@ -301,7 +311,9 @@ public class OfficialManualMode extends LinearOpMode {
         double intx = gamepad2.left_stick_x;
         double inty = gamepad2.left_stick_y;
         double otherY = gamepad2.right_stick_y;
+
         //telemetry.addData("This is our left stick X and this is updated", intx);
+
         //telemetry.update();
         double shoulderDir = _shoulder.getPosition() + inty * 0.2;
         double prefDir = _platform.getPosition() + intx*0.2;
@@ -324,6 +336,7 @@ public class OfficialManualMode extends LinearOpMode {
       //_platform.setPosition(prefDir);
      // _elbow.setPosition(prefDir2);
       //_shoulder.setPosition(shoulderDir);
+
         //telemetry.addData("Platform que quiere este", prefDir);
     }
 
@@ -414,9 +427,11 @@ public class OfficialManualMode extends LinearOpMode {
             if (_elbow.getPosition() < (1 - perStepSize)) {
                 _elbow.setPosition(_elbow.getPosition() + perStepSize);
             }
+
         }
 
     }
+
 
     private void resetToPresetPosition(int presetMode) {
         telemetry.addData("Preset position", presetMode);
@@ -452,6 +467,7 @@ public class OfficialManualMode extends LinearOpMode {
             }
             //telemetry.addData("Operations: ", logArray);
             telemetry.update();
+
         }
     }
 
@@ -460,6 +476,7 @@ public class OfficialManualMode extends LinearOpMode {
             logArray.add(s);
         }
         telemetry.addData("logAction", s);
+
         telemetry.addData("_platform ", _platform.getPosition());
         //telemetry.addData("_platform ", _platform.getDirection());
         telemetry.addData("_shoulder ", _shoulder.getPosition());
@@ -526,6 +543,7 @@ public class OfficialManualMode extends LinearOpMode {
             }
         }
         telemetry.update();
+
     }
 
     public void timeWheel(String direction, int timeMilliSeconds, double speed) {
