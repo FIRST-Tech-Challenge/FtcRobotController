@@ -27,7 +27,7 @@ public class RightAuton extends LinearOpMode
         telemetry.addLine(Integer.toString(finalID));
         telemetry.update();
         Auton auton = new Auton(false, finalID);
-        auton.runAutonParkOnly(new SampleMecanumDrive(hardwareMap), hardwareMap);
+        auton.runAutonParkOnly(new Robot(hardwareMap), hardwareMap);
     }
 
 }
