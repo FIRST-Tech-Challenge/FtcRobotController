@@ -161,6 +161,9 @@ class PipelinePowerPlay extends OpenCvPipeline
         g = null;
         b.release();
         b = null;
+        channels.get(0).release();
+        channels.get(1).release();
+        channels.get(2).release();
 
         return input;
     }
