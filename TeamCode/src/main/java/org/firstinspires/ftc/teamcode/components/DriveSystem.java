@@ -196,13 +196,7 @@ public class DriveSystem {
         for (DcMotor motor : motors.values()) {
             Log.i("MOTOR", motor.getCurrentPosition() + "");
             Log.i("MOTOR_POWER", motor.getPower() + "");
-            int offset;
-            if(motor == motors.get(MotorNames.FRONTLEFT)){
-                offset = Math.abs(motors.get(MotorNames.FRONTRIGHT).getCurrentPosition());
-            }
-            else {
-                offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
-            }
+            int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
             if (offset <= DriveParams.TICK_TOLERANCE) {
                 // Shut down motors and reset target
                 stopAndReset();

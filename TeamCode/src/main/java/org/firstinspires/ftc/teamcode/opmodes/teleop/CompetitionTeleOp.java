@@ -23,16 +23,20 @@ public class CompetitionTeleOp extends BaseOpMode {
         float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
         float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
-        driveSystem.slowDrive(gamepad1.left_trigger > 0.3f);
+        driveSystem.slowDrive(gamepad1.left_bumper);
         driveSystem.drive(rx, lx, ly);
         telemetry.addData("arm Left encoder ", armSystem.armLeft.getCurrentPosition());
         telemetry.addData("arm right encoder ", armSystem.armRight.getCurrentPosition());
-        telemetry.addData("arm left target",  armSystem.armLeft.getTargetPosition());
-        telemetry.addData("arm right target", armSystem.armRight.getTargetPosition());
+        telemetry.addData("arm left power",  armSystem.armLeft.getPower());
+        telemetry.addData("arm right power", armSystem.armRight.getPower());
 
 
         if (gamepad1.left_trigger > 0 || armSystem.getState() == INTAKING) {
             armSystem.intake();
+        }
+
+        if(gamepad1.right_bumper){
+            armSystem.toDaGround();
         }
 
         if (gamepad1.right_trigger > 0 || armSystem.getState() == OUTTAKING) {
@@ -41,13 +45,13 @@ public class CompetitionTeleOp extends BaseOpMode {
 
         if (gamepad1.a) {
             // Move Bar to Low Position
-            armSystem.driveToLevel(ArmSystem.LOW, 0.4);
+            armSystem.driveToLevel(ArmSystem.LOW, 0.8);
 
         }
 
         if (gamepad1.b) {
             // Move Bar to Middle Position
-            armSystem.driveToLevel(ArmSystem.MEDIUM, 0.6);
+            armSystem.driveToLevel(ArmSystem.MEDIUM, 0.8);
         }
 
         if (gamepad1.y) {
@@ -57,15 +61,7 @@ public class CompetitionTeleOp extends BaseOpMode {
 
         if (gamepad1.x) {
             //
-            armSystem.driveToLevel(ArmSystem.FLOOR, 0.2);
-        }
-
-        if (gamepad1.dpad_down) {
-            // Move Bar Down Based on Time Pressed
-        }
-
-        if (gamepad1.dpad_up) {
-            // Move Bar Up Based on Time Pressed
+            armSystem.driveToLevel(ArmSystem.FLOOR, 0.8);
         }
     }
 

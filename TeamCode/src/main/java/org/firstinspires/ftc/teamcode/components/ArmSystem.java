@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -10,9 +12,9 @@ import org.firstinspires.ftc.teamcode.params.DriveParams;
 public class ArmSystem {
 
     //fill in constants
-    public static final int LOW = 500;
-    public static final int MEDIUM = 800;
-    public static final int HIGH = 1100;
+    public static final int LOW = 600;
+    public static final int MEDIUM = 1000;
+    public static final int HIGH = 1400;
     public static final int FLOOR = 0;
     public final DcMotor armLeft; //arm left is motor1
     public final DcMotor armRight;
@@ -54,13 +56,26 @@ public class ArmSystem {
         armRight.setTargetPosition(targetPosition);
         armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armRight.setPower(power);
+        armRight.setDirection(armLeft.getDirection());
         //add code for second motor (armRight)
         int offsetLeft = Math.abs(armLeft.getCurrentPosition() - targetPosition);
         int offsetRight = Math.abs(armRight.getCurrentPosition() - targetPosition);
-        if(offsetLeft < DriveParams.TICK_TOLERANCE && offsetRight < DriveParams.TICK_TOLERANCE){
+        Log.d("what is happening", offsetLeft + " " + offsetRight + " " + armLeft.getCurrentPosition() + " " + armRight.getCurrentPosition() + " power " + armLeft.getPower() + " " + armRight.getPower());
+        if(targetPosition != 0 && offsetLeft < 20 && offsetRight < 20 ){
+            Log.d("reached", armLeft.getCurrentPosition() + " " + armRight.getCurrentPosition() + " power " + armLeft.getPower() + " " + armRight.getPower() );
+            return true;
+        }
+        else if (targetPosition > 0 && offsetLeft < 15 && offsetRight < 15){
             return true;
         }
         return false;
+    }
+
+    public void toDaGround(){
+        armRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        armLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        armRight.setPower(0);
+        armLeft.setPower(0);
     }
 
 
