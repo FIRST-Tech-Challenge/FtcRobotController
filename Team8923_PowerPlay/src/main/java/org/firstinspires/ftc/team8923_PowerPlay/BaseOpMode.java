@@ -20,6 +20,8 @@ abstract public class BaseOpMode extends LinearOpMode {
     Servo servoClaw;
 
     public BNO055IMU imu;
+    double bottomMotorSlideLeft;
+    double bottomMotorSlideRight;
 
     public void initHardware() {
         // init drive motors
@@ -54,7 +56,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorSlideRight = hardwareMap.dcMotor.get("motorSlideRight");
         servoClaw = hardwareMap.servo.get("servoClaw");
 
-        // reset encoder
+       // reset encoder
         motorSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorSlideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -65,6 +67,9 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         motorSlideLeft.setDirection(DcMotor.Direction.FORWARD);
         motorSlideRight.setDirection(DcMotor.Direction.REVERSE);
+
+        bottomMotorSlideLeft = motorSlideLeft.getCurrentPosition();
+        bottomMotorSlideRight = motorSlideRight.getCurrentPosition();
     }
 
     public void driveMecanum(double driveAngle, double drivePower, double turnPower){
@@ -79,7 +84,8 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         // gets the largest power
         double scaleFactor = Math.max(Math.max(powerFL, powerFR), Math.max(powerBL, powerBR));
-        // scale the power between the range of -1 and 1
+        // scale the power between the range of -
+        // 1 and 1
         if (scaleFactor > 1) {
             powerFL /= scaleFactor;
             powerFR /= scaleFactor;
