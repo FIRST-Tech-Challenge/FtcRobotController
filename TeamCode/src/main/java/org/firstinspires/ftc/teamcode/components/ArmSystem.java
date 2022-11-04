@@ -77,6 +77,9 @@ public class ArmSystem {
         armLeft.setPower(0);
     }
 
+    public boolean up() {
+        return (armRight.getCurrentPosition() + armLeft.getCurrentPosition())/2 > 50;
+    }
 
     public static class Intake {
         private final DigitalChannel beamBreaker;
