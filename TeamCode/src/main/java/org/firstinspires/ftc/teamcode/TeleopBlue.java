@@ -15,9 +15,6 @@ public class TeleopBlue extends Teleop {
 
     @Override
     public void setAllianceSpecificBehavior() {
-        // 435 rpm motor  = 384.5 encoder pulse/rev at output shaft 
-        // 1150 rpm motor = 145.1 encoder pulse/rev at output shaft 
-        duckVelocityNow  = -100; //blue target counts per second (negative!)
-        duckVelocityStep =  -90; //blue ramp-up step size (negative!)
+        // PowerPlay season doesn't have any red/blue alliance-specific differences
     }
 } // TeleopBlue

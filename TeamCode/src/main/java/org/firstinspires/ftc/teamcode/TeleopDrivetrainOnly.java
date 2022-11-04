@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * TeleOp DriveTrain Only (with test modes).
  */
 @TeleOp(name="Teleop-DrivetrainOnly", group="7592")
-//@Disabled
+@Disabled
 public class TeleopDrivetrainOnly extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Single Wheel Control
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Backwards Drive mode (also turns off driver-centric mode)

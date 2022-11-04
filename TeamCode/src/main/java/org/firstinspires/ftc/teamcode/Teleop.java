@@ -62,8 +62,9 @@ public abstract class Teleop extends LinearOpMode {
     boolean   collectorFlipped = false;  // Collector has been flipped to upside down orientation
 
     ElapsedTime grabberRunTimer = new ElapsedTime();
-    boolean     grabberIntake   = true;
-    boolean     grabberRunning  = false;
+    boolean     grabberRunning  = false;    // is an automatic collector activity running?
+    boolean     grabberIntake   = true;     // is it an INTAKE activity? (false means EJECTION activity)
+    boolean     grabberLifting  = false;    // if an INTAKE, has the collection occurred and now we're auto-lifting?
 
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
@@ -194,8 +195,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Rear ", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
                     rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
             telemetry.addData("Odometry (L/R)", "%d %d cts",  robot.leftOdometerCount, robot.rightOdometerCount );
-            telemetry.addData("Turret", "%d cts  %.1f deg  %.2f mA",
-                    robot.turretMotorPos, robot.turretAngle, robot.turretMotorAmps );
+            telemetry.addData("Turret", "%.1f deg  %.2f mA",  robot.turretAngle, robot.turretMotorAmps );
             telemetry.addData("Lift",   "%.1f deg  %.2f pwr  %.2f mA",
                     robot.liftAngle, robot.liftMotorPwr, robot.liftMotorAmps );
             if( rangeSensorsEnabled ) {
@@ -553,8 +553,8 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processTurretControls() {
-        boolean safeToManuallyLeft  = (robot.turretMotorPos > robot.TURRET_LIMIT_LEFT);
-        boolean safeToManuallyRight = (robot.turretMotorPos < robot.TURRET_LIMIT_RIGHT );
+        boolean safeToManuallyLeft  = (robot.turretAngle > robot.TURRET_LIMIT_LEFT);
+        boolean safeToManuallyRight = (robot.turretAngle < robot.TURRET_LIMIT_RIGHT );
         double  gamepad2_left_stick = gamepad2.left_stick_x;
         boolean manual_turret_control = ( Math.abs(gamepad2_left_stick) > 0.05 );
 
@@ -635,6 +635,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.grabberSpinCollect();
             grabberRunning  = true;
             grabberIntake   = true;
+            grabberLifting  = false;
             // start slowly lowering onto cone
             robot.liftMotorsSetPower( -0.20 );
         }
@@ -645,6 +646,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.grabberSpinEject();
             grabberRunning  = true;
             grabberIntake   = false;
+            grabberLifting  = false;
         }
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
@@ -701,21 +703,29 @@ public abstract class Teleop extends LinearOpMode {
     void processGrabberControls() {
         // Anything to process?
         if( grabberRunning ) {
+            // How much time has elapsed?
+            double elapsedTime = grabberRunTimer.milliseconds();
             // Current on an INTAKE cycle?
-            if (grabberIntake) {
-                // Is cycle complete?
-                if( grabberRunTimer.milliseconds() >= 600 ) {
-                    // stop lowering
-                    robot.liftMotorsSetPower( 0.0 );
+            if( grabberIntake ) {
+                // Is first phase complete?
+                if( (elapsedTime >= 600) && !grabberLifting ) {
                     // stop collecting
                     robot.grabberSpinStop();
+                    // reverse lift motors
+                    robot.liftMotorsSetPower( 0.40 );
+                    grabberLifting = true;
+                }
+                // Is second phase complete?
+                else if( (elapsedTime >= 900) && grabberLifting ) {
+                    // half lift motors
+                    robot.liftMotorsSetPower( 0.0 );
                     grabberRunning = false;
                 }
             } // intake
             // Currently on an EJECTION cycle?
             else {
                 // Is cycle complete?
-                if( grabberRunTimer.milliseconds() >= 750 ) {
+                if( elapsedTime >= 350 ) {
                     // stop ejecting cone
                     robot.grabberSpinStop();
                     grabberRunning = false;

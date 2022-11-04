@@ -14,16 +14,13 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  P_DRIVE_COEFF        = 0.005;   // Larger is more responsive, but also less stable
     static final double  HEADING_THRESHOLD    = 2.0;     // Minimum of 1 degree for an integer gyro
     static final double  P_TURN_COEFF         = 0.050;   // Larger is more responsive, but also less stable
-    static final long    HUB_SCORE_TIME_THRESHOLD = 29500; // Time elapsed in auto where we can still
-                                                           // score in the alliance hub and park
-
-    static final double  DRIVE_SPEED_10       = 0.14;    // Lower speed for moving from a standstill
-    static final double  DRIVE_SPEED_20       = 0.28;    // Lower speed for moving from a standstill
-    static final double  DRIVE_SPEED_30       = 0.42;    // Lower speed for fine control going sideways
-    static final double  DRIVE_SPEED_40       = 0.56;    // Normally go slower to achieve better accuracy
-    static final double  DRIVE_SPEED_50       = 0.65;    //
-    static final double  DRIVE_SPEED_55       = 0.77;    // Somewhat longer distances, go a little faster
-    static final double  TURN_SPEED_20        = 0.28;    // Nominal half speed for better accuracy.
+    static final double  DRIVE_SPEED_10       = 0.10;    // Lower speed for moving from a standstill
+    static final double  DRIVE_SPEED_20       = 0.20;    // Lower speed for moving from a standstill
+    static final double  DRIVE_SPEED_30       = 0.30;    // Lower speed for fine control going sideways
+    static final double  DRIVE_SPEED_40       = 0.40;    // Normally go slower to achieve better accuracy
+    static final double  DRIVE_SPEED_50       = 0.50;    //
+    static final double  DRIVE_SPEED_55       = 0.55;    // Somewhat longer distances, go a little faster
+    static final double  TURN_SPEED_20        = 0.20;    // Nominal half speed for better accuracy.
     static final double  TURN_SPEED_80        = 0.80;    // Nominal half speed for better accuracy.
 
 
