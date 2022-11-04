@@ -5,6 +5,8 @@ public abstract class BaseTeleOp extends BaseOpMode {
     double yPower;
     double tPower;
 
+    int yPosition;
+
     public void driveChassisWithController() {
         xPower = gamepad1.left_stick_x * (1 - gamepad1.right_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
         yPower = gamepad1.left_stick_y * (1 - gamepad1.right_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
@@ -35,12 +37,14 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveSlidesWithController() {
-        yPower = -gamepad2.left_stick_y * Constants.VERTICAL_SLIDE_SPEED_MULTIPLIER * (1 - gamepad2.right_trigger * 0.5);
+        yPosition = (motorLVSlides.getCurrentPosition() + motorRVSlides.getCurrentPosition()) / 2;
 
-        if (Math.abs(gamepad2.left_stick_y) > Constants.VERTICAL_SLIDE_DEADZONE) {
-            driveSlides(yPower);
+        if (motorLVSlides.getTargetPosition() <= 0 || motorRVSlides.getTargetPosition() <= 0) {
+            driveSlides(yPosition, 0.0); 
+        } else if (Math.abs(gamepad2.left_stick_y) > Constants.VERTICAL_SLIDE_DEADZONE) {
+            driveSlides(yPosition + (int) (10 - gamepad2.right_trigger * 5), 1.0);
         } else {
-            driveSlides(0.0);
+            driveSlides(motorLVSlides.getCurrentPosition(), 0.0);
         }
     }
 
@@ -51,6 +55,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
 //            driveTurntable(0, motorTurntable.getCurrentPosition());
 //        }
 
-        driveTurntable(0.5, Constants.TURNTABLE_DEFAULT_POSITION);
+        driveTurntable(1, Constants.TURNTABLE_DEFAULT_POSITION);
     }
 }
