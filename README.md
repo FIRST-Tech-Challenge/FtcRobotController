@@ -1,4 +1,4 @@
-## 🥳 Welcome to `Brighton-FTC`'s 2023 Season!
+## 🤖 Welcome to `Brighton-FTC`'s 2023 Season!
 
 Please click a heading below to get more related info.
 
