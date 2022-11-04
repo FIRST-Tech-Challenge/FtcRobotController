@@ -24,12 +24,7 @@ public class CompetitionTeleOp extends BaseOpMode {
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
         float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
 
-        // If loop so that the default of slow drive is not false,
-        // but instead the prior value (can be true or false as defined by buttons)
-        // and then sets to true of button pressed.
-        if (gamepad1.left_bumper) {
-            driveSystem.slowDrive(gamepad1.left_bumper);
-        }
+        driveSystem.slowDrive(gamepad1.left_bumper || ((armSystem.armRight.getCurrentPosition() + armSystem.armLeft.getCurrentPosition())/2 > 10));
 
         driveSystem.drive(rx, lx, ly);
         telemetry.addData("arm Left encoder ", armSystem.armLeft.getCurrentPosition());
@@ -52,25 +47,21 @@ public class CompetitionTeleOp extends BaseOpMode {
 
         if (gamepad1.a) {
             // Move Bar to Low Position
-            driveSystem.slowDrive(true);
             armSystem.driveToLevel(ArmSystem.LOW, 0.8);
         }
 
         if (gamepad1.b) {
             // Move Bar to Middle Position
-            driveSystem.slowDrive(true);
             armSystem.driveToLevel(ArmSystem.MEDIUM, 0.8);
         }
 
         if (gamepad1.y) {
             // Move Bar to High Position
-            driveSystem.slowDrive(true);
             armSystem.driveToLevel(ArmSystem.HIGH, 0.8);
         }
 
         if (gamepad1.x) {
-            //
-            driveSystem.slowDrive(false);
+            // Move Bar to Cone Position
             armSystem.driveToLevel(ArmSystem.FLOOR, 0.8);
         }
     }
