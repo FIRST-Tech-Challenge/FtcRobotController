@@ -15,7 +15,7 @@ public class ArmSystem {
     public static final int LOW = 500;
     public static final int MEDIUM = 800;
     public static final int HIGH = 1100;
-    public static final int FLOOR = 10;
+    public static final int FLOOR = 100;
     public final DcMotor armLeft; //arm left is motor1
     public final DcMotor armRight;
     private Intake intake;
@@ -71,14 +71,16 @@ public class ArmSystem {
     }
 
     public void toDaGround(){
-        armRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        armLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        armRight.setPower(0);
-        armLeft.setPower(0);
+        if(driveToLevel(FLOOR, 0.2)){
+            armRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armRight.setPower(0);
+            armLeft.setPower(0);
+        }
     }
 
     public boolean up() {
-        return (armRight.getCurrentPosition() + armLeft.getCurrentPosition())/2 > 50;
+        return (armRight.getCurrentPosition() + armLeft.getCurrentPosition())/2 > 600;
     }
 
     public static class Intake {
