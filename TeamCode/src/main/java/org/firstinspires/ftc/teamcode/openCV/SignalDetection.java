@@ -58,8 +58,17 @@ public class SignalDetection extends OpenCvPipeline {
         An area is considered orange when it's HSV lies between the lower and upper HSV threshold */
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
-        Scalar lowHSV = new Scalar(10, 100, 20); //Lower HSV
-        Scalar highHSV = new Scalar(25, 255, 255); //Upper HSV
+        // Orange
+//        Scalar lowHSV = new Scalar(5, 100, 100); //Lower HSV
+//        Scalar highHSV = new Scalar(30, 255, 255); //Upper HSV
+
+        // Purple
+//        Scalar lowHSV = new Scalar(125,100,100);
+//        Scalar highHSV = new Scalar(160,255,255);
+
+        // Green
+        Scalar lowHSV = new Scalar(50,100,100);
+        Scalar highHSV = new Scalar(100,255,255);
         Core.inRange(mat, lowHSV, highHSV, mat); //Update mat to show black and white areas
 
         // Create two submats to read data from
