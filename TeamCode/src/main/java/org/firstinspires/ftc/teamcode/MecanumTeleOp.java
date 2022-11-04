@@ -43,8 +43,9 @@ public class MecanumTeleOp extends LinearOpMode {
         int fieldCentricTrigger = 0;
         boolean liftToggled = true;
         robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         robot.motorLiftRight.setDirection(DcMotor.Direction.REVERSE);
         robot.motorLiftLeft.setDirection(DcMotor.Direction.REVERSE);
 
@@ -88,6 +89,7 @@ public class MecanumTeleOp extends LinearOpMode {
             robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             double currentPos = robot.motorLiftRight.getCurrentPosition();
             robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             if (gamepad1.right_trigger>0.3 && currentPos < 650) {
                 robot.motorLiftRight.setPower(0.55);
                 robot.motorLiftLeft.setPower(0.55);
@@ -97,7 +99,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 robot.motorLiftLeft.setPower(-0.2);
             } else {
                 // hold if pos is within range, otherwise set to 0 - but will this cause a situation where you can never move the lift?
-                if(currentPos>10 && currentPos<650){
+                if(currentPos>10 && currentPos<650) {
                     robot.motorLiftRight.setPower(0.12);
                     robot.motorLiftLeft.setPower(0.12);
                 }
@@ -114,8 +116,6 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("IMU Heading: ", -robot.imu.getAngularOrientation().firstAngle);
             telemetry.addData("Field Centric: ", robot.isFieldCentric);
             telemetry.addData("speed multiplier: ", robot.speedMultiplier);
-            telemetry.addLine("Right Lift Position" + Double.toString(robot.motorLiftRight.getCurrentPosition()));
-            telemetry.addLine("Left Lift Position" + Double.toString(robot.motorLiftLeft.getCurrentPosition()));
             telemetry.update();
         }
     }
