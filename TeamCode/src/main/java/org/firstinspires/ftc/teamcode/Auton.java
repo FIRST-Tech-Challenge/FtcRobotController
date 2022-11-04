@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 public class Auton {
@@ -32,7 +32,7 @@ public class Auton {
 
     }
 
-    public void runAutonParkOnly(SampleMecanumDrive drive, HardwareMap hardwareMap)
+    public void runAutonParkOnly(Robot drive, HardwareMap hardwareMap)
     {
         Servo intake = hardwareMap.get(Servo.class, "intake");
 
@@ -65,7 +65,7 @@ public class Auton {
 
     }
 
-    public void runAutonWithConeNew(SampleMecanumDrive drive, HardwareMap hardwareMap)
+    public void runAutonWithConeNew(Robot drive, HardwareMap hardwareMap)
     {
         Servo intake = hardwareMap.get(Servo.class, "intake");
 //        DcMotor motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
@@ -121,7 +121,7 @@ public class Auton {
         }
     }
 
-    public void runAutonMain(SampleMecanumDrive drive, HardwareMap hardwareMap) {
+    public void runAutonMain(Robot drive, HardwareMap hardwareMap) {
         Servo intake = hardwareMap.get(Servo.class, "intake");
 //        DcMotor motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
 //        DcMotor motorLiftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
