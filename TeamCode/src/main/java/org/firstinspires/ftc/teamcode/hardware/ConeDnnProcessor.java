@@ -31,7 +31,6 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 
 	}
 
-
 	Net net;
 
 	private StringBuffer detectMsgBuf;
@@ -61,6 +60,7 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 
 
 	public Mat processFrame(Mat input) {
+		long startMills  = System.currentTimeMillis();
 		detectMsgBuf = new StringBuffer();
 		/**
 		 * These values need to correspond to the Network used.
@@ -117,6 +117,9 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 				}
 			}
 		}
+
+		long endMills  = System.currentTimeMillis();
+		detectMsgBuf.append(" Duration: " + (endMills - startMills) );
 		detectMsg = detectMsgBuf.toString();
 
 		return input;
