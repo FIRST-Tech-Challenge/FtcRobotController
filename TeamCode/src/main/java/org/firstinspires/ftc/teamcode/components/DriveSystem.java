@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.internal.android.dx.ssa.DomFront;
 import org.firstinspires.ftc.teamcode.params.DriveParams;
 
 import java.util.EnumMap;
@@ -194,6 +195,15 @@ public class DriveSystem {
         }
         // Determine distance from desired target and stop if within acceptable tolerance
         for (DcMotor motor : motors.values()) {
+            if(motor.getDeviceName() == MotorNames.FRONTLEFT.name()){
+                motor.setPower(motors.get(MotorNames.BACKLEFT).getPower());
+            }
+            else if(motor.getDeviceName() == MotorNames.FRONTRIGHT.name()){
+                motor.setPower(motors.get(MotorNames.BACKRIGHT.name()).getPower());
+            }
+            else{
+                motor.setPower(maxPower);
+            }
             Log.i("MOTOR", motor.getCurrentPosition() + "");
             Log.i("MOTOR_POWER", motor.getPower() + "");
             int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
@@ -258,8 +268,9 @@ public class DriveSystem {
                 motor.setTargetPosition(mTargetTicks);
             }
             // Change mode so robot drives to target ticks
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motor.setPower(maxPower);
+            if(motor.getDeviceName() == MotorNames.BACKLEFT.name() || motor.getDeviceName() == MotorNames.BACKRIGHT.name()){
+                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
         });
     }
 
