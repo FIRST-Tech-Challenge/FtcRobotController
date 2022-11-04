@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team417_PowerPlay;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team417_PowerPlay.drive.SampleMecanumDrive;
 
@@ -15,12 +16,20 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor leftEncoder;
     DcMotor rightEncoder;
     DcMotor frontEncoder;
+    DcMotor motorArm;
+
+    Servo grabberServo;
+    Toggler grabberToggle;
+
+    public static final double GRABBER_OPEN = 0.5;
+    public static final double GRABBER_CLOSED = 0.0;
 
     public void initializeHardware() {
         motorFL = hardwareMap.dcMotor.get("motorFL");
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
+        motorArm = hardwareMap.dcMotor.get("motorArm");
 
         leftEncoder = hardwareMap.dcMotor.get("leftEncoder");
         rightEncoder = hardwareMap.dcMotor.get("rightEncoder");
@@ -30,6 +39,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -39,6 +49,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         leftEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -48,16 +59,22 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorFL.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.REVERSE);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
         motorFR.setDirection(DcMotor.Direction.FORWARD);
 
+        grabberServo = hardwareMap.servo.get("grabberServo");
+        grabberServo.setPosition(GRABBER_CLOSED);
+        grabberToggle = new Toggler();
+
         motorFL.setPower(0);
         motorFR.setPower(0);
         motorBL.setPower(0);
         motorBR.setPower(0);
+        motorArm.setPower(0);
     }
 
     public void mecanumDrive(double x, double y, double turning) {
