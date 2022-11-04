@@ -33,9 +33,9 @@ import java.lang.Math;
  *  This is consistent with the FTC field coordinate conventions set out in the document:
  *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
  */
-@Autonomous(name="Autonomous Left", group="7592", preselectTeleOp = "Teleop")
+@Autonomous(name="Autonomous Right", group="7592", preselectTeleOp = "Teleop")
 //@Disabled
-public class AutonomousLeft extends AutonomousBase {
+public class AutonomousRight extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drivetrain.
@@ -161,29 +161,31 @@ public class AutonomousLeft extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void moveToTallJunction() {
 
-        // Drive away from wall
-        timeDriveStraight( DRIVE_SPEED_20, 750 );
+        // Move 8" away from wall before initiating any other robot movements/expansions
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 4.0, 999.9, DRIVE_THRU );
 
         // Tilt grabber down from stored position
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
-        // Drive a bit further
-        timeDriveStraight( DRIVE_SPEED_20, 750 );
+        // Move 8" more way from wall before initiating any other robot movements/expansions
+        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 4.0, 999.9, DRIVE_THRU );
 
         // Raise lift to scoring position
         robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
+
+        // Drive all the way to the tall junction pole
+        gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 43.5, 999.9, DRIVE_TO );
+
+        // If the lift hasn't finish, wait here until it has
         while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
             performEveryLoop();
         }
 
-        // Drive all the way to the tall junction pole
-        timeDriveStraight( DRIVE_SPEED_20, 3800 );
-
         // Turn toward pole
-        gyroTurn(TURN_SPEED_20, 45.0 );   // Turn right 44 degrees
+        gyroTurn(TURN_SPEED_20, 44.0 );   // Turn right 44 degrees
 
         // Drive closer to the pole in order to score
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 1.0, 999.9, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 1.0, 999.9, DRIVE_TO );
 
     } // moveToTallJunction
 
@@ -197,8 +199,11 @@ public class AutonomousLeft extends AutonomousBase {
         }
         robot.grabberSpinStop();
 
-        // Back away from the pole
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -2.0, 999.9, DRIVE_TO );
+        // Drive closer to the pole in order to score
+        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, -2.0, 999.9, DRIVE_TO );
+
+        // Realign to 0 degrees
+        gyroTurn(TURN_SPEED_20, 0.0 );
 
     } // scoreCone
 
@@ -211,48 +216,9 @@ public class AutonomousLeft extends AutonomousBase {
     /* |   | S |   |     S = Starting floor tile                                                  */
     /* +---+---+---/                                                                              */
     private void signalZoneParking( int signalZoneLocation ) {
-
-        if( signalZoneLocation == 1 ) {
-            // Realign back to 0 degrees
-            gyroTurn(TURN_SPEED_20, 0.0 );
-            // Lower lift to driving height
-            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
-            while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
-                performEveryLoop();
-            }
-            // Strafe left one tile
-            timeDriveStrafe( DRIVE_SPEED_30, 1750 );
-            // Back away from center line
-            timeDriveStraight( -DRIVE_SPEED_20, 2000 );
-        } // // signalZoneLocation 1
-
-        else if( signalZoneLocation == 3 ) {
-            // Turn fully 90 deg
-            gyroTurn(TURN_SPEED_20, 90.0 );
-            // Lower lift to driving height
-            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
-            // Drive forward one tile
-            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 20.0, 999.9, DRIVE_TO );
-            // Ensure lift has finished the automatic movement
-            while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
-                performEveryLoop();
-            }
-        } // signalZoneLocation 3
-
-        else { // signalZoneLocation 2
-            // Realign back to 0 degrees
-            gyroTurn(TURN_SPEED_20, 0.0 );
-            // Lower lift to driving height
-            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
-            // Drive back one tile closer to the cone depot
-            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -20.0, 999.9, DRIVE_TO );
-            // Ensure lift has finished the automatic movement
-            while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
-                performEveryLoop();
-            }
-        } // signalZoneLocation
-
-        sleep( 5000 );
+        
+        
+        
     } // signalZoneParking
 
-} /* AutonomousLeft */
+} /* AutonomousRight */

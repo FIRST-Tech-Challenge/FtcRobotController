@@ -112,7 +112,7 @@ public class HardwareSlimbot
     // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
     public double       LIFT_ANGLE_COLLECT = 87.0;    // lift position for collecting cones
     public double       LIFT_ANGLE_GROUND  = 88.0;    // lift position for collecting cones
-    public double       LIFT_ANGLE_LOW     = 61.0;    // lift position for LOW junction
+    public double       LIFT_ANGLE_LOW     = 66.0;    // lift position for LOW junction
     public double       LIFT_ANGLE_MED     = 42.0;    // lift position for MEDIUM junction
     public double       LIFT_ANGLE_HIGH    = 12.0;    // lift position for HIGH junction
 

@@ -21,6 +21,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  DRIVE_SPEED_50       = 0.50;    //
     static final double  DRIVE_SPEED_55       = 0.55;    // Somewhat longer distances, go a little faster
     static final double  TURN_SPEED_20        = 0.20;    // Nominal half speed for better accuracy.
+    static final double  TURN_SPEED_40        = 0.40;    // Nominal half speed for better accuracy.
     static final double  TURN_SPEED_80        = 0.80;    // Nominal half speed for better accuracy.
 
 
@@ -30,8 +31,7 @@ public abstract class AutonomousBase extends LinearOpMode {
      */
     public void performEveryLoop() {
         robot.readBulkData();
-   //     robot.cappingArmPosRun();
-     //   robot.freightArmPosRun();
+        robot.liftPosRun();
     }
 
     /*---------------------------------------------------------------------------------------------
