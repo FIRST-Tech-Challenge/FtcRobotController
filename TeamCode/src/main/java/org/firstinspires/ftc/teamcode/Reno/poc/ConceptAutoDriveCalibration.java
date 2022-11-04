@@ -53,6 +53,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
 
     private ElapsedTime     runtime = new ElapsedTime();
+    private RobotLocation currentRobotLocation = null;
 
     @Override
     public void runOpMode() {
@@ -60,6 +61,8 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         robot.init(hardwareMap);
 
         telemetry.setMsTransmissionInterval(50);
+
+
 
        // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -73,12 +76,26 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         telemetry.setMsTransmissionInterval(50);
         waitForStart();
 
-        this.driveClosedLoop();
-        //this.navigate(12, 12);
+        //this.testLoopDrive();
+        this.testNavigation();
         sleep(1000);  // Pause to display last telemetry message.
     }
 
-    private void driveClosedLoop()
+    private void testNavigation()
+    {
+        this.navigateTo(36, -12);
+        this.currentRobotLocation.thirdAngle = robot.getRawHeading();
+        this.turnHeading(45);
+        driveStraight(DRIVE_SPEED, 6.0);
+        sleep(2000);
+        driveStraight(DRIVE_SPEED, -6.0);
+        this.turnHeading(-45);
+        //this.navigateTo(-12, -12);
+        telemetry.addData("", "current heading %5.2f", robot.getRawHeading());
+        sleep(5000);
+    }
+
+    private void testLoopDrive()
     {
         //drive forward to form a loop
         driveStraight(DRIVE_SPEED, 24.0);
@@ -102,33 +119,86 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         ElapsedTime     timer = new ElapsedTime();
         RobotLocation robotLocation;
         double origAngle = robot.getRawHeading();
+
+        if(currentRobotLocation != null)
+        {
+            telemetry.addData("", currentRobotLocation.toString());
+            telemetry.update();
+            return currentRobotLocation;
+        }
         do {
+            sleep(250);
             robotLocation = robot.getRobotLocationOnField();
+            //sleep(250);
+            if(robotLocation != null)
+            {
+                currentRobotLocation = robotLocation;
+                break;
+            }
             this.turnHeading(45);
-        }while (robotLocation == null && timer.milliseconds() < 1000);
+        }while (robotLocation == null && timer.milliseconds() < 5000);
+
+
 
         if(origAngle != robot.getRawHeading())
         {
-            this.turnHeading(origAngle);
+            //this.turnHeading(origAngle);
         }
+        //this.turnToHeading(90);
+        //this.turnHeading(90);
 
+        if(robotLocation != null) {
+            telemetry.addData("", robotLocation.toString());
+            telemetry.update();
+            //this.turnHeading(robotLocation.thirdAngle);
+            //sleep(25000);
+        }
         return robotLocation;
     }
 
-    public void navigate(double destX, double destY)
+    public void navigateTo(double destX, double destY)
     {
-        Logging.log(String.format("navigate to ... (5.2f, 5.2f)", destX, destY));
+        Logging.log(String.format("navigate to ... (%5.2f, %5.2f)", destX, destY));
         RobotLocation robotLocation = this.getRobotLocation();
 
         if(robotLocation != null) {
             double distanceX = destX - robotLocation.x;
             double distanceY = destY - robotLocation.y;
 
-            Logging.log(String.format(" distance on X axis 5.2f", distanceX));
-            Logging.log(String.format(" distance on Y axis 5.2f", distanceY));
+
+            Logging.log(String.format(" distance on X axis %5.2f", distanceX));
+            Logging.log(String.format(" distance on Y axis %5.2f", distanceY));
+            telemetry.addData("", String.format(" distance on X axis %5.2f", distanceX));
+            telemetry.addData("", String.format(" distance on X axis %5.2f", distanceY));
+            telemetry.update();
+            if(robotLocation.thirdAngle < 0)
+            {
+                this.turnHeading(-robotLocation.thirdAngle);
+
+                telemetry.addData("", "current heading %5.2f", robot.getRawHeading());
+                telemetry.update();
+                sleep(100);
+
+                this.turnHeading(180 - robot.getRawHeading());
+
+                telemetry.addData("", "current heading %5.2f", robot.getRawHeading());
+                telemetry.update();
+                sleep(100);
+
+            }
+            else
+            {
+                this.turnHeading( -1 * robotLocation.thirdAngle);
+            }
+            sleep(1000);
             this.driveStraight(DRIVE_SPEED, distanceX);
             this.turnHeading(90);
             this.driveStraight(DRIVE_SPEED, distanceY);
+        }
+        else
+        {
+            telemetry.addData("Robot location cannot be determined.", null);
+            telemetry.update();
         }
 
     }

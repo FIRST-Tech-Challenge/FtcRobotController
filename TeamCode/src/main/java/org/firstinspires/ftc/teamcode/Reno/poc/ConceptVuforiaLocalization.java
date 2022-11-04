@@ -161,10 +161,15 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
         target.setName("red wall");
 
 
-        target.setLocation(createMatrix((0 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
+        target.setLocation(createMatrix((-24 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
 
         // Set phone location on robot
-        cameraLocation = createMatrix((10 * meterPerInch), (float)(-4.75 * meterPerInch), 0, 90, 0, 0);
+        cameraLocation = createMatrix((14 * meterPerInch), (float)(4 * meterPerInch), 0, 90, 0, 90);
+
+        //target.setLocation(createMatrix((-24 * mmPerInch), (24 * mmPerInch), 0, 90, 0, 90));
+
+        // Set phone location on robot
+        //cameraLocation = createMatrix((0 * mmPerInch), (float)(-0 * mmPerInch), 0, 90, 0, 0);
 
         // Setup listener and inform it of phone information
         //listener = (VuforiaTrackableDefaultListener) target.getListener();
@@ -220,8 +225,10 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
 
                 float[] coordinates = lastLocation.getTranslation().getData();
 
-                robotX = coordinates[0] *1000;
+                robotX = coordinates[0] * 1000;
                 robotY = coordinates[1] * 1000;
+
+                telemetry.addData("robot x/y", "(%5.2f, %5.2f)", robotX, robotY);
                 robotAngle = Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
 
                 telemetry.addData("Pos (inches)", "{X, Y, Z} = %.1f, %.1f, %.1f",

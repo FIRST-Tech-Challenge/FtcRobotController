@@ -7,6 +7,7 @@ public class RobotLocation {
     public double firstAngle;
     public double secondAngle;
     public double thirdAngle;
+    public String targetName;
 
     public RobotLocation(double x, double y, double z, double firstAngle, double secondAngle, double thirdAngle)
     {
@@ -20,7 +21,12 @@ public class RobotLocation {
 
     public String toString()
     {
-        return String.format("Robot location (%5.2f, %5.2f), angle (%5.2f, %5.2f, %5.2f)", this.x, this.y, this.z, this.firstAngle, this.secondAngle, this.thirdAngle);
+        return String.format("Robot location (" + this.targetName + ") (%5.2f, %5.2f), angle (%5.2f, %5.2f, %5.2f)", this.x, this.y, this.z, this.firstAngle, this.secondAngle, this.thirdAngle);
+    }
+
+    public void setTargetName(String targetName)
+    {
+        this.targetName = targetName;
     }
 
 }

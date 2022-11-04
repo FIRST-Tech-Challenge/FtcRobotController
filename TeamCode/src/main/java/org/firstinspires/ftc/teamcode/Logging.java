@@ -109,6 +109,8 @@ public class Logging
 
         fileTxt.setFormatter(logFormatter);
 
+
+
         logger.addHandler(fileTxt);
 
         isSetup = true;
@@ -167,7 +169,7 @@ public class Logging
     {
         if (!enabled) return;
 
-        logger.log(Level.INFO, String.format("%s: %s", currentMethod(2), String.format(message, parms)));
+        logger.log(Level.INFO, String.format(" RENO - %s: %s", currentMethod(2), String.format(message, parms)));
     }
 
     /**

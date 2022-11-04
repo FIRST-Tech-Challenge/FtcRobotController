@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.Reno;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XZY;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -43,6 +44,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -221,6 +223,10 @@ public class HardwareRobot
         this.rightDriveBack.setPower(0);
         this.rightDriveFront.setPower(0);
         this.resetEncoder();
+        if(targets != null)
+        {
+            //targets.deactivate();
+        }
     }
 
     public void tankDrive(double leftPower, double rightPower) {
@@ -415,8 +421,13 @@ public class HardwareRobot
         return AngleUnit.DEGREES.normalize(angles.thirdAngle);
     }
 
-    private void setupVuforia()
+    public void setupVuforia()
     {
+        float CAMERA_FORWARD_DISPLACEMENT  = 0.0f * mmPerInch;   // eg: Enter the forward distance from the center of the robot to the camera lens
+        float CAMERA_VERTICAL_DISPLACEMENT = 7.0f * mmPerInch;   // eg: Camera is 6 Inches above ground
+        float CAMERA_LEFT_DISPLACEMENT     = 0.0f * mmPerInch;   // eg: Enter the left distance from the center of the robot to the camera lens
+
+
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -440,26 +451,39 @@ public class HardwareRobot
         allTrackables.addAll(targets);
 
         // Setup the target to be tracked
-        identifyTarget(0, "Red Audience Wall",   -halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0,  90);
-        identifyTarget(1, "Red Rear Wall",        halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0, -90);
-        identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);
-        identifyTarget(3, "Blue Rear Wall",       halfField,   oneAndHalfTile, mmTargetHeight, 90, 0, -90);
+        identifyTarget(0, "Red Audience Wall",   -halfTile * 2,  halfTile * 2, mmTargetHeight, 90, 0,  90);
+        //identifyTarget(0, "Red Audience Wall",   -halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0,  90);
+        //identifyTarget(1, "Red Rear Wall",        halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0, -90);
+        //identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);
+        //identifyTarget(3, "Blue Rear Wall",       halfField,   oneAndHalfTile, mmTargetHeight, 90, 0, -90);
 
         target = allTrackables.get(0);
         target.setName("Red Audience Wall");
 
 
-        target.setLocation(createMatrix((24 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
+        //target.setLocation(createMatrix((-24 * mmPerInch), (24 * mmPerInch), 0, 90, 0, 90));
 
         // Set phone location on robot
-        cameraLocation = createMatrix((10 * meterPerInch), (float)(-4.75 * meterPerInch), 0, 90, 0, 0);
-
+        //cameraLocation = createMatrix(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT, 90, 0, 90);
+        //cameraLocation = createMatrix((0 * meterPerInch), (float)(0 * meterPerInch), 0, 90, 0, 0);
         // Setup listener and inform it of phone information
         //listener = (VuforiaTrackableDefaultListener) target.getListener();
         //listener.setPhoneInformation(phoneLocation, parameters.cameraDirection);
+
+        //cameraLocation = OpenGLMatrix
+        //        .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
+        //        .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, 90, 90, 0));
+
+        target.setLocation(createMatrix((-24 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
+
+        // Set phone location on robot
+        cameraLocation = createMatrix((float)(14.5 * meterPerInch), (float)(4 * meterPerInch), 0, 90, 0, 90);
+
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(parameters.cameraName, cameraLocation);
         }
+
+        targets.activate();
     }
 
     private OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w)
@@ -471,24 +495,33 @@ public class HardwareRobot
 
     public RobotLocation getRobotLocationOnField()
     {
+        String targetName = "";
+
         for (VuforiaTrackable trackable : allTrackables)
         {
+            targetName = "";
+
             if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible())
             {
                 listener = ((VuforiaTrackableDefaultListener)trackable.getListener());
+                targetName = trackable.getName();
                 OpenGLMatrix robotLocationTransform = listener.getUpdatedRobotLocation();
                 OpenGLMatrix targetLocationTransform = listener.getVuforiaCameraFromTarget();
                 OpenGLMatrix robotLocationOnField = listener.getFtcFieldFromRobot();
                 OpenGLMatrix cameraLocationOnRobot = listener.getCameraLocationOnRobot(webcamName);
                 OpenGLMatrix targetLocationOnField = target.getFtcFieldFromTarget();
 
+                //float[] coordinates = robotLocationOnField.getTranslation().getData();
                 float[] coordinates = robotLocationTransform.getTranslation().getData();
+                VectorF translation = robotLocationTransform.getTranslation();
 
-                robotX = coordinates[0] * 1000;
-                robotY = coordinates[1] * 1000;
-                Orientation orientation = Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+                //robotX = coordinates[0] * 1000;
+                //robotY = coordinates[1] * 1000;
+                robotX = translation.get(0) * 1000;
+                robotY = translation.get(1) * 1000;
+                Orientation orientation = Orientation.getOrientation(robotLocationOnField, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 RobotLocation robotLocation = new RobotLocation(robotX / mmPerInch, robotY / mmPerInch, 0, orientation.firstAngle, orientation.secondAngle, orientation.thirdAngle);
-
+                robotLocation.setTargetName(targetName);
                 Logging.log(robotLocation.toString());
                 return robotLocation;
             }
