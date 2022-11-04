@@ -24,7 +24,7 @@ public class CompetitionTeleOp extends BaseOpMode {
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
         float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
 
-        driveSystem.slowDrive(gamepad1.left_bumper || ((armSystem.armRight.getCurrentPosition() + armSystem.armLeft.getCurrentPosition())/2 > 10));
+        driveSystem.slowDrive(gamepad1.left_bumper || ((armSystem.up())));
 
         driveSystem.drive(rx, lx, ly);
         telemetry.addData("arm Left encoder ", armSystem.armLeft.getCurrentPosition());

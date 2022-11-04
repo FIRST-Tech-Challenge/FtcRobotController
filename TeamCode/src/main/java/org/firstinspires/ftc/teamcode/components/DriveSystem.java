@@ -178,7 +178,7 @@ public class DriveSystem {
                     break;
             }
         });
-        mSlowDrive = false;
+
     }
 
     /**
