@@ -1,6 +1,13 @@
+## Contribution des Dragons 20279 (FRC Dragons 3975)
+Ce repo git est un fork du repo officiel de FTC. Auquel vient s'ajouter la librairie des Dragons, inspirée de la librarire de WPILib pour coder un Robot FTC de la même façon qu'un robot FRC.
+La programmation orienté commandes est documentée ici : https://docs.wpilib.org/fr/stable/docs/software/commandbased/index.html
+C'est un travail toujours en cours qu'il nous fait plaisir de partager avec la communauté FIRST du Québec.
+N'héistez pas à nous contacter (lesdragons3975@gmail.com) si vous voyez une erreur ou si il manque quelque chose d'essentiel (ou non) qui n'a pas été porté.
+La documentation partagée avec la communauté lors du camp de formation des mentors du 5 novembre 2022 plus les autres documentations des Dragons sont disponibles ici : [docDragons](/docDragons)
+
 ## NOTICE
 
-This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.
+This repository contains the public FTC SDK for the Power Play (2022-2023) competition season.
 
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
