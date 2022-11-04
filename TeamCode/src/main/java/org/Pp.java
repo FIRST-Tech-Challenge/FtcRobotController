@@ -25,28 +25,27 @@ class Ppbot{
         BRight = maps.dcMotor.get("br");
         FLeft = maps.dcMotor.get("fl");
         FRight = maps.dcMotor.get("fr");
-        //Take = maps.servo.get("take");
-        //Slider = maps.dcMotor.get("s");
+        Take = maps.servo.get("grabber");
+        Slider = maps.dcMotor.get("slider");
 
         BLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         BRight.setDirection(DcMotorSimple.Direction.FORWARD);
         FLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         FRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Slider.setDirection(DcMotorSimple.Direction.FORWARD);
+        Slider.setDirection(DcMotorSimple.Direction.FORWARD);
 
         BLeft.setPower(0.0);
         BRight.setPower(0.0);
         FLeft.setPower(0.0);
         FRight.setPower(0.0);
-        //Slider.setPower(0.0);
-        //Take.setPosition(1.0);
+        Slider.setPower(0.0);
+        Take.setPosition(1.0);
 
         BLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //Slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        Slider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }
 
@@ -60,7 +59,7 @@ public class Pp extends LinearOpMode{
     double Armpos = 1.0;
     double Slidepos = 0.0;
     final double Armspeed = 0.1;
-    final double Slidespeed = 0.5;
+    final double Slidespeed = 1.0;
     final double rotationScalar = 0.5;
     final double speedScalar = 0.8;
 
@@ -90,21 +89,21 @@ public class Pp extends LinearOpMode{
                 robot.BLeft.setPower(rotationScalar * -rx);
                 robot.BRight.setPower(rotationScalar * -rx);
                 robot.FLeft.setPower(rotationScalar * rx);
-                robot.FRight.setPower(rotationScalar * rx);
+                robot.FRight.setPower(rotationScalar * -rx);
             }
             // if we want to go foward/back do a little motor powering
             else if (Math.abs(y) >= Math.abs(x) && Math.abs(y) > 0.03){
-                robot.BLeft.setPower(speedScalar * -y * 0.9); //-
-                robot.BRight.setPower(speedScalar * y);
-                robot.FLeft.setPower(speedScalar * y); //-
-                robot.FRight.setPower(speedScalar * y * 1.1); //0
+                robot.BLeft.setPower(speedScalar * -y * 0.7); //-
+                robot.BRight.setPower(speedScalar * y * 0.7);
+                robot.FLeft.setPower(speedScalar * y * 0.85); //-
+                robot.FRight.setPower(speedScalar * y); //0
 
             }
             //if we want to go strafing, set a little moter powerfing for strafing
             else if (Math.abs(x) > (Math.abs(y)) && Math.abs(x) > 0.03){
-                robot.BLeft.setPower(speedScalar * x);
-                robot.BRight.setPower(speedScalar * x * 0.8);
-                robot.FLeft.setPower(speedScalar * x);
+                robot.BLeft.setPower(speedScalar * x * 0.7);
+                robot.BRight.setPower(speedScalar * x * 0.7);
+                robot.FLeft.setPower(speedScalar * x * 0.85);
                 robot.FRight.setPower(speedScalar * -x);
             //if we dont want to move make sure we dont move
             } else {
@@ -116,23 +115,28 @@ public class Pp extends LinearOpMode{
             //uppy downy.
             Slidepos = 0.0;
             if (gamepad1.right_bumper)
-                Slidepos += Slidespeed;
+                Slidepos -= Slidespeed / 4;
+            if (gamepad1.left_bumper)
+                Slidepos -= Slidespeed / 40;
             if (Math.abs(gamepad1.right_trigger) > 0.0)
                 Slidepos -= Slidespeed;
+            if (Math.abs(gamepad1.left_trigger) > 0.0)
+                Slidepos -= Slidespeed / 2;
             //open close :)
             if (gamepad1.x)
                 Armpos -= Armspeed;
             if (gamepad1.b)
                 Armpos += Armspeed;
             //set power and position for grabby and shit
-            //robot.Slider.setPower(Slidepos);
+            robot.Slider.setPower(Slidepos);
 
-            Armpos = Range.clip(Armpos, 0.0, 1.0);
-            //robot.Take.setPosition(Armpos);
+            Armpos = Range.clip(Armpos, 0.0, 0.45);
+            robot.Take.setPosition(Armpos);
 
             //telemetry :nerd_emoji:
             telemetry.addData("x","%.2f", x);
             telemetry.addData("y","%.2f", y);
+            telemetry.addData("servo","%.2f", Armpos);
             telemetry.update();
 
             sleep(50);
