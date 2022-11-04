@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.hardware.ConeDnnProcessor;
 import org.firstinspires.ftc.teamcode.hardware.Hardware2022;
 import org.firstinspires.ftc.teamcode.hardware.MecanumWheels;
@@ -12,11 +13,13 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
+import org.openftc.easyopencv.OpenCvSwitchableWebcam;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 @TeleOp(name = "DNN Test")
 public class DnnTest   extends LinearOpMode {
 
-    OpenCvInternalCamera phoneCam;
+    OpenCvWebcam webCam;
 
     ConeDnnProcessor ConeImgPipeline;
 
@@ -34,22 +37,24 @@ public class DnnTest   extends LinearOpMode {
         robot = new MecanumWheels();
 
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName webCamName  = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webCam = OpenCvCameraFactory.getInstance().createWebcam( webCamName    );
+
         ConeImgPipeline = new ConeDnnProcessor();
-        phoneCam.setPipeline(ConeImgPipeline);
+        webCam.setPipeline(ConeImgPipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        //webCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
+                webCam.startStreaming(640,480, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -69,7 +74,7 @@ public class DnnTest   extends LinearOpMode {
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping in this sample
-            sleep(3000);
+            sleep(100);
         }
 
 

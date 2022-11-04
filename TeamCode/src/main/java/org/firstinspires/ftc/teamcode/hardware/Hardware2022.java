@@ -23,9 +23,20 @@ public class Hardware2022 {
     private final double xAxisCoeff = 360 ;  // How many degrees encoder to turn to run an inch in X Axis
     private final double yAxisCoeff = 360 ;  // How many degrees encoder to turn to run an inch in X Axis
 
+    //Encoder value of VSlide height in Cone mode,
+    private final double CONE_SLIDE_LOW = 0 ;
+    private final double CONE_SLIDE_MID = 720 ;
+    private final double CONE_SLIDE_HIGH = 1440 ;
+
+    //Encoder value of VSlide height in No Cone mode
+    private final double NOCONE_SLIDE_LOW = 0 ;
+    private final double NOCONE_SLIDE_MID = 0 ;
+    private final double NOCONE_SLIDE_HIGH = 0 ;
+
 
     private boolean debug = true;
     private Telemetry telemetry;
+
     /**
      * Robot has 2 state,  with a cone , or without a cone
      */
@@ -33,6 +44,13 @@ public class Hardware2022 {
         HasCone,
         NoCone
     }
+    enum SlideHeight {
+        Low,
+        Mid,
+        High
+    }
+
+    private SlideHeight currentVSHeight = SlideHeight.Low;
 
     //Start with no cone.
     RobotState currentState = RobotState.NoCone;
@@ -57,7 +75,7 @@ public class Hardware2022 {
     public DcMotor wheelBackLeft = null;
     //public DcMotor wheelStrafe = null;
 
-    public DcMotor vertical = null;
+    public DcMotor vSlide = null;
 
     public Servo grabberclaw = null;
     public ColorSensor sensorColor = null;
@@ -91,9 +109,10 @@ public class Hardware2022 {
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        vertical = hwMap.get(DcMotor.class, "Vertical");
-        vertical.setDirection(DcMotor.Direction.FORWARD);
-        vertical.setPower(0);
+        vSlide = hwMap.get(DcMotor.class, "Vertical");
+        vSlide.setDirection(DcMotor.Direction.FORWARD);
+        vSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vSlide.setPower(0);
 
         sensorColor = hwMap.get(ColorSensor.class, "clawdistance");
         sensorDistance = hwMap.get(DistanceSensor.class, "clawdistance");
@@ -110,6 +129,9 @@ public class Hardware2022 {
     private void moveXAxis( int distance, double power ) {
 
         wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -160,6 +182,10 @@ public class Hardware2022 {
      */
 
     private void moveYAxis( int distance, double power ) {
+        wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -244,10 +270,69 @@ public class Hardware2022 {
         }
     }
 
+    /**
+     *  This operation to raise Vertical Slide to one level higher
+     */
     public void raiseVerticalSlide (  ) {
         telemetry.addLine().addData("[Dummy >]  ", "Slide Raised ");
         telemetry.update();
+
+        switch ( currentVSHeight) {
+            case Low: {
+                break;
+            }
+
+            case Mid: {
+                break;
+            }
+
+            case High: {
+                //DO noting, already highest
+                break;
+            }
+        }
+
+
     }
+
+    /**
+     * This operation to lower veritical Slide to one level lower.
+     */
+    public void lowerVerticalSlide () {
+
+        switch ( currentVSHeight) {
+            case Low: {
+                //DO nothing, already lowest.
+                break;
+            }
+
+            case Mid: {
+                break;
+            }
+
+            case High: {
+                break;
+            }
+        }
+
+    }
+
+    /**
+     * Lower vertical Slide freely , using game control
+     * @param power
+     */
+    public void freeLowerVerticalSlide( float power ) {
+
+    }
+
+    /**
+     * Raise vertical Slide freely , using game control
+     * @param power
+     */
+    public void freeRaiseVerticalSlide( float power ) {
+
+    }
+
 
     public void releaeCone ( ){
 

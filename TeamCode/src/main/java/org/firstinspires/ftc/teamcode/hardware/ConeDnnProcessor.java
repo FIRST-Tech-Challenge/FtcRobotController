@@ -24,8 +24,8 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 	 */
 	public ConeDnnProcessor() {
 		net = Dnn.readNetFromTensorflow(
-				"/sdcard/First/DNN/ssd_mobilenet_v1_coco_2017_11_17_frozen.pb",
-				"/sdcard/First/DNN/ssd_mobilenet_v1_coco_2017_11_17.pbtxt");
+				"/sdcard/First/DNN/faster_rcnn_inception_v2_coco_2018_01_28_frozen.pb",
+				"/sdcard/First/DNN/faster_rcnn_inception_v2_coco_2018_01_28.pbtxt");
 		//"C:\\git_local\\TF_Training\\faster_rcnn_inception_v2_coco_2018_01_28\\faster_rcnn_inception_v2_coco_2018_01_28_frozen.pb",
 		//"C:\\git_local\\TF_Training\\faster_rcnn_inception_v2_coco_2018_01_28\\faster_rcnn_inception_v2_coco_2018_01_28.pbtxt" );
 
@@ -35,6 +35,7 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 	Net net;
 
 	private StringBuffer detectMsgBuf;
+	private String detectMsg ;
 
 	boolean debug = true;
 
@@ -66,8 +67,8 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 		 * Fast RCNN:  800 x 600,  Scale = 1.0 , mean 0
 		 * SSD Mobilenet v1  300 X 300 , Scale 1.0 , mean 0
 		 */
-		final int IN_WIDTH = 300;
-		final int IN_HEIGHT = 300;
+		final int IN_WIDTH = 800;
+		final int IN_HEIGHT = 600;
 
 		final double IN_SCALE_FACTOR = 1.0;
 		final double MEAN_VAL = 0;
@@ -92,14 +93,17 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 				double confidence = conf[0];
 				if (confidence > THRESHOLD) {
 					int classId = (int) detections.get(i, 1)[0];
+					String label = classNames[classId] + ": " + confidence;
+					detectMsgBuf.append( label + " " );
+
+					/*
 					int left = (int) (detections.get(i, 3)[0] * cols);
 					int top = (int) (detections.get(i, 4)[0] * rows);
 					int right = (int) (detections.get(i, 5)[0] * cols);
 					int bottom = (int) (detections.get(i, 6)[0] * rows);
+
 					// Draw rectangle around detected object.
 					Imgproc.rectangle(input, new Point(left, top), new Point(right, bottom), new Scalar(0, 255, 0));
-					String label = classNames[classId] + ": " + confidence;
-					detectMsgBuf.append( label + " " );
 					int[] baseLine = new int[1];
 					Size labelSize = Imgproc.getTextSize(label, Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, 1, baseLine);
 					// Draw background for label.
@@ -109,18 +113,20 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 					// Write class name and confidence.
 					Imgproc.putText(input, label, new Point(left, top), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5,
 							new Scalar(0, 0, 0));
+					*/
 				}
 			}
 		}
+		detectMsg = detectMsgBuf.toString();
 
 		return input;
 	}
 
 	public String getDetectMsg() {
-		if (detectMsgBuf!=null) {
-			return detectMsgBuf.toString();
+		if (detectMsg!=null) {
+			return detectMsg;
 		} else {
-			return " NONE";
+			return "N1ONE";
 		}
 	}
 
