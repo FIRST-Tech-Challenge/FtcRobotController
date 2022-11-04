@@ -81,11 +81,11 @@ public class DriveSystem {
             switch(name) {
                 case FRONTLEFT:
                 case BACKLEFT:
-                    motor.setDirection(DcMotorSimple.Direction.FORWARD);
+                    motor.setDirection(DcMotorSimple.Direction.REVERSE);
                     break;
                 case FRONTRIGHT:
                 case BACKRIGHT:
-                    motor.setDirection(DcMotorSimple.Direction.REVERSE);
+                    motor.setDirection(DcMotorSimple.Direction.FORWARD);
                     break;
             }
         });
@@ -270,7 +270,7 @@ public class DriveSystem {
             if(name == MotorNames.BACKLEFT || name == MotorNames.BACKRIGHT){
                 motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }else{
-                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
         });
     }
