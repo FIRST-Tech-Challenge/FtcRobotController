@@ -57,7 +57,6 @@ public class RotateTest extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
-        reset = new Reset(robot);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
@@ -65,6 +64,8 @@ public class RotateTest extends OpMode{
         posSystem = new GlobalPosSystem(robot);
         kinematics = new LinearKinematicsTestJR(posSystem);
         posSystem.grabKinematics(kinematics);
+        reset = new Reset(robot,posSystem);
+
     }
 
     @Override

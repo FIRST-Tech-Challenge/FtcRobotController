@@ -1,28 +1,47 @@
 package org.firstinspires.ftc.teamcode.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
 public class Reset {
     HardwareDrive robot;
+    GlobalPosSystem globalPosSystem;
     Constants constants = new Constants();
+    ElapsedTime gapTime = new ElapsedTime();
+    int waitForMS = 500;
+    double prevTime=0;
+    double currentTime=0;
 
     boolean STOP_RESET_L = false;
     boolean STOP_RESET_R = false;
     boolean isResetCycle = false;
 
-    public Reset(HardwareDrive r){
+    public Reset(HardwareDrive r, GlobalPosSystem gps){
         robot = r;
+        globalPosSystem=gps;
+        gapTime.reset();
     }
 
     public void reset(boolean shouldReset){
         if (shouldReset){
-            updateReset();
+            if(gapTime.milliseconds()-prevTime>waitForMS){
+                updateReset();
+            }else{
+                robot.botL.setPower(0);
+                robot.topL.setPower(0);
+                robot.botR.setPower(0);
+                robot.topR.setPower(0);
+            }
+
         } else{
             STOP_RESET_L = false;
             STOP_RESET_R = false;
             isResetCycle = false;
+            gapTime.reset();
+            prevTime=gapTime.milliseconds();
         }
     }
 
@@ -71,6 +90,8 @@ public class Reset {
                 robot.botL.setPower(0);
                 robot.topL.setPower(0);
 
+                globalPosSystem.hardResetGPS();
+
                 STOP_RESET_L = true;
             } else if (!STOP_RESET_L){
                 robot.botL.setPower(0.3);
@@ -86,6 +107,8 @@ public class Reset {
 
                 robot.botR.setPower(0);
                 robot.topR.setPower(0);
+
+                globalPosSystem.hardResetGPS();
 
                 STOP_RESET_R = true;
             } else if (!STOP_RESET_R){

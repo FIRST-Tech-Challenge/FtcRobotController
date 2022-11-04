@@ -21,12 +21,16 @@ public class Accelerator {
             isAccelerateCycle = true;
         }
 
-        double accelerationFactor = (Math.tanh(0.5 * accelerationTimer.seconds() - 1.5) / 2.5) + 0.6;
+        double accelerationFactor = Math.pow(accelerationTimer.seconds()/8.0,3);
         power *= accelerationFactor;
 
         if (power > 1) power = 1;
         else if (power < -1) power = -1;
 
         return power;
+    }
+
+    public void resetTimer(){
+        accelerationTimer.reset();
     }
 }
