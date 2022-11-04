@@ -76,6 +76,7 @@ public abstract class BaseAuto extends LinearOpMode {
         while (opModeIsActive())
         {
             telemetry.addData("Analysis", ConeImgPipeline.getMeanVal());
+            telemetry.addData("Sleeve: ", ConeImgPipeline.getSleveSide());
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping in this sample

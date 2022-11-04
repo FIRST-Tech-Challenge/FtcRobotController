@@ -49,7 +49,7 @@ public class DnnTest   extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(800,600, OpenCvCameraRotation.UPSIDE_DOWN);
+                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -69,7 +69,7 @@ public class DnnTest   extends LinearOpMode {
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping in this sample
-            sleep(100);
+            sleep(3000);
         }
 
 

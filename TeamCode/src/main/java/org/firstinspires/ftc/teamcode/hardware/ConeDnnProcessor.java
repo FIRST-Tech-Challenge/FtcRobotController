@@ -20,14 +20,14 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class ConeDnnProcessor extends OpenCvPipeline {
 
 	/**
-	 * Load net during construct
+	 * Load net during constructx
 	 */
 	public ConeDnnProcessor() {
 		net = Dnn.readNetFromTensorflow(
-		//		"/sdcard/First/faster_rcnn_inception_v2_coco_2018_01_28_frozen.pb",
-		//		"/sdcard/First/faster_rcnn_inception_v2_coco_2018_01_28.pbtxt");
-		"D:\\git_local\\TF_Training\\faster_rcnn_inception_v2_coco_2018_01_28\\faster_rcnn_inception_v2_coco_2018_01_28_frozen.pb",
-		"D:\\git_local\\TF_Training\\faster_rcnn_inception_v2_coco_2018_01_28\\faster_rcnn_inception_v2_coco_2018_01_28.pbtxt" );
+				"/sdcard/First/DNN/ssd_mobilenet_v1_coco_2017_11_17_frozen.pb",
+				"/sdcard/First/DNN/ssd_mobilenet_v1_coco_2017_11_17.pbtxt");
+		//"C:\\git_local\\TF_Training\\faster_rcnn_inception_v2_coco_2018_01_28\\faster_rcnn_inception_v2_coco_2018_01_28_frozen.pb",
+		//"C:\\git_local\\TF_Training\\faster_rcnn_inception_v2_coco_2018_01_28\\faster_rcnn_inception_v2_coco_2018_01_28.pbtxt" );
 
 	}
 
@@ -66,8 +66,8 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 		 * Fast RCNN:  800 x 600,  Scale = 1.0 , mean 0
 		 * SSD Mobilenet v1  300 X 300 , Scale 1.0 , mean 0
 		 */
-		final int IN_WIDTH = 800;
-		final int IN_HEIGHT = 600;
+		final int IN_WIDTH = 300;
+		final int IN_HEIGHT = 300;
 
 		final double IN_SCALE_FACTOR = 1.0;
 		final double MEAN_VAL = 0;
@@ -117,10 +117,14 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 	}
 
 	public String getDetectMsg() {
-		return detectMsgBuf.toString();
+		if (detectMsgBuf!=null) {
+			return detectMsgBuf.toString();
+		} else {
+			return " NONE";
+		}
 	}
 
-	private static final String[] classNames = {"person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck",
+	private static final String[] classNames = {"background","person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck",
 			"boat", "traffic light", "fire hydrant", "street sign", "stop sign", "parking meter", "bench", "bird", "cat", "dog", 
 			"horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "hat", "backpack", "umbrella", "shoe", "eye glasses",
 			"handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat", "baseball glove", 
