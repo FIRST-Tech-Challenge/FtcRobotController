@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * This OpMode ramps a single motor speed up and down repeatedly until Stop is pressed.
  * The code is structured as a LinearOpMode
  *
- * This code assumes a DC motor configured with the name "left_drive" as is found on a pushbot.
+ * This code assumes a DC motor configured with the name "left_drive" as is found on a Robot.
  *
  * INCREMENT sets how much to increase/decrease the power each cycle
  * CYCLE_MS sets the update period.
