@@ -65,7 +65,7 @@ public class CompetitionTeleOp extends BaseOpMode {
         }
 
         if (gamepad1.dpad_down) {
-            ArmSystem.killMotors();
+            armSystem.killMotors();
         }
 
         if (gamepad1.dpad_up) {

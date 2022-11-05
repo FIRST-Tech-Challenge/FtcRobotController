@@ -16,8 +16,8 @@ public class ArmSystem {
     public static final int MEDIUM = 800;
     public static final int HIGH = 1100;
     public static final int FLOOR = 100;
-    public static DcMotor armLeft = null; //arm left is motor1
-    public static DcMotor armRight = null;
+    public DcMotor armLeft; //arm left is motor1
+    public DcMotor armRight;
     private Intake intake;
 
 
@@ -28,7 +28,7 @@ public class ArmSystem {
         intake = new Intake(intakeMotor, beam);
     }
 
-    public static void killMotors() {
+    public void killMotors() {
         armLeft.setPower(0);
         armRight.setPower(0);
     }
