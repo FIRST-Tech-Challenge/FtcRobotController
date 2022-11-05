@@ -25,6 +25,35 @@ public abstract class BaseTeleOp extends BaseOpMode {
         } else {
             driveWithIMU(xPower, yPower, tPower);
         }
+
+        // dpad quick turns: rotate to an interval of 90 degrees
+        if (gamepad1.dpad_up) {
+            IMUOriginalAngle = 0.0;
+        } else if (gamepad1.dpad_right) {
+            IMUOriginalAngle = -90.0;
+        } else if (gamepad1.dpad_down) {
+            IMUOriginalAngle = 180.0;
+        } else if (gamepad1.dpad_left) {
+            IMUOriginalAngle = 90.0;
+        }
+
+        // bumper button quick turns: rotate by +/-90 degrees
+        if (gamepad1.left_bumper) {
+            IMUOriginalAngle = loopAddAngle(IMUOriginalAngle, 90.0);
+        } else if (gamepad1.right_bumper) {
+            IMUOriginalAngle = loopAddAngle(IMUOriginalAngle, -90.0);
+        }
+    }
+
+    private static double loopAddAngle(double original, double addition) {
+        // add to the original imu angle, but loop around if it goes past +/-180
+        double newAngle = original + addition;
+        if (newAngle > 180.0) {
+            newAngle -= 360.0;
+        } else if (newAngle < -180.0) {
+            newAngle += 360.0;
+        }
+        return newAngle;
     }
 
     public void driveGrabberWithController() {

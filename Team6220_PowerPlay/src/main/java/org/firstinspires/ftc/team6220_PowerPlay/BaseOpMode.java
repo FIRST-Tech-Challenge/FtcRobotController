@@ -27,7 +27,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // IMU
     public BNO055IMU imu;
-    Orientation IMUOriginalAngles; // original angle reading from imu that will be used to find unwanted angle offset during drive
+    public double IMUOriginalAngle; // original angle reading from imu that will be used to find unwanted angle offset during drive
 
     // flag to say whether we should disable the correction system
     boolean turnFlag = false;
@@ -85,7 +85,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         imu.initialize(parameters);
 
         // preset the IMU angles so it doesn't start on null since it will only later be read when turning
-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        IMUOriginalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
@@ -96,7 +96,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         boolean isTurning = (tPower != 0);
 
         if (isTurning || turnFlag) {
-            IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // set original angle
+            IMUOriginalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // set original angle
 
             if (!turnFlag) {
                 turnFlag = true;
@@ -106,7 +106,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         } else {
             // obtain the current angle's error from the original angle
             Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            double angleError = IMUOriginalAngles.firstAngle - currentAngle.firstAngle;
+            double angleError = IMUOriginalAngle - currentAngle.firstAngle;
 
             // flip to inverse of angles above 180 / below -180 (to prevent infinity-rotate bug)
             // to make sure to use the shorter angle
