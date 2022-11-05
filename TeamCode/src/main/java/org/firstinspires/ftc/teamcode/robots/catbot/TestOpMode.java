@@ -121,7 +121,7 @@ public class TestOpMode extends OpMode {
             claw.setPosition(.05);
     }
     public void calib(){
-        telemetry.addData("elevator calibrating...", elevator.getposition());
+        telemetry.addData("elevator calibrating...", elevator.getCurrentPosition());
         //get elevator amperage, probably with a method in dcmotorex instead of the dcmotor class
         //might have to switch to dcmotorex for all of the motors
         //while amperage < stallValue (checks for stall)

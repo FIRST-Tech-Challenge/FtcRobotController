@@ -82,13 +82,6 @@ public class Crane implements Subsystem {
     private boolean extenderActivePID = true;
     private boolean shoulderActivePID = true;
 
-    public static double kpExtender = 0.006; //proportional constant multiplier goodish
-    public static  double kiExtender = 0.0; //integral constant multiplier
-    public static  double kdExtender = 0.0;
-
-    public static double kpShoulder = 0.002; //proportional constant multiplier goodish
-    public static  double kiShoulder = 0.0; //integral constant multiplier
-    public static  double kdShoulder = 0.0; //derivative constant multiplier
 
     public Servo bulbServo;
     public DcMotorEx extenderMotor;
@@ -226,8 +219,8 @@ public class Crane implements Subsystem {
             case 6:
                 if (System.nanoTime()>futureTime) {
                     calibrateStage = 0;
-                    setHeight(20);
-                    setDistance(20);
+                    setHeight(0);
+                    setDistance(30);
                     calibrated = true;
                     return true;
                 }
@@ -342,12 +335,12 @@ public class Crane implements Subsystem {
         //update the turret's target
         robot.turret.setTargetHeading(targetTurretAngle);
         if(shoulderActivePID)
-            movePIDShoulder(kpShoulder, kiShoulder, kdShoulder, shoulderDirectAnglePos, shoulderTargetPos);
+            movePIDShoulder(SHOULDER_PID.kP, SHOULDER_PID.kI, SHOULDER_PID.kD, shoulderDirectAnglePos, shoulderTargetPos);
         else
             shoulderTargetPos = shoulderDirectAnglePos;
 
         if(extenderActivePID)
-            movePIDExtend(kpExtender, kiExtender, kdExtender, extendPosition, extenderTargetPos);
+            movePIDExtend(EXTENDER_PID.kP, EXTENDER_PID.kI, EXTENDER_PID.kD, extendPosition, extenderTargetPos);
         else
             extenderTargetPos = extendPosition;
 
@@ -468,9 +461,9 @@ public class Crane implements Subsystem {
         bulbGripped = !bulbGripped;
     }
 
-    double pickupMemoryTurretHeading;
-    int pickupMemoryShoulderTick;
-    int pickupMemoryExtendTick;
+    double pickupMemoryTurretHeading = 0;
+    int pickupMemoryShoulderTick = 0;
+    int pickupMemoryExtendTick = (int)(0.2*EXTEND_TICKS_PER_METER);
 
     public void closeGripper(){
 
@@ -492,9 +485,9 @@ public class Crane implements Subsystem {
         extenderTargetPos = pickupMemoryExtendTick;
     }
 
-    double dropMemoryTurretHeading;
-    int dropMemoryShoulderTick;
-    int dropMemoryExtendTick;
+    double dropMemoryTurretHeading = 0;
+    int dropMemoryShoulderTick = (int)(45*SHOULDER_TICKS_PER_DEGREE);
+    int dropMemoryExtendTick = (int)(0.2*EXTEND_TICKS_PER_METER);
 
     public void openGripper(){
 
