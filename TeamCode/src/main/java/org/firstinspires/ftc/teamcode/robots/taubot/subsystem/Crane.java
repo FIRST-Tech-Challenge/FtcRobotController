@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
 
+import org.firstinspires.ftc.teamcode.robots.taubot.util.CranePositionMemory;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
@@ -78,7 +79,7 @@ public class Crane implements Subsystem {
     public static final double CRANE_LENGTH = .3683;
     double extenderPwr = 1;
     double extendCorrection = 0;
-    int extenderTargetPos = 0;
+    double extenderTargetPos = 0;
     private boolean extenderActivePID = true;
     private boolean shoulderActivePID = true;
 
@@ -177,21 +178,21 @@ public class Crane implements Subsystem {
                     shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     shoulderAngleEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    shoulderTargetPos = -(int)(SHOULDER_DEG_MAX*SHOULDER_DIRECT_TICKS_PER_DEGREE);
+                    shoulderTargetPos = -SHOULDER_DEG_MAX;
                     shoulderActivePID = true;
                     calibrateStage++;
                 }
                 break;
 
             case 3:
-                if (shoulderDirectAnglePos>shoulderTargetPos-20 && shoulderDirectAnglePos<shoulderTargetPos+20){ //shoulder is horizontal, so reset encoder to begin from here - normally use shoulderPID.onTarget(), but that might not be setup correctly yet
+                if (shoulderAngle >shoulderTargetPos-2 && shoulderAngle <shoulderTargetPos+2){ //shoulder is horizontal, so reset encoder to begin from here - normally use shoulderPID.onTarget(), but that might not be setup correctly yet
                     shoulderActivePID = false;
                     shoulderAngleEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //now horizontal should be at zero
                     shoulderTargetPos=0;
                     shoulderActivePID = true;
                     // WATCH OUT - begin extending arm - we want to find max extension (once established we will normally not do this)
                     if (EXTENDER_CALIBRATE_MAX) extenderMotor.setPower(.6);
-                    shoulderTargetPos = 700;
+                    shoulderTargetPos = 30;
                     calibrateStage++;
                 }
                 break;
@@ -233,7 +234,7 @@ public class Crane implements Subsystem {
 
     double shoulderCorrection = 0;
     double shoulderPwr = 1;
-    int shoulderTargetPos = 0;
+    double shoulderTargetPos = 0;
 
     public void movePIDShoulder(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
 
@@ -275,20 +276,45 @@ public class Crane implements Subsystem {
     }
 
     public enum Articulation {
-        TEST_INIT(0, false),
-        CAP(30, true);
+        defaultPosition,
+        manual,
+        dropCone,
+        pickupCone,
 
-        public double shoulderPos;
-        public boolean bulbGripped;
+    }
 
-        Articulation(double shoulderPos, boolean elbowPos) {
-            this.shoulderPos = shoulderPos;
-            //this.bulbGripped = elbowPos;
+    public Articulation articulate(Articulation target){
+        articulation = target;
+
+        switch(articulation){
+            case defaultPosition:
+                shoulderTargetPos = (int)(SHOULDER_TICK_MAX);
+                targetTurretAngle = 0;
+                extenderTargetPos = 0.2;
+                break;
+            case manual:
+
+                break;
+            case dropCone:
+                robot.turret.setTargetHeading(drop.getHeadingMemory());
+                shoulderTargetPos = drop.getShoulderMemory();
+                extenderTargetPos = drop.getExtendMemory();
+
+                break;
+            case pickupCone:
+                robot.turret.setTargetHeading(pickup.getHeadingMemory());
+                shoulderTargetPos = pickup.getShoulderMemory();
+                extenderTargetPos = pickup.getExtendMemory();
+
+                break;
+            default:
+                return target;
         }
+        return target;
     }
 
     private int shoulderPosition = 0;
-    private int shoulderDirectAnglePos = 0;
+    private int shoulderDirectTickPos = 0;
     private int extendPosition = 0;
     double shoulderAngle = 0;
     double extendMeters = 0;
@@ -310,10 +336,10 @@ public class Crane implements Subsystem {
     public void update(Canvas fieldOverlay) {
         //todo - switch shoulderPosition to read the dedicated angle encoder
         shoulderPosition = shoulderMotor.getCurrentPosition();
-        shoulderDirectAnglePos = shoulderAngleEncoder.getCurrentPosition();
+        shoulderDirectTickPos = shoulderAngleEncoder.getCurrentPosition();
         extendPosition = extenderMotor.getCurrentPosition();
 
-        shoulderAngle = 90 + shoulderPosition / SHOULDER_TICKS_PER_DEGREE;
+        shoulderAngle = 90 + shoulderDirectTickPos / SHOULDER_DIRECT_TICKS_PER_DEGREE;
         extendMeters = extendPosition / EXTEND_TICKS_PER_METER;
 
         shoulderAmps = shoulderMotor.getCurrent(CurrentUnit.AMPS);
@@ -335,12 +361,12 @@ public class Crane implements Subsystem {
         //update the turret's target
         robot.turret.setTargetHeading(targetTurretAngle);
         if(shoulderActivePID)
-            movePIDShoulder(SHOULDER_PID.kP, SHOULDER_PID.kI, SHOULDER_PID.kD, shoulderDirectAnglePos, shoulderTargetPos);
+            movePIDShoulder(SHOULDER_PID.kP, SHOULDER_PID.kI, SHOULDER_PID.kD, shoulderAngle, shoulderTargetPos);
         else
-            shoulderTargetPos = shoulderDirectAnglePos;
+            shoulderTargetPos = shoulderDirectTickPos;
 
         if(extenderActivePID)
-            movePIDExtend(EXTENDER_PID.kP, EXTENDER_PID.kI, EXTENDER_PID.kD, extendPosition, extenderTargetPos);
+            movePIDExtend(EXTENDER_PID.kP, EXTENDER_PID.kI, EXTENDER_PID.kD, extendMeters, extenderTargetPos);
         else
             extenderTargetPos = extendPosition;
 
@@ -365,11 +391,11 @@ public class Crane implements Subsystem {
     }
 
     public void adjustExtend(double speed){
-        setExtendTargetPos((int)(getextenderPos() + 200 * speed));
+        setExtendTargetPos((int)(getextenderPos() + 0.2 * speed));
     }
 
     public void adjustShoulder(double distance){
-        setShoulderTargetPos((int)(getShoulderPos() + 200* distance));
+        setShoulderTargetPos((int)(getShoulderPos() + 2 * distance));
     }
 
     public double getHeight(){
@@ -461,28 +487,26 @@ public class Crane implements Subsystem {
         bulbGripped = !bulbGripped;
     }
 
-    double pickupMemoryTurretHeading = 0;
-    int pickupMemoryShoulderTick = 0;
-    int pickupMemoryExtendTick = (int)(0.2*EXTEND_TICKS_PER_METER);
+
 
     public void closeGripper(){
 
         if(bulbGripped == false){
             recordPickup();
         }
+        articulate(Articulation.dropCone);
         bulbGripped = true;
     }
 
+    CranePositionMemory pickup = new CranePositionMemory(0,0,(int)(0.2*EXTEND_TICKS_PER_METER));
+    CranePositionMemory drop = new CranePositionMemory(0,(int)SHOULDER_TICK_MAX,(int)(0.2*EXTEND_TICKS_PER_METER));
+
     private void recordPickup(){
-        pickupMemoryTurretHeading = robot.turret.getHeading();
-        pickupMemoryShoulderTick = shoulderDirectAnglePos;
-        pickupMemoryExtendTick = extendPosition;
+        pickup.setCranePositionMemory(robot.turret.getHeading(), shoulderDirectTickPos,extendPosition);
     }
 
     public void goToPickup(){
-        robot.turret.setTargetHeading(pickupMemoryTurretHeading);
-        shoulderTargetPos = pickupMemoryShoulderTick;
-        extenderTargetPos = pickupMemoryExtendTick;
+        articulate(Articulation.pickupCone);
     }
 
     double dropMemoryTurretHeading = 0;
@@ -494,19 +518,16 @@ public class Crane implements Subsystem {
         if(bulbGripped == true){
             recordDrop();
         }
+        articulate(Articulation.pickupCone);
         bulbGripped = false;
     }
 
     private void recordDrop(){
-        dropMemoryTurretHeading = robot.turret.getHeading();
-        dropMemoryShoulderTick = shoulderDirectAnglePos;
-        dropMemoryExtendTick = extendPosition;
+        drop.setCranePositionMemory(robot.turret.getHeading(), shoulderDirectTickPos,extendPosition);
     }
 
     public void goToDrop(){
-        robot.turret.setTargetHeading(dropMemoryTurretHeading);
-        shoulderTargetPos = dropMemoryShoulderTick;
-        extenderTargetPos = dropMemoryExtendTick;
+        articulate(Articulation.dropCone);
     }
 
     public void setGripper(boolean g){
@@ -528,9 +549,9 @@ public class Crane implements Subsystem {
         setExtendTargetPos((int)(dis*EXTEND_TICKS_PER_METER));
     }
     public void setShoulderPwr(double pwr){ shoulderPwr = pwr; }
-    public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX),-200)); }
-    public  int getShoulderTargetPos(){ return shoulderTargetPos; }
-    public  void setExtendTargetPos(int t){ extenderTargetPos = Math.min(3075,Math.max(t, 0)); }
+    public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX/SHOULDER_DIRECT_TICKS_PER_DEGREE),-10)); }
+    public  double getShoulderTargetPos(){ return shoulderTargetPos; }
+    public  void setExtendTargetPos(int t){ extenderTargetPos = Math.min(3075/EXTEND_TICKS_PER_METER,Math.max(t, 0)); }
     public boolean nearTargetShoulder(){
         if ((Math.abs( getShoulderPos()-getShoulderTargetPos()))<55) return true;
         else return false;
@@ -538,8 +559,8 @@ public class Crane implements Subsystem {
 
 
 
-    public int getextenderPos(){ return  extendPosition; }
-    public int getShoulderPos(){ return  shoulderDirectAnglePos; }
+    public double getextenderPos(){ return  extendMeters; }
+    public double getShoulderPos(){ return shoulderAngle; }
     public double getShoulderAngle(){ return shoulderAngle;}
 
     public double getExtendMeters(){return extendMeters;}
@@ -576,7 +597,7 @@ public class Crane implements Subsystem {
             telemetryMap.put("Shoulder Tics", shoulderPosition);
             telemetryMap.put("Shoulder Power", shoulderMotor.getPower());
             telemetryMap.put("Shoulder Amps", shoulderAmps);
-            telemetryMap.put("Shoulder Direct Angle Tics", shoulderDirectAnglePos);
+            telemetryMap.put("Shoulder Direct Angle Tics", shoulderDirectTickPos);
             telemetryMap.put("Shoulder Target", shoulderTargetPos);
             telemetryMap.put("Shoulder Active", shoulderActivePID);
             telemetryMap.put("Shoulder PID Output", shoulderCorrection);
