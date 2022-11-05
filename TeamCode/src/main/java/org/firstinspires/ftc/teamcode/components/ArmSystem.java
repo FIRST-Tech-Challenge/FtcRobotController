@@ -16,8 +16,8 @@ public class ArmSystem {
     public static final int MEDIUM = 800;
     public static final int HIGH = 1100;
     public static final int FLOOR = 100;
-    public final DcMotor armLeft; //arm left is motor1
-    public final DcMotor armRight;
+    public static DcMotor armLeft = null; //arm left is motor1
+    public static DcMotor armRight = null;
     private Intake intake;
 
 
@@ -26,6 +26,14 @@ public class ArmSystem {
         armRight = motor2;
         initMotors();
         intake = new Intake(intakeMotor, beam);
+    }
+
+    public static void killMotors() {
+        armLeft.setPower(0);
+        armRight.setPower(0);
+    }
+
+    public static void armToFloor() {
     }
 
     public Intake.State getState(){
@@ -83,6 +91,8 @@ public class ArmSystem {
         return (armRight.getCurrentPosition() + armLeft.getCurrentPosition())/2 > 600;
     }
 
+
+
     public static class Intake {
         private final DigitalChannel beamBreaker;
         private final DcMotorSimple coneTake;
@@ -132,6 +142,7 @@ public class ArmSystem {
 
             return state == State.IDLE;
         }
+
 
 
         public State getState() {
