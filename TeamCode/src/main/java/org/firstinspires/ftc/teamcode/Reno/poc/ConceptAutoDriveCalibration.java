@@ -78,8 +78,9 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
         //this.testLoopDrive();
         //this.testNavigation();
-        //this.testTrajectory();
         this.testStrafeDrive();
+        this.testTrajectory();
+
         sleep(1000);  // Pause to display last telemetry message.
     }
 
@@ -161,7 +162,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
 
 
-        sleep(10000);
+        sleep(2000);
 
     }
 
@@ -171,6 +172,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         robot.setDriveLeft();
         robot.setTargetPosition(24);
         robot.drive(DRIVE_SPEED, 0);
+        sleep(1000);
     }
 
     private void testLoopDrive()
