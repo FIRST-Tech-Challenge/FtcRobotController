@@ -1,0 +1,36 @@
+Nov 4:
+1. Shoulder stop responding
+Issue description: 
+When the shoulder and elbow are both in stretched situation, both of them can fall down suddently after which the shoulder stop responding to further operation.
+
+Root cause analysis:
+It turns out to be that when they both in stretched status, the weigh of both resulted into a large torque thus high pressure against the servo. In which case, the servo axis slips thus lost it correct value. Reading from the debug concole, its values falls to zero thus blocked further operation to raise it up (due to it's already to the lowest value incorrectly)
+
+Solution:
+Switched to another servo which provided a high lift power.
+
+2. Platform lost it's position
+Issue description:
+Platform rotation range is -20 to 140 degree, instead of -90 to 90 degree if taking staight front direction as 0 degree. Before this issue appears, there's crack noises heard during platform rotation
+
+Root cause analysis:
+the screw heads on the platform base can reach the upper plate. During rotation, they ran into each other and caused miss alignment which each other
+
+Solution:
+Cut into the platform base, so that the screw can be drilled down further to avoid the issue. This addressed the root cause.
+Addtional realignment was took to reset the right position. The first approach we did is to phyiscally adjust postion of servo which took times as it's hard to adjust it precisely.  Then a ***** TRICK ****** was found to adjust it while the powerline to the platform was disconnected. It looks like the board doesn't really track the actualy physical position of servo. Instead it just maintain the value by itself. So it can be easily adjusted whatever value we want the current position to be while the servo is offline. 
+
+3. Ehhancement for fine tuning of wheel movement
+Enable both controller to be able to control the wheel movement independenty. Apply a lower the multiplefier value on one of them to allow fine tuning
+
+4. Saft guarding for operations of combination movement 
+To avoid mis operation for combination movement, use an insurance key to prevent from mis touching.
+
+5. Improvement of combination movement. 
+Adding a breaking key to stop existing combination movement
+
+4. Enhancement to grip component to make sure it hold tight of the cone and not slipping
+--- To be added
+
+
+
