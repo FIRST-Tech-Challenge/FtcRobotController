@@ -19,7 +19,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "8923TensorFlowModel.tflite";
+    private static final String TFOD_MODEL_ASSET = "RedTensorFlowModel.tflite";
     //private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/8923TensorFlowModel.tflite";
 
 
