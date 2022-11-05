@@ -6,8 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+<<<<<<< Updated upstream
 import com.qualcomm.robotcore.hardware.CRServo;
 //import com.qualcomm.robotcore.hardware.;
+=======
+c
+>>>>>>> Stashed changes
 
 
 @TeleOp(name="forward", group="Teleop")
@@ -45,10 +49,10 @@ public class forward extends LinearOpMode {
         lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        lf.setDirection(DcMotor.Direction.REVERSE);
-        rf.setDirection(DcMotor.Direction.FORWARD);
-        lb.setDirection(DcMotor.Direction.REVERSE);
-        rb.setDirection(DcMotor.Direction.FORWARD);
+        lf.setDirection(DcMotor.Direction.FORWARD);
+        rf.setDirection(DcMotor.Direction.REVERSE);
+        lb.setDirection(DcMotor.Direction.FORWARD);
+        rb.setDirection(DcMotor.Direction.REVERSE);
         tower1.setDirection(DcMotor.Direction.FORWARD);
         tower2.setDirection(DcMotor.Direction.FORWARD);
         duckspinnerL.setDirection(DcMotor.Direction.FORWARD);
@@ -109,8 +113,13 @@ public class forward extends LinearOpMode {
 
             lf.setPower(lPower * 1.0);
             rf.setPower(rPower * 1.0);
+<<<<<<< Updated upstream
             lb.setPower(lPower * 1.0);
             rb.setPower(rPower * 1.0);
+=======
+            lb.setPower(lPower * 0.8);
+            rb.setPower(rPower * 0.8);
+>>>>>>> Stashed changes
             tower1.setPower((towerPower - towerPower2) * 0.5);
             tower2.setPower((towerPower - towerPower2) * 0.5);
 
