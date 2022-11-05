@@ -9,8 +9,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
-@Autonomous(name = "RedTensorFlowObjectDetectionWebcam ")
-public class RedTensorFlowObjectDetectionWebcam extends BaseOpMode {
+@Autonomous(name = "ConceptTensorFlowObjectDetectionWebcam ")
+public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -19,7 +19,7 @@ public class RedTensorFlowObjectDetectionWebcam extends BaseOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "8923RedTensorFlowModel.tflite";
+    private static final String TFOD_MODEL_ASSET = "8923TensorFlowModel.tflite";
     //private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/8923TensorFlowModel.tflite";
 
 

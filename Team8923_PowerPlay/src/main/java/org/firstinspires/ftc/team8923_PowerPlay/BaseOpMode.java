@@ -68,7 +68,6 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorSlideLeft.setDirection(DcMotor.Direction.FORWARD);
         motorSlideRight.setDirection(DcMotor.Direction.REVERSE);
 
-        //software stop for slides
         bottomMotorSlideLeft = motorSlideLeft.getCurrentPosition();
         bottomMotorSlideRight = motorSlideRight.getCurrentPosition();
     }
