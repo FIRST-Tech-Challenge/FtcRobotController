@@ -20,7 +20,7 @@ public class RobotContainer {
     private final Telemetry mTelemetry;
     private final HardwareMap mHardwareMap;
 
-    private final VuforiaCurrentGame mVuforiaPOWERPLAY;
+    private final VuforiaCurrentGame mVuforiaPOWERPLAY = null;
 
     private final DriveSubsystem mDriveSubsystem;
 
