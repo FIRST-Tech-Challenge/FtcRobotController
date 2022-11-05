@@ -75,9 +75,9 @@ import java.util.concurrent.TimeUnit;
  * by various means (e.g.: Device File Explorer in Android Studio; plugging the device into a PC and
  * using Media Transfer; ADB; etc)
  */
-@Autonomous(name="POC: Single Sleeve", group ="Concept")
+@Autonomous(name="POC: Signal Sleeve", group ="Concept")
 //@Disabled
-public class ConceptSingleSleeveIdentification extends LinearOpMode {
+public class ConceptSignalSleeveIdentification extends LinearOpMode {
 
     //----------------------------------------------------------------------------------------------
     // State
@@ -143,20 +143,28 @@ public class ConceptSingleSleeveIdentification extends LinearOpMode {
                 Bitmap bmp = frameQueue.poll();
                 if (bmp != null) {
                     //onNewFrame(bmp);
+
                     int pixel = this.getDominantColor(bmp);
+
+
                     int redValue = Color.red(pixel);
                     int blueValue = Color.blue(pixel);
                     int greenValue = Color.green(pixel);
 
-                    if(redValue == Color.RED)
+                    telemetry.addData("picture found","%d", pixel);
+                    telemetry.addData("green color","%d", greenValue);
+                    telemetry.addData("red color","%d", redValue);
+                    telemetry.addData("blue color","%d", blueValue);
+
+                    if(redValue > 200 && greenValue < 50 && blueValue <50)
                     {
                         colorName = "RED";
                     }
-                    if(redValue == Color.GREEN)
+                    if(greenValue >200 && blueValue < 50 && redValue < 50)
                     {
                         colorName = "GREEN";
                     }
-                    if(redValue == Color.BLUE)
+                    if(blueValue >200 && redValue < 50 && greenValue < 50)
                     {
                         colorName = "BLUE";
                     }
@@ -168,6 +176,7 @@ public class ConceptSingleSleeveIdentification extends LinearOpMode {
 
             telemetry.addData("Color name" , colorName);
             telemetry.update();
+            sleep(10000);
         } finally {
             closeCamera();
         }
