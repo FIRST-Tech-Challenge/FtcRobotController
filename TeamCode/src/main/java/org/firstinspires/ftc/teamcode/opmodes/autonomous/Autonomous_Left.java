@@ -19,7 +19,6 @@ public class Autonomous_Left extends LinearOpMode {
     int detect = 0;
     TurtleRobotAuto robot = new TurtleRobotAuto(this);
 
-    TurtleRobot robot = new TurtleRobot(this);
     static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   =  3.7795276;     // For figuring circumference
@@ -225,7 +224,7 @@ public class Autonomous_Left extends LinearOpMode {
         robot.rightbackmotor.setPower(power);
         sleep(time);
     }
-    public void EncoderDrive(TurtleRobot robot, double speed,
+    public void EncoderDrive(TurtleRobotAuto robot, double speed,
                              double leftfrontInches, double leftbackInches,
                              double rightfrontInches, double rightbackInches,
                              double timeoutS) {
