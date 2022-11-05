@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.base;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -15,22 +16,20 @@ import java.util.EnumMap;
 /**
  * Basic OpMode template
  */
+
+@Autonomous(name = "testing i hope this works ", group = "Autonomous")
 public abstract class TestingOpMode extends BaseOpMode {
 
-    private boolean stopRequested;
 
     /** Initialization */
     public void init(){
-        stopRequested = false;
-        // Timeouts to determine if stuck in loop
-        this.msStuckDetectInit     = 20000;
-        this.msStuckDetectInitLoop = 20000;
-        // Initialize motors
+        super.init();
     }
 
     public void loop(){
+
         int count = 0;
-        if(driveSystem.driveToPositionTicks(300, DriveSystem.Direction.FORWARD, 0.3)){
+        if(count == 0 && driveSystem.driveToPositionTicks(300, DriveSystem.Direction.FORWARD, 0.3)){
             count ++;
             telemetry.addData("Status: ", count);
         }
@@ -50,13 +49,9 @@ public abstract class TestingOpMode extends BaseOpMode {
 
     /** Returns if a stop has been requested or if execution is
      */
-    public final boolean isStopRequested() {
-        return this.stopRequested || Thread.currentThread().isInterrupted();
-    }
 
 
     public void stop() {
-        stopRequested = true;
         super.stop();
     }
 }

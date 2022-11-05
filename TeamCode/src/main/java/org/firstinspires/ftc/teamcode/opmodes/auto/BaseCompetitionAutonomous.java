@@ -74,7 +74,7 @@ public class BaseCompetitionAutonomous extends BaseOpMode {
                 if (teamAsset == null) {
                     //drive forward slowly/10 inches and identify again
                     //backwards is forwards
-                    if (driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.4)) {
+                    if (driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.4)) {
                         currentPos += 100;
                         identifySleeve();
                     }
@@ -99,7 +99,7 @@ public class BaseCompetitionAutonomous extends BaseOpMode {
 
     private void park() {
         if (step == 0) {
-            if (driveSystem.driveToPosition(650-currentPos, DriveSystem.Direction.BACKWARD, 0.4)) {
+            if (driveSystem.driveToPosition(650-currentPos, DriveSystem.Direction.FORWARD, 0.4)) {
                 step++;
             }
         }
