@@ -37,7 +37,7 @@ public class MotorManualTeleop extends DriveMethods{
             }
 
             motor.setPower(motorPower);
-            telemetry.addLine("servoPosition" + motorPower);
+            telemetry.addLine("Motorpower" + motorPower);
             telemetry.update();
         }
     }
