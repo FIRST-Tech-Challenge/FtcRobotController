@@ -167,9 +167,10 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
     private void testStrafeDrive()
     {
-        robot.setDriveLeft();
 
-        driveStraight(DRIVE_SPEED, 24);
+        robot.setDriveLeft();
+        robot.setTargetPosition(24);
+        robot.drive(DRIVE_SPEED, 0);
     }
 
     private void testLoopDrive()
