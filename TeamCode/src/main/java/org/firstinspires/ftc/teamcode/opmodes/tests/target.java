@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -40,6 +41,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
  */
 
 @TeleOp(name="Drive To Target", group = "Concept")
+@Disabled
 public class target extends LinearOpMode
 {
     TurtleRobotAuto robot = new TurtleRobotAuto(this);

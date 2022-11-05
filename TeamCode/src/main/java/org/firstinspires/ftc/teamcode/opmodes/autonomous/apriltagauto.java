@@ -19,8 +19,9 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.opmodes.tests.april;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -30,15 +31,16 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import java.util.ArrayList;
 
-@TeleOp
+@Autonomous
 @Disabled
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
+public class apriltagauto extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    TurtleRobotAuto robot = new TurtleRobotAuto(this);
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -55,15 +57,16 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     double tagsize = 0.166;
 
     // Tag ID 1,2,3 from the 36h11 family
-    int LEFT = 1;
-    int MIDDLE = 2;
-    int RIGHT = 3;
+    int LEFT = 0;
+    int MIDDLE = 1;
+    int RIGHT = 2;
 
     AprilTagDetection tagOfInterest = null;
 
     @Override
     public void runOpMode()
     {
+        robot.init(hardwareMap);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -169,11 +172,23 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
         /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
-            //trajectory
+            strafeLeft(0.15, 1000);
+            stopRobot();
+            sleep(1000);
+            straight(0.15, 900);
+            stopRobot();
+            stop();
         }else if(tagOfInterest.id == MIDDLE){
-            //trajectory
+            straight(0.15, 1000);
+            stopRobot();
+            stop();
         }else{
-            //trajectory
+            strafeRight(0.15, 1100);
+            stopRobot();
+            sleep(1000);
+            straight(0.15, 900);
+            stopRobot();
+            stop();
         }
 
 
@@ -190,5 +205,46 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+    public void straight(double power, int time) {
+        robot.leftfrontmotor.setPower(power);
+        robot.leftbackmotor.setPower(power);
+        robot.rightfrontmotor.setPower(power);
+        robot.rightbackmotor.setPower(power);
+        sleep(time);
+    }
+    public void strafeRight(double power, int time) {
+        robot.leftfrontmotor.setPower(power);
+        robot.leftbackmotor.setPower(-power);
+        robot.rightfrontmotor.setPower(-power);
+        robot.rightbackmotor.setPower(power);
+        sleep(time);
+    }
+    public void strafeLeft(double power, int time) {
+        robot.leftfrontmotor.setPower(-power);
+        robot.leftbackmotor.setPower(power);
+        robot. rightfrontmotor.setPower(power);
+        robot.rightbackmotor.setPower(-power);
+        sleep(time);
+    }
+    public void stopRobot() {
+        robot.leftfrontmotor.setPower(0);
+        robot.leftbackmotor.setPower(0);
+        robot.rightfrontmotor.setPower(0);
+        robot.rightbackmotor.setPower(0);
+    }
+    public void left(double power, int time) {
+        robot.leftfrontmotor.setPower(power);
+        robot.leftbackmotor.setPower(power);
+        robot. rightfrontmotor.setPower(-power);
+        robot.rightbackmotor.setPower(-power);
+        sleep(time);
+    }
+    public void right(double power, int time) {
+        robot.leftfrontmotor.setPower(-power);
+        robot.leftbackmotor.setPower(-power);
+        robot. rightfrontmotor.setPower(power);
+        robot.rightbackmotor.setPower(power);
+        sleep(time);
     }
 }

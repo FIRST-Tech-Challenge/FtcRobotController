@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * is explained below.
  */
 @TeleOp(name = "camera")
-
+@Disabled
 public class camera extends LinearOpMode {
     /*
      * Specify the source for the Tensor Flow Model.

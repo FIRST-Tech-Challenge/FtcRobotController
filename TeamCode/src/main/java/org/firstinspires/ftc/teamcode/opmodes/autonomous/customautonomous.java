@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import java.util.List;
@@ -23,7 +24,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
  */
 
 @Autonomous(name = "Camera Auto")
-
+@Disabled
 public class customautonomous extends LinearOpMode {
     int detect = 0;
     TurtleRobotAuto robot = new TurtleRobotAuto(this);

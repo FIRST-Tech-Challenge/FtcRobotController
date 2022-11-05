@@ -16,13 +16,6 @@ public class Mecanum extends LinearOpMode {
 
     double frontLeftDrive, frontRightDrive, backRightDrive, backLeftDrive, armServo, clawServo;
     double driveSpeed = 1;
-    static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   =  3.7795276;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
 
     @Override
     public void runOpMode() {
@@ -31,23 +24,23 @@ public class Mecanum extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                while (gamepad2.right_bumper) {
+                while (gamepad1.right_bumper) {
                     robot.leftslidemotor.setPower(1);
                     robot.rightslidemotor.setPower(1);
                 }
-                while (gamepad2.left_bumper) {
+                while (gamepad1.left_bumper) {
                     robot.leftslidemotor.setPower(-0.5);
                     robot.rightslidemotor.setPower(-0.5);
                 }
                 robot.leftslidemotor.setPower(0);
                 robot.rightslidemotor.setPower(0);
             //                     FORWARD                     TURN                       STRAFE
-            frontRightDrive = (-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
-            frontLeftDrive  = (-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
-            backRightDrive  = (-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
-            backLeftDrive   = (-gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
-            clawServo = (gamepad2.right_stick_y);
-            armServo = (gamepad2.left_stick_y);
+            frontRightDrive = (-gamepad1.left_stick_y - (gamepad1.right_stick_x*0.5) - gamepad1.left_stick_x)*driveSpeed;
+            frontLeftDrive  = (-gamepad1.left_stick_y + (gamepad1.right_stick_x*0.5) + gamepad1.left_stick_x)*driveSpeed;
+            backRightDrive  = (-gamepad1.left_stick_y - (gamepad1.right_stick_x*0.5) + gamepad1.left_stick_x)*driveSpeed;
+            backLeftDrive   = (-gamepad1.left_stick_y + (gamepad1.right_stick_x*0.5) - gamepad1.left_stick_x)*driveSpeed;
+            clawServo = (gamepad1.right_trigger-gamepad1.left_trigger);
+            armServo = (gamepad1.right_trigger-gamepad1.left_trigger);
 
             robot.rightfrontmotor.setPower(frontRightDrive);
             robot.rightbackmotor.setPower(backRightDrive);
