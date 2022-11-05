@@ -240,7 +240,7 @@ public class Drivetrain{
     public void MoveForDis(double distance, double pow) {
 
         // calculate the distance
-        int dis = (int)(distance * 1000 / 16);
+        int dis = (int)(distance * 1000 / 23.5);
 
         // reset encoders
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -291,10 +291,75 @@ public class Drivetrain{
     }
 
     // this function is designed for the auto part
-    public void RotateForDegree(int deg, double pow) {
+    public void SideMoveForDis(double distance, double pow) {
+
+        // calculate the distance
+        int dis = (int)(distance * 1000 / 19.75);
+
+        // set direction
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        // reset encoders
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // set target distance
+        leftFrontDrive.setTargetPosition(dis);
+        leftBackDrive.setTargetPosition(dis);
+        rightFrontDrive.setTargetPosition(dis);
+        rightBackDrive.setTargetPosition(dis);
+
+        // change encoder mode
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // set power
+        leftFrontDrive.setPower(pow);
+        leftBackDrive.setPower(pow);
+        rightFrontDrive.setPower(pow);
+        rightBackDrive.setPower(pow);
+
+        // run for a while
+        while ( leftFrontDrive.isBusy() ||
+                leftBackDrive.isBusy() ||
+                rightFrontDrive.isBusy() ||
+                rightBackDrive.isBusy() ) {}
+
+        // set power to 0
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+
+        // change encoder mode back to normal
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+    }
+
+    // this function is designed for the auto part
+    public void RotateForDegree(int degree, double pow) {
 
         // calculate the degree
-//        int deg = 1000;
+        int deg = (int)(degree * 1000 / 114);
 
         // reset encoders
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -346,5 +411,8 @@ public class Drivetrain{
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
     }
 }

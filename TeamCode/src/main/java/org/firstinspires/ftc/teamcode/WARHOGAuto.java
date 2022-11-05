@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class WARHOGAuto extends LinearOpMode {
     public WARHOGAuto() throws InterruptedException {}
 
-    private Gamepad GP = new Gamepad();
     private StartPos startPos = null;
     private enum StartPos {
         redLeft,
@@ -25,21 +24,16 @@ public class WARHOGAuto extends LinearOpMode {
         //Intake intake = new Intake(hardwareMap, telemetry);
         Outtake outtake = new Outtake(hardwareMap, telemetry);
 
-        try {
-            GP.copy(gamepad1);
-        } catch (RobotCoreException e) {
-            e.printStackTrace();
-        }
         waitForStart();
 
         //set up startPos
-        if (GP.a) {
+        if (gamepad1.a) {
             startPos = StartPos.redLeft;
-        } else if (GP.b) {
+        } else if (gamepad1.b) {
             startPos = StartPos.redRight;
-        } else if (GP.x) {
+        } else if (gamepad1.x) {
             startPos = StartPos.blueLeft;
-        } else if (GP.y) {
+        } else if (gamepad1.y) {
             startPos = StartPos.blueRight;
         }
         telemetry.addData("Start Position", startPos);
@@ -53,21 +47,24 @@ public class WARHOGAuto extends LinearOpMode {
 //            telemetry.update();
 
             // drive forward
-//            drivetrain.MoveForDis(50, 1);
-            drivetrain.RotateForDegree(1000, 1);
+            drivetrain.MoveForDis(50, 1);
+            drivetrain.RotateForDegree(-45, 1);
+            drivetrain.MoveForDis(13, 1);
 
             // putting cone on pole
 
-
             // turn to cone stack
+            drivetrain.MoveForDis(-13, 1);
+            drivetrain.RotateForDegree(-45, 1);
 
             // move forward
+            drivetrain.MoveForDis(-13, 1);
 
             // take another cone
 
             // turn back
-
-            // drive forward
+            drivetrain.MoveForDis(13, 1);
+            drivetrain.RotateForDegree(45, 1);
 
             // putting cone on pole
 
