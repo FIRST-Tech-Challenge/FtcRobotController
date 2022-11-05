@@ -1,20 +1,24 @@
-package org.firstinspires.ftc.teamcode;
+/*package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Intake {
-    private DcMotor intake;
-    private DcMotor intake1;
+    private Servo arm_left;
+    private Servo arm_right;
 
     Intake(HardwareMap hardwareMap, Telemetry telemetry){
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        intake1 = hardwareMap.get(DcMotor.class, "intake1");
+        arm_left = hardwareMap.get(Servo.class, "arm_left");
+        arm_right = hardwareMap.get(Servo.class, "arm_right");
     }
 
-    public void run(double pow){
-        intake.setPower(pow);
-        intake1.setPower(-pow);
+    public void moveArmPosition(double pos){
+        arm_left.setPosition(pos);
+        arm_right.setPosition(1-pos);
     }
+
+
 }
+*/

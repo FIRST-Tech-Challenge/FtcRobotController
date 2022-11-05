@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -10,33 +11,49 @@ public class Outtake {
 
     private Telemetry telemetry;
 
-    final static int max = 1000;
+    final static int max = 1620;
     final static int min = 0;
 
     enum Height {GROUND, LOW, MEDIUM, HIGH};
 
     Outtake(HardwareMap hardwareMap, Telemetry telemetry){
         slide = hardwareMap.get(DcMotor.class, "slide");
+        slide.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         this.telemetry = telemetry;
     }
 
     //method to input a power to the slide motor
     public void run(double pow){
-        if (slide.getCurrentPosition()<max && slide.getCurrentPosition()>min){
+        int pos = slide.getCurrentPosition();
+        if (pos<=max && pos>=min){
             slide.setPower(pow);
         }
         else{
-            if (slide.getCurrentPosition()>max){
-                slide.setTargetPosition(max);
+            if (pos>max){
+                if (pow<0){
+                    slide.setPower(pow);
+                }
+                else {
+                    //slide.setTargetPosition(max);
+                    slide.setPower(0);
+                }
             }
-            else if (slide.getCurrentPosition()<min){
-                slide.setTargetPosition(min);
+            else if (pos<min){
+                if (pow>0){
+                    slide.setPower(pow);
+                }
+                else {
+                    //slide.setTargetPosition(min);
+                    slide.setPower(0);
+                }
             }
             else{
                 slide.setPower(0);
             }
         }
+        telemetry.addData("Slide Position", pos);
     }
 
     //methods to tell the motor to run to certain positions. The below are placeholder values.

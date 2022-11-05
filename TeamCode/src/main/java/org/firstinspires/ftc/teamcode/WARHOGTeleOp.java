@@ -78,7 +78,7 @@ public class WARHOGTeleOp extends LinearOpMode {
             }
 
             //intake.run(currentGamepad2.left_stick_y);
-            outtake.run(currentGamepad2.right_stick_y);
+            outtake.run(-currentGamepad2.right_stick_y);
 
 
 
