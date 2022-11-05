@@ -15,26 +15,26 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 @Config
-@Autonomous(name = "BlueRightAutoHigh")
+@Autonomous(name = "RedLeftAutoHigh")
 
 
-public class BlueRightAutoHigh extends LinearOpMode {
+public class RedLeftAutoHigh extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
-    public static double dummyP = 3;
+    public static double dummyP = 1;
 
-    public static double dummyx = -6, dummyy =30, dummya = 305;
+    public static double dummyx = 6, dummyy =-30, dummya = 135;
 
-    public static double dummyX = -12, dummyY =35, dummyA = 90;
+    public static double dummyX = 12, dummyY =-35, dummyA = 270;
 
-    public static double dummyX2 = -33, dummyY2 =35, dummyA2 = 90;
+    public static double dummyX2 = 33, dummyY2 =-35, dummyA2 = 270;
 
-    public static double dummyX3 = -55, dummyY3 =35, dummyA3 = 90;
+    public static double dummyX3 = 55, dummyY3 =-35, dummyA3 = 270;
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
         //        robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(-29.2, 62.25, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(29.2, -62.25, Math.toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);
 
         //detectSignal();
@@ -44,9 +44,9 @@ public class BlueRightAutoHigh extends LinearOpMode {
 
         if (isStopRequested()) return;
         Trajectory initialtrajectory = robot.roadrun.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(-13, 55))
+                .lineToConstantHeading(new Vector2d(13, -55))
                 .build();
-        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-13,55, Math.toRadians(270)))
+        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(13,-55, Math.toRadians(90)))
                 .lineToLinearHeading(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
                 .build();
 

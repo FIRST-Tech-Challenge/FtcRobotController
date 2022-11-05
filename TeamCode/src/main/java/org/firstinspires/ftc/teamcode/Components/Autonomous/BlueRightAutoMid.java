@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 public class BlueRightAutoMid extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
-    public static double dummyP = 1;
+    public static double dummyP = 3;
 
     public static double dummyxi = -35, dummyyi =50, dummyai = 270;
 
@@ -72,6 +72,7 @@ public class BlueRightAutoMid extends LinearOpMode {
             else if (dummyP == 3) {
                 robot.followTrajectoryAsync(park3trajectory);
             }
+            sleep(1000);
 
             robot.setFirstLoop(false);
             robot.roadrun.update();

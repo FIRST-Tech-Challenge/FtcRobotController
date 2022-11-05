@@ -25,7 +25,8 @@ public class Queuer {
     public boolean queue(boolean p_asynchronous, boolean done_condition) {
         double p_delay = delay;
         delay =0;
-        return queue(p_asynchronous, done_condition, p_delay);
+//        return queue(p_asynchronous, done_condition, p_delay);
+        return true;
     }
 
     /** same as regular queue, but will wait inputted delay time before running */
