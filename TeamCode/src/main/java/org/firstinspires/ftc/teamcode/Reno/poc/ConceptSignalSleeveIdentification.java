@@ -156,15 +156,15 @@ public class ConceptSignalSleeveIdentification extends LinearOpMode {
                     telemetry.addData("red color","%d", redValue);
                     telemetry.addData("blue color","%d", blueValue);
 
-                    if(redValue > 200 && greenValue < 50 && blueValue <50)
+                    if(redValue > greenValue && redValue > blueValue)
                     {
                         colorName = "RED";
                     }
-                    if(greenValue >200 && blueValue < 50 && redValue < 50)
+                    if(greenValue > blueValue && greenValue > redValue)
                     {
                         colorName = "GREEN";
                     }
-                    if(blueValue >200 && redValue < 50 && greenValue < 50)
+                    if(blueValue > redValue && blueValue > greenValue)
                     {
                         colorName = "BLUE";
                     }

@@ -461,7 +461,7 @@ public class HardwareRobot
         target.setName("Red Audience Wall");
 
 
-        //target.setLocation(createMatrix((-24 * mmPerInch), (24 * mmPerInch), 0, 90, 0, 90));
+        //target.setLocation(createMatrix((-72 * mmPerInch), (-36 * mmPerInch), 0, 90, 0, 90));
 
         // Set phone location on robot
         //cameraLocation = createMatrix(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT, 90, 0, 90);
@@ -474,7 +474,7 @@ public class HardwareRobot
         //        .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
         //        .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, 90, 90, 0));
 
-        target.setLocation(createMatrix((-24 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
+        target.setLocation(createMatrix((-72 * meterPerInch), (-36 * meterPerInch), 0, 90, 0, 90));
 
         // Set phone location on robot
         cameraLocation = createMatrix((float)(14.5 * meterPerInch), (float)(4 * meterPerInch), 0, 90, 0, 90);

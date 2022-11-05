@@ -77,7 +77,8 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         waitForStart();
 
         //this.testLoopDrive();
-        this.testNavigation();
+        //this.testNavigation();
+        this.testTrajectory();
         sleep(1000);  // Pause to display last telemetry message.
     }
 
@@ -107,24 +108,59 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
         this.navigate(fromLocation, toLocation);
 
-        turnHeading(-45);
-        driveStraight(DRIVE_SPEED, 6);
-
-        sleep(1000);
-
-        driveStraight(DRIVE_SPEED, -6);
-        turnHeading(45);
-
         fromLocation = toLocation;
         toLocation = new RobotLocation(-36, -12, 0, 0, 0, 90);
 
         this.navigate(fromLocation, toLocation);
 
+        turnHeading(-45);
+        driveStraight(DRIVE_SPEED, 8);
+
+        sleep(1000);
+
+        driveStraight(DRIVE_SPEED, -8);
+        turnHeading(135);
+
+        fromLocation = this.getRobotLocation();
+        if(fromLocation != null)
+        {
+            telemetry.addData("", fromLocation.toString());
+            telemetry.addData("current heading", robot.getRawHeading());
+            telemetry.update();
+            //sleep(5000);
+
+            this.turnHeading(-robot.getRawHeading());
+
+            telemetry.addData("", fromLocation.toString());
+            telemetry.addData("current heading", robot.getRawHeading());
+            telemetry.update();
+            //sleep(5000);
+            fromLocation.thirdAngle = 90;
+        }
+        //fromLocation = toLocation;
+        //fromLocation = this.getRobotLocation();
+
+        if(fromLocation == null)
+        {
+            fromLocation = toLocation;
+        }
+        toLocation = new RobotLocation(-60, -12, 0, 0, 0, 90);
+
+        this.navigate(fromLocation, toLocation);
+
         this.turnHeading(90);
 
-        driveStraight(DRIVE_SPEED, 6);
+        driveStraight(DRIVE_SPEED, 4);
 
         sleep(2000);
+
+        driveStraight(DRIVE_SPEED, -6);
+
+        //fromLocation = this.getRobotLocation();
+
+
+
+        sleep(10000);
 
     }
 
@@ -168,7 +204,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
                 currentRobotLocation = robotLocation;
                 break;
             }
-            this.turnHeading(45);
+            this.turnHeading(10);
         }while (robotLocation == null && timer.milliseconds() < 5000);
 
 
@@ -258,8 +294,8 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
             if(Math.abs(fromLocation.thirdAngle) % 180 < HEADING_THRESHOLD)
             {
-                if(robotLocation.thirdAngle < 0) {
-                    this.turnHeading(-(robotLocation.thirdAngle + 10));
+                if(fromLocation.thirdAngle < 0) {
+                    this.turnHeading(-(fromLocation.thirdAngle + 10));
                     this.turnHeading(180 - robot.getRawHeading());
                 }
 
@@ -269,14 +305,14 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
                 this.turnHeading(-fromLocation.thirdAngle);
 
             }
-            else if(robotLocation.thirdAngle < 0)
+            else if(fromLocation.thirdAngle < 0)
             {
-                this.turnHeading(-robotLocation.thirdAngle);
+                this.turnHeading(-fromLocation.thirdAngle);
                 this.turnHeading(180 - robot.getRawHeading());
             }
             else
             {
-                this.turnHeading( -1 * robotLocation.thirdAngle);
+                this.turnHeading( -1 * fromLocation.thirdAngle);
             }
             this.driveStraight(DRIVE_SPEED, distanceX);
 
