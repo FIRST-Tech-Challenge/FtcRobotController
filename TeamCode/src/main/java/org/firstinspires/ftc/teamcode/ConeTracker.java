@@ -40,7 +40,7 @@ public class ConeTracker {
      * Read the range sensors and update all the related parameters.
      * Must be called once per control cycle
      */
-    public void update() {
+    public boolean update() {
         leftRange   = left.getDistance(DistanceUnit.MM);
         centerRange = center.getDistance(DistanceUnit.MM);
         rightRange  = right.getDistance(DistanceUnit.MM);
@@ -102,6 +102,7 @@ public class ConeTracker {
             }
         }
 
+        return coneDetected;
     }
 
     public void showRanges() {

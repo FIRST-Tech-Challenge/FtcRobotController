@@ -6,6 +6,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * This opmode demonstrates how one would implement field centric control using
@@ -18,6 +21,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name="G-FORCE TELEOP", group = "advanced")
 public class GFORCE_TELEOP extends LinearOpMode {
 
+    boolean redAlliance = false;
+
     // Joystick constants
     final double AXIAL_RATE = 0.7;
     final double LATERAL_RATE = 0.7;
@@ -26,6 +31,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
     private Elevator    elevator;
     private ConeTracker coneTracker;
+    AutoConfig autoConfig = new AutoConfig();
 
     boolean headingLock = false;
     double  headingSetpoint = 0;
@@ -41,6 +47,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
         // apply hub performance
         HubPerformance.enable(hardwareMap);
+        autoConfig.init(this);
+        redAlliance = autoConfig.autoOptions.redAlliance;
 
         double manualRotate;
 
@@ -51,6 +59,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
         elevator = new Elevator(this);
         coneTracker = new ConeTracker(this);
+
+        ElapsedTime cycleTime = new ElapsedTime();
 
         // Home the elevator....  This may need to be changed once we have an Auto.
         telemetry.addData("Elevator", "Homing");
@@ -65,8 +75,11 @@ public class GFORCE_TELEOP extends LinearOpMode {
         elevator.setState(SharedStates.elevatorState);
 
         while (opModeInInit()) {
+            telemetry.addData("Alliance", redAlliance ? "RED" : "blue");
             elevator.runStateMachine();
+            telemetry.update();
         }
+        cycleTime.reset();
 
         while (opModeIsActive()) {
 
@@ -74,15 +87,14 @@ public class GFORCE_TELEOP extends LinearOpMode {
             drive.update();
             elevator.update();
             elevator.runStateMachine();
-            coneTracker.update();
-            coneTracker.showRanges();
 
             telemetry.addData("Elevator", elevator.getStateText());
 
             //-----------PILOT-----------
             //check for auto cone tracking
 
-            if (gamepad1.left_bumper && coneTracker.coneDetected) {
+            if (gamepad1.left_bumper && coneTracker.update()) {
+                coneTracker.showRanges();
                 double turn = coneTracker.coneDirection / 5.0;
                 double speed = 0;
 
@@ -192,6 +204,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
             // Display Telemetry data
             telemetry.addData("GYRO heading", Math.toDegrees(drive.getExternalHeading()));
+            telemetry.addData("cycle", "%d mS", cycleTime.time(TimeUnit.MILLISECONDS));
+            cycleTime.reset();
             telemetry.update();
         }
     }

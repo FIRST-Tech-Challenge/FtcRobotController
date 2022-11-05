@@ -29,7 +29,7 @@ public class Elevator {
 
     final int    DEAD_BAND    = 5;
     final double FAST_LIFT    =  0.5;
-    final double SLOW_LIFT    =  0.2;
+    final double SLOW_LIFT    =  0.3;
     final double SLOW_LOWER   =  0.0;
     final double FAST_LOWER   = -0.1;
     final double HOLD_POWER   =  0.05;
@@ -41,9 +41,9 @@ public class Elevator {
     final double WRIST_HOME_POSITION = 0.6;
     final double HAND_HOME_POSITION = 0.8;
 
-    final double HAND_OPEN  = 0.5; //was 0.47
-    final double HAND_READY = 0.6 ;
-    final double HAND_CLOSE = 0.85;
+    final double HAND_OPEN  = 0.6; //was 0.47
+    final double HAND_READY = 0.7 ;
+    final double HAND_CLOSE = 0.95;
 
     // Angle (A) to/from Position (P) conversion factors Y = Mx + C
     final double LIFT_P2A_M = 0.0992;
@@ -308,11 +308,12 @@ public class Elevator {
     }
 
     /***
-     * Start the power off sloly when moving a long way
+     * Start the power off slowly when moving a long way
      * @param power
      */
     private void rampPower(double power) {
-        power += (power - liftMaster.getPower()) * 0.4;
+        double currentPower =  liftMaster.getPower();
+        power = currentPower + ((power - currentPower) * 0.4);
         setPower(power);
     }
 

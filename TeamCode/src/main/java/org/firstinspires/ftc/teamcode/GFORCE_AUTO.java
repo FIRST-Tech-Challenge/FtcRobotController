@@ -18,15 +18,13 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @TeleOp(name="G-FORCE AUTO", group = "advanced")
 public class GFORCE_AUTO extends LinearOpMode {
 
-    boolean headingLock = false;
-    double  headingSetpoint = 0;
-
+    AutoConfig autoConfig = new AutoConfig();
     @Override
     public void runOpMode() throws InterruptedException{
 
-
         // Initialize GFORCE_KiwiDrive
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
+        autoConfig.init(this);
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
@@ -42,8 +40,9 @@ public class GFORCE_AUTO extends LinearOpMode {
         telemetry.update();
 
         while (opModeInInit()) {
-            // Select the desired trajectory
+            autoConfig.init_loop();
 
+            // Select the desired trajectory
             if (gamepad1.x) {
                 telemetry.addData("Trajectory", "Far Right Floor");
                 telemetry.update();
