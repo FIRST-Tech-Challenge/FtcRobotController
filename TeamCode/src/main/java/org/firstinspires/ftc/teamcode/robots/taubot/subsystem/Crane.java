@@ -53,6 +53,7 @@ public class Crane implements Subsystem {
     public static double EXTEND_TICKS_PER_METER = 806/.2921; //todo verify this is still true
 
     public static double kF = 0.0;
+
     public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.01, 0, 0);
     public static double SHOULDER_TOLERANCE = 1;
     public static double SHOULDER_POWER = 1.0;
@@ -358,7 +359,7 @@ public class Crane implements Subsystem {
     }
 
     public void adjustTurretAngle(double speed){
-        targetTurretAngle = robot.turret.getHeading() + (10 * speed);
+        targetTurretAngle = robot.turret.getHeading() + (20 * speed);
 
     }
 
@@ -374,8 +375,8 @@ public class Crane implements Subsystem {
         setExtendTargetPos((int)(getextenderPos() + 200 * speed));
     }
 
-    public void adjustShoulder(double speed){
-        setShoulderTargetPos((int)(getShoulderPos() + 200* speed));
+    public void adjustShoulder(double distance){
+        setShoulderTargetPos((int)(getShoulderPos() + 200* distance));
     }
 
     public double getHeight(){
@@ -467,12 +468,54 @@ public class Crane implements Subsystem {
         bulbGripped = !bulbGripped;
     }
 
+    double pickupMemoryTurretHeading;
+    int pickupMemoryShoulderTick;
+    int pickupMemoryExtendTick;
+
     public void closeGripper(){
+
+        if(bulbGripped == false){
+            recordPickup();
+        }
         bulbGripped = true;
     }
+
+    private void recordPickup(){
+        pickupMemoryTurretHeading = robot.turret.getHeading();
+        pickupMemoryShoulderTick = shoulderDirectAnglePos;
+        pickupMemoryExtendTick = extendPosition;
+    }
+
+    public void goToPickup(){
+        robot.turret.setTargetHeading(pickupMemoryTurretHeading);
+        shoulderTargetPos = pickupMemoryShoulderTick;
+        extenderTargetPos = pickupMemoryExtendTick;
+    }
+
+    double dropMemoryTurretHeading;
+    int dropMemoryShoulderTick;
+    int dropMemoryExtendTick;
+
     public void openGripper(){
+
+        if(bulbGripped == true){
+            recordDrop();
+        }
         bulbGripped = false;
     }
+
+    private void recordDrop(){
+        dropMemoryTurretHeading = robot.turret.getHeading();
+        dropMemoryShoulderTick = shoulderDirectAnglePos;
+        dropMemoryExtendTick = extendPosition;
+    }
+
+    public void goToDrop(){
+        robot.turret.setTargetHeading(dropMemoryTurretHeading);
+        shoulderTargetPos = dropMemoryShoulderTick;
+        extenderTargetPos = dropMemoryExtendTick;
+    }
+
     public void setGripper(boolean g){
         bulbGripped = g;
     }
@@ -492,7 +535,7 @@ public class Crane implements Subsystem {
         setExtendTargetPos((int)(dis*EXTEND_TICKS_PER_METER));
     }
     public void setShoulderPwr(double pwr){ shoulderPwr = pwr; }
-    public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX),-100)); }
+    public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX),-200)); }
     public  int getShoulderTargetPos(){ return shoulderTargetPos; }
     public  void setExtendTargetPos(int t){ extenderTargetPos = Math.min(3075,Math.max(t, 0)); }
     public boolean nearTargetShoulder(){

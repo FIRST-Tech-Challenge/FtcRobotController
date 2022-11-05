@@ -203,6 +203,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         headingPID.setSetpoint(vel);
     }
 
+    double rawHeading;
+
     @Override
     public void update(Canvas fieldOverlay) {
         //updatePose(); //David's update
@@ -223,12 +225,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.RADIANS);
         if (!imuOffsetsInitialized && imu.isGyroCalibrated()) {
-            headingOffset = wrapAngleRad(orientation.firstAngle);
+            headingOffset = orientation.firstAngle;
             rollOffset = wrapAngleRad(orientation.secondAngle);
             pitchOffset = wrapAngleRad(orientation.thirdAngle);
 
             imuOffsetsInitialized = true;
         }
+
+        rawHeading = orientation.firstAngle;
 
         heading = orientation.firstAngle - headingOffset;
 
@@ -251,7 +255,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         //-------------------------------- actual driving ---------------------------------------
 
         if(!manualDriveEnabled) {
-            driveToNextTarget.execute();
+            //driveToNextTarget.execute();
         }
 
         if (useMotorPowers) {
@@ -259,8 +263,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             rightMotor.setPower(rightPower);
 
         } else {
-            leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
-            rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
+            //leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
+            //rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
         }
     }
 
@@ -277,7 +281,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         if (debug) {
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
-            telemetryMap.put("heading", Math.toDegrees(poseEstimate.getHeading()));
+            telemetryMap.put("pose heading", Math.toDegrees(poseEstimate.getHeading()));
+            telemetryMap.put("raw heading", Math.toDegrees(rawHeading));
+            telemetryMap.put("heading", Math.toDegrees(heading));
 
             telemetryMap.put("x vel", poseVelocity.getX());
             telemetryMap.put("y vel", poseVelocity.getY());
@@ -419,12 +425,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         right = drive - turn;
 
         // Normalize the values so neither exceed +/- 1.0
+        /*
         max = Math.max(Math.abs(left), Math.abs(right));
         if (max > 1.0)
         {
             left /= max;
             right /= max;
         }
+         */
         setMotorPowers(left,right);
     }
 
@@ -654,5 +662,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     @Override
     protected double getRawExternalHeading() {
         return heading-headingOffset;
+    }
+
+    public double getRawHeading(){
+        return rawHeading;
     }
 }
