@@ -23,7 +23,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     public static DcMotor motorRVSlides;
 
     // servos
-    //public static Servo servoGrabber;
+    public static Servo servoGrabber;
 
     // IMU
     public BNO055IMU imu;
@@ -72,7 +72,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorRVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // servos
-        //servoGrabber = hardwareMap.servo.get("servoGrabber");
+        servoGrabber = hardwareMap.servo.get("servoGrabber");
 
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -87,7 +87,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         // preset the IMU angles so it doesn't start on null since it will only later be read when turning
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        //servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
+        servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
 
     public void driveWithIMU(double xPower, double yPower, double tPower)  {
@@ -135,9 +135,9 @@ public abstract class BaseOpMode extends LinearOpMode {
     // this method will allow the grabber to open or close given a boolean input, with true = open and false = close
     public void driveGrabber(boolean isOpen) {
         if (isOpen) {
-            //servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION); // set servo to open position
+            servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION); // set servo to open position
         } else {
-            //servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION); // set servo to closed position
+            servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION); // set servo to closed position
         }
     }
 

@@ -14,6 +14,8 @@ public class TeleOpCompetition extends BaseTeleOp {
         initialize();
         waitForStart();
 
+        telemetry.addLine("TO PREVENT START ROTATE WAIT A FEW SECONDS IN BETWEEN INIT AND START");
+
         driveTurntableWithController();
 
         // get angle after startup to prevent jitter on startup
