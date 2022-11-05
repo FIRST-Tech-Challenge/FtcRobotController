@@ -81,11 +81,11 @@ public class DriveSystem {
             switch(name) {
                 case FRONTLEFT:
                 case BACKLEFT:
-                    motor.setDirection(DcMotorSimple.Direction.REVERSE);
+                    motor.setDirection(DcMotorSimple.Direction.FORWARD);
                     break;
                 case FRONTRIGHT:
                 case BACKRIGHT:
-                    motor.setDirection(DcMotorSimple.Direction.FORWARD);
+                    motor.setDirection(DcMotorSimple.Direction.REVERSE);
                     break;
             }
         });
@@ -192,13 +192,17 @@ public class DriveSystem {
         if(mTargetTicks == 0) {
             driveToPositionInit(ticks, direction, maxPower);
         }
+
+        mTargetTicks = direction == Direction.BACKWARD ? -ticks : ticks;
         // Determine distance from desired target and stop if within acceptable tolerance
         for (DcMotor motor : motors.values()) {
             if(motor.getDeviceName().equals(MotorNames.FRONTLEFT.name())){
-                motor.setPower(motors.get(MotorNames.BACKLEFT).getPower());
+                double powL = motors.get(MotorNames.BACKLEFT.name()).getPower();
+                motor.setPower(direction == Direction.BACKWARD ? -1 * powL : powL);
             }
             else if(motor.getDeviceName().equals(MotorNames.FRONTRIGHT)){
-                motor.setPower(motors.get(MotorNames.BACKRIGHT.name()).getPower());
+                double powR = motors.get(MotorNames.BACKRIGHT.name()).getPower();
+                motor.setPower(direction == Direction.BACKWARD ? -1 * powR : powR);
             }
             else{
                 motor.setPower(maxPower);
@@ -215,16 +219,31 @@ public class DriveSystem {
         }
 
         if (Direction.isStrafe(direction)) {
+            //TODO fix strafe
             double diff       = computeDegreesDiff();
             double correction = Range.clip(DriveParams.STRAFE_COEFF * diff, -1, 1);
             int sign          = (direction == Direction.LEFT) ? -1 : 1;
             motors.forEach((name, motor) -> {
                 switch(name) {
                     case FRONTLEFT:
+                        if(direction == Direction.RIGHT){
+                            motor.setPower(correction > 0 ? maxPower - sign * correction: maxPower * -1);
+                        }
+                        else{
+                            motor.setPower(correction > 0 ? maxPower - sign * correction : maxPower);
+                        }
+                        break;
                     case BACKLEFT:
-                        motor.setPower(correction > 0 ? maxPower - sign * correction: maxPower);
+                        motor.setPower(correction > 0 ? maxPower - sign * correction : maxPower);
                         break;
                     case FRONTRIGHT:
+                        if(direction == Direction.LEFT){
+                            motor.setPower(correction > 0 ? maxPower + sign * correction : maxPower * -1);
+                        }
+                        else{
+                            motor.setPower(correction > 0 ? maxPower + sign * correction : maxPower);
+                        }
+                        break;
                     case BACKRIGHT:
                         motor.setPower(correction < 0 ? maxPower + sign * correction : maxPower);
                         break;

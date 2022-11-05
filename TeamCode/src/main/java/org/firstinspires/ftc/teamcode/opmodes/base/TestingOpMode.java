@@ -15,12 +15,9 @@ import java.util.EnumMap;
 /**
  * Basic OpMode template
  */
-public abstract class TestingOpMode extends OpMode {
+public abstract class TestingOpMode extends BaseOpMode {
 
-    protected DriveSystem driveSystem;
-    protected Vuforia vuforia;
     private boolean stopRequested;
-
 
     /** Initialization */
     public void init(){
@@ -31,13 +28,33 @@ public abstract class TestingOpMode extends OpMode {
         // Initialize motors
     }
 
+    public void loop(){
+        int count = 0;
+        if(driveSystem.driveToPositionTicks(300, DriveSystem.Direction.FORWARD, 0.3)){
+            count ++;
+            telemetry.addData("Status: ", count);
+        }
+        if(driveSystem.driveToPositionTicks(300, DriveSystem.Direction.BACKWARD, 0.3)){
+            count ++;
+            telemetry.addData("Status: ", count);
+        }
+        if(driveSystem.driveToPositionTicks(300, DriveSystem.Direction.LEFT, 0.3)){
+            count ++;
+            telemetry.addData("Status: ", count);
+        }
+        if(driveSystem.driveToPositionTicks(300, DriveSystem.Direction.RIGHT, 0.3)){
+            count ++;
+            telemetry.addData("Status: ", count);
+        }
+    }
+
     /** Returns if a stop has been requested or if execution is
      */
     public final boolean isStopRequested() {
         return this.stopRequested || Thread.currentThread().isInterrupted();
     }
 
-    @Override
+
     public void stop() {
         stopRequested = true;
         super.stop();
