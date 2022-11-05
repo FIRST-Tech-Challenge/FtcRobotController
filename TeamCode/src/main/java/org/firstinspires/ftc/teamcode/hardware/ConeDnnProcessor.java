@@ -24,10 +24,10 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 	 */
 	public ConeDnnProcessor() {
 		net = Dnn.readNetFromTensorflow(
-				"/sdcard/First/DNN/faster_rcnn_inception_v2_coco_2018_01_28_frozen.pb",
-				"/sdcard/First/DNN/faster_rcnn_inception_v2_coco_2018_01_28.pbtxt");
-		//"C:\\git_local\\TF_Training\\faster_rcnn_inception_v2_coco_2018_01_28\\faster_rcnn_inception_v2_coco_2018_01_28_frozen.pb",
-		//"C:\\git_local\\TF_Training\\faster_rcnn_inception_v2_coco_2018_01_28\\faster_rcnn_inception_v2_coco_2018_01_28.pbtxt" );
+				//"/sdcard/First/DNN/ssd_mobilenet_v1_coco_2017_11_17_frozen.pb",
+				//"/sdcard/First/DNN/ssd_mobilenet_v1_coco_2017_11_17.pbtxt");
+		"C:\\Transfer\\ssd_mobilenet_v1_coco_2017_11_17_frozen.pb",
+		"C:\\Transfer\\ssd_mobilenet_v1_coco_2017_11_17.pbtxt" );
 
 	}
 
@@ -50,8 +50,8 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 			if (files[i].isFile()) {
 				Mat test01 = Imgcodecs.imread(files[i].getAbsolutePath());
 				Mat result = proc.processFrame(test01);
-
-				Imgcodecs.imwrite(resultDir.getAbsolutePath() + "\\" + files[i].getName() + "-result.jpg", result);
+				System.out.println("Detected: " + proc.getDetectMsg());
+				//Imgcodecs.imwrite(resultDir.getAbsolutePath() + "\\" + files[i].getName() + "-result.jpg", result);
 
 			}
 		}
@@ -67,8 +67,8 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 		 * Fast RCNN:  800 x 600,  Scale = 1.0 , mean 0
 		 * SSD Mobilenet v1  300 X 300 , Scale 1.0 , mean 0
 		 */
-		final int IN_WIDTH = 800;
-		final int IN_HEIGHT = 600;
+		final int IN_WIDTH = 300;
+		final int IN_HEIGHT = 300;
 
 		final double IN_SCALE_FACTOR = 1.0;
 		final double MEAN_VAL = 0;
@@ -133,7 +133,7 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 		}
 	}
 
-	private static final String[] classNames = {"background","person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck",
+	private static final String[] classNames = {"bck","person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck",
 			"boat", "traffic light", "fire hydrant", "street sign", "stop sign", "parking meter", "bench", "bird", "cat", "dog", 
 			"horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "hat", "backpack", "umbrella", "shoe", "eye glasses",
 			"handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat", "baseball glove", 

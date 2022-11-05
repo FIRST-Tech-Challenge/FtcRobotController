@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -54,7 +55,7 @@ public class DnnTest   extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                webCam.startStreaming(640,480, OpenCvCameraRotation.UPSIDE_DOWN);
+                webCam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override

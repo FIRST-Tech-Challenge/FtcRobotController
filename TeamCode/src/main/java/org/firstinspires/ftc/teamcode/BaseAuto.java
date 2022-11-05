@@ -4,7 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.hardware.ConeImageProcessor;
+import org.firstinspires.ftc.teamcode.hardware.SleeveSide;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -23,11 +25,10 @@ import org.firstinspires.ftc.teamcode.hardware.MecanumWheels;
 
 //435 max ticks per second is 383.6
 
+@Autonomous(name = "BaseAuto")
+public  class BaseAuto extends LinearOpMode {
 
-public abstract class BaseAuto extends LinearOpMode {
-
-    OpenCvInternalCamera phoneCam;
-
+    OpenCvWebcam webcam;
     ConeImageProcessor ConeImgPipeline;
 
     Hardware2022 hdw;
@@ -35,31 +36,34 @@ public abstract class BaseAuto extends LinearOpMode {
     int steps = 0;
     private ElapsedTime runtime = new ElapsedTime();
 
+    SleeveSide currentSide = SleeveSide.Unkown;
+
 
     @Override
     public void runOpMode() {
-
         hdw = new Hardware2022(hardwareMap,telemetry ); //init hardware
         hdw.createHardware();
         robot = new MecanumWheels();
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources()
+                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(
+                hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         ConeImgPipeline = new ConeImageProcessor();
-        phoneCam.setPipeline(ConeImgPipeline);
+        webcam.setPipeline(ConeImgPipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        //webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
+                webcam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -68,24 +72,85 @@ public abstract class BaseAuto extends LinearOpMode {
                 /*
                  * This will be called if the camera could not be opened
                  */
+                telemetry.addData("Carema Error , " ,  errorCode);
+                telemetry.update();
+                sleep(1000);
             }
         });
 
-        waitForStart();
-
-        while (opModeIsActive())
-        {
-            telemetry.addData("Analysis", ConeImgPipeline.getMeanVal());
-            telemetry.addData("Sleeve: ", ConeImgPipeline.getSleveSide());
+        while (!isStarted() ) {
+            currentSide = ConeImgPipeline.getSleveSide();
+            telemetry.addData("Realtime analysis", this.currentSide);
+            telemetry.addData("Mean Value", ConeImgPipeline.getMeanVal());
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping in this sample
             sleep(50);
         }
 
+        //phoneCam.closeCameraDevice();
+
+        waitForStart();
+        telemetry.addData("Post Start analysis", this.currentSide);
+        telemetry.addData("Mean Value", ConeImgPipeline.getMeanVal());
+        telemetry.update();
+
+        switch ( currentSide) {
+            case Sleev1: {
+                parkZone1();
+                break;
+            }
+
+            case Sleev2: {
+                parkZone2();
+                break;
+            }
+
+            case Sleev3: {
+                parkZone3();
+                break;
+            }
+            case Unkown: {
+                parkZone2();
+
+            }
+        }
+
+
+        /*
+        while (opModeIsActive())  {
+            idle();
+        }
+        */
 
     }
 
-    abstract void movePark();
+    void parkZone1( ) {
+        telemetry.addData("Park zone 1 ", this.currentSide);
+        telemetry.update();
+        //Move Left
+        hdw.moveYAxis(24.0, -0.7);
+        hdw.moveXAxis( 36.0, 1);
+    }
+
+    void parkZone2( ) {
+        telemetry.addData("Park zone 2 ", this.currentSide);
+        telemetry.update();
+        //Move forward
+        hdw.moveXAxis( 36.0, 1);
+
+    }
+
+    void parkZone3( ) {
+        telemetry.addData("Park zone 3 ", this.currentSide);
+        telemetry.update();
+        //Move right
+        hdw.moveYAxis(24.0, 0.7);
+        hdw.moveXAxis( 36.0, 1);
+
+    }
+
+
+    //abstract void movePark();
 
 }

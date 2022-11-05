@@ -20,8 +20,8 @@ public class Hardware2022 {
     //Adjustable parameters  here.
     private final double CLAW_CLOSED = 1.0;
     private final double CLAW_OPEN = 0.7 ;
-    private final double xAxisCoeff = 360 ;  // How many degrees encoder to turn to run an inch in X Axis
-    private final double yAxisCoeff = 360 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double xAxisCoeff = 83 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double yAxisCoeff = 83 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
     private final double CONE_SLIDE_LOW = 0 ;
@@ -90,7 +90,6 @@ public class Hardware2022 {
         wheelFrontLeft = hwMap.get(DcMotor.class, "lfWheel");
         wheelBackRight = hwMap.get(DcMotor.class, "rrWheel");
         wheelBackLeft = hwMap.get(DcMotor.class, "lrWheel");
-        //wheelStrafe = hwMap.get(DcMotor.class, "wheelStrafe");
 
         wheelFrontRight.setDirection(DcMotor.Direction.FORWARD);
         wheelBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -102,10 +101,11 @@ public class Hardware2022 {
         wheelFrontLeft.setPower(0);
         wheelBackLeft.setPower(0);
         //wheelStrafe.setPower(0);
+        vSlide.setPower(0);
 
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
@@ -168,7 +168,7 @@ public class Hardware2022 {
 
     /**
      *
-     * @param distance  Distance in inches , 360 for a full circle.  Always positive
+     * @param distance  Distance in inches .  Always positive
      * @param power Positive value move forward
      */
     public void moveXAxis( double distance, double power ) {
@@ -274,7 +274,7 @@ public class Hardware2022 {
      *  This operation to raise Vertical Slide to one level higher
      */
     public void raiseVerticalSlide (  ) {
-        telemetry.addLine().addData("[Dummy >]  ", "Slide Raised ");
+        telemetry.addLine().addData("[ >]  ", "Slide Raising, current high  " + currentVSHeight);
         telemetry.update();
 
         switch ( currentVSHeight) {
@@ -288,7 +288,7 @@ public class Hardware2022 {
 
             case High: {
                 //DO noting, already highest
-                break;
+
             }
         }
 
@@ -311,7 +311,7 @@ public class Hardware2022 {
             }
 
             case High: {
-                break;
+
             }
         }
 
@@ -319,9 +319,13 @@ public class Hardware2022 {
 
     /**
      * Lower vertical Slide freely , using game control
-     * @param power
+     * @param power, Expect positive input
      */
     public void freeLowerVerticalSlide( float power ) {
+        while (vSlide.getCurrentPosition() > CONE_SLIDE_LOW ) {
+            vSlide.setPower( -power );
+        }
+
 
     }
 
@@ -330,6 +334,9 @@ public class Hardware2022 {
      * @param power
      */
     public void freeRaiseVerticalSlide( float power ) {
+        while (vSlide.getCurrentPosition() < CONE_SLIDE_HIGH ) {
+            vSlide.setPower( power );
+        }
 
     }
 
