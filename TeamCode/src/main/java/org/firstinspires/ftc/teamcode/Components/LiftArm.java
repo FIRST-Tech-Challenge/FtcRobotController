@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
-import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
-import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPENING;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_LOWERING;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
@@ -19,7 +17,7 @@ public class LiftArm {
 
     private final double LIFT_ARM_INTAKE_POS = 0.1;
 
-    private final double LIFT_ARM_OUTTAKE_POS = 0.4;
+    private final double LIFT_ARM_OUTTAKE_POS = 0.6;
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
@@ -65,7 +63,9 @@ public class LiftArm {
     //constructor
     public LiftArm() {
         //init RFServo
-        liftArmServo = new RFDualServo("liftArmServo", "liftArmServo2", 0.5);
+        liftArmServo = new RFDualServo("liftArmServo", "liftArmServo2", 0.7);
+        liftArmServo.setPositions(LIFT_ARM_INTAKE_POS);
+        ARM_INTAKE.setStatus(true);
 
     }
 
@@ -122,6 +122,10 @@ public class LiftArm {
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",raiseLiftArmToOuttake()"
                     + ",Lift Arm Raised to Outtake Position", true);
+        }
+        else {
+            logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",raiseLiftArmToOuttake()"
+                    + "ARM_INTAKE = " + ARM_INTAKE.status + "ARM_OUTTAKE =" + ARM_OUTTAKE.status, true);
         }
     }
 

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 
 
 public class Lift {
-    private final int MAX_LIFT_TICKS = 1740;
+    private final int MAX_LIFT_TICKS = 1645;
     private final double LIFT_GRAVITY_CONSTANT = 0.07;
     //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
@@ -64,10 +65,10 @@ public class Lift {
         }
     }
     public enum LiftConstants{
-        LIFT_HIGH_JUNCTION(2000, false),
-        LIFT_MED_JUNCTION(1500, false),
-        LIFT_LOW_JUNCTION(1000, false),
-        LIFT_GROUND_JUNCTION(250,false),
+        LIFT_HIGH_JUNCTION(1640, false),
+        LIFT_MED_JUNCTION(812, false),
+        LIFT_LOW_JUNCTION(15, false),
+        LIFT_GROUND_JUNCTION(0,false),
         LIFT_GROUND(0, true);
 
         double value;
@@ -118,59 +119,66 @@ public class Lift {
     public double getLiftVelocity(){
         return liftMotor.getVelocity();
     }
-    private void updateLiftStates(){
+    public void updateLiftStates(){
         int liftPos = liftMotor.getCurrentPosition();
         double liftVelocity = liftMotor.getVelocity();
-        if(liftPos < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
+        if(liftPos < 20 && abs(liftVelocity)<20){
             LiftStates.LIFT_GROUND.setStatus(true);
         }
-        if(liftPos > 0 && Math.abs(liftPos - LiftConstants.LIFT_GROUND_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
-            LiftStates.LIFT_GROUND_RAISING.setStatus(true);
+        else{
+            LiftStates.LIFT_GROUND.setStatus(false);
         }
-        if(liftPos > 0 && Math.abs(liftPos - LiftConstants.LIFT_GROUND_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity < 0){
-            LiftStates.LIFT_GROUND_JUNCTION_LOWERING.setStatus(true);
-        }
-        if(Math.abs(LiftConstants.LIFT_GROUND_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
-            LiftStates.LIFT_GROUND_JUNCTION.setStatus(true);
-        }
-        if(liftPos > LiftConstants.LIFT_GROUND_JUNCTION.value && liftPos < LiftConstants.LIFT_LOW_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_LOW_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
-            LiftStates.LIFT_GROUND_JUNCTION_RAISING.setStatus(true);
-        }
-        if(liftPos > LiftConstants.LIFT_GROUND_JUNCTION.value && liftPos < LiftConstants.LIFT_LOW_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_LOW_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
-            LiftStates.LIFT_LOW_LOWERING.setStatus(true);
-        }
-        if(Math.abs(LiftConstants.LIFT_LOW_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
-            LiftStates.LIFT_LOW.setStatus(true);
-        }
-        if(liftPos > LiftConstants.LIFT_LOW_JUNCTION.value && liftPos < LiftConstants.LIFT_MED_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_MED_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
-            LiftStates.LIFT_LOW_RAISING.setStatus(true);
-        }
-        if(liftPos > LiftConstants.LIFT_LOW_JUNCTION.value && liftPos < LiftConstants.LIFT_MED_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_MED_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity < 0){
-            LiftStates.LIFT_MID_LOWERING.setStatus(true);
-        }
-        if(Math.abs(LiftConstants.LIFT_MED_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
-            LiftStates.LIFT_MID.setStatus(true);
-        }
-        if(liftPos > LiftConstants.LIFT_MED_JUNCTION.value && liftPos < LiftConstants.LIFT_HIGH_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_HIGH_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
-            LiftStates.LIFT_MID_RAISING.setStatus(true);
-        }
-        if(liftPos > LiftConstants.LIFT_MED_JUNCTION.value && liftPos < LiftConstants.LIFT_HIGH_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_HIGH_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity < 0){
-            LiftStates.LIFT_HIGH_LOWERING.setStatus(true);
-        }
-        if(Math.abs(LiftConstants.LIFT_HIGH_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
-            LiftStates.LIFT_HIGH.setStatus(true);
-        }
+//        if(liftPos > 0 && abs(liftPos - LiftConstants.LIFT_GROUND_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
+//            LiftStates.LIFT_GROUND_RAISING.setStatus(true);
+//        }
+//        if(liftPos > 0 && abs(liftPos - LiftConstants.LIFT_GROUND_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity < 0){
+//            LiftStates.LIFT_GROUND_JUNCTION_LOWERING.setStatus(true);
+//        }
+//        if(abs(LiftConstants.LIFT_GROUND_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
+//            LiftStates.LIFT_GROUND_JUNCTION.setStatus(true);
+//        }
+//        if(liftPos > LiftConstants.LIFT_GROUND_JUNCTION.value && liftPos < LiftConstants.LIFT_LOW_JUNCTION.value && abs(liftPos - LiftConstants.LIFT_LOW_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
+//            LiftStates.LIFT_GROUND_JUNCTION_RAISING.setStatus(true);
+//        }
+//        if(liftPos > LiftConstants.LIFT_GROUND_JUNCTION.value && liftPos < LiftConstants.LIFT_LOW_JUNCTION.value && abs(liftPos - LiftConstants.LIFT_LOW_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
+//            LiftStates.LIFT_LOW_LOWERING.setStatus(true);
+//        }
+//        if(abs(LiftConstants.LIFT_LOW_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
+//            LiftStates.LIFT_LOW.setStatus(true);
+//        }
+//        if(liftPos > LiftConstants.LIFT_LOW_JUNCTION.value && liftPos < LiftConstants.LIFT_MED_JUNCTION.value && abs(liftPos - LiftConstants.LIFT_MED_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
+//            LiftStates.LIFT_LOW_RAISING.setStatus(true);
+//        }
+//        if(liftPos > LiftConstants.LIFT_LOW_JUNCTION.value && liftPos < LiftConstants.LIFT_MED_JUNCTION.value && abs(liftPos - LiftConstants.LIFT_MED_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity < 0){
+//            LiftStates.LIFT_MID_LOWERING.setStatus(true);
+//        }
+//        if(abs(LiftConstants.LIFT_MED_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
+//            LiftStates.LIFT_MID.setStatus(true);
+//        }
+//        if(liftPos > LiftConstants.LIFT_MED_JUNCTION.value && liftPos < LiftConstants.LIFT_HIGH_JUNCTION.value && abs(liftPos - LiftConstants.LIFT_HIGH_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
+//            LiftStates.LIFT_MID_RAISING.setStatus(true);
+//        }
+//        if(liftPos > LiftConstants.LIFT_MED_JUNCTION.value && liftPos < LiftConstants.LIFT_HIGH_JUNCTION.value && abs(liftPos - LiftConstants.LIFT_HIGH_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity < 0){
+//            LiftStates.LIFT_HIGH_LOWERING.setStatus(true);
+//        }
+//        if(abs(LiftConstants.LIFT_HIGH_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
+//            LiftStates.LIFT_HIGH.setStatus(true);
+//        }
     }
     public boolean liftToPosition(LiftConstants targetHeight){//TODO: make sure this is async
         //use rfmotor setPosition function to lift in accordance with the enum
         //if(targetHeight != LiftConstants.LIFT_LOW_JUNCTION && targetHeight != LiftConstants.LIFT_GROUND_JUNCTION && Claw.ClawStates.CLAW_CLOSED.status == true){
             //liftMotor.setPosition(targetHeight.value);
         //}
-        if(LC.isConeReady() == true /*&& Claw.ClawStates.CLAW_CLOSED.status == true*/){
+
+        double distance = targetHeight.value-liftMotor.getCurrentPosition();
+        if(distance>0){
             liftMotor.setPosition(targetHeight.value);
         }
-        double distance = targetHeight.value-liftMotor.getCurrentPosition();
-        boolean done = (Math.abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
+        else{
+            liftMotor.setPower(LIFT_GRAVITY_CONSTANT/4);
+        }
+        boolean done = (abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
         if(!done){
             targetHeight.setLfc(true);
         }
@@ -191,7 +199,7 @@ public class Lift {
     }
     public void setLiftPower(double power){
         liftTarget=liftMotor.getCurrentPosition();
-        if(liftTarget<MAX_LIFT_TICKS&&power>0) {
+        if(liftTarget+10<MAX_LIFT_TICKS&&power>0) {
             liftMotor.setPower(power + LIFT_GRAVITY_CONSTANT);
         }
         else if(liftTarget>10&&power<0) {

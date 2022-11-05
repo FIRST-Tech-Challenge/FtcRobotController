@@ -16,7 +16,7 @@ public class PwPTeleOp extends LinearOpMode {
         robot.roadrun.setPoseEstimate(new Pose2d(41, 61, Math.toRadians(270)));
         robot.cv.observeStick();
         waitForStart();
-        while(opModeIsActive()){
+        while(!isStopRequested()){
             robot.teleOp();
         }
         robot.stop();

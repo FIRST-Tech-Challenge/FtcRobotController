@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -60,10 +58,10 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     @NonNull
     @Override
     public List<Double> getWheelPositions() {
-        op.telemetry.addData("left",leftEncoder.getCurrentPosition());
-        op.telemetry.addData("right",rightEncoder.getCurrentPosition());
-        op.telemetry.addData("back",frontEncoder.getCurrentPosition());
-        op.telemetry.update();
+//        op.telemetry.addData("left",leftEncoder.getCurrentPosition());
+//        op.telemetry.addData("right",rightEncoder.getCurrentPosition());
+//        op.telemetry.addData("back",frontEncoder.getCurrentPosition());
+//        op.telemetry.update();
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCurrentPosition()),
                 encoderTicksToInches(rightEncoder.getCurrentPosition()),

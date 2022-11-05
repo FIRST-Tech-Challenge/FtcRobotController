@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
@@ -15,12 +14,13 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
 
 public class BlueLeftAuto extends LinearOpMode {
+    public static Pose2d startPose = new Pose2d(36, 72, Math.toRadians(180));
+
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
 
         //detectSignal();
-        Pose2d startPose = new Pose2d(36, 72, Math.toRadians(180));
-        robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.roadrun.setPoseEstimate(startPose);
         waitForStart();
 

@@ -13,27 +13,24 @@ public class StickObserverTest extends LinearOpMode {
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, true);
         sleep(500);
-        robot.roadrun.setPoseEstimate(new Pose2d(41, 61, Math.toRadians(270)));
+        robot.roadrun.setPoseEstimate(new Pose2d(40.2, 62.25, Math.toRadians(270)));
 //        robot.roadrun.setPoseEstimate(new Pose2d(0,0,Math.toRadians(90)));
         robot.cv.observeStick();
         waitForStart();
         double[] loopStart={0,0};
         while(opModeIsActive()) {
-//                if(robot.field.lookingAtPole()){
-//                    double[] pole = robot.field.lookedAtPole();
-//                    telemetry.addData("poleTheta", pole[3]);
-//                    telemetry.addData("poleDistance", pole[2]);
-//                    robot.autoAim();
-//                }
-                telemetry.addData("centerOffset", robot.cv.centerOfPole());
-                telemetry.addData("centerSize", robot.cv.poleSize());
-                telemetry.addData("cvtheta",robot.cv.rotatedPolarCoordDelta()[0]);
-                telemetry.addData("cvdistance",robot.cv.rotatedPolarCoordDelta()[1]);
-                telemetry.addData("aimTo",robot.roadrun.getPoseEstimate().getHeading() + robot.cv.rotatedPolarCoordDelta()[0]);
+                if(robot.field.lookingAtPole()){
+                    double[] pole = robot.field.lookedAtPole();
+                    telemetry.addData("poleTheta", pole[3]);
+                    telemetry.addData("poleDistance", pole[2]);
+                }
+                telemetry.addData("cvtheta",robot.cv.rotatedPolarCoord()[0]);
+                telemetry.addData("cvdistance",robot.cv.rotatedPolarCoord()[1]);
+                telemetry.addData("aimTo",robot.roadrun.getPoseEstimate().getHeading() + robot.cv.rotatedPolarCoord()[0]);
                 telemetry.update();
                 loopStart[0] = getRuntime();
                 robot.roadrun.update();
-                robot.autoAim();
+//                robot.autoAim();
                 robot.setFirstLoop(false);
         }
         robot.stop();

@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot.logger;
-
-import static java.lang.Math.abs;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.pow;
-import static java.lang.Math.round;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -106,6 +102,7 @@ public class RFMotor extends Motor {
 
     //BUG WITH CALCULATION
     public void setPosition(double targetpos) {
+        rfMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         velocity = 0;
 //        if (targetpos >= -1 && targetpos <= 1) {
 //            targetpos *= maxtickcount;
@@ -145,6 +142,7 @@ public class RFMotor extends Motor {
     }
 
     public void setPower(double power) {
+        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if (rfMotor.getPower() != power) {
 //            inputlogs.add(rfMotorName);
 //            inputlogs.add("setPower()");

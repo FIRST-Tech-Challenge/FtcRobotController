@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLO
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPENING;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
@@ -19,19 +20,20 @@ public class Claw {
     private Rev2mDistanceSensor coneObserver;
 
     //temporary
-    private final double CLAW_CONE_DISTANCE = 2;
+    private final double CLAW_CONE_DISTANCE = 2.6;
 
     //temporary
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 0.3;
+    private final double CLAW_CLOSED_POS = 0.25;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.5;
+    private final double CLAW_OPEN_POS = 0.45;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
+    private double lastCheckTime = 0;
 
     public double clawServoLastSwitchTime = 0;
     //temporary
@@ -81,7 +83,12 @@ public class Claw {
 
         coneObserver = op.hardwareMap.get(Rev2mDistanceSensor.class, "coneObserver");
 
-        CLAW_OPEN.setStatus(true);
+        if(!isTeleop){
+            closeClaw();
+        }
+        else{
+            claw.setPosition(CLAW_OPEN_POS);
+        }
     }
 
     public void updateClawStates() {
@@ -114,18 +121,22 @@ public class Claw {
         //no input
 
 
-        //the state of claw opened has to be true TODO: Boy better see sumthin with distance
-        if (CLAW_OPEN.status && isConeReady()) {
-            //set servo position
-            claw.setPosition(CLAW_CLOSED_POS);
+        //the state of claw opened has to be true
+        if (op.getRuntime()-lastCheckTime>0.2) {
+            lastCheckTime = op.getRuntime();
+            if(CLAW_OPEN.status && isConeReady()&& Lift.LiftConstants.LIFT_GROUND.getLfcValue()) {
+                //set servo position
+                claw.setPosition(CLAW_CLOSED_POS);
 
-            //set state of claw closed to true
-            CLAW_CLOSING.setStatus(true);
+                //set state of claw closed to true
+                CLAW_CLOSING.setStatus(true);
 
-            //log to general robot log that the claw has been closed through function closeClaw()
-            logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",closeClaw()"
-                    + ",Claw Closed", true);
+                //log to general robot log that the claw has been closed through function closeClaw()
+                logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",closeClaw()"
+                        + ",Claw Closed", true);
+            }
         }
+
     }
     //open the claw
     public void openClaw() {

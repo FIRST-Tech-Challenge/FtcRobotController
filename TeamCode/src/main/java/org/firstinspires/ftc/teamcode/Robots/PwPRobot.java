@@ -45,21 +45,26 @@ public class PwPRobot extends BasicRobot {
 
     public void stop() {
         cv.stopCamera();
+        logger.log("/RobotLogs/GeneralRobot", "program stoped");
         logger.closeLog();
+        lift.setLiftPower(0.0);
         op.stop();
+    }
+    public void delay(double p_delay){
+        queuer.addDelay(p_delay);
     }
 
     public void autoAim() {
         if (queuer.queue(false, !roadrun.isBusy())) {
             if (!roadrun.isBusy() && field.lookingAtPole()) {
-                /*double[] coords = cv.rotatedPolarCoordDelta();
                 Trajectory trajectory = roadrun.trajectoryBuilder(roadrun.getPoseEstimate()).lineToLinearHeading(
-                        new Pose2d(roadrun.getPoseEstimate().getX() + (coords[1] - 9) * cos(roadrun.getPoseEstimate().getHeading() + coords[0]),
-                                roadrun.getPoseEstimate().getY() + (coords[1] - 9) * sin(roadrun.getPoseEstimate().getHeading() + coords[0]),
-                                roadrun.getPoseEstimate().getHeading() + coords[0])).build();
-                roadrun.followTrajectoryAsync(trajectory);*/
+                        field.getDropPosition()).build();
+                roadrun.followTrajectoryAsync(trajectory);
             }
         }
+    }
+    public void teleAutoAim(Trajectory trajectory){
+        roadrun.followTrajectoryAsync(trajectory);
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
@@ -122,14 +127,20 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void liftToPosition(Lift.LiftConstants targetJunction){
-        if (queuer.queue(false, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 10 && lift.getLiftVelocity()==0)){
+        if (queuer.queue(true, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 10 && lift.getLiftVelocity()==0)){
             lift.liftToPosition(targetJunction);
+        }
+        else{
+            lift.setLiftPower(0);
         }
     }
 
     public void liftToPosition(int tickTarget) {
-        if (queuer.queue(false, Math.abs(tickTarget - lift.getLiftPosition()) < 10 && lift.getLiftVelocity() == 0)) {
+        if (queuer.queue(true, Math.abs(tickTarget - lift.getLiftPosition()) < 10 && lift.getLiftVelocity() == 0)) {
             lift.liftToPosition(tickTarget);
+        }
+        else{
+            lift.setLiftPower(0);
         }
     }
 
@@ -203,34 +214,28 @@ public class PwPRobot extends BasicRobot {
         lift.setLiftVelocity(velocity);
     }
     public void teleOp() {
+
         //omnidirectional movement + turning
 
 
         //manual lift up/down
         if (op.gamepad2.right_trigger != 0 || op.gamepad2.left_trigger != 0) {
-            lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger)*0.4);
+            lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
         }
         //when not manual lifting, automate lifting
         else {
             lift.setLiftPower(0);
 //            lift.liftToTarget();
         }
-//        op.telemetry.addData("centerOffset", cv.centerOfPole());
-//        op.telemetry.addData("centerSize", cv.poleSize());
-//        op.telemetry.addData("cvtheta",cv.rotatedPolarCoordDelta()[0]);
-//        op.telemetry.addData("cvdistance",cv.rotatedPolarCoordDelta()[1]);
-//        op.telemetry.addData("x", roadrun.getPoseEstimate().getX());
-//        op.telemetry.addData("y", roadrun.getPoseEstimate().getY());
-//        op.telemetry.addData("heading", roadrun.getPoseEstimate().getHeading()*180/PI);
-//        if (op.gamepad1.x && !roadrun.isBusy() && field.lookingAtPole()) {
-//            setFirstLoop(true);
-//            queuer.reset();
-//            autoAim();
-//            setFirstLoop(false);
-//        } else if (roadrun.isBusy()) {
-//            autoAim();
-//        } else {
-//            queuer.reset();
+
+        if (field.lookingAtPole()&&op.gamepad1.dpad_up && !roadrun.isBusy()) {
+            field.updateTrajectory();
+            teleAutoAim(field.getTrajectory());
+        }
+        else if(roadrun.isBusy()){
+            //nothin
+        }
+        else {
             roadrun.setWeightedDrivePower(
                     new Pose2d(
                             -op.gamepad1.left_stick_y*0.7,
@@ -238,15 +243,15 @@ public class PwPRobot extends BasicRobot {
                             -op.gamepad1.right_stick_x*0.8
                     )
             );
+        }
+//        //toggle automate lift target to higher junc
+//        if (op.gamepad2.dpad_up) {
+//            lift.toggleLiftPosition(1);
 //        }
-        //toggle automate lift target to higher junc
-        if (op.gamepad2.dpad_up) {
-            lift.toggleLiftPosition(1);
-        }
-        //toggle automate lift target to lower junc
-        if (op.gamepad2.dpad_down) {
-            lift.toggleLiftPosition(-1);
-        }
+//        //toggle automate lift target to lower junc
+//        if (op.gamepad2.dpad_down) {
+//            lift.toggleLiftPosition(-1);
+//        }
         //toggle liftArm position
         if (op.gamepad2.x) {
             liftArm.raiseLiftArmToOuttake();
@@ -261,11 +266,11 @@ public class PwPRobot extends BasicRobot {
         //will only close when detect cone
         //claw.closeClaw
 
-            claw.closeClaw();
+        claw.closeClaw();
 
         roadrun.update();
         liftArm.updateLiftArmStates();
-        claw.logClawStates();
         claw.updateClawStates();
+        lift.updateLiftStates();
     }
 }

@@ -43,8 +43,8 @@ public class CVMaster {
                  */
                 webcam.setPipeline(opencv);
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-                //FPS as high as possible
-                dashboard.startCameraStream(webcam, 0);
+
+                dashboard.startCameraStream(webcam, 5);
 
             }
 
@@ -63,8 +63,8 @@ public class CVMaster {
     public double poleSize(){
         return opencv.poleSize();
     }
-    public double[] rotatedPolarCoordDelta(){
-        return opencv.poleRotatedPolarCoordDelta();
+    public double[] rotatedPolarCoord(){
+        return opencv.poleRotatedPolarCoord();
     }
 
     public void stopCamera(){

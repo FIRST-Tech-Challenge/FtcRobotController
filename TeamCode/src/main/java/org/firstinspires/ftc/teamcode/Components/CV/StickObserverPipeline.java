@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Components.CV;
 import static java.lang.Math.PI;
 import static java.lang.Math.sin;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -14,10 +16,12 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Config
 public class StickObserverPipeline extends OpenCvPipeline {
     double centerOfPole = 0, poleSize = 0, degPerPix = -22.5/320, widTimesDist = 16.007*58;
     ArrayList<double[]> frameList;
+    public static double strictLowS = 140;
+    public static double strictHighS = 255;
 
 
     public StickObserverPipeline() {
@@ -53,11 +57,10 @@ public class StickObserverPipeline extends OpenCvPipeline {
         //scale the average saturation to 150
         masked.convertTo(scaledMask,-1,150/average.val[1],0);
 
-        Scalar strictLowHSV = new Scalar(0, 149, 100); //strict lower bound HSV for yellow
-        Scalar strictHighHSV = new Scalar(255, 200, 255); //strict higher bound HSV for yellow
 
         Mat scaledThresh = new Mat();
-
+        Scalar strictLowHSV = new Scalar(0, strictLowS, 0); //strict lower bound HSV for yellow
+        Scalar strictHighHSV = new Scalar(255, strictHighS, 255); //strict higher bound HSV for yellow
         //apply strict HSV filter onto scaledMask to get rid of any yellow other than pole
         Core.inRange(scaledMask, strictLowHSV,strictHighHSV,scaledThresh);
 
@@ -67,13 +70,13 @@ public class StickObserverPipeline extends OpenCvPipeline {
 
         Mat edges = new Mat();
         //detect edges of finalMask
-        Imgproc.Canny(finalMask, edges, 100, 200);
+        Imgproc.Canny(scaledThresh, edges, 100, 200);
 
 
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         //find contours of edges
-        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(scaledThresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
         //rotatedRect because it allows for more accurate bounding rectangles, perfect if pole is slanted
         RotatedRect[] rectangle = new RotatedRect[contours.size()];
@@ -81,17 +84,27 @@ public class StickObserverPipeline extends OpenCvPipeline {
         for (int i = 0; i < contours.size(); i++) {
             contoursPoly[i] = new MatOfPoint2f();
             //convert contour to approximate polygon
-            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 5, true);
+            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 10, true);
             //find rotatedRect for polygon
             rectangle[i] = Imgproc.minAreaRect(contoursPoly[i]);
         }
 
         //find index of largest rotatedRect(assumed that it is closest tile)
         int maxAreaIndex = 0;
+        double maxWidth = 0;
         //iterate through each rotatedRect find largest
-        for (int i = 0; i < rectangle.length; i++) {
-            if (rectangle[i].size.height > rectangle[maxAreaIndex].size.height) {
-                maxAreaIndex = i;
+        for (int i = 1; i < rectangle.length; i++) {
+            if(rectangle[i].size.height<rectangle[i].size.width){
+                if (rectangle[i].size.height > maxWidth) {
+                    maxAreaIndex = i;
+                    maxWidth = rectangle[i].size.height;
+                }
+            }
+            else{
+                if (rectangle[i].size.width > maxWidth) {
+                    maxAreaIndex = i;
+                    maxWidth = rectangle[i].size.width;
+                }
             }
         }
         //if there is a detected largest contour, record information about it
@@ -115,8 +128,12 @@ public class StickObserverPipeline extends OpenCvPipeline {
         masked.release();
         edges.release();
         thresh.release();
-//        hierarchy.release();
+        hierarchy.release();
         finalMask.release();
+        Scalar lineColor= new Scalar(255,50,50);
+        if(contoursPoly.length>0) {
+            Imgproc.rectangle(input, Imgproc.boundingRect(contoursPoly[maxAreaIndex]), lineColor, 5);
+        }
         return input;
     }
 
@@ -142,7 +159,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
         return average/frameList.size();
     }
 
-    public double[] poleRotatedPolarCoordDelta() {
+    public double[] poleRotatedPolarCoord() {
         return new double[]{degPerPix * centerOfPole() * PI / 180, widTimesDist / poleSize()};
     }
 }

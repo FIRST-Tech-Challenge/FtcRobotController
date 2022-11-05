@@ -8,6 +8,7 @@ public class Queuer {
     private ArrayList<QueueElement> queueElements;
     private boolean firstLoop = true;
     private int currentlyQueueing = 0, currentEvent = -1;
+    private double delay = 0;
 
 
     public Queuer() {
@@ -22,12 +23,17 @@ public class Queuer {
     * updates which element is currently being queued and which element is currently being executed
     * determines if currently queued element should run */
     public boolean queue(boolean p_asynchronous, boolean done_condition) {
-        return queue(p_asynchronous, done_condition, true);
+        double p_delay = delay;
+        delay =0;
+        return queue(p_asynchronous, done_condition, p_delay);
     }
 
     /** same as regular queue, but will wait inputted delay time before running */
     public boolean queue(boolean p_asyncrhonous, boolean done_condition, double p_delay) {
-        return queue(p_asyncrhonous, done_condition, op.getRuntime()-queueElements.get(currentlyQueueing+1).getReadyTime()>p_delay);
+        if(!firstLoop&&currentlyQueueing>= queueElements.size()-1) {
+            currentlyQueueing = -1;
+        }
+        return queue(p_asyncrhonous, done_condition, !firstLoop&&op.getRuntime()-queueElements.get(currentlyQueueing+1).getReadyTime()>p_delay);
     }
 
     /** same as regular queue, but will wait for extra_condition to be true before running */
@@ -81,6 +87,9 @@ public class Queuer {
                 }
             }
         }
+    }
+    public void addDelay(double p_delay){
+        delay += p_delay;
     }
 
 }
