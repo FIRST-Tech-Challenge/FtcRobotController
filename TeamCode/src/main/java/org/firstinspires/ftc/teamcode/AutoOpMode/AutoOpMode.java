@@ -21,18 +21,15 @@ public class AutoOpMode extends LinearOpMode{
         public DriveTrain driveTrain;
         public Vision vision;
 
-        //public Pose2d startPose = vision.BLUE_ALLIANCE_BLUE_TERMINAL;
 
         //need to fix vision parking positions
         public Vision.PARKING_LOCATION parkingLocation = Vision.PARKING_LOCATION.PARKPOS_1;
-        public int loopPickConetoDrop = 0;
-        public boolean pickCone = false;
 
         boolean parked = false ;
         public ElapsedTime gameTimer = new ElapsedTime(MILLISECONDS);;
 
         public Vision.ACTIVE_WEBCAM activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;
-        public Vision.VISION_IDENTIFIED_TARGET targetZone = Vision.VISION_IDENTIFIED_TARGET.LOCATION1;//Set a default vision value
+        public Vision.VISION_IDENTIFIED_TARGET targetZone = Vision.VISION_IDENTIFIED_TARGET.LOCATION_1;//Set a default vision value
         int targetZoneLevel = 0;
 
         double af = Vision.ALLIANCE_FACTOR;
@@ -53,16 +50,7 @@ public class AutoOpMode extends LinearOpMode{
             // Initiate Camera on Init.
             vision.activateVuforiaTensorFlow();
 
-            //buildAuto();
-            /*
-            if (GameField.startPosition == GameField.START_POSITION.WAREHOUSE) {
-                buildAutoWarehouse();
-            } else { //GameField.startPosition == GameField.START_POSITION.STORAGE
-                buildAutoStorage();
-            }
-             */
-            //driveTrain.getLocalizer().setPoseEstimate(startPose);
-            //buildAuto();
+            buildAuto();
 
            //autonomousController.runAutoControl();
 
@@ -94,7 +82,7 @@ public class AutoOpMode extends LinearOpMode{
 
 
 
-                    //buildAuto();
+                    runAuto();
 
 
                     //Move to Launching Position
@@ -295,38 +283,11 @@ public class AutoOpMode extends LinearOpMode{
                 }
                 telemetry.update();
             }
+            telemetry.clearAll();
             telemetry.addData("Playing Alliance Selected : ", Vision.playingAlliance);
             telemetry.addData("StartPose : ", Vision.startPosition);
-
+            telemetry.update();
             safeWait(200);
-
-            //******select start pose******
-            while(!isStopRequested()){
-                telemetry.addData("Enter a Park Pose:","");
-                telemetry.addData("Location 1: (X)", "");
-                telemetry.addData("Location 2: (Y)", "");
-                telemetry.addData("Location 3: (B)", "");
-                telemetry.addData("Playing Alliance Selected: ", Vision.playingAlliance);
-                if(gamepad1.x){
-                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS_1;
-                    telemetry.addData("Park Position: ", Vision.parkingLocation);
-                    break;
-                }
-                if(gamepad1.y){
-                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS_2;
-                    telemetry.addData("Park Position: ", Vision.parkingLocation);
-                    break;
-                }
-                if(gamepad1.b){
-                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS_3;
-                    telemetry.addData("Park Position: ", Vision.parkingLocation);
-                    break;
-                }
-                telemetry.update();
-            }
-            telemetry.addData("Playing Alliance Selected : ", Vision.playingAlliance);
-            telemetry.addData("StartPose : ", Vision.startPosition);
-            telemetry.addData("ParkPose : ", Vision.parkingLocation);
         }
 
         /**
@@ -339,8 +300,8 @@ public class AutoOpMode extends LinearOpMode{
 
 
             telemetry.addData("Playing Alliance Selected : ", vision.playingAlliance);
-            telemetry.addData("Start Position : ", Vision.startPosition);
-            telemetry.addData("Parking Location : ", parkingLocation);
+            telemetry.addData("Start Position : ", vision.startPosition);
+            telemetry.addData("Parking Location : ", vision.parkingLocation);
 
 
             telemetry.addData("Vision.playingAlliance : ", vision.playingAlliance);
