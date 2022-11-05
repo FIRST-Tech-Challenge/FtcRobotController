@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import static java.lang.Math.*;
@@ -236,7 +237,10 @@ public class Drivetrain{
     }
 
     // this function is designed for the auto part
-    public void MoveForDis(int dis, double pow) {
+    public void MoveForDis(double distance, double pow) {
+
+        // calculate the distance
+        int dis = (int)(distance * 1000 / 16);
 
         // reset encoders
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -261,6 +265,64 @@ public class Drivetrain{
         leftBackDrive.setPower(pow);
         rightFrontDrive.setPower(pow);
         rightBackDrive.setPower(pow);
+
+        // run for a while
+        while ( leftFrontDrive.isBusy() ||
+                leftBackDrive.isBusy() ||
+                rightFrontDrive.isBusy() ||
+                rightBackDrive.isBusy() ) {}
+
+        // set power to 0
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+
+        // change encoder mode back to normal
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    // this function is designed for the auto part
+    public void RotateForDegree(int deg, double pow) {
+
+        // calculate the degree
+//        int deg = 1000;
+
+        // reset encoders
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // set direction
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        // set target distance
+        leftFrontDrive.setTargetPosition(deg);
+        leftBackDrive.setTargetPosition(deg);
+        rightFrontDrive.setTargetPosition(deg);
+        rightBackDrive.setTargetPosition(deg);
+
+        // change encoder mode
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // set power
+        leftFrontDrive.setPower(pow);
+        leftBackDrive.setPower(pow);
+        rightFrontDrive.setPower(-pow);
+        rightBackDrive.setPower(-pow);
 
         // run for a while
         while ( leftFrontDrive.isBusy() ||
