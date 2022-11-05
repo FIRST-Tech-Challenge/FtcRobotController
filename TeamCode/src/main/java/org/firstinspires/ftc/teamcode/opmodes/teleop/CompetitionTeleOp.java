@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.opmodes.auto.CompetitionAutonomous;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
-
 /**
  * Drives a pushbot with teleop control.
  */
@@ -20,9 +19,9 @@ public class CompetitionTeleOp extends BaseOpMode {
      * Left trigger engages slow-drive
      */
     public void loop() {
-        float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
-        float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
-        float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
+        float rx = (float) Math.pow(gamepad2.right_stick_x, 3);
+        float lx = (float) Math.pow(gamepad2.left_stick_x, 3);
+        float ly = (float) Math.pow(gamepad2.left_stick_y, 3);
 
         driveSystem.slowDrive(gamepad1.left_bumper || ((armSystem.up())));
 
@@ -62,9 +61,18 @@ public class CompetitionTeleOp extends BaseOpMode {
 
         if (gamepad1.x) {
             // Move Bar to Cone Position
-            armSystem.driveToLevel(ArmSystem.FLOOR, 0.8);
+            align(pixycam.YELLOW, CompetitionAutonomous.POLE_WIDTH);
+        }
+
+        if (gamepad1.dpad_down) {
+            armSystem.killMotors();
+        }
+
+        if (gamepad1.dpad_up) {
+            armSystem.driveToLevel(ArmSystem.FLOOR, 0.3);
         }
     }
+
 
     public void placeCone(int level) {
         // Levels:
