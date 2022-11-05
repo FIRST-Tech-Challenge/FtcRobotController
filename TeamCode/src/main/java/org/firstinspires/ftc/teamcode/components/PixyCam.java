@@ -131,7 +131,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
     }
     //aligns the robot with the pole using pixycam and distances
     public int distanceOffset(int sign, int desiredWidth){
-        return desiredWidth - GetBiggestBlock().width; //positive means move closer
+        return desiredWidth - GetBiggestBlock(sign).width; //positive means move closer
 
     }
 

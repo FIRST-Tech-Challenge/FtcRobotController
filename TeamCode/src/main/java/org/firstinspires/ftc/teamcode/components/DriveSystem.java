@@ -270,7 +270,6 @@ public class DriveSystem {
      * @param direction sets which direction to go
      * @param maxPower sets the power to run at
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean driveToPosition(int millimeters, Direction direction, double maxPower)
     {
         Log.d("going to ", millimeters + " " + direction);
@@ -306,7 +305,6 @@ public class DriveSystem {
      * @param maxPower The maximum power of the motors
      * @return if on heading
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean turnAbsolute(double degrees, double maxPower) {
         return turn(diffFromAbs(degrees), maxPower);
     }
@@ -317,7 +315,6 @@ public class DriveSystem {
      * @param maxPower The maximum power of the motors
      * @return if on heading
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean turn(double degrees, double maxPower) {
         // If controller hub is vertical, use pitch instead of heading
         double heading = DriveParams.IMU_VERT ? imuSystem.getPitch() : imuSystem.getHeading();
@@ -352,29 +349,29 @@ public class DriveSystem {
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean onHeading(double speed, double heading) {
+        double steer;
         double leftSpeed;
+        double rightSpeed;
 
         // determine turn power based on +/- error
-        double error = computeDegreesDiff();
-        Log.d(TAG, "Error: " + error);
+        double error = imuSystem.getHeading() - mTargetHeading;
 
-        // If it gets there: stop
         if (Math.abs(error) <= DriveParams.HEADING_THRESHOLD) {
             mTargetHeading = 0;
             setMotorPower(0);
             return true;
         }
 
-        // Go full speed until 60% there
-        leftSpeed = Math.abs(error) / DriveParams.FULL_POWER_UNTIL;
+        steer = getSteer(error);
+        leftSpeed  = speed * steer;
+        rightSpeed   = -leftSpeed;
 
-        Log.d(TAG, "Left Speed: " + leftSpeed);
-        leftSpeed = Range.clip(leftSpeed, DriveParams.MIN_SPEED, 1.0);
 
+        Log.d(TAG,"Left Speed:" + leftSpeed);
+        Log.d(TAG, "Right Speed:" + rightSpeed);
         // Send desired speeds to motors.
-        tankDrive(leftSpeed * Math.signum(error), -leftSpeed * Math.signum(error));
-        Log.d(TAG, "Left Speed Post Tank Drive " + leftSpeed);
-        Log.d(TAG, "Left Power" + motors.get(MotorNames.FRONTLEFT).getPower());
+        tankDrive(leftSpeed, rightSpeed);
+
         return false;
     }
 

@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.params.DriveParams.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.IMUSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 @Disabled
 public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
-    public static final int POLE_WIDTH = 45;
+    public static final int POLE_WIDTH = 35;
     public static final int CONE_WIDTH = 150;
     private boolean park = false;
 
@@ -65,7 +66,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
             sign = 1;
         }
         startPosition = From.START;
-        newState(State.IDENTIFY_TARGET);
+        newState(State.ALIGN_WITH_POLE);
     }
 
     /**
@@ -104,10 +105,14 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 }
                 break;
             case PLACE_CONE:
-                if (!park) { // TODO: either get another or park
-                    newState(State.DRIVE_TO_CONE);
+                if (!park) {
+                    if( scoreDaCone(ArmSystem.HIGH)){
+                        newState(State.DRIVE_TO_CONE);
+                    }
                 } else {
-                    newState(State.REVERSE_JUNCTION);
+                    if(scoreDaCone(ArmSystem.HIGH)) {
+                        newState(State.END_STATE);
+                    }
                 }
                 break;
             case DRIVE_TO_CONE:
@@ -170,7 +175,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 }
                 if (step == 1) {
                     telemetry.addData("heading", driveSystem.imuSystem.getHeading() );
-                    if (driveSystem.turn(-45 * sign, 0.2)) {
+                    if (driveSystem.turn(-45 * sign, 0.5)) {
                         return true;
                     }
                 }
@@ -202,14 +207,14 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
         // Back up
         if(step == 0){
-            if(driveSystem.driveToPosition(60, DriveSystem.Direction.BACKWARD, 0.3)){
+            if(driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.3)){
                 step++;
             }
         }
 
         // Rotate
         if(step == 1){
-            if(driveSystem.turn(135 * sign, 0.5)){
+            if(driveSystem.turn(-135 * sign, 0.5)){
                 step++;
             }
 

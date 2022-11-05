@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.params.DriveParams;
 public class ArmSystem {
 
     //fill in constants
-    public static final int LOW = 500;
+    public static final int LOW = 550;
     public static final int MEDIUM = 800;
     public static final int HIGH = 1100;
     public static final int FLOOR = 100;
