@@ -3,22 +3,15 @@ package org.firstinspires.ftc.team8923_PowerPlay;
 import static org.firstinspires.ftc.team8923_PowerPlay.Constants.TICKS_PER_INCH;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.team8923_PowerPlay.BaseOpMode;
-import org.tensorflow.lite.support.label.TensorLabel;
 
 import java.util.List;
 
-public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWebcam {
+public abstract class BaseAutonomous extends RedTensorFlowObjectDetectionWebcam extends BlueTensorFlowObjectDetectionWebcam {
 
     private ElapsedTime runtime = new ElapsedTime();
 
