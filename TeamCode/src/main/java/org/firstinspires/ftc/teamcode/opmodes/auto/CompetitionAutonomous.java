@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import static org.firstinspires.ftc.teamcode.params.DriveParams.IMU;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+import org.firstinspires.ftc.teamcode.components.IMUSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
@@ -79,7 +82,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 if (teamAsset == null) {
                     //drive forward slowly/10 inches and identify again
                     //backwards is forwards
-                    if (driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.2)) {
+                    if (driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.2)) {
                         currentPos += 100;
                         teamAsset = Sleeve.BRIAN;
                     }
@@ -149,8 +152,8 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
     private boolean park() {
         if (step == 0) {
             if (teamAsset == Sleeve.BRIAN ||
-                    (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.3)) ||
-                    (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.3))) {
+                    (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.3)) ||
+                    (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.3))) {
                 return true;
             }
         }
@@ -161,11 +164,12 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         switch (startPosition) {
             case START:
                 if (step == 0) {
-                    if (driveSystem.driveToPosition(950 - currentPos, DriveSystem.Direction.BACKWARD, 0.4)) {
+                    if (driveSystem.driveToPosition(1000 - currentPos, DriveSystem.Direction.FORWARD, 0.4)) {
                         step++;
                     }
                 }
                 if (step == 1) {
+                    telemetry.addData("heading", driveSystem.imuSystem.getHeading() );
                     if (driveSystem.turn(-45 * sign, 0.2)) {
                         return true;
                     }
@@ -180,7 +184,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
     private boolean reverseJunction() {
         if(step == 0){
-            if (driveSystem.driveToPosition(40, DriveSystem.Direction.FORWARD, 0.4)){
+            if (driveSystem.driveToPosition(40, DriveSystem.Direction.BACKWARD, 0.4)){
                 step++;
             }
         }
@@ -198,7 +202,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
         // Back up
         if(step == 0){
-            if(driveSystem.driveToPosition(60, DriveSystem.Direction.FORWARD, 0.3)){
+            if(driveSystem.driveToPosition(60, DriveSystem.Direction.BACKWARD, 0.3)){
                 step++;
             }
         }
@@ -213,7 +217,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
         // Drive to cone
         if(step == 2) {
-            if (driveSystem.driveToPosition(360, DriveSystem.Direction.BACKWARD, 0.5)) {
+            if (driveSystem.driveToPosition(360, DriveSystem.Direction.FORWARD, 0.5)) {
                 return true;
             }
         }
@@ -226,7 +230,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
     private boolean drive_back_to_pole(){
         if(step == 0){
-            if(driveSystem.driveToPosition(350, DriveSystem.Direction.FORWARD, 0.3)){
+            if(driveSystem.driveToPosition(350, DriveSystem.Direction.BACKWARD, 0.3)){
                 step++;
             }
         }
@@ -237,7 +241,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
             }
         }
         if(step == 2){
-            if(driveSystem.driveToPosition(30, DriveSystem.Direction.BACKWARD, 0.3)){
+            if(driveSystem.driveToPosition(30, DriveSystem.Direction.FORWARD, 0.3)){
                 step = 0;
                 park = true;
                 return true;

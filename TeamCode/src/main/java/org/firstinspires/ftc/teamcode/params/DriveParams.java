@@ -10,6 +10,12 @@ public class DriveParams {
     public static final double CIRCUMFERENCE = 12.6;
     // 1120 ticks in a revolution
     public static final double TICKS_PER_REV = 833;
+    public static final double TICKS_IN_MM = 3.51;
+
+    public static final float mmPerInch = 25.4f;                    // constant for converting measurements from inches to millimeters
+    public static final double MM_IN_TILE = mmPerInch * 24;
+    public static final double TICKS_IN_TILE = 25.4 * MM_IN_TILE;
+
     // Is the IMU unit vertical?
     public static final boolean IMU_VERT     = false;
 

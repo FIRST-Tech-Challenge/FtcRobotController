@@ -192,6 +192,7 @@ public class DriveSystem {
         if(mTargetTicks == 0) {
             driveToPositionInit(ticks, direction, maxPower);
         }
+        mTargetTicks = direction == Direction.BACKWARD ? -ticks : ticks;
         // Determine distance from desired target and stop if within acceptable tolerance
         for (DcMotor motor : motors.values()) {
             Log.i("MOTOR", motor.getCurrentPosition() + "");
@@ -428,7 +429,7 @@ public class DriveSystem {
 
     // Currently 3.51
     private double ticksInMm() {
-        return DriveParams.TICKS_PER_REV / inchesToMm(DriveParams.CIRCUMFERENCE);
+        return DriveParams.TICKS_IN_MM;
     }
 
     /**

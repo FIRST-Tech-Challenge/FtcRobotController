@@ -95,4 +95,27 @@ public abstract class BaseOpMode extends OpMode {
         }
         return false;
     }
+
+    public boolean scoreDaCone(int level){
+        if(step == 0){
+            if(armSystem.driveToLevel(level, 0.6)){
+                step++;
+            }
+        }
+
+        if(step == 1){
+            if(driveSystem.driveToPosition(20, DriveSystem.Direction.BACKWARD, 0.2)){
+                step++;
+            }
+            //drive forward
+        }
+
+        if(step == 2){
+            if(armSystem.outtake()){
+                step = 0;
+                return true;
+            }
+        }
+        return false;
+    }
 }
