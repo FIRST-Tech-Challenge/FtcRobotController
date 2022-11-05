@@ -236,14 +236,53 @@ public class Drivetrain{
     }
 
     // this function is designed for the auto part
-    public void MoveForDis(Centricity centric, double spd) {
+    public void MoveForDis(int dis, double pow) {
 
-        //set up the list of motor powers, related to the movement vectors, z being rotation
-//        double[] motorPowers = new double[]{
-//                (1 + joyz)*spd,
-//                (-1 + joyz)*spd,
-//                (-1 - joyz)*spd,
-//                (1 - joyz)*spd
-//        };
+        // reset encoders
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // set target distance
+        leftFrontDrive.setTargetPosition(dis);
+        leftBackDrive.setTargetPosition(dis);
+        rightFrontDrive.setTargetPosition(dis);
+        rightBackDrive.setTargetPosition(dis);
+
+        // change encoder mode
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // set power
+        leftFrontDrive.setPower(pow);
+        leftBackDrive.setPower(pow);
+        rightFrontDrive.setPower(pow);
+        rightBackDrive.setPower(pow);
+
+        // run for a while
+        while ( leftFrontDrive.isBusy() ||
+                leftBackDrive.isBusy() ||
+                rightFrontDrive.isBusy() ||
+                rightBackDrive.isBusy() ) {}
+
+        // set power to 0
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+
+        // change encoder mode back to normal
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

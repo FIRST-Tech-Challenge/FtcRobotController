@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Drivetrain;
 @Autonomous(name="WARHOGAuto_testing", group="")
 public class WARHOGAuto extends LinearOpMode {
 
-//    private Drivetrain drivetrain = new Drivetrain(hardwareMap, telemetry);
+    private Drivetrain drivetrain = new Drivetrain(hardwareMap, telemetry);
 //    private Intake intake = new Intake(hardwareMap, telemetry);
     private StartPos startPos = null;
     private enum StartPos {
@@ -49,6 +49,7 @@ public class WARHOGAuto extends LinearOpMode {
             telemetry.update();
 
             // drive forward
+            drivetrain.MoveForDis(100, 0.5);
 
             // putting cone on pole
 
