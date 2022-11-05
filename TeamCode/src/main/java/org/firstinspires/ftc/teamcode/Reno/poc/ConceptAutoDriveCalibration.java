@@ -95,6 +95,39 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         sleep(5000);
     }
 
+    private void testTrajectory()
+    {
+        RobotLocation fromLocation = new RobotLocation(-36, -60, 0, 0, 0, 90);
+        RobotLocation toLocation = new RobotLocation(-60, -60, 0, 0, 0, 90);
+
+        this.navigate(fromLocation, toLocation);
+
+        fromLocation = toLocation;
+        toLocation = new RobotLocation(-60, -12, 0, 0, 0, 90);
+
+        this.navigate(fromLocation, toLocation);
+
+        turnHeading(-45);
+        driveStraight(DRIVE_SPEED, 6);
+
+        sleep(1000);
+
+        driveStraight(DRIVE_SPEED, -6);
+        turnHeading(45);
+
+        fromLocation = toLocation;
+        toLocation = new RobotLocation(-36, -12, 0, 0, 0, 90);
+
+        this.navigate(fromLocation, toLocation);
+
+        this.turnHeading(90);
+
+        driveStraight(DRIVE_SPEED, 6);
+
+        sleep(2000);
+
+    }
+
     private void testLoopDrive()
     {
         //drive forward to form a loop
@@ -194,6 +227,63 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
             this.driveStraight(DRIVE_SPEED, distanceX);
             this.turnHeading(90);
             this.driveStraight(DRIVE_SPEED, distanceY);
+        }
+        else
+        {
+            telemetry.addData("Robot location cannot be determined.", null);
+            telemetry.update();
+        }
+
+    }
+    public void navigate(RobotLocation fromLocation, RobotLocation toLocation)
+    {
+        Logging.log("from location " + fromLocation.toString());
+        Logging.log("from location " + toLocation.toString());
+
+        if(fromLocation == null)
+        {
+            fromLocation = this.getRobotLocation();
+        }
+
+        if(fromLocation != null && toLocation != null) {
+            double distanceX = toLocation.x - fromLocation.x;
+            double distanceY = toLocation.y - fromLocation.y;
+
+
+            Logging.log(String.format(" distance on X axis %5.2f", distanceX));
+            Logging.log(String.format(" distance on Y axis %5.2f", distanceY));
+            telemetry.addData("", String.format(" distance on X axis %5.2f", distanceX));
+            telemetry.addData("", String.format(" distance on X axis %5.2f", distanceY));
+            telemetry.update();
+
+            if(Math.abs(fromLocation.thirdAngle) % 180 < HEADING_THRESHOLD)
+            {
+                if(robotLocation.thirdAngle < 0) {
+                    this.turnHeading(-(robotLocation.thirdAngle + 10));
+                    this.turnHeading(180 - robot.getRawHeading());
+                }
+
+            }
+            else if (Math.abs(fromLocation.thirdAngle) % 90 < HEADING_THRESHOLD)
+            {
+                this.turnHeading(-fromLocation.thirdAngle);
+
+            }
+            else if(robotLocation.thirdAngle < 0)
+            {
+                this.turnHeading(-robotLocation.thirdAngle);
+                this.turnHeading(180 - robot.getRawHeading());
+            }
+            else
+            {
+                this.turnHeading( -1 * robotLocation.thirdAngle);
+            }
+            this.driveStraight(DRIVE_SPEED, distanceX);
+
+            this.turnHeading(90);
+
+            this.driveStraight(DRIVE_SPEED, distanceY);
+
         }
         else
         {
