@@ -52,8 +52,6 @@ public class DriveSubsystem extends SubsystemBase {
 
         mBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         mBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
     }
 
     private void holonomicDrive (double x, double y, double z)
@@ -69,24 +67,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Are the targets visible?
-        // (Note we only process first visible target).
-        if (isTargetVisible("Red Audience Wall")) {
-            processTarget();
-        } else if (isTargetVisible("Red Rear Wall")) {
-            processTarget();
-        } else if (isTargetVisible("Blue Audience Wall")) {
-            processTarget();
-        } else if (isTargetVisible("Blue Rear Wall")) {
-            processTarget();
-        } else {
-            mTelemetry.addData("No Targets Detected", "Targets are not visible.");
-        }
-
-        mTelemetry.addData("X (in)", Double.parseDouble(JavaUtil.formatNumber(mPositionX, 2)));
-        mTelemetry.addData("Y (in)", Double.parseDouble(JavaUtil.formatNumber(mPositionY, 2)));
-        mTelemetry.addData("Rotation about Z (deg)", Double.parseDouble(JavaUtil.formatNumber(mRotationZ, 2)));
-
         holonomicDrive(mX, mY, mZ);
     }
 
@@ -98,32 +78,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void stop () {
         drive(0, 0, 0);
-    }
-
-    /**
-     * Check to see if the target is visible.
-     */
-    private boolean isTargetVisible(String trackableName) {
-        // Get vuforia results for target.
-        mVuforiaResults = mVuforiaPOWERPLAY.track(trackableName);
-        return mVuforiaResults.isVisible;
-    }
-
-    /**
-     * This function displays location on the field and rotation about the Z
-     * axis on the field. It uses results from the isTargetVisible function.
-     */
-    private void processTarget() {
-        // Display the target name.
-        mTelemetry.addData("Target Detected", mVuforiaResults.name + " is visible.");
-
-        mPositionX = mVuforiaResults.x/Constants.DriveConstants.kInchToMm;
-        mPositionY = mVuforiaResults.y/Constants.DriveConstants.kInchToMm;
-        mRotationZ = mVuforiaResults.zAngle;
-    }
-
-    public  double getPositionX(){
-        return  mPositionX;
     }
 
 }

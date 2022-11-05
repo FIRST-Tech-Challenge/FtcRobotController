@@ -35,25 +35,10 @@ public class RobotContainer {
         mHardwareMap = hardwareMap;
 
         // Initialize Vuforia
-        mVuforiaPOWERPLAY = new VuforiaCurrentGame();
+
         // Initialize using external web camera.
-        mVuforiaPOWERPLAY.initialize(
-                "", // vuforiaLicenseKey
-                mHardwareMap.get(WebcamName.class, "Webcam 1"), // cameraName
-                "", // webcamCalibrationFilename
-                false, // useExtendedTracking
-                true, // enableCameraMonitoring
-                VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES, // cameraMonitorFeedback
-                0, // dx
-                0, // dy
-                0, // dz
-                AxesOrder.XZY, // axesOrder
-                90, // firstAngle
-                90, // secondAngle
-                0, // thirdAngle
-                true); // useCompetitionFieldTargetLocations
+
         // Activate here for camera preview.
-        mVuforiaPOWERPLAY.activate();
 
         mDriveSubsystem = new DriveSubsystem(mHardwareMap, mTelemetry, mVuforiaPOWERPLAY);
 
@@ -68,8 +53,6 @@ public class RobotContainer {
     @Override
     protected void finalize() {
         // Don't forget to deactivate Vuforia before the garbage collector removes the DriveSubsystem from memory
-        mVuforiaPOWERPLAY.deactivate();
-        mVuforiaPOWERPLAY.close();
     }
 
     private void configureButtonBindings() {
