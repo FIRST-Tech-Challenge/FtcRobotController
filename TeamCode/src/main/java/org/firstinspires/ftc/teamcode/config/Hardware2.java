@@ -17,7 +17,6 @@ public class Hardware2 {
     public CRServo intakeServo = null;
 
     public boolean runThisWithEncoder = true;
-
     // Other variable names
     HardwareMap hwMap;
     private ElapsedTime period = new ElapsedTime();
