@@ -13,7 +13,7 @@ public class TeleOpCompetition extends BaseTeleOp{
         waitForStart();
 
         while (opModeIsActive()) {
-            driveUsingControllers();
+            driveStickCurve(); // REPLACE THIS WITH driveUsingControllers() IF YOU DON'T LIKE IT
             driveArm();
             driveGrabber();
             doTelemetry();

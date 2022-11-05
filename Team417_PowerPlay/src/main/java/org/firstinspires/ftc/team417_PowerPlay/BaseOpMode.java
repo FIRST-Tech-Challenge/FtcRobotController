@@ -21,7 +21,8 @@ abstract public class BaseOpMode extends LinearOpMode {
     Servo grabberServo;
     Toggler grabberToggle;
 
-    public static final double GRABBER_OPEN = 0.5;
+    // ADJUST THESE VALUES TO CHANGE POSITIONS OF GRABBER
+    public static final double GRABBER_OPEN = 0.8;
     public static final double GRABBER_CLOSED = 0.0;
 
     public void initializeHardware() {
@@ -88,9 +89,28 @@ abstract public class BaseOpMode extends LinearOpMode {
         powerBL = y - x + turning;
         powerBR = y + x - turning;
 
+        // THIS IS SO IF ONE OR MORE OF THE POWERS CALCULATED ARE >1.0 IT BECOMES CAPPED AT
+        // 1 AND KEEPS PROPORTION TO THE OTHER POWERS
+        // COMMENT OUT THIS ENTIRE CODE BLOCK (LINES 95-99) IF WEIRD THINGS HAPPEN
+        double powerScalar = getLargestValue(powerFL, powerFR, powerBL, powerBR);
+        powerFL /= powerScalar;
+        powerFR /= powerScalar;
+        powerBL /= powerScalar;
+        powerBR /= powerScalar;
+
         motorFL.setPower(powerFL);
         motorFR.setPower(powerFR);
         motorBL.setPower(powerBL);
         motorBR.setPower(powerBR);
+    }
+
+    public double getLargestValue(double ... nums) {
+        double max = Double.MIN_VALUE;
+        for (double n : nums) {
+            if (n > max) {
+                max = n;
+            }
+        }
+        return max;
     }
 }

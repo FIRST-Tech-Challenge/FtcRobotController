@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team417_PowerPlay.drive.SampleMecanumDrive;
 
-@Autonomous (name="strafe test")
+// CHANGED NAME OF AUTO TO BETTER REFLECT WHAT IT DOES
+@Autonomous (name="Red left || Blue right")
 public class League1Auto extends LinearOpMode {
 
     // Coordinates for various tiles referenced on page 46 of:
@@ -21,15 +22,16 @@ public class League1Auto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        // CHANGED STARTS OF TRAJECT2 AND TRAJECT3 TO BE THE ENDS OF TRAJECT1 AND TRAJECT2
         Trajectory traject1 = drive.trajectoryBuilder(new Pose2d())
-                        .forward(5)
-                                .build();
-        Trajectory traject2 = drive.trajectoryBuilder((new Pose2d()))
-                        .strafeLeft(35)
-                                . build();
-        Trajectory traject3 = drive.trajectoryBuilder(new Pose2d())
-                        .forward(30)
-                                .build();
+                .forward(5)
+                .build();
+        Trajectory traject2 = drive.trajectoryBuilder(traject1.end())
+                .strafeLeft(35)
+                .build();
+        Trajectory traject3 = drive.trajectoryBuilder(traject2.end())
+                .forward(30)
+                .build();
         waitForStart();
 
         if (isStopRequested()) return;
