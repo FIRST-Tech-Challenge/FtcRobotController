@@ -97,6 +97,7 @@ public class Vision {
     public static final Pose2d STARTPOS_3 =  new Pose2d(61,7,Math.toRadians(0));
     public static final Pose2d STARTPOS_4 =  new Pose2d(61,-40,Math.toRadians(0));
 
+
     //Define and declare Playing Alliance
     public enum PLAYING_ALLIANCE{
         RED_ALLIANCE,
