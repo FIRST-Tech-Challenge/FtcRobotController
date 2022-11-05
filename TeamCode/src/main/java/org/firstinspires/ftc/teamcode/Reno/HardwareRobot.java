@@ -325,6 +325,15 @@ public class HardwareRobot
         rightDriveBack.setDirection(DcMotor.Direction.REVERSE);
     }
 
+    public void setDriveLeft()
+    {
+        Logging.log("set drive left");
+        leftDriveFront.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveFront.setDirection(DcMotor.Direction.FORWARD);
+        leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
+    }
+
 
     public void resetEncoder()
     {
