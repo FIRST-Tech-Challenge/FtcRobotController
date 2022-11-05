@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.params.DriveParams.IMU;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
@@ -14,7 +16,7 @@ import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 @Disabled
 public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
-    public static final int POLE_WIDTH = 35;
+    public static final int POLE_WIDTH = 50;
     public static final int CONE_WIDTH = 150;
     private boolean park = false;
 
@@ -66,7 +68,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
             sign = 1;
         }
         startPosition = From.START;
-        newState(State.ALIGN_WITH_POLE);
+        newState(State.IDENTIFY_TARGET);
     }
 
     /**
@@ -85,7 +87,10 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                     //backwards is forwards
                     if (driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.2)) {
                         currentPos += 100;
-                        teamAsset = Sleeve.BRIAN;
+                        identifySleeve();
+                        if(teamAsset == null){
+                            teamAsset = Sleeve.BRIAN;
+                        }
                     }
                     identifySleeve();
                     telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
@@ -107,7 +112,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
             case PLACE_CONE:
                 if (!park) {
                     if( scoreDaCone(ArmSystem.HIGH)){
-                        newState(State.DRIVE_TO_CONE);
+                        newState(State.REVERSE_JUNCTION);
                     }
                 } else {
                     if(scoreDaCone(ArmSystem.HIGH)) {
@@ -169,13 +174,18 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         switch (startPosition) {
             case START:
                 if (step == 0) {
-                    if (driveSystem.driveToPosition(1000 - currentPos, DriveSystem.Direction.FORWARD, 0.4)) {
+                    if (driveSystem.driveToPosition(1250 - currentPos, DriveSystem.Direction.FORWARD, 0.4)) {
                         step++;
                     }
                 }
-                if (step == 1) {
-                    telemetry.addData("heading", driveSystem.imuSystem.getHeading() );
+                if(step == 1){
+                    if(driveSystem.driveToPosition(250, DriveSystem.Direction.BACKWARD, 0.4)){
+                        step++;
+                    }
+                }
+                if (step == 2) {
                     if (driveSystem.turn(-45 * sign, 0.5)) {
+                        step = 0;
                         return true;
                     }
                 }
@@ -189,13 +199,14 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
     private boolean reverseJunction() {
         if(step == 0){
-            if (driveSystem.driveToPosition(40, DriveSystem.Direction.BACKWARD, 0.4)){
+            if (driveSystem.driveToPosition(220, DriveSystem.Direction.BACKWARD, 0.4)){
                 step++;
             }
         }
         if (step == 1) {
-            if (driveSystem.turn(45 * sign, 0.2)) {
-                step++;
+            if (revertArm(0.2) && driveSystem.turnAbsolute(0, 0.5)) {
+                step = 0;
+                return true;
             }
         }
         return false;
@@ -207,14 +218,14 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
         // Back up
         if(step == 0){
-            if(driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.3)){
+            if(driveSystem.driveToPosition(150, DriveSystem.Direction.BACKWARD, 0.3)){
                 step++;
             }
         }
 
         // Rotate
         if(step == 1){
-            if(driveSystem.turn(-135 * sign, 0.5)){
+            if(driveSystem.turnAbsolute(90 * sign, 0.5)){
                 step++;
             }
 

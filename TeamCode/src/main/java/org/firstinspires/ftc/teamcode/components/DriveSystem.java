@@ -70,7 +70,6 @@ public class DriveSystem {
 
     /** Initializes motors
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void initMotors() {
         motors.forEach((name, motor) -> {
             // Reset encoders
@@ -327,7 +326,7 @@ public class DriveSystem {
         // How far off the target heading are we?
         double difference = mTargetHeading - heading;
         Log.d(TAG,"Difference: " + difference);
-        return onHeading(maxPower, heading);
+        return onHeading(maxPower, heading, difference);
 
     }
 
@@ -343,18 +342,19 @@ public class DriveSystem {
 
     /**
      * Perform one cycle of closed loop heading control.
-     * @param speed Desired speed of turn
      * @param heading current heading
      * @return if it finished its turn
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public boolean onHeading(double speed, double heading) {
+    public double getError(double heading){
+        return heading - mTargetHeading;
+    }
+    public boolean onHeading(double speed, double heading, double difference) {
         double steer;
         double leftSpeed;
         double rightSpeed;
 
         // determine turn power based on +/- error
-        double error = imuSystem.getHeading() - mTargetHeading;
+        double error = difference;
 
         if (Math.abs(error) <= DriveParams.HEADING_THRESHOLD) {
             mTargetHeading = 0;
@@ -364,7 +364,7 @@ public class DriveSystem {
 
         steer = getSteer(error);
         leftSpeed  = speed * steer;
-        rightSpeed   = -leftSpeed;
+        rightSpeed   = -1 * leftSpeed;
 
 
         Log.d(TAG,"Left Speed:" + leftSpeed);
