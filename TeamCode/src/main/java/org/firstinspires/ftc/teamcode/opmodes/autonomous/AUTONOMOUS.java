@@ -23,7 +23,6 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -35,8 +34,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import java.util.ArrayList;
 
-@Autonomous
-public class apriltagencoder extends LinearOpMode
+@Autonomous(name="AUTONOMOUS TAP HERE")
+public class AUTONOMOUS extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -185,7 +184,7 @@ public class apriltagencoder extends LinearOpMode
 //            straight(0.15, 900);
 //            stopRobot();
 //            stop();
-//            EncoderDrive(robot, 0.45, -25, 25, 25,-25, 2);
+//            EncoderDrive(robot, 0.45, -25, -25, 25,-25, 2);
             EncoderDrive(robot, 0.45, 35, 35,35, 35, 2);
         }else if(tagOfInterest.id == MIDDLE){
 //            straight(0.15, 1000);

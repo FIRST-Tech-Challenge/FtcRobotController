@@ -29,16 +29,16 @@ public class Mecanum extends LinearOpMode {
                     robot.rightslidemotor.setPower(1);
                 }
                 while (gamepad1.left_bumper) {
-                    robot.leftslidemotor.setPower(-1);
-                    robot.rightslidemotor.setPower(-1);
+                    robot.leftslidemotor.setPower(-0.5);
+                    robot.rightslidemotor.setPower(-0.5);
                 }
                 robot.leftslidemotor.setPower(0);
                 robot.rightslidemotor.setPower(0);
             //                     FORWARD                     TURN                       STRAFE
-            frontRightDrive = (-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
-            frontLeftDrive  = (-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
-            backRightDrive  = (-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
-            backLeftDrive   = (-gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
+            frontRightDrive = (-gamepad1.left_stick_y - (gamepad1.right_stick_x*0.5) - gamepad1.left_stick_x)*driveSpeed;
+            frontLeftDrive  = (-gamepad1.left_stick_y + (gamepad1.right_stick_x*0.5) + gamepad1.left_stick_x)*driveSpeed;
+            backRightDrive  = (-gamepad1.left_stick_y - (gamepad1.right_stick_x*0.5) + gamepad1.left_stick_x)*driveSpeed;
+            backLeftDrive   = (-gamepad1.left_stick_y + (gamepad1.right_stick_x*0.5) - gamepad1.left_stick_x)*driveSpeed;
             clawServo = (gamepad1.right_trigger-gamepad1.left_trigger);
             armServo = (gamepad1.right_trigger-gamepad1.left_trigger);
 

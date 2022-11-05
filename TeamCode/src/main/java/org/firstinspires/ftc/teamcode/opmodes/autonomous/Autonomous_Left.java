@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import java.util.List;
 
 @Autonomous(name = "Autonomous_Left")
+@Disabled
 public class Autonomous_Left extends LinearOpMode {
     int detect = 0;
     TurtleRobotAuto robot = new TurtleRobotAuto(this);
