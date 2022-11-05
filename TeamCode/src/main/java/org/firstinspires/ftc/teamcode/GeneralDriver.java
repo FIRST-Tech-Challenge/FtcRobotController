@@ -44,31 +44,32 @@ public class GeneralDriver extends BaseTele {
         while (opModeIsActive()) {
             hdw.checkAndGrabCone();
 
-            if (gamepad1.start) {
+            if (gamepad1.dpad_left) {
+
+            }
+            if (gamepad1.dpad_right) {
+                hdw.goToHeight(Hardware2022.SlideHeight.Mid);
             }
             if (gamepad2.dpad_up) {
-
-                sleep(100);
+                hdw.goToHeight(Hardware2022.SlideHeight.High);
             }
             if (gamepad2.dpad_down) {
-                sleep(100);
+                hdw.goToHeight(Hardware2022.SlideHeight.Low);
             }
             if (gamepad1.y) {
-               hdw.moveYAxis(2160, -0.5);
+                hdw.releaeCone();
 
             }
             if (gamepad1.b) {
-                if ( debug) {
-                    telemetry.addLine().addData("[>]  ", "Relase cone, open claw.");
-                    telemetry.update();
-                }
-                hdw.releaeCone();
+                hdw.lowerVerticalSlide();
             }
 
             if (gamepad1.x) {
-                hdw.moveXAxis( 10.0, -0.5 );
-                sleep(6000);
+                //TODO Write method for manual grab
             }
+
+            hdw.freeLowerVerticalSlide(gamepad1.left_trigger);
+            hdw.freeRaiseVerticalSlide(gamepad1.right_trigger);
 
             //Wheel takes input of gampad 1  ,  turbo is the power factor. Range 0-1 , 1 is 100%
             robotWheel.joystick(gamepad1, 1);

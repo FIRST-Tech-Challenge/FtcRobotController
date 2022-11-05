@@ -24,14 +24,14 @@ public class Hardware2022 {
     private final double yAxisCoeff = 83 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
-    private final double CONE_SLIDE_LOW = 0 ;
-    private final double CONE_SLIDE_MID = 720 ;
-    private final double CONE_SLIDE_HIGH = 1440 ;
+    private final int CONE_SLIDE_LOW = 0 ;
+    private final int CONE_SLIDE_MID = 720 ;
+    private final int CONE_SLIDE_HIGH = 1440 ;
 
     //Encoder value of VSlide height in No Cone mode
-    private final double NOCONE_SLIDE_LOW = 0 ;
-    private final double NOCONE_SLIDE_MID = 0 ;
-    private final double NOCONE_SLIDE_HIGH = 0 ;
+    private final int NOCONE_SLIDE_LOW = 0 ;
+    private final int NOCONE_SLIDE_MID = 0 ;
+    private final int NOCONE_SLIDE_HIGH = 0 ;
 
 
     private boolean debug = true;
@@ -44,7 +44,7 @@ public class Hardware2022 {
         HasCone,
         NoCone
     }
-    enum SlideHeight {
+    public enum SlideHeight {
         Low,
         Mid,
         High
@@ -279,10 +279,29 @@ public class Hardware2022 {
 
         switch ( currentVSHeight) {
             case Low: {
-                break;
+                if (currentState.equals(RobotState.HasCone)) {
+                    while (vSlide.getCurrentPosition() < CONE_SLIDE_MID) {
+                        vSlide.setPower(1);
+                    }
+                } else if (currentState.equals(RobotState.NoCone)) {
+                    while (vSlide.getCurrentPosition() < NOCONE_SLIDE_MID) {
+                        vSlide.setPower(1);
+                    }
+                }
             }
+                break;
 
             case Mid: {
+
+                if (currentState.equals(RobotState.HasCone)) {
+                    while (vSlide.getCurrentPosition() < CONE_SLIDE_HIGH) {
+                        vSlide.setPower(1);
+                    }
+                } else if (currentState.equals(RobotState.NoCone)) {
+                    while (vSlide.getCurrentPosition() < NOCONE_SLIDE_HIGH); {
+                        vSlide.setPower(1);
+                    }
+                }
                 break;
             }
 
@@ -307,11 +326,29 @@ public class Hardware2022 {
             }
 
             case Mid: {
+                if (currentState.equals(RobotState.HasCone)) {
+                    while (vSlide.getCurrentPosition() > CONE_SLIDE_LOW) {
+                        vSlide.setPower(-1);
+                    }
+                } else if (currentState.equals(RobotState.NoCone)) {
+                    while (vSlide.getCurrentPosition() > NOCONE_SLIDE_LOW) {
+                        vSlide.setPower(-1);
+                    }
+                }
                 break;
             }
 
             case High: {
+                if (currentState.equals(RobotState.HasCone)) {
+                    while (vSlide.getCurrentPosition() > CONE_SLIDE_MID) {
+                        vSlide.setPower(-1);
+                    }
+                } else if (currentState.equals(RobotState.NoCone)) {
+                    while (vSlide.getCurrentPosition() > NOCONE_SLIDE_MID) {
+                        vSlide.setPower(-1);
+                    }
 
+                }
             }
         }
 
@@ -322,7 +359,7 @@ public class Hardware2022 {
      * @param power, Expect positive input
      */
     public void freeLowerVerticalSlide( float power ) {
-        while (vSlide.getCurrentPosition() > CONE_SLIDE_LOW ) {
+        if (vSlide.getCurrentPosition() > CONE_SLIDE_LOW ) {
             vSlide.setPower( -power );
         }
 
@@ -334,7 +371,7 @@ public class Hardware2022 {
      * @param power
      */
     public void freeRaiseVerticalSlide( float power ) {
-        while (vSlide.getCurrentPosition() < CONE_SLIDE_HIGH ) {
+        if (vSlide.getCurrentPosition() < CONE_SLIDE_HIGH ) {
             vSlide.setPower( power );
         }
 
@@ -349,18 +386,51 @@ public class Hardware2022 {
 
     }
 
-    /**
-     * This is the method to move robot state to Has Cone state
-     */
-    public void moveToHasCone ( ) {
-        //TODO: Logic Here
+
+
+    public void goToHeight ( SlideHeight height ) {
+        int targetPosition = 0;
+
+        if (currentState.equals(RobotState.HasCone)) {
+            if (height.equals(SlideHeight.Low)) {
+                targetPosition = CONE_SLIDE_LOW;
+
+            }
+            if (height.equals(SlideHeight.Mid)) {
+                targetPosition = CONE_SLIDE_MID;
+            }
+            if (height.equals(SlideHeight.High)) {
+                targetPosition = CONE_SLIDE_HIGH;
+            }
+
+        } else if (currentState.equals(RobotState.NoCone)) {
+            if (height.equals(SlideHeight.Low)) {
+                targetPosition = NOCONE_SLIDE_LOW;
+            }
+            if (height.equals(SlideHeight.Mid)) {
+                targetPosition = NOCONE_SLIDE_MID;
+            }
+            if (height.equals(SlideHeight.High)) {
+                targetPosition = NOCONE_SLIDE_HIGH;
+            }
+
+        }
+
+        //Move the slide
+        int currentPoistion = vSlide.getCurrentPosition();
+
+        if ((currentPoistion - targetPosition) > 0 ) {
+            //Lower slide
+            while (vSlide.getCurrentPosition() > targetPosition ) {
+                vSlide.setPower(-1);
+            }
+        } else {
+            //raise slide
+            while (vSlide.getCurrentPosition() < targetPosition ) {
+                vSlide.setPower(1);
+            }
+
+        }
+        currentVSHeight = height;
     }
-
-    /**
-     *
-     */
-    public void moveToNoCone () {
-
-    }
-
 }
