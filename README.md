@@ -38,6 +38,14 @@ Please click a heading below to get more related info.
 
 </details>
 
+<details><summary><h3>📃 Documentation</h3></summary>
+
+* [The FTC Control System Wiki](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki) - Programming-specific resources
+* [REV Robotics Docs](https://docs.revrobotics.com/kickoff-concepts/powerplay-2022-2023/game-breakdown) - Information about the game in general, and some programming ideas
+
+
+</details>
+
 <details><summary><h3>:link: Shortcuts in this repository</h3></summary>
 
 * [Our code](TeamCode/src/main/java/org/firstinspires/ftc/teamcode)
