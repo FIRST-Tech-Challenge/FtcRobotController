@@ -33,11 +33,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -118,26 +116,32 @@ public class Vision {
 
     //Set a default start and park position
     public static START_POSITION startPosition = START_POSITION.POS1;
-    public static PARKING_LOCATION parkingLocation = PARKING_LOCATION.PARKPOS1;
+    public static PARKING_LOCATION parkingLocation = PARKING_LOCATION.PARKPOS_1;
 
     //Define and declare Robot parking locations
     public enum PARKING_LOCATION{
-        PARKPOS1,
-        PARKPOS2,
-        PARKPOS3
+        PARKPOS_1,
+        PARKPOS_2,
+        PARKPOS_3
     }
+
 
     //Select the different colors on the signal sleeve, and define them here
     public enum VISION_IDENTIFIED_TARGET {
-        RED,
-        BLUE,
-        GREEN,
+        LOCATION_1,
+        LOCATION_2,
+        LOCATION_3,
     };
 
     public enum VISION_IDENTIFIER{
-        MARKER
+        BOLT,
+        BULB,
+        PANEL,
+        GREEN,
+        YELLOW,
+        PURPLE
     };
-    public static VISION_IDENTIFIER visionIdentifier = VISION_IDENTIFIER.MARKER;
+    public static VISION_IDENTIFIER visionIdentifier = VISION_IDENTIFIER.BOLT;
 
     //Static fields to pass Pos from Autonomous to TeleOp
     public static boolean poseSetInAutonomous = false;
@@ -153,7 +157,6 @@ public class Vision {
 
     public enum ACTIVE_WEBCAM{
         WEBCAM1,
-        WEBCAM2,
     }
 
 
@@ -174,9 +177,9 @@ public class Vision {
 
 
     // Class Members
-    private OpenGLMatrix lastLocation = null;
+    //private OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
-    private VuforiaTrackables targets   = null ;
+    //private VuforiaTrackables targets   = null ;
 
     /**
      * This is the webcam we are to use. As with other hardware devices such as motors and
@@ -194,40 +197,31 @@ public class Vision {
     public List<VuforiaTrackable> allTrackables;
 
     //Tensor Flow parameters
-    /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
-     * the following 4 detectable objects
-     *  0: Ball,
-     *  1: Cube,
-     *  2: Duck,
-     *  3: Marker (duck location tape marker)
-     *
-     *  Two additional model assets are available which only contain a subset of the objects:
-     *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
-     *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
+    /* Note: This sample uses the all-objects Tensor Flow model (PowerPlay.tflite), which contains
+     * the following 3 detectable objects
+     *  0: Bolt,
+     *  1: Bulb,
+     *  2: Panel,
      */
-    private static final String TFOD_MODEL_ASSET = "Hazmat1.tflite";
-    public static final String[] LABELS = {
-            "RED",
-            "BLUE",
-            "GREEN"
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
+
+
+    private static final String[] LABELS = {
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel",
+            "4 Green",
+            "5 Yellow",
+            "6 Purple"
     };
 
-
-    public String targetLabel1 = LABELS[0]; //RED
-    public String targetLabel2 = LABELS[1]; // BLUE
-    public String targetLabel3 = LABELS[2]; // GREEN
     public String detectedLabel = "None";
-    public float detectedLabelLeft, detectedLabelRight, detectedLabelTop, detectedLabelBottom;
-    public static float[] targetPosition = {
-            //TODO : Update values based on marker location identifier
-            250,
-            600,
-            1000
-    };
+
 
     private TFObjectDetector tfod;
     private List<Recognition> recognitions;
-    public VISION_IDENTIFIED_TARGET targetLevelDetected = VISION_IDENTIFIED_TARGET.RED;
+    public VISION_IDENTIFIED_TARGET targetLevelDetected = VISION_IDENTIFIED_TARGET.LOCATION_1;
 
     /**
      * Initialize the Vuforia localization engine.
@@ -278,11 +272,6 @@ public class Vision {
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
 
-        /*if (GameField.visionIdentifier == GameField.VISION_IDENTIFIER.MARKER){
-            targetLabel2 = LABELS[3]; //"Marker"
-        } else {//if (GameField.visionIdentifier == GameField.VISION_IDENTIFIER.DUCK)
-            targetLabel2 = LABELS[2];
-        }*/
         visionState = VISION_STATE.TFOD_INIT;
 
     }
@@ -324,108 +313,33 @@ public class Vision {
 
     public VISION_IDENTIFIED_TARGET runVuforiaTensorFlow() {
         visionState = VISION_STATE.TFOD_RUNNING;
-
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             recognitions = tfod.getUpdatedRecognitions();
             if (recognitions != null) {
                 //telemetry.addData("# Object Detected", updatedRecognitions.size());
-                if (recognitions.size() == 0 ) {
-                    // empty list.  no objects recognized.
-                    detectedLabel = "None";
-
-                    if(startPosition != START_POSITION.POS1){
-                        if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
-                            //Depending on the startPos and alliance, what is the camera going to detect
-                        } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
-                            //Depending on the startPos and alliance, what is the camera going to detect
-                        }
-                    } else if(startPosition != START_POSITION.POS2) {
-                        if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
-                            //Depending on the startPos and alliance, what is the camera going to detect
-                        } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
-                            //Depending on the startPos and alliance, what is the camera going to detect
-                        }
-                    } else { //startPosition != START_POSITION.POS3
-                        if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
-                            //Depending on the startPos and alliance, what is the camera going to detect
-                        } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
-                            //Depending on the startPos and alliance, what is the camera going to detect
-                        }
-                    }
-                } else {
-                    // list is not empty.
-                    // step through the list of recognitions and display boundary info.
-                    int i = 0;
-                    /*
-                     step through the list of recognitions and display boundary info.
-                    for (Recognition recognition : recognitions) {
-                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                recognition.getLeft(), recognition.getTop());
-                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                recognition.getRight(), recognition.getBottom());
-                        i++;
-                    }
-                     */
-
-                    for (Recognition recognition : recognitions) {
-                        // check label to see which target zone to go after.
-                        detectedLabel = recognition.getLabel();
-                        detectedLabelLeft = recognition.getLeft();
-                        detectedLabelRight = recognition.getRight();
-                        detectedLabelTop = recognition.getTop();
-                        detectedLabelBottom = recognition.getBottom();
-                        if (recognition.getLabel().equals(LABELS[0]) || recognition.getLabel().equals(LABELS[1]) ||
-                                recognition.getLabel().equals(LABELS[2])) {
-
-                            if (recognition.getLeft() < targetPosition[0]) {
-                                if(startPosition != START_POSITION.POS1){
-                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    }
-                                } else if(startPosition != START_POSITION.POS2) {
-                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    }
-                                } else { //startPosition != START_POSITION.POS3
-                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    }
-                                }
-                            } else if (recognition.getLeft() < targetPosition[1]) {
-                                if(startPosition != START_POSITION.POS1){
-                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    }
-                                } else if(startPosition != START_POSITION.POS2) {
-                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    }
-                                } else { //startPosition != START_POSITION.POS3
-                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
-                                        //Depending on the startPos and alliance, what is the camera going to detect
-                                    }
-                                }
-                            }
-                        }
+                for (Recognition recognition : recognitions) {
+                    // check label to see which target zone to go after.
+                    detectedLabel = recognition.getLabel();
+                    switch(detectedLabel){
+                        case "1 Bolt":
+                        case "6 Purple":
+                            targetLevelDetected = VISION_IDENTIFIED_TARGET.LOCATION_1;
+                            break;
+                        case "2 Bulb":
+                        case "5 Yellow":
+                            targetLevelDetected = VISION_IDENTIFIED_TARGET.LOCATION_2;
+                            break;
+                        case "3 Panel":
+                        case "4 Green":
+                            targetLevelDetected = VISION_IDENTIFIED_TARGET.LOCATION_3;
+                            break;
                     }
                 }
             }
         }
+
         return targetLevelDetected;
     }
 

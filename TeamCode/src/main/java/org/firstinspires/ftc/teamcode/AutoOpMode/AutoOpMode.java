@@ -24,7 +24,7 @@ public class AutoOpMode extends LinearOpMode{
         //public Pose2d startPose = vision.BLUE_ALLIANCE_BLUE_TERMINAL;
 
         //need to fix vision parking positions
-        public Vision.PARKING_LOCATION parkingLocation = Vision.PARKING_LOCATION.PARKPOS1;
+        public Vision.PARKING_LOCATION parkingLocation = Vision.PARKING_LOCATION.PARKPOS_1;
         public int loopPickConetoDrop = 0;
         public boolean pickCone = false;
 
@@ -32,7 +32,7 @@ public class AutoOpMode extends LinearOpMode{
         public ElapsedTime gameTimer = new ElapsedTime(MILLISECONDS);;
 
         public Vision.ACTIVE_WEBCAM activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;
-        public Vision.VISION_IDENTIFIED_TARGET targetZone = Vision.VISION_IDENTIFIED_TARGET.RED;//Set a default vision value
+        public Vision.VISION_IDENTIFIED_TARGET targetZone = Vision.VISION_IDENTIFIED_TARGET.LOCATION1;//Set a default vision value
         int targetZoneLevel = 0;
 
         double af = Vision.ALLIANCE_FACTOR;
@@ -129,7 +129,7 @@ public class AutoOpMode extends LinearOpMode{
         Pose2d parkPose; //4 different poses
 
         public void buildAuto(){
-            if(Vision.playingAlliance == Vision.PLAYING_ALLIANCE.BLUE_ALLIANCE){
+            if(vision.playingAlliance == Vision.PLAYING_ALLIANCE.BLUE_ALLIANCE){
                 initPose = Vision.STARTPOS_1; //Starting pos when on blue alliance
                 midWayPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards signal cone
                 pickConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
@@ -308,17 +308,17 @@ public class AutoOpMode extends LinearOpMode{
                 telemetry.addData("Location 3: (B)", "");
                 telemetry.addData("Playing Alliance Selected: ", Vision.playingAlliance);
                 if(gamepad1.x){
-                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS1;
+                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS_1;
                     telemetry.addData("Park Position: ", Vision.parkingLocation);
                     break;
                 }
                 if(gamepad1.y){
-                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS2;
+                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS_2;
                     telemetry.addData("Park Position: ", Vision.parkingLocation);
                     break;
                 }
                 if(gamepad1.b){
-                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS3;
+                    Vision.parkingLocation = Vision.PARKING_LOCATION.PARKPOS_3;
                     telemetry.addData("Park Position: ", Vision.parkingLocation);
                     break;
                 }
