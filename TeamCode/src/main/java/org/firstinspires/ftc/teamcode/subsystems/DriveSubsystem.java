@@ -6,11 +6,8 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaBase;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaCurrentGame;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.dragonswpilib.SubsystemBase;
 
@@ -34,9 +31,10 @@ public class DriveSubsystem extends SubsystemBase {
     private double mPositionY = 0;
     private double mRotationZ = 0;
 
-    public DriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
+    public DriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry, VuforiaCurrentGame vuforiaPOWERPLAY) {
         mTelemetry = telemetry;
         mHardwareMap = hardwareMap;
+        mVuforiaPOWERPLAY = vuforiaPOWERPLAY;
 
         mLeftMotor = mHardwareMap.get(DcMotor.class, "left motor");
         mRightMotor = mHardwareMap.get(DcMotor.class, "right motor");
@@ -55,34 +53,7 @@ public class DriveSubsystem extends SubsystemBase {
         mBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         mBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // Initialize Vuforia
-        mVuforiaPOWERPLAY = new VuforiaCurrentGame();
-        // Initialize using external web camera.
-        mVuforiaPOWERPLAY.initialize(
-                "", // vuforiaLicenseKey
-                mHardwareMap.get(WebcamName.class, "Webcam 1"), // cameraName
-                "", // webcamCalibrationFilename
-                false, // useExtendedTracking
-                true, // enableCameraMonitoring
-                VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES, // cameraMonitorFeedback
-                0, // dx
-                0, // dy
-                0, // dz
-                AxesOrder.XZY, // axesOrder
-                90, // firstAngle
-                90, // secondAngle
-                0, // thirdAngle
-                true); // useCompetitionFieldTargetLocations
-        // Activate here for camera preview.
-        mVuforiaPOWERPLAY.activate();
 
-    }
-
-    @Override
-    protected void finalize() {
-        // Don't forget to deactivate Vuforia before the garbage collector removes the DriveSubsystem from memory
-        mVuforiaPOWERPLAY.deactivate();
-        mVuforiaPOWERPLAY.close();
     }
 
     private void holonomicDrive (double x, double y, double z)

@@ -4,6 +4,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaCurrentGame;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.commandGroups.AutonomousCommandGroup;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -15,6 +19,8 @@ public class RobotContainer {
     private final Gamepad mGamepad1, mGamepad2;
     private final Telemetry mTelemetry;
     private final HardwareMap mHardwareMap;
+
+    private final VuforiaCurrentGame mVuforiaPOWERPLAY;
 
     private final DriveSubsystem mDriveSubsystem;
 
@@ -28,7 +34,28 @@ public class RobotContainer {
         mTelemetry = telemetry;
         mHardwareMap = hardwareMap;
 
-        mDriveSubsystem = new DriveSubsystem(mHardwareMap, mTelemetry);
+        // Initialize Vuforia
+        mVuforiaPOWERPLAY = new VuforiaCurrentGame();
+        // Initialize using external web camera.
+        mVuforiaPOWERPLAY.initialize(
+                "", // vuforiaLicenseKey
+                mHardwareMap.get(WebcamName.class, "Webcam 1"), // cameraName
+                "", // webcamCalibrationFilename
+                false, // useExtendedTracking
+                true, // enableCameraMonitoring
+                VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES, // cameraMonitorFeedback
+                0, // dx
+                0, // dy
+                0, // dz
+                AxesOrder.XZY, // axesOrder
+                90, // firstAngle
+                90, // secondAngle
+                0, // thirdAngle
+                true); // useCompetitionFieldTargetLocations
+        // Activate here for camera preview.
+        mVuforiaPOWERPLAY.activate();
+
+        mDriveSubsystem = new DriveSubsystem(mHardwareMap, mTelemetry, mVuforiaPOWERPLAY);
 
         mDriveCommand = new DriveCommand(mTelemetry, mDriveSubsystem, mGamepad1);
 
@@ -36,6 +63,13 @@ public class RobotContainer {
 
         configureButtonBindings();
         configureDefaultCommands();
+    }
+
+    @Override
+    protected void finalize() {
+        // Don't forget to deactivate Vuforia before the garbage collector removes the DriveSubsystem from memory
+        mVuforiaPOWERPLAY.deactivate();
+        mVuforiaPOWERPLAY.close();
     }
 
     private void configureButtonBindings() {
