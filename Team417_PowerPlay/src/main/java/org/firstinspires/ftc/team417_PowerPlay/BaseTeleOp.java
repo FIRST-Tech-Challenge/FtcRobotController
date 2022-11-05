@@ -6,7 +6,7 @@ abstract public class BaseTeleOp extends BaseOpMode{
 
     public void driveUsingControllers() {
         double x = gamepad1.left_stick_x;
-        double y = - gamepad1.left_stick_y;
+        double y = -gamepad1.left_stick_y;
         double turning = gamepad1.right_stick_x;
 
         mecanumDrive(x, y, turning);
@@ -31,7 +31,7 @@ abstract public class BaseTeleOp extends BaseOpMode{
         armPower = (gamepad2.left_stick_y * 0.5);
         if (motorArm.getCurrentPosition() > 0 && armPower > 0) {
             armPower = 0;
-        } else if (motorArm.getCurrentPosition() < -1000 && armPower < 0) {
+        } else if (motorArm.getCurrentPosition() < -1420 && armPower < 0) {
             armPower = 0;
         }
         motorArm.setPower(armPower);
@@ -42,7 +42,7 @@ abstract public class BaseTeleOp extends BaseOpMode{
         grabberIsOpen = grabberToggle.toggle(gamepad2.a);
 
         // COMMENT THIS LINE OUT TO NOT HAVE DRIVER 1 CONTROL THE GRABBER
-        grabberIsOpen = grabberToggle.toggle(gamepad1.a);
+        //grabberIsOpen = grabberToggle.toggle(gamepad1.a);
 
         if (grabberIsOpen) {
             grabberServo.setPosition(GRABBER_OPEN);

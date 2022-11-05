@@ -92,11 +92,11 @@ abstract public class BaseOpMode extends LinearOpMode {
         // THIS IS SO IF ONE OR MORE OF THE POWERS CALCULATED ARE >1.0 IT BECOMES CAPPED AT
         // 1 AND KEEPS PROPORTION TO THE OTHER POWERS
         // COMMENT OUT THIS ENTIRE CODE BLOCK (LINES 95-99) IF WEIRD THINGS HAPPEN
-        double powerScalar = getLargestValue(powerFL, powerFR, powerBL, powerBR);
+        /*double powerScalar = getLargestValue(powerFL, powerFR, powerBL, powerBR);
         powerFL /= powerScalar;
         powerFR /= powerScalar;
         powerBL /= powerScalar;
-        powerBR /= powerScalar;
+        powerBR /= powerScalar;*/
 
         motorFL.setPower(powerFL);
         motorFR.setPower(powerFR);
