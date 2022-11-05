@@ -177,10 +177,10 @@ public class AutonomousLeft extends AutonomousBase {
         }
 
         // Drive all the way to the tall junction pole
-        timeDriveStraight( DRIVE_SPEED_20, 3800 );
+        timeDriveStraight( DRIVE_SPEED_20, 3700 );
 
         // Turn toward pole
-        gyroTurn(TURN_SPEED_20, 45.0 );   // Turn right 44 degrees
+        gyroTurn(TURN_SPEED_20, 45.0 );   // Turn right 45 degrees
 
         // Drive closer to the pole in order to score
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 1.0, 999.9, DRIVE_TO );
@@ -231,12 +231,13 @@ public class AutonomousLeft extends AutonomousBase {
             gyroTurn(TURN_SPEED_20, 90.0 );
             // Lower lift to driving height
             robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
-            // Drive forward one tile
-            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 20.0, 999.9, DRIVE_TO );
-            // Ensure lift has finished the automatic movement
             while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
                 performEveryLoop();
             }
+            // Drive forward one tile
+            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 22.0, 999.9, DRIVE_TO );
+            gyroTurn(TURN_SPEED_20, 180.0 );
+            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 10.0, 999.9, DRIVE_TO );
         } // signalZoneLocation 3
 
         else { // signalZoneLocation 2
@@ -252,7 +253,6 @@ public class AutonomousLeft extends AutonomousBase {
             }
         } // signalZoneLocation
 
-        sleep( 5000 );
     } // signalZoneParking
 
 } /* AutonomousLeft */

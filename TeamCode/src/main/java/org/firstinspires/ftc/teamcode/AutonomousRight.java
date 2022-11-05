@@ -82,7 +82,7 @@ public class AutonomousRight extends AutonomousBase {
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for team color/number
         while (!isStarted()) {
-            telemetry.addData("STARTING", "%s", "LEFT");
+            telemetry.addData("STARTING", "%s", "RIGHT");
             telemetry.addData("Signal Detect", "R: " + PipelinePowerPlay.avgR + " G: " +
                     PipelinePowerPlay.avgG + " B: " + PipelinePowerPlay.avgB + " Zone: " +
                     PipelinePowerPlay.signalZone);
@@ -161,31 +161,29 @@ public class AutonomousRight extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void moveToTallJunction() {
 
-        // Move 8" away from wall before initiating any other robot movements/expansions
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 4.0, 999.9, DRIVE_THRU );
+        // Drive away from wall
+        timeDriveStraight( DRIVE_SPEED_20, 750 );
 
         // Tilt grabber down from stored position
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
-        // Move 8" more way from wall before initiating any other robot movements/expansions
-        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 4.0, 999.9, DRIVE_THRU );
+        // Drive a bit further
+        timeDriveStraight( DRIVE_SPEED_20, 750 );
 
         // Raise lift to scoring position
         robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
-
-        // Drive all the way to the tall junction pole
-        gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 43.5, 999.9, DRIVE_TO );
-
-        // If the lift hasn't finish, wait here until it has
         while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
             performEveryLoop();
         }
 
+        // Drive all the way to the tall junction pole
+        timeDriveStraight( DRIVE_SPEED_20, 3700 );
+
         // Turn toward pole
-        gyroTurn(TURN_SPEED_20, 44.0 );   // Turn right 44 degrees
+        gyroTurn(TURN_SPEED_20, -45.0 );   // Turn left 45 degrees
 
         // Drive closer to the pole in order to score
-        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 1.0, 999.9, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 1.0, 999.9, DRIVE_TO );
 
     } // moveToTallJunction
 
@@ -199,11 +197,8 @@ public class AutonomousRight extends AutonomousBase {
         }
         robot.grabberSpinStop();
 
-        // Drive closer to the pole in order to score
-        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, -2.0, 999.9, DRIVE_TO );
-
-        // Realign to 0 degrees
-        gyroTurn(TURN_SPEED_20, 0.0 );
+        // Back away from the pole
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -2.0, 999.9, DRIVE_TO );
 
     } // scoreCone
 
@@ -216,9 +211,48 @@ public class AutonomousRight extends AutonomousBase {
     /* |   | S |   |     S = Starting floor tile                                                  */
     /* +---+---+---/                                                                              */
     private void signalZoneParking( int signalZoneLocation ) {
-        
-        
-        
+
+        if( signalZoneLocation == 1 ) {
+            // Turn fully -90 deg
+            gyroTurn(TURN_SPEED_20, -90.0 );
+            // Lower lift to driving height
+            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+            while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
+                performEveryLoop();
+            }
+            // Drive forward one tile
+            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 22.0, 999.9, DRIVE_TO );
+            gyroTurn(TURN_SPEED_20, 180.0 );
+            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 10.0, 999.9, DRIVE_TO );
+        } // signalZoneLocation 1
+
+        else if( signalZoneLocation == 3 ) {
+            // Realign back to 0 degrees
+            gyroTurn(TURN_SPEED_20, 0.0 );
+            // Lower lift to driving height
+            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+            while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
+                performEveryLoop();
+            }
+            // Strafe right one tile
+            timeDriveStrafe( -DRIVE_SPEED_30, 1900 );
+            // Back away from center line
+            timeDriveStraight( -DRIVE_SPEED_20, 2000 );
+        } // // signalZoneLocation 3
+
+        else { // signalZoneLocation 2
+            // Realign back to 0 degrees
+            gyroTurn(TURN_SPEED_20, 0.0 );
+            // Lower lift to driving height
+            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+            // Drive back one tile closer to the cone depot
+            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -20.0, 999.9, DRIVE_TO );
+            // Ensure lift has finished the automatic movement
+            while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
+                performEveryLoop();
+            }
+        } // signalZoneLocation
+
     } // signalZoneParking
 
 } /* AutonomousRight */
