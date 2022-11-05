@@ -21,7 +21,7 @@ public class WARHOGTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         Drivetrain drivetrain = new Drivetrain(hardwareMap, telemetry);
-        //Intake intake = new Intake(hardwareMap, telemetry);
+        Intake intake = new Intake(hardwareMap, telemetry);
         Outtake outtake = new Outtake(hardwareMap, telemetry);
 
         double joyx, joyy, joyz, gas, basespeed;
@@ -77,7 +77,9 @@ public class WARHOGTeleOp extends LinearOpMode {
                 else{centricity = Drivetrain.Centricity.BOT;}
             }
 
-            //intake.run(currentGamepad2.left_stick_y);
+            intake.runArm(currentGamepad2.left_stick_y);
+            intake.runClaw(currentGamepad2.left_trigger);
+            intake.runWrist(currentGamepad2.right_trigger);
             outtake.run(-currentGamepad2.right_stick_y);
 
 
