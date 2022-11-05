@@ -52,12 +52,12 @@ public class DriverControls {
 
         if(stickyGamepad1.a) {
             robot.crane.closeGripper();
-            robot.crane.goToDrop();
+            //robot.crane.goToDrop();
         }
 
         if(stickyGamepad1.b){
             robot.crane.openGripper();
-            robot.crane.goToPickup();
+            //robot.crane.goToPickup();
         }
 
         //manual override of drivetrain

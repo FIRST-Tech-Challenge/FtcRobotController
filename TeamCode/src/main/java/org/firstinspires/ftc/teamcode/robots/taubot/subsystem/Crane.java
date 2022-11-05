@@ -53,6 +53,7 @@ public class Crane implements Subsystem {
     public static double EXTEND_TICKS_PER_METER = 806/.2921; //todo verify this is still true
 
     public static double kF = 0.0;
+
     public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.01, 0, 0);
     public static double SHOULDER_TOLERANCE = 1;
     public static double SHOULDER_POWER = 1.0;
@@ -374,8 +375,8 @@ public class Crane implements Subsystem {
         setExtendTargetPos((int)(getextenderPos() + 200 * speed));
     }
 
-    public void adjustShoulder(double speed){
-        setShoulderTargetPos((int)(getShoulderPos() + 200* speed));
+    public void adjustShoulder(double distance){
+        setShoulderTargetPos((int)(getShoulderPos() + 200* distance));
     }
 
     public double getHeight(){

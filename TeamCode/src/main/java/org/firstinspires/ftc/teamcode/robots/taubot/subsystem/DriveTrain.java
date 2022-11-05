@@ -255,7 +255,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         //-------------------------------- actual driving ---------------------------------------
 
         if(!manualDriveEnabled) {
-            driveToNextTarget.execute();
+            //driveToNextTarget.execute();
         }
 
         if (useMotorPowers) {
@@ -263,8 +263,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             rightMotor.setPower(rightPower);
 
         } else {
-            leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
-            rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
+            //leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
+            //rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
         }
     }
 
@@ -662,5 +662,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     @Override
     protected double getRawExternalHeading() {
         return heading-headingOffset;
+    }
+
+    public double getRawHeading(){
+        return rawHeading;
     }
 }
