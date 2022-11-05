@@ -15,12 +15,16 @@ public class TestOpMode extends OpMode {
     private DcMotor arm = null;
     private DcMotor elbow = null;
     private Servo claw = null;
+    private Servo wrist = null;
     // regular drive
     private double powerLeft = 0;
     private double powerRight = 0;
     // motor power
     private int armPosition = 0;
     private int elbowPositon = 0;
+    // arm and claw variables
+    private int currArmPos = 0;
+    private int maxArm = Integer.MAX_VALUE;
     //number variables
     private static final float DEADZONE = .1f;
     @Override
@@ -35,6 +39,7 @@ public class TestOpMode extends OpMode {
         arm = this.hardwareMap.get(DcMotor.class, "arm");
         elbow = this.hardwareMap.get(DcMotor.class, "elbow");
         claw = this.hardwareMap.get(Servo.class, "claw");
+        wrist = this.hardwareMap.get(Servo.class, "wrist");
         this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -52,7 +57,8 @@ public class TestOpMode extends OpMode {
         arm.setPower(1);
         elbow.setPower(1);
 //        elbow.setTargetPosition(-505);
-//        elbowPositon = elbow.getCurrentPosition();
+        elbowPositon = elbow.getCurrentPosition();
+        wrist.setPosition(0);
     }
     @Override
     public void loop() {
@@ -101,11 +107,36 @@ public class TestOpMode extends OpMode {
         telemetry.addData("elbow position: ", elbow.getCurrentPosition());
         if(gamepad1.dpad_down)
         {
-            armPosition = 0;
-            elbowPositon = 0;
-            arm.setTargetPosition(armPosition);
-            elbow.setTargetPosition(elbowPositon);
+            if(currArmPos < 0 )
+                currArmPos += 10;
+            else
+                currArmPos = 0;
+        }//-1898, -360, -2073, -2582
+        if(gamepad1.dpad_up)
+        {
+            if (currArmPos > -1890)
+                currArmPos -= 10;
+            else
+                currArmPos = -1890;
         }
+        if(gamepad1.dpad_right)
+        {
+            elbow.setTargetPosition(elbowPositon += 10);
+        }
+        if (gamepad1.dpad_left)
+        {
+//            if (elbowPositon > 0)
+            elbow.setTargetPosition(elbowPositon -= 10);
+        }
+        if (gamepad1.left_trigger > DEADZONE)
+        {
+            wrist.setPosition(1);
+        }
+        if (gamepad1.right_trigger > DEADZONE)
+        {
+            wrist.setPosition(0);
+        }
+        arm.setTargetPosition(currArmPos);
     }
     public void clawMove() {
         telemetry.addData("Claw servo position:", claw.getPosition());
