@@ -146,7 +146,7 @@ public class AutonomousRight extends LinearOpMode {
     // claw servo motor variables
     private Servo clawServo = null;
     static final double CLAW_INCREMENT = -0.24;  // amount to slew servo each CYCLE_MS cycle
-    static final double CLAW_OPEN_POS = 0.32;     // Maximum rotational position
+    static final double CLAW_OPEN_POS = 0.31;     // Maximum rotational position
     static final double CLAW_CLOSE_POS = 0.08;
     static final double CLAW_MAX_POS = CLAW_OPEN_POS;
     static final double CLAW_MIN_POS = CLAW_CLOSE_POS;  // Minimum rotational position
@@ -701,8 +701,6 @@ public class AutonomousRight extends LinearOpMode {
      * @param degrees Degrees to turn, + is left - is right
      */
     private void rotate(double degrees, double power) {
-        // restart imu angle tracking.
-        float angleBeforeRotate = lastAngles.firstAngle;
         resetAngle();
 
         // if degrees > 359 we cap at 359 with same sign as original degrees.
@@ -849,17 +847,19 @@ public class AutonomousRight extends LinearOpMode {
         clawServo.setPosition(CLAW_CLOSE_POS);
         sleep(200); // wait 0.4 sec to make sure clawServo is at grep position
         setSliderPosition(LOW_JUNCTION_POS);
-
+        sleep(500); // wait preload cone to lifted.
+        readColorSensor(backgroundColor);
+        Logging.log("Autonomous - complete background color read.");
         // drive robot to sleeve cone
         robotRunToPosition(20.0, true);
         readColorSensor(sleeveColor); // reading sleeve signal
-
+        Logging.log("Autonomous - complete Sleeve color read.");
         // push sleeve cone out, and reading background color for calibration
         robotRunToPosition(36.0, true); // drive robot to the center of 3rd mat
         // lift slider during strafe to high junction
         setSliderPosition(HIGH_JUNCTION_POS);
         robotRunToPosition(-4.0, true); // throw off sleeve cone
-        readColorSensor(backgroundColor);
+
         parkingLocation = calculateParkingLocation(sleeveColor, backgroundColor);
         telemetry.addData("Sleeve","moving distance (%.1f) inch", parkingLocation);
         telemetry.update();
@@ -938,7 +938,7 @@ public class AutonomousRight extends LinearOpMode {
                 maxV = ratio[i];
             }
         }
-
+        Logging.log("Autonomous - channel = %d, max value = %.3f", channel, maxV);
         String color = "";
         switch (channel) {
             case 0: // red
@@ -986,6 +986,8 @@ public class AutonomousRight extends LinearOpMode {
                 .addData("Green", colorSensor.green())
                 .addData("Blue ", colorSensor.blue());
         telemetry.addData("color", "rgb ratio, %.2f, %.2f, %.2f", colorRatio[0], colorRatio[1], colorRatio[2]);
+        Logging.log(String.format("Autonomous - Red: %d, green: %d, blue: %d", colorSensor.red(), colorSensor.green(), colorSensor.blue()));
+        Logging.log(String.format("Autonomous - Red: %.2f, green: %.2f, blue: %.2f", colorRatio[0], colorRatio[1], colorRatio[2]));
     }
 
     /**

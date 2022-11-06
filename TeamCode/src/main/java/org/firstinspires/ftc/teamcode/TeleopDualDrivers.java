@@ -142,7 +142,7 @@ public class TeleopDualDrivers extends LinearOpMode {
     // claw servo motor variables
     private Servo clawServo = null;
     static final double CLAW_INCREMENT = -0.24;  // amount to slew servo each CYCLE_MS cycle
-    static final double CLAW_OPEN_POS = 0.32;     // Maximum rotational position
+    static final double CLAW_OPEN_POS = 0.31;     // Maximum rotational position
     static final double CLAW_CLOSE_POS = 0.08;
     static final double CLAW_MAX_POS = CLAW_OPEN_POS;
     static final double CLAW_MIN_POS = CLAW_CLOSE_POS;  // Minimum rotational position
@@ -564,12 +564,7 @@ public class TeleopDualDrivers extends LinearOpMode {
         clawServo.setPosition(CLAW_OPEN_POS); // unload  cone
         sleep(100); // wait 0.4 sec to make sure clawServo is at grep position
         clawServoPosition = clawServo.getPosition(); // keep claw position
-        /*
-        sliderTargetPosition = getSliderPosition();
-        moveSlider = sliderTargetPosition + SLIDER_MOVE_DOWN_POSITION;
-        setSliderPosition(moveSlider);
-        waitSliderRun();
-        */
+
         robotRunToPosition(-robotAutoUnloadMovingDistance, true); // move out from junction
         armServo.setPosition(ARM_LOAD_POSITION);
         waitRobotRun();
@@ -731,8 +726,6 @@ public class TeleopDualDrivers extends LinearOpMode {
      * @param degrees Degrees to turn, + is left - is right
      */
     private void rotate(double degrees, double power) {
-        // restart imu angle tracking.
-        float angleBeforeRotate = lastAngles.firstAngle;
         resetAngle();
 
         // if degrees > 359 we cap at 359 with same sign as original degrees.
