@@ -7,6 +7,10 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
     int yPosition;
 
+    // used in stopping the bumper quick turn action from being run more than once on a press
+    boolean pressedLeftBumper = false;
+    boolean pressedRightBumper = false;
+
     public void driveChassisWithController() {
         xPower = gamepad1.left_stick_x * (1 - gamepad1.right_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
         yPower = gamepad1.left_stick_y * (1 - gamepad1.right_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
@@ -38,11 +42,22 @@ public abstract class BaseTeleOp extends BaseOpMode {
         }
 
         // bumper button quick turns: rotate by +/-90 degrees
-        if (gamepad1.left_bumper) {
+        if (gamepad1.left_bumper && !pressedLeftBumper) {
             IMUOriginalAngle = loopAddAngle(IMUOriginalAngle, 90.0);
-        } else if (gamepad1.right_bumper) {
-            IMUOriginalAngle = loopAddAngle(IMUOriginalAngle, -90.0);
+            pressedLeftBumper = true; // stops this action from being run more than once on a bumper press
         }
+        if (gamepad1.right_bumper && !pressedRightBumper) {
+            IMUOriginalAngle = loopAddAngle(IMUOriginalAngle, -90.0);
+            pressedRightBumper = true; // stops this action from being run more than once on a bumper press
+        }
+        // resets the bumper action for the next press
+        if (!gamepad1.left_bumper) {
+            pressedLeftBumper = false;
+        }
+        if (!gamepad1.right_bumper) {
+            pressedRightBumper = false;
+        }
+
     }
 
     private static double loopAddAngle(double original, double addition) {
