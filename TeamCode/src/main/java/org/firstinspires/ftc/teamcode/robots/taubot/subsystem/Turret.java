@@ -52,6 +52,7 @@ public class Turret implements Subsystem {
         turretPID.setInputRange(-360, 360);
         turretPID.setOutputRange(-1.0, 1.0);
         turretPID.setTolerance(TURRET_TOLERANCE);
+        turretPID.enableIntegralZeroCrossingReset(false);
         turretPID.enable();
         initIMU(turretIMU);
     }

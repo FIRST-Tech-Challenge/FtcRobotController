@@ -243,24 +243,11 @@ public class PowerPlay_6832 extends OpMode {
     @Override
     public void init_loop() {
 
-
-
         //run all driver controls needed in init_loop
         dc.init_loop();
 
         update();
 
-
-        /*
-        try {
-            Thread.sleep(0);
-        }catch(InterruptedException e){}
-
-
-         */
-
-
-        //while (!robot.crane.calibrate()){} //omg no loops!
         if (!armCalibrated) armCalibrated=robot.crane.calibrate();
     }
     private void rumble() {
