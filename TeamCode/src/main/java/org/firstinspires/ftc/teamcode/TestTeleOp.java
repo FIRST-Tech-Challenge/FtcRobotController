@@ -19,14 +19,14 @@ public class TestTeleOp extends LinearOpMode {
     private DcMotor motorFR;
 
     //Grabber
-    private Servo Arm;
+    //private Servo Arm;
     //private Servo Hand;
-    private CRServo Ducky;
+    //private CRServo Ducky;
 
-    private Servo Basket;
+    //private Servo Basket;
 
-    private DcMotor linearSlide;
-    private DcMotor intakeMotor;
+    private DcMotor slideLeft;
+    private DcMotor slideRight;
 
     //Odometer
     private DcMotor verticalLeft; // BL
@@ -44,16 +44,17 @@ public class TestTeleOp extends LinearOpMode {
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
         motorFL = hardwareMap.get(DcMotor.class, "motorFL");
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
-        Arm = hardwareMap.get(Servo.class, "Arm");
+        //Arm = hardwareMap.get(Servo.class, "Arm");
         //Hand = hardwareMap.get(Servo.class, "Hand");
         //Ducky = hardwareMap.get(CRServo.class, "Ducky");
-        Ducky = hardwareMap.crservo.get("Ducky");
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        Basket = hardwareMap.get(Servo.class, "Basket");
+       // Ducky = hardwareMap.crservo.get("Ducky");
+        //intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        //Basket = hardwareMap.get(Servo.class, "Basket");
 
-        linearSlide = hardwareMap.get(DcMotor.class, "linearSlide");
+        slideLeft = hardwareMap.get(DcMotor.class, "slideLeft");
+        slideRight = hardwareMap.get(DcMotor.class, "slideRight");
 
-        Ducky = hardwareMap.get(CRServo.class, "Ducky");
+        //Ducky = hardwareMap.get(CRServo.class, "Ducky");
         verticalLeft = hardwareMap.get(DcMotor.class, "motorBL");
         verticalRight = hardwareMap.get(DcMotor.class, "motorFR");
         horizontal = hardwareMap.get(DcMotor.class, "motorBR");
@@ -69,8 +70,8 @@ public class TestTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
 
             //showOdo();
-            telemetry.addData("position", linearSlide.getCurrentPosition());
-            telemetry.update();
+            //telemetry.addData("position", linearSlide.getCurrentPosition());
+           // telemetry.update();
             //intakeMotor.setPower(0.8);
 
             if (gamepad1.dpad_up) {
@@ -100,45 +101,45 @@ public class TestTeleOp extends LinearOpMode {
                 turnLeft();
 
             } else if (gamepad1.right_trigger > 0) {
-                lowerSlide();
+                //lowerSlide();
 
             } else if (gamepad1.left_trigger > 0) {
-                RS3();
+               // RS3();
 
             } else if (gamepad1.left_stick_button) {
-                RS2();
+               // RS2();
 
             } else if (gamepad1.right_stick_button) {
-                RS1();
+               // RS1();
 
             } else if (gamepad1.x) {
                 //start intake
                 sleep(500);
-                intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-                intakeMotor.setPower(0.8);
+                //intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+                //intakeMotor.setPower(0.8);
 
             } else if (gamepad1.b) {
                 //reverse intake
-                intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-                intakeMotor.setPower(0.8);
+               // intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+                //intakeMotor.setPower(0.8);
 
             } else if (gamepad1.a) {
                 //stop intake
-                intakeMotor.setPower(0);
+                //intakeMotor.setPower(0);
 
             } else if (gamepad1.y) {
                 //Ducky.setPower(1);
 
             } else if (gamepad2.x) {
                 //let go
-                raiseBasket();
+                //raiseBasket();
 
             } else if (gamepad2.y) {
-                lowerBasket();
+                //lowerBasket();
 
             } else if (gamepad2.a) {
                 //let go
-                lockBasket();
+                //lockBasket();
 
             } else {
                 motorBL.setPower(0);
@@ -199,7 +200,7 @@ public class TestTeleOp extends LinearOpMode {
         motorFR.setPower(-wheelPower);
         motorFL.setPower(-wheelPower);
     }
-
+ /*
     public void RS3() {
         //linearSlide.setTargetPosition(500);
         // int i = 50;
@@ -275,6 +276,9 @@ public class TestTeleOp extends LinearOpMode {
         linearSlide.setPower(0.9);
     }
 
+
+  */
+
     private void initDriveTrain() {
 
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -295,7 +299,8 @@ public class TestTeleOp extends LinearOpMode {
         verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
