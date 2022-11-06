@@ -31,7 +31,7 @@ abstract public class BaseTeleOp extends BaseOpMode{
         armPower = (gamepad2.left_stick_y * 0.5);
         if (motorArm.getCurrentPosition() > 0 && armPower > 0) {
             armPower = 0;
-        } else if (motorArm.getCurrentPosition() < -1420 && armPower < 0) {
+        } else if (motorArm.getCurrentPosition() < -1500 && armPower < 0) {
             armPower = 0;
         }
         motorArm.setPower(armPower);
