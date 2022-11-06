@@ -30,7 +30,7 @@ public class DriveParams {
     public static final double STRAFE_COEFF      = 0.09;
     // Larger P_TURN is more responsive, but also less stable
     // 0.012
-    public static final double P_TURN_COEFF      = 0.15;
+    public static final double P_TURN_COEFF      = 0.05;
     // Tightest threshold as we can make it with an integer gyro
     public static final double HEADING_THRESHOLD = 5 ;
     // Acceptable distance in ticks to stop motors at

@@ -200,10 +200,14 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
             }
         }
         if (step == 1) {
-            if (revertArm(0.2) && driveSystem.turnAbsolute(0 * sign, 0.5)) {
+            if (revertArm(0.2)) {
                 step = 0;
                 return true;
             }
+        }
+
+        if(step == 2){
+            if(driveSystem.turnAbsolute(0*sign, 0.5));
         }
         return false;
     }
