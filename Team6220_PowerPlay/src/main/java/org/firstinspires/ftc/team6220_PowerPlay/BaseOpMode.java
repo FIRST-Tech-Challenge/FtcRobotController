@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -27,10 +28,13 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // IMU
     public BNO055IMU imu;
-    Orientation IMUOriginalAngles; // original angle reading from imu that will be used to find unwanted angle offset during drive
+    public Orientation IMUOriginalAngles; // original angle reading from imu that will be used to find unwanted angle offset during drive
 
     // flag to say whether we should disable the correction system
-    boolean turnFlag = false;
+    private boolean turnFlag = false;
+
+    private double error;
+    private double ySlidePower;
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -48,6 +52,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
+        motorLVSlides.setDirection(DcMotor.Direction.FORWARD);
+        motorRVSlides.setDirection(DcMotor.Direction.REVERSE);
+        motorTurntable.setDirection(DcMotor.Direction.FORWARD);
 
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -64,12 +71,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorTurntable.setTargetPosition(0);
-        motorLVSlides.setTargetPosition(0);
-        motorRVSlides.setTargetPosition(0);
-
         motorTurntable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorLVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorRVSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        motorLVSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRVSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // servos
         servoGrabber = hardwareMap.servo.get("servoGrabber");
@@ -141,13 +146,13 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
     }
 
-    // this method will allow the slides to move upwards, downwards, outwards, and inwards given a specified x position, x power, y position, and y power
-    public void driveSlides(/*int xPosition, double xPower,*/ int yPosition, double yPower) {
-        motorLVSlides.setPower(yPower);
-        motorRVSlides.setPower(yPower);
+    // this method will allow the slides to move upwards, downwards, outwards, and inwards given a specified x target position and y target position
+    public void driveSlides(/*int xTargetPosition,*/ int yTargetPosition) {
+        error = yTargetPosition - motorLVSlides.getCurrentPosition();
+        ySlidePower = Math.max(error * Constants.VERTICAL_SLIDE_P_CONSTANT, 0.25);
 
-        motorLVSlides.setTargetPosition(yPosition);
-        motorRVSlides.setTargetPosition(yPosition);
+        motorLVSlides.setPower(ySlidePower);
+        motorRVSlides.setPower(ySlidePower);
     }
 
     // this method will allow the turntable to turn clockwise or counterclockwise given a specified power and position

@@ -5,8 +5,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
     double yPower;
     double tPower;
 
-    int yPosition;
-
     public void driveChassisWithController() {
         xPower = gamepad1.left_stick_x * (1 - gamepad1.right_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
         yPower = gamepad1.left_stick_y * (1 - gamepad1.right_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
@@ -28,7 +26,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveGrabberWithController() {
-
         if (gamepad2.x) {  // press x to close
             driveGrabber(false);
         } else if (gamepad2.a) {  // press a to open
@@ -37,24 +34,26 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveSlidesWithController() {
-        yPosition = (motorLVSlides.getCurrentPosition() + motorRVSlides.getCurrentPosition()) / 2;
-
-        if (motorLVSlides.getTargetPosition() <= 0 || motorRVSlides.getTargetPosition() <= 0) {
-            driveSlides(yPosition, 0.0); 
+        if (gamepad2.dpad_up) {
+            driveSlides(Constants.VERTICAL_SLIDE_HIGH_JUNCTION);
+        } else if (gamepad2.dpad_right) {
+            driveSlides(Constants.VERTICAL_SLIDE_MEDIUM_JUNCTION);
+        } else if (gamepad2.dpad_left) {
+            driveSlides(Constants.VERTICAL_SLIDE_LOW_JUNCTION);
+        } else if (gamepad2.dpad_down) {
+            driveSlides(Constants.VERTICAL_SLIDE_BOTTOM);
         } else if (Math.abs(gamepad2.left_stick_y) > Constants.VERTICAL_SLIDE_DEADZONE) {
-            driveSlides(yPosition + (int) (10 - gamepad2.right_trigger * 5), 1.0);
-        } else {
-            driveSlides(motorLVSlides.getCurrentPosition(), 0.0);
+            if (motorLVSlides.getTargetPosition() < Constants.VERTICAL_SLIDE_BOTTOM) {
+                driveSlides(Constants.VERTICAL_SLIDE_BOTTOM);
+            } else if (motorLVSlides.getTargetPosition() > Constants.VERTICAL_SLIDE_TOP) {
+                driveSlides(Constants.VERTICAL_SLIDE_TOP);
+            } else {
+                driveSlides(motorLVSlides.getTargetPosition() + (int) (-gamepad2.left_stick_y * 240));
+            }
         }
     }
 
     public void driveTurntableWithController() {
-//        if (Math.abs(D2rightStickX) > Constants.TURNTABLE_DEADZONE) {
-//            driveTurntable(D2rightStickX * D2triggerSpeedMod, 0);
-//        } else if (Math.abs(D2rightStickX) < Constants.TURNTABLE_DEADZONE) {
-//            driveTurntable(0, motorTurntable.getCurrentPosition());
-//        }
-
-        driveTurntable(1, Constants.TURNTABLE_DEFAULT_POSITION);
+        driveTurntable(1.0, 0);
     }
 }

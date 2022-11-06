@@ -16,65 +16,29 @@ public abstract class BaseAutonomous extends BaseOpMode {
         Position position = new Position(DistanceUnit.INCH, 0.0, 0.0, 0.0, 0);
         Velocity velocity = new Velocity(DistanceUnit.INCH, 0.0, 0.0, 0.0, 0);
 
-        imu.startAccelerationIntegration(position, velocity, 5);
+        imu.startAccelerationIntegration(position, velocity, 10);
 
         boolean distanceReached = false;
 
-        double distanceTraveled = 0.0;
-
+        double distanceTraveled;
         double angleDeviation;
         double motorPower;
         double turningPower;
 
         double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        double headingRadians = Math.toRadians(heading);
-
-        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         while (!distanceReached && opModeIsActive()) {
             angleDeviation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle;
 
             turningPower = angleDeviation / 50;
 
-            // todo - max linear acceleration where encoders don't slip, then 0, then max linear deceleration where encoders don't slip
-            motorPower = Math.max(Math.sqrt(Math.sin(distanceTraveled / targetDistance * Math.PI)) * 0.25, 0.1);
-
-            // todo - make work for any heading
-            if (headingRadians == 0) {
-                motorFL.setPower(motorPower + turningPower);
-                motorFR.setPower(motorPower - turningPower);
-                motorBL.setPower(motorPower + turningPower);
-                motorBR.setPower(motorPower - turningPower);
-            } else if (headingRadians == Math.PI / 2) {
-                motorFL.setPower(-motorPower + turningPower);
-                motorFR.setPower(-motorPower - turningPower);
-                motorBL.setPower(-motorPower + turningPower);
-                motorBR.setPower(-motorPower - turningPower);
-            } else if (headingRadians == Math.PI) {
-                motorFL.setPower(-motorPower + turningPower);
-                motorFR.setPower(motorPower - turningPower);
-                motorBL.setPower(motorPower + turningPower);
-                motorBR.setPower(-motorPower - turningPower);
-            } else if (headingRadians == 3 * Math.PI / 2) {
-                motorFL.setPower(motorPower + turningPower);
-                motorFR.setPower(-motorPower - turningPower);
-                motorBL.setPower(-motorPower + turningPower);
-                motorBR.setPower(motorPower - turningPower);
-            }
-
             // todo - fix distance
             distanceTraveled = Math.sqrt(Math.pow(imu.getPosition().x, 2) + Math.pow(imu.getPosition().y, 2));
 
-            if (distanceTraveled - targetDistance > -1) {
+            // todo - max linear acceleration where encoders don't slip, then 0, then max linear deceleration where encoders don't slip
+            motorPower = Math.max(Math.sqrt(Math.sin(distanceTraveled / targetDistance * Math.PI)) * 0.25, 0.1);
+
+            if (distanceTraveled > targetDistance) {
                 motorFL.setPower(0.0);
                 motorFR.setPower(0.0);
                 motorBL.setPower(0.0);
@@ -84,6 +48,38 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
                 imu.stopAccelerationIntegration();
             }
+
+            // todo - make work for any heading
+            if (heading == 0) {
+                motorFL.setPower(motorPower + turningPower);
+                motorFR.setPower(motorPower - turningPower);
+                motorBL.setPower(motorPower + turningPower);
+                motorBR.setPower(motorPower - turningPower);
+            } else if (heading == 90) {
+                motorFL.setPower(-motorPower + turningPower);
+                motorFR.setPower(-motorPower - turningPower);
+                motorBL.setPower(-motorPower + turningPower);
+                motorBR.setPower(-motorPower - turningPower);
+            } else if (heading == 180) {
+                motorFL.setPower(-motorPower + turningPower);
+                motorFR.setPower(motorPower - turningPower);
+                motorBL.setPower(motorPower + turningPower);
+                motorBR.setPower(-motorPower - turningPower);
+            } else if (heading == 270) {
+                motorFL.setPower(motorPower + turningPower);
+                motorFR.setPower(-motorPower - turningPower);
+                motorBL.setPower(-motorPower + turningPower);
+                motorBR.setPower(motorPower - turningPower);
+            }
+
+            telemetry.addData("fl", String.valueOf(motorFL.getPower()));
+            telemetry.addData("fr", String.valueOf(motorFR.getPower()));
+            telemetry.addData("bl", String.valueOf(motorBL.getPower()));
+            telemetry.addData("br", String.valueOf(motorBR.getPower()));
+            telemetry.addData("traveled", String.valueOf(distanceTraveled));
+            telemetry.addData("x", String.valueOf(imu.getPosition().x));
+            telemetry.addData("y", String.valueOf(imu.getPosition().y));
+            telemetry.update();
         }
     }
 }

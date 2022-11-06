@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.team6220_PowerPlay;
+package org.firstinspires.ftc.team6220_PowerPlay.Competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 
 @TeleOp(name = "TeleOpCompetition", group = "Competition")
 public class TeleOpCompetition extends BaseTeleOp {
@@ -13,8 +14,6 @@ public class TeleOpCompetition extends BaseTeleOp {
     public void runOpMode() {
         initialize();
         waitForStart();
-
-        telemetry.addLine("TO PREVENT START ROTATE WAIT A FEW SECONDS IN BETWEEN INIT AND START");
 
         driveTurntableWithController();
 
