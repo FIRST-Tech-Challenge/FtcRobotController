@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.testing.Robot
 import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.command.commands.*
+import com.asiankoala.koawalib.control.filter.SlewRateLimiter
 import com.asiankoala.koawalib.logger.LoggerConfig
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.DriveHackCmd
 
@@ -19,13 +20,20 @@ class BlueOp : KOpMode(photonEnabled = false) {
 
     override fun mInit() {
         robot = Robot(startPose)
-        robot.drive.defaultCommand = DriveHackCmd(
+        robot.drive.defaultCommand = MecanumCmd(
             robot.drive,
             driver.leftStick,
             driver.rightStick,
-            driver.leftTrigger::isToggled,
-            driver.a::isToggled
+            0.9,
+            0.9,
+            0.9,
+            1.0,
+            1.0,
+            1.0
         )
+//        driver.leftStick.setXRateLimiter(SlewRateLimiter(0.9))
+//        driver.leftStick.setYRateLimiter(SlewRateLimiter(0.9))
+//        driver.rightStick.setXRateLimiter(SlewRateLimiter(0.9))
 
         Logger.config = LoggerConfig.DASHBOARD_CONFIG
 

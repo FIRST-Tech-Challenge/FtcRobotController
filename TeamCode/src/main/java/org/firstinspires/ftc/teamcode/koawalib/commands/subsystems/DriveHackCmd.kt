@@ -40,9 +40,9 @@ class DriveHackCmd(
 
     override fun processPowers(): Pose {
         val default = super.processPowers()
-        if(spacegliderToggle.invoke()) {
-            driveHack.spaceglide(leftStick.vector)
-        }
+//        if(spacegliderToggle.invoke()) {
+//            driveHack.spaceglide(leftStick.vector)
+//        }
 //        val v = if (spacegliderToggle.invoke()) {
 //            driveHack.spaceglide(default.vec).rotate(-heading.invoke()
 //                    + if (alliance == Alliance.RED) 180.0.radians else 0.0)

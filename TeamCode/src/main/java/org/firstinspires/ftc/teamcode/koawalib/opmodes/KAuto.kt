@@ -73,7 +73,7 @@ open class KAuto(
     )
 
     private fun getGVFCmd(path: Path, vararg cmds: Pair<Cmd, Vector>) =
-        GVFCmd(robot.drive, SimpleGVFController(path, kN, kOmega, kF, kS, epsilon), *cmds)
+        GVFCmd(robot.drive, SimpleGVFController(path, kN, kOmega, kF, kS, epsilon, 2.0), *cmds)
 
     override fun mInit() {
         +SequentialGroup(

@@ -35,7 +35,7 @@ class TestAuto : KOpMode() {
     private fun defaultGVFCmd(path: Path, vararg cmds: Pair<Cmd, Vector>): GVFCmd {
         return GVFCmd(
             robot.drive,
-            SimpleGVFController(path, 0.6, 1.0 / 30.0, 4.0, 1.0, 1.0)
+            SimpleGVFController(path, 0.6, 1.0 / 30.0, 4.0, 1.0, 1.0, 2.0)
         )
     }
 
@@ -81,62 +81,62 @@ class TestAuto : KOpMode() {
             WaitUntilCmd {opModeState == OpModeState.START},
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(path1, 0.6, 1.0/30.0, 4.0, 0.7, 2.0)
+                SimpleGVFController(path1, 0.6, 30.0, 4.0, 0.7, 3.0, 3.0)
             ),
            WaitCmd(0.5),
             GVFCmd(
                robot.drive,
-               SimpleGVFController(intakePath, 0.6, 1.0/30.0, 4.0, 0.4, 2.0)
+               SimpleGVFController(intakePath, 0.6, 30.0, 4.0, 0.4, 3.0, 3.0)
            ),
            WaitCmd(0.5),
            GVFCmd(
                robot.drive,
-               SimpleGVFController(depositPath, 0.5, 1.0/20.0, 4.0, 0.7, 2.0)
+               SimpleGVFController(depositPath, 0.5, 25.0, 2.0, 0.7, 3.0, 3.0)
            ),
            WaitCmd(0.5),
            GVFCmd(
                robot.drive,
-               SimpleGVFController(intakePath, 0.6, 1.0/30.0, 4.0, 0.4, 2.0)
+               SimpleGVFController(intakePath, 0.6, 30.0, 4.0, 0.4, 3.0, 3.0)
            ),
            WaitCmd(0.5),
            GVFCmd(
                robot.drive,
-               SimpleGVFController(depositPath, 0.5, 1.0/20.0, 4.0, 0.7, 3.0)
+               SimpleGVFController(depositPath, 0.5, 25.0, 2.0, 0.7, 3.0, 3.0)
            ),
            WaitCmd(0.5),
            GVFCmd(
                robot.drive,
-               SimpleGVFController(intakePath, 0.6, 1.0/30.0, 4.0, 0.4, 2.0)
+               SimpleGVFController(intakePath, 0.6, 30.0, 4.0, 0.4, 3.0, 3.0)
            ),
            WaitCmd(0.5),
            GVFCmd(
                robot.drive,
-               SimpleGVFController(depositPath, 0.5, 1.0/20.0, 4.0, 0.7, 3.0)
+               SimpleGVFController(depositPath, 0.5, 25.0, 2.0, 0.7, 3.0, 3.0)
            ),
            WaitCmd(0.5),
            GVFCmd(
                robot.drive,
-               SimpleGVFController(intakePath, 0.6, 1.0/30.0, 4.0, 0.4, 2.0)
+               SimpleGVFController(intakePath, 0.6, 30.0, 4.0, 0.4, 3.0, 3.0)
            ),
            WaitCmd(0.5),
            GVFCmd(
                robot.drive,
-               SimpleGVFController(depositPath, 0.5, 1.0/20.0, 4.0, 0.7, 3.0)
+               SimpleGVFController(depositPath, 0.5, 25.0, 2.0, 0.7, 3.0, 3.0)
            ),
            WaitCmd(0.5),
            GVFCmd(
                robot.drive,
-               SimpleGVFController(intakePath, 0.6, 1.0/30.0, 4.0, 0.4, 2.0)
+               SimpleGVFController(intakePath, 0.6, 30.0, 4.0, 0.4, 3.0, 3.0)
            ),
            WaitCmd(0.5),
            GVFCmd(
                robot.drive,
-               SimpleGVFController(depositPath, 0.5, 1.0/20.0, 4.0, 0.7, 3.0)
+               SimpleGVFController(depositPath, 0.5, 25.0, 2.0, 0.7, 3.0, 3.0)
            ),
            WaitCmd(0.5),
            GVFCmd(
                robot.drive,
-               SimpleGVFController(intakePath2, 0.6, 1.0/10.0, 4.0, 0.7, 2.0)
+               SimpleGVFController(intakePath2, 0.6, 20.0, 4.0, 0.7, 3.0, 3.0)
            )
         )
         mainCommand.schedule()

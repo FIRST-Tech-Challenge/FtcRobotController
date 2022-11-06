@@ -1,4 +1,4 @@
 include ':FtcRobotController'
 include ':TeamCode'
 include(':koawalib')
-project(':koawalib').projectDir = new File(settingsDir, '../koawalib/koawalib')
+project(':koawalib').projectDir = new File(settingsDir, '../koawalib/core')
