@@ -148,10 +148,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
             leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-                imu = hardwareMap.get(BNO055IMU.class, "baseIMU");
-                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-                imu.initialize(parameters);
+
+
+
+
 
         headingPID = new PIDController(HEADING_PID);
         headingPID.setInputRange(0, Math.toRadians(360));
@@ -223,7 +223,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
         }
 
-        Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.RADIANS);
+        Orientation orientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+        
         if (!imuOffsetsInitialized && imu.isGyroCalibrated()) {
             headingOffset = orientation.firstAngle;
             rollOffset = wrapAngleRad(orientation.secondAngle);
@@ -233,7 +234,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         }
 
         rawHeading = orientation.firstAngle;
-
+        rawHeading =
         heading = orientation.firstAngle - headingOffset;
 
         roll = orientation.secondAngle - rollOffset;
