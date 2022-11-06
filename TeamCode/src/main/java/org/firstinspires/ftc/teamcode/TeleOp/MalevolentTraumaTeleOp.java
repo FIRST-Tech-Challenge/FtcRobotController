@@ -31,35 +31,20 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.DriveDirections;
 
 @TeleOp(name="Malevolent Trauma TeleOp", group="Trauma")
 
 
-public class MalevolentTraumaTeleOp extends LinearOpMode {
-    DcMotor frontRightMotor;
-    DcMotor frontLeftMotor;
-    DcMotor backRightMotor;
-    DcMotor backLeftMotor;
+public class MalevolentTraumaTeleOp extends DriveDirections {
     double powerLevel = 0.8;
 
     @Override
     public void runOpMode() {
-
-        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
-        backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
-
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        super.runOpMode();
         waitForStart();
 
         while (opModeIsActive()) {
@@ -76,29 +61,17 @@ public class MalevolentTraumaTeleOp extends LinearOpMode {
                 //Checks if joystick moved more up than side to side, if so, move forward or backward
                 //"If joystick moved more vertically than horizontally, then move forward/backward"
                 if (Math.abs(gamepad1.left_stick_x) < Math.abs(gamepad1.left_stick_y)) {
-                    frontRightMotor.setPower(-gamepad1.left_stick_y * powerLevel);
-                    frontLeftMotor.setPower(-gamepad1.left_stick_y * powerLevel);
-                    backLeftMotor.setPower(-gamepad1.left_stick_y * powerLevel);
-                    backRightMotor.setPower(-gamepad1.left_stick_y * powerLevel);
+                    DriveInDirection(gamepad1.left_stick_y * powerLevel,"BACKWARDS");
                     //Checks if moved more horizontally than up and down, if so, strafes
                     //"If joystick moved more horizontally than vertically, strafe"
                 } else if (Math.abs(gamepad1.left_stick_y) < Math.abs(gamepad1.left_stick_x)) {
-                    frontRightMotor.setPower(-gamepad1.left_stick_x * powerLevel);
-                    frontLeftMotor.setPower(gamepad1.left_stick_x * powerLevel);
-                    backLeftMotor.setPower(-gamepad1.left_stick_x * powerLevel);
-                    backRightMotor.setPower(gamepad1.left_stick_x * powerLevel);
+                    DriveInDirection(gamepad1.left_stick_x * powerLevel,"RIGHT");
                 }
                 //Check if the right joystick is moved significantly, otherwise motors are stopped
             }else if(Math.abs(gamepad1.right_stick_x) > 0.1){
-                frontRightMotor.setPower(gamepad1.right_stick_x*powerLevel);
-                frontLeftMotor.setPower(-gamepad1.right_stick_x*powerLevel);
-                backRightMotor.setPower(gamepad1.right_stick_x*powerLevel);
-                backLeftMotor.setPower(-gamepad1.right_stick_x*powerLevel);
+                DriveInDirection(gamepad1.right_stick_x * powerLevel,"ROTATE_Left");
             } else {
-                frontRightMotor.setPower(0);
-                frontLeftMotor.setPower(0);
-                backRightMotor.setPower(0);
-                backLeftMotor.setPower(0);
+                DriveInDirection(0,"STOP");
             }
 
         }
