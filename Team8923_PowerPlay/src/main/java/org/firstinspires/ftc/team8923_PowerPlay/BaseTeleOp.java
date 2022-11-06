@@ -41,9 +41,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         if (gamepad2.dpad_up) {
             motorSlideLeft.setPower(mechanismSpeed);
             motorSlideRight.setPower(mechanismSpeed);
-        } else if (gamepad2.dpad_down
-                && motorSlideLeft.getCurrentPosition() > bottomMotorSlideLeft
-                && motorSlideRight.getCurrentPosition() > bottomMotorSlideRight) {
+        } else if (gamepad2.dpad_down) {
             motorSlideLeft.setPower(-mechanismSpeed);
             motorSlideRight.setPower(-mechanismSpeed);
         } else {
