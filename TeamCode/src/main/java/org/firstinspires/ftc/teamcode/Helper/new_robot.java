@@ -23,8 +23,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class new_robot {
     private ElapsedTime runtime = new ElapsedTime();
-    public DcMotor verticalSlider;
-    public DcMotor horizontalSlider;
+    public DcMotor vSlider;
+    public DcMotor hSlider;
     public Servo claw;
 
     //Drivetrain Motor
@@ -61,8 +61,8 @@ public class new_robot {
         hwMap = ahwMap;
         //Init motors and servos
         claw = hwMap.get(Servo.class, "claw");
-        verticalSlider = hwMap.get(DcMotor.class, "verticalSlider");
-        horizontalSlider = hwMap.get(DcMotor.class, "horizontalSlider");
+        vSlider = hwMap.get(DcMotor.class, "vSlider");
+        hSlider = hwMap.get(DcMotor.class, "hSlider");
 
         //Init motors and servos
         FLMotor = hwMap.get(DcMotor.class, "FLMotor");
@@ -77,8 +77,8 @@ public class new_robot {
         BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         claw.setDirection(Servo.Direction.FORWARD);
-        verticalSlider.setDirection(DcMotorSimple.Direction.FORWARD);
-        horizontalSlider.setDirection(DcMotorSimple.Direction.FORWARD);
+        vSlider.setDirection(DcMotorSimple.Direction.FORWARD);
+        hSlider.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Setting the direction
         FLMotor.setDirection(DcMotor.Direction.FORWARD);

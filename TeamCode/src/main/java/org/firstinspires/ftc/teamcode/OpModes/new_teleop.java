@@ -81,11 +81,11 @@ public class new_teleop extends LinearOpMode {
             }
 
             /** Slider **/
-            double verticalSliderPower =  gamepad1. left_stick_y;
-            double horizontalSliderPower = gamepad1.left_stick_x;
+            double vSliderPower =  gamepad1. left_stick_y;
+            double hSliderPower = gamepad1.left_stick_x;
 
-            robot.verticalSlider.setPower(verticalSliderPower);
-            robot.horizontalSlider.setPower(horizontalSliderPower);
+            robot.vSlider.setPower(vSliderPower);
+            robot.hSlider.setPower(hSliderPower);
 
         }
 
