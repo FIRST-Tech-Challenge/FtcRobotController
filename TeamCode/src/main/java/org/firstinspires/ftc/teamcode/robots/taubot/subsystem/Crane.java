@@ -367,6 +367,7 @@ public class Crane implements Subsystem {
             default:
                 return false;
         }
+        return true;
     }
 
     private int shoulderPosition = 0;
