@@ -4,46 +4,31 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 
 @TeleOp(name="Competition Teleop", group="Iterative Opmode")
 public class CompetitionTeleop2023 extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor LF = null;
-    private DcMotor RF = null;
-    private DcMotor LB = null;
-    private DcMotor RB = null;
-    private  DcMotor arm = null;
-    /*boolean changed = false; //Outside of loop()
-    boolean changed2 = false;
-    boolean changed3 = false;
-    //public Servo turny = null;
-    private CRServo spinspinducky = null;
-    private CRServo intake = null;
-    private DcMotor armboom = null;
-    //private  DcMotor intakemotor = null;
-    */
-    private double PowerFactor = 1.0f;
-    private double maxEncode = 4200;
-    private double minEncode = 100;
-    //private Servo platform = null;
-    //private Servo tester = null;
-    /*double tgtPower = 0;
-    private static final float BUCKETCLEAR = .65f;
-    private static final float BUCKETDUMP = 0f;
-    private static final float BUCKETIN = 1f;
-    boolean spinthatduck = false;
-    float dr_position = 0;
-    boolean isRumbling = false;
-    float dr_lock = .815f;
+    //Declare the wheels
+    private DcMotor LF = null; //Located on Control Hub- Motor port 0
+    private DcMotor RF = null; //Located on Control Hub- Motor port 2
+    private DcMotor LB = null; //Located on Control Hub- Motor port 1
+    private DcMotor RB = null; //Located on Control Hub- Motor port 3
+    //Declare variables used for our arm lift
+    private  DcMotor arm = null; //Located on Expansion Hub- Motor port 0
+    private Servo gripper = null; //Located on Expansion Hub- Servo port 0
 
-    //magnet thingy
-    private Servo dr_magnet = null;
-    private static DistanceSensor MMA = null;
+    private double PowerFactor = 1.0f; //Max power available for wheels
+    private double maxEncode = 2175; //4200 for higher, 2175 for lower-- Max so arm won't overextend
+    private double minEncode = 100; //Minimum so string on arm lift doesn't break
+
+     boolean changed = false; //Used for the gripper button code
+     boolean changed2 = false; //Used for the code that allows the driver to alter speed
+
     /*
       Code to run ONCE when the driver hits INIT
      */
@@ -59,53 +44,38 @@ public class CompetitionTeleop2023 extends OpMode {
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
         arm = hardwareMap.get(DcMotor.class, "arm");
-        /*intake = hardwareMap.get(CRServo.class, "intake");
-        spinspinducky = hardwareMap.get(CRServo.class, "spinspinducky");
-        platform  = hardwareMap.get(Servo.class, "platform");
-        armboom = hardwareMap.get(DcMotor.class, "armboom");
-        dr_magnet = hardwareMap.get(Servo.class, "dr_magnet");
-        MMA = hardwareMap.get(DistanceSensor.class, "MMA");
-
+        gripper = hardwareMap.get(Servo.class,"gripper");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-*/
+
         LF.setDirection(DcMotor.Direction.FORWARD);
         RF.setDirection(DcMotor.Direction.REVERSE);
         LB.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.REVERSE);
-        arm.setDirection(DcMotor.Direction.REVERSE);
 
+        //Reverse the arm direction so it moves in the proper direction
+        arm.setDirection(DcMotor.Direction.REVERSE);
+        //Set arm up to use encoders
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //Set arm up to brake
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        /*
-        // Tell the driver that initialization is complete
-        telemetry.addData("Status", "Initialized");
-*/
-    }
+
+       }
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
     @Override
     public void init_loop() {
-      //  superPusher.setPosition(.6);
-       //tester.setPosition(0.2);  // ring loader arm servo
-        //platform.setPosition(0);
-        //dr_magnet.setPosition(0);
+        //Set gripper servo to 0
+        gripper.setPosition(0);
     }
 
     /*
      * Code to run ONCE when the driver hits PLAY
      */
-    //@Override
-    //public void start() {
-     //   runtime.reset();
-    //}
 
-    /*
-     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
-     */
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
@@ -113,211 +83,70 @@ public class CompetitionTeleop2023 extends OpMode {
         double RFPower;
         double LBPower;
         double RBPower;
-        double rainbowPower;
-        double rainbowPower2;
-        double superShooterPower;
-        double superShooterPower2;
 
-
-//        Out
-      /*  if (gamepad1.left_bumper&&!gamepad1.right_bumper) {
-           //intake.setDirection(DcMotorSimple.Direction.REVERSE);
-            intake.setPower(-1);
-
-        }
-        else if(!gamepad1.left_bumper&&!gamepad1.right_bumper)
-        {
-            intake.setPower(0);
-        }
-        //In
-        else if (gamepad1.right_bumper&&!gamepad1.left_bumper) {
-            //intake.setDirection(DcMotorSimple.Direction.FORWARD);
-            intake.setPower(1);
-        }
-
-
-        /*if(gamepad1.a && !changed) {
-            if(platform.getPosition() == 0) platform.setPosition(.8);
-            else platform.setPosition(0);
-            changed = true;
-        } else if(!gamepad1.a) changed = false;
-
-        if(gamepad1.y && !changed2)
-        {
-            if(PowerFactor == 0.8f)
-            {
+        //Code for gamepad1
+        //Allows the driver to alter speed and make the robot move faster or slower
+        if (gamepad1.y && !changed2) {
+            if (PowerFactor == 0.8f) {
                 PowerFactor = 0.5f;
-            }
-            else
-            {
+            } else {
                 PowerFactor = (0.8f);
             }
             changed2 = true;
-        }
-        else if(!gamepad1.y)
-        {
+        } else if (!gamepad1.y) {
             changed2 = false;
         }
 
-        if(gamepad2.y && !changed3)
-        {
-            if(dr_position == .815f)
-            {
-                dr_lock = 1f;
-            }
-            else
-            {
-                dr_lock = (0.815f);
-            }
-            changed3 = true;
-        }
-        else if(!gamepad1.y)
-        {
-            changed3 = false;
-        }
+        //Code for mecanum wheels
+            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * PowerFactor;
+            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+            double rightX = Math.pow(gamepad1.right_stick_x, 5.0);
+            //double rightX = (-gamepad1.right_stick_x);
+            LBPower = r * Math.cos(robotAngle) - rightX;
+            RBPower = r * Math.sin(robotAngle) + rightX;
+            LFPower = r * Math.sin(robotAngle) - rightX;
+            RFPower = r * Math.cos(robotAngle) + rightX;
 
+            // Send calculated power to wheels
+            LB.setPower(LBPower);
+            RB.setPower(RBPower);
+            LF.setPower(LFPower);
+            RF.setPower(RFPower);
 
-        if (gamepad2.dpad_up)
-        {
-            dr_position += .005f;
-            if (dr_position > dr_lock)
-            {
-                dr_position = dr_lock;
-            }
-            dr_magnet.setPosition(dr_position);
-        }
-        if (gamepad2.dpad_down)
-        {
-            dr_position -=.005f;
-            dr_magnet.setPosition(dr_position);
-        }
-*/
-        //boom up
-        if (gamepad2.left_trigger >= .1 && arm.getCurrentPosition() < maxEncode )
-        {
+        //Code for gamepad2
+        //Moves the arm up
+        if (gamepad2.left_trigger >= .1 && arm.getCurrentPosition() < maxEncode) {
             arm.setPower(gamepad2.left_trigger);
-            telemetry.addData("arm ticks", arm.getCurrentPosition()); telemetry.update();
-
-        }
-        else if (gamepad2.right_trigger >= .1 && arm.getCurrentPosition() > minEncode){
+            telemetry.addData("arm ticks", arm.getCurrentPosition());
+            telemetry.update();
+            //Moves the arm down
+        } else if (gamepad2.right_trigger >= .1 && arm.getCurrentPosition() > minEncode) {
             arm.setPower(-gamepad2.right_trigger);
-        } else {
+        }
+        //Allows the arm to stay in the location the drivers want
+        else {
             arm.setPower(0);
             arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
-
-/*
-        if (gamepad2.left_bumper){
-            spinspinducky.setPower(1);
-        }
-        else if (gamepad2.right_bumper){
-            spinspinducky.setPower(-1);
-        }
-        else {
-            spinspinducky.setPower(0);
-        }
-
-
-
-
-
-
-        if (MMA.getDistance(DistanceUnit.CM)<3 && !isRumbling)
-        {
-            gamepad1.rumble(1000);
-            gamepad2.rumble(1000);
-            isRumbling=true;
-        }
-        else
-        {
-            if(MMA.getDistance(DistanceUnit.CM)>4 && isRumbling)
-            {
-                isRumbling=false;
-            }
-        }
-*/
-        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y)  * PowerFactor;
-        double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        double rightX = Math.pow(gamepad1.right_stick_x,5.0);
-        //double rightX = (-gamepad1.right_stick_x);
-        LBPower = r * Math.cos(robotAngle) - rightX;
-        RBPower = r * Math.sin(robotAngle) + rightX;
-        LFPower = r * Math.sin(robotAngle) - rightX;
-        RFPower = r * Math.cos(robotAngle) + rightX;
-        /*
-        LBPower = r * Math.cos(robotAngle) + rightX;
-        RBPower = r * Math.sin(robotAngle) - rightX;
-        LFPower = r * Math.sin(robotAngle) + rightX;
-        RFPower = r * Math.cos(robotAngle) - rightX;
-*/
-        /*double tgtPower1 = 0;
-        tgtPower1 = this.gamepad2.left_stick_y;
-      //  rainbow.setPower(tgtPower1);
-        //rainbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-
-        //tgtPower = -this.gamepad2.right_stick_y;
-    //    superShooter.setPower(tgtPower);
-
-
-        tgtPower = -this.gamepad2.right_stick_y;
-      //  superShooter.setPower(Range.clip(tgtPower, 0, .65));
-
-
-        //telemetry.addData("MotorPower", superShooter.getPower());
-       /* telemetry.addData("Pos",dr_magnet.getPosition());
-        telemetry.addData("Status", "Running");
-        telemetry.addData("MMA", MMA.getDistance(DistanceUnit.CM));
-        telemetry.update();
-
-        if (gamepad2.x) {
-            superShooter.setPower(1);
-            telemetry.addData("MotorPower", superShooter.getPower());
-            telemetry.addData("Status", "Running");
-            telemetry.update();
-        } else {
-            superShooter.setPower(0);
-        }
-        if (gamepad2.y) {
-            superShooter.setPower(0.85);
-            telemetry.addData("MotorPower", superShooter.getPower());
-            telemetry.addData("Status", "Running");
-            telemetry.update();
-        }
-        else {
-            superShooter.setPower(0);
-
-            double tgtPower = 0;*/
-           /*
-            tgtPower = -this.gamepad2.right_stick_y;
-            superShooter.setPower(tgtPower);
-            telemetry.addData("Target Power", tgtPower);
-            telemetry.addData("MotorPower", superShooter.getPower());
-            telemetry.addData("Status", "Running");
-            telemetry.update();
-*/
-
-        // Send calculated power to wheels
-        LB.setPower(LBPower);
-        RB.setPower(RBPower);
-        LF.setPower(LFPower);
-        RF.setPower(RFPower);
-
+        //Allows the drivers to use a single button to open and close gripper
+        if (gamepad2.a && !changed) {
+            if (gripper.getPosition() == 0) gripper.setPosition(.4);
+            else gripper.setPosition(0);
+            changed = true;
+        } else if (!gamepad2.a) changed = false;
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-      //  telemetry.addData("positionTarget: ", "%.2f", positionTarget);
-    }
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            //  telemetry.addData("positionTarget: ", "%.2f", positionTarget);
+        }
 
     /*
      * Code to run ONCE after the driver hits STOP
      */
     @Override
     public void stop() {
+            //Nothing in stop
     }
-
-
 }
 
 
