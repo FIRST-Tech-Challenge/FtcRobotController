@@ -62,11 +62,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         super.init();
         this.teamColor = teamColor;
         this.teamSide = teamSide;
-        if (teamSide == TeamSide.LEFT) {
-            sign = -1;
-        } else { // if teamSide is right
-            sign = 1;
-        }
+        sign = teamSide == TeamSide.LEFT ? -1: 1;
         startPosition = From.START;
         newState(State.IDENTIFY_TARGET);
     }
@@ -162,8 +158,8 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
     private boolean park() {
         if (step == 0) {
             if (teamAsset == Sleeve.BRIAN ||
-                    (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.3)) ||
-                    (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.3))) {
+                    (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(680, DriveSystem.Direction.RIGHT, 0.3)) ||
+                    (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(680, DriveSystem.Direction.LEFT, 0.3))) {
                 return true;
             }
         }
@@ -184,7 +180,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                     }
                 }
                 if (step == 2) {
-                    if (driveSystem.turn(-45 * sign, 0.5)) {
+                    if (driveSystem.turn(-46 * sign, 0.5)) {
                         step = 0;
                         return true;
                     }
@@ -199,12 +195,12 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
     private boolean reverseJunction() {
         if(step == 0){
-            if (driveSystem.driveToPosition(220, DriveSystem.Direction.BACKWARD, 0.4)){
+            if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.4)){
                 step++;
             }
         }
         if (step == 1) {
-            if (revertArm(0.2) && driveSystem.turnAbsolute(0, 0.5)) {
+            if (revertArm(0.2) && driveSystem.turnAbsolute(0 * sign, 0.5)) {
                 step = 0;
                 return true;
             }
@@ -252,7 +248,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         }
 
         if(step == 1){
-            if(driveSystem.turn(sign* -135, 0.3)){
+            if(driveSystem.turnAbsolute(sign* 90, 0.3)){
                 step++;
             }
         }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.base;
 
+import android.util.Log;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -53,9 +55,10 @@ public abstract class BaseOpMode extends OpMode {
     protected boolean alignHeading(int sign) {
         int headingOffset = pixycam.headingOffset(sign);
         telemetry.addData("offset", headingOffset);
-        if (headingOffset > 20) {
+        Log.d("degrees", headingOffset + " ");
+        if (headingOffset > 5) {
             driveSystem.turn(60, 0.5);
-        } else if (headingOffset < -20) {
+        } else if (headingOffset < -5) {
             driveSystem.turn(-60, 0.5);
         } else {
             driveSystem.setMotorPower(0);
@@ -67,10 +70,11 @@ public abstract class BaseOpMode extends OpMode {
     protected boolean alignDistance(int colorSignature, int desiredWidth){
         distanceOffset = pixycam.distanceOffset(colorSignature, desiredWidth);// find actual desired width
         telemetry.addData("offset", distanceOffset);
-        if (distanceOffset > 20) {
+        Log.d("seeing", distanceOffset + " " + pixycam.GetBiggestBlock().width);
+        if (distanceOffset > 10) {
             telemetry.addData("driving backwards", 0);
             driveSystem.drive(0, 0, -0.2f);
-        } else if (distanceOffset < -20) {
+        } else if (distanceOffset < -10) {
             telemetry.addData("driving forward", 0);
             driveSystem.drive(0, 0, 0.2f);
         } else {
@@ -89,7 +93,6 @@ public abstract class BaseOpMode extends OpMode {
         }
         if(step == 1){
             if(alignDistance(colorSignature, desiredWidth)){
-                step = 0;
                 return true;
             }
         }

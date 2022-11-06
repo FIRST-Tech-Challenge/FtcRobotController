@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
-@Autonomous (name = "pixycam testing", group = "Autonomous")
+@Disabled
 public class PixyCamCenter extends BaseOpMode {
 
     protected PixyCam pixycam;

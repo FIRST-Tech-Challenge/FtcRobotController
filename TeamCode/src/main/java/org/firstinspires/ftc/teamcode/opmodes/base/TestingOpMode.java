@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.base;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -17,7 +18,7 @@ import java.util.EnumMap;
  * Basic OpMode template
  */
 
-@Autonomous(name = "testing i hope this works ", group = "Autonomous")
+@Disabled
 public abstract class TestingOpMode extends BaseOpMode {
 
 

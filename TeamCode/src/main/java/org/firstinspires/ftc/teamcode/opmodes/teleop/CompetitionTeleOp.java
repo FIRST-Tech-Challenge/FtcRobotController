@@ -32,12 +32,18 @@ public class CompetitionTeleOp extends BaseOpMode {
         telemetry.addData("arm right power", armSystem.armRight.getPower());
 
 
+
+
         if (gamepad1.left_trigger > 0 || armSystem.getState() == INTAKING) {
             armSystem.intake();
         }
 
         if(gamepad1.right_bumper){
-            armSystem.toDaGround();
+            //
+        }
+
+        if(gamepad1.left_bumper){
+            //
         }
 
         if (gamepad1.right_trigger > 0 || armSystem.getState() == OUTTAKING) {

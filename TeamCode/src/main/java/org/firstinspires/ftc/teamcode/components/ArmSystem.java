@@ -15,10 +15,11 @@ public class ArmSystem {
     public static final int LOW = 550;
     public static final int MEDIUM = 800;
     public static final int HIGH = 1100;
-    public static final int FLOOR = 100;
+    public static final int FLOOR = 120;
     public DcMotor armLeft; //arm left is motor1
     public DcMotor armRight;
     private Intake intake;
+    private int mTargetPosition;
 
 
     public ArmSystem(DcMotor motor1, DcMotor motor2, DcMotor intakeMotor, DigitalChannel beam){
@@ -26,11 +27,13 @@ public class ArmSystem {
         armRight = motor2;
         initMotors();
         intake = new Intake(intakeMotor, beam);
+        mTargetPosition = 0;
     }
 
     public void killMotors() {
         armLeft.setPower(0);
         armRight.setPower(0);
+        mTargetPosition = 0;
     }
 
     public static void armToFloor() {
@@ -58,12 +61,20 @@ public class ArmSystem {
     }
 
     public boolean driveToLevel(int targetPosition, double power){
-        armLeft.setTargetPosition(targetPosition);
-        armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armLeft.setPower(power);
-        armRight.setTargetPosition(targetPosition);
-        armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armRight.setPower(power);
+        if(mTargetPosition == 0){
+            armLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        if(mTargetPosition != targetPosition){
+            mTargetPosition = targetPosition;
+            armLeft.setTargetPosition(targetPosition);
+            armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armLeft.setPower(power);
+            armRight.setTargetPosition(targetPosition);
+            armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armRight.setPower(power);
+        }
+
         //add code for second motor (armRight)
         int offsetLeft = Math.abs(armLeft.getCurrentPosition() - targetPosition);
         int offsetRight = Math.abs(armRight.getCurrentPosition() - targetPosition);
@@ -88,7 +99,7 @@ public class ArmSystem {
     }
 
     public boolean up() {
-        return (armRight.getCurrentPosition() + armLeft.getCurrentPosition())/2 > 600;
+        return (armRight.getCurrentPosition() + armLeft.getCurrentPosition())/2 > 400;
     }
 
 
