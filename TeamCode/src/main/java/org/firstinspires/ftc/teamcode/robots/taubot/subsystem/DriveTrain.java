@@ -234,7 +234,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         }
 
         rawHeading = orientation.firstAngle;
-        rawHeading =
         heading = orientation.firstAngle - headingOffset;
 
         roll = orientation.secondAngle - rollOffset;
