@@ -19,9 +19,10 @@ public class RFMotor extends Motor {
 
     private double maxtickcount = 0;
     private double mintickcount = 0;
-    private double DEFAULTCOEF1 = 1.5, DEFAULTCOEF2 = 150.0;
+    private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
+    private double GRAVITY_CONSTANT = 0.07;
     private double TICK_BOUNDARY_PADDING = 5, TICK_STOP_PADDING = 5;
-    private double velocity = 0;
+    private double power = 0;
     private String rfMotorName;
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
@@ -103,7 +104,7 @@ public class RFMotor extends Motor {
     //BUG WITH CALCULATION
     public void setPosition(double targetpos) {
         rfMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        velocity = 0;
+        power = 0;
 //        if (targetpos >= -1 && targetpos <= 1) {
 //            targetpos *= maxtickcount;
 //        }
@@ -125,34 +126,26 @@ public class RFMotor extends Motor {
             distance = targetpos - getCurrentPosition();
             if (distance > 0) {
                 for (int i = 0; i < coefs.size(); i++) {
-                    velocity += pow(distance, coefs.size() - i - 1) * coefs.get(i);
+                    power += pow(distance, coefs.size() - i - 1) * coefs.get(i);
                 }
-                setVelocity(velocity);
+                setPower(power + GRAVITY_CONSTANT);
             } else if (distance < 0) {
                 for (int i = 0; i < coefs.size(); i++) {
-                    velocity -= pow(Math.abs(distance), coefs.size() - i - 1) * coefs.get(i);
+                    power -= pow(Math.abs(distance), coefs.size() - i - 1) * coefs.get(i);
                 }
-                setVelocity(velocity);
+                setPower(power + GRAVITY_CONSTANT);
             } else {
                 logger.log("/MotorLogs/RFMotor" + rfMotorName, "ERROR: distance should not be equal to 0 in setPosition() in RFMotor");
             }
         } else {
-            setVelocity(0);
+            setPower(0);
         }
     }
 
     public void setPower(double power) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        if (rfMotor.getPower() != power) {
-//            inputlogs.add(rfMotorName);
-//            inputlogs.add("setPower()");
-//            inputlogs.add("Setting Power: " + power);
-//            logger.log("/MotorLogs/RFMotor", rfMotorName + ",setPower()," +
-//                    "Setting Power: " + df.format(power), true, true);
-//            inputlogs.clear();
-//            logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + power);
-//            logger.log("/RobotLogs/GeneralRobotLog", rfMotorName + "\nsetPower():\nSetting Power:" + power);
-        }
+        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + power, false, true);
+        logger.log("/RobotLogs/GeneralRobotLog", rfMotorName + ",setPower():,Setting Power: " + power, true, true);
         rfMotor.setPower(power);
     }
 
