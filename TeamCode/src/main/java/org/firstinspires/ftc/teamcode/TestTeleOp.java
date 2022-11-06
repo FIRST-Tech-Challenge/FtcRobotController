@@ -61,7 +61,7 @@ public class TestTeleOp extends LinearOpMode {
         expansion_Hub_3 = hardwareMap.get(Blinker.class, "Expansion Hub 3");
 
         //initDriveTrain();
-
+        //Waiting for start
         waitForStart();
         telemetry.addData("you can", "start now");
         telemetry.update();
