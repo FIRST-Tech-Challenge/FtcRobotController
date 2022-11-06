@@ -102,12 +102,14 @@ public class Hardware2 {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        verticalLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // get the encoders reset
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
 
@@ -118,12 +120,14 @@ public class Hardware2 {
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        verticalLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 
@@ -144,4 +148,3 @@ public class Hardware2 {
 
 
 }
-
