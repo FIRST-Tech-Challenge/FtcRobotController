@@ -9,9 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -337,9 +335,7 @@ public class Logger {
 //    }
 
     public void closeLog(){
-        Collection<File> fileCollection = logList.values();
-        Object[] fileArrayList= fileCollection.toArray();
-        File[] fileArray = (File[]) Arrays.stream(fileArrayList).toArray();
+        File[] fileArray = logList.values().toArray(new File[1]);
         try {
             for (int i=0; i< fileArray.length;i++){
                 FileWriter file = new FileWriter(fileArray[i]);

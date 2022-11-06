@@ -29,7 +29,7 @@ public class Claw {
     private final double CLAW_CLOSED_POS = 0.25;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.45;
+    private final double CLAW_OPEN_POS = 0.55;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
@@ -37,7 +37,7 @@ public class Claw {
 
     public double clawServoLastSwitchTime = 0;
     //temporary
-    public final double CLAW_SERVO_SWITCH_TIME = 1;
+    public final double CLAW_SERVO_SWITCH_TIME = 0.2;
 
     //States:
     //CLAW_CLOSED
@@ -88,6 +88,7 @@ public class Claw {
         }
         else{
             claw.setPosition(CLAW_OPEN_POS);
+            CLAW_OPEN.setStatus(true);
         }
     }
 
@@ -124,7 +125,7 @@ public class Claw {
         //the state of claw opened has to be true
         if (op.getRuntime()-lastCheckTime>0.2) {
             lastCheckTime = op.getRuntime();
-            if(CLAW_OPEN.status && isConeReady()&& Lift.LiftConstants.LIFT_GROUND.getLfcValue()) {
+            if(CLAW_OPEN.status && isConeReady()&& LiftArm.liftArmStates.ARM_INTAKE.getStatus()) {
                 //set servo position
                 claw.setPosition(CLAW_CLOSED_POS);
 

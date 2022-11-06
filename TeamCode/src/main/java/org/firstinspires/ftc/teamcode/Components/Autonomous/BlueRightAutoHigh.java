@@ -62,18 +62,18 @@ public class BlueRightAutoHigh extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(dummyX3, dummyY3,Math.toRadians(dummyA3)))
                 .build();
 
-        while (opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested() && getRuntime()<28) {
             logger.loopcounter++;
             robot.followTrajectoryAsync(initialtrajectory);
 
-//            robot.liftToPosition(LIFT_HIGH_JUNCTION);
-//            robot.raiseLiftArmToOuttake(true);
+            robot.liftToPosition(LIFT_HIGH_JUNCTION);
+            robot.raiseLiftArmToOuttake(true);
 
             robot.followTrajectoryAsync(preloadtrajectory);
 
 //            robot.delay(0.5);
-//            robot.openClaw(false);
-//            robot.liftToPosition(LIFT_GROUND);
+            robot.openClaw(false);
+            robot.liftToPosition(LIFT_GROUND);
 
             if (dummyP == 1) {
                 robot.followTrajectoryAsync(park1trajectory);
@@ -89,7 +89,9 @@ public class BlueRightAutoHigh extends LinearOpMode {
             robot.roadrun.update();
             robot.updateClawStates();
         }
-
         robot.stop();
+        if(getRuntime()>29.8){
+            stop();
+        }
     }
 }

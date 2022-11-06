@@ -44,11 +44,11 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void stop() {
-        cv.stopCamera();
-        logger.log("/RobotLogs/GeneralRobot", "program stoped");
-        logger.closeLog();
+        if(cv.isStreaming()) {
+            cv.stopCamera();
+        }
         lift.setLiftPower(0.0);
-        op.stop();
+        logger.log("/RobotLogs/GeneralRobot", "program stoped");
     }
     public void delay(double p_delay){
         queuer.addDelay(p_delay);
@@ -127,7 +127,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void liftToPosition(Lift.LiftConstants targetJunction){
-        if (queuer.queue(true, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 10 && lift.getLiftVelocity()==0)){
+        if (queuer.queue(true, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 10)){
             lift.liftToPosition(targetJunction);
         }
         else{
@@ -254,11 +254,15 @@ public class PwPRobot extends BasicRobot {
 //        }
         //toggle liftArm position
         if (op.gamepad2.x) {
-            liftArm.raiseLiftArmToOuttake();
+            if(ARM_OUTTAKE.getStatus()) {
+                liftArm.lowerLiftArmToIntake();
+
+            }
+            else {
+                liftArm.raiseLiftArmToOuttake();
+            }
         }
-        if (op.gamepad2.y) {
-            liftArm.lowerLiftArmToIntake();
-        }
+
         //manual open/close claw (will jsut be open claw in the future)
         if (op.gamepad1.x) {
             claw.openClaw();

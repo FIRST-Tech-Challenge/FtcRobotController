@@ -21,7 +21,7 @@ public class LiftArm {
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
-    public final double LIFT_ARM_SERVO_SWITCH_TIME = 0.4;
+    public final double LIFT_ARM_SERVO_SWITCH_TIME = 0.2;
 
     //States:
     //ARM_INTAKE

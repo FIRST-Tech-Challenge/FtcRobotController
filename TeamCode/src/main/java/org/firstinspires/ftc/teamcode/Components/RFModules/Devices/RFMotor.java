@@ -103,7 +103,7 @@ public class RFMotor extends Motor {
 
     //BUG WITH CALCULATION
     public void setPosition(double targetpos) {
-        rfMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         power = 0;
 //        if (targetpos >= -1 && targetpos <= 1) {
 //            targetpos *= maxtickcount;
@@ -144,8 +144,8 @@ public class RFMotor extends Motor {
 
     public void setPower(double power) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + power, false, true);
-        logger.log("/RobotLogs/GeneralRobotLog", rfMotorName + ",setPower():,Setting Power: " + power, true, true);
+//        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + power, false, true);
+        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
         rfMotor.setPower(power);
     }
 

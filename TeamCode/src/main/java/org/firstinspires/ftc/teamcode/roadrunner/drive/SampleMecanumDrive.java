@@ -220,6 +220,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void followTrajectory(Trajectory trajectory) {
+        logger.log("/RobotLogs/GeneralRobot","followingTrajectory");
         followTrajectoryAsync(trajectory);
         waitForIdle();
     }

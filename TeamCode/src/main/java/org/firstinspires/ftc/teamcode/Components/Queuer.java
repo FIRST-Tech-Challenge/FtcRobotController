@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import java.util.ArrayList;
@@ -25,8 +26,7 @@ public class Queuer {
     public boolean queue(boolean p_asynchronous, boolean done_condition) {
         double p_delay = delay;
         delay =0;
-//        return queue(p_asynchronous, done_condition, p_delay);
-        return true;
+        return queue(p_asynchronous, done_condition, p_delay);
     }
 
     /** same as regular queue, but will wait inputted delay time before running */
@@ -83,14 +83,15 @@ public class Queuer {
         if (!firstLoop) {
             if (queueElements.get(currentlyQueueing).isStarted() && !queueElements.get(currentlyQueueing).isDone()) {
                 queueElements.get(currentlyQueueing).setDone(done_condition);
-                if (done_condition) {
+                if (done_condition&&currentlyQueueing>currentEvent) {
                     currentEvent = currentlyQueueing;
+                    logger.log("/RobotLogs/GeneralRobot","currentEvent"+currentEvent);
                 }
             }
         }
     }
     public void addDelay(double p_delay){
-        delay += p_delay;
+        delay = p_delay;
     }
 
 }

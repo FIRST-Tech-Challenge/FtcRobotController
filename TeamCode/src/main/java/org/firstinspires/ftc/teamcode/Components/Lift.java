@@ -109,7 +109,7 @@ public class Lift {
         coefficients.add(dfco1);
         coefficients.add(dfco2);
         liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, true, coefficients, MAX_LIFT_TICKS, 0);
-        liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         liftMotor.setTICK_BOUNDARY_PADDING(10);
         liftMotor.setTICK_STOP_PADDING(10);
     }
@@ -187,7 +187,7 @@ public class Lift {
         }
         // no conditions
         // log when movement starts & when reach target position
-        logger.log("LiftLog", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetHeight.value + " ticks", true, true, true);
+        logger.log("LiftLog", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetHeight.value + " ticks" + liftMotor.getCurrentPosition(), true, true, true);
         //async, no use sleep/wait with time, can use multiple processes
         return done;
     }
@@ -203,7 +203,7 @@ public class Lift {
             liftMotor.setPower(power + LIFT_GRAVITY_CONSTANT);
         }
         else if(liftTarget>10&&power<0) {
-            liftMotor.setPower(power + LIFT_GRAVITY_CONSTANT);
+            liftMotor.setPower(power*0.3 + LIFT_GRAVITY_CONSTANT);
         }
         else{
             liftMotor.setPower(LIFT_GRAVITY_CONSTANT);

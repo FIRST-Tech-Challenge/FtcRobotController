@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 public class QueueElement {
@@ -21,17 +22,20 @@ public class QueueElement {
         startCondition = p_startCondition;
     }
 
-    public boolean isReady(int currentEvent){
-        return isReady(currentEvent,true);
-    }
     public boolean isReady(int currentEvent, boolean extraCondition){
         //is it this elements turn to run
-        if(currentEvent>=startCondition&&!isDone&&extraCondition){
+        if(currentEvent>=startCondition&&!isDone){
             // update when start for delay logic
             if(readyTime>op.getRuntime()){
                 readyTime = op.getRuntime();
             }
-           return true;
+            if(extraCondition) {
+                return true;
+            }
+            else{
+                logger.log("/RobotLogs/GeneralRobot","readyTime =" + readyTime);
+                return false;
+            }
         }
         else{
             return false;
