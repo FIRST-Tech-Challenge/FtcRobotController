@@ -8,7 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.AutoOpMode.Vision;
+import org.firstinspires.ftc.teamcode.AutoOpMode.AutoOpMode;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -33,7 +33,7 @@ public class DriveTrain extends SampleMecanumDrive {
     //private PIDFController headingController = new PIDFController(MecanumDriveDeadWheelsEncoder.HEADING_PID);
     private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
 
-    Vision vision;
+    AutoOpMode autoOpMode;
 
     public enum DriveType {
         ROBOT_CENTRIC,
@@ -64,7 +64,7 @@ public class DriveTrain extends SampleMecanumDrive {
 
     public DriveMode driveMode = DriveMode.NORMAL_CONTROL; //Default initializer
     public static double DRAWING_TARGET_RADIUS = 2;
-    public Vector2d drivePointToAlign = vision.ORIGIN;
+    public Vector2d drivePointToAlign = AutoOpMode.ORIGIN;
 
 
     //**** Drive Train ****
