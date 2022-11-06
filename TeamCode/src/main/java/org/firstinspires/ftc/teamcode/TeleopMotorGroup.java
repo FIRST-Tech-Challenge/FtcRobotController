@@ -307,7 +307,7 @@ public class TeleopMotorGroup extends LinearOpMode {
         while (opModeIsActive()) {
             // Game pad buttons design
             if (gamepad1.start && (gamepad1.left_trigger > 0)) {
-                dualDriverMode = !dualDriverMode;
+                dualDriverMode = true;
             }
 
             if (dualDriverMode) {
@@ -524,7 +524,7 @@ public class TeleopMotorGroup extends LinearOpMode {
 
             // use gamepad2 to test autonomous code
             if (!dualDriverMode) {
-                autonomousCore();
+                autonomousTest();
             }
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update(); // update message at the end of while loop
@@ -612,7 +612,8 @@ public class TeleopMotorGroup extends LinearOpMode {
         telemetry.addData("Moving", "auto driving target position %d", targetPosition);
         setTargetPositionsToWheels(targetPosition, isBackForth);
         robotRunWithPositionModeOn(true); // turn on encoder mode
-        robotDriveWithPIDControl(AUTO_DRIVE_POWER);
+        int tSign = (int)Math.copySign(1, targetDistance);
+        robotDriveWithPIDControl(AUTO_DRIVE_POWER, tSign, isBackForth);
         robotRunWithPositionModeOn(false); // turn off encoder mode
     }
 
@@ -818,16 +819,28 @@ public class TeleopMotorGroup extends LinearOpMode {
     /**
      * Set motors power and drive or strafe robot straightly with run_to_position mode by PID control.
      * @param p the power set to the robot motors
+     * @param targetSign: Input value for the target distance sign to indicate drive directions. Disable PID if it is zero.
+     * @param isBF: flag for back-forth (true) moving, or left-right moving (false)
      */
-    private void robotDriveWithPIDControl(double p) {
+    private void robotDriveWithPIDControl(double p, int targetSign, boolean isBF ) {
         double curTime = runtime.seconds();
         correction = 0.0;
-        setPowerToWheels(p);
+        setPowerToWheels(p); // p is always positive for RUN_TO POSITION mode.
         while(robotIsBusy() && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
-            correction = pidDrive.performPID(getAngle());
-            leftMotorSetPower(p - correction);
-            rightMotorSetPower(p + correction);
-            //sleep(50);
+            if (0 == targetSign) { // no pid if sign = 0;
+                correction = pidDrive.performPID(getAngle());
+            }
+
+            if (isBF) { // left motors have same power
+                leftMotorSetPower(p - correction * targetSign);
+                rightMotorSetPower(p + correction * targetSign);
+            }
+            else { // front motors have same power
+                FrontLeftDrive.setPower(p - correction * targetSign);
+                FrontRightDrive.setPower(p - correction * targetSign);
+                BackLeftDrive.setPower(p + correction * targetSign);
+                BackRightDrive.setPower(p + correction * targetSign);
+            }
         }
         setPowerToWheels(0.0); //stop moving
     }
@@ -848,7 +861,7 @@ public class TeleopMotorGroup extends LinearOpMode {
      * 5. Load cone
      * 6. Move robot to parking area
      */
-    private void autonomousCore() {
+    private void autonomousTest() {
         double backgroundColor[] = {1.0, 1.0, 1.0};
         double sleeveColor[] = {1.0, 1.0, 1.0};
         double parkingLocation = 0.0; // distance between cone loading area to parking area, in inch
@@ -858,34 +871,57 @@ public class TeleopMotorGroup extends LinearOpMode {
         /* code for autonomous driving, must starting from right position.    */
         if (gamepad2.a) {
             //preload cone
-            clawServo.setPosition(CLAW_CLOSE_POS);
-            sleep(200); // wait 0.4 sec to make sure clawServo is at grep position
-            setSliderPosition(LOW_JUNCTION_POS);
-            waitSliderRun();
-            sliderTargetPosition = getSliderPosition(); // set target position to current position
-            clawServoPosition = clawServo.getPosition(); // keep claw position
-            readColorSensor(backgroundColor);
-            // drive robot to sleeve cone
-            robotRunToPosition(20.0, true);
-            readColorSensor(sleeveColor); // reading sleeve signal
-            robotRunToPosition(36.0, true); // drive robot to the center of 3rd mat
-            robotRunToPosition(-4.0, true); // throw off sleeve cone
-            parkingLocation = calculateParkingLocation(sleeveColor, backgroundColor);
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            Logging.log(String.format("Autonomous - imu angle a: %.2f", angles.firstAngle));
 
-            telemetry.addData("Sleeve","moving distance (%.1f) inch", parkingLocation);
+            robotRunToPosition(48, true); // strafe testing 48 inch
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            Logging.log(String.format("Autonomous - imu angle a: %.2f", angles.firstAngle));
+
+            telemetry.addData("imu heading a:","%.2f", lastAngles.firstAngle);
+            telemetry.addData("global heading a:", "%.2f", globalAngle);
             telemetry.update();
+            sleep(10000);
         }
 
         // move up slider
         if (gamepad2.b) {
-            robotRunToPosition(-12.0, false); // strafe robot half mat to left side
-            setSliderPosition(HIGH_JUNCTION_POS);
-            waitSliderRun();
-            sliderTargetPosition = getSliderPosition(); // set target position to current position
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            Logging.log(String.format("Autonomous - imu angle b: %.2f", angles.firstAngle));
+
+            robotRunToPosition(-48, true); // strafe testing 48 inch
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            Logging.log(String.format("Autonomous - imu angle b: %.2f", angles.firstAngle));
+            telemetry.addData("imu heading b:","%.2f", lastAngles.firstAngle);
+            telemetry.addData("global heading b:", "%.2f", globalAngle);
+            telemetry.update();
+            sleep(10000);
+        }
+
+        if (gamepad2.x) {
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            Logging.log(String.format("Autonomous - imu angle x: %.2f", angles.firstAngle));
+
+            robotRunToPosition(48, false); // strafe testing 48 inch
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            Logging.log(String.format("Autonomous - imu angle x: %.2f", angles.firstAngle));
+            telemetry.addData("imu heading x:","%.2f", lastAngles.firstAngle);
+            telemetry.addData("global heading x:", "%.2f", globalAngle);
+            telemetry.update();
+            sleep(10000);
         }
 
         if (gamepad2.y) {
-            robotRunToPosition(8.0, true); // drive robot half mat to high junction
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            Logging.log(String.format("Autonomous - imu angle y: %.2f", angles.firstAngle));
+
+            robotRunToPosition(-48, false); // strafe testing 48 inch
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            Logging.log(String.format("Autonomous - imu angle y: %.2f", angles.firstAngle));
+            telemetry.addData("imu heading y:","%.2f", lastAngles.firstAngle);
+            telemetry.addData("global heading y:", "%.2f", globalAngle);
+            telemetry.update();
+            sleep(10000);
         }
         if (gamepad2.right_bumper) {
             autoUnloadCone();
@@ -919,9 +955,7 @@ public class TeleopMotorGroup extends LinearOpMode {
             robotRunToPosition(24.0, false); // strafe robot to parking mat
         }
 
-        if (gamepad2.x) {
-            robotRunToPosition(48, false); // strafe testing 48 inch
-        }
+
 
     }
 

@@ -612,7 +612,8 @@ public class TeleopDualDrivers extends LinearOpMode {
         telemetry.addData("Moving", "auto driving target position %d", targetPosition);
         setTargetPositionsToWheels(targetPosition, isBackForth);
         robotRunWithPositionModeOn(true); // turn on encoder mode
-        robotDriveWithPIDControl(AUTO_DRIVE_POWER);
+        int tSign = (int)Math.copySign(1, targetDistance);
+        robotDriveWithPIDControl(AUTO_DRIVE_POWER, tSign, isBackForth);
         robotRunWithPositionModeOn(false); // turn off encoder mode
     }
 
@@ -818,16 +819,28 @@ public class TeleopDualDrivers extends LinearOpMode {
     /**
      * Set motors power and drive or strafe robot straightly with run_to_position mode by PID control.
      * @param p the power set to the robot motors
+     * @param targetSign: Input value for the target distance sign to indicate drive directions. Disable PID if it is zero.
+     * @param isBF: flag for back-forth (true) moving, or left-right moving (false)
      */
-    private void robotDriveWithPIDControl(double p) {
+    private void robotDriveWithPIDControl(double p, int targetSign, boolean isBF ) {
         double curTime = runtime.seconds();
         correction = 0.0;
-        setPowerToWheels(p);
+        setPowerToWheels(p); // p is always positive for RUN_TO POSITION mode.
         while(robotIsBusy() && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
-            correction = pidDrive.performPID(getAngle());
-            leftMotorSetPower(p - correction);
-            rightMotorSetPower(p + correction);
-            //sleep(50);
+            if (0 == targetSign) { // no pid if sign = 0;
+                correction = pidDrive.performPID(getAngle());
+            }
+
+            if (isBF) { // left motors have same power
+                leftMotorSetPower(p - correction * targetSign);
+                rightMotorSetPower(p + correction * targetSign);
+            }
+            else { // front motors have same power
+                FrontLeftDrive.setPower(p - correction * targetSign);
+                FrontRightDrive.setPower(p - correction * targetSign);
+                BackLeftDrive.setPower(p + correction * targetSign);
+                BackRightDrive.setPower(p + correction * targetSign);
+            }
         }
         setPowerToWheels(0.0); //stop moving
     }
