@@ -284,7 +284,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             telemetryMap.put("pose heading", Math.toDegrees(poseEstimate.getHeading()));
             telemetryMap.put("raw heading", Math.toDegrees(rawHeading));
             telemetryMap.put("raw heading radians", rawHeading);
-            telemetryMap.put("raw heading radians without offset", rawHeading - headingOffset);
             telemetryMap.put("heading", Math.toDegrees(heading));
 
             telemetryMap.put("x vel", poseVelocity.getX());
