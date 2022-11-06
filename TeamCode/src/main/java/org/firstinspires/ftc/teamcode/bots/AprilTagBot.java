@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.teamcode.bots;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -33,7 +34,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@TeleOp
+@Autonomous
 public class AprilTagBot extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -73,7 +74,7 @@ public class AprilTagBot extends LinearOpMode
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
