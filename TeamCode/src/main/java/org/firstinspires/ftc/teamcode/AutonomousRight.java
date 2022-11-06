@@ -61,6 +61,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -96,9 +97,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleopMotorGroup", group="Concept")
+@Autonomous(name="AutonomousRight", group="Concept")
 //@Disabled
-public class TeleopMotorGroup extends LinearOpMode {
+public class AutonomousRight extends LinearOpMode {
 
     // Declare OpMode members.
     static final double MAX_WAIT_TIME = 20; // in seconds
@@ -291,7 +292,7 @@ public class TeleopMotorGroup extends LinearOpMode {
         boolean autoUnloadConeOn;
         boolean distanceSensorOn;
 
-        boolean dualDriverMode = false;
+        boolean dualDriverMode = true;
         Gamepad myGamePad;
 
         // autonomous testing
@@ -911,7 +912,7 @@ public class TeleopMotorGroup extends LinearOpMode {
 
         if (gamepad2.dpad_left) {
             Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            rotate(-angles.firstAngle, AUTO_ROTATE_POWER); // turn robot 90 degree to left
+            rotate(-angles.firstAngle + 90, AUTO_ROTATE_POWER); // turn robot 180 degree to right
         }
 
         if (gamepad2.dpad_up) {

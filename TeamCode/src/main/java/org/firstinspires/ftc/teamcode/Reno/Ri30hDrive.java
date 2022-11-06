@@ -87,6 +87,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Autonomous(name="Ri30hDrive", group="Neptune")
+@Disabled
 public class Ri30hDrive extends LinearOpMode {
 
     static final int RED = 1;
