@@ -7,30 +7,32 @@ import org.firstinspires.ftc.teamcode.PIDs.PIDController;
 public class ArmClass {
 
     PIDController motorPID;
-    DcMotorEx slideLeft; DcMotorEx slideRight;
+    DcMotorEx slideLeft, slideRight;
     DcMotorEx armMotor;
-    Servo wristJoint; Servo clawJoint;
-    double OPEN; double CLOSE;
+    Servo wristJoint, clawJoint;
+    double OPEN, CLOSE;
+    boolean isOpen;
 
-    public ArmClass(PIDController mp, DcMotorEx sl, DcMotorEx sr, DcMotorEx a, Servo wj, Servo cj, double[] servoMinMax){
+    public ArmClass(PIDController mp, DcMotorEx sl, DcMotorEx sr, DcMotorEx a, Servo wj, Servo cj, double min, double max){
         this.motorPID = mp;
         this.slideLeft = sl;
         this.slideRight = sr;
         this.armMotor = a;
         this.wristJoint = wj;
         this.clawJoint = cj;
-        this.OPEN = servoMinMax[0];
-        this.CLOSE = servoMinMax[1];
+        this.OPEN = min;
+        this.CLOSE = max;
+        isOpen = true;
     }
 
-    // TeleOp and Auto
+
     public void goToJunction(int target){
         double currentPosition = (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition())/2.0; // average position
 
         slideLeft.setTargetPosition(target);
         slideRight.setTargetPosition(target);
 
-        while(Math.abs(currentPosition - target) > 5) {
+        if(Math.abs(currentPosition - target) > 5) {
             slideLeft.setPower(motorPID.update(target, currentPosition));
             slideRight.setPower(motorPID.update(target, currentPosition));
 
@@ -43,7 +45,7 @@ public class ArmClass {
         double currentPosition = armMotor.getCurrentPosition(); // average motor position
         armMotor.setTargetPosition(target);
 
-        while(Math.abs(currentPosition - target) > 5) {
+        if(Math.abs(currentPosition - target) > 5) {
             armMotor.setPower(motorPID.update(target, currentPosition));
             currentPosition = armMotor.getCurrentPosition(); // average of new motor position
         }
@@ -53,10 +55,9 @@ public class ArmClass {
     public void manualArmPivot(int armIncrement){
         double currentPosition = armMotor.getCurrentPosition();
         int target = (int)currentPosition + armIncrement; // we want to set the target to just above/below the current position every time this runs
-
         armMotor.setTargetPosition(target);
 
-        while(Math.abs(target - currentPosition) > 5) {
+        if(Math.abs(target - currentPosition) > 5) {
             armMotor.setPower(motorPID.update(target, currentPosition));
             currentPosition = (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition())/2.0; // average new position
         }
@@ -79,7 +80,7 @@ public class ArmClass {
         slideLeft.setTargetPosition(target);
         slideRight.setTargetPosition(target);
 
-        while(Math.abs(target - currentPosition) > 5) {
+        if(Math.abs(target - currentPosition) > 5) {
             slideLeft.setPower(motorPID.update(target, currentPosition));
             slideRight.setPower(motorPID.update(target, currentPosition));
 
