@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
-import org.checkerframework.checker.units.qual.A;
-import org.firstinspires.ftc.teamcode.Tempates.ArmClass.*;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,35 +9,39 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.PIDs.PIDController;
-import org.firstinspires.ftc.teamcode.Tempates.ArmClass;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.ArmClass;
 
-
-@TeleOp(name = "PP_MecanumTeleOp")
+@Config
+@TeleOp(name = "PP_MecanumTeleOp") // This is redundant, the name will automatically be set to the class name if you don't set it - Tiernan
 public class PP_MecanumTeleOp extends OpMode {
     //"MC ABHI IS ON THE REPO!!!"
 
+    public static double armKp = 0.0;
+    public static double armKd = 0.0;
+    public static double armKi = 0.0;
+    public static double armKf = 0.0;
+
     // Declaring class members to be used in other methods
     private ElapsedTime runtime = new ElapsedTime();
-    PIDController motorPID = new PIDController(0,0,0,runtime);
-
-
-
+    PIDController motorPID = new PIDController(armKp, armKd, armKi, armKf, runtime);
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, slideMotorLeft, slideMotorRight, armMotor;
     private Servo clawJoint, wristJoint;
 
 
+    // TODO: Why are these not private, this makes me sad. Also you could make them static and stick in their own class... - Tiernan
     // Claw Servo open and close constants
-    final int OPEN = 0;
-    final double CLOSE = 0.5; // probably adjust later
-    final double[] OCARR = {0, 0.5};
-    ArmClass acControl = new ArmClass(motorPID, slideMotorLeft, slideMotorRight, armMotor, wristJoint, clawJoint, OCARR);
+
+    final double[] servo_MinMax = {0, 0.5};
+    final double OPEN = 0.45; // claw open
+    final double CLOSE = 0.35; // claw close
+    ArmClass armControl;
 
     /**
      * Get the maximum absolute value from a static array of doubles
+     *
      * @param input the input array of double values
      * @return the maximum value from the input array
      */
-
     private double getMax(double[] input) {
         double max = Integer.MIN_VALUE;
         for (double value : input) {
@@ -51,26 +54,27 @@ public class PP_MecanumTeleOp extends OpMode {
 
     @Override
     public void init() {
-        // Declaring our motors
-        motorFrontLeft = (DcMotorEx)hardwareMap.dcMotor.get("FL");
-        motorBackLeft = (DcMotorEx)hardwareMap.dcMotor.get("BL");
-        motorFrontRight = (DcMotorEx)hardwareMap.dcMotor.get("FR");
-        motorBackRight = (DcMotorEx)hardwareMap.dcMotor.get("BR");
-        slideMotorLeft = (DcMotorEx)hardwareMap.dcMotor.get("liftMotor");
-        slideMotorRight = (DcMotorEx)hardwareMap.dcMotor.get("liftMotor");
-        armMotor = (DcMotorEx)hardwareMap.dcMotor.get("armMotor");
+        // Expansion Hub Pins
+        motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("FL"); // Pin 2
+        motorBackLeft = (DcMotorEx) hardwareMap.dcMotor.get("BL"); // Pin 1
+        slideMotorLeft = (DcMotorEx) hardwareMap.dcMotor.get("SL"); // Pin 0
+
+        // Control Hub Pins
+        motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("FR"); // Pin 3
+        motorBackRight = (DcMotorEx) hardwareMap.dcMotor.get("BR"); // Pin 2
+        slideMotorRight = (DcMotorEx) hardwareMap.dcMotor.get("SR"); // Pin 1
+        armMotor = (DcMotorEx) hardwareMap.dcMotor.get("ARM"); // Pin 0
+
+        clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
+        wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
 
 
-        // Declaring our servos
-        clawJoint = hardwareMap.get(Servo.class, "clawJoint");
-        wristJoint = hardwareMap.get(Servo.class, "wristJoint");
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder does NOT disable counting
 
-
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Running without an encoder does NOT disable counting
-        slideMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // You don't want to run using encoders for PID
         slideMotorRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -89,19 +93,20 @@ public class PP_MecanumTeleOp extends OpMode {
 
         clawJoint.setPosition(OPEN);
 
-        }// end of init
+        armControl = new ArmClass(motorPID, slideMotorLeft, slideMotorRight, armMotor, wristJoint, clawJoint, OPEN, CLOSE);
+    }// end of init
 
-        @Override
-        public void loop(){
-        // Our variables
+    @Override
+    public void loop() {
+        motorPID.setCoefficients(armKp, armKi, armKd, armKf);
         boolean precisionToggle = gamepad1.right_trigger > 0.1;
-
         drive(precisionToggle);
-        arm();
-        }
+        arm(); // includes claw mechanism
+    }
 
-//        BOT METHODS       \\
-    public void drive(boolean precisionToggle){
+
+    //        BOT METHODS       \\
+    public void drive(boolean precisionToggle) {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
@@ -141,65 +146,62 @@ public class PP_MecanumTeleOp extends OpMode {
             backRightPower /= maxValue;
         }
 
+        // Hi!
         if (precisionToggle) {
-            motorFrontLeft.setPower(frontLeftPower * 0.6);
-            motorBackLeft.setPower(backLeftPower * 0.6);
-            motorFrontRight.setPower(frontRightPower * 0.6);
-            motorBackRight.setPower(backRightPower * 0.6);
-        }
-
-        else {
+            motorFrontLeft.setPower(frontLeftPower * 0.3);
+            telemetry.addData("Power front left",frontLeftPower*0.3);
+            motorBackLeft.setPower(backLeftPower * 0.3);
+            telemetry.addData("Power back left",backLeftPower*0.3);
+            motorFrontRight.setPower(frontRightPower * 0.3);
+            telemetry.addData("Power front right",frontRightPower*0.3);
+            motorBackRight.setPower(backRightPower * 0.3);
+            telemetry.addData("Power back right:",backRightPower*0.3);
+        } else {
             motorFrontLeft.setPower(frontLeftPower);
             motorBackLeft.setPower(backLeftPower);
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
         }
-
-    } // end of drive()
-
-    public void arm(){
-        // BUTTONS
-        if(gamepad2.a){
-            // 1000 represents an arbitrary value for the max, 700 mid, 400 low, 0 ground
-            acControl.goToJunction(1000);
-
-        }
-        else if(gamepad2.b){
-            acControl.goToJunction(700);
-        }
-        else if(gamepad2.y){
-            acControl.goToJunction(400);
-        }
-        else if(gamepad2.x){
-            acControl.goToJunction(0);
-        }
-
-        // DPAD
-        if(gamepad2.dpad_left){
-            acControl.clawRotate(-0.01);
-        }
-        else if(gamepad2.dpad_right){
-            acControl.clawRotate(0.01);
-        }
-        else if(gamepad2.dpad_up){
-            acControl.armPivot(100); // pivots up
-        }
-        else if(gamepad2.dpad_down){
-            acControl.armPivot(-100); // pivots down
-        }
-
-        // BUMPER
-        if(gamepad2.right_bumper){
-            acControl.claw();
-        }
-
-        // TRIGGERS
-        if(gamepad2.right_trigger > 0.2){
-            acControl.slides(5);
-        }
-        else if(gamepad2.left_trigger > 0.2){
-            acControl.slides(-5);
-        }
     }
 
-   }// end of class
+    public void arm() {
+        // BUTTONS \\
+        if (gamepad2.a) {
+            // 1000 represents an arbitrary value for the max -> 700 mid, 400 low, 0 ground
+            armControl.goToJunction(1000);
+        } else if (gamepad2.b) {
+            armControl.goToJunction(700);
+        } else if (gamepad2.y) {
+            armControl.goToJunction(400);
+        } else if (gamepad2.x) {
+          armControl.goToJunction(0);
+        }
+
+        // DPAD \\
+        if (gamepad2.dpad_left) {
+            armControl.manualClawRotate(-0.01);
+        } else if (gamepad2.dpad_right) {
+            armControl.manualClawRotate(0.01);
+        } else if (gamepad2.dpad_up) {
+            telemetry.addLine("dpadUp");
+            armControl.armPivot(100); // pivots up
+        } else if (gamepad2.dpad_down) {
+            telemetry.addLine("dpadDown");
+            armControl.armPivot(-100); // pivots down
+        }
+
+        // BUMPER \\
+        if (gamepad2.right_bumper) {
+            armControl.claw();
+            //clawJoint.setPosition(0.4); <-- still does not work
+        }
+
+        // TRIGGERS \\
+        if (gamepad2.right_trigger > 0.2) {
+           armControl.manualSlides(5);
+        } else if (gamepad2.left_trigger > 0.2) {
+           armControl.manualSlides(-5);
+        }
+    }
+}
+

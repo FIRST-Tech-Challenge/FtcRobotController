@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences;
+/*
+package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences.MainAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -10,6 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.MechanismTemplates.ArmClass;
 import org.firstinspires.ftc.teamcode.PIDs.PIDController;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetection;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetectionPipeline;
@@ -19,7 +22,6 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous
 public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 {
-
     final int OPEN = 0;
     final double CLOSE = 0.5; // probably adjust later
 
@@ -27,14 +29,16 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
     private Servo armJoint, clawJoint, wristJoint;
     ElapsedTime timer = new ElapsedTime();
 
+
+
     //Declaring lift motor powers
     double power;
 
     // Declaring our motor PID for the lift; passing through our PID values
-    PIDController motorPID = new PIDController(0,0,0, timer); // This is where we tune PID values
+    private PIDController motorPID = new PIDController(0,0,0,0, timer); // This is where we tune PID values
 
     public PP_Auto_Quad3(){
-        super.runOpMode();
+        super.runOpMode(); // runs the opMode of the apriltags pipeline
 
         waitForStart();
 
@@ -57,8 +61,9 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         armJoint = hardwareMap.get(Servo.class, "armJoint");
         clawJoint = hardwareMap.get(Servo.class, "clawJoint");
         wristJoint = hardwareMap.get(Servo.class, "wristJoint");
-
     }
+
+    private ArmClass arm = new ArmClass(motorPID,liftMotorLeft,liftMotorRight,armMotor,wristJoint,clawJoint,OPEN,CLOSE);
 
     @Override
     public void runOpMode()
@@ -66,19 +71,16 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         // bot object created
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
 
+        // calling our method to run trajectories and passing through our newly created bot object
         bot = runTrajectories(bot);
 
         // LOOPS TO RUN ASYNC \\
-        while (opModeIsActive()){
+       while (opModeIsActive()){
             bot.update();
 
-            // Our motors will stop running exactly at position 100
-           /* power = motorPID.update(100, intakeMotor.getCurrentPosition());
-            liftMotorLeft.setPower(power);
-            liftMotorRight.setPower(power);
-            */
-
         }
+
+
     }// end of runOpMode()
 
     public SampleMecanumDrive runTrajectories(SampleMecanumDrive bot){
@@ -86,8 +88,9 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         bot.setPoseEstimate(startPose);
 
         // TRAJECTORY SEQUENCES \\
-        Pose2d endPose = cycle(bot, startPose);
+        Pose2d endPose = cycle(bot, startPose); // cycle method -> should return a Pose2d
 
+        // the tagUse variable is inherited from the AprilTagDetection class
         if(tagUse == 1) {
             TrajectorySequence sussyBaka = bot.trajectorySequenceBuilder(endPose)
                     .lineToLinearHeading(new Pose2d(-12.2, 15.5, Math.toRadians(-109)))
@@ -96,6 +99,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
             telemetry.addData("Chris Pratt","Is Currently In The Mushroom Kingdom");
         }else if(tagUse ==2) {
             telemetry.addData("Walter White","Curently Has No Pants");
+            // bot doesn't need to move if it is in the 2nd tag zone since that is where we deposit anyway
         }else{
             TrajectorySequence jacobIsCute = bot.trajectorySequenceBuilder(endPose)
                     .lineTo(new Vector2d(-58.2,24.6))
@@ -104,24 +108,28 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
             bot.followTrajectorySequenceAsync(jacobIsCute);
             telemetry.addData("Bohan and Abhilash"," = Very Cute");
         }
-
         return bot;
     }
 
     public Pose2d cycle(SampleMecanumDrive bot, Pose2d currentPosition){
         TrajectorySequence openingMove =  bot.trajectorySequenceBuilder(currentPosition)
-            .addTemporalMarker(2.2,() -> {
-                goToJunction(1000);
-                armPivot(500);
-                claw();
-                armPivot(-500);})//temporal marker for the extake
+            .addTemporalMarker(2,() -> {
+                arm.goToJunction(1000);
+                arm.armPivot(500);
+                arm.claw();
+                arm.armPivot(-500);
+                })//temporal marker for the extake
             .lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75))) // Drive to cone stack
+
             .addTemporalMarker(1,()->{
-                goToJunction(0);
-                armPivot(-950);
-                claw();
-                armPivot(950);})//marker for the intake, the timing will be tested so where the markers are located and times are subject to change
+                arm.goToJunction(0);
+                arm.armPivot(-950);
+                arm.claw();
+                arm.armPivot(950);
+                })//marker for the intake, the timing will be tested so where the markers are located and times are subject to change
+
             .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0)))
+
             //.addTemporalMarker()
             .lineToLinearHeading(new Pose2d(-33, 8, Math.toRadians(-39.75)))
             .waitSeconds(1)//Deposit at junction; Under the impression that using the async PID, the slides will be already be moved up
@@ -130,7 +138,9 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         Pose2d endPose = new Pose2d(-33,8,Math.toRadians(-39.75)); // Deposit at junction
 
         TrajectorySequence cycles =  bot.trajectorySequenceBuilder(currentPosition)
-                .addTemporalMarker(3,() -> {goToJunction(0);claw();})
+                .addTemporalMarker(3,() -> {
+                arm.goToJunction(0);
+                arm.claw();})
                 .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0))) // back to the cone stack
                 .lineToLinearHeading(new Pose2d(-33, 8, Math.toRadians(-39.75))) // go to junction
                 .waitSeconds(1)//Under the impression that using the async PID, the slides will be already be moved up
@@ -140,48 +150,8 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         for(int i = 1; i <= 3; i++){
           bot.followTrajectorySequenceAsync(cycles);
          }
-        return endPose;
+        return endPose; // returning our end position so our april tags conditionals know where to start from
     }
-
-    public void goToJunction(int target){
-        double currentPosition = (liftMotorLeft.getCurrentPosition() + liftMotorRight.getCurrentPosition())/2.0; // average position
-
-        liftMotorLeft.setTargetPosition(target);
-        liftMotorRight.setTargetPosition(target);
-
-        while(Math.abs(currentPosition - target) > 5) {
-            liftMotorLeft.setPower(motorPID.update(target, currentPosition));
-            liftMotorRight.setPower(motorPID.update(target, currentPosition));
-
-            currentPosition = (liftMotorLeft.getCurrentPosition() + liftMotorRight.getCurrentPosition())/2.0; // average new position
-        }
-    }
-
-    public void armPivot(int target){
-        double currentPosition = armMotor.getCurrentPosition(); // average position
-        armMotor.setTargetPosition(target);
-
-        while(Math.abs(currentPosition - target) > 5) {
-            armMotor.setPower(motorPID.update(target, currentPosition));
-            currentPosition = armMotor.getCurrentPosition(); // average new position
-        }
-    }
-
-    public void clawRotate(double increment){
-        wristJoint.setPosition(wristJoint.getPosition() + increment);
-    }
-
-    public void claw(){
-        if(clawJoint.getPosition() == OPEN){
-            clawJoint.setPosition(CLOSE);
-        }else{
-            clawJoint.setPosition(OPEN);
-        }
-    }
-
-
-
-
-
 
 }
+*/

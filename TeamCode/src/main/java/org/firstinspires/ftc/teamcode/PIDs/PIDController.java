@@ -6,6 +6,7 @@ public class PIDController {
     double kp;
     double ki;
     double kd;
+    double kf;
     double derivative;
     ElapsedTime timer;
 
@@ -23,11 +24,20 @@ public class PIDController {
      * @param Ki Integral coefficient
      * @param Kd Derivative coefficient
      */
-    public PIDController(double Kp, double Ki, double Kd, ElapsedTime timer) {
+    public PIDController(double Kp, double Ki, double Kd, double Kf, ElapsedTime timer) {
         this.kp = Kp;
         this.ki = Ki;
         this.kd = Kd;
+        this.kf = Kf;
         this.timer = timer;
+    }
+
+    // This method is being called in a loop to reset the coefficients in dashboard
+    public void setCoefficients(double kp, double ki, double kd, double kf) {
+        this.kp = kp;
+        this.ki = ki;
+        this.kd = kd;
+        this.kf = kf;
     }
 
     /**
@@ -43,7 +53,7 @@ public class PIDController {
         double errorChange = (error - lastError);
 
         // filter out high frequency noise to increase derivative performance
-        /**
+        /*
          * This low-pass filter works because the sum of
          * (a * previousFilterEstimate) + (1-a) * errorChange <-- current measurement
          * always equals 1 (like 100%).
@@ -71,7 +81,6 @@ public class PIDController {
         derivative = (error - lastError) / timer.seconds();
         lastError = error;
 
-        double outputPower = (error * kp) + (derivative * kd) + (integralSum * ki);
-        return outputPower;
+        return (error * kp) + (derivative * kd) + (integralSum * ki) + (target * kf);
     }
 }
