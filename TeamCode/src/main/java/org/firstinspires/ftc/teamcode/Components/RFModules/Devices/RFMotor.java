@@ -84,7 +84,7 @@ public class RFMotor extends Motor {
         maxtickcount = maxtick;
         mintickcount = mintick;
 
-        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
+        logger.createFile("/MotorLogs/RFMotor" + rfMotorName, "Runtime    Component               " +
                 "Function               Action");
     }
 
@@ -144,8 +144,8 @@ public class RFMotor extends Motor {
 
     public void setPower(double power) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + power, false, true);
-        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
+        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + power, false, false);
+//        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
         rfMotor.setPower(power);
     }
 

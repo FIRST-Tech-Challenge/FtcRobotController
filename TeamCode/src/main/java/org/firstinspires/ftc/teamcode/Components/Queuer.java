@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class Queuer {
     private ArrayList<QueueElement> queueElements;
-    private boolean firstLoop = true;
-    private int currentlyQueueing = 0, currentEvent = -1;
+    private boolean firstLoop = true, mustFinish = false;
+    private int currentlyQueueing = 0, currentEvent = -1, mustStartCondition = -1, completeCurrentEvent = 0;
     private double delay = 0;
 
 
@@ -46,15 +46,20 @@ public class Queuer {
 
         //update which element is currently being queued & which event is currently being executed
         updateQueuer(done_condition);
-
+        boolean isReady = false;
         //determine if currently queued element should be executed with extra_condition(probably position threshold)
-        boolean isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, extra_condition);
+        if(!queueElements.get(currentlyQueueing).isMustFinish()) {
+            isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, extra_condition);
+        }else{
+            isReady = queueElements.get(currentlyQueueing).isReady(completeCurrentEvent, extra_condition);
+
+        }
 
         //set queueElement internal value
         if (isReady) {
             queueElements.get(currentlyQueueing).setStarted(true);
         }
-        return isReady;
+        return isReady || queueElements.get(currentlyQueueing).isStarted()&&!queueElements.get(currentlyQueueing).isDone();
     }
 
     public void reset() {
@@ -63,13 +68,21 @@ public class Queuer {
     /** create new queueElement*/
     private void createQueueElement(boolean p_asynchrnous) {
         int startCondition = -1;
+        if(!mustFinish){
         for (int i = 0; i < queueElements.size(); i++) {
             if (!queueElements.get(queueElements.size() - i - 1).isAsynchronous()) {
                 startCondition = queueElements.size() - i - 1;
                 break;
             }
         }
-        queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition));
+            queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition));
+        }
+        else{
+            mustFinish = false;
+            startCondition = mustStartCondition;
+            queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition,true));
+            logger.log("/RobotLogs/GeneralRobot", "StartCondition" + mustStartCondition);
+        }
     }
     /** update which element is currently being queued(processed) and which element is currently being executed*/
     private void updateQueuer(boolean done_condition) {
@@ -83,15 +96,37 @@ public class Queuer {
         if (!firstLoop) {
             if (queueElements.get(currentlyQueueing).isStarted() && !queueElements.get(currentlyQueueing).isDone()) {
                 queueElements.get(currentlyQueueing).setDone(done_condition);
-                if (done_condition&&currentlyQueueing>currentEvent) {
-                    currentEvent = currentlyQueueing;
-                    logger.log("/RobotLogs/GeneralRobot","currentEvent"+currentEvent);
+                if(done_condition) {
+                    calculateCompleteCurrentEvent();
+                    logger.log("/RobotLogs/GeneralRobot", "event"+currentlyQueueing+"Done"+"completeEvents" + completeCurrentEvent);
+                    if (currentlyQueueing > currentEvent) {
+                        currentEvent = currentlyQueueing;
+                        logger.log("/RobotLogs/GeneralRobot", "currentEvent" + currentEvent);
+                    }
                 }
+            }
+        }
+    }
+    private void calculateCompleteCurrentEvent(){
+        for(int i=0;i<queueElements.size();i++){
+            if(queueElements.get(i).isDone()){
+                completeCurrentEvent=i;
+            }else{
+                break;
             }
         }
     }
     public void addDelay(double p_delay){
         delay = p_delay;
     }
-
+    public void waitForFinish(){
+        waitForFinish(queueElements.size()-1);
+    }
+    public void waitForFinish(int p_startCondition){
+        if(firstLoop) {
+            mustFinish = true;
+            mustStartCondition = p_startCondition;
+            logger.log("/RobotLogs/GeneralRobot", "mustStartCondition" + mustStartCondition);
+        }
+    }
 }

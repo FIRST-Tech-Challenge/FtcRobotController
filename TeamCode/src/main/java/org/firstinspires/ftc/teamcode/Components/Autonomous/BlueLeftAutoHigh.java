@@ -15,47 +15,56 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 @Config
-@Autonomous(name = "BlueRightAutoHigh")
+@Autonomous(name = "BlueLeftAutoHigh")
 
 
-public class BlueRightAutoHigh extends LinearOpMode {
+public class BlueLeftAutoHigh extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
-    public static double dummyP = 3;
+    public static double dummyP = 1;
 
-    public static double dummyx = -3.5, dummyy =26, dummya = 305;
+    public static double dummyx = 1, dummyy =25.5, dummya = 235;
 
-    public static double dummyX = -12, dummyY =35, dummyA = 90;
+    public static double dummyX = 12, dummyY =33, dummyA = 90;
 
-    public static double dummyX2 = -33, dummyY2 =35, dummyA2 = 90;
+    public static double dummyX2 = 33, dummyY2 =35, dummyA2 = 90;
 
-    public static double dummyX3 = -55, dummyY3 =35, dummyA3 = 90;
+    public static double dummyX3 = 55, dummyY3 =36, dummyA3 = 90;
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
         //        robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(-29.2, 62.25, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(40.35, 62.25, Math.toRadians(270));
         robot.roadrun.setPoseEstimate(startPose);
+        robot.cv.observeSleeve();
+        while(getRuntime()<5){
+        }
+        dummyP = robot.cv.getPosition();
 
         //detectSignal();
+
         //store in variable
 
         waitForStart();
 
         if (isStopRequested()) return;
         Trajectory initialtrajectory = robot.roadrun.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(-13, 55))
+                .lineToConstantHeading(new Vector2d(13, 58))
                 .build();
-        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-13,55, Math.toRadians(270)))
+        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(13,58, Math.toRadians(270)))
                 .lineToLinearHeading(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
                 .build();
 
-        Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
-                .lineToLinearHeading(new Pose2d(dummyX, dummyY,Math.toRadians(dummyA)))
+        Trajectory parkpreptrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
+                .lineTo(new Vector2d(dummyX, dummyY))
+                .build();
+
+        Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyX,dummyY, Math.toRadians(dummya)))
+                .lineToLinearHeading(new Pose2d(dummyX, dummyY2, Math.toRadians(dummyA)))
                 .build();
 
         Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyX,dummyY, Math.toRadians(dummyA)))
-                .lineToLinearHeading(new Pose2d(dummyX2, dummyY2,Math.toRadians(dummyA2)))
+                .lineToSplineHeading(new Pose2d(dummyX2, dummyY2,Math.toRadians(dummyA2)))
                 .build();
 
         Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyX2,dummyY2, Math.toRadians(dummyA2)))
@@ -76,10 +85,13 @@ public class BlueRightAutoHigh extends LinearOpMode {
             robot.delay(0.8);
             robot.lowerLiftArmToIntake(true);
 
+            robot.followTrajectoryAsync(parkpreptrajectory);
+
             if (dummyP == 1) {
                 robot.followTrajectoryAsync(park1trajectory);
             }
-            else if (dummyP == 2) {
+
+            if (dummyP == 2) {
                 robot.followTrajectoryAsync(park2trajectory);
             }
             else if (dummyP == 3) {

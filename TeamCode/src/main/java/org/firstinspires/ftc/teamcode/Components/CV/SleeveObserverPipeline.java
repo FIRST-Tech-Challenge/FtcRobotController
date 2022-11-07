@@ -15,18 +15,16 @@ import java.util.ArrayList;
 public class SleeveObserverPipeline extends OpenCvPipeline {
     double centerOfPole = 0, poleSize = 0, degPerPix = -22.5/320, widTimesDist = 16.007*58;
     ArrayList<double[]> frameList;
-    public static double p1x = 130, p1y =240, p2x = 60, p2y =150,
-        h1 = 0,s1 = 0, v1 =0,
-            h1u = 255,s1u = 255, v1u =255,
-            h2 = 20,s2 = 0, v2 =0,
-            h2u =255,s2u = 255, v2u =255,
-            h3 = 20,s3 = 0, v3 =0,
-            h3u = 255,s3u = 255, v3u =255,
+    public static double p1x = 340, p1y =240, p2x = 430, p2y =370,
+
+        h1 = 2,s1 = 0, v1 =0,
+            h1u = 10,s1u = 255, v1u =255,
+            h2 = 63,s2 = 0, v2 =0,
+            h2u =71,s2u = 255, v2u =255,
+            h3 = 150,s3 = 0, v3 =0,
+            h3u = 165,s3u = 255, v3u =255,
             colour = 1;
 
-    Rect ROI = new Rect( //130 x 210, 60 x 120
-            new Point(p1x,p1y),
-            new Point(p2x,p2y));
 
 
     public SleeveObserverPipeline() {
@@ -35,6 +33,9 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        Rect ROI = new Rect( //130 x 210, 60 x 120
+                new Point(p1x,p1y),
+                new Point(p2x,p2y));
         Mat mat = new Mat();
 
         //mat turns into HSV value
@@ -62,10 +63,12 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
         double purpleValue = Core.sumElems(cone).val[0]/ROI.area()/255;
         Mat thresh2 = new Mat();
         Core.inRange(mat,loworangeHSV,highorangeHSV,thresh2);
+        cone.release();
         cone = thresh2.submat(ROI);
         double orangeValue = Core.sumElems(cone).val[0]/ROI.area()/255;
         Mat thresh3 = new Mat();
         Core.inRange(mat,lowgreenHSV,highgreenHSV,thresh3);
+        cone.release();
         cone = thresh3.submat(ROI);
         double greenValue = Core.sumElems(cone).val[0]/ROI.area()/255;
         frameList.add(new double[]{orangeValue, greenValue, purpleValue});
@@ -98,17 +101,17 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
 
    public int getPosition(){
         double[] sums = {0,0,0};
-        for(int i=0;i<frameList.size();i++){
+        for(int i=0;i<frameList.size()-1;i++){
             sums[0]+=frameList.get(i)[0];
             sums[1]+=frameList.get(i)[1];
             sums[2]+=frameList.get(i)[2];
         }
         if(sums[0]>sums[1]&&sums[0]>sums[2]){
-            return 1;
-        }else if(sums[1]>sums[2]){
             return 2;
-        }else{
+        }else if(sums[1]>sums[2]){
             return 3;
+        }else{
+            return 1;
         }
    }
 }

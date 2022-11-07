@@ -53,7 +53,12 @@ public class PwPRobot extends BasicRobot {
     public void delay(double p_delay){
         queuer.addDelay(p_delay);
     }
-
+    public void waitForFinish(int condition){
+        queuer.waitForFinish(condition);
+    }
+    public void waitForFinish(){
+        queuer.waitForFinish();
+    }
     public void autoAim() {
         if (queuer.queue(false, !roadrun.isBusy())) {
             if (!roadrun.isBusy() && field.lookingAtPole()) {
@@ -77,7 +82,7 @@ public class PwPRobot extends BasicRobot {
     public void followTrajectoryAsync (Trajectory trajectory) {
         if (queuer.queue(false, !roadrun.isBusy())) {
             if (!roadrun.isBusy()) {
-                roadrun.followTrajectory(trajectory);
+                roadrun.followTrajectoryAsync(trajectory);
             }
         }
     }
@@ -127,20 +132,14 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void liftToPosition(Lift.LiftConstants targetJunction){
-        if (queuer.queue(true, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 10)){
+        if (queuer.queue(true, lift.isDone())){
             lift.liftToPosition(targetJunction);
-        }
-        else{
-            lift.setLiftPower(0);
         }
     }
 
     public void liftToPosition(int tickTarget) {
         if (queuer.queue(true, Math.abs(tickTarget - lift.getLiftPosition()) < 10 && lift.getLiftVelocity() == 0)) {
             lift.liftToPosition(tickTarget);
-        }
-        else{
-            lift.setLiftPower(0);
         }
     }
 

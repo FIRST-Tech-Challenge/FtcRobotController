@@ -29,7 +29,7 @@ public class Claw {
     private final double CLAW_CLOSED_POS = 0.25;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.55;
+    private final double CLAW_OPEN_POS = 0.5;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
@@ -84,6 +84,7 @@ public class Claw {
         coneObserver = op.hardwareMap.get(Rev2mDistanceSensor.class, "coneObserver");
 
         if(!isTeleop){
+            CLAW_OPEN.setStatus(true);
             closeClaw();
         }
         else{

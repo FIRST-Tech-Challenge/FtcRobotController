@@ -20,8 +20,7 @@ public class SleeveObserverTest extends LinearOpMode {
         waitForStart();
         double[] loopStart={0,0};
         while(opModeIsActive()) {
-               telemetry.addData("pos",robot.cv.getPosition());
-               telemetry.update();
+            robot.cv.getPosition();
         }
         robot.stop();
     }

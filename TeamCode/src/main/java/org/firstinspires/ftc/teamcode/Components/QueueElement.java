@@ -16,10 +16,18 @@ public class QueueElement {
     private boolean isDone = false;
     //For delay
     private double readyTime = 1000;
+
+    private boolean mustFinish = false;
     public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition) {
         queuePos = queueNum;
         asynchronous = p_asynchronous;
         startCondition = p_startCondition;
+    }
+    public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish) {
+        queuePos = queueNum;
+        asynchronous = p_asynchronous;
+        startCondition = p_startCondition;
+        mustFinish = p_mustFinish;
     }
 
     public boolean isReady(int currentEvent, boolean extraCondition){
@@ -41,6 +49,7 @@ public class QueueElement {
             return false;
         }
     }
+    public boolean isMustFinish(){return mustFinish;}
     public boolean isDone(){return isDone;}
     public void setDone(boolean p_isDone){
         isDone=p_isDone;

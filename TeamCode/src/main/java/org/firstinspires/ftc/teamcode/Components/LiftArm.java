@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
-import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_LOWERING;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
@@ -91,7 +90,7 @@ public class LiftArm {
 
         //the state of claw open has to be true (cone has already been dropped)
         //&& LIFT_GROUND.status
-        if (CLAW_OPEN.status && ARM_OUTTAKE.status) {
+        if (/*CLAW_OPEN.status && */ARM_OUTTAKE.status) {
 
             //set servo position
             liftArmServo.setPositions(LIFT_ARM_INTAKE_POS);

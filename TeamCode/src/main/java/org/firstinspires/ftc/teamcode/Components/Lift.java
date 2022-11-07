@@ -30,6 +30,26 @@ public class Lift {
 //        }
 //
 //    }
+
+    //TODO: RFMotor
+    private RFMotor liftMotor;
+    private Claw LC = new Claw();
+    private double liftTarget = 0;
+    private double dfco1 =  .01; private double dfco2 = 0.05;
+    private ArrayList<Double> coefficients = new ArrayList<>();
+    private boolean done = true;
+
+    public Lift(){ //constructor
+        // hardware map
+        Claw LC = new Claw();
+        logger.createFile("LiftLog", "Time Component Function Action");
+        coefficients.add(dfco1);
+        coefficients.add(dfco2);
+        liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, true, coefficients, MAX_LIFT_TICKS, 0);
+        liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        liftMotor.setTICK_BOUNDARY_PADDING(10);
+        liftMotor.setTICK_STOP_PADDING(10);
+    }
     public enum LiftStates {
         LIFT_GROUND(true, "LIFT_GROUND"),
         LIFT_GROUND_RAISING(false, "LIFT_GROUND_RAISING"),
@@ -95,24 +115,6 @@ public class Lift {
         }
         //make enum for all the tick counts for ground low med high junctions, can set with setGoal(int goal);
     }
-    //TODO: RFMotor
-    private RFMotor liftMotor;
-    private Claw LC = new Claw();
-    private double liftTarget = 0;
-    private double dfco1 = 1.5; private double dfco2 = 150.0;
-    private ArrayList<Double> coefficients = new ArrayList<>();
-
-    public Lift(){ //constructor
-        // hardware map
-        Claw LC = new Claw();
-        logger.createFile("LiftLog", "Time Component Function Action");
-        coefficients.add(dfco1);
-        coefficients.add(dfco2);
-        liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, true, coefficients, MAX_LIFT_TICKS, 0);
-        liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        liftMotor.setTICK_BOUNDARY_PADDING(10);
-        liftMotor.setTICK_STOP_PADDING(10);
-    }
     public int getLiftPosition(){
         return liftMotor.getCurrentPosition();
     }
@@ -165,20 +167,20 @@ public class Lift {
 //            LiftStates.LIFT_HIGH.setStatus(true);
 //        }
     }
-    public boolean liftToPosition(LiftConstants targetHeight){//TODO: make sure this is async
+    public void liftToPosition(LiftConstants targetHeight){//TODO: make sure this is async
         //use rfmotor setPosition function to lift in accordance with the enum
         //if(targetHeight != LiftConstants.LIFT_LOW_JUNCTION && targetHeight != LiftConstants.LIFT_GROUND_JUNCTION && Claw.ClawStates.CLAW_CLOSED.status == true){
             //liftMotor.setPosition(targetHeight.value);
         //}
 
         double distance = targetHeight.value-liftMotor.getCurrentPosition();
-        if(distance>0){
+        if(!done){
             liftMotor.setPosition(targetHeight.value);
         }
-        else{
-            liftMotor.setPower(LIFT_GRAVITY_CONSTANT/4);
+        done = (abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
+        if(done){
+            liftMotor.setPower(LIFT_GRAVITY_CONSTANT);
         }
-        boolean done = (abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
         if(!done){
             targetHeight.setLfc(true);
         }
@@ -187,8 +189,10 @@ public class Lift {
         }
         // no conditions
         // log when movement starts & when reach target position
-        logger.log("LiftLog", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetHeight.value + " ticks" + liftMotor.getCurrentPosition(), true, true, true);
+        logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetHeight.value + " ticks" + liftMotor.getCurrentPosition());
         //async, no use sleep/wait with time, can use multiple processes
+    }
+    public boolean isDone(){
         return done;
     }
     public void liftToPosition(int targetTickCount){

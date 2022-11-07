@@ -21,7 +21,7 @@ public class RoadRunMoveTest extends LinearOpMode {
         robot.roadrun.setPoseEstimate(startPose);
 
         waitForStart();
-//7 1/8, 2
+//1.5,0,0.25,0.7,0.4,0.8,0.9,1.3,0.5,0,0.25
         if (isStopRequested()) return;
 //        TrajectorySequence trajSeq = robot.roadrun.trajectorySequenceBuilder(startPose)
 //                .lineToConstantHeading(new Vector2d(35.25, 57.75))
@@ -30,18 +30,18 @@ public class RoadRunMoveTest extends LinearOpMode {
 ////                .lineToSplineHeading(new Pose2d(13.75, 5.75,Math.toRadians(0)))
 ////                .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
 //                .build();
-//        TrajectorySequence trajSeq2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
-//                .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(180)))
-//                .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(90)))
-//                .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(0)))
-//                .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
-//                .build();
         TrajectorySequence trajSeq2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
-                .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(270)))
-                .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(270)))
-                .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
                 .build();
+//        TrajectorySequence trajSeq2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
+//                .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(270)))
+//                .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(270)))
+//                .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(270)))
+//                .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
+//                .build();
 
         while (opModeIsActive()) {
 //            robot.followTrajectorySequenceAsync(trajSeq);

@@ -105,7 +105,8 @@ public class Logger {
     @SuppressLint("DefaultLocale")
     public void log(String fileName, String input) {
         try {
-            FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+            File file = new File("/sdcard/tmp/"+fileName+data+"Log.csv");
+            FileWriter filewriter = new FileWriter(file, true);
             filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
             filewriter.close();
         } catch (IOException e) {

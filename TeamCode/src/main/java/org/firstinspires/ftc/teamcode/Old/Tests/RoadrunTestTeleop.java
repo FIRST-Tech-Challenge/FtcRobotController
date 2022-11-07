@@ -4,14 +4,11 @@ package org.firstinspires.ftc.teamcode.Old.Tests;
 import static java.lang.Math.PI;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Old.Components.Chassis.BasicChassis;
-import org.firstinspires.ftc.teamcode.Old.Components.SummerMec.SummerMecRobot;
-import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
+import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -24,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
 public class RoadrunTestTeleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        SummerMecRobot robot = new SummerMecRobot(this, true);
+        PwPRobot robot = new PwPRobot(this, true);
 
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.roadrun.setPoseEstimate(new Pose2d(-34,-58,0));
