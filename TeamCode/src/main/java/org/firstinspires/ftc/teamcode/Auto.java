@@ -12,6 +12,7 @@ public class Auto extends AutoGuts{
     public void start() {
         double midPointX = pipeline.getRectMidpointX();
         double width = pipeline.getRectWidth();
+        int height = pipeline.getRectHeight();
         double area = pipeline.getRectArea();
         double turn = 0;
         double powerGroup1 = 0;
@@ -21,31 +22,29 @@ public class Auto extends AutoGuts{
         double angle = 0;
         double loopCounter = 0;
 
-        //TODO: code doesn't actually do much..... fix it
-
-        // makes robot turn if no box is detected
-        if(area == 0){
-            turn = 1;
+        try {
+            driveEncoder(0, 100, 1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        if(area != 0) {
-            turn = 0;
-            // gets ratio of 1 to 0 of the screen
-            angleRatio = (width - midPointX) / width;
-            // multiplies by 180 to get the angle in the polar coordinates
-            angle = angleRatio * Math.PI;
+        turn(1,90);
+        do{
+            area = pipeline.getRectArea();
+            width = pipeline.getRectWidth();
+            midPointX = pipeline.getRectMidpointX();
+            height = pipeline.getRectHeight();
 
-            // bigger area is slower speed
-            if (area > 1000) {
-                speed = 1000 / area;
-            }
+            cascadeMoveClaw(height - 100, 1, 1, true);
 
-
-            // topLeftPower and bottomRightPower
-            powerGroup1 = (Math.sin(angle) - Math.cos(angle));
-            // topRightPower and bottomLeftPower
-            powerGroup2 = (Math.sin(angle) + Math.cos(angle));
         }
-        // Power for drivetrain
+        while(area > 200);
+
+
+
+
 
     }
+
+
 }
+

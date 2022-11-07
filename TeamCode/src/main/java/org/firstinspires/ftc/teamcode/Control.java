@@ -12,7 +12,6 @@ public abstract class Control extends OpMode {
         HIGH
     }
 
-
     @Override
     public void init() {
         hraezlyr = new Hraezlyr(hardwareMap);

@@ -10,6 +10,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -27,7 +28,8 @@ public class Hraezlyr {
     public DcMotor cascadeMotor1;
     public DcMotor cascadeMotor2;
     public OpenCvCamera camera;
-
+    public Servo servoClawMove;
+    public Servo servoClawClose;
     public BNO055IMU IMU;
 
 
@@ -46,6 +48,8 @@ public class Hraezlyr {
         bottomRight = hwmap.get(DcMotor.class, "bottomRight");
         cascadeMotor1 = hwmap.get(DcMotor.class, "cascadeMotor1");
         cascadeMotor2 = hwmap.get(DcMotor.class, "cascadeMotor2");
+        servoClawMove = hwmap.get(Servo.class, "servoClawMove");
+        servoClawClose =  hwmap.get(Servo.class, "servoClawClose");
 
         IMU = hwmap.get(BNO055IMU.class, "gyroscope");
 
