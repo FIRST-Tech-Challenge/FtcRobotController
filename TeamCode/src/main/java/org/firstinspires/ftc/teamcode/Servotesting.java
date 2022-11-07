@@ -8,15 +8,17 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp
 public class Servotesting extends LinearOpMode {
-    private Servo Right;
-    private Servo Left;
+    private CRServo Right;
+    private CRServo Left;
     private DcMotor Crain;
+    private DcMotor Spin;
 
 
     public void runOpMode() throws InterruptedException {
-        Right = hardwareMap.get(Servo.class,"Rights");
-        Left = hardwareMap.get(Servo.class, "Lefts");
+        Right = hardwareMap.get(CRServo.class,"Rights");
+        Left = hardwareMap.get(CRServo.class, "Lefts");
         Crain = hardwareMap.get(DcMotor.class, "Crain");
+        Spin = hardwareMap.get(DcMotor.class, "Spin");
 
         waitForStart();
         while (opModeIsActive()) {
@@ -24,21 +26,54 @@ public class Servotesting extends LinearOpMode {
             boolean pickup;
             boolean dropoff;
             double crainpower;
+            boolean turning;
 
             crainpower = gamepad2.left_stick_y;
             pickup = gamepad2.x;
             dropoff = gamepad2.y;
+            turning = gamepad2.b;
+
 
             Crain.setPower(crainpower);
 
-            if (pickup) {
-                Right.setPosition(1);
-                Left.setPosition(0);
+            if (pickup==true) {
+                Right.setPower(1);
+                Left.setPower(-1);
             }
-            if (dropoff){
-                Right.setPosition(0);
-                Left.setPosition(1);
+
+            if (dropoff==true){
+                Right.setPower(-1);
+                Left.setPower(1);
+
             }
+
+            if (dropoff==false && pickup==false){
+                Right.setPower(0);
+                Left.setPower(0);
+
+            }
+
+
+            if (turning){
+                Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                Crain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                Spin.setTargetPosition(0);
+                Crain.setTargetPosition(0);
+                Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spin.setPower(1);
+                Crain.setPower(1);
+                while(Spin.isBusy()){
+
+                }
+                Crain.setTargetPosition(1);
+                Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Crain.setPower(1);
+                while (Crain.isBusy()){
+
+                }
+            }
+
         }
 
 
