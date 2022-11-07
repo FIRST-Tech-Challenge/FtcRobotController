@@ -310,7 +310,6 @@ public class AutonomousRight extends LinearOpMode {
         waitSliderRun();
         clawServo.setPosition(CLAW_CLOSE_POS);
         sleep(200); // wait to make sure clawServo is at grep position
-        clawServoPosition = clawServo.getPosition(); // keep claw position
     }
 
     /**
@@ -395,25 +394,6 @@ public class AutonomousRight extends LinearOpMode {
     }
 
     /**
-     * Wait until the motor complete action.
-     * The MAXIMUM waiting time is MAX_WAIT_TIME to avoid death.
-     * @param mot: the motor which be checked if it is in active.
-     */
-    private void waitMotorActionComplete(@NonNull DcMotor mot) {
-        double curTime = runtime.seconds();
-        while((mot.isBusy()) && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
-            idle();
-        }
-        /*
-          while((Math.abs(mot.getCurrentPosition() - mot.getTargetPosition()) < 10) && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
-              idle();
-          }
-        }
-         */
-    }
-
-
-    /**
      * Resets the cumulative angle tracking to zero.
      */
     private void resetAngle() {
@@ -490,9 +470,8 @@ public class AutonomousRight extends LinearOpMode {
         leftMotorSetPower(0);
 
         rotation = getAngle();
-
         // wait for rotation to stop.
-        sleep(500);
+        sleep(300);
 
         // reset angle tracking on new heading.
         resetAngle();
@@ -549,15 +528,17 @@ public class AutonomousRight extends LinearOpMode {
      * Check if robot motors are busy. Return ture if yes, false otherwise.
      */
     private boolean robotIsBusy() {
-        return (FrontRightDrive.isBusy() || FrontLeftDrive.isBusy() ||
-                BackLeftDrive.isBusy() || BackRightDrive.isBusy());
+        return (FrontRightDrive.isBusy() && FrontLeftDrive.isBusy() && BackLeftDrive.isBusy() && BackRightDrive.isBusy());
+
         /*
-                boolean r = ((Math.abs(FrontRightDrive.getCurrentPosition() - FrontRightDrive.getTargetPosition()) < 10) &&
-                (Math.abs(FrontLeftDrive.getCurrentPosition() - FrontLeftDrive.getTargetPosition()) < 10) &&
-                (Math.abs(BackLeftDrive.getCurrentPosition() - BackLeftDrive.getTargetPosition()) < 10) &&
-                (Math.abs(BackRightDrive.getCurrentPosition() - BackRightDrive.getTargetPosition()) < 10));
+        boolean r = ((Math.abs(FrontRightDrive.getCurrentPosition() - FrontRightDrive.getTargetPosition()) > 10) &&
+                (Math.abs(FrontLeftDrive.getCurrentPosition() - FrontLeftDrive.getTargetPosition()) > 10) &&
+                (Math.abs(BackLeftDrive.getCurrentPosition() - BackLeftDrive.getTargetPosition()) > 10) &&
+                (Math.abs(BackRightDrive.getCurrentPosition() - BackRightDrive.getTargetPosition()) > 10));
         return r;
-         */
+        */
+
+
     }
 
     /** code for autonomous
@@ -587,12 +568,13 @@ public class AutonomousRight extends LinearOpMode {
         readColorSensor(sleeveColor); // reading sleeve signal
         Logging.log("Autonomous - complete Sleeve color read.");
         // push sleeve cone out, and reading background color for calibration
-        robotRunToPosition(36.0, true); // drive robot to the center of 3rd mat
+        robotRunToPosition(36.0, true);
         // lift slider during strafe to high junction
         setSliderPosition(HIGH_JUNCTION_POS);
         robotRunToPosition(-4.0, true); // throw off sleeve cone
 
         parkingLocation = calculateParkingLocation(sleeveColor, backgroundColor);
+        parkingLocation = 36.0; // just for testing.
         Logging.log(String.format("Autonomous - parking lot aisle location: %.2f", parkingLocation));
 
         robotRunToPosition(-12.0, false); // strafe robot half mat to left side
@@ -600,11 +582,11 @@ public class AutonomousRight extends LinearOpMode {
 
         robotRunToPosition(7.0, true); // drive robot half mat to high junction
         autoUnloadCone();
-        Logging.log("Autonomous - 1st cone has been unloaded.");
+        Logging.log("Autonomous - pre-load cone has been unloaded.");
         // lower down slider after unloading cone
         setSliderPosition(WALL_POSITION);
 
-        for(int autoLoop = 0; autoLoop < 1; autoLoop++) {
+        for(int autoLoop = 0; autoLoop < 2; autoLoop++) {
             // right turn 90 degree
             Logging.log("Autonomous - loop index: %d ", autoLoop);
             Orientation imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -615,10 +597,14 @@ public class AutonomousRight extends LinearOpMode {
 
             // drive robot to loading area
             robotRunToPosition(38.0, true);
-            autoLoadCone(coneStack5th - coneLoadStackGap * autoLoop); // need update to input cone height position
+            autoLoadCone(coneStack5th - coneLoadStackGap * autoLoop);
+            imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            Logging.log(String.format("Autonomous - imu angle after load cone: %.2f", imuAngles.firstAngle));
             setSliderPosition(WALL_POSITION);
             waitSliderRun(); // make sure slider has been lifted before moving out cone stack.
 
+            // lift slider during rotation.
+            setSliderPosition(MEDIUM_JUNCTION_POS);
             // drive back robot to high junction
             robotRunToPosition(-38.0, true);
             Logging.log("Autonomous - robot has arrived high junction.");
@@ -636,17 +622,21 @@ public class AutonomousRight extends LinearOpMode {
             Logging.log("Autonomous - slider has lifted to high junction.");
             robotRunToPosition(7.0, true); // drive robot half mat to high junction
             autoUnloadCone();
-            Logging.log("Autonomous - %d cone has been unloaded.", autoLoop);
+            Logging.log("Autonomous - %d cone has been unloaded.", autoLoop + 2);
+            imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            Logging.log(String.format("Autonomous - imu angle after unload cone: %.2f", imuAngles.firstAngle));
             setSliderPosition(WALL_POSITION);
         }
         Logging.log("Autonomous -  latest cone has been unloaded.");
 
-        if (gamepad2.dpad_up) {
-            // drive to final parking lot
-            robotRunToPosition(parkingLocation, false); // strafe robot to parking
-            Logging.log(String.format("Autonomous - Arrived parking lot aisle: %.2f", parkingLocation));
-            robotRunToPosition(-24.0, true); // drive robot to parking mat
-        }
+        // drive to final parking lot
+        robotRunToPosition(parkingLocation, false); // strafe robot to parking
+        Logging.log(String.format("Autonomous - Arrived parking lot aisle: %.2f", parkingLocation));
+        Orientation imuAngles1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Logging.log(String.format("Autonomous - imu angle is: %.2f", imuAngles1.firstAngle));
+
+        robotRunToPosition(-24.0, true); // drive robot to parking mat
+        Logging.log("Autonomous -  finish parking.");
     }
 
     /**
@@ -721,21 +711,19 @@ public class AutonomousRight extends LinearOpMode {
     }
 
     /**
-     * Wait until robot wheel motors complete actions.
-     */
-    private void waitRobotRun() {
-        waitMotorActionComplete(FrontLeftDrive);
-        waitMotorActionComplete(FrontRightDrive);
-        waitMotorActionComplete(BackLeftDrive);
-        waitMotorActionComplete(BackRightDrive);
-    }
-
-    /**
      * Wait until slider motors complete actions.
      */
     private void waitSliderRun() {
-        waitMotorActionComplete(RightSliderMotor);
-        waitMotorActionComplete(LeftSliderMotor);
+        double curTime = runtime.seconds();
+       /*   while((RightSliderMotor.isBusy() && LeftSliderMotor.isBusy()) && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
+            idle();
+        }
+       */
+        while ((Math.abs(RightSliderMotor.getCurrentPosition() - RightSliderMotor.getTargetPosition()) > 10) &&
+                (Math.abs(LeftSliderMotor.getCurrentPosition() - LeftSliderMotor.getTargetPosition()) > 10) &&
+                ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
+            idle();
+        }
     }
 
     /**
@@ -756,5 +744,4 @@ public class AutonomousRight extends LinearOpMode {
         int l = LeftSliderMotor.getCurrentPosition();
         return (r+l)/2;
     }
-
 }
