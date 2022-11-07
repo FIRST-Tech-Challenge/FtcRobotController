@@ -12,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
@@ -30,49 +29,31 @@ public class AutoOpMode extends LinearOpMode{
     public static final Vector2d ORIGIN = new Vector2d(0,0);
     public static final Pose2d ORIGINPOSE = new Pose2d(0,0,Math.toRadians(0));
 
-    // Declare and assign starting pose of robot
-    public static final Pose2d STARTPOS_1 =  new Pose2d(-61,7,Math.toRadians(180));
-    public static final Pose2d STARTPOS_2 =  new Pose2d(-61,-40,Math.toRadians(180));
-    public static final Pose2d STARTPOS_3 =  new Pose2d(61,7,Math.toRadians(0));
-    public static final Pose2d STARTPOS_4 =  new Pose2d(61,-40,Math.toRadians(0));
-
-
-    //Define and declare Playing Alliance
-    public enum PLAYING_ALLIANCE{
-        RED_ALLIANCE,
-        BLUE_ALLIANCE,
-    }
-    public static PLAYING_ALLIANCE playingAlliance = PLAYING_ALLIANCE.BLUE_ALLIANCE;
-    public static double ALLIANCE_FACTOR = 1;
-
 
     //Define and declare Robot Starting Locations
     public enum START_POSITION{
-        POS1,
-        POS2,
-        POS3,
-        POS4
+        BLUE_LEFT,
+        BLUE_RIGHT,
+        RED_LEFT,
+        RED_RIGHT
     }
-
-    //Set a default start and park position
     public static START_POSITION startPosition;
-    public static PARKING_LOCATION parkingLocation = PARKING_LOCATION.PARKPOS_1;
 
     //Define and declare Robot parking locations
     public enum PARKING_LOCATION{
-        PARKPOS_1,
-        PARKPOS_2,
-        PARKPOS_3
+        LOCATION_1, //Rename to game manual names
+        LOCATION_2,
+        LOCATION_3
     }
+    public static PARKING_LOCATION parkingLocation;
 
-
-    //Select the different colors on the signal sleeve, and define them here
     public enum VISION_IDENTIFIED_TARGET {
         LOCATION_1,
         LOCATION_2,
         LOCATION_3,
     };
 
+    //Select the different colors on the signal sleeve, and define them here
     public enum VISION_IDENTIFIER{
         BOLT,
         BULB,
@@ -82,22 +63,6 @@ public class AutoOpMode extends LinearOpMode{
         PURPLE
     };
     public static VISION_IDENTIFIER visionIdentifier = VISION_IDENTIFIER.BOLT;
-
-    //Static fields to pass Pos from Autonomous to TeleOp
-    public static boolean poseSetInAutonomous = false;
-    public static Pose2d currentPose = new Pose2d();
-
-    public enum VISION_STATE {
-        TFOD_INIT,
-        TFOD_ACTIVE,
-        TFOD_RUNNING,
-        INACTIVE
-    }
-    public VISION_STATE visionState = VISION_STATE.INACTIVE;
-
-    public enum ACTIVE_WEBCAM{
-        WEBCAM1,
-    }
 
 
     /*
@@ -114,7 +79,7 @@ public class AutoOpMode extends LinearOpMode{
      */
     private static final String VUFORIA_KEY =
             "AZME4Mr/////AAABmY+MAyxxT0IileR7JBqaAPsxN2XNYlaGBtEjYaHOlVVTqPQf7NH9eIrosYKKQHPGEXLtJUsdMwZ9e3EXBfy6arulcLPvdpW9bqAB2F2MJJXo35lLA096l/t/LQTi+etVso0Xc5RYkTVSIP3YABp1TeOaF8lCSpjVhPIVW3l/c/XlrnEMPhJk9IgqMEp4P/ifqAqMMMUAIKPEqIrXIv79TvAfdIJig46gfQGaQl5tFHr3nmvMbh/LhFrh5AWAy3B/93cCkOszmYkdHxZStbNB5lMdkTnf3sCnYbQY4jviorfhYrAkqHWH6vNOB9lUt8dOSeHsDtlk33e/6xQgOCNYFN80anYMp82JNDBFX3oyGliV";
-
+//Add Key for each team
 
     // Class Members
     //private OpenGLMatrix lastLocation = null;
@@ -170,24 +135,254 @@ public class AutoOpMode extends LinearOpMode{
         boolean parked = false ;
         public ElapsedTime gameTimer = new ElapsedTime(MILLISECONDS);;
 
-        public ACTIVE_WEBCAM activeWebcam = ACTIVE_WEBCAM.WEBCAM1;
         public VISION_IDENTIFIED_TARGET targetZone = VISION_IDENTIFIED_TARGET.LOCATION_1;//Set a default vision value
         int targetZoneLevel = 0;
 
-        double af = ALLIANCE_FACTOR;
+        //double af = ALLIANCE_FACTOR;
 
+        @Override
+        public void runOpMode() throws InterruptedException {
+            /*Create your Subsystem Objects*/
+            driveTrain = new DriveTrain(hardwareMap);
+
+
+            /* Create Controllers */
+
+            //Key Pay inputs to select Game Plan;
+            selectGamePlan();
+
+            // Initiate Camera on Init.
+            activateVuforiaTensorFlow();
+
+            buildAuto();
+
+           //autonomousController.runAutoControl();
+
+            telemetry.addData("Waiting for start to be pressed.", "Robot is ready!");
+            telemetry.update();
+
+            if (isStopRequested()) return;
+
+            while (!isStopRequested()) {
+
+                //Run Vuforia Tensor Flow
+                targetZone = runVuforiaTensorFlow();
+                targetZoneLevel = targetZone.ordinal();
+
+                if (!parked) {
+                    //autonomousController.runAutoControl();
+                }
+
+                if (DEBUG_FLAG) {
+                    printDebugMessages();
+                    telemetry.update();
+                }
+
+                //Game Play is pressed
+                while (opModeIsActive() && !isStopRequested() && !parked) {
+                    gameTimer.reset();
+
+                    deactivateVuforiaTensorFlow();
+
+                    runAuto();
+                    parked = true;
+
+                    if (DEBUG_FLAG) {
+                        printDebugMessages();
+                        telemetry.update();
+                    }
+                }
+
+            }
+        }
+
+        //Initialize any other TrajectorySequences as desired
+        TrajectorySequence trajInitToPickAndDropConeToPark;
+
+        //Initialize any other Pose2d's as desired
+        Pose2d initPose; //4 different poses
+        Pose2d midWayPose; //4 different poses
+        Pose2d pickConePose; //4 different poses
+        Pose2d dropConePose; //4 different poses
+        Pose2d parkPose; //4 different poses
+
+        public void buildAuto(){
+            switch(startPosition){
+                case BLUE_LEFT:
+                    initPose = ORIGINPOSE; //Starting pos when on blue alliance
+                    midWayPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards signal cone
+                    pickConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    dropConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    parkPose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    break;
+                case BLUE_RIGHT:
+                    initPose = ORIGINPOSE; //Starting pos when on blue alliance
+                    midWayPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards signal cone
+                    pickConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    dropConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    parkPose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    break;
+                case RED_LEFT:
+                    initPose = ORIGINPOSE; //Starting pos when on blue alliance
+                    midWayPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards signal cone
+                    pickConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    dropConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    parkPose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    break;
+                case RED_RIGHT:
+                    initPose = ORIGINPOSE; //Starting pos when on blue alliance
+                    midWayPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards signal cone
+                    pickConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    dropConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    parkPose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                    break;
+            }
+
+            //Pick 5 cones and park
+            trajInitToPickAndDropConeToPark = driveTrain.trajectorySequenceBuilder(initPose)
+                    .lineToLinearHeading(midWayPose)
+                    .lineToLinearHeading(pickConePose)
+                    .addTemporalMarker(0,()->{
+                        pickCone();
+                    })
+                    .lineToLinearHeading(midWayPose)
+                    .lineToLinearHeading(dropConePose)
+                    .addTemporalMarker(0,()->{
+                        dropCone();
+                    })
+                    .lineToLinearHeading(midWayPose)
+                    .lineToLinearHeading(pickConePose)
+                    .addTemporalMarker(0,()->{
+                        pickCone();
+                    })
+                    .lineToLinearHeading(midWayPose)
+                    .lineToLinearHeading(dropConePose)
+                    .addTemporalMarker(0,()->{
+                        dropCone();
+                    })
+                    .lineToLinearHeading(midWayPose)
+                    .lineToLinearHeading(pickConePose)
+                    .addTemporalMarker(0,()->{
+                        pickCone();
+                    })
+                    .lineToLinearHeading(midWayPose)
+                    .lineToLinearHeading(dropConePose)
+                    .addTemporalMarker(0,()->{
+                        dropCone();
+                    })
+                    .lineToLinearHeading(midWayPose)
+                    .lineToLinearHeading(pickConePose)
+                    .addTemporalMarker(0,()->{
+                        pickCone();
+                    })
+                    .lineToLinearHeading(midWayPose)
+                    .lineToLinearHeading(dropConePose)
+                    .addTemporalMarker(0,()->{
+                        dropCone();
+                    })
+                    .lineToLinearHeading(midWayPose)
+                    .lineToLinearHeading(pickConePose)
+                    .addTemporalMarker(0,()->{
+                        pickCone();
+                    })
+                    .lineToLinearHeading(midWayPose)
+                    .lineToLinearHeading(dropConePose)
+                    .addTemporalMarker(0,()->{
+                        dropCone();
+                    })
+                    .build();
+        }
+
+        public void runAuto(){
+            //Write any other actions to take during auto, or any other conditions for maneuvering
+            driveTrain.followTrajectorySequence(trajInitToPickAndDropConeToPark);
+            return;
+        }
+
+        //Write a method which is able to pick the cone depending on your subsystems
+        public void pickCone(){
+
+        }
+
+        //Write a method which is able to drop the cone depending on your subsystems
+        public void dropCone(){
+
+        }
+
+        public void selectGamePlan() {
+            telemetry.setAutoClear(true);
+            telemetry.addData("Compile time : ", "22:00 :: 1/27/2022");
+
+            //******select start pose******
+            while(!isStopRequested()){
+                telemetry.addData("Enter a Start Pose:","");
+                telemetry.addData("Blue Left: (X)", "");
+                telemetry.addData("Blue Right: (Y)", "");
+                telemetry.addData("Red Left: (B)", "");
+                telemetry.addData("Red Right: (A)", "");
+                if(gamepad1.x){
+                    startPosition = START_POSITION.BLUE_LEFT;
+                    telemetry.addData("Start Position: ", startPosition);
+                    break;
+                }
+                if(gamepad1.y){
+                    startPosition = START_POSITION.BLUE_RIGHT;
+                    telemetry.addData("Start Position: ", startPosition);
+                    break;
+                }
+                if(gamepad1.b){
+                    startPosition = START_POSITION.RED_LEFT;
+                    telemetry.addData("Start Position: ", startPosition);
+                    break;
+                }
+                if(gamepad1.a){
+                    startPosition = START_POSITION.RED_RIGHT;
+                    telemetry.addData("Start Position: ", startPosition);
+                    break;
+                }
+                telemetry.update();
+            }
+            telemetry.clearAll();
+            telemetry.addData("StartPose : ", startPosition);
+            telemetry.update();
+        }
+
+        /**
+         * Method to add debug messages. Update as telemetry.addData.
+         * Use public attributes or methods if needs to be called here.
+         */
+        public void printDebugMessages(){
+            telemetry.setAutoClear(true);
+            telemetry.addData("DEBUG_FLAG is : ", DEBUG_FLAG);
+
+
+            telemetry.addData("Start Position : ", startPosition);
+            telemetry.addData("Parking Location : ", parkingLocation);
+
+            //****** Drive debug ******
+            telemetry.addData("Drive Mode : ", driveTrain.driveMode);
+            telemetry.addData("PoseEstimate :", driveTrain.poseEstimate);
+            //telemetry.addData("Battery Power", driveTrain.getBatteryVoltage(hardwareMap));
+
+            telemetry.addData("Vision detectedLabel", detectedLabel);
+            telemetry.addData("Vision targetZone :", targetZone);
+            telemetry.addData("Vision targetZoneLevel :", targetZoneLevel);
+
+            telemetry.addData("Game Timer : ", gameTimer.time());
+
+            telemetry.update();
+
+        }
     /**
      * Initialize the Vuforia localization engine.
      */
-    public AutoOpMode(HardwareMap hardwareMap, ACTIVE_WEBCAM activeWebcam) {
-        activeWebcam = ACTIVE_WEBCAM.WEBCAM1;
+    public AutoOpMode(HardwareMap hardwareMap) {
+        //if (activeWebcam == ACTIVE_WEBCAM.WEBCAM1){
+        webcamName = hardwareMap.get(WebcamName.class, "Webcam1");
+        //} /*else { //TODO: Uncomment if using 2 cameras;
+        webcamName = hardwareMap.get(WebcamName.class, "Webcam2");
+        //}
 
-        if (activeWebcam == ACTIVE_WEBCAM.WEBCAM1){
-            webcamName = hardwareMap.get(WebcamName.class, "Webcam1");
-        } /*else { //TODO: Uncomment if using 2 cameras;
-            webcamName = hardwareMap.get(WebcamName.class, "Webcam2");
-        }
-        */
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -225,8 +420,6 @@ public class AutoOpMode extends LinearOpMode{
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
 
-        visionState = VISION_STATE.TFOD_INIT;
-
     }
     /**
      * Activate Vuforia Tensor Flow to determine target zone
@@ -239,7 +432,6 @@ public class AutoOpMode extends LinearOpMode{
          **/
         if (tfod != null) {
             tfod.activate();
-            visionState = VISION_STATE.TFOD_ACTIVE;
 
             // The TensorFlow software will scale the input images from the camera to a lower resolution.
             // This can result in lower detection accuracy at longer distances (> 55cm or 22").
@@ -264,7 +456,6 @@ public class AutoOpMode extends LinearOpMode{
 
 
     public VISION_IDENTIFIED_TARGET runVuforiaTensorFlow() {
-        visionState = VISION_STATE.TFOD_RUNNING;
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
@@ -301,293 +492,7 @@ public class AutoOpMode extends LinearOpMode{
     public void deactivateVuforiaTensorFlow(){
         if (tfod != null) {
             tfod.shutdown();
-            visionState = VISION_STATE.INACTIVE;
         }
     }
-        @Override
-        public void runOpMode() throws InterruptedException {
-            /*Create your Subsystem Objects*/
-            driveTrain = new DriveTrain(hardwareMap);
-
-
-            /* Create Controllers */
-
-            //Key Pay inputs to select Game Plan;
-            selectGamePlan();
-            af = ALLIANCE_FACTOR;
-
-            // Initiate Camera on Init.
-            activateVuforiaTensorFlow();
-
-            buildAuto();
-
-           //autonomousController.runAutoControl();
-
-            telemetry.addData("Waiting for start to be pressed.", "Robot is ready!");
-            telemetry.update();
-
-            if (isStopRequested()) return;
-
-            while (!isStopRequested()) {
-
-                //Run Vuforia Tensor Flow
-                targetZone = runVuforiaTensorFlow();
-                targetZoneLevel = targetZone.ordinal();
-
-                if (!parked) {
-                    //autonomousController.runAutoControl();
-                }
-
-                if (DEBUG_FLAG) {
-                    printDebugMessages();
-                    telemetry.update();
-                }
-
-                //Game Play is pressed
-                while (opModeIsActive() && !isStopRequested() && !parked) {
-                    gameTimer.reset();
-
-                    deactivateVuforiaTensorFlow();
-
-
-
-                    runAuto();
-
-
-                    //Move to Launching Position
-                    parked = true;
-
-                    //Write last position to static class to be used as initial position in TeleOp
-
-                    currentPose = driveTrain.getPoseEstimate();
-                    poseSetInAutonomous = true;
-
-
-                    if (DEBUG_FLAG) {
-                        printDebugMessages();
-                        telemetry.update();
-                    }
-                }
-
-            }
-            safeWait(100);
-            currentPose = driveTrain.getPoseEstimate();
-            poseSetInAutonomous = true;
-        }
-
-        //Initialize any other TrajectorySequences as desired
-        TrajectorySequence trajInitToPickAndDropConeToPark;
-
-        //Initialize any other Pose2d's as desired
-        Pose2d initPose; //4 different poses
-        Pose2d midWayPose; //4 different poses
-        Pose2d pickConePose; //4 different poses
-        Pose2d dropCone; //4 different poses
-        Pose2d parkPose; //4 different poses
-
-        public void buildAuto(){
-            if(playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE){
-                initPose = currentPose; //Starting pos when on blue alliance
-                midWayPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards signal cone
-                pickConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
-                dropCone =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
-                parkPose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
-
-            } else {
-                initPose = currentPose; //Starting pos when on red alliance
-                midWayPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards cone
-                pickConePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
-                dropCone =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
-                parkPose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
-
-            }
-
-            //Pick 5 cones and park
-            trajInitToPickAndDropConeToPark = driveTrain.trajectorySequenceBuilder(initPose)
-                    .lineToLinearHeading(midWayPose)
-                    .lineToLinearHeading(pickConePose)
-                    .addTemporalMarker(0,()->{
-                        pickCone();
-                    })
-                    .lineToLinearHeading(midWayPose)
-                    .lineToLinearHeading(dropCone)
-                    .addTemporalMarker(0,()->{
-                        dropCone();
-                    })
-                    .lineToLinearHeading(midWayPose)
-                    .lineToLinearHeading(pickConePose)
-                    .addTemporalMarker(0,()->{
-                        pickCone();
-                    })
-                    .lineToLinearHeading(midWayPose)
-                    .lineToLinearHeading(dropCone)
-                    .addTemporalMarker(0,()->{
-                        dropCone();
-                    })
-                    .lineToLinearHeading(midWayPose)
-                    .lineToLinearHeading(pickConePose)
-                    .addTemporalMarker(0,()->{
-                        pickCone();
-                    })
-                    .lineToLinearHeading(midWayPose)
-                    .lineToLinearHeading(dropCone)
-                    .addTemporalMarker(0,()->{
-                        dropCone();
-                    })
-                    .lineToLinearHeading(midWayPose)
-                    .lineToLinearHeading(pickConePose)
-                    .addTemporalMarker(0,()->{
-                        pickCone();
-                    })
-                    .lineToLinearHeading(midWayPose)
-                    .lineToLinearHeading(dropCone)
-                    .addTemporalMarker(0,()->{
-                        dropCone();
-                    })
-                    .lineToLinearHeading(midWayPose)
-                    .lineToLinearHeading(pickConePose)
-                    .addTemporalMarker(0,()->{
-                        pickCone();
-                    })
-                    .lineToLinearHeading(midWayPose)
-                    .lineToLinearHeading(dropCone)
-                    .addTemporalMarker(0,()->{
-                        dropCone();
-                    })
-                    .build();
-        }
-
-        public void runAuto(){
-            //Write any other actions to take during auto, or any other conditions for maneuvering
-            driveTrain.followTrajectorySequence(trajInitToPickAndDropConeToPark);
-            return;
-        }
-
-        //Write a method which is able to pick the cone depending on your subsystems
-        public void pickCone(){
-
-        }
-
-        //Write a method which is able to drop the cone depending on your subsystems
-        public void dropCone(){
-
-        }
-        /**
-         * Safe method to wait so that stop button is also not missed
-         * @param time time in ms to wait
-         */
-        public void safeWait(double time){
-            ElapsedTime timer = new ElapsedTime(MILLISECONDS);
-            timer.reset();
-            while (!isStopRequested() && timer.time() < time){
-                //autonomousController.runAutoControl();
-                driveTrain.update();
-            }
-        }
-
-        public void loopWait(double time){
-            ElapsedTime timer = new ElapsedTime(MILLISECONDS);
-            timer.reset();
-            while (!isStopRequested() && timer.time() < time){
-                //autonomousController.runAutoControl();
-                driveTrain.update();
-            }
-        }
-
-        public void selectGamePlan() {
-            telemetry.setAutoClear(true);
-            telemetry.addData("Compile time : ", "22:00 :: 1/27/2022");
-
-            //***** Select Alliance ******
-            telemetry.addData("Enter PLaying Alliance :", "(Blue: (X),    Red: (B))");
-            telemetry.update();
-
-            while(!isStopRequested()){
-                if(gamepad1.x){
-                    playingAlliance = PLAYING_ALLIANCE.BLUE_ALLIANCE;
-                    ALLIANCE_FACTOR = -1;
-                    telemetry.addData("Playing Alliance Selected : ", playingAlliance);
-                    break;
-                }
-                if(gamepad1.b){
-                    playingAlliance = PLAYING_ALLIANCE.RED_ALLIANCE;
-                    ALLIANCE_FACTOR = 1;
-                    telemetry.addData("Playing Alliance Selected : ", playingAlliance);
-                    break;
-                }
-                telemetry.update();
-            }
-            telemetry.update();
-            safeWait(200);
-
-            //******select start pose******
-            while(!isStopRequested()){
-                telemetry.addData("Enter a Start Pose:","");
-                telemetry.addData("Blue Left: (X)", "");
-                telemetry.addData("Blue Right: (Y)", "");
-                telemetry.addData("Red Left: (B)", "");
-                telemetry.addData("Red Right: (A)", "");
-                telemetry.addData("Playing Alliance Selected: ", playingAlliance);
-                if(gamepad1.x){
-                    startPosition = START_POSITION.POS1;
-                    telemetry.addData("Start Position: ", startPosition);
-                    break;
-                }
-                if(gamepad1.y){
-                    startPosition = START_POSITION.POS2;
-                    telemetry.addData("Start Position: ", startPosition);
-                    break;
-                }
-                if(gamepad1.b){
-                    startPosition = START_POSITION.POS3;
-                    telemetry.addData("Start Position: ", startPosition);
-                    break;
-                }
-                if(gamepad1.a){
-                    startPosition = START_POSITION.POS4;
-                    telemetry.addData("Start Position: ", startPosition);
-                    break;
-                }
-                telemetry.update();
-            }
-            telemetry.clearAll();
-            telemetry.addData("Playing Alliance Selected : ", playingAlliance);
-            telemetry.addData("StartPose : ", startPosition);
-            telemetry.update();
-            safeWait(200);
-        }
-
-        /**
-         * Method to add debug messages. Update as telemetry.addData.
-         * Use public attributes or methods if needs to be called here.
-         */
-        public void printDebugMessages(){
-            telemetry.setAutoClear(true);
-            telemetry.addData("DEBUG_FLAG is : ", DEBUG_FLAG);
-
-
-            telemetry.addData("Playing Alliance Selected : ", playingAlliance);
-            telemetry.addData("Start Position : ", startPosition);
-            telemetry.addData("Parking Location : ", parkingLocation);
-
-
-            telemetry.addData("Vision.playingAlliance : ", playingAlliance);
-            telemetry.addData("Vision.poseSetInAutonomous : ", poseSetInAutonomous);
-            telemetry.addData("Vision.currentPose : ", currentPose);
-
-            //****** Drive debug ******
-            telemetry.addData("Drive Mode : ", driveTrain.driveMode);
-            telemetry.addData("PoseEstimate :", driveTrain.poseEstimate);
-            //telemetry.addData("Battery Power", driveTrain.getBatteryVoltage(hardwareMap));
-
-            telemetry.addData("Vision detectedLabel", detectedLabel);
-            telemetry.addData("Vision targetZone :", targetZone);
-            telemetry.addData("Vision targetZoneLevel :", targetZoneLevel);
-
-            telemetry.addData("Game Timer : ", gameTimer.time());
-
-            telemetry.update();
-
-        }
-        }
+}
 
