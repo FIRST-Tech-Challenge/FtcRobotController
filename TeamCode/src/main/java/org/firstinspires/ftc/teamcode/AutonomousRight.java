@@ -555,15 +555,8 @@ public class AutonomousRight extends LinearOpMode {
      * Check if robot motors are busy. Return ture if yes, false otherwise.
      */
     private boolean robotIsBusy() {
-        return (FrontRightDrive.isBusy() && FrontLeftDrive.isBusy() && BackLeftDrive.isBusy() && BackRightDrive.isBusy());
-
-        /*
-        boolean r = ((Math.abs(FrontRightDrive.getCurrentPosition() - FrontRightDrive.getTargetPosition()) > 10) &&
-                (Math.abs(FrontLeftDrive.getCurrentPosition() - FrontLeftDrive.getTargetPosition()) > 10) &&
-                (Math.abs(BackLeftDrive.getCurrentPosition() - BackLeftDrive.getTargetPosition()) > 10) &&
-                (Math.abs(BackRightDrive.getCurrentPosition() - BackRightDrive.getTargetPosition()) > 10));
-        return r;
-        */
+        boolean b = FrontRightDrive.isBusy() && FrontLeftDrive.isBusy() && BackLeftDrive.isBusy() && BackRightDrive.isBusy();
+        return b;
     }
 
     /** code for autonomous
@@ -575,8 +568,8 @@ public class AutonomousRight extends LinearOpMode {
      * 6. Move robot to parking area
      */
     private void autonomousCore() {
-        double backgroundColor[] = {1.0, 1.0, 1.0};
-        double sleeveColor[] = {1.0, 1.0, 1.0};
+        double[] backgroundColor = {1.0, 1.0, 1.0};
+        double[] sleeveColor = {1.0, 1.0, 1.0};
         double parkingLocation; // distance between cone loading area to parking area, in inch
 
         clawServo.setPosition(CLAW_CLOSE_POS);
@@ -672,7 +665,7 @@ public class AutonomousRight extends LinearOpMode {
     private double calculateParkingLocation(@NonNull double[] s, @NonNull double[] b) {
         int channel = 0;
         double location;
-        double ratio[] = {s[0]/b[0], s[1]/b[1], s[2]/b[2]};
+        double[] ratio = {s[0]/b[0], s[1]/b[1], s[2]/b[2]};
 
         // find the maximum value in ratio[]
         double maxV = ratio[0];
@@ -714,17 +707,16 @@ public class AutonomousRight extends LinearOpMode {
      */
     private void readColorSensor(@NonNull double[] colorRatio ) {
         //color sensor control
-        int r = 1, g = 1, b = 1, total = 3;
+        int r = colorSensor.red();
+        int g = colorSensor.green();
+        int b = colorSensor.blue();
 
-        r = colorSensor.red();
-        g = colorSensor.green();
-        b = colorSensor.blue();
-
-        total = r + g + b;
-        colorRatio[0] = (double)r / total;
-        colorRatio[1] = (double)g / total;
-        colorRatio[2] = (double)b / total;
-
+        int total = r + g + b;
+        if (0 != total) {
+            colorRatio[0] = (double) r / total;
+            colorRatio[1] = (double) g / total;
+            colorRatio[2] = (double) b / total;
+        }
         telemetry.addLine()
                 .addData("Red  ", colorSensor.red())
                 .addData("Green", colorSensor.green())
