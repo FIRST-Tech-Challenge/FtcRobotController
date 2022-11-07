@@ -23,8 +23,8 @@ public class CompetitionTeleop2023 extends OpMode {
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
 
     private double PowerFactor = 1.0f; //Max power available for wheels
-    private double maxEncode = 2175; //4200 for higher, 2175 for lower-- Max so arm won't overextend
-    private double minEncode = 100; //Minimum so string on arm lift doesn't break
+    private double maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend
+    private double minEncode = 150; //Minimum so string on arm lift doesn't break
 
      boolean changed = false; //Used for the gripper button code
      boolean changed2 = false; //Used for the code that allows the driver to alter speed
@@ -130,7 +130,7 @@ public class CompetitionTeleop2023 extends OpMode {
         }
         //Allows the drivers to use a single button to open and close gripper
         if (gamepad2.a && !changed) {
-            if (gripper.getPosition() == 0) gripper.setPosition(.4);
+            if (gripper.getPosition() == 0) gripper.setPosition(.6);
             else gripper.setPosition(0);
             changed = true;
         } else if (!gamepad2.a) changed = false;
