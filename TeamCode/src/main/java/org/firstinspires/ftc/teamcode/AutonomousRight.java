@@ -104,9 +104,9 @@ public class AutonomousRight extends LinearOpMode {
     static final double HIGH_SPEED_POWER = 0.6;  // used to adjust driving sensitivity.
     static final double SLOW_DOWN_POWER = 0.2;
     static final double CORRECTION_POWER = 0.1;
-    static final double MIN_ROTATE_POWER = 0.11;
-    static final double AUTO_DRIVE_POWER = 0.5; // used for auto driving
-    static final double AUTO_ROTATE_POWER = 0.6; // used for auto driving
+    static final double MIN_ROTATE_POWER = 0.12;
+    static final double AUTO_DRIVE_POWER = 0.6; // used for auto driving
+    static final double AUTO_ROTATE_POWER = 0.9; // used for auto driving
 
     // slider motor variables
     private DcMotor RightSliderMotor = null;
@@ -223,7 +223,7 @@ public class AutonomousRight extends LinearOpMode {
         // Set PID proportional value to start reducing power at about 50 degrees of rotation.
         // P by itself may stall before turn completed so we add a bit of I (integral) which
         // causes the PID controller to gently increase power if the turn is not completed.
-        pidRotate = new PIDController(.009, .0, 0);
+        pidRotate = new PIDController(.008, .0, 0);
 
         // Set PID proportional value to produce non-zero correction value when robot veers off
         // straight line. P value controls how sensitive the correction is.
@@ -321,14 +321,22 @@ public class AutonomousRight extends LinearOpMode {
     private void robotRunToPosition(double targetDistance, boolean isBackForth) {
         int countsPerInch = isBackForth? COUNTS_PER_INCH_DRIVE : COUNTS_PER_INCH_STRAFE;
         int targetPosition = (int)(targetDistance * countsPerInch);
-        setTargetPositionsToWheels(targetPosition, isBackForth);
-        robotRunWithPositionModeOn(true); // turn on encoder mode,and reset encoders
         int tSign = (int)Math.copySign(1, targetDistance);
+        double drivePower = AUTO_DRIVE_POWER;
+        setTargetPositionsToWheels(targetPosition, isBackForth);
+        Logging.log("Autonomous - Target Position = %d", targetPosition);
+        robotRunWithPositionModeOn(true); // turn on encoder mode,and reset encoders
+        Logging.log("Autonomous - reset encoders to zero.");
         if (Math.abs(targetDistance) < 12.0) {
-            tSign = 0; // disable PID for short distance moving.
+            drivePower = SLOW_DOWN_POWER; // low speed for short moving
         }
-        robotDriveWithPIDControl(AUTO_DRIVE_POWER, tSign, isBackForth);
+        Logging.log("Autonomous - PID = %d, power = %.2f", tSign, drivePower);
+        robotDriveWithPIDControl(drivePower, tSign, isBackForth);
         robotRunWithPositionModeOn(false); // turn off encoder mode
+        Logging.log("Autonomous - FL Current Position = %d", FrontLeftDrive.getCurrentPosition());
+        Logging.log("Autonomous - FR Current Position = %d", FrontRightDrive.getCurrentPosition());
+        Logging.log("Autonomous - BL Current Position = %d", BackLeftDrive.getCurrentPosition());
+        Logging.log("Autonomous - BR Current Position = %d", BackRightDrive.getCurrentPosition());
     }
 
     /**
@@ -432,6 +440,7 @@ public class AutonomousRight extends LinearOpMode {
      * @param degrees Degrees to turn, + is left - is right
      */
     private void rotate(double degrees, double power) {
+        robotRunWithPositionModeOn(false); // make sure it is the mode of Run without encorder
         resetAngle();
 
         // if degrees > 359 we cap at 359 with same sign as original degrees.
@@ -496,6 +505,24 @@ public class AutonomousRight extends LinearOpMode {
     }
 
     /**
+     * Set front motors power.
+     * @param p the power set to front left right motor and front right motor
+     */
+    private void frontMotorSetPower(double p) {
+        FrontRightDrive.setPower(p);
+        FrontLeftDrive.setPower(p);
+    }
+
+    /**
+     * Set front motors power.
+     * @param p the power set to back left right motor and back right motor
+     */
+    private void backMotorSetPower(double p) {
+        BackRightDrive.setPower(p);
+        BackLeftDrive.setPower(p);
+    }
+
+    /**
      * Set motors power and drive or strafe robot straightly with run_to_position mode by PID control.
      * @param p the power set to the robot motors
      * @param targetSign: Input value for the target distance sign to indicate drive directions. Disable PID if it is zero.
@@ -505,20 +532,20 @@ public class AutonomousRight extends LinearOpMode {
         double curTime = runtime.seconds();
         correction = 0.0;
         setPowerToWheels(p); // p is always positive for RUN_TO POSITION mode.
+        sleep(100); // let motors starting moving before checking isBusy.
         while(robotIsBusy() && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
-            if (0 == targetSign) { // no pid if sign = 0;
+            if (0 != targetSign) { // no pid if sign = 0;
                 correction = pidDrive.performPID(getAngle());
             }
+            Logging.log("Autonomous -power = %.2f, correction = %.2f, global angle = %.3f", p, correction, globalAngle);
 
             if (isBF) { // left motors have same power
                 leftMotorSetPower(p - correction * targetSign);
                 rightMotorSetPower(p + correction * targetSign);
             }
             else { // front motors have same power
-                FrontLeftDrive.setPower(p - correction * targetSign);
-                FrontRightDrive.setPower(p - correction * targetSign);
-                BackLeftDrive.setPower(p + correction * targetSign);
-                BackRightDrive.setPower(p + correction * targetSign);
+                frontMotorSetPower(p - correction * targetSign);
+                backMotorSetPower(p + correction * targetSign);
             }
         }
         setPowerToWheels(0.0); //stop moving
@@ -537,8 +564,6 @@ public class AutonomousRight extends LinearOpMode {
                 (Math.abs(BackRightDrive.getCurrentPosition() - BackRightDrive.getTargetPosition()) > 10));
         return r;
         */
-
-
     }
 
     /** code for autonomous
@@ -574,8 +599,7 @@ public class AutonomousRight extends LinearOpMode {
         robotRunToPosition(-4.0, true); // throw off sleeve cone
 
         parkingLocation = calculateParkingLocation(sleeveColor, backgroundColor);
-        parkingLocation = 36.0; // just for testing.
-        Logging.log(String.format("Autonomous - parking lot aisle location: %.2f", parkingLocation));
+        Logging.log("Autonomous - parking lot aisle location: %.2f", parkingLocation);
 
         robotRunToPosition(-12.0, false); // strafe robot half mat to left side
         waitSliderRun(); // make sure slider has been lifted.
@@ -590,16 +614,16 @@ public class AutonomousRight extends LinearOpMode {
             // right turn 90 degree
             Logging.log("Autonomous - loop index: %d ", autoLoop);
             Orientation imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            Logging.log(String.format("Autonomous - imu angle before turn: %.2f", imuAngles.firstAngle));
+            Logging.log("Autonomous - imu angle before right turn: %.2f", imuAngles.firstAngle);
             rotate(-AngleUnit.DEGREES.normalize(imuAngles.firstAngle) - 90, AUTO_ROTATE_POWER);
-            Logging.log(String.format("Autonomous - imu turn: %.2f degree", -AngleUnit.DEGREES.normalize(imuAngles.firstAngle) - 90));
-            Logging.log(String.format("Autonomous - imu angle after turn: %.2f", lastAngles.firstAngle));
+            Logging.log("Autonomous - imu turn: %.2f degree", -AngleUnit.DEGREES.normalize(imuAngles.firstAngle) - 90);
+            Logging.log("Autonomous - imu angle after turn: %.2f", lastAngles.firstAngle);
 
             // drive robot to loading area
             robotRunToPosition(38.0, true);
             autoLoadCone(coneStack5th - coneLoadStackGap * autoLoop);
             imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            Logging.log(String.format("Autonomous - imu angle after load cone: %.2f", imuAngles.firstAngle));
+            Logging.log("Autonomous - imu angle after load cone: %.2f", imuAngles.firstAngle);
             setSliderPosition(WALL_POSITION);
             waitSliderRun(); // make sure slider has been lifted before moving out cone stack.
 
@@ -614,9 +638,9 @@ public class AutonomousRight extends LinearOpMode {
 
             // left turn 90 degree
             imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            Logging.log(String.format("Autonomous - imu angle before turn: %.2f", imuAngles.firstAngle));
+            Logging.log("Autonomous - imu angle before left turn: %.2f", imuAngles.firstAngle);
             rotate(-AngleUnit.DEGREES.normalize(imuAngles.firstAngle), AUTO_ROTATE_POWER); // turn robot -90 degree to right
-            Logging.log(String.format("Autonomous - imu angle after turn: %.2f", lastAngles.firstAngle));
+            Logging.log("Autonomous - imu angle after turn: %.2f", lastAngles.firstAngle);
 
             waitSliderRun(); // make sure slider has been lifted
             Logging.log("Autonomous - slider has lifted to high junction.");
@@ -624,16 +648,16 @@ public class AutonomousRight extends LinearOpMode {
             autoUnloadCone();
             Logging.log("Autonomous - %d cone has been unloaded.", autoLoop + 2);
             imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            Logging.log(String.format("Autonomous - imu angle after unload cone: %.2f", imuAngles.firstAngle));
+            Logging.log("Autonomous - imu angle after unload cone: %.2f", imuAngles.firstAngle);
             setSliderPosition(WALL_POSITION);
         }
         Logging.log("Autonomous -  latest cone has been unloaded.");
 
         // drive to final parking lot
         robotRunToPosition(parkingLocation, false); // strafe robot to parking
-        Logging.log(String.format("Autonomous - Arrived parking lot aisle: %.2f", parkingLocation));
+        Logging.log("Autonomous - Arrived parking lot aisle: %.2f", parkingLocation);
         Orientation imuAngles1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        Logging.log(String.format("Autonomous - imu angle is: %.2f", imuAngles1.firstAngle));
+        Logging.log("Autonomous - imu angle is: %.2f", imuAngles1.firstAngle);
 
         robotRunToPosition(-24.0, true); // drive robot to parking mat
         Logging.log("Autonomous -  finish parking.");
@@ -706,8 +730,8 @@ public class AutonomousRight extends LinearOpMode {
                 .addData("Green", colorSensor.green())
                 .addData("Blue ", colorSensor.blue());
         telemetry.addData("color", "rgb ratio, %.2f, %.2f, %.2f", colorRatio[0], colorRatio[1], colorRatio[2]);
-        Logging.log(String.format("Autonomous - Red: %d, green: %d, blue: %d", colorSensor.red(), colorSensor.green(), colorSensor.blue()));
-        Logging.log(String.format("Autonomous - Red: %.2f, green: %.2f, blue: %.2f", colorRatio[0], colorRatio[1], colorRatio[2]));
+        Logging.log("Autonomous - Red: %d, green: %d, blue: %d", colorSensor.red(), colorSensor.green(), colorSensor.blue());
+        Logging.log("Autonomous - Red: %.2f, green: %.2f, blue: %.2f", colorRatio[0], colorRatio[1], colorRatio[2]);
     }
 
     /**
