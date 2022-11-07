@@ -56,7 +56,7 @@ public class SignalDetection extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         /* Create a monochrome image with orange areas white and non-orange areas black
         An area is considered orange when it's HSV lies between the lower and upper HSV threshold */
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
         // Orange
 //        Scalar lowHSV = new Scalar(5, 100, 100); //Lower HSV
@@ -67,8 +67,21 @@ public class SignalDetection extends OpenCvPipeline {
 //        Scalar highHSV = new Scalar(160,255,255);
 
         // Green
-        Scalar lowHSV = new Scalar(50,100,100);
-        Scalar highHSV = new Scalar(100,255,255);
+//        Scalar lowHSV = new Scalar(50,100,100);
+//        Scalar highHSV = new Scalar(100,255,255);
+
+        // Orange YCrCb
+        Scalar lowHSV = new Scalar(0, 140, 0);
+        Scalar highHSV = new Scalar(255, 200, 100);
+
+        // Purple YCrCb
+//        Scalar lowHSV = new Scalar(0, 140, 128);
+//        Scalar highHSV = new Scalar(255, 180, 255);
+
+        // Green YCrCb
+//        Scalar lowHSV = new Scalar(0, 0, 0);
+//        Scalar highHSV = new Scalar(255, 110, 128);
+
         Core.inRange(mat, lowHSV, highHSV, mat); //Update mat to show black and white areas
 
         // Create two submats to read data from
