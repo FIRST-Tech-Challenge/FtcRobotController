@@ -16,16 +16,24 @@ import java.util.List;
 public class Elevator {
 
     // Elevator Constants
+    final boolean DROP_ON_HOME = true;
     final double HOME_POWER = -0.1;
 
-    final int ELEVATOR_MIN    = 0;
-    final int ELEVATOR_HOME   = 40;
-    final int ELEVATOR_GROUND = 160;
-    final int ELEVATOR_STACK_TOP = 200;
-    final int ELEVATOR_LOW    = 460;
-    final int ELEVATOR_MID    = 710;
-    final int ELEVATOR_HIGH   = 1000;
-    final int ELEVATOR_MAX    = 1100;
+    final static int ELEVATOR_MIN    = 0;
+    final static  int ELEVATOR_HOME   = 40;
+    final static  int ELEVATOR_GROUND = 160;
+    final static  int ELEVATOR_STACK_TOP = 200;
+    final static  int ELEVATOR_LOW    = 460;
+    final static  int ELEVATOR_MID    = 710;
+    final static  int ELEVATOR_HIGH   = 1000;
+    final static  int ELEVATOR_MAX    = 1100;
+
+    final static  int ELEVATOR_TOP_LEVEL  = 4;
+    final static  int elevatorLevel[] = { Elevator.ELEVATOR_HOME,
+            Elevator.ELEVATOR_STACK_TOP,
+            Elevator.ELEVATOR_LOW,
+            Elevator.ELEVATOR_MID,
+            Elevator.ELEVATOR_HIGH  };
 
     final int    DEAD_BAND    = 5;
     final double FAST_LIFT    =  0.5;
@@ -64,6 +72,7 @@ public class Elevator {
     private LinearOpMode myOpMode = null;
 
     // elevator state variables
+    private int     currentElevatorLevel = 0;
     private ElevatorState elevatorState = IDLE;
     private boolean liftActive          = false;
     private boolean liftInPosition      = false;
@@ -72,15 +81,15 @@ public class Elevator {
     private int     liftTargetPosition  = 0;
     private int     liftLastPosition    = 0;
 
-    double pendingDelay;
-    int    pendingLiftPosition;
-    ElevatorState pendingState;
-    int requestedPosition;
+    private boolean newLevelReqested = false;
+    private int     requestedPosition;
+    private double  pendingDelay;
+    private int     pendingLiftPosition;
+    private ElevatorState pendingState;
 
     private double  wristOffset = 0;
     private double  wristPosition = 0;
     private double  wristAngle = 0;
-
     private double  handPosition = 0;
 
     // Elevator Constructor.  Call once opmode is running.
@@ -100,6 +109,8 @@ public class Elevator {
         liftSlave.setDirection(DcMotorSimple.Direction.REVERSE);
         setWristPosition(WRIST_HOME_POSITION);
         setHandPosition(HAND_HOME_POSITION);
+        currentElevatorLevel = 0;
+        newLevelReqested = false;
     }
 
     // ======  Elevator State Machine
@@ -123,7 +134,9 @@ public class Elevator {
 
             case HOME_OPEN: {
                if  (newLiftPosition()) {
-                   setHandDelayMove(HAND_CLOSE, 0.3, requestedPosition, MOVING_CLOSED);
+//                   setHandDelayMove(HAND_CLOSE, 0.3, requestedPosition, MOVING_CLOSED);  close hand before lifting.  Does not work for stack
+                   setLiftTargetPosition(requestedPosition);
+                   setState(MOVING_OPEN);
                } else if (myOpMode.gamepad2.square) {
                    setHandDelayMove(HAND_CLOSE, 0.3, (liftPosition + 100), HOME_CLOSED);
                }
@@ -144,6 +157,7 @@ public class Elevator {
             case GOING_HOME_OPEN: {
                 if (liftInPosition) {
                     setHandPosition(HAND_OPEN);
+                    currentElevatorLevel = 0;  // Se to home level.
                     setState(HOME_OPEN);
                 }
                 break;
@@ -162,6 +176,8 @@ public class Elevator {
             case MOVING_OPEN: {
                 if (liftInPosition) {
                     setState(IN_POSITION_OPEN);
+                } else if (newLiftPosition()) {
+                    setLiftTargetPosition(requestedPosition);
                 }
                 break;
             }
@@ -172,6 +188,8 @@ public class Elevator {
                  } else if (myOpMode.gamepad2.square) {
                      setHandPosition(HAND_CLOSE);
                      setState(IN_POSITION_CLOSED);
+                 }  else if (newLiftPosition()) {
+                     setLiftTargetPosition(requestedPosition);
                  }
 
                 break;
@@ -180,6 +198,8 @@ public class Elevator {
             case MOVING_CLOSED: {
                 if (liftInPosition) {
                     setState(IN_POSITION_CLOSED);
+                } else if (newLiftPosition()) {
+                    setLiftTargetPosition(requestedPosition);
                 }
                 break;
             }
@@ -192,8 +212,13 @@ public class Elevator {
                      setLiftTargetPosition(requestedPosition);
                      setState(MOVING_CLOSED);
                  } else if (myOpMode.gamepad2.left_bumper) {
-                     setLiftTargetPosition(ELEVATOR_HOME);
-                     setState(HOME_CLOSED);
+                     if (DROP_ON_HOME) {
+                         setHandDelayMove(HAND_READY, 0.1, ELEVATOR_HOME, GOING_HOME_OPEN);
+                     } else {
+                         currentElevatorLevel = 0;  // Se to home level.
+                         setLiftTargetPosition(ELEVATOR_HOME);
+                         setState(HOME_CLOSED);
+                     }
                  }
                  break;
             }
@@ -205,28 +230,7 @@ public class Elevator {
     ----------PILOT/CO-PILOT-------------
     ----------ELEVATOR CONTROLS----------
      */
-    public boolean newLiftPosition () {
-        int newPosition = 0;
-        // Select one of the 4 preset heights
-        if (myOpMode.gamepad2.dpad_down) {
-            newPosition = ELEVATOR_LOW;
-        } else if (myOpMode.gamepad2.dpad_left) {
-           newPosition = ELEVATOR_MID;
-        } else if (myOpMode.gamepad2.dpad_up) {
-            newPosition = ELEVATOR_HIGH;
-        } else if (myOpMode.gamepad2.dpad_right) {
-            newPosition = ELEVATOR_GROUND;
-        } else if (myOpMode.gamepad2.triangle) {
-            newPosition = ELEVATOR_STACK_TOP;
-        }
 
-        if(newPosition != 0) {
-            requestedPosition = newPosition;
-            return true;
-        } else {
-            return false;
-        }
-    }
     /***
      * This is the normal way to run the Elevator state machine.
      * Only use the parameter form if you want to force a state change
@@ -301,6 +305,8 @@ public class Elevator {
 
             // Display key arm data
             myOpMode.telemetry.addData("arm position", liftPosition);
+            myOpMode.telemetry.addData("arm setpoint", liftTargetPosition);
+            myOpMode.telemetry.addData("armLevel",     currentElevatorLevel);
             myOpMode.telemetry.addData("arm angle", liftAngle);
             myOpMode.telemetry.addData("servo position", wristPosition);
         }
@@ -337,12 +343,46 @@ public class Elevator {
         myOpMode.sleep(50);
         setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         setLiftTargetPosition(0);
+        currentElevatorLevel = 0;
+        newLevelReqested = false;
         setHandPosition(HAND_OPEN);
         enableLift();  // Start closed loop control
     }
 
+    private boolean newLiftPosition() {
+        if (newLevelReqested) {
+            newLevelReqested = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     // ----- Elevator controls
+    public void levelUp() {
+        // Move up if not at top.
+        if (currentElevatorLevel < ELEVATOR_TOP_LEVEL) {
+            // look to see if we are at home, and if hand is open or closed
+            if ((currentElevatorLevel == 0) && (handPosition == HAND_CLOSE)) {
+                // Jump past Top of Stack
+                currentElevatorLevel = 2;
+            } else {
+                currentElevatorLevel++;
+            }
+        }
+        requestedPosition = elevatorLevel[currentElevatorLevel];
+        newLevelReqested = true;
+    }
+
+    public void levelDown() {
+        // Move down if not at bottom
+        if (currentElevatorLevel > 0) {
+            currentElevatorLevel--;
+        }
+        requestedPosition = elevatorLevel[currentElevatorLevel];
+        newLevelReqested = true;
+    }
+
     public void enableLift() {
         liftActive = true;
     }

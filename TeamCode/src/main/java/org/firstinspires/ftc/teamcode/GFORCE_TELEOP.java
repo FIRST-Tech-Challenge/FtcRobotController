@@ -37,6 +37,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
     double  headingSetpoint = 0;
     boolean lastFlip = false;
     boolean flip = false;
+    boolean lastStepUp = false;
+    boolean lastStepDown = false;
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as GFORCE_KiwiDrive's heading controller
@@ -187,7 +189,22 @@ public class GFORCE_TELEOP extends LinearOpMode {
             }
 
             //-----------CO-PILOT--------------
-            // Lower the elevator to the base
+
+            // Elevator lift position:
+            boolean stepUp = gamepad2.dpad_up;
+            boolean stepDown = gamepad2.dpad_down;
+            boolean newPosition = false;
+
+            if (stepUp && !lastStepUp) {
+                elevator.levelUp();
+            }
+            if (stepDown && !lastStepDown) {
+                elevator.levelDown();
+            }
+
+            lastStepUp   = stepUp;
+            lastStepDown = stepDown;
+
             // Put the hand in safe position
             flip = (gamepad1.right_bumper || gamepad2.right_bumper);
             if (flip && !lastFlip) {
