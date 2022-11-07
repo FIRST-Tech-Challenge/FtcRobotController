@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.config;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.CRServoImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,6 +17,7 @@ public class Hardware2 {
     public CRServo intakeServo = null;
 
     public boolean runThisWithEncoder = true;
+    public BNO055IMU imu;
 
     // Other variable names
     HardwareMap hwMap;
@@ -58,7 +59,7 @@ public class Hardware2 {
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        verticalLiftMotor.setDirection(DcMotor.Direction.FORWARD);
+        verticalLiftMotor.setDirection(DcMotor.Direction.REVERSE);
         intakeServo.resetDeviceConfigurationForOpMode();
 
 
