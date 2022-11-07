@@ -21,7 +21,7 @@ public class BlueRightAutonomousCompetition extends AprilTagDetect {
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         driveWithIMU(0.0, 0.25, 0.0);
-        sleep(1500);
+        sleep(1400);
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         driveWithIMU(0.0, 0.0, 0.0);
@@ -29,7 +29,7 @@ public class BlueRightAutonomousCompetition extends AprilTagDetect {
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         driveWithIMU(0.0, -0.25, 0.0);
-        sleep(1500);
+        sleep(1350);
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         driveWithIMU(0.0, 0.0, 0.0);
@@ -47,7 +47,7 @@ public class BlueRightAutonomousCompetition extends AprilTagDetect {
             case 0:
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 driveWithIMU(0.0, -0.25, 0.0);
-                sleep(1400);
+                sleep(1500);
 
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 driveWithIMU(0.0, 0.0, 0.0);
@@ -59,7 +59,7 @@ public class BlueRightAutonomousCompetition extends AprilTagDetect {
             case 2:
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 driveWithIMU(0.0, 0.25, 0.0);
-                sleep(1400);
+                sleep(1450);
 
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 driveWithIMU(0.0, 0.0, 0.0);

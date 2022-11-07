@@ -31,7 +31,7 @@ public class BlueLeftAutonomousCompetition extends AprilTagDetect {
             case 0:
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 driveWithIMU(0.0, -0.25, 0.0);
-                sleep(1400);
+                sleep(1550);
 
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 driveWithIMU(0.0, 0.0, 0.0);

@@ -16,7 +16,7 @@ public class Constants {
     public static final double VERTICAL_SLIDE_P_CONSTANT = 0.001;
     public static final double VERTICAL_SLIDE_DEADZONE = 0.1;
 
-    public static final double DRIVE_SPEED_MULTIPLIER = 0.35;
+    public static final double DRIVE_SPEED_MULTIPLIER = 0.55;
     public static final int DRIVE_DEADZONE_DEGREES = 10;
 
     public static final double TURNTABLE_DEADZONE = 0.1;

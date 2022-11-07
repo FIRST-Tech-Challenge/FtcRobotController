@@ -6,9 +6,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
     double tPower;
 
     public void driveChassisWithController() {
-        xPower = gamepad1.left_stick_x * (1 - gamepad1.right_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
-        yPower = gamepad1.left_stick_y * (1 - gamepad1.right_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
-        tPower = gamepad1.right_stick_x * (1 - gamepad1.right_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
+        xPower = gamepad1.left_stick_x * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
+        yPower = gamepad1.left_stick_y * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
+        tPower = gamepad1.right_stick_x * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
 
         // atan2 determines angle between the two sticks
         // case for driving the robot left and right
@@ -34,22 +34,15 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveSlidesWithController() {
-        if (gamepad2.dpad_up) {
-            driveSlides(Constants.VERTICAL_SLIDE_HIGH_JUNCTION);
-        } else if (gamepad2.dpad_right) {
-            driveSlides(Constants.VERTICAL_SLIDE_MEDIUM_JUNCTION);
-        } else if (gamepad2.dpad_left) {
-            driveSlides(Constants.VERTICAL_SLIDE_LOW_JUNCTION);
-        } else if (gamepad2.dpad_down) {
-            driveSlides(Constants.VERTICAL_SLIDE_BOTTOM);
-        } else if (Math.abs(gamepad2.left_stick_y) > Constants.VERTICAL_SLIDE_DEADZONE) {
-            if (motorLVSlides.getTargetPosition() < Constants.VERTICAL_SLIDE_BOTTOM) {
-                driveSlides(Constants.VERTICAL_SLIDE_BOTTOM);
-            } else if (motorLVSlides.getTargetPosition() > Constants.VERTICAL_SLIDE_TOP) {
-                driveSlides(Constants.VERTICAL_SLIDE_TOP);
-            } else {
-                driveSlides(motorLVSlides.getTargetPosition() + (int) (-gamepad2.left_stick_y * 240));
-            }
+        motorLVSlides.setPower(-gamepad2.left_stick_y);
+        motorRVSlides.setPower(-gamepad2.left_stick_y);
+
+        if (motorLVSlides.getCurrentPosition() < 0) {
+            motorLVSlides.setPower(0.5);
+            motorRVSlides.setPower(0.5);
+        } else if (motorLVSlides.getCurrentPosition() > 9600) {
+            motorLVSlides.setPower(-0.5);
+            motorRVSlides.setPower(-0.5);
         }
     }
 

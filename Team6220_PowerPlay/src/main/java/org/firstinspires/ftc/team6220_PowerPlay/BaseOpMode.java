@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -32,10 +33,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
 
-    // doubles for linear slide method
-    private double error;
-    private double ySlidePower;
-
     // initializes the motors, servos, and IMUs
     public void initialize() {
 
@@ -53,7 +50,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
         motorLVSlides.setDirection(DcMotor.Direction.FORWARD);
-        motorRVSlides.setDirection(DcMotor.Direction.REVERSE);
+        motorRVSlides.setDirection(DcMotor.Direction.FORWARD);
         motorTurntable.setDirection(DcMotor.Direction.FORWARD);
 
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -148,11 +145,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // this method will allow the slides to move upwards, downwards, outwards, and inwards given a specified x target position and y target position
     public void driveSlides(/*int xTargetPosition,*/ int yTargetPosition) {
-        error = yTargetPosition - motorLVSlides.getCurrentPosition();
-        ySlidePower = Math.max(error * Constants.VERTICAL_SLIDE_P_CONSTANT, 0.25);
 
-        motorLVSlides.setPower(ySlidePower);
-        motorRVSlides.setPower(ySlidePower);
     }
 
     // this method will allow the turntable to turn clockwise or counterclockwise given a specified power and position
