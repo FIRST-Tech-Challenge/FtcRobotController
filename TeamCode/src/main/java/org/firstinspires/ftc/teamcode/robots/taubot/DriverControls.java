@@ -60,7 +60,7 @@ public class DriverControls {
 
         //manual override of drivetrain
         if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
-            robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x);
+            robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y,  gamepad1.left_stick_x);
         else {
             robot.driveTrain.ManualDriveOff();
         }

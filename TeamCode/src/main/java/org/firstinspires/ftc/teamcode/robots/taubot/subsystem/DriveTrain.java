@@ -82,8 +82,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //devices ---------------------------------------------------------
     List<DcMotorEx> motors;
-    public DcMotorEx leftMotor = null;
-    public DcMotorEx rightMotor = null;
+    public DcMotorEx leftMotorNew = null;
+    public DcMotorEx rightMotorNew = null;
 
     private BNO055IMU imu = null;
     private VoltageSensor batteryVoltageSensor;
@@ -125,14 +125,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         if (simulated) {
 
-            leftMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
-            rightMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
-            motors = Arrays.asList(leftMotor, rightMotor);
+            leftMotorNew = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+            rightMotorNew = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+            motors = Arrays.asList(leftMotorNew, rightMotorNew);
         } else {
 
-            leftMotor = hardwareMap.get(DcMotorEx.class, "motorLeft");
-            rightMotor = hardwareMap.get(DcMotorEx.class, "motorRight");
-            motors = Arrays.asList(leftMotor, rightMotor);
+            leftMotorNew = hardwareMap.get(DcMotorEx.class, "motorLeftNew");
+            rightMotorNew = hardwareMap.get(DcMotorEx.class, "motorRightNew");
+            motors = Arrays.asList(leftMotorNew, rightMotorNew);
         }
             for (DcMotorEx motor : motors) {
                 MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -146,7 +146,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 compensatedBatteryVoltage = batteryVoltageSensor.getVoltage();
             }
 
-            leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftMotorNew.setDirection(DcMotorSimple.Direction.REVERSE);
 
                 imu = hardwareMap.get(BNO055IMU.class, "baseIMU");
                 BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -210,8 +210,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         //updatePose(); //David's update
         // sensor reading
 
-        leftVelocity = diffEncoderTicksToInches(leftMotor.getVelocity());
-        rightVelocity = diffEncoderTicksToInches(rightMotor.getVelocity());
+        //leftVelocity = diffEncoderTicksToInches(leftMotorNew.getVelocity());
+        //rightVelocity = diffEncoderTicksToInches(rightMotorNew.getVelocity());
 
         if (simulated) {
             double dt = loopTime / 1e9;
@@ -219,11 +219,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             rightPosition += rightVelocity * dt;
 
         } else {
-            leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
-            rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
+            leftPosition = diffEncoderTicksToInches(leftMotorNew.getCurrentPosition() - leftRelOffset);
+            rightPosition = diffEncoderTicksToInches(rightMotorNew.getCurrentPosition() - rightRelOffset);
         }
 
-        Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.RADIANS);
+        Orientation orientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         if (!imuOffsetsInitialized && imu.isGyroCalibrated()) {
             headingOffset = orientation.firstAngle;
             rollOffset = wrapAngleRad(orientation.secondAngle);
@@ -233,10 +233,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         }
 
         rawHeading = orientation.firstAngle;
-<<<<<<< HEAD
-=======
 
->>>>>>> parent of 2e8a0e6 (update angle code)
         heading = orientation.firstAngle - headingOffset;
 
         roll = orientation.secondAngle - rollOffset;
@@ -261,14 +258,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             //driveToNextTarget.execute();
         }
 
-        if (useMotorPowers) {
-            leftMotor.setPower(leftPower);
-            rightMotor.setPower(rightPower);
 
-        } else {
-            //leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
-            //rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
-        }
+        leftMotorNew.setPower(leftPower);
+            rightMotorNew.setPower(rightPower);
+
+       /* } else {
+            //leftMotorNew.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
+            //rightMotorNew.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
+        }*/
     }
 
     @Override
@@ -325,10 +322,13 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             telemetryMap.put("drive velocity", driveVelocity.toString());
             telemetryMap.put("last drive velocity", lastDriveVelocity.toString());
 
+            telemetryMap.put("left motor power", leftPower);
+            telemetryMap.put("right motor power", rightPower);
+
             telemetryMap.put("loop time", loopTime / 1e9);
 
             if (!simulated) {
-                PIDFCoefficients velocityCoefficients = leftMotor
+                PIDFCoefficients velocityCoefficients = leftMotorNew
                         .getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
                 telemetryMap.put("measured drivetrain PID coeffs", String.format("(p: %f, i: %f, d: %f)",
                         velocityCoefficients.p, velocityCoefficients.i, velocityCoefficients.d));
@@ -450,8 +450,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //reset the relative position to zeros
     private void resetRelPos(){
-        leftRelOffset = leftMotor.getCurrentPosition();
-        rightRelOffset = rightMotor.getCurrentPosition();
+        leftRelOffset = leftMotorNew.getCurrentPosition();
+        rightRelOffset = rightMotorNew.getCurrentPosition();
         leftPosition = 0;
         rightPosition = 0;
     }

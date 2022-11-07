@@ -119,7 +119,7 @@ public class Robot implements Subsystem {
         for (LynxModule module : hubs)
             module.clearBulkCache();
 
-        articulate(articulation);
+        //articulate(articulation);
 
         //update subsystems
         for(int i = 0; i < subsystems.length; i++) {
