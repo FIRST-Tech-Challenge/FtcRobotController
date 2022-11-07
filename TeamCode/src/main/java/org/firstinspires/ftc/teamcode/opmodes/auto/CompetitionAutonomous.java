@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
@@ -55,6 +56,8 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
     protected TeamColor teamColor;
     protected TeamSide teamSide;
     private int sign;
+    private double nowTime;
+    private ElapsedTime time;
     /**
      * Initializes State Machine
      */
@@ -62,6 +65,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         super.init();
         this.teamColor = teamColor;
         this.teamSide = teamSide;
+        time = new ElapsedTime();
         sign = teamSide == TeamSide.LEFT ? -1: 1;
         startPosition = From.START;
         newState(State.IDENTIFY_TARGET);
@@ -97,12 +101,16 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 break;
             case DRIVE_TO_JUNCTION:
                 if (drive_to_junction()) {
+                    nowTime = time.seconds();
                     newState(State.ALIGN_WITH_POLE);
                 }
                 break;
             case ALIGN_WITH_POLE:
                 if (align(PixyCam.YELLOW, POLE_WIDTH)) {
                     newState(State.PLACE_CONE);
+                }
+                if((time.seconds() - nowTime) >= 2){
+                    newState(State.REVERSE_JUNCTION);
                 }
                 break;
             case PLACE_CONE:
@@ -201,13 +209,15 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         }
         if (step == 1) {
             if (revertArm(0.2)) {
-                step = 0;
-                return true;
+                step++;
             }
         }
 
         if(step == 2){
-            if(driveSystem.turnAbsolute(0*sign, 0.5));
+            if(driveSystem.turnAbsolute(0*sign, 0.5)){
+                step = 0;
+                return true;
+            }
         }
         return false;
     }

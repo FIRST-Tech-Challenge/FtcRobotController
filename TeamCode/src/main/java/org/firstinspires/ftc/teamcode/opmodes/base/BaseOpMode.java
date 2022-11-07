@@ -91,8 +91,9 @@ public abstract class BaseOpMode extends OpMode {
                 step++;
             }
         }
-        if(step == 1){
+        if(step == 0){
             if(alignDistance(colorSignature, desiredWidth)){
+                step = 0;
                 return true;
             }
         }

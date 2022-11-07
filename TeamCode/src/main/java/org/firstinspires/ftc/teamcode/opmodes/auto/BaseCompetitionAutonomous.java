@@ -48,9 +48,7 @@ public class BaseCompetitionAutonomous extends BaseOpMode {
         telemetry.addData("heading", driveSystem.imuSystem.getHeading());
         telemetry.update();
 
-        if (teamAsset == null) {
-            identifySleeve();
-        }
+        identifySleeve();
 
     }
 
@@ -72,13 +70,12 @@ public class BaseCompetitionAutonomous extends BaseOpMode {
         // Execute state machine
         switch (mCurrentState) {
             case IDENTIFY_TARGET:
+                telemetry.addData("team asset ", teamAsset.toString());
                 if (teamAsset == null) {
                     //drive forward slowly/10 inches and identify again
                     if (driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.4)) {
                         currentPos += 100;
                         identifySleeve();
-                    }
-                    if(teamAsset == null){
                         teamAsset = Sleeve.BRIAN;
                     }
                     telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
