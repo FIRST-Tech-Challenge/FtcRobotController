@@ -81,6 +81,9 @@ public class GFORCE_TELEOP extends LinearOpMode {
             elevator.runStateMachine();
             telemetry.update();
         }
+
+        // Lift arm into home position.
+        elevator.setLiftTargetPosition(Elevator.ELEVATOR_HOME);
         cycleTime.reset();
 
         while (opModeIsActive()) {

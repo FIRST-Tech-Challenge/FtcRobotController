@@ -21,7 +21,6 @@ public class Elevator {
 
     final static int ELEVATOR_MIN    = 0;
     final static  int ELEVATOR_HOME   = 40;
-    final static  int ELEVATOR_GROUND = 160;
     final static  int ELEVATOR_STACK_TOP = 200;
     final static  int ELEVATOR_LOW    = 460;
     final static  int ELEVATOR_MID    = 710;
@@ -46,16 +45,12 @@ public class Elevator {
     // Wrist & Hand Constants
     final double SAFE_WRIST_OFFSET = 90;
 
-    final double WRIST_HOME_POSITION = 0.6;
+    final double WRIST_HOME_POSITION = 0.56;
     final double HAND_HOME_POSITION = 0.8;
 
     final double HAND_OPEN  = 0.6; //was 0.47
     final double HAND_READY = 0.7 ;
     final double HAND_CLOSE = 0.95;
-
-    // Angle (A) to/from Position (P) conversion factors Y = Mx + C
-    final double LIFT_P2A_M = 0.0992;
-    final double LIFT_P2A_C = -37.2;
 
     final double WRIST_A2P_M = 0.00374;
     final double WRIST_A2P_C = 0.472;
@@ -92,6 +87,9 @@ public class Elevator {
     private double  wristAngle = 0;
     private double  handPosition = 0;
 
+    private double lift_P2A_m;
+    private double lift_P2A_c;
+
     // Elevator Constructor.  Call once opmode is running.
     public Elevator(LinearOpMode opMode) {
         // Attach to hardware devices
@@ -111,6 +109,12 @@ public class Elevator {
         setHandPosition(HAND_HOME_POSITION);
         currentElevatorLevel = 0;
         newLevelReqested = false;
+        elevatorState = IDLE;
+
+        // Angle (A) to/from Position (P) conversion factors Y = Mx + C
+        SolveFor p2a = new SolveFor(41, -25, 976, 59);
+        lift_P2A_m = p2a.getM();
+        lift_P2A_c = p2a.getC();
     }
 
     // ======  Elevator State Machine
@@ -426,11 +430,11 @@ public class Elevator {
 
     // ------ Angle/reading conversions
     public double elevatorEncoderToAngle (int position) {
-        return(((position * LIFT_P2A_M) + LIFT_P2A_C));
+        return(((position * lift_P2A_m) + lift_P2A_c));
     }
 
     public int elevatorAngleToEncoder (double angle) {
-        return((int)((angle- LIFT_P2A_C)/ LIFT_P2A_M));
+        return((int)((angle- lift_P2A_c)/ lift_P2A_m));
     }
 
     public double wristAngleToServo (double angle) {
