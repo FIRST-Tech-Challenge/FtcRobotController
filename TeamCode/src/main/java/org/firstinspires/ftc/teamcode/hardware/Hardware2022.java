@@ -90,6 +90,7 @@ public class Hardware2022 {
         wheelFrontLeft = hwMap.get(DcMotor.class, "lfWheel");
         wheelBackRight = hwMap.get(DcMotor.class, "rrWheel");
         wheelBackLeft = hwMap.get(DcMotor.class, "lrWheel");
+        vSlide = hwMap.get(DcMotor.class, "Vertical");
 
         wheelFrontRight.setDirection(DcMotor.Direction.FORWARD);
         wheelBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -109,16 +110,15 @@ public class Hardware2022 {
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        vSlide = hwMap.get(DcMotor.class, "Vertical");
         vSlide.setDirection(DcMotor.Direction.FORWARD);
         vSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlide.setPower(0);
-
+/*
         sensorColor = hwMap.get(ColorSensor.class, "clawdistance");
         sensorDistance = hwMap.get(DistanceSensor.class, "clawdistance");
 
         grabberclaw = hwMap.get(Servo.class, "grabberclaw");
-
+*/
     }
 
     /**

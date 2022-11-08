@@ -41,7 +41,7 @@ public class GeneralDriver extends BaseTele {
 
         //This is the main loop of operation.
         while (opModeIsActive()) {
-            hdw.checkAndGrabCone();
+            //hdw.checkAndGrabCone();
 
             if (gamepad1.dpad_left) {
 

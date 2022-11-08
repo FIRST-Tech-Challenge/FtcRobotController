@@ -15,6 +15,8 @@ public class MecanumWheels {
     public double wheelBackRightPower = 0;
     public double wheelBackLeftPower = 0;
 
+    public double frontWheelWeaken = 0.5;
+
     public double turbo = 0;
 
     public MecanumWheels(){ }
@@ -72,16 +74,16 @@ public class MecanumWheels {
 
     public void strafeRight(double turbo){
         this.turbo = turbo;
-        wheelFrontRightPower = -1 * turbo;
-        wheelFrontLeftPower = 1 * turbo;
+        wheelFrontRightPower = -1 * turbo * frontWheelWeaken;
+        wheelFrontLeftPower = 1 * turbo * frontWheelWeaken;
         wheelBackRightPower = 1 * turbo;
         wheelBackLeftPower = -1 * turbo;
     }
 
     public void strafeLeft(double speed){
         this.turbo = turbo;
-        wheelFrontRightPower = 1 * turbo;
-        wheelFrontLeftPower = -1 * turbo;
+        wheelFrontRightPower = 1 * turbo * frontWheelWeaken;
+        wheelFrontLeftPower = -1 * turbo * frontWheelWeaken;
         wheelBackRightPower = -1 * turbo;
         wheelBackLeftPower = 1 * turbo;
     }
