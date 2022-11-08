@@ -139,7 +139,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         if (isOpen) {
             servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION);
         } else {
-            servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION); // set servo to closed position
+            servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
         }
     }
 
