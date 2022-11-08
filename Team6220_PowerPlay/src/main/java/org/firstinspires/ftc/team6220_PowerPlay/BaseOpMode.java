@@ -89,7 +89,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         // preset the IMU angles so it doesn't start on null since it will only later be read when turning
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        servoGrabber.setPosition(Constants.GRABBER_INITIAL_POSITION);
+        servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
 
     public void driveWithIMU(double xPower, double yPower, double tPower)  {
