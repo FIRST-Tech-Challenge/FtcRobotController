@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.MechanismTemplates;
 
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -14,7 +13,7 @@ public class Claw{
     private final double CLOSE = 0.15;
 
     // wrist positions
-    private final double WRIST_INTAKE_POSITION = 0; // wrist rotates to intake cone
+    private final double WRIST_INTAKE_POSITION = 0.52; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
     private final double WRIST_EXTAKE_POSITION = 0.5; // wrist rotates to extake on junction
 
     public Claw(HardwareMap hardwareMap, boolean isAuton ){

@@ -46,7 +46,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
        while (opModeIsActive()){
             bot.update();
             slideControl.Update();
-            armControl.update();
+            armControl.update(telemetry);
         }
 
     }// end of runOpMode()
@@ -85,10 +85,10 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
             .addTemporalMarker(2,() -> {
                 slideControl.setHighJunction();
                 //slideControl.Update();
-                armControl.setForwards();
+                armControl.setIntake();
                 //armControl.update();
                 clawMovement.toggleOpenClose();
-                armControl.setBackwards();
+                armControl.setExtake();
 
                 })//temporal marker for the extake
             .lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75))) // Drive to cone stack
@@ -97,7 +97,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
                 slideControl.setIntakeOrGround();
                 //slideControl.Update();
                 clawMovement.toggleOpenClose();
-                armControl.setForwards();
+                armControl.setIntake();
                 //armControl.update();
                 })//marker for the intake, the timing will be tested so where the markers are located and times are subject to change
 
@@ -126,6 +126,14 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
           bot.followTrajectorySequenceAsync(cycles);
          }
         return endPose; // returning our end position so our april tags conditionals know where to start from
+        /*
+        if (gamepad2.dpad_left) {
+            clawControl.toggleWristRotate();
+        } else if (gamepad2.dpad_right) {
+            clawControl.toggleWristRotate();
+        }
+
+         */
     }
 
 }

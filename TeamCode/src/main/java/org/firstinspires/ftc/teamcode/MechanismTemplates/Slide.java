@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.MechanismTemplates;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Config
 public class Slide {
     private PIDFController slidePIDF;
     private Motor slideLeft, slideRight;
@@ -14,7 +16,12 @@ public class Slide {
     private final static double LOW_JUNCTION = 500;
     private final static double ZERO_POSITION = 0;
 
-    private final double[] PIDF_COFFECIENTS = {0.001,0.001,0.001,0.001};//TODO: will have to tune to proper values later
+    public static double slideKp = 0.0001;
+    public static double slideKi = 0.001;
+    public static double slideKd = 0.001;
+    public static double slideKf = 0.001;
+
+    private final double[] PIDF_COFFECIENTS = {slideKp, slideKi, slideKd, slideKf};//TODO: will have to tune to proper values later
 
     private double targetPosition;
 

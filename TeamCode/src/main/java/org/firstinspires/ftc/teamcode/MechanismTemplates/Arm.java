@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.MechanismTemplates;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+@Config
 /**
  * Example class created by Tiernan demonstrating better OOP and PIDF usage
  */
@@ -11,104 +15,43 @@ public class Arm {
     private PIDFController armPIDF;
     private Motor armMotor;
 
-    private final static double FORWARDS_POS = 100; // TODO: Change this to the actual position based on motor encoder readings
-    private final static double BACKWARDS_POS = -100; // TODO: Change this to the actual position based on motor encoder readings
-    private final double[] PIDF_COEFF = {0.0001, 0.001, 0.001, 0.001}; // TODO: Tune this PIDF
+    public static double armKp = 0.009;
+    public static double armKi = 0.000;
+    public static double armKd = 0.000;
+    public static double armKf = 0.000;
 
-    private double targetPos;
+    public static double EXTAKE_POS = 1200; // TODO: Change this to the actual position based on motor encoder readings
+    public static double INTAKE_POS = 25; // TODO: Change this to the actual position based on motor encoder readings
+    public static double targetPos = 0;
+
+    private final double[] PIDF_COEFF = {armKp, armKi, armKd, armKf}; // TODO: Tune this PIDF
 
     public Arm(HardwareMap hardwareMap){
         armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_60);
         armMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         armMotor.setRunMode(Motor.RunMode.VelocityControl);
-        //armMotor.setInverted(true); TODO: will have to check if we need to invert the motor
+        armMotor.resetEncoder(); // We want the arm to start at a position of 0
 
         armPIDF = new PIDFController(PIDF_COEFF[0], PIDF_COEFF[1], PIDF_COEFF[2], PIDF_COEFF[3]);
-        targetPos = FORWARDS_POS;
     }
 
-    public void update(){
+    public void update(Telemetry telemetry){
+        armPIDF.setPIDF(armKp, armKi, armKd, armKf);
         double correction = armPIDF.calculate(armMotor.getCurrentPosition(), targetPos);
+
+        telemetry.addData("targetPosition:", targetPos);
+        telemetry.addData("motor position: ", armMotor.getCurrentPosition());
+        telemetry.addData("correction: ", correction);
+        telemetry.update();
+
         armMotor.set(correction);
     }
 
-    public void setForwards(){
-        targetPos = FORWARDS_POS;
+    public void setExtake(){
+        targetPos = EXTAKE_POS;
     }
 
-    public void setBackwards(){
-        targetPos = BACKWARDS_POS;
+    public void setIntake(){
+        targetPos = INTAKE_POS;
     }
-
-//    public void goToJunction(int target){
-//        double currentPosition = (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition())/2.0; // average position
-//
-//        slideLeft.setTargetPosition(target);
-//        slideRight.setTargetPosition(target);
-//
-//        if(Math.abs(currentPosition - target) > 5) {
-//            slideLeft.setPower(motorPID.update(target, currentPosition));
-//            slideRight.setPower(motorPID.update(target, currentPosition));
-//
-//            //currentPosition = (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition())/2.0; // average new position
-//        }
-//    }
-//
-//    // Auto
-//    public void armPivot(int target){
-//        double currentPosition = armMotor.getCurrentPosition(); // average motor position
-//        armMotor.setTargetPosition(target);
-//
-//        if(Math.abs(currentPosition - target) > 5) {
-//            armMotor.setPower(motorPID.update(target, currentPosition));
-//           // currentPosition = armMotor.getCurrentPosition(); // average of new motor position
-//        }
-//    }
-//
-//    // TeleOp
-//    public void manualArmPivot(int armIncrement){
-//        double currentPosition = armMotor.getCurrentPosition();
-//        int target = (int)currentPosition + armIncrement; // we want to set the target to just above/below the current position every time this runs
-//        armMotor.setTargetPosition(target);
-//
-//        if(Math.abs(target - currentPosition) > 5) {
-//            armMotor.setPower(motorPID.update(target, currentPosition));
-//            //currentPosition = (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition())/2.0; // average new position
-//        }
-//    }
-//
-//    // TeleOp
-//    public void manualClawRotate(double servoIncrement){
-//        wristJoint.setPosition(wristJoint.getPosition() + servoIncrement);
-//    }
-//    // Auto
-//    public void clawRotate(double servoTarget){
-//        wristJoint.setPosition(servoTarget);
-//    }
-//
-//    // TeleOp
-//    public void manualSlides(int slideIncrement){
-//        double currentPosition = (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition())/2.0; // average position
-//        int target = (int)currentPosition + slideIncrement; // we want to set the target to just above/below the current position every time this loop runs
-//
-//        slideLeft.setTargetPosition(target);
-//        slideRight.setTargetPosition(target);
-//
-//        if(Math.abs(target - currentPosition) > 5) {
-//            slideLeft.setPower(motorPID.update(target, currentPosition));
-//            slideRight.setPower(motorPID.update(target, currentPosition));
-//
-//            //currentPosition = (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition())/2.0; average new position
-//        }
-//    }
-//
-//    // Can be used in both teleOp and Autonomous (maybe)
-//    public void claw(){
-//        if(clawJoint.getPosition() == OPEN){
-//            clawJoint.setPosition(CLOSE);
-//        }else{
-//            clawJoint.setPosition(OPEN);
-//        }
-//    }
-
 }

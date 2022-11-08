@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
-import org.firstinspires.ftc.teamcode.PIDs.PIDController;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 
 @Config
@@ -21,22 +20,16 @@ public class PP_MecanumTeleOp extends OpMode
 
     boolean isAuto = false; // yes I know this is stupid
 
-    public static double armKp = 0.0;
-    public static double armKd = 0.0;
-    public static double armKi = 0.0;
-    public static double armKf = 0.0;
-
     // Declaring class members to be used in other methods
     private ElapsedTime runtime = new ElapsedTime();
-    private final PIDController motorPID = new PIDController(armKp, armKd, armKi, armKf, runtime);
-    private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, slideMotorLeft, slideMotorRight, armMotor;
+    private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight; //slideMotorLeft, slideMotorRight, armMotor;
     private Servo clawJoint, wristJoint;
-
 
     // TODO: Why are these not private, this makes me sad. Also you could make them static and stick in their own class... - Tiernan
     // Claw Servo open and close constants
     private final double[] servo_MinMax = {0, 0.5};
     private final double OPEN = 0.45; // claw open
+
     private Arm armControl;
     private Slide slideControl;
     private Claw clawControl;
@@ -75,15 +68,15 @@ public class PP_MecanumTeleOp extends OpMode
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder does NOT disable encoder counting
-        slideMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // You don't want to run using encoders for PID
-        slideMotorRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //slideMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // You don't want to run using encoders for PID
+        //slideMotorRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //slideMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //slideMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Reverse the left side motors
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -92,6 +85,7 @@ public class PP_MecanumTeleOp extends OpMode
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
         clawControl = new Claw(hardwareMap, isAuto);
+
     }// INIT()
 
     @Override
@@ -101,6 +95,9 @@ public class PP_MecanumTeleOp extends OpMode
         drive(precisionToggle);
         arm(); // this method calls the arm object's methods
         claw(); // this method calls the claw object's methods
+
+        armControl.update(telemetry);
+
     }// end of loop()
 
 
@@ -165,12 +162,12 @@ public class PP_MecanumTeleOp extends OpMode
 
     public void arm() {
         if(gamepad2.dpad_up){
-            armControl.setForwards();
+            armControl.setExtake();
         }
-        else {
-            armControl.setBackwards();
+        else if(gamepad2.dpad_down){
+            armControl.setIntake();
         }
-        armControl.update();
+        armControl.update(telemetry);
 
         // BUTTONS \\
         if (gamepad2.a) {
@@ -180,10 +177,10 @@ public class PP_MecanumTeleOp extends OpMode
             slideControl.setMidJunction();
         } else if (gamepad2.y) {
             slideControl.setLowJunction();
-        } else{
+        } else if (gamepad2.x){
           slideControl.setIntakeOrGround();
         }
-        slideControl.Update();
+        //slideControl.Update();
 
         // TRIGGERS \\
         if (gamepad2.right_trigger > 0.2) {
@@ -191,25 +188,13 @@ public class PP_MecanumTeleOp extends OpMode
         } else if (gamepad2.left_trigger > 0.2) {
            slideControl.manualSlides(-5);
        }
-       slideControl.Update();
+       //slideControl.Update();
     }// end of arm()
 
     public void claw(){
-        // DPAD \\
-
-        //code for manual claw wrist rotation, idk ( ﾉ ﾟｰﾟ)ﾉ
-
-        /*
-        DISCLAIMER: this section is commented out because it makes more sense for auto control, not manual increments
-        if (gamepad2.dpad_left) {
-            clawControl.toggleWristRotate();
-        } else if (gamepad2.dpad_right) {
-            clawControl.toggleWristRotate();
-        }
-         */
-
         // BUMPER \\
         if (gamepad2.right_bumper) {
+            // add a delay here so that the claw doesn't jitter open and closed
             clawControl.toggleOpenClose(); // toggles whether the claw is open or closed
         }
 
