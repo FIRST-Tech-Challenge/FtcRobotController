@@ -137,7 +137,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     // this method will allow the grabber to open or close given a boolean input, with true = open and false = close
     public void driveGrabber(boolean isOpen) {
         if (isOpen) {
-            servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION); // set servo to open position
+            servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION);
         } else {
             servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION); // set servo to closed position
         }
