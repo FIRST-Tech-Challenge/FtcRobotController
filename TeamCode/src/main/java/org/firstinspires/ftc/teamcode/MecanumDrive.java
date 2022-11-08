@@ -49,7 +49,7 @@ import java.util.List;
 public final class MecanumDrive {
     //todo configure and tune all the parameters
     // drive model parameters
-    public static double IN_PER_TICK = 0;
+    public static double IN_PER_TICK = (Math.PI * 2.0 * 1.88976) / 537.7;
     public static double LATERAL_IN_PER_TICK = 1;
     public static double TRACK_WIDTH_TICKS = 0;
 
