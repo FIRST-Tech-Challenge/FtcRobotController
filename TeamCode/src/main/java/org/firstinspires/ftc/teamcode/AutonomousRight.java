@@ -98,7 +98,7 @@ public class AutonomousRight extends LinearOpMode {
     private DcMotor BackLeftDrive = null;
     private DcMotor BackRightDrive = null;
     private BNO055IMU imu = null;
-
+    private SleeveIdentification mySleeve = null;
 
     // Driving motor variables
     static final double HIGH_SPEED_POWER = 0.6;  // used to adjust driving sensitivity.
@@ -151,7 +151,7 @@ public class AutonomousRight extends LinearOpMode {
     // sensors
     private DistanceSensor distanceSensor;
     private ColorSensor colorSensor;// best collected within 2cm of the target
-
+    SleeveIdentification.sleeveSignal mySleeveColor = SleeveIdentification.sleeveSignal.UNKNOWN;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -240,6 +240,9 @@ public class AutonomousRight extends LinearOpMode {
         pidDrive.setSetpoint(0); // be sure input range has been set before
         pidDrive.setOutputRange(0, CORRECTION_POWER);
         pidDrive.enable();
+
+        // camera init
+        mySleeve.initCamera(hardwareMap);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Mode", "waiting for start");
@@ -572,27 +575,35 @@ public class AutonomousRight extends LinearOpMode {
         double[] sleeveColor = {1.0, 1.0, 1.0};
         double parkingLocation; // distance between cone loading area to parking area, in inch
 
+        mySleeveColor = mySleeve.captureSleeveSignal();
+
         clawServo.setPosition(CLAW_CLOSE_POS);
         RightSliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
         LeftSliderMotor.setPower(SLIDER_MOTOR_POWER);
 
         sleep(200); // wait 0.4 sec to make sure clawServo is at grep position
         setSliderPosition(MEDIUM_JUNCTION_POS);
-        sleep(500); // wait preload cone to lifted.
-        readColorSensor(backgroundColor);
-        Logging.log("Autonomous - complete background color read.");
-        // drive robot to sleeve cone
-        robotRunToPosition(20.0, true);
-        readColorSensor(sleeveColor); // reading sleeve signal
-        Logging.log("Autonomous - complete Sleeve color read.");
-        // push sleeve cone out, and reading background color for calibration
-        robotRunToPosition(36.0, true);
+        if (SleeveIdentification.sleeveSignal.UNKNOWN != mySleeveColor) {
+            robotRunToPosition(36.0, true);
+        }
+        else {
+            sleep(500); // wait preload cone to lifted.
+            readColorSensor(backgroundColor);
+            Logging.log("Autonomous - complete background color read.");
+            // drive robot to sleeve cone
+            robotRunToPosition(20.0, true);
+            readColorSensor(sleeveColor); // reading sleeve signal
+            Logging.log("Autonomous - complete Sleeve color read.");
+            // push sleeve cone out, and reading background color for calibration
+            robotRunToPosition(36.0, true);
+        }
+        parkingLocation = calculateParkingLocation(sleeveColor, backgroundColor);
+        Logging.log("Autonomous - parking lot aisle location: %.2f", parkingLocation);
+
         // lift slider during strafe to high junction
         setSliderPosition(HIGH_JUNCTION_POS);
         robotRunToPosition(-4.0, true); // throw off sleeve cone
 
-        parkingLocation = calculateParkingLocation(sleeveColor, backgroundColor);
-        Logging.log("Autonomous - parking lot aisle location: %.2f", parkingLocation);
 
         robotRunToPosition(-12.0, false); // strafe robot half mat to left side
         waitSliderRun(); // make sure slider has been lifted.
@@ -665,39 +676,67 @@ public class AutonomousRight extends LinearOpMode {
     private double calculateParkingLocation(@NonNull double[] s, @NonNull double[] b) {
         int channel = 0;
         double location;
-        double[] ratio = {s[0]/b[0], s[1]/b[1], s[2]/b[2]};
+        String color = "";
 
-        // find the maximum value in ratio[]
-        double maxV = ratio[0];
-        for (int i = 1; i < 3; i++) {
-            if (ratio[i] > maxV) {
-                channel = i;
-                maxV = ratio[i];
+        if(SleeveIdentification.sleeveSignal.UNKNOWN != mySleeveColor) {
+            switch (mySleeveColor) {
+                case RED: // red
+                    location = -1.0 * 12; // parking lot #1 (red), first mat
+                    color = "red";
+                    break;
+                case GREEN: // green
+                    location = 1.0 * 12; // parking lot #2 (green), second mat
+                    color = "green";
+                    break;
+                case BLUE: // blue
+                    location = 3.0 * 12; // parking lot #3 (blue), third mat
+                    color = "blue";
+                    break;
+                default:
+                    location = 0.0;
+                    color = "Unknow";
             }
         }
-        Logging.log("Autonomous - channel = %d, max value = %.3f", channel, maxV);
-        String color = "";
-        switch (channel) {
-            case 0: // red
-                location = -1.0 * 12; // parking lot #1 (red), third mat
-                color = "red";
-                break;
-            case 1: // green
-                location = 1.0 * 12; // parking lot #2 (green), third mat
-                color = "green";
-                break;
-            case 2: // blue
-                location = 3.0 * 12; // parking lot #3 (blue), third mat
-                color = "blue";
-                break;
-            default:
-                location = 0.0;
+        else {
+            if (0 == b[0]) return 0.0;
+            if (0 == b[1]) return 0.0;
+            if (0 == b[2]) return 0.0;
+            double[] ratio = {s[0] / b[0], s[1] / b[1], s[2] / b[2]};
+
+            // find the maximum value in ratio[]
+            double maxV = ratio[0];
+            for (int i = 1; i < 3; i++) {
+                if (ratio[i] > maxV) {
+                    channel = i;
+                    maxV = ratio[i];
+                }
+            }
+            Logging.log("Autonomous - channel = %d, max value = %.3f", channel, maxV);
+            switch (channel) {
+                case 0: // red
+                    location = -1.0 * 12; // parking lot #1 (red), third mat
+                    color = "red";
+                    break;
+                case 1: // green
+                    location = 1.0 * 12; // parking lot #2 (green), third mat
+                    color = "green";
+                    break;
+                case 2: // blue
+                    location = 3.0 * 12; // parking lot #3 (blue), third mat
+                    color = "blue";
+                    break;
+                default:
+                    location = 0.0;
+                    color = "Unknow";
+            }
+            telemetry.addData("color", "rgb ratio, %.2f, %.2f, %.2f", ratio[0], ratio[1], ratio[2]);
         }
         telemetry.addLine()
                 .addData("channal ", channel)
                 .addData("Color is ", color)
                 .addData("location ", location);
-        telemetry.addData("color", "rgb ratio, %.2f, %.2f, %.2f", ratio[0], ratio[1], ratio[2]);
+        Logging.log("Autonomous - Sleeve color from camera is %d", SleeveIdentification.sleeveSignal.UNKNOWN);
+
         return location;
     }
 
