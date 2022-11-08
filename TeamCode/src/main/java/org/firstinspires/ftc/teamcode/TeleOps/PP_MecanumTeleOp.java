@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.PIDs.PIDController;
@@ -16,8 +15,11 @@ import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 
 @Config
 @TeleOp(name = "PP_MecanumTeleOp") // This is redundant, the name will automatically be set to the class name if you don't set it - Tiernan
-public class PP_MecanumTeleOp extends OpMode {
+public class PP_MecanumTeleOp extends OpMode
+{
     //"MC ABHI IS ON THE REPO!!!"
+
+    boolean isAuto = false; // yes I know this is stupid
 
     public static double armKp = 0.0;
     public static double armKd = 0.0;
@@ -26,20 +28,18 @@ public class PP_MecanumTeleOp extends OpMode {
 
     // Declaring class members to be used in other methods
     private ElapsedTime runtime = new ElapsedTime();
-    private PIDController motorPID = new PIDController(armKp, armKd, armKi, armKf, runtime);
+    private final PIDController motorPID = new PIDController(armKp, armKd, armKi, armKf, runtime);
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, slideMotorLeft, slideMotorRight, armMotor;
     private Servo clawJoint, wristJoint;
 
 
     // TODO: Why are these not private, this makes me sad. Also you could make them static and stick in their own class... - Tiernan
     // Claw Servo open and close constants
-
     private final double[] servo_MinMax = {0, 0.5};
     private final double OPEN = 0.45; // claw open
-    private final double CLOSE = 0.35; // claw close
     private Arm armControl;
     private Slide slideControl;
-    private Claw clawMovement;
+    private Claw clawControl;
 
     /**
      * Get the maximum absolute value from a static array of doubles
@@ -47,7 +47,8 @@ public class PP_MecanumTeleOp extends OpMode {
      * @param input the input array of double values
      * @return the maximum value from the input array
      */
-    private double getMax(double[] input) {
+    private double getMax(double[] input)
+    {
         double max = Integer.MIN_VALUE;
         for (double value : input) {
             if (Math.abs(value) > max) {
@@ -58,7 +59,8 @@ public class PP_MecanumTeleOp extends OpMode {
     }
 
     @Override
-    public void init() {
+    public void init()
+    {
         // Expansion Hub Pins
         motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("FL"); // Pin 2
         motorBackLeft = (DcMotorEx) hardwareMap.dcMotor.get("BL"); // Pin 1
@@ -66,16 +68,13 @@ public class PP_MecanumTeleOp extends OpMode {
         // Control Hub Pins
         motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("FR"); // Pin 3
         motorBackRight = (DcMotorEx) hardwareMap.dcMotor.get("BR"); // Pin 2
-
         clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
         wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
-
 
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder does NOT disable counting
-
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder does NOT disable encoder counting
         slideMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // You don't want to run using encoders for PID
         slideMotorRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -86,28 +85,28 @@ public class PP_MecanumTeleOp extends OpMode {
         slideMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Reverse the right side motors
+        // Reverse the left side motors
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-        clawJoint.setPosition(OPEN);
-
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
-        clawMovement = new Claw(hardwareMap);
-    }// end of init
+        clawControl = new Claw(hardwareMap, isAuto);
+    }// INIT()
 
     @Override
-    public void loop() {
-        boolean precisionToggle = gamepad1.right_trigger > 0.1;
+    public void loop()
+    {
+        boolean precisionToggle = gamepad1.right_trigger > 0.1; // we want to check this every time the loop runs
         drive(precisionToggle);
-        arm(); // includes claw mechanism
-    }
+        arm(); // this method calls the arm object's methods
+        claw(); // this method calls the claw object's methods
+    }// end of loop()
 
 
     //        BOT METHODS       \\
-    public void drive(boolean precisionToggle) {
+    public void drive(boolean precisionToggle)
+    {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
@@ -147,7 +146,6 @@ public class PP_MecanumTeleOp extends OpMode {
             backRightPower /= maxValue;
         }
 
-        // Hi!
         if (precisionToggle) {
             motorFrontLeft.setPower(frontLeftPower * 0.3);
             telemetry.addData("Power front left",frontLeftPower*0.3);
@@ -163,7 +161,7 @@ public class PP_MecanumTeleOp extends OpMode {
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
         }
-    }
+    }// end of drive()
 
     public void arm() {
         if(gamepad2.dpad_up){
@@ -187,18 +185,6 @@ public class PP_MecanumTeleOp extends OpMode {
         }
         slideControl.Update();
 
-     // DPAD \\
-        if (gamepad2.dpad_left) {
-            clawMovement.rotateWristIfForward();
-        } else if (gamepad2.dpad_right) {
-            clawMovement.rotateWristIfBackward();
-        }
-
-        // BUMPER \\
-        if (gamepad2.right_bumper) {
-            clawMovement.openOrCloseClaw();
-        }
-
         // TRIGGERS \\
         if (gamepad2.right_trigger > 0.2) {
            slideControl.manualSlides(5);
@@ -206,6 +192,27 @@ public class PP_MecanumTeleOp extends OpMode {
            slideControl.manualSlides(-5);
        }
        slideControl.Update();
-    }
+    }// end of arm()
+
+    public void claw(){
+        // DPAD \\
+
+        //code for manual claw wrist rotation, idk ( ﾉ ﾟｰﾟ)ﾉ
+
+        /*
+        DISCLAIMER: this section is commented out because it makes more sense for auto control, not manual increments
+        if (gamepad2.dpad_left) {
+            clawControl.toggleWristRotate();
+        } else if (gamepad2.dpad_right) {
+            clawControl.toggleWristRotate();
+        }
+         */
+
+        // BUMPER \\
+        if (gamepad2.right_bumper) {
+            clawControl.toggleOpenClose(); // toggles whether the claw is open or closed
+        }
+
+    }// end of claw()
 }
 

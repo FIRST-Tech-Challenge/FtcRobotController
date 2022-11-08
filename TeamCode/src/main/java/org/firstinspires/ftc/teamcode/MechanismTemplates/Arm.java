@@ -2,22 +2,17 @@ package org.firstinspires.ftc.teamcode.MechanismTemplates;
 
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.PIDs.PIDController;
 
 /**
  * Example class created by Tiernan demonstrating better OOP and PIDF usage
  */
 public class Arm {
-
     private PIDFController armPIDF;
     private Motor armMotor;
 
     private final static double FORWARDS_POS = 100; // TODO: Change this to the actual position based on motor encoder readings
     private final static double BACKWARDS_POS = -100; // TODO: Change this to the actual position based on motor encoder readings
-
     private final double[] PIDF_COEFF = {0.0001, 0.001, 0.001, 0.001}; // TODO: Tune this PIDF
 
     private double targetPos;

@@ -3,30 +3,19 @@ package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences.MainAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
-import org.firstinspires.ftc.teamcode.PIDs.PIDController;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetection;
-import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous
 public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 {
-
-
-
+    private boolean isAuto = true;
     //Declaring lift motor powers
     private Arm armControl;
     private Slide slideControl;
@@ -34,16 +23,15 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 
     // Declaring our motor PID for the lift; passing through our PID values
 
-    public PP_Auto_Quad3(){
-
-
+    public PP_Auto_Quad3()
+    {
         super.runOpMode(); // runs the opMode of the apriltags pipeline
 
         waitForStart();
 
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
-        clawMovement = new Claw(hardwareMap);
+        clawMovement = new Claw(hardwareMap, isAuto);
     }
 
 
@@ -101,7 +89,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
                 slideControl.Update();
                 armControl.setForwards();
                 armControl.update();
-                clawMovement.openOrCloseClaw();
+                clawMovement.toggleOpenClose();
                 armControl.setBackwards();
                 armControl.update();
                 })//temporal marker for the extake
@@ -110,7 +98,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
             .addTemporalMarker(1,()->{
                 slideControl.setIntakeOrGround();
                 slideControl.Update();
-                clawMovement.openOrCloseClaw();
+                clawMovement.toggleOpenClose();
                 armControl.setForwards();
                 armControl.update();
                 })//marker for the intake, the timing will be tested so where the markers are located and times are subject to change
@@ -128,7 +116,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
                 .addTemporalMarker(3,() -> {
                 slideControl.setIntakeOrGround();
                 slideControl.Update();
-                clawMovement.openOrCloseClaw();
+                clawMovement.toggleOpenClose();
                 })
                 .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0))) // back to the cone stack
                 .lineToLinearHeading(new Pose2d(-33, 8, Math.toRadians(-39.75))) // go to junction
