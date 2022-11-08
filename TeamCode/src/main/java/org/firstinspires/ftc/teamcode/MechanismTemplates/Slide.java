@@ -4,16 +4,15 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-
-
 public class Slide {
     private PIDFController slidePIDF;
     private Motor slideLeft, slideRight;
 
-    private final static double HIGH_JUNCTION= 1000; //TODO: change values into actual tested positions instead of placeholders
-    private final static double MID_JUNCTION = 800;//TODO: change values into actual tested positions instead of placeholders
-    private final static double LOW_JUNCTION = 500;//TODO: change values into actual tested positions instead of placeholders
-    private final static double ZERO_POSITION = 0;//TODO: change values into actual tested positions instead of placeholders
+    //TODO: change values into actual tested positions instead of placeholders
+    private final static double HIGH_JUNCTION= 1000;
+    private final static double MID_JUNCTION = 800;
+    private final static double LOW_JUNCTION = 500;
+    private final static double ZERO_POSITION = 0;
 
     private final double[] PIDF_COFFECIENTS = {0.001,0.001,0.001,0.001};//TODO: will have to tune to proper values later
 
@@ -31,16 +30,23 @@ public class Slide {
 
         slidePIDF = new PIDFController(PIDF_COFFECIENTS[0],PIDF_COFFECIENTS[1],PIDF_COFFECIENTS[2],PIDF_COFFECIENTS[3]);
 
-        targetPosition = ZERO_POSITION;
+        targetPosition = ZERO_POSITION; // target position is 0 by default
 
     }
 
-    public void Update(){
+    public void Update(){ // updates the position of the motor
         double correctionLeft = slidePIDF.calculate(slideLeft.getCurrentPosition(),targetPosition);
         double correctionRight = slidePIDF.calculate(slideRight.getCurrentPosition(),targetPosition);
 
-        slideLeft.set(correctionLeft);
+        // Not sure if you would want to add a conditional to stop the motors at some point, but idt adding another while loop would work
+        slideLeft.set(correctionLeft); // sets the output power of the motor
         slideRight.set(correctionRight);
+    }
+
+    public void manualSlides(int slideIncrement){
+        if((targetPosition + slideIncrement) <= 100 && (targetPosition - slideIncrement) >= 0) {
+            targetPosition -= slideIncrement;
+        }
     }
 
     public void setIntakeOrGround(){
@@ -57,11 +63,6 @@ public class Slide {
 
     public void setHighJunction(){
         targetPosition = HIGH_JUNCTION;
-    }
-
-    public void manualSlides(int slideIncrement){
-        if((targetPosition+slideIncrement)<=100 && (targetPosition-slideIncrement)>=0)
-            targetPosition -= slideIncrement;
     }
 
 }

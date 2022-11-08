@@ -40,10 +40,6 @@ public class Arm {
         targetPos = BACKWARDS_POS;
     }
 
-
-
-
-
 //    public void goToJunction(int target){
 //        double currentPosition = (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition())/2.0; // average position
 //

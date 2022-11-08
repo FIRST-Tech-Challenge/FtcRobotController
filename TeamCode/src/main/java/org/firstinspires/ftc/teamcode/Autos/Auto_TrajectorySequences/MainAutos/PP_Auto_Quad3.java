@@ -22,7 +22,6 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
     private Claw clawMovement;
 
     // Declaring our motor PID for the lift; passing through our PID values
-
     public PP_Auto_Quad3()
     {
         super.runOpMode(); // runs the opMode of the apriltags pipeline
@@ -33,8 +32,6 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         slideControl = new Slide(hardwareMap);
         clawMovement = new Claw(hardwareMap, isAuto);
     }
-
-
 
     @Override
     public void runOpMode()
@@ -48,9 +45,9 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         // LOOPS TO RUN ASYNC \\
        while (opModeIsActive()){
             bot.update();
-
+            slideControl.Update();
+            armControl.update();
         }
-
 
     }// end of runOpMode()
 
@@ -68,39 +65,40 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
                     .build();
             bot.followTrajectorySequenceAsync(sussyBaka);
             telemetry.addData("Chris Pratt","Is Currently In The Mushroom Kingdom");
-        }else if(tagUse ==2) {
+        }
+        else if(tagUse ==2) {
             telemetry.addData("Walter White","Curently Has No Pants");
             // bot doesn't need to move if it is in the 2nd tag zone since that is where we deposit anyway
-        }else{
+        }
+        else{
             TrajectorySequence jacobIsCute = bot.trajectorySequenceBuilder(endPose)
                     .lineTo(new Vector2d(-58.2,24.6))
                     .build();
-
             bot.followTrajectorySequenceAsync(jacobIsCute);
             telemetry.addData("Bohan and Abhilash"," = Very Cute");
         }
         return bot;
-    }
+    }// end of runTrajectories
 
     public Pose2d cycle(SampleMecanumDrive bot, Pose2d currentPosition){
         TrajectorySequence openingMove =  bot.trajectorySequenceBuilder(currentPosition)
             .addTemporalMarker(2,() -> {
                 slideControl.setHighJunction();
-                slideControl.Update();
+                //slideControl.Update();
                 armControl.setForwards();
-                armControl.update();
+                //armControl.update();
                 clawMovement.toggleOpenClose();
                 armControl.setBackwards();
-                armControl.update();
+
                 })//temporal marker for the extake
             .lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75))) // Drive to cone stack
 
             .addTemporalMarker(1,()->{
                 slideControl.setIntakeOrGround();
-                slideControl.Update();
+                //slideControl.Update();
                 clawMovement.toggleOpenClose();
                 armControl.setForwards();
-                armControl.update();
+                //armControl.update();
                 })//marker for the intake, the timing will be tested so where the markers are located and times are subject to change
 
             .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0)))
@@ -115,7 +113,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         TrajectorySequence cycles =  bot.trajectorySequenceBuilder(currentPosition)
                 .addTemporalMarker(3,() -> {
                 slideControl.setIntakeOrGround();
-                slideControl.Update();
+                //slideControl.Update();
                 clawMovement.toggleOpenClose();
                 })
                 .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0))) // back to the cone stack
