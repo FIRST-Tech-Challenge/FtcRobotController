@@ -125,8 +125,8 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
         return new Block(signature, buffer[1], buffer[2], buffer[3], buffer[4]);
     }
     //returns the offset from the x direction
-    public int headingOffset(int sign){
-        return GetBiggestBlock(sign).x - 140;
+    public int headingOffset(int signature){
+        return GetBiggestBlock(signature).x - 140;//TODO change so that the value changes based on sign. (-128 + sign * 12)
         //a negative value means rotate left a positive value means rotate right
     }
     //aligns the robot with the pole using pixycam and distances
