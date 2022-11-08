@@ -36,6 +36,10 @@ dependencies {
 dependencies {
     implementation 'org.openftc:easyopencv:1.5.2'
     implementation 'org.openftc:apriltag:1.1.0'
+
+    implementation 'org.ftclib.ftclib:core:2.0.1'
+    // the following is optional if you want vision
+    implementation 'org.ftclib.ftclib:vision:2.0.1'
 }
 
 

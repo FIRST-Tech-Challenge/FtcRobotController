@@ -1,4 +1,4 @@
-/*
+
 package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences.MainAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -12,7 +12,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.MechanismTemplates.ArmClass;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.PIDs.PIDController;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetection;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetectionPipeline;
@@ -22,48 +24,29 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous
 public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 {
-    final int OPEN = 0;
-    final double CLOSE = 0.5; // probably adjust later
-
-    private DcMotorEx armMotor, liftMotorLeft, liftMotorRight;
-    private Servo armJoint, clawJoint, wristJoint;
-    ElapsedTime timer = new ElapsedTime();
 
 
 
     //Declaring lift motor powers
-    double power;
+    private Arm armControl;
+    private Slide slideControl;
+    private Claw clawMovement;
 
     // Declaring our motor PID for the lift; passing through our PID values
-    private PIDController motorPID = new PIDController(0,0,0,0, timer); // This is where we tune PID values
 
     public PP_Auto_Quad3(){
+
+
         super.runOpMode(); // runs the opMode of the apriltags pipeline
 
         waitForStart();
 
-        // Motors \\
-        liftMotorLeft = (DcMotorEx)hardwareMap.dcMotor.get("liftMotorLeft");
-        liftMotorRight = (DcMotorEx)hardwareMap.dcMotor.get("liftMotorRight");
-        armMotor = (DcMotorEx)hardwareMap.dcMotor.get("armMotor");
-
-        liftMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // RUN_USING_ENCODER limits motors to about 80% of their full potential
-        liftMotorRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        liftMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        liftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // Servos \\
-        armJoint = hardwareMap.get(Servo.class, "armJoint");
-        clawJoint = hardwareMap.get(Servo.class, "clawJoint");
-        wristJoint = hardwareMap.get(Servo.class, "wristJoint");
+        armControl = new Arm(hardwareMap);
+        slideControl = new Slide(hardwareMap);
+        clawMovement = new Claw(hardwareMap);
     }
 
-    private ArmClass arm = new ArmClass(motorPID,liftMotorLeft,liftMotorRight,armMotor,wristJoint,clawJoint,OPEN,CLOSE);
+
 
     @Override
     public void runOpMode()
@@ -114,18 +97,22 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
     public Pose2d cycle(SampleMecanumDrive bot, Pose2d currentPosition){
         TrajectorySequence openingMove =  bot.trajectorySequenceBuilder(currentPosition)
             .addTemporalMarker(2,() -> {
-                arm.goToJunction(1000);
-                arm.armPivot(500);
-                arm.claw();
-                arm.armPivot(-500);
+                slideControl.setHighJunction();
+                slideControl.Update();
+                armControl.setForwards();
+                armControl.update();
+                clawMovement.openOrCloseClaw();
+                armControl.setBackwards();
+                armControl.update();
                 })//temporal marker for the extake
             .lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75))) // Drive to cone stack
 
             .addTemporalMarker(1,()->{
-                arm.goToJunction(0);
-                arm.armPivot(-950);
-                arm.claw();
-                arm.armPivot(950);
+                slideControl.setIntakeOrGround();
+                slideControl.Update();
+                clawMovement.openOrCloseClaw();
+                armControl.setForwards();
+                armControl.update();
                 })//marker for the intake, the timing will be tested so where the markers are located and times are subject to change
 
             .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0)))
@@ -139,8 +126,10 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 
         TrajectorySequence cycles =  bot.trajectorySequenceBuilder(currentPosition)
                 .addTemporalMarker(3,() -> {
-                arm.goToJunction(0);
-                arm.claw();})
+                slideControl.setIntakeOrGround();
+                slideControl.Update();
+                clawMovement.openOrCloseClaw();
+                })
                 .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0))) // back to the cone stack
                 .lineToLinearHeading(new Pose2d(-33, 8, Math.toRadians(-39.75))) // go to junction
                 .waitSeconds(1)//Under the impression that using the async PID, the slides will be already be moved up
@@ -154,4 +143,3 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
     }
 
 }
-*/
