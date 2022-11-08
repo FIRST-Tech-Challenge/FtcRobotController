@@ -45,7 +45,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         // LOOPS TO RUN ASYNC \\
        while (opModeIsActive()){
             bot.update();
-            slideControl.Update();
+            slideControl.Update(telemetry);
             armControl.update(telemetry);
         }
 

@@ -180,7 +180,7 @@ public class PP_MecanumTeleOp extends OpMode
         } else if (gamepad2.x){
           slideControl.setIntakeOrGround();
         }
-        //slideControl.Update();
+        slideControl.Update(telemetry);
 
         // TRIGGERS \\
         if (gamepad2.right_trigger > 0.2) {

@@ -20,9 +20,9 @@ public class Arm {
     public static double armKd = 0.000;
     public static double armKf = 0.000;
 
-    public static double EXTAKE_POS = 1200; // TODO: Change this to the actual position based on motor encoder readings
-    public static double INTAKE_POS = 25; // TODO: Change this to the actual position based on motor encoder readings
-    public static double targetPos = 0;
+    public final static double EXTAKE_POS = 1200; // TODO: Change this to the actual position based on motor encoder readings
+    public final static double INTAKE_POS = 0; // TODO: Change this to the actual position based on motor encoder readings
+    public double targetPos = 0;
 
     private final double[] PIDF_COEFF = {armKp, armKi, armKd, armKf}; // TODO: Tune this PIDF
 
@@ -39,10 +39,7 @@ public class Arm {
         armPIDF.setPIDF(armKp, armKi, armKd, armKf);
         double correction = armPIDF.calculate(armMotor.getCurrentPosition(), targetPos);
 
-        telemetry.addData("targetPosition:", targetPos);
-        telemetry.addData("motor position: ", armMotor.getCurrentPosition());
-        telemetry.addData("correction: ", correction);
-        telemetry.update();
+
 
         armMotor.set(correction);
     }
