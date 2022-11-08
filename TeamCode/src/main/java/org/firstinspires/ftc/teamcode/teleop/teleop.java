@@ -16,10 +16,12 @@ import org.firstinspires.ftc.teamcode.config.Hardware2;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
-@TeleOp(name = "Drivercentric", group = "Taus")
+//@TeleOp(name = "Drivercentric", group = "Taus")
 public class teleop extends LinearOpMode {
 
     private Hardware2 robot = null;
+    public BNO055IMU imu;
+
 
     float rotate_angle = 0;
     double reset_angle = 0;
@@ -32,12 +34,21 @@ public class teleop extends LinearOpMode {
     @Override
     public void runOpMode() {
         Hardware2 robot = new Hardware2();
-        robot.initTeleOpIMU(hardwareMap);
+        robot.initTeleOpIMU();
 
         robot.frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         robot.backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         robot.backRightMotor.setDirection(DcMotor.Direction.FORWARD);
         robot.frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+        imu.initialize(parameters);
 
 
         while (!opModeIsActive()) {
@@ -118,7 +129,7 @@ public class teleop extends LinearOpMode {
     }
 
     public double getHeading() {
-        Orientation angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double heading = angles.firstAngle;
         if (heading < -180) {
             heading = heading + 360;

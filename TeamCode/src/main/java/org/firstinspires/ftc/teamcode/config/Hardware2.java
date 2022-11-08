@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.config;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Hardware2 {
+public class Hardware2 extends OpMode {
 
     // Motor variable names
     public DcMotor frontLeftMotor = null;
@@ -25,31 +28,50 @@ public class Hardware2 {
 
 
     public Hardware2() {
-        hwMap = null;
         this.runThisWithEncoder = true;
+    }
+
+    @Override
+    public void init() {
+
+
+    }
+
+    @Override
+    public void loop() {
+
     }
 
 
     public Hardware2(boolean runThisWithEncoder) {
-        hwMap = null;
         this.runThisWithEncoder = runThisWithEncoder;
     }
 
 
-    public void initTeleOpIMU(HardwareMap hwMap) {
+    public void initTeleOpIMU() {
+
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//
+//        parameters.mode = BNO055IMU.SensorMode.IMU;
+//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        parameters.loggingEnabled = false;
+//        imu.initialize(parameters);
 
         // Save reference to Hardware map
-        this.hwMap = hwMap;
+        this.hwMap = hardwareMap;
 
         period.reset();
 
 
-        frontLeftMotor = hwMap.dcMotor.get("front_left");
-        frontRightMotor = hwMap.dcMotor.get("front_right");
-        backLeftMotor = hwMap.dcMotor.get("back_left");
-        backRightMotor = hwMap.dcMotor.get("back_right");
-        verticalLiftMotor = hwMap.dcMotor.get("vertical_lift");
-        intakeServo = hwMap.crservo.get("intake_servo");
+        frontLeftMotor = this.hwMap.dcMotor.get("front_left");
+        frontRightMotor = this.hwMap.dcMotor.get("front_right");
+        backLeftMotor = this.hwMap.dcMotor.get("back_left");
+        backRightMotor = this.hwMap.dcMotor.get("back_right");
+        verticalLiftMotor = this.hwMap.dcMotor.get("vertical_lift");
+        intakeServo = this.hwMap.crservo.get("intake_servo");
 
 
         // Initialize Motors
