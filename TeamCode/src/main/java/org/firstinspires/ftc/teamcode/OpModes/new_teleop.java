@@ -49,7 +49,6 @@ public class new_teleop extends LinearOpMode {
             double move_y_axis = gamepad1.left_stick_y;
             double move_x_axis = -gamepad1.left_stick_x;
             double pivot_turn = -gamepad1.right_stick_x;
-            double slider_power = gamepad2.right_stick_y;
 
             //Sets the target power
             double target_fl_power = move_y_axis + move_x_axis + pivot_turn;
@@ -76,13 +75,13 @@ public class new_teleop extends LinearOpMode {
             if(gamepad1.x) {
                 robot.claw.setPosition(90);
             }
-            if(gamepad2.y) {
+            if(gamepad1.y) {
                 robot.claw.setPosition(0);
             }
 
             /** Slider **/
-            double vSliderPower =  gamepad1. left_stick_y;
-            double hSliderPower = gamepad1.left_stick_x;
+            double vSliderPower =  -gamepad1.left_stick_y;
+            double hSliderPower = gamepad1.right_stick_x;
 
             robot.vSlider.setPower(vSliderPower);
             robot.hSlider.setPower(hSliderPower);
