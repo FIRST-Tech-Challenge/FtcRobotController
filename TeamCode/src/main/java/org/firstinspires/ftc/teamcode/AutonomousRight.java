@@ -140,6 +140,7 @@ public class AutonomousRight extends LinearOpMode {
     static final int COUNTS_PER_INCH_STRAFE = 55; // robot strafe 1 INCH. Left-right moving. need test
     double robotAutoLoadMovingDistance = 1.0; // in INCH
     double robotAutoUnloadMovingDistance = 3.5; // in INCH
+    static final int SLOW_DOWN_DISTANCE = 10; // slow down in the final 10 inch
 
     // IMU related
     Orientation lastAngles = new Orientation();
@@ -330,7 +331,7 @@ public class AutonomousRight extends LinearOpMode {
         Logging.log("Autonomous - Target Position = %d", targetPosition);
         robotRunWithPositionModeOn(true); // turn on encoder mode,and reset encoders
         Logging.log("Autonomous - reset encoders to zero.");
-        if (Math.abs(targetDistance) < 12.0) {
+        if (Math.abs(targetDistance) < SLOW_DOWN_DISTANCE) {
             drivePower = SLOW_DOWN_POWER; // low speed for short moving
         }
         Logging.log("Autonomous - PID = %d, power = %.2f", tSign, drivePower);
@@ -539,6 +540,14 @@ public class AutonomousRight extends LinearOpMode {
         while(robotIsBusy() && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
             if (0 != targetSign) { // no pid if sign = 0;
                 correction = pidDrive.performPID(getAngle());
+            }
+
+            int currPosition = FrontLeftDrive.getCurrentPosition();
+            int targetPosition = FrontLeftDrive.getTargetPosition();
+
+            //slow down when close to destination around 10 inch.
+            if (Math.abs(currPosition - targetPosition) < (SLOW_DOWN_DISTANCE * COUNTS_PER_INCH_DRIVE)) {
+                p = SLOW_DOWN_POWER;
             }
             Logging.log("Autonomous -power = %.2f, correction = %.2f, global angle = %.3f", p, correction, globalAngle);
 
