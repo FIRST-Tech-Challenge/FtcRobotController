@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -57,7 +56,7 @@ public class GeneralDriver extends BaseTele {
                 hdw.goToHeight(Hardware2022.SlideHeight.Low);
             }
             if (gamepad1.y) {
-                hdw.releaeCone();
+                hdw.releaseCone();
 
             }
             if (gamepad1.b) {
@@ -65,7 +64,7 @@ public class GeneralDriver extends BaseTele {
             }
 
             if (gamepad1.x) {
-                //TODO Write method for manual grab
+                hdw.manualgrab();
             }
 
             hdw.freeLowerVerticalSlide(gamepad1.left_trigger);

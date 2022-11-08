@@ -57,7 +57,7 @@ public class Hardware2022 {
 
     /**
      * Constructor
-     * @param m This is the HarewareMap, which is configured on the dirver stataion.
+     * @param m This is the HardwareMap, which is configured on the driver station.
      * @param tm  The Telemetry object, used for debug purpose.
      */
     public Hardware2022(HardwareMap m, Telemetry tm )
@@ -146,9 +146,9 @@ public class Hardware2022 {
         telemetry.addLine().addData("[FL Position >]  ", ""+wheelFrontLeft.getCurrentPosition() );
         telemetry.update();
 
-        while ( Math.abs(wheelFrontLeft.getCurrentPosition()) < distance ) {
+        while ( Math.abs(getXAxisPosition()) < distance ) {
 
-            telemetry.addLine().addData("[FL Position >]  ", ""+wheelFrontLeft.getCurrentPosition() );
+            telemetry.addLine().addData("[FL Position >]  ", "" + getXAxisPosition() );
             telemetry.update();
             try {
                 sleep(50);
@@ -163,6 +163,12 @@ public class Hardware2022 {
         wheelFrontLeft.setPower(0);
         wheelBackRight.setPower(0);
         wheelBackLeft.setPower(0);
+
+    }
+
+    private int getXAxisPosition ( ) {
+        return ( wheelFrontLeft.getCurrentPosition() + wheelFrontRight.getCurrentPosition()
+                 - wheelBackLeft.getCurrentPosition() - wheelBackRight.getCurrentPosition()) /4 ;
 
     }
 
@@ -220,8 +226,9 @@ public class Hardware2022 {
 
     }
 
+
     /**
-     * This operation move robot lef/right according to the input
+     * This operation move robot left/right according to the input
      * @param distance  Distance inch ,
      * @param power Positive value move right.
      */
@@ -231,13 +238,19 @@ public class Hardware2022 {
 
     }
 
+    private int getYAxisPosition ( ) {
+        return ( wheelFrontLeft.getCurrentPosition() + wheelFrontRight.getCurrentPosition()
+                - wheelBackLeft.getCurrentPosition() - wheelBackRight.getCurrentPosition()) /4 ;
+
+    }
+
+
     /**
      * This method checks current state of robot.
      *
      * @return  Enumeration of robot state.
      */
     RobotState checkState(){
-        //TODO Implment the logic to check here.
         return currentState;
     }
 
@@ -251,7 +264,6 @@ public class Hardware2022 {
 
         //Only try to grab cone if in No Cone state.
         if ( currentState.equals(RobotState.NoCone)){
-            //TODO:  Logic here
             if ( debug) {
                 telemetry.addLine().addData("[>]  ", "No cone, checking cone.");
                 telemetry.update();
@@ -315,7 +327,7 @@ public class Hardware2022 {
     }
 
     /**
-     * This operation to lower veritical Slide to one level lower.
+     * This operation to lower vertical Slide to one level lower.
      */
     public void lowerVerticalSlide () {
 
@@ -378,7 +390,7 @@ public class Hardware2022 {
     }
 
 
-    public void releaeCone ( ){
+    public void  releaseCone( ){
 
         grabberclaw.setPosition(CLAW_OPEN);
         currentState = RobotState.NoCone;
@@ -417,9 +429,9 @@ public class Hardware2022 {
         }
 
         //Move the slide
-        int currentPoistion = vSlide.getCurrentPosition();
+        int currentPosition = vSlide.getCurrentPosition();
 
-        if ((currentPoistion - targetPosition) > 0 ) {
+        if ((currentPosition - targetPosition) > 0 ) {
             //Lower slide
             while (vSlide.getCurrentPosition() > targetPosition ) {
                 vSlide.setPower(-1);
@@ -432,5 +444,18 @@ public class Hardware2022 {
 
         }
         currentVSHeight = height;
+
+
     }
+
+    public void manualgrab() {
+
+        grabberclaw.setPosition(CLAW_CLOSED);
+        currentState = RobotState.HasCone;
+
+    }
+
+
+
+
 }

@@ -7,11 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @Disabled
 public class LeftAuto extends BaseAuto {
 
-    @Override
-    public void runOpMode() {
-        super.runOpMode();
-    }
-
     /**
      * THis is the movement from the left side of field to park
      */

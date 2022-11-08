@@ -24,10 +24,10 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 	 */
 	public ConeDnnProcessor() {
 		net = Dnn.readNetFromTensorflow(
-				//"/sdcard/First/DNN/ssd_mobilenet_v1_coco_2017_11_17_frozen.pb",
-				//"/sdcard/First/DNN/ssd_mobilenet_v1_coco_2017_11_17.pbtxt");
-		"C:\\Transfer\\ssd_mobilenet_v1_coco_2017_11_17_frozen.pb",
-		"C:\\Transfer\\ssd_mobilenet_v1_coco_2017_11_17.pbtxt" );
+				"/sdcard/First/DNN/ssd_mobilenet_v3_large_coco_2020_01_14_frozen.pb",
+				"/sdcard/First/DNN/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt");
+		//"C:\\Transfer\\ssd_mobilenet_v1_coco_2017_11_17_frozen.pb",
+		//"C:\\Transfer\\ssd_mobilenet_v1_coco_2017_11_17.pbtxt" );
 
 	}
 
@@ -66,9 +66,10 @@ public class ConeDnnProcessor extends OpenCvPipeline {
 		 * These values need to correspond to the Network used.
 		 * Fast RCNN:  800 x 600,  Scale = 1.0 , mean 0
 		 * SSD Mobilenet v1  300 X 300 , Scale 1.0 , mean 0
+		 * SSD Mobilenet V3  320x320  Scale 1.0
 		 */
-		final int IN_WIDTH = 300;
-		final int IN_HEIGHT = 300;
+		final int IN_WIDTH = 320;
+		final int IN_HEIGHT = 320;
 
 		final double IN_SCALE_FACTOR = 1.0;
 		final double MEAN_VAL = 0;

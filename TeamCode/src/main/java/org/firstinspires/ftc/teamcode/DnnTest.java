@@ -34,8 +34,8 @@ public class DnnTest   extends LinearOpMode {
     public void runOpMode() {
 
         hdw = new Hardware2022(hardwareMap,telemetry ); //init hardware
-        hdw.createHardware();
-        robot = new MecanumWheels();
+        //hdw.createHardware();
+        //robot = new MecanumWheels();
 
 
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
