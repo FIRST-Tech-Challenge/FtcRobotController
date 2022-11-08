@@ -26,11 +26,73 @@ Enable both controller to be able to control the wheel movement independenty. Ap
 4. Saft guarding for operations of combination movement 
 To avoid mis operation for combination movement, use an insurance key to prevent from mis touching.
 
-5. Improvement of combination movement. 
+5. Improvement of combination movement.
 Adding a breaking key to stop existing combination movement
 
 4. Enhancement to grip component to make sure it hold tight of the cone and not slipping
 --- To be added
+
+
+Nov 7: Postmortem for 11/6 Competition:
+
+Preparision:
+
+--- Need more practice
+--- Rule not clear
+--- Learning: change WIFI user/password. It still works.
+
+Prons:
+
+--- Moving system is very fast
+--- Compact size and never get panalty.
+
+Things to be improved:
+
+--- Motor can move fast.  (Reliability)
+	
+--- Move can be less impact
+	--- Grip dropping
+		---- combination of movement. Elbow always keep paralell with the ground.
+		---- combination of movemnet. predefined gripping and drop.
+		---- rotation can't interrupt. 
+		---- keep rotation wire will be wrapped together
+		---- repeated grab and drop.
+
+--- Arm have to be placed exactly the same place. It's not easy to land to the right stop
+	--- Improvmentment: make a bigger grip, a better gripdd
+
+Issue in the game:
+--- cone dropped from grip
+	--- having move
+	--- design of the grip
+	
+--- Platform lost position
+	--- possibly because of hardware issue when shoulder/arm extended.
+
+	--- Tracebility:
+		---- write action
+
+	--- fix solution: position recovery
+		--- set position/ get position from controll hub.
+		--- Idea: removal of platform
+
+Action Items:
+--- AI not implemented
+--- Finish the line.
+--- Not leveraging the side cone.
+----Beacon
+
+
+Open discussion:
+--- Flatfrom or Wheel
+	---Accuracy
+	---Speed
+
+Plan:
+---- automation pick up and drop 
+---- recognition of picture
+---- bigger/firm grip
+
 
 
 
