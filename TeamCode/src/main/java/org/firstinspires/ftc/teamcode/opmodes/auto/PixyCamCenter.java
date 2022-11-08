@@ -16,6 +16,7 @@ public class PixyCamCenter extends BaseOpMode {
     private boolean stopRequested;
     private PixyCam.Block block;
     private int count;
+    public boolean isTurning;
 
 
     /** Initialization */
@@ -26,6 +27,7 @@ public class PixyCamCenter extends BaseOpMode {
         // Initialize motors
         pixycam = hardwareMap.get(PixyCam.class, "pixy");
         count = 0;
+        isTurning = false;
 
 
     }
@@ -45,7 +47,7 @@ public class PixyCamCenter extends BaseOpMode {
         String s = block.width + " " + block.height;
         String coords = block.x + ", " + block.y;
         int rotationOffset = pixycam.headingOffset(PixyCam.YELLOW);
-        int distanceOffset = pixycam.distanceOffset(PixyCam.YELLOW, 50);
+        int distanceOffset = pixycam.distanceOffset(PixyCam.YELLOW, 40);
 //        telemetry.addData("block", s);
 //        telemetry.addData("coords", coords);
         telemetry.addData("distanceOFfset", distanceOffset);
@@ -53,7 +55,8 @@ public class PixyCamCenter extends BaseOpMode {
         Log.d("rotationOffset", rotationOffset + " ");
         Log.d("distanceOfset", distanceOffset + " ");
         telemetry.update();
-        if(gamepad1.a){
+        if(gamepad1.a || isTurning){
+            isTurning = !align(PixyCam.YELLOW, 40);
             align(PixyCam.YELLOW, 40);
         }
 

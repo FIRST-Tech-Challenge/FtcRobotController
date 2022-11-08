@@ -72,11 +72,11 @@ public abstract class BaseOpMode extends OpMode {
         telemetry.addData("offset", distanceOffset);
         Log.d("seeing", distanceOffset + " " + pixycam.GetBiggestBlock().width);
         if (distanceOffset > 5) {
-            telemetry.addData("driving backwards", 0);
-            driveSystem.drive(0, 0, -0.2f);
-        } else if (distanceOffset < -5) {
             telemetry.addData("driving forward", 0);
             driveSystem.drive(0, 0, 0.2f);
+        } else if (distanceOffset < -5) {
+            telemetry.addData("driving backwards", 0);
+            driveSystem.drive(0, 0, -0.2f);
         } else {
             telemetry.addData("stopping", 0);
             driveSystem.setMotorPower(0);
@@ -91,7 +91,7 @@ public abstract class BaseOpMode extends OpMode {
                 step++;
             }
         }
-        if(step == 0){
+        if(step == 1){
             if(alignDistance(colorSignature, desiredWidth)){
                 step = 0;
                 return true;
