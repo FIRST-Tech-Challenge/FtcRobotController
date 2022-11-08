@@ -8,6 +8,7 @@ public class Claw{
     private boolean isOpen;
     private boolean isWristIntakePosition;
     private boolean isAuto;
+
     // claw positions
     private final double OPEN = 0.45;
     private final double CLOSE = 0.15;
@@ -18,8 +19,8 @@ public class Claw{
 
     public Claw(HardwareMap hardwareMap, boolean isAuton ){
         isAuto = isAuton;
-        wristJoint = hardwareMap.get(Servo.class,"WRIST");
-        clawJoint = hardwareMap.get(Servo.class, "CLAW");
+        wristJoint = hardwareMap.get(Servo.class,"WRIST"); // Pin 0
+        clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
         isOpen = true; // our claw begins in the open position
 
         if(isAuto)

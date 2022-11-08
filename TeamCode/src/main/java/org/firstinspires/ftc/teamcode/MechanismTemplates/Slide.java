@@ -18,10 +18,10 @@ public class Slide {
     private final static double LOW_JUNCTION = 900;
     private final static double ZERO_POSITION = 0;
 
-    public static double slideKp = 0.001;
-    public static double slideKi = 0.000;
+    public static double slideKp = 0.002;
+    public static double slideKi = 0.0001;
     public static double slideKd = 0.000;
-    public static double slideKf = 0.000;
+    public static double slideKf = 0.0001;
 
     private final double[] PIDF_COFFECIENTS = {slideKp, slideKi, slideKd, slideKf};//TODO: will have to tune to proper values later
 
@@ -30,8 +30,10 @@ public class Slide {
     public Slide(HardwareMap hardwareMap){
         slideLeft = new Motor(hardwareMap, "SL", Motor.GoBILDA.RPM_312);
         slideRight = new Motor(hardwareMap,"SR", Motor.GoBILDA.RPM_312);
+
         slideLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
         slideLeft.setRunMode(Motor.RunMode.VelocityControl);
         slideRight.setRunMode(Motor.RunMode.VelocityControl);
 
@@ -48,12 +50,12 @@ public class Slide {
     public void Update(Telemetry telemetry){ // updates the position of the motor
         double correctionLeft = slidePIDF.calculate(slideLeft.getCurrentPosition(),targetPosition);
         double correctionRight = slidePIDF.calculate(slideRight.getCurrentPosition(),targetPosition);
-        telemetry.addData("targetPosition:", targetPosition);
-        telemetry.addData("Right motor position: ", slideRight.getCurrentPosition());
-        telemetry.addData("Left motor position: ", slideLeft.getCurrentPosition());
-            telemetry.addData("Left correction: ", correctionLeft);
-        telemetry.addData("Right correction: ", correctionRight);
-            telemetry.update();
+        //telemetry.addData("targetPosition:", targetPosition);
+        //telemetry.addData("Right motor position: ", slideRight.getCurrentPosition());
+        //telemetry.addData("Left motor position: ", slideLeft.getCurrentPosition());
+        //    telemetry.addData("Left correction: ", correctionLeft);
+        //telemetry.addData("Right correction: ", correctionRight);
+        //    telemetry.update();
 
         // Not sure if you would want to add a conditional to stop the motors at some point, but idt adding another while loop would work
         slideLeft.set(correctionLeft); // sets the output power of the motor
