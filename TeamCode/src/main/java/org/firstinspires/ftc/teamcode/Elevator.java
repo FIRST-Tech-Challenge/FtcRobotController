@@ -62,6 +62,7 @@ public class Elevator {
     private Servo           wrist;  //smaller values tilt the wrist down
     private Servo           hand;   //smaller values open the hand more
     private ElapsedTime     elevatorStateTimer = new ElapsedTime();
+    private ElapsedTime     runTime = new ElapsedTime();
 
     // class members (objects)
     private LinearOpMode myOpMode = null;
@@ -226,6 +227,29 @@ public class Elevator {
                  }
                  break;
             }
+
+            case LOWERING_TO_RELEASE: {
+                if (liftInPosition) {
+                    setHandPosition(HAND_OPEN);
+                    setState(RELEASING);
+                }
+                break;
+            }
+
+            case RELEASING: {
+                if (elevatorStateTimer.time() > 0.5) {
+                    setWristOffset(SAFE_WRIST_OFFSET);
+                    setState(FLIPPING_UP);
+                }
+                break;
+            }
+
+            case FLIPPING_UP: {
+                if (elevatorStateTimer.time() > 0.5) {
+                    setState(IN_POSITION_OPEN);
+                }
+                break;
+            }
         }
         return elevatorState;
     }
@@ -306,17 +330,18 @@ public class Elevator {
             wristAngle = wristOffset - liftAngle;
             wristPosition = wristAngleToServo(wristAngle);
             setWristPosition(wristPosition);
-
-            // Display key arm data
-            myOpMode.telemetry.addData("arm position", liftPosition);
-            myOpMode.telemetry.addData("arm setpoint", liftTargetPosition);
-            myOpMode.telemetry.addData("armLevel",     currentElevatorLevel);
-            myOpMode.telemetry.addData("arm angle", liftAngle);
-            myOpMode.telemetry.addData("servo position", wristPosition);
         }
         return liftInPosition;
     }
 
+    public void showElevatorState() {
+        // Display key arm data
+        myOpMode.telemetry.addData("arm position", liftPosition);
+        myOpMode.telemetry.addData("arm setpoint", liftTargetPosition);
+        myOpMode.telemetry.addData("armLevel",     currentElevatorLevel);
+        myOpMode.telemetry.addData("arm angle", liftAngle);
+        myOpMode.telemetry.addData("servo position", wristPosition);
+    }
     /***
      * Start the power off slowly when moving a long way
      * @param power
@@ -349,7 +374,7 @@ public class Elevator {
         setLiftTargetPosition(0);
         currentElevatorLevel = 0;
         newLevelReqested = false;
-        setHandPosition(HAND_OPEN);
+        setHandPosition(HAND_CLOSE);
         enableLift();  // Start closed loop control
     }
 
@@ -387,6 +412,14 @@ public class Elevator {
         newLevelReqested = true;
     }
 
+    public void autoRelease() {
+        if (currentElevatorLevel > 0) {
+            currentElevatorLevel--;
+        }
+        setLiftTargetPosition(elevatorLevel[currentElevatorLevel]);
+        setState(LOWERING_TO_RELEASE);
+    }
+
     public void enableLift() {
         liftActive = true;
     }
@@ -410,6 +443,14 @@ public class Elevator {
 
     public void jogElevator(double speed) {
         setLiftTargetPosition(liftTargetPosition + (int)(speed * 7));
+    }
+
+    public void runElevator(double seconds) {
+        runTime.reset();
+        while (runTime.time() < seconds) {
+            update();
+            runStateMachine();
+        }
     }
 
     // ----- Wrist controls

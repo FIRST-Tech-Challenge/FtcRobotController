@@ -94,6 +94,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
             elevator.runStateMachine();
 
             telemetry.addData("Elevator", elevator.getStateText());
+            elevator.showElevatorState();
 
             //-----------PILOT-----------
             //check for auto cone tracking

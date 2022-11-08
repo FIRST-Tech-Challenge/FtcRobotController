@@ -218,6 +218,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
 
     public void waitForIdle() {
         while (!Thread.currentThread().isInterrupted() && isBusy()) {
+
             update();
         }
     }
