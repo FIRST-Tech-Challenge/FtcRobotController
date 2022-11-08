@@ -57,7 +57,6 @@ public class PixyCamCenter extends BaseOpMode {
         telemetry.update();
         if(gamepad1.a || isTurning){
             isTurning = !align(PixyCam.YELLOW, 40);
-            align(PixyCam.YELLOW, 40);
         }
 
     }

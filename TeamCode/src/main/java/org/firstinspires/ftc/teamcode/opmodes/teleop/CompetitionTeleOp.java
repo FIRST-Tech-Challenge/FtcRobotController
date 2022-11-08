@@ -30,6 +30,7 @@ public class CompetitionTeleOp extends BaseOpMode {
         telemetry.addData("arm right encoder ", armSystem.armRight.getCurrentPosition());
         telemetry.addData("arm left power",  armSystem.armLeft.getPower());
         telemetry.addData("arm right power", armSystem.armRight.getPower());
+        telemetry.addData("Right X", gamepad1.right_stick_x);
 
 
 

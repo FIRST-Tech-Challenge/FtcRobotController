@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.base;
 
+import static org.firstinspires.ftc.teamcode.opmodes.auto.CompetitionAutonomous.POLE_WIDTH;
+
 import android.util.Log;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -56,10 +58,10 @@ public abstract class BaseOpMode extends OpMode {
         int headingOffset = pixycam.headingOffset(sign);
         telemetry.addData("offset", headingOffset);
         Log.d("degrees", headingOffset + " ");
-        if (headingOffset > 5) {
-            driveSystem.turn(60, 0.5);
-        } else if (headingOffset < -5) {
-            driveSystem.turn(-60, 0.5);
+        if (headingOffset > 1) {
+            driveSystem.drive(0.6f, 0, 0);
+        } else if (headingOffset < -1) {
+            driveSystem.drive(-0.6f, 0, 0);
         } else {
             driveSystem.setMotorPower(0);
             return true;
@@ -73,10 +75,10 @@ public abstract class BaseOpMode extends OpMode {
         Log.d("seeing", distanceOffset + " " + pixycam.GetBiggestBlock().width);
         if (distanceOffset > 5) {
             telemetry.addData("driving forward", 0);
-            driveSystem.drive(0, 0, 0.2f);
+            driveSystem.drive(0, 0, -0.3f);
         } else if (distanceOffset < -5) {
-            telemetry.addData("driving backwards", 0);
-            driveSystem.drive(0, 0, -0.2f);
+            telemetry.addData("driving backwards", 0.3f);
+            driveSystem.drive(0, 0, 1f);
         } else {
             telemetry.addData("stopping", 0);
             driveSystem.setMotorPower(0);
@@ -102,19 +104,31 @@ public abstract class BaseOpMode extends OpMode {
 
     public boolean scoreDaCone(int level){
         if(step == 0){
+            if(armSystem.driveToLevel(level-300, 0.6)){
+                step +=2;
+            }
+        }
+
+        if(step == 1){
+            if(align(PixyCam.YELLOW, POLE_WIDTH)){
+                step++;
+            }
+        }
+
+        if(step == 2){
             if(armSystem.driveToLevel(level, 0.6)){
                 step++;
             }
         }
 
-        if(step == 1){
-            if(driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.2)){
+        if(step == 3){
+            if(driveSystem.driveToPosition(210, DriveSystem.Direction.FORWARD, 0.2)){
                 step++;
             }
             //drive forward
         }
 
-        if(step == 2){
+        if(step == 4){
             if(armSystem.outtake()){
                 step = 0;
                 return true;
