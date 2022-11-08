@@ -71,10 +71,10 @@ public abstract class BaseOpMode extends OpMode {
         distanceOffset = pixycam.distanceOffset(colorSignature, desiredWidth);// find actual desired width
         telemetry.addData("offset", distanceOffset);
         Log.d("seeing", distanceOffset + " " + pixycam.GetBiggestBlock().width);
-        if (distanceOffset > 10) {
+        if (distanceOffset > 5) {
             telemetry.addData("driving backwards", 0);
             driveSystem.drive(0, 0, -0.2f);
-        } else if (distanceOffset < -10) {
+        } else if (distanceOffset < -5) {
             telemetry.addData("driving forward", 0);
             driveSystem.drive(0, 0, 0.2f);
         } else {
@@ -108,7 +108,7 @@ public abstract class BaseOpMode extends OpMode {
         }
 
         if(step == 1){
-            if(driveSystem.driveToPosition(200, DriveSystem.Direction.FORWARD, 0.2)){
+            if(driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.2)){
                 step++;
             }
             //drive forward

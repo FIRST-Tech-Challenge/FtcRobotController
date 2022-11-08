@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
-@Disabled
+@Autonomous (name = "pixy cam", group = "Autonomous")
 public class PixyCamCenter extends BaseOpMode {
 
     protected PixyCam pixycam;
@@ -40,35 +40,21 @@ public class PixyCamCenter extends BaseOpMode {
         return this.stopRequested || Thread.currentThread().isInterrupted();
     }
     public void loop(){
-//        block = pixycam.GetBiggestBlock(PixyCam.BLUE);
-//        Log.d("block ", block.toString());
-//        String s = block.width + " " + block.height;
-//        String coords = block.x + ", " + block.y;
-//        int rotationOffset = pixycam.headingOffset(PixyCam.BLUE);
-//        int distanceOffset = pixycam.distanceOffset(PixyCam.BLUE, 100);
-//        telemetry.addData("rotationOffset", rotationOffset);
+        block = pixycam.GetBiggestBlock(PixyCam.YELLOW);
+        Log.d("block ", block.toString());
+        String s = block.width + " " + block.height;
+        String coords = block.x + ", " + block.y;
+        int rotationOffset = pixycam.headingOffset(PixyCam.YELLOW);
+        int distanceOffset = pixycam.distanceOffset(PixyCam.YELLOW, 50);
 //        telemetry.addData("block", s);
 //        telemetry.addData("coords", coords);
-//        telemetry.addData("distanceOFfset", distanceOffset);
-//        Log.d("rotationOffset", rotationOffset + " ");
-//        Log.d("distanceOfset", distanceOffset + " ");
-//        telemetry.update();
-        if(count == 0 && driveSystem.driveToPositionTicks(1000, DriveSystem.Direction.FORWARD, 0.3)){
-            count ++;
-            telemetry.addData("Status: ", count);
-            double t = getRuntime();
-        }
-        if(count == 1 && driveSystem.driveToPositionTicks(1000, DriveSystem.Direction.BACKWARD, 0.3)){
-            count ++;
-            telemetry.addData("Status: ", count);
-        }
-        if(count == 2 && driveSystem.driveToPositionTicks(1000, DriveSystem.Direction.LEFT, 0.3)){
-            count ++;
-            telemetry.addData("Status: ", count);
-        }
-        if(count == 3 && driveSystem.driveToPositionTicks(1000, DriveSystem.Direction.RIGHT, 0.3)){
-            count ++;
-            telemetry.addData("Status: ", count);
+        telemetry.addData("distanceOFfset", distanceOffset);
+        telemetry.addData("rotationOffset", rotationOffset);
+        Log.d("rotationOffset", rotationOffset + " ");
+        Log.d("distanceOfset", distanceOffset + " ");
+        telemetry.update();
+        if(gamepad1.a){
+            align(PixyCam.YELLOW, 40);
         }
 
     }

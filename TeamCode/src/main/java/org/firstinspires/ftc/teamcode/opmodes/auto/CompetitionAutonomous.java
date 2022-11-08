@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 @Disabled
 public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
-    public static final int POLE_WIDTH = 50;
+    public static final int POLE_WIDTH = 40;
     public static final int CONE_WIDTH = 150;
     private boolean park = false;
 
