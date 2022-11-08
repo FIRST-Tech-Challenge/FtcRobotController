@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences;
+package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences.MainAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;

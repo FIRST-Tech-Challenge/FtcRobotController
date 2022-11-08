@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,28 +8,31 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.PIDs.PIDController;
-import org.firstinspires.ftc.teamcode.MechanismTemplates.ArmClass;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 
-
-@TeleOp(name = "PP_MecanumTeleOp")
-public class PP_MecanumTeleOp extends OpMode {
+@Config
+@TeleOp(name = "PP_MecanumTeleOp") // This is redundant, the name will automatically be set to the class name if you don't set it - Tiernan
+public class PP_MecanumTeleOp extends OpMode
+{
     //"MC ABHI IS ON THE REPO!!!"
+
+    boolean isAuto = false; // yes I know this is stupid
 
     // Declaring class members to be used in other methods
     private ElapsedTime runtime = new ElapsedTime();
-    PIDController motorPID = new PIDController(0, 0, 0, 0, runtime);
-
-
-    private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, slideMotorLeft, slideMotorRight, armMotor;
+    private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight; //slideMotorLeft, slideMotorRight, armMotor;
     private Servo clawJoint, wristJoint;
 
-
+    // TODO: Why are these not private, this makes me sad. Also you could make them static and stick in their own class... - Tiernan
     // Claw Servo open and close constants
-    final int OPEN = 0;
-    final double CLOSE = 0.5; // probably adjust later
-    final double[] servo_MinMax = {0, 0.5};
-    ArmClass armControl = new ArmClass(motorPID, slideMotorLeft, slideMotorRight, armMotor, wristJoint, clawJoint, servo_MinMax);
+    private final double[] servo_MinMax = {0, 0.5};
+    private final double OPEN = 0.45; // claw open
+
+    private Arm armControl;
+    private Slide slideControl;
+    private Claw clawControl;
 
     /**
      * Get the maximum absolute value from a static array of doubles
@@ -36,7 +40,8 @@ public class PP_MecanumTeleOp extends OpMode {
      * @param input the input array of double values
      * @return the maximum value from the input array
      */
-    private double getMax(double[] input) {
+    private double getMax(double[] input)
+    {
         double max = Integer.MIN_VALUE;
         for (double value : input) {
             if (Math.abs(value) > max) {
@@ -47,59 +52,58 @@ public class PP_MecanumTeleOp extends OpMode {
     }
 
     @Override
-    public void init() {
-        // Declaring our motors
-        motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("FL");
-        motorBackLeft = (DcMotorEx) hardwareMap.dcMotor.get("BL");
-        motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("FR");
-        motorBackRight = (DcMotorEx) hardwareMap.dcMotor.get("BR");
-        slideMotorLeft = (DcMotorEx) hardwareMap.dcMotor.get("liftMotor");
-        slideMotorRight = (DcMotorEx) hardwareMap.dcMotor.get("liftMotor");
-        armMotor = (DcMotorEx) hardwareMap.dcMotor.get("armMotor");
+    public void init()
+    {
+        // Expansion Hub Pins
+        motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("FL"); // Pin 2
+        motorBackLeft = (DcMotorEx) hardwareMap.dcMotor.get("BL"); // Pin 1
 
+        // Control Hub Pins
+        motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("FR"); // Pin 3
+        motorBackRight = (DcMotorEx) hardwareMap.dcMotor.get("BR"); // Pin 2
+        clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
+        wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
 
-        // Declaring our servos
-        clawJoint = hardwareMap.get(Servo.class, "clawJoint");
-        wristJoint = hardwareMap.get(Servo.class, "wristJoint");
-
-
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Running without an encoder does NOT disable counting
-        slideMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slideMotorRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder does NOT disable encoder counting
+        //slideMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // You don't want to run using encoders for PID
+        //slideMotorRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //slideMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //slideMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Reverse the right side motors
+        // Reverse the left side motors
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        clawJoint.setPosition(OPEN);
+        armControl = new Arm(hardwareMap);
+        slideControl = new Slide(hardwareMap);
+        clawControl = new Claw(hardwareMap, isAuto);
 
-    }// end of init
+    }// INIT()
 
     @Override
-    public void loop() {
-        // Our variables
-        boolean precisionToggle = gamepad1.right_trigger > 0.1;
-
+    public void loop()
+    {
+        boolean precisionToggle = gamepad1.right_trigger > 0.1; // we want to check this every time the loop runs
         drive(precisionToggle);
-        arm(); // includes claw mechanism
-    }
+        arm(); // this method calls the arm object's methods
+        claw(); // this method calls the claw object's methods
+
+        armControl.update(telemetry);
+
+    }// end of loop()
 
 
     //        BOT METHODS       \\
-    public void drive(boolean precisionToggle) {
+    public void drive(boolean precisionToggle)
+    {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
@@ -140,54 +144,60 @@ public class PP_MecanumTeleOp extends OpMode {
         }
 
         if (precisionToggle) {
-            motorFrontLeft.setPower(frontLeftPower * 0.6);
-            motorBackLeft.setPower(backLeftPower * 0.6);
-            motorFrontRight.setPower(frontRightPower * 0.6);
-            motorBackRight.setPower(backRightPower * 0.6);
+            motorFrontLeft.setPower(frontLeftPower * 0.3);
+            telemetry.addData("Power front left",frontLeftPower*0.3);
+            motorBackLeft.setPower(backLeftPower * 0.3);
+            telemetry.addData("Power back left",backLeftPower*0.3);
+            motorFrontRight.setPower(frontRightPower * 0.3);
+            telemetry.addData("Power front right",frontRightPower*0.3);
+            motorBackRight.setPower(backRightPower * 0.3);
+            telemetry.addData("Power back right:",backRightPower*0.3);
         } else {
             motorFrontLeft.setPower(frontLeftPower);
             motorBackLeft.setPower(backLeftPower);
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
         }
-
-    }
+    }// end of drive()
 
     public void arm() {
+        if(gamepad2.dpad_up){
+            armControl.setExtake();
+        }
+        else if(gamepad2.dpad_down){
+            armControl.setIntake();
+        }
+        armControl.update(telemetry);
+
         // BUTTONS \\
         if (gamepad2.a) {
             // 1000 represents an arbitrary value for the max -> 700 mid, 400 low, 0 ground
-            armControl.goToJunction(1000);
+            slideControl.setHighJunction();
         } else if (gamepad2.b) {
-            armControl.goToJunction(700);
+            slideControl.setMidJunction();
         } else if (gamepad2.y) {
-            armControl.goToJunction(400);
-        } else if (gamepad2.x) {
-            armControl.goToJunction(0);
+            slideControl.setLowJunction();
+        } else if (gamepad2.x){
+          slideControl.setIntakeOrGround();
         }
-
-        // DPAD \\
-        if (gamepad2.dpad_left) {
-            armControl.manualClawRotate(-0.01);
-        } else if (gamepad2.dpad_right) {
-            armControl.manualClawRotate(0.01);
-        } else if (gamepad2.dpad_up) {
-            armControl.armPivot(100); // pivots up
-        } else if (gamepad2.dpad_down) {
-            armControl.armPivot(-100); // pivots down
-        }
-
-        // BUMPER \\
-        if (gamepad2.right_bumper) {
-            armControl.claw();
-        }
+        slideControl.Update(telemetry);
 
         // TRIGGERS \\
         if (gamepad2.right_trigger > 0.2) {
-            armControl.manualSlides(5);
+           slideControl.manualSlides(5);
         } else if (gamepad2.left_trigger > 0.2) {
-            armControl.manualSlides(-5);
+           slideControl.manualSlides(-5);
+       }
+       //slideControl.Update();
+    }// end of arm()
+
+    public void claw(){
+        // BUMPER \\
+        if (gamepad2.right_bumper) {
+            // add a delay here so that the claw doesn't jitter open and closed
+            clawControl.toggleOpenClose(); // toggles whether the claw is open or closed
         }
-    }
+
+    }// end of claw()
 }
 
