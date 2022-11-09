@@ -6,6 +6,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 //meep meep example create your own class
+// from bottom right corner
 public class MeepMeepTrajectories {
     public static void main(String[] args) {
         //placeholder signal zone
@@ -105,5 +106,4 @@ public class MeepMeepTrajectories {
 
     }
 }
-
 
