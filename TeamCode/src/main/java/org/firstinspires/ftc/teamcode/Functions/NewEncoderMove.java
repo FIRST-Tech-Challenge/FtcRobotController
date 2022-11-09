@@ -6,6 +6,10 @@ public class NewEncoderMove {
     private DcMotor leftMotor, leftMotorBack, rightMotor, rightMotorBack;
     private int leftFrontPos, rightFrontPos, leftBackPos, rightBackPos;
 
+    /**
+     * This method sets the mode of the motors to run with encoders and resets them
+     * It also sets the original position of all motors to 0 so it means it hasn't moved yet
+     */
     void Init()
     {
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -19,7 +23,13 @@ public class NewEncoderMove {
         rightBackPos = 0;
 
     }
-
+    /**
+     * This method initialises the motors.
+     * @param _LM : left motor front
+     * @param _LMB : right motor front
+     * @param _RM : left motor back
+     * @param _RMB : right motor back
+     */
     public NewEncoderMove(DcMotor _LM, DcMotor _LMB, DcMotor _RM, DcMotor _RMB)
     {
         leftMotor = _LM;
@@ -29,6 +39,17 @@ public class NewEncoderMove {
         Init();
     }
 
+    /**
+     * This function will be used in our main program to tell the robot to go a certain number of ticks
+     * It can also be used for rotating the robot
+     * @param leftFrontTarget : the target ticks number for the left front motor
+     * @param leftBackTarget : the target ticks number for the left back motor
+     * @param rightFrontTarget : the target ticks number for the right front motor
+     * @param rightBackTarget : the target ticks number for the right back motor
+     * @param power : the power/speed that we set the motors to run with
+     * @param opMode : this boolean tells us if the opMode is active or not so that motor will continue to run and go to the target position only if the opMode is active and the code is running
+     * Template: DriveTo(+/-number, +/-number, +/-number, +/-number, any number from 0 to 1,  opModeIsActive());
+     */
     public void DriveTo(int leftFrontTarget, int leftBackTarget, int rightFrontTarget, int rightBackTarget, double power, boolean opMode)
     {
         leftFrontPos += leftFrontTarget;
