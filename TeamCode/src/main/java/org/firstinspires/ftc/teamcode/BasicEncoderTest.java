@@ -62,12 +62,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Encoder_Testing")
+@Autonomous(name="EncoderTesting")
 //@Disabled
 public class BasicEncoderTest extends LinearOpMode {
 
     /* Declare OpMode members. */
-    private DcMotor    motor1  = null;
+    private DcMotor    lf  = null;
 //    private DcMotor    lb  = null;
 //    private DcMotor    rf  = null;
 //    private DcMotor    rb  = null;
@@ -92,7 +92,7 @@ public class BasicEncoderTest extends LinearOpMode {
     public void runOpMode() {
 
         // Initialize the drive system variables.
-         motor1  = hardwareMap.get(DcMotor.class, "motor1");
+         lf  = hardwareMap.get(DcMotor.class, "lf");
 //         lb = hardwareMap.get(DcMotor.class, "lb");
 //         rf = hardwareMap.get(DcMotor.class, "rf");
 //         rb = hardwareMap.get(DcMotor.class, "rb");
@@ -100,18 +100,18 @@ public class BasicEncoderTest extends LinearOpMode {
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-         motor1.setDirection(DcMotor.Direction.FORWARD);
+         lf.setDirection(DcMotor.Direction.FORWARD);
 //         lb.setDirection(DcMotor.Direction.FORWARD);
 //         rf.setDirection(DcMotor.Direction.FORWARD);
 //         rb.setDirection(DcMotor.Direction.REVERSE);
 
 
-        motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -119,7 +119,7 @@ public class BasicEncoderTest extends LinearOpMode {
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Starting at",
-                            motor1.getCurrentPosition()
+                            lf.getCurrentPosition()
 //                            lb.getCurrentPosition(),
 //                            rf.getCurrentPosition(),
 //                            rb.getCurrentPosition()
@@ -167,17 +167,17 @@ public class BasicEncoderTest extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newmotor1Target = motor1.getCurrentPosition() + (int)(counts);
+            newmotor1Target = lf.getCurrentPosition() + (int)(counts);
 //            newmotor2Target = lb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
 //            newmotor3Target = rf.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
 //            newmotor4Target = rb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            motor1.setTargetPosition(newmotor1Target);
+            lf.setTargetPosition(newmotor1Target);
 //            lb.setTargetPosition(newmotor2Target);
 //            rf.setTargetPosition(newmotor3Target);
 //            rb.setTargetPosition(newmotor4Target);
 
             // Turn On RUN_TO_POSITION
-            motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //            lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //            rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //            rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -185,7 +185,7 @@ public class BasicEncoderTest extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            motor1.setPower(speed);
+            lf.setPower(speed);
 //            lb.setPower(Math.abs(speed));
 //            rf.setPower(Math.abs(speed));
 //            rb.setPower(Math.abs(speed));
@@ -199,23 +199,23 @@ public class BasicEncoderTest extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS) &&
-                   (motor1.isBusy() )) {
+                   (lf.isBusy() )) {
 
                 // Display it for the driver.
                 telemetry.addData("Running to", newmotor1Target );
                 telemetry.addData("Currently at",
-                                            motor1.getCurrentPosition());
+                                            lf.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
-                motor1.setPower(0);
+                lf.setPower(0);
 //                lb.setPower(0);
 //                rf.setPower(0);
 //                rb.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //            lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //            rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //            rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

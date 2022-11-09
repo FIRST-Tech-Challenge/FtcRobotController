@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public abstract class Driving358 extends LinearOpMode {
+public class Driving358 extends LinearOpMode {
 
 
     Hardware358 robot = new Hardware358();
@@ -501,6 +501,11 @@ public abstract class Driving358 extends LinearOpMode {
                 motorStop();
 
         }
+    }
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
     }
 
 //    public void lift (double power, int level, long moveTime){

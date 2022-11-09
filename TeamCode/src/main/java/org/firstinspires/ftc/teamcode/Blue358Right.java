@@ -70,12 +70,10 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Encoder", group="Robot")
-@Disabled
+@Autonomous(name="AutoDrive")
+//@Disabled
 public class Blue358Right extends Driving358
 {
-    //dqwhhadast
-    //dqwhhadast
     int hello=9;
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String[] LABELS = {

@@ -8,8 +8,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 
 //  DRIVING MECANUM WHEELS SIMPLIFIED         
 //             @TeleOp
@@ -55,9 +53,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  *
  */
 
-@TeleOp(name="Reborn Teleop", group="reborn") // i will come soon. when the 3d print is done, make sure u watch ur back
+@TeleOp(name="358Teleop", group="reborn") // i will come soon. when the 3d print is done, make sure u watch ur back
 //@Disabled
-public class rebornTeleOp extends OpMode {
+public class TeleOp_358 extends OpMode {
 
     Hardware358 robot = new Hardware358();
     // Declare OpMode members.
