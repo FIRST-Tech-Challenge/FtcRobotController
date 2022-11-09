@@ -11,7 +11,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public abstract class BaseAutonomous extends BaseOpMode {
 
-    // this method will allow the robot to drive straight in a specified direction using the IMU given a specified heading and distance
+    /**
+     * this method will allow the robot to drive straight in a specified direction using the IMU given a specified heading and distance
+     * @param heading 360-degree direction robot should move (front is 0)
+     * @param targetDistance distance robot should move in inches
+     */
     public void driveOmniInches(int heading, double targetDistance) {
         Position position = new Position(DistanceUnit.INCH, 0.0, 0.0, 0.0, 0);
         Velocity velocity = new Velocity(DistanceUnit.INCH, 0.0, 0.0, 0.0, 0);
