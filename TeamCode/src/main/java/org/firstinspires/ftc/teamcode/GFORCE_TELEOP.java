@@ -101,23 +101,32 @@ public class GFORCE_TELEOP extends LinearOpMode {
             //-----------PILOT-----------
             //check for auto cone tracking
 
-            if (gamepad1.left_bumper && coneTracker.update()) {
+            if (gamepad1.left_bumper && elevator.getWristIsSafe()) {
+                elevator.setWristOffset(0);
+            }
+
+            if (gamepad1.left_bumper && elevator.handIsOpen && !elevator.getWristIsSafe() && coneTracker.update()) {
                 coneTracker.showRanges();
                 double turn = coneTracker.coneDirection / 5.0;
                 double speed = 0;
 
                 if (coneTracker.coneRange > 110) {
                     speed = 0.2;
+                    elevator.grabRequest = false;
                 }else if (coneTracker.coneRange > 95) {
                     speed = 0.1;
+                    elevator.grabRequest = true;
                 }else if (coneTracker.coneRange < 75) {
                     speed = -0.1;
+                    elevator.grabRequest = true;
                 }
 
                 lockNewHeading(drive.getExternalHeading());
                 drive.setWeightedDrivePower(new Pose2d(speed, 0, turn));
 
             } else  {
+                elevator.grabRequest = false;
+
                 // Read pose and use it to convery joystick inputs to Field Centric.
                 Pose2d poseEstimate = drive.getPoseEstimate();
 
