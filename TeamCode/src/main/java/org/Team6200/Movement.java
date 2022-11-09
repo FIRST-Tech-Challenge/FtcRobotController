@@ -2,7 +2,9 @@ package org.Team6200;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.HashMap;
 
@@ -15,12 +17,15 @@ public class Movement {
     private BNO055IMU imu;
     public boolean isDoingAction = false;
     private Thread currentThread = null;
-    public Movement(HashMap<String, HardwareDevice> motorsC){
-        this.motors = motorsC;
-        frontLeft = (DcMotor)motors.get("frontLeft");
-        frontRight = (DcMotor)motors.get("frontRight");
-        backRight = (DcMotor)motors.get("backRight");
-        backLeft = (DcMotor)motors.get("backLeft");
+    public Movement(HardwareMap hw){
+
+        frontLeft = hw.get(DcMotorEx.class, "leftFront");
+        frontRight = hw.get(DcMotorEx.class, "rightFront");
+        backRight = hw.get(DcMotorEx.class, "rightRear");
+        backLeft = hw.get(DcMotorEx.class, "leftRear");
+
+        //backRight = (DcMotor)motors.get("backRight");
+        ///backLeft = (DcMotor)motors.get("backLeft");
         imu = (BNO055IMU)motors.get("imu");
         BNO055IMU.Parameters params = new BNO055IMU.Parameters();
         imu.initialize(params);
