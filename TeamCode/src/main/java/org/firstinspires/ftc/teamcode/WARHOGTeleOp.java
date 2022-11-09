@@ -99,7 +99,7 @@ public class WARHOGTeleOp extends LinearOpMode {
             wristmod = (currentGamepad2.right_trigger-.2)*.625;
             if(wristmod>0){
                 intake.runArm(armpos, wristmod);
-                telemetry.addData("Wrist Mod: ", wristmod);
+                telemetry.addData("Wrist Mod", wristmod);
             }
             else {
                 intake.runArm(armpos);
