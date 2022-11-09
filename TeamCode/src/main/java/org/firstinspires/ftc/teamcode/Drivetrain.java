@@ -240,7 +240,7 @@ public class Drivetrain{
     public void MoveForDis(double distance, double pow) {
 
         // calculate the distance
-        int dis = (int)(distance * 1000 / 23.5);
+        int dis = (int)(distance * 1000 / 23.5 * 50/48);
 
         // reset encoders
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

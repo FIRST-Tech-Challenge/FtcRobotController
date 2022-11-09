@@ -80,4 +80,8 @@ public class Outtake {
     public void setHeight(int pos){
         slide.setTargetPosition(pos);
     }
+
+    public boolean isSlideRunning(){
+        return slide.isBusy();
+    }
 }

@@ -31,6 +31,8 @@ public class WARHOGAuto extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
 
+    static final double speed = .6;
+
     //this stuff does not need to be changed
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -71,7 +73,7 @@ public class WARHOGAuto extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(864,480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -161,31 +163,39 @@ public class WARHOGAuto extends LinearOpMode {
 
         // start command just came in
 
+        if(tagOfInterest == null || tagOfInterest.id == LEFT){
+
+        }else if(tagOfInterest.id == MIDDLE){
+
+        }else{
+
+        }
+
         // drive to pole and raise slide
-        drivetrain.MoveForDis(50, 1);
+        drivetrain.MoveForDis(50, speed);
         outtake.setHeight(Outtake.Height.HIGH);
-        drivetrain.RotateForDegree(-45, 1);
-        drivetrain.MoveForDis(13, 1);
+        drivetrain.RotateForDegree(-45, speed);
+        drivetrain.MoveForDis(13, speed);
         outtake.setHeight(Outtake.Height.GROUND);
 
         // turn to cone stack
-        drivetrain.MoveForDis(-13, 1);
-        drivetrain.RotateForDegree(-45, 1);
+        drivetrain.MoveForDis(-13, speed);
+        drivetrain.RotateForDegree(-45, speed);
         intake.runArm(.2);
 
         // move backward toward cone stack
-        drivetrain.MoveForDis(-13, 1);
+        drivetrain.MoveForDis(-13, speed);
 
         // take another cone
         intake.closeClaw();
         intake.runArm(Intake.Height.RETRACTED);
 
         // turn back
-        drivetrain.MoveForDis(13, 1);
+        drivetrain.MoveForDis(13, speed);
         sleep(500);
         intake.openClaw();
         intake.runArm(Intake.Height.UPRIGHT);
-        drivetrain.RotateForDegree(45, 1);
+        drivetrain.RotateForDegree(45, speed);
         sleep(500);
         outtake.setHeight(Outtake.Height.HIGH);
 
@@ -193,6 +203,8 @@ public class WARHOGAuto extends LinearOpMode {
         outtake.setHeight(Outtake.Height.GROUND);
 
         // park
+
+        while(opModeIsActive()){sleep(20);}
 
     }
 

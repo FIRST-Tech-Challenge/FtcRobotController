@@ -12,7 +12,7 @@ public class Intake {
 
     double armMax = .8;
     double armMin = 0;
-    double armMid = .4;
+    double armMid = .55;
     double endMod = 0;
     double newPos;
 

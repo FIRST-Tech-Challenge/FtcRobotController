@@ -111,7 +111,9 @@ public class WARHOGTeleOp extends LinearOpMode {
             }
 
             //move the outtake slides up and down
-            outtake.run(-currentGamepad2.right_stick_y);
+            if (!outtake.isSlideRunning()){
+                outtake.run(-currentGamepad2.right_stick_y);
+            }
 
             if(currentGamepad2.a){
                 outtake.setHeight(Outtake.Height.GROUND);
