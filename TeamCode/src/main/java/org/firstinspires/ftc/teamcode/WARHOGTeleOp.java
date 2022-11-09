@@ -84,6 +84,8 @@ public class WARHOGTeleOp extends LinearOpMode {
 
             //move arm
             armpos += -currentGamepad2.left_stick_y*.02;
+            if(armpos<0){armpos=0;}
+            if(armpos>.9){armpos=.9;}
             //defined positions
             if(currentGamepad2.dpad_down){
                 armpos = intake.runArm(Intake.Height.EXTENDED);
@@ -128,7 +130,7 @@ public class WARHOGTeleOp extends LinearOpMode {
                 outtake.setHeight(Outtake.Height.HIGH);
             }
 
-
+            telemetry.addData("slide pos:", outtake.showSlideValue());
 
             //end step
             telemetry.update();

@@ -21,7 +21,7 @@ public class Outtake {
         slide = hardwareMap.get(DcMotor.class, "slide");
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.telemetry = telemetry;
     }
 
@@ -64,17 +64,25 @@ public class Outtake {
         switch(height){
             case GROUND:
                 slide.setTargetPosition(0);
+                break;
             case LOW:
                 slide.setTargetPosition(900);
+                break;
             case MEDIUM:
                 slide.setTargetPosition(1300);
+                break;
             case HIGH:
                 slide.setTargetPosition(max);
+                break;
+            default:
+                break;
         }
 
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slide.setPower(autoSpeed);
-
+        while (slide.isBusy()) {}
+        slide.setPower(0);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void setHeight(int pos){
@@ -84,4 +92,6 @@ public class Outtake {
     public boolean isSlideRunning(){
         return slide.isBusy();
     }
+
+    public double showSlideValue() { return slide.getCurrentPosition(); }
 }
