@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobotTeleOp;
 public class Mecanum extends LinearOpMode {
 
     double frontLeftDrive, frontRightDrive, backRightDrive, backLeftDrive, armServo, clawServo;
-    double driveSpeed = 1;
+    double driveSpeed = 0.8;
 
     @Override
     public void runOpMode() {
@@ -24,30 +24,19 @@ public class Mecanum extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                while (gamepad1.right_bumper) {
-                    robot.leftslidemotor.setPower(1);
-                    robot.rightslidemotor.setPower(1);
-                }
-                while (gamepad1.left_bumper) {
-                    robot.leftslidemotor.setPower(-0.5);
-                    robot.rightslidemotor.setPower(-0.5);
-                }
-                robot.leftslidemotor.setPower(0);
-                robot.rightslidemotor.setPower(0);
+            robot.leftslidemotor.setPower(gamepad2.left_stick_y*0.7);
+            robot.rightslidemotor.setPower(gamepad2.left_stick_y*0.7);
             //                     FORWARD                     TURN                       STRAFE
             frontRightDrive = (-gamepad1.left_stick_y - (gamepad1.right_stick_x*0.5) - gamepad1.left_stick_x)*driveSpeed;
             frontLeftDrive  = (-gamepad1.left_stick_y + (gamepad1.right_stick_x*0.5) + gamepad1.left_stick_x)*driveSpeed;
             backRightDrive  = (-gamepad1.left_stick_y - (gamepad1.right_stick_x*0.5) + gamepad1.left_stick_x)*driveSpeed;
             backLeftDrive   = (-gamepad1.left_stick_y + (gamepad1.right_stick_x*0.5) - gamepad1.left_stick_x)*driveSpeed;
-            clawServo = (gamepad1.right_trigger-gamepad1.left_trigger);
-            armServo = (gamepad1.right_trigger-gamepad1.left_trigger);
-
+            robot.ArmServo.setPower(gamepad2.right_stick_y);
             robot.rightfrontmotor.setPower(frontRightDrive);
             robot.rightbackmotor.setPower(backRightDrive);
             robot.leftbackmotor.setPower(backLeftDrive);
             robot.leftfrontmotor.setPower(frontLeftDrive);
-            robot.ArmServo.setPower(clawServo);
-            robot.ClawMotor.setPower(armServo);
+
             if (frontLeftDrive>0 && frontRightDrive>0 && backLeftDrive>0 && backRightDrive>0) {
                 telemetry.addLine("Going forward");
             }

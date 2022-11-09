@@ -34,8 +34,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import java.util.ArrayList;
 
-@Autonomous
-@Disabled
+@Autonomous(name="AUTONOMOUS TAP HERE")
+//@Disabled
 public class apriltagauto extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -172,21 +172,21 @@ public class apriltagauto extends LinearOpMode
 
         /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
-            strafeLeft(0.15, 1000);
+            strafeLeft(0.5, 1000);
             stopRobot();
             sleep(1000);
-            straight(0.15, 900);
+            straight(0.5, 1100);
             stopRobot();
             stop();
         }else if(tagOfInterest.id == MIDDLE){
-            straight(0.15, 1000);
+            straight(0.5, 1100);
             stopRobot();
             stop();
         }else{
-            strafeRight(0.15, 1100);
+            strafeRight(0.5, 1200);
             stopRobot();
             sleep(1000);
-            straight(0.15, 900);
+            straight(0.5, 1100);
             stopRobot();
             stop();
         }
@@ -247,4 +247,11 @@ public class apriltagauto extends LinearOpMode
         robot.rightbackmotor.setPower(power);
         sleep(time);
     }
+    public void LinearSlide(double power, int time) {
+        // Negative power = up
+        robot.leftslidemotor.setPower(power);
+        robot.rightslidemotor.setPower(power);
+        sleep(time);
+    }
+
 }
