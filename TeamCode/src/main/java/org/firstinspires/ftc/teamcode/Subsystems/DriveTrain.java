@@ -8,7 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.AutoOpMode.AutoOpMode;
+import org.firstinspires.ftc.teamcode.OpModes.AutoOpMode;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -64,8 +64,7 @@ public class DriveTrain extends SampleMecanumDrive {
 
     public DriveMode driveMode = DriveMode.NORMAL_CONTROL; //Default initializer
     public static double DRAWING_TARGET_RADIUS = 2;
-    public Vector2d drivePointToAlign = AutoOpMode.ORIGIN;
-
+    public Vector2d drivePointToAlign = new Vector2d(0,0);
 
     //**** Drive Train ****
     //For Position
