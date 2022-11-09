@@ -62,9 +62,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Encoder Testing")
+@Autonomous(name="Encoder_Testing")
 //@Disabled
-public class TESTING_RobotAutoDriveByEncoder_Linear extends LinearOpMode {
+public class BasicEncoderTest extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor    motor1  = null;
@@ -72,7 +72,7 @@ public class TESTING_RobotAutoDriveByEncoder_Linear extends LinearOpMode {
 //    private DcMotor    rf  = null;
 //    private DcMotor    rb  = null;
 
-    private ElapsedTime     runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
