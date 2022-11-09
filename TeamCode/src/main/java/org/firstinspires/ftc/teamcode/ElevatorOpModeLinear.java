@@ -69,7 +69,7 @@ import org.firstinspires.ftc.teamcode.hardware.Elevator;
  */
 
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear Opmode")
-@Disabled
+//@Disabled
 public class ElevatorOpModeLinear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
@@ -103,8 +103,6 @@ public class ElevatorOpModeLinear extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
         }
     }}

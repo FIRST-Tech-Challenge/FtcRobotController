@@ -14,16 +14,16 @@ public class Elevator {
     private Telemetry telemetry;
 
     public Elevator(HardwareMap hardwareMap, Telemetry telemetry){
-        mainServo = hardwareMap.get(Servo.class, "elevator_main_servo");
-        rightServo = hardwareMap.get(Servo.class, "elevator_right_servo");
+//        mainServo = hardwareMap.get(Servo.class, "elevator_main_servo");
+//        rightServo = hardwareMap.get(Servo.class, "elevator_right_servo");
         elevatorMotor = hardwareMap.get(DcMotor.class, "elevator_motor");
         this.telemetry = telemetry;
     }
 
     public void initMotors(){
         elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
-        mainServo.setPosition(Servo.MIN_POSITION);
-        rightServo.setPosition(Servo.MAX_POSITION);
+//        mainServo.setPosition(Servo.MIN_POSITION);
+//        rightServo.setPosition(Servo.MAX_POSITION);
     }
     public void setElevatorMotorPower(double power){
         elevatorMotor.setPower(power);
