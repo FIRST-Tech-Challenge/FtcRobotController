@@ -6,33 +6,29 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 
 @Config
-@TeleOp(name = "PP_MecanumTeleOp") // This is redundant, the name will automatically be set to the class name if you don't set it - Tiernan
+@TeleOp
 public class PP_MecanumTeleOp extends OpMode
 {
     //"MC ABHI IS ON THE REPO!!!"
 
     boolean isAuto = false; // yes I know this is stupid
+    boolean lastTriggerPress = false;
 
-    // Declaring class members to be used in other methods
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight; //slideMotorLeft, slideMotorRight, armMotor;
-    private Servo clawJoint, wristJoint;
+    // Declaring drivetrain motors
+    private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
 
-    // TODO: Why are these not private, this makes me sad. Also you could make them static and stick in their own class... - Tiernan
-    // Claw Servo open and close constants
-    private final double[] servo_MinMax = {0, 0.5};
-    private final double OPEN = 0.45; // claw open
-
+    // Declaring mechanism objects
     private Arm armControl;
     private Slide slideControl;
     private Claw clawControl;
+
+    double precisionReduction = 0.3;
 
     /**
      * Get the maximum absolute value from a static array of doubles
@@ -61,31 +57,24 @@ public class PP_MecanumTeleOp extends OpMode
         // Control Hub Pins
         motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("FR"); // Pin 3
         motorBackRight = (DcMotorEx) hardwareMap.dcMotor.get("BR"); // Pin 2
-        clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
-        wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
 
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder does NOT disable encoder counting
-        //slideMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // You don't want to run using encoders for PID
-        //slideMotorRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //slideMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //slideMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Reverse the left side motors
+        // Reverse motors
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
         clawControl = new Claw(hardwareMap, isAuto);
-
     }// INIT()
 
     @Override
@@ -93,13 +82,13 @@ public class PP_MecanumTeleOp extends OpMode
     {
         boolean precisionToggle = gamepad1.right_trigger > 0.1; // we want to check this every time the loop runs
         drive(precisionToggle);
-        arm(); // this method calls the arm object's methods
-        claw(); // this method calls the claw object's methods
+        arm();
+        claw();
+        slides();
 
         armControl.update(telemetry);
-
+        slideControl.update(telemetry);
     }// end of loop()
-
 
     //        BOT METHODS       \\
     public void drive(boolean precisionToggle)
@@ -118,7 +107,6 @@ public class PP_MecanumTeleOp extends OpMode
         double backLeftPower = (y - x + 2 * rx) / denominator;
         double frontRightPower = (y - x - 2 * rx) / denominator;
         double backRightPower = (y + x - 2 * rx) / denominator;
-
 
         // Cube the motor powers
         frontLeftPower = Math.pow(frontLeftPower, 3);
@@ -144,14 +132,14 @@ public class PP_MecanumTeleOp extends OpMode
         }
 
         if (precisionToggle) {
-            motorFrontLeft.setPower(frontLeftPower * 0.3);
-            telemetry.addData("Power front left",frontLeftPower*0.3);
-            motorBackLeft.setPower(backLeftPower * 0.3);
-            telemetry.addData("Power back left",backLeftPower*0.3);
-            motorFrontRight.setPower(frontRightPower * 0.3);
-            telemetry.addData("Power front right",frontRightPower*0.3);
-            motorBackRight.setPower(backRightPower * 0.3);
-            telemetry.addData("Power back right:",backRightPower*0.3);
+            motorFrontLeft.setPower(frontLeftPower * precisionReduction);
+            telemetry.addData("Power front left",frontLeftPower * precisionReduction);
+            motorBackLeft.setPower(backLeftPower * precisionReduction);
+            telemetry.addData("Power back left",backLeftPower * precisionReduction);
+            motorFrontRight.setPower(frontRightPower * precisionReduction);
+            telemetry.addData("Power front right",frontRightPower * precisionReduction);
+            motorBackRight.setPower(backRightPower * precisionReduction);
+            telemetry.addData("Power back right:",backRightPower * precisionReduction);
         } else {
             motorFrontLeft.setPower(frontLeftPower);
             motorBackLeft.setPower(backLeftPower);
@@ -161,43 +149,51 @@ public class PP_MecanumTeleOp extends OpMode
     }// end of drive()
 
     public void arm() {
-        if(gamepad2.dpad_up){
-            armControl.setExtake();
-        }
-        else if(gamepad2.dpad_down){
-            armControl.setIntake();
-        }
-        armControl.update(telemetry);
-
         // BUTTONS \\
         if (gamepad2.a) {
-            // 1000 represents an arbitrary value for the max -> 700 mid, 400 low, 0 ground
             slideControl.setHighJunction();
-        } else if (gamepad2.b) {
-            slideControl.setMidJunction();
-        } else if (gamepad2.y) {
-            slideControl.setLowJunction();
-        } else if (gamepad2.x){
-          slideControl.setIntakeOrGround();
+            armControl.setExtake();
+            // potentially use a falling edge detector
+            clawControl.toggleWristRotate();
         }
-        slideControl.Update(telemetry);
-
-        // TRIGGERS \\
-        if (gamepad2.right_trigger > 0.2) {
-           slideControl.manualSlides(5);
-        } else if (gamepad2.left_trigger > 0.2) {
-           slideControl.manualSlides(-5);
-       }
-       //slideControl.Update();
+        else if (gamepad2.b) {
+            slideControl.setMidJunction();
+            armControl.setExtake();
+            clawControl.toggleWristRotate();
+        }
+        else if (gamepad2.y) {
+            slideControl.setLowJunction();
+            armControl.setExtake();
+            clawControl.toggleWristRotate();
+        }
+        else if (gamepad2.x){
+            slideControl.setIntakeOrGround();
+            armControl.setIntake();
+            clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
+        }
     }// end of arm()
 
     public void claw(){
         // BUMPER \\
-        if (gamepad2.right_bumper) {
-            // add a delay here so that the claw doesn't jitter open and closed
-            clawControl.toggleOpenClose(); // toggles whether the claw is open or closed
+        if (lastTriggerPress != gamepad2.right_bumper) {
+            clawControl.toggleOpenClose();
         }
 
+        // when the loop runs again, the lastButtonPress will actually be equal
+        // to the gamepad2.right_bumper conditional, thus proving the if statement
+        // false until you release the bumper
+
+        lastTriggerPress = gamepad2.right_bumper;
+
     }// end of claw()
+
+    public void slides(){
+        // TRIGGERS \\
+        if (gamepad2.right_trigger > 0.2) {
+            slideControl.manualSlides(5);
+        } else if (gamepad2.left_trigger > 0.2) {
+            slideControl.manualSlides(-5);
+        }
+    }
 }
 

@@ -4,22 +4,24 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw{
-    private Servo wristJoint,clawJoint;
+    public Servo wristJoint;
+    private Servo clawJoint; // public because a button must set the wrist to the intake position regardless of its status
     private boolean isOpen;
     private boolean isWristIntakePosition;
     private boolean isAuto;
+
     // claw positions
     private final double OPEN = 0.45;
     private final double CLOSE = 0.15;
 
     // wrist positions
-    private final double WRIST_INTAKE_POSITION = 0.52; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
+    public final double WRIST_INTAKE_POSITION = 0.52; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
     private final double WRIST_EXTAKE_POSITION = 0.5; // wrist rotates to extake on junction
 
     public Claw(HardwareMap hardwareMap, boolean isAuton ){
         isAuto = isAuton;
-        wristJoint = hardwareMap.get(Servo.class,"WRIST");
-        clawJoint = hardwareMap.get(Servo.class, "CLAW");
+        wristJoint = hardwareMap.get(Servo.class,"WRIST"); // Pin 0
+        clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
         isOpen = true; // our claw begins in the open position
 
         if(isAuto)

@@ -8,38 +8,47 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
-/**
- * Example class created by Tiernan demonstrating better OOP and PIDF usage
- */
 public class Arm {
-    private PIDFController armPIDF;
+    private  PIDFController armPIDF;
     private Motor armMotor;
 
-    public static double armKp = 0.009;
-    public static double armKi = 0.000;
-    public static double armKd = 0.000;
+    // Declaring and Initializing PIDF values
+    public static double armKp = 0.0085;
+    public static double armKi = 0.001;
+    public static double armKd = 0.0001;
     public static double armKf = 0.000;
 
-    public final static double EXTAKE_POS = 1200; // TODO: Change this to the actual position based on motor encoder readings
-    public final static double INTAKE_POS = 0; // TODO: Change this to the actual position based on motor encoder readings
+    // Correction represents the error term of the PIDF loop
+    private double correction;
+
+    public static double EXTAKE_POS = 1200; // Actual position based on encoder readings
+    public static double INTAKE_POS = 25;
+
+    // Initially set to 0 because we only want the claw to move when given input from the controller
+    // initializing the targetPos value to a greater positive value would cause the update() method to
+    // immediately start moving the arm since a difference between the current motor encoder position
+    // and the target position is created (error).
     public double targetPos = 0;
 
-    private final double[] PIDF_COEFF = {armKp, armKi, armKd, armKf}; // TODO: Tune this PIDF
-
     public Arm(HardwareMap hardwareMap){
-        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_60);
+        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_60); // Pin ___
         armMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         armMotor.setRunMode(Motor.RunMode.VelocityControl);
+
         armMotor.resetEncoder(); // We want the arm to start at a position of 0
 
+        double[] PIDF_COEFF = {armKp, armKi, armKd, armKf};
         armPIDF = new PIDFController(PIDF_COEFF[0], PIDF_COEFF[1], PIDF_COEFF[2], PIDF_COEFF[3]);
     }
 
     public void update(Telemetry telemetry){
         armPIDF.setPIDF(armKp, armKi, armKd, armKf);
-        double correction = armPIDF.calculate(armMotor.getCurrentPosition(), targetPos);
+        correction = armPIDF.calculate(armMotor.getCurrentPosition(), targetPos);
 
-
+        telemetry.addData("Correction: ", correction);
+        telemetry.addData("Target Position: ", targetPos);
+        telemetry.addData("Motor Position: ", armMotor.getCurrentPosition());
+        telemetry.update();
 
         armMotor.set(correction);
     }
