@@ -11,7 +11,7 @@ public class Outtake {
 
     private Telemetry telemetry;
 
-    final static int max = 1620;
+    final static int max = 1640;
     final static int min = 0;
 
     enum Height {GROUND, LOW, MEDIUM, HIGH};
@@ -26,6 +26,8 @@ public class Outtake {
 
     //method to input a power to the slide motor
     public void run(double pow){
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         int pos = slide.getCurrentPosition();
         if (pos<=max && pos>=min){
             slide.setPower(pow);
@@ -62,12 +64,15 @@ public class Outtake {
             case GROUND:
                 slide.setTargetPosition(0);
             case LOW:
-                slide.setTargetPosition(100);
+                slide.setTargetPosition(900);
             case MEDIUM:
-                slide.setTargetPosition(200);
+                slide.setTargetPosition(1300);
             case HIGH:
-                slide.setTargetPosition(300);
+                slide.setTargetPosition(max);
         }
+
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     public void setHeight(int pos){

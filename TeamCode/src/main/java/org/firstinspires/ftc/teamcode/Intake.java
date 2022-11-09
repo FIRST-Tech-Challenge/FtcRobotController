@@ -10,8 +10,14 @@ public class Intake {
     private Servo wrist;
     private Servo claw;
 
+    double armMax = .8;
+    double armMin = 0;
+    double armMid = .4;
+    double newPos;
+
     WristMode wristMode;
 
+    //set up servos and variables
     Intake(HardwareMap hardwareMap, Telemetry telemetry){
         armLeft = hardwareMap.get(Servo.class, "armLeft");
         armRight = hardwareMap.get(Servo.class, "armRight");
@@ -20,35 +26,103 @@ public class Intake {
         wristMode = WristMode.MATCHED;
     }
 
-    public enum WristMode{INDEPENDENT, MATCHED}
+    public enum WristMode{INDEPENDENT, MATCHED, SIDEWAYS}
+    public enum Height{EXTENDED, UPRIGHT, RETRACTED}
 
+    //moves arm to a position
     public void runArm(double pos){
-        armLeft.setPosition(pos);
-        armRight.setPosition(1-pos);
+        if (pos>armMax){
+            newPos = armMax;
+        }
+        else {
+            newPos = pos;
+        }
 
+        armLeft.setPosition(newPos);
+        armRight.setPosition(1-newPos);
+
+        //if matched, make the wrist keep the cone upright
         if (wristMode== WristMode.MATCHED){
-            runWrist(pos);
+            if(newPos>.6){
+                runWrist(newPos*1.25);
+            }
+            else {
+                runWrist(newPos);
+            }
         }
     }
 
+    //moves arm to a position, changing the wristmode during only this function
     public void runArm(double pos, WristMode newWristMode){
-        armLeft.setPosition(pos);
-        armRight.setPosition(1-pos);
+        if (pos>armMax){
+            newPos = armMax;
+        }
+        else {
+            newPos = pos;
+        }
 
+        armLeft.setPosition(newPos);
+        armRight.setPosition(1-newPos);
+
+        //if matched, make the wrist keep the cone upright
         if (newWristMode== WristMode.MATCHED){
-            runWrist(pos);
+            if(newPos>.6){
+                runWrist(newPos*1.25);
+            }
+            else {
+                runWrist(newPos);
+            }
         }
     }
 
+    public double runArm(Height height){
+        switch(height){
+            case EXTENDED:
+                runArm(armMin);
+                return armMin;
+            case UPRIGHT:
+                runArm(armMid);
+                return armMid;
+            case RETRACTED:
+                runArm(armMax);
+                return armMax;
+            default:
+                return armMid;
+        }
+    }
+
+    //this method moves the wrist to a position
     public void runWrist(double pos){
         wrist.setPosition(pos);
     }
 
+    //this method moves the claw to a position
     public void runClaw(double pos){
         claw.setPosition(pos);
     }
 
+    //this method changes whether the wrist matches rotation of the arm
     public void changeWristMode(WristMode newWristMode){
         wristMode = newWristMode;
+    }
+
+    public void openClaw(){
+        runClaw(.2);
+    }
+    public void closeClaw(){
+        runClaw(.55);
+    }
+
+    public void toggleClaw(){
+        if (claw.getPosition()>.3){
+            openClaw();
+        }
+        else{closeClaw();}
+    }
+
+    //this method returns the arm's position
+    //0 is all the way out, 1 is all the way in
+    public double getArmPos(){
+        return armLeft.getPosition();
     }
 }

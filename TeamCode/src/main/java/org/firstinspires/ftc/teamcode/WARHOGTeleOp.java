@@ -20,14 +20,17 @@ public class WARHOGTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        //set up classes
         Drivetrain drivetrain = new Drivetrain(hardwareMap, telemetry);
         Intake intake = new Intake(hardwareMap, telemetry);
         Outtake outtake = new Outtake(hardwareMap, telemetry);
 
-        double joyx, joyy, joyz, gas, basespeed;
+        //set up variables
+        double joyx, joyy, joyz, gas, basespeed, armpos;
         Drivetrain.Centricity centricity = Drivetrain.Centricity.FIELD;
 
         basespeed = .4;
+        armpos = 0;
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
@@ -77,10 +80,44 @@ public class WARHOGTeleOp extends LinearOpMode {
                 else{centricity = Drivetrain.Centricity.BOT;}
             }
 
-            intake.runArm(currentGamepad2.left_stick_y);
-            intake.runClaw(currentGamepad2.left_trigger);
-            intake.runWrist(currentGamepad2.right_trigger);
+
+
+            //move arm
+            armpos += -currentGamepad2.left_stick_y*.02;
+            //defined positions
+            if(currentGamepad2.dpad_down){
+                armpos = intake.runArm(Intake.Height.EXTENDED);
+            }
+            if(currentGamepad2.dpad_left){
+                armpos = intake.runArm(Intake.Height.UPRIGHT);
+            }
+            if(currentGamepad2.dpad_up){
+                armpos = intake.runArm(Intake.Height.RETRACTED);
+            }
+
+            intake.runArm(armpos);
+
+            //open/close the claw
+            if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
+                intake.toggleClaw();
+
+            }
+
+            //move the outtake slides up and down
             outtake.run(-currentGamepad2.right_stick_y);
+
+            if(currentGamepad2.a){
+                outtake.setHeight(Outtake.Height.GROUND);
+            }
+            if(currentGamepad2.x){
+                outtake.setHeight(Outtake.Height.LOW);
+            }
+            if(currentGamepad2.b){
+                outtake.setHeight(Outtake.Height.MEDIUM);
+            }
+            if(currentGamepad2.y){
+                outtake.setHeight(Outtake.Height.HIGH);
+            }
 
 
 
