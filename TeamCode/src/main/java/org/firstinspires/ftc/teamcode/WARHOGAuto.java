@@ -175,7 +175,8 @@ public class WARHOGAuto extends LinearOpMode {
         drivetrain.MoveForDis(50, speed);
         outtake.setHeight(Outtake.Height.HIGH);
         drivetrain.RotateForDegree(-45, speed);
-        drivetrain.MoveForDis(13, speed);
+        drivetrain.MoveForDis(17, 0.2);
+        sleep(500);
         outtake.setHeight(Outtake.Height.GROUND);
 
         // turn to cone stack
@@ -192,12 +193,13 @@ public class WARHOGAuto extends LinearOpMode {
 
         // turn back
         drivetrain.MoveForDis(13, speed);
-        sleep(500);
         intake.openClaw();
         intake.runArm(Intake.Height.UPRIGHT);
-        drivetrain.RotateForDegree(45, speed);
         sleep(500);
+        drivetrain.RotateForDegree(45, speed);
         outtake.setHeight(Outtake.Height.HIGH);
+        drivetrain.MoveForDis(17, 0.2);
+        sleep(500);
 
         // putting cone on pole
         outtake.setHeight(Outtake.Height.GROUND);

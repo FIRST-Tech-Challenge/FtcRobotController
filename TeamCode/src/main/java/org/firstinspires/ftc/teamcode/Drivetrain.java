@@ -359,7 +359,7 @@ public class Drivetrain{
     public void RotateForDegree(int degree, double pow) {
 
         // calculate the degree
-        int deg = (int)(degree * 1000 / 114);
+        int deg = (int)(degree * 1000 / 105);
 
         // reset encoders
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

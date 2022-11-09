@@ -11,7 +11,7 @@ public class Outtake {
 
     private Telemetry telemetry;
 
-    final static int max = 1640;
+    final static int max = 1700;
     final static int min = 0;
     final static double autoSpeed = .8;
 
@@ -66,7 +66,7 @@ public class Outtake {
                 slide.setTargetPosition(0);
                 break;
             case LOW:
-                slide.setTargetPosition(900);
+                slide.setTargetPosition(750);
                 break;
             case MEDIUM:
                 slide.setTargetPosition(1300);
