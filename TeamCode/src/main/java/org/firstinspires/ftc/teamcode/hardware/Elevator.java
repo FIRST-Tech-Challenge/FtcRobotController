@@ -29,6 +29,7 @@ public class Elevator {
         elevatorMotor.setPower(power);
         telemetry.addData("position", elevatorMotor.getCurrentPosition());
         telemetry.addData("terget position", elevatorMotor.getTargetPosition());
+        telemetry.update();
     }
 
 }
