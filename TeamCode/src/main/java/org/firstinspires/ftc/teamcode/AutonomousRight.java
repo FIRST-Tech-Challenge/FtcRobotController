@@ -152,6 +152,7 @@ public class AutonomousRight extends LinearOpMode {
     // sensors
     private DistanceSensor distanceSensor;
     private ColorSensor colorSensor;// best collected within 2cm of the target
+    boolean  isCameraInstalled = false;
     SleeveIdentification.sleeveSignal mySleeveColor = SleeveIdentification.sleeveSignal.UNKNOWN;
     @Override
     public void runOpMode() {
@@ -243,8 +244,9 @@ public class AutonomousRight extends LinearOpMode {
         pidDrive.enable();
 
         // camera init
-        mySleeve.initCamera(hardwareMap);
-
+        if (isCameraInstalled) {
+            mySleeve.initCamera(hardwareMap);
+        }
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Mode", "waiting for start");
         telemetry.update();
@@ -584,8 +586,9 @@ public class AutonomousRight extends LinearOpMode {
         double[] sleeveColor = {1.0, 1.0, 1.0};
         double parkingLocation; // distance between cone loading area to parking area, in inch
 
-        mySleeveColor = mySleeve.captureSleeveSignal();
-
+        if (isCameraInstalled) {
+            mySleeveColor = mySleeve.captureSleeveSignal();
+        }
         clawServo.setPosition(CLAW_CLOSE_POS);
         RightSliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
         LeftSliderMotor.setPower(SLIDER_MOTOR_POWER);

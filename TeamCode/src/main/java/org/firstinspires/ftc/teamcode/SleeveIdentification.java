@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.os.Handler;
@@ -176,7 +177,16 @@ public class SleeveIdentification {
     }
 
     private int getDominantColor(Bitmap bitmap) {
-        Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, 1, 1, true);
+
+        // TODO : update below 4 variable values due to sleeve location in the view of image.
+        int cropStartX = bitmap.getWidth() / 4;
+        int cropStartY = bitmap.getHeight() / 4;
+        int cropWidth = bitmap.getWidth() / 2;
+        int cropHeight = bitmap.getHeight() / 2;
+        Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, cropStartX, cropStartY, cropWidth, cropHeight);
+
+        Bitmap newBitmap = Bitmap.createScaledBitmap(croppedBitmap, 1, 1, true);
+
         return newBitmap.getPixel(0, 0);
     }
 
