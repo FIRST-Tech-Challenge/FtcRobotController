@@ -25,13 +25,13 @@ public class Hardware2022 {
 
     //Encoder value of VSlide height in Cone mode,
     private final int CONE_SLIDE_LOW = 0 ;
-    private final int CONE_SLIDE_MID = 720 ;
-    private final int CONE_SLIDE_HIGH = 1440 ;
+    private final int CONE_SLIDE_MID = 1440 ;
+    private final int CONE_SLIDE_HIGH = 2880 ;
 
     //Encoder value of VSlide height in No Cone mode
     private final int NOCONE_SLIDE_LOW = 0 ;
-    private final int NOCONE_SLIDE_MID = 0 ;
-    private final int NOCONE_SLIDE_HIGH = 0 ;
+    private final int NOCONE_SLIDE_MID = 360 ;
+    private final int NOCONE_SLIDE_HIGH = 720;
 
 
     private boolean debug = true;
@@ -96,22 +96,20 @@ public class Hardware2022 {
         wheelBackRight.setDirection(DcMotor.Direction.REVERSE);
         wheelBackLeft.setDirection(DcMotor.Direction.FORWARD);
         wheelFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        vSlide.setDirection(DcMotor.Direction.REVERSE);
+
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wheelFrontRight.setPower(0);
         wheelBackRight.setPower(0);
         wheelFrontLeft.setPower(0);
         wheelBackLeft.setPower(0);
         //wheelStrafe.setPower(0);
-        vSlide.setPower(0);
 
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        vSlide.setDirection(DcMotor.Direction.FORWARD);
-        vSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlide.setPower(0);
 /*
         sensorColor = hwMap.get(ColorSensor.class, "clawdistance");
@@ -371,6 +369,9 @@ public class Hardware2022 {
      * @param power, Expect positive input
      */
     public void freeLowerVerticalSlide( float power ) {
+        telemetry.addLine().addData("Encoder Reading", vSlide.getCurrentPosition() );
+        telemetry.update();
+
         if (vSlide.getCurrentPosition() > CONE_SLIDE_LOW ) {
             vSlide.setPower( -power );
         }
@@ -383,8 +384,17 @@ public class Hardware2022 {
      * @param power
      */
     public void freeRaiseVerticalSlide( float power ) {
+        telemetry.addLine().addData("Encoder Reading", vSlide.getCurrentPosition() );
+        telemetry.addLine().addData("pwer input", power );
+
+        telemetry.update();
+
         if (vSlide.getCurrentPosition() < CONE_SLIDE_HIGH ) {
+            telemetry.addLine().addData("We have power!", power );
             vSlide.setPower( power );
+            //Thread.sleep(100);
+        } else {
+            vSlide.setPower( 0 );
         }
 
     }

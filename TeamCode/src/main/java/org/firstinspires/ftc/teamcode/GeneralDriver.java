@@ -25,7 +25,7 @@ public class GeneralDriver extends BaseTele {
         hdw.wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hdw.wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        double powerDrivePercentage = 0.5;
+        double powerDrivePercentage = 1;
 
         telemetry.addData("[>]", "All set?");
         telemetry.update();
@@ -67,7 +67,7 @@ public class GeneralDriver extends BaseTele {
                 hdw.manualgrab();
             }
 
-            hdw.freeLowerVerticalSlide(gamepad1.left_trigger);
+            //hdw.freeLowerVerticalSlide(gamepad1.left_trigger);
             hdw.freeRaiseVerticalSlide(gamepad1.right_trigger);
 
             //Wheel takes input of gampad 1  ,  turbo is the power factor. Range 0-1 , 1 is 100%

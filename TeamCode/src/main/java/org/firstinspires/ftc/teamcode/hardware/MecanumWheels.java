@@ -15,7 +15,7 @@ public class MecanumWheels {
     public double wheelBackRightPower = 0;
     public double wheelBackLeftPower = 0;
 
-    public double frontWheelWeaken = 0.5;
+    public double frontWheelWeaken = 1;
 
     public double turbo = 0;
 
