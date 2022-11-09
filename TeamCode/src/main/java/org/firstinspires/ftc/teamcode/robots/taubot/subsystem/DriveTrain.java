@@ -31,7 +31,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -82,8 +81,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //devices ---------------------------------------------------------
     List<DcMotorEx> motors;
-    public DcMotorEx leftMotorNew = null;
-    public DcMotorEx rightMotorNew = null;
+    public DcMotorEx leftMotor = null;
+    public DcMotorEx rightMotor = null;
 
     private BNO055IMU imu = null;
     private VoltageSensor batteryVoltageSensor;
@@ -125,14 +124,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         if (simulated) {
 
-            leftMotorNew = new DcMotorExSim(USE_MOTOR_SMOOTHING);
-            rightMotorNew = new DcMotorExSim(USE_MOTOR_SMOOTHING);
-            motors = Arrays.asList(leftMotorNew, rightMotorNew);
+            leftMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+            rightMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+            motors = Arrays.asList(leftMotor, rightMotor);
         } else {
 
-            leftMotorNew = hardwareMap.get(DcMotorEx.class, "motorLeftNew");
-            rightMotorNew = hardwareMap.get(DcMotorEx.class, "motorRightNew");
-            motors = Arrays.asList(leftMotorNew, rightMotorNew);
+            leftMotor = hardwareMap.get(DcMotorEx.class, "motorLeft");
+            rightMotor = hardwareMap.get(DcMotorEx.class, "motorRight");
+            motors = Arrays.asList(leftMotor, rightMotor);
         }
             for (DcMotorEx motor : motors) {
                 MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -146,7 +145,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 compensatedBatteryVoltage = batteryVoltageSensor.getVoltage();
             }
 
-        leftMotorNew.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
                 imu = hardwareMap.get(BNO055IMU.class, "baseIMU");
                 BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -176,22 +175,15 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         velocityPID.setTolerance(HEADING_PID_TOLERANCE);
         velocityPID.enable();                                                                                     
 
-
-
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
-
 
         //default pose - gotta have some initial pose
         setPoseEstimate(Position.START_RIGHT.getPose());
 
-
-
         driveToNextTarget = Utils.getStateMachine(gridDrive)
                 .addState(() -> false)
                 .build();
-
-
 
     }
 
@@ -207,11 +199,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     @Override
     public void update(Canvas fieldOverlay) {
-        //updatePose(); //David's update
+
         // sensor reading
 
-        //leftVelocity = diffEncoderTicksToInches(leftMotorNew.getVelocity());
-        //rightVelocity = diffEncoderTicksToInches(rightMotorNew.getVelocity());
+        leftVelocity = diffEncoderTicksToInches(leftMotor.getVelocity());
+        rightVelocity = diffEncoderTicksToInches(rightMotor.getVelocity());
 
         if (simulated) {
             double dt = loopTime / 1e9;
@@ -219,8 +211,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             rightPosition += rightVelocity * dt;
 
         } else {
-            leftPosition = diffEncoderTicksToInches(leftMotorNew.getCurrentPosition() - leftRelOffset);
-            rightPosition = diffEncoderTicksToInches(rightMotorNew.getCurrentPosition() - rightRelOffset);
+            leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
+            rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
         }
 
         Orientation orientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
@@ -243,29 +235,24 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         pitchVelocity = angularVelocities.yRotationRate;
         angularVelocity = angularVelocities.xRotationRate;
 
-
         updatePoseEstimate();
         poseEstimate = getPoseEstimate();
         poseVelocity = getPoseVelocity();
 
-
-
-
-
         //-------------------------------- actual driving ---------------------------------------
 
         if(!manualDriveEnabled) {
-            //driveToNextTarget.execute();
+            driveToNextTarget.execute();
         }
 
+        if (useMotorPowers) {
+        leftMotor.setPower(leftPower);
+        rightMotor.setPower(rightPower);
 
-        leftMotorNew.setPower(leftPower);
-            rightMotorNew.setPower(rightPower);
-
-       /* } else {
-            //leftMotorNew.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
-            //rightMotorNew.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
-        }*/
+        } else {
+            leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
+            rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
+        }
     }
 
     @Override
@@ -328,7 +315,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             telemetryMap.put("loop time", loopTime / 1e9);
 
             if (!simulated) {
-                PIDFCoefficients velocityCoefficients = leftMotorNew
+                PIDFCoefficients velocityCoefficients = leftMotor
                         .getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
                 telemetryMap.put("measured drivetrain PID coeffs", String.format("(p: %f, i: %f, d: %f)",
                         velocityCoefficients.p, velocityCoefficients.i, velocityCoefficients.d));
@@ -382,7 +369,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         headingPID.setInput(heading);
         double correction = headingPID.performPID();
 
-
         //check if the correction is in the right direction
         //todo
         setLeftVelocity(sign*velocity + correction);
@@ -390,13 +376,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         return time > gridPathLine.getTotalTime();
     }
-
-
-
-
-
-
-
 
 
     // ----------------------------------------------------------------------------------------------
@@ -429,14 +408,13 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         right = drive - turn;
 
         // Normalize the values so neither exceed +/- 1.0
-        /*
         max = Math.max(Math.abs(left), Math.abs(right));
         if (max > 1.0)
         {
             left /= max;
             right /= max;
         }
-         */
+
         setMotorPowers(left,right);
     }
 
@@ -450,8 +428,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //reset the relative position to zeros
     private void resetRelPos(){
-        leftRelOffset = leftMotorNew.getCurrentPosition();
-        rightRelOffset = rightMotorNew.getCurrentPosition();
+        leftRelOffset = leftMotor.getCurrentPosition();
+        rightRelOffset = rightMotor.getCurrentPosition();
         leftPosition = 0;
         rightPosition = 0;
     }
@@ -533,6 +511,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         }
         return false;
     }
+
     //request a turn in degrees units
     public boolean turnUntilDegrees(double turnAngle) {
         return turnUntil(Math.toRadians(turnAngle));

@@ -45,7 +45,7 @@ public class DriverControls {
     void joystickDrive() {
 
         if (notJoystickDeadZone(gamepad1.right_stick_x)) robot.crane.adjustTurretAngle(-gamepad1.right_stick_x);
-        if (notJoystickDeadZone(gamepad1.right_stick_y)) robot.crane.adjustShoulder(-0.7*gamepad1.right_stick_y);
+        if (notJoystickDeadZone(gamepad1.right_stick_y)) robot.crane.adjustShoulder(-gamepad1.right_stick_y);
 
         if (gamepad1.right_trigger>.05) robot.crane.adjustExtend(gamepad1.right_trigger);
         if (gamepad1.left_trigger>.05) robot.crane.adjustExtend(-gamepad1.left_trigger);
@@ -126,16 +126,17 @@ public class DriverControls {
     void handlePregameControls() {
         Constants.Position previousStartingPosition = startingPosition;
         if(stickyGamepad1.x || stickyGamepad2.x) {
-            startingPosition = Constants.Position.START_LEFT;
-            alliance.Toggle();
-        }
+            alliance = Constants.Alliance.BLUE;        }
         if(stickyGamepad1.b || stickyGamepad2.b) {
             alliance = Constants.Alliance.RED;
         }
+
+        if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)startingPosition = Constants.Position.START_LEFT;
+        if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)startingPosition = Constants.Position.START_RIGHT;
+
         if(previousStartingPosition != startingPosition) {
-            //todo these lines need to be enabled once we build the drivetrain and auton routines for powerplay
-            //robot.driveTrain.setPoseEstimate(startingPosition.getPose());
-            //auto.build(startingPosition);
+            robot.driveTrain.setPoseEstimate(startingPosition.getPose());
+            auto.build(startingPosition);
         }
 
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)

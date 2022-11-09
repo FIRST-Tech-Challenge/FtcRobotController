@@ -209,13 +209,18 @@ public class PowerPlay_6832 extends OpMode {
 
         robot = new Robot(hardwareMap,false);
 
-
-
         // gamepads
         dc = new DriverControls(gamepad1,gamepad2);
 
+        //auton setup
+        alliance = Constants.Alliance.RED;
+        startingPosition = Constants.Position.START_RIGHT;
+        robot.driveTrain.setPoseEstimate(startingPosition.getPose());
         auto = new Autonomous(robot);
-
+        auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
+        auto.visionProvider.initializeVision(hardwareMap);
+        visionProviderFinalized = true;
+        auto.build(startingPosition);
 
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
@@ -224,19 +229,12 @@ public class PowerPlay_6832 extends OpMode {
         forwardSmoother = new ExponentialSmoother(FORWARD_SMOOTHING_FACTOR);
         rotateSmoother = new ExponentialSmoother(ROTATE_SMOOTHING_FACTOR);
 
-        auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
-        auto.visionProvider.initializeVision(hardwareMap);
-        visionProviderFinalized = true;
-
         debugTelemetry = true;
         if (debugTelemetry)
             configureDashboardDebug();
         else
             configureDashboardMatch();
         telemetry.update();
-
-
-
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -304,16 +302,16 @@ public class PowerPlay_6832 extends OpMode {
                         // auton full
                         break;
                     case BACK_AND_FORTH:
-                        //auto.backAndForth.execute();
+                        auto.backAndForth.execute();
                         break;
                     case SQUARE:
-                        //auto.square.execute();
+                        auto.square.execute();
                         break;
                     case SQUARENORR:
-                        //auto.squareNoRR.execute();
+                        auto.squareNoRR.execute();
                         break;
                     case TURN:
-                        //auto.turn.execute();
+                        auto.turn.execute();
                 }
             } else {
                 dc.handlePregameControls();

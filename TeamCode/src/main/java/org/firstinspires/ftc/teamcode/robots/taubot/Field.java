@@ -23,7 +23,7 @@ public class Field {
 
     public Pose2d targetCoordinate;
 
-    public static double inchesPerGrid = 24;
+    public static double inchesPerGrid = 23.5;
     public int fieldWidth = 12;
 
     HashMap<String, FieldObject[]> mapObjects = new HashMap<String, FieldObject[]>();

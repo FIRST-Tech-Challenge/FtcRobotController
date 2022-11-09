@@ -51,9 +51,11 @@ public class Crane implements Subsystem {
 
     public static double kF = 0.0;
 
-    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.035, 0.0001, 0.0025);
+    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.05, 0.0001, 0.005);
     public static double SHOULDER_TOLERANCE = 1;
     public static double SHOULDER_POWER = 1.0;
+    public static double SHOULDER_ADJUST = 7.5;
+    public static double EXTEND_ADJUST = .075;
 
     public static double kE = 0.0;
     public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(30, 0, 0.005);
@@ -215,6 +217,7 @@ public class Crane implements Subsystem {
                 if (System.nanoTime()>futureTime) {
                     calibrateStage = 0;
                     calibrated = true;
+                    shoulderTargetAngle = 10; //initial angle up to clear look at signal
                     return true;
                 }
                 break;
@@ -337,7 +340,7 @@ public class Crane implements Subsystem {
                 {
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     setExtendTargetPos(defaultPos.getExtendMemory());
-                    pickupTimer = futureTime(1); //typical time to retract enough to start turntable
+                    pickupTimer = futureTime(1.5); //typical time to retract enough to start turntable
                     pickupConeStage++;
                 }
                 break;
@@ -349,7 +352,7 @@ public class Crane implements Subsystem {
                     //move to previous drop location with a little extra height
                     //robot.turret.setTargetHeading(drop.getHeadingMemory());
                     targetTurretAngle = drop.getHeadingMemory();
-                    setShoulderTargetAngle(drop.getShoulderMemory());
+                    setShoulderTargetAngle(drop.getShoulderMemory()+5);
                     setExtendTargetPos(drop.getExtendMemory());
                     pickupConeStage = 0;
                     return true;
@@ -370,7 +373,7 @@ public class Crane implements Subsystem {
                 release();
 
                 //set timer to allow bulb gripper enough time to change
-                dropTimer = futureTime(.5);
+                dropTimer = futureTime(.3);
                 dropConeStage++;
 
                 break;
@@ -392,7 +395,8 @@ public class Crane implements Subsystem {
                 {
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     setExtendTargetPos(defaultPos.getExtendMemory());
-                    dropTimer = futureTime(.75); //typical time to retract enough to start turntable
+                    targetTurretAngle = pickup.getHeadingMemory();
+                    dropTimer = futureTime(1); //typical time to retract enough to start turntable
                     dropConeStage++;
                 }
                 break;
@@ -403,8 +407,8 @@ public class Crane implements Subsystem {
                 if(System.nanoTime() > dropTimer) {
                     //move to previous drop location with a little extra height
                     //robot.turret.setTargetHeading(pickup.getHeadingMemory()); //doesn't work cause - gets overriden
-                    targetTurretAngle = pickup.getHeadingMemory();
-                    setShoulderTargetAngle(pickup.getShoulderMemory());
+
+                    setShoulderTargetAngle(pickup.getShoulderMemory()+10); //return high
                     setExtendTargetPos(pickup.getExtendMemory());
                     dropConeStage = 0;
                     return true;
@@ -495,11 +499,11 @@ public class Crane implements Subsystem {
     }
 
     public void adjustExtend(double speed){
-        setExtendTargetPos((getExtendMeters() + 0.05 * speed));
+        setExtendTargetPos((getExtendMeters() + EXTEND_ADJUST * speed));
     }
 
     public void adjustShoulder(double distance){
-        setShoulderTargetAngle((getShoulderAngle() + 5 * distance));
+        setShoulderTargetAngle((getShoulderAngle() + SHOULDER_ADJUST * distance));
     }
 
     public double getHeight(){

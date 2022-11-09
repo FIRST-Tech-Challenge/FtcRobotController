@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.teamcode.robots.taubot.Field;
+
 @Config(value = "PPConstants")
 public class Constants {
 
@@ -77,8 +79,9 @@ public class Constants {
     }
 
     public enum Position {
-        START_LEFT(new Pose2d(-1.5, 9, Math.toRadians(0))),
-        START_RIGHT(new Pose2d(12, 12, Math.toRadians(0))),
+        ORIGIN(new Pose2d(0, 9, Math.toRadians(0))), //not a legal starting position - should never be actually used
+        START_LEFT(new Pose2d(-1.5 * Field.inchesPerGrid, 9, Math.toRadians(0))),
+        START_RIGHT(new Pose2d(1.5 * Field.inchesPerGrid, 9, Math.toRadians(0))),
 
         RED_SHIPPING_HUB(new Pose2d(-12, -24)),
         BLUE_SHIPPING_HUB(new Pose2d(-12, 24));
