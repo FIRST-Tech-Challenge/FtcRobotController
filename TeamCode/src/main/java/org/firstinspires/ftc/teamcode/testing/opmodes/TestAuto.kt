@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 class TestAuto : KOpMode() {
     private val robot by lazy { Robot(startPose) }
 
-    private val startPose = Pose(-55.0, -36.0, 180.0.radians)
+    private val startPose = Pose(-59.0, -36.0, 180.0.radians)
 
     private val kN = 0.6
     private val kOmega = 1.0 / 30.0
