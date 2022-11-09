@@ -13,6 +13,7 @@ public class Outtake {
 
     final static int max = 1640;
     final static int min = 0;
+    final static double autoSpeed = .8;
 
     enum Height {GROUND, LOW, MEDIUM, HIGH};
 
@@ -72,6 +73,7 @@ public class Outtake {
         }
 
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slide.setPower(autoSpeed);
 
     }
 

@@ -26,7 +26,7 @@ public class WARHOGTeleOp extends LinearOpMode {
         Outtake outtake = new Outtake(hardwareMap, telemetry);
 
         //set up variables
-        double joyx, joyy, joyz, gas, basespeed, armpos;
+        double joyx, joyy, joyz, gas, basespeed, armpos, wristmod;
         Drivetrain.Centricity centricity = Drivetrain.Centricity.FIELD;
 
         basespeed = .4;
@@ -95,12 +95,19 @@ public class WARHOGTeleOp extends LinearOpMode {
                 armpos = intake.runArm(Intake.Height.RETRACTED);
             }
 
-            intake.runArm(armpos);
+            //move the arm, modifying the wrist's position if right trigger is pressed
+            wristmod = (currentGamepad2.right_trigger-.2)*.625;
+            if(wristmod>0){
+                intake.runArm(armpos, wristmod);
+                telemetry.addData("Wrist Mod: ", wristmod);
+            }
+            else {
+                intake.runArm(armpos);
+            }
 
             //open/close the claw
             if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
                 intake.toggleClaw();
-
             }
 
             //move the outtake slides up and down

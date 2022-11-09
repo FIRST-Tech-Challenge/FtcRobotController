@@ -13,6 +13,7 @@ public class Intake {
     double armMax = .8;
     double armMin = 0;
     double armMid = .4;
+    double endMod = 0;
     double newPos;
 
     WristMode wristMode;
@@ -43,8 +44,8 @@ public class Intake {
 
         //if matched, make the wrist keep the cone upright
         if (wristMode== WristMode.MATCHED){
-            if(newPos>.6){
-                runWrist(newPos*1.25);
+            if(newPos>.7){
+                runWrist(newPos+endMod);
             }
             else {
                 runWrist(newPos);
@@ -66,13 +67,31 @@ public class Intake {
 
         //if matched, make the wrist keep the cone upright
         if (newWristMode== WristMode.MATCHED){
-            if(newPos>.6){
-                runWrist(newPos*1.25);
+            if(newPos>.7){
+                runWrist(newPos+endMod);
             }
             else {
                 runWrist(newPos);
             }
         }
+    }
+
+    //moves arm to a position
+    public void runArm(double pos, double wristMod){
+        if (pos>armMax){
+            newPos = armMax;
+        }
+        else {
+            newPos = pos;
+        }
+
+        armLeft.setPosition(newPos);
+        armRight.setPosition(1-newPos);
+
+        //make the wrist keep the cone upright, with the modification
+
+        runWrist(newPos+wristMod);
+
     }
 
     public double runArm(Height height){
