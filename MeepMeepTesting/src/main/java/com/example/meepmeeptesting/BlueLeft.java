@@ -5,8 +5,8 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class MeepMeepTrajectories2 {
-    // from top right corner
+public class BlueLeft {
+    // from top left corner
         public static void main(String[] args) {
             int signalZone = 3;
             MeepMeep meepMeep = new MeepMeep(800);
