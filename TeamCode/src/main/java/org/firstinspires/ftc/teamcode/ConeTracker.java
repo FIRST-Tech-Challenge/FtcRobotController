@@ -96,9 +96,9 @@ public class ConeTracker {
         } else {
             double rangeDifference = (leftRange - rightRange);
             if (rangeDifference > DEAD_BAND) {
-                coneDirection = 0.2;
+                coneDirection = -0.3;
             } else if (rangeDifference < -DEAD_BAND) {
-                coneDirection = -0.2;
+                coneDirection = 0.3;
             }
         }
 

@@ -43,7 +43,8 @@ public class Elevator {
     final double IN_POSITION_LIMIT = 10;
 
     // Wrist & Hand Constants
-    final double SAFE_WRIST_OFFSET = 90;
+    final double WRIST_UP_OFFSET   = 90;
+    final double WRIST_SAFE_OFFSET = 75;
 
     final double WRIST_HOME_POSITION = 0.56;
     final double HAND_HOME_POSITION = 0.7;
@@ -77,6 +78,7 @@ public class Elevator {
     private double  liftAngle           = 0;
     private int     liftTargetPosition  = 0;
     private int     liftLastPosition    = 0;
+    private boolean wristIsSafe         = false;
 
     private boolean newLevelReqested = false;
     private int     requestedPosition;
@@ -163,11 +165,19 @@ public class Elevator {
 
             case HOME_OPEN: {
                if  (newLiftPosition()) {
-//                   setHandDelayMove(HAND_CLOSE, 0.3, requestedPosition, MOVING_CLOSED);  close hand before lifting.  Does not work for stack
+                   if (wristIsSafe) {
+                       setWristOffset(0);
+                   }
                    setLiftTargetPosition(requestedPosition);
                    setState(MOVING_OPEN);
                } else if (myOpMode.gamepad2.square) {
                    setHandDelayMove(HAND_CLOSE, 0.3, (liftPosition + 100), HOME_CLOSED);
+               } else if (homeRequested()) {
+                   if (wristIsSafe) {
+                       setWristOffset(0);
+                   }
+                   setHandPosition(HAND_OPEN);
+                   setLiftTargetPosition(ELEVATOR_HOME);
                }
                break;
             }
@@ -179,15 +189,23 @@ public class Elevator {
                 } else if (myOpMode.gamepad2.circle) {
                     setHandPosition(HAND_OPEN);
                     setState(HOME_OPEN);
+                } else if (homeRequested()) {
+                    setLiftTargetPosition(ELEVATOR_HOME);
+                    setHandPosition(HAND_OPEN);
                 }
                 break;
             }
 
             case GOING_HOME_OPEN: {
                 if (liftInPosition) {
+                    if (wristIsSafe) {
+                        setWristOffset(WRIST_UP_OFFSET);
+                    }
                     setHandPosition(HAND_OPEN);
                     currentElevatorLevel = 0;  // Se to home level.
                     setState(HOME_OPEN);
+                } else {
+                    setWristOffset(WRIST_SAFE_OFFSET);
                 }
                 break;
             }
@@ -212,7 +230,7 @@ public class Elevator {
             }
 
             case IN_POSITION_OPEN: {
-                 if (myOpMode.gamepad2.left_bumper) {
+                 if (homeRequested()) {
                      setHandDelayMove(HAND_READY, 0.1, ELEVATOR_HOME, GOING_HOME_OPEN);
                  } else if (myOpMode.gamepad2.square) {
                      setHandPosition(HAND_CLOSE);
@@ -240,7 +258,7 @@ public class Elevator {
                  } else if (newLiftPosition()) {
                      setLiftTargetPosition(requestedPosition);
                      setState(MOVING_CLOSED);
-                 } else if (myOpMode.gamepad2.left_bumper) {
+                 } else if (homeRequested()) {
                      if (DROP_ON_HOME) {
                          setHandDelayMove(HAND_READY, 0.1, ELEVATOR_HOME, GOING_HOME_OPEN);
                      } else {
@@ -252,7 +270,7 @@ public class Elevator {
                  break;
             }
 
-            case LOWERING_TO_RELEASE: {
+            case LOWERING_TO_RELEASE_IN_AUTO: {
                 if (liftInPosition) {
                     setHandPosition(HAND_OPEN);
                     setState(RELEASING);
@@ -262,7 +280,7 @@ public class Elevator {
 
             case RELEASING: {
                 if (elevatorStateTimer.time() > 0.5) {
-                    setWristOffset(SAFE_WRIST_OFFSET);
+                    setWristOffset(WRIST_SAFE_OFFSET);
                     setState(FLIPPING_UP);
                 }
                 break;
@@ -270,6 +288,7 @@ public class Elevator {
 
             case FLIPPING_UP: {
                 if (elevatorStateTimer.time() > 0.5) {
+                    setLiftTargetPosition(ELEVATOR_STACK_TOP);
                     setState(IN_POSITION_OPEN);
                 }
                 break;
@@ -410,6 +429,10 @@ public class Elevator {
         }
     }
 
+    private boolean homeRequested() {
+        return myOpMode.gamepad2.left_bumper;
+    }
+
     // ----- Elevator controls
     public void levelUp() {
         // Move up if not at top.
@@ -440,7 +463,7 @@ public class Elevator {
             currentElevatorLevel--;
         }
         setLiftTargetPosition(elevatorLevel[currentElevatorLevel]);
-        setState(LOWERING_TO_RELEASE);
+        setState(LOWERING_TO_RELEASE_IN_AUTO);
     }
 
     public void enableLift() {
@@ -464,6 +487,10 @@ public class Elevator {
         return liftPosition;
     }
 
+    public boolean getWristIsSafe() {
+        return wristIsSafe;
+    }
+
     public void jogElevator(double speed) {
         setLiftTargetPosition(liftTargetPosition + (int)(speed * 7));
     }
@@ -477,7 +504,10 @@ public class Elevator {
     }
 
     // ----- Wrist controls
-    public void setWristOffset(double angle){wristOffset = angle;}
+    public void setWristOffset(double angle){
+        wristOffset = angle;
+        wristIsSafe = (wristOffset > 20);
+    }
 
     public double getWristOffset () {return wristOffset;}
 

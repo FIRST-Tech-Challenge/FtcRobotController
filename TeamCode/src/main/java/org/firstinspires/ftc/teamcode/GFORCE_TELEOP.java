@@ -211,13 +211,13 @@ public class GFORCE_TELEOP extends LinearOpMode {
             lastStepUp   = stepUp;
             lastStepDown = stepDown;
 
-            // Put the hand in safe position
+            // Put the wrist in safe position
             flip = (gamepad1.right_bumper || gamepad2.right_bumper);
             if (flip && !lastFlip) {
-                if (elevator.getWristOffset() == elevator.SAFE_WRIST_OFFSET) {
+                if (elevator.getWristIsSafe()) {
                    elevator.setWristOffset(0);
                 } else {
-                    elevator.setWristOffset(elevator.SAFE_WRIST_OFFSET);
+                    elevator.setWristOffset(elevator.WRIST_SAFE_OFFSET);
                 }
             }
             lastFlip = flip;
