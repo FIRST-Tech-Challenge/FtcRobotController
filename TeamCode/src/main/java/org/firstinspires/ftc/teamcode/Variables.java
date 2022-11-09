@@ -36,4 +36,6 @@ public class Variables {
     //other variables
     public static double clicksPerRotation = 537.6;
     public static double rotationsPerMeter = 1/0.3015928947;
+
+    // Grbber #1 Clamp: 0.5, Release: 0.75
 }

@@ -34,6 +34,7 @@ public class Meet0Teleop extends DriveMethods {
         double leftX;
         double rightX;
         double speedDiv = 2;
+        // LOOK IN VARIABLES FOR GRIBBER POSISITIONS, SEE NUMBER ON GRIBBER
         double clampPosition = 0.19;
         //double clampPosition = 0.76;
         double releasePosition = 0.08;

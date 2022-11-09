@@ -9,17 +9,25 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class GrbberTest extends DriveMethods{
     Servo grabber;
     public void runOpMode(){
-        double clamp = 0.69;
-        double release = 0.420;
+        // LOOK IN VARIABLES FOR GRIBBER POSISITIONS, SEE NUMBER ON GRIBBER
+        double clamp = 0.5;
+        double release = 0.75;
         int i = 1;
         grabber = hardwareMap.get(Servo.class, "grabber");
         waitForStart();
+
         while(opModeIsActive()){
+            telemetry.addLine("Servo Position: "+ grabber.getPosition());
+            telemetry.update();
             if (i<50){
                 grabber.setPosition(release);
-                sleep(1000);
+                telemetry.addLine("Servo Position: "+ grabber.getPosition());
+                telemetry.update();
+                sleep(3000);
                 grabber.setPosition(clamp);
-                sleep(1000);
+                telemetry.addLine("Servo Position: "+ grabber.getPosition());
+                telemetry.update();
+                sleep(3000);
                 i++;
             }
 
