@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode.robots.catbot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @TeleOp(name="Iron Giant OpMode", group="Challenge")
 public class TestOpMode extends OpMode {
@@ -13,7 +16,7 @@ public class TestOpMode extends OpMode {
     private DcMotor motorBackLeft = null;
     private DcMotor motorFrontLeft = null;
     private DcMotor motorBackRight = null;
-    private DcMotor elevator = null;
+    private DcMotorEx elevator = null;
     private Servo claw = null;
     // regular drive
     private double powerLeft = 0;
@@ -35,15 +38,16 @@ public class TestOpMode extends OpMode {
     private static final int MAXELEVTICS = 4320;
     private static final int MINELEVTICS = 0;
     private int currElevTics = 0;
+    private double MOTORSTALLVALUE = 12.76;
 
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing " + this.getClass() + "...");
         telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
+        elevator = this.hardwareMap.get(DcMotorEx.class, "elevator");
+        //calib(); <-- fix!!!!!!!!
         motorInit();
-        calib();
-
     }
 
     @Override
@@ -126,15 +130,18 @@ public class TestOpMode extends OpMode {
         //might have to switch to dcmotorex for all of the motors
         //while amperage < stallValue (checks for stall)
         //elevator.setPower(-0.1); or something
-        //telemetry.addData("done calibrating");
-
+        if(elevator.getCurrent(CurrentUnit.AMPS) < MOTORSTALLVALUE)
+        {
+            elevator.setPower(-.1);
+        }
+        telemetry.addData("done calibrating", elevator.getCurrentPosition());
     }
     public void motorInit(){
         motorFrontLeft = this.hardwareMap.get(DcMotor.class, "motorFrontLeft");
         motorBackLeft = this.hardwareMap.get(DcMotor.class, "motorBackLeft");
         motorFrontRight = this.hardwareMap.get(DcMotor.class, "motorFrontRight");
         motorBackRight = this.hardwareMap.get(DcMotor.class, "motorBackRight");
-        elevator = this.hardwareMap.get(DcMotor.class, "elevator");
+        //elevator = this.hardwareMap.get(DcMotorEx.class, "elevator");
         claw = this.hardwareMap.get(Servo.class, "claw");
         elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
