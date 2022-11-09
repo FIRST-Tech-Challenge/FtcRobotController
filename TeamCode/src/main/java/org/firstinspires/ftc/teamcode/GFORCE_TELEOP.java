@@ -59,7 +59,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
         // Initialize robot hardware classes GFORCE_KiwiDrive
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
-        elevator = new Elevator(this);
+        elevator = new Elevator(this, false);
         coneTracker = new ConeTracker(this);
 
         ElapsedTime cycleTime = new ElapsedTime();
@@ -79,6 +79,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
         while (opModeInInit()) {
             telemetry.addData("Alliance", redAlliance ? "RED" : "blue");
             elevator.runStateMachine();
+            coneTracker.update();       // testing only
+            coneTracker.showRanges();   // testing only
             telemetry.update();
         }
 
@@ -229,6 +231,9 @@ public class GFORCE_TELEOP extends LinearOpMode {
             cycleTime.reset();
             telemetry.update();
         }
+
+        // Set Elevator state back to Idle for next autonomous
+        elevator.setState(ElevatorState.IDLE);
     }
 
     // Lock in a new heading for the Auto Heading Hold..

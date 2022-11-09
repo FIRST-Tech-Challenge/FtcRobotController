@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
@@ -32,7 +31,7 @@ public class GFORCE_AUTO extends LinearOpMode {
         // Initialize GFORCE_KiwiDrive
         drive = new GFORCE_KiwiDrive(hardwareMap);
         autoConfig.init(this);
-        elevator = new Elevator(this);
+        elevator = new Elevator(this, true);
         coneTracker = new ConeTracker(this);
 
         // We want to turn off velocity control for teleop
@@ -46,14 +45,12 @@ public class GFORCE_AUTO extends LinearOpMode {
         TrajectorySequence ourTrajectory = null;
 
         while (opModeInInit()) {
-            autoConfig.init_loop();
             elevator.update();
             elevator.runStateMachine();
+            autoConfig.init_loop();
             //read signal cone
             // Select the desired trajectory
         }
-
-
 
         if (opModeIsActive()) {
             if (autoConfig.autoOptions.enabled) {
@@ -65,31 +62,30 @@ public class GFORCE_AUTO extends LinearOpMode {
                         drive.setPoseEstimate(startPosition);
                         if(autoConfig.autoOptions.scoreJunction) {
                             //we are red, starting at the front, scoring the junction
-
                             ourTrajectory = drive.trajectorySequenceBuilder(startPosition)
-                                    .addDisplacementMarker(2, () -> {
-                                    elevator.levelUp();
-                                    })
+                                    .addDisplacementMarker(0.5, () -> {elevator.levelUp();})
                                     .splineTo(new Vector2d(-30, -53), Math.toRadians(45))
-                                    .addDisplacementMarker(() -> {
-                                      elevator.autoRelease();
-                                    })
-                                    .waitSeconds(2)
+                                    .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {elevator.autoRelease(); })
+                                    .waitSeconds(1.5)
                                     .setReversed(true)
                                     .splineTo(new Vector2d(-35, -59), Math.toRadians(0))
                             .build();
                             followGforceSequence(ourTrajectory);
                         }
-
                     }
                 }
             }
-
         }
 
         // save the last field position in shared states class for teleop to use.
         SharedStates.currentPose = drive.getPoseEstimate();
+
+        // Set Elevator state back to Idle for next autonomous
+        elevator.setState(ElevatorState.IDLE);
+
     }
+
+
     public void followGforceSequence(TrajectorySequence trajectory) {
         drive.followTrajectorySequenceAsync(trajectory);
         while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {

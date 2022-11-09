@@ -46,7 +46,7 @@ public class Elevator {
     final double SAFE_WRIST_OFFSET = 90;
 
     final double WRIST_HOME_POSITION = 0.56;
-    final double HAND_HOME_POSITION = 0.8;
+    final double HAND_HOME_POSITION = 0.7;
 
     final double HAND_OPEN  = 0.6; //was 0.47
     final double HAND_READY = 0.7 ;
@@ -66,6 +66,7 @@ public class Elevator {
 
     // class members (objects)
     private LinearOpMode myOpMode = null;
+    private boolean      isAutonomous = false;
 
     // elevator state variables
     private int     currentElevatorLevel = 0;
@@ -92,30 +93,47 @@ public class Elevator {
     private double lift_P2A_c;
 
     // Elevator Constructor.  Call once opmode is running.
-    public Elevator(LinearOpMode opMode) {
+    public Elevator(LinearOpMode opMode, boolean isAuto) {
         // Attach to hardware devices
         myOpMode = opMode;
+        isAutonomous = isAuto;
         liftMaster = myOpMode.hardwareMap.get(DcMotorEx.class, "lift_master");
         liftSlave = myOpMode.hardwareMap.get(DcMotorEx.class, "lefte");
         wrist = myOpMode.hardwareMap.get(Servo.class, "wrist");
         hand = myOpMode.hardwareMap.get(Servo.class, "hand");
         motors = Arrays.asList(liftMaster, liftSlave);
 
+        // Angle (A) to/from Position (P) conversion factors Y = Mx + C
+        SolveFor p2a = new SolveFor(41, -25, 976, 59);
+        lift_P2A_m = p2a.getM();
+        lift_P2A_c = p2a.getC();
+
         setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         liftMaster.setDirection(DcMotorSimple.Direction.FORWARD);
         liftSlave.setDirection(DcMotorSimple.Direction.REVERSE);
-        setWristPosition(WRIST_HOME_POSITION);
         setHandPosition(HAND_HOME_POSITION);
+        setWristPosition(WRIST_HOME_POSITION);
+
         currentElevatorLevel = 0;
         newLevelReqested = false;
-        elevatorState = IDLE;
+        elevatorState = SharedStates.elevatorState;
 
-        // Angle (A) to/from Position (P) conversion factors Y = Mx + C
-        SolveFor p2a = new SolveFor(41, -25, 976, 59);
-        lift_P2A_m = p2a.getM();
-        lift_P2A_c = p2a.getC();
+        // do any grabber required initializations
+        switch (elevatorState) {
+            case HOME_OPEN:
+                setHandPosition(HAND_OPEN);
+                break;
+
+            case HOME_CLOSED:
+                myOpMode.sleep(500);
+                setHandPosition(HAND_CLOSE);
+                break;
+
+            default:
+        }
+
     }
 
     // ======  Elevator State Machine
@@ -133,7 +151,13 @@ public class Elevator {
                 recalibrateHomePosition();
                 myOpMode.telemetry.addData("Elevator", "Home Done.");
                 myOpMode.telemetry.update();
-                setState(HOME_OPEN);
+                if (isAutonomous) {
+                    setHandPosition(HAND_CLOSE);
+                    setState(HOME_CLOSED);
+                } else {
+                    setHandPosition(HAND_OPEN);
+                    setState(HOME_OPEN);
+                }
                 break;
             }
 
@@ -374,7 +398,6 @@ public class Elevator {
         setLiftTargetPosition(0);
         currentElevatorLevel = 0;
         newLevelReqested = false;
-        setHandPosition(HAND_CLOSE);
         enableLift();  // Start closed loop control
     }
 
