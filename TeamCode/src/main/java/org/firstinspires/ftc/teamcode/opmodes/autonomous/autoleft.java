@@ -24,8 +24,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -35,23 +34,16 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import java.util.ArrayList;
 
-@Autonomous
-@Disabled
-public class AUTONOMOUS extends LinearOpMode
+@Autonomous(name = "dont press auto left")
+//@Disabled
+public class autoleft extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     TurtleRobotAuto robot = new TurtleRobotAuto(this);
 
     static final double FEET_PER_METER = 3.28084;
-    static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   =  3.7795276;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
-    private ElapsedTime runtime = new ElapsedTime();
+
     // Lens intrinsics
     // UNITS ARE PIXELS
     // NOTE: this calibration is for the C920 webcam at 800x448.
@@ -177,32 +169,44 @@ public class AUTONOMOUS extends LinearOpMode
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
-
+        left(0.5, 250);
+        stopRobot();
+        sleep(1000);
+        LinearSlide(1, 500);
+        LinearSlide(0,1000);
+        straight(0.5, 700);
+        stopRobot();
+        ServoArm(0.5, 250);
+        ServoClaw(0.5, 250);
+        ServoArm(0,1000);
+        ServoClaw(0,1000);
+        ServoClaw(-0.5,250);
+        ServoArm(-0.5,250);
+        ServoArm(0,1000);
+        ServoClaw(0,1000);
+        straight(-0.5,700);
+        stopRobot();
+        right(0.5, 250);
+        stopRobot();
         /* Actually do something useful */
-
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
-            strafeLeft(0.5, 1100);
+            strafeLeft(0.5, 1000);
             stopRobot();
             sleep(1000);
-//            straight(0.15, 900);
-//            stopRobot();
-//            stop();
-//            EncoderDrive(robot, 0.45, -25, -25, 25,-25, 2);
-            EncoderDrive(robot, 0.45, 35, 35,35, 35, 2);
+            straight(0.5, 900);
+            stopRobot();
+            stop();
         }else if(tagOfInterest.id == MIDDLE){
-//            straight(0.15, 1000);
-//            stopRobot();
-//            stop();
-            EncoderDrive(robot, 0.5, 35, 35,35, 35, 2);
+            straight(0.5, 1000);
+            stopRobot();
+            stop();
         }else{
-            strafeRight(0.15, 1100);
+            strafeRight(0.5, 1200);
             stopRobot();
             sleep(1000);
-//            straight(0.15, 900);
-//            stopRobot();
-//            stop();
-//            EncoderDrive(robot, 0.45, 25, -25, -25,25, 2);
-            EncoderDrive(robot, 0.45, 35, 35,35, 35, 2);
+            straight(0.5, 1000);
+            stopRobot();
+            stop();
         }
 
 
@@ -261,82 +265,18 @@ public class AUTONOMOUS extends LinearOpMode
         robot.rightbackmotor.setPower(power);
         sleep(time);
     }
-    public void EncoderDrive(TurtleRobotAuto turtleRobotAuto, double speed,
-                             double leftfrontInches, double leftbackInches,
-                             double rightfrontInches, double rightbackInches,
-                             double timeoutS) {
-        int newLeftfrontTarget;
-        int newLeftbackTarget;
-        int newRightfrontTarget;
-        int newRightbackTarget;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftfrontTarget = robot.leftfrontmotor.getCurrentPosition() + (int) (leftfrontInches * COUNTS_PER_INCH);
-            newLeftbackTarget = robot.leftbackmotor.getCurrentPosition() + (int) (leftbackInches * COUNTS_PER_INCH);
-            newRightfrontTarget = robot.rightfrontmotor.getCurrentPosition() + (int) (rightfrontInches * COUNTS_PER_INCH);
-            newRightbackTarget = robot.rightbackmotor.getCurrentPosition() + (int) (rightbackInches * COUNTS_PER_INCH);
-            robot.leftfrontmotor.setTargetPosition(newLeftfrontTarget);
-            robot.leftbackmotor.setTargetPosition(newLeftfrontTarget);
-            robot.rightfrontmotor.setTargetPosition(newRightfrontTarget);
-            robot.rightbackmotor.setTargetPosition(newRightbackTarget);
-
-
-            // Turn On RUN_TO_POSITION
-            robot.leftfrontmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftbackmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightfrontmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightbackmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.leftfrontmotor.setPower(Math.abs(speed));
-            robot.leftbackmotor.setPower(Math.abs(speed));
-            robot.rightfrontmotor.setPower(Math.abs(speed));
-            robot.rightbackmotor.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the  will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the  continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS)
-                    && (robot.leftfrontmotor.isBusy() &&
-                    robot.leftbackmotor.isBusy()
-                    && robot.rightfrontmotor.isBusy()
-                    && robot.rightbackmotor.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1", "Running to %7d :%7d",
-                        newLeftfrontTarget,
-                        newLeftbackTarget,
-                        newRightfrontTarget,
-                        newRightbackTarget);
-                telemetry.addData("Path2", "Running at %7d :%7d",
-                        robot.leftfrontmotor.getCurrentPosition(),
-                        robot.leftbackmotor.getCurrentPosition(),
-                        robot.rightfrontmotor.getCurrentPosition(),
-                        robot.rightbackmotor.getCurrentPosition());
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            robot.leftfrontmotor.setPower(0);
-            robot.leftbackmotor.setPower(0);
-            robot.rightfrontmotor.setPower(0);
-            robot.rightbackmotor.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            robot.leftfrontmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.leftbackmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightfrontmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightbackmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
+    public void LinearSlide(double power, int time) {
+        // Negative power = up
+        robot.leftslidemotor.setPower(power);
+        robot.rightslidemotor.setPower(power);
+        sleep(time);
+    }
+    public void ServoClaw (double power, int time) {
+        robot.ClawMotor.setPower(power);
+        sleep(time);
+    }
+    public void ServoArm(double power, int time) {
+        robot.ArmServo.setPower(power);
+        sleep(time);
     }
 }
