@@ -6,10 +6,7 @@ public class EncoderMove {
 
 
     public DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack;
-
     public Move move;
-
-
 
 
     public EncoderMove(DcMotor _FL, DcMotor _FR,DcMotor _BL, DcMotor _BR) {

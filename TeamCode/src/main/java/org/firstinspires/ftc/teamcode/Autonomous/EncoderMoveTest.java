@@ -78,20 +78,9 @@ public class EncoderMoveTest extends LinearOpMode {
      * Initialize the motors.
      */
     private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack,vaccumLeft;
-    private DcMotorEx armMotorLeft, armMotorRight;
-    private CRServo collectorCr;
     private Move move;
     private Rotate rotate;
-    private Arm arm;
-    private Vacuum vaccum;
-    private RotationDetector rotationDetector;
-    private ArmEncoder armEncoder;
-    private CarouselMotor _carouselMotor;
-    private Collector collector;
     public VoltageReader voltageReader;
-    private Servo L1Servo;
-    private Servo L2Servo;
-    private ArmServos armServos;
     private EncoderMove encoderMove;
 
 
@@ -104,21 +93,9 @@ public class EncoderMoveTest extends LinearOpMode {
         rightMotor = hardwareMap.dcMotor.get("FR");
         leftMotorBack = hardwareMap.dcMotor.get("BL");
         rightMotorBack = hardwareMap.dcMotor.get("BR");
-        vaccumLeft = hardwareMap.dcMotor.get("VL");
-        L1Servo = hardwareMap.servo.get("L1S");
-        L2Servo = hardwareMap.servo.get("L2S");
-        armMotorRight = hardwareMap.get(DcMotorEx.class, "AMR");
-        armMotorLeft = hardwareMap.get(DcMotorEx.class, "AML");
-        armEncoder = new ArmEncoder(armMotorLeft, armMotorRight);
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
-        vaccum = new Vacuum(vaccumLeft);
-        rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
-        collectorCr = hardwareMap.crservo.get("CR");
-        collector = new Collector(collectorCr);
-        VoltageSensor VS = this.hardwareMap.voltageSensor.iterator().next();
-        voltageReader = new VoltageReader(VS);
-        armServos = new ArmServos(L1Servo, L2Servo);
+
 
         encoderMove = new EncoderMove(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
 
@@ -141,8 +118,6 @@ public class EncoderMoveTest extends LinearOpMode {
         waitForStart();
 
         sleep(2000);
-
-        vaccumLeft.setPower(-0.5);
 
 //        int centi = 18;
 //        while(encoderMove.driveSlideLeft( 0.7)){
