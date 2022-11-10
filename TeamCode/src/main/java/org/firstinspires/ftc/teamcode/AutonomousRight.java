@@ -102,11 +102,11 @@ public class AutonomousRight extends LinearOpMode {
 
     // Driving motor variables
     static final double HIGH_SPEED_POWER = 0.6;  // used to adjust driving sensitivity.
-    static final double SLOW_DOWN_POWER = 0.2;
-    static final double CORRECTION_POWER = 0.1;
-    static final double MIN_ROTATE_POWER = 0.12;
-    static final double AUTO_DRIVE_POWER = 0.6; // used for auto driving
-    static final double AUTO_ROTATE_POWER = 0.9; // used for auto driving
+    static final double SLOW_DOWN_POWER = 0.3;
+    static final double CORRECTION_POWER = 0.12;
+    static final double MIN_ROTATE_POWER = 0.20;
+    static final double AUTO_DRIVE_POWER = 1.0; // used for auto driving
+    static final double AUTO_ROTATE_POWER = 1.0; // used for auto driving
 
     // slider motor variables
     private DcMotor RightSliderMotor = null;
@@ -149,11 +149,13 @@ public class AutonomousRight extends LinearOpMode {
     double rotation = 0.0;
     PIDController pidRotate, pidDrive;
 
-    // sensors
+    // sensors, camera
     private DistanceSensor distanceSensor;
     private ColorSensor colorSensor;// best collected within 2cm of the target
     boolean  isCameraInstalled = false;
     SleeveIdentification.sleeveSignal mySleeveColor = SleeveIdentification.sleeveSignal.UNKNOWN;
+
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -225,11 +227,11 @@ public class AutonomousRight extends LinearOpMode {
         // Set PID proportional value to start reducing power at about 50 degrees of rotation.
         // P by itself may stall before turn completed so we add a bit of I (integral) which
         // causes the PID controller to gently increase power if the turn is not completed.
-        pidRotate = new PIDController(.008, .0, 0);
+        pidRotate = new PIDController(.014, .0, 0);
 
         // Set PID proportional value to produce non-zero correction value when robot veers off
         // straight line. P value controls how sensitive the correction is.
-        pidDrive = new PIDController(.03, 0, 0);
+        pidDrive = new PIDController(.04, 0, 0);
 
         // make sure the imu gyro is calibrated before continuing.
         while (!isStopRequested() && !imu.isGyroCalibrated()) {
@@ -339,10 +341,9 @@ public class AutonomousRight extends LinearOpMode {
         Logging.log("Autonomous - PID = %d, power = %.2f", tSign, drivePower);
         robotDriveWithPIDControl(drivePower, tSign, isBackForth);
         robotRunWithPositionModeOn(false); // turn off encoder mode
-        Logging.log("Autonomous - FL Current Position = %d", FrontLeftDrive.getCurrentPosition());
-        Logging.log("Autonomous - FR Current Position = %d", FrontRightDrive.getCurrentPosition());
-        Logging.log("Autonomous - BL Current Position = %d", BackLeftDrive.getCurrentPosition());
-        Logging.log("Autonomous - BR Current Position = %d", BackRightDrive.getCurrentPosition());
+        Logging.log("Autonomous - Current Position, FL = %d, FR= %d, BL = %d, BR = %d",
+                FrontLeftDrive.getCurrentPosition(), FrontRightDrive.getCurrentPosition(),
+                BackLeftDrive.getCurrentPosition(), BackRightDrive.getCurrentPosition());
     }
 
     /**
@@ -539,6 +540,8 @@ public class AutonomousRight extends LinearOpMode {
         correction = 0.0;
         setPowerToWheels(p); // p is always positive for RUN_TO POSITION mode.
         sleep(100); // let motors starting moving before checking isBusy.
+
+        Logging.log("Autonomous -power = %.2f, global angle = %.3f", p, getAngle());
         while(robotIsBusy() && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
             if (0 != targetSign) { // no pid if sign = 0;
                 correction = pidDrive.performPID(getAngle());
@@ -551,7 +554,6 @@ public class AutonomousRight extends LinearOpMode {
             if (Math.abs(currPosition - targetPosition) < (SLOW_DOWN_DISTANCE * COUNTS_PER_INCH_DRIVE)) {
                 p = SLOW_DOWN_POWER;
             }
-            Logging.log("Autonomous -power = %.2f, correction = %.2f, global angle = %.3f", p, correction, globalAngle);
 
             if (isBF) { // left motors have same power
                 leftMotorSetPower(p - correction * targetSign);
@@ -563,6 +565,7 @@ public class AutonomousRight extends LinearOpMode {
             }
         }
         setPowerToWheels(0.0); //stop moving
+        Logging.log("Autonomous -power = %.2f, global angle = %.3f", p, getAngle());
     }
 
     /**
@@ -588,6 +591,7 @@ public class AutonomousRight extends LinearOpMode {
 
         if (isCameraInstalled) {
             mySleeveColor = mySleeve.captureSleeveSignal();
+            Logging.log("Autonomous - complete color read from camera.");
         }
         clawServo.setPosition(CLAW_CLOSE_POS);
         RightSliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
@@ -596,7 +600,7 @@ public class AutonomousRight extends LinearOpMode {
         sleep(200); // wait 0.4 sec to make sure clawServo is at grep position
         setSliderPosition(MEDIUM_JUNCTION_POS);
         if (SleeveIdentification.sleeveSignal.UNKNOWN != mySleeveColor) {
-            robotRunToPosition(36.0, true);
+            robotRunToPosition(56.0, true);
         }
         else {
             sleep(500); // wait preload cone to lifted.
@@ -620,54 +624,86 @@ public class AutonomousRight extends LinearOpMode {
         robotRunToPosition(-12.0, false); // strafe robot half mat to left side
         waitSliderRun(); // make sure slider has been lifted.
 
-        robotRunToPosition(7.0, true); // drive robot half mat to high junction
+        robotRunToPosition(7.5, true); // drive robot V to high junction
         autoUnloadCone();
         Logging.log("Autonomous - pre-load cone has been unloaded.");
         // lower down slider after unloading cone
         setSliderPosition(WALL_POSITION);
 
+        Orientation imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
         for(int autoLoop = 0; autoLoop < 2; autoLoop++) {
-            // right turn 90 degree
             Logging.log("Autonomous - loop index: %d ", autoLoop);
-            Orientation imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            // right turn 90 degree
+            imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             Logging.log("Autonomous - imu angle before right turn: %.2f", imuAngles.firstAngle);
             rotate(-AngleUnit.DEGREES.normalize(imuAngles.firstAngle) - 90, AUTO_ROTATE_POWER);
             Logging.log("Autonomous - imu turn: %.2f degree", -AngleUnit.DEGREES.normalize(imuAngles.firstAngle) - 90);
             Logging.log("Autonomous - imu angle after turn: %.2f", lastAngles.firstAngle);
 
+            // double confirm for accurate turn
+            imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            rotate(-AngleUnit.DEGREES.normalize(imuAngles.firstAngle) - 90, AUTO_ROTATE_POWER);
+            Logging.log("Autonomous - imu angle after cone unloading correction: %.2f", lastAngles.firstAngle);
+
             // drive robot to loading area
             robotRunToPosition(38.0, true);
+
+            // load cone
             autoLoadCone(coneStack5th - coneLoadStackGap * autoLoop);
+
+            // lift cone by slider
+            setSliderPosition(WALL_POSITION);
+
+            // make sure it is 90 degree before running back
             imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             Logging.log("Autonomous - imu angle after load cone: %.2f", imuAngles.firstAngle);
-            setSliderPosition(WALL_POSITION);
+            rotate(-AngleUnit.DEGREES.normalize(imuAngles.firstAngle) - 90, AUTO_ROTATE_POWER);
+            Logging.log("Autonomous - imu angle after correction: %.2f", lastAngles.firstAngle);
             waitSliderRun(); // make sure slider has been lifted before moving out cone stack.
 
             // lift slider during rotation.
             setSliderPosition(MEDIUM_JUNCTION_POS);
+
             // drive back robot to high junction
-            robotRunToPosition(-38.0, true);
+            robotRunToPosition(-38.0 + 3.0, true); // adjust according to testing
             Logging.log("Autonomous - robot has arrived high junction.");
 
             // lift slider during rotation.
             setSliderPosition(HIGH_JUNCTION_POS);
 
-            // left turn 90 degree
+            // left turn 90 degree facing to high junction
             imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             Logging.log("Autonomous - imu angle before left turn: %.2f", imuAngles.firstAngle);
             rotate(-AngleUnit.DEGREES.normalize(imuAngles.firstAngle), AUTO_ROTATE_POWER); // turn robot -90 degree to right
             Logging.log("Autonomous - imu angle after turn: %.2f", lastAngles.firstAngle);
 
+            // double turn for accurate
+            imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            rotate(-AngleUnit.DEGREES.normalize(imuAngles.firstAngle), AUTO_ROTATE_POWER);
+            Logging.log("Autonomous - imu angle after correction: %.2f", lastAngles.firstAngle);
+
             waitSliderRun(); // make sure slider has been lifted
             Logging.log("Autonomous - slider has lifted to high junction.");
-            robotRunToPosition(7.0, true); // drive robot half mat to high junction
+
+            // moving forward V to junction
+            robotRunToPosition(8.5, true); // adjust according to testing
+
+            // unload cone
             autoUnloadCone();
             Logging.log("Autonomous - %d cone has been unloaded.", autoLoop + 2);
             imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             Logging.log("Autonomous - imu angle after unload cone: %.2f", imuAngles.firstAngle);
+
+            // lower slider and get ready to load cone
             setSliderPosition(WALL_POSITION);
         }
         Logging.log("Autonomous -  latest cone has been unloaded.");
+
+        // turn robot -90 degree to right
+        rotate(-AngleUnit.DEGREES.normalize(imuAngles.firstAngle), AUTO_ROTATE_POWER);
+        Logging.log("Autonomous - imu angle before parking after correction: %.2f", lastAngles.firstAngle);
 
         // drive to final parking lot
         robotRunToPosition(parkingLocation, false); // strafe robot to parking
@@ -690,7 +726,7 @@ public class AutonomousRight extends LinearOpMode {
         double location;
         String color = "";
 
-        if(SleeveIdentification.sleeveSignal.UNKNOWN != mySleeveColor) {
+        if(SleeveIdentification.sleeveSignal.UNKNOWN != mySleeveColor) { // camera
             switch (mySleeveColor) {
                 case RED: // red
                     location = -1.0 * 12; // parking lot #1 (red), first mat
@@ -708,8 +744,9 @@ public class AutonomousRight extends LinearOpMode {
                     location = 0.0;
                     color = "Unknow";
             }
+            Logging.log("Autonomous - Sleeve color from camera is %s", color);
         }
-        else {
+        else { // color sensor
             if (0 == b[0]) return 0.0;
             if (0 == b[1]) return 0.0;
             if (0 == b[2]) return 0.0;
@@ -723,7 +760,6 @@ public class AutonomousRight extends LinearOpMode {
                     maxV = ratio[i];
                 }
             }
-            Logging.log("Autonomous - channel = %d, max value = %.3f", channel, maxV);
             switch (channel) {
                 case 0: // red
                     location = -1.0 * 12; // parking lot #1 (red), third mat
@@ -741,13 +777,10 @@ public class AutonomousRight extends LinearOpMode {
                     location = 0.0;
                     color = "Unknow";
             }
+            Logging.log("Autonomous - channel = %d, max value = %.3f", channel, maxV);
+            Logging.log("Autonomous - Sleeve color from color sensor is %s", color);
             telemetry.addData("color", "rgb ratio, %.2f, %.2f, %.2f", ratio[0], ratio[1], ratio[2]);
         }
-        telemetry.addLine()
-                .addData("channal ", channel)
-                .addData("Color is ", color)
-                .addData("location ", location);
-        Logging.log("Autonomous - Sleeve color from camera is %d", SleeveIdentification.sleeveSignal.UNKNOWN);
 
         return location;
     }

@@ -307,7 +307,11 @@ public class TeleopDualDrivers extends LinearOpMode {
         while (opModeIsActive()) {
             // Game pad buttons design
             if (gamepad1.start && (gamepad1.left_trigger > 0)) {
-                dualDriverMode = !dualDriverMode;
+                dualDriverMode = false;
+            }
+
+            if (gamepad1.start && (gamepad1.right_trigger > 0)) {
+                dualDriverMode = true;
             }
 
             if (dualDriverMode) {
@@ -322,6 +326,7 @@ public class TeleopDualDrivers extends LinearOpMode {
             robotMovingRightLeft = gamepad1.left_stick_x;
             robotTurn            = gamepad1.right_stick_x;
             distanceSensorOn     = gamepad1.back;
+            autoLoadConeOn       = gamepad1.left_bumper;
 
             // gamepad1 or gamepad2 buttons
             sliderUpDown                = myGamePad.right_stick_y;
@@ -333,7 +338,6 @@ public class TeleopDualDrivers extends LinearOpMode {
             clawOpen                    = myGamePad.dpad_down;
             armTurnLeft                 = myGamePad.dpad_left;
             armTurnRight                = myGamePad.dpad_right;
-            autoLoadConeOn              = myGamePad.left_bumper;
             autoUnloadConeOn            = myGamePad.right_bumper;
 
             // sensors

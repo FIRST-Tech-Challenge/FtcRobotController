@@ -255,11 +255,11 @@ public class TeleopMotorGroup extends LinearOpMode {
         // Set PID proportional value to start reducing power at about 50 degrees of rotation.
         // P by itself may stall before turn completed so we add a bit of I (integral) which
         // causes the PID controller to gently increase power if the turn is not completed.
-        pidRotate = new PIDController(.015, .0, 0);
+        pidRotate = new PIDController(.014, .0, 0);
 
         // Set PID proportional value to produce non-zero correction value when robot veers off
         // straight line. P value controls how sensitive the correction is.
-        pidDrive = new PIDController(.03, 0, 0);
+        pidDrive = new PIDController(.04, 0, 0);
 
         // make sure the imu gyro is calibrated before continuing.
         while (!isStopRequested() && !imu.isGyroCalibrated()) {
@@ -759,31 +759,11 @@ public class TeleopMotorGroup extends LinearOpMode {
         // clockwise (right).
 
         // rotate until turn is completed.
-
-        if (degrees < 0) {
-            // On right turn we have to get off zero first.
-            while (opModeIsActive() && getAngle() == 0) {
-                leftMotorSetPower(power);
-                rightMotorSetPower(-power);
-                sleep(100);
-            }
-
-            do {
-                power = pidRotate.performPID(getAngle()); // power will be - on right turn.
-                leftMotorSetPower(-power);
-                rightMotorSetPower(power);
-                telemetry.addData("Rotate", "rotate power: %.4f", power);
-                telemetry.update();
-            } while (opModeIsActive() && !pidRotate.onAbsTarget());
-        }
-        else    // left turn.
-            do {
-                power = pidRotate.performPID(getAngle()); // power will be + on left turn.
-                leftMotorSetPower(-power);
-                rightMotorSetPower(power);
-                telemetry.addData("Rotate", "rotate power: %.4f", power);
-                telemetry.update();
-            } while (opModeIsActive() && !pidRotate.onAbsTarget());
+        do {
+            power = pidRotate.performPID(getAngle()); // power will be + on left turn.
+            leftMotorSetPower(-power);
+            rightMotorSetPower(power);
+        } while (opModeIsActive() && !pidRotate.onAbsTarget());
 
         // turn the motors off.
         rightMotorSetPower(0);
@@ -877,11 +857,13 @@ public class TeleopMotorGroup extends LinearOpMode {
             robotRunToPosition(48, true); // strafe testing 48 inch
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             Logging.log(String.format("Autonomous - imu angle a: %.2f", angles.firstAngle));
-
+            rotate(-angles.firstAngle, AUTO_ROTATE_POWER); // turn robot 90 degree to right
+            Logging.log("Autonomous - Current Position, FL = %d, FR= %d, BL = %d, BR = %d",
+                    FrontLeftDrive.getCurrentPosition(), FrontRightDrive.getCurrentPosition(),
+                    BackLeftDrive.getCurrentPosition(), BackRightDrive.getCurrentPosition());
             telemetry.addData("imu heading a:","%.2f", lastAngles.firstAngle);
             telemetry.addData("global heading a:", "%.2f", globalAngle);
             telemetry.update();
-            sleep(10000);
         }
 
         // move up slider
@@ -895,7 +877,10 @@ public class TeleopMotorGroup extends LinearOpMode {
             telemetry.addData("imu heading b:","%.2f", lastAngles.firstAngle);
             telemetry.addData("global heading b:", "%.2f", globalAngle);
             telemetry.update();
-            sleep(10000);
+            Logging.log("Autonomous - Current Position, FL = %d, FR= %d, BL = %d, BR = %d",
+                    FrontLeftDrive.getCurrentPosition(), FrontRightDrive.getCurrentPosition(),
+                    BackLeftDrive.getCurrentPosition(), BackRightDrive.getCurrentPosition());
+            rotate(-angles.firstAngle, AUTO_ROTATE_POWER); // turn robot 90 degree to right
         }
 
         if (gamepad2.x) {
@@ -908,7 +893,7 @@ public class TeleopMotorGroup extends LinearOpMode {
             telemetry.addData("imu heading x:","%.2f", lastAngles.firstAngle);
             telemetry.addData("global heading x:", "%.2f", globalAngle);
             telemetry.update();
-            sleep(10000);
+            rotate(-angles.firstAngle, AUTO_ROTATE_POWER); // turn robot 90 degree to right
         }
 
         if (gamepad2.y) {
@@ -921,13 +906,12 @@ public class TeleopMotorGroup extends LinearOpMode {
             telemetry.addData("imu heading y:","%.2f", lastAngles.firstAngle);
             telemetry.addData("global heading y:", "%.2f", globalAngle);
             telemetry.update();
-            sleep(10000);
+            rotate(-angles.firstAngle, AUTO_ROTATE_POWER); // turn robot 90 degree to right
         }
         if (gamepad2.right_bumper) {
-            autoUnloadCone();
-            setSliderPosition(WALL_POSITION);
-            waitSliderRun(); // make sure left and right motor are complete actions
-            sliderTargetPosition = getSliderPosition(); // set target position to current position
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            rotate(-angles.firstAngle-90, AUTO_ROTATE_POWER); // turn robot 90 degree to right
+            rotate(-lastAngles.firstAngle-90, AUTO_ROTATE_POWER); // turn robot 90 degree to right
         }
 
         if (gamepad2.dpad_right) {
@@ -939,10 +923,9 @@ public class TeleopMotorGroup extends LinearOpMode {
             robotRunToPosition(38.5, true); // drive robot to loading area
         }
         if (gamepad2.left_bumper) {
-            autoLoadCone(coneStack5th); // need update to input cone height position
-            setSliderPosition(LOW_JUNCTION_POS);
-            waitSliderRun();
-            sliderTargetPosition = getSliderPosition(); // set target position to current position
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            rotate(-angles.firstAngle, AUTO_ROTATE_POWER); // turn robot 90 degree to right
+            rotate(-lastAngles.firstAngle, AUTO_ROTATE_POWER); // turn robot 90 degree to right
         }
 
         if (gamepad2.dpad_left) {
