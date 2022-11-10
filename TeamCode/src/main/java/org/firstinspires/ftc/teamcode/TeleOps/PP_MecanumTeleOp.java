@@ -150,10 +150,10 @@ public class PP_MecanumTeleOp extends OpMode
 
     public void arm() {
         // BUTTONS \\
+        /*
         if (gamepad2.a) {
             slideControl.setHighJunction();
             armControl.setExtake();
-            // potentially use a falling edge detector
             clawControl.toggleWristRotate();
         }
         else if (gamepad2.b) {
@@ -171,7 +171,18 @@ public class PP_MecanumTeleOp extends OpMode
             armControl.setIntake();
             clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
         }
-    }// end of arm()
+         */
+
+
+         if(gamepad2.dpad_up) {
+            armControl.setExtake();
+         }
+         else if(gamepad2.dpad_down){
+            armControl.setIntake();
+         }
+
+
+         }// end of arm()
 
     public void claw(){
         // BUMPER \\

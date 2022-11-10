@@ -11,11 +11,11 @@ public class Claw{
     private boolean isAuto;
 
     // claw positions
-    private final double OPEN = 0.45;
-    private final double CLOSE = 0.15;
+    private final double OPEN = 0.77;
+    private final double CLOSE = 0.6625;
 
     // wrist positions
-    public final double WRIST_INTAKE_POSITION = 0.52; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
+    public final double WRIST_INTAKE_POSITION = 0.445; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
     private final double WRIST_EXTAKE_POSITION = 0.5; // wrist rotates to extake on junction
 
     public Claw(HardwareMap hardwareMap, boolean isAuton ){
