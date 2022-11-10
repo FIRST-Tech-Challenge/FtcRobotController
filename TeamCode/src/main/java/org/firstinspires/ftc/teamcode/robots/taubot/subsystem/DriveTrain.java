@@ -47,6 +47,8 @@ import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.Trajector
 import org.firstinspires.ftc.teamcode.robots.taubot.util.CloneFollower;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+import org.firstinspires.ftc.teamcode.util.AxisDirection;
+import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import java.util.Arrays;
@@ -151,6 +153,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
                 parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
                 imu.initialize(parameters);
+                //because the Expansion hub is upsidedown:
+                BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
         headingPID = new PIDController(HEADING_PID);
         headingPID.setInputRange(0, Math.toRadians(360));
@@ -238,6 +242,13 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         updatePoseEstimate();
         poseEstimate = getPoseEstimate();
         poseVelocity = getPoseVelocity();
+
+        if(trajectorySequenceRunner.isBusy()) {
+            DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity(), fieldOverlay);
+            if (signal != null)
+                setDriveSignal(signal);
+            poseError = trajectorySequenceRunner.getLastPoseError();
+        }
 
         //-------------------------------- actual driving ---------------------------------------
 

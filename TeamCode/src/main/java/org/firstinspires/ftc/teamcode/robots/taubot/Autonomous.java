@@ -101,40 +101,40 @@ public class Autonomous {
         
         TrajectorySequence backAndForthSequence =
                 robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                        .back(48)
-                        .forward(48)
+                        .back(24)
+                        .forward(24)
                         .build();
         backAndForth = trajectorySequenceToStateMachine(backAndForthSequence);
 
         TrajectorySequence squareSequence =
                 robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                        .back(24)
+                        .back(12)
                         .turn(Math.toRadians(-90))
-                        .back(24)
+                        .back(12)
                         .turn(Math.toRadians(-90))
-                        .back(24)
+                        .back(12)
                         .turn(Math.toRadians(-90))
-                        .back(24)
+                        .back(12)
                         .turn(Math.toRadians(-90))
                         .build();
         square = trajectorySequenceToStateMachine(squareSequence);
 
         squareNoRR = Utils.getStateMachine(new Stage())
-                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 90,20))
-                .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.turnUntilDegrees(0))
-                .addTimedState(1f, () -> {}, () -> {})
                 .addState(() -> robot.driveTrain.driveUntilDegrees(24, 0,20))
                 .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.turnUntilDegrees(270))
+                .addState(() -> robot.driveTrain.turnUntilDegrees(90))
                 .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 270,20))
+                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 90,20))
                 .addTimedState(1f, () -> {}, () -> {})
                 .addState(() -> robot.driveTrain.turnUntilDegrees(180))
                 .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 180, 20))
+                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 180,20))
                 .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.turnUntilDegrees(90))
+                .addState(() -> robot.driveTrain.turnUntilDegrees(270))
+                .addTimedState(1f, () -> {}, () -> {})
+                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 270, 20))
+                .addTimedState(1f, () -> {}, () -> {})
+                .addState(() -> robot.driveTrain.turnUntilDegrees(0))
                 .addTimedState(1f, () -> {}, () -> {})
                 .build();
 

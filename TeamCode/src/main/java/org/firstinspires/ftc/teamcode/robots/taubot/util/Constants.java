@@ -13,9 +13,7 @@ public class Constants {
     //Subsystems
     //----------------------------------------------------------------------------------------------
 
-    //Crane Subsystems
-    public static final int BULB_SERVO_OPEN= 1500;
-    public static final int BULB_SERVO_CLOSED = 1250;
+
     //----------------------------------------------------------------------------------------------
     // Physical Constants
     //----------------------------------------------------------------------------------------------
@@ -25,7 +23,7 @@ public class Constants {
     public static final double DISTANCE_BETWEEN_WHEELS = TRACK_WIDTH;
 
 
-    public static double MAX_ANG_VEL = Math.toRadians(120);
+    public static double MAX_ANG_VEL = Math.toRadians(180);
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
     public static final double MAX_RPM = 150;
 
@@ -35,10 +33,10 @@ public class Constants {
     public static PIDFCoefficients SWERVE_VELOCITY_PID = new PIDFCoefficients(10, 3, 0,
             getMotorVelocityF(MAX_RPM / 60 * 1120));
 
-    public static final double MAX_VELOCITY = 2;
-    public static final double MAX_ACCELERATION = 1;
+    public static final double MAX_VELOCITY = 30.0;
+    public static final double MAX_ACCELERATION = 10.0;
 
-    public static final double DIFF_TICKS_PER_INCH = 307.699557;
+    public static final double DIFF_TICKS_PER_INCH = 1635.0/48.0; //rough measure
 
     // ratios
 
