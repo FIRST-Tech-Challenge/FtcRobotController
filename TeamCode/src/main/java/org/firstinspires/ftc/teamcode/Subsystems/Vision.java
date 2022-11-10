@@ -86,7 +86,8 @@ public class Vision {
      */
     //TODO : Create VUFORIA_KEY for your team based on above instructions and update
     private static final String VUFORIA_KEY =
-            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            //" -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "AZME4Mr/////AAABmY+MAyxxT0IileR7JBqaAPsxN2XNYlaGBtEjYaHOlVVTqPQf7NH9eIrosYKKQHPGEXLtJUsdMwZ9e3EXBfy6arulcLPvdpW9bqAB2F2MJJXo35lLA096l/t/LQTi+etVso0Xc5RYkTVSIP3YABp1TeOaF8lCSpjVhPIVW3l/c/XlrnEMPhJk9IgqMEp4P/ifqAqMMMUAIKPEqIrXIv79TvAfdIJig46gfQGaQl5tFHr3nmvMbh/LhFrh5AWAy3B/93cCkOszmYkdHxZStbNB5lMdkTnf3sCnYbQY4jviorfhYrAkqHWH6vNOB9lUt8dOSeHsDtlk33e/6xQgOCNYFN80anYMp82JNDBFX3oyGliV";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -101,9 +102,8 @@ public class Vision {
     private TFObjectDetector tfod;
 
 
-    public Vision(HardwareMap hardwareMap) {
-        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
-        // first.
+    public Vision() {
+        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that first.
         initVuforia();
         initTfod();
     }
@@ -171,7 +171,7 @@ public class Vision {
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraDirection = CameraDirection.BACK;
 
-            //  Instantiate the Vuforia engine
+        //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
 
@@ -181,16 +181,16 @@ public class Vision {
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-            tfodParameters.minResultConfidence = 0.75f;
-            tfodParameters.isModelTensorFlow2 = true;
-            tfodParameters.inputSize = 300;
-            tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.75f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 300;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 
-            // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
-            // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-            tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-            // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
+        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
     /**

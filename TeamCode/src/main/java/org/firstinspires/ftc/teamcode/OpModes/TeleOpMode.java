@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
+
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 
 /**
@@ -31,7 +34,10 @@ public class TeleOpMode extends LinearOpMode {
         /*If Start is pressed, enter loop and exit only when Stop is pressed */
         while (!isStopRequested()) {
             while (opModeIsActive()) {
-                driveTrain.driveTrainFieldCentric();
+                driveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
+                driveTrain.gamepadInput = new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
+                driveTrain.gamepadInputTurn = - gamepad1.right_stick_x;
+                driveTrain.driveTrainPointFieldModes();
             }
         }
     }
