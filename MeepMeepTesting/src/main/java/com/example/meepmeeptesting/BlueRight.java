@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 //meep meep example create your own class
-public class RedLeft {
+public class BlueRight {
     public static void main(String[] args) {
         //placeholder signal zone
         int signalZone = 3;
@@ -21,7 +21,7 @@ public class RedLeft {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
+                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 64.75, Math.toRadians(270)))
                                         .strafeRight(25)
                                         .forward(30)
                                         .strafeLeft(13)
@@ -42,7 +42,7 @@ public class RedLeft {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
+                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 64.75, Math.toRadians(270)))
                                         .strafeRight(25)
                                         .forward(30)
                                         .strafeLeft(13)
@@ -62,7 +62,7 @@ public class RedLeft {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
+                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 64.75, Math.toRadians(270)))
                                         .strafeRight(25)
                                         .forward(30)
                                         .strafeLeft(13)
