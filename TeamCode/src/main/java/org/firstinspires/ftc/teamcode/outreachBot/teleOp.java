@@ -32,45 +32,63 @@ public class teleOp extends LinearOpMode {
         telemetry.addData("Initialized", "Ready to start");
         waitForStart();
 
+        boolean speedyhaha = false;
         while (opModeIsActive()) {
  /*
    Drivetrain Options
   */
-            //                        double speed;
-            //                        speed = 1;
-            //                        backLeft.setPower(((1 * gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x) * speed);
-            //                        backRight.setPower(((-1 * gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x) * speed);
-            //                        frontLeft.setPower(((1 * gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x) * speed);
-            //                        frontRight.setPower(((-1 * gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x) * speed);
-            //
-            //                        double speed = -gamepad1.left_stick_y;
-            //                        double turn = gamepad1.right_stick_x;
-            //                        double strafe = gamepad1.left_stick_x;
-            //                        frontLeft.setPower(speed + turn + strafe);
-            //                        frontRight.setPower(speed - turn - strafe);
-            //                        backLeft.setPower(speed + turn - strafe);
-            //                        backRight.setPower(speed - turn + strafe);
-            //
-            double speed = 0.3;
+//                                    double speed;
+//                                    speed = 0.5;
+//                                    backLeft.setPower(((1 * gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x) * speed);
+//                                    backRight.setPower(((-1 * gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x) * speed);
+//                                    frontLeft.setPower(((1 * gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x) * speed);
+//                                    frontRight.setPower(((-1 * gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x) * speed);
+                                if (speedyhaha == true) {
+                                    if (gamepad1.left_bumper) {
+//                                      speedyhaha = false;
+                                    }
+                                    double warpFactor = -1;
+                                    double speed = (-gamepad1.left_stick_y) + 0.13;
+                                    double turn = -gamepad1.right_stick_x;
+                                    double strafe = gamepad1.left_stick_x;
+                                    frontLeft.setPower((speed + turn + strafe) * warpFactor);
+                                    frontRight.setPower((speed - turn - strafe) * warpFactor);
+                                    backLeft.setPower((speed + turn - strafe) * warpFactor);
+                                    backRight.setPower((speed - turn + strafe) * warpFactor);
+                                } else {
+                                    if (gamepad1.right_bumper) {
+//                                      speedyhaha = true;
+                                    }
+                                    double warpFactor = -0.5;
+                                    double speed = (-gamepad1.left_stick_y) + 0.13;
+                                    double turn = -gamepad1.right_stick_x;
+                                    double strafe = gamepad1.left_stick_x;
+                                    frontLeft.setPower((speed + turn + strafe) * warpFactor);
+                                    frontRight.setPower((speed - turn - strafe) * warpFactor);
+                                    backLeft.setPower((speed + turn - strafe) * warpFactor);
+                                    backRight.setPower((speed - turn + strafe) * warpFactor);
+                                }
 
-            double x = gamepad1.left_stick_x;
-            double y = gamepad1.left_stick_y*-1;
-            double turn = gamepad1.right_stick_x;
-            double theta = Math.atan2(y, x);
-            double power = Math.hypot(x, y);
-            double sin = Math.sin(theta - Math.PI/4);
-            double cos = Math.cos(theta - Math.PI/4);
-            double max = Math.max(Math.abs(sin), Math.abs(cos));
-            frontLeft.setPower((power * cos/max + turn)*speed);
-            frontRight.setPower((power * sin/max - turn)*speed);
-            backLeft.setPower((power * sin/max + turn)*speed);
-            backRight.setPower((power * cos/max - turn)*speed);
-            if ((power + Math.abs(turn)) > 1) {
-                frontLeft.setPower((frontLeft.getPower()) / power + turn);
-                frontRight.setPower((frontRight.getPower()) / power + turn);
-                backLeft.setPower((backLeft.getPower()) / power + turn);
-                backRight.setPower((backRight.getPower()) / power + turn);
-            }
+//            double speed = 0.1;
+//
+//            double x = gamepad1.left_stick_x;
+//            double y = gamepad1.left_stick_y;
+//            double turn = gamepad1.right_stick_x;
+//            double theta = Math.atan2(y, x);
+//            double power = Math.hypot(x, y);
+//            double sin = Math.sin(theta - Math.PI/4);
+//            double cos = Math.cos(theta - Math.PI/4);
+//            double max = Math.max(Math.abs(sin), Math.abs(cos));
+//            frontLeft.setPower((power * cos/max + turn)*speed);
+//            frontRight.setPower((power * sin/max - turn)*speed);
+//            backLeft.setPower((power * sin/max + turn)*speed);
+//            backRight.setPower((power * cos/max - turn)*speed);
+//            if ((power + Math.abs(turn)) > 1) {
+//                frontLeft.setPower((frontLeft.getPower()) / power + turn);
+//                frontRight.setPower((frontRight.getPower()) / power + turn);
+//                backLeft.setPower((backLeft.getPower()) / power + turn);
+//                backRight.setPower((backRight.getPower()) / power + turn);
+//            }
  /*
    Arm Cascade Options
    */
