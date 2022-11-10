@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Functions;
+package org.firstinspires.ftc.teamcode.TeleOp;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Functions.DistanceSensorFunction;
+
+//Trebui eapelat distancesensorfunction pt valoarea valoare
 
 public class DistanceSensorTeleOp {
 
