@@ -642,7 +642,10 @@ public class AutonomousRight extends LinearOpMode {
             Logging.log("Autonomous - imu turn: %.2f degree", -AngleUnit.DEGREES.normalize(imuAngles.firstAngle) - 90);
             Logging.log("Autonomous - imu angle after turn: %.2f", lastAngles.firstAngle);
 
-            // double confirm for accurate turn
+            // strafe to left a little bit to compensate the shift from 90 rotation.
+            robotRunToPosition(-1.0, false);
+
+            // adjust position and double rotation for accurate 90
             imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             rotate(-AngleUnit.DEGREES.normalize(imuAngles.firstAngle) - 90, AUTO_ROTATE_POWER);
             Logging.log("Autonomous - imu angle after cone unloading correction: %.2f", lastAngles.firstAngle);
