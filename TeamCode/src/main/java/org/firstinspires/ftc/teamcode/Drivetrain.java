@@ -28,6 +28,7 @@ public class Drivetrain{
     private BNO055IMU imu;
     private Telemetry telemetry;
     static final int TickPerRev = 10; // need to measure
+    double angleOffset = 0;
 
     Drivetrain(HardwareMap hardwareMap, Telemetry telemetry) throws InterruptedException {
 
@@ -190,7 +191,11 @@ public class Drivetrain{
 
     //rather confusingly this just gives the heading
     public double getIMUData(){
-        return -imu.getAngularOrientation().firstAngle;
+        return -imu.getAngularOrientation().firstAngle+angleOffset;
+    }
+
+    public void resetAngle(){
+        angleOffset = imu.getAngularOrientation().firstAngle;
     }
 
 

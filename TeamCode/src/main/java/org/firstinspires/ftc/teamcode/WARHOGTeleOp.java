@@ -80,6 +80,11 @@ public class WARHOGTeleOp extends LinearOpMode {
                 else{centricity = Drivetrain.Centricity.BOT;}
             }
 
+            //reset the angle
+            if(currentGamepad1.dpad_up){
+                drivetrain.resetAngle();
+            }
+
 
 
             //move arm

@@ -192,10 +192,14 @@ public class WARHOGAuto extends LinearOpMode {
 
         }
 
+        drivetrain.rotateToPosition(90, .6);
+        sleep(999999);
+
         // drive to pole and raise slide
         drivetrain.MoveForDis(50, speed);
         outtake.setHeight(Outtake.Height.HIGH);
         drivetrain.RotateForDegree(-45*posMod, speed); //turn in different directions depending on start position
+        //drivetrain.rotateToPosition(45 * posMod, speed);
         drivetrain.MoveForDis(17, 0.2);
         //sleep(300);
         outtake.setHeight(Outtake.Height.GROUND);
@@ -205,6 +209,7 @@ public class WARHOGAuto extends LinearOpMode {
 
         for(int i=0; i<5; i++) {
             drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
+            //drivetrain.rotateToPosition(90 * posMod, speed);
             intake.runArm(.2);
 
             // move backward toward cone stack
@@ -219,6 +224,7 @@ public class WARHOGAuto extends LinearOpMode {
             intake.openClaw();
             //sleep(500);
             drivetrain.RotateForDegree(45 * posMod, speed);
+            //drivetrain.rotateToPosition(45 * posMod, speed);
             intake.runArm(Intake.Height.UPRIGHT);
             sleep(200);
             outtake.setHeight(Outtake.Height.HIGH);
@@ -231,6 +237,7 @@ public class WARHOGAuto extends LinearOpMode {
         }
         // park
         drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
+        //drivetrain.rotateToPosition(45 * posMod, speed);
         switch(tagOfInterest.id){
             case 1:
                 drivetrain.MoveForDis(24, speed);
@@ -242,6 +249,7 @@ public class WARHOGAuto extends LinearOpMode {
         }
 
         drivetrain.RotateForDegree(90*posMod, speed);
+        //drivetrain.rotateToPosition(0 * posMod, speed);
 
 
         while(opModeIsActive()){sleep(20);}
