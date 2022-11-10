@@ -31,6 +31,9 @@ public class WARHOGAuto extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
 
+    int colorMod = 0;
+    int posMod = 0;
+
     static final double speed = .6;
 
     //this stuff does not need to be changed
@@ -163,6 +166,24 @@ public class WARHOGAuto extends LinearOpMode {
 
         // start command just came in
 
+        //set modifier values
+        switch (startPosColor){
+            case RED:
+                colorMod = 1;
+                break;
+            case BLUE:
+                colorMod = -1;
+                break;
+        }
+        switch (startPosPosition){
+            case LEFT:
+                posMod = -1;
+                break;
+            case RIGHT:
+                posMod = 1;
+                break;
+        }
+
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
 
         }else if(tagOfInterest.id == MIDDLE){
@@ -174,37 +195,54 @@ public class WARHOGAuto extends LinearOpMode {
         // drive to pole and raise slide
         drivetrain.MoveForDis(50, speed);
         outtake.setHeight(Outtake.Height.HIGH);
-        drivetrain.RotateForDegree(-45, speed);
+        drivetrain.RotateForDegree(-45*posMod, speed); //turn in different directions depending on start position
         drivetrain.MoveForDis(17, 0.2);
-        sleep(500);
+        //sleep(300);
         outtake.setHeight(Outtake.Height.GROUND);
 
         // turn to cone stack
         drivetrain.MoveForDis(-13, speed);
-        drivetrain.RotateForDegree(-45, speed);
-        intake.runArm(.2);
 
-        // move backward toward cone stack
-        drivetrain.MoveForDis(-13, speed);
+        for(int i=0; i<5; i++) {
+            drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
+            intake.runArm(.2);
 
-        // take another cone
-        intake.closeClaw();
-        intake.runArm(Intake.Height.RETRACTED);
+            // move backward toward cone stack
+            drivetrain.MoveForDis(-13, speed);
 
-        // turn back
-        drivetrain.MoveForDis(13, speed);
-        intake.openClaw();
-        intake.runArm(Intake.Height.UPRIGHT);
-        sleep(500);
-        drivetrain.RotateForDegree(45, speed);
-        outtake.setHeight(Outtake.Height.HIGH);
-        drivetrain.MoveForDis(17, 0.2);
-        sleep(500);
+            // take another cone
+            intake.closeClaw();
+            intake.runArm(Intake.Height.RETRACTED);
 
-        // putting cone on pole
-        outtake.setHeight(Outtake.Height.GROUND);
+            // turn back
+            drivetrain.MoveForDis(13, speed);
+            intake.openClaw();
+            //sleep(500);
+            drivetrain.RotateForDegree(45 * posMod, speed);
+            intake.runArm(Intake.Height.UPRIGHT);
+            sleep(200);
+            outtake.setHeight(Outtake.Height.HIGH);
+            drivetrain.MoveForDis(17, 0.2);
+            //sleep(300);
+            outtake.setHeight(Outtake.Height.GROUND);
 
+            // turn to cone stack
+            drivetrain.MoveForDis(-13, speed);
+        }
         // park
+        drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
+        switch(tagOfInterest.id){
+            case 1:
+                drivetrain.MoveForDis(24, speed);
+                break;
+            case 2:
+                break;
+            case 3:
+                drivetrain.MoveForDis(-24, speed);
+        }
+
+        drivetrain.RotateForDegree(90*posMod, speed);
+
 
         while(opModeIsActive()){sleep(20);}
 

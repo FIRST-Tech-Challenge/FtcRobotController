@@ -200,7 +200,7 @@ public class Drivetrain{
         //set up movement vectors and relate them to input ("joy") vectors
         double x, y, max;
         if(centric==Centricity.FIELD){
-            double angle = -imu.getAngularOrientation().firstAngle;
+            double angle = getIMUData();
 
             x = joyx*cos(angle) - joyy*sin(angle);
             y = joyx*sin(angle) + joyy*cos(angle);
@@ -414,5 +414,40 @@ public class Drivetrain{
 
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+    }
+
+    public void rotateToPosition(double targetAngle, double pow){
+        double angle = getIMUData()%360;
+        double angleLower = angle-360;
+        double angleHigher = angle+360;
+        double workingAngle = 0;
+        double speedCoef = 1;
+
+        if(abs(targetAngle-angle)<abs(targetAngle-angleLower)){
+            if(abs(targetAngle-angle)<abs(targetAngle-angleHigher)){
+                workingAngle=angle;
+            }else{
+                workingAngle=angleHigher;
+            }
+        }else{
+            workingAngle=angleLower;
+        }
+
+        while (targetAngle!=workingAngle){
+            if (abs(targetAngle-workingAngle)<=30){
+                speedCoef = abs(targetAngle-workingAngle)/30;
+            }
+            else{
+                speedCoef=1;
+            }
+
+            move(DirectionMode.ROTATE, abs(pow) * ((targetAngle-workingAngle) / abs(targetAngle-workingAngle)) * speedCoef);
+
+
+            telemetry.addData("Target Angle", targetAngle);
+            telemetry.addData("Actual Angle", workingAngle);
+
+            telemetry.update();
+        }
     }
 }
