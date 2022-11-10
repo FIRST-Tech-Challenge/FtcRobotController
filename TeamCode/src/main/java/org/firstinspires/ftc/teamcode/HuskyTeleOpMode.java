@@ -59,7 +59,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        double y, x, rx;
+        double y, x, rx, armAngle;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -78,6 +78,8 @@ public class HuskyTeleOpMode extends LinearOpMode {
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
 
+            /* This is commented out to test Gamepad 2 with Arm Movements
+               todo: change this for the final functions
             // this allows gamepad2 driver to drive the robot at a slower speed, to fine tune
             // the position of the robot when delivering the cargo
             y -= 0.3 * (gamepad2.left_stick_y);
@@ -86,17 +88,27 @@ public class HuskyTeleOpMode extends LinearOpMode {
             x = Range.clip(x, -1, 1);
             rx += 0.3 * (gamepad2.right_stick_x);
             rx = Range.clip(rx, -1, 1);
+            */
+
+            armAngle = 0.3 * (gamepad2.right_stick_x); // todo 0.3 will most likely have to be change
+            armAngle = Range.clip(armAngle, -1, 1);
+
 
             double frontLeftVelocity = (y + x + rx) * HuskyBot.VELOCITY_CONSTANT;
             double rearLeftVelocity = (y - x + rx) * HuskyBot.VELOCITY_CONSTANT;
             double frontRightVelocity = (y - x - rx) * HuskyBot.VELOCITY_CONSTANT;
             double rearRightVelocity = (y + x - rx) * HuskyBot.VELOCITY_CONSTANT;
 
+            double armSwivelVelocity = armAngle * HuskyBot.VELOCITY_CONSTANT;
+
             // apply the calculated values to the motors.
             huskyBot.frontLeftDrive.setVelocity(frontLeftVelocity);
             huskyBot.rearLeftDrive.setVelocity(rearLeftVelocity);
             huskyBot.frontRightDrive.setVelocity(frontRightVelocity);
             huskyBot.rearRightDrive.setVelocity(rearRightVelocity);
+
+            // apply the calculated arm values to the arm motor
+            huskyBot.armSwivelMotor.setVelocity(armSwivelVelocity);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

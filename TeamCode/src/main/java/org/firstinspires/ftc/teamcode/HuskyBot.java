@@ -48,6 +48,8 @@ public class HuskyBot {
     public DcMotorEx rearLeftDrive = null;
     public DcMotorEx rearRightDrive = null;
 
+    public DcMotorEx armSwivelMotor = null;
+
     // goBILDA 5203 Series Yellow Jacket Planetary Gear Motor
     // max encoder ticks per second
     // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
@@ -70,6 +72,10 @@ public class HuskyBot {
         rearLeftDrive = hwMap.get(DcMotorEx.class, "rear_left_drive");
         frontRightDrive = hwMap.get(DcMotorEx.class, "front_right_drive");
         rearRightDrive = hwMap.get(DcMotorEx.class, "rear_right_drive");
+
+        // todo: add device name for Arm Motor [THIS NEEDS TO BE DONE BEFORE WE RUN THE PROGRAM]
+        armSwivelMotor = hwMap.get(DcMotorEx.class, "");
+
 
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
