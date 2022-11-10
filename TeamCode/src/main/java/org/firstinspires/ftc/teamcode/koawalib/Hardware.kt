@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.koawalib
 
 import com.asiankoala.koawalib.control.controller.PIDGains
-import com.asiankoala.koawalib.control.motor.DisabledPosition
 import com.asiankoala.koawalib.control.motor.FFGains
 import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.KEncoder
@@ -45,7 +44,6 @@ class Hardware(startPose: Pose) {
             FFGains(kG = TODO(), kS = TODO(), kV = TODO(), kA = TODO()),
             MotionConstraints(TODO(), TODO()),
             allowedPositionError = TODO(),
-            disabledPosition = DisabledPosition(TODO())
         )
         .build()
 
@@ -58,7 +56,6 @@ class Hardware(startPose: Pose) {
             FFGains(kCos = TODO()),
             MotionConstraints(TODO(), TODO()),
             allowedPositionError = TODO(),
-            disabledPosition = DisabledPosition(TODO())
         )
         .build()
 

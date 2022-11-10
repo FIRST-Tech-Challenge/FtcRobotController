@@ -23,7 +23,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 
 @Autonomous
-@Config
 class BlueAuto : KOpMode() {
 
     private val startPose = Pose(-59.0, -36.0, 0.0.radians)
@@ -47,7 +46,6 @@ class BlueAuto : KOpMode() {
         GVFConfig.kStatic,
         GVFConfig.kV,
         GVFConfig.kA,
-        kIsTuning = true
     )
 
 
