@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <Webcam name="Webcam 1" serialNumber="4A28CD10" />
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Control Hub" port="173">
+            <Matrix12vMotor name="rightFrontMotor" port="0" />
+            <Matrix12vMotor name="rightRearMotor" port="1" />
+            <Matrix12vMotor name="leftRearMotor" port="2" />
+            <Matrix12vMotor name="leftFrontMotor" port="3" />
+
+            <Servo name="gripServo" port="0"/>
+
+        </LynxModule>
+        <LynxModule name="Expansion Hub" port="2">
+            <Matrix12vMotor name="armExtension" port="0"/>
+
+            <LynxEmbeddedIMU name="imuE" port="0" bus="0" />
+
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>

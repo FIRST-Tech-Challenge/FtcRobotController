@@ -20,11 +20,9 @@ public class Beta_TeleOp extends LinearOpMode {
         DcMotorEx armExtension = hardwareMap.get(DcMotorEx.class, "armExtension");
         Servo gripServo = hardwareMap.get(Servo.class,"gripServo");
         double speed;
-
-        waitForStart();
         armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armExtension.setDirection(DcMotor.Direction.FORWARD);
-        armExtension.setTargetPosition(400);
+        waitForStart();
+        armExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (opModeIsActive()) {
             //Speed Control
             if (gamepad1.right_bumper) {
@@ -45,29 +43,33 @@ public class Beta_TeleOp extends LinearOpMode {
             rightRearMotor.setPower(pivot - vertical - horizontal);
             leftRearMotor.setPower(pivot + vertical - horizontal);
 
-            //Arm Extension
-//            double value = gamepad2.right_stick_y;
-//            if(value >= 0) {
-//                armExtension.setPower((value * 0.5) + 0.1);
-//            } else {
-//                armExtension.setPower((value * 0.3) + 0.1);
-//            }
+//            Arm Extension
+            double value = gamepad2.right_stick_y;
+            if(armExtension.getCurrentPosition() > 0) {
+                if(value >= 0) {
+                    armExtension.setPower((value * 0.5) + 0.15);
+                } else {
+                    armExtension.setPower((value * 0.3) + 0.1);
+                }
+            } else {
+                if(value >= 0) {
+                    armExtension.setPower((value * 0.5));
+                } else {
+                    armExtension.setPower((value * 0.3));
+                }
+            }
+
 
             //Gripper
-            if(gamepad2.x) {
+            if(gamepad2.a) {
                 gripServo.setPosition(0.15);
             }
             if(gamepad2.b) {
                 gripServo.setPosition(0);
             }
 
-            if(gamepad2.dpad_up) {
-                armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armExtension.setPower(0.3);
-            }
             telemetry.addData("Position: ",armExtension.getCurrentPosition());
             telemetry.addData("Target: ",armExtension.getTargetPosition());
-            telemetry.addData("Direction: ",armExtension.getDirection());
             telemetry.addData("Power: ",armExtension.getPower());
             telemetry.update();
         }
