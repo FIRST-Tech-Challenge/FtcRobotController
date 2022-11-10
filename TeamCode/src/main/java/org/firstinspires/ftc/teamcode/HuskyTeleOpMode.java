@@ -92,6 +92,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
             armAngle = 0.3 * (gamepad2.right_stick_x); // todo 0.3 will most likely have to be change
             armAngle = Range.clip(armAngle, -1, 1);
+            // todo + IMPORTANT: we will have to limit this to rotate only 360 degrees once the arm is added.
 
 
             double frontLeftVelocity = (y + x + rx) * HuskyBot.VELOCITY_CONSTANT;
