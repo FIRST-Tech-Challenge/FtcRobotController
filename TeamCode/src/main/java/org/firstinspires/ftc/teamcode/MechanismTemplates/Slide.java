@@ -14,17 +14,17 @@ public class Slide {
     //TODO: change values into actual tested positions instead of placeholders
     private final static double HIGH_JUNCTION= 1600;
     private final static double MID_JUNCTION = 1200;
-    private final static double LOW_JUNCTION = 900;
+    private final static double LOW_JUNCTION = 100;
     private final static double ZERO_POSITION = 0;
 
-    public static double slideKp = 0.002;
-    public static double slideKi = 0.0001;
-    public static double slideKd = 0.000;
-    public static double slideKf = 0.0001;
+    public static double slideKp = 0.00025;
+    public static double slideKi = 0.00001;
+    public static double slideKd = 0.0002;
+    public static double slideKf = 0.0;
 
     private final double[] PIDF_COFFECIENTS = {slideKp, slideKi, slideKd, slideKf};
 
-    private double targetPosition;
+    private double targetPos;
     double correctionLeft;
     double correctionRight;
 
@@ -43,7 +43,7 @@ public class Slide {
 
         slidePIDF = new PIDFController(PIDF_COFFECIENTS[0],PIDF_COFFECIENTS[1],PIDF_COFFECIENTS[2],PIDF_COFFECIENTS[3]);
 
-        targetPosition = ZERO_POSITION; // target position is 0 by default
+        targetPos = ZERO_POSITION; // target position is 0 by default
         slideRight.resetEncoder();
         slideLeft.resetEncoder();
     }
@@ -51,11 +51,11 @@ public class Slide {
     public void update(Telemetry telemetry){
         slidePIDF.setPIDF(slideKp, slideKi, slideKp, slideKf);
 
-        correctionLeft = slidePIDF.calculate(slideLeft.getCurrentPosition(),targetPosition);
-        correctionRight = slidePIDF.calculate(slideRight.getCurrentPosition(),targetPosition);
+        correctionLeft = slidePIDF.calculate(slideLeft.getCurrentPosition(), targetPos);
+        correctionRight = slidePIDF.calculate(slideRight.getCurrentPosition(), targetPos);
 
         /*
-        telemetry.addData("targetPosition: ", targetPosition);
+        telemetry.addData("targetPosition: ", targetPos);
         telemetry.addData("Right motor position: ", slideRight.getCurrentPosition());
         telemetry.addData("Left motor position: ", slideLeft.getCurrentPosition());
         telemetry.addData("Left correction: ", correctionLeft);
@@ -69,25 +69,25 @@ public class Slide {
     }
 
     public void manualSlides(int slideIncrement){
-        if((targetPosition + slideIncrement) <= 100 && (targetPosition - slideIncrement) >= 0) {
-            targetPosition += slideIncrement;
+        if((targetPos + slideIncrement) <= 100 && (targetPos - slideIncrement) >= 0) {
+            targetPos += slideIncrement;
         }
     }
 
     public void setIntakeOrGround(){
-        targetPosition = ZERO_POSITION;
+        targetPos = ZERO_POSITION;
     }
 
     public void setLowJunction(){
-        targetPosition = LOW_JUNCTION;
+        targetPos = LOW_JUNCTION;
     }
 
     public void setMidJunction(){
-        targetPosition = MID_JUNCTION;
+        targetPos = MID_JUNCTION;
     }
 
     public void setHighJunction(){
-        targetPosition = HIGH_JUNCTION;
+        targetPos = HIGH_JUNCTION;
     }
 
 }
