@@ -53,10 +53,10 @@ abstract public class BaseTeleOp extends BaseOpMode {
         }
     }
 
-
-     // press the X button, claw opens
-     // press the A button, claw closes
-
+    /**
+     * press the X button, claw opens
+     * press the A button, claw closes
+     */
     public void driveClaw() {
         if (gamepad2.x) {
             servoClaw.setPosition(OPEN_CLAW);
