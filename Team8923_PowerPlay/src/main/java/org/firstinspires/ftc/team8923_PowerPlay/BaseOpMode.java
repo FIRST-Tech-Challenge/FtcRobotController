@@ -84,8 +84,7 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         // gets the largest power
         double scaleFactor = Math.max(Math.max(powerFL, powerFR), Math.max(powerBL, powerBR));
-        // scale the power between the range of -
-        // 1 and 1
+        // scale the power between the range of -1 and 1
         if (scaleFactor > 1) {
             powerFL /= scaleFactor;
             powerFR /= scaleFactor;
