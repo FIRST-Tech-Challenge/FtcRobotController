@@ -44,7 +44,12 @@ abstract public class BaseTeleOp extends BaseOpMode {
         if (gamepad2.dpad_up) {
             motorSlideLeft.setPower(mechanismSpeed);
             motorSlideRight.setPower(mechanismSpeed);
-        } else if (gamepad2.dpad_down) {
+        } else if(gamepad2.dpad_down
+            && motorSlideLeft.getCurrentPosition() > bottomMotorSlideLeft
+                && motorSlideRight.getCurrentPosition() > bottomMotorSlideRight) {
+
+        }
+        else if (gamepad2.dpad_down) {
             motorSlideLeft.setPower(-mechanismSpeed);
             motorSlideRight.setPower(-mechanismSpeed);
         } else {
@@ -64,40 +69,6 @@ abstract public class BaseTeleOp extends BaseOpMode {
             servoClaw.setPosition(CLOSED_CLAW);
         }
     }
-
-    //using imu
-    public void imuPivot(double referenceAngle, double targetAngle, double maxSpeed, double kAngle, double timeout) {
-        runtime.reset();
-        //counter-clockwise is positive
-        double pivot;
-        double currentRobotAngle;
-        double angleError;
-
-        targetAngle = referenceAngle + targetAngle;
-        targetAngle = adjustAngles(targetAngle);
-        do {
-            currentRobotAngle = imu.getAngularOrientation().firstAngle;
-            angleError = currentRobotAngle - targetAngle;
-            angleError = adjustAngles(angleError);
-            pivot = angleError * kAngle;
-
-            if (pivot >= 0.0) {
-                pivot = Range.clip(pivot, 0.15, maxSpeed);
-            } else {
-                pivot = Range.clip(pivot, -maxSpeed, -0.15);
-            }
-
-            speedFL = pivot;
-            speedFR = pivot;
-            speedBL = pivot;
-            speedBR = pivot;
-
-            motorFL.setPower(speedFL);
-            motorFR.setPower(speedFR);
-            motorBL.setPower(speedBL);
-            motorBR.setPower(speedBR);
-            idle();
-        }
 
 }
 
