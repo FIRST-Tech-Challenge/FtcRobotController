@@ -89,7 +89,7 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
 
     public Position detectSignalSleeve() {
         Position position = Position.THREE;
-        //sets parking position dependant on label
+        // sets parking position dependant on label
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
@@ -171,11 +171,6 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
         while (opModeIsActive() &&
                 (runtime.seconds() < 30) &&
                 (motorFL.isBusy() && motorFR.isBusy() && motorBL.isBusy() && motorBR.isBusy())) {
-
-            // Display it for the driver.
-            //telemetry.addData("Running to",  " %7d %7d %7d %7d", targetFL,  targetFR, targetBL, targetBR);
-            //telemetry.addData("Currently at",  " at %7d %7d %7d %7d", motorFL.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorBR.getCurrentPosition());
-            //telemetry.update();
         }
 
         // Stop all motion;
@@ -222,13 +217,6 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
         }
         while ((opModeIsActive() && (Math.abs(angleError) > 3.0)) && (runtime.seconds() < timeout));
         stopDriving();
-    }
-
-    public void sendTelemetry() {
-        //Informs drivers of robot location
-        telemetry.addData("X", robotX);
-        telemetry.addData("Y", robotY);
-        telemetry.addData("Robot Angle", imu.getAngularOrientation().firstAngle);
     }
 
     private void stopDriving() {
