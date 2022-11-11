@@ -117,11 +117,11 @@ public  class BaseAuto extends LinearOpMode {
         }
 
 
-        /*
+
         while (opModeIsActive())  {
             idle();
         }
-        */
+
 
     }
 
@@ -129,15 +129,15 @@ public  class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        hdw.moveYAxis(24.0, -0.7);
-        hdw.moveXAxis( 36.0, 1);
+        hdw.moveYAxis(24.0, -0.1);
+        hdw.moveXAxis( 36.0, 0.3);
     }
 
     void parkZone2( ) {
         telemetry.addData("Park zone 2 ", this.currentSide);
         telemetry.update();
         //Move forward
-        hdw.moveXAxis( 36.0, 1);
+        hdw.moveXAxis( 36.0, 0.3);
 
     }
 
@@ -145,8 +145,8 @@ public  class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 3 ", this.currentSide);
         telemetry.update();
         //Move right
-        hdw.moveYAxis(24.0, 0.7);
-        hdw.moveXAxis( 36.0, 1);
+        hdw.moveYAxis(24.0, 0.1);
+        hdw.moveXAxis( 36.0, 0.3);
 
     }
 
