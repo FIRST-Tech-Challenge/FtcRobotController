@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This is NOT an opmode.
@@ -46,7 +47,15 @@ public class HuskyBot {
     public DcMotorEx rearLeftDrive = null;
     public DcMotorEx rearRightDrive = null;
 
+    // Arm Control Motor Init.
     public DcMotorEx armSwivel = null;
+    public DcMotorEx armHeight = null;
+    public DcMotorEx armLength = null;
+
+    // Claw (on the Arm) Servo Init.
+    public Servo clawHeight = null;
+    public Servo clawAngle = null;
+    public Servo clawOpener = null; // TODO: set this to be fixed open/close positions.
 
     // goBILDA 5203 Series Yellow Jacket Planetary Gear Motor
     // max encoder ticks per second
@@ -71,7 +80,15 @@ public class HuskyBot {
         frontRightDrive = hwMap.get(DcMotorEx.class, "front_right_drive");
         rearRightDrive = hwMap.get(DcMotorEx.class, "rear_right_drive");
 
+        // Define and Init. Arm Motors
         armSwivel = hwMap.get(DcMotorEx.class, "arm_swivel");
+        armHeight = hwMap.get(DcMotorEx.class, "arm_height");
+        armLength = hwMap.get(DcMotorEx.class, "arm_length");
+
+        // Define and Init. Claw Servos
+        clawAngle = hwMap.get(Servo.class, "claw_angle");
+        clawHeight = hwMap.get(Servo.class, "claw_height");
+        clawOpener = hwMap.get(Servo.class, "claw_opener");
 
 
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -87,6 +104,11 @@ public class HuskyBot {
         rearLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
         rearRightDrive.setPower(0);
+
+        // Set all arm-related motors and servos to zero power.
+        armSwivel.setPower(0);
+        armHeight.setPower(0);
+        armLength.setPower(0);
 
         // this base configuration sets the drive motors to run without encoders and the arm motor
         // to run with encoder. if any opmode requires different setting, that should be changed in
