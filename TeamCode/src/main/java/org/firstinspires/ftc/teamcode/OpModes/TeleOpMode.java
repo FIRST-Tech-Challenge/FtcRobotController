@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@TeleOp(name = "TeleOp", group = "00-Teleop")
+@TeleOp(name = "FTC Wires TeleOp", group = "00-Teleop")
 public class TeleOpMode extends LinearOpMode {
 
     public DriveTrain driveTrain;
@@ -28,6 +28,9 @@ public class TeleOpMode extends LinearOpMode {
         /* Create Subsystem Objects*/
         driveTrain = new DriveTrain(hardwareMap);
 
+        telemetry.clearAll();
+        telemetry.addData("Running FTC Wires TeleOp adopted for Team","TEAM NUMBER");
+        telemetry.update();
         /* Wait for Start or Stop Button to be pressed */
         waitForStart();
 
@@ -36,7 +39,7 @@ public class TeleOpMode extends LinearOpMode {
             while (opModeIsActive()) {
                 driveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
                 driveTrain.gamepadInput = new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
-                driveTrain.gamepadInputTurn = - gamepad1.right_stick_x;
+                driveTrain.gamepadInputTurn = -gamepad1.right_stick_x;
                 driveTrain.driveTrainPointFieldModes();
             }
         }

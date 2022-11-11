@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -38,7 +36,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.OpModes.AutoOpMode;
 
 import java.util.List;
 
@@ -54,7 +51,7 @@ import java.util.List;
  */
 public class Vision {
 
-    public int identifiedTarget = 1; //1 for Location 1, 2 for Location 2 and 3 for Location 3
+    public int identifiedparkingLocation = 1; //1 for Location 1, 2 for Location 2 and 3 for Location 3
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -102,10 +99,10 @@ public class Vision {
     private TFObjectDetector tfod;
 
 
-    public Vision() {
+    public Vision(HardwareMap hardwareMap) {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that first.
         initVuforia();
-        initTfod();
+        initTfod(hardwareMap);
     }
 
     public void activateVuforiaTensorFlow() {
@@ -144,13 +141,13 @@ public class Vision {
 
                     switch (recognition.getLabel()) {
                         case "1 Bolt":
-                            identifiedTarget = 1;
+                            identifiedparkingLocation = 1;
                             break;
                         case "2 Bulb":
-                            identifiedTarget = 2;
+                            identifiedparkingLocation = 2;
                             break;
                         case "3 Panel":
-                            identifiedTarget = 3;
+                            identifiedparkingLocation = 3;
                             break;
                     }
                 }
@@ -178,7 +175,7 @@ public class Vision {
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
-    private void initTfod() {
+    private void initTfod(HardwareMap hardwareMap) {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
