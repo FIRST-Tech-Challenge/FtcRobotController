@@ -13,6 +13,12 @@ public class DistanceSensorFunction {
         sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
     }
 
+    public DistanceSensorFunction(DistanceSensor _sensorRange)
+    {
+        sensorRange = _sensorRange;
+        init();
+    }
+
 
     //get ma of 10 measures of distance
     public double distance()
@@ -24,6 +30,7 @@ public class DistanceSensorFunction {
 
             if (value < 819)
                 value2 += value;
+            else value2 += 0;
         }
 
         value2 /= 10;
