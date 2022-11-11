@@ -182,10 +182,11 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    //using imu
+    
+    // using imu
     public void imuPivot(double referenceAngle, double targetAngle, double maxSpeed, double kAngle, double timeout) {
         runtime.reset();
-        //counter-clockwise is positive
+        // counter-clockwise is positive
         double pivot;
         double currentRobotAngle;
         double angleError;
