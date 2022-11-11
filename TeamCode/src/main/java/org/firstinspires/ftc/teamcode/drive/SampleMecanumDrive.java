@@ -128,6 +128,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightFront = hardwareMap.get(DcMotorEx.class, "front_right");
         //linearSlide = hardwareMap.get(DcMotorEx.class, "linearslide");
 
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightRear.setDirection(DcMotor.Direction.FORWARD);
+
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
