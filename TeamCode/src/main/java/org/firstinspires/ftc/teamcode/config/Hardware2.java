@@ -1,15 +1,14 @@
 package org.firstinspires.ftc.teamcode.config;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Hardware2 extends OpMode {
+public class Hardware2 {
 
     // Motor variable names
     public DcMotor frontLeftMotor = null;
@@ -17,10 +16,11 @@ public class Hardware2 extends OpMode {
     public DcMotor backLeftMotor = null;
     public DcMotor backRightMotor = null;
     public DcMotor verticalLiftMotor = null;
-    public CRServo intakeServo = null;
+    public Servo leftClaw = null;
+    public Servo rightClaw = null;
 
     public boolean runThisWithEncoder = true;
-    public BNO055IMU imu;
+    //public BNO055IMU imu;
 
     // Other variable names
     HardwareMap hwMap;
@@ -28,61 +28,42 @@ public class Hardware2 extends OpMode {
 
 
     public Hardware2() {
+        hwMap = null;
         this.runThisWithEncoder = true;
-    }
-
-    @Override
-    public void init() {
-
-
-    }
-
-    @Override
-    public void loop() {
-
     }
 
 
     public Hardware2(boolean runThisWithEncoder) {
+        hwMap = null;
         this.runThisWithEncoder = runThisWithEncoder;
     }
 
 
-    public void initTeleOpIMU() {
-
-//        imu = hardwareMap.get(BNO055IMU.class, "imu");
-//
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//
-//        parameters.mode = BNO055IMU.SensorMode.IMU;
-//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        parameters.loggingEnabled = false;
-//        imu.initialize(parameters);
+    public void initTeleOpIMU(HardwareMap hwMap) {
 
         // Save reference to Hardware map
-        this.hwMap = hardwareMap;
+        this.hwMap = hwMap;
 
         period.reset();
 
 
-        frontLeftMotor = this.hwMap.dcMotor.get("front_left");
-        frontRightMotor = this.hwMap.dcMotor.get("front_right");
-        backLeftMotor = this.hwMap.dcMotor.get("back_left");
-        backRightMotor = this.hwMap.dcMotor.get("back_right");
-        verticalLiftMotor = this.hwMap.dcMotor.get("vertical_lift");
-        intakeServo = this.hwMap.crservo.get("intake_servo");
+        frontLeftMotor = hwMap.dcMotor.get("front_left");
+        frontRightMotor = hwMap.dcMotor.get("front_right");
+        backLeftMotor = hwMap.dcMotor.get("back_left");
+        backRightMotor = hwMap.dcMotor.get("back_right");
+        verticalLiftMotor = hwMap.dcMotor.get("vertical_lift");
+        leftClaw = hwMap.servo.get("leftClaw");
+        rightClaw = hwMap.servo.get("rightClaw");
 
 
         // Initialize Motors
 
 
-        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        verticalLiftMotor.setDirection(DcMotor.Direction.REVERSE);
-        intakeServo.resetDeviceConfigurationForOpMode();
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        verticalLiftMotor.setDirection(DcMotor.Direction.FORWARD);
 
 
 
@@ -168,6 +149,27 @@ public class Hardware2 extends OpMode {
         return period.time();
 
     }
+    public DcMotor getBackLeftDrive() {
+        return backLeftMotor;
+    }
+    public DcMotor getLeftDrive() {
+        return frontLeftMotor;
+    }
+    public DcMotor getBackRightDrive() {
+        return backRightMotor;
+    }
+    public DcMotor getRightDrive() {
+        return frontRightMotor;
+    }
+    public Servo getLeftClaw() {
+        return leftClaw;
+    }
 
+    public Servo getRightClaw() {
+        return rightClaw;
+    }
 
+    public DcMotor getArm() { return verticalLiftMotor; }
 }
+
+
