@@ -96,17 +96,16 @@ public class Hardware2022 {
         wheelFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         vSlide.setDirection(DcMotor.Direction.FORWARD);
 
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         vSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wheelFrontRight.setPower(0);
         wheelBackRight.setPower(0);
         wheelFrontLeft.setPower(0);
         wheelBackLeft.setPower(0);
-        //wheelStrafe.setPower(0);
 
         vSlide.setPower(0);
 /*
@@ -129,10 +128,10 @@ public class Hardware2022 {
         wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         wheelFrontRight.setPower(power);
         wheelFrontLeft.setPower(power);
@@ -156,8 +155,7 @@ public class Hardware2022 {
     }
 
     private int getYAxisPosition( ) {
-        return ( wheelFrontLeft.getCurrentPosition() + wheelFrontRight.getCurrentPosition()
-                 - wheelBackLeft.getCurrentPosition() - wheelBackRight.getCurrentPosition()) /4 ;
+        return  wheelFrontLeft.getCurrentPosition() ;
 
     }
 
@@ -167,7 +165,7 @@ public class Hardware2022 {
      * @param power Positive value move forward
      */
     public void moveYAxis(double distance, double power ) {
-        moveYAxisDegree( Math.round( (float) distance * this.xAxisCoeff ), power ) ;
+        moveYAxisDegree( Math.round( (float) distance * this.yAxisCoeff ), power ) ;
     }
 
     /**
@@ -182,14 +180,14 @@ public class Hardware2022 {
         wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         wheelFrontRight.setPower(-power);
-        wheelFrontLeft.setPower(power);
         wheelBackRight.setPower(power);
+        wheelFrontLeft.setPower(power);
         wheelBackLeft.setPower(-power);
 
         telemetry.addLine().addData("[X Position >]  ", ""+ getXAxisPosition() );
@@ -217,14 +215,12 @@ public class Hardware2022 {
      */
 
     public void moveXAxis(double  distance, double power ) {
-        moveXAxisDegree(Math.round((float) distance * yAxisCoeff), power);
+        moveXAxisDegree(Math.round((float) distance * xAxisCoeff), power);
 
     }
 
     private int getXAxisPosition( ) {
-        return ( wheelFrontLeft.getCurrentPosition() + wheelFrontRight.getCurrentPosition()
-                - wheelBackLeft.getCurrentPosition() - wheelBackRight.getCurrentPosition()) /4 ;
-
+        return  wheelFrontLeft.getCurrentPosition() /4 ;
     }
 
 
