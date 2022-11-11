@@ -31,9 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 /**
  * This is NOT an opmode.
@@ -48,7 +46,7 @@ public class HuskyBot {
     public DcMotorEx rearLeftDrive = null;
     public DcMotorEx rearRightDrive = null;
 
-    public DcMotorEx armSwivelMotor = null;
+    public DcMotorEx armSwivel = null;
 
     // goBILDA 5203 Series Yellow Jacket Planetary Gear Motor
     // max encoder ticks per second
@@ -73,8 +71,7 @@ public class HuskyBot {
         frontRightDrive = hwMap.get(DcMotorEx.class, "front_right_drive");
         rearRightDrive = hwMap.get(DcMotorEx.class, "rear_right_drive");
 
-        // todo: add device name for Arm Motor [THIS NEEDS TO BE DONE BEFORE WE RUN THE PROGRAM]
-        armSwivelMotor = hwMap.get(DcMotorEx.class, "");
+        armSwivel = hwMap.get(DcMotorEx.class, "arm_swivel");
 
 
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

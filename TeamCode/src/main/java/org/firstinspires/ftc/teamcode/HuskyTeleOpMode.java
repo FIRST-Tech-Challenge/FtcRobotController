@@ -35,8 +35,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 @TeleOp(name = "Husky TeleOpMode", group = "TeleOp")
 public class HuskyTeleOpMode extends LinearOpMode {
 
@@ -90,8 +88,10 @@ public class HuskyTeleOpMode extends LinearOpMode {
             rx = Range.clip(rx, -1, 1);
             */
 
-            armAngle = 0.3 * (gamepad2.right_stick_x); // todo 0.3 will most likely have to be change
-            armAngle = Range.clip(armAngle, -1, 1);
+            huskyBot.armSwivel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            double armPower = -gamepad2.right_stick_x;
+            armPower = Range.clip(armPower, -0.1, 0.35);
+            huskyBot.armSwivel.setPower(armPower);
             // todo + IMPORTANT: we will have to limit this to rotate only 360 degrees once the arm is added.
 
 
@@ -100,16 +100,12 @@ public class HuskyTeleOpMode extends LinearOpMode {
             double frontRightVelocity = (y - x - rx) * HuskyBot.VELOCITY_CONSTANT;
             double rearRightVelocity = (y + x - rx) * HuskyBot.VELOCITY_CONSTANT;
 
-            double armSwivelVelocity = armAngle * HuskyBot.VELOCITY_CONSTANT;
-
             // apply the calculated values to the motors.
             huskyBot.frontLeftDrive.setVelocity(frontLeftVelocity);
             huskyBot.rearLeftDrive.setVelocity(rearLeftVelocity);
             huskyBot.frontRightDrive.setVelocity(frontRightVelocity);
             huskyBot.rearRightDrive.setVelocity(rearRightVelocity);
 
-            // apply the calculated arm values to the arm motor
-            huskyBot.armSwivelMotor.setVelocity(armSwivelVelocity);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
