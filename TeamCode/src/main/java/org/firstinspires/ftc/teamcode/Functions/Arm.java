@@ -176,7 +176,7 @@ public class Arm {
         return status;
     }
 
-    /*public String CheckMotors(){
+     /*public String CheckMotors(){
         //return "Hex right power: "+arm_motor_right.getPower()+"\n"+ "  Hex 2 power: "+arm_motor_left.getPower();
     }*/
 
