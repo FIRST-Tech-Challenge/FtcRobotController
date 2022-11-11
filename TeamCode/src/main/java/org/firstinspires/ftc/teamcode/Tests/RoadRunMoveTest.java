@@ -35,13 +35,13 @@ public class RoadRunMoveTest extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(90)))
                 .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
-                .build();
-//        TrajectorySequence trajSeq2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
-//                .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(270)))
-//                .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(270)))
-//                .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(270)))
-//                .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
 //                .build();
+//        TrajectorySequence trajSeq2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
+//                .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(270)), SampleMecanumDrive.getVelocityConstraint(5,5,5),SampleMecanumDrive.getAccelerationConstraint(5))
+//                .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(270)), SampleMecanumDrive.getVelocityConstraint(5,5,5),SampleMecanumDrive.getAccelerationConstraint(5))
+//                .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(270)), SampleMecanumDrive.getVelocityConstraint(5,5,5),SampleMecanumDrive.getAccelerationConstraint(5))
+//                .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)), SampleMecanumDrive.getVelocityConstraint(5,5,5),SampleMecanumDrive.getAccelerationConstraint(5))
+                .build();
 
         while (opModeIsActive()) {
 //            robot.followTrajectorySequenceAsync(trajSeq);
