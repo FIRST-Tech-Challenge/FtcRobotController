@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Robots;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 
@@ -209,6 +211,12 @@ public class PwPRobot extends BasicRobot {
 //            aligner.reverseAlignerIntake();
 //        }
 //    }
+    public void liftToTarget(){
+        lift.liftToTarget();
+    }
+    public void setLiftTarget(double p_target){
+        lift.setLiftTarget(p_target);
+    }
     public void setLiftVelocity(double velocity){
         lift.setLiftVelocity(velocity);
     }
@@ -216,15 +224,30 @@ public class PwPRobot extends BasicRobot {
 
         //omnidirectional movement + turning
 
+        if(op.gamepad2.y){
+            lift.setLiftTarget(LIFT_HIGH_JUNCTION.getValue());
+        }
+        if(op.gamepad2.b){
+            lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
+        }
+        if(op.gamepad2.a){
+            lift.setLiftTarget(0);
+        }
 
+        if(op.gamepad1.dpad_left&&op.gamepad2.dpad_left){
+            lift.resetEncoder();
+        }
         //manual lift up/down
-        if (op.gamepad2.right_trigger != 0 || op.gamepad2.left_trigger != 0) {
+        if(op.gamepad1.dpad_down&&op.gamepad2.dpad_down){
+            lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger)/3);
+        }
+        else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
             lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
         }
         //when not manual lifting, automate lifting
         else {
-            lift.setLiftPower(0);
-//            lift.liftToTarget();
+//            lift.setLiftPower(0);
+            lift.liftToTarget();
         }
 
         if (field.lookingAtPole()&&op.gamepad1.dpad_up && !roadrun.isBusy()) {
@@ -252,7 +275,7 @@ public class PwPRobot extends BasicRobot {
 //            lift.toggleLiftPosition(-1);
 //        }
         //toggle liftArm position
-        if (op.gamepad2.x) {
+        if (op.gamepad2.right_bumper) {
             if(ARM_OUTTAKE.getStatus()) {
                 liftArm.lowerLiftArmToIntake();
 

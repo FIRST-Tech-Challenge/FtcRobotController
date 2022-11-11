@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_LOWERING;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
@@ -14,7 +13,7 @@ public class LiftArm {
 
     private RFDualServo liftArmServo;
 
-    private final double LIFT_ARM_INTAKE_POS = 0.1;
+    private final double LIFT_ARM_INTAKE_POS = 0.14;
 
     private final double LIFT_ARM_OUTTAKE_POS = 0.6;
 
@@ -110,7 +109,7 @@ public class LiftArm {
 
         //the state of claw closed has to be true (cone has already been grabbed)
         // && (LIFT_GROUND_JUNCTION.status || LIFT_LOW.status || LIFT_MID.status || LIFT_HIGH.status)
-        if (CLAW_CLOSED.status && ARM_INTAKE.status) {
+        if ( ARM_INTAKE.status) {
 
             //set servo position
             liftArmServo.setPositions(LIFT_ARM_OUTTAKE_POS);

@@ -23,8 +23,7 @@ public class BlueLeftAutoHigh extends LinearOpMode {
 
     public static double dummyP = 1;
 
-    public static double dummyx = 1, dummyy =25.5, dummya = 235;
-
+    public static double dummyx = 0, dummyy =28.5, dummya = 270;
     public static double dummyX = 12, dummyY =33, dummyA = 90;
 
     public static double dummyX2 = 33, dummyY2 =35, dummyA2 = 90;

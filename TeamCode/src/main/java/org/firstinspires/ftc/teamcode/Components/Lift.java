@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.abs;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -11,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 
 import java.util.ArrayList;
 
-
+@Config
 public class Lift {
     private final int MAX_LIFT_TICKS = 1645;
     private final double LIFT_GRAVITY_CONSTANT = 0.07;
@@ -35,10 +37,10 @@ public class Lift {
     private RFMotor liftMotor;
     private Claw LC = new Claw();
     private double liftTarget = 0;
-    private double dfco1 =  .01; private double dfco2 = 0.05;
+    public static double dfco1 =  4, dfco2 = 100;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
-
+//447,297,173,53,0
     public Lift(){ //constructor
         // hardware map
         Claw LC = new Claw();
@@ -174,13 +176,9 @@ public class Lift {
         //}
 
         double distance = targetHeight.value-liftMotor.getCurrentPosition();
-        if(!done){
-            liftMotor.setPosition(targetHeight.value);
-        }
+
         done = (abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
-        if(done){
-            liftMotor.setPower(LIFT_GRAVITY_CONSTANT);
-        }
+        setLiftTarget(targetHeight.getValue());
         if(!done){
             targetHeight.setLfc(true);
         }
@@ -215,6 +213,10 @@ public class Lift {
         logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + power, true, true, true);
         op.telemetry.addData("ticks", liftMotor.getCurrentPosition());
     }
+    public void setLiftRawPower(double rawPower){
+        liftMotor.setPower(rawPower);
+        liftTarget = liftMotor.getCurrentPosition();
+    }
     public void setLiftVelocity(double p_velocity){
         //liftTarget=liftMotor.getCurrentPosition();
         //if(liftTarget<MAX_LIFT_TICKS&&power>0) {
@@ -229,9 +231,16 @@ public class Lift {
         //logger.log("LiftLog", "Claw motor power to " + liftMotor.)
         logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + p_velocity, true, true, true);
     }
+    public void resetEncoder(){
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        op.sleep(200);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftTarget=0;
+    }
     public void liftToTarget(){
         liftMotor.setPosition(liftTarget);
     }
+    public void setLiftTarget(double p_liftTaret){liftTarget = p_liftTaret;}
     //1 up, -1 down
     public void toggleLiftPosition(int direction){
         if(direction ==1 ){

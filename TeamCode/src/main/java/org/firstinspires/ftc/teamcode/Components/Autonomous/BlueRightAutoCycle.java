@@ -15,15 +15,15 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 @Config
-@Autonomous(name = "BlueRightAutoHigh")
+@Autonomous(name = "BlueRightAutoCycle")
 
 
-public class BlueRightAutoHigh extends LinearOpMode {
+public class BlueRightAutoCycle extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;
 
-    public static double dummyx = 0.75, dummyy =25.5, dummya = 270;
+    public static double dummyx = -23.5, dummyy =2, dummya = 270;
 
     public static double dummyX = -12, dummyY =35, dummyA = 90;
 
@@ -39,20 +39,16 @@ public class BlueRightAutoHigh extends LinearOpMode {
 
         //detectSignal();
         //store in variable
-        robot.cv.observeSleeve();
-        while(getRuntime()<5){
-        }
-        dummyP = robot.cv.getPosition();
+
         waitForStart();
 
-        if (isStopRequested()) return;
         Trajectory initialtrajectory = robot.roadrun.trajectoryBuilder(startPose)
                 .lineToConstantHeading(new Vector2d(-13, 55))
                 .build();
         Trajectory initialtrajectory2 = robot.roadrun.trajectoryBuilder(new Pose2d(-13,55, Math.toRadians(270)))
-                .lineToConstantHeading(new Vector2d(-13, 45))
+                .lineToConstantHeading(new Vector2d(-13, 21.5))
                 .build();
-        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-13,45, Math.toRadians(270)))
+        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-13,21.5, Math.toRadians(270)))
                 .lineToLinearHeading(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
                 .build();
 
