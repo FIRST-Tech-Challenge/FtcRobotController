@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -10,12 +8,9 @@ import org.firstinspires.ftc.teamcode.hardware.SleeveSide;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 //import com.qualcomm.robotcore.hardware;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -129,15 +124,15 @@ public  class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        hdw.moveYAxis(24.0, -0.1);
-        hdw.moveXAxis( 36.0, 0.3);
+        hdw.moveXAxis(24.0, -0.1);
+        hdw.moveYAxis( 36.0, 0.3);
     }
 
     void parkZone2( ) {
         telemetry.addData("Park zone 2 ", this.currentSide);
         telemetry.update();
         //Move forward
-        hdw.moveXAxis( 36.0, 0.3);
+        hdw.moveYAxis( 36.0, 0.3);
 
     }
 
@@ -145,8 +140,8 @@ public  class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 3 ", this.currentSide);
         telemetry.update();
         //Move right
-        hdw.moveYAxis(24.0, 0.1);
-        hdw.moveXAxis( 36.0, 0.3);
+        hdw.moveXAxis(24.0, 0.1);
+        hdw.moveYAxis( 36.0, 0.3);
 
     }
 

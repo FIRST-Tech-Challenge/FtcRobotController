@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import static java.lang.Thread.*;
-
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -125,7 +122,7 @@ public class Hardware2022 {
      * @param distance  Distance in encoder degree , 360 for a full circle.  Always positive
      * @param power Positive value move forward
      */
-    private void moveXAxisDegree( long distance, double power ) {
+    private void moveYAxisDegree(long distance, double power ) {
 
         wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -142,12 +139,12 @@ public class Hardware2022 {
         wheelBackRight.setPower(power);
         wheelBackLeft.setPower(power);
 
-        telemetry.addLine().addData("[X Position >]  ", getXAxisPosition() );
+        telemetry.addLine().addData("[Y Position >]  ", getYAxisPosition() );
         telemetry.update();
 
-        while ( Math.abs(getXAxisPosition()) < distance ) {
+        while ( Math.abs(getYAxisPosition()) < distance ) {
 
-            telemetry.addLine().addData("[X Position >]  ", "" + getXAxisPosition() );
+            telemetry.addLine().addData("[Y Position >]  ", "" + getYAxisPosition() );
             telemetry.update();
         }
 
@@ -158,7 +155,7 @@ public class Hardware2022 {
 
     }
 
-    private int getXAxisPosition ( ) {
+    private int getYAxisPosition( ) {
         return ( wheelFrontLeft.getCurrentPosition() + wheelFrontRight.getCurrentPosition()
                  - wheelBackLeft.getCurrentPosition() - wheelBackRight.getCurrentPosition()) /4 ;
 
@@ -169,8 +166,8 @@ public class Hardware2022 {
      * @param distance  Distance in inches .  Always positive
      * @param power Positive value move forward
      */
-    public void moveXAxis( double distance, double power ) {
-        moveXAxisDegree( Math.round( (float) distance * this.xAxisCoeff ), power ) ;
+    public void moveYAxis(double distance, double power ) {
+        moveYAxisDegree( Math.round( (float) distance * this.xAxisCoeff ), power ) ;
     }
 
     /**
@@ -179,7 +176,7 @@ public class Hardware2022 {
      * @param power Positive value move right.
      */
 
-    private void moveYAxisDegree( long distance, double power ) {
+    private void moveXAxisDegree(long distance, double power ) {
         wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -195,12 +192,12 @@ public class Hardware2022 {
         wheelBackRight.setPower(power);
         wheelBackLeft.setPower(-power);
 
-        telemetry.addLine().addData("[Y Position >]  ", ""+getYAxisPosition() );
+        telemetry.addLine().addData("[X Position >]  ", ""+ getXAxisPosition() );
         telemetry.update();
 
-        while ( Math.abs(getYAxisPosition()) < distance ) {
+        while ( Math.abs(getXAxisPosition()) < distance ) {
 
-            telemetry.addLine().addData("[Y Position >]  ", getYAxisPosition() );
+            telemetry.addLine().addData("[X Position >]  ", getXAxisPosition() );
             telemetry.update();
 
         }
@@ -219,12 +216,12 @@ public class Hardware2022 {
      * @param power Positive value move right.
      */
 
-    public void moveYAxis( double  distance, double power ) {
-        moveYAxisDegree(Math.round((float) distance * yAxisCoeff), power);
+    public void moveXAxis(double  distance, double power ) {
+        moveXAxisDegree(Math.round((float) distance * yAxisCoeff), power);
 
     }
 
-    private int getYAxisPosition ( ) {
+    private int getXAxisPosition( ) {
         return ( wheelFrontLeft.getCurrentPosition() + wheelFrontRight.getCurrentPosition()
                 - wheelBackLeft.getCurrentPosition() - wheelBackRight.getCurrentPosition()) /4 ;
 

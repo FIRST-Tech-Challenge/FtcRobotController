@@ -12,7 +12,7 @@ public class LeftAuto extends BaseAuto {
      */
 
     void movePark() {
-        hdw.moveXAxis(6.0,0.7);
+        hdw.moveYAxis(6.0,0.7);
 
     }
 
