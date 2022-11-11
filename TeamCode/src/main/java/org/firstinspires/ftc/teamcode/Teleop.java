@@ -137,13 +137,17 @@ public abstract class Teleop extends LinearOpMode {
             // Execute any automatic movements
             robot.liftPosRun();
 
-/* DISABLE DRIVER-CENTRIC MODE FOR THIS SEASON
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
             {
                 driverMode = DRIVER_MODE_DRV_CENTRIC;
             }
-*/
+
+            // Check for an OFF-to-ON toggle of the gamepad1 CIRCLE button (toggles ROBOT-CENTRIC drive control)
+            if( gamepad1_circle_now && !gamepad1_circle_last)
+            {
+                driverMode = DRIVER_MODE_STANDARD;
+            }
 
 /* DISABLE BACKWARD MODE FOR THIS SEASON
             // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button (toggles STANDARD/BACKWARD drive control)

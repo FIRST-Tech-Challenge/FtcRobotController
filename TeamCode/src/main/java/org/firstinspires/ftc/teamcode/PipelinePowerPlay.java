@@ -81,8 +81,8 @@ class PipelinePowerPlay extends OpenCvPipeline
                 directory += "/blue_not_terminal";
             }
         }
-        sub1PointA = new Point( 150,90);  // 20x20 pixels on signal sleeve
-        sub1PointB = new Point( 170,110);
+        sub1PointA = new Point( 157,90);  // 20x20 pixels on signal sleeve
+        sub1PointB = new Point( 177,110);
 
         // Create the directory structure to store the autonomous image used to start auto.
         File autonomousDir = new File(directory);
