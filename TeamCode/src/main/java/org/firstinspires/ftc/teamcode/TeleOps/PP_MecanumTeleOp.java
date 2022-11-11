@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
+import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 
 @Config
 @TeleOp
@@ -23,10 +26,15 @@ public class PP_MecanumTeleOp extends OpMode
     // Declaring drivetrain motors
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
 
+    SignalEdgeDetector gamepad2_dpad_up = new SignalEdgeDetector(() -> gamepad2.dpad_up);
+    SignalEdgeDetector gamepad2_dpad_down = new SignalEdgeDetector(() -> gamepad2.dpad_down);
+
     // Declaring mechanism objects
     private Arm armControl;
     private Slide slideControl;
     private Claw clawControl;
+
+    private GamepadEx driverOp;
 
     double precisionReduction = 0.3;
 
@@ -50,6 +58,9 @@ public class PP_MecanumTeleOp extends OpMode
     @Override
     public void init()
     {
+        driverOp = new GamepadEx(gamepad2);
+        driverOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER);
+
         // Expansion Hub Pins
         motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("FL"); // Pin 2
         motorBackLeft = (DcMotorEx) hardwareMap.dcMotor.get("BL"); // Pin 1
@@ -57,6 +68,7 @@ public class PP_MecanumTeleOp extends OpMode
         // Control Hub Pins
         motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("FR"); // Pin 3
         motorBackRight = (DcMotorEx) hardwareMap.dcMotor.get("BR"); // Pin 2
+
 
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
@@ -67,6 +79,7 @@ public class PP_MecanumTeleOp extends OpMode
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         // Reverse motors
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -86,8 +99,10 @@ public class PP_MecanumTeleOp extends OpMode
         claw();
         slides();
 
-        armControl.update(telemetry);
+        gamepad2_dpad_up.update();
+        gamepad2_dpad_down.update();
         slideControl.update(telemetry);
+        armControl.update(telemetry);
     }// end of loop()
 
     //        BOT METHODS       \\
@@ -150,43 +165,42 @@ public class PP_MecanumTeleOp extends OpMode
 
     public void arm() {
         // BUTTONS \\
-        /*
         if (gamepad2.a) {
             slideControl.setHighJunction();
-            armControl.setExtake();
-            clawControl.toggleWristRotate();
+            //armControl.setExtake();
+            //clawControl.toggleWristRotate();
         }
         else if (gamepad2.b) {
             slideControl.setMidJunction();
-            armControl.setExtake();
-            clawControl.toggleWristRotate();
+            //armControl.setExtake();
+            //clawControl.toggleWristRotate();
         }
         else if (gamepad2.y) {
             slideControl.setLowJunction();
-            armControl.setExtake();
-            clawControl.toggleWristRotate();
+            //armControl.setExtake();
+            //clawControl.toggleWristRotate();
         }
         else if (gamepad2.x){
             slideControl.setIntakeOrGround();
-            armControl.setIntake();
-            clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
+            //armControl.setIntake();
+            //clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
         }
-         */
 
-
-         if(gamepad2.dpad_up) {
+        if(gamepad2_dpad_up.isRisingEdge()) {
+            clawControl.toggleWristRotate();
             armControl.setExtake();
          }
-         else if(gamepad2.dpad_down){
+         else if(gamepad2_dpad_down.isRisingEdge()){
+            clawControl.toggleWristRotate();
             armControl.setIntake();
          }
-
-
-         }// end of arm()
+    }
 
     public void claw(){
         // BUMPER \\
         if (lastTriggerPress != gamepad2.right_bumper) {
+            telemetry.addLine("Controller works");
+            telemetry.update();
             clawControl.toggleOpenClose();
         }
 
@@ -195,8 +209,7 @@ public class PP_MecanumTeleOp extends OpMode
         // false until you release the bumper
 
         lastTriggerPress = gamepad2.right_bumper;
-
-    }// end of claw()
+    }
 
     public void slides(){
         // TRIGGERS \\
