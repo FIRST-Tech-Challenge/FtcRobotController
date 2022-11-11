@@ -3,6 +3,8 @@ package org.firstinspires.ftc.team8923_PowerPlay;
 import static org.firstinspires.ftc.team8923_PowerPlay.Constants.CLOSED_CLAW;
 import static org.firstinspires.ftc.team8923_PowerPlay.Constants.OPEN_CLAW;
 
+import com.qualcomm.robotcore.util.Range;
+
 abstract public class BaseTeleOp extends BaseOpMode {
 
     private boolean isSlowMode = false;
@@ -63,6 +65,40 @@ abstract public class BaseTeleOp extends BaseOpMode {
             servoClaw.setPosition(CLOSED_CLAW);
         }
     }
+
+    //using imu
+    public void imuPivot(double referenceAngle, double targetAngle, double maxSpeed, double kAngle, double timeout) {
+        runtime.reset();
+        //counter-clockwise is positive
+        double pivot;
+        double currentRobotAngle;
+        double angleError;
+
+        targetAngle = referenceAngle + targetAngle;
+        targetAngle = adjustAngles(targetAngle);
+        do {
+            currentRobotAngle = imu.getAngularOrientation().firstAngle;
+            angleError = currentRobotAngle - targetAngle;
+            angleError = adjustAngles(angleError);
+            pivot = angleError * kAngle;
+
+            if (pivot >= 0.0) {
+                pivot = Range.clip(pivot, 0.15, maxSpeed);
+            } else {
+                pivot = Range.clip(pivot, -maxSpeed, -0.15);
+            }
+
+            speedFL = pivot;
+            speedFR = pivot;
+            speedBL = pivot;
+            speedBR = pivot;
+
+            motorFL.setPower(speedFL);
+            motorFR.setPower(speedFR);
+            motorBL.setPower(speedBL);
+            motorBR.setPower(speedBR);
+            idle();
+        }
 
 }
 

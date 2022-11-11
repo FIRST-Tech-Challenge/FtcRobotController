@@ -12,6 +12,7 @@ public class TeleOpCompetition extends BaseTeleOp{
         waitForStart();
 
         while (opModeIsActive()){
+            imuPivot();
             driveRobot();
             driveRobotSpeed();
             driveMechanism();
