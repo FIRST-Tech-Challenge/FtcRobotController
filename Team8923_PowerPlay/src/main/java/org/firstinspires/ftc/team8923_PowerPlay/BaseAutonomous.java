@@ -191,7 +191,7 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
     // using imu
     public void imuPivot(double referenceAngle, double targetAngle, double maxSpeed, double kAngle, double timeout) {
         runtime.reset();
-        //counter-clockwise is positive
+        // counter-clockwise is positive
         double pivot;
         double currentRobotAngle;
         double angleError;
