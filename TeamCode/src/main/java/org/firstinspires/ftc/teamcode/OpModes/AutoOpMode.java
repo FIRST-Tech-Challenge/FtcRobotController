@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 /**
  * Write a detailed description of the autoClass
  */
-@Autonomous(name = "FTC Wires Autonomous", group = "00-Autonomous" , preselectTeleOp = "TeleOp")
+@Autonomous(name = "FTC Wires Autonomous", group = "00-Autonomous" , preselectTeleOp = "FTC Wires TeleOp")
 public class AutoOpMode extends LinearOpMode{
 
     //Define and declare Robot Starting Locations
@@ -154,6 +154,7 @@ public class AutoOpMode extends LinearOpMode{
     }
 
     public void runAuto(){
+        telemetry.setAutoClear(false);
         telemetry.addData("Running FTC Wires (ftcwires.org) Autonomous Mode adopted for Team:","TEAM NUMBER");
         telemetry.addData("---------------------------------------","");
         //Write any other actions to take during auto, or any other conditions for maneuvering
