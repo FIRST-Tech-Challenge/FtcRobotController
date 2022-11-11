@@ -5,9 +5,13 @@ abstract public class BaseTeleOp extends BaseOpMode{
     double armPower = 0.0;
 
     public void driveUsingControllers() {
-        double x = gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y;
-        double turning = gamepad1.right_stick_x;
+        double x = gamepad1.left_stick_x * 0.5;
+        double y = -gamepad1.left_stick_y * 0.5;
+        double turning = gamepad1.right_stick_x * 0.5;
+
+        y *= 1 - (0.8 * gamepad1.right_trigger);
+        x *= 1 - (0.8 * gamepad1.right_trigger);
+        turning *= 1 - (0.8 * gamepad1.right_trigger);
 
         mecanumDrive(x, y, turning);
     }
