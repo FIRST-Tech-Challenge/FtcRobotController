@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_PowerPlay.Competition;
+package org.firstinspires.ftc.team6220_PowerPlay.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_PowerPlay.TestClasses;
+package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
