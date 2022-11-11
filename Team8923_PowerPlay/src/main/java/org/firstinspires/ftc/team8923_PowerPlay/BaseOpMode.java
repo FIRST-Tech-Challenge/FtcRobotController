@@ -68,8 +68,8 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorSlideLeft.setDirection(DcMotor.Direction.FORWARD);
         motorSlideRight.setDirection(DcMotor.Direction.REVERSE);
 
-        //bottomMotorSlideLeft = motorSlideLeft.getCurrentPosition();
-        //bottomMotorSlideRight = motorSlideRight.getCurrentPosition();
+        bottomMotorSlideLeft = motorSlideLeft.getCurrentPosition();
+        bottomMotorSlideRight = motorSlideRight.getCurrentPosition();
     }
 
     public void driveMecanum(double driveAngle, double drivePower, double turnPower){
