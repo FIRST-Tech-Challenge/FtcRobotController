@@ -12,11 +12,11 @@ public class Claw{
 
     // claw positions
     private final double OPEN = 0.77;
-    private final double CLOSE = 0.6625;
+    private final double CLOSE = 0.6759;
 
     // wrist positions
-    public final double WRIST_INTAKE_POSITION = 0.445; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
-    private final double WRIST_EXTAKE_POSITION = 0.5; // wrist rotates to extake on junction
+    public final double WRIST_INTAKE_POSITION = 0.929; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
+    private final double WRIST_EXTAKE_POSITION = 0.268; // wrist rotates to extake on junction
 
     public Claw(HardwareMap hardwareMap, boolean isAuton ){
         isAuto = isAuton;
@@ -54,5 +54,6 @@ public class Claw{
         else { // if the wrist is in the extake position, switch it back to the intake position so it can pick up cones
             wristJoint.setPosition(WRIST_INTAKE_POSITION);
         }
+        isWristIntakePosition = !isWristIntakePosition;
     }
 }
