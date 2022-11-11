@@ -103,19 +103,21 @@ public class TeleOp_358 extends OpMode {
                 stickY = gamepad1.left_stick_y;
             }
             else{
-                stickX = gamepad2.left_stick_x;
-                stickY = gamepad2.left_stick_y;
+                stickY = gamepad2.left_stick_x;
+                stickX = gamepad2.left_stick_y;
             }
-
+//
             if (Math.abs(gamepad1.right_stick_x) > Math.abs(gamepad2.right_stick_x)){
                 stickR = gamepad1.right_stick_x;
             }
-            else {
-                stickR = gamepad2.right_stick_x;
-            }
+//            else {
+//                stickR = gamepad2.right_stick_x;
+//            }
 
             //variables
-            double r = Math.hypot(-stickX, stickY); //ur mom is watching you from the ceiling. dont look up...
+            double r = .5;
+            double forward = stickY; //ur mom is watching you from the ceiling. dont look up...
+            double turning= stickX;
             double robotAngle = Math.atan2(stickY, -stickX) - Math.PI / 4;
             double rightX = -stickR * turnReduction;
             final double v1 = r * Math.cos(robotAngle) + rightX;
@@ -138,9 +140,9 @@ public class TeleOp_358 extends OpMode {
             robot.lb.setPower(-speedModifier * v3 * precisionActive);
             robot.rb.setPower(-speedModifier * v4 * precisionActive);
 
-            telemetry.addData("fLPower", -speedModifier * v1 * precisionActive);
-            telemetry.addData("fRPower", -speedModifier * v2 * precisionActive);
-            telemetry.addData("bLPower", -speedModifier * v3 * precisionActive);
+            telemetry.addData("leftx", stickX);
+            telemetry.addData("lefty", stickY);
+            telemetry.addData("Rightx", stickR);
             telemetry.addData("bRPower", -speedModifier * v4 * precisionActive);
 
             telemetry.addData("Encoder port 1 back left", robot.lb.getCurrentPosition());

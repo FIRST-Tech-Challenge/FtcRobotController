@@ -36,6 +36,7 @@ public class Hardware358 {
     public DcMotor rf = null; // right front
     public DcMotor rb = null; // right back
     public DcMotor lb = null; // left back
+    public DcMotor m = null; //middle
 //    private DcMotor leftDrive   = null;
 //    private DcMotor rightDrive  = null;
 //    private DcMotor armMotor = null;
@@ -72,10 +73,10 @@ public class Hardware358 {
 
 
 
-        lf.setDirection(DcMotor.Direction.REVERSE);
-        rf.setDirection(DcMotor.Direction.REVERSE);
-        lb.setDirection(DcMotor.Direction.FORWARD);
-        rb.setDirection(DcMotor.Direction.FORWARD);
+        lb.setDirection(DcMotor.Direction.REVERSE);
+        rb.setDirection(DcMotor.Direction.REVERSE);
+        lf.setDirection(DcMotor.Direction.FORWARD);
+        rf.setDirection(DcMotor.Direction.FORWARD);
 
         lf.setPower(0);
         rf.setPower(0);

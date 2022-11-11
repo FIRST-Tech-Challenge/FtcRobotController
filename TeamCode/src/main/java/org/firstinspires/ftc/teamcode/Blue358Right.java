@@ -135,8 +135,8 @@ public class Blue358Right extends Driving358
         //=======================
         //--actual code----------
         //=======================--------------------------------------------------------
-        int duckLevel = duckDetection();   // change to todays game
-        telemetry.addData("Duck Pos", duckLevel);
+        int parkLevel = levelDetection();   // change to todays game
+        telemetry.addData("Duck Pos", parkLevel);
         telemetry.update();
         telemetry.addData("Action", "Initial Move");
         telemetry.update();
@@ -144,7 +144,7 @@ public class Blue358Right extends Driving358
         sleep(2000);
         int lateralMoveDistance = 25;
         int angleAmount = 95;
-        switch(duckLevel){//moves to the alliance shipping hub based on what it reads
+        switch(parkLevel){//moves to the alliance shipping hub based on what it reads
             case (1)://Warehouse close. Scoring level 1. Bottom
                // levelLift('l');
                 rotate(.5, 'r', angleAmount);
@@ -173,7 +173,7 @@ public class Blue358Right extends Driving358
 //        robot.clawServo.setPosition(.5);
         move(.3, 'b', 10);
         //move(0.5,'b',10);
-//        if (duckLevel!=3) {
+//        if (parkLevel!=3) {
 //            levelLift('t');
 //        }
         rotate(0.5, 'r', 90);
@@ -192,7 +192,7 @@ public class Blue358Right extends Driving358
 
         move(0.4,'r',10);
     }
-    private int duckDetection (){
+    private int levelDetection (){
         long programTime = System.currentTimeMillis();
         long waitTime = 5000L;
         while (opModeIsActive()) {

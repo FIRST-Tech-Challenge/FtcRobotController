@@ -47,6 +47,7 @@ public class Driving358 extends LinearOpMode {
         robot.lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.m.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
    //     robot.rotateRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //     robot.rotateRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
