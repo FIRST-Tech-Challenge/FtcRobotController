@@ -133,9 +133,9 @@ public class Hardware2022 {
         wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        wheelFrontRight.setPower(power);
-        wheelFrontLeft.setPower(power);
+        wheelFrontRight.setPower(-power);
         wheelBackRight.setPower(power);
+        wheelFrontLeft.setPower(-power);
         wheelBackLeft.setPower(power);
 
         telemetry.addLine().addData("[Y Position >]  ", getYAxisPosition() );
@@ -186,9 +186,9 @@ public class Hardware2022 {
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         wheelFrontRight.setPower(-power);
-        wheelBackRight.setPower(power);
+        wheelBackRight.setPower(-power);
         wheelFrontLeft.setPower(power);
-        wheelBackLeft.setPower(-power);
+        wheelBackLeft.setPower(power);
 
         telemetry.addLine().addData("[X Position >]  ", ""+ getXAxisPosition() );
         telemetry.update();
@@ -220,7 +220,7 @@ public class Hardware2022 {
     }
 
     private int getXAxisPosition( ) {
-        return  wheelFrontLeft.getCurrentPosition() /4 ;
+        return  wheelFrontLeft.getCurrentPosition() ;
     }
 
 
