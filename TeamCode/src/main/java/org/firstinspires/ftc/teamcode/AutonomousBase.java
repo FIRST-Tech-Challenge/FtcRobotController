@@ -4,6 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.ReadWriteFile;
+
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+
+import java.io.File;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
@@ -24,6 +29,15 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  TURN_SPEED_40        = 0.40;    // Nominal half speed for better accuracy.
     static final double  TURN_SPEED_80        = 0.80;    // Nominal half speed for better accuracy.
 
+    //Files to access the algorithm constants
+    File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
+    File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
+
+    double robotEncoderWheelDistance            = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * robot.COUNTS_PER_INCH2;
+    double horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
+    double robotGlobalXCoordinatePosition       = 0.0;   // in odometer counts
+    double robotGlobalYCoordinatePosition       = 0.0;
+    double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
 
     /*---------------------------------------------------------------------------------------------
      * getAngle queries the current gyro angle
@@ -31,6 +45,7 @@ public abstract class AutonomousBase extends LinearOpMode {
      */
     public void performEveryLoop() {
         robot.readBulkData();
+        globalCoordinatePositionUpdate();
         robot.liftPosRun();
     }
 
@@ -497,4 +512,41 @@ public abstract class AutonomousBase extends LinearOpMode {
             robot.rearRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } // opModeIsActive()
     } // gyroDrive()
+
+    /**
+     * Ensure angle is in the range of -PI to +PI (-180 to +180 deg)
+     * @param angleRadians
+     * @return
+     */
+    public double AngleWrapRadians( double angleRadians ){
+        while( angleRadians < -Math.PI ) {
+            angleRadians += 2.0*Math.PI;
+        }
+        while( angleRadians > Math.PI ){
+            angleRadians -= 2.0*Math.PI;
+        }
+        return angleRadians;
+    }
+
+    /**
+     * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
+     */
+    private void globalCoordinatePositionUpdate(){
+        //Get Current Positions
+        int leftChange  = robot.leftOdometerCount  - robot.leftOdometerPrev;
+        int rightChange = robot.rightOdometerCount - robot.rightOdometerPrev;
+        //Calculate Angle
+        double changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
+        robotOrientationRadians += changeInRobotOrientation;
+        robotOrientationRadians = AngleWrapRadians( robotOrientationRadians );   // Keep between -PI and +PI
+        //Get the components of the motion
+        int rawHorizontalChange = robot.strafeOdometerCount - robot.strafeOdometerPrev;
+        double horizontalChange = rawHorizontalChange - (changeInRobotOrientation*horizontalEncoderTickPerDegreeOffset);
+        double p = ((rightChange + leftChange) / 2.0);
+        double n = horizontalChange;
+        //Calculate and update the position values
+        robotGlobalXCoordinatePosition += (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
+        robotGlobalYCoordinatePosition += (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
+    } // globalCoordinatePositionUpdate
+
 } // AutonomousBase

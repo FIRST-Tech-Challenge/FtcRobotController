@@ -4,6 +4,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.ReadWriteFile;
+
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+
+import java.io.File;
 
 /**
  * TeleOp Full Control.
@@ -47,10 +52,6 @@ public abstract class Teleop extends LinearOpMode {
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
     boolean   autoDrive                = false;
 
-    // These are set in the alliance-specific teleops
-    double      duckVelocityNow;
-    double      duckVelocityStep;
-
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
     boolean   rangeSensorsEnabled = true;  // enable only when designing an Autonomous plan (takes time!)
     int       rangeSensorIndex = 1;         // only send a new ping out every other control cycle, and rotate sensors
@@ -68,6 +69,16 @@ public abstract class Teleop extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
+
+    //Files to access the algorithm constants
+    File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
+    File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
+
+    double robotEncoderWheelDistance            = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * robot.COUNTS_PER_INCH2;
+    double horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
+    double robotGlobalXCoordinatePosition       = 0.0;   // in odometer counts
+    double robotGlobalYCoordinatePosition       = 0.0;
+    double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
 
     // sets unique behavior based on alliance
     public abstract void setAllianceSpecificBehavior();
@@ -110,6 +121,7 @@ public abstract class Teleop extends LinearOpMode {
 
             // Bulk-refresh the Control/Expansion Hub device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
+            globalCoordinatePositionUpdate();
 
             // If enabled, process ultrasonic range sensors
             if( rangeSensorsEnabled ) {
@@ -198,15 +210,20 @@ public abstract class Teleop extends LinearOpMode {
                     frontLeft, robot.frontLeftMotorVel, frontRight, robot.frontRightMotorVel );
             telemetry.addData("Rear ", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
                     rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
-            telemetry.addData("Odometry (L/R)", "%d %d cts",  robot.leftOdometerCount, robot.rightOdometerCount );
             telemetry.addData("Turret", "%.1f deg  %.2f mA",  robot.turretAngle, robot.turretMotorAmps );
             telemetry.addData("Lift",   "%.1f deg  %.2f pwr  %.2f mA",
                     robot.liftAngle, robot.liftMotorPwr, robot.liftMotorAmps );
+            telemetry.addData("Collector", "%.2f %.2f",
+                    robot.leftTiltServo.getPosition(), robot.rightTiltServo.getPosition() );
             if( rangeSensorsEnabled ) {
                telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f in", sonarRangeL/2.54, sonarRangeR/2.54 );
                telemetry.addData("Sonar Range (F/B)", "%.1f  %.1f in", sonarRangeF/2.54, sonarRangeB/2.54 );
             }
-            telemetry.addData("Gyro Angle", "%.1f deg (%.1f tilt)", robot.headingIMU(), robot.tiltAngle );
+            telemetry.addData("Odometry (L/R/S)", "%d %d %d cts",
+                    robot.leftOdometerCount, robot.rightOdometerCount, robot.strafeOdometerCount );
+            telemetry.addData("World X",     "%.2f in", (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2) );
+            telemetry.addData("World Y",     "%.2f in", (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2) );
+            telemetry.addData("Orientation", "%.2f deg (IMU %.2f)", Math.toDegrees(robotOrientationRadians),  robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
 
@@ -653,6 +670,19 @@ public abstract class Teleop extends LinearOpMode {
             grabberLifting  = false;
         }
         //===================================================================
+        // Check for input on the LEFT TRIGGER
+        else if( gamepad2.left_trigger > 0.03  )
+        {   // rotate collector toward -0.50
+            double newTilt = robot.currentTilt - 0.003;
+            robot.grabberSetTilt( newTilt );
+        }
+        // Check for input on the RIGHT TRIGGER
+        else if( gamepad2.right_trigger > 0.03  )
+        {   // rotate collector toward +0.50
+            double newTilt = robot.currentTilt + 0.003;
+            robot.grabberSetTilt( newTilt );
+        }
+        //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         else if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Raise lift to HIGH junction
@@ -737,5 +767,41 @@ public abstract class Teleop extends LinearOpMode {
             } // ejection
         } // grabberRunning
     } // processGrabberControls
+
+    /**
+     * Ensure angle is in the range of -PI to +PI (-180 to +180 deg)
+     * @param angleRadians
+     * @return
+     */
+    public double AngleWrapRadians( double angleRadians ){
+        while( angleRadians < -Math.PI ) {
+            angleRadians += 2.0*Math.PI;
+        }
+        while( angleRadians > Math.PI ){
+            angleRadians -= 2.0*Math.PI;
+        }
+        return angleRadians;
+    }
+
+    /**
+     * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
+     */
+    private void globalCoordinatePositionUpdate(){
+        //Get Current Positions
+        int leftChange  = robot.leftOdometerCount  - robot.leftOdometerPrev;
+        int rightChange = robot.rightOdometerCount - robot.rightOdometerPrev;
+        //Calculate Angle
+        double changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
+        robotOrientationRadians += changeInRobotOrientation;
+        robotOrientationRadians = AngleWrapRadians( robotOrientationRadians );   // Keep between -PI and +PI
+        //Get the components of the motion
+        int rawHorizontalChange = robot.strafeOdometerCount - robot.strafeOdometerPrev;
+        double horizontalChange = rawHorizontalChange - (changeInRobotOrientation*horizontalEncoderTickPerDegreeOffset);
+        double p = ((rightChange + leftChange) / 2.0);
+        double n = horizontalChange;
+        //Calculate and update the position values
+        robotGlobalXCoordinatePosition += (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
+        robotGlobalYCoordinatePosition += (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
+    } // globalCoordinatePositionUpdate
 
 } // Teleop

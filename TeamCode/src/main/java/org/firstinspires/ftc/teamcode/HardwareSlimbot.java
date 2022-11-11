@@ -73,11 +73,13 @@ public class HardwareSlimbot
     public final static double MIN_TURN_POW       = 0.03;    // Minimum speed to turn the robot
     public final static double MIN_STRAFE_POW     = 0.04;    // Minimum speed to strafe the robot
     protected double COUNTS_PER_MOTOR_REV  = 28.0;    // goBilda Yellow Jacket Planetary Gear Motor Encoders
-//  protected double DRIVE_GEAR_REDUCTION  = 26.851;  // goBilda 26.9:1 (223rpm) gear ratio with 1:1 bevel gear
-    protected double DRIVE_GEAR_REDUCTION  = 19.203;  // goBilda 19.2:1 (312rpm) gear ratio with 1:1 bevel gear
+//  protected double DRIVE_GEAR_REDUCTION  = 26.851;  // goBilda 26.9:1 (223rpm) gear ratio with 1:1 HDT5 pully/belt
+    protected double DRIVE_GEAR_REDUCTION  = 19.203;  // goBilda 19.2:1 (312rpm) gear ratio with 1:1 HDT5 pully/belt
     protected double MECANUM_SLIPPAGE      = 1.01;    // one wheel revolution doesn't achieve 6" x 3.1415 of travel.
     protected double WHEEL_DIAMETER_INCHES = 3.77953; // (96mm) -- for computing circumference
     protected double COUNTS_PER_INCH       = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION * MECANUM_SLIPPAGE) / (WHEEL_DIAMETER_INCHES * 3.1415);
+    // The math above assumes motor encoders.  For REV odometry pods, the counts per inch is different
+    protected double COUNTS_PER_INCH2      = 1738.4;  // 8192 counts-per-rev / (1.5" omni wheel * PI)
 
     //====== MOTORS FOR GAMEPLAY MECHANISMS (turret / lift) =====
     protected DcMotorEx turretMotor        = null;    // A pair of motors operated as one with a Y cable
@@ -148,6 +150,7 @@ public class HardwareSlimbot
     public Servo        leftTiltServo       = null;   // tilt GRABBER up/down (left arm)
     public Servo        rightTiltServo      = null;   // tilt GRABBER up/down (right arm)
 
+    public double       currentTilt         =  0.00;
     public double       GRABBER_TILT_MAX    =  0.50;  // 0.5 (max) is up; -0.5 (min) is down
     public double       GRABBER_TILT_INIT   =  0.50;
     public double       GRABBER_TILT_STORE  =  0.30;
@@ -248,9 +251,9 @@ public class HardwareSlimbot
         rearRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Define and Initialize odometry pod encoders
-    //  leftOdometer    = hwMap.get(DcMotorEx.class,"LeftOdom");   // port0 (ideally a "REVERSE" motor port)
-        rightOdometer   = hwMap.get(DcMotorEx.class,"RightOdom");  // port1 (ideally a "FORWARD" motor port)
-//      strafeOdometer  = hwMap.get(DcMotorEx.class,"StrafeOdom");           // port2 (ideally a "REVERSE" motor port)
+//      leftOdometer   = hwMap.get(DcMotorEx.class,"LeftOdom");             // port0 (ideally a "REVERSE" motor port)
+        rightOdometer  = hwMap.get(DcMotorEx.class,"RightOdom");  // port1 (ideally a "FORWARD" motor port)
+//      strafeOdometer = hwMap.get(DcMotorEx.class,"StrafeOdom");           // port2 (ideally a "REVERSE" motor port)
 
         rightOdometer.setDirection(DcMotor.Direction.FORWARD);
 //      leftOdometer.setDirection(DcMotor.Direction.REVERSE);
@@ -275,6 +278,8 @@ public class HardwareSlimbot
         liftMotorF.setDirection(DcMotor.Direction.REVERSE);
         liftMotorB.setDirection(DcMotor.Direction.FORWARD);
         liftMotorsSetPower( 0.0 );
+        liftMotorF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);  // for odometry
+        liftMotorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);  // for odometry
         liftMotorF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotorB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotorF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -408,10 +413,10 @@ public class HardwareSlimbot
         rightOdometerCount = rightOdometer.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
         // Parse left odometry encoder
         leftOdometerPrev   = leftOdometerCount;
-//      leftOdometerCount  = leftOdometer.getCurrentPosition();  // Must be POSITIVE when bot moves FORWARD
+        leftOdometerCount  = -liftMotorB.getCurrentPosition();   // Must be POSITIVE when bot moves FORWARD
         // Parse rear odometry encoder
         strafeOdometerPrev  = strafeOdometerCount;
-//      strafeOdometerCount = strafeOdometer.getCurrentPosition();
+        strafeOdometerCount = -liftMotorF.getCurrentPosition();  // Must be POSITIVE when bot moves RIGHT
 
         // Do we need to capture lift motor instrumentation data?
         if( liftMotorLogEnable ) {
@@ -497,6 +502,8 @@ public class HardwareSlimbot
         // Rotate the two servos in opposite direction
         leftTiltServo.setPosition(  0.5 + tiltAmount );
         rightTiltServo.setPosition( 0.5 - tiltAmount );
+        // Store the current setting
+        currentTilt = tiltAmount;
     } // grabberSetTilt
 
     /*--------------------------------------------------------------------------------------------*/
