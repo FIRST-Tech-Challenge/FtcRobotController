@@ -54,8 +54,9 @@ public class Crane implements Subsystem {
     public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.05, 0.0001, 0.005);
     public static double SHOULDER_TOLERANCE = 1;
     public static double SHOULDER_POWER = 1.0;
-    public static double SHOULDER_ADJUST = 7.5;
-    public static double EXTEND_ADJUST = .075;
+    public static double SHOULDER_ADJUST = 13;
+    public static double EXTEND_ADJUST = .05;
+    public static double TURRET_ADJUST = 20;
 
     public static double kE = 0.0;
     public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(30, 0, 0.005);
@@ -487,7 +488,7 @@ public class Crane implements Subsystem {
     }
 
     public void adjustTurretAngle(double speed){
-        targetTurretAngle = robot.turret.getHeading() + (10 * speed);
+        targetTurretAngle = robot.turret.getHeading() + (TURRET_ADJUST * speed);
     }
 
     public void adjustDistance(double speed){

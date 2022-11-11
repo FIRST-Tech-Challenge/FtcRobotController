@@ -23,7 +23,7 @@ public class Field {
 
     public Pose2d targetCoordinate;
 
-    public static double inchesPerGrid = 23.5;
+    public static double INCHES_PER_GRID = 23.5;
     public int fieldWidth = 12;
 
     HashMap<String, FieldObject[]> mapObjects = new HashMap<String, FieldObject[]>();
@@ -104,8 +104,8 @@ public class Field {
 
     public static Pose2d coordinatesToPose(Pose2d coordinate){
         return new Pose2d(
-                coordinate.getX()*inchesPerGrid + inchesPerGrid/2,
-                coordinate.getY()*inchesPerGrid + inchesPerGrid/2,
+                coordinate.getX()* INCHES_PER_GRID + INCHES_PER_GRID /2,
+                coordinate.getY()* INCHES_PER_GRID + INCHES_PER_GRID /2,
                 0
         );
     }
@@ -197,8 +197,8 @@ public class Field {
     public Pose2d poseToCoordinates(Pose2d currentPose){
         //todo
         return new Pose2d(
-                (currentPose.getX() - inchesPerGrid/2) / inchesPerGrid,
-                (currentPose.getY() - inchesPerGrid/2) / inchesPerGrid,
+                (currentPose.getX() - INCHES_PER_GRID /2) / INCHES_PER_GRID,
+                (currentPose.getY() - INCHES_PER_GRID /2) / INCHES_PER_GRID,
                 0);
 
     }

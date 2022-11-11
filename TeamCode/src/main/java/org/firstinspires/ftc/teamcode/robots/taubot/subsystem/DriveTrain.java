@@ -31,14 +31,17 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
+import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DiffyKinematics;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.PathLine;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
@@ -93,7 +96,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //PID LOOPS_______________________________________________________________________
 
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.1, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.5, 0, 0);
     public static double HEADING_PID_TOLERANCE = 1;
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
@@ -205,6 +208,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public void update(Canvas fieldOverlay) {
 
         // sensor reading
+        currentStateMachine.execute();
 
         leftVelocity = diffEncoderTicksToInches(leftMotor.getVelocity());
         rightVelocity = diffEncoderTicksToInches(rightMotor.getVelocity());
@@ -489,7 +493,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     }
     //version using a heading requested in degrees
     public boolean driveUntilDegrees(double driveDistance, double driveHeading, double driveSpeed) {
-        return driveUntil(driveDistance, Math.toRadians(driveHeading), driveSpeed);
+        return driveUntil(driveDistance, Math.toRadians(-driveHeading), driveSpeed);
     }
 
     //driveAsyncInitialized is only true when its currently driving
@@ -525,7 +529,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //request a turn in degrees units
     public boolean turnUntilDegrees(double turnAngle) {
-        return turnUntil(Math.toRadians(turnAngle));
+        return turnUntil(Math.toRadians(-turnAngle));
     }
 
     //see isDriving();
@@ -630,6 +634,57 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return Arrays.asList(
                 leftVelocity,
                 rightVelocity);
+    }
+
+    StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
+
+    public Articulation articulate(Articulation target, Position startingPosition){
+        Articulation articulation = target;
+        switch(articulation){
+            case  leftAuton:
+                currentStateMachine = Utils.getStateMachine(new Stage())
+                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID+4,0,20))
+                        .addState(() ->
+                                ((startingPosition == Position.START_LEFT )? turnUntilDegrees(-90):turnUntilDegrees(90))
+                        )
+                        .addState(() ->
+                                ((startingPosition == Position.START_LEFT )? driveUntilDegrees(Field.INCHES_PER_GRID,-90,20):driveUntilDegrees(-Field.INCHES_PER_GRID,90,20))
+                        )
+                        .addState(() -> {return true;})
+                        .build();;
+                break;
+            case middleAuton:
+                currentStateMachine = Utils.getStateMachine(new Stage())
+                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID+4,0,20))
+                        .addState(() ->
+                            ((startingPosition == Position.START_LEFT )? turnUntilDegrees(-90):turnUntilDegrees(90))
+                        )
+                        .addState(() -> {return true;})
+                        .build();
+                break;
+            case rightAuton:
+                currentStateMachine = Utils.getStateMachine(new Stage())
+                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID+4,0,20))
+                        .addState(() ->
+                                ((startingPosition == Position.START_LEFT )? turnUntilDegrees(-90):turnUntilDegrees(90))
+                        )
+                        .addState(() ->
+                                ((startingPosition == Position.START_LEFT )? driveUntilDegrees(-Field.INCHES_PER_GRID,-90,20):driveUntilDegrees(Field.INCHES_PER_GRID,90,20))
+                        )
+                        .addState(() -> {return true;})
+                        .build();;
+                break;
+            default:
+                break;
+
+        }
+        return target;
+    }
+
+    public enum Articulation{
+        leftAuton,
+        middleAuton,
+        rightAuton
     }
 
     public double getVoltage() {

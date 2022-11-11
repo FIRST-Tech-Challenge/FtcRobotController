@@ -103,18 +103,14 @@ public class DriverControls {
         robot.driveTrain.ManualTankDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
 
         // turret controls
-        if (notJoystickDeadZone(gamepad1.right_stick_x)) robot.crane.adjustTurretAngle(-gamepad1.right_stick_x);
-        if (notJoystickDeadZone(gamepad1.right_stick_y)) robot.crane.adjustShoulder(-gamepad1.right_stick_y);
+        if (notJoystickDeadZone(gamepad1.right_stick_x)) robot.crane.adjustTurretAngle(-Math.pow(gamepad1.right_stick_x,2));
+        if (notJoystickDeadZone(gamepad1.right_stick_y)) robot.crane.adjustShoulder(-Math.pow(gamepad1.right_stick_y,2));
 
-        if (gamepad1.right_trigger>.05) robot.crane.adjustExtend(gamepad1.right_trigger);
-        if (gamepad1.left_trigger>.05) robot.crane.adjustExtend(-gamepad1.left_trigger);
+        if (gamepad1.right_trigger>.02) robot.crane.adjustExtend(gamepad1.right_trigger);
+        if (gamepad1.left_trigger>.02) robot.crane.adjustExtend(-gamepad1.left_trigger);
 
-        if(stickyGamepad1.a) {
-            robot.crane.pickupSequence();
-        }
-
-        if(stickyGamepad1.b){
-            robot.crane.dropSequence();
+        if(stickyGamepad1.y) {
+            robot.crane.toggleGripper();
         }
     }
 

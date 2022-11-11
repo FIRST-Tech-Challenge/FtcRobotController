@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.taubot;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.Position;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
 
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
@@ -25,7 +26,7 @@ public class Autonomous {
             leftNoRR, rightNoRR, blueDownNoRR, redDownNoRR,
             blueUpSimple, redUpSimple, blueDownSimple, redDownSimple;
     // misc. routines
-    public StateMachine backAndForth, square, turn, lengthTest, diagonalTest, squareNoRR;
+    public StateMachine backAndForth, square, turn, lengthTest, diagonalTest, squareNoRR, Auton;
 
     public Autonomous(Robot robot) {
         this.robot = robot;
@@ -119,20 +120,29 @@ public class Autonomous {
                         .build();
         square = trajectorySequenceToStateMachine(squareSequence);
 
+        Auton = Utils.getStateMachine(new Stage())
+                .addMineralState(
+                        () -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> { robot.driveTrain.articulate(DriveTrain.Articulation.leftAuton,startingPosition); return true; },
+                        () -> { robot.driveTrain.articulate(DriveTrain.Articulation.middleAuton,startingPosition); return true; },
+                        () -> { robot.driveTrain.articulate(DriveTrain.Articulation.rightAuton,startingPosition); return true; }
+                )
+                .build();
+
         squareNoRR = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.driveTrain.driveUntilDegrees(24, 0,20))
                 .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.turnUntilDegrees(90))
+                .addState(() -> robot.driveTrain.turnUntilDegrees(-90))
                 .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 90,20))
+                .addState(() -> robot.driveTrain.driveUntilDegrees(24, -90,20))
                 .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.turnUntilDegrees(180))
+                .addState(() -> robot.driveTrain.turnUntilDegrees(-180))
                 .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 180,20))
+                .addState(() -> robot.driveTrain.driveUntilDegrees(24, -180,20))
                 .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.turnUntilDegrees(270))
+                .addState(() -> robot.driveTrain.turnUntilDegrees(-270))
                 .addTimedState(1f, () -> {}, () -> {})
-                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 270, 20))
+                .addState(() -> robot.driveTrain.driveUntilDegrees(24, -270, 20))
                 .addTimedState(1f, () -> {}, () -> {})
                 .addState(() -> robot.driveTrain.turnUntilDegrees(0))
                 .addTimedState(1f, () -> {}, () -> {})

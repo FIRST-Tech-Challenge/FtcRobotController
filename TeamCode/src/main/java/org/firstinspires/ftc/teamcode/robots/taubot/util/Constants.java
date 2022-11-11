@@ -78,8 +78,8 @@ public class Constants {
 
     public enum Position {
         ORIGIN(new Pose2d(0, 9, Math.toRadians(0))), //not a legal starting position - should never be actually used
-        START_LEFT(new Pose2d(-1.5 * Field.inchesPerGrid, 9, Math.toRadians(0))),
-        START_RIGHT(new Pose2d(1.5 * Field.inchesPerGrid, 9, Math.toRadians(0))),
+        START_LEFT(new Pose2d(-1.5 * Field.INCHES_PER_GRID, 9, Math.toRadians(0))),
+        START_RIGHT(new Pose2d(1.5 * Field.INCHES_PER_GRID, 9, Math.toRadians(0))),
 
         RED_SHIPPING_HUB(new Pose2d(-12, -24)),
         BLUE_SHIPPING_HUB(new Pose2d(-12, 24));
