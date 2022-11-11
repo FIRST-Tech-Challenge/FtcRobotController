@@ -40,7 +40,6 @@ abstract public class BaseTeleOp extends BaseOpMode {
      * if dpad up, linear slides go up
      * if dpad down, linear slides go down
      */
-
     public void driveMechanism() {
         if (gamepad2.dpad_up) {
             motorSlideLeft.setPower(mechanismSpeed);
