@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Grnd_Junc_Sig_Prk101", group="Autonomous")
+@Autonomous(name="Signal", group="Autonomous")
 //@Disabled
 public class Signal extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
