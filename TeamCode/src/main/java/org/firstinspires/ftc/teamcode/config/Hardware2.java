@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Hardware2 {
@@ -14,10 +16,11 @@ public class Hardware2 {
     public DcMotor backLeftMotor = null;
     public DcMotor backRightMotor = null;
     public DcMotor verticalLiftMotor = null;
-    public CRServo intakeServo = null;
+    public Servo leftClaw = null;
+    public Servo rightClaw = null;
 
     public boolean runThisWithEncoder = true;
-    public BNO055IMU imu;
+    //public BNO055IMU imu;
 
     // Other variable names
     HardwareMap hwMap;
@@ -49,18 +52,18 @@ public class Hardware2 {
         backLeftMotor = hwMap.dcMotor.get("back_left");
         backRightMotor = hwMap.dcMotor.get("back_right");
         verticalLiftMotor = hwMap.dcMotor.get("vertical_lift");
-        intakeServo = hwMap.crservo.get("intake_servo");
+        leftClaw = hwMap.servo.get("leftClaw");
+        rightClaw = hwMap.servo.get("rightClaw");
 
 
         // Initialize Motors
 
 
-        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        verticalLiftMotor.setDirection(DcMotor.Direction.REVERSE);
-        intakeServo.resetDeviceConfigurationForOpMode();
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        verticalLiftMotor.setDirection(DcMotor.Direction.FORWARD);
 
 
 
@@ -146,6 +149,27 @@ public class Hardware2 {
         return period.time();
 
     }
+    public DcMotor getBackLeftDrive() {
+        return backLeftMotor;
+    }
+    public DcMotor getLeftDrive() {
+        return frontLeftMotor;
+    }
+    public DcMotor getBackRightDrive() {
+        return backRightMotor;
+    }
+    public DcMotor getRightDrive() {
+        return frontRightMotor;
+    }
+    public Servo getLeftClaw() {
+        return leftClaw;
+    }
 
+    public Servo getRightClaw() {
+        return rightClaw;
+    }
 
+    public DcMotor getArm() { return verticalLiftMotor; }
 }
+
+
