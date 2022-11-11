@@ -8,15 +8,15 @@ public class DistanceSensorFunction {
 
     private DistanceSensor sensorRange;
 
-    public void init()
-    {
-        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
-    }
+//    public void init()
+//    {
+//        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
+//    }
 
     public DistanceSensorFunction(DistanceSensor _sensorRange)
     {
         sensorRange = _sensorRange;
-        init();
+//        init();
     }
 
 
