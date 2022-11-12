@@ -139,7 +139,7 @@ public class AutonomousRight extends LinearOpMode {
     static final int COUNTS_PER_INCH_DRIVE = 45; // robot drive 1 INCH. Back-forth moving
     static final int COUNTS_PER_INCH_STRAFE = 55; // robot strafe 1 INCH. Left-right moving. need test
     double robotAutoLoadMovingDistance = 1.0; // in INCH
-    double robotAutoUnloadMovingDistance = 3.5; // in INCH
+    double robotAutoUnloadMovingDistance = 3.0; // in INCH
     static final int SLOW_DOWN_DISTANCE = 10; // slow down in the final 10 inch
 
     // IMU related
@@ -611,20 +611,19 @@ public class AutonomousRight extends LinearOpMode {
             readColorSensor(sleeveColor); // reading sleeve signal
             Logging.log("Autonomous - complete Sleeve color read.");
             // push sleeve cone out, and reading background color for calibration
-            robotRunToPosition(36.0, true);
+            robotRunToPosition(39.0, true);
         }
         parkingLocation = calculateParkingLocation(sleeveColor, backgroundColor);
         Logging.log("Autonomous - parking lot aisle location: %.2f", parkingLocation);
 
         // lift slider during strafe to high junction
         setSliderPosition(HIGH_JUNCTION_POS);
-        robotRunToPosition(-4.0, true); // get rid of sleeve cone
+        robotRunToPosition(-6.0, true); // get rid of sleeve cone
 
-
-        robotRunToPosition(-12.0, false); // strafe robot half mat to left side
+        robotRunToPosition(-16.0, false); // strafe robot half mat to left side
         waitSliderRun(); // make sure slider has been lifted.
 
-        robotRunToPosition(7.5, true); // drive robot V to high junction
+        robotRunToPosition(8, true); // drive robot V to high junction
         autoUnloadCone();
         Logging.log("Autonomous - pre-load cone has been unloaded.");
         // lower down slider after unloading cone
@@ -643,7 +642,7 @@ public class AutonomousRight extends LinearOpMode {
             Logging.log("Autonomous - imu angle after turn: %.2f", lastAngles.firstAngle);
 
             // strafe to the left a little bit to compensate for the shift from 90 degree rotation(currently 1 inch).
-            robotRunToPosition(-1.0, false);
+            robotRunToPosition(-2.0, false);
 
             // adjust position and double rotation for accurate 90
             imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -651,7 +650,7 @@ public class AutonomousRight extends LinearOpMode {
             Logging.log("Autonomous - imu angle after cone unloading correction: %.2f", lastAngles.firstAngle);
 
             // drive robot to loading area
-            robotRunToPosition(38.0, true);
+            robotRunToPosition(40.0, true);
 
             // load cone
             autoLoadCone(coneStack5th - coneLoadStackGap * autoLoop);
@@ -691,7 +690,7 @@ public class AutonomousRight extends LinearOpMode {
             Logging.log("Autonomous - slider is positioned to high junction.");
 
             // moving forward V to junction
-            robotRunToPosition(8.5, true); // adjust according to testing
+            robotRunToPosition(9, true); // adjust according to testing
 
             // unload cone & adjust
             autoUnloadCone();
@@ -714,12 +713,13 @@ public class AutonomousRight extends LinearOpMode {
         Orientation imuAngles1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         Logging.log("Autonomous - imu angle is: %.2f", imuAngles1.firstAngle);
 
-        robotRunToPosition(-24.0, true); // drive robot to parking mat
-        Logging.log("Autonomous -  finished parking.");
-
         // lower slider in prep for tele-op
         setSliderPosition(GROUND_POSITION);
-        Logging.log("Autonomous - slider lowered, autonomous complete.");
+
+        //drive robot to parking mat
+        robotRunToPosition(-21.0, true);
+        Logging.log("Autonomous -  finished parking.");
+        Logging.log("Autonomous - autonomous complete.");
     }
 
     /**
@@ -777,7 +777,7 @@ public class AutonomousRight extends LinearOpMode {
                     color = "green";
                     break;
                 case 2: // blue
-                    location = 3.0 * 12; // parking lot #3 (blue), third mat
+                    location = 3.0 * 12 - 4; // parking lot #3 (blue), third mat
                     color = "blue";
                     break;
                 default:
