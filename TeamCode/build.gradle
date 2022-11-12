@@ -27,5 +27,6 @@ dependencies {
 
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
     implementation 'org.openftc:easyopencv:1.5.2'
+    implementation 'org.openftc:apriltag:1.1.0'
 
 }
