@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name ="BlueBluePlace", group = "A")
+@Autonomous(name ="BBLow", group = "A")
 public class BlueBluePlace extends DriveMethods {
     public void runOpMode() {
         initMotorsBlue();
