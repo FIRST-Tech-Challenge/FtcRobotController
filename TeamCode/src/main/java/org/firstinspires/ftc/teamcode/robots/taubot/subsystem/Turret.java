@@ -55,6 +55,7 @@ public class Turret implements Subsystem {
         turretPID.setOutputRange(-1.0, 1.0);
         turretPID.setTolerance(TURRET_TOLERANCE);
         turretPID.enableIntegralZeroCrossingReset(false);
+        turretPID.setIntegralCutIn(5); //suppress integral until within 5 degrees of target
         turretPID.enable();
         initIMU(turretIMU);
     }
@@ -86,6 +87,7 @@ public class Turret implements Subsystem {
             initialized = true;
         }
 
+        //update current IMU heading before doing any other calculations
         heading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
 
         turretPID.setPID(TURRET_PID);
@@ -93,8 +95,8 @@ public class Turret implements Subsystem {
         turretPID.setSetpoint(targetHeading);
         turretPID.setInput(heading);
         double correction = turretPID.performPID();
-        power = turretPID.onTarget() ? 0 : correction;
-        motor.setPower(power);
+        //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
+        motor.setPower(correction);
     }
 
     public void stop() {
@@ -111,6 +113,15 @@ public class Turret implements Subsystem {
 
     public double getHeading() {
         return heading;
+    }
+
+    /**
+     * assign the current heading of the robot to a specific angle
+     * @param angle the value that the current heading will be assigned to
+     */
+    public void setHeading(double angle){
+        heading = angle;
+        initialized = false; //triggers recalc of heading offset at next IMU update cycle
     }
 
     Pose2d localPosition;
