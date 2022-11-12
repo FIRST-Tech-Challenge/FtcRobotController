@@ -138,7 +138,7 @@ public class AutoRedLeft extends LinearOpMode {
                     .turn(Math.toRadians(90))
                     .forward(25)
                     .turn(Math.toRadians(90))
-                    .forward(55)
+                    .forward(50)
                     .turn(Math.toRadians(90))
                     .forward(30)
                     .build();
@@ -157,7 +157,7 @@ public class AutoRedLeft extends LinearOpMode {
                     .turn(Math.toRadians(90))
                     .forward(25)
                     .turn(Math.toRadians(90))
-                    .forward(55)
+                    .forward(50)
                     .turn(Math.toRadians(90))
                     .build();
         }
