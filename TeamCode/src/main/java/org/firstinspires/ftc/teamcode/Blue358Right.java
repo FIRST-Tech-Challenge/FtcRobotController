@@ -75,12 +75,11 @@ import java.util.List;
 public class Blue358Right extends Driving358
 {
     int hello=9;
-    private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     private static final String[] LABELS = {
-            "Ball",
-            "Cube",
-            "Duck",
-            "Marker"
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
     };
     Hardware358 robot = new Hardware358();
     public int x;
@@ -136,7 +135,7 @@ public class Blue358Right extends Driving358
         //--actual code----------
         //=======================--------------------------------------------------------
         int parkLevel = levelDetection();   // change to todays game
-        telemetry.addData("Duck Pos", parkLevel);
+        telemetry.addData("Level:", parkLevel);
         telemetry.update();
         telemetry.addData("Action", "Initial Move");
         telemetry.update();
@@ -212,10 +211,10 @@ public class Blue358Right extends Driving358
                                 recognition.getRight(), recognition.getBottom());
                         if (recognition.getLabel().equalsIgnoreCase("Duck")) {
                             if (recognition.getLeft() >250.0) {
-                                telemetry.addData("Duck Location", "Warehouse Far");
+                                telemetry.addData("Level", "3");
                                 return 3;
                             } else if (recognition.getLeft() < 250.0) {
-                                telemetry.addData("Duck Location", "Middle");
+                                telemetry.addData("Level", "2");
                                 return 2;
                             }
                         }
@@ -259,11 +258,15 @@ public class Blue358Right extends Driving358
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.minResultConfidence = 0.75f;
         tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 320;
+        tfodParameters.inputSize = 300;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+
+        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
+        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
 }

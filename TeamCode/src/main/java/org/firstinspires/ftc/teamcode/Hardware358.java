@@ -93,8 +93,8 @@ public class Hardware358 {
         m.setPower(0);
         lift.setPower(0);
 
-        leftServo.setPosition(0.5);
-        rightServo.setPosition(0.5);
+        leftServo.setPosition(1);
+        rightServo.setPosition(0);
 
         lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

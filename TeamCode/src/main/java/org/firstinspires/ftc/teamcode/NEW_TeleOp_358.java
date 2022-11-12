@@ -64,23 +64,23 @@ public class NEW_TeleOp_358 extends OpMode {
             double v1 = 0;
             double v2 = 0;
             double vm = 0;
-            if (Math.abs(gamepad1.right_stick_x) > 0.2)
+            if (Math.abs(gamepad1.left_stick_x) > 0.2)
             {
-                stickX = gamepad1.right_stick_x;
+                stickX = gamepad1.left_stick_x;
                 v1 = stickX;
                 v2 = -stickX;
                 //stickY = 0;
             }
             if (Math.abs(gamepad1.left_stick_y) > 0.2){
                 stickY = gamepad1.left_stick_y;
-                v1 = stickY;
+                v1 = -stickY;
                 v2 = -stickY;
                 //stickX = 0;
             }
-//            if (Math.abs(gamepad1.right_stick_x) > 0.2)
-//            {
-//                vm = gamepad1.right_stick_x;
-//            }
+            if (Math.abs(gamepad1.right_stick_y) > 0.2)
+            {
+                vm = gamepad1.right_stick_y;
+            }
 //
 //            //variables
 //           if(Math.abs(stickY) > stickX)
@@ -110,7 +110,7 @@ public class NEW_TeleOp_358 extends OpMode {
             robot.rf.setPower(-speedModifier * v2 * precisionActive);
             robot.lb.setPower(-speedModifier * v1 * precisionActive);
             robot.rb.setPower(-speedModifier * v2 * precisionActive);
-            robot.m.setPower(-speedModifier * vm * precisionActive);
+            robot.lift.setPower(-speedModifier * vm * precisionActive);
 
             telemetry.addData("fLPower", -speedModifier * v1 * precisionActive);
             telemetry.addData("fRPower", -speedModifier * v2 * precisionActive);
@@ -135,19 +135,19 @@ public class NEW_TeleOp_358 extends OpMode {
         //======================================
         //----------CLAW ROTATOR----------------
         //======================================
-        if(gamepad1.x){
+        if(gamepad1.right_trigger > 0.5){
             robot.leftServo.setPosition(1);
-            robot.rightServo.setPosition(1);
+            robot.rightServo.setPosition(0);
             telemetry.addData("Button X", gamepad1.x);
         }
         else if(gamepad1.b){
-            robot.leftServo.setPosition(0.0);
-            robot.rightServo.setPosition(0.0);
+            robot.leftServo.setPosition(0);
+            robot.rightServo.setPosition(0);
             telemetry.addData("Button B", gamepad1.b);
         }
         else {
-            robot.leftServo.setPosition(0.5);
-            robot.rightServo.setPosition(0.5);
+            robot.leftServo.setPosition(0);
+            robot.rightServo.setPosition(1);
             telemetry.addData("Neither", gamepad1.b);
         }
             //        if (gamepad1.dpad_up || gamepad2.dpad_up) {
