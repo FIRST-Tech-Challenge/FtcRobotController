@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -102,18 +105,65 @@ public class AutoRedLeft extends LinearOpMode {
             telemetry.addLine("No tag snapshot available, never sighted(");
             telemetry.update();
         }
-
+        TrajectorySequence seq = null;
+        Pose2d pos = new Pose2d(-35.5, -64.75, Math.toRadians(90));
+        robot.setPoseEstimate(pos);
         if (tagOfInterest.id == LEFT) {
             //insert trajectories for parking zone 1
-
+            seq = robot.trajectorySequenceBuilder(pos)
+                    .forward(17.5)
+                    .turn(Math.toRadians(-90))
+                    .forward(4)
+                    //use claw
+                    .back(4)
+                    .turn(Math.toRadians(-90))
+                    .forward(17.5)
+                    .turn(Math.toRadians(-90))
+                    .forward(25)
+                    .turn(Math.toRadians(-90))
+                    .forward(25)
+                    .build();
         }
 
         else if (tagOfInterest.id == MIDDLE) {
             //insert trajectories for parking zone 2
+            seq = robot.trajectorySequenceBuilder(pos)
+                    .forward(17.5)
+                    .turn(Math.toRadians(-90))
+                    .forward(4)
+                    //use claw
+                    .back(4)
+                    .turn(Math.toRadians(-90))
+                    .forward(17.5)
+                    .turn(Math.toRadians(90))
+                    .forward(25)
+                    .turn(Math.toRadians(90))
+                    .forward(55)
+                    .turn(Math.toRadians(90))
+                    .forward(30)
+                    .build();
         }
 
         else if (tagOfInterest.id == RIGHT) {
             //insert trajectories for parking zone 3
+            seq = robot.trajectorySequenceBuilder(pos)
+                    .forward(17.5)
+                    .turn(Math.toRadians(-90))
+                    .forward(4)
+                    //use claw
+                    .back(4)
+                    .turn(Math.toRadians(-90))
+                    .forward(17.5)
+                    .turn(Math.toRadians(90))
+                    .forward(25)
+                    .turn(Math.toRadians(90))
+                    .forward(55)
+                    .turn(Math.toRadians(90))
+                    .build();
+        }
+        waitForStart();
+        if(!isStopRequested() && seq != null){
+            robot.followTrajectorySequence(seq);
         }
 
 
