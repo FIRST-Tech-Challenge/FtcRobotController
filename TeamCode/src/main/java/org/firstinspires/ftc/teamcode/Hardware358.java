@@ -38,6 +38,8 @@ public class Hardware358 {
     public DcMotor lb = null; // left back
     public DcMotor m = null; //middle
     public DcMotor lift = null;
+    public Servo rightServo = null;
+    public Servo leftServo = null;
 //    private DcMotor leftDrive   = null;
 //    private DcMotor rightDrive  = null;
 //    private DcMotor armMotor = null;
@@ -73,7 +75,8 @@ public class Hardware358 {
         lb = HwMap.get(DcMotor.class, "lb");
         m = HwMap.get(DcMotor.class, "mid");
         lift = HwMap.get(DcMotor.class, "lift");
-
+        leftServo = HwMap.get(Servo.class,"leftServo");
+        rightServo = HwMap.get(Servo.class,"rightServo");
 
 
         lf.setDirection(DcMotor.Direction.FORWARD);
@@ -89,6 +92,9 @@ public class Hardware358 {
         rb.setPower(0);
         m.setPower(0);
         lift.setPower(0);
+
+        leftServo.setPosition(0.5);
+        rightServo.setPosition(0.5);
 
         lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

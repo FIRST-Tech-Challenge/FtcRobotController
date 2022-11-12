@@ -58,7 +58,7 @@ public class NEW_TeleOp_358 extends OpMode {
         //======================================
         //------------WHEEL CODE----------------
         //======================================
-        {
+
             double stickX = 0;
             double stickY = 0;
             double v1 = 0;
@@ -118,8 +118,8 @@ public class NEW_TeleOp_358 extends OpMode {
             telemetry.addData("bRPower", -speedModifier * v2 * precisionActive);
             telemetry.addData("MPower", -speedModifier * vm * precisionActive);
             telemetry.addData("LEFTPower", gamepad1.left_stick_x);
-            telemetry.addData("DEBUGX", v1);
-            telemetry.addData("DEBUGY", v2);
+
+
 
 
             telemetry.addData("Encoder port 1 back left", robot.lb.getCurrentPosition());
@@ -128,34 +128,29 @@ public class NEW_TeleOp_358 extends OpMode {
             telemetry.addData("Encoder port 4 back left", robot.lb.getCurrentPosition());
             telemetry.addData("Encoder port 0 back left", robot.m.getCurrentPosition());
 
-        }
+
 
         telemetry.addLine();
 
         //======================================
-        //----------QUACK DELIVERY--------------
-        //======================================
-
-        if (gamepad1.y || gamepad2.y){
-           // robot.duckSpinner.setPower(.1*precisionActive);
-            telemetry.addData("Duck Spinner", "Wheeeee");
-        }
-        else if (gamepad1.x || gamepad2.x){
-         ///   robot.duckSpinner.setPower(-.1*precisionActive);
-            telemetry.addData("Duck Spinner", "Down"); //hello. i am watching.
-
-        }
-        else {
-          //  robot.duckSpinner.setPower(0);
-            telemetry.addData("Duck Spinner", "Off"); //ripped hamilton is near
-        }
-
-        //======================================
         //----------CLAW ROTATOR----------------
         //======================================
-
-
-//        if (gamepad1.dpad_up || gamepad2.dpad_up) {
+        if(gamepad1.x){
+            robot.leftServo.setPosition(1);
+            robot.rightServo.setPosition(1);
+            telemetry.addData("Button X", gamepad1.x);
+        }
+        else if(gamepad1.b){
+            robot.leftServo.setPosition(0.0);
+            robot.rightServo.setPosition(0.0);
+            telemetry.addData("Button B", gamepad1.b);
+        }
+        else {
+            robot.leftServo.setPosition(0.5);
+            robot.rightServo.setPosition(0.5);
+            telemetry.addData("Neither", gamepad1.b);
+        }
+            //        if (gamepad1.dpad_up || gamepad2.dpad_up) {
 //            robot.rotateRight.setPower(-.2 * precisionActive);
 //            robot.rotateLeft.setPower(-.2 * precisionActive);
 //            telemetry.addData("Rotator State", "Up"); //be careful wherever you go.
@@ -177,7 +172,7 @@ public class NEW_TeleOp_358 extends OpMode {
 //            robot.chuteServo.setPosition(0.5);
 //        }
 
-        telemetry.addLine();
+//        telemetry.addLine();
 //        telemetry.addData("In the DANGER ZONE", robot.magStopBottom.getValue());
 //        telemetry.addData("Claw Rotator Position:", robot.rotateRight.getCurrentPosition());
 //        telemetry.addData("Claw Rotator Position:", robot.frontLeft.getCurrentPosition());
