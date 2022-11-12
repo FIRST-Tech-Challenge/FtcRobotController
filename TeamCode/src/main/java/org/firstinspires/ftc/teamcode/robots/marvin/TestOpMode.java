@@ -22,6 +22,7 @@ public class TestOpMode extends OpMode {
     // motor power
     private int armPosition = 0;
     private int elbowPositon = 0;
+    private double wristPosition = 0;
     // arm and claw variables
     private int currArmPos = 0;
     private int maxArm = Integer.MAX_VALUE;
@@ -58,6 +59,7 @@ public class TestOpMode extends OpMode {
         elbow.setPower(1);
 //        elbow.setTargetPosition(-505);
         elbowPositon = elbow.getCurrentPosition();
+        wristPosition = wrist.getPosition();
         wrist.setPosition(0);
     }
     @Override
@@ -105,6 +107,7 @@ public class TestOpMode extends OpMode {
     {
         telemetry.addData("arm position: ", arm.getCurrentPosition());
         telemetry.addData("elbow position: ", elbow.getCurrentPosition());
+        telemetry.addData("wrist position: ", wrist.getPosition());
         if(gamepad1.dpad_down)
         {
             if(currArmPos < 0 )
@@ -130,20 +133,20 @@ public class TestOpMode extends OpMode {
         }
         if (gamepad1.left_trigger > DEADZONE)
         {
-            wrist.setPosition(1);
+            wrist.setPosition(wrist.getPosition()+.02);
         }
         if (gamepad1.right_trigger > DEADZONE)
         {
-            wrist.setPosition(0);
+            wrist.setPosition(wrist.getPosition()-.02);
         }
         arm.setTargetPosition(currArmPos);
     }
     public void clawMove() {
         telemetry.addData("Claw servo position:", claw.getPosition());
         if (gamepad1.left_bumper)
-            claw.setPosition(.5);
+            claw.setPosition(claw.getPosition()+.02);
         if (gamepad1.right_bumper)
-            claw.setPosition(0);
+            claw.setPosition(claw.getPosition()-.02);
     }
 
 }

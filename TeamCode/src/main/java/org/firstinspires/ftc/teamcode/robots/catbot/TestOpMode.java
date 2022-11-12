@@ -7,10 +7,23 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.concurrent.TimeUnit;
+
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.robots.catbot.util.Utils;
+import org.firstinspires.ftc.teamcode.statemachine.Stage;
+import org.firstinspires.ftc.teamcode.statemachine.State;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 @TeleOp(name="Iron Giant OpMode", group="Challenge")
 public class TestOpMode extends OpMode {
+    private boolean auton = true;
+//    private StateMachine autonStateMachine = Utils.getStateMachine(new Stage())
+//            .addState(() -> driveToD())
+//
+////            .addState(() -> driveToD(1))
+////            .addState(() -> driveToD(2))
+//            .build();
     //variable setup
     private DcMotor motorFrontRight = null;
     private DcMotor motorBackLeft = null;
@@ -40,6 +53,34 @@ public class TestOpMode extends OpMode {
     private int currElevTics = 0;
     private double MOTORSTALLVALUE = 12.76;
 
+//    public boolean driveToD() {
+//    double powerLeft = 0;
+//    double powerRight = 0;
+//    boolean done = false;
+//        try {
+//            TimeUnit.SECONDS.sleep(5);
+//        } catch (InterruptedException e) {
+//
+//        }
+//        done = true;
+//    while(!done) {
+//        powerLeft = 1;
+//        powerRight = 1;
+//    }
+//    if(done) {
+//        powerLeft = 0;
+//        powerRight = 0;
+//        return done;
+//    }
+//        while(auton) {
+//            motorFrontLeft.setPower(powerLeft);
+//            motorFrontRight.setPower(powerRight);
+//            motorBackRight.setPower(powerRight);
+//            motorBackLeft.setPower(powerLeft);
+//        }
+//    return false;
+//    }
+
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing " + this.getClass() + "...");
@@ -52,6 +93,8 @@ public class TestOpMode extends OpMode {
 
     @Override
     public void loop() {
+//        autonStateMachine.execute();
+
         //tankDrive();
         mechanumDrive();
         elevatorMove();
@@ -77,8 +120,8 @@ public class TestOpMode extends OpMode {
     }
 
     public void mechanumDrive() {
-        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+        double r = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+        double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
         double rightX = gamepad1.right_stick_x*.65;
         final double v1 = r * Math.cos(robotAngle) + rightX;
         final double v2 = r * Math.sin(robotAngle) - rightX;
@@ -120,7 +163,7 @@ public class TestOpMode extends OpMode {
     public void clawMove() {
         telemetry.addData("Claw servo position:", claw.getPosition());
         if (gamepad1.left_bumper)
-            claw.setPosition(.5);
+            claw.setPosition(1);
         if (gamepad1.right_bumper)
             claw.setPosition(.05);
     }
