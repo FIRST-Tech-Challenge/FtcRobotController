@@ -21,13 +21,17 @@ public class GrbberTest extends DriveMethods{
             telemetry.update();
             if (i<50){
                 grabber.setPosition(release);
-                telemetry.addLine("Servo Position: "+ grabber.getPosition());
                 telemetry.update();
                 sleep(3000);
                 grabber.setPosition(clamp);
-                telemetry.addLine("Servo Position: "+ grabber.getPosition());
+                telemetry.addLine("Clamp: "+ grabber.getPosition());
                 telemetry.update();
                 sleep(3000);
+//                This code is to locate approx location of servo location
+//                grabber.setPosition(i*0.05);
+//                telemetry.addLine("Servo Position: "+ grabber.getPosition());
+//                telemetry.update();
+//                sleep(2000);
                 i++;
             }
 
