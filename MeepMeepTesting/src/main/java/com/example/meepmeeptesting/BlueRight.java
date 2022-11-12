@@ -21,13 +21,17 @@ public class BlueRight {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(35.5, -60, Math.toRadians(180)))
+                                drive.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
+                                        .turn(Math.toRadians(90))
                                         .forward(12)
                                         .turn(Math.toRadians(-90))
+                                        .forward(3)
+                                        // use claw
+                                        .back(3)
                                         .turn(Math.toRadians(90))
-                                        .forward(11)
+                                        .forward(14)
                                         .turn(Math.toRadians(-90))
-                                        .forward(45)
+                                        .forward(26)
                                         .build()
                         );
                 break;
@@ -38,13 +42,17 @@ public class BlueRight {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(35.5, -60, Math.toRadians(180)))
+                                drive.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
+                                        .turn(Math.toRadians(90))
                                         .forward(12)
                                         .turn(Math.toRadians(-90))
-                                        .turn(Math.toRadians(90))
-                                        .forward(11)
+                                        .forward(3)
+                                        // use claw
+                                        .back(3)
                                         .turn(Math.toRadians(-90))
-                                        .forward(25)
+                                        .forward(10)
+                                        .turn(Math.toRadians(90))
+                                        .forward(26)
                                         .build()
                         );
                 break;
@@ -55,11 +63,17 @@ public class BlueRight {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(35.5, -60, Math.toRadians(180)))
+                                drive.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
+                                        .turn(Math.toRadians(90))
                                         .forward(12)
                                         .turn(Math.toRadians(-90))
+                                        .forward(3)
+                                        // use claw
+                                        .back(3)
+                                        .turn(Math.toRadians(-90))
+                                        .forward(35)
                                         .turn(Math.toRadians(90))
-                                        .forward(11)
+                                        .forward(26)
                                         .build()
                         );
 
@@ -78,5 +92,8 @@ public class BlueRight {
 
     }
 }
+
+
+
 
 
