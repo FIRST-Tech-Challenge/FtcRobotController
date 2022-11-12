@@ -37,6 +37,7 @@ public class Hardware358 {
     public DcMotor rb = null; // right back
     public DcMotor lb = null; // left back
     public DcMotor m = null; //middle
+    public DcMotor lift = null;
 //    private DcMotor leftDrive   = null;
 //    private DcMotor rightDrive  = null;
 //    private DcMotor armMotor = null;
@@ -70,23 +71,31 @@ public class Hardware358 {
         rf = HwMap.get(DcMotor.class, "rf");
         rb = HwMap.get(DcMotor.class, "rb");
         lb = HwMap.get(DcMotor.class, "lb");
+        m = HwMap.get(DcMotor.class, "mid");
+        lift = HwMap.get(DcMotor.class, "lift");
 
 
 
-        lb.setDirection(DcMotor.Direction.REVERSE);
-        rb.setDirection(DcMotor.Direction.REVERSE);
         lf.setDirection(DcMotor.Direction.FORWARD);
-        rf.setDirection(DcMotor.Direction.FORWARD);
+        rf.setDirection(DcMotor.Direction.REVERSE);
+        lb.setDirection(DcMotor.Direction.FORWARD);
+        rb.setDirection(DcMotor.Direction.REVERSE);
+        m.setDirection(DcMotor.Direction.FORWARD);
+        lift.setDirection(DcMotor.Direction.FORWARD);
 
         lf.setPower(0);
         rf.setPower(0);
         lb.setPower(0);
         rb.setPower(0);
+        m.setPower(0);
+        lift.setPower(0);
 
         lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 //        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
