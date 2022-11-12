@@ -9,7 +9,7 @@ public class BlueLeft {
     // from top left corner
         public static void main(String[] args) {
             int signalZone = 1;
-            MeepMeep meepMeep = new MeepMeep(800);
+            MeepMeep meepMeep = new MeepMeep(500);
             RoadRunnerBotEntity myBot = null;
 
             switch (signalZone){
