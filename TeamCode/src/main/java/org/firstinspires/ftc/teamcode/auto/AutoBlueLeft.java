@@ -105,15 +105,15 @@ public class AutoBlueLeft extends LinearOpMode {
             telemetry.update();
         }
         TrajectorySequence seq = null;
-        robot.setPoseEstimate(new Pose2d(-37, 60, Math.toRadians(270)));
+        robot.setPoseEstimate(new Pose2d(37, 60, Math.toRadians(270)));
         if (tagOfInterest.id == LEFT) {
             //insert trajectories for parking zone 1
             // drive.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(270)))
-            seq = robot.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
+            seq = robot.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(270)))
                     .turn(Math.toRadians(90))
-                    .forward(22)
+                    .forward(26)
                     .turn(Math.toRadians(-90))
-                    .forward(37)
+                    .forward(40)
                     .turn(Math.toRadians(-90))
                     .forward(3)
                     .build();
@@ -123,15 +123,15 @@ public class AutoBlueLeft extends LinearOpMode {
             //insert trajectories for parking zone 2
             seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                     .turn(Math.toRadians(90))
-                    .forward(22)
+                    .forward(26)
                     .turn(Math.toRadians(-90))
-                    .forward(37)
+                    .forward(40)
                     .turn(Math.toRadians(-90))
                     .forward(3)
                     // use claw
                     .back(3)
                     .turn(Math.toRadians(-90))
-                    .forward(37)
+                    .forward(40)
                     .turn(Math.toRadians(90))
                     .forward(25)
                     .turn(Math.toRadians(90))
@@ -143,15 +143,15 @@ public class AutoBlueLeft extends LinearOpMode {
             //insert trajectories for parking zone 3
             seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                     .turn(Math.toRadians(90))
-                    .forward(22)
+                    .forward(26)
                     .turn(Math.toRadians(-90))
-                    .forward(37)
+                    .forward(40)
                     .turn(Math.toRadians(-90))
                     .forward(3)
                     // use claw
                     .back(3)
                     .turn(Math.toRadians(-90))
-                    .forward(37)
+                    .forward(40)
                     .turn(Math.toRadians(90))
                     .forward(46)
                     .turn(Math.toRadians(90))
