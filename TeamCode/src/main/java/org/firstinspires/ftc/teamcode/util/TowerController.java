@@ -14,8 +14,8 @@ public class TowerController {
     private DcMotor screw;
     private DcMotor uBar;
     private Servo intake;
-    private DigitalChannel highSensor;
-    private DigitalChannel lowSensor;
+//    private DigitalChannel highSensor;
+//    private DigitalChannel lowSensor;
     public boolean raiseTower;
     public boolean intakePos;
     public double uBarNum = 1;
@@ -35,47 +35,47 @@ public class TowerController {
         uBar.setDirection(DcMotor.Direction.FORWARD);
 
         //Setup sensors
-        DigitalChannel highSensor = hardwareMap.get(DigitalChannel.class, "highSensor");
-        DigitalChannel lowSensor = hardwareMap.get(DigitalChannel.class, "lowSensor");
-        highSensor.setMode(DigitalChannel.Mode.INPUT);
-        lowSensor.setMode(DigitalChannel.Mode.INPUT);
+//        DigitalChannel highSensor = hardwareMap.get(DigitalChannel.class, "highSensor");
+//        DigitalChannel lowSensor = hardwareMap.get(DigitalChannel.class, "lowSensor");
+//        highSensor.setMode(DigitalChannel.Mode.INPUT);
+//        lowSensor.setMode(DigitalChannel.Mode.INPUT);
 
         //setup encoder
         uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public void handleScrew() {
-        if(raiseTower){
-            if(highSensor.getState()){
-                screw.setPower(0);
-            }
-            else{
-                screw.setPower(1);
-            }
-        }
-        else{
-            if(lowSensor.getState()){
-                screw.setPower(0);
-            }
-            else{
-                screw.setPower(-1);
-            }
-        }
-    }
+//    public void handleScrew() {
+//        if(raiseTower){
+//            if(highSensor.getState()){
+//                screw.setPower(0);
+//            }
+//            else{
+//                screw.setPower(1);
+//            }
+//        }
+//        else{
+//            if(lowSensor.getState()){
+//                screw.setPower(0);
+//            }
+//            else{
+//                screw.setPower(-1);
+//            }
+//        }
+//    }
 
     public void handleUBar() {
         //set U bar to position depending on the uBarNum variable
         if (uBarNum == 1) {
-            drive((int) COUNTS_PER_INCH * 20, 1);
+            drive((int) COUNTS_PER_INCH * 1, 1);
         }
         if (uBarNum == 2) {
-            drive((int) COUNTS_PER_INCH * 40, 1);
+            drive((int) COUNTS_PER_INCH * 2, 1);
         }
         if (uBarNum == 3) {
-            drive((int) COUNTS_PER_INCH * 60, 1);
+            drive((int) COUNTS_PER_INCH * 3, 1);
         }
         if (uBarNum == 4) {
-            drive((int) COUNTS_PER_INCH * 80, 1);
+            drive((int) COUNTS_PER_INCH * 4, 1);
         }
     }
 
@@ -105,15 +105,19 @@ public class TowerController {
         //U Bar
         if(gamepad.b) {
             uBarLevel = 1;
+            handleUBar();
         }
         if(gamepad.a) {
             uBarLevel = 2;
+            handleUBar();
         }
         if(gamepad.x) {
             uBarLevel = 3;
+            handleUBar();
         }
         if(gamepad.y) {
             uBarLevel = 4;
+            handleUBar();
         }
 
         //Intake
