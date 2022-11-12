@@ -14,8 +14,16 @@ public class Jank_Auto extends LinearOpMode {
     private DcMotorEx motorBackRight;
     private DcMotorEx motorFrontLeft;
     ElapsedTime timer = new ElapsedTime();
-    int time = 100;
-    public Jank_Auto(){
+    int time = 1750;
+
+    double frontLeftPower = 0.75;
+    double backLeftPower = 0.75;
+    double frontRightPower = 0.75;
+    double backRightPower = 0.75;
+
+    @Override
+    public void runOpMode(){
+
 
         // Expansion Hub Pins
         motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("FL"); // Pin 2
@@ -38,21 +46,14 @@ public class Jank_Auto extends LinearOpMode {
         // Reverse motors
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
 
-    double frontLeftPower = 0.75;
-    double backLeftPower = 0.75;
-    double frontRightPower = 0.75;
-    double backRightPower = 0.75;
-
-    @Override
-    public void runOpMode(){
+        waitForStart();
         while(timer.milliseconds() <= time) {
+            // Expansion Hub Pins
 
-
-            motorBackLeft.setPower(frontLeftPower);
+            motorFrontLeft.setPower(frontLeftPower);
             motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
+            motorFrontRight.setPower(frontRightPower); //mommy
             motorBackRight.setPower(backRightPower);
         }
     }
