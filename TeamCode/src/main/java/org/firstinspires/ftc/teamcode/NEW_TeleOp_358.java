@@ -9,42 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
-//  DRIVING MECANUM WHEELS SIMPLIFIED         
-//             @TeleOp
-//             public class MecanumTeleOp extends LinearOpMode {
-//                 @Override
-//                 public void runOpMode() throws InterruptedException {
-//                     // Declare our motors
-//                     // Make sure your ID's match your configuration
-//                     // call hardware class here
-
-
-//                     t();
-
-//                     if (isStopRequested()) return;
-
-//                     while (opModeIsActive()) {
-//                         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-//                         double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-//                         double rx = gamepad1.right_stick_x;
-
-//                         // Denominator is the largest motor power (absolute value) or 1
-//                         // This ensures all the powers maintain the same ratio, but only when
-//                         // at least one is out of the range [-1, 1]
-//                         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-//                         double frontLeftPower = (y + x + rx) / denominator;
-//                         double backLeftPower = (y - x + rx) / denominator;
-//                         double frontRightPower = (y - x - rx) / denominator;
-//                         double backRightPower = (y + x - rx) / denominator;
-
-//                         motorFrontLeft.setPower(frontLeftPower);
-//                         motorBackLeft.setPower(backLeftPower);
-//                         motorFrontRight.setPower(frontRightPower);
-//                         motorBackRight.setPower(backRightPower);
-//                     }
-//                 }
-//             }
-
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
  * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
@@ -53,9 +17,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *
  */
 
-@TeleOp(name="oldeTeleop", group="reborn") // i will come soon. when the 3d print is done, make sure u watch ur back
+@TeleOp(name="358Teleop", group="reborn") // i will come soon. when the 3d print is done, make sure u watch ur back
 //@Disabled
-public class TeleOp_358 extends OpMode {
+public class NEW_TeleOp_358 extends OpMode {
 
     Hardware358 robot = new Hardware358();
     // Declare OpMode members.
@@ -80,10 +44,10 @@ public class TeleOp_358 extends OpMode {
     public void loop()
 
     {
-        mecanumMove();
+        Move();
     }
 
-    public void mecanumMove()
+    public void Move()
     {
 //        double clawDistanceMeasure = robot.clawDist.getDistance(DistanceUnit.MM);
 //        telemetry.addData("Claw Distance", clawDistanceMeasure);
@@ -97,31 +61,40 @@ public class TeleOp_358 extends OpMode {
         {
             double stickX = 0;
             double stickY = 0;
-            double stickR = 0;
-            if (Math.abs(gamepad1.left_stick_x) + Math.abs(gamepad1.left_stick_y)> Math.abs(gamepad2.left_stick_x) + Math.abs(gamepad2.left_stick_y)){
-                stickY = gamepad1.left_stick_x;
-                stickX = gamepad1.left_stick_y;
+            double v1 = 0;
+            double v2 = 0;
+            double vm = 0;
+            if (Math.abs(gamepad1.right_stick_x) > 0.2)
+            {
+                stickX = gamepad1.right_stick_x;
+                v1 = stickX;
+                v2 = -stickX;
+                //stickY = 0;
             }
-            else{
-                stickY = gamepad2.left_stick_x;
-                stickX = gamepad2.left_stick_y;
+            if (Math.abs(gamepad1.left_stick_y) > 0.2){
+                stickY = gamepad1.left_stick_y;
+                v1 = stickY;
+                v2 = -stickY;
+                //stickX = 0;
             }
+//            if (Math.abs(gamepad1.right_stick_x) > 0.2)
+//            {
+//                vm = gamepad1.right_stick_x;
+//            }
+//
+//            //variables
+//           if(Math.abs(stickY) > stickX)
+//           {
+//               v1 = stickX;
+//               v2 = -stickX;
+//           }
+//           else if(Math.abs(stickX) >= stickY)
+//           {
+//               v1 = stickX;
+//               v2 = -stickX;
+//           }
 
-            if (Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad2.left_stick_x)){
-                stickR = gamepad1.right_stick_x;
-            }
-            else {
-                stickR = gamepad2.right_stick_x;
-            }
 
-            //variables
-            double r = Math.hypot(-stickX, stickY);
-            double robotAngle = Math.atan2(stickY, -stickX) - Math.PI / 4;
-            double rightX = -stickR * turnReduction;
-            final double v1 = r * Math.cos(robotAngle) + rightX;
-            final double v2 = r * Math.sin(robotAngle) - rightX;
-            final double v3 = r * Math.sin(robotAngle) + rightX;
-            final double v4 = r * Math.cos(robotAngle) - rightX;
 
 
             if (gamepad1.left_bumper || gamepad2.left_bumper) {//if the left bumper is pressed, it multiplies the total power by the precision driving modifer
@@ -135,18 +108,25 @@ public class TeleOp_358 extends OpMode {
 
             robot.lf.setPower(-speedModifier * v1 * precisionActive);
             robot.rf.setPower(-speedModifier * v2 * precisionActive);
-            robot.lb.setPower(-speedModifier * v3 * precisionActive);
-            robot.rb.setPower(-speedModifier * v4 * precisionActive);
+            robot.lb.setPower(-speedModifier * v1 * precisionActive);
+            robot.rb.setPower(-speedModifier * v2 * precisionActive);
+            robot.m.setPower(-speedModifier * vm * precisionActive);
 
             telemetry.addData("fLPower", -speedModifier * v1 * precisionActive);
             telemetry.addData("fRPower", -speedModifier * v2 * precisionActive);
-            telemetry.addData("bLPower", -speedModifier * v3 * precisionActive);
-            telemetry.addData("bRPower", -speedModifier * v4 * precisionActive);
+            telemetry.addData("bLPower", -speedModifier * v1 * precisionActive);
+            telemetry.addData("bRPower", -speedModifier * v2 * precisionActive);
+            telemetry.addData("MPower", -speedModifier * vm * precisionActive);
+            telemetry.addData("LEFTPower", gamepad1.left_stick_x);
+            telemetry.addData("DEBUGX", v1);
+            telemetry.addData("DEBUGY", v2);
+
 
             telemetry.addData("Encoder port 1 back left", robot.lb.getCurrentPosition());
             telemetry.addData("Encoder port 2 front right", robot.rf.getCurrentPosition());
             telemetry.addData("Encoder port 3 back right", robot.rb.getCurrentPosition());
             telemetry.addData("Encoder port 4 back left", robot.lb.getCurrentPosition());
+            telemetry.addData("Encoder port 0 back left", robot.m.getCurrentPosition());
 
         }
 

@@ -317,8 +317,8 @@ public class Driving358 extends LinearOpMode {
 
                 //set drive power for forward
                 robot.lf.setPower(power);
-                robot.rf.setPower(power);
-                robot.lb.setPower(-power);
+                robot.rf.setPower(-power);
+                robot.lb.setPower(power);
                 robot.rb.setPower(-power);
 
                 while (robot.lf.isBusy() && robot.lb.isBusy() && robot.rf.isBusy() && robot.rb.isBusy())
