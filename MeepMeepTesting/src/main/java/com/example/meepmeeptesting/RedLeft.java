@@ -9,7 +9,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class RedLeft {
     public static void main(String[] args) {
         //placeholder signal zone
-        int signalZone = 1;
+        int signalZone = 3;
         MeepMeep meepMeep = new MeepMeep(800);
         RoadRunnerBotEntity myBot = null;
 
@@ -21,7 +21,7 @@ public class RedLeft {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
+                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, Math.toRadians(90)))
                                         /*
                                         .strafeRight(25)
                                         .forward(30)
@@ -41,15 +41,12 @@ public class RedLeft {
                                         .forward(4)
                                         //use claw
                                         .back(4)
-                                        .turn(Math.toRadians(90))
-                                        .forward(3.5)
-                                        .back(17)
                                         .turn(Math.toRadians(-90))
-                                        .forward(24)
-                                        .turn(Math.toRadians(90))
-                                        .forward(48)
-                                        .turn(Math.toRadians(90))
-                                        .forward(48)
+                                        .forward(17.5)
+                                        .turn(Math.toRadians(-90))
+                                        .forward(25)
+                                        .turn(Math.toRadians(-90))
+                                        .forward(25)
                                         .build()
                         );
                 break;
@@ -80,15 +77,14 @@ public class RedLeft {
                                         .forward(4)
                                         //use claw
                                         .back(4)
-                                        .turn(Math.toRadians(90))
-                                        .forward(3.5)
-                                        .back(17)
                                         .turn(Math.toRadians(-90))
-                                        .forward(24)
+                                        .forward(17.5)
                                         .turn(Math.toRadians(90))
-                                        .forward(48)
+                                        .forward(25)
                                         .turn(Math.toRadians(90))
-                                        .forward(24)
+                                        .forward(55)
+                                        .turn(Math.toRadians(90))
+                                        .forward(30)
                                         .build()
                         );
                 break;
@@ -123,13 +119,13 @@ public class RedLeft {
                                         .forward(4)
                                         //use claw
                                         .back(4)
-                                        .turn(Math.toRadians(90))
-                                        .forward(3.5)
-                                        .back(17)
                                         .turn(Math.toRadians(-90))
-                                        .forward(24)
+                                        .forward(17.5)
                                         .turn(Math.toRadians(90))
-                                        .forward(24)
+                                        .forward(25)
+                                        .turn(Math.toRadians(90))
+                                        .forward(55)
+                                        .turn(Math.toRadians(90))
                                         .build()
                         );
 
