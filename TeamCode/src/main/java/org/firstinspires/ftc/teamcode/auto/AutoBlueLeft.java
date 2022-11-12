@@ -124,5 +124,3 @@ public class AutoBlueLeft extends LinearOpMode {
 
     }
 }
-
-}
