@@ -42,8 +42,8 @@ public class BlueRightAutoHigh extends LinearOpMode {
         robot.cv.observeSleeve();
         while(getRuntime()<5){
         }
-        dummyP = robot.cv.getPosition();
         waitForStart();
+        dummyP = robot.cv.getPosition();
 
         if (isStopRequested()) return;
         Trajectory initialtrajectory = robot.roadrun.trajectoryBuilder(startPose)

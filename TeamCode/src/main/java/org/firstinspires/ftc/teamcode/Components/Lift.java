@@ -37,7 +37,7 @@ public class Lift {
     private RFMotor liftMotor;
     private Claw LC = new Claw();
     private double liftTarget = 0;
-    public static double dfco1 =  4, dfco2 = 100;
+    public static double dfco1 =  0.0122, dfco2 = 1.0/3, dfco3 = 500;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
 //447,297,173,53,0
@@ -47,6 +47,7 @@ public class Lift {
         logger.createFile("LiftLog", "Time Component Function Action");
         coefficients.add(dfco1);
         coefficients.add(dfco2);
+        coefficients.add(dfco3);
         liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, true, coefficients, MAX_LIFT_TICKS, 0);
         liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         liftMotor.setTICK_BOUNDARY_PADDING(10);
@@ -194,10 +195,15 @@ public class Lift {
         return done;
     }
     public void liftToPosition(int targetTickCount){
-        liftMotor.setPosition(targetTickCount);
+        double distance = targetTickCount-liftMotor.getCurrentPosition();
 
-        logger.log("LiftLog", "Lift," + "liftToPosition(targetTickCount)," + "Lifting to " + targetTickCount + " ticks", true, true, true);
-        updateLiftStates();
+        done = (abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
+        setLiftTarget(targetTickCount);
+
+        // no conditions
+        // log when movement starts & when reach target position
+        logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetTickCount + " ticks" + liftMotor.getCurrentPosition());
+        //async, no use sleep/wait with time, can use multiple processes
     }
     public void setLiftPower(double power){
         liftTarget=liftMotor.getCurrentPosition();
@@ -237,8 +243,15 @@ public class Lift {
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftTarget=0;
     }
+    public void liftToTargetAuto(){
+            liftMotor.setPosition(liftTarget);
+    }
     public void liftToTarget(){
-        liftMotor.setPosition(liftTarget);
+        if(abs(liftTarget- liftMotor.getCurrentPosition())>100||liftMotor.getVelocity()>20) {
+            liftMotor.setPosition(liftTarget);
+        }else{
+            setLiftPower(0);
+        }
     }
     public void setLiftTarget(double p_liftTaret){liftTarget = p_liftTaret;}
     //1 up, -1 down

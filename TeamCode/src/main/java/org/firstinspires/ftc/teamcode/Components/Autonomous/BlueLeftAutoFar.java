@@ -14,10 +14,10 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 @Config
-@Autonomous(name = "BlueLeftAutoCycle")
+@Autonomous(name = "BlueLeftAutoFar")
 
 
-public class BlueLeftAutoCycle extends LinearOpMode {
+public class BlueLeftAutoFar extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;

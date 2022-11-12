@@ -22,7 +22,7 @@ public class RFMotor extends Motor {
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
-    private double GRAVITY_CONSTANT = 0.07;
+    private double GRAVITY_CONSTANT = 0.08;
     private double lastError = 0, lastTime = 0;
     private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 5;
     private double power = 0;
@@ -128,13 +128,13 @@ public class RFMotor extends Motor {
         double targetVelocity = 0;
         if (distance > 0) {
             for (int i = 0; i < coefs.size(); i++) {
-                if (i != coefs.size() - 1 || distance > TICK_STOP_PADDING) {
+                if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
                     targetVelocity += pow(distance, coefs.size() - i - 1) * coefs.get(i);
                 }
             }
         } else if (distance < 0) {
             for (int i = 0; i < coefs.size(); i++) {
-                if (i != coefs.size() - 1 || distance > TICK_STOP_PADDING) {
+                if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
                     targetVelocity -= abs(pow(distance, coefs.size() - i - 1)) * coefs.get(i);
                 }
             }

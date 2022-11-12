@@ -88,7 +88,13 @@ public class PwPRobot extends BasicRobot {
             }
         }
     }
-
+    public void followTrajectoryAsync (Trajectory trajectory, boolean clawClosed) {
+        if (queuer.queue(false, !roadrun.isBusy()||CLAW_CLOSED.getStatus())) {
+            if (!roadrun.isBusy()) {
+                roadrun.followTrajectoryAsync(trajectory);
+            }
+        }
+    }
     public void setFirstLoop(boolean value) {
         queuer.setFirstLoop(value);
     }
@@ -110,7 +116,9 @@ public class PwPRobot extends BasicRobot {
     public void closeClaw(boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, CLAW_CLOSED.getStatus())) {
             claw.updateClawStates();
-            claw.closeClaw();
+            if(claw.coneDistance()<5) {
+                claw.closeClaw();
+            }
         }
     }
 
@@ -138,13 +146,19 @@ public class PwPRobot extends BasicRobot {
             lift.liftToPosition(targetJunction);
         }
     }
-
+    public void liftToTargetAuto(){
+        lift.liftToTargetAuto();
+    }
     public void liftToPosition(int tickTarget) {
-        if (queuer.queue(true, Math.abs(tickTarget - lift.getLiftPosition()) < 10 && lift.getLiftVelocity() == 0)) {
+        if (queuer.queue(true, lift.isDone())) {
             lift.liftToPosition(tickTarget);
         }
     }
-
+    public void liftToPosition(int tickTarget, boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, lift.isDone())) {
+            lift.liftToPosition(tickTarget);
+        }
+    }
     public void setLiftPower(double p_power) {
         lift.setLiftPower(p_power);
     }
@@ -284,15 +298,20 @@ public class PwPRobot extends BasicRobot {
                 liftArm.raiseLiftArmToOuttake();
             }
         }
+        if (op.gamepad1.x) {
+            if(CLAW_CLOSED.getStatus()) {
+                claw.openClaw();
+
+            }
+            else {
+                claw.closeClaw();
+            }
+        }
 
         //manual open/close claw (will jsut be open claw in the future)
-        if (op.gamepad1.x) {
-            claw.openClaw();
-        }
+
         //will only close when detect cone
         //claw.closeClaw
-
-        claw.closeClaw();
 
         roadrun.update();
         liftArm.updateLiftArmStates();
