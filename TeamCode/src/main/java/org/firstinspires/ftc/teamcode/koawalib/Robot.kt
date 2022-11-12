@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lights
 import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 import org.firstinspires.ftc.teamcode.koawalib.vision.Webcam
+import org.firstinspires.ftc.teamcode.koawalib.vision.WebcamDevice
 
 class Robot(startPose: Pose) {
     private val hardware = Hardware(startPose)
@@ -24,7 +25,7 @@ class Robot(startPose: Pose) {
 
     val arm = Arm(hardware.armMotor)
     val claw = Claw(hardware.clawServo, hardware.distanceSensor)
-    val lift = Lift(hardware.liftMotor)
+    val lift = Lift(hardware.liftLeadMotor, hardware.liftSecondMotor, hardware.liftThirdMotor)
+    val webcam = WebcamDevice(hardware.webcam, SleevePipeline(0.166, 578.272, 578.272, 402.145, 221.506))
     val lightsDevice = Lights(hardware.lights)
-    val webcam = Webcam("Webcam", SleevePipeline())
 }

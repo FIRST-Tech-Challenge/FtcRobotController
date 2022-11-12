@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.koawalib.opmodes
 
 import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.command.commands.InstantCmd
+import com.asiankoala.koawalib.command.commands.MecanumCmd
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.subsystem.odometry.Odometry
 import com.asiankoala.koawalib.util.Alliance
@@ -28,7 +29,7 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
             driver.rightStick,
             driver.leftTrigger::isToggled,
             driver.a::isToggled,
-            alliance
+            robot.drive::pose
         )
     }
 

@@ -18,7 +18,4 @@ class Robot(startPose: Pose) {
     )
 
 //    val arm = Arm(hardware.arm)
-
-    val webcam = Webcam("Webcam", SleevePipeline())
-
 }

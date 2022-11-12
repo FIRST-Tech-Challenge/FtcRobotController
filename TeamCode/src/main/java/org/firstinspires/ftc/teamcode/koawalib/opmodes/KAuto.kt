@@ -37,6 +37,7 @@ open class KAuto(
     private val kF = 4.0
     private val kS = 1.0
     private val epsilon = 1.0
+    private val thetaEpsilon = 5.0
 
     private val initialPath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
@@ -73,7 +74,7 @@ open class KAuto(
     )
 
     private fun getGVFCmd(path: Path, vararg cmds: Pair<Cmd, Vector>) =
-        GVFCmd(robot.drive, SimpleGVFController(path, kN, kOmega, kF, kS, epsilon, 2.0), *cmds)
+        GVFCmd(robot.drive, SimpleGVFController(path, kN, kOmega, kF, kS, epsilon, thetaEpsilon), *cmds)
 
     override fun mInit() {
         +SequentialGroup(

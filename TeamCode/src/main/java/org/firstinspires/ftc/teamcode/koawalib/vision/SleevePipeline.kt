@@ -1,126 +1,301 @@
+/*
+ * Copyright (c) 2021 OpenFTC Team
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package org.firstinspires.ftc.teamcode.koawalib.vision
 
+import org.opencv.calib3d.Calib3d
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
+import org.openftc.apriltag.AprilTagDetection
+import org.openftc.apriltag.AprilTagDetectorJNI
 import org.openftc.easyopencv.OpenCvPipeline
 
-class SleevePipeline : OpenCvPipeline() {
-    /*
-    YELLOW  = Parking Left
-    CYAN    = Parking Middle
-    MAGENTA = Parking Right
-     */
-    enum class ParkingPosition {
-        LEFT, CENTER, RIGHT
+class SleevePipeline(// UNITS ARE METERS
+    var tagsize: Double, fx: Double, fy: Double, cx: Double, cy: Double
+) :
+    OpenCvPipeline() {
+    private var nativeApriltagPtr: Long
+    private val grey = Mat()
+    var latestDetections = ArrayList<AprilTagDetection>()
+        private set
+    private var detectionsUpdate: ArrayList<AprilTagDetection> = ArrayList()
+    private val detectionsUpdateSync = Any()
+    var cameraMatrix = Mat()
+    var blue = Scalar(7.0, 197.0, 235.0, 255.0)
+    var red = Scalar(255.0, 0.0, 0.0, 255.0)
+    var green = Scalar(0.0, 255.0, 0.0, 255.0)
+    var white = Scalar(255.0, 255.0, 255.0, 255.0)
+    var fx: Double
+    var fy: Double
+    var cx: Double
+    var cy: Double
+    var tagsizeX: Double
+    var tagsizeY: Double
+    private var decimation = 0f
+    private var needToSetDecimation = false
+    private val decimationSync = Any()
+
+    init {
+        tagsizeX = tagsize
+        tagsizeY = tagsize
+        this.fx = fx
+        this.fy = fy
+        this.cx = cx
+        this.cy = cy
+        constructMatrix()
+
+        // Allocate a native context object. See the corresponding deletion in the finalizer
+        nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(
+            AprilTagDetectorJNI.TagFamily.TAG_36h11.string,
+            3f,
+            3
+        )
     }
 
-    // Color definitions
-    private val YELLOW = Scalar(255.0, 255.0, 0.0)
-    private val CYAN = Scalar(0.0, 255.0, 255.0)
-    private val MAGENTA = Scalar(255.0, 0.0, 255.0)
-
-    // Percent and mat definitions
-    private var yelPercent = 0.0
-    private var cyaPercent = 0.0
-    private var magPercent = 0.0
-    private val yelMat = Mat()
-    private val cyaMat = Mat()
-    private val magMat = Mat()
-    private var blurredMat = Mat()
-    private var kernel = Mat()
-
-    // Anchor point definitions
-    var sleeve_pointA = Point(
-        SLEEVE_TOPLEFT_ANCHOR_POINT.x,
-        SLEEVE_TOPLEFT_ANCHOR_POINT.y
-    )
-    var sleeve_pointB = Point(
-        SLEEVE_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-        SLEEVE_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT
-    )
-
-    // Returns an enum being the current position where the robot will park
-    // Running variable storing the parking position
-    @Volatile
-    var position = ParkingPosition.LEFT
-        private set
+    fun finalize() {
+        // Might be null if createApriltagDetector() threw an exception
+        if (nativeApriltagPtr != 0L) {
+            // Delete the native context we created in the constructor
+            AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr)
+            nativeApriltagPtr = 0
+        } else {
+            println("SleevePipeline.finalize(): nativeApriltagPtr was NULL")
+        }
+    }
 
     override fun processFrame(input: Mat): Mat {
-        // Noise reduction
-        Imgproc.blur(input, blurredMat, Size(5.0, 5.0))
-        blurredMat = blurredMat.submat(Rect(sleeve_pointA, sleeve_pointB))
-
-        // Apply Morphology
-        kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(3.0, 3.0))
-        Imgproc.morphologyEx(blurredMat, blurredMat, Imgproc.MORPH_CLOSE, kernel)
-
-        // Gets channels from given source mat
-        Core.inRange(blurredMat, lower_yellow_bounds, upper_yellow_bounds, yelMat)
-        Core.inRange(blurredMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat)
-        Core.inRange(blurredMat, lower_magenta_bounds, upper_magenta_bounds, magMat)
-
-        // Gets color specific values
-        yelPercent = Core.countNonZero(yelMat).toDouble()
-        cyaPercent = Core.countNonZero(cyaMat).toDouble()
-        magPercent = Core.countNonZero(magMat).toDouble()
-
-        // Calculates the highest amount of pixels being covered on each side
-        val maxPercent = yelPercent.coerceAtLeast(cyaPercent.coerceAtLeast(magPercent))
-
-        // Checks all percentages, will highlight bounding box in camera preview
-        // based on what color is being detected
-        if (maxPercent == yelPercent) {
-            position = ParkingPosition.LEFT
-            Imgproc.rectangle(
-                input,
-                sleeve_pointA,
-                sleeve_pointB,
-                YELLOW,
-                2
-            )
-        } else if (maxPercent == cyaPercent) {
-            position = ParkingPosition.CENTER
-            Imgproc.rectangle(
-                input,
-                sleeve_pointA,
-                sleeve_pointB,
-                CYAN,
-                2
-            )
-        } else if (maxPercent == magPercent) {
-            position = ParkingPosition.RIGHT
-            Imgproc.rectangle(
-                input,
-                sleeve_pointA,
-                sleeve_pointB,
-                MAGENTA,
-                2
-            )
+        // Convert to greyscale
+        Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY)
+        synchronized(decimationSync) {
+            if (needToSetDecimation) {
+                AprilTagDetectorJNI.setApriltagDetectorDecimation(nativeApriltagPtr, decimation)
+                needToSetDecimation = false
+            }
         }
 
-        // Memory cleanup
-        blurredMat.release()
-        yelMat.release()
-        cyaMat.release()
-        magMat.release()
-        kernel.release()
+        // Run AprilTag
+        latestDetections = AprilTagDetectorJNI.runAprilTagDetectorSimple(
+            nativeApriltagPtr, grey,
+            tagsize, fx, fy, cx, cy
+        )
+        synchronized(detectionsUpdateSync) { detectionsUpdate = latestDetections }
+
+        // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
+        // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
+        for (detection in latestDetections) {
+            val pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY)
+            drawAxisMarker(input, tagsizeY / 2.0, 6, pose.rvec, pose.tvec, cameraMatrix)
+            draw3dCubeMarker(
+                input,
+                tagsizeX,
+                tagsizeX,
+                tagsizeY,
+                5,
+                pose.rvec,
+                pose.tvec,
+                cameraMatrix
+            )
+        }
         return input
     }
 
-    companion object {
-        // TOPLEFT anchor point for the bounding box
-        private val SLEEVE_TOPLEFT_ANCHOR_POINT = Point(145.0, 168.0)
+    fun setDecimation(decimation: Float) {
+        synchronized(decimationSync) {
+            this.decimation = decimation
+            needToSetDecimation = true
+        }
+    }
 
-        // Width and height for the bounding box
-        var REGION_WIDTH = 30
-        var REGION_HEIGHT = 50
+    fun getDetectionsUpdate(): ArrayList<AprilTagDetection> {
+        synchronized(detectionsUpdateSync) {
+            val ret = detectionsUpdate
+            detectionsUpdate
+            return ret
+        }
+    }
 
-        // Lower and upper boundaries for colors
-        private val lower_yellow_bounds = Scalar(200.0, 200.0, 0.0, 255.0)
-        private val upper_yellow_bounds = Scalar(255.0, 255.0, 130.0, 255.0)
-        private val lower_cyan_bounds = Scalar(0.0, 200.0, 200.0, 255.0)
-        private val upper_cyan_bounds = Scalar(150.0, 255.0, 255.0, 255.0)
-        private val lower_magenta_bounds = Scalar(170.0, 0.0, 170.0, 255.0)
-        private val upper_magenta_bounds = Scalar(255.0, 60.0, 255.0, 255.0)
+    fun constructMatrix() {
+        //     Construct the camera matrix.
+        //
+        //      --         --
+        //     | fx   0   cx |
+        //     | 0    fy  cy |
+        //     | 0    0   1  |
+        //      --         --
+        //
+        cameraMatrix = Mat(3, 3, CvType.CV_32FC1)
+        cameraMatrix.put(0, 0, fx)
+        cameraMatrix.put(0, 1, 0.0)
+        cameraMatrix.put(0, 2, cx)
+        cameraMatrix.put(1, 0, 0.0)
+        cameraMatrix.put(1, 1, fy)
+        cameraMatrix.put(1, 2, cy)
+        cameraMatrix.put(2, 0, 0.0)
+        cameraMatrix.put(2, 1, 0.0)
+        cameraMatrix.put(2, 2, 1.0)
+    }
+
+    /**
+     * Draw a 3D axis marker on a detection. (Similar to what Vuforia does)
+     *
+     * @param buf the RGB buffer on which to draw the marker
+     * @param length the length of each of the marker 'poles'
+     * @param rvec the rotation vector of the detection
+     * @param tvec the translation vector of the detection
+     * @param cameraMatrix the camera matrix used when finding the detection
+     */
+    fun drawAxisMarker(
+        buf: Mat,
+        length: Double,
+        thickness: Int,
+        rvec: Mat,
+        tvec: Mat,
+        cameraMatrix: Mat
+    ) {
+        // The points in 3D space we wish to project onto the 2D image plane.
+        // The origin of the coordinate space is assumed to be in the center of the detection.
+        val axis = MatOfPoint3f(
+            Point3(0.0, 0.0, 0.0),
+            Point3(length, 0.0, 0.0),
+            Point3(0.0, length, 0.0),
+            Point3(0.0, 0.0, -length)
+        )
+
+        // Project those points
+        val matProjectedPoints = MatOfPoint2f()
+        Calib3d.projectPoints(axis, rvec, tvec, cameraMatrix, MatOfDouble(), matProjectedPoints)
+        val projectedPoints = matProjectedPoints.toArray()
+
+        // Draw the marker!
+        Imgproc.line(buf, projectedPoints[0], projectedPoints[1], red, thickness)
+        Imgproc.line(buf, projectedPoints[0], projectedPoints[2], green, thickness)
+        Imgproc.line(buf, projectedPoints[0], projectedPoints[3], blue, thickness)
+        Imgproc.circle(buf, projectedPoints[0], thickness, white, -1)
+    }
+
+    fun draw3dCubeMarker(
+        buf: Mat,
+        length: Double,
+        tagWidth: Double,
+        tagHeight: Double,
+        thickness: Int,
+        rvec: Mat,
+        tvec: Mat,
+        cameraMatrix: Mat
+    ) {
+        //axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
+        //       [0,0,-3],[0,3,-3],[3,3,-3],[3,0,-3] ])
+
+        // The points in 3D space we wish to project onto the 2D image plane.
+        // The origin of the coordinate space is assumed to be in the center of the detection.
+        val axis = MatOfPoint3f(
+            Point3(-tagWidth / 2, tagHeight / 2, 0.0),
+            Point3(tagWidth / 2, tagHeight / 2, 0.0),
+            Point3(tagWidth / 2, -tagHeight / 2, 0.0),
+            Point3(-tagWidth / 2, -tagHeight / 2, 0.0),
+            Point3(-tagWidth / 2, tagHeight / 2, -length),
+            Point3(tagWidth / 2, tagHeight / 2, -length),
+            Point3(tagWidth / 2, -tagHeight / 2, -length),
+            Point3(-tagWidth / 2, -tagHeight / 2, -length)
+        )
+
+        // Project those points
+        val matProjectedPoints = MatOfPoint2f()
+        Calib3d.projectPoints(axis, rvec, tvec, cameraMatrix, MatOfDouble(), matProjectedPoints)
+        val projectedPoints = matProjectedPoints.toArray()
+
+        // Pillars
+        for (i in 0..3) {
+            Imgproc.line(buf, projectedPoints[i], projectedPoints[i + 4], blue, thickness)
+        }
+
+        // Base lines
+        //Imgproc.line(buf, projectedPoints[0], projectedPoints[1], blue, thickness);
+        //Imgproc.line(buf, projectedPoints[1], projectedPoints[2], blue, thickness);
+        //Imgproc.line(buf, projectedPoints[2], projectedPoints[3], blue, thickness);
+        //Imgproc.line(buf, projectedPoints[3], projectedPoints[0], blue, thickness);
+
+        // Top lines
+        Imgproc.line(buf, projectedPoints[4], projectedPoints[5], green, thickness)
+        Imgproc.line(buf, projectedPoints[5], projectedPoints[6], green, thickness)
+        Imgproc.line(buf, projectedPoints[6], projectedPoints[7], green, thickness)
+        Imgproc.line(buf, projectedPoints[4], projectedPoints[7], green, thickness)
+    }
+
+    /**
+     * Extracts 6DOF pose from a trapezoid, using a camera intrinsics matrix and the
+     * original size of the tag.
+     *
+     * @param points the points which form the trapezoid
+     * @param cameraMatrix the camera intrinsics matrix
+     * @param tagsizeX the original width of the tag
+     * @param tagsizeY the original height of the tag
+     * @return the 6DOF pose of the camera relative to the tag
+     */
+    fun poseFromTrapezoid(
+        points: Array<Point>,
+        cameraMatrix: Mat,
+        tagsizeX: Double,
+        tagsizeY: Double
+    ): Pose {
+        // The actual 2d points of the tag detected in the image
+        val points2d = MatOfPoint2f(*points)
+
+        // The 3d points of the tag in an 'ideal projection'
+        val arrayPoints3d = arrayOfNulls<Point3>(4)
+        arrayPoints3d[0] = Point3(-tagsizeX / 2, tagsizeY / 2, 0.0)
+        arrayPoints3d[1] = Point3(tagsizeX / 2, tagsizeY / 2, 0.0)
+        arrayPoints3d[2] = Point3(tagsizeX / 2, -tagsizeY / 2, 0.0)
+        arrayPoints3d[3] = Point3(-tagsizeX / 2, -tagsizeY / 2, 0.0)
+        val points3d = MatOfPoint3f(*arrayPoints3d)
+
+        // Using this information, actually solve for pose
+        val pose: Pose = Pose()
+        Calib3d.solvePnP(
+            points3d,
+            points2d,
+            cameraMatrix,
+            MatOfDouble(),
+            pose.rvec,
+            pose.tvec,
+            false
+        )
+        return pose
+    }
+
+    /*
+     * A simple container to hold both rotation and translation
+     * vectors, which together form a 6DOF pose.
+     */
+    inner class Pose {
+        var rvec: Mat
+        var tvec: Mat
+
+        constructor() {
+            rvec = Mat()
+            tvec = Mat()
+        }
+
+        constructor(rvec: Mat, tvec: Mat) {
+            this.rvec = rvec
+            this.tvec = tvec
+        }
     }
 }

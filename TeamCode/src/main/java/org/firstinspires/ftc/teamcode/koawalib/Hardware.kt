@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.koawalib
 
+import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.control.controller.PIDGains
 import com.asiankoala.koawalib.control.motor.FFGains
 import com.asiankoala.koawalib.control.profile.MotionConstraints
@@ -12,6 +13,8 @@ import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
+import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
+import org.firstinspires.ftc.teamcode.koawalib.vision.Webcam
 
 class Hardware(startPose: Pose) {
     val fl = MotorFactory("fl")
@@ -34,17 +37,26 @@ class Hardware(startPose: Pose) {
         .brake
         .build()
 
-    val liftMotor = MotorFactory("Lift")
+    val liftLeadMotor = MotorFactory("liftLead")
         .float
         .forward
         .createEncoder(Lift.ticksPerUnit, false)
         .zero(Lift.homePos)
         .withMotionProfileControl(
-            PIDGains(TODO(), TODO(), TODO()),
-            FFGains(kG = TODO(), kS = TODO(), kV = TODO(), kA = TODO()),
-            MotionConstraints(TODO(), TODO()),
-            allowedPositionError = TODO(),
+            PIDGains(Lift.kP, Lift.kI, Lift.kD),
+            FFGains(Lift.kS, Lift.kV, Lift.kA, kG = Lift.kG),
+            MotionConstraints(Lift.maxVel, Lift.maxAccel),
+            allowedPositionError = Lift.allowedPositionError,
+            disabledPosition = Lift.disabledPosition
         )
+        .build()
+
+    val liftSecondMotor = MotorFactory("lift2")
+        .float
+        .build()
+
+    val liftThirdMotor = MotorFactory("lift3")
+        .float
         .build()
 
     val armMotor = MotorFactory("Arm")
@@ -52,10 +64,10 @@ class Hardware(startPose: Pose) {
         .createEncoder(Arm.ticksPerUnit, false)
         .zero(Arm.homePos)
         .withMotionProfileControl(
-            PIDGains(TODO(), TODO(), TODO()),
-            FFGains(kCos = TODO()),
-            MotionConstraints(TODO(), TODO()),
-            allowedPositionError = TODO(),
+            PIDGains(Arm.kP, Arm.kI, Arm.kD),
+            FFGains(Arm.kS, Arm.kV, Arm.kA, Arm.kCos),
+            MotionConstraints(Arm.maxVel, Arm.maxAccel),
+            allowedPositionError = Arm.allowedPositionError,
         )
         .build()
 
@@ -66,6 +78,8 @@ class Hardware(startPose: Pose) {
 
     val lights = KServo("Lights")
 
+    val webcam = Webcam("Webcam", SleevePipeline(0.166, 578.272, 578.272, 402.145, 221.506))
+
     private val leftEncoder = KEncoder(fr, ticksPerUnit, true).reverse.zero()
     private val rightEncoder = KEncoder(fl, ticksPerUnit, true).zero()
     private val auxEncoder = KEncoder(br, ticksPerUnit, true).zero()
@@ -74,12 +88,15 @@ class Hardware(startPose: Pose) {
         leftEncoder,
         rightEncoder,
         auxEncoder,
-        TODO(),
-        TODO(),
+        TRACK_WIDTH,
+        PERP_TRACKER,
         startPose
     )
 
+    @Config
     companion object {
         private const val ticksPerUnit = 1892.3724
+        @JvmField var TRACK_WIDTH = 0.0
+        @JvmField var PERP_TRACKER = 0.0
     }
 }
