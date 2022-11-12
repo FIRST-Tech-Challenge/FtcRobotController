@@ -119,10 +119,10 @@ public class AutonomousRight extends LinearOpMode {
     static final int coneLoadStackGap = (int)(COUNTS_PER_INCH *  1.32);
 
     // 10inch for low junction, 20inch for medium, and 30 for high
-    static final int WALL_POSITION = (int)(COUNTS_PER_INCH * 7.0);
-    static final int LOW_JUNCTION_POS = (int)(COUNTS_PER_INCH * 13.5); // 13.5 inch
-    static final int MEDIUM_JUNCTION_POS = (int)(COUNTS_PER_INCH * 23.5);
-    static final int HIGH_JUNCTION_POS = (int)(COUNTS_PER_INCH * 33.5);
+    static final int GROUND_POSITION = (int)(0); // Ground(0 inch)
+    static final int WALL_POSITION = (int)(COUNTS_PER_INCH * 7.0);  // 7 inch
+    static final int MEDIUM_JUNCTION_POS = (int)(COUNTS_PER_INCH * 23.5); //23.5 inch
+    static final int HIGH_JUNCTION_POS = (int)(COUNTS_PER_INCH * 33.5); //33.5 inch
     static final int SLIDER_MOVE_DOWN_POSITION = COUNTS_PER_INCH * 3; // move down 6 inch to unload cone
     int sliderTargetPosition = 0;
 
@@ -671,7 +671,7 @@ public class AutonomousRight extends LinearOpMode {
 
             // drive back robot to high junction
             robotRunToPosition(-38.0 + 3.0, true); // adjust according to testing
-            Logging.log("Autonomous - robot has arrived high junction.");
+            Logging.log("Autonomous - robot has arrived at high junction.");
 
             // lift slider during rotation.
             setSliderPosition(HIGH_JUNCTION_POS);
@@ -688,14 +688,14 @@ public class AutonomousRight extends LinearOpMode {
             Logging.log("Autonomous - imu angle after correction: %.2f", lastAngles.firstAngle);
 
             waitSliderRun(); // make sure slider has been lifted
-            Logging.log("Autonomous - slider has lifted to high junction.");
+            Logging.log("Autonomous - slider is positioned to high junction.");
 
             // moving forward V to junction
             robotRunToPosition(8.5, true); // adjust according to testing
 
             // unload cone & adjust
             autoUnloadCone();
-            Logging.log("Autonomous - %d cone has been unloaded.", autoLoop + 2);
+            Logging.log("Autonomous - cone %d has been unloaded.", autoLoop + 2);
             imuAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             Logging.log("Autonomous - imu angle after unload cone: %.2f", imuAngles.firstAngle);
 
@@ -706,16 +706,20 @@ public class AutonomousRight extends LinearOpMode {
 
         // turn robot -90 degree to right
         rotate(-AngleUnit.DEGREES.normalize(imuAngles.firstAngle), AUTO_ROTATE_POWER);
-        Logging.log("Autonomous - imu angle before parking after correction: %.2f", lastAngles.firstAngle);
+        Logging.log("Autonomous - imu angle before parking and after correction: %.2f", lastAngles.firstAngle);
 
         // drive to final parking lot
         robotRunToPosition(parkingLocation, false); // strafe robot to parking
-        Logging.log("Autonomous - Arrived parking lot aisle: %.2f", parkingLocation);
+        Logging.log("Autonomous - Arrived at parking lot aisle: %.2f", parkingLocation);
         Orientation imuAngles1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         Logging.log("Autonomous - imu angle is: %.2f", imuAngles1.firstAngle);
 
         robotRunToPosition(-24.0, true); // drive robot to parking mat
-        Logging.log("Autonomous -  finish parking.");
+        Logging.log("Autonomous -  finished parking.");
+
+        // lower slider in prep for tele-op
+        setSliderPosition(GROUND_POSITION);
+        Logging.log("Autonomous - slider lowered, autonomous complete.");
     }
 
     /**
