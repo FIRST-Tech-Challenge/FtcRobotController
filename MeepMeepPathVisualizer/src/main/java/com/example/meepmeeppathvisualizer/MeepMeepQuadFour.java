@@ -8,17 +8,17 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
-public class MeepMeepQuadThree {
+public class MeepMeepQuadFour {
     public static void main(String[] args){
-        int aprilTagsId = 1;
+        int aprilTagsId = 2;
 
         MeepMeep mm = new MeepMeep(800,90);
         new MeepMeepPersistence(mm);
 
         MeepMeepPersistence persist = new MeepMeepPersistence(mm);
         persist.restore();
-
-        Pose2d startPose = new Pose2d(-35, 61.8, Math.toRadians(270));
+        //starts at tile F2
+        Pose2d startPose = new Pose2d(-35, -55, Math.toRadians(0));
 
         // Creating bot
         RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
@@ -34,23 +34,22 @@ public class MeepMeepQuadThree {
 
                 .setColorScheme(new ColorSchemeBlueDark())
 
-                .setDimensions(14.6, 15.4)
+                .setDimensions(13, 16)
 
                 .followTrajectorySequence(drive -> {
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
-
-                    builder.lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75)));
+                    //goes to high junction w preloaded cone
+                    builder.lineToLinearHeading(new Pose2d(-23,-11,Math.toRadians(90)));
                     builder.waitSeconds(1);//cone deposit
                     for(int i=1; i <= 4;i++ )
                         cycle(builder);
 
                     if(aprilTagsId == 1)
-
-                        builder.lineToLinearHeading(new Pose2d(-12.2,15.5,Math.toRadians(-109)));
+                        builder.lineToLinearHeading(new Pose2d(-65,-35,Math.toRadians(270)));
                     else if(aprilTagsId ==2)
-                        builder.waitSeconds(1.74);
+                        builder.lineToLinearHeading(new Pose2d(-35,-35,Math.toRadians(270)));
                     else
-                        builder.lineTo(new Vector2d(-58.2,24.6));
+                        builder.lineToLinearHeading(new Pose2d(-13,-35,Math.toRadians(270)));
                     return builder.build();
                 });
 
@@ -63,11 +62,10 @@ public class MeepMeepQuadThree {
     }
 
     public static void cycle(TrajectorySequenceBuilder builder){
-        builder.lineToLinearHeading(new Pose2d(-57,12.3,Math.toRadians(0)));
+        builder.lineToLinearHeading(new Pose2d(-57,-13,Math.toRadians(0))); // cone deposit
         builder.waitSeconds(2.5); //This would be replaced with an actual intake function
-        builder.lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75)));
+        builder.lineToLinearHeading(new Pose2d(-23,-11,Math.toRadians(90))); // high junction
         builder.waitSeconds(1);//Under the impression that using the async PID, the slides will be already be moved up
     }
 
 }
-

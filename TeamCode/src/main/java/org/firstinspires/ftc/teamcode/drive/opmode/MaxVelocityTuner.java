@@ -25,7 +25,6 @@ import java.util.Objects;
  * Further fine tuning of kF may be desired.
  */
 @Config
-@Disabled
 @Autonomous(group = "drive")
 public class MaxVelocityTuner extends LinearOpMode {
     public static double RUNTIME = 2.0;
