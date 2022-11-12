@@ -14,27 +14,27 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 @Config
-@Autonomous(name = "BlueRightAutoCycle")
+@Autonomous(name = "BlueLeftAutoCycle")
 
 
-public class BlueRightAutoCycle extends LinearOpMode {
+public class BlueLeftAutoCycle extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;
 
-    public static double dummyx = -22, dummyy = 7, dummya = 270;
-    public static double dummyx2 = -22, dummyy2 =12, dummya2 = 270;
+    public static double dummyx = 22, dummyy = 7, dummya = 270;
+    public static double dummyx2 = 22, dummyy2 =12, dummya2 = 270;
 
-    public static double dummyX = -10, dummyY = 10, dummyA = 180;
+    public static double dummyX = 10, dummyY = 10, dummyA = 0;
 
-    public static double dummyX2 = -33, dummyY2 = 10, dummyA2 = 180;
+    public static double dummyX2 = 33, dummyY2 = 10, dummyA2 = 0;
 
-    public static double dummyX3 = -55, dummyY3 = 10, dummyA3 = 180;
+    public static double dummyX3 = 55, dummyY3 = 10, dummyA3 = 0;
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(-29.6, 62.25, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(40.35, 62.25, Math.toRadians(270));
         robot.roadrun.setPoseEstimate(startPose);
 
         //detectSignal();
@@ -47,12 +47,12 @@ public class BlueRightAutoCycle extends LinearOpMode {
 
         if (isStopRequested()) return;
         Trajectory initialtrajectory = robot.roadrun.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(-13, 55))
+                .lineToConstantHeading(new Vector2d(13, 55))
                 .build();
-        Trajectory initialtrajectory2 = robot.roadrun.trajectoryBuilder(new Pose2d(-13,55, Math.toRadians(270)))
-                .lineToConstantHeading(new Vector2d(-13, 10))
+        Trajectory initialtrajectory2 = robot.roadrun.trajectoryBuilder(new Pose2d(13,55, Math.toRadians(270)))
+                .lineToConstantHeading(new Vector2d(13, 10))
                 .build();
-        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-13,10, Math.toRadians(270)))
+        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(13,10, Math.toRadians(270)))
                 .lineToConstantHeading(new Vector2d(dummyx,dummyy))
                 .build();
         Trajectory backtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
@@ -84,6 +84,7 @@ public class BlueRightAutoCycle extends LinearOpMode {
 //            robot.lowerLiftArmToIntake(true);
             robot.followTrajectoryAsync(backtrajectory);
             robot.followTrajectoryAsync(park2trajectory);
+            robot.followTrajectoryAsync(park1trajectory);
 
 //            if (dummyP == 1) {
 //                robot.followTrajectoryAsync(park1trajectory);

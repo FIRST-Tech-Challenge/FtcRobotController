@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.CV;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+
 import com.acmerobotics.dashboard.config.Config;
 
 import org.opencv.core.Core;
@@ -106,6 +108,10 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
             sums[1]+=frameList.get(i)[1];
             sums[2]+=frameList.get(i)[2];
         }
+        op.telemetry.addData("oogabooa: ", sums[0]);
+        op.telemetry.addData("oogabooa: ", sums[1]);
+        op.telemetry.addData("oogabooa: ", sums[2]);
+        op.telemetry.update();
         if(sums[0]>sums[1]&&sums[0]>sums[2]){
             return 2;
         }else if(sums[1]>sums[2]){
