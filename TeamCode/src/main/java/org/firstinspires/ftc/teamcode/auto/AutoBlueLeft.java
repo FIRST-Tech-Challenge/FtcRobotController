@@ -105,41 +105,57 @@ public class AutoBlueLeft extends LinearOpMode {
             telemetry.update();
         }
         TrajectorySequence seq = null;
-        robot.setPoseEstimate(new Pose2d(-35.5, 61, Math.toRadians(0)));
+        robot.setPoseEstimate(new Pose2d(-37, 60, Math.toRadians(270)));
         if (tagOfInterest.id == LEFT) {
             //insert trajectories for parking zone 1
-            seq = robot.trajectorySequenceBuilder(new Pose2d(-35.5, 61, Math.toRadians(0)))
-                    .forward(12)
-                    .turn(Math.toRadians(-90))
-                    .forward(2)
+            // drive.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(270)))
+            seq = robot.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
                     .turn(Math.toRadians(90))
-                    .forward(11)
+                    .forward(22)
                     .turn(Math.toRadians(-90))
-                    .forward(45)
+                    .forward(37)
+                    .turn(Math.toRadians(-90))
+                    .forward(3)
                     .build();
         }
 
         else if (tagOfInterest.id == MIDDLE) {
             //insert trajectories for parking zone 2
             seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
-                    .forward(12)
-                    .turn(Math.toRadians(-90))
-                    .forward(2)
                     .turn(Math.toRadians(90))
-                    .forward(11)
+                    .forward(22)
                     .turn(Math.toRadians(-90))
+                    .forward(37)
+                    .turn(Math.toRadians(-90))
+                    .forward(3)
+                    // use claw
+                    .back(3)
+                    .turn(Math.toRadians(-90))
+                    .forward(37)
+                    .turn(Math.toRadians(90))
                     .forward(25)
+                    .turn(Math.toRadians(90))
+                    .forward(35)
                     .build();
         }
 
         else if (tagOfInterest.id == RIGHT) {
             //insert trajectories for parking zone 3
             seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
-                    .forward(12)
-                    .turn(Math.toRadians(-90))
-                    .forward(2)
                     .turn(Math.toRadians(90))
-                    .forward(11)
+                    .forward(22)
+                    .turn(Math.toRadians(-90))
+                    .forward(37)
+                    .turn(Math.toRadians(-90))
+                    .forward(3)
+                    // use claw
+                    .back(3)
+                    .turn(Math.toRadians(-90))
+                    .forward(37)
+                    .turn(Math.toRadians(90))
+                    .forward(46)
+                    .turn(Math.toRadians(90))
+                    .forward(35)
                     .build();
         }
         waitForStart();
