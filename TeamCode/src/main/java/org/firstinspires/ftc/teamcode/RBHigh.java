@@ -14,7 +14,7 @@ public class RBHigh extends DriveMethods{
         waitForStart();
 
         driveForDistance(0.45, Variables.Direction.FORWARD, 0.35, 0);
-        driveForDistance(1, Variables.Direction.RIGHT, 0.35, 0);
+        driveForDistance(1.25, Variables.Direction.RIGHT, 0.35, 0);
         driveForDistance(0.1, Variables.Direction.FORWARD, 0.35, 0);
 
 //        clawRelease();
@@ -24,7 +24,7 @@ public class RBHigh extends DriveMethods{
 //        sleep(1000);
 //        GoToHeight(0);
 
-        driveForDistance(1, Variables.Direction.LEFT, 0.35, 0);
+        driveForDistance(1.25, Variables.Direction.LEFT, 0.35, 0);
         driveForDistance(1.5, Variables.Direction.BACKWARD, 0.35, 0);
 
         while (opModeIsActive()) {

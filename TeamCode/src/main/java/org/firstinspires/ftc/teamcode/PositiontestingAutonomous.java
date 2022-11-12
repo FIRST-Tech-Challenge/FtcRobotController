@@ -50,34 +50,53 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="LukasSlideTeleop", group="Linear Opmode")
+@TeleOp(name="SlideTesting", group="Linear Opmode")
 
-public class LukasSlideTeleop extends LinearOpMode {
+public class PositiontestingAutonomous extends DriveMethods {
 
     // Declare OpMode members.
-        DcMotor motorSlide;
+
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-
-        motorSlide = hardwareMap.get(DcMotor.class, "slide");
-
+        initMotorsBlue();
         waitForStart();
-         double leftY = 0;
+
+        GoToHeight(500);
+
+        GoToHeight(1300);
+
+        GoToHeight(600);
+
+        GoToHeight(300);
+
+        GoToHeight(1000);
+
+        GoToHeight(1800);
+
+        GoToHeight(1200);
+
+        GoToHeight(1900);
+
+        GoToHeight(2500);
+
+        GoToHeight(2250);
+
+        GoToHeight(3000);
+
+        GoToHeight(3300);
+
+        GoToHeight(3700);
+
+        GoToHeight(2200);
+
+        GoToHeight(1000);
+
+        GoToHeight(0);
 
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-            leftY = -gamepad1.left_stick_y;
-
-            motorSlide.setPower(leftY/3);
-
-            telemetry.addLine("leftY: " + leftY);
-            telemetry.addLine("Current Slide Clicks: " + motorSlide.getCurrentPosition());
-            telemetry.update();
-
 
         }
     }

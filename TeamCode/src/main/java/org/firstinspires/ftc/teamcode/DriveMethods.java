@@ -4,11 +4,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -183,76 +185,105 @@ public class DriveMethods extends LinearOpMode{
         motorBR.setPower(0);
     }
     */
-    public void CalibrateIMU() {
 
-    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-    parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-    parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-    parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-    parameters.loggingEnabled = true;
-    parameters.loggingTag = "IMU";
-    parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+    /**
+     * This is a REV internal IMU calibration below
+     */
+//    public void CalibrateIMU() {
+//
+//    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//    parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+//    parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//    parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+//    parameters.loggingEnabled = true;
+//    parameters.loggingTag = "IMU";
+//    parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+//
+//    // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+//    // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+//    // and named "imu".
+//    imu = hardwareMap.get(BNO055IMU.class, "imu");
+//    imu.initialize(parameters);
+//
+//    telemetry.addLine("imu should be calibrated!");
+//    telemetry.update();
+//    isImuCalibrated = true;
+//    sleep(1000);
+//
+//
+//    }
 
-    // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-    // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-    // and named "imu".
-    imu = hardwareMap.get(BNO055IMU.class, "imu");
-    imu.initialize(parameters);
 
-    telemetry.addLine("imu should be calibrated!");
-    telemetry.update();
-    isImuCalibrated = true;
-    sleep(1000);
-
-
-    }
-
-    public double getCurrentZ() {
+//    public double getCurrentZ() {
 //        if(!isImuCalibrated){
 //            CalibrateIMU();
 //        }
 
-        Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
-        double currentZ = currentAngle.firstAngle;
-        return currentZ;
+//        Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+//        double currentZ = currentAngle.firstAngle;
+//        return currentZ;
+//    }
+
+
+
+    /**
+     * Above code is for REV internal IMU
+     * BELOW is code for NavX IMU
+     */
+
+    public void calibrateNavXIMU(){
+        navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
+        gyro = (IntegratingGyroscope)navxMicro;
+
+        while (navxMicro.isCalibrating())  {
+            telemetry.addLine("calibrating...");
+            telemetry.update();
+            sleep(50);
+        }
+        telemetry.addLine("calibrated!");
+        telemetry.update();
     }
 
-//    public double getCumulativeZ(){
-////        if(!isImuCalibrated){
-////            CalibrateIMU();
-////
-////        }
-//        double currentHeading = getCurrentZ();
-//        double deltaHeading = currentHeading - previousHeading;
-//        if(deltaHeading <= -180) {
-//            deltaHeading += 360;
-//        } else if(deltaHeading >= 180) {
-//            deltaHeading -=360;
-//        }
-//
-//        intergratedHeading += deltaHeading;
-//        previousHeading = currentHeading;
-//
-//        return intergratedHeading;
-//
-//    }
-    //double targetZ = getCurrentZ();
-    public void recenterRobotZRotation(double targetRotationZ) {
-        double FLPower = motorFL.getPower();
-        double BLPower = motorBL.getPower();
-        double FRPower = motorFR.getPower();
-        double BRPower = motorBR.getPower();
-        targetZ = getCurrentZ();
-        while(Math.floor(getCurrentZ()) != targetZ) {
-            double currentZ = getCurrentZ();
-            double rotateError = targetZ - currentZ;
-            //motorFL.setPower();
-            motorFL.setPower(FLPower - (rotateError / 100));
-            motorBL.setPower(BLPower - (rotateError / 100));
-            motorFR.setPower(FRPower + (rotateError / 100));
-            motorBR.setPower(BRPower + (rotateError / 100));
-        }
+    public double getCurrentZ(){
+        Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
     }
+
+    public double getCumulativeZ(){
+        double currentHeading = getCurrentZ();
+        double deltaHeading = currentHeading - previousHeading;
+        if(deltaHeading <= -180) {
+            deltaHeading += 360;
+        } else if(deltaHeading >= 180) {
+            deltaHeading -=360;
+        }
+
+        intergratedHeading += deltaHeading;
+        previousHeading = currentHeading;
+
+        return intergratedHeading;
+
+    }
+
+    /**
+     *Above is NavX IMU stuff
+     **/
+//    public void recenterRobotZRotation(double targetRotationZ) {
+//        double FLPower = motorFL.getPower();
+//        double BLPower = motorBL.getPower();
+//        double FRPower = motorFR.getPower();
+//        double BRPower = motorBR.getPower();
+//        targetZ = getCurrentZ();
+//        while(Math.floor(getCurrentZ()) != targetZ) {
+//            double currentZ = getCurrentZ();
+//            double rotateError = targetZ - currentZ;
+//            //motorFL.setPower();
+//            motorFL.setPower(FLPower - (rotateError / 100));
+//            motorBL.setPower(BLPower - (rotateError / 100));
+//            motorFR.setPower(FRPower + (rotateError / 100));
+//            motorBR.setPower(BRPower + (rotateError / 100));
+//        }
+//    }
     public void driveForDistance(double distanceMeters, Direction movementDirection, double power, double targetRotation) { // distance: 2, strafe: false, power: 0.5
         //targetZ = getCurrentZ();
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -371,11 +402,11 @@ public class DriveMethods extends LinearOpMode{
         double aggressiveness = 2700;
         double holdingPower = 0;
         if (dif < 0) {
-            aggressiveness = 2700;
+            aggressiveness = 2000;
             holdingPower = 0;
         } if (dif > 0) {
             aggressiveness = 2000;
-            holdingPower = 0.05;
+            holdingPower = 0.18;
         }
         motorSlide.setPower((dif / aggressiveness));
 
@@ -402,6 +433,21 @@ public class DriveMethods extends LinearOpMode{
     }
     public void clawRelease(){
         servoGrabberThing.setPosition(Release);
+    }
+    public void goToDown(){
+        GoToHeight(downHeight);
+    }
+    public void goToCollect(){
+        GoToHeight(collectHeight);
+    }
+    public void goToLow(){
+        GoToHeight(lowHeight);
+    }
+    public void goToMid(){
+        GoToHeight(midHeight);
+    }
+    public void goToHigh(){
+        GoToHeight(highHeight);
     }
 
     public void initMotorsSecondBot() {

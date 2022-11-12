@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -27,6 +29,11 @@ public class Variables {
 
     public static ElapsedTime runtime = new ElapsedTime();
     public static BNO055IMU imu;
+
+    //NavX IMU stuffs below
+    public static IntegratingGyroscope gyro;
+    public static NavxMicroNavigationSensor navxMicro;
+
     public static double previousHeading = 0;
     public static double intergratedHeading = 0;
     public static double targetZ;
@@ -39,6 +46,13 @@ public class Variables {
 
     public static final double Clamp = 0.5;
     public static final double Release = 0.5;
+
+    public static final int downHeight = 0;
+    public static final int collectHeight = 200;
+    public static final int lowHeight = 1950;
+    public static final int midHeight = 3100;
+    public static final int highHeight = 4400;
+
 
     // Grbber #1 Clamp: 0.5, Release: 0.75
     // grbber #2 Clamp: 0.58, Release: 0.51
