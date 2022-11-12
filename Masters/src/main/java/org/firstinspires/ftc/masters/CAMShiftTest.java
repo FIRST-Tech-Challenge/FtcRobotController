@@ -2,6 +2,7 @@ package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,6 +18,8 @@ public class CAMShiftTest extends LinearOpMode {
     private static final int CAMERA_WIDTH  = 640; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
 
+    TelemetryPacket packet = new TelemetryPacket();
+
     @Override
     public void runOpMode()
     {
@@ -25,7 +28,7 @@ public class CAMShiftTest extends LinearOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         //OpenCV Pipeline
         CAMShiftPipelinePowerPlay myPipeline;
-        webcam.setPipeline(myPipeline = new CAMShiftPipelinePowerPlay(telemetry));
+        webcam.setPipeline(myPipeline = new CAMShiftPipelinePowerPlay(telemetry,packet));
         // Configuration of Pipeline
         // Webcam Streaming
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -50,6 +53,10 @@ public class CAMShiftTest extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(webcam, 10);
 
         telemetry.update();
+
+        packet.put("Position", 3);
+        dashboard.sendTelemetryPacket(packet);
+
         waitForStart();
 
         while (opModeIsActive())

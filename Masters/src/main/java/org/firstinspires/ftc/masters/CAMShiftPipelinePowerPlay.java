@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.masters;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -45,9 +48,12 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
     // hardcode the initial location of window
     private final Rect trackWindow = new Rect(150, 60, 63, 125);
     Telemetry telemetry;
+    private final TelemetryPacket packet;
 
-    public CAMShiftPipelinePowerPlay(Telemetry telemetry) {
+
+    public CAMShiftPipelinePowerPlay(Telemetry telemetry, TelemetryPacket packet) {
         this.telemetry = telemetry;
+        this.packet = packet;
     }
 
     Mat region_a;
@@ -65,9 +71,9 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
     int avg_a = 0;
     int avg_b = 0;
 
-    int difFromPoleThresh = 170; //b
-    int difFromRedConeThresh = 170; //a
-    int difFromBlueConeThresh = 97; //b
+    int difFromPoleThresh = 190; //b
+    int difFromRedConeThresh = 180; //a
+    int difFromBlueConeThresh = 85; //b
 
     int difFromPole; //b
     int difFromRedCone; //a
@@ -108,8 +114,11 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
         for (int i = 0; i < 4 ;i++) {
             Imgproc.line(input, points[i], points[(i+1)%4], new Scalar(255, 0, 0),2);
         }
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
         data = rot_rect.toString();
         telemetry.addData("rot_rect: ", rot_rect.toString());
+        packet.put("rot_rect: ", rot_rect.toString());
 
         Point center = rot_rect.center;
         Size size = rot_rect.size;
@@ -123,6 +132,7 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
             orientation = ConeOrientation.TIPPED;
         }
         telemetry.addData("Orientation: ", orientation);
+        packet.put("Orientation: ", orientation);
 
         if (orientation == ConeOrientation.UPRIGHT) {
             topLeftPoint = new Point(center.x-(size.width/4),center.y-(size.height/4));
@@ -150,6 +160,10 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
 
             telemetry.addData("avg_a: ", avg_a);
             telemetry.addData("avg_b: ", avg_b);
+            packet.put("avg_a: ", avg_a);
+            packet.put("avg_b: ", avg_b);
+
+
 
             difFromPole = Math.abs(difFromPoleThresh - avg_b);
             difFromRedCone = Math.abs(difFromRedConeThresh - avg_a);
@@ -164,6 +178,8 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
             }
 
             telemetry.addData("Detected Object: ", detectedObject);
+            packet.put("Detected Object: ", detectedObject);
+
 
         }
         catch(Exception e) {
@@ -177,24 +193,14 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
             case POLE:
                 telemetry.addData("Center X",center.x);
                 telemetry.addData("Pole H->W Ratio", heightWidthRatio);
+                packet.put("Center X",center.x);
+                packet.put("Pole H->W Ratio", heightWidthRatio);
+
                 break;
             case RED_CONE:
-                telemetry.addData("Cone H->W Ratio", heightWidthRatio);
-                if (heightWidthRatio >= 1.70 && heightWidthRatio <= 1.90) {
-                    numCones = 1;
-                } else if (heightWidthRatio >= 1.90 && heightWidthRatio <= 2.20) {
-                    numCones = 2;
-                } else if (heightWidthRatio >= 2.20 && heightWidthRatio <= 2.45) {
-                    numCones = 3;
-                } else if (heightWidthRatio >= 2.45 && heightWidthRatio <= 2.75) {
-                    numCones = 4;
-                } else if (heightWidthRatio >= 2.75 && heightWidthRatio <= 3.00) {
-                    numCones = 5;
-                }
-                telemetry.addData("Num Cones: ",numCones);
-                break;
             case BLUE_CONE:
-                telemetry.addData("Cone H->W Ratio", size.height/size.width);
+                telemetry.addData("Cone H->W Ratio", heightWidthRatio);
+                packet.put("Cone H->W Ratio", heightWidthRatio);
                 if (heightWidthRatio >= 1.70 && heightWidthRatio <= 1.90) {
                     numCones = 1;
                 } else if (heightWidthRatio >= 1.90 && heightWidthRatio <= 2.20) {
@@ -207,10 +213,15 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
                     numCones = 5;
                 }
                 telemetry.addData("Num Cones: ",numCones);
+                packet.put("Num Cones: ",numCones);
                 break;
+
             case THE_MADNESS_OF_CTHULHU:
                 break;
         }
+
+
+        dashboard.sendTelemetryPacket(packet);
 
 
         telemetry.update();
