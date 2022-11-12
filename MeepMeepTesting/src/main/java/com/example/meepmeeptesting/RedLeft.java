@@ -9,7 +9,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class RedLeft {
     public static void main(String[] args) {
         //placeholder signal zone
-        int signalZone = 3;
+        int signalZone = 1;
         MeepMeep meepMeep = new MeepMeep(800);
         RoadRunnerBotEntity myBot = null;
 
@@ -22,6 +22,7 @@ public class RedLeft {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
+                                        /*
                                         .strafeRight(25)
                                         .forward(30)
                                         .strafeLeft(13)
@@ -33,6 +34,23 @@ public class RedLeft {
                                         .strafeLeft(50)
                                         .forward(30)
                                         .build()
+                                         */
+
+                                        .forward(17.5)
+                                        .turn(Math.toRadians(-90))
+                                        .forward(4)
+                                        //use claw
+                                        .back(4)
+                                        .turn(Math.toRadians(90))
+                                        .forward(3.5)
+                                        .back(17)
+                                        .turn(Math.toRadians(-90))
+                                        .forward(24)
+                                        .turn(Math.toRadians(90))
+                                        .forward(48)
+                                        .turn(Math.toRadians(90))
+                                        .forward(48)
+                                        .build()
                         );
                 break;
             case 2:
@@ -43,6 +61,8 @@ public class RedLeft {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
+
+                                        /*
                                         .strafeRight(25)
                                         .forward(30)
                                         .strafeLeft(13)
@@ -52,6 +72,23 @@ public class RedLeft {
                                         .strafeRight(13)
                                         .forward(25)
                                         .strafeLeft(25)
+                                        .build()
+                                        */
+
+                                        .forward(17.5)
+                                        .turn(Math.toRadians(-90))
+                                        .forward(4)
+                                        //use claw
+                                        .back(4)
+                                        .turn(Math.toRadians(90))
+                                        .forward(3.5)
+                                        .back(17)
+                                        .turn(Math.toRadians(-90))
+                                        .forward(24)
+                                        .turn(Math.toRadians(90))
+                                        .forward(48)
+                                        .turn(Math.toRadians(90))
+                                        .forward(24)
                                         .build()
                         );
                 break;
@@ -63,6 +100,7 @@ public class RedLeft {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
+                                        /*
                                         .strafeRight(25)
                                         .forward(30)
                                         .strafeLeft(13)
@@ -72,6 +110,26 @@ public class RedLeft {
                                         .strafeRight(13)
                                         //.forward(25)
                                         //.strafeLeft(50)
+                                         */
+
+
+                                        /*.strafeRight(12)
+                                        .forward(10)
+                                        //use claw
+                                        .back(10)*/
+
+                                        .forward(17.5)
+                                        .turn(Math.toRadians(-90))
+                                        .forward(4)
+                                        //use claw
+                                        .back(4)
+                                        .turn(Math.toRadians(90))
+                                        .forward(3.5)
+                                        .back(17)
+                                        .turn(Math.toRadians(-90))
+                                        .forward(24)
+                                        .turn(Math.toRadians(90))
+                                        .forward(24)
                                         .build()
                         );
 
