@@ -136,8 +136,9 @@ public class GFORCE_AUTO extends LinearOpMode {
                 speed = -0.1;
             }
             drive.setWeightedDrivePower(new Pose2d(speed, 0, turn));
+
             if (((coneTracker.coneRange > 70) && (coneTracker.coneRange < 90))) {
-                elevator.setWristPosition(elevator.HAND_CLOSE);
+                elevator.setHandPosition(elevator.HAND_CLOSE);
                 coneGrabbed = true;
             }
         } else {
