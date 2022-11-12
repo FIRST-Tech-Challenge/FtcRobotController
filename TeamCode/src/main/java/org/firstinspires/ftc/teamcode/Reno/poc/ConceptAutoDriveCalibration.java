@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.Reno.poc;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -96,6 +97,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         //this.navigateTo(-12, -12);
         telemetry.addData("", "current heading %5.2f", robot.getRawHeading());
         sleep(5000);
+        OpModeManagerImpl impl;
     }
 
     private void testTrajectory()
