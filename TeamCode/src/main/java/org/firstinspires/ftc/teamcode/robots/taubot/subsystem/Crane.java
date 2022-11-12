@@ -56,7 +56,7 @@ public class Crane implements Subsystem {
     public static double SHOULDER_POWER = 1.0;
     public static double SHOULDER_ADJUST = 13;
     public static double EXTEND_ADJUST = .05;
-    public static double TURRET_ADJUST = 7;
+    public static double TURRET_ADJUST = 20;
 
     public static double kE = 0.0;
     public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(30, 0, 0.005);

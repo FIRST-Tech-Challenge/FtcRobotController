@@ -656,7 +656,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         switch(articulation){
             case  leftAuton:
                 currentStateMachine = Utils.getStateMachine(new Stage())
-                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID+4,0,20))
+                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20))
                         .addState(() ->
                                 ((startingPosition == Position.START_LEFT )? turnUntilDegrees(-90):turnUntilDegrees(90))
                         )
@@ -668,7 +668,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 break;
             case middleAuton:
                 currentStateMachine = Utils.getStateMachine(new Stage())
-                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID+4,0,20))
+                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20))
                         .addState(() ->
                             ((startingPosition == Position.START_LEFT )? turnUntilDegrees(-90):turnUntilDegrees(90))
                         )
@@ -677,7 +677,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 break;
             case rightAuton:
                 currentStateMachine = Utils.getStateMachine(new Stage())
-                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID+4,0,20))
+                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20))
                         .addState(() ->
                                 ((startingPosition == Position.START_LEFT )? turnUntilDegrees(-90):turnUntilDegrees(90))
                         )

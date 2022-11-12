@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.USE_MOTOR_SMOOTHING;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -24,7 +25,7 @@ import java.util.Map;
 @Config(value = "PPTurret")
 public class Turret implements Subsystem {
 
-    public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.04, 0.01, 0.04); //0.02, 0.01, 0.05)
+    public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.02, 0.0, 0.0); //0.02, 0.01, 0.05)
     public static final double TICKS_PER_DEGREE = 36;
     public static double TURRET_TOLERANCE = 1;
 
@@ -65,7 +66,6 @@ public class Turret implements Subsystem {
         parametersIMUTurret.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parametersIMUTurret.loggingEnabled = true;
         parametersIMUTurret.loggingTag = "turretIMU";
-
 
         turretIMU.initialize(parametersIMUTurret);
         this.turretIMU=turretIMU;
