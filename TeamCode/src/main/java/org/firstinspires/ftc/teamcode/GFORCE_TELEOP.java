@@ -105,21 +105,20 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 elevator.setWristOffset(0);
             }
 
-            if (gamepad1.left_bumper && elevator.handIsOpen && !elevator.getWristIsSafe() && coneTracker.update()) {
+            if (gamepad1.left_bumper && elevator.handIsOpen && !elevator.getWristIsSafe() && coneTracker.update() ) {
                 coneTracker.showRanges();
                 double turn = coneTracker.coneDirection / 5.0;
                 double speed = 0;
 
-                if (coneTracker.coneRange > 110) {
+                if (coneTracker.coneRange > 120) {
                     speed = 0.2;
-                    elevator.grabRequest = false;
-                }else if (coneTracker.coneRange > 95) {
+                }else if (coneTracker.coneRange > 100) {
                     speed = 0.1;
-                    elevator.grabRequest = true;
-                }else if (coneTracker.coneRange < 75) {
+                }else if (coneTracker.coneRange < 80) {
                     speed = -0.1;
-                    elevator.grabRequest = true;
                 }
+
+                elevator.grabRequest = (gamepad2.cross && ((coneTracker.coneRange > 70) && (coneTracker.coneRange < 90)));
 
                 lockNewHeading(drive.getExternalHeading());
                 drive.setWeightedDrivePower(new Pose2d(speed, 0, turn));

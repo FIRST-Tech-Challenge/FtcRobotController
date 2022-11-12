@@ -20,7 +20,7 @@ public class Elevator {
     final double HOME_POWER = -0.1;
 
     final static int ELEVATOR_MIN    = 0;
-    final static  int ELEVATOR_HOME   = 40;
+    final static  int ELEVATOR_HOME   = 42;
     final static  int ELEVATOR_STACK_TOP = 200;
     final static  int ELEVATOR_LOW    = 460;
     final static  int ELEVATOR_MID    = 710;
@@ -40,7 +40,7 @@ public class Elevator {
     final double SLOW_LOWER   =  0.0;
     final double FAST_LOWER   = -0.1;
     final double HOLD_POWER   =  0.05;
-    final double IN_POSITION_LIMIT = 10;
+    final double IN_POSITION_LIMIT = 15;
 
     // Wrist & Hand Constants
     final double WRIST_UP_OFFSET   = 90;
