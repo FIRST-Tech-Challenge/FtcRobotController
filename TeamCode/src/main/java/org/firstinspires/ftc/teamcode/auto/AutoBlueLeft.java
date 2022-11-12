@@ -129,9 +129,6 @@ public class AutoBlueLeft extends LinearOpMode {
                     .forward(40)
                     .turn(Math.toRadians(-90))
                     .forward(3)
-                    .build();
-            robot.servo.setPosition(0);
-            seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                     .back(3)
                     .turn(Math.toRadians(-90))
                     .forward(40)
@@ -151,9 +148,6 @@ public class AutoBlueLeft extends LinearOpMode {
                     .forward(40)
                     .turn(Math.toRadians(-90))
                     .forward(3)
-                    .build();
-            robot.servo.setPosition(0);
-            seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                     .back(3)
                     .turn(Math.toRadians(-90))
                     .forward(40)

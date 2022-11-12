@@ -114,9 +114,6 @@ public class AutoRedLeft extends LinearOpMode {
                     .forward(17.5)
                     .turn(Math.toRadians(-90))
                     .forward(4)
-                    .build();
-            robot.servo.setPosition(0);
-            seq = robot.trajectorySequenceBuilder(pos)
                     .back(4)
                     .turn(Math.toRadians(-90))
                     .forward(17.5)
@@ -134,9 +131,6 @@ public class AutoRedLeft extends LinearOpMode {
                     .turn(Math.toRadians(-90))
                     .forward(4)
                     //use claw
-                    .build();
-            robot.servo.setPosition(0);
-            seq = robot.trajectorySequenceBuilder(pos)
                     .back(4)
                     .turn(Math.toRadians(-90))
                     .forward(17.5)
@@ -156,9 +150,6 @@ public class AutoRedLeft extends LinearOpMode {
                     .turn(Math.toRadians(-90))
                     .forward(4)
                     //use claw
-                    .build();
-            robot.servo.setPosition(0);
-            seq = robot.trajectorySequenceBuilder(pos)
                     .back(4)
                     .turn(Math.toRadians(-90))
                     .forward(17.5)
