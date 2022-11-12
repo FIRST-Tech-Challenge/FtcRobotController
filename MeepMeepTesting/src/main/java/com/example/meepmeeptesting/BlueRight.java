@@ -21,17 +21,13 @@ public class BlueRight {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 64.75, Math.toRadians(270)))
-                                        .strafeRight(25)
-                                        .forward(30)
-                                        .strafeLeft(13)
-                                        .forward(4)
-                                        //use claw
-                                        .back(4)
-                                        .strafeRight(13)
-                                        .back(30)
-                                        .strafeLeft(50)
-                                        .forward(30)
+                                drive.trajectorySequenceBuilder(new Pose2d(35.5, -60, Math.toRadians(180)))
+                                        .forward(12)
+                                        .turn(Math.toRadians(-90))
+                                        .turn(Math.toRadians(90))
+                                        .forward(11)
+                                        .turn(Math.toRadians(-90))
+                                        .forward(45)
                                         .build()
                         );
                 break;
@@ -42,16 +38,13 @@ public class BlueRight {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 64.75, Math.toRadians(270)))
-                                        .strafeRight(25)
-                                        .forward(30)
-                                        .strafeLeft(13)
-                                        .forward(4)
-                                        //use claw
-                                        .back(4)
-                                        .strafeRight(13)
+                                drive.trajectorySequenceBuilder(new Pose2d(35.5, -60, Math.toRadians(180)))
+                                        .forward(12)
+                                        .turn(Math.toRadians(-90))
+                                        .turn(Math.toRadians(90))
+                                        .forward(11)
+                                        .turn(Math.toRadians(-90))
                                         .forward(25)
-                                        .strafeLeft(25)
                                         .build()
                         );
                 break;
@@ -62,16 +55,11 @@ public class BlueRight {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 64.75, Math.toRadians(270)))
-                                        .strafeRight(25)
-                                        .forward(30)
-                                        .strafeLeft(13)
-                                        .forward(4)
-                                        //use claw
-                                        .back(4)
-                                        .strafeRight(13)
-                                        //.forward(25)
-                                        //.strafeLeft(50)
+                                drive.trajectorySequenceBuilder(new Pose2d(35.5, -60, Math.toRadians(180)))
+                                        .forward(12)
+                                        .turn(Math.toRadians(-90))
+                                        .turn(Math.toRadians(90))
+                                        .forward(11)
                                         .build()
                         );
 

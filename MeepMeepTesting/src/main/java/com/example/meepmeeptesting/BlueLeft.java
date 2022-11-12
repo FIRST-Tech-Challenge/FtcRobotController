@@ -8,7 +8,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class BlueLeft {
     // from top left corner
         public static void main(String[] args) {
-            int signalZone = 3;
+            int signalZone = 1;
             MeepMeep meepMeep = new MeepMeep(800);
             RoadRunnerBotEntity myBot = null;
 
@@ -21,14 +21,15 @@ public class BlueLeft {
                             .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                             .setDimensions(14, 10.5)
                             .followTrajectorySequence(drive ->
-                                    drive.trajectorySequenceBuilder(new Pose2d(-35.5, 64.75, Math.toRadians(0)))
+                                    drive.trajectorySequenceBuilder(new Pose2d(-35.5, 61, Math.toRadians(0)))
                                             //use claw
-                                            .forward(25)
+                                            .forward(12)
                                             .turn(Math.toRadians(-90))
-                                            .forward(40)
-                                            .turn(Math.toRadians(-90))
+                                            .forward(2)
                                             .turn(Math.toRadians(90))
-                                            .forward(10)
+                                            .forward(11)
+                                            .turn(Math.toRadians(-90))
+                                            .forward(45)
                                             .build()
                             );
                     break;
@@ -39,13 +40,14 @@ public class BlueLeft {
                             .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                             .setDimensions(14, 10.5)
                             .followTrajectorySequence(drive ->
-                                    drive.trajectorySequenceBuilder(new Pose2d(-35.5, 64.75, Math.toRadians(0)))
-                                            .forward(25)
+                                    drive.trajectorySequenceBuilder(new Pose2d(-35.5, 61, Math.toRadians(0)))
+                                            .forward(12)
                                             .turn(Math.toRadians(-90))
-                                            .forward(40)
-                                            .turn(Math.toRadians(-90))
+                                            .forward(2)
                                             .turn(Math.toRadians(90))
-                                            .back(10)
+                                            .forward(11)
+                                            .turn(Math.toRadians(-90))
+                                            .forward(25)
                                             .build()
                             );
                     break;
@@ -56,13 +58,12 @@ public class BlueLeft {
                             .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                             .setDimensions(14, 10.5)
                             .followTrajectorySequence(drive ->
-                                    drive.trajectorySequenceBuilder(new Pose2d(-35.5, 64.75, Math.toRadians(0)))
-                                            .forward(25)
+                                    drive.trajectorySequenceBuilder(new Pose2d(-35.5, 61, Math.toRadians(0)))
+                                            .forward(12)
                                             .turn(Math.toRadians(-90))
-                                            .forward(40)
-                                            .turn(Math.toRadians(-90))
+                                            .forward(2)
                                             .turn(Math.toRadians(90))
-                                            .back(35)
+                                            .forward(11)
                                             .build()
                             );
 

@@ -20,13 +20,12 @@ public class RedRight {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 64.75, Math.toRadians(-180)))
-                                        .forward(22)
+                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 61, Math.toRadians(-180)))
+                                        .forward(12)
                                         .turn(Math.toRadians(90))
-                                        .forward(40)
-                                        .turn(Math.toRadians(90))
+                                        .forward(3)
                                         .turn(Math.toRadians(-90))
-                                        .back(35)
+                                        .forward(13)
                                         .build()
                         );
                 break;
@@ -37,13 +36,14 @@ public class RedRight {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 64.75, Math.toRadians(-180)))
-                                        .forward(22)
+                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 61, Math.toRadians(-180)))
+                                        .forward(12)
                                         .turn(Math.toRadians(90))
-                                        .forward(40)
-                                        .turn(Math.toRadians(90))
+                                        .forward(3)
                                         .turn(Math.toRadians(-90))
-                                        .back(10)
+                                        .forward(13)
+                                        .turn(Math.toRadians(90))
+                                        .forward(27)
                                         .build()
                         );
                 break;
@@ -54,13 +54,14 @@ public class RedRight {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 64.75, Math.toRadians(-180)))
-                                        .forward(22)
+                                drive.trajectorySequenceBuilder(new Pose2d(35.5, 61, Math.toRadians(-180)))
+                                        .forward(12)
                                         .turn(Math.toRadians(90))
-                                        .forward(40)
-                                        .turn(Math.toRadians(90))
+                                        .forward(3)
                                         .turn(Math.toRadians(-90))
-                                        .forward(10)
+                                        .forward(13)
+                                        .turn(Math.toRadians(90))
+                                        .forward(45)
                                         .build()
                         );
 
