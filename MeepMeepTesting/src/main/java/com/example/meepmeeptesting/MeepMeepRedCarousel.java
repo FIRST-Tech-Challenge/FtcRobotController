@@ -13,7 +13,6 @@ public class MeepMeepRedCarousel {
         Pose2d parkPosition = new Pose2d(new Vector2d(-61, -34), Math.toRadians(0));
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-
                 .setConstraints(45, 60, Math.toRadians(60), Math.toRadians(60), 16.4)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35, -63),Math.toRadians(270)))
