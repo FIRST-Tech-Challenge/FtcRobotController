@@ -52,10 +52,15 @@ public class DriverControls {
 
         if(stickyGamepad1.a) {
             robot.crane.pickupSequence();
+
         }
 
         if(stickyGamepad1.b){
             robot.crane.dropSequence();
+        }
+
+        if(gamepad1.y){
+           // robot.driveTrain.driveUntil(24,0,0);
         }
 
         //manual override of drivetrain

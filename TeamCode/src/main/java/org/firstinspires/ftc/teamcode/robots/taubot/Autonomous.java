@@ -120,15 +120,6 @@ public class Autonomous {
                         .build();
         square = trajectorySequenceToStateMachine(squareSequence);
 
-        Auton = Utils.getStateMachine(new Stage())
-                .addMineralState(
-                        () -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> { robot.driveTrain.articulate(DriveTrain.Articulation.leftAuton,startingPosition); return true; },
-                        () -> { robot.driveTrain.articulate(DriveTrain.Articulation.middleAuton,startingPosition); return true; },
-                        () -> { robot.driveTrain.articulate(DriveTrain.Articulation.rightAuton,startingPosition); return true; }
-                )
-                .build();
-
         squareNoRR = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.driveTrain.driveUntilDegrees(24, 0,20))
                 .addTimedState(1f, () -> {}, () -> {})

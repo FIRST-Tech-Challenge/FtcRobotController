@@ -297,8 +297,9 @@ public class PowerPlay_6832 extends OpMode {
                         //handleCraneDebug();
                         break;
                     case AUTONOMOUS:
-                        auto.Auton.execute();
-                        gameState = GameState.TELE_OP;
+                        if(robot.AutonRun(auto.visionProvider.getMostFrequentPosition().getIndex(),startingPosition)) {
+                            gameState = GameState.TELE_OP;
+                        }
                         break;
                     case BACK_AND_FORTH:
                         auto.backAndForth.execute();

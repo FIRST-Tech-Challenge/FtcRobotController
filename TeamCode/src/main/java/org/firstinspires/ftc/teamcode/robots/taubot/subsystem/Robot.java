@@ -14,8 +14,10 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+import org.firstinspires.ftc.teamcode.vision.VisionProvider;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -89,6 +91,7 @@ public class Robot implements Subsystem {
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
+        telemetryMap.put("AutonState", autonIndex);
         telemetryMap.put("auto-dump enabled", autoDumpEnabled);
         if(debug) {
             for (int i = 0; i < subsystems.length; i++) {
@@ -104,6 +107,7 @@ public class Robot implements Subsystem {
         telemetryMap.put(" X", current_dx);
         telemetryMap.put(" Y", current_dy);
         telemetryMap.put("imu heading",driveTrain.getRawHeading());
+        telemetryMap.put("turn until degrees done", turnUntilDegreesDone);
 
 
         return telemetryMap;
@@ -119,7 +123,7 @@ public class Robot implements Subsystem {
         for (LynxModule module : hubs)
             module.clearBulkCache();
 
-        //articulate(articulation);
+        articulate(articulation);
 
         //update subsystems
         for(int i = 0; i < subsystems.length; i++) {
@@ -172,12 +176,70 @@ public class Robot implements Subsystem {
 
     public double getVoltage(){return batteryVoltageSensor.getVoltage();}
 
+    int autonIndex = 0;
+
+    boolean turnUntilDegreesDone = false;
+    public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
+        switch (autonIndex){
+            case 0:
+                if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID+4,0,20)){
+                    autonIndex++;
+                }
+                break;
+            case 1:
+                if(startingPosition.equals( Constants.Position.START_LEFT)){
+                    if(driveTrain.turnUntilDegrees( 90)){
+                        autonIndex++;
+                        turnUntilDegreesDone = true;
+                    }
+                }else{
+                    if(driveTrain.turnUntilDegrees(-90)){
+                        autonIndex++;
+                        turnUntilDegreesDone = true;
+                    }
+                }
+                break;
+            case 2:
+                if(autonTarget  == 1){
+                    autonIndex++;
+                    break;
+                }
+                if(startingPosition.equals( Constants.Position.START_LEFT)){
+                    if(autonTarget == 0){
+                        if(driveTrain.driveUntilDegrees(Field.INCHES_PER_GRID,-90,20))autonIndex++;
+                    }else{
+                        if(driveTrain.driveUntilDegrees(-Field.INCHES_PER_GRID,-90,20))autonIndex++;
+                    }
+                }else{
+                    if(autonTarget == 0){
+                        if(driveTrain.driveUntilDegrees(-Field.INCHES_PER_GRID, -90,20))autonIndex++;
+                    }else{
+                        if(driveTrain.driveUntilDegrees(Field.INCHES_PER_GRID,-90,20))autonIndex++;
+                    }
+                }
+                break;
+            case 3:
+                if(startingPosition.equals( Constants.Position.START_LEFT)){
+                    turret.setTargetHeading(-90);
+                }else{
+                    turret.setTargetHeading(90);
+                }
+                autonIndex = 0;
+                return true;
+
+            default:
+                return false;
+        }
+        return false;
+    }
+
     //----------------------------------------------------------------------------------------------
     // Articulations
     //----------------------------------------------------------------------------------------------
 
     public enum Articulation {
         MANUAL,
+        AUTON,
 
         // misc. articulations
         INIT,

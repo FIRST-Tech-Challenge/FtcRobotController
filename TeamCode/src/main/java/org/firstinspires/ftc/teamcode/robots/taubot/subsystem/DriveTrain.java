@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.*;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.diffInchesToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.swerveInchesToEncoderTicks;
@@ -260,9 +261,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             driveToNextTarget.execute();
         }
 
+
+
         if (useMotorPowers) {
-        leftMotor.setPower(leftPower);
-        rightMotor.setPower(rightPower);
+            leftMotor.setPower(leftPower);
+            rightMotor.setPower(rightPower);
 
         } else {
             leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
@@ -493,7 +496,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     }
     //version using a heading requested in degrees
     public boolean driveUntilDegrees(double driveDistance, double driveHeading, double driveSpeed) {
-        return driveUntil(driveDistance, Math.toRadians(-driveHeading), driveSpeed);
+        return driveUntil(driveDistance, Math.toRadians(wrapAngle(driveHeading)), driveSpeed);
     }
 
     //driveAsyncInitialized is only true when its currently driving
@@ -513,6 +516,16 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             .build();
 
     boolean turnInit = false;
+
+    public boolean setTurn(double angles){
+        setTargetHeading(Math.toRadians(angles));
+        if(heading-Math.toRadians(angles) >= -0.05 && heading-Math.toRadians(angles) <= 0.05){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public boolean turnUntil(double turnAngle) {
         if(!turnInit){
             this.turnAngle = turnAngle; // this is in Radians relative to the starting angle as set by auton alliance
@@ -529,7 +542,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //request a turn in degrees units
     public boolean turnUntilDegrees(double turnAngle) {
-        return turnUntil(Math.toRadians(-turnAngle));
+        return turnUntil(Math.toRadians(wrapAngle(turnAngle)));
     }
 
     //see isDriving();
