@@ -4,23 +4,26 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp
+@TeleOp(name = "Teleop")
 public class TeleopGOODOneController extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        // Declare our motors
-        // Make sure your ID's match your configuration
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("backLeft");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
         DcMotor linearslide = hardwareMap.dcMotor.get("linearSlide");
 
+        Servo clawservo = hardwareMap.servo.get("daclaw");
+
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        boolean move = false;
 
         waitForStart();
 
@@ -39,26 +42,40 @@ public class TeleopGOODOneController extends LinearOpMode {
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
-
-            if (gamepad2.dpad_up) {
-                linearslide.setPower(1);
-            } else if (gamepad2.dpad_down) {
-                linearslide.setPower(-1);
+//3250
+            if (gamepad1.dpad_up) {
+                if (linearslide.getCurrentPosition() < 3250) {
+                    move = true;
+                    linearslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    linearslide.setPower(0.5);
+                } else {
+                    linearslide.setPower(0);
+                }
+            } else if (gamepad1.dpad_down) {
+                if (linearslide.getCurrentPosition() > 0) {
+                    move = true;
+                    linearslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    linearslide.setPower(-0.5);
+                } else {
+                    linearslide.setPower(0);
+                }
             } else {
-                linearslide.setPower(0);
+                if (move) {
+                    move = false;
+                    linearslide.setTargetPosition(linearslide.getCurrentPosition());
+                    linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    linearslide.setPower(1);
+                }
             }
 
-            if (gamepad2.dpad_right) { // Dumps cup right
-                linearslide.setTargetPosition(500);
-                linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearslide.setPower(.5);
+            if (gamepad2.a) {
+                clawservo.setPosition(100);
             }
 
-            if (gamepad2.dpad_left) { // Dumps cup right
-                linearslide.setTargetPosition(500);
-                linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearslide.setPower(.5);
+            if (gamepad2.b) {
+                clawservo.setPosition(0);
             }
+
 
 //            if (gamepad2.dpad_up) { // Dumps cup right
 //                linearslide.setTargetPosition(500);

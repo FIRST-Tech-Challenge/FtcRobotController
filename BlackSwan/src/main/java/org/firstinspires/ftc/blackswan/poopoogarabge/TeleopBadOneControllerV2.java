@@ -1,20 +1,26 @@
 //package org.firstinspires.ftc.blackswan.poopoogarabge;
 //
 //
+//import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+//
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //import com.qualcomm.robotcore.hardware.DcMotor;
+//import com.qualcomm.robotcore.hardware.Servo;
 //
-//@TeleOp(name="TeleopBadOne")
+//@TeleOp(name="TeleopBadOneControllerV2")
 //
-//public class TeleopBadOneController extends LinearOpMode {
+//public class TeleopBadOneControllerV2 extends LinearOpMode {
 //
 //    double MAX_SPEED = 0.9;
+//    int LiftPos = 0;
 //
 //    @Override
 //    public void runOpMode() throws InterruptedException {
 //
-//        DcMotor frontLeft, backLeft, frontRight, backRight, arm, carousel, intake;
+//        // Defining different motor/servos and what they are called in the configuration file
+//        DcMotor frontLeft, backLeft, frontRight, backRight, slide, carousel, intake;
+//        Servo dump;
 //
 //        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
 //        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
@@ -23,134 +29,113 @@
 //
 //        carousel = hardwareMap.get(DcMotor.class, "carousel");
 //
-//        arm = hardwareMap.get(DcMotor.class, "arm");
+//        slide = hardwareMap.get(DcMotor.class, "slide");
 //
 //        intake = hardwareMap.get(DcMotor.class, "intake");
+//
+//        dump = hardwareMap.get(Servo.class, "dump");
 //
 //        frontLeft.setDirection(DcMotor.Direction.FORWARD);
 //        frontRight.setDirection(DcMotor.Direction.REVERSE);
 //        backLeft.setDirection(DcMotor.Direction.FORWARD);
 //        backRight.setDirection(DcMotor.Direction.REVERSE);
-//        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        slide.setZeroPowerBehavior(BRAKE);
 //
 //        waitForStart();
 //
-//        //telemetry testing delete later!!!
-//        String detection = "none";
 //        while (opModeIsActive()) {
-//            //turn with right stick
-////            telemetry.addData("left stick value x", gamepad1.left_stick_x);
-////            telemetry.addData("left stick value y", gamepad1.left_stick_y);
-//            telemetry.addData("left stick value x", gamepad2.left_stick_x);
-//            telemetry.addData("left stick value y", gamepad2.left_stick_y);
-//            telemetry.addData("detection", detection);
-//            telemetry.update();
+//                // Turns robot right
 //            if (gamepad1.right_stick_x > 0.1) {
-//                telemetry.addData("positive", gamepad1.right_stick_x);
 //                frontLeft.setPower(gamepad1.right_stick_x * MAX_SPEED);
 //                frontRight.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
 //                backLeft.setPower(gamepad1.right_stick_x * MAX_SPEED);
 //                backRight.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
+//                // Turns robot left
 //            } else if (gamepad1.right_stick_x < -0.1) {
-//                telemetry.addData("negative", gamepad1.right_stick_x);
 //                frontLeft.setPower(gamepad1.right_stick_x * MAX_SPEED);
 //                frontRight.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
 //                backLeft.setPower(gamepad1.right_stick_x * MAX_SPEED);
 //                backRight.setPower(gamepad1.right_stick_x * MAX_SPEED * -1);
 //            } else if (gamepad1.left_stick_x < -0.25 && gamepad1.left_stick_y < -0.25) {
-//                //move UpLeft
+//                // Moves the robot UpLeft
 //                frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backRight.setPower(0);
 //                frontLeft.setPower(0);
-//                detection = "UpLeft";
 //            } else if (gamepad1.left_stick_x > 0.25 && gamepad1.left_stick_y < -0.25) {
-//                //move UpRight
+//                // Moves the robot UpRight
 //                frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backLeft.setPower(0);
 //                frontRight.setPower(0);
-//                detection = "UpRight";
 //            } else if (gamepad1.left_stick_x > 0.25 && gamepad1.left_stick_y > 0.25) {
-//                //move DownRight
+//                // Moves the robot DownRight
 //                frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backRight.setPower(0);
 //                frontLeft.setPower(0);
-//                detection = "DownRight";
 //            } else if (gamepad1.left_stick_x < -0.25 && gamepad1.left_stick_y > 0.25) {
-//                //move DownLeft
+//                // Moves the robot DownLeft
 //                frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backLeft.setPower(0);
 //                frontRight.setPower(0);
-//                detection = "DownLeft";
 //            } else if (gamepad1.left_stick_y > 0.1) {
-//                //move Down
+//                // Moves the robot Down
 //                frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
-//                detection = "Down";
 //            } else if (gamepad1.left_stick_y < -0.1) {
-//                //move Up
+//                // Moves the robot Up
 //                frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
 //                backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
-//                detection = "Up";
 //            } else if (gamepad1.left_stick_x < -0.1) {
-//                //move Right
+//                // Moves the robot Right
 //                frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
 //                backRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
 //                frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
 //                backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
-//                detection = "Right";
 //            } else if (gamepad1.left_stick_x > 0.1) {
-//                //move Left
+//                // Moves the robot Left
 //                frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
 //                backRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
 //                frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
 //                backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
-//                detection = "Left";
 //            } else {
+//                // Sets motor power to zero so it does not attack us
 //                frontLeft.setPower(0);
 //                frontRight.setPower(0);
 //                backLeft.setPower(0);
 //                backRight.setPower(0);
-//                detection = "None";
-//            }
-//            if (gamepad1.dpad_up) { //up
-//                arm.setTargetPosition(1250);
-//                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(.5);
-//
-//            }
-//            if (gamepad1.dpad_left) { //middle
-//                arm.setTargetPosition(825);
-//                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(.5);
-//
-//            }
-//            if (gamepad1.dpad_right) { //low
-//                arm.setTargetPosition(500);
-//                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(.5);
-//
 //            }
 //
-//            if (gamepad1.dpad_down) {
-//                arm.setTargetPosition(75);
-//                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(.3);
-////                while (arm.isBusy() && opModeIsActive()) {
-////
-////                }
-////                arm.setPower(0);
-////                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//
+//            // Dumps the cup which is attached to the linear slides
+//            if (gamepad1.dpad_left) { // Dumps cup left
+//                dump.setPosition(0.90);
+//                sleep(700);
+//                dump.setPosition(0.52);
+//            }
+//            if (gamepad1.dpad_right) { // Dumps cup right
+//                dump.setPosition(0.1);
+//                sleep(700);
+//                dump.setPosition(0.52);
 //            }
 //
+//            // Spins the motor for the linear slides
+//            if (gamepad1.dpad_up) { // Moves Slides Up
+//                slide.setPower(1);
+//            } else if (gamepad1.dpad_down) { // Moves Slides Down
+//                slide.setPower(-0.5);
+//            } else if (slide.getCurrentPosition() >= 0){
+//                slide.setPower(0);
+//            } else {
+//                slide.setPower(0);
+//            }
+//
+//            // Spins the intake
 //            if (gamepad1.right_trigger > 0.1) {
 //                intake.setPower(-1);
 //            } else if (gamepad1.left_trigger > 0.1) {
@@ -159,20 +144,10 @@
 //                intake.setPower(0);
 //            }
 //
-//
-////this is to set the intake to cover the element inside
-////            if (gamepad2.a) {
-////                intake.setTargetPosition(-356);
-////                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-////                intake.setPower(0.8);
-////                while (intake.isBusy() && opModeIsActive()) {
-////                }
-////
-////                telemetry.update();
-////            }
+//            telemetry.addData("LiftPos", slide.getCurrentPosition());
+//            telemetry.update();
 //
 //            turnDuck(carousel);
-//
 //
 //        }
 //    }
@@ -185,7 +160,7 @@
 //        }else {
 //            carousel.setPower(0);
 //        }
+//
 //    }
 //
 //}
-//
