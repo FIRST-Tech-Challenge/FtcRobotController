@@ -12,15 +12,15 @@ public class Slide {
     private Motor slideLeft, slideRight;
 
     //TODO: change values into actual tested positions instead of placeholders
-    private final static double HIGH_JUNCTION= 1600;
-    private final static double MID_JUNCTION = 1200;
-    private final static double LOW_JUNCTION = 100;
-    private final static double ZERO_POSITION = 0;
+    private final static double HIGH_JUNCTION= 2300; //<-- 12.90, 2150 ;
+    private final static double MID_JUNCTION = 1500; //<-- 12.90, 1550 ;
+    private final static double LOW_JUNCTION = 325;  //<-- 12.90, 500 ;
+    public static double ZERO_POSITION = 5;//10;
 
-    public static double slideKp = 0.00025;
-    public static double slideKi = 0.00001;
-    public static double slideKd = 0.0002;
-    public static double slideKf = 0.0;
+    public static double slideKp = 0.00326; //0.0039;
+    public static double slideKi = 0.000000325; //0.00000325;
+    public static double slideKd = 0.000001; //0.000001;
+    public static double slideKf = 0.000069; //0.000069;
 
     private final double[] PIDF_COFFECIENTS = {slideKp, slideKi, slideKd, slideKf};
 
@@ -39,7 +39,7 @@ public class Slide {
         slideRight.setRunMode(Motor.RunMode.VelocityControl);
 
         slideLeft.setInverted(true);
-        slideRight.setInverted(false);
+
 
         slidePIDF = new PIDFController(PIDF_COFFECIENTS[0],PIDF_COFFECIENTS[1],PIDF_COFFECIENTS[2],PIDF_COFFECIENTS[3]);
 
@@ -49,19 +49,19 @@ public class Slide {
     }
 
     public void update(Telemetry telemetry){
-        slidePIDF.setPIDF(slideKp, slideKi, slideKp, slideKf);
+        slidePIDF.setPIDF(slideKp, slideKi, slideKd, slideKf);
 
         correctionLeft = slidePIDF.calculate(slideLeft.getCurrentPosition(), targetPos);
         correctionRight = slidePIDF.calculate(slideRight.getCurrentPosition(), targetPos);
 
-        /*
+
         telemetry.addData("targetPosition: ", targetPos);
         telemetry.addData("Right motor position: ", slideRight.getCurrentPosition());
         telemetry.addData("Left motor position: ", slideLeft.getCurrentPosition());
         telemetry.addData("Left correction: ", correctionLeft);
         telemetry.addData("Right correction: ", correctionRight);
         telemetry.update();
-         */
+
 
         // sets the output power of the motor
         slideLeft.set(correctionLeft);

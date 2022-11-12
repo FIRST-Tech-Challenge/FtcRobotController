@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 public class PP_MecanumTeleOp extends OpMode
 {
     //"MC ABHI IS ON THE REPO!!!"
-
     boolean isAuto = false; // yes I know this is stupid
     boolean lastTriggerPress = false;
 
@@ -28,6 +27,11 @@ public class PP_MecanumTeleOp extends OpMode
 
     SignalEdgeDetector gamepad2_dpad_up = new SignalEdgeDetector(() -> gamepad2.dpad_up);
     SignalEdgeDetector gamepad2_dpad_down = new SignalEdgeDetector(() -> gamepad2.dpad_down);
+    SignalEdgeDetector gamepad2_A = new SignalEdgeDetector(() -> gamepad2.a);
+    SignalEdgeDetector gamepad2_B = new SignalEdgeDetector(() -> gamepad2.b);
+    SignalEdgeDetector gamepad2_X = new SignalEdgeDetector(() -> gamepad2.x);
+    SignalEdgeDetector gamepad2_Y = new SignalEdgeDetector(() -> gamepad2.y);
+
 
     // Declaring mechanism objects
     private Arm armControl;
@@ -37,7 +41,6 @@ public class PP_MecanumTeleOp extends OpMode
     private GamepadEx driverOp;
 
     double precisionReduction = 0.3;
-
     /**
      * Get the maximum absolute value from a static array of doubles
      *
@@ -69,7 +72,6 @@ public class PP_MecanumTeleOp extends OpMode
         motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("FR"); // Pin 3
         motorBackRight = (DcMotorEx) hardwareMap.dcMotor.get("BR"); // Pin 2
 
-
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -80,14 +82,13 @@ public class PP_MecanumTeleOp extends OpMode
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
         // Reverse motors
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
-        clawControl = new Claw(hardwareMap, isAuto);
+        clawControl = new Claw(hardwareMap, isAuto, () -> gamepad2.right_bumper, () -> gamepad2.a);
     }// INIT()
 
     @Override
@@ -101,8 +102,10 @@ public class PP_MecanumTeleOp extends OpMode
 
         gamepad2_dpad_up.update();
         gamepad2_dpad_down.update();
-        slideControl.update(telemetry);
-        armControl.update(telemetry);
+        gamepad2_A.update();
+        gamepad2_B.update();
+        gamepad2_X.update();
+        gamepad2_Y.update();
     }// end of loop()
 
     //        BOT METHODS       \\
@@ -110,7 +113,7 @@ public class PP_MecanumTeleOp extends OpMode
     {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
-        double rx = gamepad1.right_stick_x;
+        double rx = -gamepad1.right_stick_x;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
@@ -163,61 +166,49 @@ public class PP_MecanumTeleOp extends OpMode
         }
     }// end of drive()
 
-    public void arm() {
+    public void arm(){
+        armControl.update(telemetry);
         // BUTTONS \\
-        if (gamepad2.a) {
-            slideControl.setHighJunction();
-            //armControl.setExtake();
-            //clawControl.toggleWristRotate();
-        }
-        else if (gamepad2.b) {
-            slideControl.setMidJunction();
-            //armControl.setExtake();
-            //clawControl.toggleWristRotate();
-        }
-        else if (gamepad2.y) {
-            slideControl.setLowJunction();
-            //armControl.setExtake();
-            //clawControl.toggleWristRotate();
-        }
-        else if (gamepad2.x){
-            slideControl.setIntakeOrGround();
-            //armControl.setIntake();
-            //clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
-        }
-
-        if(gamepad2_dpad_up.isRisingEdge()) {
-            clawControl.toggleWristRotate();
+        if (gamepad2_A.isRisingEdge()) {
             armControl.setExtake();
-         }
-         else if(gamepad2_dpad_down.isRisingEdge()){
+            slideControl.setHighJunction();
             clawControl.toggleWristRotate();
+        }
+        else if (gamepad2_B.isRisingEdge()) {
+            armControl.setExtake();
+            slideControl.setMidJunction();
+            clawControl.toggleWristRotate();
+        }
+        else if (gamepad2_Y.isRisingEdge()) {
+            armControl.setExtake();
+            slideControl.setLowJunction();
+            clawControl.toggleWristRotate();
+        }
+        else if (gamepad2_X.isRisingEdge()){
             armControl.setIntake();
-         }
+            slideControl.setIntakeOrGround();
+            clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
+        }
     }
 
-    public void claw(){
-        // BUMPER \\
-        if (lastTriggerPress != gamepad2.right_bumper) {
-            telemetry.addLine("Controller works");
-            telemetry.update();
-            clawControl.toggleOpenClose();
-        }
-
-        // when the loop runs again, the lastButtonPress will actually be equal
-        // to the gamepad2.right_bumper conditional, thus proving the if statement
-        // false until you release the bumper
-
-        lastTriggerPress = gamepad2.right_bumper;
+    public void claw() {
+        clawControl.update(); // updates the isOpen and isIntakePosition signal edge detector
+        clawControl.toggleOpenClose();
     }
 
     public void slides(){
+    slideControl.update(telemetry);
+    /*
         // TRIGGERS \\
-        if (gamepad2.right_trigger > 0.2) {
+        if ( _trigger > 0.2) {
             slideControl.manualSlides(5);
         } else if (gamepad2.left_trigger > 0.2) {
             slideControl.manualSlides(-5);
         }
+
+
+     */
     }
+
 }
 

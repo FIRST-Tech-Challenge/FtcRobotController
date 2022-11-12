@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
+import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetection;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -21,6 +22,8 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
     private Slide slideControl;
     private Claw clawMovement;
 
+    SignalEdgeDetector isIntakePosition;
+
     // Declaring our motor PID for the lift; passing through our PID values
     public PP_Auto_Quad3()
     {
@@ -30,7 +33,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
-        clawMovement = new Claw(hardwareMap, isAuto);
+        clawMovement = new Claw(hardwareMap, isAuto, () -> gamepad2.right_bumper, () -> gamepad2.a);
     }
 
     @Override
