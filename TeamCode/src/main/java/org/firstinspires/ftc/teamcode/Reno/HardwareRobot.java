@@ -136,7 +136,7 @@ public class HardwareRobot
 
     // Class Members
     private OpenGLMatrix lastLocation   = null;
-    private VuforiaLocalizer vuforia    = null;
+    public VuforiaLocalizer vuforia    = null;
     private VuforiaTrackables targets   = null ;
     private WebcamName webcamName       = null;
 

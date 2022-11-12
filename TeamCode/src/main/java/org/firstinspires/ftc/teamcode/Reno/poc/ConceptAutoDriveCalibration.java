@@ -105,7 +105,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         RobotLocation fromLocation = new RobotLocation(-36, -60, 0, 0, 0, 90);
         RobotLocation toLocation = new RobotLocation(-60, -60, 0, 0, 0, 90);
 
-        this.navigate(fromLocation, toLocation);
+        //this.navigate(fromLocation, toLocation);
 
         fromLocation = toLocation;
         toLocation = new RobotLocation(-60, -12, 0, 0, 0, 90);
@@ -162,7 +162,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
         //fromLocation = this.getRobotLocation();
 
-
+        this.testStrafeDrive();
 
         sleep(2000);
 
