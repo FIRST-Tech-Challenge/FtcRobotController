@@ -37,12 +37,11 @@ public class MeepMeepRedCarousel {
 //                                .strafeRight(20)
                                 .splineToLinearHeading(new Pose2d(new Vector2d(-22, -44), Math.toRadians(270)), Math.toRadians(180))
                                 .splineToLinearHeading (new Pose2d(new Vector2d(-62, -35),Math.toRadians(270)), Math.toRadians(180))
-
                                 .build()
                 )
                 ;
 
-        meepMeep.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
+        meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_KAI_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)

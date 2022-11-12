@@ -56,7 +56,7 @@ public class PowerPlayComputerVisionPipelines {
 //        Get and store camera monitor view id.
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"));
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
         sleevePipeline = new SleevePipeline(telemetry);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -110,7 +110,7 @@ public class PowerPlayComputerVisionPipelines {
         }
     }
 
-//Pipeline for finding duck
+//Pipeline for finding sleeve color
     public static class SleevePipeline extends OpenCvPipeline{
         Telemetry telemetry;
         public SleevePipeline(Telemetry telemetry) {
@@ -148,9 +148,9 @@ public class PowerPlayComputerVisionPipelines {
 
 
 //        The thresholds to which the averages are compared.
-        final int RED_SLEEVE_SIDE = 189;
-        final int YELLOW_SLEEVE_SIDE = 140;
-        final int GREEN_SLEEVE_SIDE = 115;
+        final int RED_SLEEVE_SIDE = 180;
+        final int YELLOW_SLEEVE_SIDE = 126;
+        final int GREEN_SLEEVE_SIDE = 117;
 
         int distanceFromGreen;
         int distanceFromRed;
@@ -221,7 +221,7 @@ public class PowerPlayComputerVisionPipelines {
 //
             distanceFromGreen = Math.abs(aChannelAvg - GREEN_SLEEVE_SIDE);
             distanceFromRed = Math.abs(aChannelAvg - RED_SLEEVE_SIDE);
-            distanceFromYellow = Math.abs(bChannelAvg - YELLOW_SLEEVE_SIDE);
+            distanceFromYellow = Math.abs(aChannelAvg - YELLOW_SLEEVE_SIDE);
 
 
             telemetry.addData("distanceFromGreen", distanceFromGreen);
@@ -240,8 +240,14 @@ public class PowerPlayComputerVisionPipelines {
             telemetry.addData("Color detected", color);
             telemetry.update();
 
+            LAB.release();
+            A.release();
+            B.release();
+            aRegion.release();
+            bRegion.release();
 
             return input;
+
         }
     }
 }
