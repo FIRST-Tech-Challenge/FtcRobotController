@@ -113,7 +113,10 @@ public class AutoBlueRight extends LinearOpMode {
                     .forward(12)
                     .turn(Math.toRadians(-90))
                     .forward(3)
+                    .build();
                     // use claw
+            robot.servo.setPosition(0);
+            seq = robot.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
                     .back(3)
                     .turn(Math.toRadians(90))
                     .forward(14)
@@ -130,7 +133,10 @@ public class AutoBlueRight extends LinearOpMode {
                     .forward(12)
                     .turn(Math.toRadians(-90))
                     .forward(3)
+                    .build();
                     // use claw
+            robot.servo.setPosition(0);
+            seq = robot.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
                     .back(3)
                     .turn(Math.toRadians(-90))
                     .forward(10)
@@ -146,7 +152,9 @@ public class AutoBlueRight extends LinearOpMode {
                     .forward(12)
                     .turn(Math.toRadians(-90))
                     .forward(3)
-                    // use claw
+                    .build();
+            robot.servo.setPosition(0);
+            seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                     .back(3)
                     .turn(Math.toRadians(-90))
                     .forward(35)
