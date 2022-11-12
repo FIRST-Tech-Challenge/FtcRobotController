@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.USE_MOTOR_SMOOTHING;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -72,11 +73,20 @@ public class Turret implements Subsystem {
 
     }
 
+    boolean initialized = false;
+    double offsetHeading;
+
     public void update(Canvas fieldOverlay) {
 
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+        if (!initialized) {
+            //first time in - we assume that the robot has not started moving and that orientation values are set to the current absolute orientation
+            //so first set of imu readings are effectively offsets
+            offsetHeading = wrapAngleMinus(360 - imuAngles.firstAngle, heading);
+            initialized = true;
+        }
 
-        heading = imuAngles.firstAngle;
+        heading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
 
         turretPID.setPID(TURRET_PID);
         turretPID.setTolerance(TURRET_TOLERANCE);
