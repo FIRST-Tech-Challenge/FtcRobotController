@@ -16,20 +16,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Hardware2022 {
 
     //Adjustable parameters  here.
-    private final double CLAW_CLOSED = 1.0;
+    private final double CLAW_CLOSED = 0.3 ;
     private final double CLAW_OPEN = 0.7 ;
-    private final double xAxisCoeff = 83 ;  // How many degrees encoder to turn to run an inch in X Axis
-    private final double yAxisCoeff = 83 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double xAxisCoeff = 28.4 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double yAxisCoeff = 27.5 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
     private final int CONE_SLIDE_LOW = 0 ;
-    private final int CONE_SLIDE_MID = 1440 ;
-    private final int CONE_SLIDE_HIGH = 2880 ;
+    private final int CONE_SLIDE_MID = 1200 ;
+    private final int CONE_SLIDE_HIGH = 2000 ;
 
     //Encoder value of VSlide height in No Cone mode
     private final int NOCONE_SLIDE_LOW = 0 ;
-    private final int NOCONE_SLIDE_MID = 360 ;
-    private final int NOCONE_SLIDE_HIGH = 720;
+    private final int NOCONE_SLIDE_MID = 120 ;
+    private final int NOCONE_SLIDE_HIGH = 360;
 
 
     private boolean debug = true;
@@ -79,6 +79,7 @@ public class Hardware2022 {
     public ColorSensor sensorColor = null;
     public DistanceSensor sensorDistance = null;
 
+    private int vsldieInitPosition = 0;
     /**
      * Initialize hardware.
      */
@@ -101,6 +102,7 @@ public class Hardware2022 {
         wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         vSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vsldieInitPosition = vSlide.getCurrentPosition() ;
 
         wheelFrontRight.setPower(0);
         wheelBackRight.setPower(0);
@@ -108,12 +110,12 @@ public class Hardware2022 {
         wheelBackLeft.setPower(0);
 
         vSlide.setPower(0);
-/*
+
         sensorColor = hwMap.get(ColorSensor.class, "clawdistance");
         sensorDistance = hwMap.get(DistanceSensor.class, "clawdistance");
 
         grabberclaw = hwMap.get(Servo.class, "grabberclaw");
-*/
+
     }
 
     /**
@@ -133,10 +135,10 @@ public class Hardware2022 {
         wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        wheelFrontRight.setPower(-power);
-        wheelBackRight.setPower(power);
-        wheelFrontLeft.setPower(-power);
-        wheelBackLeft.setPower(power);
+        wheelFrontRight.setPower(power);
+        wheelBackRight.setPower(-power);
+        wheelFrontLeft.setPower(power);
+        wheelBackLeft.setPower(-power);
 
         telemetry.addLine().addData("[Y Position >]  ", getYAxisPosition() );
         telemetry.update();
@@ -261,6 +263,10 @@ public class Hardware2022 {
         }
     }
 
+    private int getVSlidePosition () {
+        return vSlide.getCurrentPosition() - vsldieInitPosition;
+    }
+
     /**
      *  This operation to raise Vertical Slide to one level higher
      */
@@ -271,11 +277,11 @@ public class Hardware2022 {
         switch ( currentVSHeight) {
             case Low: {
                 if (currentState.equals(RobotState.HasCone)) {
-                    while (vSlide.getCurrentPosition() < CONE_SLIDE_MID) {
+                    while (getVSlidePosition() < CONE_SLIDE_MID) {
                         vSlide.setPower(1);
                     }
                 } else if (currentState.equals(RobotState.NoCone)) {
-                    while (vSlide.getCurrentPosition() < NOCONE_SLIDE_MID) {
+                    while (getVSlidePosition() < NOCONE_SLIDE_MID) {
                         vSlide.setPower(1);
                     }
                 }
@@ -285,11 +291,11 @@ public class Hardware2022 {
             case Mid: {
 
                 if (currentState.equals(RobotState.HasCone)) {
-                    while (vSlide.getCurrentPosition() < CONE_SLIDE_HIGH) {
+                    while (getVSlidePosition() < CONE_SLIDE_HIGH) {
                         vSlide.setPower(1);
                     }
                 } else if (currentState.equals(RobotState.NoCone)) {
-                    while (vSlide.getCurrentPosition() < NOCONE_SLIDE_HIGH); {
+                    while (getVSlidePosition() < NOCONE_SLIDE_HIGH); {
                         vSlide.setPower(1);
                     }
                 }
@@ -318,11 +324,11 @@ public class Hardware2022 {
 
             case Mid: {
                 if (currentState.equals(RobotState.HasCone)) {
-                    while (vSlide.getCurrentPosition() > CONE_SLIDE_LOW) {
+                    while (getVSlidePosition() > CONE_SLIDE_LOW) {
                         vSlide.setPower(-1);
                     }
                 } else if (currentState.equals(RobotState.NoCone)) {
-                    while (vSlide.getCurrentPosition() > NOCONE_SLIDE_LOW) {
+                    while (getVSlidePosition() > NOCONE_SLIDE_LOW) {
                         vSlide.setPower(-1);
                     }
                 }
@@ -331,11 +337,11 @@ public class Hardware2022 {
 
             case High: {
                 if (currentState.equals(RobotState.HasCone)) {
-                    while (vSlide.getCurrentPosition() > CONE_SLIDE_MID) {
+                    while (getVSlidePosition() > CONE_SLIDE_MID) {
                         vSlide.setPower(-1);
                     }
                 } else if (currentState.equals(RobotState.NoCone)) {
-                    while (vSlide.getCurrentPosition() > NOCONE_SLIDE_MID) {
+                    while (getVSlidePosition() > NOCONE_SLIDE_MID) {
                         vSlide.setPower(-1);
                     }
 
@@ -348,7 +354,6 @@ public class Hardware2022 {
     /**
      * Lower vertical Slide freely , using game control
      * @param power, Expect positive input
-     */
     public void freeLowerVerticalSlide( float power ) {
         telemetry.addLine().addData("Encoder Reading", vSlide.getCurrentPosition() );
         telemetry.update();
@@ -361,19 +366,22 @@ public class Hardware2022 {
         }
 
     }
+     */
 
     /**
-     * Raise vertical Slide freely , using game control
+     * Move vertical Slide freely , using game control
      * @param power
      */
-    public void freeRaiseVerticalSlide( float power ) {
-        telemetry.addLine().addData("Encoder Reading", vSlide.getCurrentPosition() );
-        telemetry.addLine().addData("pwer input", power );
+    public void freeMoveVerticalSlide(float power ) {
+        //telemetry.addLine().addData("Encoder Reading", vSlide.getCurrentPosition() );
+        //telemetry.addLine().addData("pwer input", power );
 
         telemetry.update();
 
-        if (vSlide.getCurrentPosition() < CONE_SLIDE_HIGH ) {
-            telemetry.addLine().addData("We have power!", power );
+        if ( (vSlide.getCurrentPosition() - vsldieInitPosition)  <= CONE_SLIDE_HIGH
+                && (vSlide.getCurrentPosition() - vsldieInitPosition)  >= 0 ) {
+            //telemetry.addLine().addData("We have power!", power );
+            //telemetry.update();
             vSlide.setPower( power );
             //Thread.sleep(100);
         } else {
@@ -384,6 +392,8 @@ public class Hardware2022 {
 
 
     public void  releaseCone( ){
+        telemetry.addLine().addData("Release", CLAW_OPEN );
+        telemetry.update();
 
         grabberclaw.setPosition(CLAW_OPEN);
         currentState = RobotState.NoCone;
@@ -442,6 +452,8 @@ public class Hardware2022 {
     }
 
     public void manualgrab() {
+        telemetry.addLine().addData("Manaul Grap", CLAW_CLOSED );
+        telemetry.update();
 
         grabberclaw.setPosition(CLAW_CLOSED);
         currentState = RobotState.HasCone;
