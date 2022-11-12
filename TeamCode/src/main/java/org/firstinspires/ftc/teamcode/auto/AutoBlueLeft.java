@@ -105,6 +105,7 @@ public class AutoBlueLeft extends LinearOpMode {
 
         if (tagOfInterest.id == LEFT) {
             //insert trajectories for parking zone 1
+
         }
 
         else if (tagOfInterest.id == MIDDLE) {
