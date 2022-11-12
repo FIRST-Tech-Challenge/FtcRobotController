@@ -15,11 +15,11 @@ public class Slide {
     private final static double HIGH_JUNCTION= 2300; //<-- 12.90, 2150 ;
     private final static double MID_JUNCTION = 1500; //<-- 12.90, 1550 ;
     private final static double LOW_JUNCTION = 325;  //<-- 12.90, 500 ;
-    public static double ZERO_POSITION = 5;//10;
+    public static double ZERO_POSITION = 10;//5;
 
-    public static double slideKp = 0.00326; //0.0039;
+    public static double slideKp = 0.00348; //0.00326; //0.0039;
     public static double slideKi = 0.000000325; //0.00000325;
-    public static double slideKd = 0.000001; //0.000001;
+    public static double slideKd = 0.0; //0.000001;
     public static double slideKf = 0.000069; //0.000069;
 
     private final double[] PIDF_COFFECIENTS = {slideKp, slideKi, slideKd, slideKf};
