@@ -182,6 +182,7 @@ public class Robot implements Subsystem {
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
         switch (autonIndex){
             case 0:
+                crane.setShoulderTargetAngle(75);
                 if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID+4,0,20)){
                     autonIndex++;
                 }
@@ -189,44 +190,50 @@ public class Robot implements Subsystem {
             case 1:
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
                     if(driveTrain.turnUntilDegrees( 90)){
+                        turret.setTargetHeading(90);
                         autonIndex++;
                         turnUntilDegreesDone = true;
                     }
                 }else{
                     if(driveTrain.turnUntilDegrees(-90)){
+                        turret.setTargetHeading(90);
                         autonIndex++;
                         turnUntilDegreesDone = true;
                     }
                 }
                 break;
             case 2:
+                if(startingPosition.equals( Constants.Position.START_LEFT)){
+                    turret.setTargetHeading(90);
+                }else{
+                    turret.setTargetHeading(90);
+                }
+                autonIndex++;
+                break;
+            case 3:
                 if(autonTarget  == 1){
                     autonIndex++;
                     break;
                 }
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
                     if(autonTarget == 0){
-                        if(driveTrain.driveUntilDegrees(Field.INCHES_PER_GRID,-90,20))autonIndex++;
+                        if(driveTrain.driveUntilDegrees(0.8*Field.INCHES_PER_GRID,-90,20))autonIndex++;
                     }else{
-                        if(driveTrain.driveUntilDegrees(-Field.INCHES_PER_GRID,-90,20))autonIndex++;
+                        if(driveTrain.driveUntilDegrees(-0.8*Field.INCHES_PER_GRID,-90,20))autonIndex++;
                     }
                 }else{
                     if(autonTarget == 0){
-                        if(driveTrain.driveUntilDegrees(-Field.INCHES_PER_GRID, -90,20))autonIndex++;
+                        if(driveTrain.driveUntilDegrees(-0.8*Field.INCHES_PER_GRID, -90,20))autonIndex++;
                     }else{
-                        if(driveTrain.driveUntilDegrees(Field.INCHES_PER_GRID,-90,20))autonIndex++;
+                        if(driveTrain.driveUntilDegrees(0.8*Field.INCHES_PER_GRID,-90,20))autonIndex++;
                     }
                 }
                 break;
-            case 3:
-                if(startingPosition.equals( Constants.Position.START_LEFT)){
-                    turret.setTargetHeading(-90);
-                }else{
-                    turret.setTargetHeading(90);
+            case 4:
+                if(turret.turnToTargetHeading(170)){
+                    autonIndex = 0;
+                    return true;
                 }
-                autonIndex = 0;
-                return true;
-
             default:
                 return false;
         }

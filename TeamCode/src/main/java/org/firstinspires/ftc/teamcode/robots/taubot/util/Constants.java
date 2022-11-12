@@ -36,7 +36,7 @@ public class Constants {
     public static final double MAX_VELOCITY = 30.0;
     public static final double MAX_ACCELERATION = 10.0;
 
-    public static final double DIFF_TICKS_PER_INCH = 1635.0/48.0; //rough measure
+    public static double DIFF_TICKS_PER_INCH = 32.9; //rough measure
 
     // ratios
 

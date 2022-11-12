@@ -40,7 +40,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -60,10 +59,10 @@ import java.util.Map;
  * TeleOp and Autonomous.
  */
 
-@TeleOp(name = "PowerPlay_6832", group = "Challenge") // @Autonomous(...) is the other common choice
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "PowerPlay_Auton_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config
-public class PowerPlay_6832 extends OpMode {
+public class PowerPlayAuton_6832 extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -246,7 +245,7 @@ public class PowerPlay_6832 extends OpMode {
 
         update();
 
-        if (!armCalibrated && robot.crane.calibrateEnabled()) armCalibrated=robot.crane.calibrate();
+        if (!armCalibrated) armCalibrated=robot.crane.calibrate();
     }
     private void rumble() {
         gamepad1.rumble((int) (RUMBLE_DURATION * 1000));
@@ -276,7 +275,7 @@ public class PowerPlay_6832 extends OpMode {
 
             if (active) {
                 long currentTime = System.currentTimeMillis();
-                if (!endGameHandled && gameState == PowerPlay_6832.GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
+                if (!endGameHandled && gameState == PowerPlayAuton_6832.GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
 //                robot.articulate(Robot.Articulation.START_END_GAME);
                     endGameHandled = true;
                     rumble();

@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.USE_MOTOR_SMOOTHING;
-import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngle;
-import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -69,6 +68,14 @@ public class Turret implements Subsystem {
         parametersIMUTurret.loggingEnabled = true;
         parametersIMUTurret.loggingTag = "turretIMU";
 
+        /*
+        *  imu = hardwareMap.get(BNO055IMU.class, "baseIMU");
+                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+                imu.initialize(parameters);
+                //because the Expansion hub is upsidedown:
+                BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);*/
+
         turretIMU.initialize(parametersIMUTurret);
         this.turretIMU=turretIMU;
 
@@ -77,23 +84,41 @@ public class Turret implements Subsystem {
     boolean initialized = false;
     double offsetHeading;
 
+    void customWrapHeading(){
+        if(heading > 180){
+            heading -= 360;
+            targetHeading -= 360;
+        }
+        if(heading < -180){
+            heading += 360;
+            targetHeading += 360;
+        }
+    }
+    public static double distanceBetweenAngles(double currentAngle, double targetAngle){
+        double result = wrapAngle(targetAngle - currentAngle);
+        if(result >180) return result - 360;
+        return result;
+    }
+
     public void update(Canvas fieldOverlay) {
 
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+
         if (!initialized) {
             //first time in - we assume that the robot has not started moving and that orientation values are set to the current absolute orientation
             //so first set of imu readings are effectively offsets
-            offsetHeading = wrapAngleMinus(360 - imuAngles.firstAngle, heading);
+            offsetHeading = (heading-imuAngles.firstAngle)% 360;
             initialized = true;
         }
-
+        //offset = heading - initialHeading
         //update current IMU heading before doing any other calculations
-        heading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
+        heading = wrapAngle(offsetHeading + imuAngles.firstAngle);
+
 
         turretPID.setPID(TURRET_PID);
         turretPID.setTolerance(TURRET_TOLERANCE);
-        turretPID.setSetpoint(targetHeading);
-        turretPID.setInput(heading);
+        turretPID.setSetpoint(0);
+        turretPID.setInput(-distanceBetweenAngles(heading,targetHeading));
         double correction = turretPID.performPID();
         //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
         motor.setPower(correction);
@@ -104,7 +129,11 @@ public class Turret implements Subsystem {
     }
 
     public void setTargetHeading(double targetHeading){
-        this.targetHeading = targetHeading;
+        this.targetHeading = wrapAngle(targetHeading);
+    }
+    public boolean turnToTargetHeading(double targetHeading){
+        setTargetHeading(targetHeading);
+        return turretPID.getError() < 5;
     }
 
     public double getTargetHeading() {

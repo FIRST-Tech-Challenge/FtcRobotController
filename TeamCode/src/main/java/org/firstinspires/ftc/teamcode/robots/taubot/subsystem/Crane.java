@@ -34,7 +34,7 @@ public class Crane implements Subsystem {
 
     //control constants
     public static double PICK_UP_VELOCITY = 0.5;
-    public static double HEIGHT_AFTER_PICKING_UP_CONE = 8;
+    public static double HEIGHT_AFTER_PICKING_UP_CONE = 15;
 
     public static int SHOULDER_START_ANGLE = 0;
     public static int BULB_HOME_PWM = 1500;
@@ -45,13 +45,16 @@ public class Crane implements Subsystem {
     public static double SHOULDER_DEG_MIN = -10; // degrees down from horizontal - negative angles are counter clockwise while looking at the left side of the bot
     public static double SHOULDER_DEG_MAX = 90-7.25; //max elevation of shoulder when stalled up - measured by inclinometer
     public static double SHOULDER_DIRECT_TICKS_PER_DEGREE = (1937-88)/(SHOULDER_DEG_MAX); //todo verify/update when sensor secured and robot is more burned in - before tuning precision articulation
+
     public static double SHOULDER_TICK_MAX = 1849;
 
     public static double EXTEND_TICKS_PER_METER = 806/.2921; //todo verify this is still true
 
     public static double kF = 0.0;
 
-    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.05, 0.0001, 0.005);
+    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.03, 0.0001, 0.006);
+    public static double SHOULDER_MAX_PID_OUTPUT = 0.8;
+    public static double SHOULDER_MIN_PID_OUTPUT = -0.8;
     public static double SHOULDER_TOLERANCE = 1;
     public static double SHOULDER_POWER = 1.0;
     public static double SHOULDER_ADJUST = 13;
@@ -60,6 +63,8 @@ public class Crane implements Subsystem {
 
     public static double kE = 0.0;
     public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(30, 0, 0.005);
+    public static double EXTEND_MAX_PID_OUTPUT = 0.8;
+    public static double EXTEND_MIN_PID_OUTPUT = -0.8;
     public static double EXTENDER_TOLERANCE = 1;
     public static double EXTENDER_POWER = 1.0;
     public static double EXTENDER_TICS_MIN = 0;
@@ -80,6 +85,8 @@ public class Crane implements Subsystem {
     double extenderTargetPos = 0;
     private boolean extenderActivePID = true;
     private boolean shoulderActivePID = true;
+
+    private boolean craneCalibrationEnabled = false;
 
     public Servo bulbServo;
     public DcMotorEx extenderMotor;
@@ -127,7 +134,9 @@ public class Crane implements Subsystem {
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
         }
         extendPID = new PIDController(0,0,0);
+        extendPID.setOutputRange(EXTEND_MIN_PID_OUTPUT, EXTEND_MAX_PID_OUTPUT);
         shoulderPID = new PIDController(0,0,0);
+        shoulderPID.setOutputRange(SHOULDER_MIN_PID_OUTPUT,SHOULDER_MAX_PID_OUTPUT);
         shoulderPID.setIntegralCutIn(40);
         shoulderPID.enableIntegralZeroCrossingReset(false);
     }
@@ -235,7 +244,7 @@ public class Crane implements Subsystem {
     public void movePIDShoulder(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
 
         //initialization of the PID calculator's output range, target value and multipliers
-        shoulderPID.setOutputRange(-shoulderPwr, shoulderPwr);
+        shoulderPID.setOutputRange(SHOULDER_MIN_PID_OUTPUT, SHOULDER_MAX_PID_OUTPUT);
         shoulderPID.setPID(Kp, Ki, Kd);
         shoulderPID.setSetpoint(targetTicks);
         shoulderPID.enable();
@@ -609,7 +618,7 @@ public class Crane implements Subsystem {
     CranePositionMemory drop = new CranePositionMemory(0,45,0.2);
 
     private void recordPickup(){
-        pickup.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle+10,extendMeters);
+        pickup.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle+20,extendMeters);
     }
 
     public void pickupSequence(){
@@ -625,7 +634,18 @@ public class Crane implements Subsystem {
     }
 
     private void recordDrop(){
-        drop.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle,extendMeters);
+        drop.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle + 10,extendMeters);
+    }
+
+    public void enableCalibrate(){
+        craneCalibrationEnabled = true;
+    }
+    public void setCalibrated(){
+        calibrated = true;
+    }
+
+    public boolean calibrateEnabled(){
+       return craneCalibrationEnabled;
     }
 
     public void dropSequence(){

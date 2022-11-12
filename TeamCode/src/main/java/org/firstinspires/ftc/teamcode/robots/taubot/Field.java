@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.PathLine;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants; 
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.Vector2;
@@ -249,20 +250,8 @@ public class Field {
                 targetPose.getX() - currentPose.getX()
         );
     }
+
     public StateMachine getPathToTarget(DriveTrain driveTrain){
-        Pose2d currentCoordinate = poseToCoordinates(driveTrain.getPoseEstimate());
-        StateMachine state = Utils.getStateMachine(new Stage())
-                .addState(() ->
-                        driveTrain.setPath(new PathLine(new Pose2d(0,0,0),new Pose2d(2,0,0),0, 12, 10))
-                )
-                .addState(() ->
-                        driveTrain.followPath()
-                )
-                //todo add drivetrain
-                .build();
-        return  state;
-    }
-    /*public StateMachine getPathToTarget(DriveTrain driveTrain){
         StateMachine state;
 
         Pose2d currentCoordinate = poseToCoordinates(driveTrain.getPoseEstimate());
@@ -324,7 +313,7 @@ public class Field {
 
 
     }
-*/
+
     public void goToStack(Robot robot){
         Pose2d currentPose = robot.driveTrain.getPoseEstimate();
         FieldObject nearestStack = getNearestObject("AllianceStack", poseToCoordinates(currentPose));
