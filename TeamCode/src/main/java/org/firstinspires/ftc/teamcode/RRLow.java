@@ -13,8 +13,9 @@ public class RRLow extends DriveMethods {
         waitForStart();
 
         GoToHeight(1950);
+        driveForDistance(0.05, Direction.FORWARD, 0.3, 0);
         driveForDistance(0.2, Direction.RIGHT, 0.3, 0);
-        driveForDistance(0.28, Direction.FORWARD, 0.3, 0);
+        driveForDistance(0.17, Direction.FORWARD, 0.3, 0);
         sleep(500);
         clawRelease();
         sleep(1000);
@@ -22,7 +23,7 @@ public class RRLow extends DriveMethods {
 
         GoToHeight(0);
 
-        driveForDistance(1.4, Direction.LEFT, 0.5, 0);
+        driveForDistance(1.4, Direction.LEFT, 0.4, 0);
 
 
         while(opModeIsActive()) {

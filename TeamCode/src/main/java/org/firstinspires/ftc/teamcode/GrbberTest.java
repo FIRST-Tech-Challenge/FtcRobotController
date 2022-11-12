@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.Variables.servoGrabberThing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name="grib", group = "a")
+@Disabled
 public class GrbberTest extends DriveMethods{
     Servo grabber;
     public void runOpMode(){

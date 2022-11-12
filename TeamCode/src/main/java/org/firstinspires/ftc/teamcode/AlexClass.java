@@ -25,6 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Autonomous     (name="AlexClass", group = "A")
+@Disabled
 public class AlexClass extends DriveMethods {
 
 //    boolean imuIsCali = false;
@@ -38,12 +39,12 @@ public class AlexClass extends DriveMethods {
     public void runOpMode() {
       initMotorsBlue();
 
-      CalibrateIMU();
+//      CalibrateIMU();
         waitForStart();
 
 
         while (opModeIsActive()) {
-            telemetry.addLine("CurrentZ: " + getCurrentZ());
+//            telemetry.addLine("CurrentZ: " + getCurrentZ());
             telemetry.update();
         }
 

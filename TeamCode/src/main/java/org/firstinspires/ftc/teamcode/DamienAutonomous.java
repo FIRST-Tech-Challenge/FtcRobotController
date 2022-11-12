@@ -85,7 +85,7 @@ public class DamienAutonomous extends DriveMethods {
         // initMotorsRed();
 
         initMotorsBlue();
-        CalibrateIMU();
+//        CalibrateIMU();
         motorLinearSlide = hardwareMap.get(DcMotor.class,"motorLS");
 
         // Wait for the game to start (driver presses PLAY)
@@ -100,8 +100,8 @@ public class DamienAutonomous extends DriveMethods {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)");
 //            telemetry.addData("Cumulative Z", "" + getCumulativeZ());
-            telemetry.addData("Current Z", "" + getCurrentZ());
-            telemetry.addData("Error","" + (0 - getCurrentZ()));
+//            telemetry.addData("Current Z", "" + getCurrentZ());
+//            telemetry.addData("Error","" + (0 - getCurrentZ()));
             telemetry.update();
         }
     }

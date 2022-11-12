@@ -231,39 +231,39 @@ public class DriveMethods extends LinearOpMode{
      * BELOW is code for NavX IMU
      */
 
-    public void calibrateNavXIMU(){
-        navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
-        gyro = (IntegratingGyroscope)navxMicro;
+//    public void calibrateNavXIMU(){
+//        navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
+//        gyro = (IntegratingGyroscope)navxMicro;
+//
+//        while (navxMicro.isCalibrating())  {
+//            telemetry.addLine("calibrating...");
+//            telemetry.update();
+//            sleep(50);
+//        }
+//        telemetry.addLine("calibrated!");
+//        telemetry.update();
+//    }
+//
+//    public double getCurrentZ(){
+//        Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        return angles.firstAngle;
+//    }
 
-        while (navxMicro.isCalibrating())  {
-            telemetry.addLine("calibrating...");
-            telemetry.update();
-            sleep(50);
-        }
-        telemetry.addLine("calibrated!");
-        telemetry.update();
-    }
-
-    public double getCurrentZ(){
-        Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angles.firstAngle;
-    }
-
-    public double getCumulativeZ(){
-        double currentHeading = getCurrentZ();
-        double deltaHeading = currentHeading - previousHeading;
-        if(deltaHeading <= -180) {
-            deltaHeading += 360;
-        } else if(deltaHeading >= 180) {
-            deltaHeading -=360;
-        }
-
-        intergratedHeading += deltaHeading;
-        previousHeading = currentHeading;
-
-        return intergratedHeading;
-
-    }
+//    public double getCumulativeZ(){
+//        double currentHeading = getCurrentZ();
+//        double deltaHeading = currentHeading - previousHeading;
+//        if(deltaHeading <= -180) {
+//            deltaHeading += 360;
+//        } else if(deltaHeading >= 180) {
+//            deltaHeading -=360;
+//        }
+//
+//        intergratedHeading += deltaHeading;
+//        previousHeading = currentHeading;
+//
+//        return intergratedHeading;
+//
+//    }
 
     /**
      *Above is NavX IMU stuff
@@ -402,15 +402,15 @@ public class DriveMethods extends LinearOpMode{
         double aggressiveness = 2700;
         double holdingPower = 0;
         if (dif < 0) {
-            aggressiveness = 2000;
+            aggressiveness = 1500;
             holdingPower = 0;
         } if (dif > 0) {
-            aggressiveness = 2000;
+            aggressiveness = 1600;
             holdingPower = 0.18;
         }
         motorSlide.setPower((dif / aggressiveness));
 
-        while (Math.abs(dif) >= 150) { // doesn't work when trying to go down
+        while (Math.abs(dif) >= 75) { // doesn't work when trying to go down
             telemetry.addLine(dif + "..difference");
             telemetry.addLine(Math.abs(motorSlide.getCurrentPosition()) + "..position");
             telemetry.addLine(target + "..target");
@@ -418,6 +418,9 @@ public class DriveMethods extends LinearOpMode{
             telemetry.update();
             dif = (target - Math.abs(motorSlide.getCurrentPosition()));
             motorSlide.setPower(((dif / aggressiveness) + holdingPower));
+            if(target == 0 && motorSlide.getCurrentPosition() < 150){
+                aggressiveness = 325;
+            }
         }
         motorSlide.setPower(holdingPower);
     }

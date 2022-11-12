@@ -31,8 +31,8 @@ public class Variables {
     public static BNO055IMU imu;
 
     //NavX IMU stuffs below
-    public static IntegratingGyroscope gyro;
-    public static NavxMicroNavigationSensor navxMicro;
+//    public static IntegratingGyroscope gyro;
+//    public static NavxMicroNavigationSensor navxMicro;
 
     public static double previousHeading = 0;
     public static double intergratedHeading = 0;
@@ -45,7 +45,7 @@ public class Variables {
     public static double rotationsPerMeter = 1/0.3015928947;
 
     public static final double Clamp = 0.5;
-    public static final double Release = 0.5;
+    public static final double Release = 0.75;
 
     public static final int downHeight = 0;
     public static final int collectHeight = 200;

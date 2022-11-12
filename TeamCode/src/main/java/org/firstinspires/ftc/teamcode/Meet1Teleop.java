@@ -112,21 +112,21 @@ public class Meet1Teleop extends DriveMethods {
                     break;
                 case 1:
                     slideTarget = 200;
-                    aggressiveness = 1500;
-                    holdingPower = 0.05;
+                    aggressiveness = 1200;
+                    holdingPower = 0.06;
                     break;
                 case 2:
-                    slideTarget = 1950;
+                    slideTarget = 1850;
                     aggressiveness = 2000;
                     holdingPower = 0.18;
                     break;
                 case 3:
-                    slideTarget = 3100;
+                    slideTarget = 3000;
                     aggressiveness = 2000;
                     holdingPower = 0.18;
                     break;
                 case 4:
-                    slideTarget = 4400;
+                    slideTarget = 4300;
                     aggressiveness = 2000;
                     holdingPower = 0.18;
                     break;
@@ -149,8 +149,13 @@ public class Meet1Teleop extends DriveMethods {
 //                aggressiveness = 1750;
 //            }
 
-            if(slideTarget == 0 && motorSlide.getCurrentPosition() < 150){
-                aggressiveness = 950;
+            if(slideTarget == 0 && motorSlide.getCurrentPosition() < 150 && motorSlide.getCurrentPosition() >= 50){
+                aggressiveness = 700;
+                holdingPower = 0;
+            }
+
+            if(slideTarget == 0 && motorSlide.getCurrentPosition() < 50){
+                aggressiveness = 400;
                 holdingPower = 0;
             }
 

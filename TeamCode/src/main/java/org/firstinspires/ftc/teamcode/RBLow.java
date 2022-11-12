@@ -12,8 +12,9 @@ public class RBLow extends DriveMethods {
         waitForStart();
 
         GoToHeight(1950);
-        driveForDistance(0.22, Direction.LEFT, 0.3, 0);
-        driveForDistance(0.3, Direction.FORWARD, 0.3, 0);
+        driveForDistance(0.05, Direction.FORWARD, 0.3, 0);
+        driveForDistance(0.25, Direction.LEFT, 0.3, 0);
+        driveForDistance(0.17, Direction.FORWARD, 0.3, 0);
         sleep(500);
         clawRelease();
         sleep(1000);

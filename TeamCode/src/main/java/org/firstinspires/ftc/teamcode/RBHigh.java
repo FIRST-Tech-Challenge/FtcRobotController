@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name ="RBHigh", group = "A")
+@Disabled
 public class RBHigh extends DriveMethods{
     public void runOpMode() {
         initMotorsBlue();

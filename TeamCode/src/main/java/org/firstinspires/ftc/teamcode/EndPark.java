@@ -21,7 +21,7 @@ public class EndPark extends DriveMethods {
 
         waitForStart();
 
-        driveForDistance(.8, Direction.FORWARD, 0.5,0);
+        driveForDistance(.75, Direction.FORWARD, 0.5,0);
 
         while(opModeIsActive()) {
 
