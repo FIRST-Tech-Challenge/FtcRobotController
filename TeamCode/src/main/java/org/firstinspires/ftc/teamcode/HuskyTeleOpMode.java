@@ -96,11 +96,14 @@ public class HuskyTeleOpMode extends LinearOpMode {
             if(gamepad2.dpad_up)
             {
                 huskyBot.armLength.setPower(0.75);
+                // If this is right, then it will only move when the dpad is held, rather than a toggle button.
+                huskyBot.armLength.setPower(0);
             }
 
             if(gamepad2.dpad_down)
             {
                 huskyBot.armLength.setPower(-0.75);
+                huskyBot.armLength.setPower(0);
             }
 
             /*
