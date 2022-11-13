@@ -21,9 +21,12 @@
 
 package org.firstinspires.ftc.teamcode.bots;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -35,7 +38,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import java.util.ArrayList;
 
 @Autonomous
-public class AprilTagBot extends LinearOpMode
+public class AprilTagBot extends FSMBot
 {
     OpenCvCamera camera;
     AprilTagPipeline aprilTagDetectionPipeline;
@@ -57,11 +60,19 @@ public class AprilTagBot extends LinearOpMode
 
     AprilTagDetection tagOfInterest = null;
 
+    public AprilTagBot(LinearOpMode opMode) {
+        super(opMode);
+    }
+
     @Override
-    public void runOpMode()
-    {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+    public void init(HardwareMap ahwMap) {
+        hwMap = ahwMap;
+        initCamera();
+    }
+
+    public void initCamera(){
+        int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -81,54 +92,35 @@ public class AprilTagBot extends LinearOpMode
         });
 
         telemetry.setMsTransmissionInterval(50);
+    }
 
-        /*
-         * The INIT-loop:
-         * This REPLACES waitForStart!
-         */
-        while (!isStarted() && !isStopRequested())
+    public int detect(){
+        //during waitforstart
+        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+        if(currentDetections.size() != 0)
         {
-            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+            boolean tagFound = false;
 
-            if(currentDetections.size() != 0)
+            for(AprilTagDetection tag : currentDetections)
             {
-                boolean tagFound = false;
-
-                for(AprilTagDetection tag : currentDetections)
+                if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
                 {
-                    if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
-                    {
-                        tagOfInterest = tag;
-                        tagFound = true;
-                        break;
-                    }
+                    tagOfInterest = tag;
+                    tagFound = true;
+                    break;
                 }
+            }
 
-                if(tagFound)
-                {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
-                }
-                else
-                {
-                    telemetry.addLine("Don't see tag of interest :(");
-
-                    if(tagOfInterest == null)
-                    {
-                        telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else
-                    {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
-                    }
-                }
-
+            if(tagFound)
+            {
+                telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                telemetry.addLine(String.format("\nDetected tag ID=%d", tagOfInterest.id));
+                return tagOfInterest.id;
             }
             else
             {
                 telemetry.addLine("Don't see tag of interest :(");
-
                 if(tagOfInterest == null)
                 {
                     telemetry.addLine("(The tag has never been seen)");
@@ -136,56 +128,26 @@ public class AprilTagBot extends LinearOpMode
                 else
                 {
                     telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
                 }
-
             }
 
-            telemetry.update();
-            sleep(20);
         }
-
-        /*
-         * The START command just came in: now work off the latest snapshot acquired
-         * during the init loop.
-         */
-
-        /* Update the telemetry */
-        if(tagOfInterest != null)
+        else // no tag
         {
-            telemetry.addLine("Tag snapshot:\n");
-            tagToTelemetry(tagOfInterest);
-            telemetry.update();
-        }
-        else
-        {
-            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
-            telemetry.update();
-        }
-        if(tagOfInterest == null || tagOfInterest.id == LEFT){
-
-        }
-        else if (tagOfInterest.id == MIDDLE)
-        {
-
-        }
-        else
-        {
+            telemetry.addLine("Don't see tag of interest :(");
+            if(tagOfInterest == null)
+            {
+                telemetry.addLine("(The tag has never been seen)");
+            }
+            else
+            {
+                telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+            }
 
         }
 
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
+        telemetry.update();
+        return 0;
     }
 
-    void tagToTelemetry(AprilTagDetection detection)
-    {
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
-    }
 }
