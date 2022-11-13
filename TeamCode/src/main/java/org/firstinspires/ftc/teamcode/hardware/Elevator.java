@@ -17,6 +17,7 @@ public class Elevator {
 //        mainServo = hardwareMap.get(Servo.class, "elevator_main_servo");
 //        rightServo = hardwareMap.get(Servo.class, "elevator_right_servo");
         elevatorMotor = hardwareMap.get(DcMotor.class, "elevator_motor");
+        elevatorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.telemetry = telemetry;
     }
 
@@ -29,6 +30,8 @@ public class Elevator {
         elevatorMotor.setPower(power);
         telemetry.addData("position", elevatorMotor.getCurrentPosition());
         telemetry.addData("terget position", elevatorMotor.getTargetPosition());
+        telemetry.addData("power", power);
+        telemetry.addData("dcPower", elevatorMotor.getPower());
         telemetry.update();
     }
 
