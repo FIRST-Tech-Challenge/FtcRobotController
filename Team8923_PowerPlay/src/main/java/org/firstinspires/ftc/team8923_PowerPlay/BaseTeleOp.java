@@ -25,8 +25,6 @@ abstract public class BaseTeleOp extends BaseOpMode {
         driveMecanum(angle, power, rotationalPower);
     }
 
-
-
     public void driveRobotSpeed() {
         isSlowMode = driveSpeedToggle.toggle(gamepad1.left_bumper);
         if (isSlowMode) {
@@ -44,12 +42,10 @@ abstract public class BaseTeleOp extends BaseOpMode {
         if (gamepad2.dpad_up) {
             motorSlideLeft.setPower(mechanismSpeed);
             motorSlideRight.setPower(mechanismSpeed);
-        } else if(gamepad2.dpad_down
-            && motorSlideLeft.getCurrentPosition() > bottomMotorSlideLeft
-                && motorSlideRight.getCurrentPosition() > bottomMotorSlideRight) {
-
         }
-        else if (gamepad2.dpad_down) {
+        else if (gamepad2.dpad_down
+                && motorSlideLeft.getCurrentPosition() < bottomMotorSlideLeft
+                && motorSlideRight.getCurrentPosition() < bottomMotorSlideRight) {
             motorSlideLeft.setPower(-mechanismSpeed);
             motorSlideRight.setPower(-mechanismSpeed);
         } else {
@@ -68,6 +64,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         } else if (gamepad2.a) {
             servoClaw.setPosition(CLOSED_CLAW);
         }
+
     }
 
 }

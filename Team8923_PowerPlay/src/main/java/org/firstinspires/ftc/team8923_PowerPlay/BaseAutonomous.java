@@ -54,13 +54,13 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
         imu.initialize(parameters);
         telemetry.addData("Init State", "Init Finished");
 
-        //Set last know encoder values
+        // Set last know encoder values
         lastEncoderFR = motorFR.getCurrentPosition();
         lastEncoderFL = motorFL.getCurrentPosition();
         lastEncoderBL = motorBL.getCurrentPosition();
         lastEncoderBR = motorBR.getCurrentPosition();
 
-        //set IMU heading offset
+        // set IMU heading offset
         headingOffset = imu.getAngularOrientation().firstAngle - robotAngle;
 
         initVuforia();
@@ -228,7 +228,7 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
 
     }
 
-    //normalizing the angle to be between -180 to 180
+    // normalizing the angle to be between -180 to 180
     private double adjustAngles(double angle) {
         while (angle > 180)
             angle -= 360;
