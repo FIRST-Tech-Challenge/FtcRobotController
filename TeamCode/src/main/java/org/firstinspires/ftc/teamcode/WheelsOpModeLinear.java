@@ -53,12 +53,13 @@ import org.firstinspires.ftc.teamcode.hardware.Wheels;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-@Disabled
+@TeleOp(name="Wheeels Basic: Linear OpMode", group="Linear Opmode")
+//@Disabled
 public class WheelsOpModeLinear extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    double xAxis;
     double yAxis;
 
     @Override
@@ -74,9 +75,11 @@ public class WheelsOpModeLinear extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            xAxis = gamepad1.left_stick_x;
             yAxis = -gamepad1.left_stick_y;
             wheels.setPower(Wheel.frontLeft, yAxis);
 
+            telemetry.addData("Left JoyStick", "X: %f, Y: %f", xAxis, yAxis);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Wheels {
@@ -16,6 +17,8 @@ public class Wheels {
         frontRight = hm.get(DcMotor.class, "FrontRight");
         backLeft = hm.get(DcMotor.class, "BackLeft");
         backRight = hm.get(DcMotor.class, "BackRight");
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public DcMotor toDcMotor(Wheel w) {
