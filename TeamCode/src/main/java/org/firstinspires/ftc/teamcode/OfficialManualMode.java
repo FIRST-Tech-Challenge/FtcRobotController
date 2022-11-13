@@ -41,9 +41,12 @@ public class OfficialManualMode extends LinearOpMode {
     public double elbowMinPosition = 0.5;
     public double elbowDefaultPosition = 0.90;
     public double platformDefaultPosition = 0.654 ;
-    public double gripMinPostion = 0.07;
+    public double gripMinPosition = 0.07;
     public double gripMaxPosition = 0.7;
 
+    public double elbowBothMaxShoulderBeginPosition = 0.65; //elbow start position when both_max begin
+    public int    elbowTimeBothMaxShoulderBegin = 1000; // elbow remain at same position when shoulder begin up
+    public int    shoulderTimeFromMinToMax = 4000;
     public double wheelTurnSpeed = 4.0;
     // "wheel_forward @10 @0.5", wheel_back 10inch and speed is 0.5
     // wheel_left/wheel_right/wheel_back
@@ -498,11 +501,11 @@ public class OfficialManualMode extends LinearOpMode {
             _grip.setPosition(gripMaxPosition);
         }
         else if (actionName.equals("grip_close")) {
-            if (_grip.getPosition() > gripMinPostion)
+            if (_grip.getPosition() > gripMinPosition)
                 _grip.setPosition(_grip.getPosition() - perStepSizeGrip);
         }
         else if (actionName.equals("grip_min")) {
-            _grip.setPosition(gripMinPostion);
+            _grip.setPosition(gripMinPosition);
         }
         else if (actionName.equals("elbow_up")) {
             if (_elbow.getPosition() > perStepSizeElbow) {
@@ -627,17 +630,56 @@ public class OfficialManualMode extends LinearOpMode {
 
     public void shoulderElbowBoth(String[] splitStrings) {
         if (splitStrings[0].equals("both_min")) {
+            double shoulderPosition = _shoulder.getPosition();
             _shoulder.setPosition(shoulderMinPosition);
-            _elbow.setPosition(elbowMinPosition);
+            if (shoulderPosition < shoulderMaxPosition * 2 / 3) {
+                _elbow.setPosition(elbowMinPosition);
+            }
+            else {
+                int remainTime = shoulderTimeFromMinToMax - 1000;
+                int perStepSleepTime = 100;
+                double elbowPosition = _elbow.getPosition();
+                double stepSize = (elbowMinPosition - elbowPosition) / (remainTime / perStepSleepTime);
+                while (remainTime > 0) {
+                    telemetry.addData("stepSize", stepSize);
+                    telemetry.addData("remainTime", remainTime);
+                    logAction("both_min");
+                    elbowPosition += stepSize;
+                    if (elbowPosition < elbowMinPosition)
+                        _elbow.setPosition(elbowPosition);
+                    sleep(perStepSleepTime);
+                    remainTime -= perStepSleepTime;
+                }
+            }
+            //_grip.setPosition(gripMaxPosition);
         }
         else if (splitStrings[0].equals("both_max")) {
-            //replayActions(presetActionsBothMax);
-            _elbow.setPosition(0.67);
+            double shoulderPosition = _shoulder.getPosition();
             _shoulder.setPosition(shoulderMaxPosition);
-            sleep(1000);
-            _elbow.setPosition(0.5);
-            sleep(2000);
-            _elbow.setPosition(elbowMaxPosition);
+            if (shoulderPosition > shoulderMaxPosition * 2 / 3) {
+                _elbow.setPosition(elbowMaxPosition);
+            }
+            else {
+                _elbow.setPosition(elbowBothMaxShoulderBeginPosition);
+                sleep(elbowTimeBothMaxShoulderBegin);
+                int remainTime = shoulderTimeFromMinToMax - elbowTimeBothMaxShoulderBegin;
+                int perStepSleepTime = 100;
+                double stepSize = (elbowBothMaxShoulderBeginPosition - elbowMaxPosition) / (remainTime / perStepSleepTime);
+                double elbowPosition = elbowBothMaxShoulderBeginPosition;
+                while (remainTime > 0) {
+                    telemetry.addData("stepSize", stepSize);
+                    telemetry.addData("remainTime", remainTime);
+                    logAction("both_max");
+                    elbowPosition -= stepSize;
+                    if (elbowPosition >= elbowMaxPosition)
+                        _elbow.setPosition(elbowPosition);
+                    sleep(perStepSleepTime);
+                    remainTime -= perStepSleepTime;
+                }
+            }
+            //logAction("both_max_end");
+            //_elbow.setPosition(0.5);
+            //sleep(2000);
         }
     }
 
