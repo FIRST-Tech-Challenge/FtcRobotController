@@ -116,17 +116,17 @@ public class Meet1Teleop extends DriveMethods {
                     holdingPower = 0.06;
                     break;
                 case 2:
-                    slideTarget = 1850;
+                    slideTarget = 1800;
                     aggressiveness = 2000;
                     holdingPower = 0.18;
                     break;
                 case 3:
-                    slideTarget = 3000;
+                    slideTarget = 2950;
                     aggressiveness = 2000;
                     holdingPower = 0.18;
                     break;
                 case 4:
-                    slideTarget = 4300;
+                    slideTarget = 4200;
                     aggressiveness = 2000;
                     holdingPower = 0.18;
                     break;
