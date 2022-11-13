@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 
 public class SignalEdgeDetector {

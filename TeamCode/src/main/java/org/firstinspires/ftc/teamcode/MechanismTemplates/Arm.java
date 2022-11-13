@@ -13,16 +13,13 @@ public class Arm {
     private Motor armMotor;
 
     // Declaring and Initializing PIDF values
-    public static double armKp = 0.00097;
-    public static double armKi = 0.000001;
-    public static double armKd = 0;
-    public static double armKf = 0.000023;
+    public static double armKp = 0.0026;
+    public static double armKi = 0.000029;
+    public static double armKd = 0.000005;
+    public static double armKf = 0.000004;
 
-    // Correction represents the error term of the PIDF loop
-    private double correction;
-
-    public static double EXTAKE_POS = 1269; // Actual position based on encoder readings
-    public static double INTAKE_POS = -15;
+    public static double EXTAKE_POS = 1250; // 1255 Actual position based on encoder readings
+    public static double INTAKE_POS = 0; // -42.45391238 was the old value
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
     // initializing the targetPos value to a greater positive value would cause the update() method to
@@ -43,7 +40,8 @@ public class Arm {
 
     public void update(Telemetry telemetry){
         armPIDF.setPIDF(armKp, armKi, armKd, armKf);
-        correction = armPIDF.calculate(armMotor.getCurrentPosition(), targetPos);
+        // Correction represents the error term of the PIDF loop
+        double correction = armPIDF.calculate(armMotor.getCurrentPosition(), targetPos);
 
        // telemetry.addData("Correction: ", correction);
         //telemetry.addData("Target Position: ", targetPos);
