@@ -72,16 +72,20 @@ public class new_teleop extends LinearOpMode {
             robot.BRMotor.setPower(DRIVETRAIN_SPEED * br_power);
 
             /** Claw **/
-            if(gamepad1.x) {
-                robot.claw.setPosition(90);
+            if(gamepad2.x) {
+                robot.claw.setPosition(0.90);
+                telemetry.addData("Claw Position", robot.claw.getPosition());
+                telemetry.update();
             }
-            if(gamepad1.y) {
-                robot.claw.setPosition(0);
+            if(gamepad2.y) {
+                robot.claw.setPosition(0.20);
+                telemetry.addData("Claw Position", robot.claw.getPosition());
+                telemetry.update();
             }
 
             /** Slider **/
-            double vSliderPower =  -gamepad1.left_stick_y;
-            double hSliderPower = gamepad1.right_stick_x;
+            double vSliderPower =  -gamepad2.left_stick_y;
+            double hSliderPower = gamepad2.right_stick_x;
 
             robot.vSlider.setPower(vSliderPower);
             robot.hSlider.setPower(hSliderPower);

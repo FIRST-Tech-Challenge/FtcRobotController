@@ -33,6 +33,18 @@ public class new_robot {
     public DcMotor BLMotor = null;
     public DcMotor BRMotor = null;
 
+    //IMU
+    //How many times the encoder counts a tick per revolution of the motor.
+    static final double COUNTS_PER_MOTOR_REV= 538; // eg: GoBuilda 5203 Planetery
+
+    //Gear ratio of the motor to the wheel. 1:1 would mean that 1 turn of the motor is one turn of the wheel, 2:1 would mean two turns of the motor is one turn of the wheel, and so on.
+    static final double DRIVE_GEAR_REDUCTION= 1; // This is < 1.0 if geared UP
+
+    //Diameter of the wheel in CM
+    static final double WHEEL_DIAMETER_CM= 10; // For figuring circumference
+
+    //How many times the encoder counts a tick per CM moved. (Ticks per rev * Gear ration) / perimeter
+    static final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_CM * 3.1415);
 
 
 
@@ -101,5 +113,75 @@ public class new_robot {
         FRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+    }
+
+    public void Drive(double speed, int distance) {
+        int targetLeft;
+        int targetRight;
+        int avgLeft = (this.FLMotor.getCurrentPosition() + this.BLMotor.getCurrentPosition()) / 2;
+        int avgRight = (this.FRMotor.getCurrentPosition() + this.BRMotor.getCurrentPosition()) / 2;
+
+        targetRight = avgRight + (int) (distance * COUNTS_PER_CM);
+        targetLeft = avgLeft + (int) (distance * COUNTS_PER_CM);
+
+        //Set motor targets
+        this.FLMotor.setTargetPosition(targetLeft);
+        this.BLMotor.setTargetPosition(targetLeft);
+        this.FRMotor.setTargetPosition(targetRight);
+        this.BRMotor.setTargetPosition(targetRight);
+
+        //set the mode to go to the target position
+        this.FLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.FRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.BLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.BRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Set the power of the motor.
+        FLMotor.setPower(speed);
+        FRMotor.setPower(speed);
+        BLMotor.setPower(speed);
+        BRMotor.setPower(speed);
+    }
+
+    public void Strafe(double speed, int distance) {
+        int targetFront;
+        int targetBack;
+        int avgFront = (this.FLMotor.getCurrentPosition() + this.BRMotor.getCurrentPosition()) / 2;
+        int avgBack = (this.FRMotor.getCurrentPosition() + this.BLMotor.getCurrentPosition()) / 2;
+
+        targetFront = avgFront + (int) (distance * COUNTS_PER_CM);
+        targetBack = avgBack + (int) (distance * COUNTS_PER_CM);
+
+        //Set motor targets
+        this.FLMotor.setTargetPosition(targetFront);
+        this.BLMotor.setTargetPosition(targetBack);
+        this.FRMotor.setTargetPosition(targetBack);
+        this.BRMotor.setTargetPosition(targetFront);
+
+        //set the mode to go to the target position
+        this.FLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.FRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.BLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.BRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Set the power of the motor.
+        FLMotor.setPower(speed);
+        FRMotor.setPower(speed);
+        BLMotor.setPower(speed);
+        BRMotor.setPower(speed);
+    }
+
+    public void stopDriveMotors(){
+        // Stop all motion;
+        this.FLMotor.setPower(0);
+        this.FRMotor.setPower(0);
+        this.BLMotor.setPower(0);
+        this.BRMotor.setPower(0);
+
+        // Turn off RUN_TO_POSITION
+        this.FLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
