@@ -27,10 +27,6 @@ public class basic_controls extends LinearOpMode{
             stopRobot();
         }
     }
-    public void ServoClaw (double power, int time) {
-        robot.ClawMotor.setPower(power);
-        sleep(time);
-    }
     public void ServoArm(double power, int time) {
         robot.ArmServo.setPower(power);
         sleep(time);

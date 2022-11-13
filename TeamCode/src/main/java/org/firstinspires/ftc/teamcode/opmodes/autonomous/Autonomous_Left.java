@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import java.util.List;
 
 @Autonomous(name = "Autonomous_Left")
-@Disabled
+
 public class Autonomous_Left extends LinearOpMode {
     int detect = 0;
     TurtleRobotAuto robot = new TurtleRobotAuto(this);

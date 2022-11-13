@@ -13,7 +13,6 @@ public class TurtleRobotAuto {
     public DcMotor rightbackmotor = null;
     public DcMotor leftfrontmotor = null;
     public DcMotor leftbackmotor = null;
-    public CRServo ClawMotor = null;
     public CRServo ArmServo = null;
     public DcMotor leftslidemotor = null;
     public DcMotor rightslidemotor = null;
@@ -38,7 +37,6 @@ public class TurtleRobotAuto {
         leftbackmotor = hwMap.get(DcMotor.class, "leftbackmotor");
         rightfrontmotor = hwMap.get(DcMotor.class, "rightfrontmotor");
         rightbackmotor = hwMap.get(DcMotor.class, "rightbackmotor");
-        ClawMotor = hwMap.get(CRServo.class, "ClawMotor");
         ArmServo = hwMap.get(CRServo.class, "ArmServo");
         leftslidemotor = hwMap.get(DcMotor.class, "leftslidemotor");
         rightslidemotor = hwMap.get(DcMotor.class, "rightslidemotor");
@@ -65,7 +63,8 @@ public class TurtleRobotAuto {
         leftfrontmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightfrontmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightbackmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        rightslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }
