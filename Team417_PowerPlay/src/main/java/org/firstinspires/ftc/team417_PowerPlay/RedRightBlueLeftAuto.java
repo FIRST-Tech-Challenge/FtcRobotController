@@ -14,9 +14,9 @@ public class RedRightBlueLeftAuto extends LinearOpMode {
     // Coordinates for various tiles referenced on page 46 of:
     // https://www.firstinspires.org/sites/default/files/uploads/resource_library/ftc/game-manual-part-2-traditional.pdf
     // Robot's position starts at (0, 0) - all tile coordinates are in relation to this starting position
-    private static final double Y_POSITION_A = -30;
-    private static final double X_POSITION_1 = 41;
-    private static final double X_POSITION_AWAY_FROM_WALL = 5;
+    private static final double Y_POS_AWAY_FROM_WAll = 5;
+    private static final double X_POS_6 = 36;
+    private static final double Y_POS_E = 20;
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -26,14 +26,14 @@ public class RedRightBlueLeftAuto extends LinearOpMode {
         // CHANGED STARTS OF TRAJECT2 AND TRAJECT3 TO BE THE ENDS OF TRAJECT1 AND TRAJECT2
         //Red Left Blue Right Location 1
         Trajectory traject1 = drive.trajectoryBuilder(new Pose2d())
-                .forward(5)
+                .forward(Y_POS_AWAY_FROM_WAll)
                 .build();
         Trajectory traject2 = drive.trajectoryBuilder(traject1.end())
-                .strafeLeft(36)
+                .strafeLeft(X_POS_6)
                 .build();
 
         Trajectory traject3 = drive.trajectoryBuilder(traject2.end())
-                .forward(20)
+                .forward(Y_POS_E)
                 .build();
         waitForStart();
 

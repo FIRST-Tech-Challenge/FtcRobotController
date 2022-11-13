@@ -21,9 +21,12 @@ abstract public class BaseOpMode extends LinearOpMode {
     Servo grabberServo;
     Toggler grabberToggle;
 
-    // ADJUST THESE VALUES TO CHANGE POSITIONS OF GRABBER
+
     public static final double GRABBER_OPEN = 0.8;
     public static final double GRABBER_CLOSED = 0.0;
+
+    public static final double MAX_ARM_POSITION = -1500;
+    public static final double MIN_ARM_POSITION = 0;
 
     public void initializeHardware() {
         motorFL = hardwareMap.dcMotor.get("motorFL");
