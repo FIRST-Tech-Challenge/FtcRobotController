@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team417_PowerPlay.drive.SampleMecanumDrive;
 
-// CHANGED NAME OF AUTO TO BETTER REFLECT WHAT IT DOES
 @Autonomous (name="Red left || BLue right")
 public class RedLeftBlueRightAuto extends LinearOpMode {
 

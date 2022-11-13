@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team417_PowerPlay.drive.SampleMecanumDrive;
 
-// CHANGED NAME OF AUTO TO BETTER REFLECT WHAT IT DOES
 @Autonomous (name="Red right || Blue left ")
 public class RedRightBlueLeftAuto extends LinearOpMode {
 
@@ -31,6 +30,7 @@ public class RedRightBlueLeftAuto extends LinearOpMode {
         Trajectory traject3 = drive.trajectoryBuilder(traject2.end())
                 .forward(Y_POS_E)
                 .build();
+
         waitForStart();
 
         if (isStopRequested()) return;
