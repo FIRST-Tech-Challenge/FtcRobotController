@@ -44,7 +44,7 @@ public class Lift {
     public Lift(){ //constructor
         // hardware map
         Claw LC = new Claw();
-        logger.createFile("LiftLog", "Time Component Function Action");
+        //logger.createFile("GeneralRobotLog", "Time Component Function Action");
         coefficients.add(dfco1);
         coefficients.add(dfco2);
         coefficients.add(dfco3);
@@ -216,7 +216,7 @@ public class Lift {
         else{
             liftMotor.setPower(LIFT_GRAVITY_CONSTANT);
         }
-        logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + power, true, true, true);
+        logger.log("GeneralRobotLog", "Lift," + "setPower()," + "Lift power set to " + power, true, true, true);
         op.telemetry.addData("ticks", liftMotor.getCurrentPosition());
     }
     public void setLiftRawPower(double rawPower){
@@ -234,8 +234,8 @@ public class Lift {
         //else{
         //    liftMotor.setPower(0);
         //}
-        //logger.log("LiftLog", "Claw motor power to " + liftMotor.)
-        logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + p_velocity, true, true, true);
+        //logger.log("GeneralRobotLog", "Claw motor power to " + liftMotor.)
+        logger.log("GeneralRobotLog", "Lift," + "setPower()," + "Lift power set to " + p_velocity, true, true, true);
     }
     public void resetEncoder(){
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -249,11 +249,17 @@ public class Lift {
     public void liftToTarget(){
         if(abs(liftTarget- liftMotor.getCurrentPosition())>100||liftMotor.getVelocity()>20) {
             liftMotor.setPosition(liftTarget);
+            logger.log("GeneralRobotLog", "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks", true);
         }else{
             setLiftPower(0);
         }
+
     }
-    public void setLiftTarget(double p_liftTaret){liftTarget = p_liftTaret;}
+    public void setLiftTarget(double p_liftTarget){
+        liftTarget = p_liftTarget;
+        logger.log("GeneralRobotLog", "Lift," + "setLiftTarget()," + "Lift target set to:" + p_liftTarget + " ticks", true);
+
+    }
     //1 up, -1 down
     public void toggleLiftPosition(int direction){
         if(direction ==1 ){

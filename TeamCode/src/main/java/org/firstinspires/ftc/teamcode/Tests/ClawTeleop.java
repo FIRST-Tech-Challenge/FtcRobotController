@@ -2,11 +2,12 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
-
+@Disabled
 @TeleOp
 public class ClawTeleop extends LinearOpMode {
     PwPRobot robot;
