@@ -62,7 +62,9 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Encoder Linear Slide", group="Tests")
+
+@Autonomous(name="Robot: Auto Drive Linear Slide", group="Robot")
+@Disabled
 public class encoder_linear_slide extends LinearOpMode {
 
     /* Declare OpMode members. */
