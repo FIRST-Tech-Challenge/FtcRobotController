@@ -47,7 +47,7 @@ public class Jank_Auto extends LinearOpMode {
 
         waitForStart();
         ElapsedTime timer = new ElapsedTime();
-        int time = 1250;
+        int time = 1000;
         while(timer.milliseconds() <= time) {
             // Expansion Hub Pins
 
