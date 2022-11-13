@@ -104,5 +104,13 @@ public class ElevatorOpModeLinear extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
+            if (gamepad1.y)
+                elevator.mainServoPower();//.setPosition(ARM_UP_POWER);
+            else if (gamepad1.a)
+                elevator.leftRightServoPower(-1);
+            else if (gamepad1.b)
+                elevator.leftRightServoPower(1);
+            else
+                elevator.stop();
         }
     }}
