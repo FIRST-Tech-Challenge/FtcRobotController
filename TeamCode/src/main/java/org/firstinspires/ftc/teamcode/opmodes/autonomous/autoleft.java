@@ -169,24 +169,24 @@ public class autoleft extends LinearOpMode
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
-        left(0.5, 250);
+        straight(1,200);
+        left(0.5, 450);
         stopRobot();
         sleep(1000);
-        LinearSlide(1, 500);
+        LinearSlide(-1, 750);
         LinearSlide(0,1000);
-        straight(0.5, 700);
+
+        straight(0.5, 500);
         stopRobot();
+        LinearSlide(0.5,750);
+        LinearSlide(0,1000);
         ServoArm(0.5, 250);
-        ServoClaw(0.5, 250);
         ServoArm(0,1000);
-        ServoClaw(0,1000);
-        ServoClaw(-0.5,250);
+        straight(-0.5,500);
+        stopRobot();
         ServoArm(-0.5,250);
         ServoArm(0,1000);
-        ServoClaw(0,1000);
-        straight(-0.5,700);
-        stopRobot();
-        right(0.5, 250);
+        right(0.5, 350);
         stopRobot();
         /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
@@ -269,10 +269,6 @@ public class autoleft extends LinearOpMode
         // Negative power = up
         robot.leftslidemotor.setPower(power);
         robot.rightslidemotor.setPower(power);
-        sleep(time);
-    }
-    public void ServoClaw (double power, int time) {
-        robot.ClawMotor.setPower(power);
         sleep(time);
     }
     public void ServoArm(double power, int time) {

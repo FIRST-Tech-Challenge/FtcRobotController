@@ -36,7 +36,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import java.util.ArrayList;
 
 @Autonomous
-@Disabled
+
 public class AUTONOMOUS extends LinearOpMode
 {
     OpenCvCamera camera;

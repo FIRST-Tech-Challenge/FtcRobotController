@@ -177,13 +177,9 @@ public class autoright extends LinearOpMode
         straight(0.5, 700);
         stopRobot();
         ServoArm(0.5, 250);
-        ServoClaw(0.5, 250);
         ServoArm(0,1000);
-        ServoClaw(0,1000);
-        ServoClaw(-0.5,250);
         ServoArm(-0.5,250);
         ServoArm(0,1000);
-        ServoClaw(0,1000);
         straight(-0.5,700);
         stopRobot();
         left(0.5, 250);
@@ -269,10 +265,6 @@ public class autoright extends LinearOpMode
         // Negative power = up
         robot.leftslidemotor.setPower(power);
         robot.rightslidemotor.setPower(power);
-        sleep(time);
-    }
-    public void ServoClaw (double power, int time) {
-        robot.ClawMotor.setPower(power);
         sleep(time);
     }
     public void ServoArm(double power, int time) {
