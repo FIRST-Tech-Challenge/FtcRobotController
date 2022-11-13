@@ -146,15 +146,16 @@ public class AimBot extends FSMBot {
             //EDGE DETECTION (CANNY)
             //Imgproc.Canny(mat, edges, 100, 100*3 );
 
+            //detect edges first
+            Imgproc.Canny(mat, edges, 100, 100 * 2);
 
-
-            Imgproc.findContours(mat, contours, h, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(edges, contours, h, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
             Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
 
             double maxVal = 0;
             int maxValIdx = 0;
 
-            //parse through every contour to find greatest area
+            //parse through every contour every frame to find greatest area
             for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++){
                 double contourArea = Imgproc.contourArea(contours.get(contourIdx));
 
@@ -168,7 +169,10 @@ public class AimBot extends FSMBot {
             }
 
             //draws the greatest area
-            Imgproc.drawContours(mat, contours, maxValIdx, new Scalar(0,255,0), 5);
+            Imgproc.drawContours(mat, contours, maxValIdx, new Scalar(0,255,0), 3);
+
+            //Imgproc.boundingRect(contours);
+            //Imgproc.rectangle(mat, boundingRect, new Scalar (255,0,0));
 
             /* SIMPLEBLOBDETECTION
             //MatOfKeyPoint keypoints = new MatOfKeyPoint();
