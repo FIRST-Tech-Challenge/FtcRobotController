@@ -41,6 +41,8 @@ public class OfficialManualMode extends LinearOpMode {
     public double elbowMinPosition = 0.5;
     public double elbowDefaultPosition = 0.90;
     public double platformDefaultPosition = 0.654 ;
+    public double gripMinPostion = 0.07;
+    public double gripMaxPosition = 0.7;
 
     public double wheelTurnSpeed = 4.0;
     // "wheel_forward @10 @0.5", wheel_back 10inch and speed is 0.5
@@ -262,6 +264,18 @@ public class OfficialManualMode extends LinearOpMode {
             //resetServoPosition();
             return;
         }
+        if (gamepad1.left_bumper) {
+            playAction("grip_open", true);
+            return;
+        }
+        if (gamepad1.right_bumper) {
+            playAction("grip_close", true);
+            return;
+        }
+        if (gamepad1.left_stick_button && gamepad1.right_stick_button) {
+            //resetServoPosition();
+            return;
+        }
 
         // enable for both controller
         double y, x , rx, denominator;
@@ -477,20 +491,18 @@ public class OfficialManualMode extends LinearOpMode {
             */
         }
         else if (actionName.equals("grip_open")) {
-            if (_grip.getPosition() <= (1 - perStepSizeGrip))
+            if (_grip.getPosition() < gripMaxPosition)
                 _grip.setPosition(_grip.getPosition() + perStepSizeGrip);
-            //_grip.setPosition(1);
         }
         else if (actionName.equals("grip_max")) {
-            _grip.setPosition(0.8);
+            _grip.setPosition(gripMaxPosition);
         }
         else if (actionName.equals("grip_close")) {
-            if (_grip.getPosition() >= perStepSizeGrip)
+            if (_grip.getPosition() > gripMinPostion)
                 _grip.setPosition(_grip.getPosition() - perStepSizeGrip);
-            //_grip.setPosition(0);
         }
         else if (actionName.equals("grip_min")) {
-            _grip.setPosition(0);
+            _grip.setPosition(gripMinPostion);
         }
         else if (actionName.equals("elbow_up")) {
             if (_elbow.getPosition() > perStepSizeElbow) {
