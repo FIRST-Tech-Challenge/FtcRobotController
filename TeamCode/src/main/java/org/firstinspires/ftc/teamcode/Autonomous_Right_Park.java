@@ -1,23 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import android.view.ViewDebug;
-
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 
-@TeleOp(name = "Official Manual Mode", group = "Match")
-public class OfficialManualMode extends LinearOpMode {
+@Autonomous(name = "Right Park", group = "Match")
+public class Autonomous_Right_Park extends LinearOpMode {
     private DcMotor _fl, _fr, _rl, _rr;
     private Servo _grip, _platform, _elbow, _shoulder;
     private double _armPosition = 0, _leftTrigger = 0, _rightTrigger = 0;
@@ -26,23 +22,13 @@ public class OfficialManualMode extends LinearOpMode {
     private boolean firstTime = true;
 
     private ElapsedTime recentActionTime = new ElapsedTime();
-    public double perStepSizePlatform = 0.001;
-    public double perStepSizeShoulder = 0.01;
-    public double perStepSizeElbow = 0.01;
-    public double perStepSizeGrip = 0.01;
-    public boolean enablePad1Control = false;
-    public int minTimeOfTwoOperations = 20; //milliseconds, 0.05 second
+    public double perStepSize = 0.01;
+    public int minTimeOfTwoOperations = 50; //milliseconds, 0.05 second
     public double ratioPad2WheelSpeed = 0.1; //pad2 can control wheel at the ratio speed of pad1, 0 means pad2 stick can't wheels, 1 means same as pad1
 
     public double shoulderDefaultPosition = 0.15;
-    public double shoulderMaxPosition = 0.94;
-    public double shoulderMinPosition = 0.144;
-    public double elbowMaxPosition = 0.06;
-    public double elbowMinPosition = 0.5;
     public double elbowDefaultPosition = 0.90;
-    public double platformDefaultPosition = 0.654 ;
-
-    public double wheelTurnSpeed = 4.0;
+    public double platformDefaultPosition = 0;
     // "wheel_forward @10 @0.5", wheel_back 10inch and speed is 0.5
     // wheel_left/wheel_right/wheel_back
     // platform and shoulder elbow remain still, position / direction not changed
@@ -62,8 +48,6 @@ public class OfficialManualMode extends LinearOpMode {
     // shoulder up or down 10 times the perStepSize
     // "elbow_up @10" "elbow_down @20"
     //
-    // "both_min" shoulder and elbow will go down to the lowest position, ready to grab cone
-    // "both_max" shoulder and elbow will go up to the highest position, ready to put cone to the pole
 
     // "position_shoulder @0.4", shoulder setPosition directly to 0.4
     // "position_platform @0.8", platform setPosition directly to 0.8
@@ -71,31 +55,16 @@ public class OfficialManualMode extends LinearOpMode {
 
     // "grip_max" "grip_min" "grip_open @10" "grip_close @10"
     //
+
+
+    @Override
+    public void waitForStart() {
+        super.waitForStart();
+    }
+
     public ArrayList<String> presetActionsLeft = new ArrayList<String>(Arrays.asList(
-            "elbow_up @40",
-            "grip_max",
-            "sleep @400",
-            "wheel_forward @9 @0.2",
-            "grip_min",
-            "sleep @400",
-            "shoulder_up @75",
-            "sleep @400",
-            "wheel_forward @17 @0.2",
-            "sleep @400",
-            "wheel_right @30 @0.2",
-            "platform_right @17",
-            "sleep @400",
-            "elbow_up @43",
-            "sleep @500",
-            "elbow_up @2",
-            "sleep @500",
-            "grip_max",
-            "elbow_down @60",
-            "platform_left @20",
-            "wheel_back @28 @0.2",
-            "shoulder_down @100",
-            "sleep @400",
-            "elbow_down @50"
+            "wheel_right @28 @0.2"
+
     ));
 
     public ArrayList<String> presetActionsPad1X = new ArrayList<String>(Arrays.asList(
@@ -113,18 +82,50 @@ public class OfficialManualMode extends LinearOpMode {
             "wheel_right @1 @01"
     ));
 
-    public ArrayList<String> presetActionsPad2X = presetActionsLeft;
-
+    public ArrayList<String> presetActionsPad2X = new ArrayList<String>(Arrays.asList(
+            "shoulder_up @10",
+            "elbow_up @30"
+    ));
     public ArrayList<String> presetActionsPad2Y = new ArrayList<String>(Arrays.asList(
-            "both_max"
+            "position_shoulder @0.8",
+            "position_elbow @0"
     ));
     public ArrayList<String> presetActionsPad2A = new ArrayList<String>(Arrays.asList(
-            "both_min"
+            "position_shoulder @0.44",
+            "position_elbow @0.18"
     ));
     public ArrayList<String> presetActionsPad2B = new ArrayList<String>(Arrays.asList(
-            "wheel_turn_left @28 @0.3"
-    ));
-    public ArrayList<String> presetActionsBothMax = new ArrayList<String>(Arrays.asList(
+            "elbow_down @20",
+            //   position("position_elbow", "0.5");
+            "wheel_forward @10 @0.8",
+            "grip_close @10",
+            "elbow_up @20",
+            "wheel_forward @10 @0.8"
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "wheel_forward @20 @0.2",
+//            "wheel_back @20 @0.2",
+//            "shoulder_up @65",
+//            "elbow_up @0.6"
     ));
 
     private ElapsedTime moreTimeToStart = new ElapsedTime();
@@ -196,13 +197,13 @@ public class OfficialManualMode extends LinearOpMode {
             if (firstTime) {
                 firstTime = false;
                 resetToPresetPosition(0);
+                replayActions(presetActionsLeft);
             }
             controlArm();
             controlWheels();
         }
     }
 
-    private ElapsedTime resetServoPositionTimer = new ElapsedTime();
     private void resetToPresetPosition(int presetMode) {
         //telemetry.addData("Preset position", presetMode);
         if (presetMode == 0) {
@@ -214,28 +215,6 @@ public class OfficialManualMode extends LinearOpMode {
             //replayActions(presetActionsShoulderUp);
         }
     }
-
-    private boolean pwmEnable = true;
-    public void resetServoPosition() {
-        if (resetServoPositionTimer.seconds() > 5) {
-            //_platform.getController().resetDeviceConfigurationForOpMode();
-            _platform.getController().setServoPosition(0, 0.5);
-            //ServoController.PwmStatus pwmStatus = _platform.getController().getPwmStatus();
-            if (pwmEnable) {
-                _platform.getController().pwmDisable();
-                pwmEnable = false;
-            }
-            else {
-                _platform.getController().pwmEnable();
-                pwmEnable = true;
-                _platform.setPosition(0.5);
-            }
-            //_platform.resetDeviceConfigurationForOpMode();
-            //_shoulder.getController().setServoPosition(1, shoulderDefaultPosition);
-            //_elbow.getController().setServoPosition(2, elbowDefaultPosition);
-            resetServoPositionTimer.reset();
-        }
-    };
 
     private void controlWheels() {
         if (gamepad1.a) {
@@ -256,10 +235,6 @@ public class OfficialManualMode extends LinearOpMode {
         }
         if (gamepad1.options) {
             setLogMode(!logMode);
-            return;
-        }
-        if (gamepad1.left_stick_button && gamepad1.right_stick_button) {
-            //resetServoPosition();
             return;
         }
 
@@ -287,7 +262,7 @@ public class OfficialManualMode extends LinearOpMode {
         if (gamepad1.left_trigger > 0) {
             speedmultiplier = 2;
         } else if (gamepad1.right_trigger > 0) {
-            speedmultiplier = 0.5 * wheelTurnSpeed;
+            speedmultiplier = 0.5;
         } else {
             speedmultiplier = 1;
         }
@@ -331,17 +306,12 @@ public class OfficialManualMode extends LinearOpMode {
 
     }
 
-    void setElbowPositionAlongWithShoulder(double shoulderPosition) {
-        double ratio = (elbowMaxPosition - elbowMinPosition) / (shoulderMaxPosition - shoulderMinPosition);
-        double elbowPosition = ratio * (shoulderPosition - shoulderMinPosition) + elbowMinPosition;
-        _elbow.setPosition(elbowPosition);
-    }
 
 
     private void controlArm() {
         if (gamepad2.x) {
             if (gamepad2.left_stick_button) {
-               // replayActions(presetActionsPad2X);
+                replayActions(presetActionsPad2X);
             }
             return;
         }
@@ -353,49 +323,45 @@ public class OfficialManualMode extends LinearOpMode {
         }
         if (gamepad2.b) {
             if (gamepad2.left_stick_button) {
-               replayActions(presetActionsPad2B);
+                replayActions(presetActionsPad2B);
             }
             return;
         }
         if (gamepad2.y) {
             if (gamepad2.left_stick_button) {
-               replayActions(presetActionsPad2Y);
+                replayActions(presetActionsPad2Y);
             }
             return;
         }
 
-        if (gamepad2.left_bumper || (enablePad1Control && gamepad1.left_bumper)) {
+        //if (gamepad1.dpad_left) {
+        //    playAction("grip_open", true);
+        //}
+        //if (gamepad1.dpad_right) {
+        //    playAction("grip_close", true);
+        //}
+        if (gamepad1.left_bumper || gamepad2.left_bumper) {
             playAction("grip_max", true);
             return;
         }
-        if (gamepad2.right_bumper || (enablePad1Control && gamepad1.right_bumper)) {
+        if (gamepad1.right_bumper || gamepad2.right_bumper) {
             playAction("grip_min", true);
             return;
         }
-        if (gamepad2.dpad_up || (enablePad1Control && gamepad1.dpad_up)) {
-            playAction("shoulder_up", true);
+        if (gamepad1.dpad_up || gamepad2.dpad_up) {
+            playAction("dpad_up", true);
             return;
         }
-        if (gamepad2.dpad_down || (enablePad1Control && gamepad1.dpad_down)) {
-            playAction("shoulder_down", true);
+        if (gamepad1.dpad_down || gamepad2.dpad_down) {
+            playAction("dpad_down", true);
             return;
         }
-        if (gamepad2.dpad_left || (enablePad1Control && gamepad1.dpad_left)) {
-            playAction("platform_left", true);
+        if (gamepad1.dpad_left || gamepad2.dpad_left) {
+            //playAction("dpad_left", true);
             return;
         }
-        if (gamepad2.dpad_right || (enablePad1Control && gamepad1.dpad_right)) {
-            playAction("platform_right", true);
-            return;
-        }
-        if ((gamepad2.left_trigger > 0 && gamepad2.right_trigger == 0) ||
-                (enablePad1Control && gamepad1.left_trigger > 0 && gamepad1.right_trigger == 0)) {
-            playAction("elbow_up", true);
-            return;
-        }
-        if ((gamepad2.right_trigger > 0 && gamepad2.left_trigger == 0) ||
-                (enablePad1Control && gamepad1.right_trigger > 0 && gamepad1.left_trigger == 0)) {
-            playAction("elbow_down", true);
+        if (gamepad1.dpad_right || gamepad2.dpad_right) {
+            //playAction("dpad_right", true);
             return;
         }
         if (gamepad2.left_stick_button) {
@@ -404,6 +370,16 @@ public class OfficialManualMode extends LinearOpMode {
         }
         if (gamepad2.right_stick_button) {
             //playAction("right_stick_button", true);
+            return;
+        }
+        if ((gamepad1.left_trigger > 0 && gamepad1.right_trigger == 0) ||
+                (gamepad2.left_trigger > 0 && gamepad2.right_trigger == 0))    {
+            playAction("elbow_up", true);
+            return;
+        }
+        if ((gamepad1.right_trigger > 0 && gamepad1.left_trigger == 0) ||
+                (gamepad2.right_trigger > 0 && gamepad2.left_trigger == 0)) {
+            playAction("elbow_down", true);
             return;
         }
 
@@ -421,20 +397,17 @@ public class OfficialManualMode extends LinearOpMode {
             }
         }
         logAction(actionName);
-        if (actionName.equals("platform_left")) {
-            if (_platform.getPosition() <= (1 - perStepSizePlatform))
-                _platform.setPosition(_platform.getPosition() + perStepSizePlatform);
+        if (actionName.equals("dpad_left") || actionName.equals("platform_left")) {
+            if (_platform.getPosition() <= (1 - perStepSize))
+                _platform.setPosition(_platform.getPosition() + perStepSize);
         }
-        else if (actionName.equals("platform_right")) {
-            if (_platform.getPosition() >= perStepSizePlatform)
-                _platform.setPosition(_platform.getPosition() - perStepSizePlatform);
+        else if (actionName.equals("dpad_right") || actionName.equals("platform_right")) {
+            if (_platform.getPosition() >= perStepSize)
+                _platform.setPosition(_platform.getPosition() - perStepSize);
         }
-        else if (actionName.equals("shoulder_up")) {
-            double currentShoulderPosition = _shoulder.getPosition();
-            if (currentShoulderPosition < shoulderMaxPosition) {
-                _shoulder.setPosition(currentShoulderPosition + perStepSizeShoulder);
-                setElbowPositionAlongWithShoulder(currentShoulderPosition + perStepSizeShoulder);
-                //_elbow.setPosition(-0.66*_shoulder.getPosition() + 0.62);
+        else if (actionName.equals("dpad_up") || actionName.equals("shoulder_up")) {
+            if (_shoulder.getPosition() <= (1 - 2*perStepSize)) {
+                _shoulder.setPosition(_shoulder.getPosition() + perStepSize);
             }
             /*
             if (shoulderMoved) {
@@ -453,11 +426,9 @@ public class OfficialManualMode extends LinearOpMode {
             }
             */
         }
-        else if (actionName.equals("shoulder_down")) {
-            double currentShoulderPosition = _shoulder.getPosition();
-            if (_shoulder.getPosition() > shoulderMinPosition) {
-                _shoulder.setPosition(currentShoulderPosition - perStepSizeShoulder);
-                setElbowPositionAlongWithShoulder(currentShoulderPosition - perStepSizeShoulder);
+        else if (actionName.equals("dpad_down") || actionName.equals("shoulder_down")) {
+            if (_shoulder.getPosition() >= 0.1) {
+                _shoulder.setPosition(_shoulder.getPosition() - perStepSize);
             }
             /*
             if (shoulderMoved) {
@@ -477,29 +448,29 @@ public class OfficialManualMode extends LinearOpMode {
             */
         }
         else if (actionName.equals("grip_open")) {
-            if (_grip.getPosition() <= (1 - perStepSizeGrip))
-                _grip.setPosition(_grip.getPosition() + perStepSizeGrip);
+            if (_grip.getPosition() <= (1 - perStepSize))
+                _grip.setPosition(_grip.getPosition() + perStepSize);
             //_grip.setPosition(1);
         }
         else if (actionName.equals("grip_max")) {
             _grip.setPosition(0.8);
         }
         else if (actionName.equals("grip_close")) {
-            if (_grip.getPosition() >= perStepSizeGrip)
-                _grip.setPosition(_grip.getPosition() - perStepSizeGrip);
+            if (_grip.getPosition() >= perStepSize)
+                _grip.setPosition(_grip.getPosition() - perStepSize);
             //_grip.setPosition(0);
         }
         else if (actionName.equals("grip_min")) {
             _grip.setPosition(0);
         }
-        else if (actionName.equals("elbow_up")) {
-            if (_elbow.getPosition() > perStepSizeElbow) {
-                _elbow.setPosition(_elbow.getPosition() - perStepSizeElbow);
+        else if (actionName.equals("left_trigger") || actionName.equals("elbow_up")) {
+            if (_elbow.getPosition() > perStepSize) {
+                _elbow.setPosition(_elbow.getPosition() - perStepSize);
             }
         }
-        else if (actionName.equals("elbow_down")) {
-            if (_elbow.getPosition() < (1 - perStepSizeElbow)) {
-                _elbow.setPosition(_elbow.getPosition() + perStepSizeElbow);
+        else if (actionName.equals("right_trigger") || actionName.equals("elbow_down")) {
+            if (_elbow.getPosition() < (1 - perStepSize)) {
+                _elbow.setPosition(_elbow.getPosition() + perStepSize);
             }
 
         }
@@ -542,13 +513,13 @@ public class OfficialManualMode extends LinearOpMode {
         telemetry.addData("logAction", s);
 
         telemetry.addData("_platform ", _platform.getPosition());
-        telemetry.addData("_platform servo ", _platform.getController().getServoPosition(0));
+        //telemetry.addData("_platform ", _platform.getDirection());
         telemetry.addData("_shoulder ", _shoulder.getPosition());
-        telemetry.addData("_shoulder servo ", _shoulder.getController().getServoPosition(1));
+        //telemetry.addData("_shoulder direction", _shoulder.getDirection());
         telemetry.addData("_elbow ", _elbow.getPosition());
-        telemetry.addData("_elbow servo ", _elbow.getController().getServoPosition(2));
+        //telemetry.addData("_elbow direction", _elbow.getDirection());
         telemetry.addData("_grip ", _grip.getPosition());
-        telemetry.addData("_grip servo ", _grip.getController().getServoPosition(3));
+        //telemetry.addData("_grip direction", _grip.getDirection());
         telemetry.update();
     }
 
@@ -583,9 +554,6 @@ public class OfficialManualMode extends LinearOpMode {
                 repeatTimes = Integer.parseInt(splitStrings[1]);
                 sleep(repeatTimes);
             }
-            else if (splitStrings[0].startsWith("both")) {
-                shoulderElbowBoth(splitStrings);
-            }
             else if (splitStrings[0].startsWith("time_wheel")) {
                 timeWheel(splitStrings[0], splitStrings[1], splitStrings[2]);
             }
@@ -597,7 +565,7 @@ public class OfficialManualMode extends LinearOpMode {
             }
             else {
                 if (splitStrings.length >= 2)
-                    repeatTimes = Integer.parseInt(splitStrings[1]);
+                repeatTimes = Integer.parseInt(splitStrings[1]);
                 for (int j = 0; j < repeatTimes; j++) {
                     if (gamepad2.right_stick_button)
                     {
@@ -611,22 +579,6 @@ public class OfficialManualMode extends LinearOpMode {
         }
         telemetry.update();
 
-    }
-
-    public void shoulderElbowBoth(String[] splitStrings) {
-        if (splitStrings[0].equals("both_min")) {
-            _shoulder.setPosition(shoulderMinPosition);
-            _elbow.setPosition(elbowMinPosition);
-        }
-        else if (splitStrings[0].equals("both_max")) {
-            //replayActions(presetActionsBothMax);
-            _elbow.setPosition(0.67);
-            _shoulder.setPosition(shoulderMaxPosition);
-            sleep(1000);
-            _elbow.setPosition(0.5);
-            sleep(2000);
-            _elbow.setPosition(elbowMaxPosition);
-        }
     }
 
     public void position(String target, String sPosition) {
