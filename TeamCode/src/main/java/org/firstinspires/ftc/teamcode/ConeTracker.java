@@ -105,6 +105,8 @@ public class ConeTracker {
         return coneDetected;
     }
 
+
+
     public void showRanges() {
         myOpMode.telemetry.addData("cone found", coneDetected);
         myOpMode.telemetry.addData("left", leftRange);

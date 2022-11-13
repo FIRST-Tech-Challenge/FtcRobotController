@@ -28,6 +28,10 @@ public class GFORCE_AUTO extends LinearOpMode {
 
     Double ONE_TILE = 23.5;
 
+    // declare all trajectories //
+    TrajectorySequence redFrontJunctionInit;
+    TrajectorySequence redFrontJunctionLoop;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,15 +42,6 @@ public class GFORCE_AUTO extends LinearOpMode {
         elevator = new Elevator(this, true);
         coneTracker = new ConeTracker(this);
 
-        // We want to turn off velocity control for teleop
-        // Velocity control per wheel is not necessary outside of motion profiled auto
-        // drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Retrieve our pose from the PoseStorage.currentPose static field
-        // See AutoTransferPose.java for further details
-
-
-        TrajectorySequence ourTrajectory = null;
 
         while (opModeInInit()) {
             elevator.update();
@@ -61,39 +56,17 @@ public class GFORCE_AUTO extends LinearOpMode {
                 weAreRed = autoConfig.autoOptions.redAlliance;
                 if (weAreRed) {
                     if (autoConfig.autoOptions.startFront) {
-                        Pose2d startPosition = new Pose2d(new Vector2d(-35, -62), Math.toRadians(90));
-                        drive.setExternalHeading(Math.toRadians(90));
-                        drive.setPoseEstimate(startPosition);
+
                         if (autoConfig.autoOptions.scoreJunction) {
                             //we are red, starting at the front, scoring the junction
-                            ourTrajectory = drive.trajectorySequenceBuilder(startPosition)
-                                    .addDisplacementMarker(0.5, () -> {
-                                        elevator.levelUp();
-                                    })
-                                    .splineTo(new Vector2d(-30, -53), Math.toRadians(45))
-                                    .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                                        elevator.autoRelease();
-                                    })
-                                    .waitSeconds(1.5)
-                                    .setReversed(true)
-                                    .splineTo(new Vector2d(-35, -59), Math.toRadians(0))
-                                    .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                                        elevator.setLiftTargetPosition(Elevator.ELEVATOR_STACK_TOP);
-                                    })
-                                    .lineTo(new Vector2d((ONE_TILE * -1.5), (ONE_TILE * -1)))
-                                    .splineToConstantHeading(new Vector2d(-51, (ONE_TILE * -0.5)), Math.toRadians(180))
-                                    .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                                        elevator.setWristOffset(0);
-                                    })
-                                    .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                                        trackConeNow = true;
-                                    })
-                                    .waitSeconds(2)
-                                    .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                                        trackConeNow = false;
-                                    })
-                                    .build();
-                            followGforceSequence(ourTrajectory);
+                            buildRedFrontJunction();
+                            followGforceSequence(redFrontJunctionInit);
+                            telemetry.addData("autorunning","first sequence finish");
+                            telemetry.update();
+                            trackConeNow = false;
+                            followGforceSequence(redFrontJunctionLoop);
+                            telemetry.addData("autorunning","second sequence finish");
+                            telemetry.update();
                         }
                     }
                 }
@@ -123,6 +96,7 @@ public class GFORCE_AUTO extends LinearOpMode {
     }
 
     public void coneHoming() {
+        drive.updatePoseEstimate();
         if (coneTracker.update() && !coneGrabbed) {
             coneTracker.showRanges();
             double turn = coneTracker.coneDirection / 5.0;
@@ -138,12 +112,71 @@ public class GFORCE_AUTO extends LinearOpMode {
             drive.setWeightedDrivePower(new Pose2d(speed, 0, turn));
 
             if (((coneTracker.coneRange > 70) && (coneTracker.coneRange < 90))) {
-                elevator.setHandPosition(elevator.HAND_CLOSE);
+               // elevator.setHandPosition(elevator.HAND_CLOSE);
+                elevator.grabRequest = true;
                 coneGrabbed = true;
+                trackConeNow = false;
+
             }
         } else {
             drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
         }
         telemetry.update();
+    }
+
+    public void startConeTracking() {
+        trackConeNow = true;
+        coneGrabbed = false;
+    }
+    // trajectory builders //
+    private void buildRedFrontJunction (){
+        Pose2d startPosition = new Pose2d(new Vector2d(-35, -62), Math.toRadians(90));
+        drive.setExternalHeading(Math.toRadians(90));
+        drive.setPoseEstimate(startPosition);
+        redFrontJunctionInit = drive.trajectorySequenceBuilder(startPosition)
+            .addDisplacementMarker(0.5, () -> {
+                elevator.levelUp();
+            })
+            .splineTo(new Vector2d(-30, -53), Math.toRadians(45))
+            .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                elevator.autoRelease();
+            })
+            .waitSeconds(1.5)
+            .setReversed(true)
+            .splineTo(new Vector2d(-35, -59), Math.toRadians(0))
+            .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                elevator.setLiftTargetPosition(Elevator.ELEVATOR_STACK_TOP);
+            })
+            .lineTo(new Vector2d((ONE_TILE * -1.5), (ONE_TILE * -1)))
+            .splineToConstantHeading(new Vector2d(-51, (ONE_TILE * -0.5)), Math.toRadians(180))
+            .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                elevator.setWristOffset(0);
+            })
+            .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+              startConeTracking();
+            })
+            .waitSeconds(1.5)
+            .build();
+
+        startPosition = new Pose2d(new Vector2d((ONE_TILE * -2.5), (ONE_TILE * -0.5)), Math.toRadians(180));
+           redFrontJunctionLoop =drive.trajectorySequenceBuilder(startPosition)
+           .back(3)
+           .setReversed(false)
+           .splineTo(new Vector2d(-(2 * ONE_TILE + 6.7),(7.6 - ONE_TILE )),Math.toRadians(-45))
+           .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+               elevator.autoRelease();
+           })
+           .waitSeconds(1.5)
+           .back(2)
+           .setReversed(false)
+           .splineToLinearHeading(new Pose2d(-51, (ONE_TILE * -0.5), Math.toRadians(180)), Math.toRadians(180))
+                   .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                       elevator.setLiftTargetPosition((Elevator.ELEVATOR_STACK_TOP)-20);
+                       elevator.setWristOffset(0);
+                       elevator.setHandPosition(elevator.HAND_OPEN);
+                       startConeTracking();
+                   })
+                   .waitSeconds(1.5)
+           .build();
     }
 }

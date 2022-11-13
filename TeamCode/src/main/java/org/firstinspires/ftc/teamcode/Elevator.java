@@ -238,8 +238,7 @@ public class Elevator {
                  if (homeRequested()) {
                      setHandDelayMove(HAND_READY, 0.1, ELEVATOR_HOME, GOING_HOME_OPEN);
                  } else if (grabRequested()) {
-                     setHandPosition(HAND_CLOSE);
-                     setState(IN_POSITION_CLOSED);
+                     setHandDelayMove(HAND_CLOSE, 0.3, (liftPosition + 240), IN_POSITION_CLOSED);
                  }  else if (newLiftPosition()) {
                      setLiftTargetPosition(requestedPosition);
                  }
