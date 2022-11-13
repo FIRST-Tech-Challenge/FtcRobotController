@@ -20,7 +20,6 @@ abstract public class BaseTeleOp extends BaseOpMode{
             armPower = 0;
         }
         motorArm.setPower(armPower);
-
     }
 
     public void driveGrabber() {

@@ -21,10 +21,6 @@ public class RedLeftBlueRightAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-
-
-        // CHANGED STARTS OF TRAJECT2 AND TRAJECT3 TO BE THE ENDS OF TRAJECT1 AND TRAJECT2
-        //Red Left Blue Right Location 1
         Trajectory traject1 = drive.trajectoryBuilder(new Pose2d())
                 .forward(Y_POS_AWAY_FROM_WAll)
                 .build();
