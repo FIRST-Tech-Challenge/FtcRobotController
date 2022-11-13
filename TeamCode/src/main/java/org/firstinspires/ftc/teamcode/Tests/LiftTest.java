@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 public class LiftTest extends LinearOpMode {
     public void runOpMode(){
         PwPRobot robot = new PwPRobot(this, true);
-        RFGamepad liftGp = new RFGamepad(this);
+        RFGamepad liftGp = new RFGamepad();
         waitForStart();
         while(opModeIsActive()){
             if(gamepad1.a||Lift.LiftConstants.LIFT_GROUND_JUNCTION.getLfcValue()){

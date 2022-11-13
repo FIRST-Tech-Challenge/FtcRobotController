@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
@@ -18,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Components.ClawExtension;
 import org.firstinspires.ftc.teamcode.Components.Field;
 import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
@@ -27,6 +30,7 @@ public class PwPRobot extends BasicRobot {
     private LiftArm liftArm = null;
     private ClawExtension clawExtension = null;
     private Lift lift = null;
+    private RFGamepad gp = null;
     public Field field = null;
     public CVMaster cv = null;
     public SampleMecanumDrive roadrun = null;
@@ -42,7 +46,7 @@ public class PwPRobot extends BasicRobot {
         liftArm = new LiftArm();
 //        clawExtension = new ClawExtension();
         lift = new Lift();
-
+        gp = new RFGamepad();
     }
 
     public void stop() {
@@ -279,6 +283,8 @@ public class PwPRobot extends BasicRobot {
                             -op.gamepad1.right_stick_x*0.8
                     )
             );
+            logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + -op.gamepad1.left_stick_y*0.7 + " | " + -op.gamepad1.left_stick_x + " | " + -op.gamepad1.right_stick_x*0.8);
+
         }
 //        //toggle automate lift target to higher junc
 //        if (op.gamepad2.dpad_up) {
@@ -312,6 +318,16 @@ public class PwPRobot extends BasicRobot {
 
         //will only close when detect cone
         //claw.closeClaw
+        gp.readGamepad(gamepad2.y, "gamepad1_y", "High Junction");
+        gp.readGamepad(gamepad1.x, "gamepad1_x", "Toggle Claw Open/Close");
+        gp.readGamepad(gamepad2.a, "gamepad1_a", "Ground Junction");
+        gp.readGamepad(gamepad2.b, "gamepad1_b", "Medium Junction");
+        gp.readGamepad(gamepad1.left_stick_y, "gamepad1_left_stick_y", "Forwards/Backwards");
+        gp.readGamepad(gamepad1.left_stick_x, "gamepad1_left_stick_x", "Left/Right");
+        gp.readGamepad(gamepad1.right_stick_x, "gamepad1_right_stick_x", "Turn Angle Left/Right");
+        gp.readGamepad(gamepad2.left_trigger, "gamepad2_left_trigger", "Lift going down power");
+        gp.readGamepad(gamepad2.right_trigger, "gamepad2_right_trigger", "Lift going up power");
+        gp.readGamepad(gamepad2.right_bumper, "gamepad2_right_bumper", "Lift Arm Toggle Up/Down");
 
         roadrun.update();
         liftArm.updateLiftArmStates();
