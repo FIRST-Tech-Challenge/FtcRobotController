@@ -23,6 +23,8 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
             h2u =71,s2u = 255, v2u =255,
             h3 = 150,s3 = 0, v3 =0,
             h3u = 165,s3u = 255, v3u =255,
+
+    //h3u and s3u: 71 and 90
             colour = 1;
 
 

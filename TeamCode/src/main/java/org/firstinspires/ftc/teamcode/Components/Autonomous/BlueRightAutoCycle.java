@@ -23,8 +23,8 @@ public class BlueRightAutoCycle extends LinearOpMode {
 
     public static double dummyP = 3;
 
-    public static double dummyx = -23.5, dummyy = 5, dummya = 270;
-    public static double dummyx2 = -23.5, dummyy2 =10, dummya2 = 270;
+    public static double dummyx = -23, dummyy = 3.5, dummya = 270;
+    public static double dummyx2 = -23, dummyy2 =10, dummya2 = 270;
     public static double dummyx3 = -50, dummyy3 =10, dummya3 = 180;
     public static double dummyx4 = -62.5, dummyy4 =10, dummya4 = 180;
 
@@ -53,9 +53,9 @@ public class BlueRightAutoCycle extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-13, 55))
                 .build();
         Trajectory initialtrajectory2 = robot.roadrun.trajectoryBuilder(new Pose2d(-13,55, Math.toRadians(270)))
-                .lineToConstantHeading(new Vector2d(-13, 10))
+                .lineToConstantHeading(new Vector2d(-15, 13))
                 .build();
-        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-13,10, Math.toRadians(270)))
+        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-15,13, Math.toRadians(270)))
                 .lineToLinearHeading(new Pose2d(dummyx,dummyy,Math.toRadians(dummya)))
                 .build();
         Trajectory backtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
@@ -97,38 +97,38 @@ public class BlueRightAutoCycle extends LinearOpMode {
             robot.followTrajectoryAsync(preloadtrajectory);
             robot.waitForFinish();
             robot.openClaw(false);
-            robot.liftToPosition((int)stackPos[0]);
-            robot.delay(0.8);
-            robot.lowerLiftArmToIntake(true);
-            robot.followTrajectoryAsync(backtrajectory);
-            for(int i=0;i<2;i++){
-                robot.followTrajectoryAsync(pickupTrajectory);
-                robot.followTrajectoryAsync(approachTrajectory,true);
-                robot.closeClaw(true);
-                robot.waitForFinish();
-                robot.liftToPosition((int)(stackPos[i]+400),false);
-                robot.followTrajectoryAsync(dropTrajectory);
-                robot.liftToPosition(LIFT_HIGH_JUNCTION);
-                robot.raiseLiftArmToOuttake();
-                robot.followTrajectoryAsync(dropTrajectory2);
-                robot.waitForFinish();
-                robot.openClaw(true);
-                robot.liftToPosition((int)stackPos[i+1]);
-                robot.delay(0.8);
-                robot.lowerLiftArmToIntake(true);
-                robot.followTrajectoryAsync(backtrajectory);
-            }
-
-            if (dummyP == 1) {
-                robot.followTrajectoryAsync(park1trajectory);
-            }
-            else if (dummyP == 3) {
-                robot.followTrajectoryAsync(park3trajectory);
-            }
-            else{
-                robot.followTrajectoryAsync(park2trajectory);
-
-            }
+//            robot.liftToPosition((int)stackPos[0]);
+//            robot.delay(0.8);
+//            robot.lowerLiftArmToIntake(true);
+//            robot.followTrajectoryAsync(backtrajectory);
+//            for(int i=0;i<2;i++){
+//                robot.followTrajectoryAsync(pickupTrajectory);
+//                robot.followTrajectoryAsync(approachTrajectory,true);
+//                robot.closeClaw(true);
+//                robot.waitForFinish();
+//                robot.liftToPosition((int)(stackPos[i]+400),false);
+//                robot.followTrajectoryAsync(dropTrajectory);
+//                robot.liftToPosition(LIFT_HIGH_JUNCTION);
+//                robot.raiseLiftArmToOuttake();
+//                robot.followTrajectoryAsync(dropTrajectory2);
+//                robot.waitForFinish();
+//                robot.openClaw(true);
+//                robot.liftToPosition((int)stackPos[i+1]);
+//                robot.delay(0.8);
+//                robot.lowerLiftArmToIntake(true);
+//                robot.followTrajectoryAsync(backtrajectory);
+//            }
+//
+//            if (dummyP == 1) {
+//                robot.followTrajectoryAsync(park1trajectory);
+//            }
+//            else if (dummyP == 3) {
+//                robot.followTrajectoryAsync(park3trajectory);
+//            }
+//            else{
+//                robot.followTrajectoryAsync(park2trajectory);
+//
+//            }
 
             robot.setFirstLoop(false);
             robot.liftToTargetAuto();
