@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-@Autonomous(name = "Left", group = "Match")
-public class Autonomous_Left extends LinearOpMode {
+@Autonomous(name = "Left Storage", group = "Match")
+public class Autonomous_Left_Storage extends LinearOpMode {
     private DcMotor _fl, _fr, _rl, _rr;
     private Servo _grip, _platform, _elbow, _shoulder;
     private double _armPosition = 0, _leftTrigger = 0, _rightTrigger = 0;
@@ -28,8 +27,8 @@ public class Autonomous_Left extends LinearOpMode {
     public double ratioPad2WheelSpeed = 0.1; //pad2 can control wheel at the ratio speed of pad1, 0 means pad2 stick can't wheels, 1 means same as pad1
 
     public double shoulderDefaultPosition = 0.15;
-    public double elbowDefaultPosition = 0.75;
-    public double platformDefaultPosition = 0.8;
+    public double elbowDefaultPosition = 0.90;
+    public double platformDefaultPosition = 0;
     // "wheel_forward @10 @0.5", wheel_back 10inch and speed is 0.5
     // wheel_left/wheel_right/wheel_back
     // platform and shoulder elbow remain still, position / direction not changed
@@ -64,12 +63,30 @@ public class Autonomous_Left extends LinearOpMode {
     }
 
     public ArrayList<String> presetActionsLeft = new ArrayList<String>(Arrays.asList(
-            "elbow_down @20",
-         //   position("position_elbow", "0.5");
-            "wheel_forward @10 @0.8",
-            "grip_close @10",
-            "elbow_up @20",
-            "wheel_forward @10 @0.8"
+//            "elbow_up @41",
+//            "sleep @400",
+            "wheel_forward @10 @0.2",
+            "sleep @1000",
+            "grip_min",
+            "sleep @1000",
+            "shoulder_up @75",
+            "sleep @400",
+            "wheel_forward @15 @0.2",
+            "sleep @400",
+            "wheel_right @30 @0.2",
+            "platform_right @17",
+            "sleep @400",
+            "elbow_up @81",
+            "sleep @500",
+            "elbow_up @5",
+            "sleep @1500",
+            "grip_max",
+            "elbow_down @60",
+            "platform_left @20",
+            "wheel_back @28 @0.2",
+            "shoulder_down @100",
+            "sleep @400",
+            "elbow_down @50"
 
     ));
 
@@ -194,7 +211,7 @@ public class Autonomous_Left extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            if (moreTimeToStart.milliseconds() < 2000) {
+            if (moreTimeToStart.milliseconds() < 500) {
                 telemetry.addData("Waiting millisecond: ", moreTimeToStart.milliseconds()  );
                 telemetry.update();
                 continue;
@@ -570,6 +587,7 @@ public class Autonomous_Left extends LinearOpMode {
                 wheel(splitStrings[0], splitStrings[1], splitStrings[2], 60);
             }
             else {
+                if (splitStrings.length >= 2)
                 repeatTimes = Integer.parseInt(splitStrings[1]);
                 for (int j = 0; j < repeatTimes; j++) {
                     if (gamepad2.right_stick_button)
@@ -578,7 +596,7 @@ public class Autonomous_Left extends LinearOpMode {
                         return;
                     }
                     playAction(splitStrings[0], false);
-                    sleep(100);
+                    sleep(10);
                 }
             }
         }

@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-@Autonomous(name = "Left Storage", group = "Match")
-public class Autonomous_Left_Storage extends LinearOpMode {
+@Autonomous(name = "Right Storage", group = "Match")
+public class Autonomous_Right_Storage extends LinearOpMode {
     private DcMotor _fl, _fr, _rl, _rr;
     private Servo _grip, _platform, _elbow, _shoulder;
     private double _armPosition = 0, _leftTrigger = 0, _rightTrigger = 0;
@@ -28,7 +28,7 @@ public class Autonomous_Left_Storage extends LinearOpMode {
 
     public double shoulderDefaultPosition = 0.15;
     public double elbowDefaultPosition = 0.90;
-    public double platformDefaultPosition = 0.8;
+    public double platformDefaultPosition = 0;
     // "wheel_forward @10 @0.5", wheel_back 10inch and speed is 0.5
     // wheel_left/wheel_right/wheel_back
     // platform and shoulder elbow remain still, position / direction not changed
@@ -63,27 +63,24 @@ public class Autonomous_Left_Storage extends LinearOpMode {
     }
 
     public ArrayList<String> presetActionsLeft = new ArrayList<String>(Arrays.asList(
-            "elbow_up @41",
-            "grip_max",
-            "sleep @400",
             "wheel_forward @10 @0.2",
             "sleep @1000",
             "grip_min",
             "sleep @1000",
             "shoulder_up @75",
             "sleep @400",
-            "wheel_forward @15 @0.2",
+            "wheel_forward @13 @0.2",
             "sleep @400",
-            "wheel_right @30 @0.2",
-            "platform_right @17",
+            "wheel_left @31 @0.2",
+            "platform_left @17",
             "sleep @400",
-            "elbow_up @40",
+            "elbow_up @81",
             "sleep @500",
             "elbow_up @5",
-            "sleep @500",
+            "sleep @1500",
             "grip_max",
             "elbow_down @60",
-            "platform_left @20",
+            "platform_right @20",
             "wheel_back @28 @0.2",
             "shoulder_down @100",
             "sleep @400",
