@@ -16,7 +16,7 @@ public class LEDStrip extends OpMode{
 
     @Override
     public void loop(){
-
+        gold();
     }
 
 

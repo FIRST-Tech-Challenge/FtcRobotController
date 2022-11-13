@@ -29,17 +29,12 @@
     <remote-repository>
       <option name="id" value="maven" />
       <option name="name" value="maven" />
-      <option name="url" value="https://dl.bintray.com/first-tech-challenge/ftcsdk/" />
+      <option name="url" value="https://maven.brott.dev/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="maven" />
       <option name="name" value="maven" />
       <option name="url" value="https://maven.0x778.tk" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="maven" />
-      <option name="name" value="maven" />
-      <option name="url" value="https://maven.brott.dev/" />
     </remote-repository>
   </component>
 </project>
