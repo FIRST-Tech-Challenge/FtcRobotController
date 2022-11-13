@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_GROUND;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -22,14 +24,14 @@ public class BlueRightAutoHigh extends LinearOpMode {
 
     public static double dummyP = 3;
 
-    public static double dummyx = 0.0, dummyy =28.5, dummya = 270;
-    public static double dummyx2 = 0.0, dummyy2 =31, dummya2 = 280;
+    public static double dummyx = 0.0, dummyy =27, dummya = 270;
+    public static double dummyx2 = 0.0, dummyy2 =34, dummya2 = 280;
 
-    public static double dummyX = -12, dummyY =35, dummyA = 90;
+    public static double dummyX = -12, dummyY =36, dummyA = 90;
 
-    public static double dummyX2 = -33, dummyY2 =35, dummyA2 = 90;
+    public static double dummyX2 = -33, dummyY2 =36, dummyA2 = 90;
 
-    public static double dummyX3 = -55, dummyY3 =35, dummyA3 = 90;
+    public static double dummyX3 = -55, dummyY3 =36, dummyA3 = 90;
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
@@ -50,9 +52,12 @@ public class BlueRightAutoHigh extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-13, 55))
                 .build();
         Trajectory initialtrajectory2 = robot.roadrun.trajectoryBuilder(new Pose2d(-13,55, Math.toRadians(270)))
-                .lineToConstantHeading(new Vector2d(-13, 45))
+                .lineToConstantHeading(new Vector2d(-13, 37))
                 .build();
-        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-13,45, Math.toRadians(270)))
+        Trajectory preloadtrajectory1 = robot.roadrun.trajectoryBuilder(new Pose2d(-13,37, Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(0,33, Math.toRadians(dummya)))
+                .build();
+        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(0,33, Math.toRadians(270)))
                 .lineToLinearHeading(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
                 .build();
         Trajectory backtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
@@ -73,13 +78,15 @@ public class BlueRightAutoHigh extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested() && getRuntime()<28) {
             logger.loopcounter++;
             robot.followTrajectoryAsync(initialtrajectory);
-//            robot.liftToPosition(LIFT_HIGH_JUNCTION);
+            robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.raiseLiftArmToOuttake(true);
             robot.followTrajectoryAsync(initialtrajectory2);
+            robot.followTrajectoryAsync(preloadtrajectory1);
             robot.followTrajectoryAsync(preloadtrajectory);
+            robot.liftToPosition(1300);
             robot.waitForFinish();
             robot.openClaw(false);
-//            robot.liftToPosition(LIFT_GROUND);
+            robot.liftToPosition(LIFT_GROUND);
             robot.delay(0.8);
             robot.lowerLiftArmToIntake(true);
             robot.followTrajectoryAsync(backtrajectory);
@@ -95,7 +102,7 @@ public class BlueRightAutoHigh extends LinearOpMode {
             }
 
             robot.setFirstLoop(false);
-//            robot.liftToTarget();
+            robot.liftToTargetAuto();
             robot.roadrun.update();
             robot.updateClawStates();
         }

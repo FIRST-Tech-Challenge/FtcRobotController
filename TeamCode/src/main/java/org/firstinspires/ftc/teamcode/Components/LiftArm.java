@@ -13,9 +13,9 @@ public class LiftArm {
 
     private RFDualServo liftArmServo;
 
-    private final double LIFT_ARM_INTAKE_POS = 0.14;
+    private final double LIFT_ARM_INTAKE_POS = 0.13;
 
-    private final double LIFT_ARM_OUTTAKE_POS = 0.6;
+    private final double LIFT_ARM_OUTTAKE_POS = 0.57;
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary

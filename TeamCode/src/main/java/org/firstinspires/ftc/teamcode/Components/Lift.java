@@ -88,7 +88,7 @@ public class Lift {
         }
     }
     public enum LiftConstants{
-        LIFT_HIGH_JUNCTION(1640, false),
+        LIFT_HIGH_JUNCTION(1645, false),
         LIFT_MED_JUNCTION(812, false),
         LIFT_LOW_JUNCTION(15, false),
         LIFT_GROUND_JUNCTION(0,false),
@@ -237,7 +237,8 @@ public class Lift {
         //else{
         //    liftMotor.setPower(0);
         //}
-        //logger.log("/RobotLogs/GeneralRobot", "Claw motor power to " + liftMotor.)
+
+        //logger.log("GeneralRobotLog", "Claw motor power to " + liftMotor.)
         logger.log("/RobotLogs/GeneralRobot", "Lift," + "setPower()," + "Lift power set to " + p_velocity, true, true, true);
     }
     public void resetEncoder(){
@@ -256,12 +257,15 @@ public class Lift {
             logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Target: " + liftTarget + " ticks | Current Position: " + liftMotor.getCurrentPosition() + " | Velocity: " + liftMotor.getVelocity(), true);
         }
         else{
+            logger.log("/RobotLogs/GeneralRobot", "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks", true);
             setLiftPower(0);
         }
 
     }
     public void setLiftTarget(double p_liftTarget){
         liftTarget = p_liftTarget;
+        logger.log("/RobotLogs/GeneralRobot", "Lift," + "setLiftTarget()," + "Lift target set to:" + p_liftTarget + " ticks", true);
+
         logger.log("/RobotLogs/GeneralRobot", "Lift," + "setLiftTarget()," + "Lift target set to:" + p_liftTarget + " ticks", true);
     }
     //1 up, -1 down

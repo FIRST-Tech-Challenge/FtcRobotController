@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_GROUND;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -24,11 +26,11 @@ public class BlueLeftAutoHigh extends LinearOpMode {
 
     public static double dummyx = 0, dummyy =28.5, dummya = 270;
     public static double dummyx2 = 0.0, dummyy2 =31, dummya2 = 260;
-    public static double dummyX = 12, dummyY =33, dummyA = 90;
+    public static double dummyX = 12, dummyY =37, dummyA = 90;
 
-    public static double dummyX2 = 33, dummyY2 =35, dummyA2 = 90;
+    public static double dummyX2 = 33, dummyY2 =38, dummyA2 = 90;
 
-    public static double dummyX3 = 55, dummyY3 =36, dummyA3 = 90;
+    public static double dummyX3 = 55, dummyY3 =38, dummyA3 = 90;
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
@@ -73,13 +75,13 @@ public class BlueLeftAutoHigh extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested() && getRuntime()<28) {
             logger.loopcounter++;
             robot.followTrajectoryAsync(initialtrajectory);
-//            robot.liftToPosition(LIFT_HIGH_JUNCTION);
+            robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.raiseLiftArmToOuttake(true);
             robot.followTrajectoryAsync(initialtrajectory2);
             robot.followTrajectoryAsync(preloadtrajectory);
             robot.waitForFinish();
             robot.openClaw(false);
-//            robot.liftToPosition(LIFT_GROUND);
+            robot.liftToPosition(LIFT_GROUND);
             robot.delay(0.8);
             robot.lowerLiftArmToIntake(true);
             robot.followTrajectoryAsync(backtrajectory);

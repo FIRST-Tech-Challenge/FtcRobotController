@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
@@ -50,9 +48,6 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void stop() {
-        if(cv.isStreaming()) {
-            cv.stopCamera();
-        }
         lift.setLiftPower(0.0);
         logger.log("/RobotLogs/GeneralRobot", "program stoped");
     }
@@ -122,6 +117,9 @@ public class PwPRobot extends BasicRobot {
             claw.updateClawStates();
             if(claw.coneDistance()<5) {
                 claw.closeClaw();
+            }
+            else{
+                logger.log("/RobotLogs/GeneralRobot","ConeDistance: " + claw.coneDistance() );
             }
         }
     }
@@ -249,6 +247,7 @@ public class PwPRobot extends BasicRobot {
             lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
         }
         if(op.gamepad2.a){
+            liftArm.lowerLiftArmToIntake();
             lift.setLiftTarget(0);
         }
 
@@ -305,29 +304,27 @@ public class PwPRobot extends BasicRobot {
             }
         }
         if (op.gamepad1.x) {
-            if(CLAW_CLOSED.getStatus()) {
                 claw.openClaw();
-
-            }
-            else {
-                claw.closeClaw();
-            }
+        }
+        claw.closeClaw();
+        if(op.getRuntime()- claw.getLastTime()>.3&&op.getRuntime()- claw.getLastTime()<.5){
+            liftArm.raiseLiftArmToOuttake();
         }
 
         //manual open/close claw (will jsut be open claw in the future)
 
         //will only close when detect cone
         //claw.closeClaw
-        gp.readGamepad(gamepad2.y, "gamepad1_y", "High Junction");
-        gp.readGamepad(gamepad1.x, "gamepad1_x", "Toggle Claw Open/Close");
-        gp.readGamepad(gamepad2.a, "gamepad1_a", "Ground Junction");
-        gp.readGamepad(gamepad2.b, "gamepad1_b", "Medium Junction");
-        gp.readGamepad(gamepad1.left_stick_y, "gamepad1_left_stick_y", "Forwards/Backwards");
-        gp.readGamepad(gamepad1.left_stick_x, "gamepad1_left_stick_x", "Left/Right");
-        gp.readGamepad(gamepad1.right_stick_x, "gamepad1_right_stick_x", "Turn Angle Left/Right");
-        gp.readGamepad(gamepad2.left_trigger, "gamepad2_left_trigger", "Lift going down power");
-        gp.readGamepad(gamepad2.right_trigger, "gamepad2_right_trigger", "Lift going up power");
-        gp.readGamepad(gamepad2.right_bumper, "gamepad2_right_bumper", "Lift Arm Toggle Up/Down");
+        gp.readGamepad(op.gamepad2.y, "gamepad1_y", "High Junction");
+        gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Toggle Claw Open/Close");
+        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Ground Junction");
+        gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Medium Junction");
+        gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Forwards/Backwards");
+        gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Left/Right");
+        gp.readGamepad(op.gamepad1.right_stick_x, "gamepad1_right_stick_x", "Turn Angle Left/Right");
+        gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Lift going down power");
+        gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Lift going up power");
+        gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Lift Arm Toggle Up/Down");
 
         roadrun.update();
         liftArm.updateLiftArmStates();

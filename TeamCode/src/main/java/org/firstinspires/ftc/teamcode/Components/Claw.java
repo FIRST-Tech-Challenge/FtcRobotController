@@ -26,7 +26,7 @@ public class Claw {
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 0.32;
+    private final double CLAW_CLOSED_POS = 0.31;
 
     //temporary
     private final double CLAW_OPEN_POS = 0.48;
@@ -102,7 +102,9 @@ public class Claw {
         }
         op.telemetry.addData("coneDist",coneObserver.getDistance(INCH));
     }
-
+    public double getLastTime(){
+        return claw.getLastTime();
+    }
     public void logClawStates() {
         logger.log("/RobotLogs/GeneralRobot", CLAW_CLOSED.status + " " + CLAW_OPEN.status, false,
                 false, true);
@@ -126,7 +128,7 @@ public class Claw {
         //the state of claw opened has to be true
         if (op.getRuntime()-lastCheckTime>0.2) {
             lastCheckTime = op.getRuntime();
-            if(CLAW_OPEN.status && /*isConeReady()&&*/ LiftArm.liftArmStates.ARM_INTAKE.getStatus()) {
+            if(CLAW_OPEN.status && isConeReady()&& LiftArm.liftArmStates.ARM_INTAKE.getStatus()) {
                 //set servo position
                 claw.setPosition(CLAW_CLOSED_POS);
 
