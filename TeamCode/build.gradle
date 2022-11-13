@@ -23,5 +23,6 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
+    implementation 'org.openftc:easyopencv:1.5.2'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
