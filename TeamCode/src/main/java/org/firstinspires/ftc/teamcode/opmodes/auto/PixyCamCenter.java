@@ -17,6 +17,7 @@ public class PixyCamCenter extends BaseOpMode {
     private PixyCam.Block block;
     private int count;
     public boolean isTurning;
+    public boolean isDriving;
 
 
     /** Initialization */
@@ -28,6 +29,7 @@ public class PixyCamCenter extends BaseOpMode {
         pixycam = hardwareMap.get(PixyCam.class, "pixy");
         count = 0;
         isTurning = false;
+        isDriving = false;
 
 
     }
@@ -42,12 +44,12 @@ public class PixyCamCenter extends BaseOpMode {
         return this.stopRequested || Thread.currentThread().isInterrupted();
     }
     public void loop(){
-        block = pixycam.GetBiggestBlock(PixyCam.YELLOW);
+        block = pixycam.GetBiggestBlock(PixyCam.BLUE);
         Log.d("block ", block.toString());
         String s = block.width + " " + block.height;
         String coords = block.x + ", " + block.y;
-        int rotationOffset = pixycam.headingOffset(PixyCam.YELLOW);
-        int distanceOffset = pixycam.distanceOffset(PixyCam.YELLOW, 40);
+        int rotationOffset = pixycam.headingOffset(PixyCam.BLUE);
+        int distanceOffset = pixycam.distanceOffset(PixyCam.BLUE, 40);
 //        telemetry.addData("block", s);
 //        telemetry.addData("coords", coords);
         telemetry.addData("distanceOFfset", distanceOffset);
@@ -56,15 +58,13 @@ public class PixyCamCenter extends BaseOpMode {
         Log.d("distanceOfset", distanceOffset + " ");
         telemetry.update();
         if(gamepad1.a || isTurning){
-            isTurning = !align(PixyCam.YELLOW, 40);
+            isTurning = !align(PixyCam.BLUE, 100);
+        }
+        if (gamepad1.b || isDriving) {
+            isDriving = !driveSystem.driveToPosition(120, DriveSystem.Direction.FORWARD, 0.2);
         }
 
     }
 
 
-    @Override
-    public void stop() {
-        stopRequested = true;
-        super.stop();
-    }
 }
