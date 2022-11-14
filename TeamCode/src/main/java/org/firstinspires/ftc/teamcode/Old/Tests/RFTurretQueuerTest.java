@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.LedColor;
 
 @Autonomous(name = "RFTurretQueuerTest")
-
+@Disabled
 public class RFTurretQueuerTest extends LinearOpMode {
 
     @Override

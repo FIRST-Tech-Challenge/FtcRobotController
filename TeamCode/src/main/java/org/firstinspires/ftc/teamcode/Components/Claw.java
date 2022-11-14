@@ -20,16 +20,16 @@ public class Claw {
     private Rev2mDistanceSensor coneObserver;
 
     //temporary
-    private final double CLAW_CONE_DISTANCE = 2.6;
+    private final double CLAW_CONE_DISTANCE = 2.5;
 
     //temporary
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 0.25;
+    private final double CLAW_CLOSED_POS = 0.31;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.5;
+    private final double CLAW_OPEN_POS = 0.48;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
@@ -102,7 +102,9 @@ public class Claw {
         }
         op.telemetry.addData("coneDist",coneObserver.getDistance(INCH));
     }
-
+    public double getLastTime(){
+        return claw.getLastTime();
+    }
     public void logClawStates() {
         logger.log("/RobotLogs/GeneralRobot", CLAW_CLOSED.status + " " + CLAW_OPEN.status, false,
                 false, true);
@@ -159,6 +161,25 @@ public class Claw {
                     + ",Claw Opened", true);
         }
     }
+    public void openClaw(double delay) {
+        //no input
+
+
+        //the state of claw closed has to be true TODO: refer to line 16
+        if (CLAW_CLOSED.status) {
+            //set servo position
+            claw.setPosition(CLAW_OPEN_POS);
+            claw.setFlipTime(op.getRuntime()+delay);
+            //TODO: need separate CLAW_OPEN_POS constant?
+
+            //set state of claw open to true
+            CLAW_OPENING.setStatus(true);
+
+            //log to general robot log that the claw has been opened through function openClaw()
+            logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
+                    + ",Claw Opened", true);
+        }
+    }
 
 
     //look at and return distance to the nearest cone
@@ -173,6 +194,9 @@ public class Claw {
         op.telemetry.addData("coneDist",coneObserver.getDistance(INCH));
 
         return coneObserver.getDistance(INCH) < CLAW_CONE_DISTANCE;
+    }
+    public double coneDistance(){
+        return coneObserver.getDistance(INCH);
     }
 
     //look at and return distance to the top of the stick

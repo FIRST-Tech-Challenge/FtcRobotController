@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,17 +13,18 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
+@Config
 public class RFMotor extends Motor {
     private DcMotorEx rfMotor = null;
     private ArrayList<Double> coefs = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-
+    public static double D = 0.000004, D2 = 0, minVelocity = -700, VEL_TO_ANALOG = .0006;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
-    private double GRAVITY_CONSTANT = 0.07;
-    private double TICK_BOUNDARY_PADDING = 5, TICK_STOP_PADDING = 5;
+    private double GRAVITY_CONSTANT = 0.08;
+    private double lastError = 0, lastTime = 0;
+    private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 5;
     private double power = 0;
     private String rfMotorName;
 
@@ -122,24 +125,36 @@ public class RFMotor extends Motor {
         }
         double distance = targetpos - getCurrentPosition();
 
-        if (Math.abs(distance) > TICK_STOP_PADDING) {
-            distance = targetpos - getCurrentPosition();
-            if (distance > 0) {
-                for (int i = 0; i < coefs.size(); i++) {
-                    power += pow(distance, coefs.size() - i - 1) * coefs.get(i);
+        double targetVelocity = 0;
+        if (distance > 0) {
+            for (int i = 0; i < coefs.size(); i++) {
+                if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
+                    targetVelocity += pow(distance, coefs.size() - i - 1) * coefs.get(i);
                 }
-                setPower(power + GRAVITY_CONSTANT);
-            } else if (distance < 0) {
-                for (int i = 0; i < coefs.size(); i++) {
-                    power -= pow(Math.abs(distance), coefs.size() - i - 1) * coefs.get(i);
-                }
-                setPower(power + GRAVITY_CONSTANT);
-            } else {
-                logger.log("/MotorLogs/RFMotor" + rfMotorName, "ERROR: distance should not be equal to 0 in setPosition() in RFMotor");
             }
-        } else {
-            setPower(0);
+        } else if (distance < 0) {
+            for (int i = 0; i < coefs.size(); i++) {
+                if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
+                    targetVelocity -= abs(pow(distance, coefs.size() - i - 1)) * coefs.get(i);
+                }
+            }
         }
+
+        if(targetVelocity<minVelocity){
+            targetVelocity = minVelocity;
+        }
+        double error = targetVelocity - rfMotor.getVelocity();
+        double dStuff = 0;
+        if(abs(error)<abs(lastError)){
+            dStuff = (error-lastError)/(op.getRuntime()-lastTime)*D2;
+        }
+        else{
+            dStuff = (error-lastError)/(op.getRuntime()-lastTime)*D2/2;
+        }
+        power = dStuff+error * VEL_TO_ANALOG;
+        rfMotor.setPower(dStuff +error *D +targetVelocity* VEL_TO_ANALOG + GRAVITY_CONSTANT);
+        lastError = error;
+        lastTime = op.getRuntime();
     }
 
     public void setPower(double power) {

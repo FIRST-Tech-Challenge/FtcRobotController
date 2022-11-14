@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+
+import static java.lang.Math.PI;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -41,27 +45,30 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         super(Arrays.asList(
                 new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
                 new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
-                new Pose2d(FORWARD_OFFSET, 41.025/25.4, Math.toRadians(90)) // front
+                new Pose2d(FORWARD_OFFSET, -41.025/25.4, Math.toRadians(90)) // front
         ));
 
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
+
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
     }
 
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        return WHEEL_RADIUS * 2 * PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
     @NonNull
     @Override
     public List<Double> getWheelPositions() {
-//        op.telemetry.addData("left",leftEncoder.getCurrentPosition());
-//        op.telemetry.addData("right",rightEncoder.getCurrentPosition());
-//        op.telemetry.addData("back",frontEncoder.getCurrentPosition());
-//        op.telemetry.update();
+        op.telemetry.addData("left",leftEncoder.getCurrentPosition());
+        op.telemetry.addData("right",rightEncoder.getCurrentPosition());
+        op.telemetry.addData("back",frontEncoder.getCurrentPosition());
+        op.telemetry.addData("x",getPoseEstimate().getX());
+        op.telemetry.addData("y",getPoseEstimate().getY());
+        op.telemetry.addData("a",getPoseEstimate().getHeading()*180/PI);        op.telemetry.update();
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCurrentPosition()),
                 encoderTicksToInches(rightEncoder.getCurrentPosition()),

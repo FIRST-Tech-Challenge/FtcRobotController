@@ -47,6 +47,9 @@ public class RFServo implements Servo {
 
         servolimit = limit;
     }
+    public void setFlipTime(double p_flipTime){
+        lasttime=p_flipTime;
+    }
 
     public void setPosition(double position) {
         if (op.getRuntime() - lasttime > 0.2) {

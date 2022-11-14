@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Robots;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 
@@ -16,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Components.ClawExtension;
 import org.firstinspires.ftc.teamcode.Components.Field;
 import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
@@ -25,6 +28,7 @@ public class PwPRobot extends BasicRobot {
     private LiftArm liftArm = null;
     private ClawExtension clawExtension = null;
     private Lift lift = null;
+    private RFGamepad gp = null;
     public Field field = null;
     public CVMaster cv = null;
     public SampleMecanumDrive roadrun = null;
@@ -40,13 +44,10 @@ public class PwPRobot extends BasicRobot {
         liftArm = new LiftArm();
 //        clawExtension = new ClawExtension();
         lift = new Lift();
-
+        gp = new RFGamepad();
     }
 
     public void stop() {
-        if(cv.isStreaming()) {
-            cv.stopCamera();
-        }
         lift.setLiftPower(0.0);
         logger.log("/RobotLogs/GeneralRobot", "program stoped");
     }
@@ -86,7 +87,13 @@ public class PwPRobot extends BasicRobot {
             }
         }
     }
-
+    public void followTrajectoryAsync (Trajectory trajectory, boolean clawClosed) {
+        if (queuer.queue(false, !roadrun.isBusy()||CLAW_CLOSED.getStatus())) {
+            if (!roadrun.isBusy()) {
+                roadrun.followTrajectoryAsync(trajectory);
+            }
+        }
+    }
     public void setFirstLoop(boolean value) {
         queuer.setFirstLoop(value);
     }
@@ -108,7 +115,12 @@ public class PwPRobot extends BasicRobot {
     public void closeClaw(boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, CLAW_CLOSED.getStatus())) {
             claw.updateClawStates();
-            claw.closeClaw();
+            if(claw.coneDistance()<5) {
+                claw.closeClaw();
+            }
+            else{
+                logger.log("/RobotLogs/GeneralRobot","ConeDistance: " + claw.coneDistance() );
+            }
         }
     }
 
@@ -136,13 +148,19 @@ public class PwPRobot extends BasicRobot {
             lift.liftToPosition(targetJunction);
         }
     }
-
+    public void liftToTargetAuto(){
+        lift.liftToTargetAuto();
+    }
     public void liftToPosition(int tickTarget) {
-        if (queuer.queue(true, Math.abs(tickTarget - lift.getLiftPosition()) < 10 && lift.getLiftVelocity() == 0)) {
+        if (queuer.queue(true, lift.isDone())) {
             lift.liftToPosition(tickTarget);
         }
     }
-
+    public void liftToPosition(int tickTarget, boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, lift.isDone())) {
+            lift.liftToPosition(tickTarget);
+        }
+    }
     public void setLiftPower(double p_power) {
         lift.setLiftPower(p_power);
     }
@@ -209,6 +227,12 @@ public class PwPRobot extends BasicRobot {
 //            aligner.reverseAlignerIntake();
 //        }
 //    }
+    public void liftToTarget(){
+        lift.liftToTarget();
+    }
+    public void setLiftTarget(double p_target){
+        lift.setLiftTarget(p_target);
+    }
     public void setLiftVelocity(double velocity){
         lift.setLiftVelocity(velocity);
     }
@@ -216,15 +240,31 @@ public class PwPRobot extends BasicRobot {
 
         //omnidirectional movement + turning
 
+        if(op.gamepad2.y){
+            lift.setLiftTarget(LIFT_HIGH_JUNCTION.getValue());
+        }
+        if(op.gamepad2.b){
+            lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
+        }
+        if(op.gamepad2.a){
+            liftArm.lowerLiftArmToIntake();
+            lift.setLiftTarget(0);
+        }
 
+        if(op.gamepad1.dpad_left&&op.gamepad2.dpad_left){
+            lift.resetEncoder();
+        }
         //manual lift up/down
-        if (op.gamepad2.right_trigger != 0 || op.gamepad2.left_trigger != 0) {
+        if(op.gamepad1.dpad_down&&op.gamepad2.dpad_down){
+            lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger)/3);
+        }
+        else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
             lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
         }
         //when not manual lifting, automate lifting
         else {
-            lift.setLiftPower(0);
-//            lift.liftToTarget();
+//            lift.setLiftPower(0);
+            lift.liftToTarget();
         }
 
         if (field.lookingAtPole()&&op.gamepad1.dpad_up && !roadrun.isBusy()) {
@@ -242,6 +282,8 @@ public class PwPRobot extends BasicRobot {
                             -op.gamepad1.right_stick_x*0.8
                     )
             );
+            logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + -op.gamepad1.left_stick_y*0.7 + " | " + -op.gamepad1.left_stick_x + " | " + -op.gamepad1.right_stick_x*0.8);
+
         }
 //        //toggle automate lift target to higher junc
 //        if (op.gamepad2.dpad_up) {
@@ -252,7 +294,7 @@ public class PwPRobot extends BasicRobot {
 //            lift.toggleLiftPosition(-1);
 //        }
         //toggle liftArm position
-        if (op.gamepad2.x) {
+        if (op.gamepad2.right_bumper) {
             if(ARM_OUTTAKE.getStatus()) {
                 liftArm.lowerLiftArmToIntake();
 
@@ -261,15 +303,28 @@ public class PwPRobot extends BasicRobot {
                 liftArm.raiseLiftArmToOuttake();
             }
         }
+        if (op.gamepad1.x) {
+                claw.openClaw();
+        }
+        claw.closeClaw();
+        if(op.getRuntime()- claw.getLastTime()>.3&&op.getRuntime()- claw.getLastTime()<.5){
+            liftArm.raiseLiftArmToOuttake();
+        }
 
         //manual open/close claw (will jsut be open claw in the future)
-        if (op.gamepad1.x) {
-            claw.openClaw();
-        }
+
         //will only close when detect cone
         //claw.closeClaw
-
-        claw.closeClaw();
+        gp.readGamepad(op.gamepad2.y, "gamepad1_y", "High Junction");
+        gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Toggle Claw Open/Close");
+        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Ground Junction");
+        gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Medium Junction");
+        gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Forwards/Backwards");
+        gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Left/Right");
+        gp.readGamepad(op.gamepad1.right_stick_x, "gamepad1_right_stick_x", "Turn Angle Left/Right");
+        gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Lift going down power");
+        gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Lift going up power");
+        gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Lift Arm Toggle Up/Down");
 
         roadrun.update();
         liftArm.updateLiftArmStates();

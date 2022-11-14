@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.abs;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -11,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 
 import java.util.ArrayList;
 
-
+@Config
 public class Lift {
     private final int MAX_LIFT_TICKS = 1645;
     private final double LIFT_GRAVITY_CONSTANT = 0.07;
@@ -35,16 +37,17 @@ public class Lift {
     private RFMotor liftMotor;
     private Claw LC = new Claw();
     private double liftTarget = 0;
-    private double dfco1 =  .01; private double dfco2 = 0.05;
+    public static double dfco1 =  0.0122, dfco2 = 1.0/3, dfco3 = 500;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
-
+//447,297,173,53,0
     public Lift(){ //constructor
         // hardware map
         Claw LC = new Claw();
-        logger.createFile("LiftLog", "Time Component Function Action");
+        //logger.createFile("/RobotLogs/GeneralRobot", "Time Component Function Action");
         coefficients.add(dfco1);
         coefficients.add(dfco2);
+        coefficients.add(dfco3);
         liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, true, coefficients, MAX_LIFT_TICKS, 0);
         liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         liftMotor.setTICK_BOUNDARY_PADDING(10);
@@ -76,16 +79,16 @@ public class Lift {
         public void setStatus(boolean p_status) {
             status = p_status;
             if(p_status==true){
-                for(int i = 0; i< ClawExtension.ClawExtensionStates.values().length; i++){
-                    if(name != ClawExtension.ClawExtensionStates.values()[i].name()){
-                        ClawExtension.ClawExtensionStates.values()[i].setStatus(false);
+                for(int i = 0; i< Lift.LiftStates.values().length; i++){
+                    if(name != Lift.LiftStates.values()[i].name()){
+                        Lift.LiftStates.values()[i].setStatus(false);
                     }
                 }
             }
         }
     }
     public enum LiftConstants{
-        LIFT_HIGH_JUNCTION(1640, false),
+        LIFT_HIGH_JUNCTION(1645, false),
         LIFT_MED_JUNCTION(812, false),
         LIFT_LOW_JUNCTION(15, false),
         LIFT_GROUND_JUNCTION(0,false),
@@ -174,13 +177,9 @@ public class Lift {
         //}
 
         double distance = targetHeight.value-liftMotor.getCurrentPosition();
-        if(!done){
-            liftMotor.setPosition(targetHeight.value);
-        }
+
         done = (abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
-        if(done){
-            liftMotor.setPower(LIFT_GRAVITY_CONSTANT);
-        }
+        setLiftTarget(targetHeight.getValue());
         if(!done){
             targetHeight.setLfc(true);
         }
@@ -196,24 +195,36 @@ public class Lift {
         return done;
     }
     public void liftToPosition(int targetTickCount){
-        liftMotor.setPosition(targetTickCount);
+        double distance = targetTickCount-liftMotor.getCurrentPosition();
 
-        logger.log("LiftLog", "Lift," + "liftToPosition(targetTickCount)," + "Lifting to " + targetTickCount + " ticks", true, true, true);
-        updateLiftStates();
+        done = (abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
+        setLiftTarget(targetTickCount);
+
+        // no conditions
+        // log when movement starts & when reach target position
+        logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetTickCount + " ticks" + liftMotor.getCurrentPosition());
+        //async, no use sleep/wait with time, can use multiple processes
     }
+    private boolean liftZeroLogged = false;
     public void setLiftPower(double power){
         liftTarget=liftMotor.getCurrentPosition();
-        if(liftTarget+10<MAX_LIFT_TICKS&&power>0) {
+        if((liftTarget+10<MAX_LIFT_TICKS&&power>0) || (liftTarget>10&&power<0)) {
             liftMotor.setPower(power + LIFT_GRAVITY_CONSTANT);
-        }
-        else if(liftTarget>10&&power<0) {
-            liftMotor.setPower(power*0.3 + LIFT_GRAVITY_CONSTANT);
+            logger.log("/RobotLogs/GeneralRobot", "Lift," + "setPower()," + "Lift power set to " + power, true);
+            liftZeroLogged = false;
         }
         else{
             liftMotor.setPower(LIFT_GRAVITY_CONSTANT);
+            if(liftZeroLogged == false){
+                logger.log("/RobotLogs/GeneralRobot", "Lift," + "setPower()," + "Lift power set to 0", true);
+                liftZeroLogged = true;
+            }
         }
-        logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + power, true, true, true);
         op.telemetry.addData("ticks", liftMotor.getCurrentPosition());
+    }
+    public void setLiftRawPower(double rawPower){
+        liftMotor.setPower(rawPower);
+        liftTarget = liftMotor.getCurrentPosition();
     }
     public void setLiftVelocity(double p_velocity){
         //liftTarget=liftMotor.getCurrentPosition();
@@ -226,11 +237,36 @@ public class Lift {
         //else{
         //    liftMotor.setPower(0);
         //}
-        //logger.log("LiftLog", "Claw motor power to " + liftMotor.)
-        logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + p_velocity, true, true, true);
+
+        //logger.log("GeneralRobotLog", "Claw motor power to " + liftMotor.)
+        logger.log("/RobotLogs/GeneralRobot", "Lift," + "setPower()," + "Lift power set to " + p_velocity, true, true, true);
+    }
+    public void resetEncoder(){
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        op.sleep(200);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftTarget=0;
+    }
+    public void liftToTargetAuto(){
+            liftMotor.setPosition(liftTarget);
     }
     public void liftToTarget(){
-        liftMotor.setPosition(liftTarget);
+        if(abs(liftTarget- liftMotor.getCurrentPosition())>100||liftMotor.getVelocity()>20) {
+            liftMotor.setPosition(liftTarget);
+            logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks", true);
+            logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Target: " + liftTarget + " ticks | Current Position: " + liftMotor.getCurrentPosition() + " | Velocity: " + liftMotor.getVelocity(), true);
+        }
+        else{
+            logger.log("/RobotLogs/GeneralRobot", "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks", true);
+            setLiftPower(0);
+        }
+
+    }
+    public void setLiftTarget(double p_liftTarget){
+        liftTarget = p_liftTarget;
+        logger.log("/RobotLogs/GeneralRobot", "Lift," + "setLiftTarget()," + "Lift target set to:" + p_liftTarget + " ticks", true);
+
+        logger.log("/RobotLogs/GeneralRobot", "Lift," + "setLiftTarget()," + "Lift target set to:" + p_liftTarget + " ticks", true);
     }
     //1 up, -1 down
     public void toggleLiftPosition(int direction){

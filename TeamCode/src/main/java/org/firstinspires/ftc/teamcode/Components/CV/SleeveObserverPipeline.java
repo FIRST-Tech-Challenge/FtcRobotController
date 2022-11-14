@@ -23,6 +23,8 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
             h2u =71,s2u = 255, v2u =255,
             h3 = 150,s3 = 0, v3 =0,
             h3u = 165,s3u = 255, v3u =255,
+
+    //h3u and s3u: 71 and 90
             colour = 1;
 
 
@@ -92,7 +94,7 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
             thresh3.copyTo(input);
         }
         Scalar color = new Scalar(255,0,0);
-        Imgproc.rectangle(input, ROI, color, 5);
+            Imgproc.rectangle(input, ROI, color, 5);
         thresh.release();
         thresh2.release();
         thresh3.release();
@@ -106,7 +108,11 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
             sums[1]+=frameList.get(i)[1];
             sums[2]+=frameList.get(i)[2];
         }
-        if(sums[0]>sums[1]&&sums[0]>sums[2]){
+//        op.telemetry.addData("sums0",sums[0]);
+//       op.telemetry.addData("sums1",sums[1]);
+//       op.telemetry.addData("sums2",sums[2]);
+//       op.telemetry.update();
+           if(sums[0]>sums[1]&&sums[0]>sums[2]){
             return 2;
         }else if(sums[1]>sums[2]){
             return 3;

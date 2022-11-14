@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 //1804,0
 //2495,761
 //140/8092 * 6.28
+@Disabled
 @Autonomous(name = "RoadRunStrafeTest")
 public class RoadRunStrafeTest extends LinearOpMode {
 

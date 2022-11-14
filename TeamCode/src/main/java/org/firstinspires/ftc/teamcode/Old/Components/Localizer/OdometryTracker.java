@@ -41,7 +41,7 @@ public class OdometryTracker extends Tracker {
         encoderLeft = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
         encoderRight = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
         encoderBack = (DcMotorEx) op.hardwareMap.dcMotor.get("leftEncoder");
-        encoderLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        encoderBack.setDirection(DcMotorSimple.Direction.REVERSE);
         encoderLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         encoderRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         encoderBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

@@ -10,6 +10,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -28,7 +29,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFCRServo;
 import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
 
 import java.util.ArrayList;
-
+@Disabled
 @Config
 @TeleOp(name = "RFModuleTeleop")
 //@Disabled
