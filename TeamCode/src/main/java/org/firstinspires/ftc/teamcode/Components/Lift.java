@@ -254,16 +254,21 @@ public class Lift {
     public void liftToTargetAuto(){
             liftMotor.setPosition(liftTarget);
     }
+    private boolean LTTZeroLogged = false;
     public void liftToTarget(){
         if(op.getRuntime()-lastManualTime>0.2) {
             liftMotor.setPosition(liftTarget);
             logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks", true);
             logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Target: " + liftTarget + " ticks | Current Position: " + liftMotor.getCurrentPosition() + " | Velocity: " + liftMotor.getVelocity(), true);
+            LTTZeroLogged = false;
         }else if(op.getRuntime()-lastManualTime<.2&&liftMotor.getPower()==liftMotor.getGRAVITY_CONSTANT()){
             setLiftTarget(liftMotor.getCurrentPosition());
         }
         else{
-            logger.log("/RobotLogs/GeneralRobot", "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks", true);
+            if(LTTZeroLogged == false){
+                logger.log("/RobotLogs/GeneralRobot", "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks", true);
+                LTTZeroLogged = true;
+            }
             setLiftPower(0);
         }
 
