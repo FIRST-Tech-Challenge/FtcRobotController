@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
-public class new_robot {
+public class Robot {
     private ElapsedTime runtime = new ElapsedTime();
     public DcMotor vSlider;
     public DcMotor hSlider;
@@ -184,4 +184,31 @@ public class new_robot {
         this.BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    
+    public void turnRobot(float turnAngle) {
+    Orientation angle = Robot.imu.getAngularOrientation();
+
+    float angleStart = modAngle(angle.firstAngle);
+    float angleEnd = modAngle(angleStart + turnAngle);
+    float angleCurrent = angleStart;
+    float direction = Math.signum(turnAngle);
+
+    double pwr = 0.3;
+        while (Math.abs(angleCurrent - angleEnd) > 1) {
+            FLMotor.setPower(pwr * direction);
+            FRMotor.setPower(-pwr * direction);
+            BLMotor.setPower(pwr * direction);
+            BRMotor.setPower(-pwr * direction);
+            angleCurrent = modAngle(Robot.imu.getAngularOrientation().firstAngle);
+        }
+        stopDriveMotors();
+    }
+    float modAngle(float angle) {
+        angle = angle % 360;
+        if (angle < 0) {
+            angle += 360;
+        }
+        return angle;
+    }
+    
 }
