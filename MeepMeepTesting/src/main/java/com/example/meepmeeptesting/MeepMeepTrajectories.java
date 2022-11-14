@@ -6,11 +6,10 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 //meep meep example create your own class
-// from bottom right corner
 public class MeepMeepTrajectories {
     public static void main(String[] args) {
         //placeholder signal zone
-        int signalZone = 2;
+        int signalZone = 1;
         MeepMeep meepMeep = new MeepMeep(800);
         RoadRunnerBotEntity myBot = null;
 
@@ -24,7 +23,7 @@ public class MeepMeepTrajectories {
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
                                         .forward(22)
-                                        //scan signal sleeve
+                                        //scan the thing
                                         .back(22)
                                         .turn(Math.toRadians(-60))
                                         .forward(20)
@@ -52,7 +51,7 @@ public class MeepMeepTrajectories {
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
                                         .forward(22)
-                                        //scan signal sleeve
+                                        //scan the thing
                                         .back(22)
                                         .turn(Math.toRadians(-60))
                                         .forward(20)
@@ -77,7 +76,7 @@ public class MeepMeepTrajectories {
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
                                         .forward(22)
-                                        //scan signal sleeve
+                                        //scan the thing
                                         .back(22)
                                         .turn(Math.toRadians(-60))
                                         .forward(20)
@@ -106,4 +105,5 @@ public class MeepMeepTrajectories {
 
     }
 }
+
 
