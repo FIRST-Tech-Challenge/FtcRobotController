@@ -231,39 +231,39 @@ public class DriveMethods extends LinearOpMode{
      * BELOW is code for NavX IMU
      */
 
-//    public void calibrateNavXIMU(){
-//        navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
-//        gyro = (IntegratingGyroscope)navxMicro;
-//
-//        while (navxMicro.isCalibrating())  {
-//            telemetry.addLine("calibrating...");
-//            telemetry.update();
-//            sleep(50);
-//        }
-//        telemetry.addLine("calibrated!");
-//        telemetry.update();
-//    }
-//
-//    public double getCurrentZ(){
-//        Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//        return angles.firstAngle;
-//    }
+    public void calibrateNavXIMU(){
+        navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
+        gyro = (IntegratingGyroscope)navxMicro;
 
-//    public double getCumulativeZ(){
-//        double currentHeading = getCurrentZ();
-//        double deltaHeading = currentHeading - previousHeading;
-//        if(deltaHeading <= -180) {
-//            deltaHeading += 360;
-//        } else if(deltaHeading >= 180) {
-//            deltaHeading -=360;
-//        }
-//
-//        intergratedHeading += deltaHeading;
-//        previousHeading = currentHeading;
-//
-//        return intergratedHeading;
-//
-//    }
+        while (navxMicro.isCalibrating())  {
+            telemetry.addLine("calibrating...");
+            telemetry.update();
+            sleep(50);
+        }
+        telemetry.addLine("calibrated!");
+        telemetry.update();
+    }
+
+    public double getCurrentZ(){
+        Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
+    }
+
+    public double getCumulativeZ(){
+        double currentHeading = getCurrentZ();
+        double deltaHeading = currentHeading - previousHeading;
+        if(deltaHeading <= -180) {
+            deltaHeading += 360;
+        } else if(deltaHeading >= 180) {
+            deltaHeading -=360;
+        }
+
+        intergratedHeading += deltaHeading;
+        previousHeading = currentHeading;
+
+        return intergratedHeading;
+
+    }
 
     /**
      *Above is NavX IMU stuff
@@ -285,7 +285,7 @@ public class DriveMethods extends LinearOpMode{
 //        }
 //    }
     public void driveForDistance(double distanceMeters, Direction movementDirection, double power, double targetRotation) { // distance: 2, strafe: false, power: 0.5
-        //targetZ = getCurrentZ();
+        targetZ = targetRotation;
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -361,20 +361,23 @@ public class DriveMethods extends LinearOpMode{
         double FRPower = motorFR.getPower();
         double BRPower = motorBR.getPower();
 
+        double currentZ = getCurrentZ();
+        double rotateError = targetZ - currentZ;
+
         while (targetPos >= avgPosition) {
             FLPosition = Math.abs(motorFL.getCurrentPosition());
             BLPosition = Math.abs(motorBL.getCurrentPosition());
             FRPosition = Math.abs(motorFR.getCurrentPosition());
             BRPosition = Math.abs(motorBR.getCurrentPosition());
 
-            //double currentZ = getCurrentZ();
-            //double rotateError = targetZ - currentZ;
+            currentZ = getCurrentZ();
+            rotateError = targetZ - currentZ;
 
             avgPosition = (int) (FLPosition + BLPosition + FRPosition + BRPosition) / 4;
-//            motorFL.setPower(FLPower - (rotateError / 150));
-//            motorBL.setPower(BLPower - (rotateError / 150));
-//            motorFR.setPower(FRPower + (rotateError / 150));
-//            motorBR.setPower(BRPower + (rotateError / 150));
+            motorFL.setPower(FLPower - (rotateError / 150));
+            motorBL.setPower(BLPower - (rotateError / 150));
+            motorFR.setPower(FRPower + (rotateError / 150));
+            motorBR.setPower(BRPower + (rotateError / 150));
 
             telemetry.addLine("MotorFL Power " + motorFL.getPower());
             telemetry.addLine("MotorBL Power " + motorBL.getPower());
@@ -384,9 +387,9 @@ public class DriveMethods extends LinearOpMode{
             telemetry.addLine("Current Position: " + avgPosition);
             telemetry.addLine("targetPos " + targetPos);
 
-//            telemetry.addLine("Cumulative Z " + getCumulativeZ());
-//            telemetry.addLine("Current Z " + getCurrentZ());
-//            telemetry.addLine("Error " + rotateError);
+            telemetry.addLine("Cumulative Z " + getCumulativeZ());
+            telemetry.addLine("Current Z " + getCurrentZ());
+            telemetry.addLine("Error " + rotateError);
             telemetry.update();
         }
 
