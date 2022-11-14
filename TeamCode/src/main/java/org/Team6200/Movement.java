@@ -90,14 +90,14 @@ public class Movement {
         backRight.setPower(1*br);
         backLeft.setPower(-1*bl);
     }
-/*
-    public void startForwardPower(double power){
-        motors.get("frontRight").setPower(1*power);
-        motors.get("frontLeft").setPower(-1*power);
-        motors.get("backRight").setPower(1*power);
-        motors.get("backLeft").setPower(-1*power);
-    }
-*/
+    /*
+        public void startForwardPower(double power){
+            motors.get("frontRight").setPower(1*power);
+            motors.get("frontLeft").setPower(-1*power);
+            motors.get("backRight").setPower(1*power);
+            motors.get("backLeft").setPower(-1*power);
+        }
+    */
     public void stopMotors(){
         frontRight.setPower(0);
         frontLeft.setPower(0);
@@ -116,14 +116,14 @@ public class Movement {
             }
         }).start();
     }
-/*
-    public void sharpTurnPower(double power){
-        motors.get("frontRight").setPower(power);
-        motors.get("frontLeft").setPower(power);
-        motors.get("backRight").setPower(power);
-        motors.get("backLeft").setPower(power);
-    }
-*/
+    /*
+        public void sharpTurnPower(double power){
+            motors.get("frontRight").setPower(power);
+            motors.get("frontLeft").setPower(power);
+            motors.get("backRight").setPower(power);
+            motors.get("backLeft").setPower(power);
+        }
+    */
     public void sharpLeft(){
 
         frontRight.setPower(1);

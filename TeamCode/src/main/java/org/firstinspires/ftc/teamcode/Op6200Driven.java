@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp
 public class Op6200Driven extends OpMode {
+    float minPosition = 0.3f;
+    float maxPosition = 0.8f;
 
     private SampleMecanumDrive robot;
 
@@ -29,8 +31,8 @@ public class Op6200Driven extends OpMode {
     @Override
     public void loop() {
 
-        double drive = -gamepad1.left_stick_y/4;
-        double strafe = -gamepad1.left_stick_x/4;
+        double drive = -gamepad1.left_stick_y/3.5;
+        double strafe = -gamepad1.left_stick_x/3.5;
         double turn = gamepad1.right_stick_x / 1.75;
 
         double frontLeftPower = Range.clip(drive + strafe + turn, -0.4, 0.4);
@@ -42,13 +44,25 @@ public class Op6200Driven extends OpMode {
         robot.rightFront.setPower(frontRightPower);
         robot.leftRear.setPower(backLeftPower);
         robot.rightRear.setPower(backRightPower);
-        if(gamepad1.right_trigger > gamepad1.left_trigger){
+        /*if(gamepad1.right_trigger > gamepad1.left_trigger){
             robot.servo.setDirection(Servo.Direction.FORWARD);
             robot.servo.setPosition(gamepad1.right_trigger);
         }else if(gamepad1.left_trigger > gamepad1.right_trigger){
             robot.servo.setDirection(Servo.Direction.REVERSE);
             robot.servo.setPosition(gamepad1.left_trigger);
+        }*/
+        double gripPos = robot.servo.getPosition();
+        if(gamepad1.left_trigger > 0 && gripPos > minPosition){
+            gripPos = gripPos - 0.01;
+        }else if(gamepad1.right_trigger > 0 && gripPos < maxPosition){
+            gripPos = gripPos + 0.01;
+        }else{
+            gripPos = gripPos;
         }
+
+
+        robot.servo.setPosition(Range.clip(gripPos, minPosition, maxPosition));
+
         /*float lt = gamepad1.left_trigger / 2;
         float rt = gamepad1.right_trigger / 2;
         if(gamepad1.left_trigger != 0){
@@ -88,24 +102,24 @@ public class Op6200Driven extends OpMode {
 
 
         //manual movement for linear slide
-       int lmotorpos = robot.lmotor.getCurrentPosition();
-       if(gamepad1.right_bumper)
+        int lmotorpos = robot.lmotor.getCurrentPosition();
+        if(gamepad1.right_bumper)
         {
-           robot.lmotor.setTargetPosition(lmotorpos + 60);
+            robot.lmotor.setTargetPosition(lmotorpos + 60);
             robot.lmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-           robot.lmotor.setPower(0.95);
+            robot.lmotor.setPower(0.95);
             telemetry.addData("Current position", robot.lmotor.getCurrentPosition());
 
-       }
+        }
 
         if(gamepad1.left_bumper)
         {
-           robot.lmotor.setTargetPosition(lmotorpos - 60);
-           robot.lmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-           robot.lmotor.setPower(0.95);
-         telemetry.addData("Current position", robot.lmotor.getCurrentPosition());
+            robot.lmotor.setTargetPosition(lmotorpos - 60);
+            robot.lmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.lmotor.setPower(0.95);
+            telemetry.addData("Current position", robot.lmotor.getCurrentPosition());
 
-       }}
+        }}
 }
 
 
