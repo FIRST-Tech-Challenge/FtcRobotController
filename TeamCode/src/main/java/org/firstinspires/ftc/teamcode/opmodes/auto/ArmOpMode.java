@@ -20,8 +20,8 @@ public class ArmOpMode extends OpMode {
 
     /** Initialization */
     public void init() {
-        motor1 = hardwareMap.get(DcMotor.class,"arm1");
-        motor2 = hardwareMap.get(DcMotor.class,"arm2");
+        motor1 = hardwareMap.get(DcMotor.class,"arm_right");
+        motor2 = hardwareMap.get(DcMotor.class,"arm_left");
         motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

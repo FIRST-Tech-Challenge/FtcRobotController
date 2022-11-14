@@ -11,14 +11,63 @@ import org.firstinspires.ftc.teamcode.params.DriveParams;
 
 public class ArmSystem {
 
-    //fill in constants
+    // Pole Heights
     public static final int LOW = 550;
     public static final int MEDIUM = 800;
     public static final int HIGH = 1100;
     public static final int FLOOR = 120;
+
+    public enum Cone {
+        ONE (100),
+        TWO (120),
+        THREE (150),
+        FOUR (190),
+        FIVE (320);
+
+        private final int height;
+        // Cone Stack Drop Distance
+        public static final int CONE_DROP = 70;
+
+        // Cone Clear Distance
+        public static final int CONE_CLEAR = 100;
+
+        Cone(int height) {
+            this.height = height;
+        }
+
+        public int approach() {
+            return height;
+        }
+
+        public int grab() {
+            return height - CONE_DROP;
+        }
+
+        public int clear() {
+            return height + CONE_CLEAR;
+        }
+
+    }
+
+    // grab 2 approach 120
+    // grab 2 grab 40
+    // lift off 2 190
+
+    // grab 3 approach 150 (120 + 30)
+    // grab 3 grab 79 (40 + 40)
+    // lift off 3 200
+
+    // grab 4 approach 190 (150 + 40)
+    // grab 4 grab 125 (80 + 40)
+    // lift off 4 244
+
+    // grab 5 approach 240 (190 + 50)
+    // grab 5 170 (120 + 50)
+    // lift off 5 270
+
     public DcMotor armLeft; //arm left is motor1
     public DcMotor armRight;
-    private Intake intake;
+    public Intake intake;
     private int mTargetPosition;
 
 
@@ -124,17 +173,14 @@ public class ArmSystem {
         }
 
         public boolean intake(){
-            if (state != State.INTAKING) {
+            if (isBeamBroken()) {
+                coneTake.setPower(0.0);
+                state = State.IDLE;
+            } else if (state != State.INTAKING) {
                 state = State.INTAKING;
                 coneTake.setDirection(DcMotor.Direction.REVERSE);
                 coneTake.setPower(0.75);
             }
-
-            if (isBeamBroken()) {
-                coneTake.setPower(0.0);
-                state = State.IDLE;
-            }
-
             return state == State.IDLE;
         }
 
@@ -153,8 +199,6 @@ public class ArmSystem {
 
             return state == State.IDLE;
         }
-
-
 
         public State getState() {
             return state;
