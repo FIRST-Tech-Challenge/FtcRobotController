@@ -29,9 +29,12 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.HuskyBot.ARM_EXTENSION_MAX_POWER;
+import static org.firstinspires.ftc.teamcode.HuskyBot.ARM_LIFT_MAX_POWER;
+import static org.firstinspires.ftc.teamcode.HuskyBot.ARM_SWIVEL_MAX_POWER;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -46,6 +49,12 @@ public class HuskyTeleOpMode extends LinearOpMode {
     final double FINAL_TIME = 110.0;    // last 10 seconds
     boolean endGameRumbled = false;
     boolean finalRumbled = false;
+
+    double armSwivelPower = 0.0;
+    double armExtendPower = 0.0;
+    double armLiftPower = 0.0;
+    double clawRotationPosition = 0.0;
+    double clawLiftPosition = 0.0;
 
     @Override
     public void runOpMode() {
@@ -76,44 +85,10 @@ public class HuskyTeleOpMode extends LinearOpMode {
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
 
-
             double frontLeftVelocity = (y + x + rx) * HuskyBot.VELOCITY_CONSTANT;
             double rearLeftVelocity = (y - x + rx) * HuskyBot.VELOCITY_CONSTANT;
             double frontRightVelocity = (y - x - rx) * HuskyBot.VELOCITY_CONSTANT;
             double rearRightVelocity = (y + x - rx) * HuskyBot.VELOCITY_CONSTANT;
-
-            // arm/claw mechanisms
-
-            // todo + IMPORTANT: we will have to limit this to rotate only 360 degrees once the arm is added.
-            double armSwivelPower = -gamepad2.right_stick_x;
-            armSwivelPower = Range.clip(armSwivelPower, -0.65, 0.65);
-
-            double armHeightPower = gamepad2.right_stick_y;
-            // todo: this will have to be tuned for stability
-            armHeightPower = Range.clip(armHeightPower, -0.4, 0.4);
-
-            // Increases/Decreases Arm Length
-            if(gamepad2.dpad_up)
-            {
-                huskyBot.armLength.setPower(0.75);
-                // If this is right, then it will only move when the dpad is held, rather than a toggle button.
-                huskyBot.armLength.setPower(0);
-            }
-
-            if(gamepad2.dpad_down)
-            {
-                huskyBot.armLength.setPower(-0.75);
-                huskyBot.armLength.setPower(0);
-            }
-
-            /*
-            if(gamepad2.a)
-            {
-                // todo get this working so that way it does the entire action and then stops when claw is open
-            }
-            */
-
-
 
             // apply the calculated values to the motors.
             huskyBot.frontLeftDrive.setVelocity(frontLeftVelocity);
@@ -121,25 +96,65 @@ public class HuskyTeleOpMode extends LinearOpMode {
             huskyBot.frontRightDrive.setVelocity(frontRightVelocity);
             huskyBot.rearRightDrive.setVelocity(rearRightVelocity);
 
-            // apply calculated values to arm/claw motors/servos
-            huskyBot.armSwivel.setPower(armSwivelPower);
-            huskyBot.armHeight.setPower(armHeightPower);
+            // arm/claw mechanisms
+            // todo + IMPORTANT: we will have to limit this to rotate only 240 degrees once the arm is added.
+            armSwivelPower = -gamepad2.left_stick_x;
+            armSwivelPower = Range.clip(armSwivelPower, -ARM_SWIVEL_MAX_POWER, ARM_SWIVEL_MAX_POWER);
+            if (armSwivelPower != 0) {
+                huskyBot.armSwivel.setPower(armSwivelPower);
+            }
 
+            armLiftPower = gamepad2.left_stick_y;
+            // todo: this will have to be tuned for stability
+            armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MAX_POWER, ARM_LIFT_MAX_POWER);
+            if (armLiftPower != 0) {
+                huskyBot.armLift.setPower(armLiftPower);
+            }
 
-            // Show the elapsed game time and wheel power
+            // Increases/Decreases Arm Length
+            armExtendPower = gamepad2.dpad_up ? ARM_EXTENSION_MAX_POWER : (gamepad2.dpad_down ? -ARM_EXTENSION_MAX_POWER : 0);
+            if (armExtendPower != 0) {
+                huskyBot.armExtend.setPower(armExtendPower);
+            }
+
+            clawRotationPosition = gamepad2.right_stick_x;
+            if (clawRotationPosition != 0) {
+                huskyBot.clawRotate.setPosition(clawRotationPosition);
+            }
+
+            clawLiftPosition = gamepad2.right_stick_y;
+            if (clawLiftPosition != 0) {
+                huskyBot.clawLift.setPosition(clawLiftPosition);
+            }
+
+            if (gamepad2.x) {
+                huskyBot.clawGrab.setPosition(0.3);
+            }
+            if (gamepad2.a) {
+                huskyBot.clawGrab.setPosition(0.0);
+            }
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Stick", "y (%.2f), x (%.2f), rx (%.2f)", y, x, rx);
-            telemetry.addData("Actual Vel", "fl (%.2f), rl (%.2f)", huskyBot.frontLeftDrive.getVelocity(), huskyBot.rearLeftDrive.getVelocity());
-            telemetry.addData("Actual Vel", "fr (%.2f), rr (%.2f)", huskyBot.frontRightDrive.getVelocity(), huskyBot.rearRightDrive.getVelocity());
+            telemetry.addData("Actual Vel", "fl (%.2f), rl (%.2f)",
+                    huskyBot.frontLeftDrive.getVelocity(), huskyBot.rearLeftDrive.getVelocity());
+            telemetry.addData("Actual Vel", "fr (%.2f), rr (%.2f)",
+                    huskyBot.frontRightDrive.getVelocity(), huskyBot.rearRightDrive.getVelocity());
             telemetry.addData("Target Vel", "fl (%.2f), rl (%.2f)", frontLeftVelocity, rearLeftVelocity);
             telemetry.addData("Target Vel", "fr (%.2f), rr (%.2f)", frontRightVelocity, rearRightVelocity);
             telemetry.addData("Power", "front left (%.2f), rear left (%.2f)", huskyBot.frontLeftDrive.getPower(), huskyBot.rearLeftDrive.getPower());
-            telemetry.addData("Power", "front right (%.2f), rear right (%.2f)",  huskyBot.frontLeftDrive.getPower(), huskyBot.rearLeftDrive.getPower());
+            telemetry.addData("Power", "front right (%.2f), rear right (%.2f)", huskyBot.frontLeftDrive.getPower(), huskyBot.rearLeftDrive.getPower());
 
             // Show the Arm/Claw Telemetry
-            telemetry.addData("Arm Swivel Power", "swv pwr (%.2f)", huskyBot.armSwivel.getPower());
-            telemetry.addData("Arm Length Power", "lgh pwr ($.2f)", huskyBot.armLength.getPower()); // This should only return -0.75 or 0.75
-            telemetry.addData("Arm Height Power", "ht pwr ($.2f)", huskyBot.armHeight.getPower());
+            telemetry.addData("Arm Swivel", "Power: (%.2f), Pos: (%d)",
+                    huskyBot.armSwivel.getPower(), huskyBot.armSwivel.getCurrentPosition());
+            telemetry.addData("Arm Lift", "Power: (%.2f), Pos: (%d)",
+                    huskyBot.armLift.getPower(), huskyBot.armLift.getCurrentPosition());
+            telemetry.addData("Arm Extend", "Power: (%.2f), Pos: (%d)",
+                    huskyBot.armExtend.getPower(), huskyBot.armExtend.getCurrentPosition());
+            telemetry.addData("Claw Rotate", "Pos: (%.2f)", huskyBot.clawRotate.getPosition());
+            telemetry.addData("Claw Lift", "Pos: (%.2f)", huskyBot.clawLift.getPosition());
+            telemetry.addData("Claw Grab", "Pos: (%.2f)", huskyBot.clawGrab.getPosition());
 
             telemetry.update();
         }

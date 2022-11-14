@@ -49,18 +49,24 @@ public class HuskyBot {
 
     // Arm Control Motor Init.
     public DcMotorEx armSwivel = null;
-    public DcMotorEx armHeight = null;
-    public DcMotorEx armLength = null;
+    public DcMotorEx armLift = null;
+    public DcMotorEx armExtend = null;
 
     // Claw (on the Arm) Servo Init.
-    public Servo clawHeight = null;
-    public Servo clawAngle = null;
-    public Servo clawOpener = null; // TODO: set this to be fixed open/close positions.
+    public Servo clawLift = null;
+    public Servo clawRotate = null;
+    public Servo clawGrab = null; // TODO: set this to be fixed open/close positions.
 
     // goBILDA 5203 Series Yellow Jacket Planetary Gear Motor
     // max encoder ticks per second
     // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
     public static final double VELOCITY_CONSTANT = 537.7 * 312/60;
+
+
+    public static final double ARM_SWIVEL_MAX_POWER = 0.2;
+    public static final double ARM_SWIVEL_LIMIT = 200;
+    public static final double ARM_LIFT_MAX_POWER = 0.2;
+    public static final double ARM_EXTENSION_MAX_POWER = 0.2;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -82,13 +88,13 @@ public class HuskyBot {
 
         // Define and Init. Arm Motors
         armSwivel = hwMap.get(DcMotorEx.class, "arm_swivel");
-        armHeight = hwMap.get(DcMotorEx.class, "arm_height");
-        armLength = hwMap.get(DcMotorEx.class, "arm_length");
+        armLift = hwMap.get(DcMotorEx.class, "arm_lift");
+        armExtend = hwMap.get(DcMotorEx.class, "arm_extend");
 
         // Define and Init. Claw Servos
-        clawAngle = hwMap.get(Servo.class, "claw_angle");
-        clawHeight = hwMap.get(Servo.class, "claw_height");
-        clawOpener = hwMap.get(Servo.class, "claw_opener");
+        clawRotate = hwMap.get(Servo.class, "claw_rotate");
+        clawLift = hwMap.get(Servo.class, "claw_lift");
+        clawGrab = hwMap.get(Servo.class, "claw_grab");
 
 
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -107,8 +113,8 @@ public class HuskyBot {
 
         // Set all arm-related motors and servos to zero power.
         armSwivel.setPower(0);
-        armHeight.setPower(0);
-        armLength.setPower(0);
+        armLift.setPower(0);
+        armExtend.setPower(0);
 
         // this base configuration sets the drive motors to run without encoders and the arm motor
         // to run with encoder. if any opmode requires different setting, that should be changed in
