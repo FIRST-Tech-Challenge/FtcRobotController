@@ -68,13 +68,17 @@ public class Robot {
 
     //private static LinearOpmode opModeObj;
 
-    public void init(HardwareMap ahwMap) throws InterruptedException {
+    public boolean init(HardwareMap ahwMap) throws InterruptedException {
 
         hwMap = ahwMap;
         //Init motors and servos
         claw = hwMap.get(Servo.class, "claw");
         vSlider = hwMap.get(DcMotor.class, "vSlider");
         hSlider = hwMap.get(DcMotor.class, "hSlider");
+        
+        if(claw == null) return false;
+        if(vSlider == null) return false;
+        if(hSlider == null) return false;
 
         //Init motors and servos
         FLMotor = hwMap.get(DcMotor.class, "FLMotor");
@@ -141,6 +145,8 @@ public class Robot {
         FRMotor.setPower(speed);
         BLMotor.setPower(speed);
         BRMotor.setPower(speed);
+        
+        return true;
     }
 
     public void Strafe(double speed, int distance) {
