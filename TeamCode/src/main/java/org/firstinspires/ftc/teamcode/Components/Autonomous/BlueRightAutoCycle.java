@@ -27,19 +27,19 @@ public class BlueRightAutoCycle extends LinearOpMode {
     public static double dummyxi2 = -12.5, dummyyi2 = 13;
 
 
-    public static double dummyx = -23, dummyy = 3.5, dummya = 270;
+    public static double dummyx = -23, dummyy = 5, dummya = 270;
     public static double dummyx2 = -23, dummyy2 =11, dummya2 = 270;
-    public static double dummyxd = -23, dummyyd = 3.5, dummyad = 270;
+    public static double dummyxd = -23, dummyyd = 4.5, dummyad = 270;
     public static double dummyx2i = -23, dummyy2i =11, dummya2i = 270;
-    public static double dummyx3 = -38, dummyy3 =10, dummya3 = 180;
-    public static double dummyx4 = -62, dummyy4 =10, dummya4 = 180;
+    public static double dummyx3 = -38, dummyy3 =9, dummya3 = 180;
+    public static double dummyx4 = -62, dummyy4 =9, dummya4 = 180;
 
     public static double dummyX = -10, dummyY = 11, dummyA = 180;
 
     public static double dummyX2 = -33, dummyY2 = 11, dummyA2 = 180;
 
 //    public static double dummyX3 = -55, dummyY3 = 10, dummyA3 = 180;
-    double[] stackPos = {420,360,173,53,0};
+    double[] stackPos = {420,350,173,53,0};
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
@@ -113,8 +113,8 @@ public class BlueRightAutoCycle extends LinearOpMode {
             robot.followTrajectoryAsync(backtrajectory);
             for(int i=0;i<2;i++){
                 robot.followTrajectoryAsync(pickupTrajectory);
-                robot.followTrajectoryAsync(approachTrajectory,true);
                 robot.closeClaw(true);
+                robot.followTrajectoryAsync(approachTrajectory,true);
                 robot.waitForFinish();
                 robot.raiseLiftArmToOuttake();
                 robot.liftToPosition(LIFT_HIGH_JUNCTION);

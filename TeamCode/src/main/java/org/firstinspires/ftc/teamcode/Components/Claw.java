@@ -20,7 +20,7 @@ public class Claw {
     private Rev2mDistanceSensor coneObserver;
 
     //temporary
-    private final double CLAW_CONE_DISTANCE = 2.5;
+    private final double CLAW_CONE_DISTANCE = 2.6;
 
     //temporary
     private final double CLAW_SERVO_MAX_TICK = 1.0;

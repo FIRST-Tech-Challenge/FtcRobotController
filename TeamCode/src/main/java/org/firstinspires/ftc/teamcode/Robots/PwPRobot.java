@@ -260,6 +260,7 @@ public class PwPRobot extends BasicRobot {
         }
         else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
             lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
+            lift.updateLastManualTime();
         }
         //when not manual lifting, automate lifting
         else {

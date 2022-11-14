@@ -40,6 +40,7 @@ public class Lift {
     public static double dfco1 =  0.0122, dfco2 = 1.0/3, dfco3 = 500;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
+    private double lastManualTime = 0.0;
 //447,297,173,53,0
     public Lift(){ //constructor
         // hardware map
@@ -222,6 +223,9 @@ public class Lift {
         }
         op.telemetry.addData("ticks", liftMotor.getCurrentPosition());
     }
+    public void updateLastManualTime(){
+        lastManualTime = op.getRuntime();
+    }
     public void setLiftRawPower(double rawPower){
         liftMotor.setPower(rawPower);
         liftTarget = liftMotor.getCurrentPosition();
@@ -251,10 +255,12 @@ public class Lift {
             liftMotor.setPosition(liftTarget);
     }
     public void liftToTarget(){
-        if(abs(liftTarget- liftMotor.getCurrentPosition())>100||liftMotor.getVelocity()>20) {
+        if(op.getRuntime()-lastManualTime>0.2) {
             liftMotor.setPosition(liftTarget);
             logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks", true);
             logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Target: " + liftTarget + " ticks | Current Position: " + liftMotor.getCurrentPosition() + " | Velocity: " + liftMotor.getVelocity(), true);
+        }else if(op.getRuntime()-lastManualTime<.2&&liftMotor.getPower()==liftMotor.getGRAVITY_CONSTANT()){
+            setLiftTarget(liftMotor.getCurrentPosition());
         }
         else{
             logger.log("/RobotLogs/GeneralRobot", "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks", true);

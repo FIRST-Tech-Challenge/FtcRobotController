@@ -163,6 +163,12 @@ public class RFMotor extends Motor {
 //        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
         rfMotor.setPower(power);
     }
+    public double getPower(){
+        return rfMotor.getPower();
+    }
+    public double getGRAVITY_CONSTANT(){
+        return GRAVITY_CONSTANT;
+    }
 
     public void setVelocity(double velocity) {
         if (rfMotor.getVelocity() != velocity) {
