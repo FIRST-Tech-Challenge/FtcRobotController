@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -36,7 +35,7 @@ public class RedAuto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
     public int parkingTarget;
-    new_robot robot = new new_robot();
+    Robot robot = new Robot();
 
     public enum AutoSteps {
         detectSignal, park, endAuto
@@ -48,15 +47,11 @@ public class RedAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
-        initVuforia();
-        initTfod();
-        robot.init(hardwareMap);
-
-        if (tfod != null) {
-            tfod.activate();
-
-            tfod.setZoom(1.0, 16.0 / 9.0);
-        }
+        if(!initVuforia()) throw new Error("Vuforia failed to init");
+        if(!initTfod()) throw new Error("TensorFlow failed to init");
+        if(!robot.init(hardwareMap)) throw new Error("Robot failed to init");
+        tfod.activate();
+        tfod.setZoom(1.0, 16.0 / 9.0);
 
 
         /** Wait for the game to begin */
@@ -84,14 +79,14 @@ public class RedAuto extends LinearOpMode {
                             double row = (recognition.getTop() + recognition.getBottom()) / 2;
                             double width = Math.abs(recognition.getRight() - recognition.getLeft());
                             double height = Math.abs(recognition.getTop() - recognition.getBottom());
-                            String objectLabel = recognition.getLabel();
+                            String objLabel = recognition.getLabel();
 
-                            if (objectLabel == "1 Bolt") {
-                                parkingTarget = 1;
-                            } else if (objectLabel == "2 Bulb") {
-                                parkingTarget = 2;
-                            } else if (objectLabel == "3 Panel") {
-                                parkingTarget = 3;
+                            int i = 1;
+                            for(String check : LABELS) {
+                                if(objLabel == check) {
+                                    parkingTarget = i;
+                                }
+                                i++;
                             }
 
                             telemetry.addData("", " ");
@@ -111,12 +106,14 @@ public class RedAuto extends LinearOpMode {
                         break;
 
                     case park:
+                       
                         Park(parkingTarget);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
                         Step = AutoSteps.endAuto;
                         break;
 
                     case endAuto:
-                        telemetry.addData("➡️", "Auto Finished");
+                        telemetry.addData(">", "Auto Finished");
                         telemetry.update();
                         break;
                 }
@@ -125,7 +122,7 @@ public class RedAuto extends LinearOpMode {
     }
 
 
-    private void initVuforia() {
+    private boolean initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
@@ -136,10 +133,12 @@ public class RedAuto extends LinearOpMode {
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        if(vuforia == null) return false;
+        return true;
     }
 
 
-    private void initTfod() {
+    private boolean initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -152,55 +151,34 @@ public class RedAuto extends LinearOpMode {
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        if(tfod == null) return false;
+        return true;
     }
 
     private void Park(int location) {
-        if (location == 1) {
-            runtime.reset();
-            timeout_ms = 3000;
-            robot.Drive(0.3, -75);
-            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
+        resetRuntime();
+        robot.Drive(0.3, -75);
+        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+        robot.stopDriveMotors();
+        resetRuntime();
+        switch(location) {
+            case 1:
+                robot.Strafe(0.3, 75);
+                while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                robot.stopDriveMotors();
+            break;
+            case 2:
+                //Stay in place
+            break;
+            case 3:
+                robot.Strafe(0.3, -75);
+                while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                robot.stopDriveMotors();
 
-            }
-            robot.stopDriveMotors();
-            sleep(100);
-
-            runtime.reset();
-            timeout_ms = 3000;
-            robot.Strafe(0.3, 75);
-            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-            }
-            robot.stopDriveMotors();
         }
-
-        if (location == 2) {
-            runtime.reset();
-            timeout_ms = 3000;
-            robot.Drive(0.3, -75);
-            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-            }
-            robot.stopDriveMotors();
-        }
-
-        if (location == 3) {
-            runtime.reset();
-            timeout_ms = 3000;
-            robot.Drive(0.3, -75);
-            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-            }
-            robot.stopDriveMotors();
-            sleep(100);
-
-            runtime.reset();
-            timeout_ms = 3000;
-            robot.Strafe(0.3, -75);
-            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-            }
-            robot.stopDriveMotors();
-        }
+    }
+    void resetRuntime() {
+        runtime.reset();
+        timeout_ms = 3000;
     }
 }
