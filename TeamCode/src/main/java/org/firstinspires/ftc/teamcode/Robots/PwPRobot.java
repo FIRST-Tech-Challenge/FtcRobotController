@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.AR
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Aligner;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Components.CV.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.ClawExtension;
 import org.firstinspires.ftc.teamcode.Components.Field;
+import org.firstinspires.ftc.teamcode.Components.LEDStrip;
 import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
@@ -34,6 +36,7 @@ public class PwPRobot extends BasicRobot {
     public Field field = null;
     public CVMaster cv = null;
     public SampleMecanumDrive roadrun = null;
+    private LEDStrip leds = null;
 
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
@@ -47,6 +50,7 @@ public class PwPRobot extends BasicRobot {
 //        clawExtension = new ClawExtension();
         lift = new Lift();
         gp = new RFGamepad();
+        leds = new LEDStrip();
     }
 
     public void stop() {
@@ -249,6 +253,43 @@ public class PwPRobot extends BasicRobot {
 
     public void setLiftVelocity(double velocity) {
         lift.setLiftVelocity(velocity);
+    }
+
+    public void rainbow() {
+        leds.rainbow();
+    }
+    public void red() {
+        leds.red();
+    }
+    public void blue() {
+        leds.blue();
+    }
+    public void orange(){
+        leds.orange();
+    }
+
+    public void yellow(){
+        leds.yellow();
+    }
+
+    public void gold(){
+        leds.gold();
+    }
+
+    public void white(){
+        leds.white();
+    }
+
+    public void gray(){
+        leds.gray();
+    }
+
+    public void pink (){
+        leds.pink();
+    }
+
+    public void fire (){
+        leds.fire();
     }
 
     private boolean mecZeroLogged = false;
