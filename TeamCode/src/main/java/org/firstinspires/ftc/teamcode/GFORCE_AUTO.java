@@ -78,7 +78,6 @@ public class GFORCE_AUTO extends LinearOpMode {
 
         // Set Elevator state back to Idle for next autonomous
         elevator.setState(ElevatorState.IDLE);
-
     }
 
 

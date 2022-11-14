@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 @TeleOp(name="G-FORCE TELEOP", group = "advanced")
 public class GFORCE_TELEOP extends LinearOpMode {
 
-    boolean redAlliance = false;
+    boolean weAreRed = false;
 
     // Joystick constants
     final double AXIAL_RATE = 0.7;
@@ -29,6 +29,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
     final double YAW_RATE = 0.5;
     final double SLOW_TRANSLATE = 0.2;
 
+    GFORCE_KiwiDrive    drive;
     private Elevator    elevator;
     private ConeTracker coneTracker;
     AutoConfig autoConfig = new AutoConfig();
@@ -50,7 +51,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
         // apply hub performance
         HubPerformance.enable(hardwareMap);
         autoConfig.init(this);
-        redAlliance = autoConfig.autoOptions.redAlliance;
+        weAreRed = autoConfig.autoOptions.redAlliance;
 
         double manualRotate;
 
@@ -58,7 +59,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
         headingController.setOutputBounds(-YAW_RATE, YAW_RATE);
 
         // Initialize robot hardware classes GFORCE_KiwiDrive
-        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
+        drive = new GFORCE_KiwiDrive(hardwareMap);
         elevator = new Elevator(this, false);
         coneTracker = new ConeTracker(this);
 
@@ -71,16 +72,29 @@ public class GFORCE_TELEOP extends LinearOpMode {
         telemetry.addData("Elevator", "Homed !");
         telemetry.update();
 
-        // Retrieve our pose from the PoseStorage.currentPose static field
+        // Retrieve any info from Auto Run
         // See AutoTransferPose.java for further details
-        drive.setPoseEstimate(SharedStates.currentPose);
+        double newHeading = 0;
+        if (SharedStates.currentPose != null) {
+            newHeading = drive.getRawExternalHeading();
+            // Switch Gyro heading back to Field Centric.
+            if (weAreRed) {
+                // Switch an Auto heading of zero, to -90 or (-PI/2)
+                newHeading =  drive.normalizeHeading(newHeading - (Math.PI/2.0));
+            } else {
+                // Switch an Auto heading of zero, to +90 or (+PI/2)
+                newHeading =  drive.normalizeHeading(newHeading + (Math.PI/2.0));
+            }
+        }
+        drive.setExternalHeading(newHeading);
+        drive.setPoseEstimate(new Pose2d(SharedStates.currentPose.getX(), SharedStates.currentPose.getY(), newHeading));
         elevator.setState(SharedStates.elevatorState);
 
         while (opModeInInit()) {
-            telemetry.addData("Alliance", redAlliance ? "RED" : "blue");
+            telemetry.addData("Alliance", weAreRed ? "RED" : "blue");
             elevator.runStateMachine();
-            coneTracker.update();       // testing only
-            coneTracker.showRanges();   // testing only
+            // coneTracker.update();       // testing only
+            // coneTracker.showRanges();   // testing only
             telemetry.update();
         }
 
@@ -249,5 +263,15 @@ public class GFORCE_TELEOP extends LinearOpMode {
         headingLock = true;
         headingSetpoint = heading;
         headingController.setTargetPosition(headingSetpoint);
+    }
+
+    public void showCurrentPosition() {
+        Pose2d poseEstimate = drive.getPoseEstimate();
+
+        // Print pose to telemetry
+        telemetry.addData("x", poseEstimate.getX());
+        telemetry.addData("y", poseEstimate.getY());
+        telemetry.addData("heading GYRO.", Math.toDegrees(drive.getExternalHeading()));
+        telemetry.update();
     }
 }

@@ -10,7 +10,7 @@ public class SharedStates {
      * This allows different classes/opmodes to set and read from a central source of truth.
      * A static field allows data to persist between opmodes.
      */
-     public static Pose2d currentPose = new Pose2d();
+     public static Pose2d currentPose = null;
      public static boolean gyro_initilaized = false;
      public static ElevatorState elevatorState = IDLE;
 }

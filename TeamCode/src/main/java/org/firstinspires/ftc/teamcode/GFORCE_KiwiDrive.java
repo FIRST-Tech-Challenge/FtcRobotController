@@ -353,4 +353,14 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
         return (Math.abs(filteredTurnRate) < STOP_TURNRATE);
     }
 
+    public double normalizeHeading(double radians) {
+        while (radians <= -Math.PI) {
+            radians += (Math.PI * 2.0);
+        }
+        while (radians >= Math.PI) {
+            radians -= (Math.PI * 2.0);
+        }
+        return radians;
+    }
+
 }
