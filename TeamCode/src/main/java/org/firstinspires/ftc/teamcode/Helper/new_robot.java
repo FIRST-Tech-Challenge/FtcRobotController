@@ -147,15 +147,15 @@ public class new_robot {
         int targetFront;
         int targetBack;
         int avgFront = (this.FLMotor.getCurrentPosition() + this.BRMotor.getCurrentPosition()) / 2;
-        int avgBack = (this.FRMotor.getCurrentPosition() + this.BLMotor.getCurrentPosition()) / 2;
+        int avgBack = (this.BLMotor.getCurrentPosition() + this.FRMotor.getCurrentPosition()) / 2;
 
         targetFront = avgFront + (int) (distance * COUNTS_PER_CM);
-        targetBack = avgBack + (int) (distance * COUNTS_PER_CM);
+        targetBack = avgBack - (int) (distance * COUNTS_PER_CM);
 
         //Set motor targets
         this.FLMotor.setTargetPosition(targetFront);
-        this.BLMotor.setTargetPosition(targetBack);
         this.FRMotor.setTargetPosition(targetBack);
+        this.BLMotor.setTargetPosition(targetBack);
         this.BRMotor.setTargetPosition(targetFront);
 
         //set the mode to go to the target position

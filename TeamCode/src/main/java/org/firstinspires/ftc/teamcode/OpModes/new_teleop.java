@@ -19,6 +19,8 @@ public class new_teleop extends LinearOpMode {
     //How fast your robot will accelerate.
     public double acceleration = 0.3;
 
+    private double holdingPower = 0.3;
+
     //Motor powers
     public double fl_power = 0;
     public double bl_power = 0;
@@ -36,10 +38,18 @@ public class new_teleop extends LinearOpMode {
          */
         robot.init(hardwareMap);
 
+
         /**
          * This code is run during the init phase, and when opMode is not active
          * i.e. When "INIT" Button is pressed on the Driver Station App
          */
+
+        telemetry.addData("FL Motor Encoder", robot.FLMotor.getCurrentPosition());
+        telemetry.addData("BL Motor Encoder", robot.BLMotor.getCurrentPosition());
+        telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
+        telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
+        telemetry.update();
+
         waitForStart();
 
 
@@ -87,8 +97,14 @@ public class new_teleop extends LinearOpMode {
             double vSliderPower =  -gamepad2.left_stick_y;
             double hSliderPower = gamepad2.right_stick_x;
 
-            robot.vSlider.setPower(vSliderPower);
+            robot.vSlider.setPower(vSliderPower + holdingPower);
             robot.hSlider.setPower(hSliderPower);
+
+            telemetry.addData("FL Motor Encoder", robot.FLMotor.getCurrentPosition());
+            telemetry.addData("BL Motor Encoder", robot.BLMotor.getCurrentPosition());
+            telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
+            telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
+            telemetry.update();
 
         }
 

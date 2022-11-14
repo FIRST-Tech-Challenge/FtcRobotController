@@ -12,13 +12,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Came
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.Helper.new_robot;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Red Auto", group = "Concept")
 public class RedAuto extends LinearOpMode {
 
-    private ElapsedTime runtime = new ElapsedTime();
-    double timeout_ms=0;
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
@@ -32,28 +32,39 @@ public class RedAuto extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
+
+    private ElapsedTime runtime = new ElapsedTime();
+    double timeout_ms = 0;
+    public int parkingTarget;
     new_robot robot = new new_robot();
 
     public enum AutoSteps {
-         goToPole, raiseSlider, openClaw
+        detectSignal, park, endAuto
     }
-    public AutoSteps autoStep = AutoSteps.goToPole;
+
+    public AutoSteps Step = AutoSteps.detectSignal;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
         initTfod();
+        robot.init(hardwareMap);
 
         if (tfod != null) {
             tfod.activate();
 
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(1.0, 16.0 / 9.0);
         }
+
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
+        telemetry.addData("FL Motor Encoder", robot.FLMotor.getCurrentPosition());
+        telemetry.addData("BL Motor Encoder", robot.BLMotor.getCurrentPosition());
+        telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
+        telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
         telemetry.update();
         waitForStart();
 
@@ -69,40 +80,49 @@ public class RedAuto extends LinearOpMode {
                         // step through the list of recognitions and display image position/size information for each one
                         // Note: "Image number" refers to the randomized image orientation/number
                         for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                            double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                            double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
+                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
+                            String objectLabel = recognition.getLabel();
 
-                            telemetry.addData(""," ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
+                            if (objectLabel == "1 Bolt") {
+                                parkingTarget = 1;
+                            } else if (objectLabel == "2 Bulb") {
+                                parkingTarget = 2;
+                            } else if (objectLabel == "3 Panel") {
+                                parkingTarget = 3;
+                            }
+
+                            telemetry.addData("", " ");
+                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
                         }
                         telemetry.update();
                     }
                 }
 
-                switch (autoStep) {
-                    case goToPole:
-                        runtime.reset();
-                        timeout_ms = 5000;
-                        robot.Drive(0.5, 60);
-                        while (opModeIsActive() &&
-                                (runtime.milliseconds() < timeout_ms) &&
-                                (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
+                switch (Step) {
+                    case detectSignal:
+                        telemetry.addData("Parking Target ", parkingTarget);
+                        telemetry.update();
+                        Step = AutoSteps.park;
+                        break;
 
-                        }
-                        robot.stopDriveMotors();
-                        autoStep = AutoSteps.raiseSlider;
+                    case park:
+                        Park(parkingTarget);
+                        Step = AutoSteps.endAuto;
+                        break;
+
+                    case endAuto:
+                        telemetry.addData("➡️", "Auto Finished");
+                        telemetry.update();
                         break;
                 }
             }
         }
     }
-
-
-
 
 
     private void initVuforia() {
@@ -132,5 +152,55 @@ public class RedAuto extends LinearOpMode {
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+    }
+
+    private void Park(int location) {
+        if (location == 1) {
+            runtime.reset();
+            timeout_ms = 3000;
+            robot.Drive(0.3, -75);
+            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
+
+            }
+            robot.stopDriveMotors();
+            sleep(100);
+
+            runtime.reset();
+            timeout_ms = 3000;
+            robot.Strafe(0.3, 75);
+            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
+
+            }
+            robot.stopDriveMotors();
+        }
+
+        if (location == 2) {
+            runtime.reset();
+            timeout_ms = 3000;
+            robot.Drive(0.3, -75);
+            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
+
+            }
+            robot.stopDriveMotors();
+        }
+
+        if (location == 3) {
+            runtime.reset();
+            timeout_ms = 3000;
+            robot.Drive(0.3, -75);
+            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
+
+            }
+            robot.stopDriveMotors();
+            sleep(100);
+
+            runtime.reset();
+            timeout_ms = 3000;
+            robot.Strafe(0.3, -75);
+            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
+
+            }
+            robot.stopDriveMotors();
+        }
     }
 }
