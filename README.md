@@ -1,6 +1,19 @@
 ## NOTICE
 
-This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.
+This repository contains the public FTC SDK for the Power Play (2022-2023) competition season and updated by ftcwires.org
+
+## ftcwires Software Platform is a quick use FTC software platform for coding Autonomous mode for the Powerplay season.
+
+Intention : This platform is targeted to be used by rookie teams or teams who are learning autonomous programming. The aim is have all teams in Wisconsin have a basic autonomous mode working before their qualifiers.
+
+Why : During the FTC WIRES survey in 2021-22 season, it was observed that many of the rookie teams and newer teams did not have a working autonomous mode in the early qualifiers. This was a demotivator for the teams as well as their alliance partners. This platform should ease the process of building a good and working autonomous mode in 1-2 days. 
+
+What does the platform contain : 
+The platform is a fork from FtcRobotController SDK released by FIRST. 
+On it, motion planning library - roadrunner by Acmerobotics is integrated. Designed primarily for autonomous robotic movement, it allows for complex path following and generation while maintaining control of velocity and acceleration. This enables bots to have more accurate and advanced path following capabilities. We are going to use Drive Encoder based odometry. (Detailed information on this is available at www.learnroadrunner.org or https://acme-robotics.gitbook.io/road-runner/, but the idea here is to help teams who find those pages overwhelming, so dont look!)
+It also includes implementation of the vision of the signal cone (default one, not your customized signal sleeve), to find the parking location in autonomous mode. This code is derived from the ConceptTensorFlowObjectDetection.java provided as example in the FTC sdk.
+Using these, an partially completed example Autonomous mode for Powerplay is implemented. You could modify this easily to develop your own autonomous mode that will work on all 4 starting positions in Powerplay - Blue Left, Blue Right, Red Left and Red Right
+
 
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
