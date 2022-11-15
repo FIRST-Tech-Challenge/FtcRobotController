@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Vision;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 /**
- * Write a detailed description of the autoClass
+ * FTC WIRES Autonomous Example
  */
 @Autonomous(name = "FTC Wires Autonomous", group = "00-Autonomous", preselectTeleOp = "FTC Wires TeleOp")
 public class AutoOpMode extends LinearOpMode{

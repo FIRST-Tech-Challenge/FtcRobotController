@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 /**
  * Drive Class that implements Mecanum drive using roadrunner using Drive Encoders
  *
- * Coded for Field Centric and Robot Centric drive mode, to be selected based on driver comfort
  */
 
 public class DriveTrain extends SampleMecanumDrive {

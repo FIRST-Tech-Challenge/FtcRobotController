@@ -8,9 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 
 /**
- * Ultimate Goal TeleOp mode <BR>
- *
- * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
+ * FTC WIRES TeleOp Example
  *
  */
 @TeleOp(name = "FTC Wires TeleOp", group = "00-Teleop")

@@ -43,10 +43,9 @@ import java.util.List;
  * This 2022-2023 OpMode illustrates the basics of using the TensorFlow Object Detection API to
  * determine which image is being presented to the robot.
  *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
+ * Adopted from ConceptTensorFlowObjectDetection.java in external.examples
  *
- * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
+ * IMPORTANT: In order to use this, you need to obtain your own Vuforia license key as
  * is explained below.
  */
 public class Vision {
@@ -83,8 +82,7 @@ public class Vision {
      */
     //TODO : Create VUFORIA_KEY for your team based on above instructions and update
     private static final String VUFORIA_KEY =
-            //" -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
-            "AZME4Mr/////AAABmY+MAyxxT0IileR7JBqaAPsxN2XNYlaGBtEjYaHOlVVTqPQf7NH9eIrosYKKQHPGEXLtJUsdMwZ9e3EXBfy6arulcLPvdpW9bqAB2F2MJJXo35lLA096l/t/LQTi+etVso0Xc5RYkTVSIP3YABp1TeOaF8lCSpjVhPIVW3l/c/XlrnEMPhJk9IgqMEp4P/ifqAqMMMUAIKPEqIrXIv79TvAfdIJig46gfQGaQl5tFHr3nmvMbh/LhFrh5AWAy3B/93cCkOszmYkdHxZStbNB5lMdkTnf3sCnYbQY4jviorfhYrAkqHWH6vNOB9lUt8dOSeHsDtlk33e/6xQgOCNYFN80anYMp82JNDBFX3oyGliV";
+            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -121,7 +119,7 @@ public class Vision {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.0, 16.0 / 9.0);
+            tfod.setZoom(1.25, 16.0 / 9.0);
         }
     }
 
