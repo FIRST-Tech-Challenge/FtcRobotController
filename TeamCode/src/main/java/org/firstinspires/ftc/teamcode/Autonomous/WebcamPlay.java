@@ -29,7 +29,6 @@ package org.firstinspires.ftc.teamcode.Autonomous;/* Copyright (c) 2019 FIRST. A
 
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -50,9 +49,9 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Webcam Power PLay", group = "Concept")
+@TeleOp(name = "WebcamPLay", group = "Concept")
 //@Disabled
-public class WebcamPowerPlay extends LinearOpMode {
+public class WebcamPlay extends LinearOpMode {
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -70,7 +69,6 @@ public class WebcamPowerPlay extends LinearOpMode {
             "2 Bulb",
             "3 Panel"
     };
-    public String label = null;
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -85,11 +83,11 @@ public class WebcamPowerPlay extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " AZQwvYv/////AAABmS6VvtqnbUU+sIysr2M9qZxgQ5j1eZcxwv8H9oZB7YbizuyZiF7DOgB3/NXqHX88yJwq02F" +
-                    "i/naRIWLBYcKc74VkEnrax08NkxGLMzr9a6f+mGp+Zr0ItYfygz6Qr5o2YvW9rILeo4ii3B98bvrvZTiT+CFci" +
-                    "zfvgcQ6xkMEdtT3mnUbayzi1Xt1R05iNyl5vdKzeIUyHliZgF7RRZ/tgVyjEFMhEmYSk7YNzjFzlnKc3M9QJmLQs" +
-                    "XS+dCM5uYh35pa2lkJ8yOTvwvsD+td1Zld79Ry+ZbmqFtrFdx7HUsbDLzHB08ulwW33aEfC3eFKC11EAru/xAloUxMrjZ" +
-                    "qW6zksyVfiZKLmlCFPE2vc++BZ";
+            " AZQwvYv/////AAABmS6VvtqnbUU+sIysr2M9qZxgQ5j1eZcxwv8H9oZB7YbizuyZiF7DOgB3/NXqHX88yJwq02Fi/naR" +
+                    "IWLBYcKc74VkEnrax08NkxGLMzr9a6f+mGp+Zr0ItYfygz6Qr5o2YvW9rILeo4ii3B98bvrvZTiT+CFcizfvg" +
+                    "cQ6xkMEdtT3mnUbayzi1Xt1R05iNyl5vdKzeIUyHliZgF7RRZ/tgVyjEFMhEmYSk7YNzjFzlnKc3M9QJmLQsXS" +
+                    "+dCM5uYh35pa2lkJ8yOTvwvsD+td1Zld79Ry+ZbmqFtrFdx7HUsbDLzHB08ulwW33aEfC3eFKC11EAru/xAloUx" +
+                    "MrjZqW6zksyVfiZKLmlCFPE2vc++BZ ";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -123,7 +121,7 @@ public class WebcamPowerPlay extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(2.0, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
@@ -147,7 +145,6 @@ public class WebcamPowerPlay extends LinearOpMode {
                             double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
                             double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-                            
 
                             telemetry.addData(""," ");
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
@@ -184,7 +181,7 @@ public class WebcamPowerPlay extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
+        tfodParameters.minResultConfidence = 0.65f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 300;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
