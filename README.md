@@ -1,6 +1,6 @@
 ## NOTICE
 
-This repository contains the public FTC SDK for the Power Play (2022-2023) competition season and updated by ftcwires.org
+This repository contains the public FTC SDK for the Power Play (2022-2023) competition season and updated by https://www.ftcwires.org/software-platform
 
 ## ftcwires Software Platform is a quick use FTC software platform for coding Autonomous mode for the Powerplay season.
 
