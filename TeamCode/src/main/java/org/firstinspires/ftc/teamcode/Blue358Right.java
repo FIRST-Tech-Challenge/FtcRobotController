@@ -143,53 +143,53 @@ public class Blue358Right extends Driving358
         sleep(2000);
         int lateralMoveDistance = 25;
         int angleAmount = 95;
-        switch(parkLevel){//moves to the alliance shipping hub based on what it reads
-            case (1)://Warehouse close. Scoring level 1. Bottom
+        //switch(parkLevel){//moves to the alliance shipping hub based on what it reads
+            //case (1)://Warehouse close. Scoring level 1. Bottom
                // levelLift('l');
-                rotate(.5, 'r', angleAmount);
-                move(.6, 'l', lateralMoveDistance-2);
+                //rotate(.5, 'r', angleAmount);
+                //move(.6, 'l', lateralMoveDistance-2);
              //   distanceMove(20, false);
-                break;
-            case (2)://Mid. Scoring level 2. Mid
+                //break;
+            //case (2)://Mid. Scoring level 2. Mid
             //    levelLift('m');
-                rotate(.5, 'r', angleAmount);
-                move(.6, 'l', lateralMoveDistance);
+                //rotate(.5, 'r', angleAmount);
+                //move(.6, 'l', lateralMoveDistance);
             //    distanceMove(25, false);
-                break;
-            case (3)://warehouse far. scoring level 3 top
+                //break;
+            //case (3)://warehouse far. scoring level 3 top
            //     levelLift('t');
-                rotate(.5, 'r', angleAmount);
-                move(.6, 'l', lateralMoveDistance+2);
+                //rotate(.5, 'r', angleAmount);
+                //move(.6, 'l', lateralMoveDistance+2);
            //     distanceMove(45, false);
-                break;
-            default:
-                break;
-        }
+                //break;
+            //default:
+                //break;
+        //}
 //        robot.clawServo.setPosition(0.5);
 //        sleep(200);
 //        robot.clawServo.setPosition(.15);
 //        sleep(200);
 //        robot.clawServo.setPosition(.5);
-        move(.3, 'b', 10);
+        //move(.3, 'b', 10);
         //move(0.5,'b',10);
 //        if (parkLevel!=3) {
 //            levelLift('t');
 //        }
-        rotate(0.5, 'r', 90);
-        move(.3, 'l', 4);
+        rotate(0.5, 'l', 90);
+        move(.3, 'f', 33.25);
         //this section is specifically to deliver ducks.
-        move(0.4,'f',45);
-        move (.2, 'r', 5);//untested
+        //move(0.4,'f',45);
+        //move (.2, 'r', 5);//untested
         //robot.duckSpinner.setPower(-.1);
-        sleep(2000);
+        //sleep(2000);
       //  robot.duckSpinner.setPower(0);
-        move(.3, 'b', 5);
+        //move(.3, 'b', 5);
 
-        rotate(0.5, 'l',100);
+        //rotate(0.5, 'l',100);
 
      //   distanceMove(65, false);
 
-        move(0.4,'r',10);
+        //move(0.4,'r',10);
     }
     private int levelDetection (){
         long programTime = System.currentTimeMillis();
