@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Functions;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class NewEncoderMove {
     private DcMotor leftMotor, leftMotorBack, rightMotor, rightMotorBack;
@@ -16,6 +17,9 @@ public class NewEncoderMove {
         leftMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotorBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftMotorBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFrontPos = 0;
         leftBackPos = 0;

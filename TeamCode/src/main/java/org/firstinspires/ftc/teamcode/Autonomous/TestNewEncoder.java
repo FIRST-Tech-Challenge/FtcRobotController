@@ -28,7 +28,11 @@ public class TestNewEncoder extends LinearOpMode {
 
         waitForStart();
 
-        encoderMove.DriveTo(100,100,100,100,0.5, opModeIsActive());
+        encoderMove.DriveTo(1000,1000,1000,1000,0.5, opModeIsActive());
+        sleep(500);
+        encoderMove.DriveTo(-1000,-1000,-1000,-1000,0.5,opModeIsActive());
+        sleep(500);
+        encoderMove.DriveTo(-1100,-1100,1100,1100,0.5,opModeIsActive());
     }
 }
 
