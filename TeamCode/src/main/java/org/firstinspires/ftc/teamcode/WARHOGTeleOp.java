@@ -26,7 +26,8 @@ public class WARHOGTeleOp extends LinearOpMode {
         Outtake outtake = new Outtake(hardwareMap, telemetry);
 
         //set up variables
-        double joyx, joyy, joyz, gas, basespeed, armpos, wristmod;
+        double joyx, joyy, joyz, gas, basespeed, armpos, wristmod, offset;
+        offset = 0;
         Drivetrain.Centricity centricity = Drivetrain.Centricity.FIELD;
 
         basespeed = .4;
@@ -38,7 +39,33 @@ public class WARHOGTeleOp extends LinearOpMode {
         Gamepad previousGamepad2 = new Gamepad();
 
 
-        waitForStart();
+        while (!isStarted() && !isStopRequested()) {
+            try {
+                previousGamepad1.copy(currentGamepad1);
+                previousGamepad2.copy(currentGamepad2);
+
+                currentGamepad1.copy(gamepad1);
+                currentGamepad2.copy(gamepad2);
+            }
+            catch (RobotCoreException e) {
+                // Swallow the possible exception, it should not happen as
+                // currentGamepad1/2 are being copied from valid Gamepads.
+            }
+
+            if(currentGamepad1.dpad_left && !previousGamepad1.dpad_left){
+                offset-=90;
+            }
+            if(currentGamepad1.dpad_right && !previousGamepad1.dpad_right){
+                offset+=90;
+            }
+            if (offset==360){offset=0;}
+            if (offset==-90){offset=270;}
+
+            telemetry.addData("Angle Offset", offset);
+            telemetry.update();
+        }
+
+        drivetrain.setAngleOffset(offset);
 
         while(opModeIsActive()){
             //set up inputs
@@ -88,9 +115,9 @@ public class WARHOGTeleOp extends LinearOpMode {
 
 
             //move arm
-            armpos += -currentGamepad2.left_stick_y*.02;
+            armpos += currentGamepad2.left_stick_y*.014;
             if(armpos<0){armpos=0;}
-            if(armpos>.9){armpos=.9;}
+            if(armpos>.9){armpos=.8;}
             //defined positions
             if(currentGamepad2.dpad_down){
                 armpos = intake.runArm(Intake.Height.EXTENDED);

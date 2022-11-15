@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import static java.lang.Math.*;
+import static java.lang.Thread.sleep;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -198,6 +199,10 @@ public class Drivetrain{
         angleOffset = imu.getAngularOrientation().firstAngle;
     }
 
+    public void setAngleOffset(double angle){
+        angleOffset = angle*PI/180;
+    }
+
 
     //put in the three vectors (z being rotation) and it will move the motors the correct powers
     public double[] driveVectors(Centricity centric, double joyx, double joyy, double joyz, double spd){ //spd is a speed coefficient
@@ -242,7 +247,7 @@ public class Drivetrain{
     }
 
     // this function is designed for the auto part
-    public void MoveForDis(double distance, double pow) {
+    public void MoveForDis(double distance, double pow) throws InterruptedException {
 
         // calculate the distance
         int dis = (int)(distance * 1000 / 23.5 * 50/48);
@@ -266,10 +271,13 @@ public class Drivetrain{
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // set power
-        leftFrontDrive.setPower(pow);
-        leftBackDrive.setPower(pow);
-        rightFrontDrive.setPower(pow);
-        rightBackDrive.setPower(pow);
+        for(int i =1; i<11; i++) {
+            leftFrontDrive.setPower(pow*i/10);
+            leftBackDrive.setPower(pow*i/10);
+            rightFrontDrive.setPower(pow*i/10);
+            rightBackDrive.setPower(pow*i/10);
+            sleep(20);
+        }
 
         // run for a while
         while ( leftFrontDrive.isBusy() ||
@@ -422,35 +430,35 @@ public class Drivetrain{
     }
 
     public void rotateToPosition(double targetAngle, double pow){
-        double angle = getIMUData()%360;
-        double angleLower = angle-360;
-        double angleHigher = angle+360;
-        double workingAngle = 0;
+        double angle = getIMUData()*180/PI;
+        double angleMod = 0;
         double speedCoef = 1;
 
-        if(abs(targetAngle-angle)<abs(targetAngle-angleLower)){
-            if(abs(targetAngle-angle)<abs(targetAngle-angleHigher)){
-                workingAngle=angle;
+        if(abs(targetAngle-angle)<abs(targetAngle-(angle-360))){
+            if(abs(targetAngle-angle)<abs(targetAngle-(angle+360))){
+                angleMod=0;
             }else{
-                workingAngle=angleHigher;
+                angleMod=360;
             }
         }else{
-            workingAngle=angleLower;
+            angleMod=-360;
         }
 
-        while (targetAngle!=workingAngle){
-            if (abs(targetAngle-workingAngle)<=30){
-                speedCoef = abs(targetAngle-workingAngle)/30;
+        while (abs(targetAngle-(angle+angleMod))>0.25){
+            angle = getIMUData()*180/PI;
+
+            if (abs(targetAngle-(angle+angleMod))<=30){
+                speedCoef = abs(targetAngle-(angle+angleMod))/30;
             }
             else{
                 speedCoef=1;
             }
 
-            move(DirectionMode.ROTATE, abs(pow) * ((targetAngle-workingAngle) / abs(targetAngle-workingAngle)) * speedCoef);
+            move(DirectionMode.ROTATE, abs(pow) * ((targetAngle-(angle+angleMod)) / abs(targetAngle-(angle+angleMod))) * speedCoef);
 
 
             telemetry.addData("Target Angle", targetAngle);
-            telemetry.addData("Actual Angle", workingAngle);
+            telemetry.addData("Actual Angle", (angle+angleMod));
 
             telemetry.update();
         }

@@ -17,11 +17,11 @@ import java.util.ArrayList;
 public class WARHOGAuto extends LinearOpMode {
     public WARHOGAuto() throws InterruptedException {}
 
-    private StartPosColor startPosColor = null;
+    private StartPosColor startPosColor = StartPosColor.RED;
     private enum StartPosColor {
         RED, BLUE
     };
-    private StartPosPosition startPosPosition = null;
+    private StartPosPosition startPosPosition = StartPosPosition.LEFT;
     private enum StartPosPosition{
         LEFT, RIGHT
     };
@@ -184,72 +184,68 @@ public class WARHOGAuto extends LinearOpMode {
                 break;
         }
 
-        if(tagOfInterest == null || tagOfInterest.id == LEFT){
 
-        }else if(tagOfInterest.id == MIDDLE){
-
-        }else{
-
-        }
-
-        drivetrain.rotateToPosition(90, .6);
-        sleep(999999);
 
         // drive to pole and raise slide
-        drivetrain.MoveForDis(50, speed);
+        drivetrain.MoveForDis(70, speed);
+        drivetrain.MoveForDis(-17, speed);
         outtake.setHeight(Outtake.Height.HIGH);
-        drivetrain.RotateForDegree(-45*posMod, speed); //turn in different directions depending on start position
-        //drivetrain.rotateToPosition(45 * posMod, speed);
-        drivetrain.MoveForDis(17, 0.2);
+        //drivetrain.RotateForDegree(-45*posMod, speed); //turn in different directions depending on start position
+        drivetrain.rotateToPosition(-45 * posMod, speed);
+        drivetrain.MoveForDis(18, 0.2);
         //sleep(300);
         outtake.setHeight(Outtake.Height.GROUND);
 
         // turn to cone stack
-        drivetrain.MoveForDis(-13, speed);
+        drivetrain.MoveForDis(-18, speed);
 
-        for(int i=0; i<5; i++) {
-            drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
-            //drivetrain.rotateToPosition(90 * posMod, speed);
-            intake.runArm(.2);
+        for(int i=0; i<0; i++) {
+            //drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
+            drivetrain.rotateToPosition(-90 * posMod, speed);
+            intake.runArm(.2-.3*i);
 
             // move backward toward cone stack
-            drivetrain.MoveForDis(-13, speed);
+            drivetrain.MoveForDis(-18, speed);
 
             // take another cone
             intake.closeClaw();
             intake.runArm(Intake.Height.RETRACTED);
 
             // turn back
-            drivetrain.MoveForDis(13, speed);
+            drivetrain.MoveForDis(18, speed);
             intake.openClaw();
             //sleep(500);
-            drivetrain.RotateForDegree(45 * posMod, speed);
-            //drivetrain.rotateToPosition(45 * posMod, speed);
+            //drivetrain.RotateForDegree(45 * posMod, speed);
+            drivetrain.rotateToPosition(-45 * posMod, speed);
             intake.runArm(Intake.Height.UPRIGHT);
             sleep(200);
             outtake.setHeight(Outtake.Height.HIGH);
-            drivetrain.MoveForDis(17, 0.2);
+            drivetrain.MoveForDis(18, 0.2);
             //sleep(300);
             outtake.setHeight(Outtake.Height.GROUND);
 
             // turn to cone stack
-            drivetrain.MoveForDis(-13, speed);
+            drivetrain.MoveForDis(-18, speed);
         }
         // park
-        drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
-        //drivetrain.rotateToPosition(45 * posMod, speed);
-        switch(tagOfInterest.id){
-            case 1:
-                drivetrain.MoveForDis(24, speed);
-                break;
-            case 2:
-                break;
-            case 3:
-                drivetrain.MoveForDis(-24, speed);
+        //drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
+        intake.runArm(Intake.Height.UPRIGHT);
+        drivetrain.rotateToPosition(-90 * posMod, speed);
+        if(tagOfInterest == null || tagOfInterest.id == MIDDLE){
+
+        }else if(tagOfInterest.id == LEFT){
+
+            drivetrain.MoveForDis(24, speed);
+
+        }else{
+            drivetrain.MoveForDis(-20, speed);
         }
 
-        drivetrain.RotateForDegree(90*posMod, speed);
-        //drivetrain.rotateToPosition(0 * posMod, speed);
+        //drivetrain.RotateForDegree(90*posMod, speed);
+        if(tagOfInterest==null || tagOfInterest.id!=3) {
+            drivetrain.rotateToPosition(0 * posMod, speed);
+            drivetrain.MoveForDis(-12, speed);
+        }
 
 
         while(opModeIsActive()){sleep(20);}

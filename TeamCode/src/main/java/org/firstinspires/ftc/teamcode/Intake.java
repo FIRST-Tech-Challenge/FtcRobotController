@@ -13,7 +13,7 @@ public class Intake {
     double armMax = .8;
     double armMin = 0;
     double armMid = .40;
-    double endMod = 0;
+    double endMod = .14;
     double newPos;
 
     WristMode wristMode;
@@ -44,8 +44,11 @@ public class Intake {
 
         //if matched, make the wrist keep the cone upright
         if (wristMode== WristMode.MATCHED){
-            if(newPos>.7){
-                runWrist(newPos+endMod);
+            if(newPos>armMid&&claw.getPosition()>0.4) {
+                runWrist(1);
+            }
+            else if(newPos>.5){
+                runWrist(newPos + endMod);
             }
             else {
                 runWrist(newPos);
