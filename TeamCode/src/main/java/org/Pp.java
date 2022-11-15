@@ -62,6 +62,7 @@ public class Pp extends LinearOpMode{
     final double Slidespeed = 1.0;
     final double rotationScalar = 0.5;
     final double speedScalar = 0.8;
+    double drivespeed = 0.2;
 
     @Override
 
@@ -71,7 +72,7 @@ public class Pp extends LinearOpMode{
         telemetry.update();
 
         waitForStart();
-        
+
         //while we balling
         while(opModeIsActive()){
             // y = forward/back x = left strafe/right strafe, rx = rotation
@@ -82,9 +83,14 @@ public class Pp extends LinearOpMode{
             //great fun math
 
             //if not turning, do a little driving.
-            if (gamepad1.y) {
+            if (gamepad1.dpad_up)
                 y = 0.2;
-            }
+            if (gamepad1.dpad_down)
+                y = -0.2;
+            if (gamepad1.dpad_left)
+                x = -0.3;
+            if (gamepad1.dpad_right)
+                x = 0.3;
             if (Math.abs(rx) > 0.03){
                 robot.BLeft.setPower(rotationScalar * -rx);
                 robot.BRight.setPower(rotationScalar * -rx);
@@ -105,7 +111,7 @@ public class Pp extends LinearOpMode{
                 robot.BRight.setPower(speedScalar * x * 0.7);
                 robot.FLeft.setPower(speedScalar * x * 0.85);
                 robot.FRight.setPower(speedScalar * -x);
-            //if we dont want to move make sure we dont move
+                //if we dont want to move make sure we dont move
             } else {
                 robot.BLeft.setPower(0);
                 robot.BRight.setPower(0);
@@ -114,7 +120,7 @@ public class Pp extends LinearOpMode{
             }
             //uppy downy.
             Slidepos = 0.0;
-            if (gamepad1.right_bumper)
+            if (gamepad1.left_bumper)
                 Slidepos -= Slidespeed / 4;
             if (gamepad1.left_bumper)
                 Slidepos -= Slidespeed / 40;
@@ -142,4 +148,20 @@ public class Pp extends LinearOpMode{
             sleep(50);
         }
     }
+    public void moveRight() {
+        x = 0.3;
+    }
+
+    public void moveLeft() {
+        x = -0.3;
+    }
+
+    public void moveForward() {
+        y = 0.2;
+    }
+
+    public void moveBackward() {
+        y = -0.2;
+    }
+
 }
