@@ -31,12 +31,11 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
 @Autonomous(preselectTeleOp = "Beta_TeleOp")
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
+public class Adv_Auto extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -164,11 +163,11 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
         armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armExtension.setDirection(DcMotor.Direction.REVERSE);
-        gripServo.setPosition(.15);
+        armExtension.setTargetPosition(700);
 
         waitForStart();
 
-
+        armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armExtension.setPower(0.6);
 //        gripServo.setPosition(0.15);
 //        sleep(1000);
@@ -179,37 +178,10 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
 
         if(tagOfInterest == null || tagOfInterest.id == LEFT) {
-            rightFrontMotor.setPower(.5);
-            leftFrontMotor.setPower(-.5);
-            rightRearMotor.setPower(.5);
-            leftRearMotor.setPower(-.5);
 
-            sleep(880);
-
-            rightFrontMotor.setPower(.5);
-            leftFrontMotor.setPower(.5);
-            rightRearMotor.setPower(-.5);
-            leftRearMotor.setPower(-.5);
-
-            sleep(1000);
-
-            rightFrontMotor.setPower(0);
-            leftFrontMotor.setPower(0);
-            rightRearMotor.setPower(0);
-            leftRearMotor.setPower(0);
 
         } else if(tagOfInterest.id == MIDDLE){
-            rightFrontMotor.setPower(.5);
-            leftFrontMotor.setPower(-.5);
-            rightRearMotor.setPower(.5);
-            leftRearMotor.setPower(-.5);
 
-            sleep(880);
-
-            rightFrontMotor.setPower(0);
-            leftFrontMotor.setPower(0);
-            rightRearMotor.setPower(0);
-            leftRearMotor.setPower(0);
 
         } else {
             rightFrontMotor.setPower(.5);
@@ -219,10 +191,10 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
             sleep(880);
 
-            rightFrontMotor.setPower(-.5);
-            leftFrontMotor.setPower(-.5);
-            rightRearMotor.setPower(.5);
-            leftRearMotor.setPower(.5);
+            rightFrontMotor.setPower(.3);
+            leftFrontMotor.setPower(.3);
+            rightRearMotor.setPower(.3);
+            leftRearMotor.setPower(.3);
 
             sleep(1000);
 
@@ -230,6 +202,15 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             leftFrontMotor.setPower(0);
             rightRearMotor.setPower(0);
             leftRearMotor.setPower(0);
+
+            sleep(1000);
+
+            rightFrontMotor.setPower(.5);
+            leftFrontMotor.setPower(-.5);
+            rightRearMotor.setPower(.5);
+            leftRearMotor.setPower(-.5);
+
+            sleep(880);
         }
 
     }

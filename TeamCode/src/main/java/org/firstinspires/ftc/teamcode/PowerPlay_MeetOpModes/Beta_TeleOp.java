@@ -45,23 +45,60 @@ public class Beta_TeleOp extends LinearOpMode {
 
 //            Arm Extension
             double value = gamepad2.right_stick_y;
-            if(armExtension.getCurrentPosition() > 0) {
+//            if(armExtension.getCurrentPosition() > 100) {
+//                if (value >= 0) {
+//                    armExtension.setPower((value * 0.5) + 0.15);
+//                } else {
+//                    armExtension.setPower((value * 0.2) + 0.1);
+//                }
+//            }
+//            else if(armExtension.getCurrentPosition() < 0) {
+//                if (value >= 0) {
+//                    armExtension.setPower((value * 0.5));
+//                } else {
+//                    armExtension.setPower((value * 0));
+//                }
+//            }
+
+
+
+            if(armExtension.getCurrentPosition() > 100) {
                 if(value >= 0) {
-                    armExtension.setPower((value * 0.5) + 0.15);
+                    armExtension.setPower((value * 0.5) + 0.1);
                 } else {
-                    armExtension.setPower((value * 0.3) + 0.1);
+                    armExtension.setPower((value * 0.2) + 0.1);
                 }
-            } else {
+            } else if(armExtension.getCurrentPosition() > -100){
                 if(value >= 0) {
                     armExtension.setPower((value * 0.5));
                 } else {
-                    armExtension.setPower((value * 0.3));
+                    armExtension.setPower((value * 0.2));
                 }
+            } else {
+                armExtension.setPower(0.6);
             }
 
 
             //Gripper
-            if(gamepad2.a) {
+//            if(gripServo.getPosition() > .1 && gamepad2.x) {
+//                gripServo.setPosition(0);
+//            } else if(gripServo.getPosition() < .05 && gamepad2.x) {
+//                gripServo.setPosition(0.15);
+//            }
+
+//            boolean changed = false;
+//            if (gamepad2.x && !changed) {
+//                if (gripServo.getPosition() < 0.01) {
+//                    gripServo.setPosition(.15);
+//                } else {
+//                    gripServo.setPosition(0);
+//                }
+//                changed = true;
+//            } else if (!gamepad2.x) {
+//                changed = false;
+//            }
+
+            if(gamepad2.x) {
                 gripServo.setPosition(0.15);
             }
             if(gamepad2.b) {
@@ -69,6 +106,7 @@ public class Beta_TeleOp extends LinearOpMode {
             }
 
             telemetry.addData("Position: ",armExtension.getCurrentPosition());
+            telemetry.addData("Servo Position: ",gripServo.getPosition());
             telemetry.addData("Target: ",armExtension.getTargetPosition());
             telemetry.addData("Power: ",armExtension.getPower());
             telemetry.update();
