@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
@@ -63,7 +64,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         time = new ElapsedTime();
         sign = teamSide == TeamSide.LEFT ? -1: 1;
         startPosition = From.START;
-        newState(State.ALIGN_WITH_CONE);
+        newState(State.IDENTIFY_TARGET);
     }
 
     /**
@@ -83,7 +84,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                     if (driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.2)) {
                         currentPos += 100;
                         identifySleeve();
-                        if(teamAsset == null){
+                        if (teamAsset == null) {
                             teamAsset = Sleeve.BRIAN;
                         }
                     }
@@ -104,24 +105,23 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 if (align(PixyCam.YELLOW, POLE_WIDTH)) {
                     newState(State.PLACE_CONE);
                 }
-                if((time.seconds() - nowTime) >= 2){
+                if ((time.seconds() - nowTime) >= 2) {
                     newState(State.REVERSE_JUNCTION);
                 }
                 break;
             case PLACE_CONE:
-                if (!park) {
-                    if(scoreDaCone(ArmSystem.HIGH)){
+                if (scoreDaCone(ArmSystem.HIGH)) {
+                    if(park){
                         newState(State.REVERSE_JUNCTION);
                     }
-                } else {
-                    if(scoreDaCone(ArmSystem.HIGH)) {
-                        newState(State.END_STATE);
+                    else{
+                        newState(State.REVERSE_JUNCTION);
                     }
                 }
                 break;
             case DRIVE_TO_CONE:
                 if (driveSystem.driveToPosition(360, DriveSystem.Direction.FORWARD, 0.5)) {
-                   newState(State.ALIGN_WITH_CONE);
+                    newState(State.ALIGN_WITH_CONE);
                 }
                 break;
             case ALIGN_WITH_CONE:
@@ -136,13 +136,18 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 }
                 break;
             case DRIVE_BACK_TO_POLE:
-                if(drive_back_to_pole()){
+                if (drive_back_to_pole()) {
                     newState(State.ALIGN_WITH_POLE);
                 }
                 break;
             case REVERSE_JUNCTION:
-                if(reverseJunction())
-                    newState(State.ALIGN_WITH_CONE);
+                if (reverseJunction()){
+                    if(park){
+                        newState(State.PARK);
+                    }else{
+                        newState(State.ALIGN_WITH_CONE);
+                    }
+                }
                 break;
             case PARK:
                 if (park()) {
@@ -196,6 +201,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
     }
 
     private boolean reverseJunction() {
+        int turn = park ? sign * 0 : sign * 90; //CHANGE!! real values should be 0 and 90
         if(step == 0){
             if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.4)){
                 step++;
@@ -208,7 +214,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         }
 
         if(step == 2){
-            if(driveSystem.turnAbsolute(90, 0.5)){
+            if(driveSystem.turnAbsolute(turn, 0.5)){ //change cuz imu go to all the turn absolute
                 step = 0;
                 return true;
             }
@@ -218,11 +224,12 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
 
     private boolean intake_cone() {
+        //TODO make applicable for multiple cones and add ternary
         if (step == 0 && armSystem.driveToLevel(Cone.FIVE.approach(), .3)) {
             step++;
         }
         if (step == 1 &&
-                driveSystem.driveToPosition(150, DriveSystem.Direction.FORWARD, 0.2)) {
+                driveSystem.driveToPosition(125, DriveSystem.Direction.FORWARD, 0.2)) {
             step++;
         }
         if (step == 2 && (armSystem.intake() || armSystem.driveToLevel(Cone.FIVE.grab(), 0.3))) {
@@ -248,7 +255,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         }
 
         if(step == 1){
-            if(driveSystem.turnAbsolute(sign * -90, 0.5)){
+            if(driveSystem.turnAbsolute(sign * -135, 0.5)){
                 step++;
             }
         }
@@ -273,7 +280,8 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
     @Override
     public void stop() {
-        // msStuckDetectStop = 2000; // Maybe?
-        while(!armSystem.driveToLevel(ArmSystem.LOW, .3)) {} // Might work?
+        msStuckDetectStop = 4000; // Maybe?
+        armSystem.armRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armSystem.armLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 }

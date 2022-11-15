@@ -54,8 +54,8 @@ public abstract class BaseOpMode extends OpMode {
         driveSystem = new DriveSystem(driveMap, imu);
     }
 
-    protected boolean alignHeading(int sign) {
-        int headingOffset = pixycam.headingOffset(sign);
+    protected boolean alignHeading(int signature) {
+        int headingOffset = pixycam.headingOffset(signature);
         telemetry.addData("offset", headingOffset);
         Log.d("degrees", headingOffset + " ");
         if (headingOffset > 1) {
