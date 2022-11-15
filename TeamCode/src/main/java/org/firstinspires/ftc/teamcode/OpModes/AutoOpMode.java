@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 /**
  * Write a detailed description of the autoClass
  */
-@Autonomous(name = "FTC Wires Autonomous", group = "00-Autonomous" , preselectTeleOp = "FTC Wires TeleOp")
+@Autonomous(name = "FTC Wires Autonomous", group = "00-Autonomous", preselectTeleOp = "FTC Wires TeleOp")
 public class AutoOpMode extends LinearOpMode{
 
     //Define and declare Robot Starting Locations
@@ -38,7 +38,11 @@ public class AutoOpMode extends LinearOpMode{
         // Initiate Camera on Init.
         vision.activateVuforiaTensorFlow();
 
-        while (!isStopRequested()) {
+        //Build Autonomous trajectory to be used based on starting position selected
+        buildAuto();
+        driveTrain.getLocalizer().setPoseEstimate(initPose);
+
+        while (!isStopRequested() && !opModeIsActive()) {
             //Run Vuforia Tensor Flow and keep watching for the identifier in the Signal Cone.
             vision.runVuforiaTensorFlow();
             telemetry.clearAll();
@@ -47,22 +51,26 @@ public class AutoOpMode extends LinearOpMode{
             telemetry.addData("Selected Starting Position", startPosition);
             telemetry.addData("Vision identified Parking Location", vision.identifiedparkingLocation);
             telemetry.update();
-
-            //Game Play Button  is pressed
-            if (opModeIsActive() && !isStopRequested()) {
-                //Build Autonomous trajectory to be used based on starting position selected
-                buildAuto();
-                driveTrain.getLocalizer().setPoseEstimate(initPose);
-                //Stop Vision process
-                vision.deactivateVuforiaTensorFlow();
-                runAuto();
-                break;
-            }
         }
+
+        //Game Play Button  is pressed
+        if (opModeIsActive() && !isStopRequested()) {
+            //Stop Vision process
+            vision.deactivateVuforiaTensorFlow();
+
+            //Build parking trajectory based on last detected target by vision
+            buildParking();
+
+            //run Autonomous trajectory
+            runAutoAndParking();
+        }
+
+        //Trajectory is completed, display Parking complete
+        parkingComplete();
     }
 
     //Initialize any other TrajectorySequences as desired
-    TrajectorySequence trajectoryAuto ;
+    TrajectorySequence trajectoryAuto, trajectoryParking ;
 
     //Initialize any other Pose2d's as desired
     Pose2d initPose; // Starting Pose
@@ -71,6 +79,7 @@ public class AutoOpMode extends LinearOpMode{
     Pose2d dropConePose0, dropConePose1, dropConePose2;
     Pose2d parkPose;
 
+    //Set all position based on selected staring location and Build Autonomous Trajectory
     public void buildAuto() {
         switch (startPosition) {
             case BLUE_LEFT:
@@ -78,8 +87,8 @@ public class AutoOpMode extends LinearOpMode{
                 midWayPose = new Pose2d(-12, 36, Math.toRadians(0)); //Choose the pose to move forward towards signal cone
                 pickConePose = new Pose2d(-12, 55, Math.toRadians(90)); //Choose the pose to move to the stack of cones
                 dropConePose0 = new Pose2d(-12, 12, Math.toRadians(225)); //Choose the pose to move to the stack of cones
-                dropConePose1 = new Pose2d(-12, 12, Math.toRadians(225)); //Choose the pose to move to the stack of cones
-                dropConePose2 = new Pose2d(-12, 12, Math.toRadians(225)); //Choose the pose to move to the stack of cones
+                dropConePose1 = new Pose2d(-11, 12, Math.toRadians(225)); //Choose the pose to move to the stack of cones
+                dropConePose2 = new Pose2d(-10, 12, Math.toRadians(225)); //Choose the pose to move to the stack of cones
                 switch(vision.identifiedparkingLocation){
                     case 1: parkPose = new Pose2d(-12, 60, Math.toRadians(180)); break; // Location 1
                     case 2: parkPose = new Pose2d(-12, 36, Math.toRadians(180)); break; // Location 2
@@ -91,8 +100,8 @@ public class AutoOpMode extends LinearOpMode{
                 midWayPose = new Pose2d(-12, -36, Math.toRadians(0)); //Choose the pose to move forward towards signal cone
                 pickConePose = new Pose2d(-12, -55, Math.toRadians(270)); //Choose the pose to move to the stack of cones
                 dropConePose0 = new Pose2d(-12, -12, Math.toRadians(135)); //Choose the pose to move to the stack of cones
-                dropConePose1 = new Pose2d(-12, -12, Math.toRadians(135)); //Choose the pose to move to the stack of cones
-                dropConePose2 = new Pose2d(-12, -12, Math.toRadians(135)); //Choose the pose to move to the stack of cones
+                dropConePose1 = new Pose2d(-11, -12, Math.toRadians(135)); //Choose the pose to move to the stack of cones
+                dropConePose2 = new Pose2d(-10, -12, Math.toRadians(135)); //Choose the pose to move to the stack of cones
                 switch(vision.identifiedparkingLocation){
                     case 1: parkPose = new Pose2d(-12, -11, Math.toRadians(180)); break; // Location 1
                     case 2: parkPose = new Pose2d(-12, -36, Math.toRadians(180)); break; // Location 2
@@ -104,8 +113,8 @@ public class AutoOpMode extends LinearOpMode{
                 midWayPose = new Pose2d(12, -36, Math.toRadians(180)); //Choose the pose to move forward towards signal cone
                 pickConePose = new Pose2d(12, -55, Math.toRadians(270)); //Choose the pose to move to the stack of cones
                 dropConePose0 = new Pose2d(12, -12, Math.toRadians(45)); //Choose the pose to move to the stack of cones
-                dropConePose1 = new Pose2d(12, -12, Math.toRadians(45)); //Choose the pose to move to the stack of cones
-                dropConePose2 = new Pose2d(12, -15, Math.toRadians(45)); //Choose the pose to move to the stack of cones
+                dropConePose1 = new Pose2d(11, -12, Math.toRadians(45)); //Choose the pose to move to the stack of cones
+                dropConePose2 = new Pose2d(10, -15, Math.toRadians(45)); //Choose the pose to move to the stack of cones
                 switch(vision.identifiedparkingLocation){
                     case 1: parkPose = new Pose2d(12, -60, Math.toRadians(0)); break; // Location 1
                     case 2: parkPose = new Pose2d(12, -36, Math.toRadians(0)); break; // Location 2
@@ -117,8 +126,8 @@ public class AutoOpMode extends LinearOpMode{
                 midWayPose = new Pose2d(12, 36, Math.toRadians(180)); //Choose the pose to move forward towards signal cone
                 pickConePose = new Pose2d(12, 55, Math.toRadians(90)); //Choose the pose to move to the stack of cones
                 dropConePose0 = new Pose2d(12, 12, Math.toRadians(315)); //Choose the pose to move to the stack of cones
-                dropConePose1 = new Pose2d(12, 12, Math.toRadians(315)); //Choose the pose to move to the stack of cones
-                dropConePose2 = new Pose2d(12, 12, Math.toRadians(315)); //Choose the pose to move to the stack of cones
+                dropConePose1 = new Pose2d(11, 12, Math.toRadians(315)); //Choose the pose to move to the stack of cones
+                dropConePose2 = new Pose2d(10, 12, Math.toRadians(315)); //Choose the pose to move to the stack of cones
                 switch(vision.identifiedparkingLocation){
                     case 1: parkPose = new Pose2d(12, 11, Math.toRadians(0)); break; // Location 1
                     case 2: parkPose = new Pose2d(12, 36, Math.toRadians(0)); break; // Location 2
@@ -137,39 +146,46 @@ public class AutoOpMode extends LinearOpMode{
                 .lineToLinearHeading(midWayPose)
                 .lineToLinearHeading(pickConePose)
                 .addDisplacementMarker(() -> {
-                    pickCone(1);
+                    pickCone(1); //Pick top cone from stack
                 })
                 .lineToLinearHeading(midWayPose)
                 .lineToLinearHeading(dropConePose1)
                 .addDisplacementMarker(() -> {
-                    dropCone(1);
+                    dropCone(1); //Drop cone on junction
                 })
                 .lineToLinearHeading(midWayPose)
                 .lineToLinearHeading(pickConePose)
                 .addDisplacementMarker(() -> {
-                    pickCone(2);
+                    pickCone(2); //Pick second cone from stack
                 })
                 .lineToLinearHeading(midWayPose)
                 .lineToLinearHeading(dropConePose2)
                 .addDisplacementMarker(() -> {
-                    dropCone(2);
+                    dropCone(2); //Drop cone on junction
                 })
-                .addDisplacementMarker(() -> {
-                    parkingComplete();
-                })
+                .lineToLinearHeading(midWayPose)
+                .build();
+    }
+
+    //Build parking trajectory based on target detected by vision
+    public void buildParking(){
+        trajectoryParking = driveTrain.trajectorySequenceBuilder(midWayPose)
                 .lineToLinearHeading(parkPose)
                 .build();
     }
 
-    public void runAuto(){
+    //Run Auto trajectory and parking trajectory
+    public void runAutoAndParking(){
         telemetry.setAutoClear(false);
         telemetry.addData("Running FTC Wires (ftcwires.org) Autonomous Mode adopted for Team:","TEAM NUMBER");
         telemetry.addData("---------------------------------------","");
-        //Write any other actions to take during auto, or any other conditions for maneuvering
+        telemetry.update();
+        //Run the trajectory built for Auto and Parking
         driveTrain.followTrajectorySequence(trajectoryAuto);
+        driveTrain.followTrajectorySequence(trajectoryParking);
     }
 
-    //Write a method which is able to pick the cone depending on your subsystems
+    //Write a method which is able to pick the cone from the stack depending on your subsystems
     public void pickCone(int coneCount) {
         /*TODO: Add code to pick Cone 1 from stack*/
         telemetry.addData("Picked Cone: Stack", coneCount);
