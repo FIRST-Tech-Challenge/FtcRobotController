@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //import org.firstinspires.ftc.teamcode.HardwarePushbot;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.HardwarePushbot;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class automethods extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
+    HardwarePushbot robot = new HardwarePushbot();// Use a Pushbot's hardware
     ElapsedTime timer = new ElapsedTime();
     String slideDataSTR;
     int slideDown;
@@ -63,7 +65,7 @@ public class automethods extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
     }
 
-/*
+
     public void encoderDrive(double speed, double inches,
                              double timeoutS) {
         int newLeftFrontTarget;
@@ -139,7 +141,7 @@ public class automethods extends LinearOpMode {
 
     ////////////////////////////arm up init//////////////////////////////
 
-
+/*
     public void startturn(double speed, double timeoutS)
     {
         if (opModeIsActive()) {
@@ -173,7 +175,7 @@ public class automethods extends LinearOpMode {
             telemetry.update();
         }
     }
-
+*/
     boolean onHeading(double speed, double angle, double PCoeff) {
         double error;
         double steer;
@@ -296,7 +298,7 @@ public class automethods extends LinearOpMode {
         }
 
     }
-
+/*
     public float getZAngle() {
         return (robot.imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle);
     }
