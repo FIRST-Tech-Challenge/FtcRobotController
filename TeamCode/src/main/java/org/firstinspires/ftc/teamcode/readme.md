@@ -4,6 +4,8 @@ Team Members:
 - Arin Khare
 - Smyan Sengupta
 - Arthur Leung
+- Christian Francisco
+- Sean Sia
 - James Lian
 - Aria Bose-Mullick
 
