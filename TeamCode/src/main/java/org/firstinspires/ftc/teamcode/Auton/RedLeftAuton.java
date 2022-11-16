@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.Robot.GBrobot;
 import org.openftc.apriltag.AprilTagDetection;
@@ -33,6 +34,10 @@ public class RedLeftAuton extends LinearOpMode {
     int LEFT = 13;
     int MIDDLE = 0;
     int RIGHT = 19;
+
+    double leftDistance;
+    double rightDistance;
+
 
     AprilTagDetection tagOfInterest = null;
 
@@ -130,6 +135,11 @@ public class RedLeftAuton extends LinearOpMode {
             telemetry.addLine("Right Parking spot");
         }
 
+        /*if(robot.left.getDistance() >= 70 && robot.right.getDistance() < 200){
+            telemetry.addData("In position", "Robot in position!");
+            telemetry.update();
+        }*/
+
 
         telemetry.addData("robot", "press play to start");
         telemetry.update();
@@ -137,42 +147,84 @@ public class RedLeftAuton extends LinearOpMode {
         waitForStart();
 
         if(park .equals("LEFT")){
-            //telemetry.addLine("Park in LEFT parking area
-            //                                |
-            //Move towards left tall tower--->|
-            robot.Drive.MoveRobotToPositionStrafe(0.5, 25);
-            robot.Drive.MoveRobotToPosition(0.5, 41);
-
-            //robot.lift.driveLiftToPosition(0.5, 10);
-            //Raise arm
-            //robot.Drive.MoveRobotToPositionStrafe(0.5, -3);
-            //Strafe to parking position
-            //robot.Drive.MoveRobotToPosition(0.5, 2.5);
-            //Park
+            robot.claw.setClawPosition(0.0);
+            sleep(200);
+            robot.lift.driveLiftToPosition(1, 200);
+            sleep(100);
+            robot.Drive.MoveRobotToPositionStrafe(0.6, 27);
+            sleep(300);
+            robot.Drive.MoveRobotToPosition(0.5, 55);
+            sleep(300);
+            robot.Drive.pointTurn(-95,0.3);
+            robot.lift.driveLiftToPosition(0.7, 3750);
+            sleep(400);
+            robot.Drive.MoveRobotToPosition(0.5, 6);
+            sleep(50);
+            robot.claw.setClawPosition(0.25);
+            sleep(50);
+            robot.lift.driveLiftToPosition(0.7, 0);
+            sleep(300);
+            robot.Drive.MoveRobotToPosition(0.5, -10);
+            sleep(200);
+            //robot.lift.driveLiftToPosition(1, -3000);
+            robot.Drive.pointTurn(-75,0.2);
+            sleep(300);
+            robot.Drive.MoveRobotToPositionStrafe(0.7, -2);
+            sleep(200);
+            robot.Drive.MoveRobotToPosition(0.4, 48);
         }
         else if(park.equals("MIDDLE")){
-            //telemetry.addLine("Park in MIDDLE parking area");
-            robot.Drive.MoveRobotToPosition(0.5, 5);
-            //Move forward from position
-            robot.Drive.MoveRobotToPositionStrafe(0.5, 7);
-            //Strafe towards tower
-            //robot.lift.driveLiftToPosition(0.5, 10);
-            //Raise arm
-            robot.Drive.MoveRobotToPositionStrafe(0.5, -7);
-            //Strafe to parking position
-            robot.Drive.MoveRobotToPosition(0.5, 2.5);
-            //Park
+            robot.claw.setClawPosition(0.0);
+            sleep(200);
+            robot.lift.driveLiftToPosition(1, 200);
+            sleep(100);
+            robot.Drive.MoveRobotToPositionStrafe(0.6, 27);
+            sleep(300);
+            robot.Drive.MoveRobotToPosition(0.5, 55);
+            sleep(300);
+            robot.Drive.pointTurn(-95,0.3);
+            robot.lift.driveLiftToPosition(0.7, 3750);
+            sleep(400);
+            robot.Drive.MoveRobotToPosition(0.5, 6);
+            sleep(50);
+            robot.claw.setClawPosition(0.25);
+            sleep(50);
+            robot.lift.driveLiftToPosition(0.7, 0);
+            sleep(300);
+            robot.Drive.MoveRobotToPosition(0.5, -10);
+            sleep(200);
+            //robot.lift.driveLiftToPosition(1, -3000);
+            robot.Drive.pointTurn(-75,0.2);
+            sleep(300);
+            robot.Drive.MoveRobotToPositionStrafe(0.7, -2);
+            sleep(200);
+            robot.Drive.MoveRobotToPosition(0.4, 26);
         }
         else if(park.equals("RIGHT")){
-            //telemetry.addLine("Park in RIGHT parking area");
-            robot.Drive.MoveRobotToPosition(0.5, 5);
-            //Move forward from position
-            robot.Drive.MoveRobotToPositionStrafe(0.5, 7);
-            //Strafe towards tower
-            //robot.lift.driveLiftToPosition(0.5, 10);
-            //Raise arm
-            robot.Drive.MoveRobotToPositionStrafe(0.5, 10);
-            //Strafe to parking position and park
+            robot.claw.setClawPosition(0.0);
+            sleep(200);
+            robot.lift.driveLiftToPosition(1, 200);
+            sleep(100);
+            robot.Drive.MoveRobotToPositionStrafe(0.6, 27);
+            sleep(300);
+            robot.Drive.MoveRobotToPosition(0.5, 55);
+            sleep(300);
+            robot.Drive.pointTurn(-95,0.3);
+            robot.lift.driveLiftToPosition(0.7, 3750);
+            sleep(400);
+            robot.Drive.MoveRobotToPosition(0.5, 6);
+            sleep(50);
+            robot.claw.setClawPosition(0.25);
+            sleep(50);
+            robot.lift.driveLiftToPosition(0.7, 0);
+            sleep(300);
+            robot.Drive.MoveRobotToPosition(0.5, -10);
+            sleep(200);
+            //robot.lift.driveLiftToPosition(1, -3000);
+            robot.Drive.pointTurn(-75,0.2);
+            sleep(300);
+            robot.Drive.MoveRobotToPositionStrafe(0.7, -2);
+
         }
         else{
             telemetry.addLine("NO Parking position found");
