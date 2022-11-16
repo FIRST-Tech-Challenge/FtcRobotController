@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_GROUND;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
@@ -9,12 +10,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-
+@Disabled
 @Config
 @Autonomous(name = "BlueLeftAutoHigh")
 
@@ -24,14 +26,14 @@ public class BlueLeftAutoHigh extends LinearOpMode {
 
     public static double dummyP = 3;
 
-    public static double dummyx = 0.0, dummyy =27, dummya = 270;
-    public static double dummyx2 = 0.0, dummyy2 =34, dummya2 = 260;
+    public static double dummyx = 0.0, dummyy =28, dummya = 270;
+    public static double dummyx2 = 0.0, dummyy2 =34, dummya2 = 280;
 
     public static double dummyX = 12, dummyY =36, dummyA = 90;
 
     public static double dummyX2 = 33, dummyY2 =36, dummyA2 = 90;
 
-    public static double dummyX3 = 55, dummyY3 =36, dummyA3 = 90;
+    public static double dummyX3 = 56, dummyY3 =34, dummyA3 = 90;
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
@@ -42,14 +44,19 @@ public class BlueLeftAutoHigh extends LinearOpMode {
         //detectSignal();
         //store in variable
         robot.cv.observeSleeve();
-        while(getRuntime()<5){
+        while(!isStarted()){
+            telemetry.addData("pos",robot.cv.getPosition());
+            telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
+            telemetry.update();
+            robot.updateClawStates();
+            robot.updateLiftArmStates();
         }
         waitForStart();
         dummyP = robot.cv.getPosition();
 
         if (isStopRequested()) return;
         Trajectory initialtrajectory = robot.roadrun.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(13, 55))
+                .lineToConstantHeading(new Vector2d(13, 61))
                 .build();
         Trajectory initialtrajectory2 = robot.roadrun.trajectoryBuilder(new Pose2d(13,55, Math.toRadians(270)))
                 .lineToConstantHeading(new Vector2d(13, 37))

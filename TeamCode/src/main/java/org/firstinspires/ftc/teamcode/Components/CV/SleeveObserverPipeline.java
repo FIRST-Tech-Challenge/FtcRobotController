@@ -17,12 +17,12 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
     public static double p1x = 340, p1y =240, p2x = 430, p2y =370,
 
-        h1 = 2,s1 = 0, v1 =0,
-            h1u = 10,s1u = 255, v1u =255,
-            h2 = 63,s2 = 0, v2 =0,
-            h2u =71,s2u = 255, v2u =255,
-            h3 = 150,s3 = 0, v3 =0,
-            h3u = 165,s3u = 255, v3u =255,
+        h1 = 150,s1 = 0, v1 =0,
+            h1u = 160,s1u = 255, v1u =255,
+            h2 = 0,s2 = 0, v2 =0,
+            h2u =10,s2u = 255, v2u =255,
+            h3 = 45,s3 = 0, v3 =0,
+            h3u = 60,s3u = 255, v3u =255,
 
     //h3u and s3u: 71 and 90
             colour = 1;
@@ -113,11 +113,11 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
 //       op.telemetry.addData("sums2",sums[2]);
 //       op.telemetry.update();
            if(sums[0]>sums[1]&&sums[0]>sums[2]){
-            return 2;
-        }else if(sums[1]>sums[2]){
-            return 3;
-        }else{
             return 1;
+        }else if(sums[1]>sums[2]){
+            return 2;
+        }else{
+            return 3;
         }
    }
 }

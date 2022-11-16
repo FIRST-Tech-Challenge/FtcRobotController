@@ -62,8 +62,7 @@ public class LiftArm {
     public LiftArm() {
         //init RFServo
         liftArmServo = new RFDualServo("liftArmServo", "liftArmServo2", 0.7);
-        liftArmServo.setPositions(LIFT_ARM_INTAKE_POS);
-        ARM_INTAKE.setStatus(true);
+        lowerLiftArmToIntake();
 
     }
 
@@ -109,7 +108,7 @@ public class LiftArm {
 
         //the state of claw closed has to be true (cone has already been grabbed)
         // && (LIFT_GROUND_JUNCTION.status || LIFT_LOW.status || LIFT_MID.status || LIFT_HIGH.status)
-        if ( ARM_INTAKE.status) {
+        if ( ARM_INTAKE.status && op.getRuntime()-liftArmServo.getLastTime()>0.2) {
 
             //set servo position
             liftArmServo.setPositions(LIFT_ARM_OUTTAKE_POS);

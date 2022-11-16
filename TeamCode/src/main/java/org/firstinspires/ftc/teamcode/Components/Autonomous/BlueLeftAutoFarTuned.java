@@ -17,12 +17,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 @Disabled
-
 @Config
-@Autonomous(name = "BlueLeftAutoFar")
+@Autonomous(name = "BlueLeftAutoFarTuned")
 
 
-public class BlueLeftAutoFar extends LinearOpMode {
+public class BlueLeftAutoFarTuned extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;

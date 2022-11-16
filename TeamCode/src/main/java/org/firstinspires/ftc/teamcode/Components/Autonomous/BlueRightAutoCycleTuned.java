@@ -9,19 +9,18 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-@Disabled
+
 @Config
-@Autonomous(name = "BlueRightAutoCycle")
+@Autonomous(name = "BlueRightAutoCycleTuned")
 
 
-public class BlueRightAutoCycle extends LinearOpMode {
+public class BlueRightAutoCycleTuned extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;
@@ -30,11 +29,11 @@ public class BlueRightAutoCycle extends LinearOpMode {
     public static double dummyxi2 = -12.5, dummyyi2 = 13;
 
 
-    public static double dummyx = -23.5, dummyy = 5, dummya = 270;
-    public static double dummyx2 = -23.5, dummyy2 =11, dummya2 = 270;
-    public static double dummyxd = -23.5, dummyyd = 5.5, dummyad = 270;
-    public static double dummyx2i = -23.5, dummyy2i =11, dummya2i = 270;
-    public static double dummyx3i = -23.5, dummyy3i =9, dummya3i = 270;
+    public static double dummyx = -24.5, dummyy = 4.5, dummya = 270;
+    public static double dummyx2 = -24.5, dummyy2 =11, dummya2 = 270;
+    public static double dummyxd = -24.5, dummyyd = 5, dummyad = 270;
+    public static double dummyx2i = -24.5, dummyy2i =11, dummya2i = 270;
+    public static double dummyx3i = -24.5, dummyy3i =9, dummya3i = 270;
     public static double dummyx3 = -38, dummyy3 =10.1, dummya3 = 180;
     public static double dummyx4 = -63.5, dummyy4 =10.1, dummya4 = 180;
 
@@ -42,7 +41,7 @@ public class BlueRightAutoCycle extends LinearOpMode {
 
     public static double dummyX2 = -35, dummyY2 = 11, dummyA2 = 180;
 
-    public static double dummyX3 = -57, dummyY3 = 11, dummyA3 = 180;
+    public static double dummyX3 = -55, dummyY3 = 11, dummyA3 = 180;
     double[] stackPos = {460,320,173,53,0};
 
     public void runOpMode() {
@@ -107,6 +106,7 @@ public class BlueRightAutoCycle extends LinearOpMode {
             telemetry.update();
             robot.updateClawStates();
             robot.updateLiftArmStates();
+
         }
         resetRuntime();
         dummyP = robot.cv.getPosition();
@@ -169,6 +169,7 @@ public class BlueRightAutoCycle extends LinearOpMode {
             robot.roadrun.update();
             robot.updateClawStates();
             robot.updateLiftArmStates();
+
         }
         robot.stop();
         if(getRuntime()>29.8){

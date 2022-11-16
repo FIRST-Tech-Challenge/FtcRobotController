@@ -9,19 +9,18 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-@Disabled
+
 @Config
-@Autonomous(name = "BlueRightAutoCycle")
+@Autonomous(name = "RedRightAutoCycleTuned")
 
 
-public class BlueRightAutoCycle extends LinearOpMode {
+public class RedRightAutoCycleTuned extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;
@@ -42,7 +41,7 @@ public class BlueRightAutoCycle extends LinearOpMode {
 
     public static double dummyX2 = -35, dummyY2 = 11, dummyA2 = 180;
 
-    public static double dummyX3 = -57, dummyY3 = 11, dummyA3 = 180;
+    public static double dummyX3 = -55, dummyY3 = 11, dummyA3 = 180;
     double[] stackPos = {460,320,173,53,0};
 
     public void runOpMode() {
@@ -107,6 +106,7 @@ public class BlueRightAutoCycle extends LinearOpMode {
             telemetry.update();
             robot.updateClawStates();
             robot.updateLiftArmStates();
+
         }
         resetRuntime();
         dummyP = robot.cv.getPosition();
@@ -131,22 +131,22 @@ public class BlueRightAutoCycle extends LinearOpMode {
             robot.lowerLiftArmToIntake(true);
             robot.followTrajectoryAsync(backtrajectory);
 //            for(int i=0;i<2;i++){
-                robot.followTrajectoryAsync(pickupTrajectory);
-                robot.followTrajectorySequenceAsync(approachTrajectory);
-                robot.closeClaw(false);
-                robot.waitForFinish();
-                robot.liftToPosition(LIFT_HIGH_JUNCTION);
-                robot.delay(0.4);
-                robot.raiseLiftArmToOuttake();
+            robot.followTrajectoryAsync(pickupTrajectory);
+            robot.followTrajectorySequenceAsync(approachTrajectory);
+            robot.closeClaw(false);
+            robot.waitForFinish();
+            robot.liftToPosition(LIFT_HIGH_JUNCTION);
+            robot.delay(0.4);
+            robot.raiseLiftArmToOuttake();
             robot.followTrajectoryAsync(dropTrajectory);
-                robot.waitForFinish();
-                robot.followTrajectoryAsync(dropTrajectory3);
-                robot.followTrajectoryAsync(dropTrajectory2);
-                robot.openClaw(false);
+            robot.waitForFinish();
+            robot.followTrajectoryAsync(dropTrajectory3);
+            robot.followTrajectoryAsync(dropTrajectory2);
+            robot.openClaw(false);
 //                robot.liftToPosition((int)stackPos[i+1]);
 //                robot.delay(0.8);
 //                robot.lowerLiftArmToIntake(true);
-                robot.followTrajectoryAsync(backtrajectory);
+            robot.followTrajectoryAsync(backtrajectory);
             robot.delay(1);
             robot.liftToPosition(0);
             robot.delay(1.8);
@@ -169,6 +169,7 @@ public class BlueRightAutoCycle extends LinearOpMode {
             robot.roadrun.update();
             robot.updateClawStates();
             robot.updateLiftArmStates();
+
         }
         robot.stop();
         if(getRuntime()>29.8){

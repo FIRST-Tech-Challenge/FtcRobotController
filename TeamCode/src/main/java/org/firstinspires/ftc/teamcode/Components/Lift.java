@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.abs;
@@ -37,7 +38,7 @@ public class Lift {
     private RFMotor liftMotor;
     private Claw LC = new Claw();
     private double liftTarget = 0;
-    public static double dfco1 =  0.0122, dfco2 = 1.0/3, dfco3 = 500;
+    public static double dfco1 =  0.0122, dfco2 = 1.0/3, dfco3 = 600;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
@@ -49,7 +50,10 @@ public class Lift {
         coefficients.add(dfco1);
         coefficients.add(dfco2);
         coefficients.add(dfco3);
-        liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, true, coefficients, MAX_LIFT_TICKS, 0);
+        liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, false, coefficients, MAX_LIFT_TICKS, 0);
+        if(!isTeleop){
+            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
         liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         liftMotor.setTICK_BOUNDARY_PADDING(10);
         liftMotor.setTICK_STOP_PADDING(10);

@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
@@ -11,7 +10,6 @@ import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.AR
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Aligner;
@@ -19,7 +17,6 @@ import org.firstinspires.ftc.teamcode.Components.CV.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.ClawExtension;
 import org.firstinspires.ftc.teamcode.Components.Field;
-import org.firstinspires.ftc.teamcode.Components.LEDStrip;
 import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
@@ -36,7 +33,7 @@ public class PwPRobot extends BasicRobot {
     public Field field = null;
     public CVMaster cv = null;
     public SampleMecanumDrive roadrun = null;
-    private LEDStrip leds = null;
+//    private LEDStrip leds = null;
 
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
@@ -50,7 +47,7 @@ public class PwPRobot extends BasicRobot {
 //        clawExtension = new ClawExtension();
         lift = new Lift();
         gp = new RFGamepad();
-        leds = new LEDStrip();
+//        leds = new LEDStrip();
     }
 
     public void stop() {
@@ -79,6 +76,9 @@ public class PwPRobot extends BasicRobot {
             }
         }
     }
+    public void updateLiftArmStates(){
+        liftArm.updateLiftArmStates();
+    }
 
     public void teleAutoAim(Trajectory trajectory) {
         roadrun.followTrajectoryAsync(trajectory);
@@ -100,10 +100,10 @@ public class PwPRobot extends BasicRobot {
         }
     }
 
-    public void followTrajectoryAsync(Trajectory trajectory, boolean clawClosed) {
-        if (queuer.queue(false, !roadrun.isBusy() || CLAW_CLOSED.getStatus())) {
+    public void followTrajectorySequenceAsync(TrajectorySequence trajectory, boolean clawClosed) {
+        if (queuer.queue(false, !roadrun.isBusy()||CLAW_CLOSING.getStatus())) {
             if (!roadrun.isBusy()) {
-                roadrun.followTrajectoryAsync(trajectory);
+                roadrun.followTrajectorySequenceAsync(trajectory);
             }
         }
     }
@@ -130,9 +130,7 @@ public class PwPRobot extends BasicRobot {
     public void closeClaw(boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, CLAW_CLOSED.getStatus())) {
             claw.updateClawStates();
-            if (claw.coneDistance() < 5) {
-                claw.closeClaw();
-            }
+                claw.closeClawRaw();
         }
     }
 
@@ -255,42 +253,7 @@ public class PwPRobot extends BasicRobot {
         lift.setLiftVelocity(velocity);
     }
 
-    public void rainbow() {
-        leds.rainbow();
-    }
-    public void red() {
-        leds.red();
-    }
-    public void blue() {
-        leds.blue();
-    }
-    public void orange(){
-        leds.orange();
-    }
 
-    public void yellow(){
-        leds.yellow();
-    }
-
-    public void gold(){
-        leds.gold();
-    }
-
-    public void white(){
-        leds.white();
-    }
-
-    public void gray(){
-        leds.gray();
-    }
-
-    public void pink (){
-        leds.pink();
-    }
-
-    public void fire (){
-        leds.fire();
-    }
 
     private boolean mecZeroLogged = false;
     private boolean progNameLogged = false;
@@ -336,11 +299,21 @@ public class PwPRobot extends BasicRobot {
         } else if (roadrun.isBusy()) {
             //nothin
         } else {
+            double[] vals = {op.gamepad1.left_stick_x,op.gamepad1.left_stick_y,op.gamepad1.right_stick_x};
+            if(op.gamepad1.left_stick_x==0){
+                vals[0]=0.01;
+            }
+            if(op.gamepad1.left_stick_y==0){
+                vals[1]=0.01;
+            }
+            if(op.gamepad1.right_stick_x==0){
+                vals[2]=0.01;
+            }
             roadrun.setWeightedDrivePower(
                     new Pose2d(
-                            -op.gamepad1.left_stick_y * 0.7,
-                            -op.gamepad1.left_stick_x,
-                            -op.gamepad1.right_stick_x * 0.8
+                            -vals[1]*0.5/*vals[1]/abs(vals[1]) * pow(vals[1],2)*/,
+                            -vals[0]*0.5/*vals[0]/abs(vals[0]) * pow(vals[0],2)*/,
+                            -vals[2]*0.5/*vals[2]/abs(vals[2]) * pow(vals[2],2)*/
                     )
             );
             if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
@@ -371,11 +344,16 @@ public class PwPRobot extends BasicRobot {
                     liftArm.raiseLiftArmToOuttake();
                 }
             }
-            if (op.gamepad1.x) {
-                claw.openClaw();
+            if (op.gamepad1.right_bumper) {
+                if(CLAW_CLOSED.getStatus()) {
+                    claw.setLastOpenTime(op.getRuntime());
+                    claw.openClaw();
+                }else{
+                    claw.closeClawRaw();
+                }
             }
             claw.closeClaw();
-            if (op.getRuntime() - claw.getLastTime() > .3 && op.getRuntime() - claw.getLastTime() < .5) {
+            if (op.getRuntime() - claw.getLastTime() > .3 && op.getRuntime() - claw.getLastTime() < .5 && CLAW_CLOSED.getStatus()) {
                 liftArm.raiseLiftArmToOuttake();
             }
 

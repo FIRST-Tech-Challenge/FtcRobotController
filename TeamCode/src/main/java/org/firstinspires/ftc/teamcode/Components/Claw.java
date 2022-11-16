@@ -20,7 +20,7 @@ public class Claw {
     private Rev2mDistanceSensor coneObserver;
 
     //temporary
-    private final double CLAW_CONE_DISTANCE = 2.6;
+    private final double CLAW_CONE_DISTANCE = 2.8;
 
     //temporary
     private final double CLAW_SERVO_MAX_TICK = 1.0;
@@ -36,6 +36,7 @@ public class Claw {
     private double lastCheckTime = 0;
 
     public double clawServoLastSwitchTime = 0;
+    private double lastOpenTime =-10;
     //temporary
     public final double CLAW_SERVO_SWITCH_TIME = 0.2;
 
@@ -105,6 +106,15 @@ public class Claw {
     public double getLastTime(){
         return claw.getLastTime();
     }
+
+    public void setLastOpenTime(double lastOpenTime) {
+        this.lastOpenTime = lastOpenTime;
+    }
+
+    public double getLastOpenTime() {
+        return lastOpenTime;
+    }
+
     public void logClawStates() {
         logger.log("/RobotLogs/GeneralRobot", CLAW_CLOSED.status + " " + CLAW_OPEN.status, false,
                 false, true);
@@ -126,7 +136,7 @@ public class Claw {
 
 
         //the state of claw opened has to be true
-        if (op.getRuntime()-lastCheckTime>0.2) {
+        if (op.getRuntime()-lastCheckTime>0.2 && op.getRuntime()-lastOpenTime>3) {
             lastCheckTime = op.getRuntime();
             if(CLAW_OPEN.status && isConeReady()&& LiftArm.liftArmStates.ARM_INTAKE.getStatus()) {
                 //set servo position
@@ -140,6 +150,25 @@ public class Claw {
                         + ",Claw Closed", true);
             }
         }
+
+    }
+    public void closeClawRaw() {
+        //no input
+
+
+        //the state of claw opened has to be true
+        if (CLAW_OPEN.status) {
+            //set servo position
+            claw.setPosition(CLAW_CLOSED_POS);
+
+            //set state of claw closed to true
+            CLAW_CLOSING.setStatus(true);
+
+            //log to general robot log that the claw has been closed through function closeClaw()
+            logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",closeClaw()"
+                    + ",Claw Closed", true);
+        }
+
 
     }
     //open the claw
