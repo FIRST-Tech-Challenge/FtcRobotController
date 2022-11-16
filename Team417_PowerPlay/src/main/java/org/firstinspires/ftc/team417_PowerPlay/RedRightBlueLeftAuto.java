@@ -38,6 +38,5 @@ public class RedRightBlueLeftAuto extends LinearOpMode {
         drive.followTrajectory(traject1);
         drive.followTrajectory(traject2);
         drive.followTrajectory(traject3);
-
     }
 }
