@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.HuskyBot.ARM_EXTENSION_MAX_POWER;
 import static org.firstinspires.ftc.teamcode.HuskyBot.ARM_LIFT_MAX_POWER;
+import static org.firstinspires.ftc.teamcode.HuskyBot.ARM_LIFT_POWER_AT_REST;
 import static org.firstinspires.ftc.teamcode.HuskyBot.ARM_SWIVEL_MAX_POWER;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -100,32 +101,27 @@ public class HuskyTeleOpMode extends LinearOpMode {
             // todo + IMPORTANT: we will have to limit this to rotate only 240 degrees once the arm is added.
             armSwivelPower = -gamepad2.left_stick_x;
             armSwivelPower = Range.clip(armSwivelPower, -ARM_SWIVEL_MAX_POWER, ARM_SWIVEL_MAX_POWER);
-            if (armSwivelPower != 0) {
-                huskyBot.armSwivel.setPower(armSwivelPower);
-            }
+            huskyBot.armSwivel.setPower(armSwivelPower);
 
             armLiftPower = gamepad2.left_stick_y;
             // todo: this will have to be tuned for stability
             armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MAX_POWER, ARM_LIFT_MAX_POWER);
-            if (armLiftPower != 0) {
+            if (armLiftPower == 0) {
+                huskyBot.armLift.setPower(ARM_LIFT_POWER_AT_REST);
+            }
+            else {
                 huskyBot.armLift.setPower(armLiftPower);
             }
 
             // Increases/Decreases Arm Length
             armExtendPower = gamepad2.dpad_up ? ARM_EXTENSION_MAX_POWER : (gamepad2.dpad_down ? -ARM_EXTENSION_MAX_POWER : 0);
-            if (armExtendPower != 0) {
-                huskyBot.armExtend.setPower(armExtendPower);
-            }
+            huskyBot.armExtend.setPower(armExtendPower);
 
             clawRotationPosition = gamepad2.right_stick_x;
-            if (clawRotationPosition != 0) {
-                huskyBot.clawRotate.setPosition(clawRotationPosition);
-            }
+            huskyBot.clawRotate.setPosition(clawRotationPosition);
 
             clawLiftPosition = gamepad2.right_stick_y;
-            if (clawLiftPosition != 0) {
-                huskyBot.clawLift.setPosition(clawLiftPosition);
-            }
+            huskyBot.clawLift.setPosition(clawLiftPosition);
 
             if (gamepad2.x) {
                 huskyBot.clawGrab.setPosition(0.3);

@@ -63,10 +63,11 @@ public class HuskyBot {
     public static final double VELOCITY_CONSTANT = 537.7 * 312/60;
 
 
-    public static final double ARM_SWIVEL_MAX_POWER = 0.2;
+    public static final double ARM_SWIVEL_MAX_POWER = 0.4;
     public static final double ARM_SWIVEL_LIMIT = 200;
-    public static final double ARM_LIFT_MAX_POWER = 0.2;
-    public static final double ARM_EXTENSION_MAX_POWER = 0.2;
+    public static final double ARM_LIFT_MAX_POWER = 0.4;
+    public static final double ARM_LIFT_POWER_AT_REST = 0.1;
+    public static final double ARM_EXTENSION_MAX_POWER = 0.4;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
