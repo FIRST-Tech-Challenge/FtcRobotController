@@ -14,7 +14,7 @@ public class TeleOpMain extends OpMode {
     DcMotor backRightMotor;
 
     DcMotor armMotor;
-    Servo coneGrabber;
+    Servo coneClaw;
 
     @Override
     public void init() {
@@ -26,7 +26,7 @@ public class TeleOpMain extends OpMode {
         backRightMotor = hardwareMap.get(DcMotor.class, "BRMotor");
 
         armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
-        coneGrabber = hardwareMap.get(Servo.class, "Grabber");
+        coneClaw = hardwareMap.get(Servo.class, "Claw");
 
         telemetry.addData("Status", "Initialized");
     }
@@ -66,20 +66,20 @@ public class TeleOpMain extends OpMode {
         // This code controls the arm!
         // Close the grabber
         if (gamepad1.a) {
-            coneGrabber.setPosition(1);
+            coneClaw.setPosition(0.5);    // 0 degrees
         }
         // Open the grabber
         if (gamepad1.x) {
-            coneGrabber.setPosition(0);
+            coneClaw.setPosition(1);      // 90 degrees
         }
 
         // Raise the arm
         if (gamepad1.y) {
-            armMotor.setPower(0.5);
+            armMotor.setPower(0.25);
         }
         // Lower the arm
         if (gamepad1.b) {
-            armMotor.setPower(-0.5);
+            armMotor.setPower(-0.25);
         }
     }
 }
