@@ -19,11 +19,11 @@ public class TeleOpMain extends OpMode {
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing");
-
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "FLMotor");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "FRMotor");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "BLMotor");
-        backRightMotor = hardwareMap.get(DcMotor.class, "BRMotor");
+        
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "FrontLeft");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "FrontRight");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "BackLeft");
+        backRightMotor = hardwareMap.get(DcMotor.class, "BackRight");
 
         armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
         coneClaw = hardwareMap.get(Servo.class, "Claw");
