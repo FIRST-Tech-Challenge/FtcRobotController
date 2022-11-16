@@ -31,9 +31,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This is NOT an opmode.
@@ -48,10 +48,42 @@ public class HuskyBot {
     public DcMotorEx rearLeftDrive = null;
     public DcMotorEx rearRightDrive = null;
 
+    // Arm Control Motor Init.
+    public DcMotorEx armSwivelMotor = null;
+    public DcMotorEx armLiftMotor = null;
+    public DcMotorEx armExtendMotor = null;
+
+    // Claw (on the Arm) Servo Init.
+    public Servo clawLift = null;
+    public Servo clawRotate = null;
+    public Servo clawGrab = null; // TODO: set this to be fixed open/close positions.
+
     // goBILDA 5203 Series Yellow Jacket Planetary Gear Motor
     // max encoder ticks per second
     // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
     public static final double VELOCITY_CONSTANT = 537.7 * 312/60;
+
+
+    public static final double ARM_SWIVEL_MAX_POWER = 0.4;
+    public static final double ARM_SWIVEL_LIMIT = 200;
+    public static final double ARM_LIFT_MAX_POWER = 0.25;
+    public static final double ARM_LIFT_MIN_POWER = 0.01;
+    public static final double ARM_LIFT_POWER_AT_REST = 0.05;
+    public static final double ARM_EXTENSION_MAX_POWER = 0.4;
+
+    public static final double CLAW_MOVE_INCREMENT = 0.01;
+
+    public static final double CLAW_LIFT_MIN_RANGE = 0.3;
+    public static final double CLAW_LIFT_MAX_RANGE = 0.8;
+    public static final double CLAW_LIFT_START_POSITION = 1.0;   // scaled, see MIN and MAX_RANGE
+
+    public static final double CLAW_ROTATE_MIN_RANGE = 0.1;
+    public static final double CLAW_ROTATE_MAX_RANGE = 0.8;
+
+    public static final double CLAW_GRAB_MIN_RANGE = 0.1;
+    public static final double CLAW_GRAB_MAX_RANGE = 0.54;
+    public static final double CLAW_GRAB_OPEN_POSITION = 0.3;
+    public static final double CLAW_GRAB_CLOSE_POSITION = 1.0;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -71,6 +103,16 @@ public class HuskyBot {
         frontRightDrive = hwMap.get(DcMotorEx.class, "front_right_drive");
         rearRightDrive = hwMap.get(DcMotorEx.class, "rear_right_drive");
 
+        // Define and Init. Arm Motors
+        armSwivelMotor = hwMap.get(DcMotorEx.class, "arm_swivel");
+        armLiftMotor = hwMap.get(DcMotorEx.class, "arm_lift");
+        armExtendMotor = hwMap.get(DcMotorEx.class, "arm_extend");
+
+        // Define and Init. Claw Servos
+        clawRotate = hwMap.get(Servo.class, "claw_rotate");
+        clawLift = hwMap.get(Servo.class, "claw_lift");
+        clawGrab = hwMap.get(Servo.class, "claw_grab");
+
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -84,6 +126,19 @@ public class HuskyBot {
         rearLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
         rearRightDrive.setPower(0);
+
+        // Set all arm-related motors and servos to zero power.
+        armSwivelMotor.setPower(0);
+
+        armLiftMotor.setPower(0);
+        armLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        armLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        armExtendMotor.setPower(0);
+
+        clawRotate.scaleRange(CLAW_ROTATE_MIN_RANGE, CLAW_ROTATE_MAX_RANGE);
+        clawLift.scaleRange(CLAW_LIFT_MIN_RANGE, CLAW_LIFT_MAX_RANGE);
+        clawGrab.scaleRange(CLAW_GRAB_MIN_RANGE, CLAW_GRAB_MAX_RANGE);
 
         // this base configuration sets the drive motors to run without encoders and the arm motor
         // to run with encoder. if any opmode requires different setting, that should be changed in
@@ -108,5 +163,15 @@ public class HuskyBot {
         frontRightDrive.setPositionPIDFCoefficients(5.0);
         rearRightDrive.setVelocityPIDFCoefficients(1.27, 0.127, 0, 12.7);
         rearRightDrive.setPositionPIDFCoefficients(5.0);
+    }
+
+    public void servoMove(Servo servo, double targetPosition) {
+        double currentPosition = servo.getPosition();
+        if (targetPosition > 0) {
+            servo.setPosition(currentPosition + CLAW_MOVE_INCREMENT);
+        }
+        else if (targetPosition < 0) {
+            servo.setPosition(currentPosition - CLAW_MOVE_INCREMENT);
+        }
     }
 }
