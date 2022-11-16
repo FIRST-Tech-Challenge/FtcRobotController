@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 @TeleOp(name = "Competition TeleOp", group="TeleOp")
 public class CompetitionTeleOp extends BaseOpMode {
 
+    private int cone = 4;
+
     /**
      * Drives the motors based on the joystick sticks
      * Left trigger engages slow-drive
@@ -40,7 +42,7 @@ public class CompetitionTeleOp extends BaseOpMode {
         }
 
         if(gamepad1.right_bumper){
-            //
+            //go to the con estack hegiht add member variable
         }
 
         if(gamepad1.left_bumper){
@@ -53,17 +55,17 @@ public class CompetitionTeleOp extends BaseOpMode {
 
         if (gamepad1.a) {
             // Move Bar to Low Position
-            armSystem.driveToLevel(ArmSystem.LOW, 0.4);
+            armSystem.driveToLevel(ArmSystem.LOW, 0.6);
         }
 
         if (gamepad1.b) {
             // Move Bar to Middle Position
-            armSystem.driveToLevel(ArmSystem.MEDIUM, 0.8);
+            armSystem.driveToLevel(ArmSystem.MEDIUM, 0.6);
         }
 
         if (gamepad1.y) {
             // Move Bar to High Position
-            armSystem.driveToLevel(ArmSystem.HIGH, 0.8);
+            armSystem.driveToLevel(ArmSystem.HIGH, 0.6);
         }
 
         if (gamepad1.x) {

@@ -104,7 +104,7 @@ public abstract class BaseOpMode extends OpMode {
 
     public boolean scoreDaCone(int level){
         if(step == 0){
-            if(armSystem.driveToLevel(level-300, 0.6)){
+            if(armSystem.driveToLevel(level-300, 0.7)){
                 step +=2;
             }
         }
@@ -116,7 +116,7 @@ public abstract class BaseOpMode extends OpMode {
         }
 
         if(step == 2){
-            if(armSystem.driveToLevel(level, 0.6)){
+            if(armSystem.driveToLevel(level, 0.7)){
                 step++;
             }
         }
@@ -138,7 +138,7 @@ public abstract class BaseOpMode extends OpMode {
     }
 
     public boolean revertArm(double pow){
-        if(armSystem.driveToLevel(ArmSystem.FLOOR,0.2)){
+        if(armSystem.driveToLevel(ArmSystem.FLOOR,pow)){
             armSystem.armLeft.setPower(0);
             armSystem.armRight.setPower(0);
             return true;

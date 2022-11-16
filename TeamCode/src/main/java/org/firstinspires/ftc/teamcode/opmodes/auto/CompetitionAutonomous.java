@@ -105,9 +105,9 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 if (align(PixyCam.YELLOW, POLE_WIDTH)) {
                     newState(State.PLACE_CONE);
                 }
-                if ((time.seconds() - nowTime) >= 2) {
-                    newState(State.REVERSE_JUNCTION);
-                }
+//                if ((time.seconds() - nowTime) >= 2) {
+//                    newState(State.REVERSE_JUNCTION);
+//                }
                 break;
             case PLACE_CONE:
                 if (scoreDaCone(ArmSystem.HIGH)) {
@@ -120,7 +120,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 }
                 break;
             case DRIVE_TO_CONE:
-                if (driveSystem.driveToPosition(360, DriveSystem.Direction.FORWARD, 0.5)) {
+                if (driveSystem.driveToPosition(360, DriveSystem.Direction.FORWARD, 0.8)) {
                     newState(State.ALIGN_WITH_CONE);
                 }
                 break;
@@ -207,17 +207,23 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 step++;
             }
         }
-        if (step == 1) {
-            if (revertArm(0.2)) {
-                step++;
+        if(step == 1) {
+            if (revertArm(0.5)) {
+                step += 1;
             }
         }
-
         if(step == 2){
-            if(driveSystem.turnAbsolute(turn, 0.5)){ //change cuz imu go to all the turn absolute
+            if(driveSystem.turnAbsolute(turn, 0.5)){
                 step = 0;
-                return true;
+                return true; 
             }
+//        if (step == 1) {
+//            boolean drive = driveSystem.turnAbsolute(turn, 0.5);
+//            boolean arm = revertArm(0.5);
+//            if (drive && arm) {
+//                step = 0;
+//                return true;
+//            }
         }
         return false;
     }
@@ -255,7 +261,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         }
 
         if(step == 1){
-            if(driveSystem.turnAbsolute(sign * -135, 0.5)){
+            if(driveSystem.turnAbsolute(sign * -45, 0.5)){
                 step++;
             }
         }

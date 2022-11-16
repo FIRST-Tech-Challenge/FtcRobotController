@@ -96,6 +96,7 @@ public class ArmSystem {
         return intake.intake();
     }
 
+
     public boolean outtake(){
         return intake.outtake();
     }
@@ -159,6 +160,7 @@ public class ArmSystem {
         private final ElapsedTime elapsedTime;
         public enum State { IDLE, INTAKING, OUTTAKING }
         private State state;
+        private double intakeDelay;
 
         public Intake(DcMotorSimple intake, DigitalChannel beam){
             beamBreaker = beam;
@@ -166,6 +168,7 @@ public class ArmSystem {
             coneTake = intake;
             state = State.IDLE;
             elapsedTime = new ElapsedTime();
+            intakeDelay = -1.0;
         }
 
         public boolean isBeamBroken(){
@@ -173,9 +176,17 @@ public class ArmSystem {
         }
 
         public boolean intake(){
+
+
             if (isBeamBroken()) {
-                coneTake.setPower(0.0);
-                state = State.IDLE;
+                if(intakeDelay < 0 ){
+                    elapsedTime.reset();
+                    intakeDelay = elapsedTime.milliseconds();
+                }
+                if(elapsedTime.milliseconds() - intakeDelay > 100){
+                    coneTake.setPower(0.0);
+                    state = State.IDLE;
+                }
             } else if (state != State.INTAKING) {
                 state = State.INTAKING;
                 coneTake.setDirection(DcMotor.Direction.REVERSE);
