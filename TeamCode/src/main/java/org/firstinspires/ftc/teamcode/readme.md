@@ -8,5 +8,6 @@ Team Members:
 - Sean Sia
 - James Lian
 - Aria Bose-Mullick
+- Tyler Montgomery (SuperTylerMan)
 
 Code found in ftc-2022/TeamCode/src/main/java/org/firstinspires/ftc/teamcode
