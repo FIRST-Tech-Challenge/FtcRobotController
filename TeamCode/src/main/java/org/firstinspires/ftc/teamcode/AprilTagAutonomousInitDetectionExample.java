@@ -53,7 +53,10 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int ID_TAG_OF_INTEREST = 3; // Tag ID 3 from the 36h11 family
+    // Tag ID 1 2 3 from the 36h11 family
+    int LEFT = 1;
+    int MIDDLE = 2;
+    int RIGHT = 3;
 
     AprilTagDetection tagOfInterest = null;
 
@@ -96,7 +99,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == ID_TAG_OF_INTEREST)
+                    if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -164,33 +167,13 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         }
 
         /* Actually do something useful */
-        if(tagOfInterest == null)
-        {
-            /*
-             * Insert your autonomous code here, presumably running some default configuration
-             * since the tag was never sighted during INIT
-             */
-        }
-        else
-        {
-            /*
-             * Insert your autonomous code here, probably using the tag pose to decide your configuration.
-             */
-
-            // e.g.
-            if(tagOfInterest.pose.x <= 20)
-            {
-                // do something
-            }
-            else if(tagOfInterest.pose.x >= 20 && tagOfInterest.pose.x <= 50)
-            {
-                // do something else
-            }
-            else if(tagOfInterest.pose.x >= 50)
-            {
-                // do something else
-            }
-        }
+    if(tagOfInterest == null || tagOfInterest.id == LEFT){
+        //trajectory
+    }else if(tagOfInterest.id == MIDDLE){
+// trajectory
+    }else{
+        //trajectory
+    }
 
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
