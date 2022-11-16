@@ -3,6 +3,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -12,9 +14,12 @@ public class DriveTrain2 extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor LinearSlide = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
+    private Servo   RightClaw = null;
+    private Servo   LeftClaw = null;
     private DcMotor rightBackDrive = null;
 
     @Override
@@ -24,11 +29,15 @@ public class DriveTrain2 extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "LeftBackMotor"); //2
         rightFrontDrive = hardwareMap.get(DcMotor.class, "RightFrontMotor");//1
         rightBackDrive = hardwareMap.get(DcMotor.class, "RightBackMotor");//3
+        LinearSlide = hardwareMap.get(DcMotor.class, "LinearSlideMotor");
+        RightClaw = hardwareMap.get(Servo.class, "RightClaw");
+        LeftClaw = hardwareMap.get(Servo.class, "LeftClaw");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        LinearSlide.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -39,6 +48,23 @@ public class DriveTrain2 extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            boolean finger = false;
+
+            if (gamepad1.right_bumper)
+                LinearSlide.setPower(0.3);
+            else if (gamepad1.left_bumper)
+                LinearSlide.setPower(-0.3);
+            else
+                LinearSlide.setPower(0);
+
+            if(gamepad1.a)
+                LeftClaw.setPosition(0.5);
+                RightClaw.setPosition(0.5);
+
+
+
+
 
             double max;
 
