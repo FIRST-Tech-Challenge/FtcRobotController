@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.dragonswpilib;
 
 /** Implements a PID control loop. */
 public class PIDController {
-    private static int instances;
 
     // Factor for "proportional" control
     private double m_kp;
@@ -73,8 +72,6 @@ public class PIDController {
             throw new IllegalArgumentException("Controller period must be a non-zero positive number!");
         }
         m_period = period;
-
-        instances++;
     }
 
     /**

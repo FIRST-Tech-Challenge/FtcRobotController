@@ -46,6 +46,26 @@ public interface Command {
     }
 
     /**
+     * Decorates this command with a set of commands to run parallel to it, ending when the last
+     * command ends. Often more convenient/less-verbose than constructing a new {@link
+     * ParallelCommandGroup} explicitly.
+     *
+     * <p>Note: This decorator works by composing this command within a CommandGroup. The command
+     * cannot be used independently after being decorated, or be re-decorated with a different
+     * decorator, unless it is manually cleared from the list of grouped commands with {@link
+     * CommandGroupBase#clearGroupedCommand(Command)}. The decorated command can, however, be further
+     * decorated without issue.
+     *
+     * @param parallel the commands to run in parallel
+     * @return the decorated command
+     */
+    default ParallelCommandGroup alongWith(Command... parallel) {
+        ParallelCommandGroup group = new ParallelCommandGroup(this);
+        group.addCommands(parallel);
+        return group;
+    }
+
+    /**
      * Decorates this command with a set of commands to run parallel to it, ending when the first
      * command ends. Often more convenient/less-verbose than constructing a new {@link
      * ParallelRaceGroup} explicitly.

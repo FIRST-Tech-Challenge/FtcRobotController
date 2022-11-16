@@ -166,6 +166,16 @@ public final class CommandScheduler {
         }
     }
 
+    /** Cancels all commands that are currently scheduled. */
+    public void cancelAll() {        
+        for (Iterator<Command> iterator = m_scheduledCommands.keySet().iterator();
+             iterator.hasNext(); ) {
+            Command command = iterator.next();
+
+            cancel(command);
+        }
+    }
+
     /**
      * Registers subsystems with the scheduler. This must be called for the subsystem's periodic block
      * to run when the scheduler is run, and for the subsystem's default command to be scheduled. It

@@ -12,8 +12,6 @@ public class Timer {
     private double m_accumulatedTime;
     private boolean m_running;
 
-    private int mTick = 0;
-
     @SuppressWarnings("MissingJavadocMethod")
     public Timer() {
         reset();
@@ -78,6 +76,5 @@ public class Timer {
      */
     public boolean hasElapsed(double seconds) {
         return get() >= seconds;
-        //return mTick++ > seconds;
     }
 }
