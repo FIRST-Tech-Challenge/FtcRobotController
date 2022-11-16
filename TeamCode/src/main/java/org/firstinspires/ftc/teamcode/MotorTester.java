@@ -21,6 +21,9 @@ public class MotorTester extends OpMode {
         backLeftMotor = hardwareMap.get(DcMotor.class, "BackLeft");
         backRightMotor = hardwareMap.get(DcMotor.class, "BackRight");
 
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+
         telemetry.addData("Status", "Initialized!");
     }
 
@@ -34,7 +37,7 @@ public class MotorTester extends OpMode {
         backRightMotor.setPower(1);
 
         try {   // Sleep for 2 seconds
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException ignored) {}
 
         telemetry.addData("Motors", "Front Left moving!");
@@ -44,7 +47,7 @@ public class MotorTester extends OpMode {
         backRightMotor.setPower(0);
 
         try {   // Sleep for 2 seconds
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException ignored) {}
 
         telemetry.addData("Motors", "Front Right moving!");
@@ -54,7 +57,7 @@ public class MotorTester extends OpMode {
         backRightMotor.setPower(0);
 
         try {   // Sleep for 2 seconds
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException ignored) {}
 
         telemetry.addData("Motors", "Back Left moving!");
@@ -64,7 +67,7 @@ public class MotorTester extends OpMode {
         backRightMotor.setPower(0);
 
         try {   // Sleep for 2 seconds
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException ignored) {}
 
         telemetry.addData("Motors", "Back Right moving!");
@@ -74,7 +77,7 @@ public class MotorTester extends OpMode {
         backRightMotor.setPower(1);
 
         try {   // Sleep for 2 seconds
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException ignored) {}
 
         telemetry.addData("Motors", "Stopped!");
@@ -84,7 +87,7 @@ public class MotorTester extends OpMode {
         backRightMotor.setPower(0);
 
         try {   // Sleep for 2 seconds
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException ignored) {}
     }
 }
