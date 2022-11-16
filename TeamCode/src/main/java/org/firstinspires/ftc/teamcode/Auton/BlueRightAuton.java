@@ -130,6 +130,10 @@ public class BlueRightAuton extends LinearOpMode {
             telemetry.addLine("Right Parking spot");
         }
 
+       /* if(robot.left.getDistance() == 10 && robot.right.getDistance() == 20){
+            telemetry.addData("In position", "Robot in position!");
+            telemetry.update();
+        }*/
 
         telemetry.addData("robot", "press play to start");
         telemetry.update();
@@ -137,41 +141,81 @@ public class BlueRightAuton extends LinearOpMode {
         waitForStart();
 
         if(park .equals("LEFT")){
-            //telemetry.addLine("Park in LEFT parking area");
-            robot.Drive.MoveRobotToPosition(0.5, 5);
-            //Move forward from position
-            robot.Drive.MoveRobotToPositionStrafe(0.5, 7);
-            //Strafe towards tower
-            robot.lift.driveLiftToPosition(0.5, 10);
-            //Raise arm
-            robot.Drive.MoveRobotToPositionStrafe(0.5, -3);
-            //Strafe to parking position
-            robot.Drive.MoveRobotToPosition(0.5, 2.5);
-            //Park
+            robot.claw.setClawPosition(0.0);
+            sleep(1500);
+            robot.lift.driveLiftToPosition(1, 200);
+            sleep(700);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, -27);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.3, 56);
+            sleep(700);
+            robot.Drive.pointTurn(95,0.3);
+            sleep(700);
+            robot.lift.driveLiftToPosition(0.8, 3750);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.5, 6);
+            sleep(700);
+            robot.claw.setClawPosition(0.25);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.5, -10);
+            sleep(700);
+            robot.Drive.pointTurn(75,0.2);
+            sleep(700);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, 2);
+
+            //Double cone code start
+            robot.Drive.MoveRobotToPosition(0.5, 48);
+
+            robot.claw.setClawPosition(0.0);
         }
         else if(park.equals("MIDDLE")){
-            //telemetry.addLine("Park in MIDDLE parking area");
-            robot.Drive.MoveRobotToPosition(0.5, 5);
-            //Move forward from position
-            robot.Drive.MoveRobotToPositionStrafe(0.5, 7);
-            //Strafe towards tower
-            robot.lift.driveLiftToPosition(0.5, 10);
-            //Raise arm
-            robot.Drive.MoveRobotToPositionStrafe(0.5, -7);
-            //Strafe to parking position
-            robot.Drive.MoveRobotToPosition(0.5, 2.5);
-            //Park
+            robot.claw.setClawPosition(0.0);
+            sleep(1500);
+            robot.lift.driveLiftToPosition(1, 200);
+            sleep(700);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, -27);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.3, 56);
+            sleep(700);
+            robot.Drive.pointTurn(95,0.3);
+            sleep(700);
+            robot.lift.driveLiftToPosition(0.8, 3750);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.5, 6);
+            sleep(700);
+            robot.claw.setClawPosition(0.25);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.5, -10);
+            sleep(700);
+            robot.Drive.pointTurn(75,0.2);
+            sleep(700);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, 2);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.3, 26);
         }
         else if(park.equals("RIGHT")){
-            //telemetry.addLine("Park in RIGHT parking area");
-            robot.Drive.MoveRobotToPosition(0.5, 5);
-            //Move forward from position
-            robot.Drive.MoveRobotToPositionStrafe(0.5, 7);
-            //Strafe towards tower
-            robot.lift.driveLiftToPosition(0.5, 10);
-            //Raise arm
-            robot.Drive.MoveRobotToPositionStrafe(0.5, 10);
-            //Strafe to parking position and park
+            robot.claw.setClawPosition(0.0);
+            sleep(1500);
+            robot.lift.driveLiftToPosition(1, 200);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, -27);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.3, 56);
+            sleep(700);
+            robot.Drive.pointTurn(95,0.3);
+            sleep(700);
+            robot.lift.driveLiftToPosition(0.8, 3750);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.5, 6);
+            sleep(700);
+            robot.claw.setClawPosition(0.25);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.5, -10);
+            sleep(700);
+            robot.Drive.pointTurn(75,0.2);
+            sleep(500);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, 2);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.3, 48);
         }
         else{
             telemetry.addLine("NO Parking position found");
@@ -186,4 +230,3 @@ public class BlueRightAuton extends LinearOpMode {
     }
 
 }
-

@@ -21,23 +21,26 @@ public class Lift{
     }
 
     public void SetMotorPower(double Power){
-        liftMotor1.setPower(-Power);
-        liftMotor2.setPower(Power);
+        liftMotor1.setPower(Power);
+        liftMotor2.setPower(-Power);
     }
 
     public void driveLiftToPosition(double power, int armPosition) {
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor1.setTargetPosition(armPosition);
-        liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor1.setPower(power);
+        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor1.setTargetPosition(armPosition);
+        liftMotor1.setTargetPosition(-armPosition);
+        liftMotor2.setTargetPosition(armPosition);
+
         liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         liftMotor1.setPower(power);
-        /*
-        while (ArmMotor.isBusy()) {
-        }*/
+        liftMotor2.setPower(power);
+
+        while(liftMotor1.isBusy()&&liftMotor2.isBusy()){
+        }
+
     }
 }
 

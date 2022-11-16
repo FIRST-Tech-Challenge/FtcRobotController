@@ -49,6 +49,6 @@ public class distance_sensor {
     }
 
     public double getDistance(){
-        return dist.getDistance(DistanceUnit.INCH);
+        return dist.getDistance(DistanceUnit.CM);
     }
 }

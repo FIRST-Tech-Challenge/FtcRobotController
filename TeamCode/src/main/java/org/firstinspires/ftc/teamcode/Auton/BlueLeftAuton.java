@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class RedRightAuton extends LinearOpMode {
+public class BlueLeftAuton extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -141,16 +141,16 @@ public class RedRightAuton extends LinearOpMode {
 
         waitForStart();
 
-        if(park .equals("LEFT")){
+        if(park.equals("LEFT")){
             robot.claw.setClawPosition(0.0);
             sleep(1500);
             robot.lift.driveLiftToPosition(1, 200);
             sleep(700);
-            robot.Drive.MoveRobotToPositionStrafe(0.3, -27);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, 27);
             sleep(700);
-            robot.Drive.MoveRobotToPosition(0.3, 56);
+            robot.Drive.MoveRobotToPosition(0.3, 55);
             sleep(700);
-            robot.Drive.pointTurn(95,0.3);
+            robot.Drive.pointTurn(-95,0.3);
             sleep(700);
             robot.lift.driveLiftToPosition(0.8, 3750);
             sleep(700);
@@ -160,20 +160,23 @@ public class RedRightAuton extends LinearOpMode {
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.5, -10);
             sleep(700);
-            robot.Drive.pointTurn(65,0.2);
+            //robot.lift.driveLiftToPosition(1, -3000);
+            robot.Drive.pointTurn(-75,0.2);
             sleep(700);
-            robot.Drive.MoveRobotToPositionStrafe(0.3, 2);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, -2);
+            sleep(700);
+            robot.Drive.MoveRobotToPosition(0.3, 48);
         }
         else if(park.equals("MIDDLE")){
             robot.claw.setClawPosition(0.0);
             sleep(1500);
             robot.lift.driveLiftToPosition(1, 200);
             sleep(700);
-            robot.Drive.MoveRobotToPositionStrafe(0.3, -27);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, 27);
             sleep(700);
-            robot.Drive.MoveRobotToPosition(0.3, 56);
+            robot.Drive.MoveRobotToPosition(0.3, 55);
             sleep(700);
-            robot.Drive.pointTurn(95,0.3);
+            robot.Drive.pointTurn(-95,0.3);
             sleep(700);
             robot.lift.driveLiftToPosition(0.8, 3750);
             sleep(700);
@@ -183,9 +186,10 @@ public class RedRightAuton extends LinearOpMode {
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.5, -10);
             sleep(700);
-            robot.Drive.pointTurn(65,0.2);
+            //robot.lift.driveLiftToPosition(1, -3000);
+            robot.Drive.pointTurn(-75,0.2);
             sleep(700);
-            robot.Drive.MoveRobotToPositionStrafe(0.3, 2);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, -2);
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.3, 26);
         }
@@ -193,11 +197,12 @@ public class RedRightAuton extends LinearOpMode {
             robot.claw.setClawPosition(0.0);
             sleep(1500);
             robot.lift.driveLiftToPosition(1, 200);
-            robot.Drive.MoveRobotToPositionStrafe(0.3, -27);
             sleep(700);
-            robot.Drive.MoveRobotToPosition(0.3, 56);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, 27);
             sleep(700);
-            robot.Drive.pointTurn(95,0.3);
+            robot.Drive.MoveRobotToPosition(0.3, 55);
+            sleep(700);
+            robot.Drive.pointTurn(-95,0.3);
             sleep(700);
             robot.lift.driveLiftToPosition(0.8, 3750);
             sleep(700);
@@ -207,11 +212,11 @@ public class RedRightAuton extends LinearOpMode {
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.5, -10);
             sleep(700);
-            robot.Drive.pointTurn(65,0.2);
-            sleep(500);
-            robot.Drive.MoveRobotToPositionStrafe(0.3, 2);
+            //robot.lift.driveLiftToPosition(1, -3000);
+            robot.Drive.pointTurn(-75,0.2);
             sleep(700);
-            robot.Drive.MoveRobotToPosition(0.3, 48);
+            robot.Drive.MoveRobotToPositionStrafe(0.3, -2);
+
         }
         else{
             telemetry.addLine("NO Parking position found");
@@ -226,3 +231,4 @@ public class RedRightAuton extends LinearOpMode {
     }
 
 }
+

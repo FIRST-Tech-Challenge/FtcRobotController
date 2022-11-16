@@ -1,13 +1,23 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Sensors.TurnPIDcontroller;
+
+import java.util.concurrent.TimeUnit;
 
 public class DriveTrain {
+    public TurnPIDcontroller PID;
     Telemetry telemetry;
     public DcMotor FrontLeft;
     public DcMotor BackLeft;
@@ -17,9 +27,16 @@ public class DriveTrain {
     double PULSES_PER_ROTATION = 537.5;
     double GEAR_RATIO = 1;
     double WHEEL_DIAMETER_INCHES = 3.77953;
-    double TRACK_WIDTH = 14;
+    double TRACK_WIDTH = 13;
     double CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER_INCHES;
     //double COUNTS_PER_INCH = PULSES_PER_ROTATION / (WHEEL_DIAMETER_INCHES * Math.PI);
+
+    private Orientation lastAngle = new Orientation();
+    private double currAngle = 0.0;
+    private ElapsedTime runtime = new ElapsedTime();
+
+    // The IMU sensor object
+    public BNO055IMU imu;
 
 
     public DriveTrain(HardwareMap hardwareMap, Telemetry telemetry){
@@ -31,6 +48,18 @@ public class DriveTrain {
         BackLeft = hardwareMap.dcMotor.get("BackLeft");
         FrontRight = hardwareMap.dcMotor.get("FrontRight");
         BackRight = hardwareMap.dcMotor.get("BackRight");
+
+        //Initialize IMU
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
 
         setMotorDirection(DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE);
         setZeroPowerBehavior( DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.ZeroPowerBehavior.BRAKE );
@@ -150,5 +179,78 @@ public class DriveTrain {
         setAllPower(0.0);
         // Turn off RUN_TO_POSITION
         setMotorModeRunUsingEncoder();
+    }
+
+    public void resetAngle(){
+        lastAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+        currAngle = 0.0;
+    }
+
+    public double getAngle(){
+        Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+        double deltaAngle = orientation.firstAngle - lastAngle.firstAngle;
+
+        if(deltaAngle > 180){
+            deltaAngle -= 360;
+        }else if(deltaAngle <= -360){
+            deltaAngle += 360;
+        }
+        currAngle += deltaAngle;
+        lastAngle = orientation;
+
+        return currAngle;
+    }
+
+    public void turn(double degrees){
+        resetAngle();
+
+        double error = degrees;
+
+        while (Math.abs(error)>2){
+            double motorPower = (error<0 ? -0.3 : 0.3);
+            setMotorPower(-motorPower,motorPower,-motorPower,motorPower);
+            error = degrees - getAngle();
+        }
+
+        setAllPower(0);
+    }
+
+    public void turnTo(double degrees){
+        Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+        //how far robot is turned to get to target position
+        double error = degrees - orientation.firstAngle;
+
+        if (error >360){
+            error -= 360;
+        }else if(error <-360){
+            error += 360;
+        }
+
+        turn(error);
+    }
+
+    public double getAbsoluteAngle(){
+        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ,AngleUnit.DEGREES).firstAngle;
+    }
+
+    public void turnPID(double degrees) {
+        turnToPID(degrees + getAbsoluteAngle());
+    }
+
+    public void turnToPID(double targetAngle){
+        TurnPIDcontroller pid = new TurnPIDcontroller(targetAngle, 0.01, 0 ,0.003);
+        runtime.reset();
+        runtime.startTime();
+        while (Math.abs(targetAngle-getAbsoluteAngle())> 3 || pid.getLastSlope() >0.75){
+            double motorPower = pid.update(getAbsoluteAngle());
+            setMotorPower(-motorPower, motorPower, -motorPower, motorPower);
+            if(runtime.time(TimeUnit.MILLISECONDS) > 500){
+                break;
+            }
+
+        }
+        setAllPower(0);
     }
 }
