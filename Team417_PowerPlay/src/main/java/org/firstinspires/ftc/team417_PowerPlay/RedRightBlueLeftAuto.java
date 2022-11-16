@@ -13,6 +13,7 @@ public class RedRightBlueLeftAuto extends LinearOpMode {
     // Coordinates for various tiles referenced on page 46 of:
     // https://www.firstinspires.org/sites/default/files/uploads/resource_library/ftc/game-manual-part-2-traditional.pdf
     // Robot's position starts at (0, 0) - all tile coordinates are in relation to this starting position
+    // X positions for rows, Y positions for different columns
     private static final double Y_POS_AWAY_FROM_WAll = 5;
     private static final double X_POS_6 = 36;
     private static final double Y_POS_E = 20;

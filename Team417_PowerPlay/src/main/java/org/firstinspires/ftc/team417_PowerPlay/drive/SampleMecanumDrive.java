@@ -58,6 +58,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.7, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(2, 0, 0);
+    // Lateral multiplier to make up for energy deficiency while strafing
     public static double LATERAL_MULTIPLIER = 60.0 / 46.319;
 
     public static double VX_WEIGHT = 1;

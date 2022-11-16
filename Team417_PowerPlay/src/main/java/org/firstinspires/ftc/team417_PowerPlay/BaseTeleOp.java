@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.team417_PowerPlay;
 
-abstract public class BaseTeleOp extends BaseOpMode{
-    boolean grabberIsOpen = false;
+abstract public class BaseTeleOp extends BaseOpMode {
+    boolean grabberOpen = false;
     double armPower = 0.0;
 
     public void driveUsingControllers() {
@@ -23,9 +23,9 @@ abstract public class BaseTeleOp extends BaseOpMode{
     }
 
     public void driveGrabber() {
-        grabberIsOpen = grabberToggle.toggle(gamepad2.a);
+        grabberOpen = grabberToggle.toggle(gamepad2.a);
 
-        if (grabberIsOpen) {
+        if (grabberOpen) {
             grabberServo.setPosition(GRABBER_OPEN);
         } else {
             grabberServo.setPosition(GRABBER_CLOSED);
@@ -36,7 +36,7 @@ abstract public class BaseTeleOp extends BaseOpMode{
         telemetry.addData("Arm power", armPower);
         telemetry.addData("Arm current position", motorArm.getCurrentPosition());
         telemetry.addData("Grabber position", grabberServo.getPosition());
-        telemetry.addData("Grabber open", grabberIsOpen);
+        telemetry.addData("Grabber open", grabberOpen);
         telemetry.update();
     }
 }
