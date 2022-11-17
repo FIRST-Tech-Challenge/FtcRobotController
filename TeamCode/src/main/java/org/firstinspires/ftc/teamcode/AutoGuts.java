@@ -13,7 +13,8 @@ public abstract class AutoGuts extends Control {
     public static final double TICKS_PER_INCH = 4096;
 
 
-    public void driveEncoder(double x, double y, double power) throws InterruptedException {
+    public void driveEncoder(double x, double y, double power) {
+
         int topLeft = hraezlyr.topLeft.getCurrentPosition();
         int topRight = hraezlyr.topRight.getCurrentPosition();
         int bottomLeft = hraezlyr.bottomLeft.getCurrentPosition();
@@ -43,10 +44,9 @@ public abstract class AutoGuts extends Control {
         hraezlyr.bottomLeft.setPower(x_output);
         hraezlyr.bottomRight.setPower(y_output);
 
-        while (hraezlyr.topLeft.isBusy() || hraezlyr.topRight.isBusy() || hraezlyr.bottomLeft.isBusy() || hraezlyr.bottomRight.isBusy())
-
-        {
-            Thread.sleep(10);
+        while (hraezlyr.topLeft.isBusy() || hraezlyr.topRight.isBusy() || hraezlyr.bottomLeft.isBusy() || hraezlyr.bottomRight.isBusy()) {
+            sleep(10);
+           hraezlyr.setMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
     }
@@ -64,19 +64,20 @@ public abstract class AutoGuts extends Control {
         hraezlyr.bottomRight.setPower(powerGroup1 - turn);
 
     }
-    public void turn(double power, double angle){
+
+    public void turn(double power, double angle) {
         double angularDistance = 0;
         do {
             double initialAngle = hraezlyr.getHeading();
-            angle = ((angle % Math.PI*2) + Math.PI*2) % Math.PI*2;
+            angle = ((angle % Math.PI * 2) + Math.PI * 2) % Math.PI * 2;
             double turnVal = 1;
 
-            if(angle - initialAngle < 0) turnVal = -1;
+            if (angle - initialAngle < 0) turnVal = -1;
             //counter clockwise
             angularDistance = Math.abs(angle - initialAngle);
-            if(angularDistance > Math.PI){ // dealing with edge cse
+            if (angularDistance > Math.PI) { // dealing with edge cse
                 turnVal *= -1;
-                angularDistance = Math.PI*2 - angularDistance; // calculating shorter angularDistance
+                angularDistance = Math.PI * 2 - angularDistance; // calculating shorter angularDistance
             }
             turnVal = turnVal * angularDistance / .35;
             hraezlyr.topLeft.setPower(turnVal);
@@ -84,23 +85,25 @@ public abstract class AutoGuts extends Control {
             hraezlyr.bottomLeft.setPower(turnVal);
             hraezlyr.bottomRight.setPower(-turnVal);
         }
-        while(!isStopRequested && angularDistance > 0.08);
+        while (!isStopRequested && angularDistance > 0.08);
     }
-    public void cascadeMoveClaw(int height, double power, double angle, boolean clawClose){
-        //TODO: adjust servos to appropriate the code
-        double close = 0;
-        if(clawClose) close = 1;
-        if(!clawClose) close = 0;
 
-        hraezlyr.servoClawClose.setPosition(close);
+    public void cascadeMoveClaw(int height, double power, double angle) {
+        hraezlyr.setCascadeMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
         hraezlyr.servoClawMove.setPosition(angle / 90);
-
-        hraezlyr.setMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-
         hraezlyr.cascadeMotor1.setTargetPosition(height);
         hraezlyr.cascadeMotor2.setTargetPosition(height);
-        hraezlyr.cascadeMotor1.setPower(power);
-        hraezlyr.cascadeMotor2.setPower(power);
+    }
+    public void closeClaw(boolean clawClose){
+        //TODO: adjust servos to appropriate the code
+        double close = 0;
+        if (clawClose) close = 1;
+        if (!clawClose) close = 0;
+
+        hraezlyr.servoClawClose.setPosition(0);
+
+
+
 
     }
 }

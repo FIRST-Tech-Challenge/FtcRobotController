@@ -87,5 +87,8 @@ public class Hraezlyr {
         bottomLeft.setMode(runMode);
         bottomRight.setMode(runMode);
     }
-
+    public void setCascadeMotorsMode(DcMotor.RunMode runMode){
+        cascadeMotor1.setMode(runMode);
+        cascadeMotor2.setMode(runMode);
+    }
 }

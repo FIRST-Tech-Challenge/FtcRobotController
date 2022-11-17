@@ -20,6 +20,7 @@ public abstract class Camera extends Control{
 
                 hraezlyr.camera.setPipeline(pipeline);
                 //            HOPE THIS WORKS ^ (if not ask tom)
+
                 hraezlyr.camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
 
 
@@ -36,6 +37,6 @@ public abstract class Camera extends Control{
             }
 
 
-        });
+        }
     }
 }

@@ -40,5 +40,11 @@ public abstract class Control extends OpMode {
                 hraezlyr.cascadeMotor2.setTargetPosition(3000);
         }
     }
-
+    public void sleep (long mill){
+        try {
+            Thread.sleep(mill);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

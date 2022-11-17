@@ -64,7 +64,8 @@ public class Drive extends Control {
         telemetry.addData("Cascade Height", hraezlyr.cascadeMotor1.getCurrentPosition());
         telemetry.update();
 
-        //System for cascade system lift
+        //System for cascade level system
+
         if(gamepad2.dpad_up){
             switch(zHeight){
                 case GROUND:
@@ -80,7 +81,7 @@ public class Drive extends Control {
             cascadeLift(zHeight);
         }
         if(gamepad2.dpad_down){
-            switch(zHeight){
+            switch(zHeight) {
                 case HIGH:
                     zHeight = Level.MEDIUM;
                     break;
@@ -89,10 +90,9 @@ public class Drive extends Control {
                     break;
                 case LOW:
                     zHeight = Level.GROUND;
+
+
             }
-            cascadeLift(zHeight);
-
-
-    }   }
-
+        }
+    }
 }
