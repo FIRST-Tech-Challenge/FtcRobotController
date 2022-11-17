@@ -47,8 +47,6 @@ public class HuskyTeleOpMode extends LinearOpMode {
     double armSwivelPower = 0.0;
     double armExtendPower = 0.0;
     double armLiftPower = 0.0;
-    double clawRotatePosition, clawRotateCurrentPosition;
-    double clawLiftPosition, clawLiftCurrentPosition;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -65,6 +63,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
         huskyBot.clawLift.setPosition(CLAW_LIFT_START_POSITION);
         huskyBot.clawGrab.setPosition(CLAW_GRAB_CLOSE_POSITION);
+        huskyBot.clawRotate.setPosition(CLAW_ROTATE_START_POSITION);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
