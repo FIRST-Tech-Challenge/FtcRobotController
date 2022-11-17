@@ -57,6 +57,8 @@ public class HuskyTeleOpMode extends LinearOpMode {
     double clawRotationPosition = 0.0;
     double clawLiftPosition = 0.0;
 
+    double MIN_ARM_POWER = 0.1;
+
     @Override
     public void runOpMode() {
         huskyBot.init(hardwareMap);
@@ -97,6 +99,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
             huskyBot.frontRightDrive.setVelocity(frontRightVelocity);
             huskyBot.rearRightDrive.setVelocity(rearRightVelocity);
 
+
             // arm/claw mechanisms
             // todo + IMPORTANT: we will have to limit this to rotate only 240 degrees once the arm is added.
             armSwivelPower = -gamepad2.left_stick_x;
@@ -120,7 +123,13 @@ public class HuskyTeleOpMode extends LinearOpMode {
             clawRotationPosition = gamepad2.right_stick_x;
             huskyBot.clawRotate.setPosition(clawRotationPosition);
 
-            clawLiftPosition = gamepad2.right_stick_y;
+            if(gamepad2.right_stick_y > 0){
+                clawLiftPosition += 0.05;
+            }
+            if(gamepad2.right_stick_y < 0)
+            {
+                clawLiftPosition -= 0.05;
+            }
             huskyBot.clawLift.setPosition(clawLiftPosition);
 
             if (gamepad2.x) {
@@ -128,6 +137,18 @@ public class HuskyTeleOpMode extends LinearOpMode {
             }
             if (gamepad2.a) {
                 huskyBot.clawGrab.setPosition(0.0);
+            }
+
+
+            // todo: these *need* to be tuned
+            if(huskyBot.armLift.getPower() < 0)
+            {
+                huskyBot.clawLift.setPosition(huskyBot.clawLift.getPosition() + 0.1);
+            }
+
+            if(huskyBot.armLift.getPower() > 0)
+            {
+                huskyBot.clawLift.setPosition(huskyBot.clawLift.getPosition() - 0.1);
             }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());

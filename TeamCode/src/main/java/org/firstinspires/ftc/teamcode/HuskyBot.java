@@ -117,6 +117,9 @@ public class HuskyBot {
         armLift.setPower(0);
         armExtend.setPower(0);
 
+        clawGrab.setPosition(0.7);
+        clawLift.setPosition(0);
+        clawRotate.setPosition(0);
         // this base configuration sets the drive motors to run without encoders and the arm motor
         // to run with encoder. if any opmode requires different setting, that should be changed in
         // the opmode itself
