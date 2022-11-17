@@ -298,7 +298,7 @@ public class automethods extends LinearOpMode {
         }
 
     }
-/*
+
     public float getZAngle() {
         return (robot.imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle);
     }
@@ -321,11 +321,10 @@ public class automethods extends LinearOpMode {
         robot.backRight.setPower(0);
         // robot.wobble.setPower(0);
 
-        robot.intakeLeft.setPower(0);
-        robot.intakeRight.setPower(0);
+
 
     }
-
+/*
     public void setLevel(double level){
         if (level == 1){
             slideTarget = slideDown-1000;
