@@ -127,6 +127,7 @@ import org.firstinspires.ftc.robotserver.internal.programmingmode.ProgrammingMod
 import org.firstinspires.inspection.RcInspectionActivity;
 import org.threeten.bp.YearMonth;
 import org.xmlpull.v1.XmlPullParserException;
+import com.acmerobotics.dashboard.FtcDashboard;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -409,6 +410,8 @@ public class FtcRobotControllerActivity extends Activity
     checkPreferredChannel();
 
     AnnotatedHooksClassFilter.getInstance().callOnCreateMethods(this);
+
+    FtcDashboard.start(context);
   }
 
   protected UpdateUI createUpdateUI() {
@@ -482,6 +485,7 @@ public class FtcRobotControllerActivity extends Activity
     RobotLog.cancelWriteLogcatToDisk();
 
     AnnotatedHooksClassFilter.getInstance().callOnDestroyMethods(this);
+    FtcDashboard.stop(context);
   }
 
   protected void bindToService() {
@@ -739,6 +743,8 @@ public class FtcRobotControllerActivity extends Activity
     AndroidBoard.showErrorIfUnknownControlHub();
 
     AnnotatedHooksClassFilter.getInstance().callOnCreateEventLoopMethods(this, eventLoop);
+
+    FtcDashboard.attachEventLoop(context, eventLoop);
   }
 
   protected OpModeRegister createOpModeRegister() {
