@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.testing.opmodes
+package org.firstinspires.ftc.teamcode.koawaTest.opmodes
 
 import com.acmerobotics.dashboard.config.Config
 

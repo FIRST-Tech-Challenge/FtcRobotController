@@ -1,16 +1,14 @@
-package org.firstinspires.ftc.teamcode.testing.opmodes
+package org.firstinspires.ftc.teamcode.koawaTest.opmodes
 
 import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.testing.Robot
+import org.firstinspires.ftc.teamcode.koawaTest.Robot
 import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.command.commands.*
-import com.asiankoala.koawalib.control.filter.SlewRateLimiter
 import com.asiankoala.koawalib.logger.LoggerConfig
-import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.DriveHackCmd
 
 @TeleOp
 @Config

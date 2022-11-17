@@ -1,66 +1,40 @@
 package org.firstinspires.ftc.teamcode.testing
 
+import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.hardware.motor.KEncoder
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
-import org.firstinspires.ftc.teamcode.koawalib.vision.Webcam
+import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
 
 class Hardware(startPose: Pose) {
     val fl = MotorFactory("fl")
-        .reverse
+        .forward
         .brake
         .build()
 
     val bl = MotorFactory("bl")
-        .reverse
+        .forward
         .brake
         .build()
 
     val br = MotorFactory("br")
-        .forward
+        .reverse
         .brake
         .build()
 
     val fr = MotorFactory("fr")
-        .forward
+        .reverse
         .brake
         .build()
 
-//    val arm = MotorFactory("arm")
-//        .forward
-//        .float
-//        .createEncoder(672.0/90.0, false)
-//        .zero(Arm.initPos)
-//        .withPositionControl(
-//            PIDGains(0.13, 0.0, 0.0033),
-////            PIDGains(0.0, 0.0, 0.0)
-//            FFGains(kCos = 0.1),
-//            allowedPositionError = 2.0,
-//            disabledPosition = DisabledPosition(Arm.initPos)
-//        )
-//        .build()
+    val liftMotor = MotorFactory("liftLead")
+        .float
+        .build()
 
-//    val arm = MotorFactory("arm")
-//        .forward
-//        .float
-//        .createEncoder(672.0/90.0, false)
-//        .zero(Arm.initPos)
-//        .withMotionProfileControl(
-//            PIDGains(0.0, 0.0, 0.0),
-//            FFGains(
-//                kCos = 0.1,
-//                kS = 0.06,
-//                kV = 0.003
-//            ),
-//            MotionConstraints(
-//                60.0,
-//                60.0
-//            ),
-//            allowedPositionError = 2.0,
-//            disabledPosition = DisabledPosition(Arm.initPos)
-//        )
-//        .build()
+    val liftSecondMotor = MotorFactory("lift2")
+        .float
+        .build()
 
     private val leftEncoder = KEncoder(fr, ticksPerUnit, true).reverse.zero()
     private val rightEncoder = KEncoder(fl, ticksPerUnit, true).zero()
@@ -70,11 +44,12 @@ class Hardware(startPose: Pose) {
         leftEncoder,
         rightEncoder,
         auxEncoder,
-        9.86,
-        8.325,
+        OdoConstants.TRACK_WIDTH,
+        OdoConstants.PERP_TRACKER,
         startPose
     )
 
+    @Config
     companion object {
         private const val ticksPerUnit = 1892.3724
     }

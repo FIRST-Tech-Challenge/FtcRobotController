@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.testing.opmodes
+package org.firstinspires.ftc.teamcode.koawaTest.opmodes
 
 import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.command.commands.Cmd
@@ -10,13 +10,12 @@ import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
-import com.asiankoala.koawalib.path.DEFAULT_HEADING_CONTROLLER
 import com.asiankoala.koawalib.path.FLIPPED_HEADING_CONTROLLER
 import com.asiankoala.koawalib.path.HermitePath
 import com.asiankoala.koawalib.path.gvf.SimpleGVFController
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.testing.Robot
+import org.firstinspires.ftc.teamcode.koawaTest.Robot
 
 @Autonomous
 class MidAuto : KOpMode() {

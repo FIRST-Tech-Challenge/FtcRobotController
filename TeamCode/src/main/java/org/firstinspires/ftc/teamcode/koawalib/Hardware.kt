@@ -10,6 +10,10 @@ import com.asiankoala.koawalib.hardware.sensor.KDistanceSensor
 import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
+import org.firstinspires.ftc.teamcode.koawalib.constants.ArmConstants
+import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
+import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
+import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
@@ -40,14 +44,14 @@ class Hardware(startPose: Pose) {
     val liftLeadMotor = MotorFactory("liftLead")
         .float
         .forward
-        .createEncoder(Lift.ticksPerUnit, false)
-        .zero(Lift.homePos)
+        .createEncoder(LiftConstants.ticksPerUnit, false)
+        .zero(LiftConstants.homePos)
         .withMotionProfileControl(
-            PIDGains(Lift.kP, Lift.kI, Lift.kD),
-            FFGains(Lift.kS, Lift.kV, Lift.kA, kG = Lift.kG),
-            MotionConstraints(Lift.maxVel, Lift.maxAccel),
-            allowedPositionError = Lift.allowedPositionError,
-            disabledPosition = Lift.disabledPosition
+            PIDGains(LiftConstants.kP, LiftConstants.kI, LiftConstants.kD),
+            FFGains(LiftConstants.kS, LiftConstants.kV, LiftConstants.kA, kG = LiftConstants.kG),
+            MotionConstraints(LiftConstants.maxVel, LiftConstants.maxAccel),
+            allowedPositionError = LiftConstants.allowedPositionError,
+            disabledPosition = LiftConstants.disabledPosition
         )
         .build()
 
@@ -61,18 +65,18 @@ class Hardware(startPose: Pose) {
 
     val armMotor = MotorFactory("Arm")
         .float
-        .createEncoder(Arm.ticksPerUnit, false)
-        .zero(Arm.homePos)
+        .createEncoder(ArmConstants.ticksPerUnit, false)
+        .zero(ArmConstants.homePos)
         .withMotionProfileControl(
-            PIDGains(Arm.kP, Arm.kI, Arm.kD),
-            FFGains(Arm.kS, Arm.kV, Arm.kA, Arm.kCos),
-            MotionConstraints(Arm.maxVel, Arm.maxAccel),
-            allowedPositionError = Arm.allowedPositionError,
+            PIDGains(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD),
+            FFGains(ArmConstants.kS, ArmConstants.kV, ArmConstants.kA, ArmConstants.kCos),
+            MotionConstraints(ArmConstants.maxVel, ArmConstants.maxAccel),
+            allowedPositionError = ArmConstants.allowedPositionError,
         )
         .build()
 
     val clawServo = KServo("Claw")
-        .startAt(Claw.closePos)
+        .startAt(ClawConstants.closePos)
 
     val distanceSensor = KDistanceSensor("distanceSensor")
 
@@ -88,15 +92,13 @@ class Hardware(startPose: Pose) {
         leftEncoder,
         rightEncoder,
         auxEncoder,
-        TRACK_WIDTH,
-        PERP_TRACKER,
+        OdoConstants.TRACK_WIDTH,
+        OdoConstants.PERP_TRACKER,
         startPose
     )
 
     @Config
     companion object {
         private const val ticksPerUnit = 1892.3724
-        @JvmField var TRACK_WIDTH = 0.0
-        @JvmField var PERP_TRACKER = 0.0
     }
 }
