@@ -145,7 +145,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                     if(park){
                         newState(State.PARK);
                     }else{
-                        newState(State.ALIGN_WITH_CONE);
+                        newState(State.DRIVE_TO_CONE);
                     }
                 }
                 break;
@@ -202,78 +202,79 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
     private boolean reverseJunction() {
         int turn = park ? sign * 0 : sign * 90; //CHANGE!! real values should be 0 and 90
-        if(step == 0){
-            if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.4)){
+        if (step == 0) {
+            if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.4)) {
                 step++;
             }
         }
-        if(step == 1) {
-            if (revertArm(0.5)) {
-                step += 1;
-            }
-        }
-        if(step == 2){
-            if(driveSystem.turnAbsolute(turn, 0.5)){
-                step = 0;
-                return true; 
-            }
-//        if (step == 1) {
-//            boolean drive = driveSystem.turnAbsolute(turn, 0.5);
-//            boolean arm = revertArm(0.5);
-//            if (drive && arm) {
+//        if(step == 1) {
+//            if (revertArm(0.5)) {
+//                step += 1;
+//            }
+//        }
+//        if(step == 2) {
+//            if (driveSystem.turnAbsolute(turn, 0.5)) {
 //                step = 0;
 //                return true;
 //            }
-        }
-        return false;
-    }
-
-
-    private boolean intake_cone() {
-        //TODO make applicable for multiple cones and add ternary
-        if (step == 0 && armSystem.driveToLevel(Cone.FIVE.approach(), .3)) {
-            step++;
-        }
-        if (step == 1 &&
-                driveSystem.driveToPosition(125, DriveSystem.Direction.FORWARD, 0.2)) {
-            step++;
-        }
-        if (step == 2 && (armSystem.intake() || armSystem.driveToLevel(Cone.FIVE.grab(), 0.3))) {
-            step++;
-        }
-        if (step == 3) {
-            if (armSystem.intake()) { // Complete the intake process -- i.e. stop
-                step++;
-            }
-        }
-        if (step == 4 && armSystem.driveToLevel(Cone.FIVE.clear(), 0.3)) {
-            newState(State.DRIVE_BACK_TO_POLE);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean drive_back_to_pole(){
-        if(step == 0){
-            if(driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.3)){
-                step++;
-            }
-        }
-
-        if(step == 1){
-            if(driveSystem.turnAbsolute(sign * -45, 0.5)){
-                step++;
-            }
-        }
-        if(step == 2){
-            if(driveSystem.driveToPosition(30, DriveSystem.Direction.FORWARD, 0.3)){
+//        }
+        if (step == 1) {
+            boolean drive = driveSystem.turnAbsolute(turn, 0.4);
+            boolean arm = revertArm(0.5);
+            if (drive && arm) {
                 step = 0;
-                park = true;
                 return true;
             }
         }
-        return false;
-    }
+            return false;
+        }
+
+
+        private boolean intake_cone () {
+            //TODO make applicable for multiple cones and add ternary
+            if (step == 0 && armSystem.driveToLevel(Cone.FIVE.approach(), .3)) {
+                step++;
+            }
+            if (step == 1 &&
+                    driveSystem.driveToPosition(125, DriveSystem.Direction.FORWARD, 0.2)) {
+                step++;
+            }
+            if (step == 2 && (armSystem.intake() || armSystem.driveToLevel(Cone.FIVE.grab(), 0.3))) {
+                step++;
+            }
+            if (step == 3) {
+                if (armSystem.intake()) { // Complete the intake process -- i.e. stop
+                    step++;
+                }
+            }
+            if (step == 4 && armSystem.driveToLevel(Cone.FIVE.clear(), 0.3)) {
+                newState(State.DRIVE_BACK_TO_POLE);
+                return true;
+            }
+            return false;
+        }
+
+        private boolean drive_back_to_pole () {
+            if (step == 0) {
+                if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.3)) {
+                    step++;
+                }
+            }
+
+            if (step == 1) {
+                if (driveSystem.turnAbsolute(sign * -45, 0.5)) {
+                    step++;
+                }
+            }
+            if (step == 2) {
+                if (driveSystem.driveToPosition(30, DriveSystem.Direction.FORWARD, 0.3)) {
+                    step = 0;
+                    park = true;
+                    return true;
+                }
+            }
+            return false;
+        }
     /**
      * Changes state to given state
      *
@@ -286,8 +287,11 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
     @Override
     public void stop() {
-        msStuckDetectStop = 4000; // Maybe?
+        // Maybe?
         armSystem.armRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armSystem.armLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        while(!revertArm(0.3)){
+
+        }
     }
 }
