@@ -7,6 +7,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 //test
 import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -24,13 +25,15 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name = "PathwayCamTest", group = "")
-public class PathwayCamTest extends LinearOpMode {
+@Autonomous(name = "Place cones w/ origin sleeve (Red side red terminal)", group = "")
+public class RRTerminalwOriginConePlace extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
     private DcMotor LB = null;
     private DcMotor RB = null;
+    private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    private DcMotor arm = null;
 
     static final float MAX_SPEED = 1.0f;
     static final float MIN_SPEED = 0.4f;
@@ -65,10 +68,18 @@ public class PathwayCamTest extends LinearOpMode {
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
 
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        gripper = hardwareMap.get(Servo.class, "gripper");
+
         LF.setDirection(DcMotor.Direction.REVERSE);  // motor direction set for mecanum wheels with mitre gears
         RF.setDirection(DcMotor.Direction.FORWARD);
         LB.setDirection(DcMotor.Direction.REVERSE);
         RB.setDirection(DcMotor.Direction.FORWARD);
+
+        //Reverse the arm direction so it moves in the proper direction
+        arm.setDirection(DcMotor.Direction.REVERSE);
+
+
 
         // IMU initialization
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -89,6 +100,10 @@ public class PathwayCamTest extends LinearOpMode {
 
         moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading);
         moveUtils.resetEncoders();
+
+        actuatorUtils.initializeActuator(arm, gripper);
+
+        actuatorUtils.gripperClose(true);
 
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
@@ -147,29 +162,39 @@ public class PathwayCamTest extends LinearOpMode {
 
             }
 
-        switch (resultROI) {
-            case 1:
-                // Far left
-                moveUtils.strafeBuddy(-35);
-                moveUtils.goStraight(26, MAX_SPEED, MIN_SPEED, ACCEL);
-                done=true;
+            switch (resultROI) {
+                case 1:
+                    // Far left
+                    moveUtils.strafeBuddy(-5);
+                    moveUtils.goStraight(26, MAX_SPEED, MIN_SPEED, ACCEL);
+                    done=true;
+                    break;
+                case 2:
+                    // Middle
+                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.strafeBuddy(5);
+                    moveUtils.goStraight(34, MAX_SPEED, MIN_SPEED, ACCEL);
+                    moveUtils.turnCW(45);
+                    actuatorUtils.armPole(3);
+                    moveUtils.goStraight(3,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.gripperOpen(true);
+                    moveUtils.goStraight(-5,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCCW(135);
+                    moveUtils.goStraight(10,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.coneCollect(1);
+                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.gripperClose(false);
+                    moveUtils.goStraight(-5,MAX_SPEED,MIN_SPEED,ACCEL);
+                    done=true;
+                    break;
+                case 3:
+                    // Far right
+                    moveUtils.strafeBuddy(5);
+                    moveUtils.goStraight(26, MAX_SPEED, MIN_SPEED, ACCEL);
+                    done=true;
 
-                break;
-            case 2:
-                // Middle
-
-                moveUtils.goStraight(34, MAX_SPEED, MIN_SPEED, ACCEL);
-                done=true;
-
-                break;
-            case 3:
-                // Far right
-                moveUtils.strafeBuddy(35);
-                moveUtils.goStraight(26, MAX_SPEED, MIN_SPEED, ACCEL);
-                done=true;
-
-                break;
-        }
+                    break;
+            }
 
 
         }
