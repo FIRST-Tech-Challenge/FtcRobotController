@@ -33,6 +33,7 @@ import static org.firstinspires.ftc.teamcode.HuskyBot.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -48,6 +49,29 @@ public class HuskyTeleOpMode extends LinearOpMode {
     double armExtendPower = 0.0;
     double armLiftPower = 0.0;
     private ElapsedTime runtime = new ElapsedTime();
+
+    // method to smoothly accelerate a motor given a target velocity.
+    void smoothAcceleration(DcMotorEx motor, double targetVel, double accelRate) {
+        double currentVel = motor.getVelocity();
+        double changeVel = 0;
+
+        // check if currentVel is close to targetVel. if it is, set velocity directly to the target.
+        if (Math.abs(currentVel - targetVel) < accelRate) {
+            currentVel = targetVel;
+        }
+        else {
+        // if motor is decelerating (approaching 0 vel), increase deceleration rate.
+            if (Math.abs(currentVel) > Math.abs(targetVel)) {
+                accelRate *= 2;
+            }
+        // set +/- changeVel based on if currentVel is lower or higher than targetVel.
+            changeVel = (currentVel < targetVel) ? accelRate : -accelRate;
+        }
+
+        // change the velocity of the motor (accelerate) based on changeVel.
+        motor.setVelocity(currentVel + changeVel);
+    }
+
 
     @Override
     public void runOpMode() {
@@ -82,16 +106,22 @@ public class HuskyTeleOpMode extends LinearOpMode {
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
 
-            double frontLeftVelocity = (y + x + rx) * HuskyBot.VELOCITY_CONSTANT;
-            double rearLeftVelocity = (y - x + rx) * HuskyBot.VELOCITY_CONSTANT;
-            double frontRightVelocity = (y - x - rx) * HuskyBot.VELOCITY_CONSTANT;
-            double rearRightVelocity = (y + x - rx) * HuskyBot.VELOCITY_CONSTANT;
+            // uses the left trigger to dynamically shift between different drive speeds.
+            // when the trigger is fully released, driveVelocity = 1.
+            // when the trigger is fully pressed, driveVelocity = 0.2.
+            float driveVelocity = (float) (1 - 0.8 * gamepad1.left_trigger);
 
-            // apply the calculated values to the motors.
-            huskyBot.frontLeftDrive.setVelocity(frontLeftVelocity);
-            huskyBot.rearLeftDrive.setVelocity(rearLeftVelocity);
-            huskyBot.frontRightDrive.setVelocity(frontRightVelocity);
-            huskyBot.rearRightDrive.setVelocity(rearRightVelocity);
+            // calculate motor velocities.
+            double frontLeftVelocity = (y + x + rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
+            double rearLeftVelocity = (y - x + rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
+            double frontRightVelocity = (y - x - rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
+            double rearRightVelocity = (y + x - rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
+
+            // apply the calculated values to the motors using smooth acceleration.
+            smoothAcceleration(huskyBot.frontLeftDrive, frontLeftVelocity, HuskyBot.VELOCITY_CONSTANT/5);
+            smoothAcceleration(huskyBot.rearLeftDrive, rearLeftVelocity, HuskyBot.VELOCITY_CONSTANT/5);
+            smoothAcceleration(huskyBot.frontRightDrive, frontRightVelocity, HuskyBot.VELOCITY_CONSTANT/5);
+            smoothAcceleration(huskyBot.rearRightDrive, rearRightVelocity, HuskyBot.VELOCITY_CONSTANT/5);
 
             // arm/claw mechanisms
             // todo + IMPORTANT: we will have to limit this to rotate only 240 degrees once the arm is added.
