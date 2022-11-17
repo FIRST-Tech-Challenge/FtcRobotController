@@ -113,19 +113,21 @@ To clone TeamCode, do the following:
 
 Note: Some names start with "Team" and others start with "team".  This is intentional.
 
-1)  Using your operating system file management tools, copy the whole "TeamCode"
+1) Using your operating system file management tools, copy the whole "TeamCode"
     folder to a sibling folder with a corresponding new name, eg: "Team0417".
 
-2)  In the new Team0417 folder, delete the TeamCode.iml file.
+2) In the new Team0417 folder, delete the TeamCode.iml file.
 
-3)  the new Team0417 folder, rename the "src/main/java/org/firstinspires/ftc/teamcode" folder
+3) the new Team0417 folder, rename the "src/main/java/org/firstinspires/ftc/teamcode" folder
     to a matching name with a lowercase 'team' eg:  "team0417".
 
-4)  In the new Team0417/src/main folder, edit the "AndroidManifest.xml" file, change the line that contains
+4) In the new Team0417/src/main folder, edit the "AndroidManifest.xml" file, change the line that contains
          package="org.firstinspires.ftc.teamcode"
     to be
          package="org.firstinspires.ftc.team0417"
 
-5)  Add:    include ':Team0417' to the "/settings.gradle" file.
+5) Add:    include ':Team0417' to the "/settings.gradle" file.
     
-6)  Open up Android Studios and clean out any old files by using the menu to "Build/Clean Project""
+6) Open up Android Studios and clean out any old files by using the menu to "Build/Clean Project""
+
+trollface.jpg
