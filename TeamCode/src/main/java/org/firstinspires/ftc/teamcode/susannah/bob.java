@@ -13,15 +13,15 @@ public class bob extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        frontLeft = hardwareMap.get(DcMotor.class, "front_left");
-        frontRight = hardwareMap.get(DcMotor.class, "front_right");
-        backLeft = hardwareMap.get(DcMotor.class, "back_left");
-        backRight = hardwareMap.get(DcMotor.class, "back_right");
+        frontLeft = hardwareMap.get(DcMotor.class, "leftFront");
+        frontRight = hardwareMap.get(DcMotor.class, "rightFront");
+        backLeft = hardwareMap.get(DcMotor.class, "leftRear");
+        backRight = hardwareMap.get(DcMotor.class, "rightRear");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Initialized", "Ready to start");
         waitForStart();
@@ -40,10 +40,10 @@ public class bob extends LinearOpMode {
                         double speed = -gamepad1.left_stick_y;
                         double turn = gamepad1.right_stick_x;
                         double strafe = gamepad1.left_stick_x;
-                        frontLeft.setPower(speed + turn + strafe);
-                        frontRight.setPower(speed - turn + strafe);
-                        backLeft.setPower(speed + turn - strafe);
-                        backRight.setPower(speed - turn - strafe);
+                        frontLeft.setPower(speed - turn - strafe);
+                        frontRight.setPower(speed + turn - strafe);
+                        backLeft.setPower(speed - turn + strafe);
+                        backRight.setPower(speed + turn + strafe);
 
 //            double x = gamepad1.left_stick_x;
 //            double y = gamepad1.left_stick_y*-1;
