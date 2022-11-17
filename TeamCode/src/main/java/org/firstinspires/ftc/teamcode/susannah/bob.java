@@ -10,13 +10,26 @@ public class bob extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
+    private DcMotor grabber;
+    private DcMotor cascade;
+    private DcMotor susan;
 
     @Override
     public void runOpMode() {
+<<<<<<< Updated upstream
         frontLeft = hardwareMap.get(DcMotor.class, "leftFront");
         frontRight = hardwareMap.get(DcMotor.class, "rightFront");
         backLeft = hardwareMap.get(DcMotor.class, "leftRear");
         backRight = hardwareMap.get(DcMotor.class, "rightRear");
+=======
+        frontLeft = hardwareMap.get(DcMotor.class, "front_left");
+        frontRight = hardwareMap.get(DcMotor.class, "front_right");
+        backLeft = hardwareMap.get(DcMotor.class, "back_left");
+        backRight = hardwareMap.get(DcMotor.class, "back_right");
+        grabber = hardwareMap.get(DcMotor.class, "Grabber");
+        cascade = hardwareMap.get(DcMotor.class, "Cascade");
+        susan = hardwareMap.get(DcMotor.class, "Susan");
+>>>>>>> Stashed changes
 
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -40,10 +53,38 @@ public class bob extends LinearOpMode {
                         double speed = -gamepad1.left_stick_y;
                         double turn = gamepad1.right_stick_x;
                         double strafe = gamepad1.left_stick_x;
+<<<<<<< Updated upstream
                         frontLeft.setPower(speed - turn - strafe);
                         frontRight.setPower(speed + turn - strafe);
                         backLeft.setPower(speed - turn + strafe);
                         backRight.setPower(speed + turn + strafe);
+=======
+                        frontLeft.setPower(speed + turn + strafe);
+                        frontRight.setPower(speed - turn - strafe);
+                        backLeft.setPower(speed + turn + strafe);
+                        backRight.setPower(speed - turn - strafe);
+>>>>>>> Stashed changes
+
+                        //Grabber Control
+                        if (gamepad1.x) {
+                            grabber.setPower(1);
+                            sleep(100);
+                            grabber.setPower(0);
+                        } else if (gamepad1.y) {
+                            grabber.setPower(-1);
+                            sleep(100);
+                            grabber.setPower(0);
+                        }
+
+                        //Cascade control
+                        if (gamepad1.right_trigger > 0.01) {
+                                cascade.setPower(gamepad1.right_trigger);
+                        } else if (gamepad1.left_trigger > 0.01) {
+                                cascade.setPower(gamepad1.left_trigger / -3);
+                        } else {
+                                cascade.setPower(0);
+                        }
+
 
 //            double x = gamepad1.left_stick_x;
 //            double y = gamepad1.left_stick_y*-1;
