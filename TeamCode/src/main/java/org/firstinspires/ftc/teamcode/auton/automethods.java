@@ -165,7 +165,7 @@ public class automethods extends LinearOpMode {
             robot.turntableLeft.setPower(0);
             robot.turntableRight.setPower(0);
         }}
-
+*/
     //////////////////////////turning////////////////////
     public void imuTurn(double speed, double angle) {
 
@@ -175,7 +175,7 @@ public class automethods extends LinearOpMode {
             telemetry.update();
         }
     }
-*/
+
     boolean onHeading(double speed, double angle, double PCoeff) {
         double error;
         double steer;

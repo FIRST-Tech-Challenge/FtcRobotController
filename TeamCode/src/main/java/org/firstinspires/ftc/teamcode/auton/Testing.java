@@ -30,7 +30,7 @@ public class Testing extends automethods {
 ////////////////////////////////////ROBOT  START////////////////////////////////////////////////////
 
 
-        encoderDrive(.5, 80, 6);
+        imuTurn(.3,-90);
 
 
 
