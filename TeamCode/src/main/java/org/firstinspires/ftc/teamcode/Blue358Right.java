@@ -143,28 +143,30 @@ public class Blue358Right extends Driving358
         sleep(2000);
         int lateralMoveDistance = 25;
         int angleAmount = 95;
-        //switch(parkLevel){//moves to the alliance shipping hub based on what it reads
-            //case (1)://Warehouse close. Scoring level 1. Bottom
-               // levelLift('l');
+        switch(parkLevel){//moves to the alliance shipping hub based on what it reads
+            case (1)://Warehouse close. Scoring level 1. Bottom
+                 //levelLift('l');
                 //rotate(.5, 'r', angleAmount);
-                //move(.6, 'l', lateralMoveDistance-2);
-             //   distanceMove(20, false);
-                //break;
-            //case (2)://Mid. Scoring level 2. Mid
-            //    levelLift('m');
+                move(.6, 'f', 35);
+                move(.6, 'l', 60);
+                //distanceMove(20, false);
+                break;
+            case (2)://Mid. Scoring level 2. Mid
+                //levelLift('m');
                 //rotate(.5, 'r', angleAmount);
-                //move(.6, 'l', lateralMoveDistance);
-            //    distanceMove(25, false);
-                //break;
-            //case (3)://warehouse far. scoring level 3 top
-           //     levelLift('t');
-                //rotate(.5, 'r', angleAmount);
-                //move(.6, 'l', lateralMoveDistance+2);
-           //     distanceMove(45, false);
-                //break;
-            //default:
-                //break;
-        //}
+                move(.6, 'f', 35);
+                move(.6, 'l', 45);
+                //distanceMove(25, false);
+                break;
+            case (3)://warehouse far. scoring level 3 top
+                //levelLift('t');
+                move(.6, 'f', 35);
+                move(.6, 'l', 45);
+                //distanceMove(45, false);
+                break;
+            default:
+                break;
+        }
 //        robot.clawServo.setPosition(0.5);
 //        sleep(200);
 //        robot.clawServo.setPosition(.15);
@@ -175,8 +177,7 @@ public class Blue358Right extends Driving358
 //        if (parkLevel!=3) {
 //            levelLift('t');
 //        }
-        rotate(0.5, 'l', 90);
-        move(.3, 'f', 33.25);
+
         //this section is specifically to deliver ducks.
         //move(0.4,'f',45);
         //move (.2, 'r', 5);//untested
@@ -200,7 +201,7 @@ public class Blue358Right extends Driving358
                 // the last time that call was made.
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                 if (updatedRecognitions != null) {
-                    telemetry.addData("# Duck Detected", updatedRecognitions.size());
+                    telemetry.addData("# image Detected", updatedRecognitions.size());
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
