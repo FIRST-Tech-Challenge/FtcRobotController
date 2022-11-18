@@ -269,8 +269,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
      * @param tagsizeY the original height of the tag
      * @return the 6DOF pose of the camera relative to the tag
      */
-    Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY)
-    {
+    Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY) {
         // The actual 2d points of the tag detected in the image
         MatOfPoint2f points2d = new MatOfPoint2f(points);
 
