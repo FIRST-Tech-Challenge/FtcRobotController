@@ -99,7 +99,7 @@ public class BlueRightAutoCycle extends LinearOpMode {
                 .build();
 
         Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyx2,dummyy2, Math.toRadians(dummya2)))
-                .lineToLinearHeading(new Pose2d(-57, 12,Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-55, 12,Math.toRadians(180)))
                 .build();
         while(!isStarted()){
             telemetry.addData("pos",robot.cv.getPosition());

@@ -26,7 +26,7 @@ public class Claw {
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 0.31;
+    private final double CLAW_CLOSED_POS = 0.3;
 
     //temporary
     private final double CLAW_OPEN_POS = 0.48;

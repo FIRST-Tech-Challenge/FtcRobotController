@@ -10,13 +10,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-@Disabled
+
 @Config
 @Autonomous(name = "BlueLeftAutoHigh")
 
@@ -33,12 +32,12 @@ public class BlueLeftAutoHigh extends LinearOpMode {
 
     public static double dummyX2 = 33, dummyY2 =36, dummyA2 = 90;
 
-    public static double dummyX3 = 56, dummyY3 =34, dummyA3 = 90;
+    public static double dummyX3 = 55, dummyY3 =34, dummyA3 = 90;
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(40.35, 62.25, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(41.85, 62.25, Math.toRadians(270));
         robot.roadrun.setPoseEstimate(startPose);
 
         //detectSignal();
@@ -64,7 +63,7 @@ public class BlueLeftAutoHigh extends LinearOpMode {
         Trajectory preloadtrajectory1 = robot.roadrun.trajectoryBuilder(new Pose2d(13,37, Math.toRadians(270)))
                 .lineToLinearHeading(new Pose2d(0,33, Math.toRadians(dummya)))
                 .build();
-        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(0,33, Math.toRadians(270)))
+        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(0,32, Math.toRadians(270)))
                 .lineToLinearHeading(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
                 .build();
         Trajectory backtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyx,dummyy, Math.toRadians(dummya)))
@@ -74,11 +73,11 @@ public class BlueLeftAutoHigh extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(dummyX, dummyY,Math.toRadians(dummyA)))
                 .build();
 
-        Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyX,dummyY, Math.toRadians(dummyA)))
+        Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyx2,dummyy2, Math.toRadians(dummya2)))
                 .lineToLinearHeading(new Pose2d(dummyX2, dummyY2,Math.toRadians(dummyA2)))
                 .build();
 
-        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyX2,dummyY2, Math.toRadians(dummyA2)))
+        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dummyx2,dummyy2, Math.toRadians(dummya2)))
                 .lineToLinearHeading(new Pose2d(dummyX3, dummyY3,Math.toRadians(dummyA3)))
                 .build();
 

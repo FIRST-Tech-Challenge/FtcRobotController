@@ -8,6 +8,9 @@ import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.pow;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -268,9 +271,11 @@ public class PwPRobot extends BasicRobot {
 
         if (op.gamepad2.y) {
             lift.setLiftTarget(LIFT_HIGH_JUNCTION.getValue());
+            liftArm.raiseLiftArmToOuttake();
         }
         if (op.gamepad2.b) {
             lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
+            liftArm.raiseLiftArmToOuttake();
         }
         if (op.gamepad2.a) {
             liftArm.lowerLiftArmToIntake();
@@ -287,18 +292,25 @@ public class PwPRobot extends BasicRobot {
             lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
             lift.updateLastManualTime();
         }
-        //when not manual lifting, automate lifting
         else {
 //            lift.setLiftPower(0);
             lift.liftToTarget();
         }
 
-        if (field.lookingAtPole() && op.gamepad1.dpad_up && !roadrun.isBusy()) {
-            field.updateTrajectory();
-            teleAutoAim(field.getTrajectory());
-        } else if (roadrun.isBusy()) {
-            //nothin
-        } else {
+        if(op.gamepad2.dpad_down){
+            lift.iterateConeStackDown();
+        }
+        if(op.gamepad2.dpad_up){
+            lift.iterateConeStackUp();
+        }
+        //when not manual lifting, automate lifting
+
+//        if (field.lookingAtPole() && op.gamepad1.dpad_up && !roadrun.isBusy()) {
+//            field.updateTrajectory();
+//            teleAutoAim(field.getTrajectory());
+//        } else if (roadrun.isBusy()) {
+//            //nothin
+//        } else {
             double[] vals = {op.gamepad1.left_stick_x,op.gamepad1.left_stick_y,op.gamepad1.right_stick_x};
             if(op.gamepad1.left_stick_x==0){
                 vals[0]=0.01;
@@ -311,9 +323,9 @@ public class PwPRobot extends BasicRobot {
             }
             roadrun.setWeightedDrivePower(
                     new Pose2d(
-                            -vals[1]*0.5/*vals[1]/abs(vals[1]) * pow(vals[1],2)*/,
-                            -vals[0]*0.5/*vals[0]/abs(vals[0]) * pow(vals[0],2)*/,
-                            -vals[2]*0.5/*vals[2]/abs(vals[2]) * pow(vals[2],2)*/
+                            -/*vals[1]**/0.53*vals[1]/abs(vals[1]) * pow(abs(vals[1]),3.0/2),
+                            -/*vals[0]**/0.53*vals[0]/abs(vals[0]) * pow(abs(vals[0]),3.0/2),
+                            -/*vals[2]**/0.53*vals[2]/abs(vals[2]) * pow(abs(vals[2]),3.0/2)
                     )
             );
             if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
@@ -354,8 +366,14 @@ public class PwPRobot extends BasicRobot {
             }
             claw.closeClaw();
             if (op.getRuntime() - claw.getLastTime() > .3 && op.getRuntime() - claw.getLastTime() < .5 && CLAW_CLOSED.getStatus()) {
-                liftArm.raiseLiftArmToOuttake();
+                if(lift.getLiftPosition()>120) {
+                    lift.raiseLiftOffStack();
+                }
+                else {
+                    liftArm.raiseLiftArmToOuttake();
+                }
             }
+
 
             //manual open/close claw (will jsut be open claw in the future)
 
@@ -371,11 +389,11 @@ public class PwPRobot extends BasicRobot {
             gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Lift going down power");
             gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Lift going up power");
             gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Lift Arm Toggle Up/Down");
-
+            op.telemetry.addData("stacklevel", lift.getStackLevel());
             roadrun.update();
             liftArm.updateLiftArmStates();
             claw.updateClawStates();
             lift.updateLiftStates();
-        }
+//        }
     }
 }
