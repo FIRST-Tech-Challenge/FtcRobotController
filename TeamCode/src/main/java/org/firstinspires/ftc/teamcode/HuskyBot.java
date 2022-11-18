@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 /**
  * This is NOT an opmode.
@@ -57,6 +58,9 @@ public class HuskyBot {
     public Servo clawLift = null;
     public Servo clawRotate = null;
     public Servo clawGrab = null; // TODO: set this to be fixed open/close positions.
+
+    // Webcam
+    public OpenCvWebcam webcam;
 
     // goBILDA 5203 Series Yellow Jacket Planetary Gear Motor
     // max encoder ticks per second
