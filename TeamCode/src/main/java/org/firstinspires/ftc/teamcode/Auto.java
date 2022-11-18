@@ -36,7 +36,6 @@ public class Auto extends AutoGuts {
         turn(1, 180);
         driveEncoder(20,100,1);
 
-        //TODO: add way to register poles on field
 
 
     }

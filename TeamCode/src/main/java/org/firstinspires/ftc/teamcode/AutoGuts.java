@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public abstract class AutoGuts extends Control {
 
+    ColorDetection colorDetection;
+
     @Override
     public void loop() {
         requestOpModeStop();
@@ -12,6 +14,11 @@ public abstract class AutoGuts extends Control {
     // TODO: fix ticks per inch to be accurate
     public static final double TICKS_PER_INCH = 4096;
 
+    @Override
+    public void init() {
+        super.init();
+        colorDetection = new ColorDetection();
+    }
 
     public void driveEncoder(double x, double y, double power) {
 

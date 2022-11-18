@@ -37,6 +37,6 @@ public abstract class Camera extends Control{
             }
 
 
-        }
+        });
     }
 }
