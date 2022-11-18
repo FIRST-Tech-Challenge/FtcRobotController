@@ -83,17 +83,33 @@ public class HardwareSlimbot
 
     //====== MOTORS FOR GAMEPLAY MECHANISMS (turret / lift) =====
     protected DcMotorEx turretMotor        = null;    // A pair of motors operated as one with a Y cable
-    public int          turretMotorTgt     = 0;       // RUN_TO_POSITION target encoder count
     public int          turretMotorPos     = 0;       // current encoder count
     public double       turretMotorVel     = 0.0;     // encoder counts per second
-    public double       turretMotorAmps    = 0.0;     // current power draw (Amps)
+    public boolean      turretMotorAuto    = false;   // Automatic movement in progress
+    public int          turretMotorCycles  = 0;       // Automatic movement cycle count
+    public int          turretMotorWait    = 0;       // Automatic movement wait count (truly there! not just passing thru)
+    public double       turretMotorPwr     = 0.0;     // turret motor power setpoint (-1.0 to +1.0)
+    public double       turretMotorAmps    = 0.0;     // turret motor current power draw (Amps)
 
     protected AnalogInput turretEncoder    = null;    // US Digital absolute magnetic encoder (MA3)
     public double       turretAngle        = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
     public double       turretAngleOffset  = 299.0;   // allows us to adjust the 0-360 deg range
+    public double       turretAngleTarget  = 0.0;     // Automatic movement target angle (degrees)
 
     public double       TURRET_LIMIT_LEFT  = -90.0;   // absolute encoder angles at maximum rotation LEFT
     public double       TURRET_LIMIT_RIGHT = +90.0;   // absolute encoder angles at maximum rotation RIGHT
+
+    // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
+    // motor performance we store data to memory until the movement is complete, then dump to a file.
+    public boolean          turretMotorLogging   = false; // only enable during development!!
+    public final static int TURRETMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
+    protected double[]      turretMotorLogTime   = new double[TURRETMOTORLOG_SIZE];  // msec
+    protected double[]      turretMotorLogAngle  = new double[TURRETMOTORLOG_SIZE];  // Angle [degrees]
+    protected double[]      turretMotorLogPwr    = new double[TURRETMOTORLOG_SIZE];  // Power
+    protected double[]      turretMotorLogAmps   = new double[TURRETMOTORLOG_SIZE];  // mAmp
+    protected boolean       turretMotorLogEnable = false;
+    protected int           turretMotorLogIndex  = 0;
+    protected ElapsedTime   turretMotorTimer     = new ElapsedTime();
 
     protected DcMotorEx liftMotorF         = null;    // FRONT lift motor
     protected DcMotorEx liftMotorB         = null;    // BACK lift motor
@@ -110,13 +126,14 @@ public class HardwareSlimbot
     public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)
 
     public double       LIFT_ANGLE_MAX     =  92.0;   // absolute encoder angle at maximum rotation FRONT
-    public double       LIFT_ANGLE_MIN     = -20.0;   // absolute encoder angle at maximum rotation REAR
+    public double       LIFT_ANGLE_MIN     = -60.0;   // absolute encoder angle at maximum rotation REAR
     // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
     public double       LIFT_ANGLE_COLLECT = 87.0;    // lift position for collecting cones
     public double       LIFT_ANGLE_GROUND  = 88.0;    // lift position for collecting cones
     public double       LIFT_ANGLE_LOW     = 66.0;    // lift position for LOW junction
     public double       LIFT_ANGLE_MED     = 42.0;    // lift position for MEDIUM junction
     public double       LIFT_ANGLE_HIGH    = 12.0;    // lift position for HIGH junction
+    public double       LIFT_ANGLE_BACK_H  = -57.0;   // lift position for BACK-SCORE HIGH junction
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -152,9 +169,10 @@ public class HardwareSlimbot
 
     public double       currentTilt         =  0.00;
     public double       GRABBER_TILT_MAX    =  0.50;  // 0.5 (max) is up; -0.5 (min) is down
-    public double       GRABBER_TILT_INIT   =  0.50;
-    public double       GRABBER_TILT_STORE  =  0.30;
-    public double       GRABBER_TILT_GRAB   =  0.20;
+    public double       GRABBER_TILT_INIT   =  0.00;
+    public double       GRABBER_TILT_STORE  = -0.15;
+    public double       GRABBER_TILT_SCORE1 =  0.19;
+    public double       GRABBER_TILT_GRAB   = -0.26;
     public double       GRABBER_TILT_MIN    = -0.50;
 
     public Servo        rotateServo         = null;   // rotate GRABBER left/right
@@ -403,6 +421,7 @@ public class HardwareSlimbot
         //===== EXPANSION HUB VALUES =====
         turretMotorPos     = turretMotor.getCurrentPosition();
         turretMotorVel     = turretMotor.getVelocity();
+        turretMotorPwr     = turretMotor.getPower();
         turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
         liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
         double liftMotorPwrPrior = liftMotorPwr;
@@ -428,6 +447,17 @@ public class HardwareSlimbot
             if( ++liftMotorLogIndex >= LIFTMOTORLOG_SIZE )
                 liftMotorLogEnable = false;
         } // liftMotorLogEnable
+
+        // Do we need to capture turret motor instrumentation data?
+        if( turretMotorLogEnable ) {
+            turretMotorLogTime[turretMotorLogIndex]  = turretMotorTimer.milliseconds();
+            turretMotorLogAngle[turretMotorLogIndex] = turretAngle;
+            turretMotorLogPwr[turretMotorLogIndex]   = turretMotorPwr;
+            turretMotorLogAmps[turretMotorLogIndex]  = turretMotorAmps;
+            // If the log is now full, disable further logging
+            if( ++turretMotorLogIndex >= TURRETMOTORLOG_SIZE )
+                turretMotorLogEnable = false;
+        } // turretMotorLogEnable
 
     } // readBulkData
 
@@ -636,6 +666,108 @@ public class HardwareSlimbot
             e.printStackTrace();
         }
     } // writeLiftLog()
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* turretPosInit()                                                                            */
+    /* - newAngle = desired turret angle                                                          */
+    public void turretPosInit( double newAngle )
+    {
+        // Current distance from target (degrees)
+        double degreesToGo = newAngle - turretAngle;
+
+        // Are we ALREADY at the specified angle?
+        if( Math.abs(degreesToGo) < 1.0 )
+            return;
+
+        // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
+        turretMotor.setPower( 0.0 );
+
+        // Establish a new target angle & reset counters
+        turretMotorAuto   = true;
+        turretAngleTarget = newAngle;
+        turretMotorCycles = 0;
+        turretMotorWait   = 0;
+
+        // If logging instrumentation, begin a new dataset now:
+        if( turretMotorLogging ) {
+            turretMotorLogIndex  = 0;
+            turretMotorLogEnable = true;
+            turretMotorTimer.reset();
+        }
+
+    } // turretPosInit
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* turretPosRun()                                                                             */
+    public void turretPosRun()
+    {
+        // Has an automatic movement been initiated?
+        if( turretMotorAuto ) {
+            // Keep track of how long we've been doing this
+            turretMotorCycles++;
+            // Current distance from target (angle degrees)
+            double degreesToGo = turretAngleTarget - turretAngle;
+            // Have we achieved the target?
+            if( Math.abs(degreesToGo) < 1.0 ) {
+                turretMotor.setPower( 0.0 );
+                if( ++turretMotorWait >= 2 ) {
+                    turretMotorAuto = false;
+                    writeTurretLog();
+                }
+            }
+            // No, still not within tolerance of desired target
+            else {
+                // Reset the wait count back to zero
+                turretMotorWait = 0;
+                double turretMotorPower;
+                if( Math.abs(degreesToGo) > 15.0 )
+                    turretMotorPower = 0.05 * degreesToGo;  // 1 deg = 0.05
+                else
+                    turretMotorPower = 0.01 * degreesToGo;  // 1 deg = 0.01
+                if( turretMotorPower < -0.40 ) turretMotorPower = -0.40;
+                if( turretMotorPower > +0.40 ) turretMotorPower = +0.40;
+                turretMotor.setPower( turretMotorPower );
+            }
+        } // turretMotorAuto
+    } // turretPosRun
+
+    /*--------------------------------------------------------------------------------------------*/
+    public void writeTurretLog() {
+        // Are we even logging these events?
+        if( !turretMotorLogging) return;
+        // Movement must be complete (disable further logging to memory)
+        turretMotorLogEnable = false;
+        // Create a subdirectory based on DATE
+        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String directoryPath = Environment.getExternalStorageDirectory().getPath() + "//FIRST//TurretMotor//" + dateString;
+        // Ensure that directory path exists
+        File directory = new File(directoryPath);
+        directory.mkdirs();
+        // Create a filename based on TIME
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String filePath = directoryPath + "/" + "turret_" + timeString + ".txt";
+        // Open the file
+        FileWriter turretLog;
+        try {
+            turretLog = new FileWriter(filePath, false);
+            turretLog.write("TurretMotor\r\n");
+            turretLog.write("Target Angle," + turretAngleTarget + "\r\n");
+            // Log Column Headings
+            turretLog.write("msec,pwr,mAmp,angle\r\n");
+            // Log all the data recorded
+            for( int i=0; i<turretMotorLogIndex; i++ ) {
+                String msecString = String.format("%.3f, ", turretMotorLogTime[i] );
+                String pwrString  = String.format("%.3f, ", turretMotorLogPwr[i]  );
+                String ampString  = String.format("%.0f, ", turretMotorLogAmps[i] );
+                String degString  = String.format("%.2f\r\n", turretMotorLogAngle[i]  );
+                turretLog.write( msecString + pwrString + ampString + degString );
+            }
+            turretLog.flush();
+            turretLog.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } // writeTurretLog()
 
     /*--------------------------------------------------------------------------------------------*/
     /* NOTE ABOUT RANGE SENSORS:                                                                  */

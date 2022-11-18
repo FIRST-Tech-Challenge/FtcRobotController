@@ -23,8 +23,8 @@ public abstract class Teleop extends LinearOpMode {
 //  boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;  //   (see processDpadDriveMode() below)
 //  boolean gamepad1_dpad_left_last,  gamepad1_dpad_left_now  = false;
 //  boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
-//  boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;
-//  boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;
+    boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;
+    boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;
     boolean gamepad1_touchpad_last,   gamepad1_touchpad_now   = false;  // autodrive to cone storage area
 
     boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  // Raise lift to TRANSPORT position
@@ -148,6 +148,7 @@ public abstract class Teleop extends LinearOpMode {
 
             // Execute any automatic movements
             robot.liftPosRun();
+            robot.turretPosRun();
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -243,8 +244,8 @@ public abstract class Teleop extends LinearOpMode {
 //      gamepad1_dpad_down_last  = gamepad1_dpad_down_now;   gamepad1_dpad_down_now  = gamepad1.dpad_down;
 //      gamepad1_dpad_left_last  = gamepad1_dpad_left_now;   gamepad1_dpad_left_now  = gamepad1.dpad_left;
 //      gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
-//      gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
-//      gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
+        gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
+        gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
 //      gamepad1_touchpad_last   = gamepad1_touchpad_now;    gamepad1_touchpad_now   = gamepad1.touchpad;
     } // captureGamepad1Buttons
 
@@ -268,7 +269,7 @@ public abstract class Teleop extends LinearOpMode {
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
     /*---------------------------------------------------------------------------------*/
     boolean processDpadDriveMode() {
-        double fineDriveSpeed  = 0.21;
+        double fineDriveSpeed  = 0.40;
         double fineStrafeSpeed = 0.35;
         double autoDriveSpeed  = 0.56;
         double fineTurnSpeed   = 0.05;
@@ -579,7 +580,25 @@ public abstract class Teleop extends LinearOpMode {
         double  gamepad2_left_stick = gamepad2.left_stick_x;
         boolean manual_turret_control = ( Math.abs(gamepad2_left_stick) > 0.05 );
 
-        if( manual_turret_control || turretTweaked ) {
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
+        if( gamepad1_cross_now && !gamepad1_cross_last)
+        {
+            robot.turretPosInit( 0.0 );
+        }
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
+        else if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
+        {
+           robot.turretPosInit( -20.0 );
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
+        else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last )
+        {
+           robot.turretPosInit( +44.0 );
+        }
+        //===================================================================
+        else if( manual_turret_control || turretTweaked ) {
             // Does user want to rotate turret LEFT (negative joystick input)
             if( safeToManuallyLeft && (gamepad2_left_stick < -0.05) ) {
                 double motorPower = multSegLinearRot( gamepad2_left_stick ); // NEGATIVE
@@ -671,13 +690,13 @@ public abstract class Teleop extends LinearOpMode {
         }
         //===================================================================
         // Check for input on the LEFT TRIGGER
-        else if( gamepad2.left_trigger > 0.03  )
+        else if( gamepad2.left_trigger > 0.05  )
         {   // rotate collector toward -0.50
             double newTilt = robot.currentTilt - 0.003;
             robot.grabberSetTilt( newTilt );
         }
         // Check for input on the RIGHT TRIGGER
-        else if( gamepad2.right_trigger > 0.03  )
+        else if( gamepad2.right_trigger > 0.05  )
         {   // rotate collector toward +0.50
             double newTilt = robot.currentTilt + 0.003;
             robot.grabberSetTilt( newTilt );
@@ -687,8 +706,10 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Raise lift to HIGH junction
             robot.grabberSpinStop();
-            robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-            robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
+//          robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+            robot.grabberSetTilt( robot.GRABBER_TILT_SCORE1 );
+//          robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
+            robot.liftPosInit( robot.LIFT_ANGLE_BACK_H );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
@@ -711,6 +732,7 @@ public abstract class Teleop extends LinearOpMode {
   //        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
             robot.liftPosInit( robot.LIFT_ANGLE_GROUND );
         }
+        //===================================================================
         else if( manual_lift_control || liftTweaked ) {
             // Does user want to rotate lift toward more NEGATIVE counts (negative joystick input)
             if( safeToManuallyRaise && (gamepad2_right_stick > 0.05) ) {

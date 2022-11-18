@@ -47,6 +47,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.readBulkData();
         globalCoordinatePositionUpdate();
         robot.liftPosRun();
+        robot.turretPosRun();
     }
 
     /*---------------------------------------------------------------------------------------------
@@ -512,6 +513,131 @@ public abstract class AutonomousBase extends LinearOpMode {
             robot.rearRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } // opModeIsActive()
     } // gyroDrive()
+
+    /*--------------------------------------------------------------------------------------------*/
+    /**
+     * Move robot to specified target position/orientation
+     * @param x_target (inches)
+     * @param y_target (inches)
+     * @param drive_angle (degrees; 0deg is straight ahead)
+     * @param move_power
+     * @param turn_power
+     * @return boolean true/false for DONE?
+     */
+    public void driveToPosition( double x_target, double y_target, double drive_angle,
+                                  double move_power, double turn_power ) {
+        // Loop until we reach the target (or autonomous program aborts)
+        while( opModeIsActive() ) {
+            // Bulk-query all odometry data (delta since last reading)
+            robot.readBulkData();
+            // Compute updated robot position/orientation
+            globalCoordinatePositionUpdate();
+            // Power drivetrain motors to move to where we WANT to be
+            if( moveToPosition( x_target, y_target, drive_angle, move_power, turn_power ) )
+                break;
+        } // opModeIsActive()
+    } // driveToPosition
+
+    /*--------------------------------------------------------------------------------------------*/
+    /**
+     * Compute instantaneous motor powers needed to move toward the specified target position/orientation
+     * NOTE that this system uses X and Y directions OPPOSITE of globalCoordinatePositionUpdate.
+     * @param x_target (inches)
+     * @param y_target (inches)
+     * @param drive_angle (degrees; 90deg is straight ahead)
+     * @param move_power
+     * @param turn_power
+     * @return boolean true/false for DONE?
+     */
+    public boolean moveToPosition( double x_target, double y_target, double drive_angle,
+                                    double move_power, double turn_power ) {
+        // Convert current robot X,Y position from encoder-counts to inches
+        double x_world = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH;  // inches (backward! see notes)
+        double y_world = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH;  // inches
+        double angle_world = robotOrientationRadians;                             // radians
+        // Compute distance and angle-offset to the target point
+        double distanceToPoint   = Math.sqrt( Math.pow((x_target - x_world),2.0) + Math.pow((y_target - y_world),2.0) );
+        double distToPointAbs    = Math.abs( distanceToPoint );
+        double angleToPoint      = (distToPointAbs < 0.001)? angle_world : Math.atan2( (y_target - y_world), (x_target - x_world) ); // radians
+        double deltaAngleToPoint = AngleWrapRadians( angleToPoint - angle_world );       // radians
+        // Compute x & y components required to move toward point (with angle correction)
+        double relative_x_to_point = Math.cos(deltaAngleToPoint) * distanceToPoint;
+        double relative_y_to_point = Math.sin(deltaAngleToPoint) * distanceToPoint;
+        // Compute absolute-value x and y distances for scaling
+        double relative_x_abs = Math.abs( relative_x_to_point );
+        double relative_y_abs = Math.abs( relative_y_to_point );
+        // Compute full movement power that preserves the shape/ratios of the intended movement direction
+        double movement_x_power = (relative_x_to_point / (relative_y_abs + relative_x_abs)) * move_power;
+        double movement_y_power = (relative_y_to_point / (relative_y_abs + relative_x_abs)) * move_power;
+        // If x-delta (forward error) within 3" (8.0cm) of target, then reduce from specified move_power
+        double x_slowdown_distance = (move_power >= 0.60)? 6.0 : 4.0;  // inches
+        double y_slowdown_distance = (move_power >= 0.60)? 5.0 : 3.0;  // inches
+        if( relative_x_abs <= x_slowdown_distance )
+           movement_x_power = Range.clip(((relative_x_to_point/x_slowdown_distance) * 0.10),-0.10,0.10);
+        // If y-delta (lateral error) within 1" (2.5cm) of target, then reduce from specified move_power
+        if( relative_y_abs <= y_slowdown_distance )
+           movement_y_power = Range.clip(((relative_y_to_point/y_slowdown_distance) * 0.12),-0.12,0.12);
+        // Compute robot orientation-angle error
+        double robot_radian_err = AngleWrapRadians( Math.toRadians(drive_angle) - angle_world );  // radians
+        double angle_tolerance = 0.25;  // degrees (within this tolerance rotation_power drops to 0%)
+        double smallAngleSpeed = 0.10;  // (0.18 .. 0.08) due to min_turn_power
+        // If within 20deg of target angle, scale-down power based on angular error, but don't drop below 8% (0.08)
+        // unless within the angle tolerance when rotation_power should drop to 0% (0.00).
+        double small_rad_error = Math.abs( robot_radian_err / Math.toRadians(30.0) );
+        double min_turn_power = (robot_radian_err <= Math.toRadians(angle_tolerance))? 0.00 : 0.08;
+        double adjusted_turn_power = (small_rad_error <= 1.0)? (small_rad_error * smallAngleSpeed + min_turn_power) : turn_power; 
+        double rotation_power = (robot_radian_err > 0.0)? adjusted_turn_power : -adjusted_turn_power;
+        // Translate X,Y,rotation power levels into mecanum wheel power values
+        // Note that this is the same math used for tele-op robot-centric driving
+        // except "x" and "y" for the odometry are opposite that of the controller joystick
+        // (assumes right motors are FORWARD; left motors are  REVERSE; positive power is FORWARD)
+        double frontRight = movement_x_power - movement_y_power - rotation_power;
+        double frontLeft  = movement_x_power + movement_y_power + rotation_power;
+        double backRight  = movement_x_power + movement_y_power - rotation_power;
+        double backLeft   = movement_x_power - movement_y_power + rotation_power;
+        // Determine the maximum motor power
+        double maxWheelPower = Math.max( Math.max( Math.abs(backLeft),  Math.abs(backRight)  ),
+                                         Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
+        // Ensure no wheel powers exceeds 1.0 or 100%
+        if( maxWheelPower > 1.00 )
+        {
+            backLeft   /= maxWheelPower;
+            backRight  /= maxWheelPower;
+            frontLeft  /= maxWheelPower;
+            frontRight /= maxWheelPower;
+        }
+        // If the computed wheel powers drop below 6% (minimum needed to produce robot movement)
+        // go ahead and abort as we'll be stuck here forever if we don't
+        if( maxWheelPower < 0.06 ) {
+            return true;
+        }
+        boolean ODOMETRY_DEBUG = false;
+        if( ODOMETRY_DEBUG ) {
+            sleep(100);       // allow 0.1 seconds of progress (from prior loop)...
+            robot.driveTrainMotorsZero(); // then stop and observe
+            telemetry.addData("World X (inches)", "%.2f in", x_world );
+            telemetry.addData("World Y (inches)", "%.2f in", y_world );
+            telemetry.addData("Orientation (deg)","%.2f deg", Math.toDegrees(angle_world) );
+            telemetry.addData("distanceToPoint", "%.2f in", distanceToPoint);
+            telemetry.addData("angleToPoint", "%.4f deg", Math.toDegrees(angleToPoint));
+            telemetry.addData("deltaAngleToPoint", "%.4f deg", Math.toDegrees(angleToPoint));
+            telemetry.addData("relative_x_to_point", "%.2f in", relative_x_to_point);
+            telemetry.addData("relative_y_to_point", "%.2f in", relative_y_to_point);
+            telemetry.addData("robot_radian_err", "%.4f deg", Math.toDegrees(robot_radian_err));
+            telemetry.addData("movement_x_power", "%.2f", movement_x_power);
+            telemetry.addData("movement_y_power", "%.2f", movement_y_power);
+            telemetry.addData("rotation_power", "%.2f", rotation_power);
+            telemetry.update();
+            sleep(3500);  // so we can read the output above
+        } // ODOMETRY_DEBUG
+        // Are we within tolerance of our target position/orientation?
+        double xy_tolerance = 0.25; // inches
+        if( (distanceToPoint <= xy_tolerance) && (Math.abs(robot_radian_err) <= Math.toRadians(angle_tolerance))  )
+            return true;
+        // NO, WE'RE NOT DONE! Update motor power settings
+        robot.driveTrainMotors( frontLeft, frontRight, backLeft, backRight );
+        return false;
+    } // moveToPosition
 
     /**
      * Ensure angle is in the range of -PI to +PI (-180 to +180 deg)

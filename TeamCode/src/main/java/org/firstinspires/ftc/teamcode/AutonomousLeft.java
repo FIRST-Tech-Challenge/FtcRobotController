@@ -105,7 +105,8 @@ public class AutonomousLeft extends AutonomousBase {
         //---------------------------------------------------------------------------------
         // UNIT TEST: The following methods verify our basic robot actions.
         // Comment them out when not being tested.
- //     testGyroDrive();
+//      testGyroDrive();
+//      unitTestOdometryDrive();
         //---------------------------------------------------------------------------------
 
         //---------------------------------------------------------------------------------
@@ -131,6 +132,19 @@ public class AutonomousLeft extends AutonomousBase {
         gyroTurn(TURN_SPEED_80, (startAngle + 240.0) );   // Turn another 120 degrees (240 total)
         gyroTurn(TURN_SPEED_80, startAngle );             // Turn back to starting angle (360 total)
     } // testGyroDrive
+
+    /*--------------------------------------------------------------------------------------------*/
+    // TEST CODE: Verify odometry-based motion functions against a tape measure
+    private void unitTestOdometryDrive() {
+        // Drive forward 12"
+        driveToPosition( 12.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40 );
+        // Strafe right 12"
+        driveToPosition( 12.0, 12.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40 );
+        // Turn 180 deg
+        driveToPosition( 12.0, 12.0, 179.9, DRIVE_SPEED_50, TURN_SPEED_40 );
+        // Stop
+        robot.driveTrainMotorsZero();
+    } // unitTestOdometryDrive
 
     /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous() {
