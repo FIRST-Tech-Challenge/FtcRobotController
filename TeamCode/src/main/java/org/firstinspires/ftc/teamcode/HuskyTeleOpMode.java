@@ -102,11 +102,11 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
             // arm/claw mechanisms
             // todo + IMPORTANT: we will have to limit this to rotate only 240 degrees once the arm is added.
-            armSwivelPower = -gamepad2.left_stick_x;
+            armSwivelPower = gamepad2.left_stick_x/2;
             armSwivelPower = Range.clip(armSwivelPower, -ARM_SWIVEL_MAX_POWER, ARM_SWIVEL_MAX_POWER);
             huskyBot.armSwivel.setPower(armSwivelPower);
 
-            armLiftPower = gamepad2.left_stick_y;
+            armLiftPower = -gamepad2.left_stick_y/2;
             // todo: this will have to be tuned for stability
             armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MAX_POWER, ARM_LIFT_MAX_POWER);
             if (armLiftPower == 0) {
@@ -126,11 +126,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
             if(gamepad2.right_stick_y > 0){
                 clawLiftPosition += 0.05;
             }
-            if(gamepad2.right_stick_y < 0)
-            {
+            if(gamepad2.right_stick_y < 0) {
                 clawLiftPosition -= 0.05;
             }
-            huskyBot.clawLift.setPosition(clawLiftPosition);
 
             if (gamepad2.x) {
                 huskyBot.clawGrab.setPosition(0.3);
@@ -140,16 +138,13 @@ public class HuskyTeleOpMode extends LinearOpMode {
             }
 
 
-            // todo: these *need* to be tuned
-            if(huskyBot.armLift.getPower() < 0)
+            // Dividing by four should account for the radius differences of both the spins, but it needs to be tested.
+            if(huskyBot.armLift.getPower() != 0)
             {
-                huskyBot.clawLift.setPosition(huskyBot.clawLift.getPosition() + 0.1);
+                clawLiftPosition = -huskyBot.armLift.getCurrentPosition()/4;
             }
 
-            if(huskyBot.armLift.getPower() > 0)
-            {
-                huskyBot.clawLift.setPosition(huskyBot.clawLift.getPosition() - 0.1);
-            }
+            huskyBot.clawLift.setPosition(clawLiftPosition);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Stick", "y (%.2f), x (%.2f), rx (%.2f)", y, x, rx);
