@@ -298,8 +298,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         Mat rvec;
         Mat tvec;
 
-        public Pose()
-        {
+        public Pose() {
             rvec = new Mat();
             tvec = new Mat();
         }
