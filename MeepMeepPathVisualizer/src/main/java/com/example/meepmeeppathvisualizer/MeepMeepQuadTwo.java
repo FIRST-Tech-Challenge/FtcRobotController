@@ -16,7 +16,7 @@ public class MeepMeepQuadTwo {
         new MeepMeepPersistence(mm);
         MeepMeepPersistence persist = new MeepMeepPersistence(mm);
         persist.restore();
-        Pose2d startPose = new Pose2d(35, 61.8, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(35, 61.8, Math.toRadians(90));
 
         // Creating bot
         RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
@@ -34,7 +34,7 @@ public class MeepMeepQuadTwo {
                 .followTrajectorySequence(drive -> {
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
 
-                    builder.lineToLinearHeading(new Pose2d(32,8,Math.toRadians(225)));
+                    builder.lineToLinearHeading(new Pose2d(32,8,Math.toRadians(50)));
                     builder.waitSeconds(1);
                     loop(builder, 4);
 
@@ -66,7 +66,7 @@ public class MeepMeepQuadTwo {
         {
             builder.lineToLinearHeading(new Pose2d(57, 12.3, Math.toRadians(0)));
             builder.waitSeconds(2.5); //This would be replaced with an actual intake function
-            builder.lineToLinearHeading(new Pose2d(32, 8, Math.toRadians(225)));
+            builder.lineToLinearHeading(new Pose2d(32, 8, Math.toRadians(50)));
             builder.waitSeconds(1);//Under the impression that using the async PID, the slides will be already be moved up
         }
     }
