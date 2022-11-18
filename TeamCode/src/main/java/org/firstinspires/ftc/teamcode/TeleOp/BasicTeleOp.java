@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Functions.Rotate;
 
 @TeleOp(name="Basic TeleOp", group="GAME")
 public class BasicTeleOp extends OpMode {
-    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack;
+    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack, armMotor;
     private Servo leftServo, rightServo;
     private Move move;
     private Rotate rotate;
@@ -22,6 +22,7 @@ public class BasicTeleOp extends OpMode {
         rightMotor = hardwareMap.dcMotor.get("FR");
         leftMotorBack = hardwareMap.dcMotor.get("BL");
         rightMotorBack = hardwareMap.dcMotor.get("BR");
+        armMotor = hardwareMap.dcMotor.get("AM");
         leftServo = hardwareMap.servo.get("LS");
         rightServo = hardwareMap.servo.get("RS");
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
@@ -84,6 +85,10 @@ public class BasicTeleOp extends OpMode {
         if(gamepad1.x)
         {
             clawServos.SwitchAndWait();
+        }
+        if(gamepad1.left_stick_y>0)
+        {
+            armMotor.setPower(gamepad1.left_stick_y);
         }
     }
 }

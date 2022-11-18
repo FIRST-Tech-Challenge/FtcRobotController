@@ -29,7 +29,6 @@ package org.firstinspires.ftc.teamcode.Autonomous;/* Copyright (c) 2019 FIRST. A
 
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.List;
@@ -60,10 +59,11 @@ public class WebcamPlay extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-   // private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    private static final String TFOD_MODEL_ASSET = "customModel.tflite";
-    // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
-
+   private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+  //  private static final String TFOD_MODEL_ASSET = "ModelPlay.tflite";
+   // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/customModel.tflite";
+    private String label = null;
+    private boolean isFound = false;
 
     private static final String[] LABELS = {
             "1 Bolt",
@@ -126,41 +126,90 @@ public class WebcamPlay extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(2.0, 16.0/9.0);
+            tfod.setZoom(1.7, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         waitForStart();
+        int number = 0;
+        if (tfod!=null) {
+            while (isFound==false) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Objects Detected", updatedRecognitions.size());
+                    number++;
+                    // step through the list of recognitions and display image position/size information for each one
+                    // Note: "Image number" refers to the randomized image orientation/number
+                    for (Recognition recognition : updatedRecognitions) {
+                        double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                        double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                        double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                        double height = Math.abs(recognition.getTop() - recognition.getBottom());
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
+                        label = recognition.getLabel();
 
-                        // step through the list of recognitions and display image position/size information for each one
-                        // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                            double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                            double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
 
-                            telemetry.addData(""," ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
+                        telemetry.addData("", " ");
+                        telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                        telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                        telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
+
+                        if(label.equals("1 Bolt"))
+                        {
+                            isFound = true;
+                            break;
                         }
-                        telemetry.update();
+                        else if(label.equals("2 Bulb"))
+                        {
+                            isFound = true;
+                            break;
+                        }
+                        else if(label.equals("3 Panel"))
+                        {
+                            isFound = true;
+                            break;
+                        }
+
                     }
+                    telemetry.update();
                 }
             }
         }
+        if(label!=null)
+        {
+            if(label.equals("1 Bolt"))
+            {
+                Bolt();
+            }
+            else if(label.equals("2 Bulb"))
+            {
+                Bulb();
+
+            }
+            else if(label.equals("3 Panel"))
+            {
+                Panel();
+            }
+        }
+    }
+
+    private void Bolt()
+    {
+
+    }
+
+    private void Bulb()
+    {
+
+    }
+
+    private void Panel()
+    {
+
     }
 
     /**
@@ -194,6 +243,7 @@ public class WebcamPlay extends LinearOpMode {
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+     //   tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LabelsCustom);
+        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LabelsCustom);
     }
 }

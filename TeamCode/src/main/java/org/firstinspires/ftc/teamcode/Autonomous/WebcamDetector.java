@@ -156,7 +156,7 @@ public class WebcamDetector extends LinearOpMode {
         ElapsedTime runtime = new ElapsedTime();
         int number=0;
         //   if (opModeIsActive()) {
-        while(opModeIsActive()) {
+        if(opModeIsActive()) {
             telemetry.addData("number=", number);
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
