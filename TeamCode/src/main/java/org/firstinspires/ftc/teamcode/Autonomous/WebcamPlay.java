@@ -31,12 +31,19 @@ package org.firstinspires.ftc.teamcode.Autonomous;/* Copyright (c) 2019 FIRST. A
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.Functions.ClawServos;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.NewEncoderMove;
+import org.firstinspires.ftc.teamcode.Functions.Rotate;
 
 /**
  * This 2022-2023 OpMode illustrates the basics of using the TensorFlow Object Detection API to
@@ -64,6 +71,12 @@ public class WebcamPlay extends LinearOpMode {
    // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/customModel.tflite";
     private String label = null;
     private boolean isFound = false;
+    private NewEncoderMove newEncoderMove;
+    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack, armMotor;
+    private Servo leftServo, rightServo;
+    private Move move;
+    private Rotate rotate;
+    private ClawServos clawServos;
 
     private static final String[] LABELS = {
             "1 Bolt",
@@ -112,6 +125,22 @@ public class WebcamPlay extends LinearOpMode {
         // first.
         initVuforia();
         initTfod();
+        leftMotor = hardwareMap.dcMotor.get("FL");
+        rightMotor = hardwareMap.dcMotor.get("FR");
+        leftMotorBack = hardwareMap.dcMotor.get("BL");
+        rightMotorBack = hardwareMap.dcMotor.get("BR");
+        armMotor = hardwareMap.dcMotor.get("AM");
+        leftServo = hardwareMap.servo.get("LS");
+        rightServo = hardwareMap.servo.get("RS");
+        move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
+        rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
+        clawServos = new ClawServos(leftServo, rightServo);
+        newEncoderMove = new NewEncoderMove(leftMotor, leftMotorBack, rightMotor, rightMotorBack);
+
+        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -199,17 +228,29 @@ public class WebcamPlay extends LinearOpMode {
 
     private void Bolt()
     {
-
+        newEncoderMove.DriveTo(-1000,1000,1000,-1000,0.7,opModeIsActive());
+        sleep(500);
+        newEncoderMove.DriveTo(1000,1000,1000,1000,0.7,opModeIsActive());
+        sleep(500);
+        newEncoderMove.DriveTo(-500,-500,500,500,0.7,opModeIsActive());
     }
 
     private void Bulb()
     {
-
+        newEncoderMove.DriveTo(-1000,1000,1000,-1000,0.7,opModeIsActive());
+        sleep(500);
+        newEncoderMove.DriveTo(1000,1000,1000,1000,0.7,opModeIsActive());
+        sleep(500);
+        newEncoderMove.DriveTo(-500,-500,500,500,0.7,opModeIsActive());
     }
 
     private void Panel()
     {
-
+        newEncoderMove.DriveTo(-1000,1000,1000,-1000,0.7,opModeIsActive());
+        sleep(500);
+        newEncoderMove.DriveTo(1000,1000,1000,1000,0.7,opModeIsActive());
+        sleep(500);
+        newEncoderMove.DriveTo(-500,-500,500,500,0.7,opModeIsActive());
     }
 
     /**

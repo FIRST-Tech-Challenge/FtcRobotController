@@ -84,11 +84,22 @@ public class BasicTeleOp extends OpMode {
         }
         if(gamepad1.x)
         {
-            clawServos.SwitchAndWait();
+           // clawServos.SwitchAndWait(1,getRuntime());
+            leftServo.setPosition(1);
+            rightServo.setPosition(0);
         }
-        if(gamepad1.left_stick_y>0)
+        if(gamepad1.a)
         {
-            armMotor.setPower(gamepad1.left_stick_y);
+            leftServo.setPosition(0);
+            rightServo.setPosition(1);
+        }
+        if(gamepad1.right_stick_y!=0)
+        {
+            armMotor.setPower(gamepad1.right_stick_y);
+        }
+        if(gamepad1.right_stick_y==0)
+        {
+            armMotor.setPower(0);
         }
     }
 }

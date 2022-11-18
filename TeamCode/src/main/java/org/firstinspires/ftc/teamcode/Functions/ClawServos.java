@@ -16,21 +16,30 @@ public class ClawServos {
     public void Open()
     {
         leftServo.setPosition(1);
-        rightServo.setPosition(1);
+        rightServo.setPosition(0);
         status1 = true;
     }
     public void Close() {
         leftServo.setPosition(0);
-        rightServo.setPosition(0);
+        rightServo.setPosition(0.8);
         status1 = false;
     }
 
-    public void SwitchAndWait(){
+    public void Switch(){
         if(status1){
-            Open();
+            Close();
         }
         else{
-            Close();
+            Open();
+        }
+    }
+    double currentWaitTime =0;
+    double currentTimeStamp =0;
+    public void SwitchAndWait(double x, double currentRuntime){
+        if(currentWaitTime ==0|| currentTimeStamp + currentWaitTime <=currentRuntime){
+            Switch();
+            currentTimeStamp =currentRuntime;
+            currentWaitTime =x;
         }
     }
 
