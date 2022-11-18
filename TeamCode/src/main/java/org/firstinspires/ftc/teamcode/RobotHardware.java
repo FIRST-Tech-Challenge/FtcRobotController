@@ -36,13 +36,12 @@ public class RobotHardware {
         fourbar1 = myOpMode.hardwareMap.get(DcMotor.class, "MotorFourbar1");
         fourbar2 = myOpMode.hardwareMap.get(DcMotor.class, "MotorFourbar2");
         fourbar1.setDirection(DcMotorSimple.Direction.REVERSE);
-        fourbar2.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
     }
 
     public void movement(Gamepad gamepad1) {
-        double frontLeftPower = +gamepad1.left_stick_y -
+        double frontLeftPower = gamepad1.left_stick_y -
                 gamepad1.left_stick_x -
                 gamepad1.right_stick_x;
         double backLeftPower = gamepad1.left_stick_y +
@@ -59,7 +58,7 @@ public class RobotHardware {
             frontLeftPower *= 0.3;
             backRightPower *= 0.3;
             backLeftPower *= 0.3;
-        } else if (!gamepad1.right_bumper && gamepad1.left_trigger == 0) {
+        } else if (!gamepad1.right_bumper) {
             frontRightPower *= 0.6;
             frontLeftPower *= 0.6;
             backRightPower *= 0.6;
@@ -71,7 +70,8 @@ public class RobotHardware {
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
     }
-    public void sisteme(Gamepad gamepad1){
-        fourbar1.setPower((gamepad1.right_trigger - gamepad1.left_trigger) * 0.6);
+    public void setFourbarPower(double power){
+        fourbar1.setPower(power);
+        fourbar2.setPower(power);
     }
 }

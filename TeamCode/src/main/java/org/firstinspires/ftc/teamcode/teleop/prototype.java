@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.teamcode.RobotHardware;
 
@@ -18,7 +17,7 @@ public class prototype extends OpMode {
 
     @Override
     public void loop() {
-        robot.sisteme(gamepad1);
+        robot.setFourbarPower(gamepad1.right_trigger - gamepad1.left_trigger);
         robot.movement(gamepad1);
     }
 
