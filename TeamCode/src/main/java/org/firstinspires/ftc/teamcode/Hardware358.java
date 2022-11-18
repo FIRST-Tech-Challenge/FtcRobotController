@@ -73,7 +73,7 @@ public class Hardware358 {
         rf = HwMap.get(DcMotor.class, "rf");
         rb = HwMap.get(DcMotor.class, "rb");
         lb = HwMap.get(DcMotor.class, "lb");
-        m = HwMap.get(DcMotor.class, "mid");
+        //m = HwMap.get(DcMotor.class, "mid");
         lift = HwMap.get(DcMotor.class, "lift");
         leftServo = HwMap.get(Servo.class,"leftServo");
         rightServo = HwMap.get(Servo.class,"rightServo");
@@ -83,14 +83,14 @@ public class Hardware358 {
         rf.setDirection(DcMotor.Direction.REVERSE);
         lb.setDirection(DcMotor.Direction.FORWARD);
         rb.setDirection(DcMotor.Direction.REVERSE);
-        m.setDirection(DcMotor.Direction.FORWARD);
+        //m.setDirection(DcMotor.Direction.FORWARD);
         lift.setDirection(DcMotor.Direction.FORWARD);
 
         lf.setPower(0);
         rf.setPower(0);
         lb.setPower(0);
         rb.setPower(0);
-        m.setPower(0);
+        //m.setPower(0);
         lift.setPower(0);
 
         leftServo.setPosition(1);
@@ -100,7 +100,7 @@ public class Hardware358 {
         rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 

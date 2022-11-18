@@ -19,8 +19,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //                     // call hardware class here
 
 
-//                     t();
-
 //                     if (isStopRequested()) return;
 
 //                     while (opModeIsActive()) {
@@ -28,7 +26,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //                         double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
 //                         double rx = gamepad1.right_stick_x;
 
-//                         // Denominator is the largest motor power (absolute value) or 1
+//                         // nominator is the largest motor power (absolute value) or 1
 //                         // This ensures all the powers maintain the same ratio, but only when
 //                         // at least one is out of the range [-1, 1]
 //                         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -63,7 +61,7 @@ public class TeleOp_358 extends OpMode {
     //methods to control the speed of the robot.
     private float speedModifier = 2f;
     private float reductionModifier = .3f;//the amount that the speed will be decreased in precision mode. Should be < 1
-    private float turboModifier = 3f;// the amount that the speed will be increased in turbo mode. Must be <2. No increase is 1.
+    private float turboModifier = 1.9f;// the amount that the speed will be increased in turbo mode. Must be <2. No increase is 1.
     private float precisionActive = 1f;
     private float turnReduction = .5f;//reduces the speed of turning. <1 to reduce. 1 if to leave as normal> yuh
     //private float BRDrive = 1f;
@@ -97,31 +95,25 @@ public class TeleOp_358 extends OpMode {
         {
             double stickX = 0;
             double stickY = 0;
-            double stickR = 0;
-            if (Math.abs(gamepad1.left_stick_x) + Math.abs(gamepad1.left_stick_y)> Math.abs(gamepad2.left_stick_x) + Math.abs(gamepad2.left_stick_y)){
-                stickY = gamepad1.left_stick_x;
-                stickX = gamepad1.left_stick_y;
+            boolean form = false;
+            if (Math.abs(gamepad1.right_stick_x) > 0){
+                stickX = gamepad1.right_stick_x;
             }
-            else{
-                stickY = gamepad2.left_stick_x;
-                stickX = gamepad2.left_stick_y;
+            if(Math.abs(gamepad1.left_stick_y) > 0){
+                stickY = gamepad1.left_stick_y;
             }
-
-            if (Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad2.left_stick_x)){
-                stickR = gamepad1.right_stick_x;
-            }
-            else {
-                stickR = gamepad2.right_stick_x;
+            if(Math.abs(gamepad1.left_stick_y) > 0){
+                form = true;
+                stickX = gamepad1.right_stick_x;
             }
 
             //variables
             double r = Math.hypot(-stickX, stickY);
             double robotAngle = Math.atan2(stickY, -stickX) - Math.PI / 4;
-            double rightX = -stickR * turnReduction;
-            final double v1 = r * Math.cos(robotAngle) + rightX;
-            final double v2 = r * Math.sin(robotAngle) - rightX;
-            final double v3 = r * Math.sin(robotAngle) + rightX;
-            final double v4 = r * Math.cos(robotAngle) - rightX;
+            final double v1 = r * Math.cos(robotAngle);
+            final double v2 = r * Math.sin(robotAngle);
+            final double v3 = r * Math.sin(robotAngle);
+            final double v4 = r * Math.cos(robotAngle);
 
 
             if (gamepad1.left_bumper || gamepad2.left_bumper) {//if the left bumper is pressed, it multiplies the total power by the precision driving modifer
@@ -132,12 +124,18 @@ public class TeleOp_358 extends OpMode {
                 precisionActive = 1f; //no modifier
             }
 
-
-            robot.lf.setPower(-speedModifier * v1 * precisionActive);
-            robot.rf.setPower(-speedModifier * v2 * precisionActive);
-            robot.lb.setPower(-speedModifier * v3 * precisionActive);
-            robot.rb.setPower(-speedModifier * v4 * precisionActive);
-
+            if(form){
+                robot.lf.setPower(-stickX);
+                robot.rf.setPower(stickX);
+                robot.lb.setPower(-stickX);
+                robot.rb.setPower(stickX);
+            }
+            else {
+                robot.lf.setPower(-speedModifier * v1 * precisionActive);
+                robot.rf.setPower(-speedModifier * v2 * precisionActive);
+                robot.lb.setPower(-speedModifier * v3 * precisionActive);
+                robot.rb.setPower(-speedModifier * v4 * precisionActive);
+            }
             telemetry.addData("fLPower", -speedModifier * v1 * precisionActive);
             telemetry.addData("fRPower", -speedModifier * v2 * precisionActive);
             telemetry.addData("bLPower", -speedModifier * v3 * precisionActive);
@@ -153,21 +151,22 @@ public class TeleOp_358 extends OpMode {
         telemetry.addLine();
 
         //======================================
-        //----------QUACK DELIVERY--------------
+        //----------CLAW GRABBER----------------
         //======================================
-
-        if (gamepad1.y || gamepad2.y){
-           // robot.duckSpinner.setPower(.1*precisionActive);
-            telemetry.addData("Duck Spinner", "Wheeeee");
+        if(gamepad1.right_trigger > 0.5){
+            robot.leftServo.setPosition(1);
+            robot.rightServo.setPosition(0);
+            telemetry.addData("Button X", gamepad1.x);
         }
-        else if (gamepad1.x || gamepad2.x){
-         ///   robot.duckSpinner.setPower(-.1*precisionActive);
-            telemetry.addData("Duck Spinner", "Down"); //hello. i am watching.
-
+        else if(gamepad1.b){
+            robot.leftServo.setPosition(0);
+            robot.rightServo.setPosition(0);
+            telemetry.addData("Button B", gamepad1.b);
         }
         else {
-          //  robot.duckSpinner.setPower(0);
-            telemetry.addData("Duck Spinner", "Off"); //ripped hamilton is near
+            robot.leftServo.setPosition(0);
+            robot.rightServo.setPosition(1);
+            telemetry.addData("Neither", gamepad1.b);
         }
 
         //======================================
