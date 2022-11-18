@@ -39,7 +39,7 @@ import java.util.ArrayList;
 @Autonomous
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
-    OpenCvCamera camera; //calls camera
+    OpenCvCamera camera; // calls camera
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
