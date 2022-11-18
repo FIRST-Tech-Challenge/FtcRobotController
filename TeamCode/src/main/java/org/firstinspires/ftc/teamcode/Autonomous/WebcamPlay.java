@@ -60,7 +60,8 @@ public class WebcamPlay extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+   // private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_ASSET = "customModel.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
 
@@ -69,7 +70,11 @@ public class WebcamPlay extends LinearOpMode {
             "2 Bulb",
             "3 Panel"
     };
-
+    private static final String[] LabelsCustom = {
+            "0 Yellow",
+            "1 Pink",
+            "2 Blue"
+    };
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
      * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
