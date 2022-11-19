@@ -18,13 +18,6 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 @TeleOp(name="Iron Giant OpMode", group="Challenge")
 public class TestOpMode extends OpMode {
     private boolean auton = true;
-//    private StateMachine autonStateMachine = Utils.getStateMachine(new Stage())
-//            .addState(() -> driveToD())
-//
-////            .addState(() -> driveToD(1))
-////            .addState(() -> driveToD(2))
-//            .build();
-    //variable setup
     private DcMotor motorFrontRight = null;
     private DcMotor motorBackLeft = null;
     private DcMotor motorFrontLeft = null;
@@ -34,67 +27,34 @@ public class TestOpMode extends OpMode {
     // regular drive
     private double powerLeft = 0;
     private double powerRight = 0;
-    // motor power
-    private double powerElevator = 0;
-    private DcMotor motorElevator = null;
-    private Servo clawServo = null;
-    // regular drive
     // mecanum types
     private double powerFrontLeft = 0;
     private double powerFrontRight = 0;
     private double powerBackLeft = 0;
     private double powerBackRight = 0;
-
-    private double powerClaw = 0;
     //number variables
     private static final float DEADZONE = .1f;
     private static final int MAXELEVTICS = 4320;
     private static final int MINELEVTICS = 0;
     private int currElevTics = 0;
-    private double MOTORSTALLVALUE = 12.76;
-
-//    public boolean driveToD() {
-//    double powerLeft = 0;
-//    double powerRight = 0;
-//    boolean done = false;
-//        try {
-//            TimeUnit.SECONDS.sleep(5);
-//        } catch (InterruptedException e) {
-//
-//        }
-//        done = true;
-//    while(!done) {
-//        powerLeft = 1;
-//        powerRight = 1;
-//    }
-//    if(done) {
-//        powerLeft = 0;
-//        powerRight = 0;
-//        return done;
-//    }
-//        while(auton) {
-//            motorFrontLeft.setPower(powerLeft);
-//            motorFrontRight.setPower(powerRight);
-//            motorBackRight.setPower(powerRight);
-//            motorBackLeft.setPower(powerLeft);
-//        }
-//    return false;
-//    }
-
+    private final double MOTORSTALLVALUE = .7;
+    //bolean variables
+    private boolean calibrate = false;
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing " + this.getClass() + "...");
         telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
-        elevator = this.hardwareMap.get(DcMotorEx.class, "elevator");
-        //calib(); <-- fix!!!!!!!!
         motorInit();
     }
-
+    @Override
+    public void init_loop()
+    {
+        if(!calibrate)
+            calib();
+    }
     @Override
     public void loop() {
-//        autonStateMachine.execute();
-
         //tankDrive();
         mechanumDrive();
         elevatorMove();
@@ -118,7 +78,6 @@ public class TestOpMode extends OpMode {
         motorBackRight.setPower(powerRight);
         motorBackLeft.setPower(powerLeft);
     }
-
     public void mechanumDrive() {
         double r = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
         double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
@@ -132,59 +91,70 @@ public class TestOpMode extends OpMode {
         motorBackLeft.setPower(v3);
         motorBackRight.setPower(v2);
     }
+    @Override
+    public void stop(){
+        calib();
+    }
     public void elevatorMove()
     {
-        telemetry.addData("elevator position: ", elevator.getCurrentPosition());
-        if(gamepad1.right_trigger > DEADZONE)
-        {
-            telemetry.addData("right trigger moved", currElevTics);
-            telemetry.addData("right trigger moved", MAXELEVTICS);
-            telemetry.addData("right trigger moved", elevator.isBusy());
-            if(currElevTics < MAXELEVTICS-150)
-              elevator.setTargetPosition(currElevTics+150);
-            else
-              elevator.setTargetPosition(MAXELEVTICS);
-         }
-        if(gamepad1.left_trigger > DEADZONE)
-        {
-            if(currElevTics > MINELEVTICS+150)
-              elevator.setTargetPosition(currElevTics-150);
-            else
-              elevator.setTargetPosition(MINELEVTICS);
-         }
-        if(gamepad1.y)
-            elevator.setTargetPosition(3883);
-        if(gamepad1.b)
-            elevator.setTargetPosition(2300);
-        if(gamepad1.a)
-            elevator.setTargetPosition(0);
-        currElevTics = elevator.getCurrentPosition();
+        if(gamepad1.dpad_down) {
+            calibrate = false;
+        }
+        if(!calibrate)
+            calib();
+        else {
+            elevator.setPower(1);
+            telemetry.addData("elevator position: ", elevator.getCurrentPosition());
+            if (gamepad1.right_trigger > DEADZONE) {
+                if (currElevTics < MAXELEVTICS - 150)
+                    elevator.setTargetPosition(currElevTics + 150);
+                else
+                    elevator.setTargetPosition(MAXELEVTICS);
+            }
+            if (gamepad1.left_trigger > DEADZONE) {
+                if (currElevTics > MINELEVTICS + 150)
+                    elevator.setTargetPosition(currElevTics - 150);
+                else
+                    elevator.setTargetPosition(MINELEVTICS);
+            }
+            if (gamepad1.y)
+                elevator.setTargetPosition(3983);
+            if (gamepad1.b)
+                elevator.setTargetPosition(2300);
+            if (gamepad1.a)
+                elevator.setTargetPosition(100);
+            currElevTics = elevator.getCurrentPosition();
+        }
     }
     public void clawMove() {
         telemetry.addData("Claw servo position:", claw.getPosition());
         if (gamepad1.left_bumper)
-            claw.setPosition(1);
+            claw.setPosition(.9);
         if (gamepad1.right_bumper)
-            claw.setPosition(.05);
+            claw.setPosition(0);
     }
     public void calib(){
-        telemetry.addData("elevator calibrating...", elevator.getCurrentPosition());
-        //get elevator amperage, probably with a method in dcmotorex instead of the dcmotor class
-        //might have to switch to dcmotorex for all of the motors
-        //while amperage < stallValue (checks for stall)
-        //elevator.setPower(-0.1); or something
+        elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        telemetry.addData("elevator calibrating...", elevator.getCurrent(CurrentUnit.AMPS));
         if(elevator.getCurrent(CurrentUnit.AMPS) < MOTORSTALLVALUE)
         {
-            elevator.setPower(-.1);
+            elevator.setPower(-.2);
         }
-        telemetry.addData("done calibrating", elevator.getCurrentPosition());
+        else {
+            calibrate = true;
+            elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            elevator.setTargetPosition(0);
+            elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            telemetry.addData("elevator position", elevator.getCurrentPosition());
+            telemetry.addData("done calibrating", elevator.getCurrentPosition());
+        }
     }
     public void motorInit(){
         motorFrontLeft = this.hardwareMap.get(DcMotor.class, "motorFrontLeft");
         motorBackLeft = this.hardwareMap.get(DcMotor.class, "motorBackLeft");
         motorFrontRight = this.hardwareMap.get(DcMotor.class, "motorFrontRight");
         motorBackRight = this.hardwareMap.get(DcMotor.class, "motorBackRight");
-        //elevator = this.hardwareMap.get(DcMotorEx.class, "elevator");
+        elevator = this.hardwareMap.get(DcMotorEx.class, "elevator");
         claw = this.hardwareMap.get(Servo.class, "claw");
         elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -192,13 +162,11 @@ public class TestOpMode extends OpMode {
         this.elevator.setDirection(DcMotor.Direction.REVERSE);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        elevator.setTargetPosition(0);
-        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         //this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        elevator.setPower(1);
-
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
+
+
