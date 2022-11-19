@@ -168,7 +168,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
             }
 
             if (gamepad2.right_stick_y != 0) {
-                huskyBot.servoMove(huskyBot.clawLift, gamepad2.right_stick_y);
+                huskyBot.servoMove(huskyBot.clawLift, -gamepad2.right_stick_y);
             }
 
             if (gamepad2.x) {
