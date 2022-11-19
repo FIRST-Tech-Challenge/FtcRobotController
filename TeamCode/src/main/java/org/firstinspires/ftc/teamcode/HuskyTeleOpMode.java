@@ -136,7 +136,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                 if(huskyBot.armLiftMotor.getCurrentPosition() < 350){
                     armLiftPowerDivider = 4;
                 } else {
-                    armLiftPowerDivider = 3.35;
+                    armLiftPowerDivider = 3.1;
                 }
             }
 
