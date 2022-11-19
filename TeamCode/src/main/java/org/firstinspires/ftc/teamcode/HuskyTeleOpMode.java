@@ -48,6 +48,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
     double armSwivelPower = 0.0;
     double armExtendPower = 0.0;
     double armLiftPower = 0.0;
+    double armLiftPowerDivider = 4;
     private ElapsedTime runtime = new ElapsedTime();
 
     // method to smoothly accelerate a motor given a target velocity.
@@ -60,11 +61,11 @@ public class HuskyTeleOpMode extends LinearOpMode {
             currentVel = targetVel;
         }
         else {
-        // if motor is decelerating (approaching 0 vel), increase deceleration rate.
+            // if motor is decelerating (approaching 0 vel), increase deceleration rate.
             if (Math.abs(currentVel) > Math.abs(targetVel)) {
                 accelRate *= 2;
             }
-        // set +/- changeVel based on if currentVel is lower or higher than targetVel.
+            // set +/- changeVel based on if currentVel is lower or higher than targetVel.
             changeVel = (currentVel < targetVel) ? accelRate : -accelRate;
         }
 
@@ -129,20 +130,37 @@ public class HuskyTeleOpMode extends LinearOpMode {
             armSwivelPower = Range.clip(armSwivelPower, -ARM_SWIVEL_MAX_POWER, ARM_SWIVEL_MAX_POWER);
             huskyBot.armSwivelMotor.setPower(armSwivelPower);
 
-            armLiftPower = -gamepad2.left_stick_y;
-            armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MIN_POWER, ARM_LIFT_MAX_POWER);
-            if (armLiftPower == 0) {
-                huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
+            if(gamepad2.left_stick_y > 0){
+                armLiftPowerDivider = 5.8;
+            } else{
+                if(huskyBot.armLiftMotor.getCurrentPosition() < 350){
+                    armLiftPowerDivider = 4;
+                } else {
+                    armLiftPowerDivider = 3.35;
+                }
             }
+
+            armLiftPower = -gamepad2.left_stick_y/armLiftPowerDivider;
+            armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MIN_POWER, ARM_LIFT_MAX_POWER);
+            if(huskyBot.armLiftMotor.getCurrentPosition() < ARM_LIFT_MAX_POSITION)
+            {
+                if (armLiftPower == 0) {
+                    huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
+                }
 //            else if (armLiftPower < 0) {
 //                huskyBot.armLiftMotor.setPower(ARM_LIFT_MIN_POWER);
 //            }
-            else {
-                huskyBot.armLiftMotor.setPower(armLiftPower);
+                else {
+                    huskyBot.armLiftMotor.setPower(armLiftPower);
+                }
+            }
+            else
+            {
+                huskyBot.armLiftMotor.setPower(0);
             }
 
             // Increases/Decreases Arm Length
-            armExtendPower = gamepad2.dpad_up ? ARM_EXTENSION_MAX_POWER : (gamepad2.dpad_down ? -ARM_EXTENSION_MAX_POWER : 0);
+            armExtendPower = gamepad2.dpad_up ? -ARM_EXTENSION_MAX_POWER : (gamepad2.dpad_down ? ARM_EXTENSION_MAX_POWER : 0);
             huskyBot.armExtendMotor.setPower(armExtendPower);
 
             if (-gamepad2.right_stick_x != 0) {
@@ -188,8 +206,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
             telemetry.addData("Claw Lift", "Right Y: (%.2f), Pos: (%.2f)",
                     gamepad2.right_stick_y, huskyBot.clawLift.getPosition());
             telemetry.addData("Claw Grab", "Pos: (%.2f)", huskyBot.clawGrab.getPosition());
-
+            telemetry.addData("Arm Lift Power Divider", armLiftPowerDivider);
             telemetry.update();
         }
     }
 }
+
