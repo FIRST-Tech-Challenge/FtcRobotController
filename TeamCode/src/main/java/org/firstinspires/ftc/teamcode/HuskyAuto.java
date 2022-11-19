@@ -94,9 +94,9 @@ public class HuskyAuto extends HuskyAutoBase {
         telemetry.update();
 
         // Open the claw before moving forward
-        huskyBot.clawLift.setPosition(CLAW_LIFT_START_POSITION);
-        huskyBot.clawGrab.setPosition(CLAW_GRAB_OPEN_POSITION);
-        huskyBot.clawRotate.setPosition(CLAW_ROTATE_START_POSITION);
+//        huskyBot.clawLift.setPosition(CLAW_LIFT_START_POSITION);
+//        huskyBot.clawGrab.setPosition(CLAW_GRAB_OPEN_POSITION);
+//        huskyBot.clawRotate.setPosition(CLAW_ROTATE_START_POSITION);
 
         if (this.parkLocation == Location.LOCATION_1) {
             // If the park location is 1, park at location 1
