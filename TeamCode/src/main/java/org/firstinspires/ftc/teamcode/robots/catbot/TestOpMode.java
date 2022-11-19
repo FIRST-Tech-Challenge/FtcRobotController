@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 @TeleOp(name="Iron Giant OpMode", group="Challenge")
 public class TestOpMode extends OpMode {
-    private boolean auton = true;
+//    private boolean auton = true;
     private DcMotor motorFrontRight = null;
     private DcMotor motorBackLeft = null;
     private DcMotor motorFrontLeft = null;
