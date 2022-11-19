@@ -34,8 +34,8 @@ public class TestTeleOp extends LinearOpMode {
     private DcMotor horizontal; // BR
 
     //Wheel stuff
-    public final double wheelPower = -0.5;
-    public final double turnSpeed = 0.5;
+    public final double wheelPower = -0.25;
+    public final double turnSpeed = 0.25;
 
     private Blinker expansion_Hub_3;
 
@@ -61,7 +61,7 @@ public class TestTeleOp extends LinearOpMode {
 
         expansion_Hub_3 = hardwareMap.get(Blinker.class, "Expansion Hub 3");
 
-        //initDriveTrain();
+        initDriveTrain();
 
         waitForStart();
         telemetry.addData("you can", "start now");
@@ -124,11 +124,29 @@ public class TestTeleOp extends LinearOpMode {
                 //intakeMotor.setPower(0.8);
 
             } else if (gamepad1.a) {
-                //stop intake
-                //intakeMotor.setPower(0);
+                sleep(500);
+                slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+                slideLeft.setTargetPosition(5);
+                slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideLeft.setPower(0.8);
+                slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+                slideRight.setTargetPosition(5);
+                slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideRight.setPower(0.8);
 
             } else if (gamepad1.y) {
-                //Ducky.setPower(1);
+                //int i = 50;
+                //for (i = 50; i < 1000; i += 100) {
+                    sleep(500);
+                    slideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+                    slideLeft.setTargetPosition(3000);
+                    slideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    slideLeft.setPower(0.8);
+                    slideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+                    slideRight.setTargetPosition(3000);
+                    slideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    slideRight.setPower(0.8);
+                //}
 
             } else if (gamepad2.x) {
                 //let go
