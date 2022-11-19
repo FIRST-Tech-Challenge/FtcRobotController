@@ -50,7 +50,7 @@ public class PowerPlayTeleOp extends OpMode {
         double lift = gamepad2.left_stick_y*0.8;
         robot.lift.SetMotorPower(lift);
 
-        if(gamepad2.a){
+      /*  if(gamepad2.a){
             robot.lift.driveLiftToPosition(0.5, 500);
         }
         if (gamepad2.b){
@@ -73,6 +73,6 @@ public class PowerPlayTeleOp extends OpMode {
             }
             telemetry.update();
         }
-
+*/
     }
 }

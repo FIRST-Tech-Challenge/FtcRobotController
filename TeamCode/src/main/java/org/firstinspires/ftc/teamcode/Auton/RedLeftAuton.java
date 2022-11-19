@@ -48,7 +48,8 @@ public class RedLeftAuton extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //Initialize robot hardware
-        robot = new GBrobot(this);
+
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -134,6 +135,7 @@ public class RedLeftAuton extends LinearOpMode {
             park = "RIGHT";
             telemetry.addLine("Right Parking spot");
         }
+        robot = new GBrobot(this);
 
         /*if(robot.left.getDistance() >= 70 && robot.right.getDistance() < 200){
             telemetry.addData("In position", "Robot in position!");
@@ -147,83 +149,81 @@ public class RedLeftAuton extends LinearOpMode {
         waitForStart();
 
         if(park .equals("LEFT")){
-            robot.claw.setClawPosition(0.0);
-            sleep(200);
-            robot.lift.driveLiftToPosition(1, 200);
-            sleep(100);
+            robot.lift.driveLiftToPosition(0.2, -10);
+            robot.claw.setClawPosition(0);
+            sleep(2500);
+            robot.lift.driveLiftToPosition(0.2, 200);
             robot.Drive.MoveRobotToPositionStrafe(0.6, 27);
             sleep(300);
             robot.Drive.MoveRobotToPosition(0.5, 55);
             sleep(300);
             robot.Drive.pointTurn(-95,0.3);
-            robot.lift.driveLiftToPosition(0.7, 3750);
+            robot.lift.driveLiftToPosition(0.5, 3750);
             sleep(400);
-            robot.Drive.MoveRobotToPosition(0.5, 6);
+            robot.Drive.MoveRobotToPosition(0.3, 7);
             sleep(50);
             robot.claw.setClawPosition(0.25);
             sleep(50);
-            robot.lift.driveLiftToPosition(0.7, 0);
+            robot.lift.driveLiftToPosition(0.5, -3000);
             sleep(300);
             robot.Drive.MoveRobotToPosition(0.5, -10);
             sleep(200);
             //robot.lift.driveLiftToPosition(1, -3000);
             robot.Drive.pointTurn(-75,0.2);
             sleep(300);
-            robot.Drive.MoveRobotToPositionStrafe(0.7, -2);
+            robot.Drive.MoveRobotToPositionStrafe(0.5, -2);
             sleep(200);
             robot.Drive.MoveRobotToPosition(0.4, 48);
         }
         else if(park.equals("MIDDLE")){
+            robot.lift.driveLiftToPosition(0.2, -10);
             robot.claw.setClawPosition(0.0);
-            sleep(200);
-            robot.lift.driveLiftToPosition(1, 200);
-            sleep(100);
+            sleep(2500);
+            robot.lift.driveLiftToPosition(0.2, 200);
             robot.Drive.MoveRobotToPositionStrafe(0.6, 27);
             sleep(300);
             robot.Drive.MoveRobotToPosition(0.5, 55);
             sleep(300);
             robot.Drive.pointTurn(-95,0.3);
-            robot.lift.driveLiftToPosition(0.7, 3750);
+            robot.lift.driveLiftToPosition(0.5, 3750);
             sleep(400);
-            robot.Drive.MoveRobotToPosition(0.5, 6);
+            robot.Drive.MoveRobotToPosition(0.3, 7);
             sleep(50);
             robot.claw.setClawPosition(0.25);
             sleep(50);
-            robot.lift.driveLiftToPosition(0.7, 0);
+            robot.lift.driveLiftToPosition(0.5, -3000);
             sleep(300);
             robot.Drive.MoveRobotToPosition(0.5, -10);
             sleep(200);
-            //robot.lift.driveLiftToPosition(1, -3000);
             robot.Drive.pointTurn(-75,0.2);
             sleep(300);
-            robot.Drive.MoveRobotToPositionStrafe(0.7, -2);
+            robot.Drive.MoveRobotToPositionStrafe(0.5, -2);
             sleep(200);
             robot.Drive.MoveRobotToPosition(0.4, 26);
         }
         else if(park.equals("RIGHT")){
+            robot.lift.driveLiftToPosition(0.2, -10);
             robot.claw.setClawPosition(0.0);
-            sleep(200);
-            robot.lift.driveLiftToPosition(1, 200);
-            sleep(100);
+            sleep(2500);
+            robot.lift.driveLiftToPosition(0.2, 200);
             robot.Drive.MoveRobotToPositionStrafe(0.6, 27);
             sleep(300);
             robot.Drive.MoveRobotToPosition(0.5, 55);
             sleep(300);
             robot.Drive.pointTurn(-95,0.3);
-            robot.lift.driveLiftToPosition(0.7, 3750);
+            robot.lift.driveLiftToPosition(0.5, 3750);
             sleep(400);
-            robot.Drive.MoveRobotToPosition(0.5, 6);
+            robot.Drive.MoveRobotToPosition(0.3, 7);
             sleep(50);
             robot.claw.setClawPosition(0.25);
             sleep(50);
-            robot.lift.driveLiftToPosition(0.7, 0);
+            robot.lift.driveLiftToPosition(0.5, -3000);
             sleep(300);
             robot.Drive.MoveRobotToPosition(0.5, -10);
             sleep(200);
-            //robot.lift.driveLiftToPosition(1, -3000);
             robot.Drive.pointTurn(-75,0.2);
             sleep(300);
-            robot.Drive.MoveRobotToPositionStrafe(0.7, -2);
+            robot.Drive.MoveRobotToPositionStrafe(0.2, -2);
 
         }
         else{
