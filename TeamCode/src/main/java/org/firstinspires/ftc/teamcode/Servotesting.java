@@ -32,13 +32,13 @@ public class Servotesting extends LinearOpMode {
 
         Right = hardwareMap.get(CRServo.class,"Rights");
         Left = hardwareMap.get(CRServo.class, "Lefts");
-        Crain = hardwareMap.get(DcMotor.class, "Crain");
+        Crain = hardwareMap.get(DcMotor.class, "Crane");
         Spin = hardwareMap.get(DcMotor.class, "Spin");
 
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -49,6 +49,7 @@ public class Servotesting extends LinearOpMode {
 
             boolean pickup;
             boolean dropoff;
+            double spinpower;
             double crainpower;
             boolean turning;
 
@@ -58,6 +59,7 @@ public class Servotesting extends LinearOpMode {
             strafeRight = gamepad1.right_bumper;
 
             crainpower = gamepad2.left_stick_y;
+            spinpower = gamepad2.right_stick_x;
             pickup = gamepad2.x;
             dropoff = gamepad2.y;
             turning = gamepad2.b;
@@ -67,7 +69,8 @@ public class Servotesting extends LinearOpMode {
                 frontRight.setPower(0.75);
                 backLeft.setPower(0.75);
                 backRight.setPower(-0.75);
-            } else if (strafeRight) {
+            }
+            if (strafeRight) {
                 frontLeft.setPower(-0.75);
                 frontRight.setPower(0.75);
                 backLeft.setPower(0.75);
@@ -86,6 +89,8 @@ public class Servotesting extends LinearOpMode {
             backRight.setPower(turn);
 
             Crain.setPower(crainpower);
+
+            Spin.setPower(spinpower);
 
             if (pickup==true) {
                 Right.setPower(1);
