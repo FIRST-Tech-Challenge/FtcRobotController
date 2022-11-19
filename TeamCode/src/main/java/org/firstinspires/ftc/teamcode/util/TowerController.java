@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -15,8 +17,8 @@ public class TowerController {
     private DcMotor screw;
     private DcMotor uBar;
     private Servo intake;
-//    private DigitalChannel highSensor;
-//    private DigitalChannel lowSensor;
+    private TouchSensor highSensor;
+    private TouchSensor lowSensor;
     public boolean raiseTower;
     public boolean intakePos = false;
     private int uBarLevel;
@@ -28,6 +30,8 @@ public class TowerController {
     public TowerController (HardwareMap hardwareMap){
 
         //Setup motors
+        highSensor = hardwareMap.get(TouchSensor.class, "highSensor");
+        lowSensor = hardwareMap.get(TouchSensor.class, "lowSensor");
         screw = hardwareMap.get(DcMotor.class, "screw");
         uBar = hardwareMap.get(DcMotor.class, "uBar");
         intake = hardwareMap.get(Servo.class, "intake");
@@ -91,8 +95,10 @@ public class TowerController {
         screw.setPower(speed);
         telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
         telemetry.update();
+        limitSwitches(telemetry);
         while (screw.isBusy() && screw.getCurrentPosition() <= screwTarget)
         {
+            limitSwitches(telemetry);
             telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
             telemetry.update();
             uBar.setPower(speed);
@@ -113,6 +119,8 @@ public class TowerController {
         }
     }
     public void handleGamepad(Gamepad gamepad, Telemetry telemetry) {
+
+        limitSwitches(telemetry);
 
         //Screw
         if(gamepad.dpad_up) {
@@ -160,5 +168,33 @@ public class TowerController {
         }
         handleIntake();
     }
+
+        public void limitSwitches(Telemetry telemetry)
+        {
+
+            if (highSensor.isPressed())
+            {
+                telemetry.addData("Status", "Limit Switch is Pressed");
+                screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                driveScrew(-100, 0.2, telemetry);
+            }
+            else
+            {
+                telemetry.addData("Status", "Limit Switch is not Pressed");
+            }
+            telemetry.update();
+
+            if (lowSensor.isPressed())
+            {
+                telemetry.addData("Status", "Limit Switch is Pressed");
+                screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                driveScrew(100, 0.2, telemetry);
+            }
+            else
+            {
+                telemetry.addData("Status", "Limit Switch is not Pressed");
+            }
+            telemetry.update();
+        }
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        //hi. you found me. -SECRET COMMENT
