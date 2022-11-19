@@ -70,9 +70,9 @@ public class HuskyBot {
 
     public static final double ARM_SWIVEL_MAX_POWER = 0.4;
     public static final double ARM_SWIVEL_LIMIT = 200;
-    public static final double ARM_LIFT_MAX_POWER = 0.25;
+    public static final double ARM_LIFT_MAX_POWER = 0.5;
     public static final double ARM_LIFT_MIN_POWER = 0.01;
-    public static final double ARM_LIFT_POWER_AT_REST = 0.05;
+    public static final double ARM_LIFT_POWER_AT_REST = 0.10;
     public static final double ARM_EXTENSION_MAX_POWER = 0.4;
 
     public static final double CLAW_MOVE_INCREMENT = 0.01;
