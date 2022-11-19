@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 @Config
 public class Lift {
-    private final int MAX_LIFT_TICKS = 1665;
+    private final int MAX_LIFT_TICKS = 1675;
     private final double LIFT_GRAVITY_CONSTANT = 0.075;
     //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
@@ -38,11 +38,11 @@ public class Lift {
     private RFMotor liftMotor;
     private Claw LC = new Claw();
     private double liftTarget = 0;
-    public static double dfco1 = 0.0122, dfco2 = 1.0 / 3, dfco3 = 400;
+    public static double dfco1 = 0.0122, dfco2 = 1.0 / 3, dfco3 = 500;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    private double[] coneStack = {480, 430, 280, 170};
+    private double[] coneStack = {470, 420, 270, 160};
     private int stackLevel = 3;
     private double lastStackTime =0;
 
@@ -98,7 +98,7 @@ public class Lift {
     }
 
     public enum LiftConstants {
-        LIFT_HIGH_JUNCTION(1665, false),
+        LIFT_HIGH_JUNCTION(1675, false),
         LIFT_MED_JUNCTION(812, false),
         LIFT_LOW_JUNCTION(15, false),
         LIFT_GROUND_JUNCTION(0, false),

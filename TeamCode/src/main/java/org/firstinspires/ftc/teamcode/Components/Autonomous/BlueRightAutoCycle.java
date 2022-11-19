@@ -42,7 +42,7 @@ public class BlueRightAutoCycle extends LinearOpMode {
 
     public static double dummyX2 = -35, dummyY2 = 11, dummyA2 = 180;
 
-    public static double dummyX3 = -57, dummyY3 = 11, dummyA3 = 180;
+    public static double dummyX3 = -58, dummyY3 = 11, dummyA3 = 180;
     double[] stackPos = {460,320,173,53,0};
 
     public void runOpMode() {

@@ -39,6 +39,7 @@ public class Claw {
     private double lastOpenTime =-10;
     //temporary
     public final double CLAW_SERVO_SWITCH_TIME = 0.2;
+    boolean shouldUseClawSensor = true;
 
     //States:
     //CLAW_CLOSED
@@ -87,11 +88,13 @@ public class Claw {
         if(!isTeleop){
             CLAW_OPEN.setStatus(true);
             closeClaw();
+            shouldUseClawSensor = true;
         }
         else{
             claw.setPosition(CLAW_OPEN_POS);
             CLAW_OPEN.setStatus(true);
         }
+        shouldUseClawSensor = true;
     }
 
     public void updateClawStates() {
@@ -218,11 +221,14 @@ public class Claw {
         //execute algorithm for observing
         //no setting state
         //log to general robot log that the cone has been observed through function closeClaw()
-        logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",getConeDistance()"
+        double distance = coneObserver.getDistance(INCH);
+                logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",getConeDistance()"
                 + coneObserver.getDistance(INCH), true);
-        op.telemetry.addData("coneDist",coneObserver.getDistance(INCH));
-
-        return coneObserver.getDistance(INCH) < CLAW_CONE_DISTANCE;
+        op.telemetry.addData("coneDist",distance);
+        if(distance>2000){
+            shouldUseClawSensor = false;
+        }
+        return coneObserver.getDistance(INCH) < CLAW_CONE_DISTANCE && shouldUseClawSensor;
     }
     public double coneDistance(){
         return coneObserver.getDistance(INCH);

@@ -30,25 +30,25 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
     public static double dummyxi2 = 12.5, dummyyi2 = 13;
 
 
-    public static double dummyx = 23.5, dummyy = 5, dummya = 270;
-    public static double dummyx2 = 23.5, dummyy2 =11.5, dummya2 = 270;
-    public static double dummyxd = 23, dummyyd = 4.5, dummyad = 270;
-    public static double dummyx2i = 23.5, dummyy2i =9, dummya2i = 270;
-    public static double dummyx3i = 23.5, dummyy3i =7, dummya3i = 270;
+    public static double dummyx = 23.5, dummyy = 5, dummya = 270; //coord for pole 1: 23.5 , 5
+    public static double dummyx2 = 23.5, dummyy2 =11.5, dummya2 = 270; //coord for pole 1: 23.5 , 5
+    public static double dummyxd = 22.25, dummyyd = 4.5, dummyad = 270; //coord for pole 2: 22.25 , 4.5
+    public static double dummyx2i = 22.25, dummyy2i =10, dummya2i = 270; //coord for pole 2: 22.25 , 4.5
+    public static double dummyx3i = 22.25, dummyy3i =8, dummya3i = 270;//coord for pole 2: 22.25 , 4.5
     public static double dummyx3 = 38, dummyy3 =10.1, dummya3 = 0;
-    public static double dummyx4 = 63.5, dummyy4 =10.1, dummya4 = 0;
+    public static double dummyx4 = 64, dummyy4 =10.1, dummya4 = 0;
 
     public static double dummyX = 12, dummyY = 11, dummyA = 0;
 
     public static double dummyX2 = 35, dummyY2 = 11, dummyA2 = 0;
 
     public static double dummyX3 = 53, dummyY3 = 11, dummyA3 = 0;
-    double[] stackPos = {460,320,173,53,0};
+    double[] stackPos = {440,320,173,53,0};
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(41.85, 63.25, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(42, 63.25, Math.toRadians(270));
         robot.roadrun.setPoseEstimate(startPose);
 
         //detectSignal();
@@ -142,6 +142,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.waitForFinish();
             robot.followTrajectoryAsync(dropTrajectory3);
             robot.followTrajectoryAsync(dropTrajectory2);
+            robot.delay(0.6543);
             robot.openClaw(false);
 //                robot.liftToPosition((int)stackPos[i+1]);
 //                robot.delay(0.8);
@@ -153,10 +154,10 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.lowerLiftArmToIntake(true);
 //            }
 
-            if (dummyP == 1) {
+            if (dummyP == 3) {
                 robot.followTrajectoryAsync(park1trajectory);
             }
-            else if (dummyP == 3) {
+            else if (dummyP == 1) {
                 robot.followTrajectoryAsync(park3trajectory);
             }
             else{

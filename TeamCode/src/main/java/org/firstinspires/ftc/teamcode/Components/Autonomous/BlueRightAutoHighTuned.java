@@ -18,10 +18,10 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 //@Disabled
 
 @Config
-@Autonomous(name = "BlueRightAutoHigh")
+@Autonomous(name = "BlueRightAutoHighTuned")
 
 
-public class BlueRightAutoHigh extends LinearOpMode {
+public class BlueRightAutoHighTuned extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;
