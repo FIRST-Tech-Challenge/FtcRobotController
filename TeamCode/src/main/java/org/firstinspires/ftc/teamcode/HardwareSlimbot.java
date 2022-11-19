@@ -139,7 +139,7 @@ public class HardwareSlimbot
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
-    public boolean          liftMotorLogging   = false; // only enable during development!!
+    public boolean          liftMotorLogging   = true; // only enable during development!!
     public final static int LIFTMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
     protected double[]      liftMotorLogTime   = new double[LIFTMOTORLOG_SIZE];  // msec
     protected double[]      liftMotorLogAngle  = new double[LIFTMOTORLOG_SIZE];  // Angle [degrees]
@@ -608,25 +608,26 @@ public class HardwareSlimbot
             }
             // No, still not within tolerance of desired target
             else {
-                double liftMotorPower;
+                // Are we moving on the front side? (LOWERING/LIFTING switch meaning on back side)
+                boolean frontside = (liftAngle > 0.0)? true : false;
+                // Are we LOWERING (little power required) or LIFTING (much power required)?
+                boolean lowering = (frontside && (degreesToGo > 0.0)) ||
+                                  (!frontside && (degreesToGo < 0.0));
+                // Compute a base power setting based on distance-from-target
+                //   15 deg = 0.60 motor power (0.30 lowering | 0.90 lifting)
+                //   10 deg = 0.50 motor power (0.25 lowering | 0.75 lifting)
+                //    5 deg = 0.40 motor power (0.20 lowering | 0.60 lifting)
+                //    1 deg = 0.32 motor power (0.16 lowering | 0.48 lifting)
+                double minPower = (degreesToGo > 0.0)? -0.30 : +0.30;
+                double liftMotorPower = minPower + (degreesToGo * -0.02);
+                // adjust for lowering/lifting
+                liftMotorPower *= (lowering)? 0.50 : 1.50;
+                // Never exceed 80% motor power, even if a long distance from target
+                if( liftMotorPower >  0.80 ) liftMotorPower =  0.80;
+                if( liftMotorPower < -0.80 ) liftMotorPower = -0.80;
+                liftMotorsSetPower( liftMotorPower );
                 // Reset the wait count back to zero
                 liftMotorWait = 0;
-                // Are we LOWERING, but quite a ways from target
-                if( degreesToGo > 10.0 )
-                    liftMotorPower = -0.50;
-                // No abrupt changes when lowering, or we'll slip a gear tooth
-                else if( degreesToGo > 5.0 )
-                    liftMotorPower = -0.40;
-                // Are we LOWERING but within 5deg of target?
-                else if( degreesToGo > 0 )
-                    liftMotorPower = -0.30;
-                // Are we RAISING but within 5deg of target?
-                else if( degreesToGo > -5.0 )
-                    liftMotorPower = 0.40;
-                // Otherwise we're RAISING, but quite a ways to go
-                else
-                    liftMotorPower = 0.80;
-                liftMotorsSetPower( liftMotorPower );
             }
         } // liftMotorAuto
     } // liftPosRun
