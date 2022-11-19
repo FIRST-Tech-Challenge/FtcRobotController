@@ -31,8 +31,8 @@ public class Variables {
     public static BNO055IMU imu;
 
     //NavX IMU stuffs below
-//    public static IntegratingGyroscope gyro;
-//    public static NavxMicroNavigationSensor navxMicro;
+    public static IntegratingGyroscope gyro;
+    public static NavxMicroNavigationSensor navxMicro;
 
     public static double previousHeading = 0;
     public static double intergratedHeading = 0;
