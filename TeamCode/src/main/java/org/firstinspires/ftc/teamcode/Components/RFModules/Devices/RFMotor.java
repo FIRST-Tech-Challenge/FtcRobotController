@@ -18,7 +18,7 @@ public class RFMotor extends Motor {
     private DcMotorEx rfMotor = null;
     private ArrayList<Double> coefs = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.000004, D2 = 0, minVelocity = -1200, VEL_TO_ANALOG = .0009;
+    public static double D = 0.000004, D2 = 0, minVelocity = -1200, VEL_TO_ANALOG = .001;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;

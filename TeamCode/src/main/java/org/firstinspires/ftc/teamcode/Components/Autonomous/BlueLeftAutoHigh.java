@@ -10,12 +10,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-
+@Disabled
 @Config
 @Autonomous(name = "BlueLeftAutoHigh")
 
@@ -98,13 +99,13 @@ public class BlueLeftAutoHigh extends LinearOpMode {
             robot.followTrajectoryAsync(backtrajectory);
 
             if (dummyP == 1) {
-                robot.followTrajectoryAsync(park1trajectory);
+                robot.followTrajectoryAsync(park3trajectory);
             }
             else if (dummyP == 2) {
                 robot.followTrajectoryAsync(park2trajectory);
             }
             else if (dummyP == 3) {
-                robot.followTrajectoryAsync(park3trajectory);
+                robot.followTrajectoryAsync(park1trajectory);
             }
 
             robot.setFirstLoop(false);
