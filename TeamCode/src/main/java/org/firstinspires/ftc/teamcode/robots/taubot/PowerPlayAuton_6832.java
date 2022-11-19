@@ -130,6 +130,8 @@ public class PowerPlayAuton_6832 extends OpMode {
     private static final int NUM_MODES = 4;
     private static final String[] GAME_MODES = { "REVERSE", "ENDGAME", "PRE-GAME", "REGULAR" };
     private boolean endGameHandled;
+    private Robot robot1;
+    private Robot ro;
 
     public enum GameState {
         AUTONOMOUS("Autonomous", true),
@@ -261,6 +263,8 @@ public class PowerPlayAuton_6832 extends OpMode {
 
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
+
+        robot.driveTrain.resetGridDrive(startingPosition);
 
         rumble();
 

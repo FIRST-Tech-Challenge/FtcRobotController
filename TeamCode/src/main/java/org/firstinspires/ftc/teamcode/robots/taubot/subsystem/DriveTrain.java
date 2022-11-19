@@ -343,6 +343,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return telemetryMap;
     }
 
+    public void resetGridDrive(Position start){
+        setPoseEstimate(new Pose2d(start.getPose().getX(),start.getPose().getY()));
+    }
+
     @Override
     public String getTelemetryName() {
         return "Drive Train";

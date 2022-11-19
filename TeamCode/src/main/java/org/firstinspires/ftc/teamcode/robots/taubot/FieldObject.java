@@ -11,7 +11,7 @@ public class FieldObject {
     public boolean redOwn;
     public boolean blueOwn;
 
-    public FieldObject(String n, double x, double y, int h){
+    public FieldObject(String n, double y, double x, int h){
         neutral = true;
         redOwn = false;
         blueOwn = false;

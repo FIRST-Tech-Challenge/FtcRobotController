@@ -263,6 +263,8 @@ public class PowerPlay_6832 extends OpMode {
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
 
+        robot.driveTrain.resetGridDrive(startingPosition);
+
         rumble();
 
 

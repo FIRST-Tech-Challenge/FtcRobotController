@@ -244,6 +244,14 @@ public class Field {
 
 
     }
+
+    public static Pose2d convertToGrids(Pose2d pos){
+        return  new Pose2d(pos.getX()/INCHES_PER_GRID, pos.getY()/INCHES_PER_GRID, pos.getHeading());
+    }
+
+    public static Pose2d convertToInches(Pose2d pos){
+        return  new Pose2d(pos.getX()*INCHES_PER_GRID, pos.getY()*INCHES_PER_GRID, pos.getHeading());
+    }
     public double getHeadingToPose(Pose2d currentPose, Pose2d targetPose){
         return Math.atan2(
                 targetPose.getY() - currentPose.getY(),

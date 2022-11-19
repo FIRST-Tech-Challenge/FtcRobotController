@@ -36,7 +36,7 @@ public class Constants {
     public static final double MAX_VELOCITY = 30.0;
     public static final double MAX_ACCELERATION = 10.0;
 
-    public static double DIFF_TICKS_PER_INCH = 32.9; //rough measure
+    public static double DIFF_TICKS_PER_INCH = 34; //rough measure
 
     // ratios
 
@@ -78,8 +78,8 @@ public class Constants {
 
     public enum Position {
         ORIGIN(new Pose2d(0, 9, Math.toRadians(0))), //not a legal starting position - should never be actually used
-        START_LEFT(new Pose2d(-1.5 * Field.INCHES_PER_GRID, 9, Math.toRadians(0))),
-        START_RIGHT(new Pose2d(1.5 * Field.INCHES_PER_GRID, 9, Math.toRadians(0))),
+        START_LEFT(new Pose2d(9, -1.5 * Field.INCHES_PER_GRID, Math.toRadians(0))),
+        START_RIGHT(new Pose2d(9, 1.5 * Field.INCHES_PER_GRID, Math.toRadians(0))),
 
         RED_SHIPPING_HUB(new Pose2d(-12, -24)),
         BLUE_SHIPPING_HUB(new Pose2d(-12, 24));

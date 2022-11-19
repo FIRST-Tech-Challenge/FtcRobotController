@@ -276,7 +276,9 @@ public class Robot implements Subsystem {
                     }
                 }
                 break;
-
+            case 7:
+                autonIndex=0;
+                return true;
             default:
                 return false;
         }
