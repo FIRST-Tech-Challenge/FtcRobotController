@@ -73,6 +73,11 @@ public class HuskyTeleOpMode extends LinearOpMode {
         motor.setVelocity(currentVel + changeVel);
     }
 
+    /*public void bReset()
+    {
+      Get Encoder
+    }*/
+
 
     @Override
     public void runOpMode() {
@@ -158,6 +163,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
             {
                 huskyBot.armLiftMotor.setPower(0);
             }
+
 
             // Increases/Decreases Arm Length
             armExtendPower = gamepad2.dpad_up ? -ARM_EXTENSION_MAX_POWER : (gamepad2.dpad_down ? ARM_EXTENSION_MAX_POWER : 0);
