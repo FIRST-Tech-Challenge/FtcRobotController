@@ -1,4 +1,5 @@
 
+
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -12,10 +13,11 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.Helper.RobotMeet1;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Red Auto", group = "Concept")
-public class RedAuto extends LinearOpMode {
+@Autonomous(name = "Auto Meet 1", group = "Concept")
+public class RedAutoMeet1 extends LinearOpMode {
 
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
@@ -55,6 +57,12 @@ public class RedAuto extends LinearOpMode {
 
             tfod.setZoom(1.0, 16.0 / 9.0);
         }
+
+        robot.vSlider.setTargetPosition(-165);
+        robot.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.vSlider.setPower(0.6);
+
+        robot.claw.setPosition(0);
 
 
         /** Wait for the game to begin */
@@ -154,6 +162,7 @@ public class RedAuto extends LinearOpMode {
 
     private void Park(int location) {
         if (location == 1) {
+
             runtime.reset();
             timeout_ms = 3000;
             robot.Drive(0.3, -75);
@@ -161,6 +170,7 @@ public class RedAuto extends LinearOpMode {
 
             }
             robot.stopDriveMotors();
+
             sleep(100);
 
             runtime.reset();
@@ -170,6 +180,7 @@ public class RedAuto extends LinearOpMode {
 
             }
             robot.stopDriveMotors();
+
         }
 
         if (location == 2) {
@@ -190,6 +201,8 @@ public class RedAuto extends LinearOpMode {
 
             }
             robot.stopDriveMotors();
+
+
             sleep(100);
 
             runtime.reset();

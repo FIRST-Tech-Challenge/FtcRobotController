@@ -4,22 +4,23 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Helper.new_robot;
+import org.firstinspires.ftc.teamcode.Helper.RobotMeet1;
 
 @TeleOp(name = "22-23 TeleOp", group = "LinearOpMode")
 
-public class new_teleop extends LinearOpMode {
+public class TeleopMeet1 extends LinearOpMode {
 
     //tells you how long the robot has run for
     private ElapsedTime runtime = new ElapsedTime();
 
 
-    new_robot robot = new new_robot();
+    RobotMeet1 robot = new RobotMeet1();
 
     //How fast your robot will accelerate.
     public double acceleration = 0.3;
 
-    private double holdingPower = 0.3;
+    // holding power for vertical slider.
+    private double holdingPower = -0.01;
 
     //Motor powers
     public double fl_power = 0;
@@ -38,7 +39,6 @@ public class new_teleop extends LinearOpMode {
          */
         robot.init(hardwareMap);
 
-
         /**
          * This code is run during the init phase, and when opMode is not active
          * i.e. When "INIT" Button is pressed on the Driver Station App
@@ -48,6 +48,7 @@ public class new_teleop extends LinearOpMode {
         telemetry.addData("BL Motor Encoder", robot.BLMotor.getCurrentPosition());
         telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
         telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
+        telemetry.addData("VSlider Encoder", robot.vSlider.getCurrentPosition());
         telemetry.update();
 
         waitForStart();
@@ -76,14 +77,14 @@ public class new_teleop extends LinearOpMode {
              Drivetrain
              */
 
-            robot.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power);
-            robot.BLMotor.setPower(DRIVETRAIN_SPEED * bl_power);
-            robot.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power);
-            robot.BRMotor.setPower(DRIVETRAIN_SPEED * br_power);
+            robot.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power * 0.75);
+            robot.BLMotor.setPower(DRIVETRAIN_SPEED * bl_power * 0.75);
+            robot.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power * 0.75);
+            robot.BRMotor.setPower(DRIVETRAIN_SPEED * br_power * 0.75);
 
             /** Claw **/
             if(gamepad2.x) {
-                robot.claw.setPosition(0.90);
+                robot.claw.setPosition(1);
                 telemetry.addData("Claw Position", robot.claw.getPosition());
                 telemetry.update();
             }
@@ -94,8 +95,8 @@ public class new_teleop extends LinearOpMode {
             }
 
             /** Slider **/
-            double vSliderPower =  -gamepad2.left_stick_y;
-            double hSliderPower = gamepad2.right_stick_x;
+            double vSliderPower =  gamepad2.left_stick_y * 0.75;
+            double hSliderPower = -gamepad2.right_stick_x * 0.75;
 
             robot.vSlider.setPower(vSliderPower + holdingPower);
             robot.hSlider.setPower(hSliderPower);
@@ -104,6 +105,8 @@ public class new_teleop extends LinearOpMode {
             telemetry.addData("BL Motor Encoder", robot.BLMotor.getCurrentPosition());
             telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
             telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
+            telemetry.addData("vSlider Encoder", robot.vSlider.getCurrentPosition());
+            telemetry.addData("vSliderPower", vSliderPower);
             telemetry.update();
 
         }

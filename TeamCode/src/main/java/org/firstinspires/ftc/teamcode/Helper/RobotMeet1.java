@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
-public class new_robot {
+public class RobotMeet1 {
     private ElapsedTime runtime = new ElapsedTime();
     public DcMotor vSlider;
     public DcMotor hSlider;
@@ -87,6 +87,7 @@ public class new_robot {
         BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         claw.setDirection(Servo.Direction.FORWARD);
         vSlider.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -102,16 +103,20 @@ public class new_robot {
         BLMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         FLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         FLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         FRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        vSlider.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
 
     }
 
