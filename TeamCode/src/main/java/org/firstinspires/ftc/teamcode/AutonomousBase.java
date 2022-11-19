@@ -552,9 +552,9 @@ public abstract class AutonomousBase extends LinearOpMode {
     public boolean moveToPosition( double x_target, double y_target, double drive_angle,
                                     double move_power, double turn_power ) {
         // Convert current robot X,Y position from encoder-counts to inches
-        double x_world = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH;  // inches (backward! see notes)
-        double y_world = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH;  // inches
-        double angle_world = robotOrientationRadians;                             // radians
+        double x_world = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (backward! see notes)
+        double y_world = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches
+        double angle_world = robotOrientationRadians;                              // radians
         // Compute distance and angle-offset to the target point
         double distanceToPoint   = Math.sqrt( Math.pow((x_target - x_world),2.0) + Math.pow((y_target - y_world),2.0) );
         double distToPointAbs    = Math.abs( distanceToPoint );
@@ -606,9 +606,9 @@ public abstract class AutonomousBase extends LinearOpMode {
             frontLeft  /= maxWheelPower;
             frontRight /= maxWheelPower;
         }
-        // If the computed wheel powers drop below 6% (minimum needed to produce robot movement)
+        // If the computed wheel powers drop below 5% (minimum needed to produce robot movement)
         // go ahead and abort as we'll be stuck here forever if we don't
-        if( maxWheelPower < 0.06 ) {
+        if( maxWheelPower < 0.05 ) {
             return true;
         }
         boolean ODOMETRY_DEBUG = false;

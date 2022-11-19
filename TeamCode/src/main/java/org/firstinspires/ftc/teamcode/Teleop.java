@@ -54,18 +54,29 @@ public abstract class Teleop extends LinearOpMode {
 
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
     boolean   rangeSensorsEnabled = true;  // enable only when designing an Autonomous plan (takes time!)
-    int       rangeSensorIndex = 1;         // only send a new ping out every other control cycle, and rotate sensors
+    int       rangeSensorIndex = 1;        // only send a new ping out every other control cycle, and rotate sensors
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
 
-    boolean   turretTweaked = false;     // Reminder to zero power when input stops
-    boolean   liftTweaked = false;       // Reminder to zero power when input stops
-    boolean   collectorFlipped = false;  // Collector has been flipped to upside down orientation
+    boolean   turretTweaked    = false;    // Reminder to zero power when input stops
+    boolean   liftTweaked      = false;    // Reminder to zero power when input stops
+    boolean   collectorFlipped = false;    // Collector has been flipped to upside down orientation
+    boolean   needFlip         = false;    // Collector needs to be flipped for this scoring orientation
 
     ElapsedTime grabberRunTimer = new ElapsedTime();
     boolean     grabberRunning  = false;    // is an automatic collector activity running?
     boolean     grabberIntake   = true;     // is it an INTAKE activity? (false means EJECTION activity)
     boolean     grabberLifting  = false;    // if an INTAKE, has the collection occurred and now we're auto-lifting?
+    double      grabberTarget1  = 0.0;      // grabber tilt for start of motion
+    double      grabberTarget2  = 0.0;      // grabber tilt for end of motion
+
+    final int LIFT_CYCLECOUNT_START  = 3;  // Lift just started moving (1st cycle)
+    final int LIFT_CYCLECOUNT_MOTORS = 2;  // Lift passing turret motors level (safe to orient the collector)
+    final int LIFT_CYCLECOUNT_CHECK  = 1;  // Verify the grabber positions
+    final int LIFT_CYCLECOUNT_DONE   = 0;  // Movement is complete (cycle count is reset)
+    int       liftCycleCount         = LIFT_CYCLECOUNT_DONE;
+    double    liftTarget             = 0.0;
+    boolean   liftTargetUpward       = false;
 
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
@@ -79,6 +90,8 @@ public abstract class Teleop extends LinearOpMode {
     double robotGlobalXCoordinatePosition       = 0.0;   // in odometer counts
     double robotGlobalYCoordinatePosition       = 0.0;
     double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
+
+    boolean leftAlliance = true;  // overriden in setAllianceSpecificBehavior() 
 
     // sets unique behavior based on alliance
     public abstract void setAllianceSpecificBehavior();
@@ -574,9 +587,23 @@ public abstract class Teleop extends LinearOpMode {
     } // averagedRangeSensors
 
     /*---------------------------------------------------------------------------------*/
+    void processCollectorFlip() {
+       // Do we need to flip the collector upside down?
+       if( (needFlip == true) && (collectorFlipped == false) ) {
+          robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
+          collectorFlipped = true;
+       }
+       // Do we need to un-flip the collector back to the normal upright position?
+       else if( (needFlip == false) && (collectorFlipped == true) ) {
+          robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
+          collectorFlipped = false;
+          }
+    } // processCollectorFlip
+
+    /*---------------------------------------------------------------------------------*/
     void processTurretControls() {
-        boolean safeToManuallyLeft  = (robot.turretAngle > robot.TURRET_LIMIT_LEFT);
-        boolean safeToManuallyRight = (robot.turretAngle < robot.TURRET_LIMIT_RIGHT );
+        boolean safeToManuallyLeft  = (robot.turretAngle > robot.TURRET_ANGLE_MIN);
+        boolean safeToManuallyRight = (robot.turretAngle < robot.TURRET_ANGLE_MAX );
         double  gamepad2_left_stick = gamepad2.left_stick_x;
         boolean manual_turret_control = ( Math.abs(gamepad2_left_stick) > 0.05 );
 
@@ -584,18 +611,24 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
         if( gamepad1_cross_now && !gamepad1_cross_last)
         {
-            robot.turretPosInit( 0.0 );
+            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         }
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
         else if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
         {
-           robot.turretPosInit( -20.0 );
+           robot.turretPosInit( leftAlliance? -21.9 : +21.9 );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last )
         {
-           robot.turretPosInit( +44.0 );
+           // ensure lift is above the motors before rotating that far
+           if( robot.liftAngle < robot.LIFT_ANGLE_MOTORS ) {
+              robot.turretPosInit( leftAlliance? +38.0 : -38.0 );
+           }
+           else {
+               // do nothing (ignore the request)
+           }
         }
         //===================================================================
         else if( manual_turret_control || turretTweaked ) {
@@ -652,8 +685,12 @@ public abstract class Teleop extends LinearOpMode {
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {   // Lower lift to COLLECT position and adjust collector tilt horizontal
             robot.grabberSpinStop();
-            robot.grabberSetTilt( robot.GRABBER_TILT_GRAB );
-            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+            needFlip       = false;  // collector upright for grabbing
+            grabberTarget1 = robot.GRABBER_TILT_GRAB;
+            grabberTarget2 = robot.GRABBER_TILT_GRAB;
+            liftTarget     = robot.LIFT_ANGLE_COLLECT;
+            liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
+            liftCycleCount = LIFT_CYCLECOUNT_START;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         else if( gamepad2_circle_now && !gamepad2_circle_last )
@@ -706,10 +743,14 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Raise lift to HIGH junction
             robot.grabberSpinStop();
-//          robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-            robot.grabberSetTilt( robot.GRABBER_TILT_SCORE1 );
-//          robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
-            robot.liftPosInit( robot.LIFT_ANGLE_BACK_H );
+            needFlip       = true;  // collector flipped for reverse scoring
+            grabberTarget1 = robot.GRABBER_TILT_STORE;
+            grabberTarget2 = robot.GRABBER_TILT_SCORE1;
+//          grabberTarget2 = robot.GRABBER_TILT_STORE;
+            liftTarget     = robot.LIFT_ANGLE_BACK_H;
+//          liftTarget     = robot.LIFT_ANGLE_HIGH;
+            liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
+            liftCycleCount = LIFT_CYCLECOUNT_START;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
@@ -752,6 +793,36 @@ public abstract class Teleop extends LinearOpMode {
                 liftTweaked = false;
             }
         } // manual_lift_control
+
+        //===================================================================
+        if( liftCycleCount >= LIFT_CYCLECOUNT_START ) {
+           robot.grabberSetTilt( grabberTarget1 );
+           robot.liftPosInit( liftTarget );
+            processCollectorFlip();
+           liftCycleCount--;  // exit this state
+        } // LIFT_CYCLECOUNT_START
+        else if( liftCycleCount == LIFT_CYCLECOUNT_MOTORS ) {
+           // Are we waiting for lift to RAISE above motor level?
+           if( (liftTargetUpward == true) && (robot.liftAngle < robot.LIFT_ANGLE_MOTORS) ) {
+             robot.grabberSetTilt( grabberTarget2 );
+             liftCycleCount--;  // LIFT_CYCLECOUNT_CHECK
+           }
+           // Or are we waiting for lift to LOWER below motor level?
+           else if( (liftTargetUpward == false) && (robot.liftAngle > robot.LIFT_ANGLE_MOTORS) )
+           {
+             robot.grabberSetTilt( grabberTarget2 );
+             liftCycleCount--;  // LIFT_CYCLECOUNT_CHECK
+           }
+           else {
+              // Do nothing this cycle (wait for lift to raise/lower past motor level
+           }
+        } // LIFT_CYCLECOUNT_MOTORS
+        else if( liftCycleCount == LIFT_CYCLECOUNT_CHECK ) {
+            // if we started close to the target position, we don't do MOTORS step correctly
+            // (fix that here at the end)
+            robot.grabberSetTilt( grabberTarget2 );
+            liftCycleCount--;  // LIFT_CYCLECOUNT_DONE
+        } // LIFT_CYCLECOUNT_CHECK
 
     } // processLiftControls
 

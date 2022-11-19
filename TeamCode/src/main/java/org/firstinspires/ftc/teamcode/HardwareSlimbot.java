@@ -96,8 +96,9 @@ public class HardwareSlimbot
     public double       turretAngleOffset  = 299.0;   // allows us to adjust the 0-360 deg range
     public double       turretAngleTarget  = 0.0;     // Automatic movement target angle (degrees)
 
-    public double       TURRET_LIMIT_LEFT  = -90.0;   // absolute encoder angles at maximum rotation LEFT
-    public double       TURRET_LIMIT_RIGHT = +90.0;   // absolute encoder angles at maximum rotation RIGHT
+    public double       TURRET_ANGLE_MAX    = +90.0;   // absolute encoder angles at maximum rotation RIGHT
+    public double       TURRET_ANGLE_CENTER = 0.0 ;    // turret centered
+    public double       TURRET_ANGLE_MIN    = -90.0;   // absolute encoder angles at maximum rotation LEFT
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -126,14 +127,15 @@ public class HardwareSlimbot
     public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)
 
     public double       LIFT_ANGLE_MAX     =  92.0;   // absolute encoder angle at maximum rotation FRONT
-    public double       LIFT_ANGLE_MIN     = -60.0;   // absolute encoder angle at maximum rotation REAR
+    public double       LIFT_ANGLE_MIN     = -70.0;   // absolute encoder angle at maximum rotation REAR
     // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
-    public double       LIFT_ANGLE_COLLECT = 87.0;    // lift position for collecting cones
+    public double       LIFT_ANGLE_COLLECT = 84.0;    // lift position for collecting cones
     public double       LIFT_ANGLE_GROUND  = 88.0;    // lift position for collecting cones
     public double       LIFT_ANGLE_LOW     = 66.0;    // lift position for LOW junction
+    public double       LIFT_ANGLE_MOTORS  = 64.0;    // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_MED     = 42.0;    // lift position for MEDIUM junction
     public double       LIFT_ANGLE_HIGH    = 12.0;    // lift position for HIGH junction
-    public double       LIFT_ANGLE_BACK_H  = -57.0;   // lift position for BACK-SCORE HIGH junction
+    public double       LIFT_ANGLE_BACK_H  = -61.0;   // lift position for BACK-SCORE HIGH junction
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -170,9 +172,9 @@ public class HardwareSlimbot
     public double       currentTilt         =  0.00;
     public double       GRABBER_TILT_MAX    =  0.50;  // 0.5 (max) is up; -0.5 (min) is down
     public double       GRABBER_TILT_INIT   =  0.00;
-    public double       GRABBER_TILT_STORE  = -0.15;
     public double       GRABBER_TILT_SCORE1 =  0.19;
-    public double       GRABBER_TILT_GRAB   = -0.26;
+    public double       GRABBER_TILT_STORE  = -0.15;
+    public double       GRABBER_TILT_GRAB   = -0.27;
     public double       GRABBER_TILT_MIN    = -0.50;
 
     public Servo        rotateServo         = null;   // rotate GRABBER left/right
@@ -597,7 +599,7 @@ public class HardwareSlimbot
             double degreesToGo = liftAngleTarget - liftAngle;
             // Have we achieved the target?
 //          if( liftMotorCycles >= 16 ) {
-            if( Math.abs(degreesToGo) < 1.0 ) {
+            if( Math.abs(degreesToGo) < 0.8 ) {
                 liftMotorsSetPower( 0.0 );
                 if( ++liftMotorWait >= 2 ) {
                     liftMotorAuto = false;
