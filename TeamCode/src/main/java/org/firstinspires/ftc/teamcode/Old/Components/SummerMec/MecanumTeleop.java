@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Old.Components.SummerMec;
 
 import static java.lang.Math.PI;
-import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
@@ -14,14 +13,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFSlides;
-import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFTurret;
-import org.firstinspires.ftc.teamcode.Old.Components.Misc.ColorDistanceRevV3;
-import org.firstinspires.ftc.teamcode.Old.Components.Localizer.OdometryTracker;
 
 import java.util.ArrayList;
 
+@Disabled
 @TeleOp(name = "MecanumTeleOp(Weakened)")
 public class MecanumTeleop extends LinearOpMode {
 

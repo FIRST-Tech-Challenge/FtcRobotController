@@ -38,12 +38,12 @@ public class Lift {
     private RFMotor liftMotor;
     private Claw LC = new Claw();
     private double liftTarget = 0;
-    public static double dfco1 = 0.0122, dfco2 = 1.0 / 3, dfco3 = 500;
+    public static double dfco1 = 0.0122, dfco2 = 1.0 / 3, dfco3 = 400;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    private double[] coneStack = {470, 420, 270, 160};
-    private int stackLevel = 3;
+    private double[] coneStack = {470, 370, 240, 120};
+    private int stackLevel = 0;
     private double lastStackTime =0;
 
     public Lift() { //constructor
