@@ -227,7 +227,7 @@ public class Crane implements Subsystem {
                 if (System.nanoTime()>futureTime) {
                     calibrateStage = 0;
                     calibrated = true;
-                    shoulderTargetAngle = 10; //initial angle up to clear look at signal
+                    shoulderTargetAngle = 20; //initial angle up to clear look at signal
                     return true;
                 }
                 break;
@@ -534,6 +534,10 @@ public class Crane implements Subsystem {
         targetDistance = Math.sqrt(Math.pow(y - turretPos.getY(),2) + Math.pow(x - turretPos.getX(),2));
 
         return true;
+    }
+
+    public void setTargetTurretAngle(double target){
+        targetTurretAngle = target;
     }
     public boolean setHeight(double newHeight){
         targetHeight = newHeight;

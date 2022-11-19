@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
 import android.graphics.Bitmap;
 
@@ -179,24 +180,23 @@ public class Robot implements Subsystem {
     int autonIndex = 0;
 
     boolean turnUntilDegreesDone = false;
+    long time;
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
         switch (autonIndex){
             case 0:
-                crane.setShoulderTargetAngle(75);
                 if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID+4,0,20)){
                     autonIndex++;
                 }
                 break;
             case 1:
+                crane.setShoulderTargetAngle(75);
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
                     if(driveTrain.turnUntilDegrees( 90)){
-                        turret.setTargetHeading(90);
                         autonIndex++;
                         turnUntilDegreesDone = true;
                     }
                 }else{
                     if(driveTrain.turnUntilDegrees(-90)){
-                        turret.setTargetHeading(90);
                         autonIndex++;
                         turnUntilDegreesDone = true;
                     }
@@ -204,13 +204,60 @@ public class Robot implements Subsystem {
                 break;
             case 2:
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
-                    turret.setTargetHeading(90);
+                    crane.setTargetTurretAngle(317.5);
+                    if(turret.isTurretNearTarget()){
+                        autonIndex++;
+                        time = futureTime(2);
+                    }
                 }else{
-                    turret.setTargetHeading(90);
+                    crane.setTargetTurretAngle(25);
+                    if(turret.isTurretNearTarget()){
+                        autonIndex++;
+                        time = futureTime(2);
+                    }
                 }
-                autonIndex++;
                 break;
             case 3:
+                if(startingPosition.equals( Constants.Position.START_LEFT)) {
+                    crane.setExtendTargetPos(0.5);
+                    crane.setShoulderTargetAngle(62);
+                    if (System.nanoTime() >= time && withinError(crane.getExtendMeters(), 0.5, 0.02) && withinError(crane.getShoulderAngle(), 62, 0.05)) {
+                        crane.setGripper(false);
+                        time = futureTime(0.3);
+                        autonIndex++;
+                    }
+                }else{
+                    crane.setExtendTargetPos(0.5);
+                    crane.setShoulderTargetAngle(62);
+                    if (System.nanoTime() >= time && withinError(crane.getExtendMeters(), 0.5, 0.02) && withinError(crane.getShoulderAngle(), 62, 0.05)) {
+                        crane.setGripper(false);
+                        time = futureTime(0.3);
+                        autonIndex++;
+                    }
+                }
+                break;
+            case 4:
+                if(System.nanoTime() >= time) {
+                    crane.setExtendTargetPos(0.54);
+                    crane.setShoulderTargetAngle(76.6);
+                }
+                if(withinError(crane.getExtendMeters(),0.54,0.02) && withinError(crane.getShoulderAngle(),76.6,0.07)){
+                    autonIndex++;
+                }
+                break;
+            case 5:
+                crane.setExtendTargetPos(0.2);
+                crane.setShoulderTargetAngle(75);
+                if(withinError(crane.getExtendMeters(),0.2,0.02) && withinError(crane.getShoulderAngle(),75,0.07)){
+                    autonIndex++;
+                }
+                break;
+            case 6:
+                if(startingPosition.equals( Constants.Position.START_LEFT)){
+                    crane.setTargetTurretAngle(90);
+                }else{
+                    crane.setTargetTurretAngle(270);
+                }
                 if(autonTarget  == 1){
                     autonIndex++;
                     break;
@@ -229,15 +276,15 @@ public class Robot implements Subsystem {
                     }
                 }
                 break;
-            case 4:
-                if(turret.turnToTargetHeading(170)){
-                    autonIndex = 0;
-                    return true;
-                }
+
             default:
                 return false;
         }
         return false;
+    }
+
+    boolean withinError(double value, double target, double percent){
+        return (value >= target*(1-percent) && value <= target*(1+percent));
     }
 
     //----------------------------------------------------------------------------------------------
