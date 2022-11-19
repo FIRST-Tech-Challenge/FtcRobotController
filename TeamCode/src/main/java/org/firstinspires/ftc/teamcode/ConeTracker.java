@@ -7,13 +7,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class ConeTracker {
 
-    final private double MAX_RANGE = 350;
+    final private double MAX_RANGE = 325;
     final private double MIN_RANGE = 50;
     final private double DEAD_BAND = 15;
 
     public  boolean coneDetected  = false;
     public  double  coneRange     = MAX_RANGE;
-    public  double  coneDirection = 0;
 
     private LinearOpMode        myOpMode = null;
     private Rev2mDistanceSensor left    = null;
@@ -28,6 +27,11 @@ public class ConeTracker {
     private boolean centerSeen = false;
     private boolean rightSeen  = false;
     private int     numberSeen = 0;
+
+    private double  trackTurn  = 0;
+    private double  trackDrive = 0;
+    private double  trackStrafe = 0;
+    private boolean trackGrab  = false;
 
     public ConeTracker(LinearOpMode opmode) {
         myOpMode = opmode;
@@ -45,6 +49,11 @@ public class ConeTracker {
         centerRange = center.getDistance(DistanceUnit.MM);
         rightRange  = right.getDistance(DistanceUnit.MM);
         numberSeen = 0;
+
+        trackStrafe = 0;
+        trackTurn   = 0;
+        trackDrive  = 0;
+        trackGrab   = false;
 
         // Determine all the individual cone ranges and also the closest range
         coneRange = MAX_RANGE;
@@ -79,33 +88,76 @@ public class ConeTracker {
 
         // Determine the direction to the cone.
         // +1 is max CCW direction, 0 is straight ahead, -1 is max CW direction.
+        if (coneDetected) {
 
-        coneDirection = 0;
-        if (numberSeen == 1){
-            if (leftSeen) {
-                coneDirection = 1;
-            } else if (rightSeen) {
-                coneDirection = -1;
+            if (numberSeen == 1) {
+                if (leftSeen) {
+                    trackTurn = 0.2;
+                } else if (rightSeen) {
+                    trackTurn = -0.2;
+                }
+            } else if (numberSeen == 2) {
+                if (leftSeen && centerSeen) {
+                    if (leftRange > (centerRange +30)) { // avoid running into diag wall
+                        trackStrafe = -0.20;
+                        trackTurn   =  0.25;
+                    } else {
+                        trackTurn = 0.15;
+                    }
+                } else if (rightSeen && centerSeen) {
+                    if (rightRange > (centerRange +30)) { // avoid running into diag wall
+                        trackStrafe = 0.20;
+                        trackTurn = -0.25;
+                    } else {
+                        trackTurn = -0.15;
+                    }
+                }
+            } else {
+                double rangeDifference = (leftRange - rightRange);
+                if (rangeDifference > DEAD_BAND) {
+                    trackTurn = -0.15;
+//                    if (rightRange > (centerRange +30)) { // avoid running into diag wall
+//                        trackStrafe = 0.15;
+//                    }
+                } else if (rangeDifference < -DEAD_BAND) {
+                    trackTurn = 0.15;
+//                    if (leftRange > (centerRange +30)) { // avoid running into diag wall
+//                        trackStrafe = -0.15;
+//                    }
+                }
             }
-        } else if (numberSeen == 2) {
-            if (leftSeen && centerSeen) {
-                coneDirection = 0.5;
-            } else if (rightSeen && centerSeen) {
-                coneDirection = -0.5;
+
+            if (coneRange > 100) {
+                trackDrive = 0.2;
+            } else if (coneRange > 80) {
+                trackDrive = 0.1;
+            } else if (coneRange > 70) {
+                trackDrive = 0.05;
+            } else if (coneRange < 70) {
+                trackDrive = -0.1;
             }
-        } else {
-            double rangeDifference = (leftRange - rightRange);
-            if (rangeDifference > DEAD_BAND) {
-                coneDirection = -0.3;
-            } else if (rangeDifference < -DEAD_BAND) {
-                coneDirection = 0.3;
-            }
+
+            trackGrab = ((coneRange > 65) && (coneRange < 75));
         }
 
         return coneDetected;
     }
 
+    public double trackTurn() {
+        return trackTurn;
+    }
 
+    public double trackDrive() {
+        return trackDrive;
+    }
+
+    public double trackStrafe() {
+        return trackStrafe;
+    }
+
+    public boolean trackGrab() {
+        return trackGrab;
+    }
 
     public void showRanges() {
         myOpMode.telemetry.addData("cone found", coneDetected);
@@ -113,7 +165,10 @@ public class ConeTracker {
         myOpMode.telemetry.addData("center", centerRange);
         myOpMode.telemetry.addData("right", rightRange);
         myOpMode.telemetry.addData("cone range", coneRange);
-        myOpMode.telemetry.addData("cone direction", coneDirection);
+        myOpMode.telemetry.addData("Track turn", trackTurn);
+        myOpMode.telemetry.addData("Track drive", trackDrive);
+        myOpMode.telemetry.addData("Track strafe", trackStrafe);
+        myOpMode.telemetry.addData("Track Grab", trackGrab);
 
     }
 }

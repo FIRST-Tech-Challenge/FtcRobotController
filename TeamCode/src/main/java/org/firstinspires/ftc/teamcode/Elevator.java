@@ -194,9 +194,11 @@ public class Elevator {
                     setHandPosition(HAND_OPEN);
                     setState(HOME_OPEN);
                 } else if (homeRequested()) {
-                    setLiftTargetPosition(ELEVATOR_HOME);
-                    setHandPosition(HAND_OPEN);
-                    setState(HOME_OPEN);
+                    setHandDelayMove(HAND_READY, 0.1, ELEVATOR_HOME, GOING_HOME_OPEN);
+
+//                    setLiftTargetPosition(ELEVATOR_HOME);
+//                    setHandPosition(HAND_OPEN);
+//                    setState(HOME_OPEN);
                 }
                 break;
             }

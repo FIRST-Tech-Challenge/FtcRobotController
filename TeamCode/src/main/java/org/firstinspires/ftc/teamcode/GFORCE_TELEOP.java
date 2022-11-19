@@ -85,16 +85,16 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 // Switch an Auto heading of zero, to +90 or (+PI/2)
                 newHeading =  drive.normalizeHeading(newHeading + (Math.PI/2.0));
             }
+            drive.setExternalHeading(newHeading);
+            drive.setPoseEstimate(new Pose2d(SharedStates.currentPose.getX(), SharedStates.currentPose.getY(), newHeading));
         }
-        drive.setExternalHeading(newHeading);
-        drive.setPoseEstimate(new Pose2d(SharedStates.currentPose.getX(), SharedStates.currentPose.getY(), newHeading));
         elevator.setState(SharedStates.elevatorState);
 
         while (opModeInInit()) {
             telemetry.addData("Alliance", weAreRed ? "RED" : "blue");
             elevator.runStateMachine();
-            // coneTracker.update();       // testing only
-            // coneTracker.showRanges();   // testing only
+            coneTracker.update();       // testing only
+            coneTracker.showRanges();   // testing only
             telemetry.update();
         }
 
@@ -121,21 +121,10 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
             if (gamepad1.left_bumper && elevator.handIsOpen && !elevator.getWristIsSafe() && coneTracker.update() ) {
                 coneTracker.showRanges();
-                double turn = coneTracker.coneDirection / 5.0;
-                double speed = 0;
-
-                if (coneTracker.coneRange > 120) {
-                    speed = 0.2;
-                }else if (coneTracker.coneRange > 100) {
-                    speed = 0.1;
-                }else if (coneTracker.coneRange < 80) {
-                    speed = -0.1;
-                }
-
-                elevator.grabRequest = (gamepad2.cross && ((coneTracker.coneRange > 70) && (coneTracker.coneRange < 90)));
 
                 lockNewHeading(drive.getExternalHeading());
-                drive.setWeightedDrivePower(new Pose2d(speed, 0, turn));
+                elevator.grabRequest = (!gamepad2.cross && coneTracker.trackGrab());
+                drive.setWeightedDrivePower(new Pose2d(coneTracker.trackDrive(), coneTracker.trackStrafe(), coneTracker.trackTurn()));
 
             } else  {
                 elevator.grabRequest = false;

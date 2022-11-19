@@ -98,24 +98,12 @@ public class GFORCE_AUTO extends LinearOpMode {
         drive.updatePoseEstimate();
         if (coneTracker.update() && !coneGrabbed) {
             coneTracker.showRanges();
-            double turn = coneTracker.coneDirection / 5.0;
-            double speed = 0;
+            drive.setWeightedDrivePower(new Pose2d(coneTracker.trackDrive(), 0, coneTracker.trackTurn()));
 
-            if (coneTracker.coneRange > 120) {
-                speed = 0.2;
-            } else if (coneTracker.coneRange > 100) {
-                speed = 0.1;
-            } else if (coneTracker.coneRange < 80) {
-                speed = -0.1;
-            }
-            drive.setWeightedDrivePower(new Pose2d(speed, 0, turn));
-
-            if (((coneTracker.coneRange > 70) && (coneTracker.coneRange < 90))) {
-               // elevator.setHandPosition(elevator.HAND_CLOSE);
+            if (coneTracker.trackGrab()) {
                 elevator.grabRequest = true;
                 coneGrabbed = true;
                 trackConeNow = false;
-
             }
         } else {
             drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
