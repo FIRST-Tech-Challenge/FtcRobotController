@@ -13,14 +13,18 @@ public class Elevator {
     private Servo leftServo = null;
     private Servo rightServo = null;
     private DcMotor elevatorMotor = null;
+
     private Telemetry telemetry;
+
     private static double mainServoPosition;
     private static double handsOffset;
     public static final double HANDS_MAX_POSITION = 0.5;
     public static final double HANDS_MIN_POSITION = -0.5;
     public static final double HANDS_MID_POSITION = 0;
-    public static final double ELEVATOR_MOTOR_SPEED = 0.5;
     public static final double LEFT_RIGHT_SERVO_SPEED = 0.2;
+
+    public static final double ELEVATOR_MOTOR_SPEED = 0.5;
+    public static final int MAX_ELEVATOR_POSITION = 30;
 
     public Elevator(HardwareMap hardwareMap, Telemetry telemetry){
         mainServo = hardwareMap.get(Servo.class, "elevator_main_servo");
@@ -33,13 +37,27 @@ public class Elevator {
     public void initMotors(){
         mainServo.setPosition(Servo.MIN_POSITION);
         mainServoPosition = Servo.MIN_POSITION;
+
         elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
+        //move elevator down - start position
+        elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elevatorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("Starting at",  "%7d", elevatorMotor.getCurrentPosition());
+        telemetry.update();
+
         leftServo.setPosition(HANDS_MID_POSITION);
         rightServo.setPosition(HANDS_MID_POSITION);
         handsOffset = 0;
     }
+
     public void setElevatorMotorPower(double power){
-        elevatorMotor.setPower(power * ELEVATOR_MOTOR_SPEED);
+        int currentPosition = elevatorMotor.getCurrentPosition();
+        if (currentPosition >= MAX_ELEVATOR_POSITION || currentPosition<= 0){
+            elevatorMotor.setPower(0);
+        }
+        else {
+            elevatorMotor.setPower(power * ELEVATOR_MOTOR_SPEED);
+        }
 
         telemetry.addData("position", elevatorMotor.getCurrentPosition());
         telemetry.update();
