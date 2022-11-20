@@ -45,7 +45,7 @@ public class Elevator {
         telemetry.update();
     }
 
-    public void leftRightServoPower(int direction) {
+    public void moveHands(int direction) {
 
         handsOffset = handsOffset + direction * LEFT_RIGHT_SERVO_SPEED;
         handsOffset = Range.clip(handsOffset , HANDS_MIN_POSITION, HANDS_MAX_POSITION);
