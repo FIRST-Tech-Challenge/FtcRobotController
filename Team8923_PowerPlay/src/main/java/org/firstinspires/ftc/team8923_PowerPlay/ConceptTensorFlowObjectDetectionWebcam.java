@@ -15,9 +15,9 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
     /*
      * Specify the source for the Tensor Flow Model.
      * If the TensorFlowLite object model is included in the Robot Controller App as an "asset",
-     * the OpMode must to load it using loadModelFromAsset().  However, if a team generated model
+     * the OpMode must to load it using loadModelFromAsset(). However, if a team generated model
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
-     * Here we assume it's an Asset.    Also see method initTfod() below .
+     * Here we assume it's an Asset. Also see method initTfod() below.
      */
     private static final String TFOD_MODEL_ASSET = "RedTensorFlowModel.tflite";
 
@@ -127,7 +127,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam");
 
-        //  Instantiate the Vuforia engine
+        // Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
 

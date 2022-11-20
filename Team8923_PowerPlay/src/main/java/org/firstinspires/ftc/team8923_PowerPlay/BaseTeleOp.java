@@ -39,10 +39,6 @@ abstract public class BaseTeleOp extends BaseOpMode {
      * if dpad down, linear slides go down
      */
     public void driveMechanism() {
-        telemetry.addData("Slides", "Running to %7d :%7d",
-                motorSlideLeft.getCurrentPosition(), motorSlideRight.getCurrentPosition());
-
-        telemetry.update();
         if (gamepad2.dpad_up) {
             motorSlideLeft.setPower(mechanismSpeed);
             motorSlideRight.setPower(mechanismSpeed);
@@ -67,7 +63,6 @@ abstract public class BaseTeleOp extends BaseOpMode {
         } else if (gamepad2.a) {
             servoClaw.setPosition(CLOSED_CLAW);
         }
-
     }
 }
 

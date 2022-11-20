@@ -44,6 +44,7 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
         TWO,
         THREE,
     }
+
     public void initAuto() {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
@@ -87,6 +88,10 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
         telemetry.update();
     }
 
+    /**
+     * Detects signal sleeve image.
+     * @return the position of what the detection detects. That position is where we park.
+     **/
     public Position detectSignalSleeve() {
         Position position = Position.THREE;
         // sets parking position dependant on label
@@ -162,6 +167,7 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
         motorFR.setPower(0.5);
         motorBL.setPower(0.5);
         motorBR.setPower(0.5);
+
         // keep looping while we are still active, and there is time left, and both motors are running.
         // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
         // its target position, the motion will stop.  This is "safer" in the event that the robot will
@@ -215,19 +221,24 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
             motorBL.setPower(speedBL);
             motorBR.setPower(speedBR);
             idle();
-        }
-        while ((opModeIsActive() && (Math.abs(angleError) > 3.0)) && (runtime.seconds() < timeout));
+        } while ((opModeIsActive() && (Math.abs(angleError) > 3.0)) && (runtime.seconds() < timeout));
         stopDriving();
     }
 
+    /**
+     * sets power to 0 to stop driving.
+     */
     private void stopDriving() {
         motorFL.setPower(0.0);
         motorFR.setPower(0.0);
         motorBL.setPower(0.0);
         motorBR.setPower(0.0);
-
     }
 
+    /**
+     * @param angle correction for irregular angles.
+     * @return returns correct angle.
+     */
     // normalizing the angle to be between -180 to 180
     private double adjustAngles(double angle) {
         while (angle > 180)
@@ -235,6 +246,5 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
         while (angle < -180)
             angle += 360;
         return angle;
-
     }
 }
