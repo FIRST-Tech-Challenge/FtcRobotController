@@ -227,7 +227,7 @@ public class Crane implements Subsystem {
                 if (System.nanoTime()>futureTime) {
                     calibrateStage = 0;
                     calibrated = true;
-                    shoulderTargetAngle = 20; //initial angle up to clear look at signal
+                    shoulderTargetAngle = 12; //initial angle up to clear look at signal
                     return true;
                 }
                 break;
@@ -350,7 +350,7 @@ public class Crane implements Subsystem {
                 {
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     setExtendTargetPos(defaultPos.getExtendMemory());
-                    pickupTimer = futureTime(0.8); //typical time to retract enough to start turntable
+                    pickupTimer = futureTime(1.5); //typical time to retract enough to start turntable
                     pickupConeStage++;
                 }
                 break;
@@ -411,7 +411,7 @@ public class Crane implements Subsystem {
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     setExtendTargetPos(defaultPos.getExtendMemory());
                     targetTurretAngle = pickup.getHeadingMemory();
-                    dropTimer = futureTime(0.8); //typical time to retract enough to start turntable
+                    dropTimer = futureTime(1.5); //typical time to retract enough to start turntable
                     dropConeStage++;
                 }
                 break;
@@ -431,7 +431,7 @@ public class Crane implements Subsystem {
             case 4:
                 if(System.nanoTime() > pickupTimer){
                     setExtendTargetPos(pickup.getExtendMemory());
-                    pickupConeStage = 0;
+                    dropConeStage = 0;
                     return true;
                 }
             default:
@@ -628,11 +628,11 @@ public class Crane implements Subsystem {
     }
 
     CranePositionMemory pickup = new CranePositionMemory(0,20,0.2);
-    CranePositionMemory defaultPos = new CranePositionMemory(0,55,0.2);
+    CranePositionMemory defaultPos = new CranePositionMemory(0,85,0);
     CranePositionMemory drop = new CranePositionMemory(0,45,0.2);
 
     private void recordPickup(){
-        pickup.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle+10,extendMeters);
+        pickup.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle+20,extendMeters);
     }
 
     public void pickupSequence(){

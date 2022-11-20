@@ -184,7 +184,7 @@ public class Robot implements Subsystem {
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
         switch (autonIndex){
             case 0:
-                if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID+4,0,20)){
+                if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID+1,0,20)){
                     autonIndex++;
                 }
                 break;
@@ -204,7 +204,7 @@ public class Robot implements Subsystem {
                 break;
             case 2:
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
-                    crane.setTargetTurretAngle(317.5);
+                    crane.setTargetTurretAngle(312);
                     if(turret.isTurretNearTarget()){
                         autonIndex++;
                         time = futureTime(2);
@@ -219,9 +219,9 @@ public class Robot implements Subsystem {
                 break;
             case 3:
                 if(startingPosition.equals( Constants.Position.START_LEFT)) {
-                    crane.setExtendTargetPos(0.5);
-                    crane.setShoulderTargetAngle(62);
-                    if (System.nanoTime() >= time && withinError(crane.getExtendMeters(), 0.5, 0.02) && withinError(crane.getShoulderAngle(), 62, 0.05)) {
+                    crane.setExtendTargetPos(0.66);
+                    crane.setShoulderTargetAngle(60);
+                    if (System.nanoTime() >= time && withinError(crane.getExtendMeters(), 0.66, 0.02) && withinError(crane.getShoulderAngle(), 60, 0.05)) {
                         crane.setGripper(false);
                         time = futureTime(0.3);
                         autonIndex++;
@@ -246,9 +246,9 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 5:
-                crane.setExtendTargetPos(0.2);
+                crane.setExtendTargetPos(0);
                 crane.setShoulderTargetAngle(75);
-                if(withinError(crane.getExtendMeters(),0.2,0.02) && withinError(crane.getShoulderAngle(),75,0.07)){
+                if(withinError(crane.getExtendMeters(),0,0.04) && withinError(crane.getShoulderAngle(),75,0.07)){
                     autonIndex++;
                 }
                 break;
@@ -264,15 +264,15 @@ public class Robot implements Subsystem {
                 }
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
                     if(autonTarget == 0){
-                        if(driveTrain.driveUntilDegrees(0.8*Field.INCHES_PER_GRID,-90,20))autonIndex++;
+                        if(driveTrain.driveUntilDegrees(0.8*Field.INCHES_PER_GRID,90,20))autonIndex++;
                     }else{
-                        if(driveTrain.driveUntilDegrees(-0.8*Field.INCHES_PER_GRID,-90,20))autonIndex++;
+                        if(driveTrain.driveUntilDegrees(-0.8*Field.INCHES_PER_GRID,90,20))autonIndex++;
                     }
                 }else{
                     if(autonTarget == 0){
-                        if(driveTrain.driveUntilDegrees(-0.8*Field.INCHES_PER_GRID, -90,20))autonIndex++;
+                        if(driveTrain.driveUntilDegrees(-0.8*Field.INCHES_PER_GRID, 270,20))autonIndex++;
                     }else{
-                        if(driveTrain.driveUntilDegrees(0.8*Field.INCHES_PER_GRID,-90,20))autonIndex++;
+                        if(driveTrain.driveUntilDegrees(0.8*Field.INCHES_PER_GRID,270,20))autonIndex++;
                     }
                 }
                 break;
