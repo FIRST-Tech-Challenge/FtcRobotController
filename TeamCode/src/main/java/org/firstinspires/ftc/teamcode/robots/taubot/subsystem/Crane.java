@@ -337,9 +337,9 @@ public class Crane implements Subsystem {
 
                 if(System.nanoTime() > pickupTimer) //waiting until gripped, then start lifting:
                 {
-                    setShoulderTargetAngle(getShoulderAngle()+10); //todo - this should be a vertical offset (not this angular shortcut)
+                    setShoulderTargetAngle(getShoulderAngle()+15); //todo - this should be a vertical offset (not this angular shortcut)
                     //enough  time for the cone to lift a cone off of a stack so it doesn't drag the stack down when retracting
-                    pickupTimer = futureTime(.25);
+                    pickupTimer = futureTime(.5);
                     pickupConeStage++;
 
                 }
@@ -350,7 +350,7 @@ public class Crane implements Subsystem {
                 {
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     setExtendTargetPos(defaultPos.getExtendMemory());
-                    pickupTimer = futureTime(1.5); //typical time to retract enough to start turntable
+                    pickupTimer = futureTime(0.8); //typical time to retract enough to start turntable
                     pickupConeStage++;
                 }
                 break;
@@ -362,12 +362,17 @@ public class Crane implements Subsystem {
                     //move to previous drop location with a little extra height
                     //robot.turret.setTargetHeading(drop.getHeadingMemory());
                     targetTurretAngle = drop.getHeadingMemory();
-                    setShoulderTargetAngle(drop.getShoulderMemory()+5);
+                    setShoulderTargetAngle(drop.getShoulderMemory());
+                    pickupTimer = futureTime(0.7);
+                    pickupConeStage++;
+                }
+                break;
+            case 4:
+                if(System.nanoTime() > pickupTimer){
                     setExtendTargetPos(drop.getExtendMemory());
                     pickupConeStage = 0;
                     return true;
                 }
-                break;
             default:
                 return false;
         }
@@ -392,7 +397,7 @@ public class Crane implements Subsystem {
 
                 if(System.nanoTime() > dropTimer) //waiting until released, then start lifting:
                 {
-                    setShoulderTargetAngle(getShoulderAngle()+5); //todo - this should be a vertical offset (not this angular shortcut)
+                    setShoulderTargetAngle(getShoulderAngle()+15); //todo - this should be a vertical offset (not this angular shortcut)
                     //enough  time for the cone to lift a cone off of a stack so it doesn't drag the stack down when retracting
                     dropTimer = futureTime(.25);
                     dropConeStage++;
@@ -406,7 +411,7 @@ public class Crane implements Subsystem {
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     setExtendTargetPos(defaultPos.getExtendMemory());
                     targetTurretAngle = pickup.getHeadingMemory();
-                    dropTimer = futureTime(1); //typical time to retract enough to start turntable
+                    dropTimer = futureTime(0.8); //typical time to retract enough to start turntable
                     dropConeStage++;
                 }
                 break;
@@ -418,12 +423,17 @@ public class Crane implements Subsystem {
                     //move to previous drop location with a little extra height
                     //robot.turret.setTargetHeading(pickup.getHeadingMemory()); //doesn't work cause - gets overriden
 
-                    setShoulderTargetAngle(pickup.getShoulderMemory()+10); //return high
-                    setExtendTargetPos(pickup.getExtendMemory());
-                    dropConeStage = 0;
-                    return true;
+                    setShoulderTargetAngle(pickup.getShoulderMemory()); //return high
+                    dropConeStage++;
+                    pickupTimer = futureTime(0.7);
                 }
                 break;
+            case 4:
+                if(System.nanoTime() > pickupTimer){
+                    setExtendTargetPos(pickup.getExtendMemory());
+                    pickupConeStage = 0;
+                    return true;
+                }
             default:
                 return false;
         }
@@ -622,7 +632,7 @@ public class Crane implements Subsystem {
     CranePositionMemory drop = new CranePositionMemory(0,45,0.2);
 
     private void recordPickup(){
-        pickup.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle+20,extendMeters);
+        pickup.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle+10,extendMeters);
     }
 
     public void pickupSequence(){
@@ -638,7 +648,7 @@ public class Crane implements Subsystem {
     }
 
     private void recordDrop(){
-        drop.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle + 10,extendMeters);
+        drop.setCranePositionMemory(robot.turret.getHeading()+10, shoulderAngle,extendMeters);
     }
 
     public void enableCalibrate(){
