@@ -48,7 +48,8 @@ public class RedLeftAuton extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //Initialize robot hardware
-
+        robot = new GBrobot(this);
+        robot.claw.setClawPosition(0.0);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -135,13 +136,6 @@ public class RedLeftAuton extends LinearOpMode {
             park = "RIGHT";
             telemetry.addLine("Right Parking spot");
         }
-        robot = new GBrobot(this);
-
-        /*if(robot.left.getDistance() >= 70 && robot.right.getDistance() < 200){
-            telemetry.addData("In position", "Robot in position!");
-            telemetry.update();
-        }*/
-
 
         telemetry.addData("robot", "press play to start");
         telemetry.update();
@@ -149,8 +143,6 @@ public class RedLeftAuton extends LinearOpMode {
         waitForStart();
 
         if(park .equals("LEFT")){
-            robot.claw.setClawPosition(0.0);
-            sleep(1500);
             robot.lift.driveLiftToPosition(1, 200);
             sleep(700);
             robot.Drive.MoveRobotToPositionStrafe(0.3, 27);
@@ -159,7 +151,7 @@ public class RedLeftAuton extends LinearOpMode {
             sleep(700);
             robot.Drive.pointTurn(-95,0.3);
             sleep(700);
-            robot.lift.driveLiftToPosition(0.8, 3750);
+            robot.lift.driveLiftToPosition(0.8, 3800);
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.5, 6);
             sleep(700);
@@ -167,7 +159,6 @@ public class RedLeftAuton extends LinearOpMode {
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.5, -10);
             sleep(700);
-            //robot.lift.driveLiftToPosition(1, -3000);
             robot.Drive.pointTurn(-75,0.2);
             sleep(700);
             robot.Drive.MoveRobotToPositionStrafe(0.3, -2);
@@ -175,8 +166,6 @@ public class RedLeftAuton extends LinearOpMode {
             robot.Drive.MoveRobotToPosition(0.3, 48);
         }
         else if(park.equals("MIDDLE")){
-            robot.claw.setClawPosition(0.0);
-            sleep(1500);
             robot.lift.driveLiftToPosition(1, 200);
             sleep(700);
             robot.Drive.MoveRobotToPositionStrafe(0.3, 27);
@@ -185,7 +174,7 @@ public class RedLeftAuton extends LinearOpMode {
             sleep(700);
             robot.Drive.pointTurn(-95,0.3);
             sleep(700);
-            robot.lift.driveLiftToPosition(0.8, 3750);
+            robot.lift.driveLiftToPosition(0.8, 3800);
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.5, 6);
             sleep(700);
@@ -202,8 +191,6 @@ public class RedLeftAuton extends LinearOpMode {
 
         }
         else if(park.equals("RIGHT")){
-            robot.claw.setClawPosition(0.0);
-            sleep(1500);
             robot.lift.driveLiftToPosition(1, 200);
             sleep(700);
             robot.Drive.MoveRobotToPositionStrafe(0.3, 27);
@@ -212,7 +199,7 @@ public class RedLeftAuton extends LinearOpMode {
             sleep(700);
             robot.Drive.pointTurn(-95,0.3);
             sleep(700);
-            robot.lift.driveLiftToPosition(0.8, 3750);
+            robot.lift.driveLiftToPosition(0.8, 3800);
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.5, 6);
             sleep(700);

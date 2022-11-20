@@ -44,6 +44,8 @@ public class BlueLeftAuton extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //Initialize robot hardware
         robot = new GBrobot(this);
+        robot.claw.setClawPosition(0.0);
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -130,20 +132,12 @@ public class BlueLeftAuton extends LinearOpMode {
             telemetry.addLine("Right Parking spot");
         }
 
-
         telemetry.addData("robot", "press play to start");
         telemetry.update();
-
-        /*if(robot.left.getDistance() == 10 && robot.right.getDistance() == 20){
-            telemetry.addData("In position", "Robot in position!");
-            telemetry.update();
-        }*/
 
         waitForStart();
 
         if(park.equals("LEFT")){
-            robot.claw.setClawPosition(0.0);
-            sleep(1500);
             robot.lift.driveLiftToPosition(1, 200);
             sleep(700);
             robot.Drive.MoveRobotToPositionStrafe(0.3, 27);
@@ -152,7 +146,7 @@ public class BlueLeftAuton extends LinearOpMode {
             sleep(700);
             robot.Drive.pointTurn(-95,0.3);
             sleep(700);
-            robot.lift.driveLiftToPosition(0.8, 3750);
+            robot.lift.driveLiftToPosition(0.8, 3800);
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.5, 6);
             sleep(700);
@@ -168,8 +162,6 @@ public class BlueLeftAuton extends LinearOpMode {
             robot.Drive.MoveRobotToPosition(0.3, 48);
         }
         else if(park.equals("MIDDLE")){
-            robot.claw.setClawPosition(0.0);
-            sleep(1500);
             robot.lift.driveLiftToPosition(1, 200);
             sleep(700);
             robot.Drive.MoveRobotToPositionStrafe(0.3, 27);
@@ -178,7 +170,7 @@ public class BlueLeftAuton extends LinearOpMode {
             sleep(700);
             robot.Drive.pointTurn(-95,0.3);
             sleep(700);
-            robot.lift.driveLiftToPosition(0.8, 3750);
+            robot.lift.driveLiftToPosition(0.8, 3800);
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.5, 6);
             sleep(700);
@@ -194,8 +186,6 @@ public class BlueLeftAuton extends LinearOpMode {
             robot.Drive.MoveRobotToPosition(0.3, 26);
         }
         else if(park.equals("RIGHT")){
-            robot.claw.setClawPosition(0.0);
-            sleep(1500);
             robot.lift.driveLiftToPosition(1, 200);
             sleep(700);
             robot.Drive.MoveRobotToPositionStrafe(0.3, 27);
@@ -204,7 +194,7 @@ public class BlueLeftAuton extends LinearOpMode {
             sleep(700);
             robot.Drive.pointTurn(-95,0.3);
             sleep(700);
-            robot.lift.driveLiftToPosition(0.8, 3750);
+            robot.lift.driveLiftToPosition(0.8, 3800);
             sleep(700);
             robot.Drive.MoveRobotToPosition(0.5, 6);
             sleep(700);
@@ -216,7 +206,6 @@ public class BlueLeftAuton extends LinearOpMode {
             robot.Drive.pointTurn(-75,0.2);
             sleep(700);
             robot.Drive.MoveRobotToPositionStrafe(0.3, -2);
-
         }
         else{
             telemetry.addLine("NO Parking position found");
