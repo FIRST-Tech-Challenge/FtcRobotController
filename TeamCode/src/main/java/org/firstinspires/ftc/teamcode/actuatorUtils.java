@@ -13,7 +13,7 @@ public class actuatorUtils {
     private static DcMotor RB = null; //declare right back motor
     private static DcMotor arm = null; //declare arm
     private static Servo gripper = null; //declare gripper
-
+    //test
     private static int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private static int minEncode = 125; //Minimum so string on arm lift doesn't break and position 0
     private static int pos1 = 1850; //Low pole height
