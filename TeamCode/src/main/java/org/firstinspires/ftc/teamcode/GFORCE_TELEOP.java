@@ -75,9 +75,11 @@ public class GFORCE_TELEOP extends LinearOpMode {
         // Retrieve any info from Auto Run
         // See AutoTransferPose.java for further details
         double newHeading = 0;
+
         if (SharedStates.currentPose != null) {
             newHeading = drive.getRawExternalHeading();
             // Switch Gyro heading back to Field Centric.
+
             if (weAreRed) {
                 // Switch an Auto heading of zero, to -90 or (-PI/2)
                 newHeading =  drive.normalizeHeading(newHeading - (Math.PI/2.0));
