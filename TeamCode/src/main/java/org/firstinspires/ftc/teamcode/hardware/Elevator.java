@@ -15,10 +15,10 @@ public class Elevator {
     private DcMotor elevatorMotor = null;
     private Telemetry telemetry;
     private static double mainServoPosition;
-    private static double leftServoPosition;
-    private static double rightServoPosition;
-    public static final double LEFT_RIGHT_SERVO_MAX_POSITION = 0.5;
-    public static final double LEFT_RIGHT_SERVO_MIN_POSITION = -0.5;
+    private static double handsOffset;
+    public static final double HANDS_MAX_POSITION = 0.5;
+    public static final double HANDS_MIN_POSITION = -0.5;
+    public static final double HANDS_MID_POSITION = 0;
     public static final double ELEVATOR_MOTOR_SPEED = 0.5;
     public static final double LEFT_RIGHT_SERVO_SPEED = 0.2;
 
@@ -34,10 +34,9 @@ public class Elevator {
         mainServo.setPosition(Servo.MIN_POSITION);
         mainServoPosition = Servo.MIN_POSITION;
         elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftServo.setPosition(Servo.MIN_POSITION);
-        rightServo.setPosition(Servo.MIN_POSITION);
-        leftServoPosition = Servo.MIN_POSITION;
-        rightServoPosition = Servo.MIN_POSITION;
+        leftServo.setPosition(HANDS_MID_POSITION);
+        rightServo.setPosition(HANDS_MID_POSITION);
+        handsOffset = 0;
     }
     public void setElevatorMotorPower(double power){
         elevatorMotor.setPower(power * ELEVATOR_MOTOR_SPEED);
@@ -47,22 +46,14 @@ public class Elevator {
     }
 
     public void leftRightServoPower(int direction) {
-        double offset;
-        double newLeftServoPosition;
-        double newRightServoPosition;
 
-        offset = direction * LEFT_RIGHT_SERVO_SPEED;
-        newLeftServoPosition = leftServoPosition + offset;
-        newRightServoPosition = rightServoPosition - offset;
-        newLeftServoPosition = Range.clip(newLeftServoPosition, LEFT_RIGHT_SERVO_MIN_POSITION, LEFT_RIGHT_SERVO_MAX_POSITION);
-        newRightServoPosition = Range.clip(newRightServoPosition, LEFT_RIGHT_SERVO_MIN_POSITION, LEFT_RIGHT_SERVO_MAX_POSITION);
-        leftServo.setPosition(newLeftServoPosition);
-        rightServo.setPosition(newRightServoPosition);
-        leftServoPosition = leftServo.getPosition();
-        rightServoPosition = rightServo.getPosition();
+        handsOffset = handsOffset + direction * LEFT_RIGHT_SERVO_SPEED;
+        handsOffset = Range.clip(handsOffset , HANDS_MIN_POSITION, HANDS_MAX_POSITION);
+        leftServo.setPosition(HANDS_MID_POSITION + handsOffset);
+        rightServo.setPosition(HANDS_MID_POSITION + handsOffset);
 
-        telemetry.addData("left servo position: ", leftServoPosition);
-        telemetry.addData("right servo position: ", rightServoPosition);
+        telemetry.addData("left servo position: ", leftServo.getPosition());
+        telemetry.addData("right servo position: ", rightServo.getPosition());
         telemetry.update();
     }
 
