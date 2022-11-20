@@ -24,6 +24,8 @@ public class Constants {
     public static final double ANGLE_TOLERANCE_DEG = 5.0;
     public static final double POSITION_TOLERANCE_MM = 2*25.4;
 
+    // IMU Constants
+    public static final double AGGRESSION = 0.05;
     // Servo positions
     public static final double OPEN_CLAW = 1.0;
     public static final double CLOSED_CLAW = 0.0;
