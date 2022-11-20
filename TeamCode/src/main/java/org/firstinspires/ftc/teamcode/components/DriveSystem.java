@@ -154,7 +154,7 @@ public class DriveSystem {
             leftY = 0.0f;
         }
 
-        double slowTurn = 0.5;
+        double slowTurn = 0.8;
 
         double frontLeftPower  = -leftY + (slowTurn * rightX) + leftX;
         double frontRightPower = -leftY - (slowTurn * rightX) - leftX;

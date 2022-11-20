@@ -20,17 +20,17 @@ public class DriveParams {
     public static final boolean IMU_VERT     = false;
 
     /*********************** TUNABLE GAME CONSTANTS ***********************************************/
-    public static final double SLOW_DRIVE_COEFF = 0.4;
+    public static final double SLOW_DRIVE_COEFF = 0.5;
 
     /*********************** TUNABLE DRIVE CONSTANTS **********************************************/
     // Gives the point at which to switch to less than full power in a turn
     public static final double FULL_POWER_UNTIL  = 160;
     // Minimum speed to complete the turn
     public static final double MIN_SPEED         = 0.2;
-    public static final double STRAFE_COEFF      = 0.09;
+    public static final double STRAFE_COEFF      = 0.4;
     // Larger P_TURN is more responsive, but also less stable
     // 0.012
-    public static final double P_TURN_COEFF      = 0.07;
+    public static final double P_TURN_COEFF      = 0.6;
     // Tightest threshold as we can make it with an integer gyro
     public static final double HEADING_THRESHOLD = 5 ;
     // Acceptable distance in ticks to stop motors at
