@@ -132,7 +132,7 @@ public class moveUtils {
         RF.setPower(0);
         LB.setPower(0);
         RB.setPower(0);
-
+//test
         LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
