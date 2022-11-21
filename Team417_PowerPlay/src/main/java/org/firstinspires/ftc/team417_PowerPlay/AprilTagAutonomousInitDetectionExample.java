@@ -39,7 +39,7 @@ import java.util.ArrayList;
 @Autonomous
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
-    OpenCvCamera camera; //calls camera
+    OpenCvCamera camera; // calls camera
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
@@ -54,7 +54,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     double cy = 221.506;
 
     // UNITS ARE METERS
-    double tagsize = 0.166;
+    double tagSize = 0.166;
 
    //Tag ID 1, 2, 3 from the 36h11 family
     int LEFT = 1;
@@ -67,7 +67,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagSize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()

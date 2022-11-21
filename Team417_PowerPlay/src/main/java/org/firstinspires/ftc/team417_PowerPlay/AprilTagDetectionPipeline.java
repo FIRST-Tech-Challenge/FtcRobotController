@@ -246,12 +246,6 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
             Imgproc.line(buf, projectedPoints[i], projectedPoints[i+4], blue, thickness);
         }
 
-        // Base lines
-        //Imgproc.line(buf, projectedPoints[0], projectedPoints[1], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[1], projectedPoints[2], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[2], projectedPoints[3], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[3], projectedPoints[0], blue, thickness);
-
         // Top lines
         Imgproc.line(buf, projectedPoints[4], projectedPoints[5], green, thickness);
         Imgproc.line(buf, projectedPoints[5], projectedPoints[6], green, thickness);
@@ -269,8 +263,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
      * @param tagsizeY the original height of the tag
      * @return the 6DOF pose of the camera relative to the tag
      */
-    Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY)
-    {
+    Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY) {
         // The actual 2d points of the tag detected in the image
         MatOfPoint2f points2d = new MatOfPoint2f(points);
 
@@ -293,19 +286,16 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
      * A simple container to hold both rotation and translation
      * vectors, which together form a 6DOF pose.
      */
-    class Pose
-    {
+    class Pose {
         Mat rvec;
         Mat tvec;
 
-        public Pose()
-        {
+        public Pose() {
             rvec = new Mat();
             tvec = new Mat();
         }
 
-        public Pose(Mat rvec, Mat tvec)
-        {
+        public Pose(Mat rvec, Mat tvec) {
             this.rvec = rvec;
             this.tvec = tvec;
         }
