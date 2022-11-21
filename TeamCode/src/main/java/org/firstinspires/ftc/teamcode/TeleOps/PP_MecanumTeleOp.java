@@ -169,7 +169,7 @@ public class PP_MecanumTeleOp extends OpMode
     public void arm(){
         armControl.update(telemetry);
         // BUTTONS \\
-        if (gamepad2_A.isRisingEdge()) {
+        if (gamepad2_Y.isRisingEdge()) {
             armControl.setExtake();
             slideControl.setHighJunction();
             clawControl.toggleWristRotate();
@@ -179,7 +179,7 @@ public class PP_MecanumTeleOp extends OpMode
             slideControl.setMidJunction();
             clawControl.toggleWristRotate();
         }
-        else if (gamepad2_Y.isRisingEdge()) {
+        else if (gamepad2_A.isRisingEdge()) {
             armControl.setExtake();
             slideControl.setLowJunction();
             clawControl.toggleWristRotate();

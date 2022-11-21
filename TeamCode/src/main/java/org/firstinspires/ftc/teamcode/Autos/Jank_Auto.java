@@ -13,8 +13,6 @@ public class Jank_Auto extends LinearOpMode {
     private DcMotorEx motorFrontRight;
     private DcMotorEx motorBackRight;
     private DcMotorEx motorFrontLeft;
-    ElapsedTime timer = new ElapsedTime();
-    int time = 1750;
 
     double frontLeftPower = 0.75;
     double backLeftPower = 0.75;
@@ -48,6 +46,8 @@ public class Jank_Auto extends LinearOpMode {
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
+        ElapsedTime timer = new ElapsedTime();
+        int time = 1000;
         while(timer.milliseconds() <= time) {
             // Expansion Hub Pins
 

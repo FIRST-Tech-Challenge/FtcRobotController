@@ -18,7 +18,7 @@ public class Arm {
     public static double armKd = 0.000005;
     public static double armKf = 0.000004;
 
-    public static double EXTAKE_POS = 1250; // 1255 Actual position based on encoder readings
+    public static double EXTAKE_POS = 1300; // 1255 Actual position based on encoder readings
     public static double INTAKE_POS = 0; // -42.45391238 was the old value
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
