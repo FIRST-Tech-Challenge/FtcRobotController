@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="Competition Teleop", group="Iterative Opmode")
-public class CompetitionTeleop2023 extends OpMode {
+@TeleOp(name="Arm Test", group="Iterative Opmode")
+public class ArmTest extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     //Declare the wheels
@@ -25,7 +25,7 @@ public class CompetitionTeleop2023 extends OpMode {
 
     private double PowerFactor = 1.0f; //Max power available for wheels
     private int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
-    private int minEncode = 110;//Minimum so string on arm lift doesn't break and position 0
+    private int minEncode = 110; //Minimum so string on arm lift doesn't break and position 0
     private int pos1 = 1850; //Position 1
     private int pos2 = 3000; //Position 2
     private int desiredpos = 0; //Used as base for increasing arm position
@@ -197,17 +197,17 @@ public class CompetitionTeleop2023 extends OpMode {
         {
             changed = false;
         }
-    // Show the elapsed game time and wheel power.
-            telemetry.addData("Status","Run Time: "+runtime.toString());
-    //  telemetry.addData("positionTarget: ", "%.2f", positionTarget);
-}
+        // Show the elapsed game time and wheel power.
+        telemetry.addData("Status","Run Time: "+runtime.toString());
+        //  telemetry.addData("positionTarget: ", "%.2f", positionTarget);
+    }
 
     /*
      * Code to run ONCE after the driver hits STOP
      */
     @Override
     public void stop() {
-            //Nothing in stop
+        //Nothing in stop
     }
 }
 

@@ -75,7 +75,7 @@ public class actuatorUtils {
         gripper.setPosition(.6); //Position that grabs cone tightly
         if (liftUp == true) {
             sleep(500);
-            arm.setTargetPosition(150); //Lifts arm up so we can move w/o drag
+            arm.setTargetPosition(165); //Lifts arm up so we can move w/o drag
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
         }
