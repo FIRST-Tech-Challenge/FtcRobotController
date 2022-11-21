@@ -1,27 +1,27 @@
 package org.firstinspires.ftc.teamcode;
 
 /** Represents the position of the robot.
- *  More generally, it contains an x-y point and a rotation.
+ *  More generally, it contains an x-y point and a orientation.
  */
 public class Position {
 
     private Point location;
 
-    // A rotation, in radians, in the interval (-pi, pi]
-    private double rotation;
+    // A orientation, in radians, in the interval (-pi, pi]
+    private double orientation;
 
     Position() {
-        location = new Point(0.0, 0.0, "");
-        setRotation(0.0);
+        location = new Point(0.0, 0.0);
+        setOrientation(0.0);
     }
 
     Position(double x, double y, double theta) {
-        location = new Point(x, y, "");
-        setRotation(theta);
+        location = new Point(x, y);
+        setOrientation(theta);
     }
     Position(Point p, double r) {
         location = p;
-        setRotation(r);
+        setOrientation(r);
     }
 
     public void setX(double x) {
@@ -32,8 +32,8 @@ public class Position {
         location.setY(y);
     }
 
-    public Position setRotation(double r) {
-        this.rotation = r;
+    public Position setOrientation(double r) {
+        orientation = r;
         return this;
     }
 
@@ -45,8 +45,8 @@ public class Position {
         return location.y;
     }
 
-    public double getRotation() {
-        return rotation;
+    public double getOrientation() {
+        return orientation;
     }
 
     public Point getLocation() {return location;}
@@ -54,10 +54,10 @@ public class Position {
     public void reset() {
         setX(0.0);
         setY(0.0);
-        setRotation(0.0);
+        setOrientation(0.0);
     }
 
     public static Position add(Position a, Position b) {
-        return new Position(a.getX() + b.getX(), a.getY() + b.getY(), (a.getRotation() + b.getRotation()) % (2 * Math.PI));
+        return new Position(a.getX() + b.getX(), a.getY() + b.getY(), (a.getOrientation() + b.getOrientation()) % (2 * Math.PI));
     }
 }
