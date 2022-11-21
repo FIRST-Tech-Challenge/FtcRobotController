@@ -100,6 +100,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
+        // See if we need to re-initialize the IMU
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;

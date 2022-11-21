@@ -117,8 +117,8 @@ public class GFORCE_AUTO extends LinearOpMode {
     }
     // trajectory builders //
     private void buildRedFrontJunction (){
-        Pose2d startPosition = new Pose2d(new Vector2d(-35, -62), Math.toRadians(90));
         drive.setExternalHeading(Math.toRadians(90));
+        Pose2d startPosition = new Pose2d(new Vector2d(-35, -62), Math.toRadians(90));
         drive.setPoseEstimate(startPosition);
         redFrontJunctionInit = drive.trajectorySequenceBuilder(startPosition)
             .addDisplacementMarker(0.5, () -> {
@@ -145,7 +145,7 @@ public class GFORCE_AUTO extends LinearOpMode {
             .waitSeconds(1.5)
             .build();
 
-        startPosition = new Pose2d(new Vector2d((ONE_TILE * -2.5), (ONE_TILE * -0.5)), Math.toRadians(180));
+           startPosition = new Pose2d(new Vector2d((ONE_TILE * -2.5), (ONE_TILE * -0.5)), Math.toRadians(180));
            redFrontJunctionLoop =drive.trajectorySequenceBuilder(startPosition)
            .back(3)
            .setReversed(false)

@@ -66,18 +66,29 @@ public class GFORCE_TELEOP extends LinearOpMode {
         ElapsedTime cycleTime = new ElapsedTime();
 
         // Home the elevator....  This may need to be changed once we have an Auto.
-        telemetry.addData("Elevator", "Homing");
-        telemetry.update();
-        elevator.recalibrateHomePosition();
-        telemetry.addData("Elevator", "Homed !");
-        telemetry.update();
+//        telemetry.addData("Elevator", "Homing");
+//        telemetry.update();
+//        elevator.recalibrateHomePosition();
+//        telemetry.addData("Elevator", "Homed !");
+//        telemetry.update();
 
         // Retrieve any info from Auto Run
         // See AutoTransferPose.java for further details
         double newHeading = 0;
 
+        elevator.setState(SharedStates.elevatorState);
+
+        while (opModeInInit()) {
+            telemetry.addData("Alliance", weAreRed ? "RED" : "blue");
+            elevator.runStateMachine();
+            coneTracker.update();       // testing only
+            coneTracker.showRanges();   // testing only
+            telemetry.addData("GYRO heading", Math.toDegrees(drive.getExternalHeading()));
+            telemetry.update();
+        }
+
         if (SharedStates.currentPose != null) {
-            newHeading = drive.getRawExternalHeading();
+            newHeading = SharedStates.currentPose.getHeading();
             // Switch Gyro heading back to Field Centric.
 
             if (weAreRed) {
@@ -89,15 +100,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
             }
             drive.setExternalHeading(newHeading);
             drive.setPoseEstimate(new Pose2d(SharedStates.currentPose.getX(), SharedStates.currentPose.getY(), newHeading));
-        }
-        elevator.setState(SharedStates.elevatorState);
-
-        while (opModeInInit()) {
-            telemetry.addData("Alliance", weAreRed ? "RED" : "blue");
-            elevator.runStateMachine();
-            coneTracker.update();       // testing only
-            coneTracker.showRanges();   // testing only
-            telemetry.update();
+        } else {
+            drive.setExternalHeading(0);
         }
 
         // Lift arm into home position.

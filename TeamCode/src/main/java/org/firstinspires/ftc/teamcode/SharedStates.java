@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.ElevatorState.IDLE;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 
 public class SharedStates {
     /**
@@ -11,6 +12,5 @@ public class SharedStates {
      * A static field allows data to persist between opmodes.
      */
      public static Pose2d currentPose = null;
-     public static boolean gyro_initilaized = false;
      public static ElevatorState elevatorState = IDLE;
 }
