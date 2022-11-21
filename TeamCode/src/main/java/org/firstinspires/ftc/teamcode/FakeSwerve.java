@@ -198,14 +198,20 @@ public class FakeSwerve extends LinearOpMode {
     public void turnNinety(boolean CW){
         //Turns Ninety degrees
         //currently not measured, will have to test this to be exact
+        int time = 5;
+        runtime.reset();
         if(CW){
             //left = +; right = -
-            leftVelo(.75);
-            rightVelo(-.75);
+            while(runtime.seconds() < time) {
+                leftVelo(.75);
+                rightVelo(-.75);
+            }
         }else{
             //left = -; right = +
-            leftVelo(-.75);
-            rightVelo(.75);
+            while(runtime.seconds < time) {
+                leftVelo(-.75);
+                rightVelo(.75);
+            }
         }
     }
 
