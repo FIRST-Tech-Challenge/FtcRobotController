@@ -157,13 +157,13 @@ public class FakeSwerve extends LinearOpMode {
                 motorsOff();
             }
             if(turnLeft){
-                //tuneNinety code currently doesnt have time so just rotates constantly
-                //fix that before implementing this code
+                //code is not setup properly so probably turns more than 90 degrees actually
+                turnNinety(false);
             }else{
                 motorsOff();
             }
             if(turnRight){
-
+                turnNinety(true);
             }else{
                 motorsOff();
             }
