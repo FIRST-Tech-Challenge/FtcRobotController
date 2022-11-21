@@ -134,6 +134,38 @@ public class FakeSwerve extends LinearOpMode {
             }else{
                 motorsOff();
             }
+            if(backDiagLeft){
+                leftWheel(-.05);
+                rightBackWheel(-.05);
+            }else{
+                motorsOff();
+            }
+            if(backDiagRight){
+                rightWheel(-.05);
+                leftBackWheel(-.05);
+            }else{
+                motorsOff();
+            }
+            if(strafeLeft){
+
+            }else{
+                motorsOff();
+            }
+            if(strafeRight){
+
+            }else{
+                motorsOff();
+            }
+            if(turnLeft){
+
+            }else{
+                motorsOff();
+            }
+            if(turnRight){
+
+            }else{
+                motorsOff();
+            }
         }
     }
 
