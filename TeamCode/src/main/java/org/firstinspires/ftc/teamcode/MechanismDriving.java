@@ -7,63 +7,47 @@ public class MechanismDriving {
 
     private static int desiredSlidePosition;
 
+    // TODO: empirically measure values of slides positions
     public static final int RETRACTED_POS = 0, LEVEL1_POS = 700, LEVEL2_POS = 1850, LEVEL3_POS = 3500, CAPPING_POS = 4000;
-    public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 1.0; //These are not final values
-    // How long it takes for the claw servo to be guaranteed to have moved to its new position.
-    public static final long CLAW_SERVO_TIME = 500;
+    public static final double INTAKE_FRONT_POS = 0, INTAKE_BACK_POS = 1.0; //These are not final values
+    public static final double COMPLIANT_WHEELS_SPEED = 1.0; //speed of compliant wheels
+    // How long it takes for the intake servo to be guaranteed to have moved to its new position.
+    public static final long INTAKE_SERVO_TIME = 500;
     public static final int EPSILON = 50;  // slide encoder position tolerances
-    double slideRampDownDist=1000, maxSpeedCoefficient =0.8, reducedSpeedCoefficient =0.7;
+    double slideRampDownDist=1000, maxSpeedCoefficient=0.8, reducedSpeedCoefficient=0.7;
 
-    public static final double[] CAROUSEL_POWERS = {.625, .75, 0};
-    public static final int[] CAROUSEL_TIMES = {1000, 500, 750};
-    public int carouselPowerIndex = 0;
-
-    public double carouselStartTime = 0.0;
 
     public static final int slidesAdjustmentSpeed = 2;
 
     MechanismDriving() {}
 
-    /** Sets the claw position to the robot's desired state.
+    /** Sets the intake position to the robot's desired state.
      */
-    public void updateClaw(Robot robot) {
-        switch (robot.desiredClawState) {
-            case CLOSED:
-                robot.claw.setPosition(CLAW_CLOSED_POS);//closed
-//                robot.clawLEDs.setPower(0);
-                robot.clawIndicator.setPosition(0);
+    public void updateIntake(Robot robot) {
+        switch (robot.desiredIntakeState) {
+            case FRONT:
+                robot.intake.setPosition(INTAKE_FRONT_POS); //closed
+                robot.intakeIndicator.setPosition(0);
                 break;
-            case OPEN:
-                robot.claw.setPosition(CLAW_OPEN_POS);//open
-//                robot.clawLEDs.setPower(1);
-                robot.clawIndicator.setPosition(1);
+            case BACK:
+                robot.intake.setPosition(INTAKE_BACK_POS); //open
+                robot.intakeIndicator.setPosition(1);
                 break;
         }
     }
 
-    /** Activates or stops carousel depending on robot's desired state.
+    /** Starts and stops the compliant wheels
+     *
+     * @param robot The robot
      */
-    public void updateCarousel(Robot robot) {
-        if (robot.desiredCarouselState == Robot.CarouselState.STOPPED) {
-            robot.carouselMotor.setPower(0.0);
-            carouselPowerIndex = 0;
-            carouselStartTime = robot.elapsedTime.milliseconds();
-            return;
-        }
-        if (robot.elapsedTime.milliseconds() - carouselStartTime < CAROUSEL_TIMES[carouselPowerIndex]) {
-            robot.carouselMotor.setPower(CAROUSEL_POWERS[carouselPowerIndex]);
-        }
-        else {
-            carouselStartTime = robot.elapsedTime.milliseconds();
-            carouselPowerIndex++;
-
-            if (carouselPowerIndex == CAROUSEL_POWERS.length) {
-                if (robot.desiredCarouselState == Robot.CarouselState.AUTO_SPIN) {
-                    carouselPowerIndex = 0;
-                } else {
-                    robot.desiredCarouselState = Robot.CarouselState.STOPPED;
-                }
-            }
+    public void updateCompliantWheels(Robot robot) {
+        switch (robot.desiredCompliantWheelsState) {
+            case OFF:
+                robot.compliantWheels.setPower(0);
+                break;
+            case ON:
+                robot.compliantWheels.setPower(COMPLIANT_WHEELS_SPEED);
+                break;
         }
     }
 
@@ -92,7 +76,6 @@ public class MechanismDriving {
     public boolean updateSlides(Robot robot) {
 
         if(Robot.desiredSlidesState != Robot.SlidesState.UNREADY){
-            // todo: arin, do we mean to have Robot with a capital R here? yes lol
             switch(Robot.desiredSlidesState){
                 case RETRACTED:
                     setSlidePosition(robot, RETRACTED_POS);

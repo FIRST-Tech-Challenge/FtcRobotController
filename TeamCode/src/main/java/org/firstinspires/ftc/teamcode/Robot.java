@@ -21,13 +21,15 @@ import java.util.Objects;
  */
 public class Robot {
     // Robot desired states.
-    public enum CarouselState {STOPPED, SPINNING, AUTO_SPIN}
+
     public enum SlidesState {RETRACTED, L1, L2, L3, CAPPING, UNREADY}
-    public enum ClawState {CLOSED, OPEN}
+    public enum IntakeState {FRONT, BACK}
+    public enum CompliantWheelsState {OFF, ON}
 
     public CarouselState desiredCarouselState;
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
-    public ClawState desiredClawState;
+    public IntakeState desiredIntakeState;
+    public CompliantWheelsState desiredCompliantWheelsState;
 
     enum BarcodeScanState {CHECK_SCAN, SCAN}
     enum BarcodeScanResult {
@@ -73,10 +75,9 @@ public class Robot {
     HashMap<RobotConfig.DriveMotors, DcMotor> driveMotors = new HashMap<RobotConfig.DriveMotors, DcMotor>();
 
     // Hardware
-//    public DcMotor carousel, slidesLeft, slidesRight, clawLEDs;
-    public DcMotor carouselMotor, slidesLeft, slidesRight;
-    public Servo claw;
-    public Servo clawIndicator;
+    public DcMotor slidesLeft, slidesRight, compliantWheels;
+    public Servo intake;
+    public Servo intakeIndicator;
 
     // Other
     public Telemetry telemetry;
@@ -93,18 +94,14 @@ public class Robot {
         numBarcodeAttempts = 0;
         resetBarcodeScanMap();
 
-        // Initialize desired states.
-        desiredCarouselState = CarouselState.STOPPED;
-        //slide state initialisation has been moved to line 114
-        desiredClawState = ClawState.CLOSED;
 
-        // Initialize hardware.
-        carouselMotor = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.CAROUSEL));
-        carouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        desiredIntakeState = IntakeState.FRONT;
+
+
 
         slidesLeft = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_LEFT));
         slidesRight = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_RIGHT));
-        claw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW));
+        intake = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.INTAKE));
 //        clawLEDs=hardwareMap.get(DcMotor.class,"LED");
 //        clawLEDs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        clawLEDs.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -147,12 +144,12 @@ public class Robot {
  *  pertaining to the robot's state.
  */
 class RobotConfig {
-    enum Motors {CAROUSEL, SLIDES_LEFT, SLIDES_RIGHT}
+    enum Motors {SLIDES_LEFT, SLIDES_RIGHT}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
-    enum Servos {CLAW, CLAW_INDICATOR}
+    enum Servos {INTAKE, INTAKE_INDICATOR}
 
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
-        put(Motors.CAROUSEL, "carousel");
+
         put(Motors.SLIDES_LEFT, "slides_left");
         put(Motors.SLIDES_RIGHT, "slides_right");
     }};
@@ -172,7 +169,7 @@ class RobotConfig {
     }};
 
     public static final Map<Servos, String> ServoNames = new HashMap<Servos, String>() {{
-        put(Servos.CLAW, "claw");
-        put(Servos.CLAW_INDICATOR, "Claw Indicator");
+        put(Servos.INTAKE, "intake");
+        put(Servos.INTAKE_INDICATOR, "Intake Indicator");
     }};
 }
