@@ -147,17 +147,18 @@ public class FakeSwerve extends LinearOpMode {
                 motorsOff();
             }
             if(strafeLeft){
-
+                strafeVelo(true,.25);
             }else{
                 motorsOff();
             }
             if(strafeRight){
-
+                strafeVelo(false,.25);
             }else{
                 motorsOff();
             }
             if(turnLeft){
-
+                //tuneNinety code currently doesnt have time so just rotates constantly
+                //fix that before implementing this code
             }else{
                 motorsOff();
             }
@@ -170,38 +171,28 @@ public class FakeSwerve extends LinearOpMode {
     }
 
     //Drive functions using .setVelocity
-    public void setVelo(boolean forward, double maxPercent, double time){
+    public void setVelo(boolean forward, double maxPercent){
         //Forward or backward
         int direction = -1;
         if(forward){
             direction = 1;
         }
         runtime.reset();
-        while(runtime.seconds() < time){
-            leftVelo(maxPercent*direction);
-            rightVelo(maxPercent*direction);
-        }
-        if(runtime.seconds() >= time){
-            motorsOff();
-        }
+        leftVelo(maxPercent*direction);
+        rightVelo(maxPercent*direction);
+        motorsOff();
     }
 
-    public void strafeVelo(boolean isLeft, double maxPercent, double time){
+    public void strafeVelo(boolean isLeft, double maxPercent){
         //Strafe left or right
         int direction = -1;
         if(isLeft){
             direction = 1;
         }
-        runtime.reset();
-        while(runtime.seconds() < time){
-            leftWheel(maxPercent * direction);
-            rightWheel(maxPercent * direction * -1);
-            leftBackWheel(maxPercent * direction * -1);
-            rightBackWheel(maxPercent * direction);
-        }
-        if(runtime.seconds() >= time){
-            motorsOff();
-        }
+        leftWheel(maxPercent * direction);
+        rightWheel(maxPercent * direction * -1);
+        leftBackWheel(maxPercent * direction * -1);
+        rightBackWheel(maxPercent * direction);
     }
 
     public void turnNinety(boolean CW){
