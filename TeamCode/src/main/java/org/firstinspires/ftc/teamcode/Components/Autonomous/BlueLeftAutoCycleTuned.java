@@ -30,9 +30,9 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
     public static double dummyxi2 = 12.5, dummyyi2 = 13;
 
 
-    public static double dummyx = 23.5, dummyy = 5, dummya = 270; //coord for pole 1: 23.5 , 5
+    public static double dummyx = 23.5, dummyy = 4.5, dummya = 270; //coord for pole 1: 23.5 , 5
     public static double dummyx2 = 23.5, dummyy2 =11.5, dummya2 = 270; //coord for pole 1: 23.5 , 5
-    public static double dummyxd = 22.25, dummyyd = 4.5, dummyad = 270; //coord for pole 2: 22.25 , 4.5
+    public static double dummyxd = 22.25, dummyyd = 4, dummyad = 270; //coord for pole 2: 22.25 , 4.5
     public static double dummyx2i = 22.25, dummyy2i =10, dummya2i = 270; //coord for pole 2: 22.25 , 4.5
     public static double dummyx3i = 22.25, dummyy3i =8, dummya3i = 270;//coord for pole 2: 22.25 , 4.5
     public static double dummyx3 = 38, dummyy3 =10.1, dummya3 = 0;
@@ -138,6 +138,8 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.delay(0.5);
             robot.raiseLiftArmToOuttake();
+            robot.delay(0.8);
+
             robot.followTrajectoryAsync(dropTrajectory);
             robot.waitForFinish();
             robot.followTrajectoryAsync(dropTrajectory3);

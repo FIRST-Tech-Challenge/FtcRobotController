@@ -104,7 +104,7 @@ public class Claw {
         if (CLAW_OPENING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
             CLAW_OPEN.setStatus(true);
         }
-        op.telemetry.addData("coneDist",coneObserver.getDistance(INCH));
+//        op.telemetry.addData("coneDist",coneObserver.getDistance(INCH));
     }
     public double getLastTime(){
         return claw.getLastTime();
