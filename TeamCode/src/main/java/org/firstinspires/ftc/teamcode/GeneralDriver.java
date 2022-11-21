@@ -20,17 +20,7 @@ public class GeneralDriver extends BaseTele {
         hdw.createHardware();
         robotWheel = new MecanumWheels();
 
-        hdw.wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hdw.wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hdw.wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hdw.wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        double powerDrivePercentage = 1;
-
-        telemetry.addData("[>]", "All set?");
-        telemetry.update();
-
-        //hdw.servoRingCounter.setPosition(0.0);
+        double powerDrivePercentage = 0.5;
 
         telemetry.addData("[>]", "All set?");
         telemetry.update();
@@ -74,12 +64,32 @@ public class GeneralDriver extends BaseTele {
             robotWheel.joystick(gamepad1, 1);
 
             /* Set the calcuated power to wheels according to the gampad input */
-            hdw.wheelFrontRight.setPower(robotWheel.wheelFrontRightPower * powerDrivePercentage);
-            hdw.wheelFrontLeft.setPower(robotWheel.wheelFrontLeftPower * powerDrivePercentage);
-            hdw.wheelBackRight.setPower(robotWheel.wheelBackRightPower * powerDrivePercentage);
-            hdw.wheelBackLeft.setPower(robotWheel.wheelBackLeftPower * powerDrivePercentage);
+            double frontLeftVelocity = robotWheel.wheelFrontLeftPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
+            double backLeftVelocity = robotWheel.wheelBackLeftPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
+            double frontRightVelocity = robotWheel.wheelFrontRightPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
+            double backRightVelocity = robotWheel.wheelBackRightPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
 
+            hdw.wheelFrontLeft.setVelocity(frontLeftVelocity);
+            hdw.wheelBackLeft.setVelocity(backLeftVelocity);
+            hdw.wheelFrontRight.setVelocity(frontRightVelocity);
+            hdw.wheelBackRight.setVelocity(backRightVelocity);
 
+            telemetry.addData("Front left set ",frontLeftVelocity );
+            telemetry.addData("back left set",backLeftVelocity );
+            telemetry.addData("Front right set",frontRightVelocity);
+            telemetry.addData("back right set",backRightVelocity );
+
+            telemetry.addData("fl: " , hdw.wheelFrontLeft.getVelocity() + " mode:" + hdw.wheelFrontLeft.getMode()
+            + " port: " +  hdw.wheelFrontLeft.getPortNumber());
+            telemetry.addData("bl: " , hdw.wheelBackLeft.getVelocity() + " mode:" + hdw.wheelBackLeft.getMode()
+                    + " port: " +  hdw.wheelBackLeft.getPortNumber());
+            telemetry.addData("fr: " , hdw.wheelFrontRight.getVelocity() + " mode:" + hdw.wheelFrontRight.getMode()
+                    + " port: " +  hdw.wheelFrontRight.getPortNumber());
+            telemetry.addData("br: " , hdw.wheelBackRight.getVelocity() + " mode:" + hdw.wheelBackRight.getMode()
+                    + " port: " +  hdw.wheelBackRight.getPortNumber());
+
+            telemetry.update();
+            
         }
 
     }

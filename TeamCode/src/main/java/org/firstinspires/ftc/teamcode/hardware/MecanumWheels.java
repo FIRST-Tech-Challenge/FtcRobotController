@@ -15,7 +15,7 @@ public class MecanumWheels {
     public double wheelBackRightPower = 0;
     public double wheelBackLeftPower = 0;
 
-    public double frontWheelWeaken = 1;
+    //public double frontWheelWeaken = 1;
 
     public double turbo = 0;
 
@@ -31,13 +31,14 @@ public class MecanumWheels {
 
         this.turbo = turbo;
 
-        double x1 = gamepad1.left_stick_x; //Math.pow(gamepad1.left_stick_x,3.0);
-        double y1 = gamepad1.left_stick_y; //Math.pow(gamepad1.left_stick_y,3.0);
-        double x2 = gamepad1.right_stick_x; //Math.pow(gamepad1.right_stick_x,3.0);
-        wheelFrontRightPower  = -y1 - x2 - x1;
-        wheelBackRightPower   = y1 + x2 - x1;
-        wheelFrontLeftPower   = -y1 + x2 + x1;
-        wheelBackLeftPower    = y1 - x2 + x1;
+        double x = gamepad1.left_stick_x; //Math.pow(gamepad1.left_stick_x,3.0);
+        double y =  gamepad1.left_stick_y; //Math.pow(gamepad1.left_stick_y,3.0);
+        double rx = gamepad1.right_stick_x; //Math.pow(gamepad1.right_stick_x,3.0);
+        wheelFrontLeftPower   = y - x  - rx ;
+        wheelBackLeftPower    = y + x - rx;
+        wheelFrontRightPower  = y + x + rx;
+        wheelBackRightPower   = y - x + rx;
+
 
         double max = Math.max(Math.abs(wheelFrontRightPower), Math.max(Math.abs(wheelBackRightPower),
                 Math.max(Math.abs(wheelFrontLeftPower), Math.abs(wheelBackLeftPower))));
@@ -74,16 +75,16 @@ public class MecanumWheels {
 
     public void strafeRight(double turbo){
         this.turbo = turbo;
-        wheelFrontRightPower = -1 * turbo * frontWheelWeaken;
-        wheelFrontLeftPower = 1 * turbo * frontWheelWeaken;
+        wheelFrontRightPower = -1 * turbo ;
+        wheelFrontLeftPower = 1 * turbo ;
         wheelBackRightPower = 1 * turbo;
         wheelBackLeftPower = -1 * turbo;
     }
 
     public void strafeLeft(double speed){
         this.turbo = turbo;
-        wheelFrontRightPower = 1 * turbo * frontWheelWeaken;
-        wheelFrontLeftPower = -1 * turbo * frontWheelWeaken;
+        wheelFrontRightPower = 1 * turbo ;
+        wheelFrontLeftPower = -1 * turbo ;
         wheelBackRightPower = -1 * turbo;
         wheelBackLeftPower = 1 * turbo;
     }

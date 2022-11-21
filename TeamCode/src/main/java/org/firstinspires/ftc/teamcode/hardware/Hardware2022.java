@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,16 +16,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 public class Hardware2022 {
 
+    static public double ANGULAR_RATE = 2000.0;
     //Adjustable parameters  here.
-    private final double CLAW_CLOSED = 0.3 ;
-    private final double CLAW_OPEN = 0.7 ;
+    private final double CLAW_CLOSED = 1 ;
+    private final double CLAW_OPEN = 0.3 ;
     private final double xAxisCoeff = 28.4 ;  // How many degrees encoder to turn to run an inch in X Axis
     private final double yAxisCoeff = 27.5 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
     private final int CONE_SLIDE_LOW = 0 ;
     private final int CONE_SLIDE_MID = 1200 ;
-    private final int CONE_SLIDE_HIGH = 2000 ;
+    private final int CONE_SLIDE_HIGH = 2500 ;
 
     //Encoder value of VSlide height in No Cone mode
     private final int NOCONE_SLIDE_LOW = 0 ;
@@ -67,10 +69,10 @@ public class Hardware2022 {
     public HardwareMap hwMap;
 
     //motors
-    public DcMotor wheelFrontRight = null;
-    public DcMotor wheelFrontLeft = null;
-    public DcMotor wheelBackRight = null;
-    public DcMotor wheelBackLeft = null;
+    public DcMotorEx wheelFrontRight = null;
+    public DcMotorEx wheelFrontLeft = null;
+    public DcMotorEx wheelBackRight = null;
+    public DcMotorEx wheelBackLeft = null;
     //public DcMotor wheelStrafe = null;
 
     public DcMotor vSlide = null;
@@ -85,29 +87,36 @@ public class Hardware2022 {
      */
     public void createHardware() {
 
-        wheelFrontRight = hwMap.get(DcMotor.class, "rfWheel");
-        wheelFrontLeft = hwMap.get(DcMotor.class, "lfWheel");
-        wheelBackRight = hwMap.get(DcMotor.class, "rrWheel");
-        wheelBackLeft = hwMap.get(DcMotor.class, "lrWheel");
+        wheelFrontRight = hwMap.get(DcMotorEx.class, "rfWheel");
+        wheelFrontLeft = hwMap.get(DcMotorEx.class, "lfWheel");
+        wheelBackRight = hwMap.get(DcMotorEx.class, "rrWheel");
+        wheelBackLeft = hwMap.get(DcMotorEx.class, "lrWheel");
         vSlide = hwMap.get(DcMotor.class, "Vertical");
 
-        wheelFrontRight.setDirection(DcMotor.Direction.FORWARD);
-        wheelBackRight.setDirection(DcMotor.Direction.REVERSE);
+
+        wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        wheelFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         wheelBackLeft.setDirection(DcMotor.Direction.FORWARD);
-        wheelFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        wheelFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        wheelBackRight.setDirection(DcMotor.Direction.REVERSE);
+
         vSlide.setDirection(DcMotor.Direction.FORWARD);
 
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        vSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         vsldieInitPosition = vSlide.getCurrentPosition() ;
 
-        wheelFrontRight.setPower(0);
-        wheelBackRight.setPower(0);
-        wheelFrontLeft.setPower(0);
-        wheelBackLeft.setPower(0);
+        wheelFrontRight.setVelocity(0);
+        wheelBackRight.setVelocity(0);
+        wheelFrontLeft.setVelocity(0);
+        wheelBackLeft.setVelocity(0);
 
         vSlide.setPower(0);
 
@@ -130,15 +139,15 @@ public class Hardware2022 {
         wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        wheelFrontRight.setPower(power);
-        wheelBackRight.setPower(-power);
-        wheelFrontLeft.setPower(power);
-        wheelBackLeft.setPower(-power);
+        wheelFrontLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
+        wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
+        wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
+        wheelBackRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
 
         telemetry.addLine().addData("[Y Position >]  ", getYAxisPosition() );
         telemetry.update();
@@ -149,10 +158,10 @@ public class Hardware2022 {
             telemetry.update();
         }
 
-        wheelFrontRight.setPower(0);
-        wheelFrontLeft.setPower(0);
-        wheelBackRight.setPower(0);
-        wheelBackLeft.setPower(0);
+        wheelFrontRight.setVelocity(0);
+        wheelFrontLeft.setVelocity(0);
+        wheelBackRight.setVelocity(0);
+        wheelBackLeft.setVelocity(0);
 
     }
 
@@ -182,15 +191,15 @@ public class Hardware2022 {
         wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        wheelFrontRight.setPower(-power);
-        wheelBackRight.setPower(-power);
-        wheelFrontLeft.setPower(power);
-        wheelBackLeft.setPower(power);
+        wheelFrontLeft.setVelocity(-power * Hardware2022.ANGULAR_RATE);
+        wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
+        wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
+        wheelBackRight.setVelocity(-power * Hardware2022.ANGULAR_RATE);
 
         telemetry.addLine().addData("[X Position >]  ", ""+ getXAxisPosition() );
         telemetry.update();
@@ -202,10 +211,10 @@ public class Hardware2022 {
 
         }
 
-        wheelFrontRight.setPower(0);
-        wheelFrontLeft.setPower(0);
-        wheelBackRight.setPower(0);
-        wheelBackLeft.setPower(0);
+        wheelFrontRight.setVelocity(0);
+        wheelFrontLeft.setVelocity(0);
+        wheelBackRight.setVelocity(0);
+        wheelBackLeft.setVelocity(0);
 
     }
 
@@ -378,8 +387,11 @@ public class Hardware2022 {
 
         telemetry.update();
 
-        if ( (vSlide.getCurrentPosition() - vsldieInitPosition)  <= CONE_SLIDE_HIGH
-                && (vSlide.getCurrentPosition() - vsldieInitPosition)  >= 0 ) {
+        if ( ( (vSlide.getCurrentPosition() - vsldieInitPosition)  <= CONE_SLIDE_HIGH
+                && power > 0 )
+               ||  ( (vSlide.getCurrentPosition() - vsldieInitPosition)  >= 0 )
+                && power < 0 )
+        {
             //telemetry.addLine().addData("We have power!", power );
             //telemetry.update();
             vSlide.setPower( power );
