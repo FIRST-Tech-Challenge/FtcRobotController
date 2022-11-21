@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.testing
 
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.drive.KMecanumOdoDrive
-import org.firstinspires.ftc.teamcode.koawalib.Hardware
 import org.firstinspires.ftc.teamcode.testing.subsystems.Lift
 
 class Robot(startPose : Pose) {
@@ -17,5 +16,5 @@ class Robot(startPose : Pose) {
         true
     )
 
-    val lift = Lift(hardware.liftLeadMotor, hardware.liftSecondMotor)
+    val lift = Lift(hardware.liftMotor, hardware.liftSecondMotor)
 }

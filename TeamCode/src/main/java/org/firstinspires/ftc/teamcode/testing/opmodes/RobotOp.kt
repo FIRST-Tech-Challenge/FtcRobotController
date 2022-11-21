@@ -15,14 +15,14 @@ class RobotOp : KOpMode(photonEnabled = true) {
         override fun mInit() {
             robot.drive.defaultCommand = MecanumCmd(
                 robot.drive,
-                driver.leftStick,
+                driver.leftStick.xInverted.yInverted,
                 driver.rightStick,
-                0.9,
-                0.9,
-                0.9,
                 1.0,
                 1.0,
-                1.0
+                1.0,
+                0.8,
+                0.8,
+                0.8
             )
 
             driver.dpadUp.onPress(Lift.LiftMove(0.7, robot.lift))
