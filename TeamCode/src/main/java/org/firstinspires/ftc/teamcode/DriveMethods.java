@@ -413,7 +413,7 @@ public class DriveMethods extends LinearOpMode{
         }
         motorSlide.setPower((dif / aggressiveness));
 
-        while (Math.abs(dif) >= 75) { // doesn't work when trying to go down
+        while (Math.abs(dif) >= 150) { // doesn't work when trying to go down
             telemetry.addLine(dif + "..difference");
             telemetry.addLine(Math.abs(motorSlide.getCurrentPosition()) + "..position");
             telemetry.addLine(target + "..target");

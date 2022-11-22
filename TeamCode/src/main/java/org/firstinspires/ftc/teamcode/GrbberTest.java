@@ -23,6 +23,7 @@ public class GrbberTest extends DriveMethods{
             telemetry.update();
             if (i<50){
                 grabber.setPosition(release);
+                telemetry.addLine("Release: "+ grabber.getPosition());
                 telemetry.update();
                 sleep(3000);
                 grabber.setPosition(clamp);
