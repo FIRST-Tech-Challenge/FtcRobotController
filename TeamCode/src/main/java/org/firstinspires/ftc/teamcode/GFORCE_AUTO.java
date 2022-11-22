@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  * <p>
  * See lines 42-57.
  */
-@Autonomous(name="G-FORCE AUTO", group = "advanced")
+@Autonomous(name="G-FORCE AUTO", group="!Competition", preselectTeleOp="G-FORCE TELEOP")
 public class GFORCE_AUTO extends LinearOpMode {
 
     private Elevator elevator;
@@ -115,6 +115,7 @@ public class GFORCE_AUTO extends LinearOpMode {
         trackConeNow = true;
         coneGrabbed = false;
     }
+
     // trajectory builders //
     private void buildRedFrontJunction (){
         drive.setExternalHeading(Math.toRadians(0));

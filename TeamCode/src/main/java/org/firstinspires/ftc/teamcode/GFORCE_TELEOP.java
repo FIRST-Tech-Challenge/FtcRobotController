@@ -65,32 +65,21 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
         ElapsedTime cycleTime = new ElapsedTime();
 
-        // Home the elevator....  This may need to be changed once we have an Auto.
-//        telemetry.addData("Elevator", "Homing");
-//        telemetry.update();
-//        elevator.recalibrateHomePosition();
-//        telemetry.addData("Elevator", "Homed !");
-//        telemetry.update();
-
-        // Retrieve any info from Auto Run
-        // See AutoTransferPose.java for further details
-        double newHeading = 0;
-
+        // Load any prior states from AUTO
         elevator.setState(SharedStates.elevatorState);
-
-        while (opModeInInit()) {
-            telemetry.addData("Alliance", weAreRed ? "RED" : "blue");
-            elevator.runStateMachine();
-            coneTracker.update();       // testing only
-            coneTracker.showRanges();   // testing only
-            telemetry.addData("GYRO heading", Math.toDegrees(drive.getExternalHeading()));
-            telemetry.update();
-        }
-
         if (SharedStates.currentPose != null) {
             drive.setExternalHeading(SharedStates.currentPose.getHeading());
         } else {
             drive.setExternalHeading(0);
+        }
+
+        while (opModeInInit()) {
+            telemetry.addData("Alliance", weAreRed ? "RED" : "blue");
+            elevator.runStateMachine();
+            // coneTracker.update();       // testing only
+            // coneTracker.showRanges();   // testing only
+            telemetry.addData("GYRO heading", Math.toDegrees(drive.getExternalHeading()));
+            telemetry.update();
         }
 
         // Lift arm into home position.

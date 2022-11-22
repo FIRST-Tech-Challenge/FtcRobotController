@@ -258,6 +258,8 @@ public class Elevator {
             }
 
             case IN_POSITION_CLOSED: {
+                 setHandPosition(HAND_CLOSE);  // Hold Tight
+
                  if (releaseRequested()) {
                      setHandPosition(HAND_OPEN);
                      setState(IN_POSITION_OPEN);
