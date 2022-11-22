@@ -22,7 +22,7 @@ public class RobotManager {
     static final double TRIGGER_DEAD_ZONE_SIZE = 0.05;
 
     public enum AllianceColor {BLUE, RED}
-    public enum StartingSide {WAREHOUSE, CAROUSEL}
+    public enum StartingSide {} //add starting side here later
 
     public Robot robot;
 
@@ -67,36 +67,6 @@ public class RobotManager {
     /** Determine new robot desired states based on controller input (checks for button releases)
      */
     public void readControllerInputs() {
-        // Carousel
-        if (getButtonRelease(GamepadWrapper.DriverAction.RUN_CAROUSEL)) {
-            switch (robot.desiredCarouselState) {
-                case STOPPED:
-                    robot.desiredCarouselState = Robot.CarouselState.SPINNING;
-                    mechanismDriving.carouselStartTime = elapsedTime.milliseconds();
-                    break;
-                case SPINNING:
-                    robot.desiredCarouselState = Robot.CarouselState.STOPPED;
-                    break;
-            }
-        }
-        if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_AUTO_SPIN)) {
-            if (robot.desiredCarouselState != Robot.CarouselState.AUTO_SPIN) {
-                robot.desiredCarouselState = Robot.CarouselState.AUTO_SPIN;
-                mechanismDriving.carouselStartTime = elapsedTime.milliseconds();
-            }
-            else {
-                robot.desiredCarouselState = Robot.CarouselState.STOPPED;
-            }
-        }
-
-        // Claw
-        if (getButtonRelease(GamepadWrapper.DriverAction.OPEN_CLAW)) {
-            robot.desiredClawState = Robot.ClawState.OPEN;
-        }
-        if (getButtonRelease(GamepadWrapper.DriverAction.CLOSE_CLAW)) {
-            robot.desiredClawState = Robot.ClawState.CLOSED;
-        }
-
         // Linear slides
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
             robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
@@ -180,11 +150,11 @@ public class RobotManager {
 
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
      */
-    public void driveMechanisms() {
-        mechanismDriving.updateCarousel(robot);
-        mechanismDriving.updateClaw(robot);
-        mechanismDriving.updateSlides(robot);
-    }
+//    public void driveMechanisms() {
+//        mechanismDriving.updateCarousel(robot);
+//        mechanismDriving.updateClaw(robot);
+//        mechanismDriving.updateSlides(robot);
+//    }
 
     /** Changes drivetrain motor inputs based off the controller inputs.
      */
@@ -228,16 +198,17 @@ public class RobotManager {
      * @param result The result of the barcode scanning. This will NEVER be WRONG_CAPS or WRONG_TAPE, it will always be a valid barcode state
      * @return A SlidesState that represents the scoring level to deposit to
      */
-    private Robot.SlidesState barcodeResultToSlidesState(Robot.BarcodeScanResult result) {
 
-        switch (result) {
-            case LEFT: return Robot.SlidesState.L1;
-            case CENTER: return Robot.SlidesState.L2;
-            case RIGHT: return Robot.SlidesState.L3;
-        }
-
-        return Robot.SlidesState.L1;
-    }
+//    private Robot.SlidesState barcodeResultToSlidesState(Robot.BarcodeScanResult result) {
+//
+//        switch (result) {
+//            case LEFT: return Robot.SlidesState.L1;
+//            case CENTER: return Robot.SlidesState.L2;
+//            case RIGHT: return Robot.SlidesState.L3;
+//        }
+//
+//        return Robot.SlidesState.L1;
+//    }
 
 
     /** Determines the position of the capstone on the barcode.
@@ -247,8 +218,8 @@ public class RobotManager {
         robot.barcodeScanResult = Robot.BarcodeScanResult.WRONG_CAPS;
         robot.resetBarcodeScanMap();
 
-        robot.barcodeScanState = Robot.BarcodeScanState.SCAN;
-        robot.numBarcodeAttempts = 0;
+     robot.numBarcodeAttempts = 0;
+        robot.barcodeScanState = Robot.BarcodeScanState.SCAN
 
         // Wait for CV to determine a finalized barcodeScanResult value (this is blocking!)
         while (robot.barcodeScanState == Robot.BarcodeScanState.SCAN) {
@@ -266,54 +237,74 @@ public class RobotManager {
     // be synchronous by repeatedly calling the mechanism driving methods. These are to be used in an autonomous OpMode.
 
     /** Delivers a duck by spinning the carousel.
+     *  (For any future coders in Robotics, please keep this here please. -Tyler :)
      */
-    public void deliverDuck() {
-        robot.desiredCarouselState = Robot.CarouselState.STOPPED;
-        mechanismDriving.updateCarousel(robot);
-
-        robot.desiredCarouselState = Robot.CarouselState.SPINNING;
-        mechanismDriving.updateCarousel(robot);
-
-        int sleepTime = 0;
-        for (int interval : MechanismDriving.CAROUSEL_TIMES) {
-            sleepTime += interval;
-        }
-
-        telemetry.addData("sleepTime", sleepTime);
-        telemetry.update();
-
-        double startingTime = robot.elapsedTime.milliseconds();
-        while (robot.elapsedTime.milliseconds() - startingTime < sleepTime) {}
-
-        robot.desiredCarouselState = Robot.CarouselState.STOPPED;
-        mechanismDriving.updateCarousel(robot);
-    }
+//     public void deliverDuck() {
+//         robot.desiredCarouselState = Robot.CarouselState.STOPPED;
+//         mechanismDriving.updateCarousel(robot);
+//
+//         robot.desiredCarouselState = Robot.CarouselState.SPINNING;
+//         mechanismDriving.updateCarousel(robot);
+//
+//         int sleepTime = 0;
+//         for (int interval : MechanismDriving.CAROUSEL_TIMES) {
+//             sleepTime += interval;
+//         }
+//
+//         telemetry.addData("sleepTime", sleepTime);
+//         telemetry.update();
+//
+//         double startingTime = robot.elapsedTime.milliseconds();
+//         while (robot.elapsedTime.milliseconds() - startingTime < sleepTime) {}
+//
+//         robot.desiredCarouselState = Robot.CarouselState.STOPPED;
+//         mechanismDriving.updateCarousel(robot);
+//     }
 
     /** Opens the claw.
      */
-    public void openClaw() {
+  /*  public void openClaw() {
         robot.desiredClawState = Robot.ClawState.OPEN;
         double startingTime = robot.elapsedTime.milliseconds();
         mechanismDriving.updateClaw(robot);
         // Wait for claw to open.
         while (robot.elapsedTime.milliseconds() - startingTime < MechanismDriving.CLAW_SERVO_TIME) {}
     }
-
+*/
     /** Closes the claw.
      */
-    public void closeClaw() {
+     /*
+  / public void closeClaw() {
         robot.desiredClawState = Robot.ClawState.CLOSED;
         double startingTime = robot.elapsedTime.milliseconds();
         mechanismDriving.updateClaw(robot);
         // Wait for claw to close.
         while (robot.elapsedTime.milliseconds() - startingTime < MechanismDriving.CLAW_SERVO_TIME) {}
     }
+    */
+
+    /** Horse shoe code
+     *  This horse shoe code here is part of the linear slides and helps the cone position into the poles.
+     */
+    public void flipHorseshoe() {
+        switch (robot.desiredIntakeState) {
+            case Robot.IntakeState.FRONT: //Horshoe Facing Foward
+                robot.desiredIntakeState = Robot.IntakeState.BACK;
+                break;
+            case Robot.IntakeState.BACK: //Horseshoe Facing Front
+                robot.desiredIntakeState = Robot.IntakeState.FRONT;
+                break;
+        }
+        double startTime = robot.elaspsedTime.milliseconds(); //Starts the time of the robot in milliseconds.
+        mechanismDriving.updateIntake(robot);
+
+    }
 
     /** Delivers a piece of freight to a particular level of the alliance shipping hub.
      *
      *  @param level the level to which the cargo needs to be delivered.
      */
-    public void deliverToShippingHub(Robot.SlidesState level) {
+    public void deliverToPole(Robot.SlidesState level) {
         // Extend slides.
         robot.desiredSlidesState = level;
         boolean extended = mechanismDriving.updateSlides(robot);
@@ -326,30 +317,31 @@ public class RobotManager {
         Position startPos = new Position(
                 new Point(robot.getPosition().getX(), robot.getPosition().getY(), "POI startPos"),
                 robot.getPosition().getRotation());
+        double forwardDistance;
 
-        double forwardDistance = Navigation.CLAW_SIZE;
-        switch (level) {
-            case L1:
-                forwardDistance -= 3;
-                break;
-            case L2:
-                forwardDistance -= 4;
-                break;
-            case L3:
-                forwardDistance -= 7;
-                break;
-        }
+//        switch (level) {
+//            case L1:
+//                forwardDistance -= 3;
+//                break;
+//            case L2:
+//                forwardDistance -= 4;
+//                break;
+//            case L3:
+//                forwardDistance -= 7;
+//                break;
+//        }
+
 //        if (level == Robot.SlidesState.L1) {forwardDistance -= 0.75;}
 
         if (forwardDistance > 0) {
             navigation.path.add(navigation.pathIndex,
-                    new Position(new Point(startPos.getX() + forwardDistance, startPos.getY(), "POI dropoff",
+                    new Position(new Point(startPos.getX() + forwardDistance, startPos.getY(),
                             Point.Action.NONE, 0.4, 0.0), startPos.getRotation()));
 
             travelToNextPOI();
         }
 
-        openClaw();
+        flipHorseshoe();
 
         // Move back to starting position.
         navigation.path.add(navigation.pathIndex, startPos);
@@ -362,7 +354,7 @@ public class RobotManager {
             retracted = mechanismDriving.updateSlides(robot);
         }
 
-        closeClaw();
+        flipHorseshoe();
     }
 
     /** Returns whether the driver is attempting to move the robot linearly
