@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,6 +16,7 @@ import java.util.Locale;
  *
  */
 @TeleOp (name="RedTeleOptimized", group="TeleOps")
+@Disabled
 public class RedTele extends LinearOpMode {
 
     Hardware9010 hdw;

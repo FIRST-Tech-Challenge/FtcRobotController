@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -16,6 +17,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 //435 max ticks per second is 383.6
 @Autonomous(name = "RedAutono")
+@Disabled
 public class RedAutono extends LinearOpMode {
 
     Hardware9010 hdw;
