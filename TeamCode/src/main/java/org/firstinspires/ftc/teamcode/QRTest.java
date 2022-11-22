@@ -60,13 +60,30 @@ public class QRTest  extends LinearOpMode  {
         });
 
         waitForStart();
+        telemetry.addData("Message : ", coneImgPipeline.getDetectMsg());
+        telemetry.addData("Sleeve: ", coneImgPipeline.getSleeveSide()
+                + " decoded:" + coneImgPipeline.isDecoded());
+        telemetry.update();
 
         while (opModeIsActive())
         {
-            telemetry.addData("Message: ", coneImgPipeline.getDetectMsg());
-            telemetry.addData("Sleeve: ", coneImgPipeline.getSleeveSide()
-                    + " decoded:" + coneImgPipeline.isDecoded());
-            telemetry.update();
+
+            if ( coneImgPipeline.isDecoded()) {
+                //Once decoded, turn web stream off
+                webCam.stopStreaming();
+
+                telemetry.addData("Detected: ", coneImgPipeline.getDetectMsg());
+                telemetry.addData("Sleeve: ", coneImgPipeline.getSleeveSide()
+                        + " decoded:" + coneImgPipeline.isDecoded());
+                telemetry.addData("Stop WebCam Streaming ", coneImgPipeline.getDetectMsg());
+                telemetry.update();
+
+            } else {
+
+                telemetry.addData("Not Detected: ", coneImgPipeline.getDetectMsg());
+                telemetry.update();
+
+            }
 
             // Don't burn CPU cycles busy-looping in this sample
             sleep(100);
