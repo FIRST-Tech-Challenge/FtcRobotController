@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.openCV.DuckPipeline;
 import org.firstinspires.ftc.teamcode.openCV.SignalDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -49,18 +50,24 @@ public class OpenCVTest extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
+//    private SignalDetection pipeline = null;
     private SignalDetection pipeline = null;
     private String webcamName = "Webcam";
     private boolean useCameraStream = true;
     private OpenCvWebcam camera = null;
-    private Telemetry camTelemetry = null;
+    private Telemetry.Item camTelemetry = null;
+    private Telemetry.Item colorTelemetry = null;
+    private Telemetry.Item timeTelemetry = null;
+    private SignalDetection.Color color = null;
+    private long msUntilDetected = 0;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        pipeline = new SignalDetection(webcamName, camTelemetry);
+        pipeline = new SignalDetection(webcamName, camTelemetry, runtime);
+//        pipeline = new DuckPipeline();
 
         //Get webcam and init OpenCV on webcam
         WebcamName webcam = hardwareMap.get(WebcamName.class, webcamName);
@@ -90,7 +97,17 @@ public class OpenCVTest extends LinearOpMode {
         });
 
         // Wait for the game to start (driver presses PLAY)
-        waitForStart();
+//        waitForStart();
+        colorTelemetry = telemetry.addData("Color", null);
+        timeTelemetry = telemetry.addData("Time until detected", null);
+        while (!isStarted()) {
+//            telemetry.addData("ur in", "init loop");
+            color = pipeline.getColor();
+            msUntilDetected = pipeline.getMsUntilDetected();
+            colorTelemetry.setValue("Color: " + color);
+            timeTelemetry.setValue(msUntilDetected);
+            telemetry.update();
+        }
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
