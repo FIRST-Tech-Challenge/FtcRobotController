@@ -87,8 +87,8 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
 
      */
-    public static double MAX_VEL = 91.16268874278971*0.9;
-    //Voltage compensated kF= 13.523466793818594
+    public static double MAX_VEL = 85.19058792468887;
+    //Voltage compensated kF= 13.62023530401879;
     public static double MAX_ACCEL = 83.49131831684393;
     public static double MAX_ANG_VEL = Math.toRadians(360);
     public static double MAX_ANG_ACCEL = Math.toRadians(360);
