@@ -338,12 +338,13 @@ public class Navigation
      *  @param target The desired position of the robot.
      *  @param constantPower A hard-coded power value for the method to use instead of ramping. Ignored if set to zero.
      */
-    public void travelLinear(Point target, double constantPower, Robot robot) {
+    public void travelLinear(double targetX, double targetY, double constantPower, Robot robot) {
         robot.positionManager.updatePosition(robot);
-        final Point startLoc = robot.getPosition().getLocation();
-        Point currentLoc;
+        final double startX = robot.getPosition().getX();
+        final double startY = robot.getPosition().getY();
 
-        double totalDistance = getEuclideanDistance(startLoc, target);
+
+        double totalDistance = getEuclideanDistance(startX, startY, targetX, targetY);
 
         double power;
         boolean ramping = true;
@@ -363,10 +364,11 @@ public class Navigation
         while (!finishedTravel) {
 
             robot.positionManager.updatePosition(robot);
-            currentLoc = robot.getPosition().getLocation();
+            double currentX = robot.getPosition().getX();
+            double currentY = robot.getPosition().getY();
 
-            distanceToTarget = getEuclideanDistance(currentLoc, target);
-            distanceTraveled = getEuclideanDistance(startLoc, currentLoc);
+            distanceToTarget = getEuclideanDistance(currentX, currentY, targetX, targetY);
+            distanceTraveled = getEuclideanDistance(startX, startY, currentX, currentY);
 
             if (ramping) {
                 if (distanceTraveled < totalDistance / 2) {
@@ -423,7 +425,7 @@ public class Navigation
 
     /** Calculates the angle at which the robot must strafe in order to get to a target location.
      */
-    private double getStrafeAngle(Point currentLoc, double currentOrientation, Point target) {
+    private double getStrafeAngle(Point currentLoc, double currentOrientation, Point target) { //LEFT OFF HERE 11/22/22
         double strafeAngle = currentOrientation - getAngleBetween(currentLoc, target);
         if (strafeAngle > Math.PI) {
             strafeAngle -= 2 * Math.PI;
@@ -444,8 +446,8 @@ public class Navigation
      *  @param b The point to find the distance to point A from.
      *  @return The Euclidean distance between the two points.
      */
-    private double getEuclideanDistance(Point a, Point b) {
-        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+    private double getEuclideanDistance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 
     /** Transforms the robot's path based on the alliance color and side of the field it is starting on.
