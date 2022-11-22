@@ -39,10 +39,10 @@ public class GeneralDriver extends BaseTele {
             if (gamepad1.dpad_right) {
                 hdw.goToHeight(Hardware2022.SlideHeight.Mid);
             }
-            if (gamepad2.dpad_up) {
+            if (gamepad1.dpad_up) {
                 hdw.goToHeight(Hardware2022.SlideHeight.High);
             }
-            if (gamepad2.dpad_down) {
+            if (gamepad1.dpad_down) {
                 hdw.goToHeight(Hardware2022.SlideHeight.Low);
             }
             if (gamepad1.y) {

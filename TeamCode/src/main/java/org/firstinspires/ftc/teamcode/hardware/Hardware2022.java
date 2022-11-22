@@ -20,8 +20,8 @@ public class Hardware2022 {
     //Adjustable parameters  here.
     private final double CLAW_CLOSED = 1 ;
     private final double CLAW_OPEN = 0.3 ;
-    private final double xAxisCoeff = 28.4 ;  // How many degrees encoder to turn to run an inch in X Axis
-    private final double yAxisCoeff = 27.5 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double xAxisCoeff = 200 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double yAxisCoeff = 200 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
     private final int CONE_SLIDE_LOW = 0 ;
@@ -132,36 +132,50 @@ public class Hardware2022 {
      * @param distance  Distance in encoder degree , 360 for a full circle.  Always positive
      * @param power Positive value move forward
      */
-    private void moveYAxisDegree(long distance, double power ) {
+    private void moveYAxisDegree(int distance, double power ) {
 
-        wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        wheelFrontLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
-        wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
-        wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
-        wheelBackRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
+        wheelFrontLeft.setTargetPosition( distance  );
+        wheelBackLeft.setTargetPosition( distance  );
+        wheelFrontRight.setTargetPosition( distance  );
+        wheelBackRight.setTargetPosition( distance  );
 
-        telemetry.addLine().addData("[Y Position >]  ", getYAxisPosition() );
+        telemetry.addLine().addData("[Y Position, after setTarget >]  ", getYAxisPosition());
         telemetry.update();
 
-        while ( Math.abs(getYAxisPosition()) < distance ) {
-
-            telemetry.addLine().addData("[Y Position >]  ", "" + getYAxisPosition() );
+        while ( wheelFrontLeft.isBusy()) {
+            telemetry.addLine().addData("[Y Position , in the while >]  ", getYAxisPosition());
+            telemetry.addLine().addData("[Y target Position , in the while >]  ", wheelFrontLeft.getTargetPosition());
             telemetry.update();
+
+            wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
+            wheelFrontLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
+            wheelBackRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
+            wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
+
         }
 
         wheelFrontRight.setVelocity(0);
         wheelFrontLeft.setVelocity(0);
         wheelBackRight.setVelocity(0);
         wheelBackLeft.setVelocity(0);
+
+
+        //Put motor back into run with encoder mode.
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
     }
 
@@ -176,7 +190,7 @@ public class Hardware2022 {
      * @param power Positive value move forward
      */
     public void moveYAxis(double distance, double power ) {
-        moveYAxisDegree( Math.round( (float) distance * this.yAxisCoeff ), power ) ;
+        moveYAxisDegree( (int) Math.round( (float) distance * this.yAxisCoeff ),  power ) ;
     }
 
     /**
@@ -184,30 +198,35 @@ public class Hardware2022 {
      * @param distance  Distance in encoder degree , 360 for a full circle.  Always positive
      * @param power Positive value move right.
      */
+    private void moveXAxisDegree(int distance, double power ) {
 
-    private void moveXAxisDegree(long distance, double power ) {
-        wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        wheelFrontLeft.setVelocity(-power * Hardware2022.ANGULAR_RATE);
-        wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
-        wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
-        wheelBackRight.setVelocity(-power * Hardware2022.ANGULAR_RATE);
+        wheelFrontLeft.setTargetPosition( -distance  );
+        wheelBackLeft.setTargetPosition( distance  );
+        wheelFrontRight.setTargetPosition( distance  );
+        wheelBackRight.setTargetPosition( -distance  );
 
-        telemetry.addLine().addData("[X Position >]  ", ""+ getXAxisPosition() );
+        telemetry.addLine().addData("[X Position, after setTarget >]  ", getYAxisPosition());
         telemetry.update();
 
-        while ( Math.abs(getXAxisPosition()) < distance ) {
-
-            telemetry.addLine().addData("[X Position >]  ", getXAxisPosition() );
+        while ( wheelFrontLeft.isBusy()) {
+            telemetry.addLine().addData("[X Position , in the while >]  ", getYAxisPosition());
+            telemetry.addLine().addData("[X target Position , in the while >]  ", wheelFrontLeft.getTargetPosition());
             telemetry.update();
+
+            wheelFrontLeft.setVelocity(-power * Hardware2022.ANGULAR_RATE);
+            wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
+            wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
+            wheelBackRight.setVelocity(-power * Hardware2022.ANGULAR_RATE);
 
         }
 
@@ -215,6 +234,15 @@ public class Hardware2022 {
         wheelFrontLeft.setVelocity(0);
         wheelBackRight.setVelocity(0);
         wheelBackLeft.setVelocity(0);
+
+
+        //Put motor back into run with encoder mode.
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
     }
 
@@ -226,7 +254,7 @@ public class Hardware2022 {
      */
 
     public void moveXAxis(double  distance, double power ) {
-        moveXAxisDegree(Math.round((float) distance * xAxisCoeff), power);
+        moveXAxisDegree((int) Math.round((float) distance * xAxisCoeff), power);
 
     }
 
