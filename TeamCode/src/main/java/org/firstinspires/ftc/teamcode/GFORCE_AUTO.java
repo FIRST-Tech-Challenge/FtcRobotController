@@ -117,25 +117,25 @@ public class GFORCE_AUTO extends LinearOpMode {
     }
     // trajectory builders //
     private void buildRedFrontJunction (){
-        drive.setExternalHeading(Math.toRadians(90));
-        Pose2d startPosition = new Pose2d(new Vector2d(-35, -62), Math.toRadians(90));
+        drive.setExternalHeading(Math.toRadians(0));
+        Pose2d startPosition = new Pose2d(new Vector2d(-62, 35), Math.toRadians(0));
         drive.setPoseEstimate(startPosition);
         redFrontJunctionInit = drive.trajectorySequenceBuilder(startPosition)
             .addDisplacementMarker(0.5, () -> {
                 elevator.levelUp();
             })
-            .splineTo(new Vector2d(-30, -53), Math.toRadians(45))
+            .splineTo(new Vector2d(-53, 30), Math.toRadians(-45))
             .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
                 elevator.autoRelease();
             })
             .waitSeconds(1.5)
             .setReversed(true)
-            .splineTo(new Vector2d(-35, -59), Math.toRadians(0))
+            .splineTo(new Vector2d(-59, 35), Math.toRadians(-90))
             .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                 elevator.setLiftTargetPosition(Elevator.ELEVATOR_STACK_TOP);
             })
-            .lineTo(new Vector2d((ONE_TILE * -1.5), (ONE_TILE * -1)))
-            .splineToConstantHeading(new Vector2d(-51, (ONE_TILE * -0.5)), Math.toRadians(180))
+            .lineTo(new Vector2d((ONE_TILE * -1.0), (ONE_TILE * 1.5)))
+            .splineToConstantHeading(new Vector2d((ONE_TILE * -0.5), 51), Math.toRadians(90))
             .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                 elevator.setWristOffset(0);
             })
@@ -145,18 +145,18 @@ public class GFORCE_AUTO extends LinearOpMode {
             .waitSeconds(1.5)
             .build();
 
-           startPosition = new Pose2d(new Vector2d((ONE_TILE * -2.5), (ONE_TILE * -0.5)), Math.toRadians(180));
+           startPosition = new Pose2d(new Vector2d((ONE_TILE * -0.5), (ONE_TILE * 2.5)), Math.toRadians(90));
            redFrontJunctionLoop =drive.trajectorySequenceBuilder(startPosition)
            .back(3)
            .setReversed(false)
-           .splineTo(new Vector2d(-(2 * ONE_TILE + 6.7),(7.6 - ONE_TILE )),Math.toRadians(-45))
+           .splineTo(new Vector2d((7.6 - ONE_TILE ), (2 * ONE_TILE + 6.7)),Math.toRadians(-135))
            .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
                elevator.autoRelease();
            })
            .waitSeconds(1.5)
            .back(2)
            .setReversed(false)
-           .splineToLinearHeading(new Pose2d(-51, (ONE_TILE * -0.5), Math.toRadians(180)), Math.toRadians(180))
+           .splineToLinearHeading(new Pose2d((ONE_TILE * -0.5), 51, Math.toRadians(90)), Math.toRadians(90))
                    .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                        elevator.setLiftTargetPosition((Elevator.ELEVATOR_STACK_TOP)-20);
                        elevator.setWristOffset(0);

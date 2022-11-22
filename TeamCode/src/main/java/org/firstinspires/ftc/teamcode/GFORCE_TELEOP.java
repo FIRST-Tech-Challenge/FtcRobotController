@@ -88,18 +88,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
         }
 
         if (SharedStates.currentPose != null) {
-            newHeading = SharedStates.currentPose.getHeading();
-            // Switch Gyro heading back to Field Centric.
-
-            if (weAreRed) {
-                // Switch an Auto heading of zero, to -90 or (-PI/2)
-                newHeading =  drive.normalizeHeading(newHeading - (Math.PI/2.0));
-            } else {
-                // Switch an Auto heading of zero, to +90 or (+PI/2)
-                newHeading =  drive.normalizeHeading(newHeading + (Math.PI/2.0));
-            }
-            drive.setExternalHeading(newHeading);
-            drive.setPoseEstimate(new Pose2d(SharedStates.currentPose.getX(), SharedStates.currentPose.getY(), newHeading));
+            drive.setExternalHeading(SharedStates.currentPose.getHeading());
         } else {
             drive.setExternalHeading(0);
         }
