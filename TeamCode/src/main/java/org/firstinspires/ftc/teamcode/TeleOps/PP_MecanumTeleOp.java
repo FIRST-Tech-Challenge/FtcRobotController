@@ -40,7 +40,7 @@ public class PP_MecanumTeleOp extends OpMode
 
     private GamepadEx driverOp;
 
-    double precisionReduction = 0.3;
+    private final double PRECISIONREDUCTION = 0.3;
     /**
      * Get the maximum absolute value from a static array of doubles
      *
@@ -95,11 +95,14 @@ public class PP_MecanumTeleOp extends OpMode
     public void loop()
     {
         boolean precisionToggle = gamepad1.right_trigger > 0.1; // we want to check this every time the loop runs
+        boolean slideUp = gamepad2.right_trigger > 0.1;
+        boolean slideDown = gamepad2.left_trigger > 0.1;
         drive(precisionToggle);
         arm();
         claw();
-        slides();
+        slides(slideUp,slideDown);
 
+        slideControl.update(telemetry);
         gamepad2_dpad_up.update();
         gamepad2_dpad_down.update();
         gamepad2_A.update();
@@ -113,7 +116,7 @@ public class PP_MecanumTeleOp extends OpMode
     {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
-        double rx = -gamepad1.right_stick_x;
+        double rx = -gamepad1.right_stick_x*0.6;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
@@ -150,14 +153,10 @@ public class PP_MecanumTeleOp extends OpMode
         }
 
         if (precisionToggle) {
-            motorFrontLeft.setPower(frontLeftPower * precisionReduction);
-            telemetry.addData("Power front left",frontLeftPower * precisionReduction);
-            motorBackLeft.setPower(backLeftPower * precisionReduction);
-            telemetry.addData("Power back left",backLeftPower * precisionReduction);
-            motorFrontRight.setPower(frontRightPower * precisionReduction);
-            telemetry.addData("Power front right",frontRightPower * precisionReduction);
-            motorBackRight.setPower(backRightPower * precisionReduction);
-            telemetry.addData("Power back right:",backRightPower * precisionReduction);
+            motorFrontLeft.setPower(frontLeftPower * PRECISIONREDUCTION);
+            motorBackLeft.setPower(backLeftPower * PRECISIONREDUCTION);
+            motorFrontRight.setPower(frontRightPower * PRECISIONREDUCTION);
+            motorBackRight.setPower(backRightPower * PRECISIONREDUCTION);
         } else {
             motorFrontLeft.setPower(frontLeftPower);
             motorBackLeft.setPower(backLeftPower);
@@ -185,9 +184,10 @@ public class PP_MecanumTeleOp extends OpMode
             clawControl.toggleWristRotate();
         }
         else if (gamepad2_X.isRisingEdge()){
+            clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
             armControl.setIntake();
             slideControl.setIntakeOrGround();
-            clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
+
         }
     }
 
@@ -196,18 +196,14 @@ public class PP_MecanumTeleOp extends OpMode
         clawControl.toggleOpenClose();
     }
 
-    public void slides(){
-    slideControl.update(telemetry);
-    /*
-        // TRIGGERS \\
-        if ( _trigger > 0.2) {
-            slideControl.manualSlides(5);
-        } else if (gamepad2.left_trigger > 0.2) {
-            slideControl.manualSlides(-5);
+    public void slides(boolean slideUp, boolean slideDown){
+
+        if (slideUp){
+            slideControl.setManualSlide(15);
+        }else if (slideDown) {
+            slideControl.setManualSlide(-15);
         }
 
-
-     */
     }
 
 }
