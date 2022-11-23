@@ -83,6 +83,34 @@ public class Meet1Teleop extends DriveMethods {
                 if(targetHeight > 4){
                     targetHeight = 4;
                 }
+                switch(targetHeight){
+                    case 0:
+                        slideTarget = 0;
+                        aggressiveness = 2000;
+                        holdingPower = 0.0;
+                        break;
+                    case 1:
+                        slideTarget = 200;
+                        aggressiveness = 1200;
+                        holdingPower = 0.06;
+                        break;
+                    case 2:
+                        slideTarget = 1800;
+                        aggressiveness = 2000;
+                        holdingPower = 0.18;
+                        break;
+                    case 3:
+                        slideTarget = 2950;
+                        aggressiveness = 2000;
+                        holdingPower = 0.18;
+                        break;
+                    case 4:
+                        slideTarget = 4200;
+                        aggressiveness = 2000;
+                        holdingPower = 0.18;
+                        break;
+
+                }
                 sleep(150);
             }
             if(gamepad2.dpad_down){
@@ -90,9 +118,38 @@ public class Meet1Teleop extends DriveMethods {
                 if(targetHeight < 0){
                     targetHeight = 0;
                 }
-                sleep(150);
+                switch(targetHeight){
+                    case 0:
+                        slideTarget = 0;
+                        aggressiveness = 2000;
+                        holdingPower = 0.0;
+                        break;
+                    case 1:
+                        slideTarget = 200;
+                        aggressiveness = 1200;
+                        holdingPower = 0.06;
+                        break;
+                    case 2:
+                        slideTarget = 1800;
+                        aggressiveness = 2000;
+                        holdingPower = 0.18;
+                        break;
+                    case 3:
+                        slideTarget = 2950;
+                        aggressiveness = 2000;
+                        holdingPower = 0.18;
+                        break;
+                    case 4:
+                        slideTarget = 4200;
+                        aggressiveness = 2000;
+                        holdingPower = 0.18;
+                        break;
 
+                }
+                sleep(150);
             }
+
+            //Change the target hight based on the height of the linear slide at the time.
 
             if(gamepad2.right_bumper){
                 targetHeight = 4;
@@ -102,34 +159,6 @@ public class Meet1Teleop extends DriveMethods {
                 targetHeight = 0;
                 sleep(50);
 
-            }
-
-            switch(targetHeight){
-                case 0:
-                    slideTarget = 0;
-                    aggressiveness = 2000;
-                    holdingPower = 0.0;
-                    break;
-                case 1:
-                    slideTarget = 200;
-                    aggressiveness = 1200;
-                    holdingPower = 0.06;
-                    break;
-                case 2:
-                    slideTarget = 1800;
-                    aggressiveness = 2000;
-                    holdingPower = 0.18;
-                    break;
-                case 3:
-                    slideTarget = 2950;
-                    aggressiveness = 2000;
-                    holdingPower = 0.18;
-                    break;
-                case 4:
-                    slideTarget = 4200;
-                    aggressiveness = 2000;
-                    holdingPower = 0.18;
-                    break;
             }
 
 

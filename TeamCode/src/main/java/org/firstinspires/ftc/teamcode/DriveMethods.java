@@ -480,5 +480,6 @@ public class DriveMethods extends LinearOpMode{
         motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
+        calibrateNavXIMU();
     }
 }
