@@ -76,10 +76,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
             }
 
             @Override
-            public void onError(int errorCode)
-            {
-
-            }
+            public void onError(int errorCode) { }
         });
 
         telemetry.setMsTransmissionInterval(50);
