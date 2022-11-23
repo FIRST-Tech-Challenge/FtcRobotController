@@ -14,10 +14,9 @@ public class TeleOpCompetition extends BaseTeleOp{
 
         while (opModeIsActive()) {
             driveUsingControllers();
-            telemetry.addData("Left Encoder", leftEncoder.getCurrentPosition());
-            telemetry.addData("Right Encoder", rightEncoder.getCurrentPosition());
-            telemetry.addData("Front Encoder", frontEncoder.getCurrentPosition());
-            telemetry.update();
+            driveArm();
+            driveGrabber();
+            doTelemetry();
             idle();
         }
     }
