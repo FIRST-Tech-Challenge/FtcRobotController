@@ -40,11 +40,21 @@ public class Wheels {
             bl /= norm;
         }
 
-        if (opMode.gamepad1.left_stick_button) {
-            fr *= .5;
-            br *= .5;
-            fl *= .5;
-            bl *= .5;
+        if (opMode.gamepad1.left_stick_button || opMode.gamepad1.left_trigger>.4) {
+            fr *= .25;
+            br *= .25;
+            fl *= .25;
+            bl *= .25;
+        } else if (opMode.gamepad1.right_trigger>.4) {
+            fr *= .8;
+            br *= .8;
+            fl *= .8;
+            bl *= .8;
+        } else {
+            fr *= .6;
+            br *= .6;
+            fl *= .6;
+            bl *= .6;
         }
 
         frontRight.setPower(fr);
