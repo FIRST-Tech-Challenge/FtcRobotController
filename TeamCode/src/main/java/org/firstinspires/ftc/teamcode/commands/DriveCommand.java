@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.dragonswpilib.CommandBase;
+import org.firstinspires.ftc.dragonswpilib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 public class DriveCommand extends CommandBase {

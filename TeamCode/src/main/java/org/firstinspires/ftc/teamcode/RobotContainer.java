@@ -3,16 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.dragonswpilib.GenericHID;
+import org.firstinspires.ftc.dragonswpilib.command.button.JoystickButton;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaCurrentGame;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.commandGroups.AutonomousCommandGroup;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.dragonswpilib.Command;
-import org.firstinspires.ftc.teamcode.dragonswpilib.JoystickButton;
+import org.firstinspires.ftc.dragonswpilib.command.Command;
 
 public class RobotContainer {
 
@@ -56,8 +54,8 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        //JoystickButton DPadUp = new JoystickButton(mGamepad1, JoystickButton.XboxControllerConstants.kDpadUp);
-        //DPadUp.whenPressed(mGoToFrontAngleCommand);
+        JoystickButton DPadUp = new JoystickButton(mGamepad1, GenericHID.XboxControllerConstants.kDpadUp);
+        DPadUp.onTrue(mAutonomousCommandGroup);
     }
 
     private void configureDefaultCommands(){
