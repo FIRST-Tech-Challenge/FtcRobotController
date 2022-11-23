@@ -112,10 +112,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
                         tagToTelemetry(tagOfInterest);
                     }
                 }
-
-            }
-            else
-            {
+            } else {
                 telemetry.addLine("Don't see tag of interest :(");
 
                 if(tagOfInterest == null)
