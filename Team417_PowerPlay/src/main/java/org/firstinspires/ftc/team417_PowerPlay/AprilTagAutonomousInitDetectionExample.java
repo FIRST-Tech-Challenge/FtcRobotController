@@ -102,9 +102,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
                 if (tagFound) {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
-                }
-                else
-                {
+                } else {
                     telemetry.addLine("Don't see tag of interest :(");
 
                     if(tagOfInterest == null)
