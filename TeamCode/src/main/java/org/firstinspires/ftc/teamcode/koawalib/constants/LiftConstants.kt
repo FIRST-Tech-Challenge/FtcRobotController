@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.koawalib.constants
 
+import com.acmerobotics.dashboard.config.Config
+
+@Config
 object LiftConstants {
     @JvmField var ticksPerUnit = 0.0
     @JvmField var homePos = 0.0

@@ -12,7 +12,7 @@ class Webcam(val device: KWebcam, private val pipeline: SleevePipeline) : Subsys
     var RIGHT = 3
     var tagOfInterest: AprilTagDetection? = null
 
-    override fun periodic() {
+    fun start() {
         val currentDetections: ArrayList<AprilTagDetection> = pipeline.latestDetections
         if (currentDetections.size != 0) {
             var tagFound = false
@@ -45,47 +45,59 @@ class Webcam(val device: KWebcam, private val pipeline: SleevePipeline) : Subsys
             }
         }
     }
-}
 
-fun tagToTelemetry(detection: AprilTagDetection?) {
-    Logger.addTelemetryLine(String.format("\nDetected tag ID=%d", detection!!.id))
-    Logger.addTelemetryLine(
-        String.format(
-            "Translation X: %.2f feet",
-            detection.pose.x * 3.28084
-        )
-    )
-    Logger.addTelemetryLine(
-        String.format(
-            "Translation Y: %.2f feet",
-            detection.pose.y * 3.28084
-        )
-    )
-    Logger.addTelemetryLine(
-        String.format(
-            "Translation Z: %.2f feet",
-            detection.pose.z * 3.28084
-        )
-    )
-    Logger.addTelemetryLine(
-        String.format(
-            "Rotation Yaw: %.2f degrees", Math.toDegrees(
-                detection.pose.yaw
+    fun update() {
+        if (tagOfInterest != null) {
+            Logger.addTelemetryLine("Tag snapshot:\n")
+            tagToTelemetry(tagOfInterest)
+        } else {
+            Logger.addTelemetryLine("No tag snapshot available, it was never sighted during the init loop :(")
+        }
+    }
+    fun tagToTelemetry(detection: AprilTagDetection?) {
+        Logger.addTelemetryLine(String.format("\nDetected tag ID=%d", detection!!.id))
+        Logger.addTelemetryLine(
+            String.format(
+                "Translation X: %.2f feet",
+                detection.pose.x * FEET_PER_METER
             )
         )
-    )
-    Logger.addTelemetryLine(
-        String.format(
-            "Rotation Pitch: %.2f degrees", Math.toDegrees(
-                detection.pose.pitch
+        Logger.addTelemetryLine(
+            String.format(
+                "Translation Y: %.2f feet",
+                detection.pose.y * FEET_PER_METER
             )
         )
-    )
-    Logger.addTelemetryLine(
-        String.format(
-            "Rotation Roll: %.2f degrees", Math.toDegrees(
-                detection.pose.roll
+        Logger.addTelemetryLine(
+            String.format(
+                "Translation Z: %.2f feet",
+                detection.pose.z * FEET_PER_METER
             )
         )
-    )
+        Logger.addTelemetryLine(
+            String.format(
+                "Rotation Yaw: %.2f degrees", Math.toDegrees(
+                    detection.pose.yaw
+                )
+            )
+        )
+        Logger.addTelemetryLine(
+            String.format(
+                "Rotation Pitch: %.2f degrees", Math.toDegrees(
+                    detection.pose.pitch
+                )
+            )
+        )
+        Logger.addTelemetryLine(
+            String.format(
+                "Rotation Roll: %.2f degrees", Math.toDegrees(
+                    detection.pose.roll
+                )
+            )
+        )
+    }
+
+    companion object {
+        const val FEET_PER_METER = 3.28084
+    }
 }

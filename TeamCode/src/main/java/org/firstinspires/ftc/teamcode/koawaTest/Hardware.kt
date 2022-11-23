@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.koawaTest
 
-import com.asiankoala.koawalib.hardware.motor.KEncoder
+import com.asiankoala.koawalib.hardware.motor.EncoderFactory
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
+import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
 
 class Hardware(startPose: Pose) {
     val fl = MotorFactory("fl")
@@ -26,51 +27,24 @@ class Hardware(startPose: Pose) {
         .brake
         .build()
 
-//    val arm = MotorFactory("arm")
-//        .forward
-//        .float
-//        .createEncoder(672.0/90.0, false)
-//        .zero(Arm.initPos)
-//        .withPositionControl(
-//            PIDGains(0.13, 0.0, 0.0033),
-////            PIDGains(0.0, 0.0, 0.0)
-//            FFGains(kCos = 0.1),
-//            allowedPositionError = 2.0,
-//            disabledPosition = DisabledPosition(Arm.initPos)
-//        )
-//        .build()
-
-//    val arm = MotorFactory("arm")
-//        .forward
-//        .float
-//        .createEncoder(672.0/90.0, false)
-//        .zero(Arm.initPos)
-//        .withMotionProfileControl(
-//            PIDGains(0.0, 0.0, 0.0),
-//            FFGains(
-//                kCos = 0.1,
-//                kS = 0.06,
-//                kV = 0.003
-//            ),
-//            MotionConstraints(
-//                60.0,
-//                60.0
-//            ),
-//            allowedPositionError = 2.0,
-//            disabledPosition = DisabledPosition(Arm.initPos)
-//        )
-//        .build()
-
-    private val leftEncoder = KEncoder(fr, ticksPerUnit, true).reverse.zero()
-    private val rightEncoder = KEncoder(fl, ticksPerUnit, true).zero()
-    private val auxEncoder = KEncoder(br, ticksPerUnit, true).zero()
+    private val leftEncoder = EncoderFactory(ticksPerUnit)
+        .revEncoder
+        .build(fl)
+    private val rightEncoder = EncoderFactory(ticksPerUnit)
+        .reverse
+        .revEncoder
+        .build(bl)
+    private val auxEncoder = EncoderFactory(ticksPerUnit)
+        .reverse
+        .revEncoder
+        .build(fr)
 
     val odometry = KThreeWheelOdometry(
         leftEncoder,
         rightEncoder,
         auxEncoder,
-        9.86,
-        8.325,
+        OdoConstants.TRACK_WIDTH,
+        OdoConstants.PERP_TRACKER,
         startPose
     )
 
