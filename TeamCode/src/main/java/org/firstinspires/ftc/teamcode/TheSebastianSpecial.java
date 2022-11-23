@@ -3,10 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class BasicTeleOpMode extends OpMode {
+public class TheSebastianSpecial extends OpMode {
 
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
@@ -36,12 +35,33 @@ public class BasicTeleOpMode extends OpMode {
 
     @Override
     public void loop() {
+        int  precision = (gamepad1.right_bumper) ? 3: 1;
 
-        double left  = -gamepad1.left_stick_y;
-        double right = -gamepad1.right_stick_y;
-        frontLeftMotor.setPower(left);
-        backLeftMotor.setPower(left);
-        frontRightMotor.setPower(right);
-        backRightMotor.setPower(right);
+        double leftStick = gamepad1.left_stick_y;
+        double rightStick = gamepad1.right_stick_y;
+        double rightTrigger = gamepad1.right_trigger;
+        double leftTrigger = gamepad1.left_trigger;
+
+        double FLeft = 0;
+        double FRight = 0;
+        double BLeft = 0;
+        double BRight = 0;
+
+        if(leftStick != 0 || rightStick != 0) {
+            FLeft  = -leftStick;
+            FRight = -rightStick;
+            BLeft = FLeft;
+            BRight = FRight;
+        }
+        else {
+            FLeft = rightTrigger - leftTrigger;
+            FRight = leftTrigger - rightTrigger;
+            BRight = rightTrigger - leftTrigger;
+            BLeft = leftTrigger - rightTrigger;
+        }
+        frontLeftMotor.setPower(FLeft/precision);
+        backLeftMotor.setPower(BLeft/precision);
+        frontRightMotor.setPower(FRight/precision);
+        backRightMotor.setPower(BRight/precision);
     }
 }
