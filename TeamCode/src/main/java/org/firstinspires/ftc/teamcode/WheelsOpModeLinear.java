@@ -31,12 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.hardware.Wheel;
 import org.firstinspires.ftc.teamcode.hardware.Wheels;
 
 
@@ -53,21 +49,21 @@ import org.firstinspires.ftc.teamcode.hardware.Wheels;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Wheeels Basic: Linear OpMode", group="Linear Opmode")
+@TeleOp(name="Wheels Basic: Linear OpMode", group="Linear Opmode")
 //@Disabled
 public class WheelsOpModeLinear extends LinearOpMode {
 
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     double xAxis;
     double yAxis;
+    double rot;
 
     @Override
     public void runOpMode() {
+        Wheels w = new Wheels(this);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        Wheels wheels = new Wheels(hardwareMap);
 
         waitForStart();
         runtime.reset();
@@ -77,11 +73,12 @@ public class WheelsOpModeLinear extends LinearOpMode {
 
             xAxis = gamepad1.left_stick_x;
             yAxis = -gamepad1.left_stick_y;
-            wheels.setPower(Wheel.frontLeft, yAxis);
+            rot = gamepad1.right_stick_x;
+
+            w.driveByJoystick(xAxis, yAxis, rot);
 
             telemetry.addData("Left JoyStick", "X: %f, Y: %f", xAxis, yAxis);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }

@@ -94,23 +94,24 @@ public class ElevatorOpModeLinear extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double power;
+//                if gamepad1.y;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
 
-            power  = -gamepad1.left_stick_y ;
-            elevator.setElevatorMotorPower(power);
+            //power  = -gamepad1.left_stick_y ;
+            //elevator.setElevatorMotorPower(power);
 
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
-            if (gamepad1.y)
-                elevator.mainServoPower();//.setPosition(ARM_UP_POWER);
-            else if (gamepad1.a)
-                elevator.leftRightServoPower(-1);
-            else if (gamepad1.b)
-                elevator.leftRightServoPower(1);
-            else
-                elevator.stop();
+            //telemetry.addData("Status", "Run Time: " + runtime.toString());
+            //telemetry.update();
+            //if (gamepad1.y)
+                //elevator.mainServoPower();//.setPosition(ARM_UP_POWER);
+            //else if (gamepad1.a)
+                //elevator.leftRightServoPower(-1);
+            //else if (gamepad1.b)
+                //elevator.leftRightServoPower(1);
+            //else
+                //elevator.stop();
         }
     }}
