@@ -121,7 +121,6 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
                     telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
-
             }
 
             telemetry.update();
