@@ -71,8 +71,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
 
