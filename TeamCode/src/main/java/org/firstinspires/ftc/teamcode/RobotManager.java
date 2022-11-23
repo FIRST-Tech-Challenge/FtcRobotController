@@ -288,16 +288,16 @@ public class RobotManager {
      */
     public void flipHorseshoe() {
         switch (robot.desiredIntakeState) {
-            case Robot.IntakeState.FRONT: //Horshoe Facing Foward
+            case FRONT: //Horseshoe Facing Forward
                 robot.desiredIntakeState = Robot.IntakeState.BACK;
                 break;
-            case Robot.IntakeState.BACK: //Horseshoe Facing Front
+            case BACK: //Horseshoe Facing Back
                 robot.desiredIntakeState = Robot.IntakeState.FRONT;
                 break;
         }
-        double startTime = robot.elaspsedTime.milliseconds(); //Starts the time of the robot in milliseconds.
+        double startTime = robot.elapsedTime.milliseconds(); //Starts the time of the robot in milliseconds.
         mechanismDriving.updateIntake(robot);
-
+        //case Robot.IntakeState.FRONT/BACK (Remove the / in between if needed to be added back. Only set 1 variable at a time)
     }
 
     /** Delivers a piece of freight to a particular level of the alliance shipping hub.
