@@ -22,6 +22,7 @@ public class TeleopGOODOneController extends LinearOpMode {
         // Reverse left motors if you are using NeveRests
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        linearslide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         boolean move = false;
 
@@ -68,30 +69,24 @@ public class TeleopGOODOneController extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.a) {
-                clawservo.setPosition(100);
-            }
-
-            if (gamepad2.b) {
+            if (gamepad1.a) {
                 clawservo.setPosition(0);
             }
 
+            if (gamepad1.b) {
+                clawservo.setPosition(.20);
+            }
 
-//            if (gamepad2.dpad_up) { // Dumps cup right
-//                linearslide.setTargetPosition(500);
-//                linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                linearslide.setPower(.5);
-//            }
+                telemetry.addData("GamepadX", x);
+                telemetry.addData("GamepadY", y);
+                telemetry.addData("servopos", clawservo.getPosition());
+                telemetry.addData("Linear Slide Position", linearslide.getCurrentPosition());
+                telemetry.update();
 
-            telemetry.addData("GamepadX", x);
-            telemetry.addData("GamepadY", y);
-            telemetry.addData("Linear Slide Position", linearslide.getCurrentPosition());
-            telemetry.update();
-
-            motorFrontLeft.setPower(frontLeftPower);
-            motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
-            motorBackRight.setPower(backRightPower);
+                motorFrontLeft.setPower(frontLeftPower);
+                motorBackLeft.setPower(backLeftPower);
+                motorFrontRight.setPower(frontRightPower);
+                motorBackRight.setPower(backRightPower);
+            }
         }
     }
-}
