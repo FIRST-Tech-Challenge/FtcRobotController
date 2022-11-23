@@ -33,7 +33,7 @@ public class LoggingUtil {
                 Long.compare(lhs.lastModified(), rhs.lastModified()));
 
         long dirSize = 0;
-        for (File file: logFiles) {
+        for (File file : logFiles) {
             dirSize += file.length();
         }
 

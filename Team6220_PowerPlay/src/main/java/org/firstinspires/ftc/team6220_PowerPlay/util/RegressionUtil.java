@@ -105,8 +105,7 @@ public class RegressionUtil {
             rampReg.addData(vel, power);
         }
 
-        return new RampResult(Math.abs(rampReg.getSlope()), Math.abs(rampReg.getIntercept()),
-                              rampReg.getRSquare());
+        return new RampResult(Math.abs(rampReg.getSlope()), Math.abs(rampReg.getIntercept()), rampReg.getRSquare());
     }
 
     /**
@@ -139,6 +138,7 @@ public class RegressionUtil {
         List<Double> accelSamples = numericalDerivative(timeSamples, velSamples);
 
         SimpleRegression accelReg = new SimpleRegression(false);
+
         for (int i = 0; i < timeSamples.size(); i++) {
             double vel = velSamples.get(i);
             double accel = accelSamples.get(i);

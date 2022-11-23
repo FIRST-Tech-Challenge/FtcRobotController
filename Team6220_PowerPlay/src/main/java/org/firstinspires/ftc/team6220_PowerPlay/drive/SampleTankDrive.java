@@ -1,5 +1,17 @@
 package org.firstinspires.ftc.team6220_PowerPlay.drive;
 
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.kV;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -33,18 +45,6 @@ import org.firstinspires.ftc.team6220_PowerPlay.util.LynxModuleUtil;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.team6220_PowerPlay.drive.DriveConstants.kV;
 
 /*
  * Simple tank drive hardware implementation for REV hardware.

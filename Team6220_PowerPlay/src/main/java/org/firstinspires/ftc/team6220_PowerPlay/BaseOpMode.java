@@ -3,7 +3,7 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -14,14 +14,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public abstract class BaseOpMode extends LinearOpMode {
 
     // motors
-    public static DcMotor motorFL;
-    public static DcMotor motorFR;
-    public static DcMotor motorBL;
-    public static DcMotor motorBR;
+    public static DcMotorEx motorFL;
+    public static DcMotorEx motorFR;
+    public static DcMotorEx motorBL;
+    public static DcMotorEx motorBR;
 
-    public static DcMotor motorTurntable;
-    public static DcMotor motorLVSlides;
-    public static DcMotor motorRVSlides;
+    public static DcMotorEx motorTurntable;
+    public static DcMotorEx motorLVSlides;
+    public static DcMotorEx motorRVSlides;
 
     // servos
     public static Servo servoGrabber;
@@ -37,41 +37,41 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void initialize() {
 
         // motors
-        motorFL = hardwareMap.dcMotor.get("motorFL");
-        motorFR = hardwareMap.dcMotor.get("motorFR");
-        motorBL = hardwareMap.dcMotor.get("motorBL");
-        motorBR = hardwareMap.dcMotor.get("motorBR");
-        motorTurntable = hardwareMap.dcMotor.get("motorTurntable");
-        motorLVSlides = hardwareMap.dcMotor.get("motorLVSlides");
-        motorRVSlides = hardwareMap.dcMotor.get("motorRVSlides");
+        motorFL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFL");
+        motorFR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFR");
+        motorBL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBL");
+        motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
+        motorTurntable = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorTurntable");
+        motorLVSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLVSlides");
+        motorRVSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRVSlides");
 
-        motorFL.setDirection(DcMotor.Direction.FORWARD);
-        motorFR.setDirection(DcMotor.Direction.REVERSE);
-        motorBL.setDirection(DcMotor.Direction.FORWARD);
-        motorBR.setDirection(DcMotor.Direction.REVERSE);
-        motorLVSlides.setDirection(DcMotor.Direction.FORWARD);
-        motorRVSlides.setDirection(DcMotor.Direction.FORWARD);
-        motorTurntable.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotorEx.Direction.FORWARD);
+        motorFR.setDirection(DcMotorEx.Direction.REVERSE);
+        motorBL.setDirection(DcMotorEx.Direction.FORWARD);
+        motorBR.setDirection(DcMotorEx.Direction.REVERSE);
+        motorLVSlides.setDirection(DcMotorEx.Direction.FORWARD);
+        motorRVSlides.setDirection(DcMotorEx.Direction.FORWARD);
+        motorTurntable.setDirection(DcMotorEx.Direction.FORWARD);
 
-        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorTurntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorTurntable.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorLVSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorRVSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         motorTurntable.setTargetPosition(0);
-        motorTurntable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorTurntable.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        motorLVSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRVSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLVSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorRVSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         // servos
         servoGrabber = hardwareMap.servo.get("servoGrabber");
@@ -79,10 +79,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
@@ -92,8 +88,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
 
-    public void driveWithIMU(double xPower, double yPower, double tPower)  {
-
+    public void driveWithIMU(double xPower, double yPower, double tPower) {
         // read imu when turning (when t != 0)
         boolean isTurning = (tPower != 0);
 
