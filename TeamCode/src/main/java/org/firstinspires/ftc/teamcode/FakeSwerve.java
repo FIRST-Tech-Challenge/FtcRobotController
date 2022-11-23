@@ -122,7 +122,7 @@ public class FakeSwerve extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
 
-            if(diagLeft){
+            if(diagLeft){ //diag should work now, individual wheel functions had a negative in it to account for not having .setDirection in auto code
                 leftWheel(.05);
                 rightBackWheel(.05);
             }else {
@@ -234,13 +234,13 @@ public class FakeSwerve extends LinearOpMode {
 
     //Power each motor with .setVelocity()
     public void leftWheel(double percent){
-        leftFrontDrive.setVelocity(-maxVelocity*percent);
+        leftFrontDrive.setVelocity(maxVelocity*percent);
     }
     public void rightWheel(double percent){
         rightFrontDrive.setVelocity(maxVelocity*percent);
     }
     public void leftBackWheel(double percent){
-        leftBackDrive.setVelocity(-maxVelocity*percent);
+        leftBackDrive.setVelocity(maxVelocity*percent);
     }
     public void rightBackWheel(double percent){
         rightBackDrive.setVelocity(maxVelocity*percent);

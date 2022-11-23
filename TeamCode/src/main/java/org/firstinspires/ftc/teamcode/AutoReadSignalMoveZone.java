@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import java.lang.Math.*;
 
 @Autonomous(name = "AutoReadSignalMoveZone", group = "Linear Opmode")
 //@Disabled
@@ -48,11 +49,15 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
     public ElapsedTime runtime = new ElapsedTime();
 
     public double off = 0.0;
-    double corrections = 1.0;
-    double maxVelocity = 340 * 537.6; //for AndyMark NeveRest 20 motor
-    boolean hasMoved = false;
-    int count = 0;
+    public double corrections = 1.0;
+    public boolean hasMoved = false;
+    public int count = 0;
 
+    //Wheel constants
+    public double maxVelocity = 340 * 537.6; //for AndyMark NeveRest 20 motor when using .setVelocity()
+    public double rpm = 340;
+    public double radius = /*insert radius*/;
+    public double oneFootTime = 1/*change unit based on what radius is in*//(getVelo(radius,rpm)*.75); //using a velo of maxVelocity * .75
 
     private static final String VUFORIA_KEY =
             "AclDUAH/////AAABmYzSWAdyDktyn7LeKaYpXPkeHMDuWfVt+ZWKtbsATYUHu+lKEe6ywQGLZLm5MRmxfQ4UQRSZ8hR7Hx7cwiYcj7DBcqr2CcI/KXvXFnaoaSHonQcH5UjgGwygyR0DRMvRI9Mm+MnWqdwgQuS4eNYgz/vAuNpeGRJmwimGZkb9kb9Uai+RaH2V33PvH4TZepOg//RReZrL33oLxaLEchTHATEKR1xj6NLzHuZVuOTnIaMwPHRrkkK/cyMqaog/be+k2uxxQ2Lxtb2Yb4nHt4n8Rs7ajT/dUSsP/6pZdWmVs7BmIafbHlLFlS/6+1rDbSfOHqEyHFoLDq/hselgdVG2pzEzPcr3ntMwoIAPjiA799i5";
@@ -98,29 +103,28 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
                             telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
                         }
                         telemetry.update();
-                        if(updatedRecognitions.size()>0){
+                        /*if(updatedRecognitions.size()>0){
                             if(!hasMoved){
                                 moveToZone(updatedRecognitions.get(0).getLabel(),count);
                             }
                         }else{
                             setVelo(true,.1,5);
                             count++;
-                        }
+                        }*/
 
                         //instead of above if else statement:
-                        /*
                         while(true){
                             if(updatedRecognitions.size() > 0){
                                 if(!hasMoved){
                                     //change move to zone to account for positioning
                                     moveToZone(updatedRecognitions.get(0).getLabel(),count);
+                                    break;
                                 }
                             }else{
                                 strafeVelo(true,.25,.5);
                                 count++;
                             }
                         }
-                        */
                     }
                 }
             }
@@ -132,24 +136,16 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
      */
 
     /* Change this function completely:
-     * Use this with strafe function paired with the count variable found in runOpMode. For example,
-     * to get to location 1 (left side of the arena), the robot needs to move about one foot from
-     * starting position to the left, and forward either one or two feet. Since the robot strafes a
-     * little to the left before reading the image on the cone, the code needs to correct the distance
-     * that needs to be traveled using the count function. To do this, first you need to figure out the
-     * relationship between power and time for the motors. For example, if the robot moves one foot with
-     * a power of .05 and time of 5 seconds, and also moves one foot with a power of .25 and a time of 1
-     * seconds, then the equation for both would be power * x and time / x, assuming x is the same for both
-     * equations. If this was the equation, a potential code for moving the rest of the one foot to the
-     * left, assuming power used in count is .05 and the time was .5, the power used in the function is
-     * -.25 and the time is 4.5, and the number stored in count is 3, could be: power = -.25,
-     * time = 4.5 - (.5 / count). Until the conversion rate is figured out, the current code works
-     * perfectly fine for what it needs to do (kind of).
      *
-     * In theory, using DcMotorEx, you can use getVelocity() to calculate distance travelled by multiplying
-     * it by time, and then applying that to distance from starting pos. Maybe set a few variables for
-     * times triggered, and the velocity over that time? or maybe just use .setVelocity() instead of
-     * .setPower() that was it's more reliable (v*t = d)
+     * Using DcMotorEx function, convert tps from strafeVelo into rpm, then use physics stuff to
+     * get distance travelled (make sure to measure radius of current wheels that are being used),
+     * then multiply by the count variable to get total distance. Convert that distance into time
+     * by converting the tps being used in the moveToZone function into rpm, then using more physics
+     * equations to get time. Input that time variable into the F() function, and either subtract
+     * or add to the time it would need to be on for to move to the correction position.
+     *
+     * The functions that set the power for the motors also need to be changed to the .setVelocity()
+     * functions that were recently added to make this work correctly.
      */
     public void moveToZone(String s, int count){
         telemetry.addData("Detected:", s);
@@ -176,6 +172,26 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
             F(.25,4.5);*/
         }
     }
+    //replacement moveToZone function for robot strafe adjustments
+
+    public void moveToZone1(String signal, int count){ /
+        telemetry.addData("Detected:",signal);
+        double timeAdjustment = getDistance(radius,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
+        if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
+            strafeVelo(true,.75,oneFootTime-timeAdjustment);
+            setVelo(true,.75,oneFootTime);
+        }
+
+        if(signal.equals("2 Bulb")){ // go to location 2 (forward)
+            strafeVelo(false,.75,timeAdjustment);
+            setVelo(true,.75,oneFootTime);
+        }
+
+        if(signal.equals("3 Panel")){ // go to location 3 (right and forward)
+            strafeVelo(false,.75,oneFootTime+timeAdjustment);
+            setVelo(true,.75,oneFootTime);
+        }
+    }
 
 
     public void setUpHardware() {
@@ -183,12 +199,12 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotorEx.class, "left_back_drive");
         rightDrive = hardwareMap.get(DcMotorEx.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotorEx.class, "right_back_drive");
-        /* Maybe use this to fix needing to use negatives in the functions below
+        // All motor directions should be fixed now because of this code
+        // Previously everything was switched
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        */
     }
 
 
@@ -226,16 +242,16 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
 
     //Driving functions. Using negative power since rn negative is forward and it's easier to understand when you don't need to add it in when calling the function
     public void F(double power, double time){
-        leftRight(-power,-power,time);
+        leftRight(power,power,time);
     }
     public void B(double power, double time){
-        leftRight(power,power,time);
+        leftRight(-power,-power,time);
     }
     public void fortyFive(double power,double time){
         runtime.reset();
         while(runtime.seconds() < time) {
-            LW(-power);
-            RW(-1*-power);
+            LW(power);
+            RW(-1*power);
         }
         if(runtime.seconds() >= time){
             LW(off);
@@ -268,10 +284,10 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
             change *= -1;
         }
         while(runtime.seconds() < time) {
-            RW( -power *-1 *change);
-            LBW(-power *-1 * change);
-            RBW( -power *change);
-            LW( -power *change);
+            RW( power *-1 *change);
+            LBW(power *-1 * change);
+            RBW( power *change);
+            LW( power *change);
         }
         if(runtime.seconds() >= time){
             motorsOff();
@@ -317,14 +333,26 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
     public void turnNinety(boolean CW){
         //Turns Ninety degrees
         //currently not measured, will have to test this to be exact
+        int time = 5;
+        runtime.reset();
         if(CW){
             //left = +; right = -
-            leftVelo(.75);
-            rightVelo(-.75);
+            while(runtime.seconds() < time) {
+                leftVelo(.75);
+                rightVelo(-.75);
+            }
+            if(runtime.seconds() >= time){
+                motorsOff();
+            }
         }else{
             //left = -; right = +
-            leftVelo(-.75);
-            rightVelo(.75);
+            while(runtime.seconds() < time) {
+                leftVelo(-.75);
+                rightVelo(.75);
+            }
+            if(runtime.seconds() >= time){
+                motorsOff();
+            }
         }
     }
 
@@ -336,6 +364,36 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
     public void rightVelo(double maxPercent){ //sets power for right wheels
         rightWheel(maxPercent);
         rightBackWheel(maxPercent);
+    }
+
+
+    //Power each motor individually
+    public void LW(double d) {
+        leftDrive.setPower(d*corrections);
+    }
+    public void RW(double d) {
+        rightDrive.setPower(d * corrections);
+    }
+    public void LBW(double d) {
+        leftBackDrive.setPower(d*corrections);
+    }
+    public void RBW(double d) {
+        rightBackDrive.setPower(d * corrections);
+    }
+
+
+    //Power each motor with .setVelocity()
+    public void leftWheel(double percent){
+        leftDrive.setVelocity(maxVelocity*percent);
+    }
+    public void rightWheel(double percent){
+        rightDrive.setVelocity(maxVelocity*percent);
+    }
+    public void leftBackWheel(double percent){
+        leftBackDrive.setVelocity(maxVelocity*percent);
+    }
+    public void rightBackWheel(double percent){
+        rightBackDrive.setVelocity(maxVelocity*percent);
     }
 
 
@@ -354,33 +412,10 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
         rightBackDrive.setPower(0);
     }
 
-
-    //Power each motor individually
-    public void LW(double d) {
-        leftDrive.setPower(d*corrections*-1);
+    public static double getVelo(double radius, double rpm){
+        return ((rpm/60)*Math.PI)*radius;
     }
-    public void RW(double d) {
-        rightDrive.setPower(d * corrections);
-    }
-    public void LBW(double d) {
-        leftBackDrive.setPower(d*corrections*-1);
-    }
-    public void RBW(double d) {
-        rightBackDrive.setPower(d * corrections);
-    }
-
-
-    //Power each motor with .setVelocity()
-    public void leftWheel(double percent){
-        leftDrive.setVelocity(-maxVelocity*percent);
-    }
-    public void rightWheel(double percent){
-        rightDrive.setVelocity(maxVelocity*percent);
-    }
-    public void leftBackWheel(double percent){
-        leftBackDrive.setVelocity(-maxVelocity*percent);
-    }
-    public void rightBackWheel(double percent){
-        rightBackDrive.setVelocity(maxVelocity*percent);
+    public static double getDistance(double radius, double rpm, double time){
+        return getVelo(radius,rpm)*time;
     }
 }

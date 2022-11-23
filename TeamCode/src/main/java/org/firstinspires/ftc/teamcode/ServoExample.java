@@ -20,9 +20,8 @@ public class ServoExample extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotor liftMotor = null;
-    private CRServo servoGrabber = null;
-    private CRServo servoLevel = null;
+    private CRServo servoGrabber1 = null;
+    //private CRServo servoGrabber2 = null;
 
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
@@ -49,9 +48,8 @@ public class ServoExample extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        liftMotor = hardwareMap.get(DcMotor.class, "motor_lift");
-        servoGrabber = hardwareMap.get(CRServo.class, "servo_grabber");
-        servoLevel = hardwareMap.get(CRServo.class, "servo_level");
+        servoGrabber1 = hardwareMap.get(CRServo.class, "servo_grabber");
+        //servoGrabber2 = hardware.Map.get(CRServo.class, "servo_grabber_two");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -67,12 +65,13 @@ public class ServoExample extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        liftMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        // If making a new Auto or TeleOp file, make sure to include waitForStart
+        // so it can pass inspection and you don't get dq-ed from tourneys
         waitForStart();
         runtime.reset();
 
@@ -81,25 +80,31 @@ public class ServoExample extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+            // Look through old files to try to find POV Mode. Currently using tank drive code
             double left  = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double right =  - gamepad1.right_stick_y;
 
-            double lift = -gamepad2.right_stick_y;
+            //Switch this to gamepad1 to test if it works easier
             boolean servoOpen = gamepad2.dpad_up;
             boolean servoClose = gamepad2.dpad_down;
 
-
-            //Code for arm (gamepad2)
-            if(servoOpen){
+            // Code for lift and grabber (gamepad2
+            // If using two servos, just add a second servo object and copy and psate the code inside if statements with different variable name
+            if(servoOpen){ //Old grabber, will need to revamp this code if using two servos for new grabber
                 direction = -1;
-                position = position +.05;
-                if(position > 1.0)position=1.0;
+                position = position +0.05;
+                //ask mr conner what the point of this position code is, seems irrelevant
+                if(position > 1.0){
+                    position=1.0;
+                }
 
                 telemetry.addData("Forward", "servo: " + position);
 
-                servoGrabber.setPower(0.25*direction);
+                servoGrabber1.setPower(0.25*direction);
+                //servoGrabber2.setPower(0.25*direction);
                 waitTime(.5);
-                servoGrabber.setPower(0);
+                servoGrabber1.setPower(0);
+                //servoGrabber2.setPower(0);
             }
 
             if(servoClose){
@@ -109,15 +114,11 @@ public class ServoExample extends LinearOpMode {
 
                 telemetry.addData("back", "servo: " + position);
 
-                servoGrabber.setPower(0.25*direction);
+                servoGrabber1.setPower(0.25*direction);
+                //servoGrabber2.setPower(0.25*direction);
                 waitTime(.5);
-                servoGrabber.setPower(0);
-            }
-
-            if(lift>0){
-                liftMotor.setPower(.05);
-            }else if(lift<0){
-                liftMotor.setPower(-.05);
+                servoGrabber1.setPower(0);
+                //servoGrabber2.setPower(0);
             }
 
             //Code for drivetrain (gamepad1)
@@ -180,9 +181,6 @@ public class ServoExample extends LinearOpMode {
             // Also completely screws over the code because of the while loop, therefore
             // DO NOT HAVE THIS WHILE LOOP UNCOMMENTED WHEN ACTUALLY USING THE ROBOT!!!!
             // DO NOT HAVE THIS WHILE LOOP UNCOMMENTED WHEN ACTUALLY USING THE ROBOT!!!!
-            // DO NOT HAVE THIS WHILE LOOP UNCOMMENTED WHEN ACTUALLY USING THE ROBOT!!!!
-            // DO NOT HAVE THIS WHILE LOOP UNCOMMENTED WHEN ACTUALLY USING THE ROBOT!!!!
-            // spam for extra effect and hopefully notice it better
 
             /*
             while(true){
