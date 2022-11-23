@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
 public class MotorTester extends OpMode {
-
+    //declare all motors
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
     DcMotor backLeftMotor;
@@ -16,78 +16,18 @@ public class MotorTester extends OpMode {
     public void init() {
         telemetry.addData("Status", "Initializing");
 
+        //assign all motors
         frontLeftMotor = hardwareMap.get(DcMotor.class, "FrontLeft");
         frontRightMotor = hardwareMap.get(DcMotor.class, "FrontRight");
         backLeftMotor = hardwareMap.get(DcMotor.class, "BackLeft");
         backRightMotor = hardwareMap.get(DcMotor.class, "BackRight");
 
-        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-
+        //tells user that the motors have been initialized
         telemetry.addData("Status", "Initialized!");
     }
 
     @Override
     public void loop() {
 
-        telemetry.addData("Motors", "All Motors moving!");
-        frontLeftMotor.setPower(1);
-        frontRightMotor.setPower(1);
-        backLeftMotor.setPower(1);
-        backRightMotor.setPower(1);
-
-        try {   // Sleep for 2 seconds
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {}
-
-        telemetry.addData("Motors", "Front Left moving!");
-        frontLeftMotor.setPower(1);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-
-        try {   // Sleep for 2 seconds
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {}
-
-        telemetry.addData("Motors", "Front Right moving!");
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(1);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-
-        try {   // Sleep for 2 seconds
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {}
-
-        telemetry.addData("Motors", "Back Left moving!");
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(1);
-        backRightMotor.setPower(0);
-
-        try {   // Sleep for 2 seconds
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {}
-
-        telemetry.addData("Motors", "Back Right moving!");
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(1);
-
-        try {   // Sleep for 2 seconds
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {}
-
-        telemetry.addData("Motors", "Stopped!");
-        frontLeftMotor.setPower(0);
-        frontRightMotor.setPower(0);
-        backLeftMotor.setPower(0);
-        backRightMotor.setPower(0);
-
-        try {   // Sleep for 2 seconds
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {}
     }
 }
