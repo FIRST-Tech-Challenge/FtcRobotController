@@ -133,8 +133,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
          */
 
         /* Update the telemetry */
-        if(tagOfInterest != null)
-        {
+        if (tagOfInterest != null) {
             telemetry.addLine("Tag snapshot:\n");
             tagToTelemetry(tagOfInterest);
             telemetry.update();
