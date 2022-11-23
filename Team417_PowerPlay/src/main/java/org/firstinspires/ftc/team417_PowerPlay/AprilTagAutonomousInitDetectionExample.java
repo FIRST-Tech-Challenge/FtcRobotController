@@ -88,8 +88,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-            if(currentDetections.size() != 0)
-            {
+            if (currentDetections.size() != 0) {
                 boolean tagFound = false;
 
                 for(AprilTagDetection tag : currentDetections)
