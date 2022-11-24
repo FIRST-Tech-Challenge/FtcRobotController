@@ -24,11 +24,11 @@ public class ServoTester extends OpMode {
 
     @Override
     public void loop() {
-        if(gamepad1.a) {
+        if(gamepad1.dpad_right) {
             rightClaw.setPosition(1);
             leftClaw.setPosition(1);
         }
-        if(gamepad1.b) {
+        if(gamepad1.dpad_left) {
             rightClaw.setPosition(0);
             leftClaw.setPosition(0);
         }
