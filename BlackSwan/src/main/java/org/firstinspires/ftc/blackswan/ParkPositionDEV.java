@@ -84,7 +84,7 @@ public class ParkPositionDEV extends LinearOpMode {
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
-        static final Point DETECTION_ANCHOR = new Point(140, 70);
+        static final Point DETECTION_ANCHOR = new Point(200, 200);
 
         static final int DETECTION_WIDTH = 20;
         static final int DETECTION_HEIGHT = 20;
@@ -154,13 +154,13 @@ public class ParkPositionDEV extends LinearOpMode {
             // two dot values, GM 116, BY 179
             // three dot values, GM 127, BY 87
 
-            if((AVG_A > 164) && (AVG_A < 184) && (AVG_B > 114) && (AVG_B < 134)){
+            if((AVG_A > 168) && (AVG_A < 208) && (AVG_B > 120) && (AVG_B < 160)){
                 telemetry.addData("ONE DOT", "Current park position");
                 ParkDot = 1;
-            } else if((AVG_A > 106) && (AVG_A < 126) && (AVG_B > 169) && (AVG_B < 189)){
+            } else if((AVG_A > 100) && (AVG_A < 140) && (AVG_B > 170) && (AVG_B < 210)){
                 telemetry.addData("TWO DOT", "Current park position");
                 ParkDot = 2;
-            } else if((AVG_A > 117) && (AVG_A < 137) && (AVG_B > 77) && (AVG_B < 97)){
+            } else if((AVG_A > 103) && (AVG_A < 143) && (AVG_B > 80) && (AVG_B < 120)){
                 telemetry.addData("THREE DOT", "Current park position");
                 ParkDot = 3;
             } else {

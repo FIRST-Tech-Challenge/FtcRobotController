@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.blackswan;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,36 +19,30 @@ import android.graphics.Color;
 import java.util.Date;
 
 public class Robot {
-    public Color colorSensor;
     Telemetry telemetry;
-    DcMotor frontLeft, backLeft, frontRight, backRight;
-    DcMotor carousel, slide, intake;
-    Servo dump;
+    DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
+    DcMotor slide;
+    Servo clawservo;
     BNO055IMU imu;
     LinearOpMode opMode;
 
     final int TICKS_PER_ROTATION = 537;
 
     public void stopMotors() {
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
+        motorFrontLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorBackLeft.setPower(0);
+        motorBackRight.setPower(0);
     }
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opMode) {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-
-        carousel = hardwareMap.get(DcMotor.class, "carousel");
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        motorFrontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        motorBackRight = hardwareMap.get(DcMotor.class, "backRight");
 
         slide = hardwareMap.get(DcMotor.class, "slide");
 
-        intake = hardwareMap.get(DcMotor.class, "intake");
-
-        dump = hardwareMap.get(Servo.class, "dump");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -70,36 +63,36 @@ public class Robot {
 
         double distanceInTicks = distance * TICKS_PER_ROTATION;
 
-        int frontLeftPosition = frontLeft.getCurrentPosition();
+        int frontLeftPosition = motorFrontLeft.getCurrentPosition();
 
         int frontLeftTarget = frontLeftPosition + (int) distanceInTicks;
 
-        int frontRightPosition = frontRight.getCurrentPosition();
+        int frontRightPosition = motorFrontRight.getCurrentPosition();
 
-        int backLeftPosition = backLeft.getCurrentPosition();
+        int backLeftPosition = motorBackLeft.getCurrentPosition();
 
         int backLeftTarget = backLeftPosition + (int) distanceInTicks;
 
-        int backRightPosition = backRight.getCurrentPosition();
+        int backRightPosition = motorBackRight.getCurrentPosition();
 
         int backRightTarget = backRightPosition + (int) distanceInTicks;
 
         int frontRightTarget = frontRightPosition + (int) distanceInTicks;
 
-        frontLeft.setTargetPosition((int) frontLeftTarget);
-        frontRight.setTargetPosition((int) frontRightTarget);
-        backLeft.setTargetPosition((int) backLeftTarget);
-        backRight.setTargetPosition((int) backRightTarget);
+        motorFrontLeft.setTargetPosition((int) frontLeftTarget);
+        motorFrontRight.setTargetPosition((int) frontRightTarget);
+        motorBackLeft.setTargetPosition((int) backLeftTarget);
+        motorBackRight.setTargetPosition((int) backRightTarget);
 
         motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        frontLeft.setPower(abs(speed));
-        frontRight.setPower(abs(speed));
-        backLeft.setPower(abs(speed));
-        backRight.setPower(abs(speed));
+        motorFrontLeft.setPower(abs(speed));
+        motorFrontRight.setPower(abs(speed));
+        motorBackLeft.setPower(abs(speed));
+        motorBackRight.setPower(abs(speed));
 
         while (this.opMode.opModeIsActive() &&
-                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
+                (motorFrontLeft.isBusy() && motorFrontRight.isBusy() && motorBackLeft.isBusy() && motorBackRight.isBusy())) {
 
             // Display it for the driver.
 
@@ -120,37 +113,37 @@ public class Robot {
 
         double distanceInTicks = distance * TICKS_PER_ROTATION;
 
-        int frontLeftPosition = frontLeft.getCurrentPosition();
+        int frontLeftPosition = motorFrontLeft.getCurrentPosition();
 
         int frontLeftTarget = frontLeftPosition - (int) distanceInTicks; //
 
-        int frontRightPosition = frontRight.getCurrentPosition();
+        int frontRightPosition = motorFrontRight.getCurrentPosition();
 
-        int backLeftPosition = backLeft.getCurrentPosition();
+        int backLeftPosition = motorBackLeft.getCurrentPosition();
 
         int backLeftTarget = backLeftPosition + (int) distanceInTicks;
 
-        int backRightPosition = backRight.getCurrentPosition();
+        int backRightPosition = motorBackRight.getCurrentPosition();
 
         int backRightTarget = backRightPosition - (int) distanceInTicks; //
 
         int frontRightTarget = frontRightPosition + (int) distanceInTicks;
 
 
-        frontLeft.setTargetPosition((int) frontLeftTarget);
-        frontRight.setTargetPosition((int) frontRightTarget);
-        backLeft.setTargetPosition((int) backLeftTarget);
-        backRight.setTargetPosition((int) backRightTarget);
+        motorFrontLeft.setTargetPosition((int) frontLeftTarget);
+        motorFrontRight.setTargetPosition((int) frontRightTarget);
+        motorBackLeft.setTargetPosition((int) backLeftTarget);
+        motorBackRight.setTargetPosition((int) backRightTarget);
 
         motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        frontLeft.setPower(abs(speed) * -1);
-        frontRight.setPower(abs(speed));
-        backLeft.setPower(abs(speed));
-        backRight.setPower(abs(speed) * -1);
+        motorFrontLeft.setPower(abs(speed) * -1);
+        motorFrontRight.setPower(abs(speed));
+        motorBackLeft.setPower(abs(speed));
+        motorBackRight.setPower(abs(speed) * -1);
 
         while (this.opMode.opModeIsActive() &&
-                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
+                (motorFrontLeft.isBusy() && motorFrontRight.isBusy() && motorBackLeft.isBusy() && motorBackRight.isBusy())) {
             telemetry.addData("frontLeftPosition", frontLeftPosition);
             telemetry.addData("frontLeftTarget", frontLeftTarget);
             telemetry.addData("frontRightPosition", frontRightPosition);
@@ -182,10 +175,10 @@ public class Robot {
 
     public void turnLeft(double angle, double speed) {
 
-        frontLeft.setPower(-speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(-speed);
-        backRight.setPower(speed);
+        motorFrontLeft.setPower(-speed);
+        motorFrontRight.setPower(speed);
+        motorBackLeft.setPower(-speed);
+        motorBackRight.setPower(speed);
 
         double targetAngle = gyroAngle() - angle;
 
@@ -198,10 +191,10 @@ public class Robot {
 
     public void turnRight(double angle, double speed) {
 
-        frontLeft.setPower(speed);
-        frontRight.setPower(-speed);
-        backLeft.setPower(speed);
-        backRight.setPower(-speed);
+        motorFrontLeft.setPower(speed);
+        motorFrontRight.setPower(-speed);
+        motorBackLeft.setPower(speed);
+        motorBackRight.setPower(-speed);
 
         double targetAngle = gyroAngle() + angle;
 
@@ -214,10 +207,10 @@ public class Robot {
 
 
     protected void motorSetMode(DcMotor.RunMode runMode) {
-        frontLeft.setMode(runMode);
-        frontRight.setMode(runMode);
-        backLeft.setMode(runMode);
-        backRight.setMode(runMode);
+        motorFrontLeft.setMode(runMode);
+        motorFrontRight.setMode(runMode);
+        motorBackLeft.setMode(runMode);
+        motorBackRight.setMode(runMode);
     }
 
     public void pause(int millis) {
@@ -228,58 +221,31 @@ public class Robot {
             time = new Date().getTime() - startTime;
         }
     }
-
-    public void blueCarousel(int millis) {
-        carousel.setPower(-0.35);
-        pause(millis);
-        carousel.setPower(0);
-    }
-
-    public void redCarousel(int millis) {
-        carousel.setPower(-0.35);
-        pause(millis);
-        carousel.setPower(0);
-    }
-
-    public void armThing(int level) {
-        if (level == 1) {
-            slide.setTargetPosition(500);
-            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            slide.setPower(.5);
-            while (slide.isBusy() && this.opMode.opModeIsActive()) {
-            }
-        }
-        if(level ==2){
-
-        slide.setTargetPosition(800);
-        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slide.setPower(.5);
-        while (slide.isBusy() && this.opMode.opModeIsActive()) {
-        }
-    }
-        if(level ==3){
-            slide.setTargetPosition(1200);
-            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            slide.setPower(.5);
-            while (slide.isBusy() && this.opMode.opModeIsActive()) {
-            }
-    }
-
-    }
-
-    public void dumpLeft(){
-        dump.setPosition(0.80);
-        pause(700);
-        dump.setPosition(0.52);
-    }
-    public void dumpRight(){
-        dump.setPosition(0.15);
-        pause(700);
-        dump.setPosition(0.52);
-    }
-    public void liftForMovement() {
-        slide.setTargetPosition(125);
-        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slide .setPower(0.5);
-    }
 }
+
+//    public void armThing(int level) {
+//        if (level == 1) {
+//            slide.setTargetPosition(500);
+//            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            slide.setPower(.5);
+//            while (slide.isBusy() && this.opMode.opModeIsActive()) {
+//            }
+//        }
+//        if(level ==2){
+//
+//            slide.setTargetPosition(800);
+//            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            slide.setPower(.5);
+//            while (slide.isBusy() && this.opMode.opModeIsActive()) {
+//            }
+//        }
+//        if(level ==3){
+//            slide.setTargetPosition(1200);
+//            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            slide.setPower(.5);
+//            while (slide.isBusy() && this.opMode.opModeIsActive()) {
+//            }
+//        }
+//
+//    }
+
