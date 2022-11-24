@@ -13,9 +13,9 @@ import java.util.ArrayList;
 @TeleOp // normally is in @Auto but is being used as a teleOp so we can play with it
 public class PowerPlay_AprilTagDetection extends LinearOpMode
 {
-   protected int tagUse;
-   protected OpenCvCamera camera; // Calls the camera
-   protected PowerPlay_AprilTagDetectionPipeline aprilTagDetectionPipeline; // Calls the pipeline
+    protected int tagUse;
+    protected OpenCvCamera camera; // Calls the camera
+    protected PowerPlay_AprilTagDetectionPipeline aprilTagDetectionPipeline; // Calls the pipeline
 
     static final double FEET_PER_METER = 3.28084;
 

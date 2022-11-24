@@ -95,12 +95,12 @@ public class PP_MecanumTeleOp extends OpMode
     public void loop()
     {
         boolean precisionToggle = gamepad1.right_trigger > 0.1; // we want to check this every time the loop runs
-        boolean slideUp = gamepad2.right_trigger > 0.1;
-        boolean slideDown = gamepad2.left_trigger > 0.1;
+        //boolean slideUp = gamepad2.right_trigger > 0.1;
+        //boolean slideDown = gamepad2.left_trigger > 0.1;
         drive(precisionToggle);
         arm();
         claw();
-        slides(slideUp,slideDown);
+        slides();
 
         slideControl.update(telemetry);
         gamepad2_dpad_up.update();
@@ -196,12 +196,14 @@ public class PP_MecanumTeleOp extends OpMode
         clawControl.toggleOpenClose();
     }
 
-    public void slides(boolean slideUp, boolean slideDown){
+    public void slides(){
 
-        if (slideUp){
-            slideControl.setManualSlide(15);
-        }else if (slideDown) {
-            slideControl.setManualSlide(-15);
+        if (gamepad2.dpad_right){
+            slideControl.setManualSlide(85);
+        }
+
+        if(gamepad2.dpad_left){
+            slideControl.setManualSlide(-85);
         }
 
     }
