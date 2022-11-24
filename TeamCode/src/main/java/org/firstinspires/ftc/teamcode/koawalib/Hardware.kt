@@ -78,8 +78,6 @@ class Hardware(startPose: Pose) {
 
     val lights = KServo("Lights")
 
-    val webcam = KWebcam("Webcam", SleevePipeline(0.166, 578.272, 578.272, 402.145, 221.506))
-
     private val leftEncoder = EncoderFactory(ticksPerUnit)
         .revEncoder
         .build(fl)

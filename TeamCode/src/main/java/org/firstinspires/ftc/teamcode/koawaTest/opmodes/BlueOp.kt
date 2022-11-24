@@ -21,7 +21,7 @@ class BlueOp : KOpMode(photonEnabled = false) {
         robot.drive.defaultCommand = MecanumCmd(
             robot.drive,
             driver.leftStick,
-            driver.rightStick.xInverted,
+            driver.rightStick,
             0.9,
             0.9,
             0.9,
@@ -34,10 +34,9 @@ class BlueOp : KOpMode(photonEnabled = false) {
 
         driver.x.onPress(InstantCmd({ driver.rumbleBlips(3) }))
         driver.y.onPress(InstantCmd({ driver.rumble(2500) }))
-
     }
 
     override fun mLoop() {
-
+        Logger.addTelemetryData("drive powers", robot.drive.powers)
     }
 }

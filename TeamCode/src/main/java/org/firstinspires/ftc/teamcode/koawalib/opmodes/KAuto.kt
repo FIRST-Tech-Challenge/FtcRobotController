@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.koawalib.opmodes
 
-import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.GVFCmd
 import com.asiankoala.koawalib.command.commands.WaitUntilCmd
@@ -22,11 +21,12 @@ import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequenc
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.IntakeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.ReadySequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
+import org.firstinspires.ftc.teamcode.koawalib.vision.AutoOpMode
 
 open class KAuto(
     alliance: Alliance,
     close: Boolean,
-) : KOpMode() {
+) : AutoOpMode() {
     private val startPose = Pose(
         Vector(-66.0, -36.0).choose(alliance, close),
         close.choose(0.0, 180.0.radians)
@@ -77,6 +77,7 @@ open class KAuto(
         GVFCmd(robot.drive, SimpleGVFController(path, kN, kOmega, kF, kS, epsilon, thetaEpsilon), *cmds)
 
     override fun mInit() {
+        super.mInit()
         +SequentialGroup(
             ClawCmds.ClawCloseCmd(robot.claw),
             CmdChooser.homeCmd(robot),
@@ -93,36 +94,32 @@ open class KAuto(
 
     companion object {
         private fun <T> Boolean.choose(a: T, b: T) = if (this) a else b
-        private fun <T> Alliance.choose(a: T, b: T) = (this == Alliance.BLUE).choose(a, b)
+        private fun <T> T.cond(cond: Boolean, f: (T) -> T) = cond.choose(f.invoke(this), this)
 
-        private fun Vector.checkFlipY(alliance: Alliance) = alliance.choose(this, Vector(-x, y))
-        private fun Vector.checkFlipX(close: Boolean) = close.choose(this, Vector(x, -y))
         private fun Vector.choose(alliance: Alliance, close: Boolean) =
-            this.checkFlipY(alliance).checkFlipX(close)
-
-        private fun HermitePath.checkFlipY(alliance: Alliance) = alliance.choose(
-            this,
-            this.map(FLIPPED_HEADING_CONTROLLER) {
-                Pose(
-                    -it.x,
-                    it.y,
-                    (180.0.radians - it.heading).angleWrap
-                )
-            }
-        )
-
-        private fun HermitePath.checkFlipX(close: Boolean) = close.choose(
-            this,
-            this.map(DEFAULT_HEADING_CONTROLLER) {
-                Pose(
-                    it.x,
-                    -it.y,
-                    -it.heading
-                )
-            }
-        )
+            this
+                .cond(alliance == Alliance.RED) { Vector(-x, y) }
+                .cond(close) { Vector(x, -y) }
 
         private fun HermitePath.choose(alliance: Alliance, close: Boolean) =
-            this.checkFlipY(alliance).checkFlipX(close)
+            this
+                .cond(alliance == Alliance.RED) {
+                    this.map(FLIPPED_HEADING_CONTROLLER) {
+                        Pose(
+                            -it.x,
+                            it.y,
+                            (180.0.radians - it.heading).angleWrap
+                        )
+                    }
+                }
+                .cond(close) {
+                    this.map(DEFAULT_HEADING_CONTROLLER) {
+                        Pose(
+                            it.x,
+                            -it.y,
+                            -it.heading
+                        )
+                    }
+                }
     }
 }

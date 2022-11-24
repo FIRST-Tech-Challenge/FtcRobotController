@@ -4,7 +4,9 @@ import com.asiankoala.koawalib.hardware.motor.EncoderFactory
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
+import com.asiankoala.koawalib.subsystem.vision.KWebcam
 import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
+import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 
 class Hardware(startPose: Pose) {
     val fl = MotorFactory("fl")
@@ -18,12 +20,10 @@ class Hardware(startPose: Pose) {
         .build()
 
     val br = MotorFactory("br")
-        .forward
         .brake
         .build()
 
     val fr = MotorFactory("fr")
-        .forward
         .brake
         .build()
 

@@ -15,9 +15,11 @@ import com.asiankoala.koawalib.path.HermitePath
 import com.asiankoala.koawalib.path.gvf.SimpleGVFController
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.teamcode.koawaTest.Robot
 
 @Autonomous
+@Disabled
 class MidAuto : KOpMode() {
     private val robot by lazy { Robot(startPose) }
 

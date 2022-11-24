@@ -1,19 +1,55 @@
 package org.firstinspires.ftc.teamcode.koawalib.vision
 
+import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.logger.Logger
-import com.asiankoala.koawalib.subsystem.Subsystem
-import com.asiankoala.koawalib.subsystem.vision.KWebcam
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.openftc.apriltag.AprilTagDetection
+import org.openftc.easyopencv.OpenCvCamera
+import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener
+import org.openftc.easyopencv.OpenCvCameraFactory
+import org.openftc.easyopencv.OpenCvCameraRotation
 
-class Webcam(val device: KWebcam, private val pipeline: SleevePipeline) : Subsystem() {
+open class AutoOpMode : KOpMode() {
+    lateinit var camera : OpenCvCamera
+    lateinit var pipeline : SleevePipeline
+
+    var fx = 578.272
+    var fy = 578.272
+    var cx = 402.145
+    var cy = 221.506
+
+    var tagsize = 0.166
 
     var LEFT = 1
     var MIDDLE = 2
     var RIGHT = 3
     var tagOfInterest: AprilTagDetection? = null
 
-    fun start() {
-        val currentDetections: ArrayList<AprilTagDetection> = pipeline.latestDetections
+    override fun mInit() {
+        val cameraMonitorViewId = hardwareMap.appContext.resources.getIdentifier(
+            "cameraMonitorViewId",
+            "id",
+            hardwareMap.appContext.packageName
+        )
+        camera = OpenCvCameraFactory.getInstance().createWebcam(
+            hardwareMap.get(
+                WebcamName::class.java, "Webcam"
+            ), cameraMonitorViewId
+        )
+        pipeline = SleevePipeline(tagsize, fx, fy, cx, cy)
+        camera.setPipeline(pipeline)
+        camera.openCameraDeviceAsync(object : AsyncCameraOpenListener {
+            override fun onOpened() {
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT)
+            }
+
+            override fun onError(errorCode: Int) {}
+        })
+    }
+
+    override fun mInitLoop() {
+        val currentDetections: ArrayList<AprilTagDetection> =
+            pipeline.latestDetections
         if (currentDetections.size != 0) {
             var tagFound = false
             for (tag in currentDetections) {
@@ -46,7 +82,11 @@ class Webcam(val device: KWebcam, private val pipeline: SleevePipeline) : Subsys
         }
     }
 
-    fun update() {
+    override fun mStart() {
+        camera.stopStreaming()
+    }
+
+    override fun mLoop() {
         if (tagOfInterest != null) {
             Logger.addTelemetryLine("Tag snapshot:\n")
             tagToTelemetry(tagOfInterest)
@@ -54,7 +94,12 @@ class Webcam(val device: KWebcam, private val pipeline: SleevePipeline) : Subsys
             Logger.addTelemetryLine("No tag snapshot available, it was never sighted during the init loop :(")
         }
     }
-    fun tagToTelemetry(detection: AprilTagDetection?) {
+
+    override fun mStop() {
+        camera.stopStreaming()
+    }
+
+    private fun tagToTelemetry(detection: AprilTagDetection?) {
         Logger.addTelemetryLine(String.format("\nDetected tag ID=%d", detection!!.id))
         Logger.addTelemetryLine(
             String.format(
@@ -101,3 +146,4 @@ class Webcam(val device: KWebcam, private val pipeline: SleevePipeline) : Subsys
         const val FEET_PER_METER = 3.28084
     }
 }
+
