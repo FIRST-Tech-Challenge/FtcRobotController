@@ -2,6 +2,7 @@ package org.firstinspires.ftc.blackswan;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,11 +18,11 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "AutonomousParkingTest")
-public class ParkPosition extends LinearOpMode {
+@TeleOp(name = "RawrXD")
+public class UwU_RawrXD extends LinearOpMode {
 
     DeterminationPipeline pipeline;
-
+    Robot robot;
     @Override
     public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -42,7 +43,7 @@ public class ParkPosition extends LinearOpMode {
 
             }
         });
-
+        int position= pipeline.position;
         waitForStart();
 
     }
@@ -83,6 +84,8 @@ public class ParkPosition extends LinearOpMode {
         int AVG_A;
         int AVG_B;
 
+        int position=0;
+
         void inputToLAB(Mat input) {
 
             Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
@@ -122,11 +125,11 @@ public class ParkPosition extends LinearOpMode {
                     2);
 
             if((AVG_A > 168) && (AVG_A < 208) && (AVG_B > 120) && (AVG_B < 160)){
-                //1
+                position=1;
             } else if((AVG_A > 100) && (AVG_A < 140) && (AVG_B > 170) && (AVG_B < 210)){
-                //2
+position=2;
             } else if((AVG_A > 103) && (AVG_A < 143) && (AVG_B > 80) && (AVG_B < 120)){
-                //3
+                position=3;
             }
 
             return input;
