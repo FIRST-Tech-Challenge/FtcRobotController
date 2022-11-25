@@ -89,11 +89,6 @@ public class AutoOpMode extends LinearOpMode{
                 dropConePose0 = new Pose2d(-12, 12, Math.toRadians(225)); //Choose the pose to move to the stack of cones
                 dropConePose1 = new Pose2d(-11, 12, Math.toRadians(225)); //Choose the pose to move to the stack of cones
                 dropConePose2 = new Pose2d(-10, 12, Math.toRadians(225)); //Choose the pose to move to the stack of cones
-                switch(vision.identifiedparkingLocation){
-                    case 1: parkPose = new Pose2d(-12, 60, Math.toRadians(180)); break; // Location 1
-                    case 2: parkPose = new Pose2d(-12, 36, Math.toRadians(180)); break; // Location 2
-                    case 3: parkPose = new Pose2d(-12, 11, Math.toRadians(180)); break; // Location 3
-                }
                 break;
             case BLUE_RIGHT:
                 initPose = new Pose2d(-54, -36, Math.toRadians(0));//Starting pose
@@ -102,11 +97,6 @@ public class AutoOpMode extends LinearOpMode{
                 dropConePose0 = new Pose2d(-12, -12, Math.toRadians(135)); //Choose the pose to move to the stack of cones
                 dropConePose1 = new Pose2d(-11, -12, Math.toRadians(135)); //Choose the pose to move to the stack of cones
                 dropConePose2 = new Pose2d(-10, -12, Math.toRadians(135)); //Choose the pose to move to the stack of cones
-                switch(vision.identifiedparkingLocation){
-                    case 1: parkPose = new Pose2d(-12, -11, Math.toRadians(180)); break; // Location 1
-                    case 2: parkPose = new Pose2d(-12, -36, Math.toRadians(180)); break; // Location 2
-                    case 3: parkPose = new Pose2d(-12, -60, Math.toRadians(180)); break; // Location 3
-                }
                 break;
             case RED_LEFT:
                 initPose = new Pose2d(54, -36, Math.toRadians(180));//Starting pose
@@ -115,11 +105,6 @@ public class AutoOpMode extends LinearOpMode{
                 dropConePose0 = new Pose2d(12, -12, Math.toRadians(45)); //Choose the pose to move to the stack of cones
                 dropConePose1 = new Pose2d(11, -12, Math.toRadians(45)); //Choose the pose to move to the stack of cones
                 dropConePose2 = new Pose2d(10, -15, Math.toRadians(45)); //Choose the pose to move to the stack of cones
-                switch(vision.identifiedparkingLocation){
-                    case 1: parkPose = new Pose2d(12, -60, Math.toRadians(0)); break; // Location 1
-                    case 2: parkPose = new Pose2d(12, -36, Math.toRadians(0)); break; // Location 2
-                    case 3: parkPose = new Pose2d(12, -11, Math.toRadians(0)); break; // Location 3
-                }
                 break;
             case RED_RIGHT:
                 initPose = new Pose2d(54, 36, Math.toRadians(180)); //Starting pose
@@ -128,11 +113,6 @@ public class AutoOpMode extends LinearOpMode{
                 dropConePose0 = new Pose2d(12, 12, Math.toRadians(315)); //Choose the pose to move to the stack of cones
                 dropConePose1 = new Pose2d(11, 12, Math.toRadians(315)); //Choose the pose to move to the stack of cones
                 dropConePose2 = new Pose2d(10, 12, Math.toRadians(315)); //Choose the pose to move to the stack of cones
-                switch(vision.identifiedparkingLocation){
-                    case 1: parkPose = new Pose2d(12, 11, Math.toRadians(0)); break; // Location 1
-                    case 2: parkPose = new Pose2d(12, 36, Math.toRadians(0)); break; // Location 2
-                    case 3: parkPose = new Pose2d(12, 60, Math.toRadians(0)); break; // Location 3
-                }
                 break;
         }
 
@@ -169,6 +149,37 @@ public class AutoOpMode extends LinearOpMode{
 
     //Build parking trajectory based on target detected by vision
     public void buildParking(){
+        switch (startPosition) {
+            case BLUE_LEFT:
+                switch(vision.identifiedparkingLocation){
+                    case 1: parkPose = new Pose2d(-12, 60, Math.toRadians(180)); break; // Location 1
+                    case 2: parkPose = new Pose2d(-12, 36, Math.toRadians(180)); break; // Location 2
+                    case 3: parkPose = new Pose2d(-12, 11, Math.toRadians(180)); break; // Location 3
+                }
+                break;
+            case BLUE_RIGHT:
+                switch(vision.identifiedparkingLocation){
+                    case 1: parkPose = new Pose2d(-12, -11, Math.toRadians(180)); break; // Location 1
+                    case 2: parkPose = new Pose2d(-12, -36, Math.toRadians(180)); break; // Location 2
+                    case 3: parkPose = new Pose2d(-12, -60, Math.toRadians(180)); break; // Location 3
+                }
+                break;
+            case RED_LEFT:
+                switch(vision.identifiedparkingLocation){
+                    case 1: parkPose = new Pose2d(12, -60, Math.toRadians(0)); break; // Location 1
+                    case 2: parkPose = new Pose2d(12, -36, Math.toRadians(0)); break; // Location 2
+                    case 3: parkPose = new Pose2d(12, -11, Math.toRadians(0)); break; // Location 3
+                }
+                break;
+            case RED_RIGHT:
+                switch(vision.identifiedparkingLocation){
+                    case 1: parkPose = new Pose2d(12, 11, Math.toRadians(0)); break; // Location 1
+                    case 2: parkPose = new Pose2d(12, 36, Math.toRadians(0)); break; // Location 2
+                    case 3: parkPose = new Pose2d(12, 60, Math.toRadians(0)); break; // Location 3
+                }
+                break;
+        }
+        
         trajectoryParking = driveTrain.trajectorySequenceBuilder(midWayPose)
                 .lineToLinearHeading(parkPose)
                 .build();
