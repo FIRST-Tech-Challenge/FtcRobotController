@@ -104,18 +104,18 @@ public class OfficialManualMode extends LinearOpMode {
     ));
 
     public ArrayList<String> presetActionsPad1X = new ArrayList<String>(Arrays.asList(
-            "wheel_left @1 @0.1"
+            "wheel_left @2 @0.3"
     ));
     public ArrayList<String> presetActionsPad1Y = new ArrayList<String>(Arrays.asList(
-            "wheel_forward @1 @01"
+            "wheel_forward @2 @0.2"
     ));
 
     public ArrayList<String> presetActionsPad1A = new ArrayList<String>(Arrays.asList(
-            "wheel_back @1 @01"
+            "wheel_back @2 @0.2"
     ));
 
     public ArrayList<String> presetActionsPad1B = new ArrayList<String>(Arrays.asList(
-            "wheel_right @1 @01"
+            "wheel_right @2 @0.3"
     ));
 
     public ArrayList<String> presetActionsPad2X = presetActionsLeft;
@@ -191,6 +191,9 @@ public class OfficialManualMode extends LinearOpMode {
 
         if (isStopRequested()) return;
 
+        Thread threadWheel = new Thread(new MultithreadingWheel());
+        Thread threadArm = new Thread(new MultithreadingArm());
+
         while (opModeIsActive()) {
             if (moreTimeToStart.milliseconds() < 500) {
                 telemetry.addData("Waiting millisecond: ", moreTimeToStart.milliseconds()  );
@@ -201,9 +204,14 @@ public class OfficialManualMode extends LinearOpMode {
             if (firstTime) {
                 firstTime = false;
                 resetToPresetPosition(0);
+                threadWheel.start();
+                threadArm.start();
             }
-            controlArm();
-            controlWheels();
+            //controlArm();
+            //controlWheels();
+
+            //nothing need to be done here now
+            sleep(10);
         }
     }
 
@@ -903,6 +911,35 @@ public class OfficialManualMode extends LinearOpMode {
         _rr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //sleep(100);   // optional pause after each move.
+    }
+
+    class MultithreadingWheel implements Runnable {
+        public void run()
+        {
+            try {
+                while (true) {
+                    controlWheels();
+                    sleep(1);
+                }
+            }
+            catch (Exception e) {
+                System.out.println("Exception is caught");
+            }
+        }
+    }
+    class MultithreadingArm implements Runnable {
+        public void run()
+        {
+            try {
+                while (true) {
+                    controlArm();
+                    //sleep(1);
+                }
+            }
+            catch (Exception e) {
+                System.out.println("Exception is caught");
+            }
+        }
     }
  }
 
