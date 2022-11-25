@@ -5,7 +5,6 @@ package org.firstinspires.ftc.teamcode;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,7 +16,7 @@ import java.util.Collections;
 /** Autonomous OpMode for Freight Frenzy.
  */
 @TeleOp(name="Freight Frenzy Tele-Op", group="TeleOp OpMode")
-public class FreightFrenzyTeleOp extends OpMode {
+public class PowerPlayTeleOp extends OpMode {
 
     private RobotManager robotManager;
     private ElapsedTime elapsedTime = new ElapsedTime();
@@ -66,10 +65,10 @@ public class FreightFrenzyTeleOp extends OpMode {
         String allianceColor = sharedPrefs.getString("alliance_color", "ERROR");
 
         if (allianceColor.equals("BLUE")) {
-            FreightFrenzyTeleOp.allianceColor = RobotManager.AllianceColor.BLUE;
+            PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.BLUE;
         }
         else if (allianceColor.equals("RED")) {
-            FreightFrenzyTeleOp.allianceColor = RobotManager.AllianceColor.RED;
+            PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.RED;
         }
     }
 }

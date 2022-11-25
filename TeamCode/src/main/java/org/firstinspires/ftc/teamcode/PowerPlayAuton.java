@@ -10,58 +10,58 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
 
 @Autonomous(name="FreightFrenzyAuton", group="Linear OpMode")
-public class FreightFrenzyAuton extends LinearOpMode {
+public class PowerPlayAuton extends LinearOpMode {
 
     private RobotManager robotManager;
     private ElapsedTime elapsedTime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
-        initSharedPreferences();
-        robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, FreightFrenzyAuton.navigationPath,
-                                        FreightFrenzyAuton.allianceColor, FreightFrenzyAuton.startingSide,
-                                        FreightFrenzyAuton.movementMode, telemetry, elapsedTime);
-
-        IMUPositioning.Initialize(this);
-        robotManager.computerVision.startStreaming();
-
-        Robot.SlidesState hubLevel;
-        do {
-            hubLevel = robotManager.readBarcode();
-        }
-        while (!isStarted());
-
-//        hubLevel = Robot.SlidesState.L3;
-
-        robotManager.computerVision.stopStreaming();
-
-        telemetry.addData("level", hubLevel.name());
-        telemetry.update();
-
-//        waitForStart(); // Wait for the play button to be pressed
-
-        double startTime = robotManager.elapsedTime.milliseconds();
-        while (robotManager.elapsedTime.milliseconds() - startTime < waitTime * 1000) {}
-
-        robotManager.closeClaw();
-        Position lastPOI;
-
-//        hubLevel = Robot.SlidesState.L1;
-
-        while ((lastPOI = robotManager.travelToNextPOI()) != null) {
-            telemetry.update();
-            telemetry.addData("POI", lastPOI.getLocation().name);
-            telemetry.addData("Action", lastPOI.getLocation().action.name());
-            telemetry.update();
-            switch (lastPOI.getLocation().action) {
-                case PRELOAD_BOX:
-                    robotManager.deliverToShippingHub(hubLevel);
-                    break;
-                case CAROUSEL:
-                    robotManager.deliverDuck();
-                    break;
-            }
-        }
+//        initSharedPreferences();
+//        robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, PowerPlayAuton.navigationPath,
+//                                        PowerPlayAuton.allianceColor, PowerPlayAuton.startingSide,
+//                                        PowerPlayAuton.movementMode, telemetry, elapsedTime);
+//
+//        IMUPositioning.Initialize(this);
+//        robotManager.computerVision.startStreaming();
+//
+//        Robot.SlidesState hubLevel;
+//        do {
+//            hubLevel = robotManager.readBarcode();
+//        }
+//        while (!isStarted());
+//
+////        hubLevel = Robot.SlidesState.L3;
+//
+//        robotManager.computerVision.stopStreaming();
+//
+//        telemetry.addData("level", hubLevel.name());
+//        telemetry.update();
+//
+////        waitForStart(); // Wait for the play button to be pressed
+//
+//        double startTime = robotManager.elapsedTime.milliseconds();
+//        while (robotManager.elapsedTime.milliseconds() - startTime < waitTime * 1000) {}
+//
+//        robotManager.closeClaw();
+//        Position lastPOI;
+//
+////        hubLevel = Robot.SlidesState.L1;
+//
+//        while ((lastPOI = robotManager.travelToNextPOI()) != null) {
+//            telemetry.update();
+//            telemetry.addData("POI", lastPOI.getLocation().name);
+//            telemetry.addData("Action", lastPOI.getLocation().action.name());
+//            telemetry.update();
+//            switch (lastPOI.getLocation().action) {
+//                case PRELOAD_BOX:
+//                    robotManager.deliverToShippingHub(hubLevel);
+//                    break;
+//                case CAROUSEL:
+//                    robotManager.deliverDuck();
+//                    break;
+//            }
+//        }
 
 //        if (navigationMode == RobotManager.NavigationMode.DUCK_CAROUSEL || navigationMode == RobotManager.NavigationMode.DUCK_WAREHOUSE) {
 //            robotManager.travelToNextPOI();  // Go to carousel.
@@ -72,7 +72,7 @@ public class FreightFrenzyAuton extends LinearOpMode {
 //            robotManager.travelToNextPOI();  // Park in warehouse.
 //        }
 
-        while (opModeIsActive()) {}
+//        while (opModeIsActive()) {}
     }
 
     // ANDROID SHARED PREFERENCES
@@ -105,82 +105,82 @@ public class FreightFrenzyAuton extends LinearOpMode {
 
         switch (movementMode) {
             case "STRAFE":
-                FreightFrenzyAuton.movementMode = Navigation.MovementMode.STRAFE;
+                PowerPlayAuton.movementMode = Navigation.MovementMode.STRAFE;
                 break;
             case "FORWARD_ONLY":
-                FreightFrenzyAuton.movementMode = Navigation.MovementMode.FORWARD_ONLY;
+                PowerPlayAuton.movementMode = Navigation.MovementMode.FORWARD_ONLY;
                 break;
         }
 
         switch (waitTime) {
             case "0_SECONDS":
-                FreightFrenzyAuton.waitTime = 0;
+                PowerPlayAuton.waitTime = 0;
                 break;
             case "5_SECONDS":
-                FreightFrenzyAuton.waitTime = 5;
+                PowerPlayAuton.waitTime = 5;
                 break;
             case "10_SECONDS":
-                FreightFrenzyAuton.waitTime = 10;
+                PowerPlayAuton.waitTime = 10;
                 break;
             case "15_SECONDS":
-                FreightFrenzyAuton.waitTime = 15;
+                PowerPlayAuton.waitTime = 15;
                 break;
             case "20_SECONDS":
-                FreightFrenzyAuton.waitTime = 20;
+                PowerPlayAuton.waitTime = 20;
                 break;
         }
 
         if (startingSide.equals("CAROUSEL")) {
-            FreightFrenzyAuton.startingSide = RobotManager.StartingSide.CAROUSEL;
+            PowerPlayAuton.startingSide = RobotManager.StartingSide.CAROUSEL;
         }
         else if (startingSide.equals("WAREHOUSE")) {
-            FreightFrenzyAuton.startingSide = RobotManager.StartingSide.WAREHOUSE;
+            PowerPlayAuton.startingSide = RobotManager.StartingSide.WAREHOUSE;
         }
 
         if (allianceColor.equals("BLUE")) {
-            FreightFrenzyAuton.allianceColor = RobotManager.AllianceColor.BLUE;
+            PowerPlayAuton.allianceColor = RobotManager.AllianceColor.BLUE;
         }
         else if (allianceColor.equals("RED")) {
-            FreightFrenzyAuton.allianceColor = RobotManager.AllianceColor.RED;
+            PowerPlayAuton.allianceColor = RobotManager.AllianceColor.RED;
         }
 
-        switch (autonMode) {
-            case "PARK_ASU":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PARK_ASU.clone();
-                break;
-            case "PRELOAD_BOX":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX.clone();
-                break;
-            case "CAROUSEL":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.CAROUSEL.clone();
-                break;
-            case "PRELOAD_BOX_AND_PARK_ASU":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX_AND_PARK_ASU.clone();
-                break;
-            case "CAROUSEL_AND_PRELOAD_BOX":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.CAROUSEL_AND_PRELOAD_BOX.clone();
-                break;
-            case "PRELOAD_BOX_AND_CAROUSEL":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX_AND_CAROUSEL.clone();
-                break;
-            case "CAROUSEL_PRELOAD_BOX_AND_PARK_ASU":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.CAROUSEL_PRELOAD_BOX_AND_PARK_ASU.clone();
-                break;
-            case "PRELOAD_BOX_CAROUSEL_AND_PARK_ASU":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX_CAROUSEL_AND_PARK_ASU.clone();
-                break;
-            case "CAROUSEL_AND_PARK_ASU":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.CAROUSEL_AND_PARK_ASU.clone();
-                break;
-            case "PARK_WAREHOUSE":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PARK_WAREHOUSE.clone();
-                break;
-            case "PRELOAD_BOX_AND_PARK_WAREHOUSE":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX_AND_PARK_WAREHOUSE.clone();
-                break;
-            case "CAROUSEL_AND_PARK_WAREHOUSE":
-                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.CAROUSEL_AND_PARK_WAREHOUSE.clone();
-                break;
+//        switch (autonMode) {
+//            case "PARK_ASU":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PARK_ASU.clone();
+//                break;
+//            case "PRELOAD_BOX":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX.clone();
+//                break;
+//            case "CAROUSEL":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.CAROUSEL.clone();
+//                break;
+//            case "PRELOAD_BOX_AND_PARK_ASU":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX_AND_PARK_ASU.clone();
+//                break;
+//            case "CAROUSEL_AND_PRELOAD_BOX":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.CAROUSEL_AND_PRELOAD_BOX.clone();
+//                break;
+//            case "PRELOAD_BOX_AND_CAROUSEL":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX_AND_CAROUSEL.clone();
+//                break;
+//            case "CAROUSEL_PRELOAD_BOX_AND_PARK_ASU":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.CAROUSEL_PRELOAD_BOX_AND_PARK_ASU.clone();
+//                break;
+//            case "PRELOAD_BOX_CAROUSEL_AND_PARK_ASU":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX_CAROUSEL_AND_PARK_ASU.clone();
+//                break;
+//            case "CAROUSEL_AND_PARK_ASU":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.CAROUSEL_AND_PARK_ASU.clone();
+//                break;
+//            case "PARK_WAREHOUSE":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PARK_WAREHOUSE.clone();
+//                break;
+//            case "PRELOAD_BOX_AND_PARK_WAREHOUSE":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX_AND_PARK_WAREHOUSE.clone();
+//                break;
+//            case "CAROUSEL_AND_PARK_WAREHOUSE":
+//                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.CAROUSEL_AND_PARK_WAREHOUSE.clone();
+//                break;
 
 //            case "PRELOAD_BOX_ONLY":
 //                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PRELOAD_BOX_ONLY.clone();
@@ -197,6 +197,6 @@ public class FreightFrenzyAuton extends LinearOpMode {
 //            case "ROTATE_180":
 //                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.ROTATE_180.clone();
 //                break;
-        }
+//        }
     }
 }
