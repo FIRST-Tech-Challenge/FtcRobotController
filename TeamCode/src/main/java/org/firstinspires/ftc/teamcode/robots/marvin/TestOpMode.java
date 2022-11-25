@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.robots.marvin;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="Iron Core OpMode", group="Challenge")
+@Autonomous(name="Iron Core OpMode", group="Challenge")
 public class TestOpMode extends OpMode {
     //variable setup
     private DcMotor motorFrontRight = null;
@@ -20,11 +20,14 @@ public class TestOpMode extends OpMode {
     private double powerLeft = 0;
     private double powerRight = 0;
     // motor power
-    private int armPosition = 0;
-    private int elbowPositon = 0;
+
+    private int elbowPosition = 0;
+    private int targetElbowPosition = 0;
     private double wristPosition = 0;
+    private double targetWristPosition = 0;
     // arm and claw variables
-    private int currArmPos = 0;
+    private int armPosition = 0;
+    private int targetArmPos = 0;
     private int maxArm = Integer.MAX_VALUE;
     //number variables
     private static final float DEADZONE = .1f;
@@ -58,17 +61,60 @@ public class TestOpMode extends OpMode {
         arm.setPower(1);
         elbow.setPower(1);
 //        elbow.setTargetPosition(-505);
-        elbowPositon = elbow.getCurrentPosition();
+        elbowPosition = elbow.getCurrentPosition();
         wristPosition = wrist.getPosition();
         wrist.setPosition(0);
     }
     @Override
     public void loop() {
+        updateSensors();
         //tankDrive();
-        mechanumDrive();
+        //process drive inputs
+        mecanumDrive();
+        //joystick processing
+        presets();
         armMove();
         clawMove();
+        updateMotors();
     }
+
+    public void updateSensors(){
+        //get current positions
+        armPosition=arm.getCurrentPosition();
+        elbowPosition=elbow.getCurrentPosition();
+        wristPosition = wrist.getPosition();
+
+    }
+    public void updateMotors(){
+        arm.setTargetPosition(targetArmPos);
+        elbow.setTargetPosition(targetElbowPosition);
+        wrist.setPosition(targetWristPosition);
+    }
+
+    public void presets() {
+        if (gamepad1.a) { //pickup cone
+            targetArmPos = -378;
+            targetElbowPosition = -591;
+            targetWristPosition = 1;
+        }
+        if (gamepad1.b) { // low junction
+            targetArmPos = -860;
+            targetElbowPosition = -290;
+            targetWristPosition = 0.5;
+        }
+
+        if (gamepad1.x) { //medium junction
+            targetArmPos = -1454;
+            targetElbowPosition = -820;
+            targetWristPosition = 0.5;
+        }
+        if (gamepad1.y) { //high junction
+            targetArmPos = -1840;
+            targetElbowPosition =  -1100;
+            targetWristPosition = 0.85;
+        }
+    }
+
     public void tankDrive()
     {
         powerRight = 0;
@@ -89,7 +135,7 @@ public class TestOpMode extends OpMode {
         motorBackRight.setPower(powerRight);
         motorBackLeft.setPower(powerLeft);
     }
-    public void mechanumDrive()
+    public void mecanumDrive()
     {
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
@@ -105,31 +151,34 @@ public class TestOpMode extends OpMode {
     }
     public void armMove()
     {
-        telemetry.addData("arm position: ", arm.getCurrentPosition());
-        telemetry.addData("elbow position: ", elbow.getCurrentPosition());
-        telemetry.addData("wrist position: ", wrist.getPosition());
-        if(gamepad1.dpad_down)
+        telemetry.addData("arm position: ", armPosition);
+        telemetry.addData("elbow position: ", elbowPosition);
+        telemetry.addData("wrist position: ", wristPosition);
+        if(gamepad1.dpad_down) //manually lower arm - shoulder joint
         {
-            if(currArmPos < 0 )
-                currArmPos += 10;
-            else
-                currArmPos = 0;
-        }//-1898, -360, -2073, -2582
-        if(gamepad1.dpad_up)
-        {
-            if (currArmPos > -1890)
-                currArmPos -= 10;
-            else
-                currArmPos = -1890;
+            targetArmPos = armPosition + 30;
+            if(targetArmPos > 0 )
+                targetArmPos = 0;
         }
-        if(gamepad1.dpad_right)
+        if(gamepad1.dpad_up) //manually raise arm - shoulder joint
         {
-            elbow.setTargetPosition(elbowPositon += 10);
+            targetArmPos = armPosition - 30;
+            if (targetArmPos < -1890)
+                targetArmPos = -1890;
         }
-        if (gamepad1.dpad_left)
+        if(gamepad1.dpad_right) //contract elbow
         {
-//            if (elbowPositon > 0)
-            elbow.setTargetPosition(elbowPositon -= 10);
+            targetElbowPosition = elbowPosition + 30;
+            if(targetElbowPosition > 0 )
+                targetElbowPosition = 0;
+
+        }
+        if (gamepad1.dpad_left) //extend elbow
+        {
+            targetElbowPosition = elbowPosition - 30;
+            if (targetElbowPosition < -1100) //todo might want to allow a little more manual extension? currently limited to the high junction elbow position
+                targetElbowPosition = -1100;
+
         }
         if (gamepad1.left_trigger > DEADZONE)
         {
@@ -139,7 +188,7 @@ public class TestOpMode extends OpMode {
         {
             wrist.setPosition(wrist.getPosition()-.02);
         }
-        arm.setTargetPosition(currArmPos);
+
     }
     public void clawMove() {
         telemetry.addData("Claw servo position:", claw.getPosition());
