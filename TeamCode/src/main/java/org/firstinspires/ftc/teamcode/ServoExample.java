@@ -30,8 +30,6 @@ public class ServoExample extends LinearOpMode {
 
     int direction = 0;
     double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
-    boolean liftOn = false;
-
 
     public void waitTime(double time){
         runtime.reset();
@@ -70,12 +68,12 @@ public class ServoExample extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // If making a new Auto or TeleOp file, make sure to include waitForStart
-        // so it can pass inspection and you don't get dq-ed from tourneys
+        // If making a new Auto or TeleOp file, make sure to include waitForStart so it can pass
+        // inspection and you don't get dq-ed from tourneys (mainly for Auto)
         waitForStart();
         runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
+        // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
 
@@ -84,7 +82,7 @@ public class ServoExample extends LinearOpMode {
             double left  = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double right =  - gamepad1.right_stick_y;
 
-            //Switch this to gamepad1 to test if it works easier
+            //Switch this to gamepad1 to test if it works in the first place
             boolean servoOpen = gamepad2.dpad_up;
             boolean servoClose = gamepad2.dpad_down;
 
@@ -174,21 +172,6 @@ public class ServoExample extends LinearOpMode {
             rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
             rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
             */
-
-            // More test code:
-            //
-            // This is not used for actual robotics thing, its merely for testing different call functions
-            // Also completely screws over the code because of the while loop, therefore
-            // DO NOT HAVE THIS WHILE LOOP UNCOMMENTED WHEN ACTUALLY USING THE ROBOT!!!!
-            // DO NOT HAVE THIS WHILE LOOP UNCOMMENTED WHEN ACTUALLY USING THE ROBOT!!!!
-
-            /*
-            while(true){
-                telemetry.addData("Current Position: ",leftFrontDrive.getCurrentPosition());
-                leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + 360);
-            }
-            */
-
 
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
