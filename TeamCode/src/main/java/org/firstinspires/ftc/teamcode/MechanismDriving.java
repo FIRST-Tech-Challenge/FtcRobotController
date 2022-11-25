@@ -8,8 +8,8 @@ public class MechanismDriving {
     private static int desiredSlidePosition;
 
     // TODO: empirically measure values of slides positions
-    public static final int RETRACTED_POS = 0, LEVEL1_POS = 700, LEVEL2_POS = 1850, LEVEL3_POS = 3500, CAPPING_POS = 4000;
-    public static final double INTAKE_FRONT_POS = 0, INTAKE_BACK_POS = 1.0; //These are not final values
+    public static final int RETRACTED_POS = 0, LOW_POS = 700, MEDIUM_POS = 1850, HIGH_POS = 3500;
+    public static final double INTAKE_FRONT_POS = 0, INTAKE_REAR_POS = 1.0; //These are not final values
     public static final double COMPLIANT_WHEELS_SPEED = 1.0; //speed of compliant wheels
     // How long it takes for the intake servo to be guaranteed to have moved to its new position.
     public static final long INTAKE_SERVO_TIME = 500;
@@ -26,11 +26,11 @@ public class MechanismDriving {
     public void updateIntake(Robot robot) {
         switch (robot.desiredIntakeState) {
             case FRONT:
-                robot.intake.setPosition(INTAKE_FRONT_POS); //closed
+                robot.intake.setPosition(INTAKE_FRONT_POS); //facing the front of the robot
                 robot.intakeIndicator.setPosition(0);
                 break;
-            case BACK:
-                robot.intake.setPosition(INTAKE_BACK_POS); //open
+            case REAR:
+                robot.intake.setPosition(INTAKE_REAR_POS); //facing the rear of the robot
                 robot.intakeIndicator.setPosition(1);
                 break;
         }
@@ -80,17 +80,14 @@ public class MechanismDriving {
                 case RETRACTED:
                     setSlidePosition(robot, RETRACTED_POS);
                     break;
-                case L1:
-                    setSlidePosition(robot, LEVEL1_POS);
+                case LOW:
+                    setSlidePosition(robot, LOW_POS);
                     break;
-                case L2:
-                    setSlidePosition(robot, LEVEL2_POS);
+                case MEDIUM:
+                    setSlidePosition(robot, MEDIUM_POS);
                     break;
-                case L3:
-                    setSlidePosition(robot, LEVEL3_POS);
-                    break;
-                case CAPPING:
-                    setSlidePosition(robot, CAPPING_POS);
+                case HIGH:
+                    setSlidePosition(robot, HIGH_POS);
                     break;
             }
 

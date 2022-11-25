@@ -55,10 +55,6 @@ public class RobotManager {
         gamepads = new GamepadWrapper(gamepad1, gamepad2);
         previousStateGamepads = new GamepadWrapper();
         previousStateGamepads.copyGamepads(gamepads);
-
-        if (allianceColor == AllianceColor.BLUE) {
-            robot.carouselMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        }
     }
 
     // TELE-OP
@@ -71,17 +67,14 @@ public class RobotManager {
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
             robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
         }
-        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_L1)) {
-            robot.desiredSlidesState = Robot.SlidesState.L1;
+        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
+            robot.desiredSlidesState = Robot.SlidesState.LOW;
         }
-        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_L2)) {
-            robot.desiredSlidesState = Robot.SlidesState.L2;
+        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_MEDIUM)) {
+            robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
         }
-        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_L3)) {
-            robot.desiredSlidesState = Robot.SlidesState.L3;
-        }
-        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_CAPPING)) {
-            robot.desiredSlidesState = Robot.SlidesState.CAPPING;
+        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
+            robot.desiredSlidesState = Robot.SlidesState.HIGH;
         }
 
         // Fine movement/rotation.
@@ -197,6 +190,8 @@ public class RobotManager {
     /** Converts a result from the barcode scanner into a level on which to place the preload box
      * @param result The result of the barcode scanning. This will NEVER be WRONG_CAPS or WRONG_TAPE, it will always be a valid barcode state
      * @return A SlidesState that represents the scoring level to deposit to
+     *
+     * (Old barcode code)
      */
 
 //    private Robot.SlidesState barcodeResultToSlidesState(Robot.BarcodeScanResult result) {
@@ -289,15 +284,17 @@ public class RobotManager {
     public void flipHorseshoe() {
         switch (robot.desiredIntakeState) {
             case FRONT: //Horseshoe Facing Forward
-                robot.desiredIntakeState = Robot.IntakeState.BACK;
+                robot.desiredIntakeState = Robot.IntakeState.REAR;
                 break;
-            case BACK: //Horseshoe Facing Back
+            case REAR: //Horseshoe Facing Back
                 robot.desiredIntakeState = Robot.IntakeState.FRONT;
                 break;
         }
         double startTime = robot.elapsedTime.milliseconds(); //Starts the time of the robot in milliseconds.
         mechanismDriving.updateIntake(robot);
-        //case Robot.IntakeState.FRONT/BACK (Remove the / in between if needed to be added back. Only set 1 variable at a time)
+        //case Robot.IntakeState.FRONT/REAR (Remove the / in between if needed to be added back. Only set 1 variable at a time)
+        //Waiting for servo to finish rotation
+        while (robot.elapsedTime.milliseconds() - startingTime < MechanismDriving.INTAKE_SERVO_TIME) {}
     }
 
     /** Delivers a piece of freight to a particular level of the alliance shipping hub.

@@ -22,11 +22,10 @@ import java.util.Objects;
 public class Robot {
     // Robot desired states.
 
-    public enum SlidesState {RETRACTED, L1, L2, L3, CAPPING, UNREADY}
-    public enum IntakeState {FRONT, BACK}
+    public enum SlidesState {RETRACTED, LOW, MEDIUM, HIGH, UNREADY}
+    public enum IntakeState {FRONT, REAR}
     public enum CompliantWheelsState {OFF, ON}
 
-    public CarouselState desiredCarouselState;
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
     public IntakeState desiredIntakeState;
     public CompliantWheelsState desiredCompliantWheelsState;
@@ -77,7 +76,7 @@ public class Robot {
     // Hardware
     public DcMotor slidesLeft, slidesRight, compliantWheels;
     public Servo intake;
-    public Servo intakeIndicator;
+    //public Servo intakeIndicator;
 
     // Other
     public Telemetry telemetry;
@@ -94,10 +93,7 @@ public class Robot {
         numBarcodeAttempts = 0;
         resetBarcodeScanMap();
 
-
         desiredIntakeState = IntakeState.FRONT;
-
-
 
         slidesLeft = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_LEFT));
         slidesRight = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_RIGHT));
