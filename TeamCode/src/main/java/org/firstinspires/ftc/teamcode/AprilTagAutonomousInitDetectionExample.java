@@ -21,8 +21,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -33,13 +36,19 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@TeleOp (name = "Detectietest", group = "test")
+@Autonomous(name = "Detection+Park", group = "test")
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
+
+    // delare motors
+    private DcMotor motorLeftFront;
+    private DcMotor motorRightFront;
+    private DcMotor motorLeftBack;
+    private DcMotor motorRightBack;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -63,6 +72,12 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        motorLeftFront = hardwareMap.dcMotor.get ("motorLeftFront")
+        motorLeftBack = hardwareMap.dcMotor.get ("motorLeftBack")
+        motorRightFront = hardwareMap.dcMotor.get ("motorRightFront")
+        motorRightBack = hardwareMap.dcMotor.get("motorRightBack")
+
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -168,16 +183,59 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
         /* Actually do something useful */
     if(tagOfInterest == null || tagOfInterest.id == LEFT){
-        //trajectory
+        //Move forward
+        motorLeftFront.setPower(-1);
+        motorLeftBack.setPower(-1);
+        motorRightFront.setPower(+1);
+        motorRightBack.setPower(+1);
+        Thread.sleep(3000);
+        // Move left
+        motorLeftFront.setPower(-1);
+        motorLeftBack.setPower(+1);
+        motorRightFront.setPower(-1);
+        motorRightBack.setPower(+1);
+        Thread.sleep(3000);
+        // Stop Robot
+        motorLeftFront.setPower(0);
+        motorLeftBack.setPower(0);
+        motorRightFront.setPower(0);
+        motorRightBack.setPower(0);
+
     }else if(tagOfInterest.id == MIDDLE){
-// trajectory
-    }else{
-        //trajectory
+        // move forward
+        motorLeftFront.setPower(-1);
+        motorLeftBack.setPower(-1);
+        motorRightFront.setPower(+1);
+        motorRightBack.setPower(+1);
+        Thread.sleep(3000);
+        // stop robot
+        motorLeftFront.setPower(0);
+        motorLeftBack.setPower(0);
+        motorRightFront.setPower(0);
+        motorRightBack.setPower(0);
+    }else
+        // move forward
+        motorLeftFront.setPower(-1);
+        motorLeftBack.setPower(-1);
+        motorRightFront.setPower(+1);
+        motorRightBack.setPower(+1);
+        Thread.sleep(3000);
+        // move right
+        motorLeftFront.setPower(+1);
+        motorLeftBack.setPower(-1);
+        motorRightFront.setPower(+1);
+        motorRightBack.setPower(-1);
+        Thread.sleep(3000);
+        // stop robot
+        motorLeftFront.setPower(0);
+        motorLeftBack.setPower(0);
+        motorRightFront.setPower(0);
+        motorRightBack.setPower(0);
     }
 
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
+
     }
 
     void tagToTelemetry(AprilTagDetection detection)
