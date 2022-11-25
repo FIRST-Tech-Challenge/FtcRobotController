@@ -256,6 +256,9 @@ public class SampleTankDrive extends TankDrive {
                     0,
                     OMEGA_WEIGHT * drivePower.getHeading()
             ).div(denom);
+        } else {
+            // Ensure the y axis is zeroed out.
+            vel = new Pose2d(drivePower.getX(), 0, drivePower.getHeading());
         }
 
         setDrivePower(vel);
