@@ -21,7 +21,7 @@ public class TestOpMode extends OpMode {
     private double powerRight = 0;
     //booleans
     private boolean auton = true;
-    private boolean
+    private boolean runToPos = false;
     // motor power
     private int elbowPosition = 0;
     private int targetElbowPosition = 0;
