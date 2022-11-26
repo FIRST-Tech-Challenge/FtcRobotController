@@ -3,25 +3,22 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 public class Elevator {
-    private Servo mainServo = null;
-    private Servo leftServo = null;
-    private Servo rightServo = null;
-    private DcMotor elevatorMotor = null;
+    private final Servo mainServo;
+    private final Servo leftServo;
+    private final Servo rightServo;
+    private final DcMotor elevatorMotor;
 
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
 
     private static double mainServoPosition;
-    private static double handsOffset;
-    public static final double HANDS_MAX_POSITION = 0.5;
-    public static final double HANDS_MIN_POSITION = -0.5;
+    public static final double HANDS_OPEN_POSITION = 0.5;
+    public static final double HANDS_CLOSED_POSITION = 0.1;
     public static final double HANDS_MID_POSITION = 0;
-    public static final double LEFT_RIGHT_SERVO_SPEED = 0.2;
 
     public static final double ELEVATOR_MOTOR_SPEED = 0.5;
     public static final int MAX_ELEVATOR_POSITION = 30;
@@ -47,7 +44,6 @@ public class Elevator {
 
         leftServo.setPosition(HANDS_MID_POSITION);
         rightServo.setPosition(HANDS_MID_POSITION);
-        handsOffset = 0;
     }
 
     public void setElevatorMotorPower(double power){
@@ -63,12 +59,10 @@ public class Elevator {
         telemetry.update();
     }
 
-    public void moveHands(int direction) {
+     private void moveHands(double position) {
 
-        handsOffset = handsOffset + direction * LEFT_RIGHT_SERVO_SPEED;
-        handsOffset = Range.clip(handsOffset , HANDS_MIN_POSITION, HANDS_MAX_POSITION);
-        leftServo.setPosition(HANDS_MID_POSITION + handsOffset);
-        rightServo.setPosition(HANDS_MID_POSITION + handsOffset);
+        leftServo.setPosition(position);
+        rightServo.setPosition(position);
 
         telemetry.addData("left servo position: ", leftServo.getPosition());
         telemetry.addData("right servo position: ", rightServo.getPosition());
@@ -84,6 +78,14 @@ public class Elevator {
     }
 
     public void stop() {
-        //mainServo
+        // stop mainServo
+    }
+
+    public void openHands() {
+        moveHands(HANDS_OPEN_POSITION);
+    }
+
+    public void closeHands() {
+        moveHands(HANDS_CLOSED_POSITION);
     }
 }

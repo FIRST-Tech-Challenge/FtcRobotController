@@ -77,9 +77,9 @@ public class ElevatorOpModeLinear extends LinearOpMode {
             if (gamepad1.y)
                 elevator.moveMainServo();
             else if (gamepad1.a)
-                elevator.moveHands(-1);
+                elevator.openHands();
             else if (gamepad1.b)
-                elevator.moveHands(1);
+                elevator.closeHands();
             else
                 elevator.stop();
         }
