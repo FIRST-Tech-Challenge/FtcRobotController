@@ -98,19 +98,19 @@ public class TestOpMode extends OpMode {
             targetWristPosition = 1;
         }
         if (gamepad1.b) { // low junction
-            targetArmPos = -860;
+            targetArmPos = -771;
             targetElbowPosition = -290;
             targetWristPosition = 0.5;
         }
 
         if (gamepad1.x) { //medium junction
-            targetArmPos = -1454;
+            targetArmPos = -1440;
             targetElbowPosition = -820;
             targetWristPosition = 0.5;
         }
         if (gamepad1.y) { //high junction
             targetArmPos = -1840;
-            targetElbowPosition =  -1100;
+            targetElbowPosition =  -1050;
             targetWristPosition = 0.85;
         }
     }
