@@ -19,8 +19,10 @@ public class TestOpMode extends OpMode {
     // regular drive
     private double powerLeft = 0;
     private double powerRight = 0;
+    //booleans
+    private boolean auton = true;
+    private boolean
     // motor power
-
     private int elbowPosition = 0;
     private int targetElbowPosition = 0;
     private double wristPosition = 0;
@@ -67,6 +69,11 @@ public class TestOpMode extends OpMode {
     }
     @Override
     public void loop() {
+        if (auton){
+
+
+        }
+
         updateSensors();
         //tankDrive();
         //process drive inputs

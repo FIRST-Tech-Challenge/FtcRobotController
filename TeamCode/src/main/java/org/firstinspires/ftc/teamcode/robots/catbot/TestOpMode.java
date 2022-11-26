@@ -59,18 +59,24 @@ public class TestOpMode extends OpMode {
     public void loop() {
         //tankDrive();
         if(auton) {
-            autonDrive();
             if(wheelsRunToPosition = false) {
                 motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                wheelsRunToPosition = true;
             }
+            autonDrive();
         }
 
         else {
-//            motorBackLeft.setMode(DcMotor.RunMode.
-            wheelsRunToPosition = false;
+            if(wheelsRunToPosition) {
+                motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                wheelsRunToPosition = false;
+            }
             mechanumDrive();
             elevatorMove();
             clawMove();
