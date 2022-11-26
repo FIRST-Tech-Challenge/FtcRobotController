@@ -55,6 +55,6 @@ public class Variables {
 
 
     // Grbber #1 Clamp: 0.5, Release: 0.75
-    // grbber #2 Clamp: 0.58, Release: 0.51
+    // grbber #2 Clamp: 0.41, Release: 0.52
     // grbber #3 Clamp: 0.25, Release: 0.5
 }
