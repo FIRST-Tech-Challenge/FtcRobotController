@@ -4,16 +4,10 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import android.os.Environment;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
-import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Objects;
 
 
@@ -46,7 +40,7 @@ public class Navigation
     static final double RED_BARCODE_OFFSET = 0;
 
     // Distances between where the robot extends/retracts the linear slides and where it opens the claw.
-    static final double CLAW_SIZE = 8.9;
+    static final double HORSESHOE_SIZE = 8.9;
 
     static final double FLOAT_EPSILON = 0.001;
 

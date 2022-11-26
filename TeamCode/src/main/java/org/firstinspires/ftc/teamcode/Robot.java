@@ -22,7 +22,8 @@ import java.util.Objects;
 public class Robot {
     // Robot desired states.
 
-    public enum SlidesState {RETRACTED, LOW, MEDIUM, HIGH, UNREADY}
+    public enum SlidesState {RETRACTED, LOW_LOWERED, LOW, MEDIUM, MEDIUM_LOWERED, HIGH, HIGH_LOWERED, UNREADY}
+    public enum ParkingPosition {INSIDE, MIDDLE, OUTSIDE}
     public enum IntakeState {FRONT, REAR}
     public enum CompliantWheelsState {OFF, ON}
 
@@ -31,24 +32,9 @@ public class Robot {
     public CompliantWheelsState desiredCompliantWheelsState;
 
     enum BarcodeScanState {CHECK_SCAN, SCAN}
-    enum BarcodeScanResult {
-        LEFT(0), CENTER(1), RIGHT(2), WRONG_CAPS(3), WRONG_TAPE(4);
-
-        public final int value;
-
-        private BarcodeScanResult(int value) {
-            this.value = value;
-        }
-
-        public static BarcodeScanResult ResultFromValue(int label) {
-            for (BarcodeScanResult e : values()) {
-                if (e.value == label) return e;
-            }
-            return null;
-        }
-    };
 
     public BarcodeScanState barcodeScanState;
+    public enum BarcodeScanResult {LEFT, CENTER, RIGHT};
 
     static final int MAX_BARCODE_ATTEMPTS = 40;                           // How many times to try scanning the barcode before giving up
     static final int MIN_BARCODE_REPEAT = MAX_BARCODE_ATTEMPTS / 2 + 1;
@@ -62,8 +48,6 @@ public class Robot {
             put(BarcodeScanResult.LEFT, 0);
             put(BarcodeScanResult.CENTER, 0);
             put(BarcodeScanResult.RIGHT, 0);
-            put(BarcodeScanResult.WRONG_CAPS, 0);
-            put(BarcodeScanResult.WRONG_TAPE, 0);
         }};
     }
 

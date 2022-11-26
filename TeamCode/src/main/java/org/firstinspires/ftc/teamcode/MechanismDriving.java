@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.util.Range;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /** Controls motors and servos that are not involved in moving the robot around the field.
  */
 public class MechanismDriving {
@@ -8,7 +11,18 @@ public class MechanismDriving {
     private static int desiredSlidePosition;
 
     // TODO: empirically measure values of slides positions
-    public static final int RETRACTED_POS = 0, LOW_POS = 700, MEDIUM_POS = 1850, HIGH_POS = 3500;
+    // TODO: empirically measure number of encoder counts for lowering horseshoe
+    public static final int LOWERING_AMOUNT = 100;
+    public static final Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
+       put(Robot.SlidesState.RETRACTED, 0);
+       put(Robot.SlidesState.LOW_LOWERED, slidePositions.get(Robot.SlidesState.LOW) - LOWERING_AMOUNT);
+       put(Robot.SlidesState.LOW, 700);
+       put(Robot.SlidesState.MEDIUM_LOWERED, slidePositions.get(Robot.SlidesState.MEDIUM) - LOWERING_AMOUNT);
+       put(Robot.SlidesState.MEDIUM, 1850);
+       put(Robot.SlidesState.HIGH_LOWERED, slidePositions.get(Robot.SlidesState.HIGH) - LOWERING_AMOUNT);
+       put(Robot.SlidesState.HIGH, 3500);
+    }};
+    //public static final int RETRACTED_POS = 0, LOW_POS = 700, MEDIUM_POS = 1850, HIGH_POS = 3500;
     public static final double INTAKE_FRONT_POS = 0, INTAKE_REAR_POS = 1.0; //These are not final values
     public static final double COMPLIANT_WHEELS_SPEED = 1.0; //speed of compliant wheels
     // How long it takes for the intake servo to be guaranteed to have moved to its new position.
@@ -76,20 +90,7 @@ public class MechanismDriving {
     public boolean updateSlides(Robot robot) {
 
         if(Robot.desiredSlidesState != Robot.SlidesState.UNREADY){
-            switch(Robot.desiredSlidesState){
-                case RETRACTED:
-                    setSlidePosition(robot, RETRACTED_POS);
-                    break;
-                case LOW:
-                    setSlidePosition(robot, LOW_POS);
-                    break;
-                case MEDIUM:
-                    setSlidePosition(robot, MEDIUM_POS);
-                    break;
-                case HIGH:
-                    setSlidePosition(robot, HIGH_POS);
-                    break;
-            }
+            setSlidePosition(robot, slidePositions.get(Robot.desiredSlidesState));
 
             double mainSpeed,reducedSpeed;//"ramp" the motor speeds down based on how far away from the destination the motors are
             mainSpeed= maxSpeedCoefficient *Range.clip(Math.abs(desiredSlidePosition - robot.slidesRight.getCurrentPosition())/slideRampDownDist, 0.1, 1);
