@@ -68,7 +68,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
         boolean intakeOn = false;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Status", "Run Time: " + runtime);
             telemetry.update();
 
             // Reset speed variables

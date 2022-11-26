@@ -40,9 +40,9 @@ public class TuningController {
         REST
     }
 
-    private StateMachine stateMachine;
+    private final StateMachine stateMachine;
 
-    private ElapsedTime externalTimer = new ElapsedTime();
+    private final ElapsedTime externalTimer = new ElapsedTime();
 
     private double currentTargetVelo = 0.0;
 

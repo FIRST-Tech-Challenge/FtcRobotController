@@ -103,9 +103,9 @@ public class ConceptExternalHardwareClass extends LinearOpMode {
             // Each time around the loop, the servos will move by a small amount.
             // Limit the total offset to half of the full travel range
             if (gamepad1.right_bumper)
-                handOffset += robot.HAND_SPEED;
+                handOffset += RobotHardware.HAND_SPEED;
             else if (gamepad1.left_bumper)
-                handOffset -= robot.HAND_SPEED;
+                handOffset -= RobotHardware.HAND_SPEED;
             handOffset = Range.clip(handOffset, -0.5, 0.5);
 
             // Move both servos to new position.  Use RobotHardware class
@@ -114,9 +114,9 @@ public class ConceptExternalHardwareClass extends LinearOpMode {
             // Use gamepad buttons to move arm up (Y) and down (A)
             // Use the MOTOR constants defined in RobotHardware class.
             if (gamepad1.y)
-                arm = robot.ARM_UP_POWER;
+                arm = RobotHardware.ARM_UP_POWER;
             else if (gamepad1.a)
-                arm = robot.ARM_DOWN_POWER;
+                arm = RobotHardware.ARM_DOWN_POWER;
             else
                 arm = 0;
 

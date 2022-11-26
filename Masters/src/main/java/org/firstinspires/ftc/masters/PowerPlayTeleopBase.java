@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Power Play FPA Build Day", group = "competition")
+@TeleOp(name="Power Play TeleOp", group = "competition")
 public class PowerPlayTeleopBase extends LinearOpMode {
 
 
@@ -35,32 +35,18 @@ public class PowerPlayTeleopBase extends LinearOpMode {
     double maxPowerConstraint = 0.75;
 
     //Fix values
-    public static int SLIDE_HIGH = 1700;
-    public static int SLIDE_MIDDLE = 1300;
-    public static int SLIDE_BOTTOM = 800;
-    public static int SLIDE_BASE = 400;
-
-
-    public enum linearSlidePositions {
-        HIGH,
-        MIDDLE,
-        BOTTOM,
-        BASE,
-        CONE_1,
-        CONE_2,
-        CONE_3,
-        CONE_4,
-        CONE_5
-    }
-
-    linearSlidePositions linearSlideTarget = linearSlidePositions.BASE;
+    public static int SLIDE_HIGH = 1320;
+    public static int SLIDE_MIDDLE = 710;
+    public static int SLIDE_BOTTOM = 0;
 
     //Fix values
-    protected final double clawServoOpen = 0.79;
-    protected final double clawServoClosed = 0.05;
-    protected final double armServoBottom = 0.79;
-    protected final double armServoTop = 0.05;
-    protected double clawServoPos = clawServoOpen;
+    protected final double clawServoOpen = 0.14;
+    protected final double clawServoClosed = 0.0;
+    protected final double armServoBottom = 0.20;
+    protected final double armServoTop = 0.76;
+    protected final double armServoMid = 0.57;
+
+
 
     int strafeConstant=1;
 
@@ -68,6 +54,19 @@ public class PowerPlayTeleopBase extends LinearOpMode {
     public void runOpMode() {
         /*
             Controls
+            --------
+            Gamepad2
+                A: Open claw
+                B: Close claw
+                Dpad Up: High junction
+                Dpad Right: Middle junction
+                Dpad Down: Low junction
+                Dpad Left: Base
+                Left stick Y-axis: Fine linear slide control (Not done yet)
+                Right stick: Arm servo control
+
+            Gamepad1
+                Steer gud
             --------
 
         */
@@ -87,7 +86,6 @@ public class PowerPlayTeleopBase extends LinearOpMode {
 
         clawServo = hardwareMap.servo.get("clawServo");
         armServo = hardwareMap.servo.get("armServo");
-        clawServo.setPosition(clawServoOpen);
 
         // Set the drive motor direction:
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -107,7 +105,8 @@ public class PowerPlayTeleopBase extends LinearOpMode {
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start (driver presses PLAY)
-        armServo.setPosition(armServoBottom);
+        armServo.setPosition(.15);
+        clawServo.setPosition(clawServoOpen);
 
         waitForStart();
         runtime.reset();
@@ -123,23 +122,20 @@ public class PowerPlayTeleopBase extends LinearOpMode {
             telemetry.addData("left x", gamepad1.left_stick_x);
             telemetry.addData("right x", gamepad1.right_stick_x);
 
-            y = gamepad1.left_stick_y;
-            x = gamepad1.left_stick_x;
-            rx = gamepad1.right_stick_x;
+            y = -gamepad2.left_stick_y;
+            x = gamepad2.left_stick_x;
+            rx = gamepad2.right_stick_x;
             if (Math.abs(y) < 0.2) {
                 y = 0;
             }
             if (Math.abs(x) < 0.2) {
                 x = 0;
             }
-                
 
             double leftFrontPower = y + strafeConstant* x + rx;
             double leftRearPower = y - strafeConstant* x + rx;
             double rightFrontPower = y - strafeConstant* x - rx;
             double rightRearPower = y + strafeConstant*x - rx;
-
-
 
             if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
@@ -184,105 +180,53 @@ public class PowerPlayTeleopBase extends LinearOpMode {
                 clawServo.setPosition(clawServoOpen);
             }
 
-
-
             if (gamepad2.dpad_up) {
-                linearSlideTarget = linearSlidePositions.HIGH;
-                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                clawServo.setPosition(clawServoClosed);
+                armServo.setPosition(armServoMid);
                 linearSlideMotor.setTargetPosition(SLIDE_HIGH);
-                linearSlideMotor.setPower(-.4);
+                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearSlideMotor.setPower(.6);
             }
 
             if (gamepad2.dpad_right) {
                 clawServo.setPosition(clawServoClosed);
-                linearSlideTarget = linearSlidePositions.MIDDLE;
-                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armServo.setPosition(armServoMid);
                 linearSlideMotor.setTargetPosition(SLIDE_MIDDLE);
-                linearSlideMotor.setPower(.9);
+                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearSlideMotor.setPower(.6);
             }
 
             if (gamepad2.dpad_down) {
                 clawServo.setPosition(clawServoClosed);
-                linearSlideTarget = linearSlidePositions.BOTTOM;
-                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armServo.setPosition(armServoMid);
                 linearSlideMotor.setTargetPosition(SLIDE_BOTTOM);
-                linearSlideMotor.setPower(.9);
+                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearSlideMotor.setPower(.6);
             }
 
             if (gamepad2.dpad_left) {
                 clawServo.setPosition(clawServoClosed);
-                linearSlideTarget = linearSlidePositions.BASE;
+                linearSlideMotor.setTargetPosition(SLIDE_BOTTOM);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setTargetPosition(SLIDE_BASE);
-                linearSlideMotor.setPower(.9);
-            }
-
-            if (Math.abs(gamepad2.left_stick_y) < 0.2) {
-                linearSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                linearSlideMotor.setPower(gamepad2.left_stick_y/2);
-            }
-
-            if (gamepad2.right_stick_y > 0.2) {
-                armServo.setPosition(armServoTop);
-            } else if (gamepad2.right_stick_y < -0.2) {
+                linearSlideMotor.setPower(-.4);
                 armServo.setPosition(armServoBottom);
-            } else {
-                armServo.setPosition(armServo.getPosition());
             }
 
-//            
-//            if (gamepad2.right_bumper){
-//                clawServoPos= clawServoOpen;
-//                armServo.setPosition(clawServoPos);
+            if (gamepad2.left_bumper) {
+                armServo.setPosition(armServoTop);
+            }
+
+//            if (Math.abs(gamepad2.left_stick_y) < 0.2) {
+//                linearSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                linearSlideMotor.setPower(gamepad2.left_stick_y/2);
 //            }
 
-//            if (gamepad2.right_trigger >= .35) {
-//                clawServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-//                linearSlideTarget = linearSlidePositions.BASE;
-//                linearSlideMotor.setTargetPosition(20);
-//                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                linearSlideMotor.setPower(-.4);
-//            }
+            if (gamepad2.right_stick_y > 0.6) {
+                armServo.setPosition(armServoBottom);
+            } else if (gamepad2.right_stick_y < -0.6) {
+                armServo.setPosition(armServoMid);
+            }
 
-//            if (gamepad2.dpad_up) {
-////                Top scoring
-//                intakeMotor.setPower(-0.8);
-//                clawServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-//                linearSlideTarget = linearSlidePositions.TOP;
-//
-//                intakeOn = false;
-//                linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
-//                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                linearSlideMotor.setPower(.9);
-//                intakeMotor.setPower(0);
-//            }
-//
-//            if (gamepad2.dpad_right) {
-////                Middle scoring
-//                intakeMotor.setPower(-0.8);
-//                clawServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-//                linearSlideTarget = linearSlidePositions.MIDDLE;
-//
-//                intakeOn = false;
-//                //robot.pause(400);
-//                linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_MIDDLE);
-//                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                linearSlideMotor.setPower(.9);
-//                intakeMotor.setPower(0);
-//            }
-//
-//            if (gamepad2.dpad_down) {
-////                Low scoring
-//                intakeMotor.setPower(-0.8);
-//                clawServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-//                linearSlideTarget = linearSlidePositions.BOTTOM;
-//
-//                intakeOn = false;
-//                linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_LOW);
-//                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                linearSlideMotor.setPower(.8);//.4
-//                intakeMotor.setPower(0);
-//            }
 
             telemetry.update();
         }
