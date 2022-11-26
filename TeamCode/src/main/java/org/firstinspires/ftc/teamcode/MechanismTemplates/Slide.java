@@ -8,14 +8,15 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class Slide {
+
     private PIDFController slidePIDF;
     private Motor slideLeft, slideRight;
 
     //TODO: change values into actual tested positions instead of placeholders
-    private final static double HIGH_JUNCTION= 2200; //<-- 12.90, 2150 ;
-    private final static double MID_JUNCTION = 1500; //<-- 12.90, 1550 ;
-    private final static double LOW_JUNCTION = 325;  //<-- 12.90, 500 ;
-    public static double ZERO_POSITION = 10;//5;
+    public static double HIGH_JUNCTION= 2300; //<-- 12.90, 2150 ;
+    public static double MID_JUNCTION = 1500; //<-- 12.90, 1550 ;
+    public static double LOW_JUNCTION = 0;  //<-- 12.90, 500 ;
+    public final static double ZERO_POSITION = 10;//5;
     public final double MAX = 2450;
 
     public static double slideKp = 0.003; //0.00326; //0.0039;
