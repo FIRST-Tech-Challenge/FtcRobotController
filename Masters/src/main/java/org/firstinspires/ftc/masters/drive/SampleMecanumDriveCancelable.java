@@ -24,7 +24,7 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.TRACK_WIDTH;
 @Config
 public class SampleMecanumDriveCancelable extends SampleMecanumDrive {
 
-    private TrajectorySequenceRunnerCancelable trajectorySequenceRunnerCancelable;
+    private final TrajectorySequenceRunnerCancelable trajectorySequenceRunnerCancelable;
 
 
     public SampleMecanumDriveCancelable(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
