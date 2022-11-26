@@ -4,30 +4,31 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name ="RRHigh", group = "A")
-@Disabled
+//@Disabled
 public class RRHigh extends DriveMethods{
     public void runOpMode() {
         initMotorsBlue();
 
-//        clawClamp();
-//        GoToHeight(1950);
-//        sleep(500);
-
+        clawClamp();
+        sleep(500);
         waitForStart();
 
-        driveForDistance(0.45, Variables.Direction.FORWARD, 0.35, 0);
-        driveForDistance(1.25, Variables.Direction.LEFT, 0.35, 0);
-        driveForDistance(0.1, Variables.Direction.FORWARD, 0.35, 0);
+        GoToHeight(300);
 
-//        clawRelease();
-
-        driveForDistance(0.1, Variables.Direction.BACKWARD, 0.35, 0);
-
-//        sleep(1000);
-//        GoToHeight(0);
-
-        driveForDistance(1.25, Variables.Direction.RIGHT, 0.35, 0);
-        driveForDistance(1.5, Variables.Direction.BACKWARD, 0.35, 0);
+        driveForDistance(0.65, Variables.Direction.RIGHT,0.35,0);
+        driveForDistance(1.22, Variables.Direction.FORWARD,0.35,0);
+        driveForDistance(0.35, Variables.Direction.LEFT, 0.35,0);
+        goToHigh();
+        driveForDistance(0.25, Variables.Direction.FORWARD,0.2,0);
+        sleep(500);
+        clawRelease();
+        sleep(200);
+        driveForDistance(0.15, Variables.Direction.BACKWARD,0.35,0);
+        goToDown();
+        sleep(500);
+        driveForDistance(0.33, Variables.Direction.RIGHT, 0.35,0);
+        driveForDistance(1.22, Variables.Direction.BACKWARD,0.35,0);
+        driveForDistance(1.5, Variables.Direction.LEFT,0.35,0);
 
         while (opModeIsActive()) {
 

@@ -44,8 +44,11 @@ public class Meet1Teleop extends DriveMethods {
         int slideTarget = 0;
         int slideDifference = 0;
         int targetHeight = 0;
+        double sPosition = motorSlide.getCurrentPosition();
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            sPosition = motorSlide.getCurrentPosition();
 
             //update doubles
             leftY = -gamepad1.left_stick_y;
@@ -77,77 +80,50 @@ public class Meet1Teleop extends DriveMethods {
             if(gamepad1.b) {
                 speedDiv = 4;
             }
+            if(gamepad2.dpad_up || gamepad2.dpad_down){
+                if(gamepad2.dpad_up) {
+                    targetHeight++;
+                    if (targetHeight > 4) {
+                        targetHeight = 4;
+                    }
+                    sleep(150);
+                }
+                if (gamepad2.dpad_down) {
+                    targetHeight--;
+                    if (targetHeight < 0) {
+                        targetHeight = 0;
+                    }
+                    sleep(150);
+                }
+                switch (targetHeight) {
+                        case 0:
+                            slideTarget = 0;
+                            aggressiveness = 2000;
+                            holdingPower = 0.0;
+                            break;
+                        case 1:
+                            slideTarget = 200;
+                            aggressiveness = 1200;
+                            holdingPower = 0.06;
+                            break;
+                        case 2:
+                            slideTarget = 1800;
+                            aggressiveness = 2000;
+                            holdingPower = 0.18;
+                            break;
+                        case 3:
+                            slideTarget = 2950;
+                            aggressiveness = 2000;
+                            holdingPower = 0.18;
+                            break;
+                        case 4:
+                            slideTarget = 4200;
+                            aggressiveness = 2000;
+                            holdingPower = 0.18;
+                            break;
 
-            if(gamepad2.dpad_up){
-                targetHeight++;
-                if(targetHeight > 4){
-                    targetHeight = 4;
+                    }
                 }
-                switch(targetHeight){
-                    case 0:
-                        slideTarget = 0;
-                        aggressiveness = 2000;
-                        holdingPower = 0.0;
-                        break;
-                    case 1:
-                        slideTarget = 200;
-                        aggressiveness = 1200;
-                        holdingPower = 0.06;
-                        break;
-                    case 2:
-                        slideTarget = 1800;
-                        aggressiveness = 2000;
-                        holdingPower = 0.18;
-                        break;
-                    case 3:
-                        slideTarget = 2950;
-                        aggressiveness = 2000;
-                        holdingPower = 0.18;
-                        break;
-                    case 4:
-                        slideTarget = 4200;
-                        aggressiveness = 2000;
-                        holdingPower = 0.18;
-                        break;
-
-                }
-                sleep(150);
-            }
-            if(gamepad2.dpad_down){
-                targetHeight--;
-                if(targetHeight < 0){
-                    targetHeight = 0;
-                }
-                switch(targetHeight){
-                    case 0:
-                        slideTarget = 0;
-                        aggressiveness = 2000;
-                        holdingPower = 0.0;
-                        break;
-                    case 1:
-                        slideTarget = 200;
-                        aggressiveness = 1200;
-                        holdingPower = 0.06;
-                        break;
-                    case 2:
-                        slideTarget = 1800;
-                        aggressiveness = 2000;
-                        holdingPower = 0.18;
-                        break;
-                    case 3:
-                        slideTarget = 2950;
-                        aggressiveness = 2000;
-                        holdingPower = 0.18;
-                        break;
-                    case 4:
-                        slideTarget = 4200;
-                        aggressiveness = 2000;
-                        holdingPower = 0.18;
-                        break;
-
-                }
-                sleep(150);
-            }
 
             //Change the target hight based on the height of the linear slide at the time.
 
@@ -166,6 +142,18 @@ public class Meet1Teleop extends DriveMethods {
                     slideTarget += (int) -gamepad2.left_stick_y * 25;
                     aggressiveness = 1250;
                     sleep(50);
+                if (sPosition<300 && sPosition>0){
+                    targetHeight = 1;
+                }
+                if (sPosition<1900 && sPosition>300){
+                    targetHeight = 2;
+                }
+                if (sPosition<3150 && sPosition>1900){
+                    targetHeight = 3;
+                }
+                if (sPosition>3150 && sPosition<4300){
+                    targetHeight = 4;
+                }
             }
             if(slideTarget<0){
                 slideTarget=0;
