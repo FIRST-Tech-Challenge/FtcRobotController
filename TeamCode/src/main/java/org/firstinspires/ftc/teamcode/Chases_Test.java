@@ -91,7 +91,6 @@ public class Chases_Test extends LinearOpMode {
             frontRight.setPower(turn);
             backLeft.setPower(-turn);
             backRight.setPower(turn);
-
             crane.setPower(cranePower);
 
             if (armToggle){
