@@ -309,6 +309,7 @@ public class Elevator {
             case AUTO_GRAB: {
                 if (liftInPosition) {
                     terminateSequence = true;  // signal to auto to stop waiting for grab;
+                    setWristOffset(0);
                     setState(IN_POSITION_CLOSED);
                 }
                 break;

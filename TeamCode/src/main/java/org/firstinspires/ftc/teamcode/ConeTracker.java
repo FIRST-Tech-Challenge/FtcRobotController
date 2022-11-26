@@ -121,11 +121,11 @@ public class ConeTracker {
                 }
             }
 
-            if (coneRange > 100) {
+            if (coneRange >= 100) {
                 trackDrive = 0.2;
-            } else if (coneRange > 80) {
+            } else if (coneRange >= 80) {
                 trackDrive = 0.1;
-            } else if (coneRange > 70) {
+            } else if (coneRange >= 70) {
                 trackDrive = 0.05;
             } else if (coneRange < 70) {
                 trackDrive = -0.1;

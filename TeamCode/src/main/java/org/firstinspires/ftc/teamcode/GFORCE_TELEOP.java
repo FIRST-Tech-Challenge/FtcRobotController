@@ -76,8 +76,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
         while (opModeInInit()) {
             telemetry.addData("Alliance", weAreRed ? "RED" : "blue");
             elevator.runStateMachine();
-            // coneTracker.update();       // testing only
-            // coneTracker.showRanges();   // testing only
+            coneTracker.update();       // testing only
+            coneTracker.showRanges();   // testing only
             telemetry.addData("GYRO heading", Math.toDegrees(drive.getExternalHeading()));
             telemetry.update();
         }
