@@ -49,7 +49,8 @@ public class Servotesting extends LinearOpMode {
 
             boolean pickup;
             boolean dropoff;
-            double spinpower;
+            boolean spinpowerup;
+            boolean spinpowerdown;
             double crainpower;
             boolean turning;
 
@@ -58,17 +59,18 @@ public class Servotesting extends LinearOpMode {
             strafeLeft = gamepad1.left_bumper;
             strafeRight = gamepad1.right_bumper;
 
-            crainpower = gamepad2.left_stick_y;
-            spinpower = gamepad2.right_stick_x;
+            crainpower = gamepad2.right_stick_y;
+            spinpowerup = gamepad2.dpad_right;
+            spinpowerdown =gamepad2.dpad_left;
             pickup = gamepad2.x;
             dropoff = gamepad2.y;
             turning = gamepad2.b;
 
             if (strafeLeft) {
-                frontLeft.setPower(-0.75);
-                frontRight.setPower(0.75);
-                backLeft.setPower(0.75);
-                backRight.setPower(-0.75);
+                frontLeft.setPower(0.75);
+                frontRight.setPower(-0.75);
+                backLeft.setPower(-00.75);
+                backRight.setPower(0.75);
             }
             if (strafeRight) {
                 frontLeft.setPower(-0.75);
@@ -90,7 +92,16 @@ public class Servotesting extends LinearOpMode {
 
             Crain.setPower(crainpower);
 
-            Spin.setPower(spinpower);
+            if (spinpowerup){
+                Spin.setPower(.5);
+            }
+            if (spinpowerdown){
+                Spin.setPower(-.5);
+            }
+
+            if (!spinpowerdown && !spinpowerup){
+                Spin.setPower(0);
+            }
 
             if (pickup==true) {
                 Right.setPower(1);
