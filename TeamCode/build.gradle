@@ -24,6 +24,8 @@ android {
 }
 
 dependencies {
+    api project(':RoadRunner')
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.6'
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:apriltag:1.1.0'

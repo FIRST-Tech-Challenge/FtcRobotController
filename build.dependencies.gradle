@@ -8,6 +8,7 @@ repositories {
 }
 
 dependencies {
+    api project(':RoadRunner')
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.6'
     implementation 'org.firstinspires.ftc:Inspection:8.0.0'
     implementation 'org.firstinspires.ftc:Blocks:8.0.0'
