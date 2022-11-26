@@ -3,23 +3,34 @@ package org.firstinspires.ftc.teamcode;
 
 import android.view.ViewDebug;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 @TeleOp(name = "Official Manual Mode", group = "Match")
 public class OfficialManualMode extends LinearOpMode {
+    public boolean useCamera = true;
     private DcMotor _fl, _fr, _rl, _rr;
     private Servo _grip, _platform, _elbow, _shoulder;
+    public CameraName cameraName;
     private double _armPosition = 0, _leftTrigger = 0, _rightTrigger = 0;
     private boolean logMode = false;
     private ArrayList<String> logArray = new ArrayList<>();
@@ -76,6 +87,8 @@ public class OfficialManualMode extends LinearOpMode {
 
     // "grip_max" "grip_min" "grip_open @10" "grip_close @10"
     //
+
+    // "ai_park" get park destination using AI
     public ArrayList<String> presetActionsLeft = new ArrayList<String>(Arrays.asList(
             "elbow_up @40",
             "grip_max",
@@ -135,6 +148,23 @@ public class OfficialManualMode extends LinearOpMode {
     private ElapsedTime moreTimeToStart = new ElapsedTime();
     private boolean stopPresetAction = false;
 
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
+
+    private static final String[] LABELS = {
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
+    };
+
+    private static final String VUFORIA_KEY =
+            "ATLKdnj/////AAABmVUesrWAHkpqtkg5toiScOqGWcxBnaVXzQ6AYKnG4ytMQUy2LoJpp3DUYKoiA2EZluhn1YMc92J8CBE+yPxU8WrJoIYsxjuZT6J/FNft57D7HkvDvOcMVGNy3TdGWv2oLCIdDFYC20nAL1OlD2dblASXzpyWaKsI1tPJtBisQnMRyDa4ytwk5U1jhlGUsVAFg0xdyMwOsNKQALO/FUea4shIGLihl2RQtRKawpB0bou99vaxtAqGcIH06ItbIKIegF/z3bpO/a7GKECeAInSJ3UJvQmey0aHeLu/KXKkmw9bRdgYCyNbtgdSd+cHr+ZdmNp0/yV3xqeWr8DQsimFkv5gDMwGfUXlEua6sb85kHwL";
+
+    private VuforiaLocalizer vuforia;
+    private TFObjectDetector tfod;
+
+    public int parkingPosition = 2;
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Declare our motors
@@ -172,6 +202,26 @@ public class OfficialManualMode extends LinearOpMode {
         _elbow = hardwareMap.get(Servo.class, "elbow");
         _shoulder = hardwareMap.get(Servo.class, "shoulder");
 
+        if (useCamera) {
+            initVuforia();
+            initTfod();
+            /**
+             * Activate TensorFlow Object Detection before we wait for the start command.
+             * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
+             **/
+            if (tfod != null) {
+                tfod.activate();
+
+                // The TensorFlow software will scale the input images from the camera to a lower resolution.
+                // This can result in lower detection accuracy at longer distances (> 55cm or 22").
+                // If your target is at distance greater than 50 cm (20") you can increase the magnification value
+                // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
+                // should be set to the value of the images used to create the TensorFlow Object Detection model
+                // (typically 16/9).
+                tfod.setZoom(1.0, 16.0/9.0);
+            }
+        }
+
         //_shoulder.resetDeviceConfigurationForOpMode();
         //_platform.resetDeviceConfigurationForOpMode();
         //_elbow.resetDeviceConfigurationForOpMode();
@@ -195,7 +245,7 @@ public class OfficialManualMode extends LinearOpMode {
         Thread threadArm = new Thread(new MultithreadingArm());
 
         while (opModeIsActive()) {
-            if (moreTimeToStart.milliseconds() < 500) {
+            if (moreTimeToStart.milliseconds() < 200) {
                 telemetry.addData("Waiting millisecond: ", moreTimeToStart.milliseconds()  );
                 telemetry.update();
                 continue;
@@ -206,11 +256,37 @@ public class OfficialManualMode extends LinearOpMode {
                 resetToPresetPosition(0);
                 threadWheel.start();
                 threadArm.start();
+                if (useCamera) {
+                    //ConceptTensorFlowObjectDetectionWebcam camera = new ConceptTensorFlowObjectDetectionWebcam();
+                    //camera.setCameraName(cameraName);
+                }
             }
             //controlArm();
             //controlWheels();
 
-            //nothing need to be done here now
+            if (useCamera && tfod != null) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Objects Detected", updatedRecognitions.size());
+
+                    // step through the list of recognitions and display image position/size information for each one
+                    // Note: "Image number" refers to the randomized image orientation/number
+                    for (Recognition recognition : updatedRecognitions) {
+                        double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                        double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                        double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                        double height = Math.abs(recognition.getTop() - recognition.getBottom());
+
+                        telemetry.addData("", " ");
+                        telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                        telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                        telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
+                    }
+                    telemetry.update();
+                }
+            }
             sleep(10);
         }
     }
@@ -224,6 +300,7 @@ public class OfficialManualMode extends LinearOpMode {
             _shoulder.setPosition(shoulderDefaultPosition);
             _elbow.setPosition(elbowDefaultPosition);
             _platform.setPosition(platformDefaultPosition);
+            _grip.setPosition(gripMinPosition);
             //replayActions(presetActionsShoulderUp);
         }
     }
@@ -606,6 +683,9 @@ public class OfficialManualMode extends LinearOpMode {
                 repeatTimes = Integer.parseInt(splitStrings[1]);
                 sleep(repeatTimes);
             }
+            else if (splitStrings[0].contains("ai_park")) {
+                aiPark();
+            }
             else if (splitStrings[0].startsWith("both")) {
                 shoulderElbowBoth(splitStrings);
             }
@@ -634,6 +714,53 @@ public class OfficialManualMode extends LinearOpMode {
         }
         telemetry.update();
 
+    }
+
+
+    boolean aiPark() {
+        int type = -1;
+        if (useCamera && tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                telemetry.addData("# Objects Detected", updatedRecognitions.size());
+
+                // step through the list of recognitions and display image position/size information for each one
+                // Note: "Image number" refers to the randomized image orientation/number
+                for (Recognition recognition : updatedRecognitions) {
+                    double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                    double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                    double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                    double height = Math.abs(recognition.getTop() - recognition.getBottom());
+
+                    telemetry.addData("", " ");
+                    telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                    telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                    telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
+
+                    if (recognition.getConfidence() > 0.6) {
+                        String s = recognition.getLabel();
+                        if (s.equals("0") ) {
+                            type = 1;
+                        }
+                        else if (s.equals("1")) {
+                            type = 2;
+                        }
+                        else if (s.equals("2")) {
+                            type = 3;
+                        }
+                    }
+                }
+                telemetry.update();
+            }
+        }
+        if (type == -1)
+            return false;
+        else {
+            parkingPosition = type;
+            return true;
+        }
     }
 
     public void shoulderElbowBoth(String[] splitStrings) {
@@ -919,7 +1046,7 @@ public class OfficialManualMode extends LinearOpMode {
             try {
                 while (true) {
                     controlWheels();
-                    sleep(1);
+                    //sleep(1);
                 }
             }
             catch (Exception e) {
@@ -940,6 +1067,40 @@ public class OfficialManualMode extends LinearOpMode {
                 System.out.println("Exception is caught");
             }
         }
+    }
+
+    /**
+     * Initialize the Vuforia localization engine.
+     */
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    public void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.75f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 300;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+
+        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
+        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
  }
 
