@@ -131,10 +131,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
         rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
-//        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DcMotorEx backEncoder= hardwareMap.get(DcMotorEx.class, "leftEncoder");
+        backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
 
@@ -165,7 +167,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 //        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
-        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap,this));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID, this);
         if(ultrasonics) {
             ultras = new Ultrasonics();

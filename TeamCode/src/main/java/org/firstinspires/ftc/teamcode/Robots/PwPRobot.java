@@ -3,11 +3,8 @@ package org.firstinspires.ftc.teamcode.Robots;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
-import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
-import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
-
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
@@ -269,40 +266,40 @@ public class PwPRobot extends BasicRobot {
 
         //omnidirectional movement + turning
 
-        if (op.gamepad2.y) {
-            lift.setLiftTarget(LIFT_HIGH_JUNCTION.getValue());
-            liftArm.raiseLiftArmToOuttake();
-        }
-        if (op.gamepad2.b) {
-            lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
-            liftArm.raiseLiftArmToOuttake();
-        }
-        if (op.gamepad2.a) {
-            liftArm.lowerLiftArmToIntake();
-            lift.setLiftTarget(0);
-        }
-
-        if (op.gamepad1.dpad_left && op.gamepad2.dpad_left) {
-            lift.resetEncoder();
-        }
-        //manual lift up/down
-        if (op.gamepad1.dpad_down && op.gamepad2.dpad_down) {
-            lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger) / 3);
-        } else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
-            lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
-            lift.updateLastManualTime();
-        }
-        else {
-//            lift.setLiftPower(0);
-            lift.liftToTarget();
-        }
-
-        if(op.gamepad2.dpad_down){
-            lift.iterateConeStackDown();
-        }
-        if(op.gamepad2.dpad_up){
-            lift.iterateConeStackUp();
-        }
+//        if (op.gamepad2.y) {
+//            lift.setLiftTarget(LIFT_HIGH_JUNCTION.getValue());
+//            liftArm.raiseLiftArmToOuttake();
+//        }
+//        if (op.gamepad2.b) {
+//            lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
+//            liftArm.raiseLiftArmToOuttake();
+//        }
+//        if (op.gamepad2.a) {
+//            liftArm.lowerLiftArmToIntake();
+//            lift.setLiftTarget(0);
+//        }
+//
+//        if (op.gamepad1.dpad_left && op.gamepad2.dpad_left) {
+//            lift.resetEncoder();
+//        }
+//        //manual lift up/down
+//        if (op.gamepad1.dpad_down && op.gamepad2.dpad_down) {
+//            lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger) / 3);
+//        } else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
+//            lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
+//            lift.updateLastManualTime();
+//        }
+//        else {
+////            lift.setLiftPower(0);
+//            lift.liftToTarget();
+//        }
+//
+//        if(op.gamepad2.dpad_down){
+//            lift.iterateConeStackDown();
+//        }
+//        if(op.gamepad2.dpad_up){
+//            lift.iterateConeStackUp();
+//        }
         //when not manual lifting, automate lifting
 
 //        if (field.lookingAtPole() && op.gamepad1.dpad_up && !roadrun.isBusy()) {
@@ -323,73 +320,73 @@ public class PwPRobot extends BasicRobot {
             }
             roadrun.setWeightedDrivePower(
                     new Pose2d(
-                            -/*vals[1]**/0.53*vals[1]/abs(vals[1]) * pow(abs(vals[1]),3.0/2),
-                            -/*vals[0]**/0.53*vals[0]/abs(vals[0]) * pow(abs(vals[0]),3.0/2),
-                            -/*vals[2]**/0.53*vals[2]/abs(vals[2]) * pow(abs(vals[2]),3.0/2)
+                            -/*vals[1]**/0.8*vals[1]/abs(vals[1]) * pow(abs(vals[1]),1.55),
+                            -/*vals[0]**/0.8*vals[0]/abs(vals[0]) * pow(abs(vals[0]),1.55),
+                            -/*vals[2]**/0.8*vals[2]/abs(vals[2]) * pow(abs(vals[2]),1.55)
                     )
             );
-            if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
-                logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + "= " + "0 | 0 | 0", true);
-                mecZeroLogged = true;
-            }
-            else if((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == true)){
-                //nutting
-            }
-            else {
-                logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + -op.gamepad1.left_stick_y * 0.7 + " | " + -op.gamepad1.left_stick_x + " | " + -op.gamepad1.right_stick_x * 0.8, true);
-                mecZeroLogged = false;
-            }
-//        //toggle automate lift target to higher junc
-//        if (op.gamepad2.dpad_up) {
-//            lift.toggleLiftPosition(1);
-//        }
-//        //toggle automate lift target to lower junc
-//        if (op.gamepad2.dpad_down) {
-//            lift.toggleLiftPosition(-1);
-//        }
-            //toggle liftArm position
-            if (op.gamepad2.right_bumper) {
-                if (ARM_OUTTAKE.getStatus()) {
-                    liftArm.lowerLiftArmToIntake();
-
-                } else {
-                    liftArm.raiseLiftArmToOuttake();
-                }
-            }
-            if (op.gamepad1.right_bumper) {
-                if(CLAW_CLOSED.getStatus()) {
-                    claw.setLastOpenTime(op.getRuntime());
-                    claw.openClaw();
-                }else{
-                    claw.closeClawRaw();
-                }
-            }
-            claw.closeClaw();
-            if (op.getRuntime() - claw.getLastTime() > .3 && op.getRuntime() - claw.getLastTime() < .5 && CLAW_CLOSED.getStatus()) {
-                if(lift.getLiftPosition()>120) {
-                    lift.raiseLiftOffStack();
-                }
-                else {
-                    liftArm.raiseLiftArmToOuttake();
-                }
-            }
-
-
-            //manual open/close claw (will jsut be open claw in the future)
-
-            //will only close when detect cone
-            //claw.closeClaw
-            gp.readGamepad(op.gamepad2.y, "gamepad1_y", "High Junction");
-            gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Toggle Claw Open/Close");
-            gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Ground Junction");
-            gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Medium Junction");
-            gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Forwards/Backwards");
-            gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Left/Right");
-            gp.readGamepad(op.gamepad1.right_stick_x, "gamepad1_right_stick_x", "Turn Angle Left/Right");
-            gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Lift going down power");
-            gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Lift going up power");
-            gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Lift Arm Toggle Up/Down");
-            op.telemetry.addData("stacklevel", lift.getStackLevel());
+//            if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
+//                logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + "= " + "0 | 0 | 0", true);
+//                mecZeroLogged = true;
+//            }
+//            else if((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == true)){
+//                //nutting
+//            }
+//            else {
+//                logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + -op.gamepad1.left_stick_y * 0.7 + " | " + -op.gamepad1.left_stick_x + " | " + -op.gamepad1.right_stick_x * 0.8, true);
+//                mecZeroLogged = false;
+//            }
+////        //toggle automate lift target to higher junc
+////        if (op.gamepad2.dpad_up) {
+////            lift.toggleLiftPosition(1);
+////        }
+////        //toggle automate lift target to lower junc
+////        if (op.gamepad2.dpad_down) {
+////            lift.toggleLiftPosition(-1);
+////        }
+//            //toggle liftArm position
+//            if (op.gamepad2.right_bumper) {
+//                if (ARM_OUTTAKE.getStatus()) {
+//                    liftArm.lowerLiftArmToIntake();
+//
+//                } else {
+//                    liftArm.raiseLiftArmToOuttake();
+//                }
+//            }
+//            if (op.gamepad1.right_bumper) {
+//                if(CLAW_CLOSED.getStatus()) {
+//                    claw.setLastOpenTime(op.getRuntime());
+//                    claw.openClaw();
+//                }else{
+//                    claw.closeClawRaw();
+//                }
+//            }
+//            claw.closeClaw();
+//            if (op.getRuntime() - claw.getLastTime() > .3 && op.getRuntime() - claw.getLastTime() < .5 && CLAW_CLOSED.getStatus()) {
+//                if(lift.getLiftPosition()>120) {
+//                    lift.raiseLiftOffStack();
+//                }
+//                else {
+//                    liftArm.raiseLiftArmToOuttake();
+//                }
+//            }
+//
+//
+//            //manual open/close claw (will jsut be open claw in the future)
+//
+//            //will only close when detect cone
+//            //claw.closeClaw
+//            gp.readGamepad(op.gamepad2.y, "gamepad1_y", "High Junction");
+//            gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Toggle Claw Open/Close");
+//            gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Ground Junction");
+//            gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Medium Junction");
+//            gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Forwards/Backwards");
+//            gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Left/Right");
+//            gp.readGamepad(op.gamepad1.right_stick_x, "gamepad1_right_stick_x", "Turn Angle Left/Right");
+//            gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Lift going down power");
+//            gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Lift going up power");
+//            gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Lift Arm Toggle Up/Down");
+//            op.telemetry.addData("stacklevel", lift.getStackLevel());
             roadrun.update();
             liftArm.updateLiftArmStates();
             claw.updateClawStates();

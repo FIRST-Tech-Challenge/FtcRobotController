@@ -13,7 +13,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 @Config
 public class SleeveObserverPipeline extends OpenCvPipeline {
-    double centerOfPole = 0, poleSize = 0, degPerPix = -22.5/320, widTimesDist = 16.007*58;
     ArrayList<double[]> frameList;
     public static double p1x = 340, p1y =240, p2x = 430, p2y =370,
 
