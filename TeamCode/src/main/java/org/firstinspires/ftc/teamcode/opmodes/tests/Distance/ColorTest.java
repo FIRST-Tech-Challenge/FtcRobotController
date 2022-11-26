@@ -29,6 +29,7 @@ public class ColorTest extends LinearOpMode {
         // While the Op Mode is running, update the telemetry values.
         while (opModeIsActive()) {
             telemetry.addData("Distance", color.getDistance(DistanceUnit.INCH));
+            Distance();
             telemetry.addData("Red", color.red());
             telemetry.addData("Green", color.green());
             telemetry.addData("Blue", color.blue());
@@ -37,8 +38,10 @@ public class ColorTest extends LinearOpMode {
 
     }
 
-    public String Distance() {
-        //color.getDistance(DistanceUnit.MM);
-        return null;
+
+
+    public void Distance() {
+        color.getDistance(DistanceUnit.INCH);
+
     }
 }
