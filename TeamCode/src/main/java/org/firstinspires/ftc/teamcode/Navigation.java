@@ -812,103 +812,103 @@ public class Navigation
  */
 class AutonomousPaths {
     // Coordinates relative to starting location close to carousel.
-    public static final Position allianceShippingHub =
-            new Position(new Point(11, 20, "POI shipping hub",
-                    Point.Action.PRELOAD_BOX, 0, 0), -Math.PI / 2);
-    public static final Position allianceStorageUnit =
-            new Position(new Point(19, -18, "POI alliance storage unit"), 0);
-    public static final Position carousel =
-            new Position(new Point(4, -13.5, "POI carousel", Point.Action.CAROUSEL,
-                    Navigation.STRAFE_CORRECTION_POWER, Navigation.ROTATION_CORRECTION_POWER), -Math.PI / 6);
-    public static final Position warehouse =
-            new Position(new Point(10, 50, "POI warehouse"), 0);
-
-    public static final Position out_from_carousel =
-            new Position(new Point(
-                    carousel.getX() + 2, carousel.getY() + 3, "out from carousel"), -Math.PI / 6);
-                    //                   6,                      -11,
-
-
-    public static final Position backed_up_from_ASH =
-            new Position(new Point(
-                    allianceShippingHub.getX() - 5, allianceShippingHub.getY(),
-                    "backed up from shipping hub"), -Math.PI / 2);
-    public static final Position lined_up_with_ASU =
-            new Position(new Point(
-                    allianceShippingHub.getX() - 5, allianceStorageUnit.getY(),
-                    "lined up with storage unit"), -Math.PI / 2);
-    public static final Position warehouse_entrance =
-            new Position(new Point(-3, warehouse.getY() - 11, "warehouse entrance"), 0);
-    public static final Position inside_warehouse =
-            new Position(new Point(-6, warehouse.getY(), "inside warehouse", Point.Action.RAISE_SLIDE_L1,
-                    Navigation.STRAFE_CORRECTION_POWER, 0.0), 0);
-
-    public static final ArrayList<Position> PARK_ASU = new ArrayList<>(Arrays.asList(
-            new Position(new Point(10, allianceStorageUnit.getY(), "near storage unit"), 0),
-            allianceStorageUnit
-    ));
-    public static final ArrayList<Position> PRELOAD_BOX = new ArrayList<>(Arrays.asList(
-            allianceShippingHub
-    ));
-    public static final ArrayList<Position> CAROUSEL = new ArrayList<>(Arrays.asList(
-            out_from_carousel,
-            carousel
-    ));
-    public static final ArrayList<Position> PRELOAD_BOX_AND_PARK_ASU = new ArrayList<>(Arrays.asList(
-            allianceShippingHub,
-            backed_up_from_ASH,
-            lined_up_with_ASU,
-            allianceStorageUnit
-    ));
-    public static final ArrayList<Position> CAROUSEL_AND_PRELOAD_BOX = new ArrayList<>(Arrays.asList(
-            out_from_carousel,
-            carousel,
-            allianceShippingHub
-    ));
-    public static final ArrayList<Position> PRELOAD_BOX_AND_CAROUSEL = new ArrayList<>(Arrays.asList(
-            allianceShippingHub,
-            out_from_carousel,
-            carousel
-    ));
-    public static final ArrayList<Position> CAROUSEL_PRELOAD_BOX_AND_PARK_ASU = new ArrayList<>(Arrays.asList(
-            out_from_carousel,
-            carousel,
-            allianceShippingHub,
-            backed_up_from_ASH,
-            lined_up_with_ASU,
-            allianceStorageUnit
-    ));
-    public static final ArrayList<Position> PRELOAD_BOX_CAROUSEL_AND_PARK_ASU = new ArrayList<>(Arrays.asList(
-            allianceShippingHub,
-            out_from_carousel,
-            carousel,
-            allianceStorageUnit
-    ));
-    public static final ArrayList<Position> CAROUSEL_AND_PARK_ASU = new ArrayList<>(Arrays.asList(
-            out_from_carousel,
-            carousel,
-            allianceStorageUnit
-    ));
-    public static final ArrayList<Position> PARK_WAREHOUSE = new ArrayList<>(Arrays.asList(
-            new Position(new Point(6, warehouse_entrance.getY() - 11, "out from start wall"), -Math.PI / 2),
-            warehouse_entrance,
-            inside_warehouse,
-            warehouse
-    ));
-    public static final ArrayList<Position> PRELOAD_BOX_AND_PARK_WAREHOUSE = new ArrayList<>(Arrays.asList(
-            allianceShippingHub,
-            new Position(new Point(backed_up_from_ASH.getX(), backed_up_from_ASH.getY(), "backed up from ASH"), 0),
-            warehouse_entrance,
-            inside_warehouse,
-            warehouse
-    ));
-    public static final ArrayList<Position> CAROUSEL_AND_PARK_WAREHOUSE = new ArrayList<>(Arrays.asList(
-            out_from_carousel,
-            carousel,
-            warehouse_entrance,
-            inside_warehouse,
-            warehouse
-    ));
+//    public static final Position allianceShippingHub =
+//            new Position(new Point(11, 20, "POI shipping hub",
+//                    Point.Action.PRELOAD_BOX, 0, 0), -Math.PI / 2);
+//    public static final Position allianceStorageUnit =
+//            new Position(new Point(19, -18, "POI alliance storage unit"), 0);
+//    public static final Position carousel =
+//            new Position(new Point(4, -13.5, "POI carousel", Point.Action.CAROUSEL,
+//                    Navigation.STRAFE_CORRECTION_POWER, Navigation.ROTATION_CORRECTION_POWER), -Math.PI / 6);
+//    public static final Position warehouse =
+//            new Position(new Point(10, 50, "POI warehouse"), 0);
+//
+//    public static final Position out_from_carousel =
+//            new Position(new Point(
+//                    carousel.getX() + 2, carousel.getY() + 3, "out from carousel"), -Math.PI / 6);
+//                    //                   6,                      -11,
+//
+//
+//    public static final Position backed_up_from_ASH =
+//            new Position(new Point(
+//                    allianceShippingHub.getX() - 5, allianceShippingHub.getY(),
+//                    "backed up from shipping hub"), -Math.PI / 2);
+//    public static final Position lined_up_with_ASU =
+//            new Position(new Point(
+//                    allianceShippingHub.getX() - 5, allianceStorageUnit.getY(),
+//                    "lined up with storage unit"), -Math.PI / 2);
+//    public static final Position warehouse_entrance =
+//            new Position(new Point(-3, warehouse.getY() - 11, "warehouse entrance"), 0);
+//    public static final Position inside_warehouse =
+//            new Position(new Point(-6, warehouse.getY(), "inside warehouse", Point.Action.RAISE_SLIDE_L1,
+//                    Navigation.STRAFE_CORRECTION_POWER, 0.0), 0);
+//
+//    public static final ArrayList<Position> PARK_ASU = new ArrayList<>(Arrays.asList(
+//            new Position(new Point(10, allianceStorageUnit.getY(), "near storage unit"), 0),
+//            allianceStorageUnit
+//    ));
+//    public static final ArrayList<Position> PRELOAD_BOX = new ArrayList<>(Arrays.asList(
+//            allianceShippingHub
+//    ));
+//    public static final ArrayList<Position> CAROUSEL = new ArrayList<>(Arrays.asList(
+//            out_from_carousel,
+//            carousel
+//    ));
+//    public static final ArrayList<Position> PRELOAD_BOX_AND_PARK_ASU = new ArrayList<>(Arrays.asList(
+//            allianceShippingHub,
+//            backed_up_from_ASH,
+//            lined_up_with_ASU,
+//            allianceStorageUnit
+//    ));
+//    public static final ArrayList<Position> CAROUSEL_AND_PRELOAD_BOX = new ArrayList<>(Arrays.asList(
+//            out_from_carousel,
+//            carousel,
+//            allianceShippingHub
+//    ));
+//    public static final ArrayList<Position> PRELOAD_BOX_AND_CAROUSEL = new ArrayList<>(Arrays.asList(
+//            allianceShippingHub,
+//            out_from_carousel,
+//            carousel
+//    ));
+//    public static final ArrayList<Position> CAROUSEL_PRELOAD_BOX_AND_PARK_ASU = new ArrayList<>(Arrays.asList(
+//            out_from_carousel,
+//            carousel,
+//            allianceShippingHub,
+//            backed_up_from_ASH,
+//            lined_up_with_ASU,
+//            allianceStorageUnit
+//    ));
+//    public static final ArrayList<Position> PRELOAD_BOX_CAROUSEL_AND_PARK_ASU = new ArrayList<>(Arrays.asList(
+//            allianceShippingHub,
+//            out_from_carousel,
+//            carousel,
+//            allianceStorageUnit
+//    ));
+//    public static final ArrayList<Position> CAROUSEL_AND_PARK_ASU = new ArrayList<>(Arrays.asList(
+//            out_from_carousel,
+//            carousel,
+//            allianceStorageUnit
+//    ));
+//    public static final ArrayList<Position> PARK_WAREHOUSE = new ArrayList<>(Arrays.asList(
+//            new Position(new Point(6, warehouse_entrance.getY() - 11, "out from start wall"), -Math.PI / 2),
+//            warehouse_entrance,
+//            inside_warehouse,
+//            warehouse
+//    ));
+//    public static final ArrayList<Position> PRELOAD_BOX_AND_PARK_WAREHOUSE = new ArrayList<>(Arrays.asList(
+//            allianceShippingHub,
+//            new Position(new Point(backed_up_from_ASH.getX(), backed_up_from_ASH.getY(), "backed up from ASH"), 0),
+//            warehouse_entrance,
+//            inside_warehouse,
+//            warehouse
+//    ));
+//    public static final ArrayList<Position> CAROUSEL_AND_PARK_WAREHOUSE = new ArrayList<>(Arrays.asList(
+//            out_from_carousel,
+//            carousel,
+//            warehouse_entrance,
+//            inside_warehouse,
+//            warehouse
+//    ));
 
     // TESTING PATHS
     // =============
