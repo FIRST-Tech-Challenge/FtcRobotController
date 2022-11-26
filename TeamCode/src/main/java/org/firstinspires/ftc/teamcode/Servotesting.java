@@ -103,12 +103,12 @@ public class Servotesting extends LinearOpMode {
                 Spin.setPower(0);
             }
 
-            if (pickup==true) {
+            if (pickup) {
                 Right.setPower(1);
                 Left.setPower(-1);
             }
 
-            if (dropoff==true){
+            if (dropoff){
                 Right.setPower(-1);
                 Left.setPower(1);
 
