@@ -21,7 +21,6 @@ public class Constants {
 
     public static final double TURNTABLE_DEADZONE = 0.1;
 
-    public static final double GRABBER_INITIALIZE_POSITION = 0.6;
-    public static final double GRABBER_OPEN_POSITION = 0.5;
-    public static final double GRABBER_CLOSE_POSITION = 0.11;
+    public static final double GRABBER_OPEN_POSITION = 0.7;
+    public static final double GRABBER_CLOSE_POSITION = 0.0;
 }
