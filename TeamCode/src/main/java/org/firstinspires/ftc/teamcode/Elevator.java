@@ -21,11 +21,14 @@ public class Elevator {
 
     final static int ELEVATOR_MIN    = 0;
     final static  int ELEVATOR_HOME   = 42;
-    final static  int ELEVATOR_STACK_TOP = 200;
+    final static  int ELEVATOR_STACK_TOP = 190;
     final static  int ELEVATOR_LOW    = 460;
     final static  int ELEVATOR_MID    = 710;
     final static  int ELEVATOR_HIGH   = 1000;
     final static  int ELEVATOR_MAX    = 1100;
+
+    final static  int ELEVATOR_COUNTS_PER_CONE = 30;
+    final static  int ELEVATOR_RELEASE_DROP = 150;
 
     final static  int ELEVATOR_TOP_LEVEL  = 4;
     final static  int elevatorLevel[] = { Elevator.ELEVATOR_HOME,
@@ -87,7 +90,6 @@ public class Elevator {
     private ElevatorState pendingState;
 
     public  boolean grabRequest;
-    public  boolean releaseRequest;
     public  boolean handIsOpen = true;
 
     private double  wristOffset = 0;
@@ -147,6 +149,7 @@ public class Elevator {
         setState(newState);
         switch (elevatorState) {
             case IDLE: {
+                resetStackHeight();
                 setState(HOMING);
                 break;
             }
@@ -195,10 +198,6 @@ public class Elevator {
                     setState(HOME_OPEN);
                 } else if (homeRequested()) {
                     setHandDelayMove(HAND_READY, 0.1, ELEVATOR_HOME, GOING_HOME_OPEN);
-
-//                    setLiftTargetPosition(ELEVATOR_HOME);
-//                    setHandPosition(HAND_OPEN);
-//                    setState(HOME_OPEN);
                 }
                 break;
             }
@@ -237,6 +236,7 @@ public class Elevator {
             }
 
             case IN_POSITION_OPEN: {
+                setHandPosition(HAND_OPEN);  // Ensure let go  (should not be required)
                  if (homeRequested()) {
                      setHandDelayMove(HAND_READY, 0.1, ELEVATOR_HOME, GOING_HOME_OPEN);
                  } else if (grabRequested()) {
@@ -258,7 +258,7 @@ public class Elevator {
             }
 
             case IN_POSITION_CLOSED: {
-                 setHandPosition(HAND_CLOSE);  // Hold Tight
+                 setHandPosition(HAND_CLOSE);  // Hold Tight  (should not be required)
 
                  if (releaseRequested()) {
                      setHandPosition(HAND_OPEN);
@@ -287,7 +287,7 @@ public class Elevator {
             }
 
             case RELEASING: {
-                if (elevatorStateTimer.time() > 0.5) {
+                if (elevatorStateTimer.time() > 0.50) {
                     setWristOffset(WRIST_SAFE_OFFSET);
                     setState(FLIPPING_UP);
                 }
@@ -295,8 +295,8 @@ public class Elevator {
             }
 
             case FLIPPING_UP: {
-                if (elevatorStateTimer.time() > 0.5) {
-                    setLiftTargetPosition(ELEVATOR_STACK_TOP);
+                if (elevatorStateTimer.time() > 0.25) {
+                    setLiftTargetPosition(getStackHeight());
                     setState(IN_POSITION_OPEN);
                 }
                 break;
@@ -387,6 +387,7 @@ public class Elevator {
 
     public void showElevatorState() {
         // Display key arm data
+        myOpMode.telemetry.addData("arm state", elevatorState);
         myOpMode.telemetry.addData("arm position", liftPosition);
         myOpMode.telemetry.addData("arm setpoint", liftTargetPosition);
         myOpMode.telemetry.addData("armLevel",     currentElevatorLevel);
@@ -455,6 +456,11 @@ public class Elevator {
             }
         }
         requestedPosition = elevatorLevel[currentElevatorLevel];
+
+        // If we are picking up from stack, drop the height for next time.
+        if (currentElevatorLevel == 1) {
+            dropStackHeight();
+        }
         newLevelReqested = true;
     }
 
@@ -467,26 +473,35 @@ public class Elevator {
         newLevelReqested = true;
     }
 
+    // called from AUTO to release cone and make hand safe.
     public void autoRelease() {
-        if (currentElevatorLevel > 0) {
-            currentElevatorLevel--;
-        }
-        setLiftTargetPosition(elevatorLevel[currentElevatorLevel]);
+        setLiftTargetPosition(Math.max(ELEVATOR_HOME, liftMaster.getCurrentPosition() - ELEVATOR_RELEASE_DROP));
         setState(LOWERING_TO_RELEASE_IN_AUTO);
     }
 
+    public void dropStackHeight() {
+        elevatorLevel[1] -= ELEVATOR_COUNTS_PER_CONE;
+    }
+
+    public int getStackHeight() {
+        return elevatorLevel[1];
+    }
+
+    public void resetStackHeight() {
+        elevatorLevel[1] = ELEVATOR_STACK_TOP;
+    }
+
+    // Local methods to check for a request to grab or release cone.
     private boolean grabRequested() {
         return (grabRequest || myOpMode.gamepad2.square);
     }
-
     private boolean releaseRequested() {
-        return (releaseRequest || myOpMode.gamepad2.circle);
+        return (myOpMode.gamepad2.circle);
     }
 
     public void enableLift() {
         liftActive = true;
     }
-
     public void disableLift() {
         liftActive = false;
     }
@@ -525,8 +540,6 @@ public class Elevator {
         wristOffset = angle;
         wristIsSafe = (wristOffset > 20);
     }
-
-    public double getWristOffset () {return wristOffset;}
 
     public void setWristPosition(double position) {
 

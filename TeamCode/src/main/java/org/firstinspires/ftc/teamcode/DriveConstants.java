@@ -63,8 +63,8 @@ public class DriveConstants {
 
     public static double MAX_VEL   = 40;  // in/s  100% = 58 IPS
     public static double MAX_ACCEL = 20; // in/s/s
-    public static double MAX_ANG_VEL = Math.toRadians(90);   // Measured at 540 deg/sec
-    public static double MAX_ANG_ACCEL = Math.toRadians(90);
+    public static double MAX_ANG_VEL = Math.toRadians(120);   // Measured at 540 deg/sec
+    public static double MAX_ANG_ACCEL = Math.toRadians(180);
 /*
      * Conversion methods.
      */

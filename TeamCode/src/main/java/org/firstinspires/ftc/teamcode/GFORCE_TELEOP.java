@@ -103,6 +103,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 elevator.setWristOffset(0);
             }
 
+            // Look for cone tracking request.
             if (gamepad1.left_bumper && elevator.handIsOpen && !elevator.getWristIsSafe() && coneTracker.update() ) {
                 coneTracker.showRanges();
 

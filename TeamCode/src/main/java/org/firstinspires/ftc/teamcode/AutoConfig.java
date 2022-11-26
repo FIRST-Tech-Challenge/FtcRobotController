@@ -70,13 +70,14 @@ public class AutoConfig
     lastNext =false;
   }
 
-  public void init_loop() {
+  public boolean init_loop() {
 
     // read the gamepad state
     prev = myOpMode.gamepad1.dpad_up;
     x1 = myOpMode.gamepad1.dpad_left;
     b1 = myOpMode.gamepad1.dpad_right;
     next = myOpMode.gamepad1.dpad_down;
+    boolean change = false;
 
     // checking to see if we are switching to the next menu item.
     if (next && !lastNext) {
@@ -125,6 +126,7 @@ public class AutoConfig
               break;
       }
       saveConfig();
+      change = true;
     }
     updateMenu();
 
@@ -133,6 +135,8 @@ public class AutoConfig
     lastX1 = x1;
     lastB1 = b1;
     lastNext  = next;
+
+    return change;
   }
 
   private void saveConfig() {
