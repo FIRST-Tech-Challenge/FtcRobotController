@@ -1,4 +1,4 @@
-/**
+ mo/**
  * Top-level build file for ftc_app project.
  *
  * It is extraordinarily rare that you will ever need to edit this file.
@@ -10,7 +10,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath 'com.android.tools.build:gradle:7.3.1'
     }
 }
 /*
