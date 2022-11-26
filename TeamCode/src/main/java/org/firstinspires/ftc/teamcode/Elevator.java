@@ -89,8 +89,9 @@ public class Elevator {
     private int     pendingLiftPosition;
     private ElevatorState pendingState;
 
-    public  boolean driverAutoGrabRequest;
-    public  boolean driverManualGrabRequest;
+    public  boolean driverAutoGrabRequest = false;
+    public  boolean driverManualGrabRequest = false;
+    public  boolean terminateSequence = false;
     public  boolean handIsOpen = true;
 
     private double  wristOffset = 0;
@@ -279,6 +280,7 @@ public class Elevator {
                  break;
             }
 
+            // ====  following States ONLY used in Autonomous
             case AUTO_RELEASE: {
                 if (liftInPosition) {
                     setHandPosition(HAND_OPEN);
@@ -298,10 +300,20 @@ public class Elevator {
             case FLIPPING_UP: {
                 if (elevatorStateTimer.time() > 0.25) {
                     setLiftTargetPosition(getStackHeight());
+                    terminateSequence = true;  // signal to auto to stop waiting for drop;
                     setState(IN_POSITION_OPEN);
                 }
                 break;
             }
+
+            case AUTO_GRAB: {
+                if (liftInPosition) {
+                    terminateSequence = true;  // signal to auto to stop waiting for grab;
+                    setState(IN_POSITION_CLOSED);
+                }
+                break;
+            }
+
         }
         return elevatorState;
     }
@@ -474,6 +486,7 @@ public class Elevator {
         newLevelReqested = true;
     }
 
+    // ===== Autonomous Features   ================================
     // called from AUTO to release cone and make hand safe.
     public void autoRelease() {
         setLiftTargetPosition(Math.max(ELEVATOR_HOME, liftMaster.getCurrentPosition() - ELEVATOR_RELEASE_DROP));
@@ -482,8 +495,20 @@ public class Elevator {
 
     // called from AUTO to grab cone and raise to drop on low junction
     public void autoGrab() {
-        setHandDelayMove(HAND_CLOSE, 0.3, ELEVATOR_LOW, MOVING_CLOSED);
+        setHandDelayMove(HAND_CLOSE, 0.3, ELEVATOR_LOW, AUTO_GRAB);
     }
+
+    public boolean sequenceComplete(){
+        if (terminateSequence) {
+            terminateSequence = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    // ===== Autonomous Features   ================================
 
     public void dropStackHeight() {
         elevatorLevel[1] -= ELEVATOR_COUNTS_PER_CONE;
@@ -534,6 +559,7 @@ public class Elevator {
         setLiftTargetPosition(liftTargetPosition + (int)(speed * 7));
     }
 
+    /*
     public void runElevator(double seconds) {
         runTime.reset();
         while (runTime.time() < seconds) {
@@ -541,6 +567,7 @@ public class Elevator {
             runStateMachine();
         }
     }
+    */
 
     // ----- Wrist controls
     public void setWristOffset(double angle){

@@ -42,10 +42,9 @@ public class GFORCE_AUTO extends LinearOpMode {
     // declare all trajectories //
     TrajectorySequence redFrontJunctionInit;
     TrajectorySequence redFrontJunctionTransition;
-    TrajectorySequence redFrontJunctionLoop;
-
-    Pose2d redFrontStartPosition = new Pose2d(-62, TILEx1_5,  Math.toRadians(0));  // Auto Start
-    Pose2d redBackStartPosition  = new Pose2d(-62, -TILEx1_5, Math.toRadians(0));  // Auto Start
+    TrajectorySequence redFrontJunctionLoop1;
+    TrajectorySequence redFrontJunctionLoop2;
+    TrajectorySequence redFrontJunctionLoop3;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -83,9 +82,13 @@ public class GFORCE_AUTO extends LinearOpMode {
                             //we are red, starting at the front, scoring the junction
                             buildRedFrontJunction();
                             followGforceSequence(redFrontJunctionInit);
-//                            followGforceSequence(redFrontJunctionTransition);
-                            followGforceSequence(redFrontJunctionLoop);
-                            followGforceSequence(redFrontJunctionLoop);
+                            followGforceSequence(redFrontJunctionTransition);
+                            followGforceSequence(redFrontJunctionLoop1);
+                            followGforceSequence(redFrontJunctionLoop2);
+                            followGforceSequence(redFrontJunctionLoop3);
+                            followGforceSequence(redFrontJunctionLoop1);
+                            followGforceSequence(redFrontJunctionLoop2);
+                            followGforceSequence(redFrontJunctionLoop3);
                         }
                     }
                 }
@@ -114,7 +117,7 @@ public class GFORCE_AUTO extends LinearOpMode {
     public void followGforceSequence(TrajectorySequence trajectory) {
         int  tempImage;
         drive.followTrajectorySequenceAsync(trajectory);
-        while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
+        while (!Thread.currentThread().isInterrupted() && drive.isBusy() && !elevator.sequenceComplete()) {
             elevator.update();
             elevator.runStateMachine();
             //  elevator.showElevatorState();
@@ -141,6 +144,7 @@ public class GFORCE_AUTO extends LinearOpMode {
 
     // use in TemporalMarker start tracking the cone.
     public void startConeTracking() {
+        elevator.sequenceComplete();
         coneTracker.reset();
         coneGrabbed = false;
         trackConeNow = true;
@@ -175,7 +179,7 @@ public class GFORCE_AUTO extends LinearOpMode {
     // trajectory builders //
     private void buildRedFrontJunction() {
 
-        Pose2d redFrontStartPosition = new Pose2d(-62, 35, Math.toRadians(0));        // Auto Start
+        Pose2d redFrontStartPosition = new Pose2d(-62, TILEx1_5,  Math.toRadians(0));  // Auto Start
 
         drive.setExternalHeading(Math.toRadians(0));
         drive.setPoseEstimate(redFrontStartPosition);
@@ -198,38 +202,37 @@ public class GFORCE_AUTO extends LinearOpMode {
             .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
                 elevator.autoRelease();
             })
-            .waitSeconds(1.0)
+            .waitSeconds(3.0)
+            .build();
 
-            // Translate again to be in center of tile parking)
+        // Translate again to be in center of tile parking)
+        redFrontJunctionTransition = drive.trajectorySequenceBuilder(redFrontJunctionInit.end())
             .strafeRight(2)
+            .UNSTABLE_addTemporalMarkerOffset(1.0, () -> {
+                elevator.setWristOffset(0);
+                elevator.setHandPosition(elevator.HAND_OPEN);
+            })
             .splineToConstantHeading(new Vector2d(-TILEx0_5, TILEx2_0), Math.toRadians(90))
             .lineTo(new Vector2d(-TILEx0_5, TILEx2_0 + 8.5)) // center of scoring...
             .build();
 
         //=========================================================================================
-       // redFrontJunctionTransition = drive.trajectorySequenceBuilder(redFrontJunctionInit.end())
-
-        //        .lineTo(new Vector2d(-TILEx0_5, TILEx2_0 + 8.5)) // center of scoring...
-
-        //        .build();
-
-        //=========================================================================================
-        redFrontJunctionLoop = drive.trajectorySequenceBuilder(redFrontJunctionInit.end())
+        // Track to, and pickup cone from stack
+        redFrontJunctionLoop1 = drive.trajectorySequenceBuilder(redFrontJunctionTransition.end())
 
             // Track cone and Grab cone when in position.
             .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {
-                elevator.setWristOffset(0);
-                elevator.setHandPosition(elevator.HAND_OPEN);
-            })
-            .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
                 grabConeWhenReady = true;
                 startConeTracking();
             })
-            .waitSeconds(1.5)
+            .waitSeconds(2)
+            .build();
 
+        //=========================================================================================
+        // Back away from stack, turn to junction.  Track cone and drop Cone.
+        redFrontJunctionLoop2 = drive.trajectorySequenceBuilder(new Pose2d(-TILEx0_5 , TILEx2_0 + 10.5, Math.toRadians(90)))
             // Back away from conestack and turn to junction.
             .setReversed(true)
-            .lineTo(new Vector2d(-TILEx0_5 , TILEx2_0 + 10.5))
             .lineTo(new Vector2d(-TILEx0_5, TILEx2_0 + 8.5))
             .turn(Math.toRadians(135))
             .setReversed(false)
@@ -240,12 +243,19 @@ public class GFORCE_AUTO extends LinearOpMode {
                 startConeTracking();
                 elevator.dropStackHeight();
             })
-            .waitSeconds(1.5)
+            .waitSeconds(2.0)
+            .build();
 
+        //=========================================================================================
+        // Back away from Junction, turn to stack.
+        redFrontJunctionLoop3 = drive.trajectorySequenceBuilder(new Pose2d(-TILEx0_5 - 2, TILEx2_0 + 6.5, Math.toRadians(-135)))
             // Back away from junction and turn to cone-stack.
             .setReversed(true)
-            .lineTo(new Vector2d(-TILEx0_5 - 2, TILEx2_0 + 6.5))
             .lineTo(new Vector2d(-TILEx0_5, TILEx2_0 + 8.5))
+            .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                elevator.setWristOffset(0);
+                elevator.setHandPosition(elevator.HAND_OPEN);
+            })
             .turn(Math.toRadians(-135))
             .setReversed(false)
             .build();
@@ -253,6 +263,7 @@ public class GFORCE_AUTO extends LinearOpMode {
 
     //=========================================================================
     private void buildRedRearJunction() {
+        Pose2d redRearStartPosition  = new Pose2d(-62, -TILEx1_5, Math.toRadians(0));  // Auto Start
 
     }
 }

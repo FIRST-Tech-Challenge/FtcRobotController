@@ -13,5 +13,6 @@ public enum ElevatorState {
     IN_POSITION_CLOSED,
     AUTO_RELEASE,
     RELEASING,
-    FLIPPING_UP
+    FLIPPING_UP,
+    AUTO_GRAB
 }
