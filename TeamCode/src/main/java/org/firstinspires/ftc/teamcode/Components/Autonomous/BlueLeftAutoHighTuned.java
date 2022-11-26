@@ -25,7 +25,7 @@ public class BlueLeftAutoHighTuned extends LinearOpMode {
 
     public static double dummyP = 3;
 
-    public static double dummyx = 0.0, dummyy =28, dummya = 270;
+    public static double dummyx = 1.0, dummyy =28.8, dummya = 270;
     public static double dummyx2 = 0.0, dummyy2 =34, dummya2 = 280;
 
     public static double dummyX = 12, dummyY =34, dummyA = 90;
@@ -98,13 +98,13 @@ public class BlueLeftAutoHighTuned extends LinearOpMode {
             robot.followTrajectoryAsync(backtrajectory);
 
             if (dummyP == 1) {
-                robot.followTrajectoryAsync(park1trajectory);
+                robot.followTrajectoryAsync(park3trajectory);
             }
             else if (dummyP == 2) {
                 robot.followTrajectoryAsync(park2trajectory);
             }
             else if (dummyP == 3) {
-                robot.followTrajectoryAsync(park3trajectory);
+                robot.followTrajectoryAsync(park1trajectory);
             }
 
             robot.setFirstLoop(false);

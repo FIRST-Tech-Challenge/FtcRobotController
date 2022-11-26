@@ -10,12 +10,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-//@Disabled
+@Disabled
 
 @Config
 @Autonomous(name = "BlueRightAutoHigh")
@@ -26,7 +27,7 @@ public class BlueRightAutoHigh extends LinearOpMode {
 
     public static double dummyP = 3;
 
-    public static double dummyx = 0.0, dummyy =28, dummya = 270;
+    public static double dummyx = 0.0, dummyy =30, dummya = 270;
     public static double dummyx2 = 0.0, dummyy2 =34, dummya2 = 280;
 
     public static double dummyX = -12, dummyY =36, dummyA = 90;

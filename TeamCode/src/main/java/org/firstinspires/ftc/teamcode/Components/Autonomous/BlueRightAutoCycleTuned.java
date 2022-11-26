@@ -29,13 +29,13 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
     public static double dummyxi2 = -12.5, dummyyi2 = 13;
 
 
-    public static double dummyx = -24.5, dummyy = 4.5, dummya = 270;
-    public static double dummyx2 = -24.5, dummyy2 = 11, dummya2 = 270;
-    public static double dummyxd = -24.5, dummyyd = 5, dummyad = 270;
-    public static double dummyx2i = -24.5, dummyy2i = 11, dummya2i = 270;
-    public static double dummyx3i = -24.5, dummyy3i = 9, dummya3i = 270;
-    public static double dummyx3 = -38, dummyy3 = 10.1, dummya3 = 180;
-    public static double dummyx4 = -63.5, dummyy4 = 10.1, dummya4 = 180;
+    public static double dummyx = -23.5, dummyy = 6, dummya = 270;
+    public static double dummyx2 = -23.5, dummyy2 =11, dummya2 = 270;
+    public static double dummyxd = -23.5, dummyyd = 6, dummyad = 270;
+    public static double dummyx2i = -23.5, dummyy2i =11, dummya2i = 270;
+    public static double dummyx3i = -23.5, dummyy3i =9, dummya3i = 270;
+    public static double dummyx3 = -38, dummyy3 =10.1, dummya3 = 180;
+    public static double dummyx4 = -63.5, dummyy4 =10.1, dummya4 = 180;
 
     public static double dummyX = -12, dummyY = 11, dummyA = 180;
 
