@@ -76,7 +76,7 @@ public class Robot {
     // Hardware
     public DcMotor slidesLeft, slidesRight, compliantWheels;
     public Servo intake;
-    //public Servo intakeIndicator;
+    public Servo intakeIndicator;
 
     // Other
     public Telemetry telemetry;
@@ -101,7 +101,7 @@ public class Robot {
 //        clawLEDs=hardwareMap.get(DcMotor.class,"LED");
 //        clawLEDs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        clawLEDs.setDirection(DcMotorSimple.Direction.FORWARD);
-        clawIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_INDICATOR));
+        intakeIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.INTAKE_INDICATOR));
 
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
             driveMotors.put(motor, hardwareMap.get(DcMotor.class, RobotConfig.DriveMotorNames.get(motor)));
