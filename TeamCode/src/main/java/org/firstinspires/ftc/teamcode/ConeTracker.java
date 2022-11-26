@@ -116,14 +116,8 @@ public class ConeTracker {
                 double rangeDifference = (leftRange - rightRange);
                 if (rangeDifference > DEAD_BAND) {
                     trackTurn = -0.15;
-//                    if (rightRange > (centerRange +30)) { // avoid running into diag wall
-//                        trackStrafe = 0.15;
-//                    }
                 } else if (rangeDifference < -DEAD_BAND) {
                     trackTurn = 0.15;
-//                    if (leftRange > (centerRange +30)) { // avoid running into diag wall
-//                        trackStrafe = -0.15;
-//                    }
                 }
             }
 
@@ -141,6 +135,10 @@ public class ConeTracker {
         }
 
         return coneDetected;
+    }
+
+    public void reset() {
+        trackGrab = false;
     }
 
     public double trackTurn() {

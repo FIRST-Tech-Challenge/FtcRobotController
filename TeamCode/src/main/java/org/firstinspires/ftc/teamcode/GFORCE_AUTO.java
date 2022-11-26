@@ -141,9 +141,9 @@ public class GFORCE_AUTO extends LinearOpMode {
 
     // use in TemporalMarker start tracking the cone.
     public void startConeTracking() {
+        coneTracker.reset();
         coneGrabbed = false;
         trackConeNow = true;
-        elevator.grabRequest = false;
     }
 
     // Home in on the nearest cone.
@@ -154,10 +154,10 @@ public class GFORCE_AUTO extends LinearOpMode {
             drive.setWeightedDrivePower(new Pose2d(coneTracker.trackDrive(), 0, coneTracker.trackTurn()));
 
             if (grabConeWhenReady && coneTracker.trackGrab()) {
+                coneGrabbed = true;
                 trackConeNow = false;
                 grabConeWhenReady = false;
-                elevator.grabRequest = true;
-                coneGrabbed = true;
+                elevator.autoGrab();
             }
 
             if (dropConeWhenReady && coneTracker.trackGrab()) {

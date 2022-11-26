@@ -108,11 +108,11 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 coneTracker.showRanges();
 
                 lockNewHeading(drive.getExternalHeading());
-                elevator.grabRequest = (!gamepad2.cross && coneTracker.trackGrab());
+                elevator.driverAutoGrabRequest = (!gamepad2.cross && coneTracker.trackGrab());
                 drive.setWeightedDrivePower(new Pose2d(coneTracker.trackDrive(), coneTracker.trackStrafe(), coneTracker.trackTurn()));
 
             } else  {
-                elevator.grabRequest = false;
+                elevator.driverAutoGrabRequest = false;
 
                 // Read pose and use it to convery joystick inputs to Field Centric.
                 Pose2d poseEstimate = drive.getPoseEstimate();
@@ -196,6 +196,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
             boolean stepUp = gamepad2.dpad_up;
             boolean stepDown = gamepad2.dpad_down;
             boolean newPosition = false;
+
+            elevator.driverManualGrabRequest = gamepad2.square;
 
             if (stepUp && !lastStepUp) {
                 elevator.levelUp();

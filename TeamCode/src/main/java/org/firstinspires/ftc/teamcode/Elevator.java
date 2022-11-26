@@ -89,7 +89,8 @@ public class Elevator {
     private int     pendingLiftPosition;
     private ElevatorState pendingState;
 
-    public  boolean grabRequest;
+    public  boolean driverAutoGrabRequest;
+    public  boolean driverManualGrabRequest;
     public  boolean handIsOpen = true;
 
     private double  wristOffset = 0;
@@ -278,7 +279,7 @@ public class Elevator {
                  break;
             }
 
-            case LOWERING_TO_RELEASE_IN_AUTO: {
+            case AUTO_RELEASE: {
                 if (liftInPosition) {
                     setHandPosition(HAND_OPEN);
                     setState(RELEASING);
@@ -476,7 +477,12 @@ public class Elevator {
     // called from AUTO to release cone and make hand safe.
     public void autoRelease() {
         setLiftTargetPosition(Math.max(ELEVATOR_HOME, liftMaster.getCurrentPosition() - ELEVATOR_RELEASE_DROP));
-        setState(LOWERING_TO_RELEASE_IN_AUTO);
+        setState(AUTO_RELEASE);
+    }
+
+    // called from AUTO to grab cone and raise to drop on low junction
+    public void autoGrab() {
+        setHandDelayMove(HAND_CLOSE, 0.3, ELEVATOR_LOW, MOVING_CLOSED);
     }
 
     public void dropStackHeight() {
@@ -493,8 +499,9 @@ public class Elevator {
 
     // Local methods to check for a request to grab or release cone.
     private boolean grabRequested() {
-        return (grabRequest || myOpMode.gamepad2.square);
+        return (driverAutoGrabRequest || driverManualGrabRequest);
     }
+
     private boolean releaseRequested() {
         return (myOpMode.gamepad2.circle);
     }
