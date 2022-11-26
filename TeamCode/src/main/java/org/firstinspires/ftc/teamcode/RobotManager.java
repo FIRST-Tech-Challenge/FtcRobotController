@@ -332,7 +332,7 @@ public class RobotManager {
 
         if (forwardDistance > 0) {
             navigation.path.add(navigation.pathIndex,
-                    new Position(new Point(startPos.getX() + forwardDistance, startPos.getY(),
+                    new Position(new Point(startPos.getX() + forwardDistance, startPos.getY() //Add the comma (,) next to the () if needed to be added back ON this line
                             Point.Action.NONE, 0.4, 0.0), startPos.getRotation()));
 
             travelToNextPOI();
