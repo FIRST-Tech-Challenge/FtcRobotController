@@ -136,12 +136,12 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         }
 
         /* Actually do something useful */
-        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+        if (tagOfInterest.id == LEFT) {
             // Parking position 1
         } else if (tagOfInterest.id == MIDDLE) {
             // Parking position 2
         } else {
-            // Parking position 3 
+            // Parking position 3 and null 
         }
 
         // You wouldn't have this in your autonomous, this is just to prevent the sample from ending
