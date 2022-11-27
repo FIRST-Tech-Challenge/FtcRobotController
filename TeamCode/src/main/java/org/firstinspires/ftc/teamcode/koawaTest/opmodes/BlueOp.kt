@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.koawaTest.Robot
 import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.command.commands.*
 import com.asiankoala.koawalib.logger.LoggerConfig
+import org.firstinspires.ftc.teamcode.koawaTest.subsystems.Arm
+import org.firstinspires.ftc.teamcode.koawaTest.subsystems.Lift
 
 @TeleOp
 @Config
@@ -32,8 +34,15 @@ class BlueOp : KOpMode(photonEnabled = false) {
 
         Logger.config = LoggerConfig.DASHBOARD_CONFIG
 
-        driver.x.onPress(InstantCmd({ driver.rumbleBlips(3) }))
-        driver.y.onPress(InstantCmd({ driver.rumble(2500) }))
+        driver.dpadUp.onPress(Lift.LiftMove(1.0, robot.lift))
+        driver.dpadDown.onPress(Lift.LiftMove(-0.4, robot.lift))
+        driver.dpadUp.onRelease(Lift.LiftMove(0.0, robot.lift))
+        driver.dpadDown.onRelease(Lift.LiftMove(0.0, robot.lift))
+
+        driver.leftBumper.onPress(Arm.ArmMove(1.0, robot.arm))
+        driver.rightBumper.onPress(Arm.ArmMove(-0.6, robot.arm))
+        driver.leftBumper.onRelease(Arm.ArmMove(0.0, robot.arm))
+        driver.rightBumper.onRelease(Arm.ArmMove(0.0, robot.arm))
     }
 
     override fun mLoop() {

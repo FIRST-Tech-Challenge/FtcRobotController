@@ -39,6 +39,20 @@ class Hardware(startPose: Pose) {
         .revEncoder
         .build(fr)
 
+    val liftMotor = MotorFactory("liftLead")
+        .float
+        .build()
+
+    val liftSecondMotor = MotorFactory("lift2")
+        .reverse
+        .float
+        .build()
+
+    val arm = MotorFactory("Arm")
+        .reverse
+        .float
+        .build()
+
     val odometry = KThreeWheelOdometry(
         leftEncoder,
         rightEncoder,

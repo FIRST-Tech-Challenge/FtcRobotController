@@ -10,6 +10,7 @@ import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
+import com.asiankoala.koawalib.path.DEFAULT_HEADING_CONTROLLER
 import com.asiankoala.koawalib.path.HermitePath
 import com.asiankoala.koawalib.path.gvf.Constraints
 import com.asiankoala.koawalib.path.gvf.MotionProfiledGVFController
@@ -32,6 +33,24 @@ class BlueAuto : AutoOpMode() {
         Pose(-9.0, -36.0, 0.0.radians)
     )
 
+    private val leftPath = HermitePath(
+        {180.0.radians},
+        Pose(-3.0, -28.0, 180.0.radians),
+        Pose(-12.0, -58.0, 180.0.radians)
+    )
+
+    private val middlePath = HermitePath(
+        {180.0.radians},
+        Pose(-3.0, -28.0, 180.0.radians),
+        Pose(-12.0, -35.0, 180.0.radians)
+    )
+
+    private val rightPath = HermitePath(
+        {180.0.radians},
+        Pose(-3.0, -28.0, 180.0.radians),
+        Pose(-12.0, -11.0, 180.0.radians)
+    )
+
     private val motionProfiledGVFController = MotionProfiledGVFController(
         path1,
         0.6,
@@ -44,8 +63,8 @@ class BlueAuto : AutoOpMode() {
         GVFConfig.kA,
     )
 
-    private val simpleGVFController = SimpleGVFController(
-                    path1,
+    private val parkRight = SimpleGVFController(
+                    rightPath,
                     0.6,
                     30.0,
                     4.0,
@@ -53,6 +72,26 @@ class BlueAuto : AutoOpMode() {
                     2.0,
                     5.0
                 )
+
+    private val parkMiddle = SimpleGVFController(
+        middlePath,
+        0.6,
+        30.0,
+        4.0,
+        0.7,
+        2.0,
+        5.0
+    )
+
+    private val parkLeft = SimpleGVFController(
+        leftPath,
+        0.6,
+        30.0,
+        4.0,
+        0.7,
+        2.0,
+        5.0
+    )
 
     override fun mInit() {
         super.mInit()
@@ -66,17 +105,13 @@ class BlueAuto : AutoOpMode() {
         mainCommand = SequentialGroup(
             WaitUntilCmd { opModeState == OpModeState.START },
             WaitUntilCmd(driver.a::isPressed),
-            GVFCmd(
-                robot.drive,
-                simpleGVFController
-            ),
-//            ChooseCmd(
-//                GVFCmd(robot.drive, simpleGVFController),
-//                ChooseCmd(
-//                    GVFCmd(robot.drive, simpleGVFController),
-//                    GVFCmd(robot.drive, simpleGVFController),
-//                ) { tagOfInterest!!.id == MIDDLE },
-//            ) { tagOfInterest!!.id == RIGHT }
+            ChooseCmd(
+                GVFCmd(robot.drive, parkRight),
+                ChooseCmd(
+                    GVFCmd(robot.drive, parkMiddle),
+                    GVFCmd(robot.drive, parkLeft),
+                ) { tagOfInterest!!.id == MIDDLE },
+            ) { tagOfInterest!!.id == RIGHT }
         )
         mainCommand.schedule()
     }
