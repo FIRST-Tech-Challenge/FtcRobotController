@@ -122,7 +122,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
         //
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
-        BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X);
+        BNO055IMUUtil.remapZAxis(imu, AxisDirection.POS_Y);
 
         /*
          * Mechanum drives are assumed to have 4 motors.
@@ -163,8 +163,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         // localizer = new StandardTrackingWheelLocalizer(hardwareMap);
-        localizer = new TwoWheelTrackingLocalizer(hardwareMap, this);
-        setLocalizer(localizer);
+        // localizer = new TwoWheelTrackingLocalizer(hardwareMap, this);
+        // setLocalizer(localizer);
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
@@ -256,7 +256,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public int getParallelEncoderPosition() {
-        return localizer.getParallelEncoderPosition();
+        return 0; // localizer.getParallelEncoderPosition();
     }
 
     public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {

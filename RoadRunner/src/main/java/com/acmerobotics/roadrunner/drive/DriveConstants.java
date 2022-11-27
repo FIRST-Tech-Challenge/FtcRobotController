@@ -28,17 +28,17 @@ public class DriveConstants {
      * Names for your motors from the robot configuration, if you only have a 2 wheel drive
      * drivetrain then the rear variants are ignored in the tank drive implementation.
      */
-    public static String LEFT_FRONT = "leftFront";
-    public static String RIGHT_FRONT = "rightFront";
-    public static String LEFT_REAR = "leftRear";
-    public static String RIGHT_REAR = "rightRear";
+    public static String LEFT_FRONT = "frontLeft";
+    public static String RIGHT_FRONT = "frontRight";
+    public static String LEFT_REAR = "backLeft";
+    public static String RIGHT_REAR = "backRight";
 
     public static String IMU = "imu";
 
     /*
      * Count of encoders.  Either 3 or 2.
      */
-    public static int ENCODER_COUNT = 3;
+    public static int ENCODER_COUNT = 0;
 
     public enum DrivetrainKind {
         MECANUM,
@@ -71,7 +71,10 @@ public class DriveConstants {
      * PIDFCoefficients(double p, double i, double d, double f)
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(25, 0, 8, 13.5);
+    /*
+     * Caffeine
+     */
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(10, 0, 8, 15.5);
     // public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(10, 0, 8, 13.2);
     // MAX VEL = 40
     // public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(20, 0, 0, 13.7);
@@ -85,7 +88,7 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_DIAMETER_MM = 75;
+    public static double WHEEL_DIAMETER_MM = 96;
     public static double IN_PER_MM = 0.03937;
     public static double WHEEL_RADIUS = (WHEEL_DIAMETER_MM * IN_PER_MM) / 2; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
@@ -93,9 +96,9 @@ public class DriveConstants {
      * The real track width is 15, but the tuner indicates that 31.15 is the right value
      * 15.275
      */
-    public static double TRACK_WIDTH = 14.9; // in
+    public static double TRACK_WIDTH = 13.4; // in
 
-    public static double WHEEL_BASE = 11.5;
+    public static double WHEEL_BASE = 8.625;
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
