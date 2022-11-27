@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Autonomous(name = "PathwayCamTest", group = "")
-public class PathwayCamTest extends LinearOpMode {
+public class RRTerminalwOriginConePark extends LinearOpMode {
 
     private DcMotor LF = null;
     private DcMotor RF = null;
