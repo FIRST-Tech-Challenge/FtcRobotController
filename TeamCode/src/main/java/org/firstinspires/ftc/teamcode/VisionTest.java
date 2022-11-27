@@ -47,10 +47,6 @@ public class VisionTest extends LinearOpMode {
         telemetry.update();
         
         while (opModeIsActive()) {
-            telemetry.addData("Mean Hue", pipeLine.meanHue);
-            telemetry.addData("Corners", pipeLine.foundCorners);
-            telemetry.addData("State by Hue", pipeLine.stateByHue);
-            telemetry.addData("State by Corners", pipeLine.stateByCorners);
             telemetry.update();
             
             sleep(50);
