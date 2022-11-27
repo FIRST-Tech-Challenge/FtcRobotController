@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 class AprilTagDetectionPipeline extends OpenCvPipeline
 {
-    private long nativeApriltagPtr;
+    private long nativeAprilTagPtr;
     private Mat grey = new Mat();
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
@@ -48,11 +48,11 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
     private final Object detectionsUpdateSync = new Object();
 
     Mat cameraMatrix;
-
-    Scalar blue = new Scalar(7,197,235,255);
-    Scalar red = new Scalar(255,0,0,255);
-    Scalar green = new Scalar(0,255,0,255);
-    Scalar white = new Scalar(255,255,255,255);
+    // RGB Values for bounding boxes
+    Scalar blue = new Scalar(7, 197, 235, 255);
+    Scalar red = new Scalar(255, 0, 0, 255);
+    Scalar green = new Scalar(0, 255, 0, 255);
+    Scalar white = new Scalar(255, 255, 255, 255);
 
     double fx;
     double fy;
@@ -68,8 +68,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    public AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy)
-    {
+    public AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy) {
         this.tagsize = tagsize;
         this.tagsizeX = tagsize;
         this.tagsizeY = tagsize;
@@ -81,52 +80,43 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         constructMatrix();
 
         // Allocate a native context object. See the corresponding deletion in the finalizer
-        nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
+        nativeAprilTagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
     }
 
     @Override
-    public void finalize()
-    {
+    public void finalize() {
         // Might be null if createApriltagDetector() threw an exception
-        if(nativeApriltagPtr != 0)
-        {
+        if(nativeAprilTagPtr != 0) {
             // Delete the native context we created in the constructor
-            AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr);
-            nativeApriltagPtr = 0;
-        }
-        else
-        {
-            System.out.println("AprilTagDetectionPipeline.finalize(): nativeApriltagPtr was NULL");
+            AprilTagDetectorJNI.releaseApriltagDetector(nativeAprilTagPtr);
+            nativeAprilTagPtr = 0;
+        } else {
+            System.out.println("AprilTagDetectionPipeline.finalize(): nativeAprilTagPtr was NULL");
         }
     }
 
     @Override
-    public Mat processFrame(Mat input)
-    {
+    public Mat processFrame(Mat input) {
         // Convert to greyscale
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
 
-        synchronized (decimationSync)
-        {
-            if(needToSetDecimation)
-            {
-                AprilTagDetectorJNI.setApriltagDetectorDecimation(nativeApriltagPtr, decimation);
+        synchronized (decimationSync) {
+            if (needToSetDecimation) {
+                AprilTagDetectorJNI.setApriltagDetectorDecimation(nativeAprilTagPtr, decimation);
                 needToSetDecimation = false;
             }
         }
 
         // Run AprilTag
-        detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, tagsize, fx, fy, cx, cy);
+        detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeAprilTagPtr, grey, tagsize, fx, fy, cx, cy);
 
-        synchronized (detectionsUpdateSync)
-        {
+        synchronized (detectionsUpdateSync) {
             detectionsUpdate = detections;
         }
 
         // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
-        for(AprilTagDetection detection : detections)
-        {
+        for(AprilTagDetection detection : detections) {
             Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
             drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
@@ -135,10 +125,8 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         return input;
     }
 
-    public void setDecimation(float decimation)
-    {
-        synchronized (decimationSync)
-        {
+    public void setDecimation(float decimation) {
+        synchronized (decimationSync) {
             this.decimation = decimation;
             needToSetDecimation = true;
         }
@@ -149,18 +137,15 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         return detections;
     }
 
-    public ArrayList<AprilTagDetection> getDetectionsUpdate()
-    {
-        synchronized (detectionsUpdateSync)
-        {
+    public ArrayList<AprilTagDetection> getDetectionsUpdate() {
+        synchronized (detectionsUpdateSync) {
             ArrayList<AprilTagDetection> ret = detectionsUpdate;
             detectionsUpdate = null;
             return ret;
         }
     }
 
-    void constructMatrix()
-    {
+    void constructMatrix() {
         //     Construct the camera matrix.
         //
         //      --         --
@@ -172,17 +157,17 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
 
         cameraMatrix = new Mat(3,3, CvType.CV_32FC1);
 
-        cameraMatrix.put(0,0, fx);
-        cameraMatrix.put(0,1,0);
-        cameraMatrix.put(0,2, cx);
+        cameraMatrix.put(0, 0, fx);
+        cameraMatrix.put(0, 1, 0);
+        cameraMatrix.put(0, 2,  cx);
 
-        cameraMatrix.put(1,0,0);
-        cameraMatrix.put(1,1,fy);
-        cameraMatrix.put(1,2,cy);
+        cameraMatrix.put(1, 0, 0);
+        cameraMatrix.put(1, 1, fy);
+        cameraMatrix.put(1, 2, cy);
 
         cameraMatrix.put(2, 0, 0);
-        cameraMatrix.put(2,1,0);
-        cameraMatrix.put(2,2,1);
+        cameraMatrix.put(2, 1, 0);
+        cameraMatrix.put(2, 2, 1);
     }
 
     /**
@@ -194,15 +179,14 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
      * @param tvec the translation vector of the detection
      * @param cameraMatrix the camera matrix used when finding the detection
      */
-    void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
-    {
+    void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix) {
         // The points in 3D space we wish to project onto the 2D image plane.
         // The origin of the coordinate space is assumed to be in the center of the detection.
         MatOfPoint3f axis = new MatOfPoint3f(
-                new Point3(0,0,0),
-                new Point3(length,0,0),
-                new Point3(0,length,0),
-                new Point3(0,0,-length)
+                new Point3(0, 0, 0),
+                new Point3(length, 0, 0),
+                new Point3(0, length, 0),
+                new Point3(0, 0, -length)
         );
 
         // Project those points
@@ -218,11 +202,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         Imgproc.circle(buf, projectedPoints[0], thickness, white, -1);
     }
 
-    void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
-    {
-        //axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
-        //       [0,0,-3],[0,3,-3],[3,3,-3],[3,0,-3] ])
-
+    void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix) {
         // The points in 3D space we wish to project onto the 2D image plane.
         // The origin of the coordinate space is assumed to be in the center of the detection.
         MatOfPoint3f axis = new MatOfPoint3f(
@@ -241,8 +221,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         Point[] projectedPoints = matProjectedPoints.toArray();
 
         // Pillars
-        for(int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             Imgproc.line(buf, projectedPoints[i], projectedPoints[i+4], blue, thickness);
         }
 
@@ -295,11 +274,8 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
             tvec = new Mat();
         }
 
-<<<<<<< HEAD
-        public Pose(Mat rvec, Mat tvec) {
-=======
         public Pose (Mat rvec, Mat tvec) {
->>>>>>> b0dd5adcb2d0699a5cde204fc71659c71eb8e3a5
+
             this.rvec = rvec;
             this.tvec = tvec;
         }
