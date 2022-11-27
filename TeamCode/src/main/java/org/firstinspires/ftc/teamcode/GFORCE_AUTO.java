@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.DriveConstants.MAX_PUSH_VEL;
+import static org.firstinspires.ftc.teamcode.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.GFORCE_KiwiDrive.getVelocityConstraint;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -40,14 +45,21 @@ public class GFORCE_AUTO extends LinearOpMode {
     final Double TILEx2_5 = TILEx1_0 * 2.5;
 
     // declare all trajectories //
-    TrajectorySequence redFrontJunctionInit;
+    TrajectorySequence redFrontReadSignal;
+    TrajectorySequence redFrontScoreJunction;
     TrajectorySequence redFrontJunctionTransition;
     TrajectorySequence redFrontJunctionLoop1;
     TrajectorySequence redFrontJunctionLoop2;
     TrajectorySequence redFrontJunctionLoop3;
+    TrajectorySequence redFrontSignalPark1;
+    TrajectorySequence redFrontSignalPark2;
+    TrajectorySequence redFrontSignalPark3;
     TrajectorySequence redFrontJunctionPark1;
     TrajectorySequence redFrontJunctionPark2;
     TrajectorySequence redFrontJunctionPark3;
+    TrajectorySequence redFrontStackPark1;
+    TrajectorySequence redFrontStackPark2;
+    TrajectorySequence redFrontStackPark3;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -82,32 +94,61 @@ public class GFORCE_AUTO extends LinearOpMode {
                 weAreRed = autoConfig.autoOptions.redAlliance;
                 if (weAreRed) {
                     if (autoConfig.autoOptions.startFront) {
-
                         if (autoConfig.autoOptions.scoreJunction) {
-                            //we are red, starting at the front, scoring the junction
-                            followGforceSequence(redFrontJunctionInit);
+                            // we are red, starting at the front, scoring the junction
+                            followGforceSequence(redFrontReadSignal);
+                            followGforceSequence(redFrontScoreJunction);
                             followGforceSequence(redFrontJunctionTransition);
 
-                            followGforceSequence(redFrontJunctionLoop1);
-                            followGforceSequence(redFrontJunctionLoop2);
-                            followGforceSequence(redFrontJunctionLoop3);
+                            if (autoConfig.autoOptions.scoreConeStack) {
+                                // we are red, starting at the front, scoring the junction, and the cone stack
+                                followGforceSequence(redFrontJunctionLoop1);
+                                followGforceSequence(redFrontJunctionLoop2);
+                                followGforceSequence(redFrontJunctionLoop3);
 
-                            followGforceSequence(redFrontJunctionLoop1);
-                            followGforceSequence(redFrontJunctionLoop2);
+                                followGforceSequence(redFrontJunctionLoop1);
+                                followGforceSequence(redFrontJunctionLoop2);
 
-                            switch(foundSignalImage) {
-                                case 1:
-                                default:
-                                    followGforceSequence(redFrontJunctionPark1);
-                                    break;
+                                if (autoConfig.autoOptions.park) {
+                                    // we are red, starting at the front, scoring the junction, and the cone stack, and parking
+                                    // we are red, starting at the front, scoring the junction and Not Conestack, and parking
+                                    if (foundSignalImage == 3)
+                                        followGforceSequence(redFrontStackPark3);
+                                    else if (foundSignalImage == 2)
+                                        followGforceSequence(redFrontStackPark2);
+                                    else
+                                        followGforceSequence(redFrontStackPark1);
+                                } else {
+                                    // we are red, starting at the front, scoring the junction and Conestack, but NOT parking
+                                    followGforceSequence(redFrontJunctionLoop3);
+                                    followGforceSequence(redFrontJunctionLoop1);
+                                    followGforceSequence(redFrontJunctionLoop2);
+                                }
+                            } else {
+                                // we are red, starting at the front, scoring the junction and Not Conestack
+                                if (autoConfig.autoOptions.park) {
+                                    // we are red, starting at the front, scoring the junction and Not Conestack, and parking
+                                    if (foundSignalImage == 3)
+                                        followGforceSequence(redFrontJunctionPark3);
+                                    else if (foundSignalImage == 2)
+                                        followGforceSequence(redFrontJunctionPark2);
+                                    else
+                                        followGforceSequence(redFrontJunctionPark1);
+                                }
+                            }
+                        } else {
+                            // we are red, starting at the front, NOT scoring the junction
+                            if (autoConfig.autoOptions.park) {
+                                // we are red, starting at the front, only parking
+                                followGforceSequence(redFrontReadSignal);
 
-                                case 2:
-                                    followGforceSequence(redFrontJunctionPark2);
-                                    break;
-
-                                case 3:
-                                    followGforceSequence(redFrontJunctionPark3);
-                                    break;
+                                // we are red, starting at the front, NOT scoring the junction and parking
+                                if (foundSignalImage == 3)
+                                    followGforceSequence(redFrontSignalPark3);
+                                else if (foundSignalImage == 2)
+                                    followGforceSequence(redFrontSignalPark2);
+                                else
+                                    followGforceSequence(redFrontSignalPark1);
                             }
                         }
                     }
@@ -204,30 +245,33 @@ public class GFORCE_AUTO extends LinearOpMode {
         drive.setExternalHeading(Math.toRadians(0));
         drive.setPoseEstimate(redFrontStartPosition);
 
-        //=========================================================================
-        redFrontJunctionInit = drive.trajectorySequenceBuilder(redFrontStartPosition)
+        //=========================================================================================
+        // JUST read the signal
+        redFrontReadSignal = drive.trajectorySequenceBuilder(redFrontStartPosition)
+            .waitSeconds(0.1)
             // Move forward and raise lift.  Start looking for signal image
             .addDisplacementMarker(0.1, () -> {
                 elevator.setLiftTargetPosition(Elevator.ELEVATOR_LOW);
                 lookForSignalImage = true;
             })
             .lineTo(new Vector2d(-TILEx2_0 - 10, TILEx1_5))
-            .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+            .build();
+
+        //=========================================================================
+        redFrontScoreJunction = drive.trajectorySequenceBuilder(redFrontReadSignal.end())
+            //  Turn sideways and translate to front of junction.  Release cone once there.
+            .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                 lookForSignalImage = false;
                 elevator.setWristOffset(0);
             })
-
-            //  Turn sideways and translate to front of junction.  Release cone once there.
             .turn(Math.toRadians(90))
             .lineTo(new Vector2d(-TILEx1_0, TILEx1_5 + 2.5))
-            .UNSTABLE_addTemporalMarkerOffset(0.25, () -> {
-                elevator.autoRelease();
-            })
+            .UNSTABLE_addTemporalMarkerOffset(0.25, () -> { elevator.autoRelease();  })
             .waitSeconds(3.0)
             .build();
 
         // Translate again to be in center of tile parking)
-        redFrontJunctionTransition = drive.trajectorySequenceBuilder(redFrontJunctionInit.end())
+        redFrontJunctionTransition = drive.trajectorySequenceBuilder(redFrontScoreJunction.end())
             .strafeRight(2)
             .UNSTABLE_addTemporalMarkerOffset(1.0, () -> {
                 elevator.setWristOffset(0);
@@ -282,45 +326,64 @@ public class GFORCE_AUTO extends LinearOpMode {
             .build();
 
         //=========================================================================================
-        // Back away from Junction, Drive to park location 1.
-        redFrontJunctionPark1 = drive.trajectorySequenceBuilder(new Pose2d(-TILEx0_5 - 2, TILEx2_0 + 6, Math.toRadians(-135)))
-                // Back away from junction and turn to cone-stack.
-                .setReversed(true)
-                .lineTo(new Vector2d(-TILEx0_5, TILEx2_5))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                    elevator.setHandPosition(elevator.HAND_OPEN);
-                })
-                .turn(Math.toRadians(-135))
-                .setReversed(false)
-                .build();
+        redFrontStackPark1 = makeRedStackPark(1);
+        redFrontStackPark2 = makeRedStackPark(2);
+        redFrontStackPark3 = makeRedStackPark(3);
 
-        //=========================================================================================
-        // Back away from Junction, Drive to park location 1.
-        redFrontJunctionPark2 = drive.trajectorySequenceBuilder(new Pose2d(-TILEx0_5 - 2, TILEx2_0 + 6, Math.toRadians(-135)))
-                // Back away from junction and turn to cone-stack.
-                .setReversed(true)
-                .lineTo(new Vector2d(-TILEx0_5, TILEx1_5))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                    elevator.setHandPosition(elevator.HAND_OPEN);
-                })
-                .turn(Math.toRadians(-135))
-                .setReversed(false)
-                .build();
+        redFrontJunctionPark1 = makeRedJunctionPark(1);
+        redFrontJunctionPark2 = makeRedJunctionPark(2);
+        redFrontJunctionPark3 = makeRedJunctionPark(3);
 
-        //=========================================================================================
-        // Back away from Junction, Drive to park location 1.
-        redFrontJunctionPark3 = drive.trajectorySequenceBuilder(new Pose2d(-TILEx0_5 - 2, TILEx2_0 + 6, Math.toRadians(-135)))
-                // Back away from junction and turn to cone-stack.
-                .setReversed(true)
-                .lineTo(new Vector2d(-TILEx0_5, TILEx0_5))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                    elevator.setHandPosition(elevator.HAND_OPEN);
-                })
-                .turn(Math.toRadians(-135))
-                .setReversed(false)
-                .build();
-
+        // Drive straight to Park at Location 1
+        redFrontSignalPark1 = makeRedSignalPark(1);
+        redFrontSignalPark2 = makeRedSignalPark(2);
+        redFrontSignalPark3 = makeRedSignalPark(3);
     }
+
+    TrajectorySequence makeRedSignalPark(int signal) {
+        TrajectorySequence tempSeq = drive.trajectorySequenceBuilder(redFrontReadSignal.end())
+                // Make a run from the signal detection point
+                .setVelConstraint(getVelocityConstraint(MAX_PUSH_VEL, MAX_ANG_VEL, TRACK_WIDTH))
+                .lineTo(new Vector2d(-TILEx0_5 + 5, TILEx1_5))
+                .back(6)
+                .lineTo(new Vector2d(-TILEx0_5 + -1, (TILEx1_5 - 1) - ((signal - 2) * TILEx1_0)))
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { elevator.setWristOffset(0); })
+                .UNSTABLE_addTemporalMarkerOffset(2.0, () -> { elevator.setLiftTargetPosition(Elevator.ELEVATOR_HOME); })
+                .waitSeconds(4)
+                .build();
+
+        return tempSeq;
+    }
+
+    TrajectorySequence makeRedJunctionPark(int signal) {
+        TrajectorySequence tempSeq = drive.trajectorySequenceBuilder(redFrontJunctionTransition.end())
+                // Back away from junction and turn to cone-stack.
+                .UNSTABLE_addTemporalMarkerOffset(0.0, () -> { elevator.setLiftTargetPosition(Elevator.ELEVATOR_LOW); })
+                .waitSeconds(1)
+                .lineTo(new Vector2d(-TILEx0_5, (TILEx1_5 - 2) - ((signal - 2) * TILEx1_0)))
+                .turn(Math.toRadians(-90))
+                .UNSTABLE_addTemporalMarkerOffset(.5, () -> {
+                    elevator.setLiftTargetPosition(Elevator.ELEVATOR_HOME);
+                })
+                .waitSeconds(2)
+                .build();
+
+        return tempSeq;
+    }
+
+    TrajectorySequence makeRedStackPark(int signal) {
+        TrajectorySequence tempSeq = drive.trajectorySequenceBuilder(new Pose2d(-TILEx0_5 - 2, TILEx2_0 + 6, Math.toRadians(-135)))
+                // Back away from junction and turn to cone-stack.
+                .setReversed(true)
+                .lineTo(new Vector2d(-TILEx0_5, TILEx1_5 - ((signal - 2) * TILEx1_0)))
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { elevator.setHandPosition(elevator.HAND_OPEN); })
+                .turn(Math.toRadians(-135))
+                .setReversed(false)
+                .build();
+
+        return tempSeq;
+    }
+
 
     //=========================================================================
     private void buildRedRearJunction() {

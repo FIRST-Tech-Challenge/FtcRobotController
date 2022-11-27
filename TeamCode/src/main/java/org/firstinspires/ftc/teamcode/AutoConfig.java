@@ -195,10 +195,10 @@ public class AutoConfig
       myOpMode.telemetry.addData((currentMenuIndex == 1) ? "1 > START DELAY"   : "1   Start Delay", autoOptions.delayInSec);
       myOpMode.telemetry.addData((currentMenuIndex == 2) ? "2 > RUN AUTO"   : "2   Run Auto", autoOptions.enabled ? "YES" : "no");
       myOpMode.telemetry.addData((currentMenuIndex == 3) ? "3 > START POSITION"   : "3   Start Position", autoOptions.startFront ? "FRONT" : "Rear");
-      myOpMode.telemetry.addData((currentMenuIndex == 4) ? "4 > SCORE TERMINAL"   : "4   Score Terminal", autoOptions.scoreTerminal ? "YES" : "no");
+      myOpMode.telemetry.addData((currentMenuIndex == 4) ? "4 > SCORE TERMINAL"   : "4   Score Terminal", autoOptions.scoreTerminal ? "N/A" : "N/A");
       myOpMode.telemetry.addData((currentMenuIndex == 5) ? "5 > SCORE JUNCTION"   : "5   Score Junction", autoOptions.scoreJunction ? "YES" : "no");
       myOpMode.telemetry.addData((currentMenuIndex == 6) ? "6 > SCORE CONESTACK"   : "6  Score Conestack", autoOptions.scoreConeStack ? "YES" : "no");
-      myOpMode.telemetry.addData((currentMenuIndex == 7) ? "7 > PARK"   : "7  Park", autoOptions.park ? "YES" : "No");
+      myOpMode.telemetry.addData((currentMenuIndex == 7) ? "7 > PARK"   : "7  Park", autoOptions.park ? "YES" : "no");
       myOpMode.telemetry.addData((currentMenuIndex == 8) ? "8 > SPARE"   : "8  spare", autoOptions.spare ? "YES" : "no");
       myOpMode.telemetry.update();
   }

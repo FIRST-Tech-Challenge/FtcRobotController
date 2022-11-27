@@ -69,6 +69,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
         elevator.setState(SharedStates.elevatorState);
         if (SharedStates.currentPose != null) {
             drive.setExternalHeading(SharedStates.currentPose.getHeading());
+            SharedStates.currentPose = null;
         } else {
             drive.setExternalHeading(0);
         }
@@ -232,6 +233,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
         // Set Elevator state back to Idle for next autonomous
         elevator.setState(ElevatorState.IDLE);
+        SharedStates.currentPose = null;
+        SharedStates.elevatorState = ElevatorState.IDLE;
     }
 
     // Lock in a new heading for the Auto Heading Hold..

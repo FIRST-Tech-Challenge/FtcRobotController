@@ -61,8 +61,9 @@ public class DriveConstants {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 2, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(1, 0, 0);
 
-    public static double MAX_VEL   = 40;  // in/s  100% = 58 IPS
-    public static double MAX_ACCEL = 20; // in/s/s
+    public static double MAX_VEL      = 40;  // in/s  100% = 58 IPS
+    public static double MAX_PUSH_VEL = 20;  // in/s  100% = 58 IPS
+    public static double MAX_ACCEL    = 30; // in/s/s
     public static double MAX_ANG_VEL = Math.toRadians(120);   // Measured at 540 deg/sec
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 /*
