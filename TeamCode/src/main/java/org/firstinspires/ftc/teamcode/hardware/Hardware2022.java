@@ -17,11 +17,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Hardware2022 {
 
     static public double ANGULAR_RATE = 2000.0;
+    private final double MIN_VELOCITY = 0.1;
+
     //Adjustable parameters  here.
     private final double CLAW_CLOSED = 1 ;
     private final double CLAW_OPEN = 0.3 ;
-    private final double xAxisCoeff = 200 ;  // How many degrees encoder to turn to run an inch in X Axis
-    private final double yAxisCoeff = 200 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double xAxisCoeff = 35.6 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
     private final int CONE_SLIDE_LOW = 0 ;
@@ -32,6 +34,7 @@ public class Hardware2022 {
     private final int NOCONE_SLIDE_LOW = 0 ;
     private final int NOCONE_SLIDE_MID = 120 ;
     private final int NOCONE_SLIDE_HIGH = 360;
+
 
 
     private boolean debug = true;
@@ -190,7 +193,7 @@ public class Hardware2022 {
      * @param power Positive value move forward
      */
     public void moveYAxis(double distance, double power ) {
-        moveYAxisDegree( (int) Math.round( (float) distance * this.yAxisCoeff ),  power ) ;
+        moveYAxisDegree( -(int) Math.round( (float) distance * this.yAxisCoeff ),  -power ) ;
     }
 
     /**
@@ -219,14 +222,27 @@ public class Hardware2022 {
         telemetry.update();
 
         while ( wheelFrontLeft.isBusy()) {
+            int currentPosition = getYAxisPosition();
+            double velocityCoff = 0 ;
+            if (Math.abs(currentPosition - 0 ) <= Math.abs(distance - currentPosition)) {
+                velocityCoff = (currentPosition - 0 )/(distance - 0) * 2 ;
+            } else {
+                velocityCoff = (distance - currentPosition)/(distance - 0) *2;
+            }
+            if ( velocityCoff <= MIN_VELOCITY ) {
+                velocityCoff = MIN_VELOCITY;
+            }
+
             telemetry.addLine().addData("[X Position , in the while >]  ", getYAxisPosition());
             telemetry.addLine().addData("[X target Position , in the while >]  ", wheelFrontLeft.getTargetPosition());
+            telemetry.addLine().addData("[X veloCoff , in the while >]  ", velocityCoff);
+
             telemetry.update();
 
-            wheelFrontLeft.setVelocity(-power * Hardware2022.ANGULAR_RATE);
-            wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
-            wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
-            wheelBackRight.setVelocity(-power * Hardware2022.ANGULAR_RATE);
+            wheelFrontLeft.setVelocity(-power * Hardware2022.ANGULAR_RATE *velocityCoff );
+            wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE*velocityCoff);
+            wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE*velocityCoff);
+            wheelBackRight.setVelocity(-power * Hardware2022.ANGULAR_RATE*velocityCoff);
 
         }
 
