@@ -57,7 +57,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
     // UNITS ARE METERS
     double tagSize = 0.166;
 
-   //Tag ID 1, 2, 3 from the 36h11 family
+   // Tag ID 1, 2, 3 from the 36h11 family
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
@@ -74,10 +74,8 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         {
             @Override
             public void onOpened() {
-
-                camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT,OpenCvCameraRotation.UPRIGHT);
                 camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
-
+                camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -151,8 +149,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         // When we implement the rest of autonomous we can delete line the while loop
     }
 
-    void tagToTelemetry(AprilTagDetection detection)
-    {
+    void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));

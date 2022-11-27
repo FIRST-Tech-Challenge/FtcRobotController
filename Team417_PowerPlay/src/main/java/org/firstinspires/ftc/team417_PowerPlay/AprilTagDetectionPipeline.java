@@ -38,8 +38,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
-class AprilTagDetectionPipeline extends OpenCvPipeline
-{
+class AprilTagDetectionPipeline extends OpenCvPipeline {
     private long nativeAprilTagPtr;
     private Mat grey = new Mat();
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
@@ -86,7 +85,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
     @Override
     public void finalize() {
         // Might be null if createApriltagDetector() threw an exception
-        if(nativeAprilTagPtr != 0) {
+        if (nativeAprilTagPtr != 0) {
             // Delete the native context we created in the constructor
             AprilTagDetectorJNI.releaseApriltagDetector(nativeAprilTagPtr);
             nativeAprilTagPtr = 0;
@@ -116,7 +115,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
 
         // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
-        for(AprilTagDetection detection : detections) {
+        for (AprilTagDetection detection : detections) {
             Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
             drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
@@ -132,8 +131,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         }
     }
 
-    public ArrayList<AprilTagDetection> getLatestDetections()
-    {
+    public ArrayList<AprilTagDetection> getLatestDetections() {
         return detections;
     }
 
@@ -275,7 +273,6 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         }
 
         public Pose (Mat rvec, Mat tvec) {
-
             this.rvec = rvec;
             this.tvec = tvec;
         }
