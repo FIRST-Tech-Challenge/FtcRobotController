@@ -9,17 +9,23 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SignalPipeline extends OpenCvPipeline {
     private int width = 640;
     private int height = 480;
     private int hueSearchSize = 25;
-    private int cornerSearchSize = 70;
+    private int cornerSearchSize = 100;
     
     private Mat empty = new Mat();
     private Mat hsv = new Mat();
     private Mat gray = new Mat();
+    private Mat graySearch;
+    private Mat canny = new Mat();
     private Mat hue = new Mat();
     private Mat display = new Mat();
+    private Mat contourHierarchy = new Mat();
     private Mat hueSearch;
     private Mat cornerSearch;
 
@@ -42,6 +48,7 @@ public class SignalPipeline extends OpenCvPipeline {
         
         Imgproc.cvtColor(input, gray, Imgproc.COLOR_RGB2GRAY);
         cornerSearch = gray.submat(new Rect(cornerTopLeft, cornerBottomRight));
+        graySearch = gray.submat(new Rect(cornerTopLeft, cornerBottomRight));
     }
     
     private void determineState() {
@@ -92,6 +99,10 @@ public class SignalPipeline extends OpenCvPipeline {
         
         determineState();
         
+        Imgproc.Canny(graySearch, canny, 100, 200);
+        ArrayList<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(canny, contours, contourHierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_TC89_KCOS);
+        
         Imgproc.cvtColor(gray, display, Imgproc.COLOR_GRAY2RGB);
         // Draw an rectangle to show where we are sampling
         Imgproc.rectangle(display, hueTopLeft, hueBottomRight, new Scalar(255, 0, 0));
@@ -101,8 +112,14 @@ public class SignalPipeline extends OpenCvPipeline {
         int[] cornersData = new int[(int) (corners.total() * corners.channels())];
         corners.get(0, 0, cornersData);
         for (int i = 0; i < corners.rows(); i++) {
-            Imgproc.circle(display, new Point(cornersData[i * 2] + cornerTopLeft.x, cornersData[i * 2 + 1] + cornerTopLeft.y), 4, new Scalar(0, 0, 255));
+            //Imgproc.circle(display, new Point(cornersData[i * 2] + cornerTopLeft.x, cornersData[i * 2 + 1] + cornerTopLeft.y), 4, new Scalar(0, 0, 255));
         }
+        
+        if (contours.size() > 0) {
+            Imgproc.putText(display, String.valueOf(contours.get(0).rows()), new Point(100, 100), 0, 1, new Scalar(255, 255, 255));
+        }
+            
+        Imgproc.drawContours(display, contours, -1, new Scalar(255, 255));
         
         // Matrices don't automatically free their memory
         corners.release();
