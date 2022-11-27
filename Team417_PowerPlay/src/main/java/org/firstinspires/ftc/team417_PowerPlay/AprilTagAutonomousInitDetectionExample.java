@@ -74,7 +74,11 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         {
             @Override
             public void onOpened() {
+<<<<<<< HEAD
                 camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT,OpenCvCameraRotation.UPRIGHT);
+=======
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+>>>>>>> e0dd6728960d15d9b609558b517c05e23a86b470
             }
 
             @Override
@@ -90,40 +94,69 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
+<<<<<<< HEAD
             if(currentDetections.size() != 0) {
                 boolean tagFound = false;
 
                 for(AprilTagDetection tag : currentDetections) {
                     if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
+=======
+            if (currentDetections.size() != 0) {
+                boolean tagFound = false;
+
+                for (AprilTagDetection tag : currentDetections) {
+                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
+>>>>>>> e0dd6728960d15d9b609558b517c05e23a86b470
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
                     }
                 }
 
+<<<<<<< HEAD
                 if(tagFound) {
+=======
+                if (tagFound) {
+>>>>>>> e0dd6728960d15d9b609558b517c05e23a86b470
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 } else {
                     telemetry.addLine("Don't see tag of interest :(");
 
+<<<<<<< HEAD
                     if(tagOfInterest == null) {
+=======
+                    if (tagOfInterest == null) {
+>>>>>>> e0dd6728960d15d9b609558b517c05e23a86b470
                         telemetry.addLine("(The tag has never been seen)");
                     } else {
                         telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         tagToTelemetry(tagOfInterest);
+<<<<<<< HEAD
                         }
                      }
 
                  } else {
                 telemetry.addLine("Don't see tag of interest :(");
                 if(tagOfInterest == null) {
+=======
+                    }
+                }
+            } else {
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if (tagOfInterest == null) {
+>>>>>>> e0dd6728960d15d9b609558b517c05e23a86b470
                     telemetry.addLine("(The tag has never been seen)");
                 } else {
                     telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
+<<<<<<< HEAD
              }
+=======
+            }
+>>>>>>> e0dd6728960d15d9b609558b517c05e23a86b470
 
             telemetry.update();
             sleep(20);
@@ -135,7 +168,11 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
          */
 
         /* Update the telemetry */
+<<<<<<< HEAD
         if(tagOfInterest != null) {
+=======
+        if (tagOfInterest != null) {
+>>>>>>> e0dd6728960d15d9b609558b517c05e23a86b470
             telemetry.addLine("Tag snapshot:\n");
             tagToTelemetry(tagOfInterest);
             telemetry.update();
