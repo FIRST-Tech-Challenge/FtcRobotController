@@ -20,8 +20,8 @@ public abstract class BaseOpMode extends LinearOpMode {
     public static DcMotorEx motorBR;
 
     public static DcMotorEx motorTurntable;
-    public static DcMotorEx motorLVSlides;
-    public static DcMotorEx motorRVSlides;
+    public static DcMotorEx motorLeftSlides;
+    public static DcMotorEx motorRightSlides;
 
     // servos
     public static Servo servoGrabber;
@@ -35,22 +35,21 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
-
         // motors
         motorFL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFL");
         motorFR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFR");
         motorBL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
         motorTurntable = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorTurntable");
-        motorLVSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLVSlides");
-        motorRVSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRVSlides");
+        motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLVSlides");
+        motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRVSlides");
 
         motorFL.setDirection(DcMotorEx.Direction.FORWARD);
         motorFR.setDirection(DcMotorEx.Direction.REVERSE);
         motorBL.setDirection(DcMotorEx.Direction.FORWARD);
         motorBR.setDirection(DcMotorEx.Direction.REVERSE);
-        motorLVSlides.setDirection(DcMotorEx.Direction.FORWARD);
-        motorRVSlides.setDirection(DcMotorEx.Direction.FORWARD);
+        motorLeftSlides.setDirection(DcMotorEx.Direction.FORWARD);
+        motorRightSlides.setDirection(DcMotorEx.Direction.FORWARD);
         motorTurntable.setDirection(DcMotorEx.Direction.FORWARD);
 
         motorFL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -58,9 +57,14 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
+        motorFL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorFR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
         motorTurntable.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        motorLVSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        motorRVSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorLeftSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorRightSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
         motorFL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -69,9 +73,12 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         motorTurntable.setTargetPosition(0);
         motorTurntable.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motorTurntable.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        motorLVSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        motorRVSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorRightSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // servos
         servoGrabber = hardwareMap.servo.get("servoGrabber");
@@ -81,9 +88,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-
-        // preset the IMU angles so it doesn't start on null since it will only later be read when turning
-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION);
     }
@@ -142,10 +146,10 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * this method will allow the slides to move upwards, downwards, outwards, and inwards given a specified x target position and y target position
-     * @param yTargetPosition target position for vertical slides motors in ticks
+     * this method will allow the slides to move upwards and downwards given a specified target position
+     * @param targetPosition target position for vertical slides motors in ticks
      */
-    public void driveSlides(/*int xTargetPosition,*/ int yTargetPosition) {
+    public void driveSlides(int targetPosition) {
 
     }
 

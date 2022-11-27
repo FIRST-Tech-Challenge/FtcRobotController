@@ -34,15 +34,15 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveSlidesWithController() {
-        motorLVSlides.setPower(-gamepad2.left_stick_y);
-        motorRVSlides.setPower(-gamepad2.left_stick_y);
+        motorLeftSlides.setPower(-gamepad2.left_stick_y);
+        motorRightSlides.setPower(-gamepad2.left_stick_y);
 
-        if (motorLVSlides.getCurrentPosition() < 0) {
-            motorLVSlides.setPower(0.5);
-            motorRVSlides.setPower(0.5);
-        } else if (motorLVSlides.getCurrentPosition() > 9600) {
-            motorLVSlides.setPower(-0.5);
-            motorRVSlides.setPower(-0.5);
+        if (motorLeftSlides.getCurrentPosition() < 0) {
+            motorLeftSlides.setPower(0.5);
+            motorRightSlides.setPower(0.5);
+        } else if (motorLeftSlides.getCurrentPosition() > 9600) {
+            motorLeftSlides.setPower(-0.5);
+            motorRightSlides.setPower(-0.5);
         }
     }
 
