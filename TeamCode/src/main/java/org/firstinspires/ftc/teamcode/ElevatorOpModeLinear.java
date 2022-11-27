@@ -54,7 +54,7 @@ public class ElevatorOpModeLinear extends LinearOpMode {
 
         elevator = new Elevator(hardwareMap, telemetry);
         double power;
-
+boolean x = false;
         elevator.initMotors();
 
         // Wait for the game to start (driver presses PLAY)
@@ -67,20 +67,23 @@ public class ElevatorOpModeLinear extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            power  = -gamepad1.left_stick_y ;
-            elevator.setElevatorMotorPower(power);
+            power  = -gamepad2.left_stick_y ;
+           // elevator.setElevatorMotorPower(power);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
+            telemetry.addData("gamepad2.b: ", gamepad2.b );
+            telemetry.addData("x: ", x );
 
-            if (gamepad1.y)
-                elevator.moveMainServo();
-            else if (gamepad1.a)
-                elevator.openHands();
-            else if (gamepad1.b)
-                elevator.closeHands();
-            else
-                elevator.stop();
+            telemetry.update();
+            if (x == false && gamepad2.b )
+            {
+//                if
+//                elevator.getLeftServo().setPosition(1);
+//                elevator.getRightServo().setPosition(0);
+                elevator.moveHands();
+            }
+
+            x=gamepad2.b;
         }
     }}
