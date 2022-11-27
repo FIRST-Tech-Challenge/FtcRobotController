@@ -20,7 +20,7 @@ public class GeneralDriver extends BaseTele {
         hdw.createHardware();
         robotWheel = new MecanumWheels();
 
-        double powerDrivePercentage = 0.5;
+        double powerDrivePercentage = 0.5 ;
 
         telemetry.addData("[>]", "All set?");
         telemetry.update();
@@ -63,7 +63,7 @@ public class GeneralDriver extends BaseTele {
             //Wheel takes input of gampad 1  ,  turbo is the power factor. Range 0-1 , 1 is 100%
             robotWheel.joystick(gamepad1, 1);
 
-            /* Set the calcuated power to wheels according to the gampad input */
+            /* Set the calcuated velocity to wheels according to the gampad input */
             double frontLeftVelocity = robotWheel.wheelFrontLeftPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
             double backLeftVelocity = robotWheel.wheelBackLeftPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
             double frontRightVelocity = robotWheel.wheelFrontRightPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;

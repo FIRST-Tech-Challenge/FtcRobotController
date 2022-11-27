@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 /**
  * This is the Robot class for 2022 FTC Season
@@ -76,7 +80,9 @@ public class Hardware2022 {
     public DcMotorEx wheelFrontLeft = null;
     public DcMotorEx wheelBackRight = null;
     public DcMotorEx wheelBackLeft = null;
-    //public DcMotor wheelStrafe = null;
+
+    //IMU
+    IMU imu =null ;
 
     public DcMotor vSlide = null;
 
@@ -128,12 +134,25 @@ public class Hardware2022 {
 
         grabberclaw = hwMap.get(Servo.class, "grabberclaw");
 
+        //Get IMU.
+        imu = hwMap.get(IMU.class, "imu");
+        //Our robot mount Conrol hub Logo face backward, and USB port is facing Up.
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        // Now initialize the IMU with this mounting orientation
+        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+
+
     }
 
     /**
      * This operation move robot forward/backward according to the input
-     * @param distance  Distance in encoder degree , 360 for a full circle.  Always positive
-     * @param power Positive value move forward
+     * @param distance  Distance in encoder degree , 360 for a full circle.  Positive for forward.
+     * @param power Positive value move forward.  Value fom 0 - 1.
      */
     private void moveYAxisDegree(int distance, double power ) {
 
@@ -182,11 +201,6 @@ public class Hardware2022 {
 
     }
 
-    private int getYAxisPosition( ) {
-        return  wheelFrontLeft.getCurrentPosition() ;
-
-    }
-
     /**
      *
      * @param distance  Distance in inches .  Always positive
@@ -198,8 +212,9 @@ public class Hardware2022 {
 
     /**
      * This operation move robot lef/right according to the input
-     * @param distance  Distance in encoder degree , 360 for a full circle.  Always positive
-     * @param power Positive value move right.
+     * @param distance  Distance in encoder degree , 360 for a full circle.  Positive for right.
+     * @param power Positive value move right, value from 0-1.
+     *
      */
     private void moveXAxisDegree(int distance, double power ) {
 
@@ -221,22 +236,22 @@ public class Hardware2022 {
         telemetry.addLine().addData("[X Position, after setTarget >]  ", getYAxisPosition());
         telemetry.update();
 
+        //Set velocity slow at beginning and end.
         while ( wheelFrontLeft.isBusy()) {
-            int currentPosition = getYAxisPosition();
+            int currentPosition = getXAxisPosition();
             double velocityCoff = 0 ;
             if (Math.abs(currentPosition - 0 ) <= Math.abs(distance - currentPosition)) {
-                velocityCoff = (currentPosition - 0 )/(distance - 0) * 2 ;
+                velocityCoff = Math.abs( (currentPosition - 0 )/(distance - 0) * 2 );
             } else {
-                velocityCoff = (distance - currentPosition)/(distance - 0) *2;
+                velocityCoff = Math.abs( (distance - currentPosition)/(distance - 0) *2);
             }
             if ( velocityCoff <= MIN_VELOCITY ) {
                 velocityCoff = MIN_VELOCITY;
             }
 
-            telemetry.addLine().addData("[X Position , in the while >]  ", getYAxisPosition());
+            telemetry.addLine().addData("[X Position , in the while >]  ", getXAxisPosition());
             telemetry.addLine().addData("[X target Position , in the while >]  ", wheelFrontLeft.getTargetPosition());
             telemetry.addLine().addData("[X veloCoff , in the while >]  ", velocityCoff);
-
             telemetry.update();
 
             wheelFrontLeft.setVelocity(-power * Hardware2022.ANGULAR_RATE *velocityCoff );
@@ -251,6 +266,44 @@ public class Hardware2022 {
         wheelBackRight.setVelocity(0);
         wheelBackLeft.setVelocity(0);
 
+        //Put motor back into run with encoder mode.
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+
+    /**
+     * This operation move robot left/right according to the input
+     * @param distance  Distance inch , positive to the right.
+     * @param power Positive value move right.
+     */
+
+    public void moveXAxis(double  distance, double power ) {
+        moveXAxisDegree((int) Math.round((float) distance * xAxisCoeff), power);
+    }
+
+    private int getXAxisPosition( ) {
+        return  wheelFrontLeft.getCurrentPosition() ;
+    }
+
+    private int getYAxisPosition( ) {
+        return  wheelFrontLeft.getCurrentPosition() ;
+    }
+
+    /**
+     * Turn robot direction.
+     *
+     * @param degree  Degrees to turn,  Positive is turn counter clock wise.
+     */
+    public void turn( double degree) {
+
+        wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Put motor back into run with encoder mode.
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -258,26 +311,63 @@ public class Hardware2022 {
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //Get current orientation.  Angle is between -180 to 180
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        double startHeading = orientation.getYaw(AngleUnit.DEGREES);
+        double endHeading = regulateDegree( startHeading + degree );
 
+        double currentHeading = startHeading;
 
+        telemetry.addLine().addData("[Start Heading: >]  ", startHeading);
+        telemetry.addLine().addData("[End Heading: >]  ", endHeading);
+        telemetry.update();
+
+        double difference = regulateDegree( endHeading  - currentHeading );
+
+        while ( Math.abs( difference )> 2  ) {
+
+            currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            difference = regulateDegree( endHeading  - currentHeading );
+
+            telemetry.addLine().addData("[Heading: Inside While >]  ", currentHeading);
+            telemetry.addLine().addData("[Difference:  >]  ", difference);
+            telemetry.update();
+
+            if ( difference > 0 ) {
+                wheelFrontLeft.setVelocity(-0.3 * Hardware2022.ANGULAR_RATE);
+                wheelBackLeft.setVelocity(-0.3 * Hardware2022.ANGULAR_RATE);
+                wheelFrontRight.setVelocity(0.3 * Hardware2022.ANGULAR_RATE);
+                wheelBackRight.setVelocity(0.3 * Hardware2022.ANGULAR_RATE);
+            } else if ( difference < 0) {
+                wheelFrontLeft.setVelocity(0.3 * Hardware2022.ANGULAR_RATE);
+                wheelBackLeft.setVelocity(0.3 * Hardware2022.ANGULAR_RATE);
+                wheelFrontRight.setVelocity(-0.3 * Hardware2022.ANGULAR_RATE);
+                wheelBackRight.setVelocity(-0.3 * Hardware2022.ANGULAR_RATE);
+            }
+
+        }
+
+        wheelFrontRight.setVelocity(0);
+        wheelFrontLeft.setVelocity(0);
+        wheelBackRight.setVelocity(0);
+        wheelBackLeft.setVelocity(0);
     }
-
 
     /**
-     * This operation move robot left/right according to the input
-     * @param distance  Distance inch ,
-     * @param power Positive value move right.
+     * Regulate degreee between -180 and 180, by adding or substracting 360.
+     *
+     * @param degree
+     * @return
      */
+    private double regulateDegree ( double degree ) {
+       if ( degree > 180) {
+           degree -= 360;
+       } else if ( degree < -180 ) {
+           degree += 360;
+       }
 
-    public void moveXAxis(double  distance, double power ) {
-        moveXAxisDegree((int) Math.round((float) distance * xAxisCoeff), power);
-
+       return degree;
     }
-
-    private int getXAxisPosition( ) {
-        return  wheelFrontLeft.getCurrentPosition() ;
-    }
-
 
     /**
      * This method checks current state of robot.
@@ -453,7 +543,6 @@ public class Hardware2022 {
 
         grabberclaw.setPosition(CLAW_OPEN);
         currentState = RobotState.NoCone;
-
 
     }
 
