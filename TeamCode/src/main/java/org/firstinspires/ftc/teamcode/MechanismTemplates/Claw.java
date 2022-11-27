@@ -11,16 +11,16 @@ import java.util.function.BooleanSupplier;
 @Config
 public class Claw {
     public Servo wristJoint;
-    private Servo clawJoint; // public because a button must set the wrist to the intake position regardless of its status
+    public Servo clawJoint; // public because a button must set the wrist to the intake position regardless of its status
     private boolean isAuto;
 
     // claw positions
-    public static double OPEN = 0.69;
-    public static double CLOSE = 0.44;
+    private final double OPEN = 0.69;
+    private final double CLOSE = 0.44;
 
     // wrist positions
-    public static double WRIST_INTAKE_POSITION = 0.72; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
-    public static double WRIST_EXTAKE_POSITION = 0.05; // wrist rotates to extake on junction
+    public final double WRIST_INTAKE_POSITION = 0.72; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
+    private final double WRIST_EXTAKE_POSITION = 0.05; // wrist rotates to extake on junction
 
     SignalEdgeDetector isOpen;
     SignalEdgeDetector isIntakePosition;
