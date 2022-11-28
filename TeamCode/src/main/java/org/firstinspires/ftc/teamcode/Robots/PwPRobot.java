@@ -26,6 +26,8 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
+import java.util.ArrayList;
+
 public class PwPRobot extends BasicRobot {
     private Aligner aligner = null;
     private Claw claw = null;
@@ -36,6 +38,7 @@ public class PwPRobot extends BasicRobot {
     public Field field = null;
     public CVMaster cv = null;
     public SampleMecanumDrive roadrun = null;
+    private ArrayList<Integer> seq;
 //    private LEDStrip leds = null;
 
 
@@ -389,11 +392,14 @@ public class PwPRobot extends BasicRobot {
             gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Value");
             gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Value");
             gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
+            gp.getSequence();
             op.telemetry.addData("stacklevel", lift.getStackLevel());
             roadrun.update();
             liftArm.updateLiftArmStates();
             claw.updateClawStates();
             lift.updateLiftStates();
+            seq = gp.getSequence();
+            logger.log("/RobotLogs/GeneralRobot", seq.toString(), false);
             //USE THE RFGAMEPAD FUNCTION CALLED getSequence(), WILL RETURN ARRAYLIST OF INTS:
             //1 = down, 2 = right, 3 = up, 4 = left
 //        }
