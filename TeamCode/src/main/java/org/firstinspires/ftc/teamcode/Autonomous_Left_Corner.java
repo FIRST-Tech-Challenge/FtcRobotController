@@ -214,7 +214,7 @@ public class Autonomous_Left_Corner extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            if (moreTimeToStart.milliseconds() < 500) {
+            if (moreTimeToStart.milliseconds() < 100) {
                 telemetry.addData("Waiting millisecond: ", moreTimeToStart.milliseconds()  );
                 telemetry.update();
                 continue;

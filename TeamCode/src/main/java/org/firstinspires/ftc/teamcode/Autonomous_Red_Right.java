@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
@@ -14,17 +14,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
-@TeleOp(name = "Official Manual Mode", group = "Match")
-public class OfficialManualMode extends LinearOpMode {
+@Autonomous(name = "red_right", group = "Match")
+public class Autonomous_Red_Right extends LinearOpMode {
     public String workingMode = "red_right";
-    public boolean autoMode = false;
+    public boolean autoMode = true;
     public boolean useCamera = true;
 
     public double inchesOneSquare = 24;
