@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-@Disabled
+//@Disabled
 @Autonomous(name = "RoadRunMoveTest")
 public class RoadRunMoveTest extends LinearOpMode {
 
@@ -60,12 +59,17 @@ public class RoadRunMoveTest extends LinearOpMode {
             //1
             robot.followTrajectorySequenceAsync(trajSeq2);
             robot.followTrajectorySequenceAsync(trajSeq2);
-//            robot.followTrajectorySequenceAsync(trajSeq2);
-//            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
 
 //            //func
             robot.setFirstLoop(false);
             robot.roadrun.update();
+            telemetry.update();
         }
     }
 }

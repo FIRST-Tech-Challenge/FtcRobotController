@@ -269,40 +269,40 @@ public class PwPRobot extends BasicRobot {
 
         //omnidirectional movement + turning
 
-        if (op.gamepad2.y) {
-            lift.setLiftTarget(LIFT_HIGH_JUNCTION.getValue());
-            liftArm.raiseLiftArmToOuttake();
-        }
-        if (op.gamepad2.b) {
-            lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
-            liftArm.raiseLiftArmToOuttake();
-        }
-        if (op.gamepad2.a) {
-            liftArm.lowerLiftArmToIntake();
-            lift.setLiftTarget(0);
-        }
-
-        if (op.gamepad1.dpad_left && op.gamepad2.dpad_left) {
-            lift.resetEncoder();
-        }
-        //manual lift up/down
-        if (op.gamepad1.dpad_down && op.gamepad2.dpad_down) {
-            lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger) / 3);
-        } else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
-            lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
-            lift.updateLastManualTime();
-        }
-        else {
-//            lift.setLiftPower(0);
-            lift.liftToTarget();
-        }
-
-        if(op.gamepad2.dpad_down){
-            lift.iterateConeStackDown();
-        }
-        if(op.gamepad2.dpad_up){
-            lift.iterateConeStackUp();
-        }
+//        if (op.gamepad2.y) {
+//            lift.setLiftTarget(LIFT_HIGH_JUNCTION.getValue());
+//            liftArm.raiseLiftArmToOuttake();
+//        }
+//        if (op.gamepad2.b) {
+//            lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
+//            liftArm.raiseLiftArmToOuttake();
+//        }
+//        if (op.gamepad2.a) {
+//            liftArm.lowerLiftArmToIntake();
+//            lift.setLiftTarget(0);
+//        }
+//
+//        if (op.gamepad1.dpad_left && op.gamepad2.dpad_left) {
+//            lift.resetEncoder();
+//        }
+//        //manual lift up/down
+//        if (op.gamepad1.dpad_down && op.gamepad2.dpad_down) {
+//            lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger) / 3);
+//        } else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
+//            lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
+//            lift.updateLastManualTime();
+//        }
+//        else {
+////            lift.setLiftPower(0);
+//            lift.liftToTarget();
+//        }
+//
+//        if(op.gamepad2.dpad_down){
+//            lift.iterateConeStackDown();
+//        }
+//        if(op.gamepad2.dpad_up){
+//            lift.iterateConeStackUp();
+//        }
         //when not manual lifting, automate lifting
 
 //        if (field.lookingAtPole() && op.gamepad1.dpad_up && !roadrun.isBusy()) {
@@ -323,9 +323,9 @@ public class PwPRobot extends BasicRobot {
             }
             roadrun.setWeightedDrivePower(
                     new Pose2d(
-                            -/*vals[1]**/0.53*vals[1]/abs(vals[1]) * pow(abs(vals[1]),3.0/2),
-                            -/*vals[0]**/0.53*vals[0]/abs(vals[0]) * pow(abs(vals[0]),3.0/2),
-                            -/*vals[2]**/0.53*vals[2]/abs(vals[2]) * pow(abs(vals[2]),3.0/2)
+                            -/*vals[1]**/0.8*vals[1]/abs(vals[1]) * pow(abs(vals[1]),1.55),
+                            -/*vals[0]**/0.8*vals[0]/abs(vals[0]) * pow(abs(vals[0]),1.55),
+                            -/*vals[2]**/0.8*vals[2]/abs(vals[2]) * pow(abs(vals[2]),1.55)
                     )
             );
             if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
