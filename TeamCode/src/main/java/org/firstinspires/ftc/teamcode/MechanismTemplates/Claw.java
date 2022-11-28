@@ -59,7 +59,7 @@ public class Claw {
         }
     }
 
-    private boolean wristInExtakePosition;
+    public boolean wristInExtakePosition;
 
     public void toggleWristRotate() { // would be used at the beginning of the goToJunction method in the arm class, for example
         if (wristInExtakePosition) {
