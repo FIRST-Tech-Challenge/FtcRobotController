@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 class IntakeSequence(
     claw: Claw,
 ) : SequentialGroup(
-    WaitUntilCmd(claw::readyToGrab),
+//    WaitUntilCmd(claw::readyToGrab),
     ClawCmds.ClawCloseCmd(claw),
     InstantCmd(RobotState::nextState)
 )

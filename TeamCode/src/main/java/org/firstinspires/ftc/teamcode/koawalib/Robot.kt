@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lights
 import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 
 class Robot(startPose: Pose) {
-    private val hardware = Hardware(startPose)
+    val hardware = Hardware(startPose)
 
     val drive = KMecanumOdoDrive(
         hardware.fl,
@@ -21,7 +21,12 @@ class Robot(startPose: Pose) {
     )
 
     val arm = Arm(hardware.armMotor)
-    val claw = Claw(hardware.clawServo, hardware.distanceSensor)
+    val claw = Claw(hardware.clawServo)
     val lift = Lift(hardware.liftLeadMotor, hardware.liftSecondMotor)
-    val lightsDevice = Lights(hardware.lights)
+//    val lightsDevice = Lights(hardware.lights)
+
+    init {
+        arm.setPos(-50.0)
+        lift.setPos(0.0)
+    }
 }

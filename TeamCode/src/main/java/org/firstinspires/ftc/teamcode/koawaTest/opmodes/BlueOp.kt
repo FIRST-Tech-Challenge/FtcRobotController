@@ -22,8 +22,8 @@ class BlueOp : KOpMode(photonEnabled = false) {
         robot = Robot(startPose)
         robot.drive.defaultCommand = MecanumCmd(
             robot.drive,
-            driver.leftStick,
-            driver.rightStick,
+            driver.leftStick.xInverted.yInverted,
+            driver.rightStick.xInverted,
             0.9,
             0.9,
             0.9,

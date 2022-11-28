@@ -20,16 +20,28 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
         scheduleDrive()
         scheduleStrategy()
         scheduleCycling()
+//        scheduleTest()
     }
 
     private fun scheduleDrive() {
-        robot.drive.defaultCommand = DriveHackCmd(
+//        robot.drive.defaultCommand = DriveHackCmd(
+//            robot.drive,
+//            driver.leftStick,
+//            driver.rightStick,
+//            driver.leftTrigger::isToggled,
+//            driver.a::isToggled,
+//            robot.drive::pose
+//        )
+        robot.drive.defaultCommand = MecanumCmd(
             robot.drive,
-            driver.leftStick,
-            driver.rightStick,
-            driver.leftTrigger::isToggled,
-            driver.a::isToggled,
-            robot.drive::pose
+            driver.leftStick.xInverted.yInverted,
+            driver.rightStick.xInverted,
+            0.9,
+            0.9,
+            0.9,
+            1.0,
+            1.0,
+            1.0
         )
     }
 
@@ -50,10 +62,22 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
         )
     }
 
+    private fun scheduleTest() {
+        driver.leftBumper.onPress(InstantCmd({robot.arm.setPos(135.0)}, robot.arm))
+        driver.rightBumper.onPress(InstantCmd({robot.lift.setPos(14.5)}, robot.lift))
+        driver.a.onPress(InstantCmd({robot.arm.setPos(-50.0)}, robot.arm))
+        driver.b.onPress(InstantCmd({robot.lift.setPos(-1.0)}, robot.lift))
+    }
+
     override fun mLoop() {
-        Logger.addTelemetryData("state", RobotState.state)
-        Logger.addTelemetryData("strat", RobotState.strategy)
-        Logger.addTelemetryData("aimbot", driver.a.isToggled)
-        Logger.addTelemetryData("spaceglide", driver.leftTrigger.isToggled)
+//        Logger.addTelemetryData("state", RobotState.state)
+//        Logger.addTelemetryData("strat", RobotState.strategy)
+//        Logger.addTelemetryData("aimbot", driver.a.isToggled)
+//        Logger.addTelemetryData("spaceglide", driver.leftTrigger.isToggled)
+        Logger.addTelemetryData("arm pos", robot.hardware.armMotor.pos)
+        Logger.addTelemetryData("lift pos", robot.hardware.liftLeadMotor.pos)
+        Logger.addTelemetryData("arm power", robot.arm.motor.power)
+        Logger.addTelemetryData("lift power", robot.hardware.liftLeadMotor.power)
+
     }
 }

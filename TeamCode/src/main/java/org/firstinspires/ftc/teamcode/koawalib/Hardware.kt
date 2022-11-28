@@ -45,38 +45,39 @@ class Hardware(startPose: Pose) {
         .createEncoder(EncoderFactory(LiftConstants.ticksPerUnit)
             .zero(LiftConstants.homePos)
         )
-        .withMotionProfileControl(
+        .withPositionControl(
             PIDGains(LiftConstants.kP, LiftConstants.kI, LiftConstants.kD),
             FFGains(kS = LiftConstants.kS, kV = LiftConstants.kV, kA = LiftConstants.kA, kG = LiftConstants.kG),
-            MotionConstraints(maxV = LiftConstants.maxVel, accel = LiftConstants.maxAccel),
             allowedPositionError = LiftConstants.allowedPositionError,
             disabledPosition = LiftConstants.disabledPosition
         )
         .build()
 
     val liftSecondMotor = MotorFactory("lift2")
+        .reverse
         .float
         .build()
 
     val armMotor = MotorFactory("Arm")
+        .reverse
         .float
         .createEncoder(EncoderFactory(ArmConstants.ticksPerUnit)
+            .reverse
             .zero(ArmConstants.homePos)
         )
-        .withMotionProfileControl(
+        .withPositionControl(
             PIDGains(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD),
             FFGains(kS = ArmConstants.kS, kV = ArmConstants.kV, kA = ArmConstants.kA, kCos = ArmConstants.kCos),
-            MotionConstraints(maxV = ArmConstants.maxVel, accel = ArmConstants.maxAccel),
             allowedPositionError = ArmConstants.allowedPositionError
         )
         .build()
 
     val clawServo = KServo("Claw")
-        .startAt(ClawConstants.closePos)
+//        .startAt(ClawConstants.closePos)
 
-    val distanceSensor = KDistanceSensor("distanceSensor")
+//    val distanceSensor = KDistanceSensor("distanceSensor")
 
-    val lights = KServo("Lights")
+//    val lights = KServo("Lights")
 
     private val leftEncoder = EncoderFactory(ticksPerUnit)
         .revEncoder

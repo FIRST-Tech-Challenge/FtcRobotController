@@ -7,9 +7,9 @@ import com.asiankoala.koawalib.subsystem.Subsystem
 import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
 
 class Claw(private val servo: KServo,
-           private val distanceSensor: KDistanceSensor
+//           private val distanceSensor: KDistanceSensor
 ) : Subsystem() {
-    val readyToGrab get() = distanceSensor.lastRead < ClawConstants.distanceThreshold
+//    val readyToGrab get() = distanceSensor.lastRead < ClawConstants.distanceThreshold
 
     fun setPos(pos: Double) {
         servo.position = pos
