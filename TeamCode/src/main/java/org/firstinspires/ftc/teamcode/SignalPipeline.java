@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -9,6 +11,8 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SignalPipeline extends OpenCvPipeline {
     private int width = 640;
@@ -22,6 +26,7 @@ public class SignalPipeline extends OpenCvPipeline {
     private Mat canny = new Mat();
     private Mat display = new Mat();
     private Mat contourHierarchy = new Mat();
+    private Mat contourMask = new Mat();
 
     // Points to determine what area we are searching in
     Point center = new Point(width / 2.0, height / 2.0);
@@ -50,11 +55,27 @@ public class SignalPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         updateConvertedMats(input);
-        
+
         // Determine contours of the image using canny edge detection
         Imgproc.Canny(gray, canny, 100, 200);
         ArrayList<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(canny, contours, contourHierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_TC89_KCOS);
+
+        // TODO: This might not work if it detects more than one contour
+        // Approximate the contour, because we will never have perfect
+        MatOfPoint2f contourPoints = new MatOfPoint2f();
+        MatOfPoint2f contourApprox = new MatOfPoint2f();
+
+        if (contours.size() > 0) {
+            contourPoints = new MatOfPoint2f(contours.get(0));
+            double epsilon = 0.1 * Imgproc.arcLength(new MatOfPoint2f(contours.get(0)), true);
+            Imgproc.approxPolyDP(contourPoints, contourApprox, epsilon, true);
+        }
+
+        // Create a mask with the contours
+        Imgproc.drawContours(contourMask, contours, 0, new Scalar(255, 255, 255), Core.FILLED);
+        // Find the mean hue using the contour mask
+        double meanHue = Core.mean(hsv, contourMask).val[0];
 
         determineState();
 
@@ -62,9 +83,10 @@ public class SignalPipeline extends OpenCvPipeline {
         display = input;
         //Imgproc.cvtColor(input, display, Imgproc.COLOR_GRAY2RGB);
         Imgproc.rectangle(display, new Rect(searchTopLeft, searchBottomRight), new Scalar(0, 255, 0));
-            
-        Imgproc.drawContours(display, contours, -1, new Scalar(255, 255));
-        
+
+        Imgproc.drawContours(display, Arrays.asList(new MatOfPoint(contourApprox)), -1, new Scalar(255, 255));
+        Imgproc.putText(display, String.valueOf(meanHue), new Point(100, 100), 0, 2, new Scalar(255));
+
         return display;
     }
 }
