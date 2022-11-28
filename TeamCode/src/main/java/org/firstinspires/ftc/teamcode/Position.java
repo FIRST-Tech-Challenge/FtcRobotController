@@ -13,6 +13,7 @@ public class Position {
     protected String name;
     protected double x;
     protected double y;
+    protected Navigation.Action action;
     //Add constructors if needed
     protected double strafePower = 0.0;
     protected double rotatePower = 0.0;
@@ -35,6 +36,16 @@ public class Position {
         this.y = y;
         this.name = name;
         setRotation(theta);
+    }
+
+    Position(double x, double y, String name, Navigation.Action action, double strafePower, double rotatePower, double theta) {
+        this.x = x;
+        this.y = y;
+        this.name = name;
+        setRotation(theta);
+        this.strafePower = strafePower;
+        this.rotatePower = rotatePower;
+        this.action = action;
     }
 
     public void setX(double x) {
@@ -60,6 +71,22 @@ public class Position {
 
     public double getRotation() {
         return rotation;
+    }
+
+    public double getStrafePower() {
+        return strafePower;
+    }
+
+    public double getRotatePower(){
+        return rotatePower;
+    }
+
+    public Navigation.Action getAction(){
+        return action;
+    }
+
+    public String getName(){
+        return name;
     }
 
     public void reset() {

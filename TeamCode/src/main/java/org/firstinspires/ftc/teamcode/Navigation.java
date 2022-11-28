@@ -22,7 +22,7 @@ import java.util.Objects;
 public class Navigation
 {
     public enum RotationDirection {CLOCKWISE, COUNTERCLOCKWISE}
-
+    public static enum Action {NONE}
     // AUTON CONSTANTS
     // ===============
     public enum MovementMode {FORWARD_ONLY, STRAFE}
@@ -348,6 +348,7 @@ public class Navigation
 
         double power;
         boolean ramping = true;
+
         if (Math.abs(constantPower - 0.0) > FLOAT_EPSILON) {
             power = constantPower;
             ramping = false;
@@ -425,8 +426,8 @@ public class Navigation
 
     /** Calculates the angle at which the robot must strafe in order to get to a target location.
      */
-    private double getStrafeAngle(Point currentLoc, double currentOrientation, Point target) { //LEFT OFF HERE 11/22/22
-        double strafeAngle = currentOrientation - getAngleBetween(currentLoc, target);
+    private double getStrafeAngle(double currentLocX, double currentLocY, double currentOrientation, double targetX, double targetY) { //LEFT OFF HERE 11/22/22
+        double strafeAngle = currentOrientation - getAngleBetween(currentLocX, currentLocY, targetX, targetY);
         if (strafeAngle > Math.PI) {
             strafeAngle -= 2 * Math.PI;
         }
@@ -438,7 +439,7 @@ public class Navigation
 
     /** Determines the angle between the horizontal axis and the segment connecting A and B.
      */
-    private double getAngleBetween(Point a, Point b) { return Math.atan2((b.y - a.y), (b.x - a.x)); }
+    private double getAngleBetween(double x1, double y1, double x2, double y2) { return Math.atan2((y2 - y1), (x2 - x1)); }
 
     /** Calculates the euclidean distance between two points.
      *
@@ -455,10 +456,7 @@ public class Navigation
     private void transformPath(RobotManager.AllianceColor allianceColor, RobotManager.StartingSide startingSide) {
         for (int i = 0; i < path.size(); i++) {
             Position pos = path.get(i);
-            Position copy = new Position(
-                    new Point(pos.getX(), pos.getY(), pos.getLocation().name, pos.getLocation().action,
-                              pos.getLocation().strafePower, pos.getLocation().rotatePower),
-                    pos.getRotation());
+            Position copy = new Position(pos.getX(),pos.getY(), pos.getName(),pos.getAction(),pos.getStrafePower(),pos.getRotatePower(),pos.getRotation());
             if (allianceColor == RobotManager.AllianceColor.RED) {
                 copy.setY(-copy.getY() + RED_BARCODE_OFFSET);
                 if (startingSide == RobotManager.StartingSide.WAREHOUSE) {
@@ -812,6 +810,7 @@ public class Navigation
 
 /** Hardcoded paths through the playing field during the Autonomous period.
  */
+/*
 class AutonomousPaths {
     // Coordinates relative to starting location close to carousel.
     public static final Position allianceShippingHub =
@@ -912,6 +911,7 @@ class AutonomousPaths {
             warehouse
     ));
 
+
     // TESTING PATHS
     // =============
 
@@ -946,3 +946,4 @@ class AutonomousPaths {
 //            new Position(new Point(0, 0, "P1"), Math.PI)
 //    ));
 }
+*/
