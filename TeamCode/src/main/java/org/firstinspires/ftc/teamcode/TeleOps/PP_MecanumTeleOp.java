@@ -188,6 +188,7 @@ public class PP_MecanumTeleOp extends OpMode
         }
         else if (gamepad2_X.isRisingEdge()){
             clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
+            clawControl.wristInExtakePosition = false;
             armControl.setIntake();
             slideControl.setIntakeOrGround();
 
