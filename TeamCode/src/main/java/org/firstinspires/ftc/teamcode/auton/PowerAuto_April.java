@@ -50,55 +50,25 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.NewHardwareMap;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
+
+import java.util.ArrayList;
+
 import java.util.List;
 
 
 //Start of Program
-@Autonomous(name="PowerAuto", group ="Concept", preselectTeleOp="Power_TeleOp")
+@Autonomous(name="PowerAuto_April", group ="Concept", preselectTeleOp="Power_TeleOp")
 
 public class PowerAuto_April extends LinearOpMode {
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
-
-
-    private static final String[] LABELS = {
-            "1 Bolt", //yoda
-            "2 Bulb", //stormtrooper
-            "3 Panel" //tie fighter
-    };
-
-    /*
-     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-     * web site at https://developer.vuforia.com/license-manager.
-     *
-     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-     * random data. As an example, here is a example of a fragment of a valid key:
-     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-     * Once you've obtained a license key, copy the string from the Vuforia web site
-     * and paste it in to your code on the next line, between the double quotes.
-     */
-    private static final String VUFORIA_KEY =
-            "Aa/n2JX/////AAABmS4qOc3rA0BbhY8eFeyaC9YC7jI+cXpqw/nsNuQ6xqHa6GXor3NmLRaRozXHNXMCSwqIH4pQNYBPYvsur4XEuCmq8uEciP6ybVn2U2VZpe16pOkECunnIut6zpoKwz286I+I3aZxgxUsCF0ER3S2bbugrV0HyA8d9jzkaYe9lSuTWTovzhvQhM7Qdso9uI5iZphRyH8qqg6zdYf9WfzQZJ4I2WTVDTd9ZPrB9jM6M2q8rUm9Sh0P//fx0N/tphz9EWXW0p8/UtRC82crWOnW7b7ZMl3Ud+K+AJxVC/PxOcbkbAAF2Fbr6y9mQ7ptrbfy+4U26isGqXbR9JzAQLp/MrJDP0k0zNqZA4u/275QkyLi";
-
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
-    private VuforiaLocalizer vuforia;
-
-    /**
-     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
-     * Detection engine.
-     */
-    private TFObjectDetector tfod;
-
-    /**
-     * This is the webcam we are to use. As with other hardware devices such as motors and
-     * servos, this device is identified using the robot configuration tool in the FTC application.
-     */
-    WebcamName webcamName = null;
 
     /* Declare OpMode members. */
     NewHardwareMap robot =   new NewHardwareMap();
@@ -139,23 +109,61 @@ public class PowerAuto_April extends LinearOpMode {
     public double sensorNum = 40;
     public double sensorNumIn = 0;
 
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
+    static final double FEET_PER_METER = 3.28084;
+
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+
+    // UNITS ARE METERS
+    double tagsize = 0.166;
+
+    // Tag ID 1,2,3 from the 36h11 family
+    /*EDIT IF NEEDED!!!*/
+
+    int LEFT = 4;
+    int MIDDLE = 2;
+    int RIGHT = 5;
+
+    AprilTagDetection tagOfInterest = null;
+
 
     @Override public void runOpMode() {   //driver presses Init button
-        VuforiaLocalizer.Parameters vparameters = new VuforiaLocalizer.Parameters();
 
-        vparameters.vuforiaLicenseKey = VUFORIA_KEY;
-        vparameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+            aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(vparameters);
+            camera.setPipeline(aprilTagDetectionPipeline);
+            camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+            {
+                @Override
+                public void onOpened()
+                {
+                    camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                }
 
-        initTfod();
+                @Override
+                public void onError(int errorCode)
+                {
 
+                }
+            });
+
+            telemetry.setMsTransmissionInterval(50);
         robot.init(hardwareMap);
 
         //robot.CameraPan.setPosition(robot.CameraOne);
 
-        robot.FreightArm.setPosition(0.9);
+        //robot.FreightArm.setPosition(0.9);
 
         //IMU initialization
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -197,89 +205,97 @@ public class PowerAuto_April extends LinearOpMode {
         robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.BmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
-        if (tfod != null) {
-            tfod.activate();
+            /*******************************************************************
+             *                                                                  *
+             *                                                                  *
+             *                 Image and Signal Determination                   *
+             *                                                                  *
+             *                                                                  *
+             *******************************************************************/
 
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 16/9).
-            tfod.setZoom(1.0, 16.0/9.0);
-        }
+        //New WaitForStart Function
 
-        sleep(500);
+            while (!isStarted() && !isStopRequested())
+            {
+                ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+                if(currentDetections.size() != 0)
+                {
+                    boolean tagFound = false;
+
+                    for(AprilTagDetection tag : currentDetections)
+                    {
+                        if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
+                        {
+                            tagOfInterest = tag;
+                            tagFound = true;
+                            break;
+                        }
+                    }
+
+                    if(tagFound)
+                    {
+                        telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                        tagToTelemetry(tagOfInterest);
+                    }
+                    else
+                    {
+                        telemetry.addLine("Don't see tag of interest :(");
+
+                        if(tagOfInterest == null)
+                        {
+                            telemetry.addLine("(The tag has never been seen)");
+                        }
+                        else
+                        {
+                            telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                            tagToTelemetry(tagOfInterest);
+                        }
+                    }
+
+                }
+                else
+                {
+                    telemetry.addLine("Don't see tag of interest :(");
+
+                    if(tagOfInterest == null)
+                    {
+                        telemetry.addLine("(The tag has never been seen)");
+                    }
+                    else
+                    {
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                        tagToTelemetry(tagOfInterest);
+                    }
+
+                }
+
+                telemetry.update();
+                sleep(20);
+            }
 
 
-        waitForStart();
+
+
+
+            if(tagOfInterest != null)
+            {
+                telemetry.addLine("Tag snapshot:\n");
+                tagToTelemetry(tagOfInterest);
+                telemetry.update();
+            }
+            else
+            {
+                telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+                telemetry.update();
+            }
+
         robot.LiftMotor.setPower(1.0);
         sleep(200);
         robot.LiftMotor.setPower(0);
 
-        gyroDrive(0.4, 4, 0, 15.0);
+        //gyroDrive(0.4, 4, 0, 15.0);
         RobotLog.d("LOGGING START");
-        /*******************************************************************
-         *                                                                  *
-         *                                                                  *
-         *                 Image and Signal Determination                   *
-         *                                                                  *
-         *                                                                  *
-         *******************************************************************/
-
-        //TFod detection code
-        if (opModeIsActive()) {
-            while (opModeIsActive() && (stackCameraStop)) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
-
-                        // step through the list of recognitions and display image position/size information for each one
-                        // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                            double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                            double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-
-                            telemetry.addData(""," ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
-                            if (recognition.getLabel().equals("1 Bolt")) {
-                                telemetry.addData("Image", "1 Bolt");
-                                targetZone = 1;
-                            } else if (recognition.getLabel().equals("2 Bulb")) {
-                                telemetry.addData("Image", "2 Bulb");
-                                targetZone = 2;
-                            } else if (recognition.getLabel().equals("3 Panel")){
-                                telemetry.addData("Image", "3 Panel");
-                                targetZone = 3;
-                            }
-
-                        }
-                        telemetry.update();
-                    }
-                }
-
-
-                cameraNumber += 1;
-                if (cameraNumber == 50000) {
-                    stackCameraStop = false;
-                    cameraNumber = 0;
-                }
-            }
-        }
-        if (tfod != null) {
-            tfod.shutdown();
-        }
 
         /******************************************************************
          *                                                                 *
@@ -366,16 +382,17 @@ public class PowerAuto_April extends LinearOpMode {
             robot.Green.setPower(0);
             sleep(500);
             gyroDrive(DRIVE_SPEED, -10, 180, 15.0);
-            //Drive to Target Zone
-            /*if(targetZone==1){
+            //Drive to Target Zone*/
+
+            if(tagOfInterest.id == LEFT){
             gyroDrive(DRIVE_SPEED, 32, 90, 15.0);
             }
-            else if(targetZone==2){
+            else if(tagOfInterest.id == MIDDLE){
             gyroDrive(DRIVE_SPEED, 12, 90, 15.0);
             }
-            else if(targetZone==3){
+            else if(tagOfInterest.id == RIGHT){
             gyroDrive(DRIVE_SPEED, -12, 90, 15.0);
-            }*/
+            }
 
     }
 
@@ -387,24 +404,16 @@ public class PowerAuto_April extends LinearOpMode {
      *                                                                 *
      *                                                                 *
      *******************************************************************/
-
-    /**
-     * Initialize the TensorFlow Object Detection engine.
-     */
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 300;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-
-        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
-        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
-    }
+        void tagToTelemetry(AprilTagDetection detection)
+        {
+            telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+            telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+            telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+            telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+            telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+            telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+            telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+        }
 
     public void gyroTelem() {
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
