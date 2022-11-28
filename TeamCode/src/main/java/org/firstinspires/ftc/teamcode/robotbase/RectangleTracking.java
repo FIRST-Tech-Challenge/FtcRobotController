@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robotbase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -12,6 +12,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 class RectangleTracking extends OpenCvPipeline
 {
@@ -38,16 +39,16 @@ class RectangleTracking extends OpenCvPipeline
     int rangeAccuracyH = 10;
     int rangeAccuracyS = 30;
 
-    Button colorSet;
+    BooleanSupplier colorSet;
 
     double[] rectangleCoordinates = {0, 0};
 
     Telemetry telemetry;
 
-    public RectangleTracking(Telemetry telemetry, ExtendedGamepad gamepad)
+    public RectangleTracking(Telemetry telemetry, BooleanSupplier colorSet)
     {
         this.telemetry = telemetry;
-        colorSet = gamepad.options;
+        this.colorSet = colorSet;
     }
 
     @Override
@@ -69,7 +70,7 @@ class RectangleTracking extends OpenCvPipeline
         double[] pixel4 = imgHSV.get((int) viewportSize.height/2, (int) viewportSize.width/2+1);
 
         //Getting Average HSV Values only when Stage=THRESHOLD
-        if(colorSet.isPressed()) {
+        if(colorSet.getAsBoolean()) {
             hHSVAverage = (pixel1[0] + pixel2[0] + pixel3[0] + pixel4[0]) / 4;
             sHSVAverage = (pixel1[1] + pixel2[1] + pixel3[1] + pixel4[1]) / 4;
             vHSVAverage = (pixel1[2] + pixel2[2] + pixel3[2] + pixel4[2]) / 4;
