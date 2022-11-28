@@ -88,7 +88,7 @@ public class RFGamepad{
 //        }
         if (op.gamepad1.dpad_down){
             if(booleanMap.get("gamepad1_dpad_down") == false){
-                seq.add(1);
+                seq.add(3);
                 booleanMap.put("gamepad1_dpad_down", true);
             }
             //timeOfPress = op.getRuntime();
@@ -108,7 +108,7 @@ public class RFGamepad{
         }
         if (op.gamepad1.dpad_up){
             if(booleanMap.get("gamepad1_dpad_up") == false){
-                seq.add(3);
+                seq.add(1);
                 booleanMap.put("gamepad1_dpad_up", true);
             }
             //timeOfPress = op.getRuntime();
