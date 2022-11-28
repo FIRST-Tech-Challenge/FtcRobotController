@@ -17,7 +17,7 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDriveDeadWheels;
  * This is a simple routine to test translational drive capabilities.
  */
 @Config
-@Disabled
+//@Disabled
 @Autonomous(group = "drive")
 public class StraightTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
