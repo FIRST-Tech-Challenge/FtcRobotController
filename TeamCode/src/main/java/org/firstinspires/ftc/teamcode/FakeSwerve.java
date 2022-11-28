@@ -22,6 +22,8 @@ public class FakeSwerve extends LinearOpMode {
     private DcMotorEx rightFrontDrive = null;
     private DcMotorEx rightBackDrive = null;
 
+    public double maxVelocity = 340 * 537.6; //for AndyMark NeveRest 20 motor when using .setVelocity()
+
     int direction = 0;
 
     public void waitTime(double time){
@@ -208,7 +210,7 @@ public class FakeSwerve extends LinearOpMode {
             }
         }else{
             //left = -; right = +
-            while(runtime.seconds < time) {
+            while(runtime.seconds() < time) {
                 leftVelo(-.75);
                 rightVelo(.75);
             }

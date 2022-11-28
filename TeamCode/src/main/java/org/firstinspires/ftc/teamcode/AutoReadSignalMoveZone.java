@@ -38,13 +38,14 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
             "3 Panel"
     };
 
+    //general constants
+    double oneFootCm = 30.48;
+
     //drivetrain
     public DcMotorEx leftDrive;
     public DcMotorEx rightDrive;
     public DcMotorEx leftBackDrive;
     public DcMotorEx rightBackDrive;
-
-
 
     public ElapsedTime runtime = new ElapsedTime();
 
@@ -56,8 +57,8 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
     //Wheel constants
     public double maxVelocity = 340 * 537.6; //for AndyMark NeveRest 20 motor when using .setVelocity()
     public double rpm = 340;
-    public double radius = /*insert radius*/;
-    public double oneFootTime = 1/*change unit based on what radius is in*//(getVelo(radius,rpm)*.75); //using a velo of maxVelocity * .75
+    public double radius = 11;
+    public double oneFootTime = oneFootCm/(getVelo(radius,rpm)*.75); //using a velo of maxVelocity * .75
 
     private static final String VUFORIA_KEY =
             "AclDUAH/////AAABmYzSWAdyDktyn7LeKaYpXPkeHMDuWfVt+ZWKtbsATYUHu+lKEe6ywQGLZLm5MRmxfQ4UQRSZ8hR7Hx7cwiYcj7DBcqr2CcI/KXvXFnaoaSHonQcH5UjgGwygyR0DRMvRI9Mm+MnWqdwgQuS4eNYgz/vAuNpeGRJmwimGZkb9kb9Uai+RaH2V33PvH4TZepOg//RReZrL33oLxaLEchTHATEKR1xj6NLzHuZVuOTnIaMwPHRrkkK/cyMqaog/be+k2uxxQ2Lxtb2Yb4nHt4n8Rs7ajT/dUSsP/6pZdWmVs7BmIafbHlLFlS/6+1rDbSfOHqEyHFoLDq/hselgdVG2pzEzPcr3ntMwoIAPjiA799i5";
@@ -174,7 +175,7 @@ public class AutoReadSignalMoveZone extends LinearOpMode {
     }
     //replacement moveToZone function for robot strafe adjustments
 
-    public void moveToZone1(String signal, int count){ /
+    public void moveToZone1(String signal, int count){
         telemetry.addData("Detected:",signal);
         double timeAdjustment = getDistance(radius,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
         if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
