@@ -263,7 +263,7 @@ public class Crane implements Subsystem {
 
         //todo - probably don't need our own PID - can use built in PID
         //initialization of the PID calculator's output range, target value and multipliers
-        extendPID.setOutputRange(-extenderPwr, extenderPwr);
+        extendPID.setOutputRange(EXTEND_MIN_PID_OUTPUT, EXTEND_MAX_PID_OUTPUT);
         extendPID.setPID(Kp, Ki, Kd);
         extendPID.setSetpoint(targetTicks);
         extendPID.enable();
@@ -346,6 +346,8 @@ public class Crane implements Subsystem {
                 break;
 
             case 2: //waiting on initial lift, then move arm to defaultpos - this is usually a retraction and a lift
+                setExtenderPwr(-0.5,0.5);
+                setShoulderPwr(-0.4, 0.4);
                 if(System.nanoTime() > pickupTimer)
                 {
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
@@ -371,6 +373,8 @@ public class Crane implements Subsystem {
                 if(System.nanoTime() > pickupTimer){
                     setExtendTargetPos(drop.getExtendMemory());
                     pickupConeStage = 0;
+                    setExtenderPwr(EXTEND_MIN_PID_OUTPUT,EXTEND_MAX_PID_OUTPUT);
+                    setShoulderPwr(SHOULDER_MIN_PID_OUTPUT,SHOULDER_MAX_PID_OUTPUT);
                     return true;
                 }
             default:
@@ -406,6 +410,8 @@ public class Crane implements Subsystem {
                 break;
 
             case 2: //waiting on lift, then move arm to defaultpos - this is usually a retraction and a lift
+                setExtenderPwr(-0.5,0.5);
+                setShoulderPwr(-0.4,0.4);
                 if(System.nanoTime() > dropTimer)
                 {
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
@@ -609,8 +615,8 @@ public class Crane implements Subsystem {
 
     @Override
     public void stop() {
-        setShoulderPwr(0);
-        setextenderPwr(0);
+        setShoulderPwr(0,0);
+        setExtenderPwr(0,0);
         setShoulderActivePID(false);
         setextenderActivePID(false);
     }
@@ -675,7 +681,7 @@ public class Crane implements Subsystem {
         return "Crane";
     }
 
-    public void setextenderPwr(double pwr){ extenderPwr = pwr; }
+    public void setExtenderPwr(double pwrMin, double pwrMax){ extendPID.setOutputRange(pwrMin,pwrMax); }
     public void setextenderActivePID(boolean isActive){extenderActivePID = isActive;}
     public void setShoulderActivePID(boolean isActive){shoulderActivePID = isActive;}
     public void setShoulderTargetDeg(double deg){
@@ -684,7 +690,7 @@ public class Crane implements Subsystem {
     public void setExtendTargetDistance(double dis){
         setExtendTargetPos((int)(dis*EXTEND_TICKS_PER_METER));
     }
-    public void setShoulderPwr(double pwr){ shoulderPwr = pwr; }
+    public void setShoulderPwr(double pwrMin, double pwrMax){ shoulderPID.setOutputRange(pwrMin,pwrMax); }
     public  void setShoulderTargetAngle(double t){ shoulderTargetAngle = (Math.max(Math.min(t,SHOULDER_TICK_MAX/SHOULDER_DIRECT_TICKS_PER_DEGREE),-10)); }
     public  double getShoulderTargetAngle(){ return shoulderTargetAngle; }
     public  void setExtendTargetPos(double t){ extenderTargetPos = Math.min(3075/EXTEND_TICKS_PER_METER,Math.max(t, 0)); }

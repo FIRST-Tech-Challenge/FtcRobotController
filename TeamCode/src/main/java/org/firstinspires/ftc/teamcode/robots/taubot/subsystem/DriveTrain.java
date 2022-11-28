@@ -32,17 +32,14 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
-import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DiffyKinematics;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.PathLine;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
@@ -262,11 +259,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         }
 
 
-
         if (useMotorPowers) {
             leftMotor.setPower(leftPower);
             rightMotor.setPower(rightPower);
-
         } else {
             leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
             rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
@@ -286,6 +281,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         if (debug) {
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
+            telemetryMap.put("x target", driveTargetPos.getX());
+            telemetryMap.put("y target", driveTargetPos.getY());
             telemetryMap.put("pose heading", Math.toDegrees(poseEstimate.getHeading()));
             telemetryMap.put("raw heading", Math.toDegrees(rawHeading));
             telemetryMap.put("raw heading radians", rawHeading);
@@ -456,6 +453,16 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         rightPosition = 0;
     }
 
+    boolean withinError(double value, double target, double offset){
+        return (value >= target-offset && value <= target+offset);
+    }
+
+    Pose2d driveTargetPos = new Pose2d(0,0);
+
+    double getMagnitude(Pose2d pos, Pose2d tar){
+        return Math.sqrt(  Math.pow(pos.getX()-tar.getX() , 2) + Math.pow(pos.getY()-tar.getY() , 2)   );
+    }
+
     private double driveTarget, driveHeading, driveSpeed, driveDistErr, driveDistErrPrev;
     private Stage driveStage = new Stage();
     private StateMachine drive = Utils.getStateMachine(driveStage)
@@ -481,7 +488,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public boolean driveUntil(double driveDistance, double driveHeading, double driveSpeed) {
         if(!driveUntilInitialized) {
-            resetRelPos();
+            //resetRelPos();
             this.driveTarget = driveDistance + getAveragePos();
             this.driveHeading = driveHeading;
             this.driveSpeed = driveSpeed;

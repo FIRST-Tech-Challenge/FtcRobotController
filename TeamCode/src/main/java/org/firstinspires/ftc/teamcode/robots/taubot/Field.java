@@ -17,6 +17,12 @@ import java.util.HashMap;
 public class Field {
 
     public FieldObject[] objects = new FieldObject[37];
+
+    public FieldObject[] substationRightPattern = new FieldObject[8];
+    public FieldObject[] substationLeftPattern = new FieldObject[8];
+
+    public FieldObject[] coneStackRightPattern = new FieldObject[8];
+    public FieldObject[] coneStackLeftPattern = new FieldObject[8];
     public boolean isBlue;
 
     //todo decide on start position
@@ -84,7 +90,7 @@ public class Field {
 
         objects[27] = new FieldObject("MidPole1",-1,4,3);
         objects[28] = new FieldObject("MidPole2",1,4,3);
-        objects[20] = new FieldObject("MidPole3",-1,2,3);
+        objects[29] = new FieldObject("MidPole3",-1,2,3);
         objects[30] = new FieldObject("MidPole4",1,2,3);
 
         mapObjects.put("MidPole", Arrays.copyOfRange(objects,27,30));
@@ -100,6 +106,89 @@ public class Field {
         objects[36] = new FieldObject("AllianceSignal2",1.5,1.5,-1);
 
         mapObjects.put("AllianceSignal", Arrays.copyOfRange(objects,35,36));
+
+        initPatterns();
+    }
+
+    int subRPatInd = 0;
+    int subLPatInd = 0;
+    int coneRPatInd = 0;
+    int coneLPatInd = 0;
+
+    public void incSubRightPat(){
+        subRPatInd++;
+    }
+    public void incSubLeftPat(){
+        subLPatInd++;
+    }
+
+    public void decSubRightPat(){
+        subRPatInd--;
+    }
+    public void decSubLeftPat(){
+        subLPatInd--;
+    }
+
+    public void incConeRightPat(){
+        coneRPatInd++;
+    }
+    public void decConeRightPat(){
+        coneRPatInd--;
+    }
+
+    public void incConeLeftPat(){
+        coneLPatInd++;
+    }
+    public void decConeLeftPat(){
+        coneLPatInd--;
+    }
+
+    public FieldObject getSubRightObject(){
+        return substationRightPattern[subRPatInd];
+    }
+
+    public FieldObject getSubLeftObject(){
+        return substationLeftPattern[subLPatInd];
+    }
+
+    public FieldObject getConeRightObject(){
+        return coneStackRightPattern[coneRPatInd];
+    }
+
+    public FieldObject getConeLeftObject(){
+        return coneStackLeftPattern[coneLPatInd];
+    }
+
+    public void initPatterns(){
+        substationRightPattern[0] = objects[34];
+        substationRightPattern[1] = objects[33];
+        substationRightPattern[2] = objects[30];
+        substationRightPattern[3] = objects[24];
+        substationRightPattern[4] = objects[26];
+        substationRightPattern[5] = objects[29];
+        substationRightPattern[6] = objects[25];
+        substationRightPattern[7] = objects[32];
+
+        substationLeftPattern[0] = objects[34];
+        substationLeftPattern[1] = objects[32];
+        substationLeftPattern[2] = objects[29];
+        substationLeftPattern[3] = objects[23];
+        substationLeftPattern[4] = objects[25];
+        substationLeftPattern[5] = objects[30];
+        substationLeftPattern[6] = objects[26];
+        substationLeftPattern[7] = objects[33];
+
+        coneStackRightPattern[0] = objects[33];
+        coneStackRightPattern[1] = objects[34];
+        coneStackRightPattern[2] = objects[30];
+        coneStackRightPattern[3] = objects[28];
+        coneStackRightPattern[4] = objects[24];
+
+        coneStackLeftPattern[0] = objects[32];
+        coneStackLeftPattern[1] = objects[34];
+        coneStackLeftPattern[2] = objects[29];
+        coneStackLeftPattern[3] = objects[27];
+        coneStackLeftPattern[4] = objects[23];
 
     }
 

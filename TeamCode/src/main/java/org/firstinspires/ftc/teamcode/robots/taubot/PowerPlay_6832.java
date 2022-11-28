@@ -40,7 +40,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -60,7 +59,7 @@ import java.util.Map;
  * TeleOp and Autonomous.
  */
 
-@TeleOp(name = "PowerPlay_6832", group = "Challenge") // @Autonomous(...) is the other common choice
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "PowerPlay_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config
 public class PowerPlay_6832 extends OpMode {
@@ -200,7 +199,7 @@ public class PowerPlay_6832 extends OpMode {
         active = true;
         initializing = true;
         debugTelemetryEnabled = DEFAULT_DEBUG_TELEMETRY_ENABLED;
-        gameState = GameState.TELE_OP;
+        gameState = PowerPlay_6832.GameState.TELE_OP;
 
         // timing
         lastLoopClockTime = System.nanoTime();
