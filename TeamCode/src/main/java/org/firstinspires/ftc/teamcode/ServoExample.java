@@ -47,7 +47,7 @@ public class ServoExample extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         servoGrabber1 = hardwareMap.get(CRServo.class, "servo_grabber");
-        //servoGrabber2 = hardware.Map.get(CRServo.class, "servo_grabber_two");
+        //servoGrabber2 = hardware.Map.get(CRServo.class, "servo_grabber_two"); THIS SHOULD NOT CONTINUOUS ALSO MIGHT ONLY NEED ONE
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!

@@ -26,6 +26,10 @@ public class FakeSwerve extends LinearOpMode {
 
     int direction = 0;
 
+    boolean switchDriveMode = gamepad1.a;
+    boolean driveMode = false;
+    boolean hasSwitched = false;
+
     public void waitTime(double time){
         runtime.reset();
         while(runtime.seconds()<time){
@@ -71,180 +75,75 @@ public class FakeSwerve extends LinearOpMode {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double left  = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double right =  - gamepad1.right_stick_y;
-            boolean turnRight = gamepad1.dpad_up;
-            boolean turnLeft = gamepad1.dpad_down;
-            boolean strafeLeft = gamepad1.dpad_left;
-            boolean strafeRight = gamepad1.dpad_right;
-            boolean diagLeft = gamepad1.x;
-            boolean diagRight = gamepad1.y;
-            boolean backDiagLeft = gamepad1.a;
-            boolean backDiagRight = gamepad1.b;
+            double y  = -gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x;
+            double rotateX = gamepad1.right_stick_x;
 
-            //makes the stuff non-linear
-            if(left>0){
-                left *=left;
+            double leftFrontPower  = 0;
+            double rightFrontPower = 0;
+            double leftBackPower   = 0;
+            double rightBackPower  = 0;
+
+            //switches the mode drive train is using
+            if(switchDriveMode){
+                if(!hasSwitched){
+                    driveMode = !driveMode;
+                    hasSwitched = true;
+                }
             }else{
-                left = left*left*-1;
+                hasSwitched = false;
             }
 
-            if(right>0){
-                right *=right;
-            }else{
-                right = right*right*-1;
+            if(driveMode){ // pov mode (fake swerve)
+                // Send calculated power to wheels
+                max = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rotateX), 1);
+                leftFrontDrive.setPower((y + x + rotateX) / max);
+                leftBackDrive.setPower((y - x + rotateX) / max);
+                rightFrontDrive.setPower((y - x - rotateX) / max);
+                rightBackDrive.setPower((y + x - rotateX) / max);
+            }else{ // tank drive
+                if(left>0){
+                    left *=left;
+                }else{
+                    left = left*left*-1;
+                }
+
+                if(right>0){
+                    right *=right;
+                }else{
+                    right = right*right*-1;
+                }
+
+                // Combine the joystick requests for each axis-motion to determine each wheel's power.
+                // Set up a variable for each drive wheel to save the power level for telemetry.
+                leftFrontPower  = left;
+                rightFrontPower = right;
+                leftBackPower   = left;
+                rightBackPower  = right;
+
+                // Normalize the values so no wheel power exceeds 100%
+                // This ensures that the robot maintains the desired motion.
+                max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+
+                if (max > 1.0) {
+                    leftFrontPower  /= max;
+                    rightFrontPower /= max;
+                    leftBackPower   /= max;
+                    rightBackPower  /= max;
+                }
+
+                // Send calculated power to wheels
+                leftFrontDrive.setPower(leftFrontPower);
+                rightFrontDrive.setPower(rightFrontPower);
+                leftBackDrive.setPower(leftBackPower);
+                rightBackDrive.setPower(rightBackPower);
             }
-
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = left;
-            double rightFrontPower = right;
-            double leftBackPower   = left;
-            double rightBackPower  = right;
-
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-
-
-            if (max > 1.0) {
-                leftFrontPower  /= max;
-                rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
-            }
-
-            // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
-
-            if(diagLeft){ //diag should work now, individual wheel functions had a negative in it to account for not having .setDirection in auto code
-                leftWheel(.05);
-                rightBackWheel(.05);
-            }else {
-                motorsOff();
-            }
-            if(diagRight){
-                rightWheel(.05);
-                leftBackWheel(.05);
-            }else{
-                motorsOff();
-            }
-            if(backDiagLeft){
-                leftWheel(-.05);
-                rightBackWheel(-.05);
-            }else{
-                motorsOff();
-            }
-            if(backDiagRight){
-                rightWheel(-.05);
-                leftBackWheel(-.05);
-            }else{
-                motorsOff();
-            }
-            if(strafeLeft){
-                strafeVelo(true,.25);
-            }else{
-                motorsOff();
-            }
-            if(strafeRight){
-                strafeVelo(false,.25);
-            }else{
-                motorsOff();
-            }
-            if(turnLeft){
-                //code is not setup properly so probably turns more than 90 degrees actually
-                turnNinety(false);
-            }else{
-                motorsOff();
-            }
-            if(turnRight){
-                turnNinety(true);
-            }else{
-                motorsOff();
-            }
         }
-    }
-
-    //Drive functions using .setVelocity
-    public void setVelo(boolean forward, double maxPercent){
-        //Forward or backward
-        int direction = -1;
-        if(forward){
-            direction = 1;
-        }
-        runtime.reset();
-        leftVelo(maxPercent*direction);
-        rightVelo(maxPercent*direction);
-        motorsOff();
-    }
-
-    public void strafeVelo(boolean isLeft, double maxPercent){
-        //Strafe left or right
-        int direction = -1;
-        if(isLeft){
-            direction = 1;
-        }
-        leftWheel(maxPercent * direction);
-        rightWheel(maxPercent * direction * -1);
-        leftBackWheel(maxPercent * direction * -1);
-        rightBackWheel(maxPercent * direction);
-    }
-
-    public void turnNinety(boolean CW){
-        //Turns Ninety degrees
-        //currently not measured, will have to test this to be exact
-        int time = 5;
-        runtime.reset();
-        if(CW){
-            //left = +; right = -
-            while(runtime.seconds() < time) {
-                leftVelo(.75);
-                rightVelo(-.75);
-            }
-        }else{
-            //left = -; right = +
-            while(runtime.seconds() < time) {
-                leftVelo(-.75);
-                rightVelo(.75);
-            }
-        }
-    }
-
-    public void leftVelo(double maxPercent){ //sets power for left wheels
-        leftWheel(maxPercent);
-        leftBackWheel(maxPercent);
-    }
-
-    public void rightVelo(double maxPercent){ //sets power for right wheels
-        rightWheel(maxPercent);
-        rightBackWheel(maxPercent);
-    }
-
-    public void motorsOff(){ //turns all motors off
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
-    }
-
-    //Power each motor with .setVelocity()
-    public void leftWheel(double percent){
-        leftFrontDrive.setVelocity(maxVelocity*percent);
-    }
-    public void rightWheel(double percent){
-        rightFrontDrive.setVelocity(maxVelocity*percent);
-    }
-    public void leftBackWheel(double percent){
-        leftBackDrive.setVelocity(maxVelocity*percent);
-    }
-    public void rightBackWheel(double percent){
-        rightBackDrive.setVelocity(maxVelocity*percent);
     }
 }
