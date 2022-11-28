@@ -52,9 +52,9 @@ public class Crane implements Subsystem {
 
     public static double kF = 0.0;
 
-    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.03, 0.0001, 0.006);
-    public static double SHOULDER_MAX_PID_OUTPUT = 0.8;
-    public static double SHOULDER_MIN_PID_OUTPUT = -0.8;
+    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.03, 0.001, 0.006);
+    public static double SHOULDER_MAX_PID_OUTPUT = 1;
+    public static double SHOULDER_MIN_PID_OUTPUT = -1;
     public static double SHOULDER_TOLERANCE = 1;
     public static double SHOULDER_POWER = 1.0;
     public static double SHOULDER_ADJUST = 13;
@@ -346,8 +346,6 @@ public class Crane implements Subsystem {
                 break;
 
             case 2: //waiting on initial lift, then move arm to defaultpos - this is usually a retraction and a lift
-                setExtenderPwr(-0.5,0.5);
-                setShoulderPwr(-0.4, 0.4);
                 if(System.nanoTime() > pickupTimer)
                 {
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
@@ -373,8 +371,6 @@ public class Crane implements Subsystem {
                 if(System.nanoTime() > pickupTimer){
                     setExtendTargetPos(drop.getExtendMemory());
                     pickupConeStage = 0;
-                    setExtenderPwr(EXTEND_MIN_PID_OUTPUT,EXTEND_MAX_PID_OUTPUT);
-                    setShoulderPwr(SHOULDER_MIN_PID_OUTPUT,SHOULDER_MAX_PID_OUTPUT);
                     return true;
                 }
             default:
@@ -401,40 +397,49 @@ public class Crane implements Subsystem {
 
                 if(System.nanoTime() > dropTimer) //waiting until released, then start lifting:
                 {
-                    setShoulderTargetAngle(getShoulderAngle()+15); //todo - this should be a vertical offset (not this angular shortcut)
+                    setShoulderTargetAngle(getShoulderAngle()+20); //todo - this should be a vertical offset (not this angular shortcut)
                     //enough  time for the cone to lift a cone off of a stack so it doesn't drag the stack down when retracting
-                    dropTimer = futureTime(.25);
+                    dropTimer = futureTime(.3);
                     dropConeStage++;
 
                 }
                 break;
 
             case 2: //waiting on lift, then move arm to defaultpos - this is usually a retraction and a lift
-                setExtenderPwr(-0.5,0.5);
-                setShoulderPwr(-0.4,0.4);
                 if(System.nanoTime() > dropTimer)
                 {
-                    setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     setExtendTargetPos(defaultPos.getExtendMemory());
-                    targetTurretAngle = pickup.getHeadingMemory();
-                    dropTimer = futureTime(1.5); //typical time to retract enough to start turntable
+                    dropTimer = futureTime(0.7); //typical time to retract enough to start turntable
+                    dropConeStage++;
+                }
+                break;
+            case 3:
+                if(System.nanoTime() > dropTimer){
+                    setShoulderTargetAngle(defaultPos.getShoulderMemory());
+                    dropTimer = futureTime(0.7);
                     dropConeStage++;
                 }
                 break;
 
-            case 3: //move to previously set pickup position
+            case 4: //move to previously set pickup position
 
                 //todo - this is currently time based and it should maybe be based on lift achieved (if achievable - long extensions can't actually lift due to torque needed)
                 if(System.nanoTime() > dropTimer) {
+                    targetTurretAngle = pickup.getHeadingMemory();
                     //move to previous drop location with a little extra height
                     //robot.turret.setTargetHeading(pickup.getHeadingMemory()); //doesn't work cause - gets overriden
-
+                    dropConeStage++;
+                    pickupTimer = futureTime(0.7);
+                }
+                break;
+            case 5:
+                if(System.nanoTime() > dropTimer){
                     setShoulderTargetAngle(pickup.getShoulderMemory()); //return high
                     dropConeStage++;
                     pickupTimer = futureTime(0.7);
                 }
                 break;
-            case 4:
+            case 6:
                 if(System.nanoTime() > pickupTimer){
                     setExtendTargetPos(pickup.getExtendMemory());
                     dropConeStage = 0;
