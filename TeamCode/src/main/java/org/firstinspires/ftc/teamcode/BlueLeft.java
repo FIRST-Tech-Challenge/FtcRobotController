@@ -36,7 +36,6 @@ public class BlueLeft extends LinearOpMode {
     OpenCvWebcam webcam;
     private DcMotor Spin;
     private DcMotor Crane;
-    private CRServo Right;
     private CRServo Left;
 
 
@@ -51,6 +50,10 @@ public class BlueLeft extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
+        Left =hardwareMap.get(CRServo.class,"Lefts");
+        Spin =hardwareMap.get(DcMotor.class,"Spin");
+        Crane =hardwareMap.get(DcMotor.class,"Crane");
+
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -62,10 +65,7 @@ public class BlueLeft extends LinearOpMode {
 
 
             gyroTurning(90);
-            sleep(1000);
-            gyroTurning(69);
-            sleep(1000);
-            gyroTurning(99);
+
 
         }
     }
@@ -187,10 +187,8 @@ public class BlueLeft extends LinearOpMode {
     }
 
     public void intake(int direction, long time) throws InterruptedException {
-        Right.setPower(direction * 1);
         Left.setPower(direction * 1);
         sleep(time);
-        Right.setPower(0);
         Left.setPower(0);
 
     }
