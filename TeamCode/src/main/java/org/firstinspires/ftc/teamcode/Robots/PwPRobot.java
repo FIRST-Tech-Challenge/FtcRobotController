@@ -379,21 +379,23 @@ public class PwPRobot extends BasicRobot {
 
             //will only close when detect cone
             //claw.closeClaw
-            gp.readGamepad(op.gamepad2.y, "gamepad1_y", "High Junction");
-            gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Toggle Claw Open/Close");
-            gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Ground Junction");
-            gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Medium Junction");
-            gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Forwards/Backwards");
-            gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Left/Right");
-            gp.readGamepad(op.gamepad1.right_stick_x, "gamepad1_right_stick_x", "Turn Angle Left/Right");
-            gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Lift going down power");
-            gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Lift going up power");
-            gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Lift Arm Toggle Up/Down");
+            gp.readGamepad(op.gamepad2.y, "gamepad1_y", "Status");
+            gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
+            gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
+            gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
+            gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
+            gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Value");
+            gp.readGamepad(op.gamepad1.right_stick_x, "gamepad1_right_stick_x", "Value");
+            gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Value");
+            gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Value");
+            gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
             op.telemetry.addData("stacklevel", lift.getStackLevel());
             roadrun.update();
             liftArm.updateLiftArmStates();
             claw.updateClawStates();
             lift.updateLiftStates();
+            //USE THE RFGAMEPAD FUNCTION CALLED getSequence(), WILL RETURN ARRAYLIST OF INTS:
+            //1 = down, 2 = right, 3 = up, 4 = left
 //        }
     }
 }

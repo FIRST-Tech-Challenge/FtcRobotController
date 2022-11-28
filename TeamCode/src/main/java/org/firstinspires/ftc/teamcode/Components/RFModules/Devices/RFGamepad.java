@@ -62,4 +62,122 @@ public class RFGamepad{
             booleanMap.put(name, value);
         }
     }
+//    public boolean isReleased(String name){
+//        boolean val = false;
+//        if(booleanMap.get(name) == false){
+//            val = true;
+//        }
+//        else if(booleanMap.get(name) == true){
+//            val = false;
+//        }
+//        return val;
+//    }
+    //1 = down, 2 = right, 3 = up, 4 = left
+    ArrayList<Integer> seq = new ArrayList<>();
+//    ArrayList<Integer> old = new ArrayList<>();
+//    int newVal;
+//    double timeOfPress = 0;
+    // Boolean map of status of all buttons
+    // Take in a button, update that corresponding status with the status of button
+    //    -
+    //
+    //
+    public ArrayList<Integer> getSequence() {
+//        for(int i=0; i<seq.size(); i++){
+//            old.set(0, seq.get(i));
+//        }
+        if (op.gamepad1.dpad_down){
+            if(booleanMap.get("gamepad1_dpad_down") == false){
+                seq.add(1);
+                booleanMap.put("gamepad1_dpad_down", true);
+            }
+            //timeOfPress = op.getRuntime();
+        }
+        else if(op.gamepad1.dpad_down == false){
+            booleanMap.put("gamepad1_dpad_down", false);
+        }
+        if (op.gamepad1.dpad_right){
+            if(booleanMap.get("gamepad1_dpad_right") == false){
+                seq.add(2);
+                booleanMap.put("gamepad1_dpad_right", true);
+            }
+            //timeOfPress = op.getRuntime();
+        }
+        else if(op.gamepad1.dpad_right == false){
+            booleanMap.put("gamepad1_dpad_right", false);
+        }
+        if (op.gamepad1.dpad_up){
+            if(booleanMap.get("gamepad1_dpad_up") == false){
+                seq.add(3);
+                booleanMap.put("gamepad1_dpad_up", true);
+            }
+            //timeOfPress = op.getRuntime();
+        }
+        else if(op.gamepad1.dpad_up == false){
+            booleanMap.put("gamepad1_dpad_up", false);
+        }
+        if (op.gamepad1.dpad_left){
+            if(booleanMap.get("gamepad1_dpad_left") == false){
+                seq.add(4);
+                booleanMap.put("gamepad1_dpad_left", true);
+            }
+            //timeOfPress = op.getRuntime();
+        }
+        else if(op.gamepad1.dpad_left == false){
+            booleanMap.put("gamepad1_dpad_left", false);
+        }
+        if (op.gamepad1.x){
+            if(booleanMap.get("gamepad1_x") == false){
+                seq.add(5);
+                booleanMap.put("gamepad1_x", true);
+            }
+            //timeOfPress = op.getRuntime();
+        }
+        else if(op.gamepad1.x == false){
+            booleanMap.put("gamepad1_x", false);
+        }
+        if (op.gamepad1.b){
+            if(booleanMap.get("gamepad1_b") == false){
+                seq.add(6);
+                booleanMap.put("gamepad1_b", true);
+            }
+            //timeOfPress = op.getRuntime();
+        }
+        else if(op.gamepad1.b == false){
+            booleanMap.put("gamepad1_b", false);
+        }
+
+
+
+
+//            if (op.gamepad1.dpad_right) {
+//                seq.add(2);
+//                //timeOfPress = op.getRuntime();
+//            }
+//            if (op.gamepad1.dpad_up) {
+//                seq.add(3);
+//                //timeOfPress = op.getRuntime();
+//            }
+//            if (op.gamepad1.dpad_left) {
+//                seq.add(4);
+//                //timeOfPress = op.getRuntime();
+//            }
+//            if (op.gamepad1.x) {
+//                seq.add(5);
+//                //timeOfPress = op.getRuntime();
+//            }
+//            if (op.gamepad1.b) {
+//                seq.add(6);
+//                //timeOfPress = op.getRuntime();
+//            }
+//        }
+//        if(seq.size() == old.size()){
+//            newVal = 0;
+//        }
+//        else if(seq.size() > old.size()){
+//            newVal = seq.get(seq.size()-1);
+//        }
+//        return newVal;
+        return seq;
+    }
 }
