@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode;
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
@@ -32,6 +34,11 @@ public class BlueLeft extends LinearOpMode {
     private DcMotor backLeft;
     private DcMotor backRight;
     OpenCvWebcam webcam;
+    private DcMotor Spin;
+    private DcMotor Crane;
+    private CRServo Right;
+    private CRServo Left;
+
 
     BNO055IMU imu;
     Orientation angles;
@@ -125,6 +132,97 @@ public class BlueLeft extends LinearOpMode {
             }
         }
         return foundAngle;
+    }
+    public void stopMotors() throws InterruptedException {
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+    }
+
+    public void move(double power, int position) {
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontRight.setTargetPosition(-position);
+        frontLeft.setTargetPosition(-position);
+        backRight.setTargetPosition(-position);
+        backLeft.setTargetPosition(-position);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontRight.setPower(power);
+        frontLeft.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
+
+        while (frontLeft.isBusy()) {
+
+        }
+
+
+    }
+
+    public void strafeLeft(double power, int time) throws InterruptedException {
+        frontLeft.setPower(-power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(-power);
+        sleep(time);
+        stopMotors();
+    }
+
+    public void strafeRight(double power, int time) throws InterruptedException {
+        frontLeft.setPower(power);
+        frontRight.setPower(-power);
+        backLeft.setPower(-power);
+        backRight.setPower(power);
+        sleep(time);
+        stopMotors();
+    }
+
+    public void intake(int direction, long time) throws InterruptedException {
+        Right.setPower(direction * 1);
+        Left.setPower(direction * 1);
+        sleep(time);
+        Right.setPower(0);
+        Left.setPower(0);
+
+    }
+    public void moveandspin(double power, int moveposition, int spinposition) {
+        move(power, moveposition);
+        spin(spinposition);
+        while (Spin.isBusy()) {
+
+        }
+    }
+    public void spin(int position) {
+        Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Spin.setTargetPosition(position);
+        Crane.setTargetPosition(-500);
+        Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Spin.setPower(1);
+        Crane.setPower(1);
+        while (Spin.isBusy()) {
+
+        }
+    }
+    public void crane(int position) {
+        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Crane.setTargetPosition(position);
+        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Crane.setPower(1);
+        while (Crane.isBusy()) {
+
+        }
+
     }
 }
 
