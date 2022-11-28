@@ -29,7 +29,7 @@ public class teleop extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        Right = hardwareMap.get(CRServo.class,"Rights");
+
         Left = hardwareMap.get(CRServo.class, "Lefts");
         Crain = hardwareMap.get(DcMotor.class, "Crane");
         Spin = hardwareMap.get(DcMotor.class, "Spin");
@@ -103,18 +103,18 @@ public class teleop extends LinearOpMode {
             }
 
             if (pickup) {
-                Right.setPower(1);
+
                 Left.setPower(-1);
             }
 
             if (dropoff){
-                Right.setPower(-1);
+
                 Left.setPower(1);
 
             }
 
             if (dropoff==false && pickup==false){
-                Right.setPower(0);
+
                 Left.setPower(0);
 
             }

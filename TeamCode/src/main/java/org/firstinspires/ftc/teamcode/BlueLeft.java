@@ -63,8 +63,9 @@ public class BlueLeft extends LinearOpMode {
         if (opModeIsActive()) {
 
 
-
+            move(1, 2000);
             gyroTurning(90);
+            move(1, 700);
 
 
         }
@@ -92,7 +93,7 @@ public class BlueLeft extends LinearOpMode {
             telemetry.addData("Angle", currentAngle);
             telemetry.addData("targetangle", targetAngle);
             telemetry.update();
-            if (angles.firstAngle >= targetAngle - 0.15 && angles.firstAngle <= targetAngle + 0.15) {
+            if (angles.firstAngle >= targetAngle - 0.13 && angles.firstAngle <= targetAngle + 0.13) {
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
@@ -161,11 +162,13 @@ public class BlueLeft extends LinearOpMode {
         backRight.setPower(power);
         backLeft.setPower(power);
 
-        while (frontLeft.isBusy()) {
+        while (frontLeft.isBusy() && opModeIsActive()){
 
         }
-
-
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void strafeLeft(double power, int time) throws InterruptedException {
