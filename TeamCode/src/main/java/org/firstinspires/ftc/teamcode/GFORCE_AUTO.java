@@ -49,23 +49,25 @@ public class GFORCE_AUTO extends LinearOpMode {
     final Double TILEx0_5 = TILEx1_0 * 0.5;
     final Double TILEx1_5 = TILEx1_0 * 1.5;
     final Double TILEx2_0 = TILEx1_0 * 2.0;
-    final Double TILEx2_5 = TILEx1_0 * 2.5;
-    final Double TILEx3_0 = TILEx1_0 * 3.0;
 
     // declare all trajectories //
-    TrajectorySequence trjReadSignal;
-    TrajectorySequence trjScoreJunction;
-    TrajectorySequence trjJunctionTransition;
-    TrajectorySequence trjJunctionLoop1;
-    TrajectorySequence trjJunctionLoop2;
-    TrajectorySequence trjJunctionLoop3;
-    TrajectorySequence trjSignalPark1;
+    TrajectorySequence trjReadSignal;     // Read signal
+    TrajectorySequence trjScoreJunction;  // Move to junction
+    TrajectorySequence trjJunctionTransition; // score on junction
+
+    TrajectorySequence trjJunctionLoop1; // pickup from conestack
+    TrajectorySequence trjJunctionLoop2; // Score on Junction
+    TrajectorySequence trjJunctionLoop3; // Go back to conestack
+
+    TrajectorySequence trjSignalPark1;   // go park from just reading signal
     TrajectorySequence trjSignalPark2;
     TrajectorySequence trjSignalPark3;
-    TrajectorySequence trjJunctionPark1;
+
+    TrajectorySequence trjJunctionPark1; // Go Park from First junction score
     TrajectorySequence trjJunctionPark2;
     TrajectorySequence trjJunctionPark3;
-    TrajectorySequence trjStackPark1;
+
+    TrajectorySequence trjStackPark1;   // go park after scoring from conestack onto junction
     TrajectorySequence trjStackPark2;
     TrajectorySequence trjStackPark3;
 
