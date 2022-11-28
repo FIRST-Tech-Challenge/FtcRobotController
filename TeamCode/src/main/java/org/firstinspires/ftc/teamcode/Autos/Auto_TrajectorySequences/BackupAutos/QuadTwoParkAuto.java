@@ -20,28 +20,28 @@ public class QuadTwoParkAuto extends PowerPlay_AprilTagDetection {
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
         bot.setPoseEstimate(startPose);
 
-        if (tagUse == 1) {
+        if (tagUse == 3) {
             TrajectorySequence sussyBaka = bot.trajectorySequenceBuilder(startPose)
-                    .back(19.5)
-                    .splineTo(new Vector2d(11.6,89.5),Math.toRadians(-80))
+                    .lineToLinearHeading(new Pose2d(35,95,Math.toRadians(0)))
+                    .forward(32)
                     .build();
 
             bot.followTrajectorySequence(sussyBaka);
             telemetry.addData("Chris Pratt", "Is Currently In The Mushroom Kingdom");
         } else if (tagUse == 2) {
             TrajectorySequence JuicyJay = bot.trajectorySequenceBuilder(startPose)
-                    .lineToLinearHeading(new Pose2d(35,95,Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(35,100,Math.toRadians(0)))
                     .build();
 
             bot.followTrajectorySequence(JuicyJay);
             telemetry.addData("Walter White", "Currently Has No Pants");
         } else {
             TrajectorySequence jacobIsCute = bot.trajectorySequenceBuilder(startPose)
-                    .back(20)
-                    .splineTo(new Vector2d(58.4,34.5),Math.toRadians(-40))
+                    .lineToLinearHeading(new Pose2d(35,100,Math.toRadians(0)))
+                    .back(32)
                     .build();
 
-            bot.followTrajectorySequenceAsync(jacobIsCute);
+            bot.followTrajectorySequence(jacobIsCute);
             telemetry.addData("Bohan and Abhilash", " = Very Cute");
         }
     }

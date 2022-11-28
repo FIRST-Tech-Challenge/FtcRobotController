@@ -13,19 +13,20 @@ public class Arm {
     private Motor armMotor;
 
     // Declaring and Initializing PIDF values
-    public static double armKp = 0.0026;
-    public static double armKi = 0.000029;
-    public static double armKd = 0.000005;
-    public static double armKf = 0.000004;
+    private double armKp = 0.0026;
+    private double armKi = 0.000029;
+    private double armKd = 0.000005;
+    private double armKf = 0.000004;
 
-    public static double EXTAKE_POS = 1300; // 1255 Actual position based on encoder readings
-    public static double INTAKE_POS = 0; // -42.45391238 was the old value
+    private final double EXTAKE_POS = 1150; // 1255 Actual position based on encoder readings
+    private final double INTAKE_POS = 0; // -42.45391238 was the old value
+    private final double MAX = 1350;
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
     // initializing the targetPos value to a greater positive value would cause the update() method to
     // immediately start moving the arm since a difference between the current motor encoder position
     // and the target position is created (error).
-    public double targetPos = 0.0;
+    private double targetPos = 0.0;
 
     public Arm(HardwareMap hardwareMap){
         armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_60); // Pin ___
@@ -57,5 +58,11 @@ public class Arm {
 
     public void setIntake(){
         targetPos = INTAKE_POS;
+    }
+
+    public void manualArm(int increment){
+        double targetManual = armMotor.getCurrentPosition()+increment;
+        if(targetManual <= MAX && targetManual >= INTAKE_POS)
+            targetPos = targetManual;
     }
 }

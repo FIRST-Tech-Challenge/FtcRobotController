@@ -16,32 +16,32 @@ public class QuadThreeParkAuto extends PowerPlay_AprilTagDetection {
     @Override
     public void runOpMode() {
         initilize();
-        Pose2d startPose = new Pose2d(-35, 61.8, Math.toRadians(-270));
+        Pose2d startPose = new Pose2d(-35, 62, Math.toRadians(-270));
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
         bot.setPoseEstimate(startPose);
 
-        if (tagUse == 1) {
+        if (tagUse == 3) {
             TrajectorySequence sussyBaka = bot.trajectorySequenceBuilder(startPose)
-                    .back(17)
-                    .splineTo(new Vector2d(-11.6, 34.5),Math.toRadians(240))
+                    .lineToLinearHeading(new Pose2d(-35,30,Math.toRadians(180)))
+                    .forward(32)
                     .build();
 
-            bot.followTrajectorySequenceAsync(sussyBaka);
+            bot.followTrajectorySequence(sussyBaka);
             telemetry.addData("Chris Pratt", "Is Currently In The Mushroom Kingdom");
         } else if (tagUse == 2) {
             TrajectorySequence JuicyJay = bot.trajectorySequenceBuilder(startPose)
-                    .lineToLinearHeading(new Pose2d(-33,34,Math.toRadians(43)))
+                    .lineToLinearHeading(new Pose2d(-35,30,Math.toRadians(180)))
                     .build();
 
             bot.followTrajectorySequence(JuicyJay);
             telemetry.addData("Walter White", "Currently Has No Pants");
         } else {
             TrajectorySequence jacobIsCute = bot.trajectorySequenceBuilder(startPose)
-                    .back(20)
-                    .splineTo(new Vector2d(-58.4, 34.5),Math.toRadians(200))
+                    .lineToLinearHeading(new Pose2d(-35,30,Math.toRadians(180)))
+                    .back(32)
                     .build();
 
-            bot.followTrajectorySequenceAsync(jacobIsCute);
+            bot.followTrajectorySequence(jacobIsCute);
             telemetry.addData("Bohan and Abhilash", " = Very Cute");
         }
     }
