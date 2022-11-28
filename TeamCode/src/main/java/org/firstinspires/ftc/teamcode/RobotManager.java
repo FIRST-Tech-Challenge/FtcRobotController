@@ -145,11 +145,11 @@ public class RobotManager {
 
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
      */
-//    public void driveMechanisms() {
+    public void driveMechanisms() {
 //        mechanismDriving.updateCarousel(robot);
 //        mechanismDriving.updateClaw(robot);
 //        mechanismDriving.updateSlides(robot);
-//    }
+    }
 
     /** Changes drivetrain motor inputs based off the controller inputs.
      */
@@ -223,15 +223,29 @@ public class RobotManager {
      *  This horse shoe code here is part of the linear slides and helps the cone position into the poles.
      */
     public void flipHorseshoe() {
-        switch (robot.desiredIntakeState) {
-            case FRONT: robot.desiredIntakeState = Robot.IntakeState.REAR;
-            case REAR: robot.desiredIntakeState = Robot.IntakeState.FRONT;
+        switch (robot.desiredHorseshoeState) {
+            case FRONT: robot.desiredHorseshoeState = Robot.HorseshoeState.REAR;
+            case REAR: robot.desiredHorseshoeState = Robot.HorseshoeState.FRONT;
         }
         double startTime = robot.elapsedTime.milliseconds(); //Starts the time of the robot in milliseconds.
-        mechanismDriving.updateIntake(robot);
-        //case Robot.IntakeState.FRONT/REAR (Remove the / in between if needed to be added back. Only set 1 variable at a time)
+        mechanismDriving.updateHorseshoe(robot);
+        //case Robot.HorseshoeState.FRONT/REAR (Remove the / in between if needed to be added back. Only set 1 variable at a time)
         //Waiting for servo to finish rotation
-        while (robot.elapsedTime.milliseconds() - startTime < MechanismDriving.INTAKE_SERVO_TIME) {}
+        while (robot.elapsedTime.milliseconds() - startTime < MechanismDriving.HORSESHOE_SERVO_TIME) {}
+    }
+
+    /** Finds the lowered SlidesState given a standard SlidesState
+     *
+     *  @param currentSlidesState the current state of the linear slides
+     *  @return the lowered SlidesState (or the retracted SlidesState if it was already retracted)
+     */
+    public Robot.SlidesState getLoweredSlidesState(Robot.SlidesState currentSlidesState) {
+        return switch (currentSlidesState) {
+            case Robot.SlidesState.LOW -> Robot.SlidesState.LOW_LOWERED;
+            case Robot.SlidesState.MEDIUM -> Robot.SlidesState.MEDIUM_LOWERED;
+            case Robot.SlidesState.HIGH -> Robot.SlidesState.HIGH_LOWERED;
+            default -> Robot.SlidesState.RETRACTED;
+        }
     }
 
     /** Delivers a piece of freight to a particular level of the alliance shipping hub.
@@ -260,7 +274,12 @@ public class RobotManager {
 
         flipHorseshoe();
 
-        // TODO: lower linear slides
+        // Lower linear slides
+        robot.desiredSlidesState = getLoweredSlidesState(currentSlidesState);
+        boolean lowered = mechanismDriving.updateSlides(robot);
+        while (!lowered) {
+            lowered = mechanismDriving.updateSlides(robot);
+        }
 
         // Move back to starting position.
         navigation.path.add(navigation.pathIndex, startPos);
@@ -274,6 +293,16 @@ public class RobotManager {
         }
 
         flipHorseshoe();
+    }
+
+    /** Picks up a cone.
+     */
+    public void pickUpCone() {
+        // Suck the cone into the horseshoe
+        robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.ON;
+        startTime = elapsedTime.milliseconds();
+        while (elapsedTime.milliseconds() - startTime < 500)
+            mechanismDriving.updateCompliantWheels();
     }
 
     /** Returns whether the driver is attempting to move the robot linearly
