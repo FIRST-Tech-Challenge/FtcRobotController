@@ -10,21 +10,21 @@ import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 
 class Hardware(startPose: Pose) {
     val fl = MotorFactory("fl")
-        .reverse
+        .forward
         .brake
         .build()
 
     val bl = MotorFactory("bl")
-        .reverse
+        .forward
         .brake
         .build()
 
     val br = MotorFactory("br")
-        .brake
+        .reverse
         .build()
 
     val fr = MotorFactory("fr")
-        .brake
+        .reverse
         .build()
 
     private val leftEncoder = EncoderFactory(ticksPerUnit)

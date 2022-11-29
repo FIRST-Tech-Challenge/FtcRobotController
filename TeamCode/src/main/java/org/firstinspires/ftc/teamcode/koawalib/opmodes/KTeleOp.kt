@@ -46,8 +46,8 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
     }
 
     private fun scheduleStrategy() {
-        driver.leftBumper.onPress(InstantCmd(RobotState::incStrat))
-        driver.rightBumper.onPress(InstantCmd(RobotState::decStrat))
+        driver.leftBumper.onPress(DepositSequence(robot))
+        driver.rightBumper.onPress(ReadySequence(robot))
     }
 
     private fun scheduleCycling() {

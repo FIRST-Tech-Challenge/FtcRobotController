@@ -4,6 +4,6 @@ import com.acmerobotics.dashboard.config.Config
 
 @Config
 object OdoConstants {
-    @JvmField var TRACK_WIDTH = 7.39
-    @JvmField var PERP_TRACKER = 3.9
+    @JvmField var TRACK_WIDTH = 6.4575
+    @JvmField var PERP_TRACKER = 3.652
 }

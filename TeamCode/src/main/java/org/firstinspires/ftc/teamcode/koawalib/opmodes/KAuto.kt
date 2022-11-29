@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.koawalib.opmodes
 
+import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.GVFCmd
 import com.asiankoala.koawalib.command.commands.WaitUntilCmd
@@ -26,7 +27,7 @@ import org.firstinspires.ftc.teamcode.koawalib.vision.AutoOpMode
 open class KAuto(
     alliance: Alliance,
     close: Boolean,
-) : AutoOpMode() {
+) : KOpMode() {
     private val startPose = Pose(
         Vector(-66.0, -36.0).choose(alliance, close),
         close.choose(0.0, 180.0.radians)
@@ -77,7 +78,6 @@ open class KAuto(
         GVFCmd(robot.drive, SimpleGVFController(path, kN, kOmega, kF, kS, epsilon, thetaEpsilon), *cmds)
 
     override fun mInit() {
-        super.mInit()
         +SequentialGroup(
             ClawCmds.ClawCloseCmd(robot.claw),
             CmdChooser.homeCmd(robot),
