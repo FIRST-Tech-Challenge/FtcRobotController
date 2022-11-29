@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -41,11 +42,11 @@ public class RRTerminalwOriginConePark extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
 
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_ASSET = "model_20221127_131503.tflite";
     private static final String[] LABELS = {
-            "1 Bolt",
-            "2 Bulb",
-            "3 Panel"
+            "Bolt",
+            "Bows",
+            "Gears"
     };
     private static final String VUFORIA_KEY =
             "AVXWcGz/////AAABmZfYj2wlVElmo2nUkerrNGhEBBg+g8Gq1KY3/lN0SEBYx7HyMslyrHttOZoGtwRt7db9nfvCiG0TBEp7V/+hojHXCorf1CEvmJWWka9nFfAbOuyl1tU/IwdgHIvSuW6rbJY2UmMWXfjryO3t9nNtRqX004LcE8O2zkKdBTw0xdqq4dr9zeA9gX0uayps7t0TRmiToWRjGUs9tQB3BDmSinXxEnElq+z3SMJGcn5Aj44iEB7uy/wuB8cGCR6GfOpDRYqn/R8wwD757NucR5LXA48rulTdthGIuHoEjud1QzyQOv4BpaODj9Oi0TMuBmBzhFJMwWzyZ4lKVyOCbf3uCRia7Q+HO+LbFbghNIGIIzZC";
@@ -86,7 +87,7 @@ public class RRTerminalwOriginConePark extends LinearOpMode {
         composeTelemetry();  // need to add this method at end of code
 
         desiredHeading = getHeading();
-
+//test
         moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading);
         moveUtils.resetEncoders();
 
@@ -99,7 +100,7 @@ public class RRTerminalwOriginConePark extends LinearOpMode {
         if (tfod != null) {
             tfod.activate();
 
-            tfod.setZoom(2.0, 16.0 / 9.0);
+            tfod.setZoom(1.5, 16.0 / 9.0);
         }
 
         waitForStart();
@@ -129,11 +130,11 @@ public class RRTerminalwOriginConePark extends LinearOpMode {
                             telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
 
                             String imageCheck = recognition.getLabel();
-                            if (imageCheck.equals("1 Bolt")) {
+                            if (imageCheck.equals("Bolt")) {
                                 resultROI = 1;
-                            } else if (imageCheck.equals("2 Bulb")) {
+                            } else if (imageCheck.equals("Gears")) {
                                 resultROI = 2;
-                            } else if (imageCheck.equals("3 Panel")) {
+                            } else if (imageCheck.equals("Bows")) {
                                 resultROI = 3;
                             } else {
                                 resultROI = 2;
@@ -261,7 +262,7 @@ public class RRTerminalwOriginConePark extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CameraDirection.BACK;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);

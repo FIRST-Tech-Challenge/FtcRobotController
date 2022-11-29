@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -27,7 +28,7 @@ import java.util.Locale;
 
 @Autonomous(name = "Place cones w/ origin sleeve (Red side red terminal)", group = "")
 public class RRTerminalwOriginConePlace extends LinearOpMode {
-
+//test
     private DcMotor LF = null;
     private DcMotor RF = null;
     private DcMotor LB = null;
@@ -44,11 +45,11 @@ public class RRTerminalwOriginConePlace extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
 
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_ASSET = "model_20221127_131503.tflite";
     private static final String[] LABELS = {
-            "1 Bolt",
-            "2 Bulb",
-            "3 Panel"
+            "Bolt",
+            "Bows",
+            "Gears"
     };
     private static final String VUFORIA_KEY =
             "AVXWcGz/////AAABmZfYj2wlVElmo2nUkerrNGhEBBg+g8Gq1KY3/lN0SEBYx7HyMslyrHttOZoGtwRt7db9nfvCiG0TBEp7V/+hojHXCorf1CEvmJWWka9nFfAbOuyl1tU/IwdgHIvSuW6rbJY2UmMWXfjryO3t9nNtRqX004LcE8O2zkKdBTw0xdqq4dr9zeA9gX0uayps7t0TRmiToWRjGUs9tQB3BDmSinXxEnElq+z3SMJGcn5Aj44iEB7uy/wuB8cGCR6GfOpDRYqn/R8wwD757NucR5LXA48rulTdthGIuHoEjud1QzyQOv4BpaODj9Oi0TMuBmBzhFJMwWzyZ4lKVyOCbf3uCRia7Q+HO+LbFbghNIGIIzZC";
@@ -103,7 +104,6 @@ public class RRTerminalwOriginConePlace extends LinearOpMode {
 
         actuatorUtils.initializeActuator(arm, gripper);
 
-        actuatorUtils.gripperClose(true);
 
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
@@ -114,49 +114,56 @@ public class RRTerminalwOriginConePlace extends LinearOpMode {
         if (tfod != null) {
             tfod.activate();
 
-            tfod.setZoom(2.0, 16.0 / 9.0);
+            tfod.setZoom(1.5, 16.0 / 9.0);
         }
         if (tfod != null && resultROI == 0) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if (updatedRecognitions != null) {
-                telemetry.addData("# Objects Detected", updatedRecognitions.size());
-
-                // step through the list of recognitions and display image position/size information for each one
-                // Note: "Image number" refers to the randomized image orientation/number
-                for (Recognition recognition : updatedRecognitions) {
-                    double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                    double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                    double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                    double height = Math.abs(recognition.getTop() - recognition.getBottom());
-
-                    telemetry.addData("", " ");
-                    telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                    telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                    telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-
-                    String imageCheck = recognition.getLabel();
-                    if (imageCheck.equals("1 Bolt")) {
-                        resultROI = 1;
-                    } else if (imageCheck.equals("2 Bulb")) {
-                        resultROI = 2;
-                    } else if (imageCheck.equals("3 Panel")) {
-                        resultROI = 3;
-                    } else {
-                        resultROI = 2;
+            while (!done) {
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Objects Detected", updatedRecognitions.size());
+                    if (updatedRecognitions.size() != 0) {
+                        done = true;
                     }
-                    telemetry.addData("ResultROI", resultROI);
+                    // step through the list of recognitions and display image position/size information for each one
+                    // Note: "Image number" refers to the randomized image orientation/number
+                    for (Recognition recognition : updatedRecognitions) {
+                        double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                        double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                        double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                        double height = Math.abs(recognition.getTop() - recognition.getBottom());
 
+                        telemetry.addData("", " ");
+                        telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                        telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                        telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
+
+                        String imageCheck = recognition.getLabel();
+                        if (imageCheck.equals("Bolt")) {
+                            resultROI = 1;
+                        } else if (imageCheck.equals("Gears")) {
+                            resultROI = 2;
+                        } else if (imageCheck.equals("Bows")) {
+                            resultROI = 3;
+                        } else {
+                            resultROI = 2;
+                        }
+                        telemetry.addData("ResultROI", resultROI);
+
+                    }
+                    telemetry.update();
                 }
-                telemetry.update();
             }
+
         }
+        actuatorUtils.gripperClose(true);
+
 
         waitForStart();
         telemetry.update();
-
+        done = false;
         while ((currTime - startTime < 2000)&& !done) {
 
             switch (resultROI) {
@@ -178,22 +185,8 @@ public class RRTerminalwOriginConePlace extends LinearOpMode {
                     moveUtils.goStraight(4,MAX_SPEED,MIN_SPEED,ACCEL);
                     actuatorUtils.gripperOpen(true);
                     moveUtils.goStraight(-4,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(135);
-                    moveUtils.strafeBuddy(-6);
-                    moveUtils.goStraight(10,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.coneCollect(1);
-                    moveUtils.goStraight(3,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.gripperClose(true);
-                    sleep(2000);
-                    actuatorUtils.armPole(1);
-                    moveUtils.goStraight(-5,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(180);
-                    moveUtils.goStraight(6,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.turnCCW(45);
-                    actuatorUtils.armPole(3);
-                    moveUtils.goStraight(7,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.gripperOpen(true);
-                    sleep(2000);
+                    moveUtils.goStraight(-10,MAX_SPEED,MIN_SPEED,ACCEL);
                     done=true;
                     break;
                 case 3:
@@ -273,6 +266,19 @@ public class RRTerminalwOriginConePlace extends LinearOpMode {
                 DEGREES);
         return angles.firstAngle;
     }
+
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+    }
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -288,16 +294,4 @@ public class RRTerminalwOriginConePlace extends LinearOpMode {
         // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CameraDirection.BACK;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-    }
 }

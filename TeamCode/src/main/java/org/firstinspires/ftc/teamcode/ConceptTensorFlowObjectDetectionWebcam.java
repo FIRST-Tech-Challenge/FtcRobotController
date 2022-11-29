@@ -61,14 +61,14 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "C:\\Users\\megan\\OneDrive\\Desktop\\Robotics\\FtcRobotController-8.0\\FtcRobotController\\src\\main\\assets\\model_20221127_131503.tflite";
+    private static final String TFOD_MODEL_ASSET = "model_20221127_131503.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
 
     private static final String[] LABELS = {
             "Bolt",
-            "Gears",
-            "Bows"
+            "Bows",
+            "Gears"
     };
 
     /*
@@ -77,6 +77,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
      * web site at https://developer.vuforia.com/license-manager.
      *
+     * test
      * Vuforia license keys are always 380 characters long, and look as if they contain mostly
      * random data. As an example, here is a example of a fragment of a valid key:
      *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
@@ -118,7 +119,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(1.5, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
