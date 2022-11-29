@@ -191,13 +191,13 @@ public class AutonomousLeft extends AutonomousBase {
         }
 
         // Drive all the way to the tall junction pole
-        driveToPosition( 52.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_40 );
+        driveToPosition( 51.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_40 );
 
         // Turn toward pole
-        driveToPosition( 52.0, 0.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        driveToPosition( 51.0, 0.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
 
         // Drive closer to the pole in order to score
-        driveToPosition( 54.0, 2.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        driveToPosition( 53.0, 2.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
     } // moveToTallJunction
 
     /*--------------------------------------------------------------------------------------------*/
@@ -211,7 +211,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.grabberSpinStop();
 
         // Back away from the pole
-        driveToPosition( 52.0, 0.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        driveToPosition( 51.0, 0.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
 
     } // scoreCone
 

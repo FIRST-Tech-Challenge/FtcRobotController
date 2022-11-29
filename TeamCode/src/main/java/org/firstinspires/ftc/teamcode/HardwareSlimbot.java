@@ -129,7 +129,7 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_MAX     =  92.0;   // absolute encoder angle at maximum rotation FRONT
     public double       LIFT_ANGLE_MIN     = -70.0;   // absolute encoder angle at maximum rotation REAR
     // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
-    public double       LIFT_ANGLE_COLLECT = 84.0;    // lift position for collecting cones
+    public double       LIFT_ANGLE_COLLECT = 89.5;    // lift position for collecting cones
     public double       LIFT_ANGLE_GROUND  = 88.0;    // lift position for collecting cones
     public double       LIFT_ANGLE_LOW     = 66.0;    // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  = 64.0;    // lift position for cleaning front turret motor
@@ -139,7 +139,7 @@ public class HardwareSlimbot
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
-    public boolean          liftMotorLogging   = true; // only enable during development!!
+    public boolean          liftMotorLogging   = false; // only enable during development!!
     public final static int LIFTMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
     protected double[]      liftMotorLogTime   = new double[LIFTMOTORLOG_SIZE];  // msec
     protected double[]      liftMotorLogAngle  = new double[LIFTMOTORLOG_SIZE];  // Angle [degrees]
