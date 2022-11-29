@@ -229,8 +229,8 @@ public class WebcamPlay extends LinearOpMode {
 
     private void Bolt()
     {
-        newEncoderMove.DriveTo(-1000,1000,1000,-1000,0.7,opModeIsActive());
-        sleep(500);
+        newEncoderMove.DriveTo(500,-500,-500,500,0.7,opModeIsActive());
+        sleep(1000);
         newEncoderMove.DriveTo(1000,1000,1000,1000,0.7,opModeIsActive());
         sleep(500);
         newEncoderMove.DriveTo(-500,-500,500,500,0.7,opModeIsActive());
@@ -240,9 +240,6 @@ public class WebcamPlay extends LinearOpMode {
     {
         newEncoderMove.DriveTo(-1000,1000,1000,-1000,0.7,opModeIsActive());
         sleep(500);
-        newEncoderMove.DriveTo(1000,1000,1000,1000,0.7,opModeIsActive());
-        sleep(500);
-        newEncoderMove.DriveTo(-500,-500,500,500,0.7,opModeIsActive());
     }
 
     private void Panel()

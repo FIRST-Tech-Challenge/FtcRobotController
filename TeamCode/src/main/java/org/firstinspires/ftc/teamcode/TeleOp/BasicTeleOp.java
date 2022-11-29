@@ -3,19 +3,23 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Functions.ArmEncoder;
 import org.firstinspires.ftc.teamcode.Functions.ClawServos;
 import org.firstinspires.ftc.teamcode.Functions.Move;
 import org.firstinspires.ftc.teamcode.Functions.Rotate;
 
 @TeleOp(name="Basic TeleOp", group="GAME")
 public class BasicTeleOp extends OpMode {
-    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack, armMotor;
+    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack;
+    private DcMotor armMotor;
     private Servo leftServo, rightServo;
     private Move move;
     private Rotate rotate;
     private ClawServos clawServos;
+    private ArmEncoder armEncoder;
     @Override
     public void init() {
         leftMotor = hardwareMap.dcMotor.get("FL");
@@ -27,12 +31,16 @@ public class BasicTeleOp extends OpMode {
         rightServo = hardwareMap.servo.get("RS");
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
+        armEncoder = new ArmEncoder(armMotor);
+
         clawServos = new ClawServos(leftServo, rightServo);
 
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftMotorBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
@@ -45,14 +53,14 @@ public class BasicTeleOp extends OpMode {
                 move.MoveRaw(1, gamepad1.left_stick_y);
             }
         }
-        else if(gamepad1.dpad_up) 
-        {
-            move.MoveFull(2);
-        }
-        else if(gamepad1.dpad_down)
-        {
-            move.MoveFull(1);
-        }
+//        else if(gamepad1.dpad_up)
+//        {
+//            move.MoveFull(2);
+//        }
+//        else if(gamepad1.dpad_down)
+//        {
+//            move.MoveFull(1);
+//        }
         else if(gamepad1.dpad_left)
         {
             rotate.RotateFull(2);
@@ -92,6 +100,17 @@ public class BasicTeleOp extends OpMode {
         {
             leftServo.setPosition(0);
             rightServo.setPosition(1);
+        }
+
+        if(gamepad1.dpad_up && armMotor.getCurrentPosition() < 0){
+            armEncoder.goTo(1000);
+        }
+        else if(gamepad1.dpad_down && armMotor.getCurrentPosition() > 0){
+            armEncoder.goTo(0);
+        }
+        else
+        {
+            armEncoder.goTo(500);
         }
         if(gamepad1.right_stick_y!=0)
         {

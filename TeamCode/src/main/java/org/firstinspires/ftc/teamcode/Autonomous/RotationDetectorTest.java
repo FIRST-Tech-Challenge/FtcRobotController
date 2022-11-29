@@ -34,11 +34,8 @@ public class RotationDetectorTest extends LinearOpMode {
         rightMotor = hardwareMap.dcMotor.get("FR");
         leftMotorBack = hardwareMap.dcMotor.get("BL");
         rightMotorBack = hardwareMap.dcMotor.get("BR");
-        collector = new Collector(collectorCr);
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
-        VoltageSensor VS = this.hardwareMap.voltageSensor.iterator().next();
-        voltageReader = new VoltageReader(VS);
         rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
         waitForStart();
 

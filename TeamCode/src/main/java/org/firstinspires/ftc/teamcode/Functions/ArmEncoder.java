@@ -9,12 +9,11 @@ public class ArmEncoder {
     /**
      * Made by David
      */
-    private DcMotorEx armMotorLeft, armMotorRight;
+    private DcMotor armMotor;
     private ElapsedTime runtime = new ElapsedTime();
-    public ArmEncoder(DcMotorEx _AML, DcMotorEx _AMR)
+    public ArmEncoder(DcMotor _AM)
     {
-        armMotorLeft = _AML;
-        armMotorRight = _AMR;
+        armMotor = _AM;
         Init();
     }
     public void Init()
@@ -22,42 +21,34 @@ public class ArmEncoder {
         /**
          * Runs the motor using encoders.
          */
-        armMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void goTo(int ticks, double velocity)
+    public void goTo(int ticks)
     {
         /**
          * Motor is stopped and the encoder value is reset to 0.
          */
-        armMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        armMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         /**
          * Sets the ticks target of the motors.
          */
-        armMotorLeft.setTargetPosition(ticks);
-        armMotorRight.setTargetPosition(ticks);
+        armMotor.setTargetPosition(ticks);
+
         /**
          * Runs to the ticks value that we want.
          */
-        armMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         /**
          * Sets the velocity of the motors.
          */
-        armMotorLeft.setVelocity(velocity);
-        armMotorRight.setVelocity(velocity);
+//        armMotor.setVelocity(velocity);
         /**
          * This while is/can be empty because we need to run the function until the motors have reached the target
          */
-//        while(armMotorLeft.isBusy() && armMotorRight.isBusy())
-//        {
-//
-//        }
 
 
     }

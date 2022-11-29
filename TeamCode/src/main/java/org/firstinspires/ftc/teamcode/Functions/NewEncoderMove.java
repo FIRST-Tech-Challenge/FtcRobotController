@@ -56,6 +56,11 @@ public class NewEncoderMove {
      */
     public void DriveTo(int leftFrontTarget, int leftBackTarget, int rightFrontTarget, int rightBackTarget, double power, boolean opMode)
     {
+        leftFrontPos = 0;
+        leftBackPos = 0;
+        rightFrontPos = 0;
+        rightBackPos = 0;
+
         leftFrontPos += leftFrontTarget;
         leftBackPos += leftBackTarget;
         rightFrontPos += rightFrontTarget;
