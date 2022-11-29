@@ -301,7 +301,7 @@ public class RobotManager {
         // Suck the cone into the horseshoe
         robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.ON;
         startTime = elapsedTime.milliseconds();
-        while (elapsedTime.milliseconds() - startTime < 500)
+        while (elapsedTime.milliseconds() - startTime < 2000) //the 2000 is in milliseconds (On how long the complient wheels stay on)
             mechanismDriving.updateCompliantWheels();
     }
 
