@@ -16,5 +16,4 @@ public class LeftAuto extends BaseAuto {
 
     }
 
-
 }

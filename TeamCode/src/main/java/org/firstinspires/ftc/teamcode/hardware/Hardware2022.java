@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -32,7 +33,7 @@ public class Hardware2022 {
     //Encoder value of VSlide height in Cone mode,
     private final int CONE_SLIDE_LOW = 0 ;
     private final int CONE_SLIDE_MID = 1200 ;
-    private final int CONE_SLIDE_HIGH = 2500 ;
+    private final int CONE_SLIDE_HIGH = 3500 ;
 
     //Encoder value of VSlide height in No Cone mode
     private final int NOCONE_SLIDE_LOW = 0 ;
@@ -86,9 +87,9 @@ public class Hardware2022 {
 
     public DcMotor vSlide = null;
 
-    public Servo grabberclaw = null;
-    public ColorSensor sensorColor = null;
-    public DistanceSensor sensorDistance = null;
+    //public Servo grabberclaw = null;
+    //public ColorSensor sensorColor = null;
+    //public DistanceSensor sensorDistance = null;
 
     private int vsldieInitPosition = 0;
     /**
@@ -129,10 +130,13 @@ public class Hardware2022 {
 
         vSlide.setPower(0);
 
+        /*
         sensorColor = hwMap.get(ColorSensor.class, "clawdistance");
         sensorDistance = hwMap.get(DistanceSensor.class, "clawdistance");
 
         grabberclaw = hwMap.get(Servo.class, "grabberclaw");
+        */
+
 
         //Get IMU.
         imu = hwMap.get(IMU.class, "imu");
@@ -318,11 +322,15 @@ public class Hardware2022 {
 
         double currentHeading = startHeading;
 
+
+        PIDFController pidf = new PIDFController(kP, kI, kD, kF);
+
         telemetry.addLine().addData("[Start Heading: >]  ", startHeading);
         telemetry.addLine().addData("[End Heading: >]  ", endHeading);
         telemetry.update();
 
         double difference = regulateDegree( endHeading  - currentHeading );
+
 
         while ( Math.abs( difference )> 2  ) {
 
@@ -383,7 +391,7 @@ public class Hardware2022 {
      * This method to check if there is a cone close to the claw,
      * If so, close the claw, and change current stats to has Cone.
      *
-     */
+
     public void checkAndGrabCone ( ) {
 
         //Only try to grab cone if in No Cone state.
@@ -399,12 +407,13 @@ public class Hardware2022 {
                     telemetry.addLine().addData("[>]  ", "Found cone,close claw.");
                     telemetry.update();
                 }
-                grabberclaw.setPosition(CLAW_CLOSED);
+                //grabberclaw.setPosition(CLAW_CLOSED);
                 currentState = RobotState.HasCone;
             }
 
         }
     }
+     */
 
     private int getVSlidePosition () {
         return vSlide.getCurrentPosition() - vsldieInitPosition;
@@ -541,7 +550,7 @@ public class Hardware2022 {
         telemetry.addLine().addData("Release", CLAW_OPEN );
         telemetry.update();
 
-        grabberclaw.setPosition(CLAW_OPEN);
+        //grabberclaw.setPosition(CLAW_OPEN);
         currentState = RobotState.NoCone;
 
     }
@@ -600,7 +609,7 @@ public class Hardware2022 {
         telemetry.addLine().addData("Manaul Grap", CLAW_CLOSED );
         telemetry.update();
 
-        grabberclaw.setPosition(CLAW_CLOSED);
+        //grabberclaw.setPosition(CLAW_CLOSED);
         currentState = RobotState.HasCone;
 
     }

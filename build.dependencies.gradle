@@ -19,5 +19,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
     implementation 'org.openftc:easyopencv:1.5.2'
+    implementation 'org.ftclib.ftclib:core:2.0.1'
 }
 
