@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
 import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 @Autonomous(name = "RotationDetectorTest", group = "Concept")
-@Disabled
 public class RotationDetectorTest extends LinearOpMode {
     private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack, armMotorLeft, armMotorRight;
     private Servo collectorServo;
@@ -35,13 +34,8 @@ public class RotationDetectorTest extends LinearOpMode {
         rightMotor = hardwareMap.dcMotor.get("FR");
         leftMotorBack = hardwareMap.dcMotor.get("BL");
         rightMotorBack = hardwareMap.dcMotor.get("BR");
-        armMotorLeft = hardwareMap.dcMotor.get("AML");
-        armMotorRight = hardwareMap.dcMotor.get("AMR");
-        collector = new Collector(collectorCr);
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
-        VoltageSensor VS = this.hardwareMap.voltageSensor.iterator().next();
-        voltageReader = new VoltageReader(VS);
         rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
         waitForStart();
 
