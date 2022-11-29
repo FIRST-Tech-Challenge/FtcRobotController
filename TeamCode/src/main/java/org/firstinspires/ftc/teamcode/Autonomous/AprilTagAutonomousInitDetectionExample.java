@@ -1,7 +1,8 @@
 
 
-package org.firstinspires.ftc.teamcode.VisionExample;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -15,7 +16,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@TeleOp
+@Autonomous
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -137,7 +138,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
          * during the init loop.
          */
 
-        /* Update the telemetry */
+        /* Update the telemetry with Tag identification */
         if(tagOfInterest != null)
         {
             telemetry.addLine("Tag snapshot:\n");
@@ -149,15 +150,17 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
-
+        /* Turn off camera streaming */
+        camera.stopStreaming();
 
 
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
             //input trajectory
+
         }else if(tagOfInterest.id == MIDDLE){
             //trajectory
         }else{
-            //trajectoryy
+            //trajectory
         }
 
 

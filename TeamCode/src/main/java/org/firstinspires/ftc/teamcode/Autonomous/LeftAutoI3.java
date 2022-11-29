@@ -1,98 +1,85 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+
 
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
-/**
- * This file is based on the FIRST example title RobotAutoDriveByEncoder_Linear
- * It file illustrates the concept of driving a path based on encoder counts with a
- * strafer drivetrain.
- *
- * The code is structured as a LinearOpMode
- *
- *  This code ALSO requires that the drive Motors have been configured such that a positive
- *  power command moves them forward, and causes the encoders to count UP.
- *
- *   The desired path in this example is:
- *   - Drive forward for 48 inches
- *
- *  The code is written using a method called: encoderDrive(speed, inches, timeoutS)
- *  that performs the actual movement.
- *  This method assumes that each movement is relative to the last stopping place.
- *  There are other ways to perform encoder based moves, but this method is probably the simplest.
- *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
+import java.util.ArrayList;
 
 @Autonomous
-//@Disabled
-public class StraferAutoDriveByEncoder extends LinearOpMode {
+public class LeftAutoI3 extends LinearOpMode
+{
+    /* Declare OpenCV OpMode members */
+        OpenCvCamera                camera;
+        AprilTagDetectionPipeline   aprilTagDetectionPipeline;
+        static final double         FEET_PER_METER = 3.28084;
 
-    /* Declare Drive Motor & Elapsed Time OpMode members. */
-    private DcMotor         leftFrontDrive   = null;
-    private DcMotor         rightFrontDrive  = null;
-    private DcMotor         leftRearDrive   = null;
-    private DcMotor         rightRearDrive  = null;
+        // Lens intrinsics
+        // UNITS ARE PIXELS
+        // NOTE: this calibration is for the C920 webcam at 800x448.
+        // You will need to do your own calibration for other configurations!
 
-    private ElapsedTime     runtime = new ElapsedTime();
+        double fx = 822.317; //578.272;
+        double fy = 822.317; //578.272;
+        double cx = 319.495; //402.145;
+        double cy = 242.502; //221.506;
+
+        // UNITS ARE METERS
+        double tagsize = 0.05;//0.166;
+
+        //int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
+
+        // Tag ID 1,2,3 from the 36h11 family
+        int LEFT = 0;
+        int MIDDLE = 1;
+        int RIGHT = 2;
+        AprilTagDetection tagOfInterest = null;
+
+    /* Declare Drive Motor & Elapsed Time OpMode member objects. */
+        private DcMotor         leftFrontDrive   = null;
+        private DcMotor         rightFrontDrive  = null;
+        private DcMotor         leftRearDrive   = null;
+        private DcMotor         rightRearDrive  = null;
+
+        private ElapsedTime     runtime = new ElapsedTime();
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
-    // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
-    // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
-    // For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
-    // This is gearing DOWN for less speed and more torque.
-    // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
-    static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 3.78 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+        // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
+        // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
+        // For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
+        // This is gearing DOWN for less speed and more torque.
+        // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
+        static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;    // eg: TETRIX Motor Encoder
+        static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
+        static final double     WHEEL_DIAMETER_INCHES   = 3.78 ;     // For figuring circumference
+        static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
+        static final double     WHEELBASE_WIDTH_INCHES  = 16.5;
+        static final double     WHEELBASE_LENGTH_INCHES = 14.5;
+        static final double     COUNTS_PER_360DEGREES = 3625; //Found this parameter by manually tuning robot
+        static final double     DRIVE_SPEED             = 0.6;
+        static final double     TURN_SPEED              = 0.8;
 
     @Override
     public void runOpMode() {
-
         // Initialize the drive system variables.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFront");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFront");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
-        leftRearDrive  = hardwareMap.get(DcMotor.class, "leftRear");
+        leftRearDrive = hardwareMap.get(DcMotor.class, "leftRear");
         rightRearDrive = hardwareMap.get(DcMotor.class, "rightRear");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -119,45 +106,148 @@ public class StraferAutoDriveByEncoder extends LinearOpMode {
         rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Front Wheels Starting at",  "%7d :%7d",
+        telemetry.addData("Front Wheels Starting at", "%7d :%7d",
                 leftFrontDrive.getCurrentPosition(),
                 rightFrontDrive.getCurrentPosition());
-        telemetry.addData("Rear Wheels Starting at",  "%7d :%7d",
+        telemetry.addData("Rear Wheels Starting at", "%7d :%7d",
                 leftRearDrive.getCurrentPosition(),
                 rightRearDrive.getCurrentPosition());
         telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
+        /* Set up OpenCV Camera Factory and pipeline, then start streaming*/
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        //       Strafe(DRIVE_SPEED,24,5.0);     // S1: Strafe right 24 inches w/ 5 sec timeout
-        //       Drive(DRIVE_SPEED,  50,  5.0);  // S2: Forward 47 Inches with 5 Sec timeout
-        //       Strafe(DRIVE_SPEED,-6.0, 5.0);
-        //       Drive(DRIVE_SPEED,5.0,5.0);
-        //insert cone placement code here
-        sleep(2000);
-        //       Drive(DRIVE_SPEED, -5.0, 5.0);
-        Turn(TURN_SPEED, -90, 5.0);
-        Turn(TURN_SPEED, 90, 5.0);
-        Turn(TURN_SPEED, 360, 5.0);
-        Turn(TURN_SPEED, -360, 5.0);
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
+            }
 
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(2000);  // pause to display final telemetry message.
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
+
+        telemetry.setMsTransmissionInterval(50);
+
+        /*
+         * The INIT-loop:
+         * This REPLACES waitForStart!
+         */
+        while (!isStarted() && !isStopRequested()) {
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+            if (currentDetections.size() != 0) {
+                boolean tagFound = false;
+
+                for (AprilTagDetection tag : currentDetections) {
+                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                }
+
+                if (tagFound) {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
+                } else {
+                    telemetry.addLine("Don't see tag of interest :(");
+
+                    if (tagOfInterest == null) {
+                        telemetry.addLine("(The tag has never been seen)");
+                    } else {
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                        tagToTelemetry(tagOfInterest);
+                    }
+                }
+
+            } else {
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if (tagOfInterest == null) {
+                    telemetry.addLine("(The tag has never been seen)");
+                } else {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+
+            }
+
+            telemetry.update();
+            sleep(20);
+        }
+        /*
+         * The START command just came in: now work off the latest snapshot acquired
+         * during the init loop.
+         */
+
+        /* Update the telemetry with Tag identification */
+        if (tagOfInterest != null) {
+            telemetry.addLine("Tag snapshot:\n");
+            tagToTelemetry(tagOfInterest);
+            telemetry.update();
+        } else {
+            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            telemetry.update();
+        }
+        /* Turn off camera streaming */
+        camera.stopStreaming();
+
+        /* Drive into position to place pre-loaded cone on high junction */
+        strafe(DRIVE_SPEED, 24, 5.0); // Strafe right 24 inches
+        driveStraight(DRIVE_SPEED, 50, 5.0); // Drive forward 50 inches
+        strafe(DRIVE_SPEED,-12,5.0); // Strafe left 12 inches
+
+        /* Place cone on high junction */
+        /* TO DO: Add code to lift Cone to high junction position */
+        driveStraight(DRIVE_SPEED,4.0, 2.0); // Drive forward to place cone on junction
+        /* TO DO: Add code to release cone and lower linear extension*/
+
+        /* Drive to stack of cones */
+        driveStraight(DRIVE_SPEED, -4.0,2.0);
+        turn(TURN_SPEED, -90,5.0);
+        driveStraight(DRIVE_SPEED, 36,5.0);
+
+        /* TO DO: Add code to grab first cone from stack */
+
+        /* Deliver second cone to high junction*/
+        driveStraight(DRIVE_SPEED, -42, 5.0);
+        strafe(DRIVE_SPEED, 12, 5.0 );
+        /* TO DO: Add code to lift cone to high junction position */
+        driveStraight(DRIVE_SPEED,4.0, 2.0); // Drive forward to place cone on junction
+        /* TO DO: Add code to release cone and lower linear extension*/
+        driveStraight(DRIVE_SPEED,-4.0, 5.0);
+        strafe(DRIVE_SPEED,-12,5.0);
+
+
+        /* Park in correct Zone */
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+            driveStraight(DRIVE_SPEED, 48, 5.0); //Park in Zone 1 (LEFT)
+        }
+        else if(tagOfInterest.id == MIDDLE) {
+            driveStraight(DRIVE_SPEED,24, 5.0); //Park in Zone 2 (MIDDLE)
+        }
+        else {
+            //Don't move; Park in Zone 3 (RIGHT)
+        }
     }
 
-    /*
-     *  Method to move robot forward or backward, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
-    public void Drive(double speed, double inches, double timeoutS) {
+    void tagToTelemetry(AprilTagDetection detection)
+    {
+        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+    public void driveStraight(double speed, double inches, double timeoutS) {
         int newLeftFrontTarget;
         int newRightFrontTarget;
         int newLeftRearTarget;
@@ -226,12 +316,11 @@ public class StraferAutoDriveByEncoder extends LinearOpMode {
             sleep(200);   // optional pause after each move.
         }
     }
-    public void Strafe(double speed, double inches, double timeoutS) {
+    public void strafe(double speed, double inches, double timeoutS) {
         int newLeftFrontTarget;
         int newRightFrontTarget;
         int newLeftRearTarget;
         int newRightRearTarget;
-
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
@@ -295,7 +384,7 @@ public class StraferAutoDriveByEncoder extends LinearOpMode {
             sleep(200);   // optional pause after each move.
         }
     }
-    public void Turn(double speed, double degrees, double timeoutS) {
+    public void turn(double speed, double degrees, double timeoutS) {
         int newLeftFrontTarget;
         int newRightFrontTarget;
         int newLeftRearTarget;
@@ -306,10 +395,10 @@ public class StraferAutoDriveByEncoder extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)((degrees / 52.75) * COUNTS_PER_MOTOR_REV);
-            newRightFrontTarget = rightFrontDrive.getCurrentPosition() - (int)((degrees / 52.75) * COUNTS_PER_MOTOR_REV);
-            newLeftRearTarget = leftRearDrive.getCurrentPosition() + (int)((degrees / 52.75) * COUNTS_PER_MOTOR_REV);
-            newRightRearTarget = rightRearDrive.getCurrentPosition() - (int)((degrees / 52.75) * COUNTS_PER_MOTOR_REV);
+            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)((degrees / 360) * COUNTS_PER_360DEGREES);
+            newRightFrontTarget = rightFrontDrive.getCurrentPosition() - (int)((degrees / 360) * COUNTS_PER_360DEGREES);
+            newLeftRearTarget = leftRearDrive.getCurrentPosition() + (int)((degrees / 360) * COUNTS_PER_360DEGREES);
+            newRightRearTarget = rightRearDrive.getCurrentPosition() - (int)((degrees / 360) * COUNTS_PER_360DEGREES);
             leftFrontDrive.setTargetPosition(newLeftFrontTarget);
             rightFrontDrive.setTargetPosition(newRightFrontTarget);
             leftRearDrive.setTargetPosition(newLeftRearTarget);
