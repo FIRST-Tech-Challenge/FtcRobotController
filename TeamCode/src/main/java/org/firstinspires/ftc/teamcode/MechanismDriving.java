@@ -23,10 +23,12 @@ public class MechanismDriving {
        put(Robot.SlidesState.HIGH, 3500);
     }};
     //public static final int RETRACTED_POS = 0, LOW_POS = 700, MEDIUM_POS = 1850, HIGH_POS = 3500;
+    //SPEED INFO: Scale from 0-1 in speed
     public static final double HORSESHOE_FRONT_POS = 0, HORSESHOE_REAR_POS = 1.0; //These are not final values
     public static final double COMPLIANT_WHEELS_SPEED = 1.0; //speed of compliant wheels
     // How long it takes for the horseshoe wheels to be guaranteed to have pushed the cone into the horseshoe.
     public static final long HORSESHOE_TIME = 500;
+    public static final long COMPLIANT_WHEELS_TIME = 2000;
     public static final int EPSILON = 50;  // slide encoder position tolerance;
 
     double slideRampDownDist=1000, maxSpeedCoefficient=0.8, reducedSpeedCoefficient=0.7;
