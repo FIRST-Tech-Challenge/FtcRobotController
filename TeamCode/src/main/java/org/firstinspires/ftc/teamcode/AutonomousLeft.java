@@ -1,4 +1,4 @@
-/* FTC Team 7572 - Version 1.0 (11/04/2022)
+/* FTC Team 7572 - Version 1.1 (11/26/2022)
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -42,7 +42,7 @@ public class AutonomousLeft extends AutonomousBase {
     static final boolean DRIVE_Y = true;    // Drive forward/backward
     static final boolean DRIVE_X = false;   // Drive right/left (not DRIVE_Y)
 
-//    double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
+//  double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
     OpenCvCamera webcam;
     public int signalZone = 0;   // dynamic (gets updated every cycle during INIT)
@@ -184,20 +184,27 @@ public class AutonomousLeft extends AutonomousBase {
         // Drive a bit further
         driveToPosition( 8.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_40 );
 
-        // Raise lift to scoring position
+        // Center turret and raise lift to scoring position
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
-        while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
+
+        // Loop until both motions are complete (robot still moving?)
+        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
             performEveryLoop();
         }
 
         // Drive all the way to the tall junction pole
-        driveToPosition( 51.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_40 );
+        driveToPosition( 52.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_40 );
+        robot.driveTrainMotorsZero();
 
         // Turn toward pole
-        driveToPosition( 51.0, 0.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        driveToPosition( 52.0, 0.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        robot.driveTrainMotorsZero();
 
         // Drive closer to the pole in order to score
-        driveToPosition( 53.0, 2.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        driveToPosition( 54.8, 2.8, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        robot.driveTrainMotorsZero();
+
     } // moveToTallJunction
 
     /*--------------------------------------------------------------------------------------------*/
@@ -211,7 +218,8 @@ public class AutonomousLeft extends AutonomousBase {
         robot.grabberSpinStop();
 
         // Back away from the pole
-        driveToPosition( 51.0, 0.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        driveToPosition( 52.0, 0.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        robot.driveTrainMotorsZero();
 
     } // scoreCone
 
@@ -228,6 +236,7 @@ public class AutonomousLeft extends AutonomousBase {
         if( signalZoneLocation == 1 ) {  // RED
             // Realign back to 0 degrees
             driveToPosition( 52.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            robot.driveTrainMotorsZero();
             // Lower lift to driving height
             robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
             while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
@@ -237,11 +246,13 @@ public class AutonomousLeft extends AutonomousBase {
             driveToPosition( 52.0, -24.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
             // Back away from center line
             driveToPosition( 40.0, -24.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            robot.driveTrainMotorsZero();
         } // // signalZoneLocation 1
 
         else if( signalZoneLocation == 3 ) {  // BLUE
             // Turn fully 90 deg
             driveToPosition( 52.0, 0.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            robot.driveTrainMotorsZero();
             // Lower lift to driving height
             robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
             while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
@@ -251,19 +262,22 @@ public class AutonomousLeft extends AutonomousBase {
             driveToPosition( 52.0, 24.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20 );
             driveToPosition( 52.0, 24.0, 180.0, DRIVE_SPEED_20, TURN_SPEED_20 );
             driveToPosition( 42.0, 24.0, 180.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            robot.driveTrainMotorsZero();
         } // signalZoneLocation 3
 
         else { // signalZoneLocation 2  // GREEN
             // Realign back to 0 degrees
             driveToPosition( 52.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            robot.driveTrainMotorsZero();
             // Lower lift to driving height
             robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
-            // Drive back one tile closer to the cone depot
-            driveToPosition( 32.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
             // Ensure lift has finished the automatic movement
             while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
                 performEveryLoop();
             }
+            // Drive back one tile closer to the cone depot
+            driveToPosition( 32.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            robot.driveTrainMotorsZero();
         } // signalZoneLocation
 
     } // signalZoneParking

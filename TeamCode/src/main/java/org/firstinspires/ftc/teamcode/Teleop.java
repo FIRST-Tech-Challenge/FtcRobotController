@@ -617,17 +617,25 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
         else if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
         {
-           robot.turretPosInit( leftAlliance? -21.9 : +21.9 );
+           // Is the driver assisting with COLLECTION? (rotate turret toward substation)
+           if( robot.liftAngle > robot.LIFT_ANGLE_MOTORS ) {
+              robot.turretPosInit( +21.9 );
+           }
+           // Driver must be assisting with SCORING? (rotate turret toward junction pole)
+           else {
+              robot.turretPosInit( -38.0 );
+           }
         }
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last )
         {
-           // ensure lift is above the motors before rotating that far
-           if( robot.liftAngle < robot.LIFT_ANGLE_MOTORS ) {
-              robot.turretPosInit( leftAlliance? +38.0 : -38.0 );
+           // Is the driver assisting with COLLECTION? (rotate turret toward substation)
+           if( robot.liftAngle > robot.LIFT_ANGLE_MOTORS ) {
+              robot.turretPosInit( -21.9 );
            }
+           // Driver must be assisting with SCORING? (rotate turret toward junction pole)
            else {
-               // do nothing (ignore the request)
+              robot.turretPosInit( +38.0 );
            }
         }
         //===================================================================
