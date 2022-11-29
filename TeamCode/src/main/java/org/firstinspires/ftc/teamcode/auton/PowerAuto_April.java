@@ -294,7 +294,6 @@ public class PowerAuto_April extends LinearOpMode {
         sleep(200);
         robot.LiftMotor.setPower(0);
 
-        //gyroDrive(0.4, 4, 0, 15.0);
         RobotLog.d("LOGGING START");
 
         /******************************************************************
@@ -309,6 +308,7 @@ public class PowerAuto_April extends LinearOpMode {
 
         //Arm positions are 0.9 for closed and 0.5 for open
         //Drive to junction
+        gyroDrive(0.4, 4, 0, 15.0);
         gyroStrafe(STRAFE_SPEED, 20, 0, 15.0);
         gyroDrive(0.5, 46, 0, 15.0);
         sleep(200);
@@ -322,7 +322,15 @@ public class PowerAuto_April extends LinearOpMode {
         //Detect the Junction
         gyroSensorStrafe(0.2, -25, 0, 15.0);
         //gyroStrafe(0.4, -4, 0, 15.0);
-        gyroDrive(0.4, 2, 0, 15.0);
+
+        sensorNum = robot.sensorRange.getDistance(DistanceUnit.INCH);
+        sensorNumIn = 6.5 - sensorNum;
+
+        RobotLog.d("%.01f cm,%.01f in,",robot.sensorRange.getDistance(DistanceUnit.CM),robot.sensorRange.getDistance(DistanceUnit.INCH));
+
+        gyroDrive(0.4, sensorNumIn, 0, 15.0);
+        RobotLog.d("%.01f cm,%.01f in,",robot.sensorRange.getDistance(DistanceUnit.CM),robot.sensorRange.getDistance(DistanceUnit.INCH));
+
         sleep(200);
         robot.LiftMotor.setPower(-0.5);
         sleep(200);
@@ -338,7 +346,7 @@ public class PowerAuto_April extends LinearOpMode {
         sleep(500);
 
         //Drive to Cone Stack
-            /*gyroDrive(DRIVE_SPEED, -4, 0, 15.0);
+            gyroDrive(DRIVE_SPEED, -4, 0, 15.0);
             gyroTurn(TURN_SPEED, 90);
 
             while (!robot.touch.isPressed()) {
@@ -346,7 +354,7 @@ public class PowerAuto_April extends LinearOpMode {
             }
             robot.LiftMotor.setPower(0);
 
-            gyroDrive(DRIVE_SPEED, 26, 90, 15.0);
+            /*gyroDrive(DRIVE_SPEED, 26, 90, 15.0);
             //Pick up cone stack
             robot.LiftMotor.setPower(1.0);
             sleep(200);
@@ -388,7 +396,7 @@ public class PowerAuto_April extends LinearOpMode {
             gyroDrive(DRIVE_SPEED, 32, 90, 15.0);
             }
             else if(tagOfInterest.id == MIDDLE){
-            gyroDrive(DRIVE_SPEED, 12, 90, 15.0);
+            gyroDrive(DRIVE_SPEED, 10, 90, 15.0);
             }
             else if(tagOfInterest.id == RIGHT){
             gyroDrive(DRIVE_SPEED, -12, 90, 15.0);
@@ -984,7 +992,7 @@ public class PowerAuto_April extends LinearOpMode {
             //sensorNum = robot.sensorRange.getDistance(DistanceUnit.CM);
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() && (sensorNum > 30 ) &&
+            while (opModeIsActive() && (sensorNum > 20 ) &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
 
@@ -1029,7 +1037,7 @@ public class PowerAuto_April extends LinearOpMode {
                 //telemetry.addData("range", String.format("%.01f in", robot.sensorRange.getDistance(DistanceUnit.INCH)));
 
                 sensorNum = robot.sensorRange.getDistance(DistanceUnit.CM);
-                sensorNumIn = (sensorNum/2.54)-3;
+                sensorNumIn = (sensorNum/2.54);
 
                 RobotLog.d("%.01f cm,%.01f in,",robot.sensorRange.getDistance(DistanceUnit.CM),robot.sensorRange.getDistance(DistanceUnit.INCH));
 
