@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team417_PowerPlay.drive.SampleMecanumDrive;
 
@@ -20,14 +21,19 @@ abstract public class BaseOpMode extends LinearOpMode {
 
     Servo grabberServo;
     Toggler grabberToggle;
+    ElapsedTime time;
+    public static final double GRABBER_OPEN = 0.9;
+    public static final double GRABBER_CLOSED = 0.4;
 
-    public static final double GRABBER_OPEN = 0.8;
-    public static final double GRABBER_CLOSED = 0.0;
-
-    public static final double MAX_ARM_POSITION = -1500;
-    public static final double MIN_ARM_POSITION = 0;
+    public static final int MAX_ARM_POSITION = -1500;
+    public static final int GRD_JUNCT_ARM_POSITION = -400;
+    public static final int LOW_JUNCT_ARM_POSITION = -1000;
+    public static final int MID_JUNCT_ARM_POSITION = -1500;
+    public static final int MIN_ARM_POSITION = 0;
 
     public void initializeHardware() {
+        time = new ElapsedTime();
+        time.reset();
         motorFL = hardwareMap.dcMotor.get("motorFL");
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorBL = hardwareMap.dcMotor.get("motorBL");
