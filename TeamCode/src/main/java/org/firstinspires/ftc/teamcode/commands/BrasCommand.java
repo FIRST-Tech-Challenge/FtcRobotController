@@ -2,22 +2,23 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.dragonswpilib.command.CommandBase;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.BrasSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
-public class DriveCommand extends CommandBase {
+public class BrasCommand extends CommandBase {
 
-    private final DriveSubsystem mDriveSubsystem;
+    private final BrasSubsystem mBrasSubsystem;
     private final Telemetry mTelemetry;
     private final Gamepad mGamepad;
 
-    public DriveCommand(Telemetry telemetry, DriveSubsystem driveSubsystem, Gamepad gamepad){
+    public BrasCommand(Telemetry telemetry, BrasSubsystem brasSubsystem, Gamepad gamepad){
         mTelemetry = telemetry;
-        mDriveSubsystem = driveSubsystem;
+        mBrasSubsystem = brasSubsystem;
         mGamepad = gamepad;
 
-        addRequirements(driveSubsystem);
+        addRequirements(brasSubsystem);
     }
 
     // Called when the command is initially scheduled.
@@ -28,16 +29,13 @@ public class DriveCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double axeX = mGamepad.left_stick_x;
-        double axeY = -mGamepad.left_stick_y;
-        double axeZ = mGamepad.right_stick_x;
-        mDriveSubsystem.drive(axeX, axeY, axeZ);// use a gyro in paramater, TO DO********
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        mDriveSubsystem.stop();
+
+        mBrasSubsystem.stop();
     }
 
     // Returns true when the command should end.
