@@ -32,10 +32,10 @@ public class RedRight extends LinearOpMode {
         m3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         m4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        DistanceSensor frontDistance = hardwareMap.get(DistanceSensor.class, "front_distance");
-        DistanceSensor leftDistance = hardwareMap.get(DistanceSensor.class, "left_distance");
-        DistanceSensor rightDistance = hardwareMap.get(DistanceSensor.class, "right_distance");
-        DistanceSensor backDistance = hardwareMap.get(DistanceSensor.class, "back_distance");
+//        DistanceSensor frontDistance = hardwareMap.get(DistanceSensor.class, "front_distance");
+//        DistanceSensor leftDistance = hardwareMap.get(DistanceSensor.class, "left_distance");
+//        DistanceSensor rightDistance = hardwareMap.get(DistanceSensor.class, "right_distance");
+//        DistanceSensor backDistance = hardwareMap.get(DistanceSensor.class, "back_distance");
 
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -48,7 +48,7 @@ public class RedRight extends LinearOpMode {
         parameters.loggingTag = "Who cares.";
         imu.initialize(parameters);
 
-        ColorSensor colorSensor = hardwareMap.colorSensor.get("color_sensor");
+        //ColorSensor colorSensor = hardwareMap.colorSensor.get("color_sensor");
         telemetry.addData("Press Start When Ready","");
         telemetry.update();
 
@@ -72,17 +72,17 @@ public class RedRight extends LinearOpMode {
 
 
 
-        telemetry.addData("Color","R %d  G %d  B %d", colorSensor.red(), colorSensor.green(), colorSensor.blue());
-        Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-        telemetry.addData("Heading", " %.1f", orientation.firstAngle * 180.0 / Math.PI);
-
-        telemetry.addData("Front Distance", " %.1f", frontDistance.getDistance(DistanceUnit.CM));
-        telemetry.addData("Left Distance", " %.1f", leftDistance.getDistance(DistanceUnit.CM));
-        telemetry.addData("Right Distance", " %.1f", rightDistance.getDistance(DistanceUnit.CM));
-        telemetry.addData("Back Distance", " %.1f", backDistance.getDistance(DistanceUnit.CM));
-        telemetry.addData("Encoders"," %d %d %d %d", m1.getCurrentPosition(), m2.getCurrentPosition(),
-                m3.getCurrentPosition(), m4.getCurrentPosition());
-        telemetry.update();
+//        telemetry.addData("Color","R %d  G %d  B %d", colorSensor.red(), colorSensor.green(), colorSensor.blue());
+//        Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+//        telemetry.addData("Heading", " %.1f", orientation.firstAngle * 180.0 / Math.PI);
+//
+//        telemetry.addData("Front Distance", " %.1f", frontDistance.getDistance(DistanceUnit.CM));
+//        telemetry.addData("Left Distance", " %.1f", leftDistance.getDistance(DistanceUnit.CM));
+//        telemetry.addData("Right Distance", " %.1f", rightDistance.getDistance(DistanceUnit.CM));
+//        telemetry.addData("Back Distance", " %.1f", backDistance.getDistance(DistanceUnit.CM));
+//        telemetry.addData("Encoders"," %d %d %d %d", m1.getCurrentPosition(), m2.getCurrentPosition(),
+//                m3.getCurrentPosition(), m4.getCurrentPosition());
+//        telemetry.update();
 
         m1.setPower(0);
         m2.setPower(0);

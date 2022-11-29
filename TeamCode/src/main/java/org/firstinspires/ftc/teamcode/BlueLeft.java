@@ -36,10 +36,10 @@ public class BlueLeft extends LinearOpMode {
                 m4.getCurrentPosition());
         telemetry.update();
 
-        DistanceSensor frontDistance = hardwareMap.get(DistanceSensor.class, "front_distance");
-        DistanceSensor leftDistance = hardwareMap.get(DistanceSensor.class, "left_distance");
-        DistanceSensor rightDistance = hardwareMap.get(DistanceSensor.class, "right_distance");
-        DistanceSensor backDistance = hardwareMap.get(DistanceSensor.class, "back_distance");
+//        DistanceSensor frontDistance = hardwareMap.get(DistanceSensor.class, "front_distance");
+//        DistanceSensor leftDistance = hardwareMap.get(DistanceSensor.class, "left_distance");
+//        DistanceSensor rightDistance = hardwareMap.get(DistanceSensor.class, "right_distance");
+//        DistanceSensor backDistance = hardwareMap.get(DistanceSensor.class, "back_distance");
 
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -58,10 +58,10 @@ public class BlueLeft extends LinearOpMode {
 
         waitForStart();
 
-        m1.setTargetPosition(7500);
-        m2.setTargetPosition(7500);
-        m3.setTargetPosition(-7500);
-        m4.setTargetPosition(-7500);
+        m1.setTargetPosition(2300);
+        m2.setTargetPosition(2300);
+        m3.setTargetPosition(2300);
+        m4.setTargetPosition(2300);
         m1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         m2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         m3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -70,6 +70,43 @@ public class BlueLeft extends LinearOpMode {
         m2.setPower(1);
         m3.setPower(1);
         m4.setPower(1);
+        sleep (1000);
+        m1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        m3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        m4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        m1.setTargetPosition(-3500);
+        m2.setTargetPosition(3500);
+        m3.setTargetPosition(-3500);
+        m4.setTargetPosition(3500);
+        m1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m1.setPower(1);
+        m2.setPower(1);
+        m3.setPower(1);
+        m4.setPower(1);
+        sleep(2000);
+        m1.setTargetPosition(4700);
+        m2.setTargetPosition(-4700);
+        m3.setTargetPosition(4700);
+        m4.setTargetPosition(-4700);
+        m1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m1.setPower(1);
+        m2.setPower(1);
+        m3.setPower(1);
+        m4.setPower(1);
+        sleep(1000);
+        m1.setPower(0);
+        m2.setPower(0);
+        m3.setPower(0);
+        m4.setPower(0);
+
+
 
 
 
@@ -94,7 +131,7 @@ public class BlueLeft extends LinearOpMode {
 
 
 
-        telemetry.addData("Color","R %d  G %d  B %d", colorSensor.red(), colorSensor.green(), colorSensor.blue());
+        /*telemetry.addData("Color","R %d  G %d  B %d", colorSensor.red(), colorSensor.green(), colorSensor.blue());
         Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         telemetry.addData("Heading", " %.1f", orientation.firstAngle * 180.0 / Math.PI);
 
@@ -104,7 +141,7 @@ public class BlueLeft extends LinearOpMode {
         telemetry.addData("Back Distance", " %.1f", backDistance.getDistance(DistanceUnit.CM));
         telemetry.addData("Encoders"," %d %d %d %d", m1.getCurrentPosition(), m2.getCurrentPosition(),
                 m3.getCurrentPosition(), m4.getCurrentPosition());
-        telemetry.update();
+        telemetry.update();*/
 
 
     }
