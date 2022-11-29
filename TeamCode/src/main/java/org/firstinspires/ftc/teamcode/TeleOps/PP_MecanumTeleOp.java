@@ -21,7 +21,7 @@ public class PP_MecanumTeleOp extends OpMode
     //"MC ABHI IS ON THE REPO!!!"
     boolean isAuto = false; // yes I know this is stupid
     boolean lastTriggerPress = false;
-    public final double TURN_PRECESION = 0.5;
+//    public final double TURN_PRECESION = 0.5;
 
     // Declaring drivetrain motors
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
@@ -118,8 +118,8 @@ public class PP_MecanumTeleOp extends OpMode
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
         double rx = -gamepad1.right_stick_x*0.75;
-        if(precisionToggle)
-            rx *= TURN_PRECESION;
+//      if(precisionToggle)
+//          rx *= TURN_PRECESION;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
@@ -195,10 +195,10 @@ public class PP_MecanumTeleOp extends OpMode
         }
 
         if(gamepad2.dpad_right)
-            armControl.manualArm(50);
+            armControl.manualArm(100);
 
         if(gamepad2.dpad_left)
-            armControl.manualArm(-50);
+            armControl.manualArm(-100);
     }
 
     public void claw() {

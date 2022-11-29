@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetect
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "QuadTwoParkAuto")
+
 public class QuadTwoParkAuto extends PowerPlay_AprilTagDetection {
     public void initilize(){
         super.runOpMode();
