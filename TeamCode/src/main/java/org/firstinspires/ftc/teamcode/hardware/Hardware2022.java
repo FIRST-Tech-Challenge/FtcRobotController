@@ -21,12 +21,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  */
 public class Hardware2022 {
 
-    static public double ANGULAR_RATE = 2000.0;
+    //This is max wheel motor velocity.
+    static public double ANGULAR_RATE = 2300.0;
     private final double MIN_VELOCITY = 0.1;
 
     //Adjustable parameters  here.
+    @Deprecated
     private final double CLAW_CLOSED = 1 ;
+    @Deprecated
     private final double CLAW_OPEN = 0.3 ;
+
     private final double xAxisCoeff = 35.6 ;  // How many degrees encoder to turn to run an inch in X Axis
     private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in X Axis
 
@@ -40,10 +44,14 @@ public class Hardware2022 {
     private final int NOCONE_SLIDE_MID = 120 ;
     private final int NOCONE_SLIDE_HIGH = 360;
 
-
-
     private boolean debug = true;
     private Telemetry telemetry;
+
+    //PID control parameter for turning.
+    private double kP =0.0;
+    private double kI = 0.0;
+    private double kD = 0.0;
+    private double kF = 0.0 ;
 
     /**
      * Robot has 2 state,  with a cone , or without a cone
@@ -243,25 +251,15 @@ public class Hardware2022 {
         //Set velocity slow at beginning and end.
         while ( wheelFrontLeft.isBusy()) {
             int currentPosition = getXAxisPosition();
-            double velocityCoff = 0 ;
-            if (Math.abs(currentPosition - 0 ) <= Math.abs(distance - currentPosition)) {
-                velocityCoff = Math.abs( (currentPosition - 0 )/(distance - 0) * 2 );
-            } else {
-                velocityCoff = Math.abs( (distance - currentPosition)/(distance - 0) *2);
-            }
-            if ( velocityCoff <= MIN_VELOCITY ) {
-                velocityCoff = MIN_VELOCITY;
-            }
 
             telemetry.addLine().addData("[X Position , in the while >]  ", getXAxisPosition());
             telemetry.addLine().addData("[X target Position , in the while >]  ", wheelFrontLeft.getTargetPosition());
-            telemetry.addLine().addData("[X veloCoff , in the while >]  ", velocityCoff);
             telemetry.update();
 
-            wheelFrontLeft.setVelocity(-power * Hardware2022.ANGULAR_RATE *velocityCoff );
-            wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE*velocityCoff);
-            wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE*velocityCoff);
-            wheelBackRight.setVelocity(-power * Hardware2022.ANGULAR_RATE*velocityCoff);
+            wheelFrontLeft.setVelocity(-power * Hardware2022.ANGULAR_RATE  );
+            wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
+            wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
+            wheelBackRight.setVelocity(-power * Hardware2022.ANGULAR_RATE);
 
         }
 
@@ -303,7 +301,6 @@ public class Hardware2022 {
      * @param degree  Degrees to turn,  Positive is turn counter clock wise.
      */
     public void turn( double degree) {
-
         wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -322,37 +319,28 @@ public class Hardware2022 {
 
         double currentHeading = startHeading;
 
-
-        PIDFController pidf = new PIDFController(kP, kI, kD, kF);
-
         telemetry.addLine().addData("[Start Heading: >]  ", startHeading);
         telemetry.addLine().addData("[End Heading: >]  ", endHeading);
         telemetry.update();
 
         double difference = regulateDegree( endHeading  - currentHeading );
+        PIDFController pidfCrtler  = new PIDFController(kP, kI, kD, kF);
+        pidfCrtler.setSetPoint(difference);
 
-
-        while ( Math.abs( difference )> 2  ) {
-
+        while ( !pidfCrtler.atSetPoint()  ) {
             currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-            difference = regulateDegree( endHeading  - currentHeading );
+
+            double velocityCaculated = pidfCrtler.calculate(currentHeading);
 
             telemetry.addLine().addData("[Heading: Inside While >]  ", currentHeading);
             telemetry.addLine().addData("[Difference:  >]  ", difference);
+            telemetry.addLine().addData("[Caled Velocity:  >]  ", velocityCaculated);
             telemetry.update();
 
-            if ( difference > 0 ) {
-                wheelFrontLeft.setVelocity(-0.3 * Hardware2022.ANGULAR_RATE);
-                wheelBackLeft.setVelocity(-0.3 * Hardware2022.ANGULAR_RATE);
-                wheelFrontRight.setVelocity(0.3 * Hardware2022.ANGULAR_RATE);
-                wheelBackRight.setVelocity(0.3 * Hardware2022.ANGULAR_RATE);
-            } else if ( difference < 0) {
-                wheelFrontLeft.setVelocity(0.3 * Hardware2022.ANGULAR_RATE);
-                wheelBackLeft.setVelocity(0.3 * Hardware2022.ANGULAR_RATE);
-                wheelFrontRight.setVelocity(-0.3 * Hardware2022.ANGULAR_RATE);
-                wheelBackRight.setVelocity(-0.3 * Hardware2022.ANGULAR_RATE);
-            }
-
+            wheelFrontLeft.setVelocity(-velocityCaculated * Hardware2022.ANGULAR_RATE);
+            wheelBackLeft.setVelocity(-velocityCaculated * Hardware2022.ANGULAR_RATE);
+            wheelFrontRight.setVelocity(velocityCaculated * Hardware2022.ANGULAR_RATE);
+            wheelBackRight.setVelocity(velocityCaculated * Hardware2022.ANGULAR_RATE);
         }
 
         wheelFrontRight.setVelocity(0);
@@ -385,35 +373,6 @@ public class Hardware2022 {
     RobotState checkState(){
         return currentState;
     }
-
-
-    /**
-     * This method to check if there is a cone close to the claw,
-     * If so, close the claw, and change current stats to has Cone.
-     *
-
-    public void checkAndGrabCone ( ) {
-
-        //Only try to grab cone if in No Cone state.
-        if ( currentState.equals(RobotState.NoCone)){
-            if ( debug) {
-                telemetry.addLine().addData("[>]  ", "No cone, checking cone.");
-                telemetry.update();
-            }
-
-            // Check if there is a cone close by, if so close claw
-            if (sensorDistance.getDistance(DistanceUnit.CM) < 2) {
-                if (debug) {
-                    telemetry.addLine().addData("[>]  ", "Found cone,close claw.");
-                    telemetry.update();
-                }
-                //grabberclaw.setPosition(CLAW_CLOSED);
-                currentState = RobotState.HasCone;
-            }
-
-        }
-    }
-     */
 
     private int getVSlidePosition () {
         return vSlide.getCurrentPosition() - vsldieInitPosition;
@@ -504,23 +463,6 @@ public class Hardware2022 {
     }
 
     /**
-     * Lower vertical Slide freely , using game control
-     * @param power, Expect positive input
-    public void freeLowerVerticalSlide( float power ) {
-        telemetry.addLine().addData("Encoder Reading", vSlide.getCurrentPosition() );
-        telemetry.update();
-
-        if (vSlide.getCurrentPosition() > CONE_SLIDE_LOW ) {
-            vSlide.setPower( -power );
-        }
-        else {
-            vSlide.setPower ( 0 );
-        }
-
-    }
-     */
-
-    /**
      * Move vertical Slide freely , using game control
      * @param power
      */
@@ -545,7 +487,7 @@ public class Hardware2022 {
 
     }
 
-
+    @Deprecated
     public void  releaseCone( ){
         telemetry.addLine().addData("Release", CLAW_OPEN );
         telemetry.update();
@@ -554,8 +496,6 @@ public class Hardware2022 {
         currentState = RobotState.NoCone;
 
     }
-
-
 
     public void goToHeight ( SlideHeight height ) {
         int targetPosition = 0;
@@ -605,6 +545,7 @@ public class Hardware2022 {
 
     }
 
+    @Deprecated
     public void manualgrab() {
         telemetry.addLine().addData("Manaul Grap", CLAW_CLOSED );
         telemetry.update();
@@ -615,6 +556,35 @@ public class Hardware2022 {
     }
 
 
+    public double getkP() {
+        return kP;
+    }
 
+    public void setkP(double kP) {
+        this.kP = kP;
+    }
 
+    public double getkI() {
+        return kI;
+    }
+
+    public void setkI(double kI) {
+        this.kI = kI;
+    }
+
+    public double getkD() {
+        return kD;
+    }
+
+    public void setkD(double kD) {
+        this.kD = kD;
+    }
+
+    public double getkF() {
+        return kF;
+    }
+
+    public void setkF(double kF) {
+        this.kF = kF;
+    }
 }

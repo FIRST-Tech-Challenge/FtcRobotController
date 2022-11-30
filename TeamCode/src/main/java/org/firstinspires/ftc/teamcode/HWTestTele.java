@@ -9,8 +9,12 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware2022;
 public class HWTestTele  extends LinearOpMode {
     Hardware2022 hdw;
 
+    double[] pidCoffs = { 0,0,0 };
+    int pidCoffIndex = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
+
         hdw = new Hardware2022(hardwareMap, telemetry); //init hardware
         hdw.createHardware();
 
@@ -23,7 +27,6 @@ public class HWTestTele  extends LinearOpMode {
 
         //This is the main loop of operation.
         while (opModeIsActive()) {
-            //hdw.checkAndGrabCone();
 
             if (gamepad1.dpad_left) {
                 hdw.moveXAxis(-2.0, -1);
@@ -42,11 +45,57 @@ public class HWTestTele  extends LinearOpMode {
             }
 
             if (gamepad1.a) {
+                hdw.setkP(pidCoffs[0]);
+                hdw.setkI(pidCoffs[1]);
+                hdw.setkD(pidCoffs[2]);
                 hdw.turn(90);
             }
 
             if ( gamepad1.b) {
+                hdw.setkP(pidCoffs[0]);
+                hdw.setkI(pidCoffs[1]);
+                hdw.setkD(pidCoffs[2]);
                 hdw.turn(-90);
+            }
+
+            if( gamepad1.x) {
+                pidCoffIndex = 0;
+                telemetry.addLine().addData("[Kp :]  ", pidCoffs[0]);
+                telemetry.addLine().addData("[Ki :]  ", pidCoffs[1]);
+                telemetry.addLine().addData("[Kd :]  ", pidCoffs[2]);
+                telemetry.update();
+            }
+
+            if( gamepad1.y) {
+                pidCoffIndex = 1;
+                telemetry.addLine().addData("[Kp :]  ", pidCoffs[0]);
+                telemetry.addLine().addData("[Ki :]  ", pidCoffs[1]);
+                telemetry.addLine().addData("[Kd :]  ", pidCoffs[2]);
+                telemetry.update();
+            }
+
+            if( gamepad1.options) {
+                pidCoffIndex = 2;
+                telemetry.addLine().addData("[Kp :]  ", pidCoffs[0]);
+                telemetry.addLine().addData("[Ki :]  ", pidCoffs[1]);
+                telemetry.addLine().addData("[Kd :]  ", pidCoffs[2]);
+                telemetry.update();
+            }
+
+            if( gamepad1.left_bumper) {
+                pidCoffs[pidCoffIndex] -= 0.1;
+                telemetry.addLine().addData("[Kp :]  ", pidCoffs[0]);
+                telemetry.addLine().addData("[Ki :]  ", pidCoffs[1]);
+                telemetry.addLine().addData("[Kd :]  ", pidCoffs[2]);
+                telemetry.update();
+            }
+
+            if( gamepad1.right_bumper) {
+                pidCoffs[pidCoffIndex] += 0.1;
+                telemetry.addLine().addData("[Kp :]  ", pidCoffs[0]);
+                telemetry.addLine().addData("[Ki :]  ", pidCoffs[1]);
+                telemetry.addLine().addData("[Kd :]  ", pidCoffs[2]);
+                telemetry.update();
             }
 
         }
