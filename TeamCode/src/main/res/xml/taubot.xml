@@ -8,8 +8,7 @@
             <RevRobotics40HDHexMotor name="shoulderAngleEncoder" port="0" />
             <Servo name="servoGripper" port="0" />
             <Servo name="intakeServoBack" port="2" />
-            <Servo name="gripperSwivel" port="1" />
-            <Servo name="nudgeSwivel" port="3" />
+            <Servo name="nudgeSwivel" port="1" />
             <Servo name="blinkin" port="4" />
             <AnalogInput name="gripperLeft" port="0" />
             <AnalogInput name="gripperRight" port="1" />
