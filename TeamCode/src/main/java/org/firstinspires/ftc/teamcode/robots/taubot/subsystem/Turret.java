@@ -153,23 +153,19 @@ public class Turret implements Subsystem {
         initialized = false; //triggers recalc of heading offset at next IMU update cycle
     }
 
-    Pose2d localPosition;
-    Pose2d robotPos;
-    Pose2d worldPos;
-
     public Pose2d getTurretPosition(Pose2d robot){
 
         double robotHeading = robot.getHeading();
 
-        double localX = -6.0*Math.sin(Math.toRadians(heading-robotHeading));
-        double localY = -8-6.0*Math.cos(Math.toRadians(heading-robotHeading));
-
         double robotX = robot.getX();
         double robotY = robot.getY();
 
-        double worldX = robotX + (localX)*Math.cos(-robotHeading) - (localY)*Math.sin(-robotHeading);
-        double worldY = robotY + (localY)*Math.cos(-robotHeading) + (localX)*Math.sin(-robotHeading);
-       return new Pose2d(worldX,worldY,heading-robotHeading);
+        double localX = -3.5;
+
+        double worldX = robotX + (localX)*Math.cos(-robotHeading);
+        double worldY = robotY + (localX)*Math.sin(-robotHeading);
+
+       return new Pose2d(worldX,worldY,heading);
     }
 
     public boolean isTurretNearTarget(){
@@ -185,9 +181,6 @@ public class Turret implements Subsystem {
             telemetryMap.put("turret motor amps", motor.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("turret near target", isTurretNearTarget());
             telemetryMap.put("turret correction", power);
-            telemetryMap.put("Local Pos", localPosition);
-            telemetryMap.put("Robot Pos", robotPos);
-            telemetryMap.put("World Pos", worldPos);
         }
 
         return telemetryMap;

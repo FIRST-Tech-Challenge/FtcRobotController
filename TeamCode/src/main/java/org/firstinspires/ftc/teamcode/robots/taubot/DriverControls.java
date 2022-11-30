@@ -94,16 +94,13 @@ public class DriverControls {
             if (gamepad1.right_trigger>.05) robot.crane.adjustExtend(gamepad1.right_trigger);
             if (gamepad1.left_trigger>.05) robot.crane.adjustExtend(-gamepad1.left_trigger);
 
-            /*
             if(stickyGamepad1.left_bumper){
-                robot.turret.setTargetHeading(robot.turret.getHeading()-90);
+                robot.crane.decNudgeIndex();
             }
 
             if(stickyGamepad1.right_bumper){
-                robot.turret.setTargetHeading(robot.turret.getHeading()+90);
+                robot.crane.incNudgeIndex();
             }
-
-             */
 
 
 

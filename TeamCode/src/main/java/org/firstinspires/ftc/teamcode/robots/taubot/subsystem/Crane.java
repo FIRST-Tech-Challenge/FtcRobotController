@@ -106,6 +106,8 @@ public class Crane implements Subsystem {
 
     boolean USE_MOTOR_SMOOTHING = true;
 
+    private Servo nudgeStickServo;
+
 
     StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
 
@@ -119,6 +121,7 @@ public class Crane implements Subsystem {
             turretMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             shoulderAngleEncoder = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             bulbServo = new ServoSim();
+            nudgeStickServo = new ServoSim();
         } else {
             shoulderMotor = hardwareMap.get(DcMotorEx.class, "shoulder");
             shoulderAngleEncoder = hardwareMap.get(DcMotorEx.class, "shoulderAngleEncoder"); //just a REV shaft encoder - no actual motor
@@ -132,6 +135,7 @@ public class Crane implements Subsystem {
             extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
+            nudgeStickServo = hardwareMap.get(Servo.class, "nudgeSwivel");
         }
         extendPID = new PIDController(0,0,0);
         extendPID.setOutputRange(EXTEND_MIN_PID_OUTPUT, EXTEND_MAX_PID_OUTPUT);
@@ -240,6 +244,53 @@ public class Crane implements Subsystem {
     double shoulderCorrection = 0;
     double shoulderPwr = 1;
     double shoulderTargetAngle = 0;
+
+    public static double NUDGE_CENTER_POS = 1500;
+    public static double NUDGE_LEFT_POS = 1500;
+    public static double NUDGE_RIGHT_POS = 1500;
+
+    //keeps track of current nudge position
+    private int nudgeIndex = 1;
+
+    public void nudgeCenter(){
+        nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_POS));
+    }
+    public void nudgeLeft(){
+        nudgeStickServo.setPosition(servoNormalize(NUDGE_LEFT_POS));
+    }
+    public void nudgeRight(){
+        nudgeStickServo.setPosition(servoNormalize(NUDGE_RIGHT_POS));
+    }
+
+    public void incNudgeIndex(){
+        if(nudgeIndex < 2){
+            nudgeIndex++;
+        }
+        updateNudgeStick();
+    }
+    public void decNudgeIndex(){
+        if(nudgeIndex > 0){
+            nudgeIndex--;
+        }
+        updateNudgeStick();
+    }
+
+    public void updateNudgeStick(){
+        switch (nudgeIndex){
+            case 0:
+                nudgeRight();
+                break;
+            case 1:
+                nudgeCenter();
+                break;
+            case 2:
+                nudgeLeft();
+                break;
+            default:
+                nudgeCenter();
+                break;
+        }
+    }
 
     public void movePIDShoulder(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
 
@@ -460,7 +511,7 @@ public class Crane implements Subsystem {
 
     private double craneLengthOffset = 0.2;
 
-    double shoulderHeight = 0;
+    double shoulderHeight = 0.245;
 
     boolean inverseKinematic = false;
     double targetHeight = 20;
@@ -488,14 +539,6 @@ public class Crane implements Subsystem {
         if(calibrated) {
             //run the current articulation
             articulate(articulation);
-            /*
-            angle = Math.toDegrees(Math.atan(targetHeight / targetDistance));
-            length = Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2))/INCHES_PER_METER - craneLengthOffset;
-            setShoulderTargetDeg(angle);
-            setExtendTargetDistance(length);
-            robot.turret.setTargetHeading(targetTurretAngle);
-
-             */
 
         }
         //update the turret's target
@@ -546,13 +589,23 @@ public class Crane implements Subsystem {
     }
 
     public boolean setTargets(double x, double y, double z){
+        x *= INCHES_PER_METER;
+        y *= INCHES_PER_METER;
+        z *= INCHES_PER_METER;
+
         Pose2d robotPos = robot.driveTrain.getPoseEstimate();
         Pose2d turretPos = robot.turret.getTurretPosition(robotPos);
-        targetTurretAngle = Math.atan2(y - turretPos.getY(), x-turretPos.getX());
+        targetTurretAngle = Math.toDegrees(Math.atan2(y - turretPos.getY(), x-turretPos.getX()));
 
         targetHeight = z-shoulderHeight;
 
-        targetDistance = Math.sqrt(Math.pow(y - turretPos.getY(),2) + Math.pow(x - turretPos.getX(),2));
+        targetDistance = 4.25 + Math.sqrt(Math.pow(y - turretPos.getY(),2) + Math.pow(x - turretPos.getX(),2));
+
+        angle = Math.toDegrees(Math.atan(targetHeight / targetDistance));
+        length = Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2)) - craneLengthOffset;
+        setShoulderTargetDeg(angle);
+        setExtendTargetDistance(length);
+        robot.turret.setTargetHeading(targetTurretAngle);
 
         return true;
     }
