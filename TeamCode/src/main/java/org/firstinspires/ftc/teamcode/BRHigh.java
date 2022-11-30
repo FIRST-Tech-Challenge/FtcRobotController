@@ -29,7 +29,7 @@ public class BRHigh extends DriveMethods{
         sleep(500);
         driveForDistance(0.35, Variables.Direction.RIGHT, 0.35,0);
         driveForDistance(1.22, Variables.Direction.BACKWARD,0.35,0);
-        driveForDistance(1.55, Variables.Direction.LEFT,0.35,qq120);
+        driveForDistance(1.55, Variables.Direction.LEFT,0.35,120);
 
         while (opModeIsActive()) {
 
