@@ -14,16 +14,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.masters.drive.SampleMecanumDriveDeadWheels;
+import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
+
 
 import java.util.Objects;
 
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ACCEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_VEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kA;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kStatic;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kV;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
 
 
 /*
@@ -49,7 +50,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    private SampleMecanumDriveDeadWheels drive;
+    private SampleMecanumDrive drive;
 
     enum Mode {
         DRIVER_MODE,
@@ -73,7 +74,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        drive = new SampleMecanumDriveDeadWheels(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
 
         mode = Mode.TUNING_MODE;
 

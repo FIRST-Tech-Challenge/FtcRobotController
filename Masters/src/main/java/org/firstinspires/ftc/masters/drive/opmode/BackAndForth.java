@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.masters.drive.SampleMecanumDriveDeadWheels;
+//
 
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
