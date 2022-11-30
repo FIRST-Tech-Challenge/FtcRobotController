@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.masters.drive.SampleMecanumDriveDeadWheels;
+
 import org.firstinspires.ftc.masters.drive.StandardTrackingWheelLocalizer;
 
 /**
