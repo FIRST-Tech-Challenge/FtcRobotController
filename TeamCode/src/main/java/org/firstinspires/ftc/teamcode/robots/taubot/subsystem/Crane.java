@@ -246,8 +246,8 @@ public class Crane implements Subsystem {
     double shoulderTargetAngle = 0;
 
     public static double NUDGE_CENTER_POS = 1500;
-    public static double NUDGE_LEFT_POS = 1500;
-    public static double NUDGE_RIGHT_POS = 1500;
+    public static double NUDGE_LEFT_POS = 900;
+    public static double NUDGE_RIGHT_POS = 2100;
 
     //keeps track of current nudge position
     private int nudgeIndex = 1;

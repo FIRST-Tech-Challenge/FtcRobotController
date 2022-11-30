@@ -218,14 +218,14 @@ public class Robot implements Subsystem {
                 break;
             case 3:
                 if(startingPosition.equals( Constants.Position.START_LEFT)) {
-                    crane.setTargets(Field.INCHES_PER_GRID*3, Field.INCHES_PER_GRID, 38);
+                    //crane.setTargets(Field.INCHES_PER_GRID*3, Field.INCHES_PER_GRID, 38);
                     if (System.nanoTime() >= autonTime) {
                         crane.setGripper(false);
                         autonTime = futureTime(0.3);
                         autonIndex++;
                     }
                 }else{
-                    crane.setTargets(Field.INCHES_PER_GRID*3, -Field.INCHES_PER_GRID, 38);
+                    //crane.setTargets(Field.INCHES_PER_GRID*3, -Field.INCHES_PER_GRID, 38);
                     if (System.nanoTime() >= autonTime){
                         crane.setGripper(false);
                         autonTime = futureTime(0.3);
