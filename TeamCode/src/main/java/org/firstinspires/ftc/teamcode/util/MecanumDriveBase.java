@@ -44,6 +44,10 @@ public class MecanumDriveBase {
         rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
       public void gamepadController(Gamepad gamepad) {
 
@@ -69,5 +73,41 @@ public class MecanumDriveBase {
         telemetry.addData("Motors", "lf(%.2f), rf(%.2f), lb(%.2f), rb(%.2f)", leftPowerFront, rightPowerFront, leftPowerBack, rightPowerBack);
         telemetry.addData("Speed control", speedFactor);
       }
+
+    public DcMotor getlf() {
+        return lf;
+    }
+
+    public DcMotor getlb() {
+        return lb;
+    }
+
+    public DcMotor getrb() {
+        return rb;
+    }
+
+    public DcMotor getrf() {
+        return rf;
+    }
+
+    public double getLeftPowerFront() {
+        return leftPowerFront;
+    }
+
+    public double getRightPowerFront() {
+        return rightPowerFront;
+    }
+
+    public double getRightPowerBack() {
+        return rightPowerBack;
+    }
+
+    public double getLeftPowerBack() {
+        return leftPowerBack;
+    }
+
+    public double getSpeedFactor() {
+        return speedFactor;
+    }
 }
 
