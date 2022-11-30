@@ -79,6 +79,9 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
     int difFromRedCone; //a
     int difFromBlueCone; //b
 
+    Point center;
+    Size size;
+
     void inputToLAB(Mat input) {
 
         Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
@@ -120,8 +123,8 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
         telemetry.addData("rot_rect: ", rot_rect.toString());
         packet.put("rot_rect: ", rot_rect.toString());
 
-        Point center = rot_rect.center;
-        Size size = rot_rect.size;
+        center = rot_rect.center;
+        size = rot_rect.size;
         double angle = rot_rect.angle;
 
         inputToLAB(input);
@@ -170,11 +173,11 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
             difFromBlueCone = Math.abs(difFromBlueConeThresh - avg_b);
 
             if (difFromPole < difFromRedCone && difFromPole < difFromBlueCone) {
-                detectedObject = detectedObject.POLE;
+                detectedObject = DetectedObject.POLE;
             } else if (difFromBlueCone < difFromPole && difFromBlueCone < difFromRedCone) {
-                detectedObject = detectedObject.BLUE_CONE;
+                detectedObject = DetectedObject.BLUE_CONE;
             } else if (difFromRedCone < difFromBlueCone) {
-                detectedObject = detectedObject.RED_CONE;
+                detectedObject = DetectedObject.RED_CONE;
             }
 
             telemetry.addData("Detected Object: ", detectedObject);

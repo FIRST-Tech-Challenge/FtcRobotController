@@ -57,7 +57,7 @@ public class ConceptCompassCalibration extends LinearOpMode {
     /* Declare OpMode members. */
     public DcMotor leftDrive   = null;
     public DcMotor  rightDrive  = null;
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     CompassSensor       compass;
 
     final static double     MOTOR_POWER   = 0.2; // scale from 0 to 1
