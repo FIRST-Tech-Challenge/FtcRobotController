@@ -25,6 +25,7 @@ public class TeleopGOODOneController extends LinearOpMode {
         linearslide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         boolean move = false;
+        linearslide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
