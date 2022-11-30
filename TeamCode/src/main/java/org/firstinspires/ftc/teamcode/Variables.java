@@ -51,7 +51,7 @@ public class Variables {
     public static final int collectHeight = 200;
     public static final int lowHeight = 1850;
     public static final int midHeight = 3100;
-    public static final int highHeight = 4400;
+    public static final int highHeight = 4200;
 
 
     // Grbber #1 Clamp: 0.5, Release: 0.75
