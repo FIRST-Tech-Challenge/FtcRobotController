@@ -7,6 +7,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -63,10 +64,14 @@ public class BlueLeft extends LinearOpMode {
         if (opModeIsActive()) {
 
 
-            //move(1, 2000);
-            //gyroTurning(90);
-            //move(1, 800);
-            crane(-1500);
+            move(1, 2000);
+            gyroTurning(90);
+            move(1, 800);
+            craneinput();
+            move(1,-500);
+            spin(100, -1600);
+            move(1, -500);
+
 
 
         }
@@ -86,6 +91,10 @@ public class BlueLeft extends LinearOpMode {
     }
 
     public boolean gyroTurning(double targetAngle) {
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         boolean foundAngle;
         foundAngle = false;
         while (!foundAngle) {
@@ -94,7 +103,7 @@ public class BlueLeft extends LinearOpMode {
             telemetry.addData("Angle", currentAngle);
             telemetry.addData("targetangle", targetAngle);
             telemetry.update();
-            if (angles.firstAngle >= targetAngle - 0.13 && angles.firstAngle <= targetAngle + 0.13) {
+            if (angles.firstAngle >= targetAngle - 0.1 && angles.firstAngle <= targetAngle + 0.1) {
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
@@ -105,30 +114,30 @@ public class BlueLeft extends LinearOpMode {
 
             } else if (angles.firstAngle >= targetAngle + 0.5) {
                 if (angles.firstAngle <= targetAngle - 5) {
-                    frontLeft.setPower(0.3);
-                    frontRight.setPower(-0.3);
-                    backLeft.setPower(0.3);
-                    backRight.setPower(-0.3);
+                    frontLeft.setPower(0.2);
+                    frontRight.setPower(-0.2);
+                    backLeft.setPower(0.2);
+                    backRight.setPower(-0.2);
                     foundAngle = false;
                 } else {
-                    frontLeft.setPower(-0.3);
-                    frontRight.setPower(0.3);
-                    backLeft.setPower(-0.3);
-                    backRight.setPower(0.3);
+                    frontLeft.setPower(-0.2);
+                    frontRight.setPower(0.2);
+                    backLeft.setPower(-0.2);
+                    backRight.setPower(0.2);
                     foundAngle = false;
                 }
             } else if (angles.firstAngle <= targetAngle - 0.5) {
                 if (angles.firstAngle >= targetAngle + 5) {
-                    frontLeft.setPower(-0.3);
-                    frontRight.setPower(0.3);
-                    backLeft.setPower(-0.3);
-                    backRight.setPower(0.3);
+                    frontLeft.setPower(-0.2);
+                    frontRight.setPower(0.2);
+                    backLeft.setPower(-0.2);
+                    backRight.setPower(0.2);
                     foundAngle = false;
                 } else {
-                    frontLeft.setPower(.3);
-                    frontRight.setPower(-.3);
-                    backLeft.setPower(.3);
-                    backRight.setPower(-.3);
+                    frontLeft.setPower(.2);
+                    frontRight.setPower(-.2);
+                    backLeft.setPower(.2);
+                    backRight.setPower(-.2);
                     foundAngle = false;
                 }
             }
@@ -167,22 +176,23 @@ public class BlueLeft extends LinearOpMode {
         while (frontLeft.isBusy() && opModeIsActive()) {
 
         }
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void craneinput(int position){
-        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Crane.setTargetPosition(position);
-        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Crane.setPower(1);
-        Left.setPower(1);
-        while (Crane.isBusy()&&opModeIsActive()) {
 
-        }
+    }
+    public void craneinput(){
+        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Crane.setTargetPosition(-400);
+        Crane.setPower(1);
+        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        move(0.5, 200);
+        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Crane.setTargetPosition(400);
+        Left.setPower(1);
+        Crane.setPower(.75);
+        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Left.setPower(0);
-        Crane.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
 
     }
 
@@ -211,24 +221,24 @@ public class BlueLeft extends LinearOpMode {
 
     }
 
-    public void moveandspin(double power, int moveposition, int spinposition) {
+    /*public void moveandspin(double power, int moveposition, int spinposition) {
         move(power, moveposition);
         spin(spinposition);
         while (Spin.isBusy()) {
 
         }
-    }
+    }*/
 
-    public void spin(int position) {
+    public void spin(int SpinPosition,int CranePosition) {
         Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Spin.setTargetPosition(position);
-        Crane.setTargetPosition(-500);
+        Spin.setTargetPosition(SpinPosition);
+        Crane.setTargetPosition(CranePosition);
         Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Spin.setPower(1);
         Crane.setPower(1);
-        while (Spin.isBusy()) {
+        while (Spin.isBusy()&&opModeIsActive()) {
 
         }
     }
@@ -238,7 +248,7 @@ public class BlueLeft extends LinearOpMode {
         Crane.setTargetPosition(position);
         Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Crane.setPower(1);
-        while (Crane.isBusy()) {
+        while (Crane.isBusy()&&opModeIsActive()) {
 
         }
 

@@ -11,7 +11,7 @@ public class encoder_Test extends LinearOpMode {
     private DcMotor crane;
 
     public void runOpMode() {
-        crane = hardwareMap.get(DcMotor.class, "crane");
+        crane = hardwareMap.get(DcMotor.class, "Crane");
 
         waitForStart();
 
