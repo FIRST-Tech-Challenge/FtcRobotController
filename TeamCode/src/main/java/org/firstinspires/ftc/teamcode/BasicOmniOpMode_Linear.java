@@ -67,7 +67,21 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             if (gamepad1.dpad_down == true) {
                 liftPower = -0.5;
             }
+            
+            private void gripper(boolean status) {
+                 if (status) {
+                         rightServo.setPosition(1.0);
+                         leftServo.setPosition(0.0);
 
+
+            }
+                 else if(!status){
+                         rightServo.setPosition(0.0);
+                         leftServo.setPosition(1.0);
+
+            }
+            }
+           
             // Normalizes the values so no wheel power exceeds 100%.
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
