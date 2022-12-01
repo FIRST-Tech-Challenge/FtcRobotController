@@ -27,9 +27,10 @@ public class OfficialManualMode extends LinearOpMode {
     public boolean autoMode = false;
     public boolean useCamera = true;
 
+    public int defaultParkingPosition = 3;
     public double inchesOneSquare = 24;
-    public boolean useOwnAIModel = false;
-    public int ownAIModelType = 1; // 1 for mnist number, 2 for flowers
+    public boolean useOwnAIModel = true;
+    public int ownAIModelType = 1; // 1 for shape, 2 for flowers
     private DcMotor _fl, _fr, _rl, _rr;
     private Servo _grip, _platform, _elbow, _shoulder;
     private boolean logMode = false;
@@ -60,7 +61,8 @@ public class OfficialManualMode extends LinearOpMode {
     public int    elbowTimeBothMaxShoulderBegin = 200; // elbow remain at same position when shoulder begin up
     public int    shoulderTimeFromMinToMax = 4000;
     public double wheelTurnSpeed = 4.0;
-    public double zoomRatio = 2.0;
+    public double zoomRatio = 1.0;
+    public int parkingPosition = defaultParkingPosition;
     // "wheel_forward @10 @0.5", wheel_back 10inch and speed is 0.5
     // wheel_left/wheel_right/wheel_back
     // platform and shoulder elbow remain still, position / direction not changed
@@ -101,32 +103,31 @@ public class OfficialManualMode extends LinearOpMode {
     public ArrayList<String> presetActionsStep1 = new ArrayList<String>(Arrays.asList(
             "grip_min",
             "both_max",
-                "wheel_forward @15 @0.3",
-            //"zoom @2.0",
+            "wheel_forward @18 @0.2",
             "ai_get_parkposition",
-                "wheel_forward @23 @0.3",
-                "sleep @100",
-                "wheel_back @10 @0.3",
+            "wheel_forward @20 @0.3",
+            "sleep @100",
+            "wheel_back @10 @0.3",
             "nextstep @presetActionsStep2"
     ));
 
     public ArrayList<String> presetActionsStep2_left = new ArrayList<String>(Arrays.asList(
-                "wheel_right @30 @0.3",
-            "wheel_turn_right @7 @0.2",
-                "wheel_forward @1.2 @0.1",
-                "sleep @200",
+            "wheel_right @31 @0.2",
+            "wheel_turn_right @9 @0.1",
+            "wheel_forward @1 @0.1",
+            "sleep @500",
             "grip_max",
-                "wheel_back @1.2 @0.3",
-            "wheel_turn_left @7 @0.2",
+            "wheel_back @1 @0.1",
+            "wheel_turn_left @9 @0.1",
             "park_ai_position",
-                "both_default"
+            "both_default"
     ));
 
     public ArrayList<String> presetActionsStep2_right = new ArrayList<String>(Arrays.asList(
             "wheel_left @29 @0.2",
             "wheel_turn_left @7 @0.1",
             "wheel_forward @1 @0.1",
-                "sleep @500",
+            "sleep @500",
             "grip_max",
             "wheel_back @1 @0.1",
             "wheel_turn_right @7 @0.1",
@@ -168,28 +169,21 @@ public class OfficialManualMode extends LinearOpMode {
     private boolean stopPresetAction = false;
 
     private String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    private String TFOD_MODEL_FILE_NUMBER  = "/sdcard/FIRST/tflitemodels/number2_model.tflite";
+    private String TFOD_MODEL_FILE_NUMBER  = "/sdcard/FIRST/tflitemodels/shape.tflite";
     private String TFOD_MODEL_FILE_FLOWER  = "/sdcard/FIRST/tflitemodels/flower.tflite";
 
     private static final String[] LABELS_NUMBER = {
-            "0",
             "1",
             "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9"
+            "3"
     };
 
     private static final String[] LABELS_FLOWER = {
-            "1 rose",
-            "2 tulip",
-            "3 dandelion",
-            "4 unknown",
-            "5 dontcare"
+            "dandelion (0)",
+            "daisy (1)",
+            "sunflowers (3)",
+            "roses (4)",
+            "abc (5)"
     };
 
     private static final String[] LABELS_BUILTIN = {
@@ -203,8 +197,6 @@ public class OfficialManualMode extends LinearOpMode {
 
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
-
-        public int parkingPosition = 3;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -604,6 +596,7 @@ public class OfficialManualMode extends LinearOpMode {
         else if (mode == false) {
             telemetry.addData("Stop log...", logArray.size());
             logMode = false;
+
             // print out the moves / buttons pressed since log start;
             //System.out.println("Operations: " + logArray);
             for (int index = 0; index < logArray.size(); index++) {
@@ -997,6 +990,7 @@ public class OfficialManualMode extends LinearOpMode {
                 (_fl.isBusy() && _fr.isBusy() && _rl.isBusy() && _rr.isBusy())) {
 
             // Display it for the driver.
+            telemetry.addData("parking position: ", parkingPosition);
             telemetry.addData("direction: ", direction);
             telemetry.addData("DistanceInches: ", distanceInches);
             telemetry.addData("Running to",  " %7d :%7d :%7d :%7d", newFrontLeftTarget,  newFrontRightTarget, newRearLeftTarget, newRearRightTarget);
@@ -1074,7 +1068,7 @@ public class OfficialManualMode extends LinearOpMode {
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.75f;
         if (useOwnAIModel && ownAIModelType == 1) {
-            tfodParameters.isModelTensorFlow2 = false;
+            tfodParameters.isModelTensorFlow2 = true;
             tfodParameters.inputSize = 300;
         }
         else if (useOwnAIModel && ownAIModelType == 2) {
@@ -1103,15 +1097,16 @@ public class OfficialManualMode extends LinearOpMode {
     }
 
     boolean aiGetParkPosition() {
+        parkingPosition = defaultParkingPosition;
         if (useCamera == false) {
             return false;
         }
         if (tfod != null) {
             if (useOwnAIModel && ownAIModelType == 1) {
-                tfod.setZoom(zoomRatio, 9.0 / 9.0);
+                tfod.setZoom(zoomRatio, 16.0 / 9.0);
             }
             else if (useOwnAIModel && ownAIModelType == 2) {
-                tfod.setZoom(zoomRatio, 9.0 / 9.0);
+                tfod.setZoom(zoomRatio, 16.0 / 9.0);
             }
             else {
                 tfod.setZoom(zoomRatio, 16.0 / 9.0);
@@ -1144,11 +1139,11 @@ public class OfficialManualMode extends LinearOpMode {
                         if (recognition.getConfidence() > 0.6) {
                             String s = recognition.getLabel();
                             if (useOwnAIModel) {
-                                if (s.equals("0")) {
+                                if (s.equals("1")) {
                                     type = 1;
-                                } else if (s.equals("1")) {
-                                    type = 2;
                                 } else if (s.equals("2")) {
+                                    type = 2;
+                                } else if (s.equals("3")) {
                                     type = 3;
                                 }
                             }
@@ -1164,11 +1159,11 @@ public class OfficialManualMode extends LinearOpMode {
                         }
                         telemetry.addData("park position", type);
                     }
-                        if (timeWaitAi.milliseconds() < 500) {
-                        telemetry.addData("ignore time", "1");
+                    if (timeWaitAi.milliseconds() < 500) {
+                        telemetry.addData("ignore time", type);
                     }
                     else {
-                        telemetry.addData("not ignore", "0");
+                        telemetry.addData("not ignore", type);
                     }
                     telemetry.update();
                 }

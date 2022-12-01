@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -17,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Autonomous(name = "red_left", group = "Match")
-public class Autonomous_Red_Left extends LinearOpMode {
-    public String workingMode = "red_left";
+@Autonomous(name = "simple park left", group = "Match")
+public class Autonomous_Simple_Park_Left extends LinearOpMode {
+    public String workingMode = "simple_park_left";
     public boolean autoMode = true;
     public boolean useCamera = true;
 
@@ -98,13 +99,9 @@ public class Autonomous_Red_Left extends LinearOpMode {
     //go forward some distance, and zoom in the camera
     public ArrayList<String> presetActionsStep1 = new ArrayList<String>(Arrays.asList(
             "grip_min",
-            "both_max",
-            "wheel_forward @16 @0.2",
-            "ai_get_parkposition",
-            "wheel_forward @22 @0.3",
-            "sleep @100",
-            "wheel_back @10 @0.3",
-            "nextstep @presetActionsStep2"
+            "both_default",
+            "wheel_left @28 @0.2",
+            "grip_max"
     ));
 
     public ArrayList<String> presetActionsStep2_left = new ArrayList<String>(Arrays.asList(
@@ -123,7 +120,7 @@ public class Autonomous_Red_Left extends LinearOpMode {
             "wheel_left @29 @0.2",
             "wheel_turn_left @7 @0.1",
             "wheel_forward @1 @0.1",
-            "sleep @500",
+                "sleep @500",
             "grip_max",
             "wheel_back @1 @0.1",
             "wheel_turn_right @7 @0.1",
@@ -1223,7 +1220,4 @@ public class Autonomous_Red_Left extends LinearOpMode {
 
     }
  }
-
-
-
 
