@@ -26,9 +26,9 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name = "Place cones w/ origin sleeve (Red side red terminal)", group = "")
-public class RRTerminalwOriginConePlace extends LinearOpMode {
-//test
+@Autonomous(name = "RedLeftPowerPlaySleeve", group = "")
+public class RedLeftPowerPlaySleeve extends LinearOpMode {
+    //test
     private DcMotor LF = null;
     private DcMotor RF = null;
     private DcMotor LB = null;
@@ -45,11 +45,11 @@ public class RRTerminalwOriginConePlace extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
 
-    private static final String TFOD_MODEL_ASSET = "model_20221127_131503.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     private static final String[] LABELS = {
             "Bolt",
-            "Bows",
-            "Gears"
+            "Bulbs",
+            "Panels"
     };
     private static final String VUFORIA_KEY =
             "AVXWcGz/////AAABmZfYj2wlVElmo2nUkerrNGhEBBg+g8Gq1KY3/lN0SEBYx7HyMslyrHttOZoGtwRt7db9nfvCiG0TBEp7V/+hojHXCorf1CEvmJWWka9nFfAbOuyl1tU/IwdgHIvSuW6rbJY2UmMWXfjryO3t9nNtRqX004LcE8O2zkKdBTw0xdqq4dr9zeA9gX0uayps7t0TRmiToWRjGUs9tQB3BDmSinXxEnElq+z3SMJGcn5Aj44iEB7uy/wuB8cGCR6GfOpDRYqn/R8wwD757NucR5LXA48rulTdthGIuHoEjud1QzyQOv4BpaODj9Oi0TMuBmBzhFJMwWzyZ4lKVyOCbf3uCRia7Q+HO+LbFbghNIGIIzZC";
@@ -143,9 +143,9 @@ public class RRTerminalwOriginConePlace extends LinearOpMode {
                         String imageCheck = recognition.getLabel();
                         if (imageCheck.equals("Bolt")) {
                             resultROI = 1;
-                        } else if (imageCheck.equals("Gears")) {
+                        } else if (imageCheck.equals("Bulbs")) {
                             resultROI = 2;
-                        } else if (imageCheck.equals("Bows")) {
+                        } else if (imageCheck.equals("Panels")) {
                             resultROI = 3;
                         } else {
                             resultROI = 2;
@@ -169,30 +169,52 @@ public class RRTerminalwOriginConePlace extends LinearOpMode {
             switch (resultROI) {
                 case 1:
                     // Far left
-                    moveUtils.strafeBuddy(-5);
-                    moveUtils.goStraight(26, MAX_SPEED, MIN_SPEED, ACCEL);
+                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCW(82);
+                    moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCCW(82);
+                    moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCW(45);
+                    actuatorUtils.armPole(3);
+                    moveUtils.goStraight(4,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.gripperOpen(true);
+                    moveUtils.goStraight(-4,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCCW(135);
+                    moveUtils.goStraight(35,MAX_SPEED,MIN_SPEED,ACCEL);
                     done=true;
                     break;
                 case 2:
                     // Middle
                     moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(-10);
-                    moveUtils.goStraight(13,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(24);
-                    moveUtils.goStraight(16, MAX_SPEED, MIN_SPEED, ACCEL);
+                    moveUtils.turnCW(82);
+                    moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCCW(82);
+                    moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.turnCW(45);
                     actuatorUtils.armPole(3);
                     moveUtils.goStraight(4,MAX_SPEED,MIN_SPEED,ACCEL);
                     actuatorUtils.gripperOpen(true);
                     moveUtils.goStraight(-4,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.turnCCW(45);
-                    moveUtils.goStraight(-10,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.strafeBuddy(-38);
+                    moveUtils.goStraight(4,MAX_SPEED,MIN_SPEED,ACCEL);
                     done=true;
                     break;
                 case 3:
                     // Far right
-                    moveUtils.strafeBuddy(5);
-                    moveUtils.goStraight(26, MAX_SPEED, MIN_SPEED, ACCEL);
+                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCW(82);
+                    moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCCW(82);
+                    moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCW(45);
+                    actuatorUtils.armPole(3);
+                    moveUtils.goStraight(4,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.gripperOpen(true);
+                    moveUtils.goStraight(-4,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCCW(45);
+                    actuatorUtils.armPole(4);
+                    moveUtils.strafeBuddy(4);
                     done=true;
 
                     break;

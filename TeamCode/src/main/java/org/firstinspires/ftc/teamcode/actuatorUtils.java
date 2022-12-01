@@ -118,6 +118,14 @@ public class actuatorUtils {
             arm.setPower(armPower);
             sleep(2500);
         }
+        else if(desiredHeight==4)
+        {
+            arm.setTargetPosition(minEncode);
+            //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(armPower);
+            sleep(2500);
+        }
     }
 
     //Method to move arm to cone collection heights
