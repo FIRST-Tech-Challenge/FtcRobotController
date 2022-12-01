@@ -126,7 +126,7 @@ public class NEW_TeleOp_358 extends OpMode {
             telemetry.addData("Encoder port 2 front right", robot.rf.getCurrentPosition());
             telemetry.addData("Encoder port 3 back right", robot.rb.getCurrentPosition());
             telemetry.addData("Encoder port 4 back left", robot.lb.getCurrentPosition());
-            telemetry.addData("Encoder port 0 back left", robot.m.getCurrentPosition());
+//            telemetry.addData("Encoder port 0 back left", robot.m.getCurrentPosition());
 
 
 

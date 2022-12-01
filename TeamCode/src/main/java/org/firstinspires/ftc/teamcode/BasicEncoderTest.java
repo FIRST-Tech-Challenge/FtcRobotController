@@ -68,9 +68,9 @@ public class BasicEncoderTest extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor    lf  = null;
-//    private DcMotor    lb  = null;
-//    private DcMotor    rf  = null;
-//    private DcMotor    rb  = null;
+    private DcMotor    lb  = null;
+    private DcMotor    rf  = null;
+    private DcMotor    rb  = null;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -93,37 +93,37 @@ public class BasicEncoderTest extends LinearOpMode {
 
         // Initialize the drive system variables.
          lf  = hardwareMap.get(DcMotor.class, "lf");
-//         lb = hardwareMap.get(DcMotor.class, "lb");
-//         rf = hardwareMap.get(DcMotor.class, "rf");
-//         rb = hardwareMap.get(DcMotor.class, "rb");
+         lb = hardwareMap.get(DcMotor.class, "lb");
+         rf = hardwareMap.get(DcMotor.class, "rf");
+         rb = hardwareMap.get(DcMotor.class, "rb");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
          lf.setDirection(DcMotor.Direction.FORWARD);
-//         lb.setDirection(DcMotor.Direction.FORWARD);
-//         rf.setDirection(DcMotor.Direction.FORWARD);
-//         rb.setDirection(DcMotor.Direction.REVERSE);
+         lb.setDirection(DcMotor.Direction.FORWARD);
+         rf.setDirection(DcMotor.Direction.FORWARD);
+         rb.setDirection(DcMotor.Direction.FORWARD);
 
 
         lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Starting at",
-                            lf.getCurrentPosition()
-//                            lb.getCurrentPosition(),
-//                            rf.getCurrentPosition(),
-//                            rb.getCurrentPosition()
-        );
+//        telemetry.addData("Starting at",
+//                            lf.getCurrentPosition();
+//                            lb.getCurrentPosition();
+//                            rf.getCurrentPosition();
+//                            rb.getCurrentPosition();
+//        );
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -168,27 +168,27 @@ public class BasicEncoderTest extends LinearOpMode {
 
             // Determine new target position, and pass to motor controller
             newmotor1Target = lf.getCurrentPosition() + (int)(counts);
-//            newmotor2Target = lb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-//            newmotor3Target = rf.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-//            newmotor4Target = rb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newmotor2Target = lb.getCurrentPosition() + (int)(counts);
+            newmotor3Target = rf.getCurrentPosition() + (int)(counts);
+            newmotor4Target = rb.getCurrentPosition() + (int)(counts);
             lf.setTargetPosition(newmotor1Target);
-//            lb.setTargetPosition(newmotor2Target);
-//            rf.setTargetPosition(newmotor3Target);
-//            rb.setTargetPosition(newmotor4Target);
+            lb.setTargetPosition(newmotor2Target);
+            rf.setTargetPosition(newmotor3Target);
+            rb.setTargetPosition(newmotor4Target);
 
             // Turn On RUN_TO_POSITION
             lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
             // reset the timeout time and start motion.
             runtime.reset();
             lf.setPower(speed);
-//            lb.setPower(Math.abs(speed));
-//            rf.setPower(Math.abs(speed));
-//            rb.setPower(Math.abs(speed));
+            lb.setPower(Math.abs(speed));
+            rf.setPower(Math.abs(speed));
+            rb.setPower(Math.abs(speed));
 
 
             // keep looping while we are still active, and there is time left, and both motors are running.
@@ -210,15 +210,15 @@ public class BasicEncoderTest extends LinearOpMode {
 
             // Stop all motion;
                 lf.setPower(0);
-//                lb.setPower(0);
-//                rf.setPower(0);
-//                rb.setPower(0);
+                lb.setPower(0);
+                rf.setPower(0);
+                rb.setPower(0);
 
             // Turn off RUN_TO_POSITION
             lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             sleep(250);   // optional pause after each move.
         }
