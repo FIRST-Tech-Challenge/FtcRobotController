@@ -52,9 +52,9 @@ public class Op6200Driven extends OpMode {
             robot.servo.setPosition(gamepad1.left_trigger);
         }*/
         double gripPos = robot.servo.getPosition();
-        if(gamepad1.left_trigger > 0 && gripPos > minPosition){
+        if(gamepad2.left_trigger > 0 && gripPos > minPosition){
             gripPos = gripPos - 0.01;
-        }else if(gamepad1.right_trigger > 0 && gripPos < maxPosition){
+        }else if(gamepad2.right_trigger > 0 && gripPos < maxPosition){
             gripPos = gripPos + 0.01;
         }else{
             gripPos = gripPos;
@@ -96,14 +96,14 @@ public class Op6200Driven extends OpMode {
 */
 
 
-        telemetry.addData("general servo position", robot.servo.getPosition());
+        telemetry.addData("general servo posi wtion", robot.servo.getPosition());
 
 
 
 
         //manual movement for linear slide
         int lmotorpos = robot.lmotor.getCurrentPosition();
-        if(gamepad1.right_bumper)
+        if(gamepad2.right_bumper)
         {
             robot.lmotor.setTargetPosition(lmotorpos + 60);
             robot.lmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -112,7 +112,7 @@ public class Op6200Driven extends OpMode {
 
         }
 
-        if(gamepad1.left_bumper)
+        if(gamepad2.left_bumper)
         {
             robot.lmotor.setTargetPosition(lmotorpos - 60);
             robot.lmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
