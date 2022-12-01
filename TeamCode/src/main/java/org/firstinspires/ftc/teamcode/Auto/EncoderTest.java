@@ -16,23 +16,6 @@ public class EncoderTest extends LinearOpMode {
     DcMotor backLeftMotor;
     DcMotor backRightMotor;
 
-    public void moveMotorsToPosition(int rightSide, int leftSide) {
-        // Reset all encoders
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Set motor modes to run to position
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        static int ticksPerRevolution = 1440;
-        static float wheelCircumference = 0.30787608005; // This is meters
-    }
-
     @Override
     public void runOpMode() {
         // ------------------------------------------------------- //
@@ -53,14 +36,42 @@ public class EncoderTest extends LinearOpMode {
         // ------------------------------------------------------- //
         waitForStart();
 
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() <= 1)) {
-            // Runs for 1 second after start button is pressed
-
-        }
-
         while (opModeIsActive()) {
             // Runs in a loop when the start button is pressed on the driver hub
+            moveMotors(1, 1, 1);
+
         }
+    }
+
+    public void moveMotors(int rightSide, int leftSide, float motorSpeed) {
+        // Reset all encoders
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set motor modes to run to position
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        int ticksPerRevolution = 1440;
+        float wheelCircumference = (float) 0.30787608005; // This is in meters
+        int ticksPerMeter = (int) (ticksPerRevolution / wheelCircumference); //This should be ~4677 ticks
+
+        int rightMoveDistance = ticksPerMeter * rightSide;   // Ex. 1 meter would be 4677 ticks
+        int leftMoveDistance = ticksPerMeter * leftSide;     // Ex. 2 meters would be 9354 ticks
+
+        frontRightMotor.setTargetPosition(rightMoveDistance);
+        backRightMotor.setTargetPosition(rightMoveDistance);
+
+        frontLeftMotor.setTargetPosition(leftMoveDistance);
+        backLeftMotor.setTargetPosition(leftMoveDistance);
+
+        frontLeftMotor.setPower(motorSpeed);
+        frontRightMotor.setPower(motorSpeed);
+        backLeftMotor.setPower(motorSpeed);
+        backRightMotor.setPower(motorSpeed);
     }
 }

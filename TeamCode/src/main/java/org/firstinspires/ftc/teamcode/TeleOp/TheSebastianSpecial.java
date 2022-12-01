@@ -12,6 +12,8 @@ public class TheSebastianSpecial extends OpMode {
     DcMotor backLeftMotor;
     DcMotor backRightMotor;
 
+    DcMotor armMotor;
+
     // DcMotor armMotor;
     // Servo coneClaw;
 
@@ -23,6 +25,8 @@ public class TheSebastianSpecial extends OpMode {
         frontRightMotor = hardwareMap.get(DcMotor.class, "FrontRight");
         backLeftMotor = hardwareMap.get(DcMotor.class, "BackLeft");
         backRightMotor = hardwareMap.get(DcMotor.class, "BackRight");
+
+        armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
         
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -63,5 +67,13 @@ public class TheSebastianSpecial extends OpMode {
         backLeftMotor.setPower(BLeft/precision);
         frontRightMotor.setPower(FRight/precision);
         backRightMotor.setPower(BRight/precision);
+
+        if (gamepad1.dpad_down) {
+            armMotor.setPower(-0.5);
+        } else if (gamepad1.dpad_up) {
+            armMotor.setPower(0.5);
+        } else {
+            armMotor.setPower(0.0);
+        }
     }
 }
