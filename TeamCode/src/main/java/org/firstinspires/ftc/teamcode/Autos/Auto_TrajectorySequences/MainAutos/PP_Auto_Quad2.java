@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences.MainAutos;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous
+@Disabled
 public class PP_Auto_Quad2 extends PowerPlay_AprilTagDetection
 {
 	private boolean isAuto = true;
@@ -128,3 +130,4 @@ public class PP_Auto_Quad2 extends PowerPlay_AprilTagDetection
 		return endPose;
 	}
 }
+

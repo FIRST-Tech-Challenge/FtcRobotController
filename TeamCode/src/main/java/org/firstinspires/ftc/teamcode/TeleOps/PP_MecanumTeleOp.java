@@ -21,6 +21,7 @@ public class PP_MecanumTeleOp extends OpMode
     //"MC ABHI IS ON THE REPO!!!"
     boolean isAuto = false; // yes I know this is stupid
     boolean lastTriggerPress = false;
+//    public final double TURN_PRECESION = 0.5;
 
     // Declaring drivetrain motors
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
@@ -95,12 +96,12 @@ public class PP_MecanumTeleOp extends OpMode
     public void loop()
     {
         boolean precisionToggle = gamepad1.right_trigger > 0.1; // we want to check this every time the loop runs
-        boolean slideUp = gamepad2.right_trigger > 0.1;
-        boolean slideDown = gamepad2.left_trigger > 0.1;
+        //boolean slideUp = gamepad2.right_trigger > 0.1;
+        //boolean slideDown = gamepad2.left_trigger > 0.1;
         drive(precisionToggle);
         arm();
         claw();
-        slides(slideUp,slideDown);
+        slides();
 
         slideControl.update(telemetry);
         gamepad2_dpad_up.update();
@@ -116,7 +117,9 @@ public class PP_MecanumTeleOp extends OpMode
     {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
-        double rx = -gamepad1.right_stick_x*0.6;
+        double rx = -gamepad1.right_stick_x*0.75;
+//      if(precisionToggle)
+//          rx *= TURN_PRECESION;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
@@ -185,10 +188,17 @@ public class PP_MecanumTeleOp extends OpMode
         }
         else if (gamepad2_X.isRisingEdge()){
             clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
+            clawControl.wristInExtakePosition = false;
             armControl.setIntake();
             slideControl.setIntakeOrGround();
 
         }
+
+        if(gamepad2.dpad_right)
+            armControl.manualArm(100);
+
+        if(gamepad2.dpad_left)
+            armControl.manualArm(-100);
     }
 
     public void claw() {
@@ -196,12 +206,14 @@ public class PP_MecanumTeleOp extends OpMode
         clawControl.toggleOpenClose();
     }
 
-    public void slides(boolean slideUp, boolean slideDown){
+    public void slides(){
 
-        if (slideUp){
-            slideControl.setManualSlide(15);
-        }else if (slideDown) {
-            slideControl.setManualSlide(-15);
+        if (gamepad2.right_trigger>0.2){
+            slideControl.setManualSlide(85);
+        }
+
+        if(gamepad2.left_trigger>0.2){
+            slideControl.setManualSlide(-85);
         }
 
     }
