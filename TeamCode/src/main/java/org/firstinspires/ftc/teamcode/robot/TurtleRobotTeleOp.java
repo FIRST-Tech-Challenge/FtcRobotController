@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class TurtleRobotTeleOp {
@@ -38,14 +39,14 @@ public class TurtleRobotTeleOp {
         rightfrontmotor = hwMap.get(DcMotor.class, "rightfrontmotor");
         rightbackmotor = hwMap.get(DcMotor.class, "rightbackmotor");
         ArmServo = hwMap.get(CRServo.class, "ArmServo");
-        leftslidemotor = hwMap.get(DcMotor.class, "leftslidemotor");
+        leftslidemotor = hwMap.get(DcMotor.class, "leftEncoder");
         rightslidemotor = hwMap.get(DcMotor.class, "rightslidemotor");
 
         leftfrontmotor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         leftbackmotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        rightfrontmotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightfrontmotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rightbackmotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
+//        leftslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set all motors to zero power
@@ -54,7 +55,7 @@ public class TurtleRobotTeleOp {
         rightfrontmotor.setPower(0);
         rightbackmotor.setPower(0);
         //ClawMotor.setPower(0);
-        leftslidemotor.setPower(0);
+//        leftslidemotor.setPower(0);
         rightslidemotor.setPower(0);
 
         // Set all motors to run without encoders.

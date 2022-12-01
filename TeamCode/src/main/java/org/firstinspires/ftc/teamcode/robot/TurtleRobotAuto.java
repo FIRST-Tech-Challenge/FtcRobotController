@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class TurtleRobotAuto {
@@ -38,12 +39,12 @@ public class TurtleRobotAuto {
         rightfrontmotor = hwMap.get(DcMotor.class, "rightfrontmotor");
         rightbackmotor = hwMap.get(DcMotor.class, "rightbackmotor");
         ArmServo = hwMap.get(CRServo.class, "ArmServo");
-        leftslidemotor = hwMap.get(DcMotor.class, "leftslidemotor");
+        leftslidemotor = hwMap.get(DcMotor.class, "leftEncoder");
         rightslidemotor = hwMap.get(DcMotor.class, "rightslidemotor");
 
         leftfrontmotor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         leftbackmotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        rightfrontmotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightfrontmotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rightbackmotor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -66,5 +67,4 @@ public class TurtleRobotAuto {
         rightslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
 }
