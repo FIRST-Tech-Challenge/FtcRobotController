@@ -9,7 +9,7 @@ public abstract class Control extends OpMode {
         GROUND,
         LOW,
         MEDIUM,
-        HIGH
+        HIGH,
     }
 
     @Override
@@ -45,6 +45,13 @@ public abstract class Control extends OpMode {
             Thread.sleep(mill);
         } catch (InterruptedException e) {
             e.printStackTrace();
+
         }
     }
+    public double constrainAngle (double angle){
+        return((angle % 360 + 360) % 360);
+    }
 }
+
+
+

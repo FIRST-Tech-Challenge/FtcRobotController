@@ -9,6 +9,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
@@ -22,10 +23,15 @@ public class Pipeline extends OpenCvPipeline {
     // rgb of cone Lighter 78 100 208 = (130, 178.696, 110.642)
 
 
-    Scalar blue = new Scalar(120, 146.518, 142.174); //we are still trying to      Cr     Cb    (Do not change  Y)
-    public static Scalar scalarLowerYCrCb = new Scalar(40, 114.34, 173.706);//(150, 0, 175);//light
-    public static Scalar scalarUpperYCrCb = new Scalar(130, 178.696, 110.642);//(170, 175, 125);//Dark
-    // These values define the Range of color, for example green is a color "in between" lightgreen and darkgreen.
+
+
+    public Scalar CyanUpper  = new Scalar(255, 175, 80);
+    public Scalar CyanLower = new Scalar(40, 130, 0);
+    public Scalar MagentaUpper  = new Scalar(255, 255, 255);
+    public Scalar MagentaLower = new Scalar(40, 127, 150);
+    public Scalar greenUpper  = new Scalar(255, 115, 125);
+    public Scalar greenLower = new Scalar(40, 30, 50);
+
     private double[] colorCenter;
 
     // Green                                             Y      Cr     Cb
@@ -37,6 +43,10 @@ public class Pipeline extends OpenCvPipeline {
 
     public boolean error = false;
     public boolean debug;
+
+    public int cyanPixels;
+    public int magentaPixels;
+    public int greenPixels;
 
     private int borderLeftX = 0;   //amount of pixels from the left side of the cam to skip
     private int borderRightX = 0;   //amount of pixels from the right of the cam to skip
@@ -66,22 +76,6 @@ public class Pipeline extends OpenCvPipeline {
         this.CAMERA_HEIGHT = CAMERA_HEIGHT;
     }
 
-    public void ConfigureScalarLower(double Y, double Cr, double Cb) {
-        scalarLowerYCrCb = new Scalar(Y, Cr, Cb);
-    }
-
-    public void ConfigureScalarUpper(double Y, double Cr, double Cb) {
-        scalarUpperYCrCb = new Scalar(Y, Cr, Cb);
-    }
-
-    public void ConfigureScalarLower(int Y, int Cr, int Cb) {
-        scalarLowerYCrCb = new Scalar(Y, Cr, Cb);
-    }
-
-    public void ConfigureScalarUpper(int Y, int Cr, int Cb) {
-        scalarUpperYCrCb = new Scalar(Y, Cr, Cb);
-    }
-
     public double[] getColorCenter() {
         return colorCenter;
     }
@@ -93,8 +87,13 @@ public class Pipeline extends OpenCvPipeline {
             // Process Image
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb); //mat = yCrCb
 
+            Mat cyan = new Mat();
+            Core.inRange(input, CyanLower, CyanUpper, cyan);
+
+            cyanPixels = Core.countNonZero(cyan);
+
             colorCenter = mat.get((int) mat.rows() / 2, (int) mat.cols() / 2);
-            Core.inRange(mat, scalarLowerYCrCb, scalarUpperYCrCb, processed);
+            Core.inRange(mat, CyanLower, CyanUpper, processed);
             // Core.bitwise_and(input, input, output, processed);
 
             // Remove Noise
@@ -143,10 +142,10 @@ public class Pipeline extends OpenCvPipeline {
                 Imgproc.rectangle(output, maxRect, new Scalar(0, 255, 0), 2);
             }
             // Draw Borders
-            Imgproc.rectangle(output, new Rect(borderLeftX, borderTopY, CAMERA_WIDTH - borderRightX - borderLeftX, CAMERA_HEIGHT - borderBottomY - borderTopY), blue, 2);
+            // Commented out for testing because this had errors - Thomas
+            //Imgproc.rectangle(output, new Rect(borderLeftX, borderTopY, CAMERA_WIDTH - borderRightX - borderLeftX, CAMERA_HEIGHT - borderBottomY - borderTopY), blue, 2);
             // Display Data
             Imgproc.putText(output, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y, new Point(5, CAMERA_HEIGHT - 5), 0, 0.6, new Scalar(255, 255, 255), 2);
-
             loopcounter++;
         } catch (Exception e) {
             debug = error;

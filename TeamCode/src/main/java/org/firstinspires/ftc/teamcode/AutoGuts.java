@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public abstract class AutoGuts extends Control {
 
     ColorDetection colorDetection;
+    Pipeline pipeline;
 
     @Override
     public void loop() {
@@ -18,6 +19,7 @@ public abstract class AutoGuts extends Control {
     public void init() {
         super.init();
         colorDetection = new ColorDetection();
+        pipeline = new Pipeline();
     }
 
     public void driveEncoder(double x, double y, double power) {
@@ -28,7 +30,7 @@ public abstract class AutoGuts extends Control {
         int bottomRight = hraezlyr.bottomRight.getCurrentPosition();
 
         // rotates by 45 to line up with mecanum wheels
-        double imuAngle = hraezlyr.getHeading() - (Math.PI / 2);
+        double imuAngle = hraezlyr.getHeading() - (180 / 2);
 
         // calculates given x and y into robots perspective of x and y also converts to ticks
         int x_output = (int) (((x * Math.cos(imuAngle)) + (y * Math.sin(imuAngle))) * TICKS_PER_INCH);
@@ -76,15 +78,15 @@ public abstract class AutoGuts extends Control {
         double angularDistance = 0;
         do {
             double initialAngle = hraezlyr.getHeading();
-            angle = ((angle % Math.PI * 2) + Math.PI * 2) % Math.PI * 2;
+            angle = constrainAngle(angle);
             double turnVal = 1;
 
             if (angle - initialAngle < 0) turnVal = -1;
             //counter clockwise
             angularDistance = Math.abs(angle - initialAngle);
-            if (angularDistance > Math.PI) { // dealing with edge cse
+            if (angularDistance > 180) { // dealing with edge cse
                 turnVal *= -1;
-                angularDistance = Math.PI * 2 - angularDistance; // calculating shorter angularDistance
+                angularDistance =  360 - angularDistance; // calculating shorter angularDistance
             }
             turnVal = turnVal * angularDistance / .35;
             hraezlyr.topLeft.setPower(turnVal);
@@ -113,4 +115,5 @@ public abstract class AutoGuts extends Control {
 
 
     }
+
 }

@@ -17,11 +17,10 @@ public class ColorDetection extends OpenCvPipeline {
         Mat output = new Mat();
         Imgproc.cvtColor(input, output, Imgproc.COLOR_RGB2YCrCb);
         centerColor = output.get(rows/2, cols/2);
-        output.release();
 
+        output.release();
         Imgproc.line(input, new Point(0, cols/2f), new Point(rows, cols/2f), new Scalar(0, 255, 0));
         Imgproc.line(input, new Point(rows/2f, 0), new Point(rows/2f, cols), new Scalar(0, 255, 0));
-
         return input;
     }
 }
