@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.sun.source.util.DocTreePathScanner;
+@Autonomous(name = "Auto", preselectTeleOp = "Drive")
 
 public class Auto extends AutoGuts {
     Pipeline pipeline;
@@ -20,6 +22,9 @@ public class Auto extends AutoGuts {
         //TODO: figure out tick per inch ratio for movement
 
         //TODO: START SIDEWAYS
+        double greenPixels = pipeline.returnGreen();
+        double cyanPixels = pipeline.returnCyan();
+        double magentaPixels = pipeline.returnMagenta();
 
         driveEncoder(100, 0, 1);
         driveEncoder(0, 50, 1);
@@ -36,7 +41,15 @@ public class Auto extends AutoGuts {
         turn(1, 180);
         driveEncoder(20,100,1);
 
-
+        if(greenPixels > cyanPixels && greenPixels > magentaPixels) {
+            //park in place 3
+        }
+        if(magentaPixels > cyanPixels && magentaPixels > greenPixels){
+            //park in place 2
+        }
+        if(cyanPixels > greenPixels && cyanPixels > magentaPixels){
+            //park in place 1
+        }
 
     }
 

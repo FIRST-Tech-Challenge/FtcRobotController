@@ -44,9 +44,9 @@ public class Pipeline extends OpenCvPipeline {
     public boolean error = false;
     public boolean debug;
 
-    public int cyanPixels;
-    public int magentaPixels;
-    public int greenPixels;
+    protected int cyanPixels;
+    protected int magentaPixels;
+    protected int greenPixels;
 
     private int borderLeftX = 0;   //amount of pixels from the left side of the cam to skip
     private int borderRightX = 0;   //amount of pixels from the right of the cam to skip
@@ -88,12 +88,17 @@ public class Pipeline extends OpenCvPipeline {
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb); //mat = yCrCb
 
             Mat cyan = new Mat();
+            Mat magenta = new Mat();
+            Mat green = new Mat();
             Core.inRange(input, CyanLower, CyanUpper, cyan);
+            Core.inRange(input, MagentaLower, MagentaUpper, magenta);
+            Core.inRange(input, greenUpper, greenLower, green);
 
+            magentaPixels = Core.countNonZero(magenta);
             cyanPixels = Core.countNonZero(cyan);
+            greenPixels = Core.countNonZero(green);
 
-            colorCenter = mat.get((int) mat.rows() / 2, (int) mat.cols() / 2);
-            Core.inRange(mat, CyanLower, CyanUpper, processed);
+
             // Core.bitwise_and(input, input, output, processed);
 
             // Remove Noise
@@ -191,6 +196,12 @@ public class Pipeline extends OpenCvPipeline {
     public double getRectArea() {
         return maxRect.area();
     }
+
+    public double returnCyan() {return cyanPixels ;}
+
+    public double returnMagenta() {return magentaPixels;}
+
+    public double returnGreen() {return greenPixels;}
 }
 
 
