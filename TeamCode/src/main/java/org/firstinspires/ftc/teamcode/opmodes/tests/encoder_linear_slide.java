@@ -122,17 +122,17 @@ public class encoder_linear_slide extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newSlideTarget = robot.leftslidemotor.getCurrentPosition() + (int) (sinch * COUNTS_PER_INCH);
-            robot.leftslidemotor.setTargetPosition(newSlideTarget);
+            newSlideTarget = robot.rightslidemotor.getCurrentPosition() + (int) (sinch * COUNTS_PER_INCH);
+//            robot.leftslidemotor.setTargetPosition(newSlideTarget);
             robot.rightslidemotor.setTargetPosition(newSlideTarget);
 
             // Turn On RUN_TO_POSITION
-            robot.leftslidemotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.leftslidemotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightslidemotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.leftslidemotor.setPower(Math.abs(speed));
+//            robot.leftslidemotor.setPower(Math.abs(speed));
             robot.rightslidemotor.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
@@ -142,25 +142,25 @@ public class encoder_linear_slide extends LinearOpMode {
             // However, if you require that BOTH motors have finished their moves before the  continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS)
-                    && (robot.leftslidemotor.isBusy() &&
-                    robot.rightslidemotor.isBusy())) {
+                    (runtime.seconds() < timeoutS) &&
+//                    && (robot.leftslidemotor.isBusy() &&
+                    (robot.rightslidemotor.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1", "Running to %7d :%7d",
                         newSlideTarget);
                 telemetry.addData("Path2", "Running at %7d :%7d",
-                        robot.leftslidemotor.getCurrentPosition(),
+//                        robot.leftslidemotor.getCurrentPosition(),
                         robot.rightslidemotor.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
-            robot.leftslidemotor.setPower(0);
+//            robot.leftslidemotor.setPower(0);
             robot.rightslidemotor.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            robot.leftslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            robot.leftslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move

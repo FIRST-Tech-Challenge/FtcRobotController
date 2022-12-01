@@ -263,7 +263,7 @@ public class autoright extends LinearOpMode
     }
     public void LinearSlide(double power, int time) {
         // Negative power = up
-        robot.leftslidemotor.setPower(power);
+//        robot.leftslidemotor.setPower(power);
         robot.rightslidemotor.setPower(power);
         sleep(time);
     }

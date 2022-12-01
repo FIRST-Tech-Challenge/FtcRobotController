@@ -180,12 +180,12 @@ public class autoleft extends LinearOpMode
         stopRobot();
         LinearSlide(0.5,750);
         LinearSlide(0,1000);
-        ServoArm(0.5, 250);
-        ServoArm(0,1000);
+//        ServoArm(0.5, 250);
+//        ServoArm(0,1000);
         straight(-0.5,500);
         stopRobot();
-        ServoArm(-0.5,250);
-        ServoArm(0,1000);
+//        ServoArm(-0.5,250);
+//        ServoArm(0,1000);
         right(0.5, 350);
         stopRobot();
         /* Actually do something useful */
@@ -267,12 +267,12 @@ public class autoleft extends LinearOpMode
     }
     public void LinearSlide(double power, int time) {
         // Negative power = up
-        robot.leftslidemotor.setPower(power);
+//        robot.leftslidemotor.setPower(power);
         robot.rightslidemotor.setPower(power);
         sleep(time);
     }
-    public void ServoArm(double power, int time) {
-        robot.ArmServo.setPower(power);
-        sleep(time);
-    }
+//    public void ServoArm(double power, int time) {
+//        robot.ArmServo.setPower(power);
+//        sleep(time);
+//    }
 }
