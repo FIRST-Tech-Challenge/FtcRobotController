@@ -177,9 +177,7 @@ public class PP_MecanumTeleOp extends OpMode
             clawControl.toggleWristRotate();
         }
         else if (gamepad2_B.isRisingEdge()) {
-            armControl.setExtake();
-            slideControl.setMidJunction();
-            clawControl.toggleWristRotate();
+           slideControl.setLowJunction();
         }
         else if (gamepad2_A.isRisingEdge()) {
             armControl.setExtake();

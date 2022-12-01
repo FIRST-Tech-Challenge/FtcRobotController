@@ -14,8 +14,8 @@ public class Slide {
 
     //TODO: change values into actual tested positions instead of placeholders
     private final double HIGH_JUNCTION= 1950; //<-- 12.90, 2150 ;
-    private final double MID_JUNCTION = 975; //<-- 12.90, 1550 ;
-    private final double LOW_JUNCTION = 0;  //<-- 12.90, 500 ;
+    private static double MID_JUNCTION = 900; //<-- 12.90, 1550 ;
+    private static double LOW_JUNCTION = 500;  //<-- 12.90, 500 ;
     private final static double ZERO_POSITION = 10;//5;
     private final double MAX = 2500;
 
