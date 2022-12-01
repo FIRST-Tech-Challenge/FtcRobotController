@@ -74,7 +74,7 @@ public class HWTestTele  extends LinearOpMode {
                 telemetry.update();
             }
 
-            if( gamepad1.options) {
+            if( gamepad1.back) {
                 pidCoffIndex = 2;
                 telemetry.addLine().addData("[Kp :]  ", pidCoffs[0]);
                 telemetry.addLine().addData("[Ki :]  ", pidCoffs[1]);

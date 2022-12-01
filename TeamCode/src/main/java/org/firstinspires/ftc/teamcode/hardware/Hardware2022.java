@@ -35,12 +35,12 @@ public class Hardware2022 {
     private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
-    private final int CONE_SLIDE_LOW = 0 ;
+    private final int CONE_SLIDE_LOW = -3000 ;
     private final int CONE_SLIDE_MID = 1200 ;
     private final int CONE_SLIDE_HIGH = 3500 ;
 
     //Encoder value of VSlide height in No Cone mode
-    private final int NOCONE_SLIDE_LOW = 0 ;
+    private final int NOCONE_SLIDE_LOW = -3000 ;
     private final int NOCONE_SLIDE_MID = 120 ;
     private final int NOCONE_SLIDE_HIGH = 360;
 
@@ -324,7 +324,7 @@ public class Hardware2022 {
         telemetry.update();
 
         double difference = regulateDegree( endHeading  - currentHeading );
-        PIDFController pidfCrtler  = new PIDFController(kP, kI, kD, kF);
+        PIDFController pidfCrtler  = new PIDFController(kP/180, kI/180, kD/180, kF);
         pidfCrtler.setSetPoint(difference);
 
         while ( !pidfCrtler.atSetPoint()  ) {
