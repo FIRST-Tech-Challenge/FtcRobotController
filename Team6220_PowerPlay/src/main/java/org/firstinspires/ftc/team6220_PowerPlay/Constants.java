@@ -25,7 +25,5 @@ public class Constants {
     public static final double GRABBER_CLOSE_POSITION = 0.0;
 
     public static final double WHEEL_CIRCUMFERENCE = 96 / 25.4 * Math.PI;
-    public static final double DRIVE_MOTOR_TICKS_TO_INCHES = WHEEL_CIRCUMFERENCE * Math.sqrt(2) / 537.6;
-    public static final double POWER_40 = 0.0;
-    public static final double ACCEL_DECEL_LENGTH = 20;
+    public static final double DRIVE_MOTOR_TICKS_TO_INCHES = WHEEL_CIRCUMFERENCE * 2 / 537.6;
 }
