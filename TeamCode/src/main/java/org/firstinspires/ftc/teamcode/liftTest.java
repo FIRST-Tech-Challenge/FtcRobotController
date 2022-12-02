@@ -91,6 +91,16 @@ public class ServoExample extends LinearOpMode {
             boolean liftUp = gamepad1.dpad_up;
             boolean liftDown = gamepad1.dpad_down;
 
+            if(liftUp){
+                liftMotor.setPower(.1);
+                waitTime(.5);
+                liftMotor.setPower(0);
+            }
+            if(liftDown){
+                liftMotor.setPower(-.1);
+                waitTime(.5);
+                liftMotor.setPower(0);
+            }
             // Code for lift and grabber (gamepad2
             // If using two servos, just add a second servo object and copy and psate the code inside if statements with different variable name
             if(servoOpen){ //Old grabber, will need to revamp this code if using two servos for new grabber
