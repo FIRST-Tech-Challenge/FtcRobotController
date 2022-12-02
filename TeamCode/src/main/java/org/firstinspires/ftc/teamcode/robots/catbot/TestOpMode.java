@@ -2,22 +2,52 @@ package org.firstinspires.ftc.teamcode.robots.catbot;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.concurrent.TimeUnit;
-
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.robots.catbot.util.Utils;
-import org.firstinspires.ftc.teamcode.statemachine.Stage;
-import org.firstinspires.ftc.teamcode.statemachine.State;
-import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+import org.firstinspires.ftc.teamcode.robots.taubot.vision.pipeline.AprilTagDetectionPipeline;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
+
+import java.util.ArrayList;
 
 @Autonomous(name="Iron Giant OpMode", group="Challenge")
 public class TestOpMode extends OpMode {
+    //autonomous variables
+    private boolean auton = true;
+    private boolean coneDown = false;
+    public boolean shouldCone = true;
+    private boolean forwardDone = false;
+    private boolean strafeDone = false;
+    private boolean shouldStrafe = true;
+    private boolean red = true;
+    private boolean swivelDone = false;
+    private boolean shouldSwivel = true;
+    private boolean motorsReset = false;
+    int tagDetected = 0;
+    //vision variables
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    static final double FEET_PER_METER = 3.28084;
+    // UNITS ARE PIXELS
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+    // UNITS ARE METERS
+    double tagsize = 0.045; //tag size on iron reign signal sleeve
+    int ID_TAG_OF_INTEREST = 1; // Tag ID 1 from the 36h11 family
+    int tagCount = 0;
+    boolean tagFound = false;
+    AprilTagDetection tagOfInterest = null;
+    //motors
     private DcMotorEx motorFrontRight = null;
     private DcMotorEx motorBackLeft = null;
     private DcMotorEx motorFrontLeft = null;
@@ -38,61 +68,208 @@ public class TestOpMode extends OpMode {
     private static final int MINELEVTICS = 0;
     private int currElevTics = 0;
     private final double MOTORSTALLVALUE = .7;
-    //bolean variables
+    //boolean variables
     private boolean calibrate = false;
-    private boolean wheelsRunToPosition = false;
-    private boolean auton = true;
+
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing " + this.getClass() + "...");
         telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
         motorInit();
+        visionInit();
     }
+
     @Override
-    public void init_loop()
-    {
-        if(!calibrate)
+    public void init_loop() {
+        if (!calibrate)
             calib();
-    }
-    @Override
-    public void loop() {
-        //tankDrive();
-        if(auton) {
-            if(wheelsRunToPosition = false) {
-                motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wheelsRunToPosition = true;
+        tagCount = 0;
+
+        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+        if (currentDetections.size() != 0) {
+            tagFound = false;
+
+            for (AprilTagDetection tag : currentDetections) {
+                if (tag.id == 1 || tag.id == 2 || tag.id == 3) {
+                    tagOfInterest = tag;
+                    tagFound = true;
+                    tagCount++;
+                    break;
+                }
             }
-            autonDrive();
+
+            if (tagFound) {
+                telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                tagDetected = tagOfInterest.id;
+                tagToTelemetry(tagOfInterest);
+
+            } else {
+                tagCount = 0;
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if (tagOfInterest == null) {
+                    telemetry.addLine("(The tag has never been seen)");
+                } else {
+                    telemetry.addLine("\nBut we HAVE seen a tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+            }
+
+        } else {
+            tagCount = 0;
+            telemetry.addLine("Don't see tag of interest :(");
+
+            if (tagOfInterest == null) {
+                telemetry.addLine("(A tag has never been seen)");
+            } else {
+                telemetry.addLine("\nBut we HAVE seen a tag before; last seen at:");
+                tagToTelemetry(tagOfInterest);
+            }
+
         }
 
-        else {
-            if(wheelsRunToPosition) {
-                motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                wheelsRunToPosition = false;
-            }
-            mechanumDrive();
+        telemetry.update();
+
+    }
+
+    @Override
+    public void loop() {
+        telemetryOutput();
+        //tankDrive();
+        if (auton) {
+            autonDrive();
+        } else {
+            mechanumDrive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
             elevatorMove();
             clawMove();
         }
     }
 
-   public void autonDrive(){
-        motorFrontLeft.setTargetPosition(1000);
-        motorBackLeft.setTargetPosition(1000);
-        motorBackRight.setTargetPosition(1000);
-        motorFrontRight.setTargetPosition(1000);
+    public void telemetryOutput() {
+        telemetry.addData("Elevator Position \t", elevator.getCurrentPosition());
+        telemetry.addData("Claw Position \t", claw.getPosition());
+        telemetry.addData("Back Right Position \t", motorBackRight.getCurrentPosition());
+        telemetry.addData("Back Left Position \t", motorBackLeft.getCurrentPosition());
+        telemetry.addData("Front Right Position \t", motorFrontRight.getCurrentPosition());
+        telemetry.addData("Front Left Position \t", motorFrontLeft.getCurrentPosition());
 
-        if(motorFrontRight.getCurrentPosition() > 995)
-            auton = false;
-        
-   }
+    }
+
+    public void strafe() {
+        if (red) {
+            if (motorFrontLeft.getCurrentPosition() < 1000)
+                mechanumDrive(0, -1, 0);
+            else
+                strafeDone = true;
+        }
+        if (!red) {
+            if (motorFrontLeft.getCurrentPosition() > -1000)
+                mechanumDrive(0, 1, 0);
+            else
+                strafeDone = true;
+        }
+    }
+
+    public void swivel() {
+        if (red) {
+            swivelDone = true;
+            shouldSwivel = false;
+        }
+        if (swivelDone == false) {
+            if (motorFrontLeft.getCurrentPosition() < 1000)
+                mechanumDrive(0, 0, 0.5);
+            else {
+                swivelDone = true;
+            }
+        }
+    }
+
+    public void forwardDropCone() {
+        if (motorFrontLeft.getCurrentPosition() < 1000)
+            mechanumDrive(1, 0, 0);
+        else {
+            claw.setPosition(0.9);
+            mechanumDrive(0, 0, 0);
+
+            coneDown = true;
+        }
+    }
+
+    public void resetMotors() {
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        mechanumDrive(0, 0, 0);
+    }
+
+    public void autonDrive() {
+
+        if (tagOfInterest != null) {
+            telemetry.addLine("Tag snapshot:\n");
+            tagToTelemetry(tagOfInterest);
+            telemetry.update();
+        } else {
+            telemetry.addLine("Tag was not detected, only dropping off the cone");
+            telemetry.update();
+        }
+        if (!swivelDone && shouldSwivel) {
+            if (shouldSwivel)
+                swivel();
+        }
+        else if (swivelDone && shouldSwivel) {
+                mechanumDrive(0, 0, 0);
+                resetMotors();
+                shouldSwivel = false;
+        }
+        else if (!coneDown && shouldCone)
+            forwardDropCone();
+        else if (coneDown && shouldCone) {
+            resetMotors();
+            shouldCone = false;
+        }
+        else if (!strafeDone && shouldStrafe) {
+            strafe();
+        }
+        else if (strafeDone && shouldStrafe) {
+            resetMotors();
+            shouldStrafe = false;
+        }
+        if (strafeDone && !shouldStrafe) {
+            if (tagDetected == 1) {
+                if (motorFrontLeft.getCurrentPosition() > -1000)
+                    mechanumDrive(-1, 0, 0);
+                else
+                    auton = false;
+            }
+            if (tagDetected == 2) {
+                if (motorFrontLeft.getCurrentPosition() > -2000)
+                    mechanumDrive(-1, 0, 0);
+                else
+                    auton = false;
+            }
+
+            if (tagDetected == 3) {
+                if (motorFrontLeft.getCurrentPosition() > -3000)
+                    mechanumDrive(-1, 0, 0);
+                else
+                    auton = false;
+            }
+
+            /* Actually do something useful */
+            if (tagOfInterest == null) {
+                mechanumDrive(0, 0, 0);
+            }
+        }
+    }
+
+
 
     public void tankDrive() {
         powerRight = 0;
@@ -111,10 +288,10 @@ public class TestOpMode extends OpMode {
         motorBackRight.setPower(powerRight);
         motorBackLeft.setPower(powerLeft);
     }
-    public void mechanumDrive() {
-        double r = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-        double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        double rightX = gamepad1.right_stick_x*.65;
+    public void mechanumDrive(double forward, double strafe, double turn) {
+        double r = Math.hypot(strafe, forward);
+        double robotAngle = Math.atan2(forward, strafe) - Math.PI / 4;
+        double rightX = turn;
         final double v1 = r * Math.cos(robotAngle) + rightX;
         final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.sin(robotAngle) + rightX;
@@ -124,20 +301,15 @@ public class TestOpMode extends OpMode {
         motorBackLeft.setPower(v3);
         motorBackRight.setPower(v2);
     }
-    @Override
-    public void stop(){
-        calib();
-    }
     public void elevatorMove()
     {
         if(gamepad1.dpad_down) {
             calibrate = false;
-        }
-        if(!calibrate)
             calib();
-        else {
+        }
+        else if (calibrate) {
             elevator.setPower(1);
-            telemetry.addData("elevator position: ", elevator.getCurrentPosition());
+//            telemetry.addData("elevator position: ", elevator.getCurrentPosition());
             if (gamepad1.right_trigger > DEADZONE) {
                 if (currElevTics < MAXELEVTICS - 150)
                     elevator.setTargetPosition(currElevTics + 150);
@@ -169,6 +341,7 @@ public class TestOpMode extends OpMode {
     public void calib(){
         elevator.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("elevator calibrating...", elevator.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("elevator position", elevator.getCurrentPosition());
         if(elevator.getCurrent(CurrentUnit.AMPS) < MOTORSTALLVALUE)
         {
             elevator.setPower(-.2);
@@ -176,10 +349,7 @@ public class TestOpMode extends OpMode {
         else {
             calibrate = true;
             elevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            elevator.setTargetPosition(0);
             elevator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            telemetry.addData("elevator position", elevator.getCurrentPosition());
-            telemetry.addData("done calibrating", elevator.getCurrentPosition());
         }
     }
     public void motorInit(){
@@ -190,16 +360,45 @@ public class TestOpMode extends OpMode {
         elevator = this.hardwareMap.get(DcMotorEx.class, "elevator");
         claw = this.hardwareMap.get(Servo.class, "claw");
         elevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         this.motorBackLeft.setDirection(DcMotorEx.Direction.REVERSE);
         this.motorFrontLeft.setDirection(DcMotorEx.Direction.REVERSE);
         this.elevator.setDirection(DcMotorEx.Direction.REVERSE);
-        motorBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        //this.motorBackRight.setDirection(DcMotorEx.Direction.REVERSE);
-        //this.motorFrontRight.setDirection(DcMotorEx.Direction.REVERSE);
-        motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void visionInit(){
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPSIDE_DOWN);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+            }
+        });
+
+        telemetry.setMsTransmissionInterval(50);
+    }
+    void tagToTelemetry(AprilTagDetection detection)
+    {
+        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        telemetry.addLine(String.format("\nTag Count ID=%d", tagCount));
     }
 }
-
-
