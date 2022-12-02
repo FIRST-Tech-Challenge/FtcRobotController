@@ -9,11 +9,12 @@ import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetection;
+import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetectionDeposit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "BlueAutoPark")
-public class BlueTerminalAuto extends PowerPlay_AprilTagDetection {
+public class BlueTerminalAuto extends PowerPlay_AprilTagDetectionDeposit {
     private Arm armControl;
     private Slide slideControl;
     private Claw clawControl;
@@ -21,23 +22,22 @@ public class BlueTerminalAuto extends PowerPlay_AprilTagDetection {
 
     public void initialize(){
         super.runOpMode();
-
-        // Declaring mechanism objects
-        armControl = new Arm(hardwareMap);
-        slideControl = new Slide(hardwareMap);
-        clawControl = new Claw(hardwareMap);
     }
+
     @Override
     public void runOpMode() {
         int currentTag = 0;
+        armControl = new Arm(hardwareMap);
+        slideControl = new Slide(hardwareMap);
+        clawControl = new Claw(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-35, 62, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(-35, 62, Math.toRadians(0));
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
         bot.setPoseEstimate(startPose);
 
         // TRAJECTORY SEQUENCES \\
         TrajectorySequence rotate = bot.trajectorySequenceBuilder(startPose)
-            .lineToLinearHeading(new Pose2d(-35,50,Math.toRadians(-270))) // rotates the bot
+            .lineToLinearHeading(new Pose2d(-35,50,Math.toRadians(180))) // rotates the bot
             .waitSeconds(2) // waits to scan AprilTag
             .build();
 
@@ -48,7 +48,7 @@ public class BlueTerminalAuto extends PowerPlay_AprilTagDetection {
                 armControl.setExtake();
                 clawControl.toggleWristRotate();
                 })
-            .waitSeconds(1.5)
+            .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                 clawControl.toggleOpenClose();
                 armControl.setIntake();
@@ -62,8 +62,8 @@ public class BlueTerminalAuto extends PowerPlay_AprilTagDetection {
                 .lineToLinearHeading(new Pose2d(-35,35,Math.toRadians(-270)))
                 .build();
 
-
         //  FOLLOW TRAJECTORY METHOD CALLS  \\
+        waitForStart();
         bot.followTrajectorySequenceAsync(rotate);
         initialize();
         currentTag = tagUse;

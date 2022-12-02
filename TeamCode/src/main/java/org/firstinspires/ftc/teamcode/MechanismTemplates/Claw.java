@@ -25,8 +25,7 @@ public class Claw {
     SignalEdgeDetector isOpen;
     SignalEdgeDetector isIntakePosition;
 
-    public Claw(HardwareMap hardwareMap, boolean isAuton, BooleanSupplier rightBumper, BooleanSupplier aButton) {
-        isAuto = isAuton;
+    public Claw(HardwareMap hardwareMap, BooleanSupplier rightBumper, BooleanSupplier aButton) {
 
         // Control Hub Pins
         wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
@@ -42,6 +41,10 @@ public class Claw {
 
     // Overloaded method for autonomous
     public Claw(HardwareMap hardwareMap){
+        // Control Hub Pins
+        wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
+        clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
+
         clawJoint.setPosition(CLOSE);
         wristJoint.setPosition(WRIST_INTAKE_POSITION);
     }

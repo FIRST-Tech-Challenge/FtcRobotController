@@ -89,7 +89,7 @@ public class PP_MecanumTeleOp extends OpMode
 
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
-        clawControl = new Claw(hardwareMap, isAuto, () -> gamepad2.right_bumper, () -> gamepad2.a);
+        clawControl = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
     }// INIT()
 
     @Override

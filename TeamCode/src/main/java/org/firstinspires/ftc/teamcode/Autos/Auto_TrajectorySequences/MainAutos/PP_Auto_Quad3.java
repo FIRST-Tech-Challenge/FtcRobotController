@@ -32,7 +32,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
-        clawMovement = new Claw(hardwareMap, isAuto, () -> gamepad2.right_bumper, () -> gamepad2.a);
+        clawMovement = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
     }
 
     @Override
