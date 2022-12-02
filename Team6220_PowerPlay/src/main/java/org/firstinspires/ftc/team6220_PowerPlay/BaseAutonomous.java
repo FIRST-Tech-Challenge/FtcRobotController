@@ -84,8 +84,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
                 motorBR.setPower(Math.min(angleLeft / 180, -0.1));
             }
 
-            angleTraveled = currentAngle - startAngle;
-            angleLeft = targetAngle - angleTraveled;
+            angleTraveled = angleError(currentAngle, startAngle);
+            angleLeft = angleError(angleTraveled, targetAngle); // now implements angleError method
         }
 
         motorFL.setPower(0.0);

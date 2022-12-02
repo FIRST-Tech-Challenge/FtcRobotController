@@ -107,15 +107,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         } else {
             // obtain the current angle's error from the original angle
             Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            double angleError = IMUOriginalAngles.firstAngle - currentAngle.firstAngle;
-
-            // flip to inverse of angles above 180 / below -180 (to prevent infinity-rotate bug)
-            // to make sure to use the shorter angle
-            if (angleError > 180.0) {
-                angleError -= 360.0;
-            } else if (angleError < -180.0) {
-                angleError += 360.0;
-            }
+            double angleError = angleError(currentAngle.firstAngle, IMUOriginalAngles.firstAngle);
 
             // apply a constant to turn the angle into a turn speed
             tPower = -Constants.CORRECTION_CONSTANT * angleError;
@@ -162,4 +154,25 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorTurntable.setPower(power);
         motorTurntable.setTargetPosition(position);
     }
+
+    /**
+     *  This method returns the signed error between two angles, taking into account the fact that they are not just two numbers but "positions" on a circle, e.g. it wraps around and always finds the shortest path along the circle.
+     *  Used to replace current - target.
+     * @param current The first angle (most of the time the current angle)
+     * @param target The second angle (most of the time the target angle)
+     * @return The signed distance between the two, taking into account circles
+     */
+    public double angleError(double current, double target) {
+        double error = target - current;
+
+        // flip to inverse of angles above 180 / below -180 (to prevent infinity-rotate bug)
+        // to make sure to use the shorter angle
+        if (error > 180.0) {
+            error -= 360.0;
+        } else if (error < -180.0) {
+            error += 360.0;
+        }
+        return error;
+    }
+
 }
