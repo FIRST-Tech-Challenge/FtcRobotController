@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 
 
-@TeleOp(name="ServoExample", group="Linear Opmode")
+@TeleOp(name="LiftTest", group="Linear Opmode")
 
-public class ServoExample extends LinearOpMode {
+public class LiftTest extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
