@@ -86,6 +86,7 @@ public class AutonomousLeft extends AutonomousBase {
             telemetry.addData("Signal Detect", "R: " + PipelinePowerPlay.avgR + " G: " +
                     PipelinePowerPlay.avgG + " B: " + PipelinePowerPlay.avgB + " Zone: " +
                     PipelinePowerPlay.signalZone);
+            telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
             telemetry.update();
             // Pause briefly before looping
             idle();
@@ -163,11 +164,13 @@ public class AutonomousLeft extends AutonomousBase {
             scoreCone();
         }
 
-        // Park in signal zone
-        if( opModeIsActive() ) {
-            telemetry.addData("Motion", "signalZoneParking");
-            telemetry.update();
-            signalZoneParking( signalZone );
+        if( fiveStackCycles < 1) {
+            // Park immediately in signal zone
+            if( opModeIsActive() ) {
+                telemetry.addData("Motion", "signalZoneParking0");
+                telemetry.update();
+                signalZoneParking0( signalZone );
+            }
         }
 
     } // mainAutonomous
@@ -175,18 +178,18 @@ public class AutonomousLeft extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void moveToTallJunction() {
 
-        // Drive away from wall
-        driveToPosition( 4.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_40 );
-
         // Tilt grabber down from stored position
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
-        // Drive a bit further
-        driveToPosition( 8.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_40 );
+        // Drive away from wall at slow speed to avoid mecanum roller slippage
+        driveToPosition( 4.0, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_40 );
 
         // Center turret and raise lift to scoring position
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
+
+        // Drive a bit further, but pick up speed
+        driveToPosition( 8.0, 0.0, 0.0, DRIVE_SPEED_55, TURN_SPEED_40 );
 
         // Loop until both motions are complete (robot still moving?)
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
@@ -194,15 +197,15 @@ public class AutonomousLeft extends AutonomousBase {
         }
 
         // Drive all the way to the tall junction pole
-        driveToPosition( 52.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_40 );
+        driveToPosition( 52.0, 0.0, 0.0, DRIVE_SPEED_55, TURN_SPEED_40 );
         robot.driveTrainMotorsZero();
 
         // Turn toward pole
-        driveToPosition( 52.0, 0.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        driveToPosition( 52.0, 0.0, 43.5, DRIVE_SPEED_30, TURN_SPEED_30 );
         robot.driveTrainMotorsZero();
 
         // Drive closer to the pole in order to score
-        driveToPosition( 54.8, 2.8, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        driveToPosition( 54.8, 2.8, 43.5, DRIVE_SPEED_30, TURN_SPEED_40 );
         robot.driveTrainMotorsZero();
 
     } // moveToTallJunction
@@ -218,7 +221,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.grabberSpinStop();
 
         // Back away from the pole
-        driveToPosition( 52.0, 0.0, 43.5, DRIVE_SPEED_20, TURN_SPEED_20 );
+        driveToPosition( 52.0, 0.0, 43.5, DRIVE_SPEED_40, TURN_SPEED_40 );
         robot.driveTrainMotorsZero();
 
     } // scoreCone
@@ -231,43 +234,45 @@ public class AutonomousLeft extends AutonomousBase {
     /* +---+---+---+                                                                              */
     /* |   | S |   |     S = Starting floor tile                                                  */
     /* +---+---+---/                                                                              */
-    private void signalZoneParking( int signalZoneLocation ) {
+    private void signalZoneParking0( int signalZoneLocation ) {
 
         if( signalZoneLocation == 1 ) {  // RED
             // Realign back to 0 degrees
-            driveToPosition( 52.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            driveToPosition( 52.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40 );
             robot.driveTrainMotorsZero();
             // Lower lift to driving height
             robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
             while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
                 performEveryLoop();
             }
+            robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
             // Strafe left one tile
-            driveToPosition( 52.0, -24.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            driveToPosition( 52.0, -21.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40 );
             // Back away from center line
-            driveToPosition( 40.0, -24.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            driveToPosition( 40.0, -21.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40 );
             robot.driveTrainMotorsZero();
         } // // signalZoneLocation 1
 
         else if( signalZoneLocation == 3 ) {  // BLUE
             // Turn fully 90 deg
-            driveToPosition( 52.0, 0.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            driveToPosition( 52.0, 0.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_40 );
             robot.driveTrainMotorsZero();
             // Lower lift to driving height
             robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
             while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
                 performEveryLoop();
             }
+            robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
             // Drive forward one tile
-            driveToPosition( 52.0, 24.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20 );
-            driveToPosition( 52.0, 24.0, 180.0, DRIVE_SPEED_20, TURN_SPEED_20 );
-            driveToPosition( 42.0, 24.0, 180.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            driveToPosition( 52.0, 24.0, 90.0, DRIVE_SPEED_40, TURN_SPEED_40 );
+            driveToPosition( 52.0, 24.0, 180.0, DRIVE_SPEED_40, TURN_SPEED_40 );
+            driveToPosition( 42.0, 24.0, 180.0, DRIVE_SPEED_40, TURN_SPEED_40 );
             robot.driveTrainMotorsZero();
         } // signalZoneLocation 3
 
         else { // signalZoneLocation 2  // GREEN
             // Realign back to 0 degrees
-            driveToPosition( 52.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            driveToPosition( 52.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40 );
             robot.driveTrainMotorsZero();
             // Lower lift to driving height
             robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
@@ -275,11 +280,12 @@ public class AutonomousLeft extends AutonomousBase {
             while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
                 performEveryLoop();
             }
+            robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
             // Drive back one tile closer to the cone depot
-            driveToPosition( 32.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20 );
+            driveToPosition( 32.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40 );
             robot.driveTrainMotorsZero();
         } // signalZoneLocation
 
-    } // signalZoneParking
+    } // signalZoneParking0
 
 } /* AutonomousLeft */

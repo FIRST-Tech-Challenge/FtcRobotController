@@ -62,6 +62,7 @@ public abstract class Teleop extends LinearOpMode {
     boolean   liftTweaked      = false;    // Reminder to zero power when input stops
     boolean   collectorFlipped = false;    // Collector has been flipped to upside down orientation
     boolean   needFlip         = false;    // Collector needs to be flipped for this scoring orientation
+    boolean   rearScoring      = true;     // D-pad controls for HIGH/MEDIUM/LOW assume REAR scoring (false=FRONT)
 
     ElapsedTime grabberRunTimer = new ElapsedTime();
     boolean     grabberRunning  = false;    // is an automatic collector activity running?
@@ -751,12 +752,10 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Raise lift to HIGH junction
             robot.grabberSpinStop();
-            needFlip       = true;  // collector flipped for reverse scoring
             grabberTarget1 = robot.GRABBER_TILT_STORE;
-            grabberTarget2 = robot.GRABBER_TILT_SCORE1;
-//          grabberTarget2 = robot.GRABBER_TILT_STORE;
-            liftTarget     = robot.LIFT_ANGLE_BACK_H;
-//          liftTarget     = robot.LIFT_ANGLE_HIGH;
+            needFlip       = (rearScoring)? true : false;  // collector flipped/REAR or normal/FRONT
+            grabberTarget2 = (rearScoring)? robot.GRABBER_TILT_SCORE1 : robot.GRABBER_TILT_STORE;
+            liftTarget     = (rearScoring)? robot.LIFT_ANGLE_HIGH_B   : robot.LIFT_ANGLE_HIGH;
             liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
             liftCycleCount = LIFT_CYCLECOUNT_START;
         }
@@ -776,10 +775,8 @@ public abstract class Teleop extends LinearOpMode {
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
-        {   // Lower to GROUND junction
-            robot.grabberSpinStop();
-  //        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-            robot.liftPosInit( robot.LIFT_ANGLE_GROUND );
+        {   // toggle front/rear scoring
+            rearScoring = !rearScoring;
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {

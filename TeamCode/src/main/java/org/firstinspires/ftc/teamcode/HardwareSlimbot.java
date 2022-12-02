@@ -126,17 +126,17 @@ public class HardwareSlimbot
     public double       liftAngleOffset    = 139.0;   // allows us to adjust the 0-360 deg range
     public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)
 
-    public double       LIFT_ANGLE_MAX     = 122.0;   // absolute encoder angle at maximum rotation FRONT
+    public double       LIFT_ANGLE_MAX     = 125.0;   // absolute encoder angle at maximum rotation FRONT
     public double       LIFT_ANGLE_MIN     = -70.0;   // absolute encoder angle at maximum rotation REAR
     // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
     public double       LIFT_ANGLE_ASTART  = 118.0;   // lift position for starting autonomous
-    public double       LIFT_ANGLE_COLLECT = 115.0;   // lift position for collecting cones
+    public double       LIFT_ANGLE_COLLECT = 116.0;   // lift position for collecting cones
     public double       LIFT_ANGLE_GROUND  = 108.0;   // lift position for collecting cones
     public double       LIFT_ANGLE_LOW     =  86.0;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  84.0;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_MED     =  62.0;   // lift position for MEDIUM junction
     public double       LIFT_ANGLE_HIGH    =  38.0;   // lift position for HIGH junction
-    public double       LIFT_ANGLE_BACK_H  = -41.0;   // lift position for BACK-SCORE HIGH junction
+    public double       LIFT_ANGLE_HIGH_B  = -41.0;   // lift position for BACK-SCORE HIGH junction
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -175,7 +175,7 @@ public class HardwareSlimbot
     public double       GRABBER_TILT_INIT   =  0.00;
     public double       GRABBER_TILT_SCORE1 =  0.19;
     public double       GRABBER_TILT_STORE  = -0.15;
-    public double       GRABBER_TILT_GRAB   = -0.31;
+    public double       GRABBER_TILT_GRAB   = -0.29;
     public double       GRABBER_TILT_MIN    = -0.50;
 
     public Servo        rotateServo         = null;   // rotate GRABBER left/right

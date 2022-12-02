@@ -24,10 +24,16 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  DRIVE_SPEED_30       = 0.30;    // Lower speed for fine control going sideways
     static final double  DRIVE_SPEED_40       = 0.40;    // Normally go slower to achieve better accuracy
     static final double  DRIVE_SPEED_50       = 0.50;    //
-    static final double  DRIVE_SPEED_55       = 0.55;    // Somewhat longer distances, go a little faster
-    static final double  TURN_SPEED_20        = 0.20;    // Nominal half speed for better accuracy.
-    static final double  TURN_SPEED_40        = 0.40;    // Nominal half speed for better accuracy.
-    static final double  TURN_SPEED_80        = 0.80;    // Nominal half speed for better accuracy.
+    static final double  DRIVE_SPEED_55       = 0.55;    //
+    static final double  DRIVE_SPEED_60       = 0.60;    //
+    static final double  DRIVE_SPEED_70       = 0.70;    //
+    static final double  DRIVE_SPEED_75       = 0.75;    //
+    static final double  DRIVE_SPEED_80       = 0.80;    //
+    static final double  DRIVE_SPEED_90       = 0.90;    //
+    static final double  TURN_SPEED_20        = 0.20;    //
+    static final double  TURN_SPEED_30        = 0.30;    //
+    static final double  TURN_SPEED_40        = 0.40;    //
+    static final double  TURN_SPEED_80        = 0.80;    //
 
     //Files to access the algorithm constants
     File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
@@ -38,6 +44,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     double robotGlobalXCoordinatePosition       = 0.0;   // in odometer counts
     double robotGlobalYCoordinatePosition       = 0.0;
     double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
+
+    int    fiveStackCycles                      = 0;
 
     /*---------------------------------------------------------------------------------------------
      * getAngle queries the current gyro angle
