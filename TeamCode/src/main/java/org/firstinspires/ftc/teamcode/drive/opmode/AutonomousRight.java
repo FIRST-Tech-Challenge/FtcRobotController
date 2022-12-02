@@ -94,10 +94,13 @@ public class AutonomousRight extends LinearOpMode {
         if(isStopRequested()) return;
 
         drive.followTrajectory(standardTraj);
-//        switch (color) {
-//            case "" {
-//                // path
-//            }
-//        }
+        switch (color) {
+            case ORANGE:
+                drive.followTrajectory(leftTraj);
+            case PURPLE:
+                // path 2
+            case GREEN:
+                drive.followTrajectory(rightTraj);
+        }
     }
 }
