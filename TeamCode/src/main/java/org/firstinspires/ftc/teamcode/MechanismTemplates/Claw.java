@@ -28,22 +28,22 @@ public class Claw {
     public Claw(HardwareMap hardwareMap, boolean isAuton, BooleanSupplier rightBumper, BooleanSupplier aButton) {
         isAuto = isAuton;
 
+        // Control Hub Pins
         wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
         clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
-        //isOpen = true; // our claw begins in the open position
 
-        if (isAuto) {
-            clawJoint.setPosition(CLOSE);
-            wristJoint.setPosition(WRIST_EXTAKE_POSITION);
-            //isWristIntakePosition = false; // our wrist does NOT start at the intake position in auto
-        } else { // if it is teleOp
-            clawJoint.setPosition(OPEN);
-            wristJoint.setPosition(WRIST_INTAKE_POSITION);
-            //isWristIntakePosition = true; // our wrist starts at the intake position in tele
-        }
+        // Presets for teleOp
+        clawJoint.setPosition(OPEN);
+        wristJoint.setPosition(WRIST_INTAKE_POSITION);
 
         isOpen = new SignalEdgeDetector(rightBumper);
         isIntakePosition = new SignalEdgeDetector(aButton);
+    }
+
+    // Overloaded method for autonomous
+    public Claw(HardwareMap hardwareMap){
+        clawJoint.setPosition(CLOSE);
+        wristJoint.setPosition(WRIST_INTAKE_POSITION);
     }
 
     private boolean clawToggled;

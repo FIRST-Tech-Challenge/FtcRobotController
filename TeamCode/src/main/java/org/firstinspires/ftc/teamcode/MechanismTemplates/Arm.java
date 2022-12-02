@@ -29,7 +29,7 @@ public class Arm {
     private double targetPos = 0.0;
 
     public Arm(HardwareMap hardwareMap){
-        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_60); // Pin ___
+        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_60); // Pin 0 on control hub
         armMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         armMotor.setRunMode(Motor.RunMode.VelocityControl);
 
