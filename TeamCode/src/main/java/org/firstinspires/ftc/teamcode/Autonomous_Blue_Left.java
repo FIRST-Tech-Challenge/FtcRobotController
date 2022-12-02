@@ -2,16 +2,19 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +25,7 @@ public class Autonomous_Blue_Left extends LinearOpMode {
     public String workingMode = "blue_left";
     public boolean autoMode = true;
     public boolean useCamera = true;
+    public boolean debugMode = true;
 
     public int defaultParkingPosition = 3;
     public double inchesOneSquare = 24;
@@ -45,7 +49,7 @@ public class Autonomous_Blue_Left extends LinearOpMode {
     public double shoulderDefaultPosition = 0.15;
     public double shoulderMaxPosition = 0.94;
     public double shoulderMinPosition = 0.144;
-    public double elbowMaxPosition = 0.06;
+    public double elbowMaxPosition = 0.04;
     public double elbowMinPosition = 0.5;
     public double elbowDefaultPosition = 0.90;
     public double platformDefaultPosition = 0.654 ;
@@ -91,7 +95,7 @@ public class Autonomous_Blue_Left extends LinearOpMode {
     // "ai_park" get park destination using AI
     // "zoom @1.5" zoom_in ratio is 1.5
     public ArrayList<String> presetActionsLeft = new ArrayList<String>(Arrays.asList(
-            "sleep @100"
+            "sleep @1"
     ));
 
     //shoulder and elbow max, not blocking camera
@@ -110,10 +114,10 @@ public class Autonomous_Blue_Left extends LinearOpMode {
     public ArrayList<String> presetActionsStep2_left = new ArrayList<String>(Arrays.asList(
             "wheel_right @31 @0.2",
             "wheel_turn_right @9 @0.1",
-            "wheel_forward @1 @0.1",
+            //"wheel_forward @1 @0.1",
             "sleep @500",
             "grip_max",
-            "wheel_back @1 @0.1",
+            //"wheel_back @1 @0.1",
             "wheel_turn_left @9 @0.1",
             "park_ai_position",
             "both_default"
@@ -122,10 +126,10 @@ public class Autonomous_Blue_Left extends LinearOpMode {
     public ArrayList<String> presetActionsStep2_right = new ArrayList<String>(Arrays.asList(
             "wheel_left @29 @0.2",
             "wheel_turn_left @7 @0.1",
-            "wheel_forward @1 @0.1",
-                "sleep @500",
+            //"wheel_forward @1 @0.1",
+            "sleep @500",
             "grip_max",
-            "wheel_back @1 @0.1",
+            //"wheel_back @1 @0.1",
             "wheel_turn_right @7 @0.1",
             "park_ai_position",
             "both_default"
@@ -377,23 +381,23 @@ public class Autonomous_Blue_Left extends LinearOpMode {
             replayActions(presetActionsPad1Y);
             return;
         }
-        if (gamepad1.options) {
+        if (debugMode && gamepad1.options) {
             setLogMode(!logMode);
             return;
         }
-        if (gamepad1.left_stick_button && gamepad1.right_stick_button) {
+        if (debugMode && gamepad1.left_stick_button && gamepad1.right_stick_button) {
             //resetServoPosition();
             return;
         }
-        if (gamepad1.dpad_left) {
+        if (debugMode && gamepad1.dpad_left) {
             replayActions(presetActionsStep1);
             return;
         }
-        if (gamepad1.dpad_right) {
+        if (debugMode && gamepad1.dpad_right) {
             replayActions(presetActionsStep2_right);
             return;
         }
-        if (gamepad1.left_stick_button && gamepad1.right_stick_button) {
+        if (debugMode && gamepad1.left_stick_button && gamepad1.right_stick_button) {
             //resetServoPosition();
             return;
         }
@@ -446,7 +450,7 @@ public class Autonomous_Blue_Left extends LinearOpMode {
 
 
     private void controlArm() {
-        if (gamepad2.x) {
+        if (debugMode && gamepad2.x) {
             if (gamepad2.left_stick_button) {
                replayActions(presetActionsPad2X);
             }
@@ -458,7 +462,7 @@ public class Autonomous_Blue_Left extends LinearOpMode {
             }
             return;
         }
-        if (gamepad2.b) {
+        if (debugMode && gamepad2.b) {
             if (gamepad2.left_stick_button) {
                replayActions(presetActionsPad2B);
             }
@@ -483,11 +487,11 @@ public class Autonomous_Blue_Left extends LinearOpMode {
             playAction("shoulder_up", true);
             return;
         }
-        if (gamepad2.dpad_down || (enablePad1Control && gamepad1.dpad_down)) {
+        if (debugMode && gamepad2.dpad_down || (enablePad1Control && gamepad1.dpad_down)) {
             playAction("shoulder_down", true);
             return;
         }
-        if (gamepad2.dpad_left || (enablePad1Control && gamepad1.dpad_left)) {
+        if (debugMode && gamepad2.dpad_left || (enablePad1Control && gamepad1.dpad_left)) {
             playAction("platform_left", true);
             return;
         }
