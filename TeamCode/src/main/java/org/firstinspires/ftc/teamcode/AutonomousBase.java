@@ -33,6 +33,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  TURN_SPEED_20        = 0.20;    //
     static final double  TURN_SPEED_30        = 0.30;    //
     static final double  TURN_SPEED_40        = 0.40;    //
+    static final double  TURN_SPEED_55        = 0.55;    //
     static final double  TURN_SPEED_80        = 0.80;    //
 
     //Files to access the algorithm constants
@@ -536,6 +537,8 @@ public abstract class AutonomousBase extends LinearOpMode {
                                   double move_power, double turn_power ) {
         // Loop until we reach the target (or autonomous program aborts)
         while( opModeIsActive() ) {
+            // Tend to any automatic mechanism movement updates
+            performEveryLoop();
             // Bulk-query all odometry data (delta since last reading)
             robot.readBulkData();
             // Compute updated robot position/orientation

@@ -178,34 +178,37 @@ public class AutonomousRight extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void moveToTallJunction() {
 
-        // Tilt grabber down from stored position
+        // Tilt grabber down from autonomous starting position (vertical)
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
         // Drive away from wall at slow speed to avoid mecanum roller slippage
-        driveToPosition( 4.0, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_40 );
+        driveToPosition( 4.0, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_30 );
 
-        // Center turret and raise lift to scoring position
+        // Perform setup to center turret and raise lift to scoring position
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
+        robot.liftPosInit( robot.LIFT_ANGLE_AUTO_H );
 
-        // Drive a bit further, but pick up speed
-        driveToPosition( 8.0, 0.0, 0.0, DRIVE_SPEED_55, TURN_SPEED_40 );
+        // Drive the main distance quickly (while lift moves)
+        driveToPosition( 44.5, 0.0, 0.0, DRIVE_SPEED_55, TURN_SPEED_55 );
 
-        // Loop until both motions are complete (robot still moving?)
+        // Finish the drive to the tall junction pole at a lower speed (stop accurately)
+        driveToPosition( 48.5, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_30 );
+        robot.driveTrainMotorsZero();
+
+        // Both mechanisms should be finished, but pause here if they haven't (until they do)
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
             performEveryLoop();
         }
 
-        // Drive all the way to the tall junction pole
-        driveToPosition( 49.5, 0.0, 0.0, DRIVE_SPEED_55, TURN_SPEED_40 );
+        // Turn toward pole
+        driveToPosition( 48.5, 0.0, -42.0, DRIVE_SPEED_30, TURN_SPEED_30 );
         robot.driveTrainMotorsZero();
 
-        // Turn toward pole
-        driveToPosition( 49.5, 0.0, -48.0, DRIVE_SPEED_30, TURN_SPEED_20 );
-        robot.driveTrainMotorsZero();
+        // Tilt grabber down to final scoring position
+        robot.grabberSetTilt( robot.GRABBER_TILT_AUTO_F );
 
         // Drive closer to the pole in order to score
-        driveToPosition( 52.0, -2.5, -48.0, DRIVE_SPEED_30, TURN_SPEED_20 );
+        driveToPosition( 51.7, -3.2, -42.0, DRIVE_SPEED_30, TURN_SPEED_30 );
         robot.driveTrainMotorsZero();
 
     } // moveToTallJunction
@@ -221,7 +224,7 @@ public class AutonomousRight extends AutonomousBase {
         robot.grabberSpinStop();
 
         // Back away from the pole
-        driveToPosition( 49.5, 0.0, -48.0, DRIVE_SPEED_40, TURN_SPEED_40 );
+        driveToPosition( 48.5, 0.0, -42.0, DRIVE_SPEED_40, TURN_SPEED_40 );
         robot.driveTrainMotorsZero();
 
     } // scoreCone
@@ -236,28 +239,11 @@ public class AutonomousRight extends AutonomousBase {
     /* +---+---+---/                                                                              */
     private void signalZoneParking0( int signalZoneLocation ) {
 
-        if( signalZoneLocation == 1 ) { // RED
-            // Turn fully -90 deg
-            driveToPosition( 51.0, 0.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_40 );
-            robot.driveTrainMotorsZero();
-            // Lower lift to driving height
-            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
-            while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
-                performEveryLoop();
-            }
-            robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
-            // Drive forward one tile
-            driveToPosition( 51.0, -24.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_40 );
-            driveToPosition( 51.0, -24.0, 180.0, DRIVE_SPEED_40, TURN_SPEED_40 );
-            driveToPosition( 42.0, -24.0, 180.0, DRIVE_SPEED_40, TURN_SPEED_40 );
-            robot.driveTrainMotorsZero();
-        } // signalZoneLocation 1
-
-        else if( signalZoneLocation == 3 ) {  // BLUE
+        if( signalZoneLocation == 3 ) {  // BLUE
             // Realign back to 0 degrees
-            driveToPosition( 51.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40 );
+            driveToPosition( 48.5, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40 );
             robot.driveTrainMotorsZero();
-            // Lower lift to driving height
+            // Ensure lift is at driving height
             robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
             while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
                 performEveryLoop();
@@ -270,13 +256,29 @@ public class AutonomousRight extends AutonomousBase {
             robot.driveTrainMotorsZero();
         } // signalZoneLocation 3
 
+        else if( signalZoneLocation == 1 ) { // RED
+            // Turn fully -90 deg
+            driveToPosition( 48.5, 0.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_40 );
+            robot.driveTrainMotorsZero();
+            // Lower the lift to driving height
+            robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+            while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
+                performEveryLoop();
+            }
+            robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
+            // Drive forward one tile
+            driveToPosition( 51.0, -24.0, -90.0, DRIVE_SPEED_40, TURN_SPEED_40 );
+            driveToPosition( 51.0, -24.0, 180.0, DRIVE_SPEED_40, TURN_SPEED_40 );
+            driveToPosition( 42.0, -24.0, 180.0, DRIVE_SPEED_40, TURN_SPEED_40 );
+            robot.driveTrainMotorsZero();
+        } // signalZoneLocation 1
+
         else { // signalZoneLocation 2  // GREEN
             // Realign back to 0 degrees
-            driveToPosition( 51.0, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40 );
+            driveToPosition( 48.5, 0.0, 0.0, DRIVE_SPEED_40, TURN_SPEED_40 );
             robot.driveTrainMotorsZero();
-            // Lower lift to driving height
+            // Ensure lift is at driving height
             robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
-            // Ensure lift has finished the automatic movement
             while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
                 performEveryLoop();
             }

@@ -228,6 +228,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Turret", "%.1f deg  %.2f mA",  robot.turretAngle, robot.turretMotorAmps );
             telemetry.addData("Lift",   "%.1f deg  %.2f pwr  %.2f mA",
                     robot.liftAngle, robot.liftMotorPwr, robot.liftMotorAmps );
+            telemetry.addData("Score mode", "%s", (rearScoring)? "REAR":"FRONT");
             telemetry.addData("Collector", "%.2f %.2f",
                     robot.leftTiltServo.getPosition(), robot.rightTiltServo.getPosition() );
             if( rangeSensorsEnabled ) {
@@ -754,7 +755,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.grabberSpinStop();
             grabberTarget1 = robot.GRABBER_TILT_STORE;
             needFlip       = (rearScoring)? true : false;  // collector flipped/REAR or normal/FRONT
-            grabberTarget2 = (rearScoring)? robot.GRABBER_TILT_SCORE1 : robot.GRABBER_TILT_STORE;
+            grabberTarget2 = (rearScoring)? robot.GRABBER_TILT_BACK_H : robot.GRABBER_TILT_FRONT_H;
             liftTarget     = (rearScoring)? robot.LIFT_ANGLE_HIGH_B   : robot.LIFT_ANGLE_HIGH;
             liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
             liftCycleCount = LIFT_CYCLECOUNT_START;

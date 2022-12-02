@@ -123,20 +123,21 @@ public class HardwareSlimbot
     
     protected AnalogInput liftEncoder      = null;    // US Digital absolute magnetic encoder (MA3)
     public double       liftAngle          = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
-    public double       liftAngleOffset    = 139.0;   // allows us to adjust the 0-360 deg range
+    public double       liftAngleOffset    = 132.0;   // allows us to adjust the 0-360 deg range
     public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)
 
     public double       LIFT_ANGLE_MAX     = 125.0;   // absolute encoder angle at maximum rotation FRONT
     public double       LIFT_ANGLE_MIN     = -70.0;   // absolute encoder angle at maximum rotation REAR
     // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
-    public double       LIFT_ANGLE_ASTART  = 118.0;   // lift position for starting autonomous
+    public double       LIFT_ANGLE_ASTART  = 122.0;   // lift position for starting autonomous
     public double       LIFT_ANGLE_COLLECT = 116.0;   // lift position for collecting cones
     public double       LIFT_ANGLE_GROUND  = 108.0;   // lift position for collecting cones
     public double       LIFT_ANGLE_LOW     =  86.0;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  84.0;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_MED     =  62.0;   // lift position for MEDIUM junction
-    public double       LIFT_ANGLE_HIGH    =  38.0;   // lift position for HIGH junction
-    public double       LIFT_ANGLE_HIGH_B  = -41.0;   // lift position for BACK-SCORE HIGH junction
+    public double       LIFT_ANGLE_HIGH    =  44.0;   // lift position for HIGH junction (FRONT Telecop)
+    public double       LIFT_ANGLE_AUTO_H  =  44.0;   // lift position for AUTONOMOUS (HIGH junction)
+    public double       LIFT_ANGLE_HIGH_B  = -27.0;   // lift position for HIGH junction (BACK Teleop)
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -172,11 +173,13 @@ public class HardwareSlimbot
 
     public double       currentTilt         =  0.00;
     public double       GRABBER_TILT_MAX    =  0.50;  // 0.5 (max) is up; -0.5 (min) is down
-    public double       GRABBER_TILT_INIT   =  0.00;
-    public double       GRABBER_TILT_SCORE1 =  0.19;
-    public double       GRABBER_TILT_STORE  = -0.15;
-    public double       GRABBER_TILT_GRAB   = -0.29;
-    public double       GRABBER_TILT_MIN    = -0.50;
+    public double       GRABBER_TILT_BACK_H =  0.17;  // Backward scoring on the high pole
+    public double       GRABBER_TILT_INIT   =  0.00;  // Pointing straight up
+    public double       GRABBER_TILT_STORE  = -0.17;  // Stored angle for autonomous driving around
+    public double       GRABBER_TILT_AUTO_F = -0.17;  // 45deg tilt for front scoring in autonomous
+    public double       GRABBER_TILT_FRONT_H = -0.17;  // Stored angle for autonomous driving around
+    public double       GRABBER_TILT_GRAB   = -0.31;  // Out horizontal for grabbing in the front
+    public double       GRABBER_TILT_MIN    = -0.50;  // As far down as we can tilt (manual control)
 
     public Servo        rotateServo         = null;   // rotate GRABBER left/right
     public double       GRABBER_ROTATE_UP   = 0.335;  // normal (upright) orientation
