@@ -21,6 +21,7 @@ public class Disco extends LinearOpMode {
         DcMotor armMotor2 = hardwareMap.dcMotor.get("arm2");
 
         Servo intake = hardwareMap.servo.get("intake");
+        CRServo axon = hardwareMap.crservo.get("axon");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -38,10 +39,10 @@ public class Disco extends LinearOpMode {
 
             double armPower = gamepad2.left_stick_y;
             if (gamepad2.dpad_up) {
-                intake.setPosition(1);
+                intake.setPosition(-1);
             }
             if (gamepad2.dpad_down) {
-                intake.setPosition(-1);
+                intake.setPosition(1);
             }
 
             // Denominator is the largest motor power (absolute value) or 1
