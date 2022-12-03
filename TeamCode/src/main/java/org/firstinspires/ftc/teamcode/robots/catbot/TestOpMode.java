@@ -248,9 +248,9 @@ public class TestOpMode extends OpMode {
         final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.sin(robotAngle) + rightX;
         final double v4 = r * Math.cos(robotAngle) - rightX;
-        motorFrontLeft.setPower(v1*.7);
-        motorFrontRight.setPower(v4*.7);
-        motorBackLeft.setPower(v3*.7);
+        motorFrontLeft.setPower(v1*.8);
+        motorFrontRight.setPower(v4);
+        motorBackLeft.setPower(v3);
         motorBackRight.setPower(v2*.8);
     }
 
