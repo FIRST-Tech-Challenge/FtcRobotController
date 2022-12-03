@@ -5,8 +5,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
     double yPower;
     double tPower;
 
-    int targetPosition;
-
     public void driveChassisWithController() {
         xPower = gamepad1.left_stick_x * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
         yPower = gamepad1.left_stick_y * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
@@ -36,13 +34,18 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveSlidesWithController() {
-        motorLeftSlides.setPower(-gamepad2.left_stick_y);
-        motorRightSlides.setPower(-gamepad2.left_stick_y);
+        if (-gamepad2.left_stick_y < 0) {
+            motorLeftSlides.setPower(-gamepad2.left_stick_y * 0.25);
+            motorRightSlides.setPower(-gamepad2.left_stick_y * 0.25);
+        } else {
+            motorLeftSlides.setPower(-gamepad2.left_stick_y);
+            motorRightSlides.setPower(-gamepad2.left_stick_y);
+        }
 
         if (motorLeftSlides.getCurrentPosition() < 0) {
             motorLeftSlides.setPower(0.5);
             motorRightSlides.setPower(0.5);
-        } else if (motorLeftSlides.getCurrentPosition() > 6900) {
+        } else if (motorLeftSlides.getCurrentPosition() > 6000) {
             motorLeftSlides.setPower(-0.5);
             motorRightSlides.setPower(-0.5);
         }

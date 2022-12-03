@@ -56,36 +56,42 @@ public abstract class BaseAutonomous extends BaseOpMode {
     }
 
     /**
-     * this method will allow the robot to drive straight in a specified direction using the IMU given a specified heading and distance
-     * @param degrees number of degrees robot should turn (positive is counterclockwise and negative is clockwise)
+     * this method will allow the robot to turn to a specified absolute angle using the IMU
+     * @param targetAngle absolute angle robot should turn to
      */
-    public void turnDegrees(double degrees) {
-        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+    public void turnToAngle(double targetAngle) {
         double currentAngle;
+        double angleError = 1.0;
+        double motorPower;
 
-        double remainingAngle = degrees;
-        double traveledAngle;
-
-        while (remainingAngle > 0 && opModeIsActive()) {
+        while (Math.abs(angleError) >= 1 && opModeIsActive()) {
             currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            angleError = targetAngle - currentAngle + 45.0;
+
+            if (angleError > 180.0) {
+                angleError -= 360.0;
+            } else if (angleError < -180.0) {
+                angleError += 360.0;
+            }
 
             // robot is turning counter-clockwise
-            if (degrees > 0) {
-                motorFL.setPower(Math.min(-remainingAngle / 180.0, -0.1));
-                motorFR.setPower(Math.min(-remainingAngle / 180.0, -0.1));
-                motorBL.setPower(Math.max(remainingAngle / 180.0, 0.1));
-                motorBR.setPower(Math.max(remainingAngle / 180.0, 0.1));
+            if (angleError > 0) {
+                motorPower = Math.min(angleError / -180.0, -0.2);
 
             // robot is turning clockwise
             } else {
-                motorFL.setPower(Math.max(-remainingAngle / 180.0, 0.1));
-                motorFR.setPower(Math.max(-remainingAngle / 180.0, 0.1));
-                motorBL.setPower(Math.min(remainingAngle / 180.0, -0.1));
-                motorBR.setPower(Math.min(remainingAngle / 180.0, -0.1));
+                motorPower = Math.max(angleError / -180.0, 0.2);
             }
 
-            traveledAngle = currentAngle - startAngle;
-            remainingAngle = degrees - traveledAngle;
+            motorFL.setPower(motorPower);
+            motorFR.setPower(-motorPower);
+            motorBL.setPower(motorPower);
+            motorBR.setPower(-motorPower);
+
+            telemetry.addData("current", currentAngle);
+            telemetry.addData("error", angleError);
+            telemetry.addData("power", motorPower);
+            telemetry.update();
         }
 
         motorFL.setPower(0.0);

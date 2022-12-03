@@ -19,8 +19,8 @@ public class RedRightAutonomousCompetition extends AprilTagDetect {
         int signal = detectAprilTag();
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        driveWithIMU(0.25, 0.0, 0.0);
-        sleep(1688);
+        driveWithIMU(0.0, -0.25, 0.0);
+        sleep(1700);
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         driveWithIMU(0.0, 0.0, 0.0);
@@ -29,7 +29,7 @@ public class RedRightAutonomousCompetition extends AprilTagDetect {
         switch (signal) {
             case 0:
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                driveWithIMU(0.0, -0.25, 0.0);
+                driveWithIMU(-0.25, 0.0, 0.0);
                 sleep(1500);
 
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -41,8 +41,8 @@ public class RedRightAutonomousCompetition extends AprilTagDetect {
 
             case 2:
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                driveWithIMU(0.0, 0.25, 0.0);
-                sleep(1550);
+                driveWithIMU(0.25, 0.0, 0.0);
+                sleep(1500);
 
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 driveWithIMU(0.0, 0.0, 0.0);
