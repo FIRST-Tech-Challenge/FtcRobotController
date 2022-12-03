@@ -30,9 +30,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     public BNO055IMU imu;
     public Orientation IMUOriginalAngles; // original angle reading from imu that will be used to find unwanted angle offset during drive
 
-    // flag to say whether we should disable the correction system
-    private boolean turnFlag = false;
-
     // initializes the motors, servos, and IMUs
     public void initialize() {
         // motors
@@ -93,15 +90,10 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     public void driveWithIMU(double xPower, double yPower, double tPower) {
+
         // read imu when turning (when t != 0)
-        boolean isTurning = (tPower != 0);
-
-        if (isTurning || turnFlag) {
+        if (tPower != 0 || Math.abs(imu.getAngularVelocity().zRotationRate) > 5) {
             IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // set original angle
-
-            if (!turnFlag) {
-                turnFlag = true;
-            }
 
         // otherwise read imu for correction
         } else {
@@ -111,11 +103,6 @@ public abstract class BaseOpMode extends LinearOpMode {
 
             // apply a constant to turn the angle into a turn speed
             tPower = -Constants.CORRECTION_CONSTANT * angleError;
-        }
-
-        // if the rotation rate is low, then that means all the momentum has left the robot's turning and can therefore turn the correction back on
-        if (Math.abs(imu.getAngularVelocity().zRotationRate) < 5) {
-            turnFlag = false;
         }
 
         // calculate speed and direction of each individual motor and set power of motors to speed
