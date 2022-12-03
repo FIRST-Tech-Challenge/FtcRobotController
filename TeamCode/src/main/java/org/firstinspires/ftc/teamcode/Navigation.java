@@ -19,8 +19,7 @@ import java.util.Objects;
 
 /** Keeps track of the robot's desired path and makes it follow it accurately.
  */
-public class Navigation
-{
+public class Navigation {
     public enum RotationDirection {CLOCKWISE, COUNTERCLOCKWISE}
     public static enum Action {NONE}
     // AUTON CONSTANTS
@@ -95,10 +94,10 @@ public class Navigation
             robot.telemetry.update();
             switch (movementMode) {
                 case FORWARD_ONLY:
-                    rotate(getAngleBetween(robot.getPosition().getLocation(), target.getLocation()) - Math.PI / 2,
+                    rotate(getAngleBetween(robot.getPosition().x, robot.getPosition().y, target.getPosition().x, target.getPosition().y) - Math.PI / 2,
                             target.getLocation().rotatePower, robot);
-                    travelLinear(target.getLocation(), target.getLocation().strafePower, robot);
-                    rotate(target.getRotation(), target.getLocation().rotatePower, robot);
+                    travelLinear(target, target.getStrafePower(), robot);
+                    rotate(target.getRotation(), target.getRotatePower(), robot);
                     break;
                 case STRAFE:
                     travelLinear(target.getLocation(), target.getLocation().strafePower, robot);
@@ -232,8 +231,7 @@ public class Navigation
      *               Within the interval (-pi, pi].
      * @param constantPower A hard-coded power value for the method to use instead of ramping. Ignored if set to zero.
      */
-    public void rotate(double target, double constantPower, Robot robot)
-    {
+    public void rotate(double target, double constantPower, Robot robot) {
         robot.positionManager.updatePosition(robot);
         // Both values are restricted to interval (-pi, pi].
         final double startOrientation = robot.getPosition().getRotation();
@@ -338,13 +336,13 @@ public class Navigation
      *  @param target The desired position of the robot.
      *  @param constantPower A hard-coded power value for the method to use instead of ramping. Ignored if set to zero.
      */
-    public void travelLinear(double targetX, double targetY, double constantPower, Robot robot) {
+    public void travelLinear(Position target, double constantPower, Robot robot) {
         robot.positionManager.updatePosition(robot);
         final double startX = robot.getPosition().getX();
         final double startY = robot.getPosition().getY();
 
 
-        double totalDistance = getEuclideanDistance(startX, startY, targetX, targetY);
+        double totalDistance = getEuclideanDistance(startX, startY, target.x, target.y);
 
         double power;
         boolean ramping = true;
@@ -368,7 +366,7 @@ public class Navigation
             double currentX = robot.getPosition().getX();
             double currentY = robot.getPosition().getY();
 
-            distanceToTarget = getEuclideanDistance(currentX, currentY, targetX, targetY);
+            distanceToTarget = getEuclideanDistance(currentX, currentY, target.x, target.y);
             distanceTraveled = getEuclideanDistance(startX, startY, currentX, currentY);
 
             if (ramping) {
@@ -426,8 +424,8 @@ public class Navigation
 
     /** Calculates the angle at which the robot must strafe in order to get to a target location.
      */
-    private double getStrafeAngle(double currentLocX, double currentLocY, double currentOrientation, double targetX, double targetY) { //LEFT OFF HERE 11/22/22
-        double strafeAngle = currentOrientation - getAngleBetween(currentLocX, currentLocY, targetX, targetY);
+    private double getStrafeAngle(Position currentLoc, Position target) {
+        double strafeAngle = currentLoc.getRotation() - getAngleBetween(currentLoc.getX(), currentLoc.getY(), target.getX(), target.getY());
         if (strafeAngle > Math.PI) {
             strafeAngle -= 2 * Math.PI;
         }
@@ -527,14 +525,8 @@ public class Navigation
      * @param b value to be scaled
      * @return an array containing the scaled versions of a and b
      */
-    double[] scaleRange(double a,double b){
-        double max;
-        if (Math.abs(a) > Math.abs(b)) {
-            max = Math.abs(a);
-        }
-        else {
-            max = Math.abs(b);
-        }
+    double[] scaleRange(double a, double b) {
+        double max = Math.abs(a) > Math.abs(b) ? Math.abs(a) : Math.abs(b);
         return new double[] {a / max, b / max};
     }
 
