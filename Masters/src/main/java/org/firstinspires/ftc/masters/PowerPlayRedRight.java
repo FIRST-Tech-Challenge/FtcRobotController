@@ -20,9 +20,23 @@ public class PowerPlayRedRight extends LinearOpMode {
     public void runOpMode() {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,  telemetry);
-
+        Pose2d startPose = new Pose2d(new Vector2d(36, -60), Math.toRadians(0));
+        drive.setPoseEstimate(startPose);
         waitForStart();
 
+        drive.liftTop();
+        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(36, -60),Math.toRadians(0)))
+                .splineToLinearHeading(new Pose2d( new Vector2d(12,-48), Math.toRadians(90)), Math.toRadians(90))
+                .lineToLinearHeading(new Pose2d(new Vector2d(12,-36),Math.toRadians(45)))
+                .lineToLinearHeading(new Pose2d(new Vector2d(12,-12),Math.toRadians(135)))
+                .build();
+
+        //use vision to align
+        //drop cone
+        drive.openClaw();
+
+        //park in the correct spot
+        //put lift down
     }
 
 }
