@@ -24,10 +24,8 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: list stuff
-      run: ls
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: output
-        path: |
+        path: TeamCode/builds/output/apk/debug/TeamCode-debug.apk
