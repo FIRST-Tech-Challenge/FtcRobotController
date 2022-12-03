@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.;
 
 
@@ -15,6 +16,8 @@ public class forward extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        Servo claw = null;
+        telemetry.addData("JServos", "wobble pos (%.2f), claw pos (%.2f)", claw.getPosition());
 
         //left front wheel
         DcMotor lf = hardwareMap.get(DcMotor.class, "lf");
@@ -26,6 +29,8 @@ public class forward extends LinearOpMode {
         DcMotor rb = hardwareMap.get(DcMotor.class, "rb");
         //arm motor 1
         DcMotor tower1 = hardwareMap.get(DcMotor.class, "tower1");
+        //Claw
+        claw = hardwareMap.get(Servo.class, "claw");
 
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -37,24 +42,20 @@ public class forward extends LinearOpMode {
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
         tower1.setDirection(DcMotor.Direction.FORWARD);
+        claw.setDirection(Servo.Direction.FORWARD);
 
         waitForStart();
         gamepad1.rumble(1000);
         gamepad2.rumble(1000);
         while (opModeIsActive()) {
 
-            if (gamepad1.right_bumper) {
-                // right bumper, "sprint mode"
-                lf.setPower(0.75);
-                rf.setPower(0.75);
-                lb.setPower(0.75);
-                rb.setPower(0.75);
-            } else {
-                // normal power
-                lf.setPower(0.5);
-                rf.setPower(0.5);
-                lb.setPower(0.5);
-                rb.setPower(0.5);
+
+                //claw (NOTE: 0-right limit, left limit will break it)
+                if ((gamepad2.left_trigger) > 0.5) {
+                    claw.setPosition(0.5);
+                } else {
+                    claw.setPosition(1);
+                }
 
                 double lPower;
                 double towerPower;
@@ -72,14 +73,13 @@ public class forward extends LinearOpMode {
                 }
 
 
-                lf.setPower(lPower);
-                rf.setPower(rPower);
-                lb.setPower(lPower);
-                rb.setPower(rPower);
-                tower1.setPower((towerPower) * 0.5);
+                lf.setPower(lPower * 0.5);
+                rf.setPower(rPower * 0.5);
+                lb.setPower(lPower * 0.5);
+                rb.setPower(rPower * 0.5);
+                tower1.setPower(towerPower);
 
 
             }
         }
     }
-}
