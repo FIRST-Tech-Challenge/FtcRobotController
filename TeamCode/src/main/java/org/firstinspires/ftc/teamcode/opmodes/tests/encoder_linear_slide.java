@@ -114,8 +114,8 @@ public class encoder_linear_slide extends LinearOpMode {
      *  3) Driver stops the opmode running.
      */
     public void encoderLinearSlide(TurtleRobotAuto turtleRobotAuto, double speed,
-                             double sinch,
-                             double timeoutS) {
+                                   double sinch,
+                                   double timeoutS) {
         int newSlideTarget;
 
         // Ensure that the opmode is still active
@@ -167,4 +167,3 @@ public class encoder_linear_slide extends LinearOpMode {
         }
     }
 }
-

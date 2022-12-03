@@ -34,7 +34,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import java.util.ArrayList;
 
-@Autonomous(name = "dont press auto left")
+@Autonomous(name="dont press auto left")
 //@Disabled
 public class autoleft extends LinearOpMode
 {
@@ -169,26 +169,29 @@ public class autoleft extends LinearOpMode
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
-        straight(1,200);
-        left(0.5, 450);
+        straight(0.25,500);
+        stopRobot();
+        right(0.25, 750);
+        stopRobot();
+        ServoArm(1,200);
+        ServoArm(0,1000);
+        sleep(1000);
+        LinearSlide(-1, 1000);
+        LinearSlide(0,1000);
+        straight(0.25, 700);
         stopRobot();
         sleep(1000);
-        LinearSlide(-1, 750);
+        LinearSlide(1, 1000);
         LinearSlide(0,1000);
-
-        straight(0.5, 500);
+        ServoArm(-0.5, 220);
+        ServoArm(0,1000);
+        straight(-0.5,330);
         stopRobot();
-        LinearSlide(0.5,750);
-        LinearSlide(0,1000);
-//        ServoArm(0.5, 250);
-//        ServoArm(0,1000);
-        straight(-0.5,500);
+        left(0.25, 750);
         stopRobot();
-//        ServoArm(-0.5,250);
-//        ServoArm(0,1000);
-        right(0.5, 350);
-        stopRobot();
-        /* Actually do something useful */
+        ServoArm(0.5, 250);
+        ServoArm(0,1000);
+//        /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
             strafeLeft(0.5, 1000);
             stopRobot();
@@ -271,8 +274,8 @@ public class autoleft extends LinearOpMode
         robot.rightslidemotor.setPower(power);
         sleep(time);
     }
-//    public void ServoArm(double power, int time) {
-//        robot.ArmServo.setPower(power);
-//        sleep(time);
-//    }
+    public void ServoArm(double power, int time) {
+        robot.ArmServo.setPower(power);
+        sleep(time);
+    }
 }
