@@ -19,11 +19,39 @@ public class PowerPlayRedRight extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        PowerPlayComputerVisionPipelines CV = new PowerPlayComputerVisionPipelines(hardwareMap, telemetry);
+        PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor sleeveColor = null;
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,  telemetry);
         Pose2d startPose = new Pose2d(new Vector2d(36, -60), Math.toRadians(0));
         drive.setPoseEstimate(startPose);
         waitForStart();
 
+        ElapsedTime elapsedTime = new ElapsedTime();
+
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        while (time < 200 && opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+            sleeveColor = CV.sleevePipeline.color;
+
+            telemetry.addData("Position", sleeveColor);
+            telemetry.update();
+        }
+
+
+        //When parking
+        switch (sleeveColor) {
+            case RED:
+                //Parking 2
+            case GRAY:
+                //Parking 1
+            case GREEN:
+                //Parking 3
+            case INDETERMINATE:
+
+        }
         drive.liftTop();
         drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(36, -60),Math.toRadians(0)))
                 .splineToLinearHeading(new Pose2d( new Vector2d(12,-48), Math.toRadians(90)), Math.toRadians(90))
