@@ -245,15 +245,19 @@ public class Crane implements Subsystem {
     double shoulderPwr = 1;
     double shoulderTargetAngle = 0;
 
-    public static double NUDGE_CENTER_POS = 1500;
-    public static double NUDGE_LEFT_POS = 900;
+    public static double NUDGE_CENTER_LEFT = 1830;
+    public static double NUDGE_CENTER_RIGHT = 1900;
+    public static double NUDGE_LEFT_POS = 900;  //home position - stowed up
     public static double NUDGE_RIGHT_POS = 2100;
 
     //keeps track of current nudge position
     private int nudgeIndex = 1;
 
-    public void nudgeCenter(){
-        nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_POS));
+    public void nudgeCenter(boolean approachingClockwise){
+        if (approachingClockwise)
+            nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_LEFT));
+        else
+            nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_RIGHT));
     }
     public void nudgeLeft(){
         nudgeStickServo.setPosition(servoNormalize(NUDGE_LEFT_POS));
@@ -263,7 +267,7 @@ public class Crane implements Subsystem {
     }
 
     public void incNudgeIndex(){
-        if(nudgeIndex < 2){
+        if(nudgeIndex < 3){
             nudgeIndex++;
         }
         updateNudgeStick();
@@ -278,16 +282,19 @@ public class Crane implements Subsystem {
     public void updateNudgeStick(){
         switch (nudgeIndex){
             case 0:
-                nudgeRight();
-                break;
-            case 1:
-                nudgeCenter();
-                break;
-            case 2:
                 nudgeLeft();
                 break;
+            case 1:
+                nudgeCenter(true);
+                break;
+            case 2:
+                nudgeCenter(false);
+                break;
+            case 3:
+                nudgeRight();
+                break;
             default:
-                nudgeCenter();
+                nudgeCenter(true);
                 break;
         }
     }
@@ -399,6 +406,7 @@ public class Crane implements Subsystem {
             case 2: //waiting on initial lift, then move arm to defaultpos - this is usually a retraction and a lift
                 if(System.nanoTime() > pickupTimer)
                 {
+                    nudgeCenter(true); //todo - approachingClockwise needs to be dependent on next target
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     setExtendTargetPos(defaultPos.getExtendMemory());
                     pickupTimer = futureTime(1.5); //typical time to retract enough to start turntable
@@ -434,17 +442,29 @@ public class Crane implements Subsystem {
     long dropTimer;
     boolean dropCone() {
         switch (dropConeStage) {
-            case 0:
-                //save values for next drop
-                release();
 
-                //set timer to allow bulb gripper enough time to change
-                dropTimer = futureTime(.3);
+            case 0:
+                release();
+                dropTimer = futureTime(2.0); //enough time for cone to start dropping
                 dropConeStage++;
 
+            case 1:
+                if(System.nanoTime() > dropTimer){
+                    nudgeRight();
+                    dropTimer = futureTime(2.0); //time for nudge right to complete
+                    dropConeStage++;
+                }
                 break;
 
-            case 1: //lift a little to clear junction
+            case 2:
+                if(System.nanoTime() > dropTimer){
+                    nudgeLeft();
+                    dropTimer = futureTime(2.0); //time for nudge left to clear
+                    dropConeStage++;
+                }
+                break;
+
+            case 3: //lift a little to clear junction
 
                 if(System.nanoTime() > dropTimer) //waiting until released, then start lifting:
                 {
@@ -456,7 +476,7 @@ public class Crane implements Subsystem {
                 }
                 break;
 
-            case 2: //waiting on lift, then move arm to defaultpos - this is usually a retraction and a lift
+            case 4: //waiting on lift, then move arm to defaultpos - this is usually a retraction and a lift
                 if(System.nanoTime() > dropTimer)
                 {
                     setExtendTargetPos(defaultPos.getExtendMemory());
@@ -464,7 +484,7 @@ public class Crane implements Subsystem {
                     dropConeStage++;
                 }
                 break;
-            case 3:
+            case 5:
                 if(System.nanoTime() > dropTimer){
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     dropTimer = futureTime(0.7);
@@ -472,7 +492,7 @@ public class Crane implements Subsystem {
                 }
                 break;
 
-            case 4: //move to previously set pickup position
+            case 6: //move to previously set pickup position
 
                 //todo - this is currently time based and it should maybe be based on lift achieved (if achievable - long extensions can't actually lift due to torque needed)
                 if(System.nanoTime() > dropTimer) {
@@ -483,14 +503,14 @@ public class Crane implements Subsystem {
                     pickupTimer = futureTime(0.7);
                 }
                 break;
-            case 5:
+            case 7:
                 if(System.nanoTime() > dropTimer){
                     setShoulderTargetAngle(pickup.getShoulderMemory()); //return high
                     dropConeStage++;
                     pickupTimer = futureTime(0.7);
                 }
                 break;
-            case 6:
+            case 8:
                 if(System.nanoTime() > pickupTimer){
                     setExtendTargetPos(pickup.getExtendMemory());
                     dropConeStage = 0;
@@ -712,7 +732,7 @@ public class Crane implements Subsystem {
     }
 
     private void recordDrop(){
-        drop.setCranePositionMemory(robot.turret.getHeading()+10, shoulderAngle,extendMeters);
+        drop.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle,extendMeters);
     }
 
     public void enableCalibrate(){

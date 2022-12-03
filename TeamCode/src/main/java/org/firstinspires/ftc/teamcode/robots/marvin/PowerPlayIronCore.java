@@ -122,6 +122,9 @@ public class PowerPlayIronCore extends OpMode {
     public void init_loop(){
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
+        if (gamepad1.a) runAuton = true;
+        if (gamepad1.b) runAuton = false;
+
         if(currentDetections.size() != 0)
         {
             tagFound = false;
@@ -176,7 +179,7 @@ public class PowerPlayIronCore extends OpMode {
             }
 
         }
-
+        telemetry.addLine(String.format("\nRunAuton=%b", runAuton));
         telemetry.update();
     }
 
@@ -387,7 +390,7 @@ public class PowerPlayIronCore extends OpMode {
         telemetry.addLine(String.format("\nMotorBackLeft=%d",motorBackLeft.getCurrentPosition()));
         telemetry.addLine(String.format("\nMotorBackRight=%d",motorBackRight.getCurrentPosition()));
         telemetry.addLine(String.format("\nAverageEncoders=%.2f", encoderAvg));
-        telemetry.addLine(String.format("\nRunAuton=%b", runAuton));
+
     }
 
 }
