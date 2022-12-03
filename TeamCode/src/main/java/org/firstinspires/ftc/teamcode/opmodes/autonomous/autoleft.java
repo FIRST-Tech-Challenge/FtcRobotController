@@ -33,7 +33,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="dont press auto left")
+@Autonomous(name="press auto left")
 //@Disabled
 public class autoleft extends LinearOpMode
 {
@@ -171,7 +171,7 @@ public class autoleft extends LinearOpMode
         // get to the correct angle
         straight(0.25,500);
         stopRobot();
-        right(0.25, 770);
+        right(0.25, 700);
         stopRobot();
 
         // tighten on cone
@@ -182,20 +182,20 @@ public class autoleft extends LinearOpMode
         // move lin slide oopar and go 2 pole
         LinearSlide(-1, 799);
         LinearSlide(0,1000);
-        straight(0.25, 780);
+        straight(0.25, 700);
         stopRobot();
         sleep(1000);
         ServoArm(-0.5, 220);
         ServoArm(0,1000);
 
         // move 2 og pos
-        straight(-0.5,330);
+        straight(-0.25,650);
         stopRobot();
         ServoArm(0.5, 220);
         ServoArm(0,1000);
         LinearSlide(1, 799);
         LinearSlide(0,1000);
-        left(0.25, 770);
+        left(0.25, 700);
         stopRobot();
         ServoArm(0.5, 250);
         ServoArm(0,1000);
@@ -213,10 +213,10 @@ public class autoleft extends LinearOpMode
             stopRobot();
             stop();
         }else{
-            strafeRight(0.5, 1100);
+            strafeRight(0.25, 2000);
             stopRobot();
             sleep(1000);
-            straight(0.5, 1500);
+            straight(0.5, 1100);
             stopRobot();
             stop();
         }

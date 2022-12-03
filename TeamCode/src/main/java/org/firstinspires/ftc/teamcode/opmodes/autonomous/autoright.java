@@ -33,8 +33,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "dont press auto right")
-//@Disabled
+@Autonomous(name = "press auto right")
 public class autoright extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -169,9 +168,9 @@ public class autoright extends LinearOpMode
             telemetry.update();
         }
         // get to the correct angle
-        straight(0.25,500);
+        straight(0.25,670);
         stopRobot();
-        left(0.25, 910);
+        left(0.25, 850);
         stopRobot();
 
         // tighten on cone
@@ -182,20 +181,20 @@ public class autoright extends LinearOpMode
         // move lin slide oopar and go 2 pole
         LinearSlide(-1, 799);
         LinearSlide(0,1000);
-        straight(0.25, 820);
+        straight(0.25, 760);
         stopRobot();
         sleep(1000);
         ServoArm(-0.5, 220);
         ServoArm(0,1000);
 
         // move 2 og pos
-        straight(-0.5,300);
+        straight(-0.25,750);
         stopRobot();
         ServoArm(0.5, 220);
         ServoArm(0,1000);
         LinearSlide(1, 799);
         LinearSlide(0,1000);
-        right(0.25, 770);
+        right(0.25, 850);
         stopRobot();
         ServoArm(0.5, 250);
         ServoArm(0,1000);
@@ -203,7 +202,7 @@ public class autoright extends LinearOpMode
             strafeLeft(0.5, 1250);
             stopRobot();
             sleep(1000);
-            straight(0.5, 900);
+            straight(0.5, 800);
             stopRobot();
             stop();
         }else if(tagOfInterest.id == MIDDLE){
@@ -214,7 +213,7 @@ public class autoright extends LinearOpMode
             strafeRight(0.5, 1100);
             stopRobot();
             sleep(1000);
-            straight(0.5, 1500);
+            straight(0.5, 1300);
             stopRobot();
             stop();
         }

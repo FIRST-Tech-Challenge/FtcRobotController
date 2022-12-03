@@ -31,20 +31,20 @@ public class Mecanum extends LinearOpMode {
         while (!isStopRequested()) {
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
+                            -gamepad1.left_stick_y * 0.8,
+                            -gamepad1.left_stick_x * 0.8,
+                            -gamepad1.right_stick_x * 0.5
                     )
             );
             drive.update();
 //
-            robot.leftslidemotor.setPower(gamepad2.right_trigger-gamepad2.left_trigger);
-            robot.rightslidemotor.setPower(gamepad2.right_trigger-gamepad2.left_trigger);
+            robot.leftslidemotor.setPower((gamepad2.right_trigger - gamepad2.left_trigger));
+            robot.rightslidemotor.setPower((gamepad2.right_trigger - gamepad2.left_trigger));
             while (gamepad2.right_bumper) {
-                robot.ArmServo.setPower(-1);
+                robot.ArmServo.setPower(1);
             }
             while (gamepad2.left_bumper) {
-                robot.ArmServo.setPower(1);
+                robot.ArmServo.setPower(-1);
             }
             robot.ArmServo.setPower(0);
 
