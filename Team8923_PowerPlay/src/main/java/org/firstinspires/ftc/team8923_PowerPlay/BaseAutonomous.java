@@ -239,7 +239,6 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
      * @param angle correction for irregular angles.
      * @return returns correct angle.
      */
-    // normalizing the angle to be between -180 to 180
     private double adjustAngles(double angle) {
         while (angle > 180)
             angle -= 360;
