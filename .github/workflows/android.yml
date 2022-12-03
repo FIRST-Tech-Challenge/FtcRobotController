@@ -28,4 +28,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: output
-        path: TeamCode/builds/output/apk/debug/TeamCode-debug.apk
+        path: TeamCode/build/outputs/apk/debug/TeamCode-debug.apk
