@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.util.TowerController;
 public class TeleOp extends OpMode
 
 {
-    private IntegratedLocalizerIMU localizer        = null;
+    private IntegratedLocalizerIMU localizer = null;
     private MecanumDriveBase mecanumDriveBase = null;
     private TowerController towerController;
     private PacManTurnToPos pacMan;
