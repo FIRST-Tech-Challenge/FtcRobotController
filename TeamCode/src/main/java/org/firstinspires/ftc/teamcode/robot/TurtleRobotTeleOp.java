@@ -46,7 +46,7 @@ public class TurtleRobotTeleOp {
         leftbackmotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         rightfrontmotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rightbackmotor.setDirection(DcMotorSimple.Direction.FORWARD);
-//        leftslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set all motors to zero power
@@ -55,7 +55,7 @@ public class TurtleRobotTeleOp {
         rightfrontmotor.setPower(0);
         rightbackmotor.setPower(0);
         //ClawMotor.setPower(0);
-//        leftslidemotor.setPower(0);
+        leftslidemotor.setPower(0);
         rightslidemotor.setPower(0);
 
         // Set all motors to run without encoders.
