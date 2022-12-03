@@ -116,6 +116,11 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
 
             tfod.setZoom(1.5, 16.0 / 9.0);
         }
+
+        actuatorUtils.gripperClose(true);
+
+
+        waitForStart();
         if (tfod != null && resultROI == 0) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
@@ -158,10 +163,6 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
             }
 
         }
-        actuatorUtils.gripperClose(true);
-
-
-        waitForStart();
         telemetry.update();
         done = false;
         while ((currTime - startTime < 2000)&& !done) {
