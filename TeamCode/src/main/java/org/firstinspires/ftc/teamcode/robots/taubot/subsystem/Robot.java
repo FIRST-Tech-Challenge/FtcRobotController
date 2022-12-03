@@ -239,9 +239,9 @@ public class Robot implements Subsystem {
                 if(System.nanoTime() >= autonTime) {
                     crane.setExtendTargetPos(0.54);
                     crane.setShoulderTargetAngle(76.6);
-                }
-                if(withinError(crane.getExtendMeters(),crane.getExtenderTargetPos(),0.02) && withinError(crane.getShoulderAngle(),crane.getShoulderTargetAngle(),0.07)){
-                    autonIndex++;
+                    if(withinError(crane.getExtendMeters(),crane.getExtenderTargetPos(),0.02) && withinError(crane.getShoulderAngle(),crane.getShoulderTargetAngle(),0.07)){
+                        autonIndex++;
+                    }
                 }
                 break;
             case 5:
