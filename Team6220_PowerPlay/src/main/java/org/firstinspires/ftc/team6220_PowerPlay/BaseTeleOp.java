@@ -6,9 +6,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
     double tPower;
 
     public void driveChassisWithController() {
-        xPower = gamepad1.left_stick_x * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
-        yPower = gamepad1.left_stick_y * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
-        tPower = gamepad1.right_stick_x * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
+        xPower = stickCurve(gamepad1.left_stick_x, Constants.DRIVE_MOVE_CURVE_FAC, Constants.DRIVE_STICK_DEADZONE)* (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
+        yPower = stickCurve(gamepad1.left_stick_y, Constants.DRIVE_MOVE_CURVE_FAC, Constants.DRIVE_STICK_DEADZONE)* (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
+        tPower = stickCurve(gamepad1.right_stick_x, Constants.DRIVE_TURN_CURVE_FAC, Constants.DRIVE_STICK_DEADZONE) * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
 
         // atan2 determines angle between the two sticks
         // case for driving the robot left and right
@@ -53,5 +53,17 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
     public void driveTurntableWithController() {
         driveTurntable(0);
+    }
+
+    /**
+     * This method is a stick curve. If you do not know what that is, become smarter.
+     * @param x The input power
+     * @param a The blending factor between linear and cubed powers
+     * @param d Deadzone size
+     * @return The remapped power
+     */
+    public double stickCurve(double x, double a, double d) {
+        x = Math.signum(x)*Math.max(0, Math.min(1, (Math.abs(x)-d)/(1-d))); // Remap x with deadzone
+        return a*x+(1-a)*x*x*x;
     }
 }

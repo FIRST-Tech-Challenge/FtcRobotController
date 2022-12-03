@@ -18,6 +18,9 @@ public class Constants {
 
     public static final double DRIVE_SPEED_MULTIPLIER = 0.4;
     public static final int DRIVE_DEADZONE_DEGREES = 45;
+    public static final double DRIVE_MOVE_CURVE_FAC = 0.4;
+    public static final double DRIVE_TURN_CURVE_FAC = 0.4;
+    public static final double DRIVE_STICK_DEADZONE = 0.025;
 
     public static final double TURNTABLE_DEADZONE = 0.1;
 
