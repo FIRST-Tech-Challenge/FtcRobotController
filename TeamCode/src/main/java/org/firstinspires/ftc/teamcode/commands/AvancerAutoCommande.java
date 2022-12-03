@@ -4,15 +4,19 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.dragonswpilib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
-public class DriveAutoCommand extends CommandBase {
+public class AvancerAutoCommande extends CommandBase {
 
     private final DriveSubsystem mDriveSubsystem;
     private final Telemetry mTelemetry;
+    private int mDistance;
+    private double mVitesse;
 
-    public DriveAutoCommand(Telemetry telemetry, DriveSubsystem driveSubsystem){
+
+    public AvancerAutoCommande(Telemetry telemetry, DriveSubsystem driveSubsystem, int distance, double vitesse){
         mTelemetry = telemetry;
         mDriveSubsystem = driveSubsystem;
-
+        mDistance = distance;
+        mVitesse = vitesse;
         addRequirements(driveSubsystem);
     }
 
@@ -24,7 +28,7 @@ public class DriveAutoCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        mDriveSubsystem.ArcadeDrive(0.5, 0);
+        mDriveSubsystem.ArcadeDrive(mVitesse, 0);
     }
 
     // Called once the command ends or is interrupted.
@@ -36,6 +40,6 @@ public class DriveAutoCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return mDriveSubsystem.getPositionCm() >= mDistance;
     }
 }
