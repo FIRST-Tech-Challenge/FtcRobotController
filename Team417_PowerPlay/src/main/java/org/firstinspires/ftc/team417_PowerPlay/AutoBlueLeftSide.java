@@ -1,33 +1,16 @@
-/*
- * Copyright (c) 2021 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
-//https://www.dotproduct3d.com/uploads/8/5/1/1/85115558/apriltags1-20.pdf -> pdf that includes all the id's for april tags
-
 package org.firstinspires.ftc.team417_PowerPlay;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.team417_PowerPlay.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.team417_PowerPlay.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -36,8 +19,8 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@Autonomous
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
+@Autonomous (name="BLUE SIDE LEFT SIDE")
+public class AutoBlueLeftSide extends LinearOpMode {
     OpenCvCamera camera; // calls camera
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -57,14 +40,46 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
     // UNITS ARE METERS
     double tagSize = 0.166;
 
-   // Tag ID 1, 2, 3 from the 36h11 family
+    // Tag ID 1, 2, 3 from the 36h11 family
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
     AprilTagDetection tagOfInterest = null;
+    DcMotor motorArm;
 
     @Override
     public void runOpMode() {
+        // ARM STUFF
+        motorArm = hardwareMap.dcMotor.get("motorArm");
+        motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorArm.setPower(0);
+
+
+        Servo grabberServo = hardwareMap.servo.get("grabberServo");
+        grabberServo.setPosition(0.0);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
+
+        Trajectory traject2 = drive.trajectoryBuilder(startPose, false)
+                .forward(48)
+                .build();
+        Trajectory traject3 = drive.trajectoryBuilder(traject2.end(), false)
+                .back(20)
+                .build();
+        Trajectory traject4 = drive.trajectoryBuilder(traject3.end(), false)
+                .strafeLeft(16)
+                .build();
+        Trajectory right = drive.trajectoryBuilder(traject4.end(), false)
+                .strafeLeft(20)
+                .build();
+        Trajectory middle = drive.trajectoryBuilder(traject4.end(), false)
+                .strafeRight(15)
+                .build();
+        Trajectory left = drive.trajectoryBuilder(traject4.end(), false)
+                .strafeRight(60)
+                .build();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagSize, fx, fy, cx, cy);
@@ -74,7 +89,6 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         {
             @Override
             public void onOpened() {
-                camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
                 camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -135,13 +149,27 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
             telemetry.update();
         }
 
+        drive.followTrajectory(traject2);
+        drive.followTrajectory(traject3);
+
+        motorArm.setPower(0);
+        while (Math.abs(motorArm.getCurrentPosition() - -950) > 10) {
+            motorArm.setPower((-950 - motorArm.getCurrentPosition()) / 1000.0);
+        }
+        motorArm.setPower(-0.005);
+        drive.followTrajectory(traject4);
+        motorArm.setPower(0);
+        sleep(20);
+        grabberServo.setPosition(0.9);
+
+
         /* Actually do something useful */
         if (tagOfInterest.id == LEFT) {
-            // Parking position 1
+            drive.followTrajectory(left);
         } else if (tagOfInterest.id == MIDDLE) {
-            // Parking position 2
+            drive.followTrajectory(middle);
         } else {
-            // Parking position 3 and null 
+            drive.followTrajectory(right);
         }
 
         // You wouldn't have this in your autonomous, this is just to prevent the sample from ending
