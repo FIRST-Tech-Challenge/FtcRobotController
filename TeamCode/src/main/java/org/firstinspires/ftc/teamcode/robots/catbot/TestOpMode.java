@@ -21,6 +21,7 @@ import java.util.ArrayList;
 @Autonomous(name="Iron Giant OpMode", group="Challenge")
 public class TestOpMode extends OpMode {
     //autonomous variables
+
     private boolean auton = true;
     private boolean coneDown = false;
     public boolean shouldCone = true;
@@ -74,7 +75,7 @@ public class TestOpMode extends OpMode {
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing " + this.getClass() + "...");
-        telemetry.addData("Status", "Hold right_trigger to enable debug mode");
+//        telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
         motorInit();
         visionInit();
@@ -84,52 +85,7 @@ public class TestOpMode extends OpMode {
     public void init_loop() {
         if (!calibrate)
             calib();
-        tagCount = 0;
-
-        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-
-        if (currentDetections.size() != 0) {
-            tagFound = false;
-
-            for (AprilTagDetection tag : currentDetections) {
-                if (tag.id == 1 || tag.id == 2 || tag.id == 3) {
-                    tagOfInterest = tag;
-                    tagFound = true;
-                    tagCount++;
-                    break;
-                }
-            }
-
-            if (tagFound) {
-                telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                tagDetected = tagOfInterest.id;
-                tagToTelemetry(tagOfInterest);
-
-            } else {
-                tagCount = 0;
-                telemetry.addLine("Don't see tag of interest :(");
-
-                if (tagOfInterest == null) {
-                    telemetry.addLine("(The tag has never been seen)");
-                } else {
-                    telemetry.addLine("\nBut we HAVE seen a tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
-                }
-            }
-
-        } else {
-            tagCount = 0;
-            telemetry.addLine("Don't see tag of interest :(");
-
-            if (tagOfInterest == null) {
-                telemetry.addLine("(A tag has never been seen)");
-            } else {
-                telemetry.addLine("\nBut we HAVE seen a tag before; last seen at:");
-                tagToTelemetry(tagOfInterest);
-            }
-
-        }
-
+        aprilTagInitLoop();
         telemetry.update();
 
     }
@@ -141,13 +97,17 @@ public class TestOpMode extends OpMode {
         if (auton) {
             autonDrive();
         } else {
-            mechanumDrive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+            mechanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            if(calibrate)
             elevatorMove();
+            else
+                calib();
             clawMove();
         }
     }
 
     public void telemetryOutput() {
+        telemetry.addData("is auton", auton);
         telemetry.addData("Elevator Position \t", elevator.getCurrentPosition());
         telemetry.addData("Claw Position \t", claw.getPosition());
         telemetry.addData("Back Right Position \t", motorBackRight.getCurrentPosition());
@@ -159,14 +119,14 @@ public class TestOpMode extends OpMode {
 
     public void strafe() {
         if (red) {
-            if (motorFrontLeft.getCurrentPosition() < 1000)
-                mechanumDrive(0, -1, 0);
+            if (motorFrontLeft.getCurrentPosition() < 2000)
+                mechanumDrive(0, 1, 0);
             else
                 strafeDone = true;
         }
         if (!red) {
-            if (motorFrontLeft.getCurrentPosition() > -1000)
-                mechanumDrive(0, 1, 0);
+            if (motorFrontLeft.getCurrentPosition() > -2000)
+                mechanumDrive(0, -1, 0);
             else
                 strafeDone = true;
         }
@@ -177,7 +137,7 @@ public class TestOpMode extends OpMode {
             swivelDone = true;
             shouldSwivel = false;
         }
-        if (swivelDone == false) {
+        if (!swivelDone) {
             if (motorFrontLeft.getCurrentPosition() < 1000)
                 mechanumDrive(0, 0, 0.5);
             else {
@@ -187,7 +147,7 @@ public class TestOpMode extends OpMode {
     }
 
     public void forwardDropCone() {
-        if (motorFrontLeft.getCurrentPosition() < 1000)
+        if (motorFrontLeft.getCurrentPosition() < 2500)
             mechanumDrive(1, 0, 0);
         else {
             claw.setPosition(0.9);
@@ -211,16 +171,8 @@ public class TestOpMode extends OpMode {
 
     public void autonDrive() {
 
-        if (tagOfInterest != null) {
-            telemetry.addLine("Tag snapshot:\n");
-            tagToTelemetry(tagOfInterest);
-            telemetry.update();
-        } else {
-            telemetry.addLine("Tag was not detected, only dropping off the cone");
-            telemetry.update();
-        }
+        autonVisionTelemetry();
         if (!swivelDone && shouldSwivel) {
-            if (shouldSwivel)
                 swivel();
         }
         else if (swivelDone && shouldSwivel) {
@@ -265,6 +217,7 @@ public class TestOpMode extends OpMode {
             /* Actually do something useful */
             if (tagOfInterest == null) {
                 mechanumDrive(0, 0, 0);
+                auton = false;
             }
         }
     }
@@ -274,9 +227,7 @@ public class TestOpMode extends OpMode {
     public void tankDrive() {
         powerRight = 0;
         powerLeft = 0;
-
 // tanvi is the bestestestestestest
-
         if (Math.abs(gamepad1.left_stick_y) > DEADZONE) {
             powerLeft = gamepad1.left_stick_y;
         }
@@ -288,6 +239,7 @@ public class TestOpMode extends OpMode {
         motorBackRight.setPower(powerRight);
         motorBackLeft.setPower(powerLeft);
     }
+
     public void mechanumDrive(double forward, double strafe, double turn) {
         double r = Math.hypot(strafe, forward);
         double robotAngle = Math.atan2(forward, strafe) - Math.PI / 4;
@@ -296,18 +248,19 @@ public class TestOpMode extends OpMode {
         final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.sin(robotAngle) + rightX;
         final double v4 = r * Math.cos(robotAngle) - rightX;
-        motorFrontLeft.setPower(v1);
-        motorFrontRight.setPower(v4);
-        motorBackLeft.setPower(v3);
-        motorBackRight.setPower(v2);
+        motorFrontLeft.setPower(v1*.7);
+        motorFrontRight.setPower(v4*.7);
+        motorBackLeft.setPower(v3*.7);
+        motorBackRight.setPower(v2*.8);
     }
+
     public void elevatorMove()
     {
-        if(gamepad1.dpad_down) {
-            calibrate = false;
-            calib();
-        }
-        else if (calibrate) {
+//        if(gamepad1.dpad_down) {
+//            calibrate = false;
+//            calib();
+//        }
+//        else if (calibrate) {
             elevator.setPower(1);
 //            telemetry.addData("elevator position: ", elevator.getCurrentPosition());
             if (gamepad1.right_trigger > DEADZONE) {
@@ -329,15 +282,16 @@ public class TestOpMode extends OpMode {
             if (gamepad1.a)
                 elevator.setTargetPosition(100);
             currElevTics = elevator.getCurrentPosition();
-        }
+//        }
     }
     public void clawMove() {
-        telemetry.addData("Claw servo position:", claw.getPosition());
+//        telemetry.addData("Claw servo position:", claw.getPosition());
         if (gamepad1.left_bumper)
             claw.setPosition(.9);
         if (gamepad1.right_bumper)
             claw.setPosition(0);
     }
+
     public void calib(){
         elevator.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("elevator calibrating...", elevator.getCurrent(CurrentUnit.AMPS));
@@ -396,9 +350,69 @@ public class TestOpMode extends OpMode {
 
         telemetry.setMsTransmissionInterval(50);
     }
-    void tagToTelemetry(AprilTagDetection detection)
+    public void tagToTelemetry(AprilTagDetection detection)
     {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
         telemetry.addLine(String.format("\nTag Count ID=%d", tagCount));
+    }
+
+    public void aprilTagInitLoop() {
+        tagCount = 0;
+
+        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+        if (currentDetections.size() != 0) {
+            tagFound = false;
+
+            for (AprilTagDetection tag : currentDetections) {
+                if (tag.id == 1 || tag.id == 2 || tag.id == 3) {
+                    tagOfInterest = tag;
+                    tagFound = true;
+                    tagCount++;
+                    break;
+                }
+            }
+
+            if (tagFound) {
+                telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                tagDetected = tagOfInterest.id;
+                tagToTelemetry(tagOfInterest);
+
+            } else {
+                tagCount = 0;
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if (tagOfInterest == null) {
+                    telemetry.addLine("(The tag has never been seen)");
+                } else {
+                    telemetry.addLine("\nBut we HAVE seen a tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+            }
+
+        } else {
+            tagCount = 0;
+            telemetry.addLine("Don't see tag of interest :(");
+
+            if (tagOfInterest == null) {
+                telemetry.addLine("(A tag has never been seen)");
+            } else {
+                telemetry.addLine("\nBut we HAVE seen a tag before; last seen at:");
+                tagToTelemetry(tagOfInterest);
+            }
+
+        }
+
+    }
+
+    public void autonVisionTelemetry() {
+        if (tagOfInterest != null) {
+            telemetry.addLine("Tag snapshot:\n");
+            tagToTelemetry(tagOfInterest);
+            telemetry.update();
+        } else {
+            telemetry.addLine("Tag was not detected, only dropping off the cone");
+            telemetry.update();
+        }
     }
 }
