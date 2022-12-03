@@ -42,13 +42,13 @@ public abstract class BaseTeleOp extends BaseOpMode {
         if (motorLeftSlides.getCurrentPosition() < 0) {
             motorLeftSlides.setPower(0.5);
             motorRightSlides.setPower(0.5);
-        } else if (motorLeftSlides.getCurrentPosition() > 9000) {
+        } else if (motorLeftSlides.getCurrentPosition() > 6900) {
             motorLeftSlides.setPower(-0.5);
             motorRightSlides.setPower(-0.5);
         }
     }
 
     public void driveTurntableWithController() {
-        driveTurntable(1.0, 0);
+        driveTurntable(0);
     }
 }

@@ -13,7 +13,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
      * @param heading 360-degree direction robot should move (front is 0)
      * @param targetDistance distance robot should move in inches
      */
-    public void driveInches(int heading, double targetDistance) {
+    public void driveInches(double heading, double targetDistance) {
         double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double turningPower;
 
@@ -21,8 +21,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
         double xPosition;
         double yPosition;
 
-        double distanceTraveled;
-        double distanceLeft = targetDistance;
+        double traveledDistance;
+        double remainingDistance = targetDistance;
 
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -34,7 +34,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while (distanceLeft > 0 && opModeIsActive()) {
+        while (remainingDistance > 0 && opModeIsActive()) {
             turningPower = (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle) / 100.0;
 
             motorFL.setPower(0.3 + turningPower);
@@ -45,8 +45,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
             xPosition = (motorFL.getCurrentPosition() - motorFR.getCurrentPosition() - motorBL.getCurrentPosition() + motorBR.getCurrentPosition()) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES / 4.0;
             yPosition = (motorFL.getCurrentPosition() + motorFR.getCurrentPosition() + motorBL.getCurrentPosition() + motorBR.getCurrentPosition()) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES / 4.0;
 
-            distanceTraveled = Math.sqrt(Math.pow(xPosition, 2) + Math.pow(yPosition, 2));
-            distanceLeft = targetDistance - distanceTraveled;
+            traveledDistance = Math.sqrt(Math.pow(xPosition, 2) + Math.pow(yPosition, 2));
+            remainingDistance = targetDistance - traveledDistance;
         }
 
         motorFL.setPower(0.0);
@@ -57,35 +57,35 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
     /**
      * this method will allow the robot to drive straight in a specified direction using the IMU given a specified heading and distance
-     * @param targetAngle number of degrees robot should turn (+ is left and - is right)
+     * @param degrees number of degrees robot should turn (positive is counterclockwise and negative is clockwise)
      */
-    public void turnDegrees(int targetAngle) {
+    public void turnDegrees(double degrees) {
         double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double currentAngle;
 
-        double angleLeft = targetAngle;
-        double angleTraveled;
+        double remainingAngle = degrees;
+        double traveledAngle;
 
-        while (angleLeft > 0 && opModeIsActive()) {
+        while (remainingAngle > 0 && opModeIsActive()) {
             currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
             // robot is turning counter-clockwise
-            if (targetAngle > 0) {
-                motorFL.setPower(Math.min(-angleLeft / 180, -0.1));
-                motorFR.setPower(Math.min(-angleLeft / 180, -0.1));
-                motorBL.setPower(Math.max(angleLeft / 180, 0.1));
-                motorBR.setPower(Math.max(angleLeft / 180, 0.1));
+            if (degrees > 0) {
+                motorFL.setPower(Math.min(-remainingAngle / 180.0, -0.1));
+                motorFR.setPower(Math.min(-remainingAngle / 180.0, -0.1));
+                motorBL.setPower(Math.max(remainingAngle / 180.0, 0.1));
+                motorBR.setPower(Math.max(remainingAngle / 180.0, 0.1));
 
             // robot is turning clockwise
             } else {
-                motorFL.setPower(Math.max(-angleLeft / 180, 0.1));
-                motorFR.setPower(Math.max(-angleLeft / 180, 0.1));
-                motorBL.setPower(Math.min(angleLeft / 180, -0.1));
-                motorBR.setPower(Math.min(angleLeft / 180, -0.1));
+                motorFL.setPower(Math.max(-remainingAngle / 180.0, 0.1));
+                motorFR.setPower(Math.max(-remainingAngle / 180.0, 0.1));
+                motorBL.setPower(Math.min(remainingAngle / 180.0, -0.1));
+                motorBR.setPower(Math.min(remainingAngle / 180.0, -0.1));
             }
 
-            angleTraveled = angleError(currentAngle, startAngle);
-            angleLeft = angleError(angleTraveled, targetAngle); // now implements angleError method
+            traveledAngle = currentAngle - startAngle;
+            remainingAngle = degrees - traveledAngle;
         }
 
         motorFL.setPower(0.0);
