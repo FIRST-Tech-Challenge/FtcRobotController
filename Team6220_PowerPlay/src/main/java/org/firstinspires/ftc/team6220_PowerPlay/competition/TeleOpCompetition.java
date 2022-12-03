@@ -24,7 +24,6 @@ public class TeleOpCompetition extends BaseTeleOp {
             driveChassisWithController();
             driveGrabberWithController();
             driveSlidesWithController();
-            idle();
         }
     }
 }
