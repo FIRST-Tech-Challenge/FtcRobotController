@@ -3,6 +3,7 @@ package org.firstinspires.ftc.blackswan;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -21,7 +22,7 @@ import java.util.Date;
 public class Robot {
     Telemetry telemetry;
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
-    DcMotor slide;
+    DcMotor linearSlide;
     Servo clawservo;
     BNO055IMU imu;
     LinearOpMode opMode;
@@ -41,7 +42,11 @@ public class Robot {
         motorFrontRight = hardwareMap.get(DcMotor.class, "frontRight");
         motorBackRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        slide = hardwareMap.get(DcMotor.class, "slide");
+        linearSlide = hardwareMap.get(DcMotor.class, "linearSlide");
+
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -137,9 +142,9 @@ public class Robot {
 
         motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        motorFrontLeft.setPower(abs(speed) * -1);
+        motorFrontLeft.setPower(abs(speed));
         motorFrontRight.setPower(abs(speed));
-        motorBackLeft.setPower(abs(speed));
+        motorBackLeft.setPower(abs(speed) * -1);
         motorBackRight.setPower(abs(speed) * -1);
 
         while (this.opMode.opModeIsActive() &&
@@ -164,29 +169,13 @@ public class Robot {
     }
 
     public double gyroAngle() {
-        Orientation angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        return angles.secondAngle;
+        return angles.firstAngle;
     }
 
     public void right(double distance, double speed) {
         left(-distance, speed);
-    }
-
-    public void turnLeft(double angle, double speed) {
-
-        motorFrontLeft.setPower(-speed);
-        motorFrontRight.setPower(speed);
-        motorBackLeft.setPower(-speed);
-        motorBackRight.setPower(speed);
-
-        double targetAngle = gyroAngle() - angle;
-
-        while (targetAngle < gyroAngle()) {
-            telemetry.addData("Current Gyro Angle", gyroAngle());
-            telemetry.update();
-        }
-        stopMotors();
     }
 
     public void turnRight(double angle, double speed) {
@@ -198,8 +187,26 @@ public class Robot {
 
         double targetAngle = gyroAngle() + angle;
 
-        while (targetAngle > gyroAngle()) {
+        while (targetAngle > Math.abs(gyroAngle()) && opMode.opModeIsActive()) {
             telemetry.addData("Current Gyro Angle", gyroAngle());
+            telemetry.addData("Target Angle", targetAngle);
+            telemetry.update();
+        }
+        stopMotors();
+    }
+
+    public void turnLeft(double angle, double speed) {
+
+        motorFrontLeft.setPower(-speed);
+        motorFrontRight.setPower(speed);
+        motorBackLeft.setPower(-speed);
+        motorBackRight.setPower(speed);
+
+        double targetAngle = gyroAngle() + angle;
+
+        while (targetAngle > Math.abs(gyroAngle()) && opMode.opModeIsActive()) {
+            telemetry.addData("Current Gyro Angle", gyroAngle());
+            telemetry.addData("Target Angle", targetAngle);
             telemetry.update();
         }
         stopMotors();
@@ -222,30 +229,3 @@ public class Robot {
         }
     }
 }
-
-//    public void armThing(int level) {
-//        if (level == 1) {
-//            slide.setTargetPosition(500);
-//            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            slide.setPower(.5);
-//            while (slide.isBusy() && this.opMode.opModeIsActive()) {
-//            }
-//        }
-//        if(level ==2){
-//
-//            slide.setTargetPosition(800);
-//            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            slide.setPower(.5);
-//            while (slide.isBusy() && this.opMode.opModeIsActive()) {
-//            }
-//        }
-//        if(level ==3){
-//            slide.setTargetPosition(1200);
-//            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            slide.setPower(.5);
-//            while (slide.isBusy() && this.opMode.opModeIsActive()) {
-//            }
-//        }
-//
-//    }
-
