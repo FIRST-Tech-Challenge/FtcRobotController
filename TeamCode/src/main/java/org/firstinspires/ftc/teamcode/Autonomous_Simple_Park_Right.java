@@ -258,6 +258,9 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
         telemetry.addData("_grip manufacturer", _grip.getManufacturer());
         telemetry.update();
 
+        if (autoMode) {
+            _grip.setPosition(gripMinPosition);
+        }
 
        // _elbow.scaleRange(0.2,0.8);
         waitForStart();
@@ -267,6 +270,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
         Thread threadWheel = new Thread(new MultithreadingWheel());
         Thread threadArm = new Thread(new MultithreadingArm());
 
+        moreTimeToStart.reset();
         while (opModeIsActive()) {
                 if (moreTimeToStart.milliseconds() < 100) {
                 telemetry.addData("Waiting millisecond: ", moreTimeToStart.milliseconds()  );
@@ -276,7 +280,13 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
             }
             if (firstTime) {
                 firstTime = false;
-                resetToPresetPosition(0);
+                if (autoMode) {
+                    resetToPresetPosition(0);
+                }
+                else {
+                    _shoulder.setPosition(shoulderDefaultPosition);
+                    _elbow.setPosition(elbowDefaultPosition);
+                }
                 if (autoMode == false) {
                     threadWheel.start();
                     threadArm.start();
@@ -286,7 +296,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
                     //camera.setCameraName(cameraName);
                 }
                 if (autoMode == true) {
-                    sleep(200);
+                    waitElapsedTime(200);
                     replayActions(presetActionsStep1);
                 }
             }
@@ -305,12 +315,14 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
             logAction("Initial");
             // center the control arms
             _grip.setPosition(gripMinPosition);
+            int waitGripTime = 1000;
                 if (autoMode == true) {
-                sleep(1000);
+                waitGripTime = 100;
                 }
                 else {
-                    sleep(200);
+                waitGripTime = 200;
                 }
+            waitElapsedTime(waitGripTime);
 
             _shoulder.setPosition(shoulderDefaultPosition);
             if (elbowSlowMotionInitial) {
@@ -326,7 +338,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
                     elbowPosition -= stepSize;
                     if (elbowPosition >= elbowBothMaxShoulderBeginPosition)
                         _elbow.setPosition(elbowPosition);
-                    sleep(perStepSleepTime);
+                    waitElapsedTime(perStepSleepTime);
                     remainTime -= perStepSleepTime;
                 }
             }
@@ -483,7 +495,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
             playAction("shoulder_up", true);
             return;
         }
-        if (debugMode && gamepad2.dpad_down || (enablePad1Control && gamepad1.dpad_down)) {
+        if (gamepad2.dpad_down || (enablePad1Control && gamepad1.dpad_down)) {
             playAction("shoulder_down", true);
             return;
         }
@@ -491,7 +503,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
             playAction("platform_left", true);
             return;
         }
-        if (gamepad2.dpad_right || (enablePad1Control && gamepad1.dpad_right)) {
+        if (debugMode && gamepad2.dpad_right || (enablePad1Control && gamepad1.dpad_right)) {
             playAction("platform_right", true);
             return;
         }
@@ -656,7 +668,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
 
             if (splitStrings[0].contains("sleep")) {
                 repeatTimes = Integer.parseInt(splitStrings[1]);
-                sleep(repeatTimes);
+                waitElapsedTime(repeatTimes);
             }
             else if (splitStrings[0].contains("ai_get_parkposition")) {
                 aiGetParkPosition();
@@ -692,7 +704,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
                         return;
                     }
                     playAction(splitStrings[0], false);
-                    sleep(10);
+                    waitElapsedTime(10);
                 }
             }
         }
@@ -746,7 +758,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
                     elbowPosition += stepSize;
                     if (elbowPosition < elbowMinPosition)
                         _elbow.setPosition(elbowPosition);
-                    sleep(perStepSleepTime);
+                    waitElapsedTime(perStepSleepTime);
                     remainTime -= perStepSleepTime;
                 }
             }
@@ -754,7 +766,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
         }
         else if (splitStrings[0].equals("both_max")) {
             _elbow.setPosition(elbowBothMaxShoulderBeginPosition);
-            sleep(elbowTimeBothMaxShoulderBegin);
+            waitElapsedTime(elbowTimeBothMaxShoulderBegin);
             double shoulderPosition = _shoulder.getPosition();
             _shoulder.setPosition(shoulderMaxPosition);
             if (shoulderPosition > shoulderMaxPosition * 2 / 3) {
@@ -762,7 +774,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
             }
             else {
                 _elbow.setPosition(elbowBothMaxShoulderBeginPosition);
-                sleep(elbowTimeBothMaxShoulderBegin);
+                waitElapsedTime(elbowTimeBothMaxShoulderBegin);
                 int remainTime = shoulderTimeFromMinToMax - elbowTimeBothMaxShoulderBegin;
                 int perStepSleepTime = 100;
                 double stepSize = (elbowBothMaxShoulderBeginPosition - elbowMaxPosition) / (remainTime / perStepSleepTime);
@@ -774,7 +786,7 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
                     elbowPosition -= stepSize;
                     if (elbowPosition >= elbowMaxPosition)
                         _elbow.setPosition(elbowPosition);
-                    sleep(perStepSleepTime);
+                    waitElapsedTime(perStepSleepTime);
                     remainTime -= perStepSleepTime;
                 }
             }
@@ -1220,7 +1232,16 @@ public class Autonomous_Simple_Park_Right extends LinearOpMode {
         }
         String sDistance = Double.toString(distance);
         wheel(operation, sDistance, "0.5", 10000);
+    }
 
+    void waitElapsedTime(int waitTime)
+    {
+        ElapsedTime t = new ElapsedTime();
+        while (t.milliseconds() < waitTime) {
+            telemetry.addData("Waiting millisecond: ", moreTimeToStart.milliseconds()  );
+            telemetry.update();
+            continue;
+        }
     }
  }
 
