@@ -60,18 +60,34 @@ public class BlueLeft extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        waitForStart();//possubky the problem
+        waitForStart();//possubly the problem
         if (opModeIsActive()) {
 
 
-            move(1, 2000);
-            gyroTurning(90);
-            move(1, 800);
-            craneinput();
-            move(1,-500);
-            spin(100, -1600);
-            move(1, -500);
 
+            move(1, 1900);
+            gyroTurning(90);
+            move(1, 750);
+
+            Left.setPower(-1);
+            craneinput();
+            sleep(1000);
+            Left.setPower(0);
+
+            move(1,-500);
+            spin(140, -1600);
+            sleep(1000);
+            move(1, -300);
+
+            /*
+            gyroTurning(180);
+            move(1, -300);
+            crane(-1500);
+            Left.setPower(-1);
+            crane(-1600);
+            move(1,-200);
+            crane(0);
+            */
 
 
         }
@@ -178,22 +194,15 @@ public class BlueLeft extends LinearOpMode {
         }
 
     }
-    public void craneinput(){
-        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Crane.setTargetPosition(-400);
+    public void craneinput() {
+        crane(-500);
+        move(0.5, 350);
+        //Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Crane.setTargetPosition(0);
+        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Crane.setPower(1);
-        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        move(0.5, 200);
-        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Crane.setTargetPosition(400);
-        Left.setPower(1);
-        Crane.setPower(.75);
-        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Left.setPower(0);
-
-
-
-
+        while (Crane.isBusy() && opModeIsActive()) {
+        }
     }
 
     public void strafeLeft(double power, int time) throws InterruptedException {
