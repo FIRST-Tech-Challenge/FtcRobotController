@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.dragonswpilib.CommandBase;
+import org.firstinspires.ftc.dragonswpilib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 public class DriveAutoCommand extends CommandBase {
@@ -24,7 +24,7 @@ public class DriveAutoCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        mDriveSubsystem.drive(0, 0.5, 0);
+        mDriveSubsystem.ArcadeDrive(0.5, 0);
     }
 
     // Called once the command ends or is interrupted.
@@ -36,6 +36,6 @@ public class DriveAutoCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }

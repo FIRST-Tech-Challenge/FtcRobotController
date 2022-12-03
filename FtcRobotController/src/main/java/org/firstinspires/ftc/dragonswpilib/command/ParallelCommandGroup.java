@@ -1,4 +1,8 @@
-package org.firstinspires.ftc.teamcode.dragonswpilib;
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package org.firstinspires.ftc.dragonswpilib.command;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,6 +18,7 @@ import java.util.Map;
 public class ParallelCommandGroup extends CommandGroupBase {
   // maps commands in this group to whether they are still running
   private final Map<Command, Boolean> m_commands = new HashMap<>();
+  private boolean m_runWhenDisabled = true;
 
   /**
    * Creates a new ParallelCommandGroup. The given commands will be executed simultaneously. The
@@ -28,6 +33,7 @@ public class ParallelCommandGroup extends CommandGroupBase {
 
   @Override
   public final void addCommands(Command... commands) {
+    //requireUngrouped(commands);
 
     if (m_commands.containsValue(true)) {
       throw new IllegalStateException(
@@ -43,6 +49,7 @@ public class ParallelCommandGroup extends CommandGroupBase {
       }
       m_commands.put(command, false);
       m_requirements.addAll(command.getRequirements());
+      m_runWhenDisabled &= command.runsWhenDisabled();
     }
   }
 
@@ -82,5 +89,10 @@ public class ParallelCommandGroup extends CommandGroupBase {
   @Override
   public final boolean isFinished() {
     return !m_commands.containsValue(true);
+  }
+
+  @Override
+  public boolean runsWhenDisabled() {
+    return m_runWhenDisabled;
   }
 }

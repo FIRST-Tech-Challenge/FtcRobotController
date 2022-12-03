@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.dragonswpilib;
+package org.firstinspires.ftc.dragonswpilib.math;
 
 public final class MathUtil {
     private MathUtil() {

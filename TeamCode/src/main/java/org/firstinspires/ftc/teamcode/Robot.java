@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.dragonswpilib.CommandScheduler;
+import org.firstinspires.ftc.dragonswpilib.command.CommandScheduler;
 
 @TeleOp
 public class Robot extends OpMode{
@@ -13,7 +13,7 @@ public class Robot extends OpMode{
      */
     @Override
     public void init() {
-        CommandScheduler.getInstance().reset();
+        //CommandScheduler.getInstance().reset();
         new RobotContainer(gamepad1, gamepad2, telemetry, hardwareMap);
     }
 
@@ -45,6 +45,6 @@ public class Robot extends OpMode{
      */
     @Override
     public void stop() {
-        CommandScheduler.getInstance().reset();
+        //CommandScheduler.getInstance().reset();
     }
 }

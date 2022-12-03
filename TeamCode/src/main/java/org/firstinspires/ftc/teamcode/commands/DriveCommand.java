@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.dragonswpilib.CommandBase;
+import org.firstinspires.ftc.dragonswpilib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 public class DriveCommand extends CommandBase {
@@ -28,10 +28,9 @@ public class DriveCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double axeX = mGamepad.left_stick_x;
-        double axeY = -mGamepad.left_stick_y;
-        double axeZ = mGamepad.right_stick_x;
-        mDriveSubsystem.drive(axeX, axeY, axeZ);
+        double rotSpeed = -mGamepad.left_stick_x;
+        double fwdSpeed = -mGamepad.left_stick_y;
+        mDriveSubsystem.ArcadeDrive(fwdSpeed, rotSpeed);
     }
 
     // Called once the command ends or is interrupted.

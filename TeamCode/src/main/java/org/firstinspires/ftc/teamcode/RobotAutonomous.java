@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.dragonswpilib.Command;
-import org.firstinspires.ftc.teamcode.dragonswpilib.CommandScheduler;
+import org.firstinspires.ftc.dragonswpilib.command.Command;
+import org.firstinspires.ftc.dragonswpilib.command.CommandScheduler;
 
 @Autonomous
 public class RobotAutonomous extends OpMode{
@@ -17,7 +17,7 @@ public class RobotAutonomous extends OpMode{
      */
     @Override
     public void init() {
-        CommandScheduler.getInstance().reset();
+        //CommandScheduler.getInstance().reset();
         mRobotContainer = new RobotContainer(gamepad1, gamepad2, telemetry, hardwareMap);
     }
 
@@ -58,6 +58,6 @@ public class RobotAutonomous extends OpMode{
         if (mAutonomousCommand != null) {
             mAutonomousCommand.cancel();
         }
-        CommandScheduler.getInstance().reset();
+        //CommandScheduler.getInstance().reset();
     }
 }
