@@ -3,16 +3,21 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="MotorManualTeleop", group="A")
-@Disabled
+
 public class MotorManualTeleop extends DriveMethods{
     DcMotor motor;
     double motorPower = 0;
     @Override
     public void runOpMode() {
         motor = hardwareMap.get(DcMotor.class, "motor");
+
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         waitForStart();
 
 
@@ -39,8 +44,32 @@ public class MotorManualTeleop extends DriveMethods{
             }
 
             motor.setPower(motorPower);
-            telemetry.addLine("Motorpower" + motorPower);
+            telemetry.addLine("Motorpower: " + motorPower);
+            telemetry.addLine("Motorposition: " + motor.getCurrentPosition());
             telemetry.update();
         }
     }
 }
+
+/*
+
+Giraffe
+
+                          _- _ , - . _
+                        `,% o` ~~-_,'.'
+                        % %@ - % %, -'%,
+                       ,-, . _ --\ -.%
+              P^=.     `'"   |+|'    `
+              ||             |+|
+              ||             |+|
+              ||             |+|
+        ______/|             |+|
+       `| ___ ,/             |+|
+        ||   ||              |+|
+        ||   ||              |+|
+________||___||___.__________/H|____
+
+
+
+
+ */

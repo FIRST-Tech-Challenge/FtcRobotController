@@ -15,7 +15,7 @@ public class DamienCVTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        DamienCVPipeline pipeline = new DamienCVPipeline();
+        DamienCVPipelineRB_BB pipeline = new DamienCVPipelineRB_BB();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(pipeline);
@@ -31,6 +31,7 @@ public class DamienCVTest extends LinearOpMode {
 
             }
         });
+
 
         waitForStart();
         while(opModeIsActive()) {

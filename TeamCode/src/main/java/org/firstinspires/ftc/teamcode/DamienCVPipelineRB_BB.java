@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -10,7 +8,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.Arrays;
 
-public class DamienCVPipeline extends OpenCvPipeline {
+public class DamienCVPipelineRB_BB extends OpenCvPipeline {
     int lastResult = 0;
     String currentResultStr = "";
     double greenPixels = 0;
@@ -25,6 +23,8 @@ public class DamienCVPipeline extends OpenCvPipeline {
     Mat inputPurple = new Mat();
     Mat returnedMat = new Mat();
 
+
+
     @Override
     public Mat processFrame(Mat input) {
 //        Mat grayInput = new Mat();
@@ -33,9 +33,9 @@ public class DamienCVPipeline extends OpenCvPipeline {
 //        Imgproc.cvtColor(input,grayInput,Imgproc.COLOR_RGB2GRAY);
         Imgproc.cvtColor(inputRGB,hsvInput,Imgproc.COLOR_RGB2HSV);
 
-        Core.inRange(hsvInput, new Scalar(46, 104, 80), new Scalar(78, 240, 255), inputGreen); // 30 - 80 100 - 255 s 100-255 v
-        Core.inRange(hsvInput, new Scalar(83, 104, 80), new Scalar(96, 240, 255), inputYellow); // 90 - 100 h
-        Core.inRange(hsvInput, new Scalar(141, 104, 80), new Scalar(170, 240, 255), inputPurple); // 150 - 190 h
+        Core.inRange(hsvInput, new Scalar(28, 46, 51), new Scalar(68, 240, 255), inputGreen); // 30 - 80 100 - 255 s 100-255 v
+        Core.inRange(hsvInput, new Scalar(81, 115, 164), new Scalar(107, 255, 255), inputYellow); // 90 - 100 h
+        Core.inRange(hsvInput, new Scalar(159, 46, 51), new Scalar(184, 255, 255), inputPurple); // 150 - 190 h
 
         purplePixels = Core.sumElems(inputPurple).val[0];
         greenPixels = Core.sumElems(inputGreen).val[0];
@@ -59,6 +59,18 @@ public class DamienCVPipeline extends OpenCvPipeline {
         } if(currentView == 3) {
             returnedMat = inputGreen;
         }
+
+        switch (lastResult) {
+            case 1:
+                currentResultStr = "purple";
+                break;
+            case 2:
+                currentResultStr = "green";
+                break;
+            case 3:
+                currentResultStr = "yellow";
+                break;
+        }
         return returnedMat;
     }
     public int getCurrentResults() {
@@ -70,10 +82,10 @@ public class DamienCVPipeline extends OpenCvPipeline {
                 currentResultStr = "purple";
                 break;
             case 2:
-                currentResultStr = "yellow";
+                currentResultStr = "green";
                 break;
             case 3:
-                currentResultStr = "green";
+                currentResultStr = "yellow";
                 break;
         }
         return currentResultStr;
