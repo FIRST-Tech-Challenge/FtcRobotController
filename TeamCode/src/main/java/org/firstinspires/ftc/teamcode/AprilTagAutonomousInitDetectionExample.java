@@ -21,10 +21,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -36,6 +37,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import java.util.ArrayList;
 
 @TeleOp
+@Disabled
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -53,22 +55,32 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
 
     // UNITS ARE METERS
     double tagsize = 0.166;
-    
-    // I commented this out to note the ID tags I will be using. 
-    // int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
-    //int ID_TAG_OF_INTEREST = 44; // Tag ID 18 from the 36h11 family
-    //int ID_TAG_OF_INTEREST = 95; // Tag ID 18 from the 36h11 family
+
+    int ID_TAG_OF_INTEREST1 = 1; // Tag ID 1 from the 36h11 family
+    int ID_TAG_OF_INTEREST2 = 3; // Tag ID 3 from the 36h11 family
+    int ID_TAG_OF_INTEREST3 = 9; // Tag ID 9 from the 36h11 family
 
     AprilTagDetection tagOfInterest = null;
 
-    /* Motor Configurations:
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-    private DcMotor lift = null;
-    */
+    // Declare Devices
+    DcMotor leftFrontMotor = null;
+    DcMotor rightFrontMotor = null;
+    DcMotor leftBackMotor = null;
+    DcMotor rightBackMotor = null;
+
+
+
+    // drive motor position variables
+    private int lfPos; private int rfPos; private int lrPos; private int rrPos;
+
+    // operational constants
+    private double fast = 0.5; // Limit motor power to this value for Andymark RUN_USING_ENCODER mode
+    private double medium = 0.3; // medium speed
+    private double slow = 0.1; // slow speed
+    private double clicksPerInch = 87.5; // empirically measured
+    private double clicksPerDeg = 21.94; // empirically measured
+    // private double lineThreshold = 0.7; // floor should be below this value, line above
+    // private double redThreshold = 1.9; // red should be below this value, blue above
 
     @Override
     public void runOpMode() {
@@ -76,21 +88,22 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Cam1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-        /*
-        // Corresponds motor names to motor variables.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFront");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBack");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
-        lift = hardwareMap.get(DcMotor.class, "liftMotor");
+        leftFrontMotor = hardwareMap.dcMotor.get("leftFront");
+        rightFrontMotor = hardwareMap.dcMotor.get("rightFront");
+        leftBackMotor = hardwareMap.dcMotor.get("leftBack");
+        rightBackMotor = hardwareMap.dcMotor.get("rightBack");
 
-        // Intializes motor directions.
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        lift.setDirection(DcMotor.Direction.FORWARD);
-        */
+        // The right motors need reversing
+        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        // Set the drive motor run modes:
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -124,7 +137,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == ID_TAG_OF_INTEREST)
+                    if(tag.id == ID_TAG_OF_INTEREST1 || tag.id == ID_TAG_OF_INTEREST2 || tag.id == ID_TAG_OF_INTEREST3)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -194,29 +207,26 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         /* Actually do something useful */
         if(tagOfInterest == null)
         {
-            /*
-             * Insert your autonomous code here, presumably running some default configuration
-             * since the tag was never sighted during INIT
-             */
+            moveForward(24, fast);
         }
         else
         {
-            /*
-             * Insert your autonomous code here, probably using the tag pose to decide your configuration.
-             */
-
-            // e.g.
-            if(tagOfInterest.pose.x <= 20)
-            {
-                // do something
+            if (tagOfInterest.id == 1) {
+                //moveRight(-24, medium);
+               // sleep(500);
+                moveForward(24, fast);
             }
-            else if(tagOfInterest.pose.x >= 20 && tagOfInterest.pose.x <= 50)
-            {
-                // do something else
+            else if (tagOfInterest.id == 3) {
+                //moveRight(-24, medium);
+               // sleep(500);
+                //moveForward(48, fast);
+               // sleep(500);
+                //moveRight(-24, medium);
             }
-            else if(tagOfInterest.pose.x >= 50)
-            {
-                // do something else
+            else if (tagOfInterest.id == 9) {
+                //moveRight(24, medium);
+                //sleep(500);
+                //moveForward(24, fast);
             }
         }
 
@@ -234,5 +244,196 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+
+    private void moveForward(int howMuch, double speed) {
+        // howMuch is in inches. A negative howMuch moves backward.
+
+        // fetch motor positions
+        lfPos = leftFrontMotor.getCurrentPosition();
+        rfPos = rightFrontMotor.getCurrentPosition();
+        lrPos = leftBackMotor.getCurrentPosition();
+        rrPos = rightBackMotor.getCurrentPosition();
+
+        // calculate new targets
+        lfPos = 1000; //howMuch * clicksPerInch;
+        rfPos = 1000; //howMuch * clicksPerInch;
+        lrPos = 1000; //howMuch * clicksPerInch;
+        rrPos = 1000; //howMuch * clicksPerInch;
+
+        // move robot to new position
+        leftFrontMotor.setTargetPosition(lfPos);
+        rightFrontMotor.setTargetPosition(rfPos);
+        leftBackMotor.setTargetPosition(lrPos);
+        rightBackMotor.setTargetPosition(rrPos);
+
+        leftFrontMotor.setPower(speed);
+        rightFrontMotor.setPower(speed);
+        leftBackMotor.setPower(speed);
+        rightBackMotor.setPower(speed);
+
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // wait for move to complete
+        while (leftFrontMotor.isBusy() && rightFrontMotor.isBusy() &&
+                leftBackMotor.isBusy() && rightBackMotor.isBusy()) {
+
+            // Display it for the driver.
+            telemetry.addLine("Move Foward");
+            telemetry.addData("Target", "%7d :%7d", lfPos, rfPos, lrPos, rrPos);
+            telemetry.addData("Actual", "%7d :%7d", leftFrontMotor.getCurrentPosition(),
+                    rightFrontMotor.getCurrentPosition(), leftBackMotor.getCurrentPosition(),
+                    rightBackMotor.getCurrentPosition());
+            telemetry.update();
+        }
+
+        // Stop all motion;
+        leftFrontMotor.setPower(0);
+        rightFrontMotor.setPower(0);
+        leftBackMotor.setPower(0);
+        rightBackMotor.setPower(0);
+    }
+
+    private void moveRight(int howMuch, double speed) {
+        // howMuch is in inches. A negative howMuch moves backward.
+
+        // fetch motor positions
+        lfPos = leftFrontMotor.getCurrentPosition();
+        rfPos = rightFrontMotor.getCurrentPosition();
+        lrPos = leftBackMotor.getCurrentPosition();
+        rrPos = rightBackMotor.getCurrentPosition();
+
+        // calculate new targets
+        lfPos += howMuch * clicksPerInch;
+        rfPos -= howMuch * clicksPerInch;
+        lrPos -= howMuch * clicksPerInch;
+        rrPos += howMuch * clicksPerInch;
+
+        // move robot to new position
+        leftFrontMotor.setTargetPosition(lfPos);
+        rightFrontMotor.setTargetPosition(rfPos);
+        leftBackMotor.setTargetPosition(lrPos);
+        rightBackMotor.setTargetPosition(rrPos);
+
+        leftFrontMotor.setPower(speed);
+        rightFrontMotor.setPower(speed);
+        leftBackMotor.setPower(speed);
+        rightBackMotor.setPower(speed);
+
+        // wait for move to complete
+        while (leftFrontMotor.isBusy() && rightFrontMotor.isBusy() &&
+                leftBackMotor.isBusy() && rightBackMotor.isBusy()) {
+
+            // Display it for the driver.
+            telemetry.addLine("Strafe Right");
+            telemetry.addData("Target", "%7d :%7d", lfPos, rfPos, lrPos, rrPos);
+            telemetry.addData("Actual", "%7d :%7d", leftFrontMotor.getCurrentPosition(),
+                    rightFrontMotor.getCurrentPosition(), leftBackMotor.getCurrentPosition(),
+                    rightBackMotor.getCurrentPosition());
+            telemetry.update();
+        }
+
+        // Stop all motion;
+        leftFrontMotor.setPower(0);
+        rightFrontMotor.setPower(0);
+        leftBackMotor.setPower(0);
+        rightBackMotor.setPower(0);
+
+    }
+
+    private void turnClockwise(int whatAngle, double speed) {
+        // whatAngle is in degrees. A negative whatAngle turns counterclockwise.
+
+        // fetch motor positions
+        lfPos = leftFrontMotor.getCurrentPosition();
+        rfPos = rightFrontMotor.getCurrentPosition();
+        lrPos = leftBackMotor.getCurrentPosition();
+        rrPos = rightBackMotor.getCurrentPosition();
+
+        // calculate new targets
+        lfPos += whatAngle * clicksPerDeg;
+        rfPos -= whatAngle * clicksPerDeg;
+        lrPos += whatAngle * clicksPerDeg;
+        rrPos -= whatAngle * clicksPerDeg;
+
+        // move robot to new position
+        leftFrontMotor.setTargetPosition(lfPos);
+        rightFrontMotor.setTargetPosition(rfPos);
+        leftBackMotor.setTargetPosition(lrPos);
+        rightBackMotor.setTargetPosition(rrPos);
+        leftFrontMotor.setPower(speed);
+        rightFrontMotor.setPower(speed);
+        leftBackMotor.setPower(speed);
+        rightBackMotor.setPower(speed);
+
+        // wait for move to complete
+        while (leftFrontMotor.isBusy() && rightFrontMotor.isBusy() &&
+                leftBackMotor.isBusy() && rightBackMotor.isBusy()) {
+
+            // Display it for the driver.
+            telemetry.addLine("Turn Clockwise");
+            telemetry.addData("Target", "%7d :%7d", lfPos, rfPos, lrPos, rrPos);
+            telemetry.addData("Actual", "%7d :%7d", leftFrontMotor.getCurrentPosition(),
+                    rightFrontMotor.getCurrentPosition(), leftBackMotor.getCurrentPosition(),
+                    rightBackMotor.getCurrentPosition());
+            telemetry.update();
+        }
+
+        // Stop all motion;
+        leftFrontMotor.setPower(0);
+        rightFrontMotor.setPower(0);
+        leftBackMotor.setPower(0);
+        rightBackMotor.setPower(0);
+    }
+    private void moveToLine(int howMuch, double speed) {
+        // howMuch is in inches. The robot will stop if the line is found before
+        // this distance is reached. A negative howMuch moves left, positive moves right.
+
+        // fetch motor positions
+        lfPos = leftFrontMotor.getCurrentPosition();
+        rfPos = rightFrontMotor.getCurrentPosition();
+        lrPos = leftBackMotor.getCurrentPosition();
+        rrPos = rightBackMotor.getCurrentPosition();
+
+        // calculate new targets
+
+        lfPos += 1000; //howMuch * clicksPerInch;
+        rfPos -= 1000; //howMuch * clicksPerInch;
+        lrPos -= 1000; //howMuch * clicksPerInch;
+        rrPos += 1000; //howMuch * clicksPerInch;
+
+        // move robot to new position
+        leftFrontMotor.setTargetPosition(lfPos);
+        rightFrontMotor.setTargetPosition(rfPos);
+        leftBackMotor.setTargetPosition(lrPos);
+        rightBackMotor.setTargetPosition(rrPos);
+        leftFrontMotor.setPower(speed);
+        rightFrontMotor.setPower(speed);
+        leftBackMotor.setPower(speed);
+        rightBackMotor.setPower(speed);
+
+        // wait for move to complete
+
+        while (leftFrontMotor.isBusy() && rightFrontMotor.isBusy() &&
+                leftBackMotor.isBusy() && rightBackMotor.isBusy()) {
+            // if (mrOds.getLightDetected() > lineThreshold) break;
+            // Display it for the driver.
+            telemetry.addLine("Move To Line");
+            telemetry.addData("Target", "%7d :%7d", lfPos, rfPos, lrPos, rrPos);
+            telemetry.addData("Actual", "%7d :%7d", leftFrontMotor.getCurrentPosition(),
+                    rightFrontMotor.getCurrentPosition(), leftBackMotor.getCurrentPosition(),
+                    rightBackMotor.getCurrentPosition());
+            telemetry.update();
+        }
+
+        // Stop all motion;
+        leftFrontMotor.setPower(0);
+        rightFrontMotor.setPower(0);
+        leftBackMotor.setPower(0);
+        rightBackMotor.setPower(0);
+
     }
 }
