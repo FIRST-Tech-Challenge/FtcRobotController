@@ -86,7 +86,6 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
         telemetry.update();
         waitForStart();
 
-        if (opModeIsActive()) {
             while (opModeIsActive()) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
@@ -113,7 +112,6 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
                 }
             }
         }
-    }
 
     /**
      * Initialize the Vuforia localization engine.
