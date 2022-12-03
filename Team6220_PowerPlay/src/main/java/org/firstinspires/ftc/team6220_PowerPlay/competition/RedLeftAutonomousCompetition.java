@@ -15,8 +15,7 @@ public class RedLeftAutonomousCompetition extends AprilTagDetect {
     public void runOpMode() throws InterruptedException {
         initialize();
 
-        servoGrabber.setPosition(0.45);
-        driveTurntable(1, Constants.TURNTABLE_DEFAULT_POSITION);
+        driveTurntable(0);
         int signal = detectAprilTag();
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
