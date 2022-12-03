@@ -137,4 +137,78 @@ public class Field {
             return false;
         }
     }
+    //      270
+    //      ||
+    // 0 = ROBOT = 180
+    //      ||
+    //      90
+    public void autoTileAim(int leftright, double tileX, double tileY, double tileT){
+        Trajectory turnLeft = null; //initialize b4hand bc it be like that
+        Trajectory turnRight = null; //^^^^
+        //the outermost if statement checks if current angle is in between a margin of 30 deg from up/right/down/left
+        double curT = roadrun.getPoseEstimate().getHeading(); //current angle
+        if(curT < Math.toRadians(315) && curT > Math.toRadians(225)){ //up
+            if(leftright == 0){ //left
+                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT)) //starting pos
+                        .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY - 17.625, //guessed values to get to pole
+                                tileT + Math.toRadians(30)), Math.toRadians(270)) //turning left + end tangent
+                        .build();
+            }
+            if(leftright == 1){ //right
+                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT)) //starting pos
+                        .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY - 17.625, //guessed values to get to pole
+                                tileT - Math.toRadians(30)), Math.toRadians(270)) //turning right + end tangent
+                        .build(); //gobeeldah
+            }
+        }
+        if(curT < Math.toRadians(225) && curT > Math.toRadians(135)){ //right
+            if(leftright == 0){
+                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
+                        .splineToSplineHeading(new Pose2d(tileX - 17.625 , tileY - 5.875,
+                                tileT + Math.toRadians(30)), Math.toRadians(180))
+                        .build();
+
+            }
+            if(leftright == 1){
+                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
+                        .splineToSplineHeading(new Pose2d(tileX - 17.625 , tileY + 5.875,
+                                tileT - Math.toRadians(30)), Math.toRadians(180))
+                        .build();
+            }
+        }
+        if(curT < Math.toRadians(135) && curT > Math.toRadians(45)){ //down
+            if(leftright == 0){
+                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
+                        .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY + 17.625,
+                                tileT + Math.toRadians(30)), Math.toRadians(90))
+                        .build();
+            }
+            if(leftright == 1){
+                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
+                        .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY + 17.625,
+                                tileT - Math.toRadians(30)), Math.toRadians(90))
+                        .build();
+            }
+        }
+        if(curT < Math.toRadians(45) && curT > Math.toRadians(315)){ //left
+            if(leftright == 0){
+                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
+                        .splineToSplineHeading(new Pose2d(tileX + 17.625 , tileY + 5.875,
+                                tileT + Math.toRadians(30)), Math.toRadians(0))
+                        .build();
+            }
+            if(leftright == 1){
+                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
+                        .splineToSplineHeading(new Pose2d(tileX + 17.625 , tileY - 5.875,
+                                tileT - Math.toRadians(30)), Math.toRadians(0))
+                        .build();
+            }
+        }
+        if(leftright == 0){ //left
+            roadrun.followTrajectoryAsync(turnLeft); //go to left junction
+        }
+        else if(leftright == 1){ //right
+            roadrun.followTrajectory(turnRight); //go to right junction
+        }
+    }
 }
