@@ -7,12 +7,19 @@ import org.firstinspires.ftc.teamcode.koawalib.Robot
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ArmCmds
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.LiftCmds
+import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
+import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
+import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
 
-class HomeSequence(robot: Robot) : SequentialGroup(
+class HomeSequence(
+    lift: Lift,
+    claw : Claw,
+    arm : Arm
+) : SequentialGroup(
     ParallelGroup(
-    LiftCmds.LiftHomeCmd(robot.lift),
-    ClawCmds.ClawOpenCmd(robot.claw),
+    LiftCmds.LiftHomeCmd(lift),
+    ClawCmds.ClawOpenCmd(claw),
     ),
     WaitCmd(0.1),
-    ArmCmds.ArmHomeCmd(robot.arm)
+    ArmCmds.ArmHomeCmd(arm)
 )

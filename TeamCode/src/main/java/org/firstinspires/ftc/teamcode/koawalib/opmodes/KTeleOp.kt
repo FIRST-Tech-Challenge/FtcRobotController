@@ -48,12 +48,12 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
     }
 
     private fun scheduleCycling() {
-        driver.leftBumper.onPress(HomeSequence(robot))
-        driver.rightBumper.onPress(DepositSequence(robot, ArmConstants.highPos, LiftConstants.highPos))
+        driver.leftBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm))
+        driver.rightBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.highPos, LiftConstants.highPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
-        driver.dpadUp.onPress(DepositSequence(robot, ArmConstants.midPos, LiftConstants.midPos))
-        driver.dpadDown.onPress(DepositSequence(robot, ArmConstants.groundPos, LiftConstants.groundPos))
-        driver.dpadLeft.onPress(DepositSequence(robot, ArmConstants.lowPos, LiftConstants.lowPos))
+        driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos))
+        driver.dpadDown.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.groundPos, LiftConstants.groundPos))
+        driver.dpadLeft.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
         driver.b.onPress(ClawCmds.ClawOpenCmd(robot.claw))
     }
 
