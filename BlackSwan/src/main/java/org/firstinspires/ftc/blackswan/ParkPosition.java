@@ -21,6 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class ParkPosition extends LinearOpMode {
 
     DeterminationPipeline pipeline;
+    public static int position;
 
     @Override
     public void runOpMode() {
@@ -44,7 +45,7 @@ public class ParkPosition extends LinearOpMode {
         });
 
         waitForStart();
-
+        telemetry.addData("|Parking Position|>", position);
     }
 
     public static class DeterminationPipeline extends OpenCvPipeline {
@@ -122,11 +123,11 @@ public class ParkPosition extends LinearOpMode {
                     2);
 
             if((AVG_A > 168) && (AVG_A < 208) && (AVG_B > 120) && (AVG_B < 160)){
-                //1
+                position=1;
             } else if((AVG_A > 100) && (AVG_A < 140) && (AVG_B > 170) && (AVG_B < 210)){
-                //2
+                position=2;
             } else if((AVG_A > 103) && (AVG_A < 143) && (AVG_B > 80) && (AVG_B < 120)){
-                //3
+                position=3;
             }
 
             return input;
