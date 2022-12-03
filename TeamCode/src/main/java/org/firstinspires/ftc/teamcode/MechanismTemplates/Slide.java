@@ -13,10 +13,10 @@ public class Slide {
     private Motor slideLeft, slideRight;
 
     //TODO: change values into actual tested positions instead of placeholders
-    private final double HIGH_JUNCTION= 1900; //<-- 12.90V, 2150 ;
-    private final double MID_JUNCTION = 975; //<-- 12.90V, 1550 ;
-    private final double LOW_JUNCTION = 900;  //<-- 12.90V, 500 ;
-    private final static double ZERO_POSITION = 10;//5V;
+    public static double HIGH_JUNCTION= 1900; //<-- 12.90V, 2150 ;
+    public static double MID_JUNCTION = 780; //<-- 12.90V, 1550 ;
+    public static double LOW_JUNCTION = 1800;  //<-- 12.90V, 500 ;
+    public static double ZERO_POSITION = 10;//5V;
     private final double MAX = 2500;
 
     private static double slideKp = 0.003; //0.00326; //0.0039;
@@ -32,7 +32,7 @@ public class Slide {
 
     public Slide(HardwareMap hardwareMap){
         slideLeft = new Motor(hardwareMap, "SL", Motor.GoBILDA.RPM_312); // Pin 0 on expansion hub
-        slideRight = new Motor(hardwareMap,"SR", Motor.GoBILDA.RPM_312); // Pin 1 on control hub
+        slideRight = new Motor(hardwareMap,"SR", Motor.GoBILDA.RPM_312); // Pin 1 on control hubm
 
         slideLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);

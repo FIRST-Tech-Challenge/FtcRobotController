@@ -15,8 +15,8 @@ public class Claw {
     private boolean isAuto;
 
     // claw positions
-    private final double OPEN = 0.69;
-    private final double CLOSE = 0.44;
+    public static double OPEN = 0.69;
+    public static double CLOSE = 0.44;
 
     // wrist positions
     public final double WRIST_INTAKE_POSITION = 0.72; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise

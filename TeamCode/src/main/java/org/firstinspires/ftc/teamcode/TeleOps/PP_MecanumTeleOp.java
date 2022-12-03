@@ -19,9 +19,7 @@ import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 public class PP_MecanumTeleOp extends OpMode
 {
     //"MC ABHI IS ON THE REPO!!!"
-    boolean isAuto = false; // yes I know this is stupid
-    boolean lastTriggerPress = false;
-    public final double TURN_PRECESION = 0.5;
+    public final double TURN_PRECESION = 0.65;
 
     // Declaring drivetrain motors
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
@@ -41,7 +39,7 @@ public class PP_MecanumTeleOp extends OpMode
 
     private GamepadEx driverOp;
 
-    private final double PRECISIONREDUCTION = 0.3;
+    private final double PRECISIONREDUCTION = 0.39;
     /**
      * Get the maximum absolute value from a static array of doubles
      *
@@ -177,7 +175,10 @@ public class PP_MecanumTeleOp extends OpMode
             clawControl.toggleWristRotate();
         }
         else if (gamepad2_B.isRisingEdge()) {
-           slideControl.setLowJunction();
+           armControl.setExtake();
+           slideControl.setMidJunction();
+           clawControl.toggleWristRotate();
+
         }
         else if (gamepad2_A.isRisingEdge()) {
             slideControl.setLowJunction();
