@@ -87,63 +87,65 @@ public class RFGamepad{
 //            old.set(0, seq.get(i));
 //        }
         if (op.gamepad1.dpad_down){
-            if(booleanMap.get("gamepad1_dpad_down") == false){
+            if(!booleanMap.get("gamepad1_dpad_down")){
                 seq.add(3);
                 booleanMap.put("gamepad1_dpad_down", true);
+                //TODO: pretty sure if u keep putting more things in the booleanMap ull build up duplicates, looks like
+                // there is a replace function
             }
             //timeOfPress = op.getRuntime();
         }
-        else if(op.gamepad1.dpad_down == false){
+        else if(!op.gamepad1.dpad_down){
             booleanMap.put("gamepad1_dpad_down", false);
         }
         if (op.gamepad1.dpad_right){
-            if(booleanMap.get("gamepad1_dpad_right") == false){
+            if(!booleanMap.get("gamepad1_dpad_right")){
                 seq.add(2);
                 booleanMap.put("gamepad1_dpad_right", true);
             }
             //timeOfPress = op.getRuntime();
         }
-        else if(op.gamepad1.dpad_right == false){
+        else if(!op.gamepad1.dpad_right){
             booleanMap.put("gamepad1_dpad_right", false);
         }
         if (op.gamepad1.dpad_up){
-            if(booleanMap.get("gamepad1_dpad_up") == false){
+            if(!booleanMap.get("gamepad1_dpad_up")){
                 seq.add(1);
                 booleanMap.put("gamepad1_dpad_up", true);
             }
             //timeOfPress = op.getRuntime();
         }
-        else if(op.gamepad1.dpad_up == false){
+        else if(!op.gamepad1.dpad_up){
             booleanMap.put("gamepad1_dpad_up", false);
         }
         if (op.gamepad1.dpad_left){
-            if(booleanMap.get("gamepad1_dpad_left") == false){
+            if(!booleanMap.get("gamepad1_dpad_left")){
                 seq.add(4);
                 booleanMap.put("gamepad1_dpad_left", true);
             }
             //timeOfPress = op.getRuntime();
         }
-        else if(op.gamepad1.dpad_left == false){
+        else if(!op.gamepad1.dpad_left){
             booleanMap.put("gamepad1_dpad_left", false);
         }
         if (op.gamepad1.x){
-            if(booleanMap.get("gamepad1_x") == false){
+            if(!booleanMap.get("gamepad1_x")){
                 seq.add(5);
                 booleanMap.put("gamepad1_x", true);
             }
             //timeOfPress = op.getRuntime();
         }
-        else if(op.gamepad1.x == false){
+        else if(!op.gamepad1.x){
             booleanMap.put("gamepad1_x", false);
         }
         if (op.gamepad1.b){
-            if(booleanMap.get("gamepad1_b") == false){
+            if(!booleanMap.get("gamepad1_b")){
                 seq.add(6);
                 booleanMap.put("gamepad1_b", true);
             }
             //timeOfPress = op.getRuntime();
         }
-        else if(op.gamepad1.b == false){
+        else if(!op.gamepad1.b){
             booleanMap.put("gamepad1_b", false);
         }
 
@@ -179,5 +181,9 @@ public class RFGamepad{
 //        }
 //        return newVal;
         return seq;
+    }
+
+    public void removeSequenceElement () {
+        seq.remove(0);
     }
 }
