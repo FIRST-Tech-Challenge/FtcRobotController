@@ -29,13 +29,13 @@ public class DamienCVPipeline extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
 //        Mat grayInput = new Mat();
 
-        Imgproc.cvtColor(input,inputRGB,Imgproc.COLOR_RGBA2RGB);
+        Imgproc.cvtColor(input,inputRGB,Imgproc.COLOR_BGR2RGB);
 //        Imgproc.cvtColor(input,grayInput,Imgproc.COLOR_RGB2GRAY);
         Imgproc.cvtColor(inputRGB,hsvInput,Imgproc.COLOR_RGB2HSV);
 
-        Core.inRange(hsvInput, new Scalar(30, 100, 100), new Scalar(80, 255, 255), inputGreen);
-        Core.inRange(hsvInput, new Scalar(90, 100, 100), new Scalar(100, 255, 255), inputYellow);
-        Core.inRange(hsvInput, new Scalar(150, 100, 100), new Scalar(190, 255, 255), inputPurple);
+        Core.inRange(hsvInput, new Scalar(46, 104, 80), new Scalar(78, 240, 255), inputGreen); // 30 - 80 100 - 255 s 100-255 v
+        Core.inRange(hsvInput, new Scalar(83, 104, 80), new Scalar(96, 240, 255), inputYellow); // 90 - 100 h
+        Core.inRange(hsvInput, new Scalar(141, 104, 80), new Scalar(170, 240, 255), inputPurple); // 150 - 190 h
 
         purplePixels = Core.sumElems(inputPurple).val[0];
         greenPixels = Core.sumElems(inputGreen).val[0];
