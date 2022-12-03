@@ -56,9 +56,8 @@ public class AutoBlueLeftSide extends LinearOpMode {
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorArm.setPower(0);
 
-
         Servo grabberServo = hardwareMap.servo.get("grabberServo");
-        grabberServo.setPosition(0.0);
+        grabberServo.setPosition(0.1);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
 
@@ -66,19 +65,19 @@ public class AutoBlueLeftSide extends LinearOpMode {
                 .forward(48)
                 .build();
         Trajectory traject3 = drive.trajectoryBuilder(traject2.end(), false)
-                .back(20)
+                .back(23)
                 .build();
         Trajectory traject4 = drive.trajectoryBuilder(traject3.end(), false)
-                .strafeLeft(16)
+                .strafeLeft(19)
                 .build();
         Trajectory right = drive.trajectoryBuilder(traject4.end(), false)
-                .strafeLeft(20)
+                .strafeRight(20)
                 .build();
         Trajectory middle = drive.trajectoryBuilder(traject4.end(), false)
-                .strafeRight(15)
+                .strafeRight(5)
                 .build();
         Trajectory left = drive.trajectoryBuilder(traject4.end(), false)
-                .strafeRight(60)
+                .strafeLeft(60)
                 .build();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -133,6 +132,7 @@ public class AutoBlueLeftSide extends LinearOpMode {
             telemetry.update();
             sleep(20);
         }
+
 
         /*
          * The START command just came in: now work off the latest snapshot acquired
