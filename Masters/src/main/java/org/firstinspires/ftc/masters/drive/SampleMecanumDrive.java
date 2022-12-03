@@ -197,7 +197,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         //set arm to middle
     }
 
-    public void liftDown(){
+    public void liftDown() {
         closeClaw();
         linearSlide.setTargetPosition(SLIDE_BOTTOM);
         linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
