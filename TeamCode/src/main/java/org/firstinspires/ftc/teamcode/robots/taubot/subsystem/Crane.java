@@ -8,6 +8,8 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -15,7 +17,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
@@ -62,7 +71,7 @@ public class Crane implements Subsystem {
     public static double TURRET_ADJUST = 20;
 
     public static double kE = 0.0;
-    public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(30, 0, 0.005);
+    public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(25, 0, 0.005);
     public static double EXTEND_MAX_PID_OUTPUT = 0.8;
     public static double EXTEND_MIN_PID_OUTPUT = -0.8;
     public static double EXTENDER_TOLERANCE = 1;
@@ -108,6 +117,10 @@ public class Crane implements Subsystem {
 
     private Servo nudgeStickServo;
 
+    BNO055IMU imu;
+
+    Orientation angles;
+    Acceleration gravity;
 
     StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
 
@@ -136,6 +149,21 @@ public class Crane implements Subsystem {
             shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
             nudgeStickServo = hardwareMap.get(Servo.class, "nudgeSwivel");
+
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+            parameters.loggingEnabled      = true;
+            parameters.loggingTag          = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+            imu = hardwareMap.get(BNO055IMU.class, "shoulderIMU");
+            imu.initialize(parameters);
+
+            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
+
         }
         extendPID = new PIDController(0,0,0);
         extendPID.setOutputRange(EXTEND_MIN_PID_OUTPUT, EXTEND_MAX_PID_OUTPUT);
@@ -143,6 +171,8 @@ public class Crane implements Subsystem {
         shoulderPID.setOutputRange(SHOULDER_MIN_PID_OUTPUT,SHOULDER_MAX_PID_OUTPUT);
         shoulderPID.setIntegralCutIn(40);
         shoulderPID.enableIntegralZeroCrossingReset(false);
+
+        shoulderTargetAngle = 5;
     }
 
     int calibrateStage=0;
@@ -231,7 +261,7 @@ public class Crane implements Subsystem {
                 if (System.nanoTime()>futureTime) {
                     calibrateStage = 0;
                     calibrated = true;
-                    shoulderTargetAngle = 14; //initial angle up to clear look at signal
+                    shoulderTargetAngle = 5; //initial angle up to clear look at signal
                     return true;
                 }
                 break;
@@ -239,7 +269,7 @@ public class Crane implements Subsystem {
         }
         return false;
     }
-    boolean calibrated = false;
+    boolean calibrated = true;
 
     double shoulderCorrection = 0;
     double shoulderPwr = 1;
@@ -546,6 +576,8 @@ public class Crane implements Subsystem {
     double angle;
     double length;
 
+    double imuShoulderAngle;
+
     @Override
     public void update(Canvas fieldOverlay) {
         //todo - switch shoulderPosition to read the dedicated angle encoder
@@ -553,13 +585,18 @@ public class Crane implements Subsystem {
         shoulderDirectTickPos = shoulderAngleEncoder.getCurrentPosition();
         extendPosition = extenderMotor.getCurrentPosition();
 
-        shoulderAngle = shoulderDirectTickPos / SHOULDER_DIRECT_TICKS_PER_DEGREE;
+        //shoulderAngle = shoulderDirectTickPos / SHOULDER_DIRECT_TICKS_PER_DEGREE;
         extendMeters = extendPosition / EXTEND_TICKS_PER_METER;
 
         shoulderAmps = shoulderMotor.getCurrent(CurrentUnit.AMPS);
         extenderAmps = extenderMotor.getCurrent(CurrentUnit.AMPS);
 
         currentStateMachine.execute();
+
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        gravity  = imu.getGravity();
+
+        shoulderAngle = -AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
 
         if(calibrated) {
             //run the current articulation
@@ -816,6 +853,7 @@ public class Crane implements Subsystem {
             telemetryMap.put("Extend Run Amp", runExtendAmp);
             telemetryMap.put("Extend Max Tics", extendMaxTics);
 
+            telemetryMap.put("IMU Shoulder Angle", imuShoulderAngle);
             telemetryMap.put("Shoulder Angle", shoulderAngle);
             telemetryMap.put("Shoulder Tics", shoulderPosition);
             telemetryMap.put("Shoulder Power", shoulderMotor.getPower());

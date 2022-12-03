@@ -202,6 +202,7 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 2:
+                crane.nudgeLeft();
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
                     crane.setTargetTurretAngle(312);
                     if(turret.isTurretNearTarget()){
@@ -220,15 +221,15 @@ public class Robot implements Subsystem {
                 if(startingPosition.equals( Constants.Position.START_LEFT)) {
                     crane.setExtendTargetPos(0.66);
                     crane.setShoulderTargetAngle(60);
-                    if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.02) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.05)) {
+                    if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
                         crane.setGripper(false);
                         autonTime = futureTime(0.3);
                         autonIndex++;
                     }
                 }else{
-                    crane.setExtendTargetPos(0.55);
+                    crane.setExtendTargetPos(0.5);
                     crane.setShoulderTargetAngle(60);
-                    if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.02) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.05)) {
+                    if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
                         crane.setGripper(false);
                         autonTime = futureTime(0.3);
                         autonIndex++;
@@ -252,6 +253,7 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 6:
+                crane.setExtendTargetPos(0.0);
                 crane.setTargetTurretAngle(180);
                 if(withinError(turret.getHeading(),turret.getTargetHeading(),0.05)){
                     autonIndex++;
