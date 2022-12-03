@@ -228,6 +228,8 @@ public class PowerPlay_6832 extends OpMode {
         forwardSmoother = new ExponentialSmoother(FORWARD_SMOOTHING_FACTOR);
         rotateSmoother = new ExponentialSmoother(ROTATE_SMOOTHING_FACTOR);
 
+        robot.crane.nudgeRight();
+
         debugTelemetry = true;
         if (debugTelemetry)
             configureDashboardDebug();

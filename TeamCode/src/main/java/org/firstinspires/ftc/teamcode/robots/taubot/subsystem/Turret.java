@@ -100,6 +100,12 @@ public class Turret implements Subsystem {
         return result;
     }
 
+    double correction = 0;
+
+    public double getCorrection(){
+        return  correction;
+    }
+
     public void update(Canvas fieldOverlay) {
 
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
@@ -119,7 +125,7 @@ public class Turret implements Subsystem {
         turretPID.setTolerance(TURRET_TOLERANCE);
         turretPID.setSetpoint(0);
         turretPID.setInput(-distanceBetweenAngles(heading,targetHeading));
-        double correction = turretPID.performPID();
+        correction = turretPID.performPID();
         //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
         motor.setPower(correction);
     }

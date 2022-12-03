@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.taubot;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.JOYSTICK_DEADZONE;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.auto;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.robot;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.startingPosition;
@@ -42,10 +43,12 @@ public class DriverControls {
         stickyGamepad2.update();
     }
 
+    public static double TURRET_DEADZONE = 0.03;
+
     void joystickDrive() {
 
         if(gamepad1.dpad_down) {
-            if (notJoystickDeadZone(gamepad1.right_stick_x))
+            if (gamepad1.right_stick_x < -TURRET_DEADZONE || gamepad1.right_stick_x > TURRET_DEADZONE)
                 robot.crane.adjustTurretAngle(-0.6*gamepad1.right_stick_x);
 
             if (notJoystickDeadZone(gamepad1.right_stick_y)) robot.crane.adjustShoulder(-0.7*gamepad1.right_stick_y);
@@ -53,17 +56,13 @@ public class DriverControls {
             if (gamepad1.right_trigger>.05) robot.crane.adjustExtend(0.7*gamepad1.right_trigger);
             if (gamepad1.left_trigger>.05) robot.crane.adjustExtend(-0.7*gamepad1.left_trigger);
 
-            /*
             if(stickyGamepad1.left_bumper){
-                robot.turret.setTargetHeading(robot.turret.getHeading()-90);
+                robot.crane.decNudgeIndex();
             }
 
             if(stickyGamepad1.right_bumper){
-                robot.turret.setTargetHeading(robot.turret.getHeading()+90);
+                robot.crane.incNudgeIndex();
             }
-
-             */
-
 
 
             if(stickyGamepad1.a) {

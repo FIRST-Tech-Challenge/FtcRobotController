@@ -231,7 +231,7 @@ public class Crane implements Subsystem {
                 if (System.nanoTime()>futureTime) {
                     calibrateStage = 0;
                     calibrated = true;
-                    shoulderTargetAngle = 12; //initial angle up to clear look at signal
+                    shoulderTargetAngle = 14; //initial angle up to clear look at signal
                     return true;
                 }
                 break;
@@ -245,25 +245,30 @@ public class Crane implements Subsystem {
     double shoulderPwr = 1;
     double shoulderTargetAngle = 0;
 
-    public static double NUDGE_CENTER_LEFT = 1830;
-    public static double NUDGE_CENTER_RIGHT = 1900;
-    public static double NUDGE_LEFT_POS = 900;  //home position - stowed up
-    public static double NUDGE_RIGHT_POS = 2100;
+    public static double NUDGE_CENTER_LEFT = 1950;
+    public static double NUDGE_CENTER_RIGHT = 2020;
+    public static double NUDGE_LEFT_POS = 1000;  //home position - stowed up
+    public static double NUDGE_RIGHT_POS = 2400;
 
     //keeps track of current nudge position
     private int nudgeIndex = 1;
 
     public void nudgeCenter(boolean approachingClockwise){
-        if (approachingClockwise)
+        if (approachingClockwise) {
             nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_LEFT));
-        else
+            nudgeIndex = 1;
+        }else {
             nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_RIGHT));
+            nudgeIndex = 2;
+        }
     }
     public void nudgeLeft(){
         nudgeStickServo.setPosition(servoNormalize(NUDGE_LEFT_POS));
+        nudgeIndex = 0;
     }
     public void nudgeRight(){
         nudgeStickServo.setPosition(servoNormalize(NUDGE_RIGHT_POS));
+        nudgeIndex = 3;
     }
 
     public void incNudgeIndex(){
@@ -397,6 +402,11 @@ public class Crane implements Subsystem {
                 {
                     setShoulderTargetAngle(getShoulderAngle()+15); //todo - this should be a vertical offset (not this angular shortcut)
                     //enough  time for the cone to lift a cone off of a stack so it doesn't drag the stack down when retracting
+                    if(robot.turret.distanceBetweenAngles(robot.turret.getHeading(),drop.getHeadingMemory()) < 0){
+                        nudgeCenter(true);
+                    }else{
+                        nudgeCenter(false);
+                    }
                     pickupTimer = futureTime(.5);
                     pickupConeStage++;
 
@@ -406,7 +416,6 @@ public class Crane implements Subsystem {
             case 2: //waiting on initial lift, then move arm to defaultpos - this is usually a retraction and a lift
                 if(System.nanoTime() > pickupTimer)
                 {
-                    nudgeCenter(true); //todo - approachingClockwise needs to be dependent on next target
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     setExtendTargetPos(defaultPos.getExtendMemory());
                     pickupTimer = futureTime(1.5); //typical time to retract enough to start turntable
@@ -445,26 +454,21 @@ public class Crane implements Subsystem {
 
             case 0:
                 release();
-                dropTimer = futureTime(2.0); //enough time for cone to start dropping
+                dropTimer = futureTime(0.3); //enough time for cone to start dropping
                 dropConeStage++;
 
             case 1:
                 if(System.nanoTime() > dropTimer){
-                    nudgeRight();
-                    dropTimer = futureTime(2.0); //time for nudge right to complete
+                    if(nudgeIndex == 2) {
+                        nudgeRight();
+                    }else if(nudgeIndex == 1){
+                        nudgeLeft();
+                    }
+                    dropTimer = futureTime(0.5); //time for nudge right to complete
                     dropConeStage++;
                 }
                 break;
-
-            case 2:
-                if(System.nanoTime() > dropTimer){
-                    nudgeLeft();
-                    dropTimer = futureTime(2.0); //time for nudge left to clear
-                    dropConeStage++;
-                }
-                break;
-
-            case 3: //lift a little to clear junction
+            case 2: //lift a little to clear junction
 
                 if(System.nanoTime() > dropTimer) //waiting until released, then start lifting:
                 {
@@ -476,15 +480,16 @@ public class Crane implements Subsystem {
                 }
                 break;
 
-            case 4: //waiting on lift, then move arm to defaultpos - this is usually a retraction and a lift
+            case 3: //waiting on lift, then move arm to defaultpos - this is usually a retraction and a lift
                 if(System.nanoTime() > dropTimer)
                 {
+                    nudgeLeft();
                     setExtendTargetPos(defaultPos.getExtendMemory());
                     dropTimer = futureTime(0.7); //typical time to retract enough to start turntable
                     dropConeStage++;
                 }
                 break;
-            case 5:
+            case 4:
                 if(System.nanoTime() > dropTimer){
                     setShoulderTargetAngle(defaultPos.getShoulderMemory());
                     dropTimer = futureTime(0.7);
@@ -492,7 +497,7 @@ public class Crane implements Subsystem {
                 }
                 break;
 
-            case 6: //move to previously set pickup position
+            case 5: //move to previously set pickup position
 
                 //todo - this is currently time based and it should maybe be based on lift achieved (if achievable - long extensions can't actually lift due to torque needed)
                 if(System.nanoTime() > dropTimer) {
@@ -503,14 +508,14 @@ public class Crane implements Subsystem {
                     pickupTimer = futureTime(0.7);
                 }
                 break;
-            case 7:
+            case 6:
                 if(System.nanoTime() > dropTimer){
                     setShoulderTargetAngle(pickup.getShoulderMemory()); //return high
                     dropConeStage++;
                     pickupTimer = futureTime(0.7);
                 }
                 break;
-            case 8:
+            case 7:
                 if(System.nanoTime() > pickupTimer){
                     setExtendTargetPos(pickup.getExtendMemory());
                     dropConeStage = 0;
@@ -529,7 +534,7 @@ public class Crane implements Subsystem {
     double extendMeters = 0;
     double shoulderAmps, extenderAmps;
 
-    private double craneLengthOffset = 0.2;
+    private double craneLengthOffset =  0.2 * INCHES_PER_METER;
 
     double shoulderHeight = 0.245;
 
@@ -619,7 +624,7 @@ public class Crane implements Subsystem {
 
         targetHeight = z-shoulderHeight;
 
-        targetDistance = 4.25 + Math.sqrt(Math.pow(y - turretPos.getY(),2) + Math.pow(x - turretPos.getX(),2));
+        targetDistance = (4.25 + Math.sqrt(Math.pow(y - turretPos.getY(),2) + Math.pow(x - turretPos.getX(),2)))/INCHES_PER_METER;
 
         angle = Math.toDegrees(Math.atan(targetHeight / targetDistance));
         length = Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2)) - craneLengthOffset;
@@ -763,14 +768,15 @@ public class Crane implements Subsystem {
     public void setextenderActivePID(boolean isActive){extenderActivePID = isActive;}
     public void setShoulderActivePID(boolean isActive){shoulderActivePID = isActive;}
     public void setShoulderTargetDeg(double deg){
-        shoulderTargetAngle = (int)(deg*SHOULDER_DIRECT_TICKS_PER_DEGREE);
+        shoulderTargetAngle = deg;
     }
     public void setExtendTargetDistance(double dis){
-        setExtendTargetPos((int)(dis*EXTEND_TICKS_PER_METER));
+        setExtendTargetPos(dis);
     }
     public void setShoulderPwr(double pwrMin, double pwrMax){ shoulderPID.setOutputRange(pwrMin,pwrMax); }
     public  void setShoulderTargetAngle(double t){ shoulderTargetAngle = (Math.max(Math.min(t,SHOULDER_TICK_MAX/SHOULDER_DIRECT_TICKS_PER_DEGREE),-10)); }
     public  double getShoulderTargetAngle(){ return shoulderTargetAngle; }
+    public double getExtenderTargetPos(){ return extenderTargetPos; }
     public  void setExtendTargetPos(double t){ extenderTargetPos = Math.min(3075/EXTEND_TICKS_PER_METER,Math.max(t, 0)); }
     public boolean nearTargetShoulder(){
         if ((Math.abs( getShoulderAngle()- getShoulderTargetAngle()))<2) return true;
