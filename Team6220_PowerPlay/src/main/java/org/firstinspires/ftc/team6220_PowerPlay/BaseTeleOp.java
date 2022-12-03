@@ -6,15 +6,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
     double tPower;
 
     public void driveChassisWithController() {
-<<<<<<< .merge_file_a18048
         xPower = stickCurve(gamepad1.left_stick_x, Constants.DRIVE_MOVE_CURVE_FAC, Constants.DRIVE_STICK_DEADZONE)* (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
         yPower = stickCurve(gamepad1.left_stick_y, Constants.DRIVE_MOVE_CURVE_FAC, Constants.DRIVE_STICK_DEADZONE)* (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
         tPower = stickCurve(gamepad1.right_stick_x, Constants.DRIVE_TURN_CURVE_FAC, Constants.DRIVE_STICK_DEADZONE) * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
-=======
-        xPower = gamepad1.left_stick_x * Constants.DRIVE_SPEED_MULTIPLIER;
-        yPower = gamepad1.left_stick_y * Constants.DRIVE_SPEED_MULTIPLIER;
-        tPower = gamepad1.right_stick_x * Constants.DRIVE_SPEED_MULTIPLIER;
->>>>>>> .merge_file_a10956
 
         // case for driving the robot left and right
         if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) < Constants.DRIVE_DEADZONE_DEGREES) {
