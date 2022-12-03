@@ -22,16 +22,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
+
 import java.util.ArrayList;
 
 @Autonomous(name="dont press auto left")
@@ -169,31 +168,41 @@ public class autoleft extends LinearOpMode
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
+        // get to the correct angle
         straight(0.25,500);
         stopRobot();
-        right(0.25, 750);
+        right(0.25, 770);
         stopRobot();
+
+        // tighten on cone
         ServoArm(1,200);
         ServoArm(0,1000);
         sleep(1000);
-        LinearSlide(-1, 1000);
+
+        // move lin slide oopar and go 2 pole
+        LinearSlide(-1, 799);
         LinearSlide(0,1000);
-        straight(0.25, 700);
+        straight(0.25, 780);
         stopRobot();
         sleep(1000);
-        LinearSlide(1, 1000);
-        LinearSlide(0,1000);
         ServoArm(-0.5, 220);
         ServoArm(0,1000);
+
+        // move 2 og pos
         straight(-0.5,330);
         stopRobot();
-        left(0.25, 750);
+        ServoArm(0.5, 220);
+        ServoArm(0,1000);
+        LinearSlide(1, 799);
+        LinearSlide(0,1000);
+        left(0.25, 770);
         stopRobot();
         ServoArm(0.5, 250);
         ServoArm(0,1000);
-//        /* Actually do something useful */
+
+    //        /* ¡Camera mierda! */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
-            strafeLeft(0.5, 1000);
+            strafeLeft(0.5, 1100);
             stopRobot();
             sleep(1000);
             straight(0.5, 900);
@@ -204,10 +213,10 @@ public class autoleft extends LinearOpMode
             stopRobot();
             stop();
         }else{
-            strafeRight(0.5, 1200);
+            strafeRight(0.5, 1100);
             stopRobot();
             sleep(1000);
-            straight(0.5, 1000);
+            straight(0.5, 1500);
             stopRobot();
             stop();
         }
