@@ -42,6 +42,7 @@ public class PowerPlayComputerVisionPipelines {
 
 //    Declare webcam
     public OpenCvWebcam webcam;
+    public OpenCvWebcam sleeveWebcam;
 
 //    Initial declaration of pipelines (One for each we use)
     public SleevePipeline sleevePipeline;
@@ -58,6 +59,9 @@ public class PowerPlayComputerVisionPipelines {
 
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
         sleevePipeline = new SleevePipeline(telemetry);
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        sleeveWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcamSleeve"),cameraMonitorViewId);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -79,7 +83,7 @@ public class PowerPlayComputerVisionPipelines {
                  * away from the user.
                  */
                 telemetry.addData("webcam open", "yes");
-                webcam.setPipeline(sleevePipeline);
+                webcam.setPipeline(new DoNothingPipeline());
                 webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -93,12 +97,31 @@ public class PowerPlayComputerVisionPipelines {
             }
         });
 
+        sleeveWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                telemetry.addData("webcam open", "yes");
+                sleeveWebcam.setPipeline(sleevePipeline);
+                sleeveWebcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addLine("Can't open sleeve camera");
+                telemetry.update();
+            }
+        });
 
     }
 
     public void stopCamera(){
         webcam.stopStreaming();
         webcam.setPipeline(new DoNothingPipeline());
+    }
+
+    public void stopSleeveCamera(){
+        sleeveWebcam.stopStreaming();
+        sleeveWebcam.setPipeline(new DoNothingPipeline());
     }
 
 //    The aforementioned pipeline. Aptly named.
@@ -121,7 +144,7 @@ public class PowerPlayComputerVisionPipelines {
         public enum SleeveColor {
             RED,
             GREEN,
-            YELLOW,
+            GRAY,
             INDETERMINATE
         }
 
@@ -135,26 +158,26 @@ public class PowerPlayComputerVisionPipelines {
 
 
 //        Sizes for subregions of the camera from which our data is extracted
-        static final int REGION_WIDTH = 75;
-        static final int REGION_HEIGHT = 150;
+        static final int REGION_WIDTH = 55;
+        static final int REGION_HEIGHT = 90;
 
         /*
          * List for the storage of points, if you're only dealing with a few regions declare them all separately, the freight regions in the other pipeline
          * are done like this.
          */
 
-        Point topLeftPoint = new Point(285,105);
+        Point topLeftPoint = new Point(150,65);
         Point bottomRightPoint = new Point(topLeftPoint.x+REGION_WIDTH, topLeftPoint.y+REGION_HEIGHT);
 
 
 //        The thresholds to which the averages are compared.
         final int RED_SLEEVE_SIDE = 180;
-        final int YELLOW_SLEEVE_SIDE = 126;
+        final int GRAY_SLEEVE_SIDE = 126;
         final int GREEN_SLEEVE_SIDE = 117;
 
         int distanceFromGreen;
         int distanceFromRed;
-        int distanceFromYellow;
+        int distanceFromGray;
 
 
         /*
@@ -221,20 +244,20 @@ public class PowerPlayComputerVisionPipelines {
 //
             distanceFromGreen = Math.abs(aChannelAvg - GREEN_SLEEVE_SIDE);
             distanceFromRed = Math.abs(aChannelAvg - RED_SLEEVE_SIDE);
-            distanceFromYellow = Math.abs(aChannelAvg - YELLOW_SLEEVE_SIDE);
+            distanceFromGray = Math.abs(aChannelAvg - GRAY_SLEEVE_SIDE);
 
 
             telemetry.addData("distanceFromGreen", distanceFromGreen);
             telemetry.addData("distanceFromRed", distanceFromRed);
-            telemetry.addData("distanceFromYellow", distanceFromYellow);
+            telemetry.addData("distanceFromGray", distanceFromGray);
 
 
-            if (distanceFromGreen < distanceFromRed && distanceFromGreen < distanceFromYellow) {
+            if (distanceFromGreen < distanceFromRed && distanceFromGreen < distanceFromGray) {
                 color = SleeveColor.GREEN;
-            } else if (distanceFromRed < distanceFromGreen && distanceFromRed < distanceFromYellow) {
+            } else if (distanceFromRed < distanceFromGreen && distanceFromRed < distanceFromGray) {
                 color = SleeveColor.RED;
-            } else if (distanceFromYellow < distanceFromRed) {
-                color = SleeveColor.YELLOW;
+            } else if (distanceFromGray < distanceFromRed) {
+                color = SleeveColor.GRAY;
             }
 
             telemetry.addData("Color detected", color);
