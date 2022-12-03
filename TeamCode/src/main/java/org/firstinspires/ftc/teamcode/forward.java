@@ -16,7 +16,7 @@ public class forward extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        Servo claw = null;
+        Servo claw = hardwareMap.get(Servo.class, "claw");;
         telemetry.addData("JServos", "wobble pos (%.2f), claw pos (%.2f)", claw.getPosition());
 
         //left front wheel
@@ -29,8 +29,6 @@ public class forward extends LinearOpMode {
         DcMotor rb = hardwareMap.get(DcMotor.class, "rb");
         //arm motor 1
         DcMotor tower1 = hardwareMap.get(DcMotor.class, "tower1");
-        //Claw
-        claw = hardwareMap.get(Servo.class, "claw");
 
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
