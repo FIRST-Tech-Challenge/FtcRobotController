@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.dragonswpilib.command;
+package org.firstinspires.ftc.dragonswpilib;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,6 +12,7 @@ public class FTC_Gyro implements Gyro {
 
     private final HardwareMap mHardwareMap;
     private final BNO055IMU mImu;
+    private double mCalibration = 0;
 
     public FTC_Gyro(HardwareMap hardwareMap) {
         mHardwareMap = hardwareMap;
@@ -27,11 +28,12 @@ public class FTC_Gyro implements Gyro {
 
     @Override
     public void reset() {
+        mCalibration = mImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
     @Override
     public double getAngle() {
-        return mImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        return mImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - mCalibration;
     }
 
     @Override
