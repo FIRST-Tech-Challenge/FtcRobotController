@@ -4,7 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.Servo;;
 
 abstract public class BaseOpMode extends LinearOpMode {
 
@@ -71,6 +71,16 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         bottomMotorSlideLeft = motorSlideLeft.getCurrentPosition();
         bottomMotorSlideRight = motorSlideRight.getCurrentPosition();
+
+        //init imu
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
     }
 
     public void driveMecanum(double driveAngle, double drivePower, double turnPower){
@@ -86,12 +96,17 @@ abstract public class BaseOpMode extends LinearOpMode {
         // gets the largest power
         double scaleFactor = Math.max(Math.max(powerFL, powerFR), Math.max(powerBL, powerBR));
         // scale the power between the range of -1 and 1
-        if (scaleFactor > driveSpeed) {
+        /*if (scaleFactor > driveSpeed) {
             powerFL /= scaleFactor;
             powerFR /= scaleFactor;
             powerBL /= scaleFactor;
             powerBR /= scaleFactor;
-        }
+        }*/
+
+        powerFL *= driveSpeed;
+        powerFR *= driveSpeed;
+        powerBL *= driveSpeed;
+        powerBR *= driveSpeed;
 
         motorFL.setPower(powerFL);
         motorFR.setPower(powerFR);
