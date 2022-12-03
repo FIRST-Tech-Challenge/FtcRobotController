@@ -28,10 +28,9 @@ public class DriveCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double axeX = mGamepad.left_stick_x;
-        double axeY = -mGamepad.left_stick_y;
-        double axeZ = mGamepad.right_stick_x;
-        mDriveSubsystem.drive(axeX, axeY, axeZ);// use a gyro in paramater, TO DO********
+        double rotSpeed = -mGamepad.left_stick_x;
+        double fwdSpeed = -mGamepad.left_stick_y;
+        mDriveSubsystem.ArcadeDrive(fwdSpeed, rotSpeed);
     }
 
     // Called once the command ends or is interrupted.
