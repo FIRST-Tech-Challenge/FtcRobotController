@@ -26,7 +26,7 @@ class Robot(startPose: Pose) {
 //    val lightsDevice = Lights(hardware.lights)
 
     init {
-        arm.setPos(-50.0)
+        arm.setPos(-67.7)
         lift.setPos(0.0)
     }
 }

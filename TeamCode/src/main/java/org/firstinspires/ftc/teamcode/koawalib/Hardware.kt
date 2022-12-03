@@ -20,22 +20,22 @@ import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 
 class Hardware(startPose: Pose) {
     val fl = MotorFactory("fl")
-        .forward
+        .reverse
         .brake
         .build()
 
     val bl = MotorFactory("bl")
-        .forward
+        .reverse
         .brake
         .build()
 
     val br = MotorFactory("br")
-        .reverse
+        .forward
         .brake
         .build()
 
     val fr = MotorFactory("fr")
-        .reverse
+        .forward
         .brake
         .build()
 
@@ -48,6 +48,7 @@ class Hardware(startPose: Pose) {
         .withPositionControl(
             PIDGains(LiftConstants.kP, LiftConstants.kI, LiftConstants.kD),
             FFGains(kS = LiftConstants.kS, kV = LiftConstants.kV, kA = LiftConstants.kA, kG = LiftConstants.kG),
+//            MotionConstraints(LiftConstants.maxVel, LiftConstants.maxAccel),
             allowedPositionError = LiftConstants.allowedPositionError,
             disabledPosition = LiftConstants.disabledPosition
         )
@@ -73,7 +74,7 @@ class Hardware(startPose: Pose) {
         .build()
 
     val clawServo = KServo("Claw")
-//        .startAt(ClawConstants.closePos)
+        .startAt(ClawConstants.openPos)
 
 //    val distanceSensor = KDistanceSensor("distanceSensor")
 
@@ -83,9 +84,11 @@ class Hardware(startPose: Pose) {
         .revEncoder
         .build(fl)
     private val rightEncoder = EncoderFactory(ticksPerUnit)
+        .reverse
         .revEncoder
         .build(bl)
     private val auxEncoder = EncoderFactory(ticksPerUnit)
+        .reverse
         .revEncoder
         .build(fr)
 

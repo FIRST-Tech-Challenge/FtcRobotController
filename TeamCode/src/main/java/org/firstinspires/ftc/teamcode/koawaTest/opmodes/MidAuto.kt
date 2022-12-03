@@ -9,6 +9,7 @@ import com.asiankoala.koawalib.command.group.SequentialGroup
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.Pose
+import com.asiankoala.koawalib.math.Vector
 import com.asiankoala.koawalib.math.radians
 import com.asiankoala.koawalib.path.FLIPPED_HEADING_CONTROLLER
 import com.asiankoala.koawalib.path.HermitePath
@@ -16,10 +17,12 @@ import com.asiankoala.koawalib.path.gvf.SimpleGVFController
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
-import org.firstinspires.ftc.teamcode.koawaTest.Robot
+import org.firstinspires.ftc.teamcode.koawalib.Robot
+import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequence
+import org.firstinspires.ftc.teamcode.koawalib.constants.ArmConstants
+import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
 
 @Autonomous
-@Disabled
 class MidAuto : KOpMode() {
     private val robot by lazy { Robot(startPose) }
 

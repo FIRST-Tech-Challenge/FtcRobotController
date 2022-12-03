@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.koawaTest.opmodes
 
-import org.firstinspires.ftc.teamcode.koawaTest.Robot
-import com.asiankoala.koawalib.command.commands.ChooseCmd
+import com.asiankoala.koawalib.command.KOpMode
+import org.firstinspires.ftc.teamcode.koawalib.Robot
 import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.GVFCmd
 import com.asiankoala.koawalib.command.commands.WaitUntilCmd
@@ -10,17 +10,16 @@ import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
-import com.asiankoala.koawalib.path.DEFAULT_HEADING_CONTROLLER
 import com.asiankoala.koawalib.path.HermitePath
 import com.asiankoala.koawalib.path.gvf.Constraints
 import com.asiankoala.koawalib.path.gvf.MotionProfiledGVFController
 import com.asiankoala.koawalib.path.gvf.SimpleGVFController
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.koawalib.vision.AutoOpMode
+import org.firstinspires.ftc.teamcode.koawalib.constants.GVFConfig
 
 @Autonomous
-class BlueAuto : AutoOpMode() {
+class BlueAuto : KOpMode() {
 
     private val startPose = Pose(-59.0, -36.0, 0.0.radians)
     private val robot by lazy { Robot(startPose) }
@@ -93,8 +92,19 @@ class BlueAuto : AutoOpMode() {
         5.0
     )
 
+
+    private val simpleGVFController = SimpleGVFController(
+        path1,
+        0.6,
+        30.0,
+        4.0,
+        0.7,
+        2.0,
+        5.0
+    )
+
     override fun mInit() {
-        super.mInit()
+//        super.mInit()
         Logger.config = LoggerConfig(
             isLogging = true,
             false,
@@ -105,13 +115,17 @@ class BlueAuto : AutoOpMode() {
         mainCommand = SequentialGroup(
             WaitUntilCmd { opModeState == OpModeState.START },
             WaitUntilCmd(driver.a::isPressed),
-            ChooseCmd(
-                GVFCmd(robot.drive, parkRight),
-                ChooseCmd(
-                    GVFCmd(robot.drive, parkMiddle),
-                    GVFCmd(robot.drive, parkLeft),
-                ) { tagOfInterest!!.id == MIDDLE },
-            ) { tagOfInterest!!.id == RIGHT }
+            GVFCmd(
+                robot.drive,
+                motionProfiledGVFController
+            ),
+//            ChooseCmd(
+//                GVFCmd(robot.drive, parkRight),
+//                ChooseCmd(
+//                    GVFCmd(robot.drive, parkMiddle),
+//                    GVFCmd(robot.drive, parkLeft),
+//                ) { tagOfInterest!!.id == MIDDLE },
+//            ) { tagOfInterest!!.id == RIGHT }
         )
         mainCommand.schedule()
     }
