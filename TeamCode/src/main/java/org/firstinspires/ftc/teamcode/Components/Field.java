@@ -142,7 +142,7 @@ public class Field {
     // 0 = ROBOT = 180
     //      ||
     //      90
-    public void autoTileAim(int leftright, double tileX, double tileY, double tileT){
+    public Trajectory autoTileAim(int leftright, double tileX, double tileY, double tileT){
         Trajectory turnLeft = null; //initialize b4hand bc it be like that
         Trajectory turnRight = null; //^^^^
         //the outermost if statement checks if current angle is in between a margin of 30 deg from up/right/down/left
@@ -161,7 +161,7 @@ public class Field {
                         .build(); //gobeeldah
             }
         }
-        if(curT < Math.toRadians(225) && curT > Math.toRadians(135)){ //right
+        else if(curT < Math.toRadians(225) && curT > Math.toRadians(135)){ //right
             if(leftright == 0){
                 turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
                         .splineToSplineHeading(new Pose2d(tileX - 17.625 , tileY - 5.875,
@@ -176,7 +176,7 @@ public class Field {
                         .build();
             }
         }
-        if(curT < Math.toRadians(135) && curT > Math.toRadians(45)){ //down
+        else if(curT < Math.toRadians(135) && curT > Math.toRadians(45)){ //down
             if(leftright == 0){
                 turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
                         .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY + 17.625,
@@ -190,7 +190,7 @@ public class Field {
                         .build();
             }
         }
-        if(curT < Math.toRadians(45) && curT > Math.toRadians(315)){ //left
+        else if(curT < Math.toRadians(45) && curT > Math.toRadians(315)){ //left
             if(leftright == 0){
                 turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
                         .splineToSplineHeading(new Pose2d(tileX + 17.625 , tileY + 5.875,
@@ -204,11 +204,12 @@ public class Field {
                         .build();
             }
         }
+
         if(leftright == 0){ //left
-            roadrun.followTrajectoryAsync(turnLeft); //go to left junction
+            return turnLeft;
         }
-        else if(leftright == 1){ //right
-            roadrun.followTrajectory(turnRight); //go to right junction
+        else{ //right
+            return turnRight;
         }
     }
 }
