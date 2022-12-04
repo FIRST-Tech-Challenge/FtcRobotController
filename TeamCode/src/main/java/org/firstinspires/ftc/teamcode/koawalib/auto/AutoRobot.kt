@@ -26,7 +26,7 @@ class AutoRobot(startPose: Pose) {
     )
 
     init {
-        arm.setPos(0.0)
+        arm.setPos(210.0)
         lift.setPos(0.0)
     }
 }

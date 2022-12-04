@@ -6,11 +6,11 @@ import com.acmerobotics.dashboard.config.Config
 object ArmConstants {
     @JvmField var ticksPerUnit = 295.0/90.0
     @JvmField var homePos = -67.7
-    @JvmField var autoHomePos = 0.0
+    @JvmField var autoHomePos = 210.0
     @JvmField var groundPos = -60.0
     @JvmField var lowPos = -30.0
-    @JvmField var midPos = 113.0
-    @JvmField var highPos = 113.0
+    @JvmField var midPos = 130.0
+    @JvmField var highPos = 130.0
     @JvmField var kP = 0.01
     @JvmField var kI = 0.0
     @JvmField var kD = 0.00265

@@ -16,6 +16,8 @@ class TestOp: OpMode() {
     lateinit var bl: DcMotor
     lateinit var br: DcMotor
 
+    lateinit var slides : DcMotor
+
     var drive = 0.0
     var strafe = 0.0
     var rotate = 0.0
@@ -39,21 +41,21 @@ class TestOp: OpMode() {
 //        }
 //    }
 //
-//    private fun slidesControl() {
-//        if (gamepad1.dpad_up) {
-//            robot.slidesUp()
-//        }
-//        else {
-//            robot.slidesOff()
-//        }
-//
-//        if (gamepad1.dpad_down) {
-//            robot.slidesDown()
-//        }
-//        else {
-//            robot.slidesOff()
-//        }
-//    }
+    private fun slidesControl() {
+        if (gamepad1.dpad_up) {
+            slides.power = 1.0
+        }
+        else {
+            slides.power = 0.0
+        }
+
+        if (gamepad1.dpad_down) {
+            slides.power = 0.4
+        }
+        else {
+            slides.power = 0.0
+        }
+    }
 //
 //    private fun getTelemetry() {
 //    }
@@ -67,6 +69,8 @@ class TestOp: OpMode() {
         bl = hardwareMap.get(DcMotor::class.java, "bl")
         br = hardwareMap.get(DcMotor::class.java, "br")
 
+        slides = hardwareMap.get(DcMotor::class.java, "Lift")
+
         fl.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         fr.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         bl.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -79,7 +83,7 @@ class TestOp: OpMode() {
     override fun loop() {
         driveControl()
 //        clawControl()
-//        slidesControl()
+        slidesControl()
 //        getTelemetry()
 //        robot.update()
     }

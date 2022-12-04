@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.koawalib.commands.sequences
 
+import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.command.commands.WaitCmd
 import com.asiankoala.koawalib.command.group.ParallelGroup
 import com.asiankoala.koawalib.command.group.SequentialGroup
@@ -14,12 +15,13 @@ import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
 class HomeSequence(
     lift: Lift,
     claw : Claw,
-    arm : Arm
+    arm : Arm,
+    armAngle : Double
 ) : SequentialGroup(
     ParallelGroup(
     LiftCmds.LiftHomeCmd(lift),
     ClawCmds.ClawOpenCmd(claw),
     ),
     WaitCmd(0.1),
-    ArmCmds.ArmHomeCmd(arm)
+    InstantCmd({arm.setPos(armAngle)}, arm),
 )
