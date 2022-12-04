@@ -19,7 +19,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@Autonomous (name="BLUE SIDE LEFT SIDE")
+@Autonomous (name="LEFT SIDE")
 public class AutoBlueLeftSide extends LinearOpMode {
     OpenCvCamera camera; // calls camera
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -57,7 +57,7 @@ public class AutoBlueLeftSide extends LinearOpMode {
         motorArm.setPower(0);
 
         Servo grabberServo = hardwareMap.servo.get("grabberServo");
-        grabberServo.setPosition(0.1);
+        grabberServo.setPosition(0.8);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
 
@@ -65,19 +65,19 @@ public class AutoBlueLeftSide extends LinearOpMode {
                 .forward(48)
                 .build();
         Trajectory traject3 = drive.trajectoryBuilder(traject2.end(), false)
-                .back(23)
+                .back(21)
                 .build();
         Trajectory traject4 = drive.trajectoryBuilder(traject3.end(), false)
-                .strafeLeft(19)
+                .strafeLeft(18.5)
                 .build();
         Trajectory right = drive.trajectoryBuilder(traject4.end(), false)
-                .strafeRight(20)
+                .strafeRight(45)
                 .build();
         Trajectory middle = drive.trajectoryBuilder(traject4.end(), false)
-                .strafeRight(5)
+                .strafeRight(21)
                 .build();
         Trajectory left = drive.trajectoryBuilder(traject4.end(), false)
-                .strafeLeft(60)
+                .strafeLeft(12)
                 .build();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -148,23 +148,28 @@ public class AutoBlueLeftSide extends LinearOpMode {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
+        grabberServo.setPosition(0.4);
+        while (Math.abs(motorArm.getCurrentPosition() - -200) > 10) {
+            motorArm.setPower((-200 - motorArm.getCurrentPosition()) / 400.0);
+        }
+        motorArm.setPower(-0.01);
 
         drive.followTrajectory(traject2);
         drive.followTrajectory(traject3);
 
         motorArm.setPower(0);
-        while (Math.abs(motorArm.getCurrentPosition() - -950) > 10) {
-            motorArm.setPower((-950 - motorArm.getCurrentPosition()) / 1000.0);
+        while (Math.abs(motorArm.getCurrentPosition() - -900) > 10) {
+            motorArm.setPower((-900 - motorArm.getCurrentPosition()) / 1000.0);
         }
         motorArm.setPower(-0.005);
         drive.followTrajectory(traject4);
         motorArm.setPower(0);
         sleep(20);
-        grabberServo.setPosition(0.9);
+        grabberServo.setPosition(0.8);
 
 
         /* Actually do something useful */
-        if (tagOfInterest.id == LEFT) {
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
             drive.followTrajectory(left);
         } else if (tagOfInterest.id == MIDDLE) {
             drive.followTrajectory(middle);
