@@ -12,12 +12,12 @@ public class TeleopMeet1 extends LinearOpMode {
 
     //tells you how long the robot has run for
     private ElapsedTime runtime = new ElapsedTime();
-
+    double timeout_ms = 0;
 
     RobotMeet1 robot = new RobotMeet1();
 
     //How fast your robot will accelerate.
-    public double acceleration = 0.3;
+    public double acceleration = 0.5;
 
     // holding power for vertical slider.
     private double holdingPower = -0.01;
@@ -49,6 +49,7 @@ public class TeleopMeet1 extends LinearOpMode {
         telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
         telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
         telemetry.addData("VSlider Encoder", robot.vSlider.getCurrentPosition());
+        telemetry.addData("Robot Location: ", robot.Location);
         telemetry.update();
 
         waitForStart();
@@ -77,10 +78,24 @@ public class TeleopMeet1 extends LinearOpMode {
              Drivetrain
              */
 
-            robot.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power * 0.75);
-            robot.BLMotor.setPower(DRIVETRAIN_SPEED * bl_power * 0.75);
-            robot.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power * 0.75);
-            robot.BRMotor.setPower(DRIVETRAIN_SPEED * br_power * 0.75);
+            robot.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power * 0.50);
+            robot.BLMotor.setPower(DRIVETRAIN_SPEED * bl_power * 0.50);
+            robot.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power * 0.36);
+            robot.BRMotor.setPower(DRIVETRAIN_SPEED * br_power * 0.50);
+
+            /** Testing Accurate Movement**/
+
+            if(gamepad1.x) {
+                robot.Drive(0.1, 60);
+            } else if (gamepad1.y) {
+                robot.Drive(0.1, -60);
+            } else if (gamepad1.a) {
+                robot.Strafe(0.1, 30);
+            } else if (gamepad1.b) {
+                robot.Strafe(0.1, -30);
+            }
+
+
 
             /** Claw **/
             if(gamepad2.x) {

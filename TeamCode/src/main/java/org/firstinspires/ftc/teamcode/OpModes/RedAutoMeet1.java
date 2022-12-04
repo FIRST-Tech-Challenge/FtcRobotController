@@ -39,7 +39,7 @@ public class RedAutoMeet1 extends LinearOpMode {
     RobotMeet1 robot = new RobotMeet1();
 
     public enum AutoSteps {
-        detectSignal, park, endAuto
+        detectSignal, goToPole, deliver, park, endAuto
     }
 
     public AutoSteps Step = AutoSteps.detectSignal;
@@ -104,6 +104,7 @@ public class RedAutoMeet1 extends LinearOpMode {
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
                             telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
                             telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
+                            telemetry.addData("Robot Location", robot.Location);
                         }
                         telemetry.update();
                     }
@@ -113,9 +114,18 @@ public class RedAutoMeet1 extends LinearOpMode {
                     case detectSignal:
                         telemetry.addData("Parking Target ", parkingTarget);
                         telemetry.update();
-                        Step = AutoSteps.park;
+                        Step = AutoSteps.goToPole;
                         break;
 
+                    case goToPole:
+                        robot.DriveToPosition(0.3, 15, 45);
+                        Step = AutoSteps.deliver;
+
+                    case deliver:
+                        int sliderPos = 500;
+                        robot.MoveSlider(0.3, sliderPos);
+                        robot.claw.setPosition(0);
+                        Step = AutoSteps.park;
                     case park:
                         Park(parkingTarget);
                         Step = AutoSteps.endAuto;
@@ -162,56 +172,16 @@ public class RedAutoMeet1 extends LinearOpMode {
 
     private void Park(int location) {
         if (location == 1) {
-
-            runtime.reset();
-            timeout_ms = 3000;
-            robot.Drive(0.3, -75);
-            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-            }
-            robot.stopDriveMotors();
-
-            sleep(100);
-
-            runtime.reset();
-            timeout_ms = 3000;
-            robot.Strafe(0.3, 75);
-            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-            }
-            robot.stopDriveMotors();
-
+            robot.DriveToPosition(0.3, 75, -75);
         }
 
         if (location == 2) {
-            runtime.reset();
-            timeout_ms = 3000;
-            robot.Drive(0.3, -75);
-            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-            }
-            robot.stopDriveMotors();
+            robot.DriveToPosition(0.3, 0, -75);
         }
 
         if (location == 3) {
-            runtime.reset();
-            timeout_ms = 3000;
-            robot.Drive(0.3, -75);
-            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
+            robot.DriveToPosition(0.3, -75, -75);
 
-            }
-            robot.stopDriveMotors();
-
-
-            sleep(100);
-
-            runtime.reset();
-            timeout_ms = 3000;
-            robot.Strafe(0.3, -75);
-            while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-            }
-            robot.stopDriveMotors();
         }
     }
 }

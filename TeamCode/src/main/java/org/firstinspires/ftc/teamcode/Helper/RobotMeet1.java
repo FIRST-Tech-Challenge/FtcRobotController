@@ -17,15 +17,26 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
 public class RobotMeet1 {
     private ElapsedTime runtime = new ElapsedTime();
+    double timeout_ms = 0;
     public DcMotor vSlider;
     public DcMotor hSlider;
     public Servo claw;
+
+    private double holdingPower = -0.01;
+
+    public int robotX = 0;
+    public int robotY = 0;
+
+    public int[] Location = {robotX,robotY};
 
     //Drivetrain Motor
     public DcMotor FLMotor = null;
@@ -35,7 +46,8 @@ public class RobotMeet1 {
 
     //IMU
     //How many times the encoder counts a tick per revolution of the motor.
-    static final double COUNTS_PER_MOTOR_REV= 538; // eg: GoBuilda 5203 Planetery
+    static final double COUNTS_PER_MOTOR_REV_Hex= 538; // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
+    static final double COUNTS_PER_MOTOR_REV_D = 385; // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-13-7-1-ratio-24mm-length-8mm-rex-shaft-435-rpm-3-3-5v-encoder/
 
     //Gear ratio of the motor to the wheel. 1:1 would mean that 1 turn of the motor is one turn of the wheel, 2:1 would mean two turns of the motor is one turn of the wheel, and so on.
     static final double DRIVE_GEAR_REDUCTION= 1; // This is < 1.0 if geared UP
@@ -44,7 +56,8 @@ public class RobotMeet1 {
     static final double WHEEL_DIAMETER_CM= 10; // For figuring circumference
 
     //How many times the encoder counts a tick per CM moved. (Ticks per rev * Gear ration) / perimeter
-    static final double COUNTS_PER_CM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_CM * 3.1415);
+    static final double COUNTS_PER_CM_Hex = (COUNTS_PER_MOTOR_REV_Hex * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_CM * 3.1415);
+    static final double COUNTS_PER_CM_D = (COUNTS_PER_MOTOR_REV_D * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_CM * 3.1415);
 
 
 
@@ -121,19 +134,33 @@ public class RobotMeet1 {
     }
 
     public void Drive(double speed, int distance) {
-        int targetLeft;
-        int targetRight;
-        int avgLeft = (this.FLMotor.getCurrentPosition() + this.BLMotor.getCurrentPosition()) / 2;
-        int avgRight = (this.FRMotor.getCurrentPosition() + this.BRMotor.getCurrentPosition()) / 2;
 
-        targetRight = avgRight + (int) (distance * COUNTS_PER_CM);
-        targetLeft = avgLeft + (int) (distance * COUNTS_PER_CM);
+        runtime.reset();
+        timeout_ms = 10000;
+
+        robotY += distance;
+        Location[1] = robotY;
+
+        int targetFL;
+        int targetFR;
+        int targetBR;
+        int targetBL;
+
+        int FLPos = this.FLMotor.getCurrentPosition();
+        int FRPos = this.FRMotor.getCurrentPosition();
+        int BLPos = this.BLMotor.getCurrentPosition();
+        int BRPos = this.BRMotor.getCurrentPosition();
+
+        targetFR = FRPos + (int) (distance * COUNTS_PER_CM_D);
+        targetBR = BRPos + (int) (distance * COUNTS_PER_CM_Hex);
+        targetFL = FLPos + (int) (distance * COUNTS_PER_CM_Hex);
+        targetBL = BLPos + (int) (distance * COUNTS_PER_CM_Hex);
 
         //Set motor targets
-        this.FLMotor.setTargetPosition(targetLeft);
-        this.BLMotor.setTargetPosition(targetLeft);
-        this.FRMotor.setTargetPosition(targetRight);
-        this.BRMotor.setTargetPosition(targetRight);
+        this.FLMotor.setTargetPosition(targetFL);
+        this.BLMotor.setTargetPosition(targetBL);
+        this.FRMotor.setTargetPosition(targetFR);
+        this.BRMotor.setTargetPosition(targetBR);
 
         //set the mode to go to the target position
         this.FLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -143,25 +170,46 @@ public class RobotMeet1 {
 
         //Set the power of the motor.
         FLMotor.setPower(speed);
-        FRMotor.setPower(speed);
+        FRMotor.setPower(speed/1.38);
         BLMotor.setPower(speed);
         BRMotor.setPower(speed);
+
+        while ((runtime.milliseconds() < timeout_ms) && (this.FLMotor.isBusy() && this.FRMotor.isBusy())) {
+
+        }
+        this.stopDriveMotors();
     }
 
     public void Strafe(double speed, int distance) {
-        int targetFront;
-        int targetBack;
-        int avgFront = (this.FLMotor.getCurrentPosition() + this.BRMotor.getCurrentPosition()) / 2;
-        int avgBack = (this.BLMotor.getCurrentPosition() + this.FRMotor.getCurrentPosition()) / 2;
 
-        targetFront = avgFront + (int) (distance * COUNTS_PER_CM);
-        targetBack = avgBack - (int) (distance * COUNTS_PER_CM);
+        robotX += distance;
+
+        runtime.reset();
+        timeout_ms = 10000;
+
+        robotX += distance;
+        Location[0] = robotX;
+
+        int targetFL;
+        int targetFR;
+        int targetBR;
+        int targetBL;
+
+        int FLPos = this.FLMotor.getCurrentPosition();
+        int FRPos = this.FRMotor.getCurrentPosition();
+        int BLPos = this.BLMotor.getCurrentPosition();
+        int BRPos = this.BRMotor.getCurrentPosition();
+
+        targetFR = FRPos - (int) (distance * COUNTS_PER_CM_D);
+        targetBR = BRPos + (int) (distance * COUNTS_PER_CM_Hex);
+        targetFL = FLPos + (int) (distance * COUNTS_PER_CM_Hex);
+        targetBL = BLPos - (int) (distance * COUNTS_PER_CM_Hex);
 
         //Set motor targets
-        this.FLMotor.setTargetPosition(targetFront);
-        this.FRMotor.setTargetPosition(targetBack);
-        this.BLMotor.setTargetPosition(targetBack);
-        this.BRMotor.setTargetPosition(targetFront);
+        this.FLMotor.setTargetPosition(targetFL);
+        this.BLMotor.setTargetPosition(targetBL);
+        this.FRMotor.setTargetPosition(targetFR);
+        this.BRMotor.setTargetPosition(targetBR);
 
         //set the mode to go to the target position
         this.FLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -171,9 +219,14 @@ public class RobotMeet1 {
 
         //Set the power of the motor.
         FLMotor.setPower(speed);
-        FRMotor.setPower(speed);
+        FRMotor.setPower(speed/1.38);
         BLMotor.setPower(speed);
         BRMotor.setPower(speed);
+
+        while ((runtime.milliseconds() < timeout_ms) && (this.FLMotor.isBusy() && this.FRMotor.isBusy())) {
+
+        }
+        this.stopDriveMotors();
     }
 
     public void stopDriveMotors(){
@@ -188,5 +241,27 @@ public class RobotMeet1 {
         this.FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void DriveToPosition(double Speed, int posX, int posY) {
+        this.Drive(Speed, posY);
+        this.Strafe(Speed, posX);
+        System.out.println(Arrays.toString(Location));
+    }
+
+    public void MoveSlider(double speed, int Position) {
+        timeout_ms = 3000;
+
+        this.vSlider.setTargetPosition(Position);
+
+        //set the mode to go to the target position
+        this.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Set the power of the motor.
+        vSlider.setPower(speed);
+
+        while ((runtime.milliseconds() < timeout_ms) && (this.vSlider.isBusy())) {
+
+        }
     }
 }
