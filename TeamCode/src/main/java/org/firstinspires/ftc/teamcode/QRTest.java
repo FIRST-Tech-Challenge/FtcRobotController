@@ -47,7 +47,7 @@ public class QRTest  extends LinearOpMode  {
             @Override
             public void onOpened()
             {
-                webCam.startStreaming(1920,1080, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                webCam.startStreaming(1920,1080, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
 
             @Override
@@ -79,16 +79,13 @@ public class QRTest  extends LinearOpMode  {
                 telemetry.update();
 
             } else {
-
                 telemetry.addData("Not Detected: ", coneImgPipeline.getDetectMsg());
                 telemetry.update();
-
             }
 
             // Don't burn CPU cycles busy-looping in this sample
             sleep(100);
         }
-
 
     }
 

@@ -11,8 +11,11 @@ public class LeftAuto extends BaseAuto {
      * THis is the movement from the left side of field to park
      */
 
-    void movePark() {
-        hdw.moveYAxis(6.0,0.7);
+    void moveJunction() {
+        hdw.moveYAxis(12.0,0.7);
+    }
+
+    { hdw.turn (90);
 
     }
 

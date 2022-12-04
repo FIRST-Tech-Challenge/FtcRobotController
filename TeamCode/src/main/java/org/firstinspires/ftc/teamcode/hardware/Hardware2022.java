@@ -35,14 +35,9 @@ public class Hardware2022 {
     private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
-    private final int CONE_SLIDE_LOW = -3000 ;
+    private final int CONE_SLIDE_LOW = 0 ;
     private final int CONE_SLIDE_MID = 1200 ;
-    private final int CONE_SLIDE_HIGH = 3500 ;
-
-    //Encoder value of VSlide height in No Cone mode
-    private final int NOCONE_SLIDE_LOW = -3000 ;
-    private final int NOCONE_SLIDE_MID = 120 ;
-    private final int NOCONE_SLIDE_HIGH = 360;
+    private final int CONE_SLIDE_HIGH = 2500 ;
 
     private boolean debug = true;
     private Telemetry telemetry;
@@ -53,13 +48,7 @@ public class Hardware2022 {
     private double kD = 0.0;
     private double kF = 0.0 ;
 
-    /**
-     * Robot has 2 state,  with a cone , or without a cone
-     */
-    enum RobotState {
-        HasCone,
-        NoCone
-    }
+
     public enum SlideHeight {
         Low,
         Mid,
@@ -67,9 +56,6 @@ public class Hardware2022 {
     }
 
     private SlideHeight currentVSHeight = SlideHeight.Low;
-
-    //Start with no cone.
-    RobotState currentState = RobotState.NoCone;
 
     /**
      * Constructor
@@ -93,7 +79,7 @@ public class Hardware2022 {
     //IMU
     IMU imu =null ;
 
-    public DcMotor vSlide = null;
+    public DcMotorEx vSlide = null;
 
     //public Servo grabberclaw = null;
     //public ColorSensor sensorColor = null;
@@ -109,11 +95,10 @@ public class Hardware2022 {
         wheelFrontLeft = hwMap.get(DcMotorEx.class, "lfWheel");
         wheelBackRight = hwMap.get(DcMotorEx.class, "rrWheel");
         wheelBackLeft = hwMap.get(DcMotorEx.class, "lrWheel");
-        vSlide = hwMap.get(DcMotor.class, "Vertical");
+        vSlide = hwMap.get(DcMotorEx.class, "Vertical");
 
-
-        wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -135,8 +120,7 @@ public class Hardware2022 {
         wheelBackRight.setVelocity(0);
         wheelFrontLeft.setVelocity(0);
         wheelBackLeft.setVelocity(0);
-
-        vSlide.setPower(0);
+        vSlide.setVelocity(0);
 
         /*
         sensorColor = hwMap.get(ColorSensor.class, "clawdistance");
@@ -156,7 +140,6 @@ public class Hardware2022 {
         // Now initialize the IMU with this mounting orientation
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
         imu.initialize(new IMU.Parameters(orientationOnRobot));
-
 
 
     }
@@ -326,6 +309,10 @@ public class Hardware2022 {
         double difference = regulateDegree( endHeading  - currentHeading );
         PIDFController pidfCrtler  = new PIDFController(kP/180, kI/180, kD/180, kF);
         pidfCrtler.setSetPoint(difference);
+        //Set tolerance as 2 degrees
+        pidfCrtler.setTolerance(2);
+        //set Integration between -0.5 to 0.5 to avoid saturating PID output.
+        pidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
 
         while ( !pidfCrtler.atSetPoint()  ) {
             currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -365,113 +352,21 @@ public class Hardware2022 {
        return degree;
     }
 
-    /**
-     * This method checks current state of robot.
-     *
-     * @return  Enumeration of robot state.
-     */
-    RobotState checkState(){
-        return currentState;
-    }
 
     private int getVSlidePosition () {
         return vSlide.getCurrentPosition() - vsldieInitPosition;
     }
 
-    /**
-     *  This operation to raise Vertical Slide to one level higher
-     */
-    public void raiseVerticalSlide (  ) {
-        telemetry.addLine().addData("[ >]  ", "Slide Raising, current high  " + currentVSHeight);
-        telemetry.update();
-
-        switch ( currentVSHeight) {
-            case Low: {
-                if (currentState.equals(RobotState.HasCone)) {
-                    while (getVSlidePosition() < CONE_SLIDE_MID) {
-                        vSlide.setPower(1);
-                    }
-                } else if (currentState.equals(RobotState.NoCone)) {
-                    while (getVSlidePosition() < NOCONE_SLIDE_MID) {
-                        vSlide.setPower(1);
-                    }
-                }
-            }
-                break;
-
-            case Mid: {
-
-                if (currentState.equals(RobotState.HasCone)) {
-                    while (getVSlidePosition() < CONE_SLIDE_HIGH) {
-                        vSlide.setPower(1);
-                    }
-                } else if (currentState.equals(RobotState.NoCone)) {
-                    while (getVSlidePosition() < NOCONE_SLIDE_HIGH); {
-                        vSlide.setPower(1);
-                    }
-                }
-                break;
-            }
-
-            case High: {
-                //DO noting, already highest
-
-            }
-        }
-
-
-    }
-
-    /**
-     * This operation to lower vertical Slide to one level lower.
-     */
-    public void lowerVerticalSlide () {
-
-        switch ( currentVSHeight) {
-            case Low: {
-                //DO nothing, already lowest.
-                break;
-            }
-
-            case Mid: {
-                if (currentState.equals(RobotState.HasCone)) {
-                    while (getVSlidePosition() > CONE_SLIDE_LOW) {
-                        vSlide.setPower(-1);
-                    }
-                } else if (currentState.equals(RobotState.NoCone)) {
-                    while (getVSlidePosition() > NOCONE_SLIDE_LOW) {
-                        vSlide.setPower(-1);
-                    }
-                }
-                break;
-            }
-
-            case High: {
-                if (currentState.equals(RobotState.HasCone)) {
-                    while (getVSlidePosition() > CONE_SLIDE_MID) {
-                        vSlide.setPower(-1);
-                    }
-                } else if (currentState.equals(RobotState.NoCone)) {
-                    while (getVSlidePosition() > NOCONE_SLIDE_MID) {
-                        vSlide.setPower(-1);
-                    }
-
-                }
-            }
-        }
-
-    }
 
     /**
      * Move vertical Slide freely , using game control
      * @param power
      */
     public void freeMoveVerticalSlide(float power ) {
-        //telemetry.addLine().addData("Encoder Reading", vSlide.getCurrentPosition() );
-        //telemetry.addLine().addData("pwer input", power );
-
+        telemetry.addLine().addData("Encoder Reading", vSlide.getCurrentPosition() );
+        telemetry.addLine().addData("pwer input", power );
         telemetry.update();
-
+        
         if ( ( (vSlide.getCurrentPosition() - vsldieInitPosition)  <= CONE_SLIDE_HIGH
                 && power > 0 )
                ||  ( (vSlide.getCurrentPosition() - vsldieInitPosition)  >= 0 )
@@ -479,82 +374,50 @@ public class Hardware2022 {
         {
             //telemetry.addLine().addData("We have power!", power );
             //telemetry.update();
-            vSlide.setPower( power );
+            vSlide.setVelocity(power * ANGULAR_RATE);
             //Thread.sleep(100);
         } else {
-            vSlide.setPower( 0 );
+            vSlide.setVelocity(0);
         }
 
     }
 
-    @Deprecated
-    public void  releaseCone( ){
-        telemetry.addLine().addData("Release", CLAW_OPEN );
-        telemetry.update();
-
-        //grabberclaw.setPosition(CLAW_OPEN);
-        currentState = RobotState.NoCone;
-
-    }
 
     public void goToHeight ( SlideHeight height ) {
         int targetPosition = 0;
 
-        if (currentState.equals(RobotState.HasCone)) {
-            if (height.equals(SlideHeight.Low)) {
-                targetPosition = CONE_SLIDE_LOW;
-
-            }
-            if (height.equals(SlideHeight.Mid)) {
-                targetPosition = CONE_SLIDE_MID;
-            }
-            if (height.equals(SlideHeight.High)) {
-                targetPosition = CONE_SLIDE_HIGH;
-            }
-
-        } else if (currentState.equals(RobotState.NoCone)) {
-            if (height.equals(SlideHeight.Low)) {
-                targetPosition = NOCONE_SLIDE_LOW;
-            }
-            if (height.equals(SlideHeight.Mid)) {
-                targetPosition = NOCONE_SLIDE_MID;
-            }
-            if (height.equals(SlideHeight.High)) {
-                targetPosition = NOCONE_SLIDE_HIGH;
-            }
-
+        if (height.equals(SlideHeight.Low)) {
+            targetPosition = CONE_SLIDE_LOW;
+        }
+        if (height.equals(SlideHeight.Mid)) {
+            targetPosition = CONE_SLIDE_MID;
+        }
+        if (height.equals(SlideHeight.High)) {
+            targetPosition = CONE_SLIDE_HIGH;
         }
 
         //Move the slide
         int currentPosition = vSlide.getCurrentPosition();
+        vSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        vSlide.setTargetPosition(targetPosition);
+        int sign = 1;
 
         if ((currentPosition - targetPosition) > 0 ) {
-            //Lower slide
-            while (vSlide.getCurrentPosition() > targetPosition ) {
-                vSlide.setPower(-1);
-            }
+            sign= -1;
         } else {
             //raise slide
-            while (vSlide.getCurrentPosition() < targetPosition ) {
-                vSlide.setPower(1);
-            }
-
+            sign = 1;
         }
+
+        while (vSlide.isBusy()) {
+            vSlide.setVelocity( sign * ANGULAR_RATE* 0.5 );
+        }
+        vSlide.setVelocity(0);
         currentVSHeight = height;
 
-
+        //Set mode back to Run using encoder.
+        vSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
-    @Deprecated
-    public void manualgrab() {
-        telemetry.addLine().addData("Manaul Grap", CLAW_CLOSED );
-        telemetry.update();
-
-        //grabberclaw.setPosition(CLAW_CLOSED);
-        currentState = RobotState.HasCone;
-
-    }
-
 
     public double getkP() {
         return kP;

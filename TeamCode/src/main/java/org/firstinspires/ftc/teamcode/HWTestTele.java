@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware2022;
 public class HWTestTele  extends LinearOpMode {
     Hardware2022 hdw;
 
-    double[] pidCoffs = { 0,0,0 };
+    double[] pidCoffs = { 0.3,0,0 };
     int pidCoffIndex = 0;
 
     @Override
@@ -83,7 +83,7 @@ public class HWTestTele  extends LinearOpMode {
             }
 
             if( gamepad1.left_bumper) {
-                pidCoffs[pidCoffIndex] -= 0.1;
+                pidCoffs[pidCoffIndex] -= 0.01;
                 telemetry.addLine().addData("[Kp :]  ", pidCoffs[0]);
                 telemetry.addLine().addData("[Ki :]  ", pidCoffs[1]);
                 telemetry.addLine().addData("[Kd :]  ", pidCoffs[2]);
@@ -91,7 +91,7 @@ public class HWTestTele  extends LinearOpMode {
             }
 
             if( gamepad1.right_bumper) {
-                pidCoffs[pidCoffIndex] += 0.1;
+                pidCoffs[pidCoffIndex] += 0.01;
                 telemetry.addLine().addData("[Kp :]  ", pidCoffs[0]);
                 telemetry.addLine().addData("[Ki :]  ", pidCoffs[1]);
                 telemetry.addLine().addData("[Kd :]  ", pidCoffs[2]);

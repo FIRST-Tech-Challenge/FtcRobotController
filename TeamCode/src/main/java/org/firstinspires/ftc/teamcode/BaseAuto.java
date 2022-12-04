@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.hardware.ConeImageProcessor;
+import org.firstinspires.ftc.teamcode.hardware.ConeQRProcessor;
 import org.firstinspires.ftc.teamcode.hardware.SleeveSide;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -23,8 +24,8 @@ import org.firstinspires.ftc.teamcode.hardware.MecanumWheels;
 @Autonomous(name = "BaseAuto")
 public  class BaseAuto extends LinearOpMode {
 
-    OpenCvWebcam webcam;
-    ConeImageProcessor ConeImgPipeline;
+    OpenCvWebcam webCam;
+    ConeQRProcessor coneImgPipeline;
 
     Hardware2022 hdw;
     MecanumWheels robot;
@@ -37,28 +38,25 @@ public  class BaseAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         hdw = new Hardware2022(hardwareMap,telemetry ); //init hardware
-        hdw.createHardware();
-        robot = new MecanumWheels();
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources()
-                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName webCamName  = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webCam = OpenCvCameraFactory.getInstance().createWebcam( webCamName    );
 
-        ConeImgPipeline = new ConeImageProcessor();
-        webcam.setPipeline(ConeImgPipeline);
+        coneImgPipeline = new ConeQRProcessor();
+        webCam.setPipeline(coneImgPipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        //webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        //webCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
+                webCam.startStreaming(1920,1080, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
@@ -67,28 +65,24 @@ public  class BaseAuto extends LinearOpMode {
                 /*
                  * This will be called if the camera could not be opened
                  */
-                telemetry.addData("Carema Error , " ,  errorCode);
-                telemetry.update();
-                sleep(1000);
             }
         });
 
-        while (!isStarted() ) {
-            currentSide = ConeImgPipeline.getSleveSide();
-            telemetry.addData("Realtime analysis", this.currentSide);
-            telemetry.addData("Mean Value", ConeImgPipeline.getMeanVal());
+        while ( !coneImgPipeline.isDecoded()) {
+            telemetry.addData("Message : ", coneImgPipeline.getDetectMsg());
+            telemetry.addData("Is decoded : ", coneImgPipeline.isDecoded());
+            telemetry.addData("Sleeve: ", currentSide);
             telemetry.update();
-
-            // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
+            sleep(100);
         }
-
-        //phoneCam.closeCameraDevice();
+        currentSide = coneImgPipeline.getSleeveSide();
 
         waitForStart();
-        telemetry.addData("Post Start analysis", this.currentSide);
-        telemetry.addData("Mean Value", ConeImgPipeline.getMeanVal());
+        telemetry.addData("Message : ", coneImgPipeline.getDetectMsg());
+        telemetry.addData("Sleeve: ", currentSide);
         telemetry.update();
+
+        //webCam.closeCameraDevice();
 
         switch ( currentSide) {
             case Sleev1: {
@@ -112,11 +106,9 @@ public  class BaseAuto extends LinearOpMode {
         }
 
 
-
         while (opModeIsActive())  {
             idle();
         }
-
 
     }
 
@@ -144,7 +136,6 @@ public  class BaseAuto extends LinearOpMode {
         hdw.moveYAxis( 36.0, 0.5);
 
     }
-
 
     //abstract void movePark();
 

@@ -64,7 +64,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
             }
         }
 
-        detectMsgBuf.append(qrCode + " Tried: " + triedTimes);
+        detectMsgBuf.append("qr code: " + qrCode + " Tried: " + triedTimes);
         detectMsgBuf.append(" Duration: " + (endMills - startMills) );
         detectMsg = detectMsgBuf.toString();
 
