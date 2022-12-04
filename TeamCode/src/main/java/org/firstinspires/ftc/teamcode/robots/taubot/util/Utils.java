@@ -26,6 +26,13 @@ public class Utils {
         return (pulse - 750.0) / 1500.0;
     }
 
+    public static boolean withinErrorPercent(double value, double target, double percent){
+        return (value >= target*(1-percent) && value <= target*(1+percent));
+    }
+
+    public static boolean withinError(double value, double target, double percent){
+        return (value >= target-percent && value <= target+percent);
+    }
 
 
     public static int servoToPWM(double setting){
