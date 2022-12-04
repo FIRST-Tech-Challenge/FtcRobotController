@@ -200,6 +200,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         headingPID.setSetpoint(vel);
     }
 
+    public void setTargetHeadingDeg(double vel){
+        setTargetHeading(Math.toRadians(vel));
+    }
+
     double rawHeading;
 
     @Override
@@ -257,7 +261,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         if(!manualDriveEnabled) {
             driveToNextTarget.execute();
         }
-
 
         if (useMotorPowers) {
             leftMotor.setPower(leftPower);
@@ -598,6 +601,101 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 startPose,
                 VEL_CONSTRAINT, ACCEL_CONSTRAINT,
                 MAX_ANG_VEL, MAX_ANG_ACCEL);
+    }
+
+    int gridDriveIndex = 0;
+
+    public double getTargetHeading(){
+        return targetHeading;
+    }
+
+    boolean gridDriveActive = false;
+
+    int gridTargetX;
+    int gridTargetY;
+
+    public void incXTarget(){
+        if(gridTargetX < 5)gridTargetX++;
+    }
+    public void decXTarget(){
+        if(gridTargetX > 0)gridTargetX--;
+    }
+
+    public void incYTarget(){
+        if(gridTargetY < 5)gridTargetY++;
+    }
+    public void decXYarget(){
+        if(gridTargetY > 0)gridTargetY--;
+    }
+
+    public boolean DriveTo(double x, double y, double speed, boolean xFirst){
+        double robotX = poseEstimate.getX();
+        double robotY = poseEstimate.getY();
+
+        if(xFirst) {
+            switch (gridDriveIndex) {
+                case 0:
+                    setTargetHeadingDeg(0);
+                    if(Utils.withinErrorPercent(heading,targetHeading,0.01)){
+                        gridDriveIndex++;
+                    }
+                    break;
+                case 1:
+                    if(driveUntilDegrees(x-robotX,0,speed)){
+                        gridDriveIndex++;
+                    }
+                    break;
+                case 2:
+                    setTargetHeadingDeg(-90);
+                    if(Utils.withinErrorPercent(heading,targetHeading,0.01)){
+                        gridDriveIndex++;
+                    }
+                    break;
+                case 3:
+                    if(driveUntilDegrees(y-robotY,-90,speed)){
+                        gridDriveIndex++;
+                    }
+                    break;
+                case 4:
+                    gridDriveIndex = 0;
+                    return true;
+                default:
+                    return false;
+
+            }
+        }else{
+            switch (gridDriveIndex) {
+                case 0:
+                    setTargetHeadingDeg(-90);
+                    if(Utils.withinErrorPercent(heading,targetHeading,0.01)){
+                        gridDriveIndex++;
+                    }
+                    break;
+                case 1:
+                    if(driveUntilDegrees(y-robotY,-90,speed)){
+                        gridDriveIndex++;
+                    }
+                    break;
+                case 2:
+                    setTargetHeadingDeg(0);
+                    if(Utils.withinErrorPercent(heading,targetHeading,0.01)){
+                        gridDriveIndex++;
+                    }
+                    break;
+                case 3:
+                    if(driveUntilDegrees(x-robotX,0,speed)){
+                        gridDriveIndex++;
+                    }
+                    break;
+                case 4:
+                    gridDriveIndex = 0;
+                    return true;
+                default:
+                    return false;
+
+            }
+        }
+        return false;
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {

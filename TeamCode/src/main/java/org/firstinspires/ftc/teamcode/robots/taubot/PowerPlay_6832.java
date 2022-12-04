@@ -83,6 +83,7 @@ public class PowerPlay_6832 extends OpMode {
     // global state
     static boolean active;
     static boolean debugTelemetryEnabled;
+    static boolean gridDriveActive = false;
     private boolean initializing,  numericalDashboardEnabled, smoothingEnabled;
     static Constants.Alliance alliance;
     static Constants.Position startingPosition;
