@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import static org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive.getVelocityConstraint;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 /**
@@ -119,7 +122,11 @@ public class AutoOpMode extends LinearOpMode{
         //Drop Preloaded Cone, Pick 5 cones and park
         trajectoryAuto = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToLinearHeading(midWayPose)
+                //Uncomment following line to slow down turn if needed.
+                //.setVelConstraint(getVelocityConstraint(30 /* Slower Velocity*/, 15 /*Slower Angular Velocity*/, DriveConstants.TRACK_WIDTH))
                 .lineToLinearHeading(dropConePose0)
+                //Uncomment following line to stop reduction in speed
+                //.resetVelConstraint()
                 .addDisplacementMarker(() -> {
                     dropCone(0); //Drop preloaded Cone
                 })
