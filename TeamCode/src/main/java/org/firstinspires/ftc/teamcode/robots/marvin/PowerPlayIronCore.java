@@ -81,17 +81,8 @@ public class PowerPlayIronCore extends OpMode {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         resetMotorEncoder();
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        arm.setTargetPosition(0);
-        elbow.setTargetPosition(0);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(1);
-        elbow.setPower(1);
 //        elbow.setTargetPosition(-505);
-        elbowPosition = elbow.getCurrentPosition();
         wristPosition = wrist.getPosition();
         wrist.setPosition(0);
 
@@ -117,13 +108,32 @@ public class PowerPlayIronCore extends OpMode {
         });
         tagCount=0;
     }
+    public void setupArm(boolean init){
+        if(init) {
+            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        }
+        arm.setTargetPosition(0);
+        elbow.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(1);
+        elbow.setPower(1);
+    }
 
     @Override
     public void init_loop(){
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-        if (gamepad1.a) runAuton = true;
-        if (gamepad1.b) runAuton = false;
+        if (gamepad1.a) {
+            runAuton = true;
+            setupArm(true); //reset encoders
+        }
+        if (gamepad1.b) {
+            runAuton = false;
+            setupArm(false);
+        }
 
         if(currentDetections.size() != 0)
         {
@@ -336,6 +346,8 @@ public class PowerPlayIronCore extends OpMode {
     public double avgMotorEncoder(){
         return (double)((Math.abs(motorBackLeft.getCurrentPosition())+ Math.abs(motorBackRight.getCurrentPosition())+ Math.abs(motorFrontLeft.getCurrentPosition()) + Math.abs(motorFrontRight.getCurrentPosition())))/4.0;
     }
+
+
 
     double encoderAvg = 0.0;
     boolean autonStage1Complete = false;
