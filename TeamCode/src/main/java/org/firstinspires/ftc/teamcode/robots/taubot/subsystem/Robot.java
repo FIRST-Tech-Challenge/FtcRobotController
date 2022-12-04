@@ -219,20 +219,16 @@ public class Robot implements Subsystem {
                 break;
             case 3:
                 if(startingPosition.equals( Constants.Position.START_LEFT)) {
-                    crane.setExtendTargetPos(0.66);
-                    crane.setShoulderTargetAngle(60);
+                    crane.setTargets(3*Field.INCHES_PER_GRID,Field.INCHES_PER_GRID,36);
                     if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
                         crane.setGripper(false);
                         autonTime = futureTime(0.3);
-                        autonIndex++;
                     }
                 }else{
-                    crane.setExtendTargetPos(0.5);
-                    crane.setShoulderTargetAngle(60);
+                    crane.setTargets(3*Field.INCHES_PER_GRID,-Field.INCHES_PER_GRID,36);
                     if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
                         crane.setGripper(false);
                         autonTime = futureTime(0.3);
-                        autonIndex++;
                     }
                 }
                 break;

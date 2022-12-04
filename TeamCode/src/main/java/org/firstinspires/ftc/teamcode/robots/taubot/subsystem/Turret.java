@@ -159,6 +159,8 @@ public class Turret implements Subsystem {
         initialized = false; //triggers recalc of heading offset at next IMU update cycle
     }
 
+    public static double localX = -5;
+
     public Pose2d getTurretPosition(Pose2d robot){
 
         double robotHeading = robot.getHeading();
@@ -166,10 +168,8 @@ public class Turret implements Subsystem {
         double robotX = robot.getX();
         double robotY = robot.getY();
 
-        double localX = -3.5;
-
         double worldX = robotX + (localX)*Math.cos(-robotHeading);
-        double worldY = robotY + (localX)*Math.sin(-robotHeading);
+        double worldY = robotY - (localX)*Math.sin(-robotHeading);
 
        return new Pose2d(worldX,worldY,heading);
     }
