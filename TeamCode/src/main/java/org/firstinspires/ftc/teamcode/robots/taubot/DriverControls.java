@@ -75,7 +75,7 @@ public class DriverControls {
             }
 
             if(gamepad1.y){
-                // robot.driveTrain.driveUntil(24,0,0);
+                robot.crane.setTargets(40,0,0);
             }
 
             //manual override of drivetrain
@@ -113,7 +113,7 @@ public class DriverControls {
             }
 
             if(gamepad1.y){
-                // robot.driveTrain.driveUntil(24,0,0);
+                robot.crane.setTargets(20,-35,30);
             }
 
             //manual override of drivetrain

@@ -34,6 +34,23 @@ public class FieldObject {
         return pos.y;
     }
 
+    public double z() {
+        switch (height) {
+            case 0:
+                return 4;
+            case 1:
+                return 5;
+            case 2:
+                return 17;
+            case 3:
+                return 27;
+            case 4:
+                return 36;
+            default:
+                return 36;
+        }
+    }
+
     public int getHeight(){ return height; }
 
     public String getName(){ return name; }

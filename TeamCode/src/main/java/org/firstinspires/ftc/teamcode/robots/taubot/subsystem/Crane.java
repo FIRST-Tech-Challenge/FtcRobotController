@@ -8,6 +8,8 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -15,7 +17,15 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.teamcode.robots.taubot.FieldObject;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
@@ -62,7 +72,7 @@ public class Crane implements Subsystem {
     public static double TURRET_ADJUST = 20;
 
     public static double kE = 0.0;
-    public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(30, 0, 0.005);
+    public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(25, 0, 0.005);
     public static double EXTEND_MAX_PID_OUTPUT = 0.8;
     public static double EXTEND_MIN_PID_OUTPUT = -0.8;
     public static double EXTENDER_TOLERANCE = 1;
@@ -108,6 +118,10 @@ public class Crane implements Subsystem {
 
     private Servo nudgeStickServo;
 
+    BNO055IMU imu;
+
+    Orientation angles;
+    Acceleration gravity;
 
     StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
 
@@ -136,6 +150,21 @@ public class Crane implements Subsystem {
             shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
             nudgeStickServo = hardwareMap.get(Servo.class, "nudgeSwivel");
+
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+            parameters.loggingEnabled      = true;
+            parameters.loggingTag          = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+            imu = hardwareMap.get(BNO055IMU.class, "shoulderIMU");
+            imu.initialize(parameters);
+
+            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
+
         }
         extendPID = new PIDController(0,0,0);
         extendPID.setOutputRange(EXTEND_MIN_PID_OUTPUT, EXTEND_MAX_PID_OUTPUT);
@@ -143,6 +172,8 @@ public class Crane implements Subsystem {
         shoulderPID.setOutputRange(SHOULDER_MIN_PID_OUTPUT,SHOULDER_MAX_PID_OUTPUT);
         shoulderPID.setIntegralCutIn(40);
         shoulderPID.enableIntegralZeroCrossingReset(false);
+
+        shoulderTargetAngle = 5;
     }
 
     int calibrateStage=0;
@@ -231,7 +262,7 @@ public class Crane implements Subsystem {
                 if (System.nanoTime()>futureTime) {
                     calibrateStage = 0;
                     calibrated = true;
-                    shoulderTargetAngle = 14; //initial angle up to clear look at signal
+                    shoulderTargetAngle = 5; //initial angle up to clear look at signal
                     return true;
                 }
                 break;
@@ -239,7 +270,7 @@ public class Crane implements Subsystem {
         }
         return false;
     }
-    boolean calibrated = false;
+    boolean calibrated = true;
 
     double shoulderCorrection = 0;
     double shoulderPwr = 1;
@@ -251,7 +282,7 @@ public class Crane implements Subsystem {
     public static double NUDGE_RIGHT_POS = 2400;
 
     //keeps track of current nudge position
-    private int nudgeIndex = 1;
+    public static int nudgeIndex = 1;
 
     public void nudgeCenter(boolean approachingClockwise){
         if (approachingClockwise) {
@@ -534,9 +565,9 @@ public class Crane implements Subsystem {
     double extendMeters = 0;
     double shoulderAmps, extenderAmps;
 
-    private double craneLengthOffset =  0.2 * INCHES_PER_METER;
+    private double craneLengthOffset =  0.432;
 
-    double shoulderHeight = 0.245;
+
 
     boolean inverseKinematic = false;
     double targetHeight = 20;
@@ -546,6 +577,8 @@ public class Crane implements Subsystem {
     double angle;
     double length;
 
+    double imuShoulderAngle;
+
     @Override
     public void update(Canvas fieldOverlay) {
         //todo - switch shoulderPosition to read the dedicated angle encoder
@@ -553,13 +586,18 @@ public class Crane implements Subsystem {
         shoulderDirectTickPos = shoulderAngleEncoder.getCurrentPosition();
         extendPosition = extenderMotor.getCurrentPosition();
 
-        shoulderAngle = shoulderDirectTickPos / SHOULDER_DIRECT_TICKS_PER_DEGREE;
+        //shoulderAngle = shoulderDirectTickPos / SHOULDER_DIRECT_TICKS_PER_DEGREE;
         extendMeters = extendPosition / EXTEND_TICKS_PER_METER;
 
         shoulderAmps = shoulderMotor.getCurrent(CurrentUnit.AMPS);
         extenderAmps = extenderMotor.getCurrent(CurrentUnit.AMPS);
 
         currentStateMachine.execute();
+
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        gravity  = imu.getGravity();
+
+        shoulderAngle = -AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
 
         if(calibrated) {
             //run the current articulation
@@ -612,22 +650,32 @@ public class Crane implements Subsystem {
     public double getDistance(){
         return INCHES_PER_METER * getExtendMeters()*Math.cos(Math.toRadians(getShoulderAngle()));
     }
+    public boolean setTargets(FieldObject obj){
+        return setTargets(obj.x(),obj.y(),obj.z());
+    }
+
+    Pose2d turretPos = new Pose2d();
+    Pose2d axlePos = new Pose2d();
+
+    public static double axleOffset = -9;
+    public static double shoulderHeight = 0.14;
 
     public boolean setTargets(double x, double y, double z){
-        x *= INCHES_PER_METER;
-        y *= INCHES_PER_METER;
-        z *= INCHES_PER_METER;
+
+        z /= INCHES_PER_METER;
 
         Pose2d robotPos = robot.driveTrain.getPoseEstimate();
-        Pose2d turretPos = robot.turret.getTurretPosition(robotPos);
+        turretPos = robot.turret.getTurretPosition(robotPos);
         targetTurretAngle = Math.toDegrees(Math.atan2(y - turretPos.getY(), x-turretPos.getX()));
+
+        axlePos = new Pose2d(turretPos.getX()+axleOffset*Math.cos(Math.toRadians(robot.turret.getHeading())), turretPos.getY()+axleOffset*Math.sin(Math.toRadians(robot.turret.getHeading())));
 
         targetHeight = z-shoulderHeight;
 
-        targetDistance = (4.25 + Math.sqrt(Math.pow(y - turretPos.getY(),2) + Math.pow(x - turretPos.getX(),2)))/INCHES_PER_METER;
+        targetDistance = (Math.sqrt(Math.pow(y - axlePos.getY(),2) + Math.pow(x - axlePos.getX(),2)))/INCHES_PER_METER;
 
         angle = Math.toDegrees(Math.atan(targetHeight / targetDistance));
-        length = Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2)) - craneLengthOffset;
+        length = (Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2)) - craneLengthOffset);
         setShoulderTargetDeg(angle);
         setExtendTargetDistance(length);
         robot.turret.setTargetHeading(targetTurretAngle);
@@ -796,6 +844,12 @@ public class Crane implements Subsystem {
         telemetryMap.put("Drop Stage", dropConeStage);
 
         if (debug) {
+            telemetryMap.put("Robot X", robot.driveTrain.getPoseEstimate().getX());
+            telemetryMap.put("Robot Y", robot.driveTrain.getPoseEstimate().getY());
+            telemetryMap.put("Turret X", robot.turret.getTurretPosition(robot.driveTrain.getPoseEstimate()).getX());
+            telemetryMap.put("Turret Y", robot.turret.getTurretPosition(robot.driveTrain.getPoseEstimate()).getY());
+            telemetryMap.put("Axle X", axlePos.getX());
+            telemetryMap.put("Axle Y", axlePos.getY());
             telemetryMap.put("Target Distance", targetDistance);
             telemetryMap.put("Target Height", targetHeight);
             telemetryMap.put("Target Turret Angle", targetTurretAngle);
@@ -816,6 +870,7 @@ public class Crane implements Subsystem {
             telemetryMap.put("Extend Run Amp", runExtendAmp);
             telemetryMap.put("Extend Max Tics", extendMaxTics);
 
+            telemetryMap.put("IMU Shoulder Angle", imuShoulderAngle);
             telemetryMap.put("Shoulder Angle", shoulderAngle);
             telemetryMap.put("Shoulder Tics", shoulderPosition);
             telemetryMap.put("Shoulder Power", shoulderMotor.getPower());
