@@ -12,6 +12,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -46,13 +47,13 @@ public class PwPRobot extends BasicRobot {
         super(opMode, p_isTeleop);
         roadrun = new SampleMecanumDrive(opMode.hardwareMap);
         cv = new CVMaster();
-        field = new Field(roadrun, cv);
+        gp = new RFGamepad();
+        field = new Field(roadrun, cv, gp);
 //        aligner = new Aligner();
         claw = new Claw();
         liftArm = new LiftArm();
 //        clawExtension = new ClawExtension();
         lift = new Lift();
-        gp = new RFGamepad();
 //        leds = new LEDStrip();
     }
 
@@ -270,6 +271,7 @@ public class PwPRobot extends BasicRobot {
             progNameLogged = true;
         }
 
+
         //omnidirectional movement + turning
 
 //        if (op.gamepad2.y) {
@@ -375,6 +377,10 @@ public class PwPRobot extends BasicRobot {
                 else {
                     liftArm.raiseLiftArmToOuttake();
                 }
+            }
+
+            if (op.gamepad1.dpad_right || op.gamepad1.dpad_left || op.gamepad1.dpad_up || op.gamepad1.dpad_down) {
+                field.autoMovement();
             }
 
 

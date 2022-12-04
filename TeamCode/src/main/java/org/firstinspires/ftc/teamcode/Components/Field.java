@@ -6,16 +6,24 @@ import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
 import org.firstinspires.ftc.teamcode.Components.CV.CVMaster;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+
+import java.util.ArrayList;
 
 public class Field {
     private SampleMecanumDrive roadrun;
     private CVMaster cv;
+    private RFGamepad gp;
+    private ArrayList<Integer> tileMovement = new ArrayList<>();
+    private ArrayList<Trajectory> fullmovement = new ArrayList<>();
     double lookingDistance = 20.0, dropDistance = 9;
     double[] poleValues = {10, 10, 0, 0}, cameraPos = {4, 4, 0.85}, dropPosition = {0, 0, 0};
     Trajectory dropTrajectory;
@@ -47,9 +55,10 @@ public class Field {
             //row 6
             {{58.75, 58.75}, {58.75, 35.25}, {58.75, 11.75}, {58.75, -11.75}, {58.75, -35.25}, {-58.75, -58.75}}};
 
-    public Field(SampleMecanumDrive p_roadrun, CVMaster p_cv) {
+    public Field(SampleMecanumDrive p_roadrun, CVMaster p_cv, RFGamepad p_gp) {
         roadrun = p_roadrun;
         cv = p_cv;
+        gp = p_gp;
     }
 
     //which tile bot at
@@ -98,8 +107,20 @@ public class Field {
 
     // returns which tile is closest with first two coords, third index is distance in inches
     public double[] minDistTile() {
-        double[] closestTile = {0, 0, 0};
+        double currentx = roadrun.getPoseEstimate().getX();
+        double currenty = roadrun.getPoseEstimate().getY();
 
+        double[] closestTile = {0, 0, 100000000};
+        for (int columnnum = 0; columnnum < 6; columnnum++) {
+            for (int rownum = 0; rownum < 6; rownum++) {
+                double dist = Math.pow(tileCoords[columnnum][rownum][0] - currentx, 2) + Math.pow(tileCoords[columnnum][rownum][1] - currenty, 2);
+                if (dist < closestTile[2]) {
+                    closestTile[0] = columnnum;
+                    closestTile[1] = rownum;
+                    closestTile[2] = Math.sqrt(dist);
+                }
+            }
+        }
         return closestTile;
     }
 
@@ -142,6 +163,7 @@ public class Field {
     // 0 = ROBOT = 180
     //      ||
     //      90
+        // TODO: (if u are inputting some sort of tile coords, you can access those through the tileCoords above)
     public Trajectory autoTileAim(int leftright, double tileX, double tileY, double tileT){
         Trajectory turnLeft = null; //initialize b4hand bc it be like that
         Trajectory turnRight = null; //^^^^
@@ -149,7 +171,8 @@ public class Field {
         double curT = roadrun.getPoseEstimate().getHeading(); //current angle
         if(curT < Math.toRadians(315) && curT > Math.toRadians(225)){ //up
             if(leftright == 0){ //left
-                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT)) //starting pos
+                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT)) //starting pos TODO: starting pos wont
+                        // TODO: be the center of the tile
                         .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY - 17.625, //guessed values to get to pole
                                 tileT + Math.toRadians(30)), Math.toRadians(270)) //turning left + end tangent
                         .build();
@@ -205,11 +228,140 @@ public class Field {
             }
         }
 
+        //TODO: i want u to return a trajectory not run it, but ask warren first
         if(leftright == 0){ //left
             return turnLeft;
         }
         else{ //right
             return turnRight;
         }
+    }
+
+    public void checkD_PAD(int direction, double[] movementchanges) {
+        if (direction == 1) {
+            movementchanges[1] = -23.5;
+            movementchanges[3] = toRadians(270);
+        }
+        else if (direction == 2) {
+            movementchanges[0] = -23.5;
+            movementchanges[2] = toRadians(270);
+            movementchanges[3] = toRadians(180);
+        }
+        else if (direction == 3) {
+            movementchanges[1] = 23.5;
+            movementchanges[3] = toRadians(90);
+        }
+        else {
+            movementchanges[0] = 23.5;
+            movementchanges[2] = toRadians(90);
+            movementchanges[3] = toRadians(0);
+        }
+    }
+
+    public Trajectory autoLateralTileGenerator(int index) {
+
+        tileMovement = gp.getSequence();
+
+        double[] movements = {0, 0, 0, 0};
+
+        checkD_PAD(tileMovement.get(index), movements);
+        Trajectory onemove = roadrun.trajectoryBuilder(new Pose2d(getCurPos().getX(), getCurPos().getY(),
+                        getCurPos().getHeading()))
+                .splineToLinearHeading(new Pose2d(getCurPos().getX() + movements[0], getCurPos().getY() + movements[1]
+                        + getCurPos().getHeading() + movements[2]), movements[3])
+                .addDisplacementMarker(() -> gp.removeSequenceElement())
+                .build();
+
+        return onemove;
+    }
+
+    public Trajectory autoTileMovementMaster() {
+        tileMovement = gp.getSequence();
+
+        double[] currenttile = minDistTile();
+        double centerxadjustment = 0;
+        double centeryadjustment = 0;
+        double forwardbackwardangleadjustment = 0;
+        double leftrightangleadjustment = 0;
+
+        if (tileMovement.get(0) == 1 || tileMovement.get(0) == 3) {
+            if (Math.abs(currenttile[0] - getCurPos().getX()) > 0.5) {
+                if ((getCurPos().getY() - currenttile[1] > 2.5 && tileMovement.get(0) == 1) ||
+                        (getCurPos().getY() - currenttile[1] < 2.5 && tileMovement.get(0) == 3)) {
+                    centerxadjustment = 2.5;
+                }
+
+            }
+
+            if (Math.abs(getCurPos().getHeading() - Math.toRadians(90)) < Math.abs(getCurPos().getHeading() -
+                    Math.toRadians(270))) {
+                forwardbackwardangleadjustment = Math.toRadians(90);
+            }
+            else {
+                forwardbackwardangleadjustment = Math.toRadians(270);
+            }
+        }
+        else {
+            if (Math.abs(currenttile[1] - getCurPos().getY()) > 0.5) {
+                if ((getCurPos().getX() - currenttile[0] > 2.5 && tileMovement.get(0) == 2) ||
+                        (getCurPos().getX() - currenttile[0] < 2.5 && tileMovement.get(0) == 4)) {
+                    centerxadjustment = 2.5;
+                }
+            }
+
+            if (Math.abs(getCurPos().getHeading()) < Math.abs(getCurPos().getHeading() - Math.toRadians(180))) {
+                leftrightangleadjustment = Math.toRadians(0);
+            }
+            else {
+                leftrightangleadjustment = Math.toRadians(180);
+            }
+        }
+
+        Trajectory adjustment = roadrun.trajectoryBuilder(new Pose2d(getCurPos().getX(), getCurPos().getY(),
+                        getCurPos().getHeading()))
+                .splineToLinearHeading(new Pose2d(currenttile[0] + centerxadjustment, currenttile[1] +
+                                centeryadjustment, forwardbackwardangleadjustment + leftrightangleadjustment),
+                        Math.toRadians(270))
+                .build();
+
+        return adjustment;
+    }
+
+    public void autoMovement() {
+        tileMovement = gp.getSequence();
+        fullmovement.clear();
+        fullmovement.add(autoTileMovementMaster());
+        if (tileMovement.size() == 1) {
+            fullmovement.add(autoLateralTileGenerator(0));
+        }
+        else if (tileMovement.size() == 2) {
+            for (int i = 0; i < 2; i++) {
+                fullmovement.add(autoLateralTileGenerator(i));
+            }
+        }
+        else if (tileMovement.size() == 3) {
+            for (int i = 0; i < 3; i++) {
+                fullmovement.add(autoLateralTileGenerator(i));
+            }
+        }
+        else if (tileMovement.size() == 4) {
+            for (int i = 0; i < 4; i++) {
+                fullmovement.add(autoLateralTileGenerator(i));
+            }
+        }
+        else if (tileMovement.size() == 5) {
+            for (int i = 0; i < 5; i++) {
+                fullmovement.add(autoLateralTileGenerator(i));
+            }
+        }
+
+        //TODO: uncomment when harry fixes his func
+//        if (tileMovement.get(tileMovement.size() - 1) == 5 || tileMovement.get(tileMovement.size() - 1) == 6) {
+//            fullmovement.add(autoTileAim());
+//        }
+    }
+
+    public Pose2d getCurPos() {
+        return roadrun.getPoseEstimate();
     }
 }

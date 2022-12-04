@@ -86,27 +86,25 @@ public class SampleRevBlinkinLedDriver extends OpMode {
         pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
         blinkinLedDriver.setPattern(pattern);
 
-//        display = telemetry.addData("Display Kind: ", displayKind.toString());
-//        patternName = telemetry.addData("Pattern: ", pattern.toString());
-//
+        display = telemetry.addData("Display Kind: ", displayKind.toString());
+        patternName = telemetry.addData("Pattern: ", pattern.toString());
+
         ledCycleDeadline = new Deadline(LED_PERIOD, TimeUnit.SECONDS);
-//        gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
+        gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void loop()
     {
-//        handleGamepad();
-//
-//        if (displayKind == DisplayKind.AUTO) {
+        handleGamepad();
+
+        if (displayKind == DisplayKind.AUTO) {
             doAutoDisplay();
-        setDisplayKind(DisplayKind.AUTO);
-//        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.LARSON_SCANNER_RED);
-//        } else {
-//            /*
-//             * MANUAL mode: Nothing to do, setting the pattern as a result of a gamepad event.
-//             */
-//        }
+        } else {
+            /*
+             * MANUAL mode: Nothing to do, setting the pattern as a result of a gamepad event.
+             */
+        }
     }
 
     /*
@@ -120,47 +118,47 @@ public class SampleRevBlinkinLedDriver extends OpMode {
      * A: Manual mode, Right bumper displays the next pattern, left bumper displays the previous pattern.
      * B: Auto mode, pattern cycles, changing every LED_PERIOD seconds.
      */
-//    protected void handleGamepad()
-//    {
-//        if (!gamepadRateLimit.hasExpired()) {
-//            return;
-//        }
-//
-//        if (gamepad1.a) {
-//            setDisplayKind(DisplayKind.MANUAL);
-//            gamepadRateLimit.reset();
-//        } else if (gamepad1.b) {
-//            setDisplayKind(DisplayKind.AUTO);
-//            gamepadRateLimit.reset();
-//        } else if ((displayKind == DisplayKind.MANUAL) && (gamepad1.left_bumper)) {
-//            pattern = pattern.previous();
-//            displayPattern();
-//            gamepadRateLimit.reset();
-//        } else if ((displayKind == DisplayKind.MANUAL) && (gamepad1.right_bumper)) {
-//            pattern = pattern.next();
-//            displayPattern();
-//            gamepadRateLimit.reset();
-//        }
-//    }
-//
+    protected void handleGamepad()
+    {
+        if (!gamepadRateLimit.hasExpired()) {
+            return;
+        }
+
+        if (gamepad1.a) {
+            setDisplayKind(DisplayKind.MANUAL);
+            gamepadRateLimit.reset();
+        } else if (gamepad1.b) {
+            setDisplayKind(DisplayKind.AUTO);
+            gamepadRateLimit.reset();
+        } else if ((displayKind == DisplayKind.MANUAL) && (gamepad1.left_bumper)) {
+            pattern = pattern.previous();
+            displayPattern();
+            gamepadRateLimit.reset();
+        } else if ((displayKind == DisplayKind.MANUAL) && (gamepad1.right_bumper)) {
+            pattern = pattern.next();
+            displayPattern();
+            gamepadRateLimit.reset();
+        }
+    }
+
     protected void setDisplayKind(DisplayKind displayKind)
     {
-//        this.displayKind = displayKind;
-//        display.setValue(displayKind.toString());
+        this.displayKind = displayKind;
+        display.setValue(displayKind.toString());
     }
 
     protected void doAutoDisplay()
     {
-//        if (ledCycleDeadline.hasExpired()) {
+        if (ledCycleDeadline.hasExpired()) {
             pattern = pattern.next();
             displayPattern();
             ledCycleDeadline.reset();
-//        }
+        }
     }
 
     protected void displayPattern()
     {
         blinkinLedDriver.setPattern(pattern);
-//        patternName.setValue(pattern.toString());
+        patternName.setValue(pattern.toString());
     }
 }
