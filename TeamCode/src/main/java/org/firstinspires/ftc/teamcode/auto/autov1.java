@@ -8,18 +8,43 @@ import org.firstinspires.ftc.teamcode.config.BaseOpMode;
 import org.firstinspires.ftc.teamcode.config.DriveUtils;
 import org.firstinspires.ftc.teamcode.config.Hardware2;
 
-@Autonomous(name="Storage Unit")
+/**
+ * @author KarthikPeri
+ */
+@Autonomous(name="autov1")
 public class autov1 extends BaseOpMode {
-    Hardware2 robot = new Hardware2(true);
+    Hardware2 robot = new Hardware2(false);
+
+    /*
+    KIMCHI RAMEN
+     */
+
     public void runOpMode() throws InterruptedException {
         robot.initTeleOpIMU(hardwareMap);
+        int position = -1;
         waitForStart();
 
-        DriveUtils.encoderDrive(this, 0.5, 30,30, 7);
-        DriveUtils.encoderDrive(this, -0.5, 10, 10, 7);
-    }
+        if (position == 0) {
+            DriveUtils.encoderDrive(this, 0.5, -24, -24, 7);
+            // Drives forward to go into the middle parking area
+            //DriveUtils.encoderDrive(this, 0.5, 10, 10, 7);
+        } else if (position == 1) {
+            // Move Left
+            DriveUtils.encoderStrafe(this,0.4,27,5);
+            // Strafes left
+            DriveUtils.encoderDrive(this, 0.4, -12, -12, 5);
+            // Drives forward to go into the left parking area
+        } else if (position == -1) {
+            // Move Right
+            DriveUtils.encoderStrafe(this, 0.4, -27, 5);
+            //Strafes Right
+            DriveUtils.encoderDrive(this, 0.4, -12, -12, 5 );
+            // Drives forward to go into the left parking area
+        }
+
+        }
     @Override
-    public Hardware2 getRobot() {
+    public Hardware2 getRobot () {
         return robot;
     }
 }

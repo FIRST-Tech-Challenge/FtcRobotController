@@ -23,5 +23,5 @@ public class FTCConstants {
     /**
      * Counts per inch.
      */
-    public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_GOBILDA * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+    public static final double COUNTS_PER_INCH = (WHEEL_DIAMETER_INCHES * 3.1415) / (COUNTS_PER_MOTOR_GOBILDA);
 }
