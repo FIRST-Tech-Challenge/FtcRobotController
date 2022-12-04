@@ -22,6 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaLocalizerImpl;
 //test
 import java.util.List;
 import java.util.Locale;
@@ -56,7 +57,7 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    private int resultROI=0;
+    private int resultROI=2;
 
     private  boolean done = false;
 
@@ -114,18 +115,21 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
         if (tfod != null) {
             tfod.activate();
 
-            tfod.setZoom(1.5, 16.0 / 9.0);
+            tfod.setZoom(1.8, 16.0 / 9.0);
         }
 
         actuatorUtils.gripperClose(true);
 
 
         waitForStart();
-        if (tfod != null && resultROI == 0) {
+        currTime=System.currentTimeMillis();
+        startTime=currTime;
+        if (tfod != null && resultROI == 2) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
-            while (!done) {
+            while (!done && opModeIsActive()) {
+                if((currTime - startTime) < 4000){
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                 if (updatedRecognitions != null) {
                     telemetry.addData("# Objects Detected", updatedRecognitions.size());
@@ -160,12 +164,19 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
                     }
                     telemetry.update();
                 }
+                currTime = System.currentTimeMillis();}
+
+                else {
+                    vuforia.close();
+                    done=true;
+                    resultROI=2;
+                }
             }
 
         }
         telemetry.update();
         done = false;
-        while ((currTime - startTime < 2000)&& !done) {
+        while (((currTime - startTime) < 30000)&& !done && opModeIsActive()) {
 
             switch (resultROI) {
                 case 1:
@@ -187,11 +198,11 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
                 case 2:
                     // Middle
                     moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(82);
+                    moveUtils.turnCW(85);
                     moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(82);
+                    moveUtils.turnCCW(85);
                     moveUtils.goStraight(13.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(44);
+                    moveUtils.turnCW(45);
                     actuatorUtils.armPole(3);
                     moveUtils.goStraight(4.5f,MAX_SPEED,MIN_SPEED,ACCEL);
                     actuatorUtils.gripperOpen(true);
@@ -220,6 +231,7 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
 
                     break;
             }
+            currTime = System.currentTimeMillis();
 
 
         }
@@ -316,5 +328,12 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
+    public class VuforiaLocalizerImplEnhanced extends VuforiaLocalizerImpl {
 
+        public VuforiaLocalizerImplEnhanced(Parameters parameters){ super(parameters); }
+
+        @Override
+        public void close(){ super.close(); }
+
+    }
 }
