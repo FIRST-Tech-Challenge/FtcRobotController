@@ -63,6 +63,12 @@ public class DrivetrainController_NoFTCLib extends OpMode
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
         rearLeftDrive  = hardwareMap.get(DcMotor.class, "rear_left_drive");
         rearRightDrive = hardwareMap.get(DcMotor.class, "rear_right_drive");
+        
+        // Set motors to use encoders-changes the input to a speed value instead of a direct power value
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // TODO Set these values accordingly
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
