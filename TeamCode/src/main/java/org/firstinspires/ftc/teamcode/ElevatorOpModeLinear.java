@@ -67,22 +67,23 @@ boolean x = false;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+
             power  = -gamepad2.left_stick_y ;
            // elevator.setElevatorMotorPower(power);
-
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("gamepad2.b: ", gamepad2.b );
             telemetry.addData("x: ", x );
-
-            telemetry.update();
             if (x == false && gamepad2.b )
             {
 //                if
 //                elevator.getLeftServo().setPosition(1);
 //                elevator.getRightServo().setPosition(0);
                 elevator.moveHands();
+
             }
+            telemetry.addData("clawstate ",elevator.clawState);
+            telemetry.update();
 
             x=gamepad2.b;
         }

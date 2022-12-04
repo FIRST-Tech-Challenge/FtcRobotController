@@ -9,13 +9,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 public class Elevator {
+    public   double ServoPosition = 0;
     private Servo mainServo = null;
-    public final double OPEN_POSITION = 0.5;
-
+    public final double OPEN_POSITION_LEFT = 0.7;
+    public final double OPEN_POSITION_RIGHT = 0.3;
     public Servo getLeftServo() {
         return leftServo;
     }
-
+    public boolean clawState = true; //true = open false = close
     private Servo leftServo = null;
 
     public Servo getRightServo() {
@@ -55,18 +56,23 @@ public class Elevator {
         //telemetry.addData("Starting at",  "%7d", elevatorMotor.getCurrentPosition());
         //telemetry.update();
 
-        leftServo.setPosition(OPEN_POSITION);
-        rightServo.setPosition(OPEN_POSITION);
+        leftServo.setPosition(OPEN_POSITION_LEFT);
+        rightServo.setPosition(OPEN_POSITION_RIGHT);
         handsOffset = 0;
     }
 
     public void moveHands() {
-        if (leftServo.getPosition()== OPEN_POSITION){
-        leftServo.setPosition(0);
-        rightServo.setPosition(1);}
+        ServoPosition = leftServo.getPosition();
+        telemetry.addData("Servoposition", ServoPosition);
+        if (clawState) {
+            leftServo.setPosition(1);
+            rightServo.setPosition(0);
+            clawState = false;
+        }
         else {
-            leftServo.setPosition(OPEN_POSITION);
-            rightServo.setPosition(OPEN_POSITION);
+            leftServo.setPosition(OPEN_POSITION_LEFT);//OPEN_POSITION_LEFT);
+            rightServo.setPosition(OPEN_POSITION_RIGHT);//OPEN_POSITION_RIGHT);
+            clawState = true;
         }
 
         //telemetry.addData("position", elevatorMotor.getCurrentPosition());
