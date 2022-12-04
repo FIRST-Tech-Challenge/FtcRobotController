@@ -56,7 +56,7 @@ public class RedLeftPowerPlaySleeve extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    private int resultROI=0;
+    private int resultROI=2;
 
     private  boolean done = false;
 
@@ -114,57 +114,67 @@ public class RedLeftPowerPlaySleeve extends LinearOpMode {
         if (tfod != null) {
             tfod.activate();
 
-            tfod.setZoom(1.5, 16.0 / 9.0);
+            tfod.setZoom(1.8, 16.0 / 9.0);
         }
         actuatorUtils.gripperClose(true);
 
 
         waitForStart();
-        if (tfod != null && resultROI == 0) {
+        currTime=System.currentTimeMillis();
+        startTime=currTime;
+        if (tfod != null && resultROI == 2) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
-            while (!done) {
-                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                if (updatedRecognitions != null) {
-                    telemetry.addData("# Objects Detected", updatedRecognitions.size());
-                    if (updatedRecognitions.size() != 0) {
-                        done = true;
-                    }
-                    // step through the list of recognitions and display image position/size information for each one
-                    // Note: "Image number" refers to the randomized image orientation/number
-                    for (Recognition recognition : updatedRecognitions) {
-                        double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                        double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                        double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                        double height = Math.abs(recognition.getTop() - recognition.getBottom());
-
-                        telemetry.addData("", " ");
-                        telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                        telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                        telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-
-                        String imageCheck = recognition.getLabel();
-                        if (imageCheck.equals("Bolt")) {
-                            resultROI = 1;
-                        } else if (imageCheck.equals("Bulbs")) {
-                            resultROI = 2;
-                        } else if (imageCheck.equals("Panels")) {
-                            resultROI = 3;
-                        } else {
-                            resultROI = 2;
+            while (!done && opModeIsActive()) {
+                if((currTime - startTime) < 4000){
+                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                    if (updatedRecognitions != null) {
+                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
+                        if (updatedRecognitions.size() != 0) {
+                            done = true;
                         }
-                        telemetry.addData("ResultROI", resultROI);
+                        // step through the list of recognitions and display image position/size information for each one
+                        // Note: "Image number" refers to the randomized image orientation/number
+                        for (Recognition recognition : updatedRecognitions) {
+                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
 
+                            telemetry.addData("", " ");
+                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
+
+                            String imageCheck = recognition.getLabel();
+                            if (imageCheck.equals("Bolt")) {
+                                resultROI = 1;
+                            } else if (imageCheck.equals("Bulbs")) {
+                                resultROI = 2;
+                            } else if (imageCheck.equals("Panels")) {
+                                resultROI = 3;
+                            } else {
+                                resultROI = 2;
+                            }
+                            telemetry.addData("ResultROI", resultROI);
+
+                        }
+                        telemetry.update();
                     }
-                    telemetry.update();
+                    currTime = System.currentTimeMillis();}
+
+                else {
+                    vuforia.close();
+                    done=true;
+                    resultROI=2;
                 }
             }
 
         }
         telemetry.update();
         done = false;
-        while ((currTime - startTime < 2000)&& !done) {
+        while (((currTime - startTime) < 30000)&& !done && opModeIsActive()) {
 
             switch (resultROI) {
                 case 1:
@@ -186,9 +196,9 @@ public class RedLeftPowerPlaySleeve extends LinearOpMode {
                 case 2:
                     // Middle
                     moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(82);
+                    moveUtils.turnCW(85);
                     moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(82);
+                    moveUtils.turnCCW(85);
                     moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.turnCW(45);
                     actuatorUtils.armPole(3);
@@ -220,6 +230,7 @@ public class RedLeftPowerPlaySleeve extends LinearOpMode {
                     break;
             }
 
+            currTime = System.currentTimeMillis();
 
         }
     }
