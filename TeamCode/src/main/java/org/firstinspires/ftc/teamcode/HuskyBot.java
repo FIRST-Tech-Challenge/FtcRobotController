@@ -36,7 +36,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.openftc.easyopencv.OpenCvWebcam;
+
+
 
 /**
  * This is NOT an opmode.
@@ -62,7 +63,7 @@ public class HuskyBot {
     public Servo clawGrab = null; // TODO: set this to be fixed open/close positions.
 
     // Webcam
-    public OpenCvWebcam webcam;
+   // public OpenCvWebcam webcam;
 
     // Magnetic Limit Switches
     public TouchSensor armExtendMax = null;
@@ -74,13 +75,18 @@ public class HuskyBot {
     public static final double VELOCITY_CONSTANT = 537.7 * 312/60;
 
 
-    public static final double ARM_SWIVEL_MAX_POWER = 0.4;
+    public static final double ARM_SWIVEL_MAX_POWER = 0.35;
     public static final double ARM_SWIVEL_LIMIT = 200;
     public static final double ARM_LIFT_MAX_POWER = 0.5;
     public static final double ARM_LIFT_MIN_POWER = 0.01;
     public static final double ARM_LIFT_POWER_AT_REST = 0.10;
+
+    public static final double C_MG = 3;
+    public static final double THETA_ZERO_POS = 350;
+    public static final double ARM_LIFT_ANG_VELO_DESIRED = 5;
+
     public static final double ARM_EXTENSION_MAX_POWER = 0.6;
-    public  static  final double ARM_LIFT_MAX_POSITION = 895;
+    public  static  final double ARM_LIFT_MAX_POSITION = 850;
 
     public static final double CLAW_MOVE_INCREMENT = 0.01;
 
@@ -121,7 +127,7 @@ public class HuskyBot {
         armExtendMotor = hwMap.get(DcMotorEx.class, "arm_extend");
 
         // Define and Init. Claw Servos
-        clawRotate = hwMap.get(Servo.class, "claw_rotate");
+        //clawRotate = hwMap.get(Servo.class, "claw_rotate");
         clawLift = hwMap.get(Servo.class, "claw_lift");
         clawGrab = hwMap.get(Servo.class, "claw_grab");
 
@@ -152,7 +158,7 @@ public class HuskyBot {
 
         armExtendMotor.setPower(0);
 
-        clawRotate.scaleRange(CLAW_ROTATE_MIN_RANGE, CLAW_ROTATE_MAX_RANGE);
+        //clawRotate.scaleRange(CLAW_ROTATE_MIN_RANGE, CLAW_ROTATE_MAX_RANGE);
         clawLift.scaleRange(CLAW_LIFT_MIN_RANGE, CLAW_LIFT_MAX_RANGE);
         clawGrab.scaleRange(CLAW_GRAB_MIN_RANGE, CLAW_GRAB_MAX_RANGE);
 

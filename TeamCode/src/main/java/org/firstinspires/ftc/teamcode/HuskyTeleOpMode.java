@@ -48,6 +48,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
     double armSwivelPower = 0.0;
     double armExtendPower = 0.0;
     double armLiftPower = 0.0;
+
     double armLiftPowerDivider = 4;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -92,8 +93,8 @@ public class HuskyTeleOpMode extends LinearOpMode {
         double y, x, rx;
 
         huskyBot.clawLift.setPosition(CLAW_LIFT_START_POSITION);
-        huskyBot.clawGrab.setPosition(CLAW_GRAB_CLOSE_POSITION);
-        huskyBot.clawRotate.setPosition(CLAW_ROTATE_START_POSITION);
+        //huskyBot.clawGrab.setPosition(CLAW_GRAB_CLOSE_POSITION);
+       // huskyBot.clawRotate.setPosition(CLAW_ROTATE_START_POSITION);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -142,7 +143,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                 armLiftPowerDivider = 4 - (huskyBot.armLiftMotor.getCurrentPosition()/900);
             }
 
-            armLiftPower = -gamepad2.left_stick_y/armLiftPowerDivider;
+           /* armLiftPower = -gamepad2.left_stick_y/armLiftPowerDivider;
             armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MIN_POWER, ARM_LIFT_MAX_POWER);
 
             // Arm Lift Motor
@@ -162,6 +163,25 @@ public class HuskyTeleOpMode extends LinearOpMode {
             {
                 huskyBot.armLiftMotor.setPower(0);
             }
+            */
+            // todo use Power = (C_MG)vsin(theta - x) formula for the arm
+            if(gamepad2.left_stick_y < 0)
+            {
+                if(huskyBot.armLiftMotor.getCurrentPosition() < ARM_LIFT_MAX_POSITION) {
+                    double power = C_MG * ARM_LIFT_ANG_VELO_DESIRED * Math.cos(Math.abs(huskyBot.armLiftMotor.getCurrentPosition() - THETA_ZERO_POS) / (ARM_LIFT_MAX_POSITION - 49));
+                    huskyBot.armLiftMotor.setPower(power / 35);
+                }
+            }
+            else if(gamepad2.left_stick_y > 0)
+            {
+                double power = -1 * C_MG * ARM_LIFT_ANG_VELO_DESIRED * Math.cos(Math.abs(huskyBot.armLiftMotor.getCurrentPosition() - THETA_ZERO_POS)/(ARM_LIFT_MAX_POSITION-49));
+                huskyBot.armLiftMotor.setPower(power/35);
+            }
+            else
+            {
+                huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
+            }
+
 
 
             // Increases/Decreases Arm Length
@@ -177,13 +197,20 @@ public class HuskyTeleOpMode extends LinearOpMode {
             // Set power for arm extend motor.
             huskyBot.armExtendMotor.setPower(armExtendPower);
 
+
+            // Claw Lift Servo Control
+            if (gamepad2.right_stick_y != 0) {
+                huskyBot.servoMove(huskyBot.clawLift, -gamepad2.right_stick_y);
+            }
+
             // Rotate the Claw
+            /*
             if (-gamepad2.right_stick_x != 0) {
                 huskyBot.servoMove(huskyBot.clawRotate, -gamepad2.right_stick_x);
             }
             if (gamepad2.right_stick_y != 0) {
                 huskyBot.servoMove(huskyBot.clawLift, -gamepad2.right_stick_y);
-            }
+            }*/
 
             // Open/Close the Claw
             if (gamepad2.x) {
@@ -217,7 +244,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     gamepad2.left_stick_y, huskyBot.armLiftMotor.getPower(), huskyBot.armLiftMotor.getCurrentPosition());
             telemetry.addData("Arm Extend", "Power: (%.2f), Pos: (%d)",
                     huskyBot.armExtendMotor.getPower(), huskyBot.armExtendMotor.getCurrentPosition());
-            telemetry.addData("Claw Rotate", "Left X: (%.2f), Pos: (%.2f)", gamepad2.right_stick_x, huskyBot.clawRotate.getPosition());
+           // telemetry.addData("Claw Rotate", "Left X: (%.2f), Pos: (%.2f)", gamepad2.right_stick_x, huskyBot.clawRotate.getPosition());
             telemetry.addData("Claw Lift", "Right Y: (%.2f), Pos: (%.2f)",
                     gamepad2.right_stick_y, huskyBot.clawLift.getPosition());
             telemetry.addData("Claw Grab", "Pos: (%.2f)", huskyBot.clawGrab.getPosition());
