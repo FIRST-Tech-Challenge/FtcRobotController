@@ -1,0 +1,22 @@
+repositories {
+    mavenCentral()
+    google() // Needed for androidx
+    flatDir {
+        dirs rootProject.file('libs')
+    }
+}
+
+dependencies {
+    implementation 'org.firstinspires.ftc:Inspection:8.1.1'
+    implementation 'org.firstinspires.ftc:Blocks:8.1.1'
+    implementation 'org.firstinspires.ftc:Tfod:8.1.1'
+    implementation 'org.firstinspires.ftc:RobotCore:8.1.1'
+    implementation 'org.firstinspires.ftc:RobotServer:8.1.1'
+    implementation 'org.firstinspires.ftc:OnBotJava:8.1.1'
+    implementation 'org.firstinspires.ftc:Hardware:8.1.1'
+    implementation 'org.firstinspires.ftc:FtcCommon:8.1.1'
+    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
+}
+
