@@ -34,6 +34,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
 import org.openftc.easyopencv.OpenCvWebcam;
 
 /**
@@ -61,6 +63,10 @@ public class HuskyBot {
 
     // Webcam
     public OpenCvWebcam webcam;
+
+    // Magnetic Limit Switches
+    public TouchSensor armExtendMax = null;
+    public TouchSensor armExtendMin = null;
 
     // goBILDA 5203 Series Yellow Jacket Planetary Gear Motor
     // max encoder ticks per second
@@ -118,6 +124,10 @@ public class HuskyBot {
         clawRotate = hwMap.get(Servo.class, "claw_rotate");
         clawLift = hwMap.get(Servo.class, "claw_lift");
         clawGrab = hwMap.get(Servo.class, "claw_grab");
+
+        // Define and Init. Magnetic Limit Switches
+        armExtendMax = hwMap.get(TouchSensor.class, "arm_extend_max");
+        armExtendMin = hwMap.get(TouchSensor.class, "arm_extend_min");
 
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

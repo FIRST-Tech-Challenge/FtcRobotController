@@ -135,18 +135,17 @@ public class HuskyTeleOpMode extends LinearOpMode {
             armSwivelPower = Range.clip(armSwivelPower, -ARM_SWIVEL_MAX_POWER, ARM_SWIVEL_MAX_POWER);
             huskyBot.armSwivelMotor.setPower(armSwivelPower);
 
+            // Arm Lift Power Divider Algorithm
             if(gamepad2.left_stick_y > 0){
                 armLiftPowerDivider = 5.8;
             } else{
-                if(huskyBot.armLiftMotor.getCurrentPosition() < 350){
-                    armLiftPowerDivider = 4;
-                } else {
-                    armLiftPowerDivider = 3.1;
-                }
+                armLiftPowerDivider = 4 - (huskyBot.armLiftMotor.getCurrentPosition()/900);
             }
 
             armLiftPower = -gamepad2.left_stick_y/armLiftPowerDivider;
             armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MIN_POWER, ARM_LIFT_MAX_POWER);
+
+            // Arm Lift Motor
             if(huskyBot.armLiftMotor.getCurrentPosition() < ARM_LIFT_MAX_POSITION)
             {
                 if (armLiftPower == 0) {
@@ -167,16 +166,26 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
             // Increases/Decreases Arm Length
             armExtendPower = gamepad2.dpad_up ? -ARM_EXTENSION_MAX_POWER : (gamepad2.dpad_down ? ARM_EXTENSION_MAX_POWER : 0);
+
+            // Use Magnetic Limit Switches to limit extension of the arm.
+            if (huskyBot.armExtendMin.isPressed()) {
+                armExtendPower = (armExtendPower > 0) ? 0 : armExtendPower;
+            }
+            if (huskyBot.armExtendMax.isPressed()) {
+                armExtendPower = (armExtendPower < 0) ? 0 : armExtendPower;
+            }
+            // Set power for arm extend motor.
             huskyBot.armExtendMotor.setPower(armExtendPower);
 
+            // Rotate the Claw
             if (-gamepad2.right_stick_x != 0) {
                 huskyBot.servoMove(huskyBot.clawRotate, -gamepad2.right_stick_x);
             }
-
             if (gamepad2.right_stick_y != 0) {
                 huskyBot.servoMove(huskyBot.clawLift, -gamepad2.right_stick_y);
             }
 
+            // Open/Close the Claw
             if (gamepad2.x) {
                 huskyBot.clawGrab.setPosition(CLAW_GRAB_OPEN_POSITION);
             }
