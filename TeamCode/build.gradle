@@ -33,4 +33,6 @@ dependencies {
         implementation('org.ftclib.ftclib:vision:2.0.1')
         implementation('org.openftc:easyopencv:1.5.2')
     }
+
+    implementation 'org.openftc:apriltag:1.1.0'
 }
