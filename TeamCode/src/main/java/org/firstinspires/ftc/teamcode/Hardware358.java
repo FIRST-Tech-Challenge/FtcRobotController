@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode;
-
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+//import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -36,7 +41,7 @@ public class Hardware358 {
     public DcMotor rf = null; // right front
     public DcMotor rb = null; // right back
     public DcMotor lb = null; // left back
-    public DcMotor m = null; //middle
+   // public DcMotor m = null; //middle
     public DcMotor lift = null;
     public Servo rightServo = null;
     public Servo leftServo = null;
@@ -54,7 +59,7 @@ public class Hardware358 {
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public Hardware358() {
-        int hello=0;
+
 
     }
 
@@ -63,12 +68,13 @@ public class Hardware358 {
      * This method must be called ONCE when the OpMode is initialized.
      * <p>
      * All of the hardware devices are accessed via the hardware map, and initialized.
-     */
+   */
     public void init(HardwareMap HwMap) {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
 //        leftDrive  = myOpMode.hardwareMap.get(DcMotor.class, "left_drive");
 //        rightDrive = myOpMode.hardwareMap.get(DcMotor.class, "right_drive");
 //        armMotor   = myOpMode.hardwareMap.get(DcMotor.class, "arm");
+
         lf = HwMap.get(DcMotor.class, "lf");
         rf = HwMap.get(DcMotor.class, "rf");
         rb = HwMap.get(DcMotor.class, "rb");
@@ -79,10 +85,10 @@ public class Hardware358 {
         rightServo = HwMap.get(Servo.class,"rightServo");
 
 
-        lf.setDirection(DcMotor.Direction.FORWARD);
-        rf.setDirection(DcMotor.Direction.REVERSE);
-        lb.setDirection(DcMotor.Direction.FORWARD);
-        rb.setDirection(DcMotor.Direction.REVERSE);
+        lf.setDirection(DcMotor.Direction.REVERSE);
+        rf.setDirection(DcMotor.Direction.FORWARD);
+        lb.setDirection(DcMotor.Direction.REVERSE);
+        rb.setDirection(DcMotor.Direction.FORWARD);
         //m.setDirection(DcMotor.Direction.FORWARD);
         lift.setDirection(DcMotor.Direction.FORWARD);
 

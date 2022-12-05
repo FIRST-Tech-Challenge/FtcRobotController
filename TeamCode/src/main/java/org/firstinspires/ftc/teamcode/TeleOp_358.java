@@ -1,6 +1,6 @@
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
- * 
+ *
  */
 
 package org.firstinspires.ftc.teamcode;
@@ -8,8 +8,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-//  DRIVING MECANUM WHEELS SIMPLIFIED         
+
+//  DRIVING MECANUM WHEELS SIMPLIFIED
 //             @TeleOp
 //             public class MecanumTeleOp extends LinearOpMode {
 //                 @Override
@@ -19,6 +21,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //                     // call hardware class here
 
 
+//                     waitForStart();
+
 //                     if (isStopRequested()) return;
 
 //                     while (opModeIsActive()) {
@@ -26,7 +30,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //                         double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
 //                         double rx = gamepad1.right_stick_x;
 
-//                         // nominator is the largest motor power (absolute value) or 1
+//                         // Denominator is the largest motor power (absolute value) or 1
 //                         // This ensures all the powers maintain the same ratio, but only when
 //                         // at least one is out of the range [-1, 1]
 //                         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -42,7 +46,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //                     }
 //                 }
 //             }
-
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
  * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
@@ -51,7 +54,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *
  */
 
-@TeleOp(name="oldeTeleop", group="reborn") // i will come soon. when the 3d print is done, make sure u watch ur back
+@TeleOp(name="TELEOP") // i will come soon. when the 3d print is done, make sure u watch ur back
 //@Disabled
 public class TeleOp_358 extends OpMode {
 
@@ -59,30 +62,26 @@ public class TeleOp_358 extends OpMode {
     // Declare OpMode members.
 
     //methods to control the speed of the robot.
-    private float speedModifier = 2f;
+    private float speedModifier = .9f;
     private float reductionModifier = .3f;//the amount that the speed will be decreased in precision mode. Should be < 1
-    private float turboModifier = 1.9f;// the amount that the speed will be increased in turbo mode. Must be <2. No increase is 1.
+    private float turboModifier = 1.5f;// the amount that the speed will be increased in turbo mode. Must be <2. No increase is 1.
     private float precisionActive = 1f;
     private float turnReduction = .5f;//reduces the speed of turning. <1 to reduce. 1 if to leave as normal> yuh
     //private float BRDrive = 1f;
 
     @Override
-    public void init()
-    {
+    public void init() {
         //Initialize the hardware variables.
         //The init() method of the hardware class does all the work here
         robot.init(hardwareMap);
     }
 
     @Override
-    public void loop()
-
-    {
+    public void loop() {
         mecanumMove();
     }
 
-    public void mecanumMove()
-    {
+    public void mecanumMove() {
 //        double clawDistanceMeasure = robot.clawDist.getDistance(DistanceUnit.MM);
 //        telemetry.addData("Claw Distance", clawDistanceMeasure);
 //        telemetry.addData("Distance from Back", robot.backDist.getDistance(DistanceUnit.CM));
@@ -95,26 +94,32 @@ public class TeleOp_358 extends OpMode {
         {
             double stickX = 0;
             double stickY = 0;
-            boolean form = false;
-            if (Math.abs(gamepad1.right_stick_x) > 0){
-                stickX = gamepad1.right_stick_x;
-            }
-            if(Math.abs(gamepad1.left_stick_y) > 0){
+            double stickR = 0;
+            double vm = 0;
+            if (Math.abs(gamepad1.left_stick_x) + Math.abs(gamepad1.left_stick_y) > Math.abs(gamepad2.left_stick_x) + Math.abs(gamepad2.left_stick_y)) {
+                stickX = gamepad1.left_stick_x;
                 stickY = gamepad1.left_stick_y;
-            }
-            if(Math.abs(gamepad1.left_stick_y) > 0){
-                form = true;
-                stickX = gamepad1.right_stick_x;
+            } else {
+                stickX = gamepad2.left_stick_x;
+                stickY = gamepad2.left_stick_y;
             }
 
+            if (Math.abs(gamepad1.right_stick_x) > Math.abs(gamepad2.right_stick_x)) {
+                stickR = gamepad1.right_stick_x;
+            } else {
+                stickR = gamepad2.right_stick_x;
+            }
+            if (Math.abs(gamepad1.right_stick_y) > 0.2) {
+                vm = gamepad1.right_stick_y;
+            }
             //variables
-            double r = Math.hypot(-stickX, stickY);
+            double r = Math.hypot(-stickX, stickY); //ur mom is watching you from the ceiling. dont look up...
             double robotAngle = Math.atan2(stickY, -stickX) - Math.PI / 4;
-            final double v1 = r * Math.cos(robotAngle);
-            final double v2 = r * Math.sin(robotAngle);
-            final double v3 = r * Math.sin(robotAngle);
-            final double v4 = r * Math.cos(robotAngle);
-
+            double rightX = -stickR * turnReduction;
+            final double v1 = r * Math.cos(robotAngle) + rightX;
+            final double v2 = r * Math.sin(robotAngle) - rightX;
+            final double v3 = r * Math.sin(robotAngle) + rightX; //the swedes are coming 4 u soon
+            final double v4 = r * Math.cos(robotAngle) - rightX;
 
             if (gamepad1.left_bumper || gamepad2.left_bumper) {//if the left bumper is pressed, it multiplies the total power by the precision driving modifer
                 precisionActive = reductionModifier;
@@ -124,18 +129,13 @@ public class TeleOp_358 extends OpMode {
                 precisionActive = 1f; //no modifier
             }
 
-            if(form){
-                robot.lf.setPower(-stickX);
-                robot.rf.setPower(stickX);
-                robot.lb.setPower(-stickX);
-                robot.rb.setPower(stickX);
-            }
-            else {
-                robot.lf.setPower(-speedModifier * v1 * precisionActive);
-                robot.rf.setPower(-speedModifier * v2 * precisionActive);
-                robot.lb.setPower(-speedModifier * v3 * precisionActive);
-                robot.rb.setPower(-speedModifier * v4 * precisionActive);
-            }
+
+            robot.lf.setPower(-speedModifier * v1 * precisionActive);
+            robot.rf.setPower(-speedModifier * v2 * precisionActive);
+            robot.lb.setPower(-speedModifier * v3 * precisionActive);
+            robot.rb.setPower(-speedModifier * v4 * precisionActive);
+            robot.lift.setPower(-speedModifier * vm * precisionActive);
+
             telemetry.addData("fLPower", -speedModifier * v1 * precisionActive);
             telemetry.addData("fRPower", -speedModifier * v2 * precisionActive);
             telemetry.addData("bLPower", -speedModifier * v3 * precisionActive);
@@ -151,73 +151,25 @@ public class TeleOp_358 extends OpMode {
         telemetry.addLine();
 
         //======================================
-        //----------CLAW GRABBER----------------
+        //----------CLAW--------------
         //======================================
-        if(gamepad1.right_trigger > 0.5){
+
+        if (gamepad1.right_trigger > 0.5) {
             robot.leftServo.setPosition(1);
             robot.rightServo.setPosition(0);
-            telemetry.addData("Button X", gamepad1.x);
-        }
-        else if(gamepad1.b){
+            telemetry.addData("Right Trigger", gamepad1.x);
+        } else if (gamepad1.b) {
             robot.leftServo.setPosition(0);
             robot.rightServo.setPosition(0);
             telemetry.addData("Button B", gamepad1.b);
-        }
-        else {
+        } else {
             robot.leftServo.setPosition(0);
             robot.rightServo.setPosition(1);
             telemetry.addData("Neither", gamepad1.b);
+            //======================================
+            //----------CLAW ROTATOR----------------
+            //======================================
         }
-
-        //======================================
-        //----------CLAW ROTATOR----------------
-        //======================================
-
-
-//        if (gamepad1.dpad_up || gamepad2.dpad_up) {
-//            robot.rotateRight.setPower(-.2 * precisionActive);
-//            robot.rotateLeft.setPower(-.2 * precisionActive);
-//            telemetry.addData("Rotator State", "Up"); //be careful wherever you go.
-//        } else if ((gamepad1.dpad_down||gamepad2.dpad_down) && (robot.magStopBottom.getValue() == 0.0 || (gamepad1.left_bumper||gamepad2.left_bumper))) {
-//            robot.rotateRight.setPower(.05 * precisionActive);
-//            robot.rotateLeft.setPower(.05 * precisionActive);
-//            telemetry.addData("Rotator State", "Down");
-//
-//        } else {
-//            robot.rotateRight.setPower(0);
-//            robot.rotateLeft.setPower(0);
-//            telemetry.addData("Rotator State", "Off"); // r u watching behind you
-//        }
-//
-//        if(gamepad1.a || gamepad2.a){
-//            robot.chuteServo.setPosition(1);
-//        }
-//        else {
-//            robot.chuteServo.setPosition(0.5);
-//        }
-
-        telemetry.addLine();
-//        telemetry.addData("In the DANGER ZONE", robot.magStopBottom.getValue());
-//        telemetry.addData("Claw Rotator Position:", robot.rotateRight.getCurrentPosition());
-//        telemetry.addData("Claw Rotator Position:", robot.frontLeft.getCurrentPosition());
-
-
-        //======================================
-        //----------CLAW ACTIVATION-------------
-        //======================================
-
-//        if (Math.max(gamepad1.right_trigger, gamepad2.right_trigger)>.1){
-//            robot.clawServo.setPosition(.15);
-//            telemetry.addData("Claw State", "Squeeeze");//squeeze is close
-//        }
-//        else {
-//            robot.clawServo.setPosition(.45);
-//            telemetry.addData("Claw State", "Sigh");//sigh is release
-//        }
-
-
-        telemetry.update();
     }
 }
-
 

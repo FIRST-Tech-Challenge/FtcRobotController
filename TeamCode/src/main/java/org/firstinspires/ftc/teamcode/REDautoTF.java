@@ -52,10 +52,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-//@TeleOp(name = "Detect", group = "Concept")
+@Autonomous(name = "RED_Cnr_AUTO")
 //@Disabled
-@Autonomous(name="Detect")
-public class TFlowObjectDetectionWebcam extends LinearOpMode {
+public class REDautoTF extends Driving358 {
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -67,33 +66,16 @@ public class TFlowObjectDetectionWebcam extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
-
+    private static int parkLevel=0;
     private static final String[] LABELS = {
             "1 Bolt",
             "2 Bulb",
             "3 Panel"
     };
 
-    /*
-     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-     * web site at https://developer.vuforia.com/license-manager.
-     *
-     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-     * random data. As an example, here is a example of a fragment of a valid key:
-     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-     * Once you've obtained a license key, copy the string from the Vuforia web site
-     * and paste it in to your code on the next line, between the double quotes.
-     */
-    private static final String VUFORIA_KEY ="AU2ZVVD/////AAABmWSnWzlvdECDh0CawWRMh50kTOol0b5i6u8TJ9mYkhAojzXIoOAOVA7kFQAmVX8CWYdcpRjhQUnpcWViN2ckinEOTF1xTzWbTv6pqSuYaUgSwNKQUy1nipKxdEpTCv6BW+17wHICNqIJVCblf5CCvgg79QnDk1G503iGNlmz8a9wRZIYadFQzWBK7Ps/sWMliCnRgUe5KAVfWAs/K+0DzveH/Gq82hE9E1GIXusodMsZJzGlmQKEWcIgfzuWYzzlYdJpw6eNPSVIK5lisdkBfkzJbsWSIsOuKJOzJMwB894qq7OB/nMJCaWT3qseZamRZKm0wpgVng4x0gW/ZccKzl/4jDDeuJOa2K4MSfCDTPn+";
 
+    private static final String VUFORIA_KEY = "AU2ZVVD/////AAABmWSnWzlvdECDh0CawWRMh50kTOol0b5i6u8TJ9mYkhAojzXIoOAOVA7kFQAmVX8CWYdcpRjhQUnpcWViN2ckinEOTF1xTzWbTv6pqSuYaUgSwNKQUy1nipKxdEpTCv6BW+17wHICNqIJVCblf5CCvgg79QnDk1G503iGNlmz8a9wRZIYadFQzWBK7Ps/sWMliCnRgUe5KAVfWAs/K+0DzveH/Gq82hE9E1GIXusodMsZJzGlmQKEWcIgfzuWYzzlYdJpw6eNPSVIK5lisdkBfkzJbsWSIsOuKJOzJMwB894qq7OB/nMJCaWT3qseZamRZKm0wpgVng4x0gW/ZccKzl/4jDDeuJOa2K4MSfCDTPn+";
 
-
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
     private VuforiaLocalizer vuforia;
 
     /**
@@ -108,7 +90,7 @@ public class TFlowObjectDetectionWebcam extends LinearOpMode {
         // first.
         initVuforia();
         initTfod();
-
+        robot.init(hardwareMap);
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
@@ -122,42 +104,100 @@ public class TFlowObjectDetectionWebcam extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(1.0, 16.0 / 9.0);
         }
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         waitForStart();
+        sleep(200);
+        move(.6, 'f', 10);
+        sleep(200);
+        parkLevel = checkLevel();
+        telemetry.addData("Level","%d",parkLevel);
+        telemetry.update();
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
 
-                        // step through the list of recognitions and display image position/size information for each one
-                        // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                            double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                            double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
+        switch (parkLevel) {//moves to the alliance shipping hub based on what it reads
+            case (1)://Warehouse close. Scoring level 1. Bottom
 
-                            telemetry.addData(""," ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
+                move(.6, 'l', 65);
+               move(.6, 'f', 65);
+
+                break;
+            case (2)://Mid. Scoring level 2. Mid
+
+                move(.6, 'l', 15);
+               move(.6, 'f', 65);
+                move(.6, 'r', 15);
+//                move(.6, 'r', 5);
+                //distanceMove(25, false);
+                break;
+            case (3)://warehouse far. scoring level 3 top
+                //levelLift('t');
+
+                move(.6, 'r', 75);
+                move(.6, 'f', 65);
+                //distanceMove(45, false);
+                break;
+            default:
+                move(.6, 'l', 75);
+                break;
+        }
+        motorStop();
+    }
+private int checkLevel() {
+    long programTime = System.currentTimeMillis();
+    long waitTime = 5000L;
+    if (opModeIsActive()) {
+        while (opModeIsActive() && (System.currentTimeMillis() - programTime )< waitTime) {
+            if (tfod != null) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Objects Detected", updatedRecognitions.size());
+
+                    // step through the list of recognitions and display image position/size information for each one
+                    // Note: "Image number" refers to the randomized image orientation/number
+                    for (Recognition recognition : updatedRecognitions) {
+                        double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                        double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                        double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                        double height = Math.abs(recognition.getTop() - recognition.getBottom());
+
+                        telemetry.addData("", " ");
+                        telemetry.addData("Image", "Level %s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+//                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
+//                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
+                        if (recognition.getLabel().equalsIgnoreCase("1 Bolt")) {
+                            telemetry.addData("BOLT", " ");
+                            return 1;
+
                         }
-                        telemetry.update();
+                        if (recognition.getLabel().equalsIgnoreCase("2 BULB")) {
+                            telemetry.addData("BULB", " ");
+                            return 2;
+
+                        }
+                        if (recognition.getLabel().equalsIgnoreCase("3 Panel")) {
+                            telemetry.addData("PANEL", " ");
+                            return 3;
+
+                        }
                     }
+                    telemetry.update();
                 }
             }
+
         }
+        return -1;
     }
+    return -1;
+}
+
+
 
     /**
      * Initialize the Vuforia localization engine.
