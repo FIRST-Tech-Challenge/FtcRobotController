@@ -99,4 +99,28 @@ public abstract class BaseAutonomous extends BaseOpMode {
         motorBL.setPower(0.0);
         motorBR.setPower(0.0);
     }
+
+    public void driveSlidesToPosition(int position) {
+        int error = position - motorLeftSlides.getCurrentPosition();
+
+        while (Math.abs(error) > 25 && opModeIsActive()) {
+            if (error < 0) {
+                if (motorLeftSlides.getCurrentPosition() > 600) {
+                    motorLeftSlides.setPower(-0.05);
+                    motorRightSlides.setPower(-0.05);
+                } else {
+                    motorLeftSlides.setPower(-1);
+                    motorRightSlides.setPower(-1);
+                }
+            } else {
+                motorLeftSlides.setPower(1);
+                motorRightSlides.setPower(1);
+            }
+
+            error = position - motorLeftSlides.getCurrentPosition();
+        }
+
+        motorLeftSlides.setPower(0.0);
+        motorRightSlides.setPower(0.0);
+    }
 }

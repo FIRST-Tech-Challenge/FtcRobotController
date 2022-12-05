@@ -47,9 +47,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
         if (motorLeftSlides.getCurrentPosition() < Constants.SLIDE_BOTTOM) {
             motorLeftSlides.setPower(0.5);
             motorRightSlides.setPower(0.5);
-        } else if (motorLeftSlides.getCurrentPosition() > Constants.SLIDE_TOP) {
-            motorLeftSlides.setPower(-0.5);
-            motorRightSlides.setPower(-0.5);
         }
     }
 

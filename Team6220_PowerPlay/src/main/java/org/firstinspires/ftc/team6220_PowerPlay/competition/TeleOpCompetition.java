@@ -24,6 +24,9 @@ public class TeleOpCompetition extends BaseTeleOp {
             driveChassisWithController();
             driveGrabberWithController();
             driveSlidesWithController();
+
+            telemetry.addData("slide", motorLeftSlides.getCurrentPosition());
+            telemetry.update();
         }
     }
 }

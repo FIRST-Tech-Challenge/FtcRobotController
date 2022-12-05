@@ -33,7 +33,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
 
-
     // initializes the motors, servos, and IMUs
     public void initialize() {
         // motors
