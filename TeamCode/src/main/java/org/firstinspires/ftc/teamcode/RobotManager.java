@@ -233,7 +233,7 @@ public class RobotManager {
         mechanismDriving.updateHorseshoe(robot);
         //case Robot.HorseshoeState.FRONT/REAR (Remove the / in between if needed to be added back. Only set 1 variable at a time)
         //Waiting for servo to finish rotation
-        while (robot.elapsedTime.milliseconds() - startTime < MechanismDriving.HORSESHOE_SERVO_TIME) {}
+        while (robot.elapsedTime.milliseconds() - startTime < MechanismDriving.HORSESHOE_TIME) {}
     }
 
     /** Finds the lowered SlidesState given a standard SlidesState
@@ -254,7 +254,7 @@ public class RobotManager {
      *
      *  @param level the level to which the cargo needs to be delivered.
      */
-    public void deliverToPole(Robot.SlidesState level) {
+    public void deliverToPole(Robot.SlidesState level, Robot robot) {
         // Extend slides.
         robot.desiredSlidesState = level;
         boolean extended = mechanismDriving.updateSlides(robot);
@@ -264,20 +264,19 @@ public class RobotManager {
 
         // Move into drop-off position.
         robot.positionManager.updatePosition(robot);
-        Position startPos = new Position(
-                new Point(robot.getPosition().getX(), robot.getPosition().getY(), "POI startPos"),
-                robot.getPosition().getRotation());
+        Position startPos = new Position(robot.getPosition().getX(), robot.getPosition().getY(),
+                robot.getPosition().getRotation(), "POI startPos");
 
         navigation.path.add(navigation.pathIndex,
-                new Position(new Point(startPos.getX() + Navigation.HORSESHOE_SIZE, startPos.getY(),
-                    "POI dropoff"), startPos.getRotation()));
+                new Position(startPos.getX() + Navigation.HORSESHOE_SIZE, startPos.getY(),
+                        startPos.getRotation(), "POI dropoff"));
 
         travelToNextPOI();
 
         flipHorseshoe();
 
         // Lower linear slides
-        robot.desiredSlidesState = getLoweredSlidesState(currentSlidesState);
+        robot.desiredSlidesState = getLoweredSlidesState(robot.desiredSlidesState);
         boolean lowered = mechanismDriving.updateSlides(robot);
         while (!lowered) {
             lowered = mechanismDriving.updateSlides(robot);
@@ -302,12 +301,12 @@ public class RobotManager {
     public void pickUpCone() {
         // Suck the cone into the horseshoe
         robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.ON;
-        startTime = elapsedTime.milliseconds();
-        while (elapsedTime.milliseconds() - startTime < COMPLIANT_WHEELS_TIME)
-            mechanismDriving.updateCompliantWheels();
+        double startTime = elapsedTime.milliseconds();
+        while (elapsedTime.milliseconds() - startTime < mechanismDriving.COMPLIANT_WHEELS_TIME)
+            mechanismDriving.updateCompliantWheels(robot);
         // Turns off compliant wheels
         robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.OFF;
-        mechanismDriving.updateCompliantWheels();
+        mechanismDriving.updateCompliantWheels(robot);
     }
 
     /** Returns whether the driver is attempting to move the robot linearly

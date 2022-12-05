@@ -88,23 +88,23 @@ public class Navigation {
             robot.telemetry.update();
             switch (movementMode) {
                 case FORWARD_ONLY:
-                    rotate(getAngleBetween(robot.getPosition().x, robot.getPosition().y, target.getPosition().x, target.getPosition().y) - Math.PI / 2,
-                            target.getLocation().rotatePower, robot);
+                    rotate(getAngleBetween(robot.getPosition().x, robot.getPosition().y, target.x, target.y) - Math.PI / 2,
+                            target.rotatePower, robot);
                     travelLinear(target, target.getStrafePower(), robot);
                     rotate(target.getRotation(), target.getRotatePower(), robot);
                     break;
                 case STRAFE:
-                    travelLinear(target.getLocation(), target.getLocation().strafePower, robot);
-                    rotate(target.getRotation(), target.getLocation().rotatePower, robot);
+                    travelLinear(target, target.strafePower, robot);
+                    rotate(target.getRotation(), target.rotatePower, robot);
                     break;
             }
 
             pathIndex++;
 
-            robot.telemetry.addData("Got to", target.getLocation().name);
+            robot.telemetry.addData("Got to", target.name);
             robot.telemetry.update();
 
-            if (target.getLocation().name.length() >= 3 && target.getLocation().name.substring(0, 3).equals("POI")) break;
+            if (target.name.startsWith("POI")) break;
         }
         return path.get(pathIndex - 1);
     }
@@ -335,7 +335,6 @@ public class Navigation {
         final double startX = robot.getPosition().getX();
         final double startY = robot.getPosition().getY();
 
-
         double totalDistance = getEuclideanDistance(startX, startY, target.x, target.y);
 
         double power;
@@ -385,7 +384,7 @@ public class Navigation {
                 power = STRAFE_CORRECTION_POWER;
             }
 
-            double strafeAngle = getStrafeAngle(currentLoc, robot.getPosition().getRotation(), target);
+            double strafeAngle = getStrafeAngle(robot.getPosition(), target);
 
             setDriveMotorPowers(strafeAngle, power, 0.0, robot, false);
 
@@ -435,9 +434,7 @@ public class Navigation {
 
     /** Calculates the euclidean distance between two points.
      *
-     *  @param a A 2D point on the playing field.
-     *  @param b The point to find the distance to point A from.
-     *  @return The Euclidean distance between the two points.
+     *  TODO: make this take two Positions
      */
     private double getEuclideanDistance(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
@@ -451,12 +448,12 @@ public class Navigation {
             Position copy = new Position(pos.getX(),pos.getY(), pos.getName(),pos.getAction(),pos.getStrafePower(),pos.getRotatePower(),pos.getRotation());
             if (allianceColor == RobotManager.AllianceColor.RED) {
                 copy.setY(-copy.getY() + RED_BARCODE_OFFSET);
-                if (startingSide == RobotManager.StartingSide.WAREHOUSE) {
+                if (startingSide == RobotManager.StartingSide.OUR_COLOR){
                     copy.setY(copy.getY() + DISTANCE_BETWEEN_START_POINTS);
                 }
                 copy.setRotation((copy.getRotation() + Math.PI) * -1);
             }
-            else if (startingSide == RobotManager.StartingSide.WAREHOUSE) {
+            else if (startingSide == RobotManager.StartingSide.OUR_COLOR) {
                 copy.setY(copy.getY() - DISTANCE_BETWEEN_START_POINTS);
             }
             path.set(i, copy);
