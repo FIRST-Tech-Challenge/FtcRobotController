@@ -65,7 +65,9 @@ public class teleop extends BaseOpMode {
 
             if (gamepad2.left_trigger > 0) {
                 robot.getArm().setPower(1.0);
-            } else if (gamepad2.right_trigger == 0) {
+            } else if (gamepad2.right_trigger > 0) {
+                robot.getArm().setPower(-0.2);
+            } else {
                 robot.getArm().setPower(0);
             }
             if (gamepad1.x) {
