@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -14,6 +18,8 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import org.firstinspires.ftc.teamcode.Components.CV.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
 
 import java.util.ArrayList;
 
@@ -21,6 +27,7 @@ public class Field {
     private SampleMecanumDrive roadrun;
     private CVMaster cv;
     private RFGamepad gp;
+    private IMU imu;
     private ArrayList<Integer> tileMovement = new ArrayList<>();
     private ArrayList<Trajectory> fullmovement = new ArrayList<>();
     double lookingDistance = 20.0, dropDistance = 9;
@@ -54,10 +61,11 @@ public class Field {
             //row 6
             {{58.75, 58.75}, {58.75, 35.25}, {58.75, 11.75}, {58.75, -11.75}, {58.75, -35.25}, {-58.75, -58.75}}};
 
-    public Field(SampleMecanumDrive p_roadrun, CVMaster p_cv, RFGamepad p_gp) {
+    public Field(SampleMecanumDrive p_roadrun, CVMaster p_cv, IMU p_imu, RFGamepad p_gp) {
         roadrun = p_roadrun;
         cv = p_cv;
         gp = p_gp;
+        imu = p_imu;
     }
 
     //which tile bot at
@@ -91,6 +99,26 @@ public class Field {
 //                    2 * roadrun.getPoseEstimate().getY() + (coords[1]) * sin(roadrun.getPoseEstimate().getHeading() + coords[0]) - poleCoords[(int) poleValues[0]][(int) poleValues[1]][1],
 //                    2 * roadrun.getPoseEstimate().getHeading() + coords[0] - poleValues[3]));
             return true;
+    }
+    public void closestDropPosition(){
+        minDistPole();
+        Pose2d curntPose = roadrun.getPoseEstimate();
+        curntPose = new Pose2d(curntPose.getX(), curntPose.getY(), imu.updateAngle());
+        op.telemetry.addData("poleValues", poleValues[0] + "," + poleValues[1]);
+        if(poleValues[0]!=0||poleValues[1]!=0) {
+            double[] idealDropPos = {poleCoords[(int) poleValues[0]][(int) poleValues[1]][0] - cos(curntPose.getHeading()) * dropDistance,
+                    poleCoords[(int) poleValues[0]][(int) poleValues[1]][1] - sin(curntPose.getHeading()) * dropDistance};
+            double dist = sqrt(pow(curntPose.getX() - idealDropPos[0], 2) + pow(curntPose.getY() - idealDropPos[1], 2));
+            Pose2d correctedPose = curntPose;
+            if (dist > 0.8) {
+                correctedPose = new Pose2d(idealDropPos[0] /*+ cos(curntPose.getHeading()) * 0.8*/, idealDropPos[1] /*+ sin(curntPose.getHeading()) * 0.8*/, curntPose.getHeading());
+//                roadrun.setPoseEstimate(correctedPose);
+            }
+            op.telemetry.addData("idealDropPos:" + idealDropPos[0] + "," + idealDropPos[1] + ":", false);
+            op.telemetry.addData("dist:", dist);
+            op.telemetry.addData("correctedDropPos:" + correctedPose.getX() + "," + correctedPose.getY() + ":", false);
+        }
+
     }
     public void updateTrajectory(){
         dropTrajectory = roadrun.trajectoryBuilder(roadrun.getPoseEstimate()).lineToLinearHeading(
@@ -152,11 +180,12 @@ public class Field {
 
     public boolean inCloseSight(int p_i, int p_j) {
         double[] dist = {roadrun.getPoseEstimate().getX() - poleCoords[p_i][p_j][0], roadrun.getPoseEstimate().getY() - poleCoords[p_i][p_j][1]};
-        dist[0] += sin((roadrun.getPoseEstimate().getHeading() )) * cameraPos[0] - cos(roadrun.getPoseEstimate().getHeading() ) * cameraPos[1];
-        dist[1] += cos((roadrun.getPoseEstimate().getHeading() )) * cameraPos[0] + sin(roadrun.getPoseEstimate().getHeading() ) * cameraPos[1];
+//        dist[0] += sin((roadrun.getPoseEstimate().getHeading() )) * cameraPos[0] - cos(roadrun.getPoseEstimate().getHeading() ) * cameraPos[1];
+//        dist[1] += cos((roadrun.getPoseEstimate().getHeading() )) * cameraPos[0] + sin(roadrun.getPoseEstimate().getHeading() ) * cameraPos[1];
         double[] polarCoords = toPolar(dist);
-        if (polarCoords[0] < lookingDistance && ((polarCoords[1] - roadrun.getPoseEstimate().getHeading()) * 180.0 / PI + 180) % 360 < 22.5) {
-            poleValues = new double[]{p_i, p_j, polarCoords[0], polarCoords[1] - roadrun.getPoseEstimate().getHeading() + PI};
+        op.telemetry.addData("diff", polarCoords[0] +"," + abs((polarCoords[1] - imu.updateAngle()) * 180.0 / PI+360) % 360 +"   |   "+p_i+"," + p_j);
+        if (polarCoords[0] < lookingDistance && abs((polarCoords[1] - imu.updateAngle()) * 180.0 / PI+360) % 360 < 22.5) {
+            poleValues = new double[]{p_i, p_j, polarCoords[0], polarCoords[1] - imu.updateAngle()+ PI};
             return true;
         } else {
             return false;
