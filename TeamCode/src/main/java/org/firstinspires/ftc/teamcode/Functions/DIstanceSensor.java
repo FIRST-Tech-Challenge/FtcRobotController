@@ -15,7 +15,7 @@ public class DIstanceSensor extends OpMode {
 
     @Override
     public void init() {
-//        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
+        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
         distanceSensorFunction = new DistanceSensorFunction(sensorRange);
 
     }

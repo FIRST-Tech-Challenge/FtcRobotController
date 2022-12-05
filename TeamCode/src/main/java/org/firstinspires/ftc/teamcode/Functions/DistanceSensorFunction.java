@@ -8,15 +8,9 @@ public class DistanceSensorFunction {
 
     private DistanceSensor sensorRange;
 
-//    public void init()
-//    {
-//        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
-//    }
-
     public DistanceSensorFunction(DistanceSensor _sensorRange)
     {
         sensorRange = _sensorRange;
-//        init();
     }
 
 
@@ -39,3 +33,17 @@ public class DistanceSensorFunction {
     }
 
 }
+
+
+//pt folosire int alte clase, sa se adauge urmatoarele linii:
+
+//    @Override
+//    public void init() {
+//        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
+//        distanceSensorFunction = new DistanceSensorFunction(sensorRange);
+//
+//    }
+
+// + apel functie "distanceSensorFunction.distance();"
+
+//senzorul nu compenseaza pt marimea lui (+- 2 cm)
