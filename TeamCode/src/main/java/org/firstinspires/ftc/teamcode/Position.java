@@ -1,63 +1,101 @@
 package org.firstinspires.ftc.teamcode;
 
 /** Represents the position of the robot.
- *  More generally, it contains an x-y point and a orientation.
+ *  More generally, it contains an x-y point and a rotation.
  */
 public class Position {
 
     private Point location;
 
-    // A orientation, in radians, in the interval (-pi, pi]
-    private double orientation;
+    // A rotation, in radians, in the interval (-pi, pi]
+    private double rotation;
+
+    protected String name;
+    protected double x;
+    protected double y;
+    protected Navigation.Action action;
+    //Add constructors if needed
+    protected double strafePower = 0.0;
+    protected double rotatePower = 0.0;
 
     Position() {
-        location = new Point(0.0, 0.0);
-        setOrientation(0.0);
+        x = 0.0;
+        y = 0.0;
+        name = "";
+        setRotation(0.0);
     }
 
     Position(double x, double y, double theta) {
-        location = new Point(x, y);
-        setOrientation(theta);
+        this.x = x;
+        this.y = y;
+        setRotation(theta);
     }
-    Position(Point p, double r) {
-        location = p;
-        setOrientation(r);
+
+    Position(double x, double y, double theta, String name) {
+        this.x = x;
+        this.y = y;
+        this.name = name;
+        setRotation(theta);
+    }
+
+    Position(double x, double y, String name, Navigation.Action action, double strafePower, double rotatePower, double theta) {
+        this.x = x;
+        this.y = y;
+        this.name = name;
+        setRotation(theta);
+        this.strafePower = strafePower;
+        this.rotatePower = rotatePower;
+        this.action = action;
     }
 
     public void setX(double x) {
-        location.setX(x);
+        this.x = x;
     }
 
     public void setY(double y) {
-        location.setY(y);
+        this.y = y;
     }
 
-    public Position setOrientation(double r) {
-        orientation = r;
+    public Position setRotation(double r) {
+        this.rotation = r;
         return this;
     }
 
     public double getX() {
-        return location.x;
+        return x;
     }
 
     public double getY() {
-        return location.y;
+        return y;
     }
 
-    public double getOrientation() {
-        return orientation;
+    public double getRotation() {
+        return rotation;
     }
 
-    public Point getLocation() {return location;}
+    public double getStrafePower() {
+        return strafePower;
+    }
+
+    public double getRotatePower(){
+        return rotatePower;
+    }
+
+    public Navigation.Action getAction(){
+        return action;
+    }
+
+    public String getName(){
+        return name;
+    }
 
     public void reset() {
         setX(0.0);
         setY(0.0);
-        setOrientation(0.0);
+        setRotation(0.0);
     }
 
     public static Position add(Position a, Position b) {
-        return new Position(a.getX() + b.getX(), a.getY() + b.getY(), (a.getOrientation() + b.getOrientation()) % (2 * Math.PI));
+        return new Position(a.getX() + b.getX(), a.getY() + b.getY(), (a.getRotation() + b.getRotation()) % (2 * Math.PI));
     }
 }
