@@ -25,7 +25,7 @@ public class PowerPlayTeleOp extends OpMode {
     public void init() {
         initSharedPreferences();
         robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, new ArrayList<>(Collections.emptyList()),
-                                        allianceColor, RobotManager.StartingSide.CAROUSEL,
+                                        allianceColor, RobotManager.StartingSide.OUR_COLOR,
                                         Navigation.MovementMode.STRAFE, telemetry, elapsedTime);
         IMUPositioning.Initialize(this);
     }
