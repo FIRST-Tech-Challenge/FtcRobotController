@@ -130,6 +130,8 @@ public class RobotManager {
             if (gamepads.getAnalogValues().gamepad2RightStickX < -0.5) {
                 navigation.wheel_speeds[3] -= 0.01;
             }
+
+            // TODO: Add button for compliant wheels (on and off switch)
         }
 
         mechanismDriving.adjustDesiredSlideHeight(gamepads.getAnalogValues(), robot);
@@ -240,11 +242,11 @@ public class RobotManager {
      *  @return the lowered SlidesState (or the retracted SlidesState if it was already retracted)
      */
     public Robot.SlidesState getLoweredSlidesState(Robot.SlidesState currentSlidesState) {
-        return switch (currentSlidesState) {
-            case Robot.SlidesState.LOW -> Robot.SlidesState.LOW_LOWERED;
-            case Robot.SlidesState.MEDIUM -> Robot.SlidesState.MEDIUM_LOWERED;
-            case Robot.SlidesState.HIGH -> Robot.SlidesState.HIGH_LOWERED;
-            default -> Robot.SlidesState.RETRACTED;
+        switch (currentSlidesState) {
+            case LOW: return Robot.SlidesState.LOW_LOWERED;
+            case MEDIUM: return Robot.SlidesState.MEDIUM_LOWERED;
+            case HIGH: return Robot.SlidesState.HIGH_LOWERED;
+            default: return Robot.SlidesState.RETRACTED;
         }
     }
 
@@ -301,8 +303,11 @@ public class RobotManager {
         // Suck the cone into the horseshoe
         robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.ON;
         startTime = elapsedTime.milliseconds();
-        while (elapsedTime.milliseconds() - startTime < 500)
+        while (elapsedTime.milliseconds() - startTime < COMPLIANT_WHEELS_TIME)
             mechanismDriving.updateCompliantWheels();
+        // Turns off compliant wheels
+        robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.OFF;
+        mechanismDriving.updateCompliantWheels();
     }
 
     /** Returns whether the driver is attempting to move the robot linearly
