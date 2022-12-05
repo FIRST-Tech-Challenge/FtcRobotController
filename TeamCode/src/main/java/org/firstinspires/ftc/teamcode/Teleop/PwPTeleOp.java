@@ -16,8 +16,8 @@ public class PwPTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new PwPRobot(this,true);
-        robot.roadrun.setPoseEstimate(new Pose2d(41, 61, Math.toRadians(270)));
-        robot.cv.observeStick();
+        robot.setPoseEstimate(new Pose2d(41, 61, Math.toRadians(270)));
+//        robot.cv.observeStick();
         waitForStart();
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while(!isStopRequested()){

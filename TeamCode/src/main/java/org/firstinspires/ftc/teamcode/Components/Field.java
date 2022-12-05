@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -14,18 +16,19 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import org.firstinspires.ftc.teamcode.Components.CV.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
 
 import java.util.ArrayList;
 
 public class Field {
     private SampleMecanumDrive roadrun;
     private CVMaster cv;
+    private IMU imu;
+    double lookingDistance = 20.0, dropDistance = -10;
+    double[] poleValues = {0, 0, 0, 0}, cameraPos = {/*4, 4, 0.41887*/0,0,0}, dropPosition = {0, 0, 0};
     private RFGamepad gp;
     private ArrayList<Integer> tileMovement = new ArrayList<>();
     private ArrayList<Trajectory> fullmovement = new ArrayList<>();
-    double lookingDistance = 20.0, dropDistance = 9;
-    double[] poleValues = {10, 10, 0, 0}, cameraPos = {4, 4, 0.85}, dropPosition = {0, 0, 0};
     Trajectory dropTrajectory;
 
     double[][][] poleCoords = {
@@ -54,9 +57,10 @@ public class Field {
             //row 6
             {{58.75, 58.75}, {58.75, 35.25}, {58.75, 11.75}, {58.75, -11.75}, {58.75, -35.25}, {-58.75, -58.75}}};
 
-    public Field(SampleMecanumDrive p_roadrun, CVMaster p_cv, RFGamepad p_gp) {
+    public Field(SampleMecanumDrive p_roadrun, CVMaster p_cv, IMU p_imu, RFGamepad p_gp) {
         roadrun = p_roadrun;
         cv = p_cv;
+        imu=p_imu;
         gp = p_gp;
     }
 
@@ -72,20 +76,46 @@ public class Field {
     public boolean lookingAtPole() {
 
             double[] coords = cv.rotatedPolarCoord();
-            dropPosition[0] = roadrun.getPoseEstimate().getX() - (coords[1] - dropDistance) * cos(roadrun.getPoseEstimate().getHeading() + coords[0] - cameraPos[2]);
-            dropPosition[1] = roadrun.getPoseEstimate().getY() - (coords[1] - dropDistance) * sin(roadrun.getPoseEstimate().getHeading() + coords[0] - cameraPos[2]);
-            dropPosition[2] = roadrun.getPoseEstimate().getHeading() - coords[0] - cameraPos[2];
+            minDistPole();
+            Pose2d curntPose = roadrun.getPoseEstimate();//.7,2.5
+        curntPose = new Pose2d(curntPose.getX(), curntPose.getY(), imu.updateAngle());
+        dropPosition[2] =curntPose.getHeading() - coords[0] + cameraPos[2];
+            dropPosition[0] = curntPose.getX() + (coords[1]) * cos(dropPosition[2]) + cameraPos[0]* sin(curntPose.getHeading()) + cameraPos[1] * cos(curntPose.getHeading());
+            dropPosition[1] = curntPose.getY() + (coords[1]) * sin(dropPosition[2]) - cameraPos[1]* sin(curntPose.getHeading()) + cameraPos[0] * cos(curntPose.getHeading());
+            dropPosition[2] =atan2(-(curntPose.getY()-dropPosition[1]),-(curntPose.getX()-dropPosition[0]));
+            op.telemetry.addData("polex", poleValues[0]);
+            op.telemetry.addData("poley",poleValues[1]);
             op.telemetry.addData("cvtheta",coords[0]);
             op.telemetry.addData("cvdistance",coords[1]);
             op.telemetry.addData("cvheight", cv.poleSize());
-            op.telemetry.addData("x", -getDropPosition().getX()+roadrun.getPoseEstimate().getX());
-            op.telemetry.addData("y", -getDropPosition().getY()+roadrun.getPoseEstimate().getY());
-            op.telemetry.addData("heading", (-getDropPosition().getHeading()+roadrun.getPoseEstimate().getHeading())*180/PI);
-            op.telemetry.update();
+            op.telemetry.addData("x", getDropPosition().getX());
+            op.telemetry.addData("y", getDropPosition().getY());
+            op.telemetry.addData("heading", (getDropPosition().getHeading()*180/PI));
 //            roadrun.setPoseEstimate(new Pose2d(2 * roadrun.getPoseEstimate().getX() + (coords[1]) * cos(roadrun.getPoseEstimate().getHeading() + coords[0]) - poleCoords[(int) poleValues[0]][(int) poleValues[1]][0],
 //                    2 * roadrun.getPoseEstimate().getY() + (coords[1]) * sin(roadrun.getPoseEstimate().getHeading() + coords[0]) - poleCoords[(int) poleValues[0]][(int) poleValues[1]][1],
 //                    2 * roadrun.getPoseEstimate().getHeading() + coords[0] - poleValues[3]));
             return true;
+    }
+    public void closestDropPosition(){
+        minDistPole();
+        Pose2d curntPose = roadrun.getPoseEstimate();
+        curntPose = new Pose2d(curntPose.getX(), curntPose.getY(), imu.updateAngle());
+        op.telemetry.addData("poleValues", poleValues[0] + "," + poleValues[1]);
+        if(poleValues[0]!=0||poleValues[1]!=0) {
+            double[] idealDropPos = {poleCoords[(int) poleValues[0]][(int) poleValues[1]][0] - cos(curntPose.getHeading()) * dropDistance,
+                    poleCoords[(int) poleValues[0]][(int) poleValues[1]][1] - sin(curntPose.getHeading()) * dropDistance};
+            double dist = sqrt(pow(curntPose.getX() - idealDropPos[0], 2) + pow(curntPose.getY() - idealDropPos[1], 2));
+            Pose2d correctedPose = curntPose;
+            double[] error = toPolar(new double[]{curntPose.getX()-idealDropPos[0],curntPose.getY()-idealDropPos[1]});
+            if (dist > 1.5) {
+                correctedPose = new Pose2d(idealDropPos[0] + cos(error[1]) * 1.5, idealDropPos[1] + sin(error[1]) * 1.5, curntPose.getHeading());
+//                roadrun.setPoseEstimate(correctedPose);
+            }
+            op.telemetry.addData("idealDropPos:" + idealDropPos[0] + "," + idealDropPos[1] + ":", false);
+            op.telemetry.addData("dist:", dist);
+            op.telemetry.addData("correctedDropPos:" + correctedPose.getX() + "," + correctedPose.getY() + ":", false);
+        }
+
     }
     public void updateTrajectory(){
         dropTrajectory = roadrun.trajectoryBuilder(roadrun.getPoseEstimate()).lineToLinearHeading(
@@ -116,7 +146,7 @@ public class Field {
                 if (dist < closestTile[2]) {
                     closestTile[0] = columnnum;
                     closestTile[1] = rownum;
-                    closestTile[2] = Math.sqrt(dist);
+                    closestTile[2] = sqrt(dist);
                 }
             }
         }
@@ -138,6 +168,8 @@ public class Field {
                 }
             }
         }
+//        poleValues[0]=0;
+//        poleValues[1]=3;
         return closestPole;
     }
 
@@ -147,11 +179,12 @@ public class Field {
 
     public boolean inCloseSight(int p_i, int p_j) {
         double[] dist = {roadrun.getPoseEstimate().getX() - poleCoords[p_i][p_j][0], roadrun.getPoseEstimate().getY() - poleCoords[p_i][p_j][1]};
-        dist[0] += sin((roadrun.getPoseEstimate().getHeading() )) * cameraPos[0] - cos(roadrun.getPoseEstimate().getHeading() ) * cameraPos[1];
-        dist[1] += cos((roadrun.getPoseEstimate().getHeading() )) * cameraPos[0] + sin(roadrun.getPoseEstimate().getHeading() ) * cameraPos[1];
+//        dist[0] += sin((roadrun.getPoseEstimate().getHeading() )) * cameraPos[0] - cos(roadrun.getPoseEstimate().getHeading() ) * cameraPos[1];
+//        dist[1] += cos((roadrun.getPoseEstimate().getHeading() )) * cameraPos[0] + sin(roadrun.getPoseEstimate().getHeading() ) * cameraPos[1];
         double[] polarCoords = toPolar(dist);
-        if (polarCoords[0] < lookingDistance && ((polarCoords[1] - roadrun.getPoseEstimate().getHeading()) * 180.0 / PI + 180) % 360 < 22.5) {
-            poleValues = new double[]{p_i, p_j, polarCoords[0], polarCoords[1] - roadrun.getPoseEstimate().getHeading() + PI};
+        op.telemetry.addData("diff", polarCoords[0] +"," + abs((polarCoords[1] - imu.updateAngle()) * 180.0 / PI+360) % 360 +"   |   "+p_i+"," + p_j);
+        if (polarCoords[0] < lookingDistance && abs((polarCoords[1] - imu.updateAngle()) * 180.0 / PI+360) % 360 < 22.5) {
+            poleValues = new double[]{p_i, p_j, polarCoords[0], polarCoords[1] - imu.updateAngle()+ PI};
             return true;
         } else {
             return false;
@@ -168,61 +201,61 @@ public class Field {
         Trajectory turnRight = null; //^^^^
         //the outermost if statement checks if current angle is in between a margin of 30 deg from up/right/down/left
         double curT = roadrun.getPoseEstimate().getHeading(); //current angle
-        if(curT < Math.toRadians(315) && curT > Math.toRadians(225)){ //up
+        if(curT < toRadians(315) && curT > toRadians(225)){ //up
             if(leftright == 0){ //left
                 turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT)) //starting pos TODO: starting pos wont
                         // TODO: be the center of the tile
                         .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY - 17.625, //guessed values to get to pole
-                                tileT + Math.toRadians(30)), Math.toRadians(270)) //turning left + end tangent
+                                tileT + toRadians(30)), toRadians(270)) //turning left + end tangent
                         .build();
             }
             if(leftright == 1){ //right
                 turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT)) //starting pos
                         .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY - 17.625, //guessed values to get to pole
-                                tileT - Math.toRadians(30)), Math.toRadians(270)) //turning right + end tangent
+                                tileT - toRadians(30)), toRadians(270)) //turning right + end tangent
                         .build(); //gobeeldah
             }
         }
-        if(curT < Math.toRadians(225) && curT > Math.toRadians(135)){ //right
+        if(curT < toRadians(225) && curT > toRadians(135)){ //right
             if(leftright == 0){
                 turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
                         .splineToSplineHeading(new Pose2d(tileX - 17.625 , tileY - 5.875,
-                                tileT + Math.toRadians(30)), Math.toRadians(180))
+                                tileT + toRadians(30)), toRadians(180))
                         .build();
 
             }
             if(leftright == 1){
                 turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
                         .splineToSplineHeading(new Pose2d(tileX - 17.625 , tileY + 5.875,
-                                tileT - Math.toRadians(30)), Math.toRadians(180))
+                                tileT - toRadians(30)), toRadians(180))
                         .build();
             }
         }
-        if(curT < Math.toRadians(135) && curT > Math.toRadians(45)){ //down
+        if(curT < toRadians(135) && curT > toRadians(45)){ //down
             if(leftright == 0){
                 turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
                         .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY + 17.625,
-                                tileT + Math.toRadians(30)), Math.toRadians(90))
+                                tileT + toRadians(30)), toRadians(90))
                         .build();
             }
             if(leftright == 1){
                 turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
                         .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY + 17.625,
-                                tileT - Math.toRadians(30)), Math.toRadians(90))
+                                tileT - toRadians(30)), toRadians(90))
                         .build();
             }
         }
-        if(curT < Math.toRadians(45) && curT > Math.toRadians(315)){ //left
+        if(curT < toRadians(45) && curT > toRadians(315)){ //left
             if(leftright == 0){
                 turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
                         .splineToSplineHeading(new Pose2d(tileX + 17.625 , tileY + 5.875,
-                                tileT + Math.toRadians(30)), Math.toRadians(0))
+                                tileT + toRadians(30)), toRadians(0))
                         .build();
             }
             if(leftright == 1){
                 turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
                         .splineToSplineHeading(new Pose2d(tileX + 17.625 , tileY - 5.875,
-                                tileT - Math.toRadians(30)), Math.toRadians(0))
+                                tileT - toRadians(30)), toRadians(0))
                         .build();
             }
         }
@@ -292,12 +325,12 @@ public class Field {
 
             }
 
-            if (Math.abs(getCurPos().getHeading() - Math.toRadians(90)) < Math.abs(getCurPos().getHeading() -
-                    Math.toRadians(270))) {
-                forwardbackwardangleadjustment = Math.toRadians(90);
+            if (Math.abs(getCurPos().getHeading() - toRadians(90)) < Math.abs(getCurPos().getHeading() -
+                    toRadians(270))) {
+                forwardbackwardangleadjustment = toRadians(90);
             }
             else {
-                forwardbackwardangleadjustment = Math.toRadians(270);
+                forwardbackwardangleadjustment = toRadians(270);
             }
         }
         else {
@@ -308,11 +341,11 @@ public class Field {
                 }
             }
 
-            if (Math.abs(getCurPos().getHeading()) < Math.abs(getCurPos().getHeading() - Math.toRadians(180))) {
-                leftrightangleadjustment = Math.toRadians(0);
+            if (Math.abs(getCurPos().getHeading()) < Math.abs(getCurPos().getHeading() - toRadians(180))) {
+                leftrightangleadjustment = toRadians(0);
             }
             else {
-                leftrightangleadjustment = Math.toRadians(180);
+                leftrightangleadjustment = toRadians(180);
             }
         }
 
@@ -320,7 +353,7 @@ public class Field {
                         getCurPos().getHeading()))
                 .splineToLinearHeading(new Pose2d(currenttile[0] + centerxadjustment, currenttile[1] +
                                 centeryadjustment, forwardbackwardangleadjustment + leftrightangleadjustment),
-                        Math.toRadians(270))
+                        toRadians(270))
                 .build();
 
         return adjustment;

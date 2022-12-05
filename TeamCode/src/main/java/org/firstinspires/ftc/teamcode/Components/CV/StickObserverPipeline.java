@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.CV;
 
 import static java.lang.Math.PI;
-import static java.lang.Math.sin;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class StickObserverPipeline extends OpenCvPipeline {
-    double centerOfPole = 0, poleSize = 0, degPerPix = -22.5/320, widTimesDist = 16.007*58;
+    double centerOfPole = 0, poleSize = 0, degPerPix = 22.5/320, widTimesDist = 16.007*58;
     ArrayList<double[]> frameList;
     public static double strictLowS = 140;
     public static double strictHighS = 255;
@@ -109,8 +108,15 @@ public class StickObserverPipeline extends OpenCvPipeline {
         }
         //if there is a detected largest contour, record information about it
         if(rectangle.length>0) {
-            centerOfPole = rectangle[maxAreaIndex].center.y + sin(rectangle[maxAreaIndex].angle) * rectangle[maxAreaIndex].size.width / 2 - 320;
-            poleSize = rectangle[maxAreaIndex].size.height;
+            if(rectangle[maxAreaIndex].size.height<rectangle[maxAreaIndex].size.width) {
+                poleSize = rectangle[maxAreaIndex].size.height;
+                centerOfPole = rectangle[maxAreaIndex].center.y - 320;
+            }
+            else{
+                poleSize = rectangle[maxAreaIndex].size.width;
+                centerOfPole = rectangle[maxAreaIndex].center.x - 320;
+
+            }
             frameList.add(new double[]{centerOfPole, poleSize});
         }
         //list of frames to reduce inconsistency, not too many so that it is still real-time

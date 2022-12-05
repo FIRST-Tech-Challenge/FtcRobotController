@@ -20,16 +20,16 @@ public class Claw {
     private Rev2mDistanceSensor coneObserver;
 
     //temporary
-    private final double CLAW_CONE_DISTANCE = 2.8;
+    private final double CLAW_CONE_DISTANCE = 2.6;
 
     //temporary
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 0.3;
+    private final double CLAW_CLOSED_POS = 0.45;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.48;
+    private final double CLAW_OPEN_POS = 0.53;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
@@ -223,7 +223,7 @@ public class Claw {
         //log to general robot log that the cone has been observed through function closeClaw()
         double distance = coneObserver.getDistance(INCH);
                 logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",getConeDistance()"
-                + coneObserver.getDistance(INCH), true);
+                + coneObserver.getDistance(INCH) +"inches", true);
         op.telemetry.addData("coneDist",distance);
         if(distance>2000){
             shouldUseClawSensor = false;

@@ -18,7 +18,7 @@ public class RFMotor extends Motor {
     private DcMotorEx rfMotor = null;
     private ArrayList<Double> coefs = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.000004, D2 = 0, minVelocity = -1200, VEL_TO_ANALOG = .001;
+    public static double D = 0.000004, D2 = 0, minVelocity = -1200, VEL_TO_ANALOG = .001, kA = 0;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
@@ -104,7 +104,6 @@ public class RFMotor extends Motor {
                 "Function               Action");
     }
 
-    //BUG WITH CALCULATION
     public void setPosition(double targetpos) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         power = 0;
@@ -125,12 +124,16 @@ public class RFMotor extends Motor {
         }
         double distance = targetpos - getCurrentPosition();
 
-        double targetVelocity = 0;
+        double targetVelocity = 0, targetAccelVelocity = 0;
         if (distance > 0) {
             for (int i = 0; i < coefs.size(); i++) {
                 if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
                     targetVelocity += pow(distance, coefs.size() - i - 1) * coefs.get(i);
                 }
+            }
+            for (int i = 0; i < coefs.size(); i++) {
+                if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
+                    targetAccelVelocity += pow(distance-targetVelocity/10, coefs.size() - i - 1) * coefs.get(i);                }
             }
         } else if (distance < 0) {
             for (int i = 0; i < coefs.size(); i++) {
@@ -138,12 +141,17 @@ public class RFMotor extends Motor {
                     targetVelocity -= abs(pow(distance, coefs.size() - i - 1)) * coefs.get(i);
                 }
             }
+            for (int i = 0; i < coefs.size(); i++) {
+                if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
+                    targetAccelVelocity -= pow(distance-targetVelocity/10, coefs.size() - i - 1) * coefs.get(i);                }
+            }
         }
 
         if(targetVelocity<minVelocity){
             targetVelocity = minVelocity;
         }
-        double error = targetVelocity - rfMotor.getVelocity();
+        double currentVelocity = rfMotor.getVelocity();
+        double error = targetVelocity - currentVelocity;
         double dStuff = 0;
         if(abs(error)<abs(lastError)){
             dStuff = (error-lastError)/(op.getRuntime()-lastTime)*D2;
@@ -151,8 +159,9 @@ public class RFMotor extends Motor {
         else{
             dStuff = (error-lastError)/(op.getRuntime()-lastTime)*D2/2;
         }
+        double accelPow = (targetAccelVelocity-targetVelocity)*kA;
         power = dStuff+error * VEL_TO_ANALOG;
-        rfMotor.setPower(dStuff +error *D +targetVelocity* VEL_TO_ANALOG + GRAVITY_CONSTANT);
+        rfMotor.setPower(dStuff +error *D +targetVelocity* VEL_TO_ANALOG + GRAVITY_CONSTANT + accelPow);
         lastError = error;
         lastTime = op.getRuntime();
     }

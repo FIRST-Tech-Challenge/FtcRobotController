@@ -41,7 +41,7 @@ public class QueueElement {
                 return true;
             }
             else{
-                logger.log("/RobotLogs/GeneralRobot","readyTime =" + readyTime);
+                logger.log("/RobotLogs/GeneralRobot",queuePos +"readyTime =" + readyTime);
                 return false;
             }
         }
