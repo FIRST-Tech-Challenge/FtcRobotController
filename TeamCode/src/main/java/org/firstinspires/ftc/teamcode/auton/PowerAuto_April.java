@@ -308,9 +308,9 @@ public class PowerAuto_April extends LinearOpMode {
 
         //Arm positions are 0.9 for closed and 0.5 for open
         //Drive to junction
-        gyroDrive(0.4, 4, 0, 15.0);
+        gyroDrive(0.4, 3, 0, 15.0);
         gyroStrafe(STRAFE_SPEED, 20, 0, 15.0);
-        gyroDrive(0.5, 46, 0, 15.0);
+        gyroDrive(0.5, 47, 0, 15.0);
         sleep(200);
 
 
@@ -325,17 +325,13 @@ public class PowerAuto_April extends LinearOpMode {
 
         sensorNum = robot.sensorRange.getDistance(DistanceUnit.INCH);
         sensorNumIn = 6.5 - sensorNum;
-
-        RobotLog.d("%.01f cm,%.01f in,",robot.sensorRange.getDistance(DistanceUnit.CM),robot.sensorRange.getDistance(DistanceUnit.INCH));
-
         gyroDrive(0.4, sensorNumIn, 0, 15.0);
-        RobotLog.d("%.01f cm,%.01f in,",robot.sensorRange.getDistance(DistanceUnit.CM),robot.sensorRange.getDistance(DistanceUnit.INCH));
 
         sleep(200);
         robot.LiftMotor.setPower(-0.5);
-        sleep(200);
+        sleep(400);
         robot.LiftMotor.setPower(0.05);
-        sleep(500);
+        sleep(200);
 
         //Deliver Cone
         robot.Gray.setPower(-1);
@@ -343,10 +339,10 @@ public class PowerAuto_April extends LinearOpMode {
         sleep(1000);
         robot.Gray.setPower(0);
         robot.Green.setPower(0);
-        sleep(500);
+        //sleep(500);
 
         //Drive to Cone Stack
-            gyroDrive(DRIVE_SPEED, -4, 0, 15.0);
+            gyroDrive(DRIVE_SPEED, -2, 0, 15.0);
             gyroTurn(TURN_SPEED, 90);
 
             while (!robot.touch.isPressed()) {
@@ -354,52 +350,55 @@ public class PowerAuto_April extends LinearOpMode {
             }
             robot.LiftMotor.setPower(0);
 
-            /*gyroDrive(DRIVE_SPEED, 26, 90, 15.0);
+            gyroDrive(DRIVE_SPEED, 26, 90, 15.0);
             //Pick up cone stack
             robot.LiftMotor.setPower(1.0);
-            sleep(200);
+            sleep(230);
             robot.LiftMotor.setPower(0);
-            gyroDrive(0.5, 8, 90, 15.0);
+            //gyroDrive(0.5, 8, 90, 15.0);
             robot.Gray.setPower(1);
             robot.Green.setPower(-1);
-            sleep(1000);
+            gyroDrive(0.4, 7, 90, 15.0);
+            sleep(500);
             robot.Gray.setPower(0);
             robot.Green.setPower(0);
-            sleep(500);
+            //sleep(500);
             robot.LiftMotor.setPower(1.0);
             sleep(500);
             robot.LiftMotor.setPower(0.05);
-            gyroDrive(0.5, -10, 90, 15.0);
+            gyroDrive(0.5, -11, 90, 15.0);
 
             //Deliver the second cone
             gyroTurn(TURN_SPEED, 180);
-            //gyroSensorStrafe(0.2, -25, 180, 15.0);
-            //gyroStrafe(0.4, 4, 180, 15.0);
-            //gyroDrive(0.4, sensorNumIn, 180, 15.0);
-            gyroStrafe(0.4, -2, 180, 15.0);
-            //gyroDrive(0.4, 2, 180, 15.0);
-            sleep(200);
-            robot.LiftMotor.setPower(-0.5);
-            sleep(300);
-            robot.LiftMotor.setPower(0.05);
-            sleep(500);
+            sleep(100);
+            //robot.LiftMotor.setPower(-0.5);
+            //sleep(10);
+
+            //Deliver Cone
             robot.Gray.setPower(-1);
             robot.Green.setPower(1);
-            sleep(1000);
+            sleep(500);
             robot.Gray.setPower(0);
             robot.Green.setPower(0);
-            sleep(500);
-            gyroDrive(DRIVE_SPEED, -10, 180, 15.0);
-            //Drive to Target Zone*/
+            //sleep(500);
+
+            gyroDrive(DRIVE_SPEED,-2,180,15.0);
+            gyroTurn(TURN_SPEED, 90);
+            while (!robot.touch.isPressed()) {
+            robot.LiftMotor.setPower(-0.8);
+            }
+            robot.LiftMotor.setPower(0);
+
+            //Drive to Target Zone
 
             if(tagOfInterest.id == LEFT){
-            gyroDrive(DRIVE_SPEED, 32, 90, 15.0);
+            gyroDrive(DRIVE_SPEED, 7, 90, 15.0);
             }
             else if(tagOfInterest.id == MIDDLE){
-            gyroDrive(DRIVE_SPEED, 10, 90, 15.0);
+            gyroDrive(DRIVE_SPEED, -12, 90, 15.0);
             }
             else if(tagOfInterest.id == RIGHT){
-            gyroDrive(DRIVE_SPEED, -12, 90, 15.0);
+            gyroDrive(DRIVE_SPEED, -34, 90, 15.0);
             }
 
     }
