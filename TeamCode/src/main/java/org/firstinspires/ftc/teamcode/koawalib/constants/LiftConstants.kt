@@ -13,12 +13,12 @@ object LiftConstants {
     @JvmField var kP = 0.8
     @JvmField var kI = 0.0
     @JvmField var kD = 0.0
-    @JvmField var kS = 0.01
+    @JvmField var kS = 0.0
     @JvmField var kV = 0.0
     @JvmField var kA = 0.0
     @JvmField var kG = 0.4
     @JvmField var maxVel = 80.0
     @JvmField var maxAccel = 80.0
     @JvmField var disabledPosition = 0.0
-    @JvmField var allowedPositionError = 0.5
+    @JvmField var allowedPositionError = 1.0
 }
