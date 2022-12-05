@@ -1,6 +1,6 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
-package org.firstinspires.ftc.teamcodekt.scheduler.auto
+package org.firstinspires.ftc.teamcodekt.blacksmith
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
@@ -13,16 +13,15 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcodekt.util.toIn
 import org.firstinspires.ftc.teamcodekt.util.toRad
 
-class TrajectorySequenceBuilderEx(val drive: SampleMecanumDrive, startPose: Pose2d) {
+class Anvil(val drive: SampleMecanumDrive, startPose: Pose2d) {
     companion object {
         @JvmStatic
-        @Suppress("MoveLambdaOutsideParentheses")
-        fun createTrajectory(
+        fun formTrajectory(
             drive: SampleMecanumDrive,
             startPose: Pose2d,
-            builder: TrajectorySequenceBuilderEx.() -> TrajectorySequenceBuilderEx
-        ): TrajectorySequenceBuilderEx {
-            return builder(TrajectorySequenceBuilderEx(drive, startPose))
+            builder: Anvil.() -> Anvil
+        ): Anvil {
+            return builder(Anvil(drive, startPose))
         }
     }
 
@@ -78,7 +77,7 @@ class TrajectorySequenceBuilderEx(val drive: SampleMecanumDrive, startPose: Pose
 
     @JvmOverloads
     fun thenRunAsync(
-        nextTrajectory: (Pose2d) -> TrajectorySequenceBuilderEx,
+        nextTrajectory: (Pose2d) -> Anvil,
         startPose: Pose2d = endPose
     ) = this.apply {
         trajectorySequenceBuilder.addTemporalMarker {
@@ -88,7 +87,7 @@ class TrajectorySequenceBuilderEx(val drive: SampleMecanumDrive, startPose: Pose
 
     @JvmOverloads
     fun thenRunAsyncIf(
-        nextTrajectory: (Pose2d) -> TrajectorySequenceBuilderEx,
+        nextTrajectory: (Pose2d) -> Anvil,
         startPose: Pose2d = endPose,
         predicate: () -> Boolean
     ) = this.apply {
@@ -97,7 +96,7 @@ class TrajectorySequenceBuilderEx(val drive: SampleMecanumDrive, startPose: Pose
         }
     }
 
-    fun build(): TrajectorySequence = trajectorySequenceBuilder.build()
+    fun finish(): TrajectorySequence = trajectorySequenceBuilder.build()
 
-    fun runAsync(): Unit = drive.followTrajectorySequenceAsync(build())
+    fun runAsync(): Unit = drive.followTrajectorySequenceAsync(finish())
 }

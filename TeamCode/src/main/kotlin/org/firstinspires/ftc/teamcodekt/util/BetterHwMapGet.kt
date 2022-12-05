@@ -12,18 +12,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap
  * ```
  * val motor = hardwareMap.get(DcMotorEx::class.java, "motor")
  * ```
- * Using reified types, we can simply do this instead:
+ * Using reified types and operator overloading, we can simply do this instead:
  * ```
- * val motor = hardwareMap._get<DcMotorEx>("motor")
+ * val motor = hardwareMap<DcMotorEx>("motor")
  * //or
- * val motor: DcMotorEx = hardwareMap._get("motor")
+ * val motor: DcMotorEx = hardwareMap("motor")
  * ```
  *
- * _Ok in hindsight this doesn't appear as useful as I thought, but it's cooler and makes me feel
- * smart so shut up_
+ * Also, for why I did not simply use `get`, it is because the `get` name is already
+ * taken by the `HardwareMap` class :(
  *
  * @param T The type of the component you want to get.
  * @param name The name of the component you want to get.
  * @author KG
  */
-inline fun <reified T> HardwareMap._get(name: String): T = get(T::class.java, name)
+inline operator fun <reified T> HardwareMap.invoke(name: String): T = get(T::class.java, name)

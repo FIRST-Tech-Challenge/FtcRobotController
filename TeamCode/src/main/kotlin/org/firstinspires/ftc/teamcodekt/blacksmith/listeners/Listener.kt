@@ -1,10 +1,10 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package org.firstinspires.ftc.teamcodekt.components.scheduler.listeners
+package org.firstinspires.ftc.teamcodekt.blacksmith.listeners
 
-import org.firstinspires.ftc.teamcodekt.scheduler.Scheduler
-import org.firstinspires.ftc.teamcodekt.scheduler.Condition
-import org.firstinspires.ftc.teamcodekt.scheduler.SignalEdgeDetector
+import org.firstinspires.ftc.teamcodekt.blacksmith.Scheduler
+import org.firstinspires.ftc.teamcodekt.blacksmith.Condition
+import org.firstinspires.ftc.teamcodekt.blacksmith.SignalEdgeDetector
 import org.firstinspires.ftc.teamcodekt.util.runOnce
 
 /**
@@ -80,7 +80,7 @@ class Listener(val condition: Condition) {
      */
     fun onFall(action: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::risingEdge as Condition
+        actions[action] = conditionSED::fallingEdge as Condition
     }
 
     /**
@@ -90,7 +90,7 @@ class Listener(val condition: Condition) {
      */
     fun whileHigh(action: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::risingEdge as Condition
+        actions[action] = conditionSED::isHigh as Condition
     }
 
     /**
@@ -100,7 +100,7 @@ class Listener(val condition: Condition) {
      */
     fun whileLow(action: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::risingEdge as Condition
+        actions[action] = conditionSED::isLow as Condition
     }
 
     /**
@@ -137,30 +137,30 @@ class Listener(val condition: Condition) {
     // Listener builders
     // ---------------------------------------------------------------
 
-    fun and(other: Condition) = Listener { condition.evaluate() && other.evaluate() }
+    fun and(otherCondition: Condition) = Listener { condition() && otherCondition.evaluate() }
 
-    fun or(other: Condition) = Listener { condition.evaluate() || other.evaluate() }
+    fun or(otherCondition: Condition) = Listener { condition() || otherCondition.evaluate() }
 
-    fun xor(other: Condition) = Listener { condition.evaluate() xor other.evaluate() }
+    fun xor(otherCondition: Condition) = Listener { condition() xor otherCondition() }
 
-    fun nand(other: Condition) = Listener { !(condition.evaluate() && other.evaluate()) }
+    fun nand(otherCondition: Condition) = Listener { !(condition() && otherCondition()) }
 
-    fun nor(other: Condition) = Listener { !(condition.evaluate() || other.evaluate()) }
+    fun nor(otherCondition: Condition) = Listener { !(condition() || otherCondition()) }
 
-    fun xnor(other: Condition) = Listener { condition.evaluate() == other.evaluate() }
+    fun xnor(otherCondition: Condition) = Listener { condition() == otherCondition() }
 
 
-    fun and(other: Listener) = Listener { condition.evaluate() && other.evaluateCondition() }
+    fun and(other: Listener) = Listener { condition() && other.evaluateCondition() }
 
-    fun or(other: Listener) = Listener { condition.evaluate() || other.evaluateCondition() }
+    fun or(other: Listener) = Listener { condition() || other.evaluateCondition() }
 
-    fun xor(other: Listener) = Listener { condition.evaluate() xor other.evaluateCondition() }
+    fun xor(other: Listener) = Listener { condition() xor other.evaluateCondition() }
 
-    fun nand(other: Listener) = Listener { !(condition.evaluate() && other.evaluateCondition()) }
+    fun nand(other: Listener) = Listener { !(condition() && other.evaluateCondition()) }
 
-    fun nor(other: Listener) = Listener { !(condition.evaluate() || other.evaluateCondition()) }
+    fun nor(other: Listener) = Listener { !(condition() || other.evaluateCondition()) }
 
-    fun xnor(other: Listener) = Listener { condition.evaluate() == other.evaluateCondition() }
+    fun xnor(other: Listener) = Listener { condition() == other.evaluateCondition() }
 
 
     fun not() = Listener { !condition.evaluate() }

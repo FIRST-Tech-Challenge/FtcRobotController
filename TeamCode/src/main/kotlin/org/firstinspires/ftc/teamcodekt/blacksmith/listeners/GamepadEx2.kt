@@ -1,9 +1,8 @@
 @file:Suppress("PropertyName", "ObjectPropertyName", "FunctionName", "MemberVisibilityCanBePrivate", "unused")
 
-package org.firstinspires.ftc.teamcodekt.scheduler.listeners
+package org.firstinspires.ftc.teamcodekt.blacksmith.listeners
 
 import com.qualcomm.robotcore.hardware.Gamepad
-import org.firstinspires.ftc.teamcodekt.components.scheduler.listeners.Listener
 import kotlin.math.abs
 
 /**

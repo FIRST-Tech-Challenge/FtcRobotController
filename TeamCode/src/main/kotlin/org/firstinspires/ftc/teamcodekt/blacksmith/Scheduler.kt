@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcodekt.scheduler
+package org.firstinspires.ftc.teamcodekt.blacksmith
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.firstinspires.ftc.teamcodekt.components.scheduler.listeners.Listener
+import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Listener
 
 /**
  * A component that simplifies the process of scheduling actions to be performed at a
