@@ -47,34 +47,34 @@ public class Hraezlyr {
         topRight = hwmap.get(DcMotor.class, "topRight");
         bottomLeft = hwmap.get(DcMotor.class, "bottomLeft");
         bottomRight = hwmap.get(DcMotor.class, "bottomRight");
-        // Commented these out for testing purposes - Thomas
-        /*cascadeMotor1 = hwmap.get(DcMotor.class, "cascadeMotor1");
+
+        cascadeMotor1 = hwmap.get(DcMotor.class, "cascadeMotor1");
         cascadeMotor2 = hwmap.get(DcMotor.class, "cascadeMotor2");
         servoClawMove = hwmap.get(Servo.class, "servoClawMove");
-        servoClawClose =  hwmap.get(Servo.class, "servoClawClose");*/
+        servoClawClose =  hwmap.get(Servo.class, "servoClawClose");
 
-        // You forgot to reverse your motors to make them all go forwards - Thomas
+
         topRight.setDirection(DcMotorSimple.Direction.REVERSE);
         bottomRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // This has to be called "imu", not "gyroscope" - Thomas
+
         IMU = hwmap.get(BNO055IMU.class, "imu");
 
-        //WebcamName webcamName = hwmap.get(WebcamName.class,"Webcam 1");
-        //camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
+        WebcamName webcamName = hwmap.get(WebcamName.class,"Webcam 1");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
 
         topLeft.setZeroPowerBehavior(BRAKE);
         topRight.setZeroPowerBehavior(BRAKE);
         bottomLeft.setZeroPowerBehavior(BRAKE);
         bottomRight.setZeroPowerBehavior(BRAKE);
 
-        /*8
+
         cascadeMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         cascadeMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         cascadeMotor1.setTargetPosition(0);
         cascadeMotor2.setTargetPosition(0);
         cascadeMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        cascadeMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
+        cascadeMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         IMU.initialize(parameters);
     }

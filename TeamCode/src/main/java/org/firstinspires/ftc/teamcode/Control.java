@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public abstract class Control extends OpMode {
+    public static final int TICKS_PER_INCH = (int)(537.6 * (2*Math.PI * 2));
     public boolean isStopRequested = false;
     Hraezlyr hraezlyr;
     enum Level {
@@ -23,6 +24,7 @@ public abstract class Control extends OpMode {
         isStopRequested = true;
 
     }
+    //538 ticks per rotation
     public void cascadeLift(Level zHeight){
         switch(zHeight){
             case GROUND:

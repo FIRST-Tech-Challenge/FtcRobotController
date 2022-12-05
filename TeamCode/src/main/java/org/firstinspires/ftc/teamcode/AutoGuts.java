@@ -104,15 +104,12 @@ public abstract class AutoGuts extends Control {
         hraezlyr.cascadeMotor2.setTargetPosition(height);
     }
     public void closeClaw(boolean clawClose){
-        //TODO: adjust servos to appropriate the code
+
         double close = 0;
-        if (clawClose) close = 1;
-        if (!clawClose) close = 0;
+        if (clawClose) close = 0;
+        if (!clawClose) close = 50;
 
-        hraezlyr.servoClawClose.setPosition(0);
-
-
-
+        hraezlyr.servoClawClose.setPosition(close);
 
     }
 

@@ -11,7 +11,7 @@ public class Auto extends AutoGuts {
     // vertical fov 28 fov
     // 1280 by 720
     // 16:9 aspect ratio
-    //TODO: add detection for sleeve
+
     @Override
     public void start() {
         double midPointX = pipeline.getRectMidpointX();
@@ -22,33 +22,29 @@ public class Auto extends AutoGuts {
         //TODO: figure out tick per inch ratio for movement
 
         //TODO: START SIDEWAYS
+        //start
         double greenPixels = pipeline.returnGreen();
         double cyanPixels = pipeline.returnCyan();
         double magentaPixels = pipeline.returnMagenta();
-
-        driveEncoder(100, 0, 1);
-        driveEncoder(0, 50, 1);
-
-        area = pipeline.getRectArea();
-        width = pipeline.getRectWidth();
-        midPointX = pipeline.getRectMidpointX();
-        height = pipeline.getRectHeight();
-
-        //TODO: make pixel to tick ratio for cascade movement
-
-        cascadeMoveClaw(height - 100, 1, 0);
-        closeClaw(true);
-        turn(1, 180);
-        driveEncoder(20,100,1);
+        //first movement
+        driveEncoder(-60 * TICKS_PER_INCH , 0, 1);
+        turn(.5,45);
+        cascadeLift(Level.HIGH);
+        driveEncoder(0,3 * TICKS_PER_INCH,1);
+        closeClaw(false);
+        turn(.5, -45);
+        driveEncoder(48 * TICKS_PER_INCH, 0, 1);
 
         if(greenPixels > cyanPixels && greenPixels > magentaPixels) {
-            //park in place 3
+            driveEncoder(0,12,1);
+            //park place 3
         }
         if(magentaPixels > cyanPixels && magentaPixels > greenPixels){
-            //park in place 2
+            //park place 2
         }
         if(cyanPixels > greenPixels && cyanPixels > magentaPixels){
-            //park in place 1
+            driveEncoder(0,-12,1);
+            //park place 1
         }
 
     }
