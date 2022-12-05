@@ -4,32 +4,53 @@ package org.firstinspires.ftc.teamcode;
  *  More generally, it contains an x-y point and a rotation.
  */
 public class Position {
-
-    private Point location;
-
     // A rotation, in radians, in the interval (-pi, pi]
     private double rotation;
 
+    protected String name;
+    protected double x;
+    protected double y;
+    protected Navigation.Action action;
+    //Add constructors if needed
+    protected double strafePower = 0.0;
+    protected double rotatePower = 0.0;
+
     Position() {
-        location = new Point(0.0, 0.0, "");
+        x = 0.0;
+        y = 0.0;
+        name = "";
         setRotation(0.0);
     }
 
     Position(double x, double y, double theta) {
-        location = new Point(x, y, "");
+        this.x = x;
+        this.y = y;
         setRotation(theta);
     }
-    Position(Point p, double r) {
-        location = p;
-        setRotation(r);
+
+    Position(double x, double y, double theta, String name) {
+        this.x = x;
+        this.y = y;
+        this.name = name;
+        setRotation(theta);
+    }
+
+    Position(double x, double y, String name, Navigation.Action action, double strafePower, double rotatePower, double theta) {
+        this.x = x;
+        this.y = y;
+        this.name = name;
+        setRotation(theta);
+        this.strafePower = strafePower;
+        this.rotatePower = rotatePower;
+        this.action = action;
     }
 
     public void setX(double x) {
-        location.setX(x);
+        this.x = x;
     }
 
     public void setY(double y) {
-        location.setY(y);
+        this.y = y;
     }
 
     public Position setRotation(double r) {
@@ -38,18 +59,32 @@ public class Position {
     }
 
     public double getX() {
-        return location.x;
+        return x;
     }
 
     public double getY() {
-        return location.y;
+        return y;
     }
 
     public double getRotation() {
         return rotation;
     }
 
-    public Point getLocation() {return location;}
+    public double getStrafePower() {
+        return strafePower;
+    }
+
+    public double getRotatePower(){
+        return rotatePower;
+    }
+
+    public Navigation.Action getAction(){
+        return action;
+    }
+
+    public String getName(){
+        return name;
+    }
 
     public void reset() {
         setX(0.0);

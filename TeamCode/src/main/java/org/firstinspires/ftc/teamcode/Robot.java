@@ -22,33 +22,19 @@ import java.util.Objects;
 public class Robot {
     // Robot desired states.
 
-    public enum SlidesState {RETRACTED, LOW, MEDIUM, HIGH, UNREADY}
-    public enum IntakeState {FRONT, REAR}
+    public enum SlidesState {RETRACTED, LOW, LOW_LOWERED, MEDIUM, MEDIUM_LOWERED, HIGH, HIGH_LOWERED, UNREADY}
+    public enum ParkingPosition {INSIDE, MIDDLE, OUTSIDE}
+    public enum HorseshoeState {FRONT, REAR}
     public enum CompliantWheelsState {OFF, ON}
 
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
-    public IntakeState desiredIntakeState;
+    public HorseshoeState desiredHorseshoeState;
     public CompliantWheelsState desiredCompliantWheelsState;
 
     enum BarcodeScanState {CHECK_SCAN, SCAN}
-    enum BarcodeScanResult {
-        LEFT(0), CENTER(1), RIGHT(2), WRONG_CAPS(3), WRONG_TAPE(4);
-
-        public final int value;
-
-        private BarcodeScanResult(int value) {
-            this.value = value;
-        }
-
-        public static BarcodeScanResult ResultFromValue(int label) {
-            for (BarcodeScanResult e : values()) {
-                if (e.value == label) return e;
-            }
-            return null;
-        }
-    };
 
     public BarcodeScanState barcodeScanState;
+    public enum BarcodeScanResult {LEFT, CENTER, RIGHT};
 
     static final int MAX_BARCODE_ATTEMPTS = 40;                           // How many times to try scanning the barcode before giving up
     static final int MIN_BARCODE_REPEAT = MAX_BARCODE_ATTEMPTS / 2 + 1;
@@ -62,8 +48,6 @@ public class Robot {
             put(BarcodeScanResult.LEFT, 0);
             put(BarcodeScanResult.CENTER, 0);
             put(BarcodeScanResult.RIGHT, 0);
-            put(BarcodeScanResult.WRONG_CAPS, 0);
-            put(BarcodeScanResult.WRONG_TAPE, 0);
         }};
     }
 
@@ -75,8 +59,8 @@ public class Robot {
 
     // Hardware
     public DcMotor slidesLeft, slidesRight, compliantWheels;
-    public Servo intake;
-    public Servo intakeIndicator;
+    public Servo horseshoe;
+    public Servo horseshoeIndicator;
 
     // Other
     public Telemetry telemetry;
@@ -93,15 +77,15 @@ public class Robot {
         numBarcodeAttempts = 0;
         resetBarcodeScanMap();
 
-        desiredIntakeState = IntakeState.FRONT;
+        desiredHorseshoeState = HorseshoeState.FRONT;
 
         slidesLeft = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_LEFT));
         slidesRight = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_RIGHT));
-        intake = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.INTAKE));
+        horseshoe = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE));
 //        clawLEDs=hardwareMap.get(DcMotor.class,"LED");
 //        clawLEDs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        clawLEDs.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.INTAKE_INDICATOR));
+        horseshoeIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE_INDICATOR));
 
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
             driveMotors.put(motor, hardwareMap.get(DcMotor.class, RobotConfig.DriveMotorNames.get(motor)));
@@ -142,7 +126,7 @@ public class Robot {
 class RobotConfig {
     enum Motors {SLIDES_LEFT, SLIDES_RIGHT}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
-    enum Servos {INTAKE, INTAKE_INDICATOR}
+    enum Servos {HORSESHOE, HORSESHOE_INDICATOR}
 
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
 
@@ -165,7 +149,7 @@ class RobotConfig {
     }};
 
     public static final Map<Servos, String> ServoNames = new HashMap<Servos, String>() {{
-        put(Servos.INTAKE, "intake");
-        put(Servos.INTAKE_INDICATOR, "Intake Indicator");
+        put(Servos.HORSESHOE, "Horseshoe");
+        put(Servos.HORSESHOE_INDICATOR, "Horseshoe Indicator");
     }};
 }
