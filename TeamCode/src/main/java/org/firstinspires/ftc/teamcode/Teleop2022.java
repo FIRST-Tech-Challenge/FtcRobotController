@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="Arm Test", group="Iterative Opmode")
-public class ArmTest extends OpMode {
+@TeleOp(name="Teleop2022", group="Iterative Opmode")
+public class Teleop2022 extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     //Declare the wheels

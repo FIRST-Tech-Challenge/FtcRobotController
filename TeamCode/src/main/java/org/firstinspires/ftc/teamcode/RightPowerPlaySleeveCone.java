@@ -22,13 +22,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaLocalizerImpl;
 //test
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name = "BlueLeftPowerPlaySleeve", group = "")
-public class BlueLeftPowerPlaySleeve extends LinearOpMode {
+@Autonomous(name = "RightPowerPlaySleeveCone", group = "")
+public class RightPowerPlaySleeveCone extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -117,7 +116,6 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
 
             tfod.setZoom(1.5, 16.0 / 9.0);
         }
-
         actuatorUtils.gripperClose(false);
 
 
@@ -130,41 +128,41 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
             // the last time that call was made.
             while (!done && opModeIsActive()) {
                 if((currTime - startTime) < 3000){
-                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                if (updatedRecognitions != null) {
-                    telemetry.addData("# Objects Detected", updatedRecognitions.size());
-                    if (updatedRecognitions.size() != 0) {
-                        done = true;
-                    }
-                    // step through the list of recognitions and display image position/size information for each one
-                    // Note: "Image number" refers to the randomized image orientation/number
-                    for (Recognition recognition : updatedRecognitions) {
-                        double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                        double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                        double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                        double height = Math.abs(recognition.getTop() - recognition.getBottom());
-
-                        telemetry.addData("", " ");
-                        telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                        telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                        telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-
-                        String imageCheck = recognition.getLabel();
-                        if (imageCheck.equals("Bolt")) {
-                            resultROI = 1;
-                        } else if (imageCheck.equals("Bulbs")) {
-                            resultROI = 2;
-                        } else if (imageCheck.equals("Panels")) {
-                            resultROI = 3;
-                        } else {
-                            resultROI = 2;
+                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                    if (updatedRecognitions != null) {
+                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
+                        if (updatedRecognitions.size() != 0) {
+                            done = true;
                         }
-                        telemetry.addData("ResultROI", resultROI);
+                        // step through the list of recognitions and display image position/size information for each one
+                        // Note: "Image number" refers to the randomized image orientation/number
+                        for (Recognition recognition : updatedRecognitions) {
+                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
 
+                            telemetry.addData("", " ");
+                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
+
+                            String imageCheck = recognition.getLabel();
+                            if (imageCheck.equals("Bolt")) {
+                                resultROI = 1;
+                            } else if (imageCheck.equals("Bulbs")) {
+                                resultROI = 2;
+                            } else if (imageCheck.equals("Panels")) {
+                                resultROI = 3;
+                            } else {
+                                resultROI = 2;
+                            }
+                            telemetry.addData("ResultROI", resultROI);
+
+                        }
+                        telemetry.update();
                     }
-                    telemetry.update();
-                }
-                currTime = System.currentTimeMillis();}
+                    currTime = System.currentTimeMillis();}
 
                 else {
                     vuforia.close();
@@ -176,67 +174,48 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
         }
         telemetry.update();
         done = false;
+        //lift arm up
         actuatorUtils.armPole(4);
         while (((currTime - startTime) < 30000)&& !done && opModeIsActive()) {
 
             switch (resultROI) {
                 case 1:
                     // Far left
-                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(82);
-                    moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(82);
-                    moveUtils.goStraight(13.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(44);
-                    actuatorUtils.armPole(3);
-                    moveUtils.goStraight(4.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.gripperOpen(true);
-                    moveUtils.goStraight(-4,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(135);
-                    moveUtils.goStraight(35,MAX_SPEED,MIN_SPEED,ACCEL);
+                    beginAuto();
                     done=true;
                     break;
                 case 2:
                     // Middle
-                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(85);
-                    moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(85);
-                    moveUtils.goStraight(13.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(45);
-                    actuatorUtils.armPole(3);
-                    moveUtils.goStraight(4.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.gripperOpen(true);
-                    moveUtils.goStraight(-4,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(45);
-                    moveUtils.strafeBuddy(-38);
-                    moveUtils.goStraight(4,MAX_SPEED,MIN_SPEED,ACCEL);
+                    beginAuto();
+                    moveUtils.goStraight(-14,MAX_SPEED,MIN_SPEED,ACCEL);
                     done=true;
                     break;
                 case 3:
                     // Far right
-                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(82);
-                    moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(82);
-                    moveUtils.goStraight(13.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(44);
-                    actuatorUtils.armPole(3);
-                    moveUtils.goStraight(4.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.gripperOpen(true);
-                    moveUtils.goStraight(-4,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(45);
-                    actuatorUtils.armPole(4);
-                    moveUtils.strafeBuddy(4);
+                    beginAuto();
+                    moveUtils.goStraight(-40,MAX_SPEED,MIN_SPEED,ACCEL);
                     done=true;
-
                     break;
             }
-            currTime = System.currentTimeMillis();
 
+            currTime = System.currentTimeMillis();
 
         }
     }
+    private void beginAuto() throws InterruptedException {
+        moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCCW(82);
+        moveUtils.goStraight(10,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCW(78);
+        moveUtils.goStraight(12,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCCW(50);
+        actuatorUtils.armPole(3);
+        moveUtils.goStraight(4.1f,MAX_SPEED,MIN_SPEED,ACCEL);
+        actuatorUtils.gripperOpen(true);
+        moveUtils.goStraight(-5,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCCW(40);
+    }
+
     void composeTelemetry() {
 
         // At the beginning of each telemetry update, grab a bunch of data
@@ -329,12 +308,5 @@ public class BlueLeftPowerPlaySleeve extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
-    public class VuforiaLocalizerImplEnhanced extends VuforiaLocalizerImpl {
 
-        public VuforiaLocalizerImplEnhanced(Parameters parameters){ super(parameters); }
-
-        @Override
-        public void close(){ super.close(); }
-
-    }
 }
