@@ -208,13 +208,13 @@ public class Power_TeleOp extends OpMode
             robot.LiftMotor.setPower(1.0);   // Lift UP
         }else if ((gamepad1.right_trigger) > 0.25 && (!robot.touch.isPressed())) {
             robot.LiftMotor.setPower(-0.5);  // Lift DOWN
-        }else if (gamepad1.x && !x_pressed){  //Only toggle on leading edge
+        }/*else if (gamepad1.x && !x_pressed){  //Only toggle on leading edge
 
             robot.LiftMotor.setPower(-0.8);
 
-        }else{
+        }*/else{
             robot.LiftMotor.setPower(0.0);
-            x_pressed = true;
+            //x_pressed = true;
         }
 
         //Reset button toggles
@@ -229,9 +229,9 @@ public class Power_TeleOp extends OpMode
         //if (!gamepad2.x) x_pressed = false;
         //if (!gamepad2.y) y_pressed = false;
 
-        telemetry.addData("range", String.format("%.01f cm", robot.sensorRange.getDistance(DistanceUnit.CM)));
-        telemetry.addData("range", String.format("%.01f in", robot.sensorRange.getDistance(DistanceUnit.INCH)));
-        RobotLog.d("%.01f cm,%.01f in,",robot.sensorRange.getDistance(DistanceUnit.CM),robot.sensorRange.getDistance(DistanceUnit.INCH));
+        //telemetry.addData("range", String.format("%.01f cm", robot.sensorRange.getDistance(DistanceUnit.CM)));
+        //telemetry.addData("range", String.format("%.01f in", robot.sensorRange.getDistance(DistanceUnit.INCH)));
+        //RobotLog.d("%.01f cm,%.01f in,",robot.sensorRange.getDistance(DistanceUnit.CM),robot.sensorRange.getDistance(DistanceUnit.INCH));
     }//loop end
 
 
