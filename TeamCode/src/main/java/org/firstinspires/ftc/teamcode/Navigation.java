@@ -928,7 +928,7 @@ class AutonomousPaths {
 //    ));
 //    public static final ArrayList<Position> PARK_STORAGE_UNIT = new ArrayList<>(Arrays.asList(
 //            new Position(new Point(0, 10, "Out from wall1"), 0),
-//            new Position(new Point(29, 10, "Out from wall2"), 0),
+//            new Position(new Point(29, 10, "Out from w=all2"), 0),
 //            new Position(new Point(29, 25, "POI storage unit"), 0)
 //    ));
 //    public static final ArrayList<Position> MOVE_STRAIGHT = new ArrayList<>(Arrays.asList(
@@ -939,3 +939,38 @@ class AutonomousPaths {
 //    ));
 }
 */
+
+class AutonomousPaths{
+    public final double FIELD_WIDTH = 6;//placeholder - field is 6 x 6 square
+
+    //origin is the staring position of the robot, a zero angle is pointing towards the terminal
+    //public Position startingPosition = new Position(0,0,0,"startingPosition");
+    //Positions are written with the starting position of the robot being
+
+    //Terminal & Substation
+    public Position terminalPosition = new Position(2,0,(-Math.PI/2),"terminalPosition");
+    public Position substationPosition = new Position(-1,0,Math.PI/2,"substationPosition");
+
+    //Junctions
+    //Ground
+    public Position closeLeftGroundJunction = new Position(-1, 0, Math.PI / 4, "leftGroundJunction");
+    public Position closeRightGroundJunction = new Position(0,0,-Math.PI / 4,"rightGroundJunction");
+    public Position centerGroundJunction = new Position(-1,2, Math.PI / 4, "centerGroundJunction");
+    public Position farRightGroundJunction = new Position(0,2,-Math.PI / 4,"farRightGroundJunction");
+
+    //Small
+    public Position leftSmallJunction = new Position(0, 0, Math.PI / 4, "leftSmallJunction");
+    public Position rightSmallJunction = new Position(0, 1, -Math.PI / 4, "rightSmallJunction");
+
+    //Medium
+    public Positin mediumJunction = new Position(0,1,Math.PI/4,"mediumJunction");
+
+    //Large
+    public Position leftLargeJunction = new Position(-1,1 Math.PI / 4,"leftLargeJunction");
+    public Position centerLargeJunction = new Position(0,2, Math.PI / 4,"centerLargeJunction");
+
+    AutonomousPaths(){
+
+    }
+
+}

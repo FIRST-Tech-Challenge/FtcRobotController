@@ -5,8 +5,6 @@ package org.firstinspires.ftc.teamcode;
  */
 public class Position {
 
-    private Point location;
-
     // A rotation, in radians, in the interval (-pi, pi]
     private double rotation;
 
