@@ -13,10 +13,9 @@ import java.util.Objects;
 
 /** Keeps track of the robot's desired path and makes it follow it accurately.
  */
-public class Navigation
-{
+public class Navigation {
     public enum RotationDirection {CLOCKWISE, COUNTERCLOCKWISE}
-
+    public static enum Action {NONE}
     // AUTON CONSTANTS
     // ===============
     public enum MovementMode {FORWARD_ONLY, STRAFE}
@@ -89,10 +88,10 @@ public class Navigation
             robot.telemetry.update();
             switch (movementMode) {
                 case FORWARD_ONLY:
-                    rotate(getAngleBetween(robot.getPosition().getLocation(), target.getLocation()) - Math.PI / 2,
+                    rotate(getAngleBetween(robot.getPosition().x, robot.getPosition().y, target.getPosition().x, target.getPosition().y) - Math.PI / 2,
                             target.getLocation().rotatePower, robot);
-                    travelLinear(target.getLocation(), target.getLocation().strafePower, robot);
-                    rotate(target.getRotation(), target.getLocation().rotatePower, robot);
+                    travelLinear(target, target.getStrafePower(), robot);
+                    rotate(target.getRotation(), target.getRotatePower(), robot);
                     break;
                 case STRAFE:
                     travelLinear(target.getLocation(), target.getLocation().strafePower, robot);
@@ -226,8 +225,7 @@ public class Navigation
      *               Within the interval (-pi, pi].
      * @param constantPower A hard-coded power value for the method to use instead of ramping. Ignored if set to zero.
      */
-    public void rotate(double target, double constantPower, Robot robot)
-    {
+    public void rotate(double target, double constantPower, Robot robot) {
         robot.positionManager.updatePosition(robot);
         // Both values are restricted to interval (-pi, pi].
         final double startOrientation = robot.getPosition().getRotation();
@@ -332,15 +330,17 @@ public class Navigation
      *  @param target The desired position of the robot.
      *  @param constantPower A hard-coded power value for the method to use instead of ramping. Ignored if set to zero.
      */
-    public void travelLinear(Point target, double constantPower, Robot robot) {
+    public void travelLinear(Position target, double constantPower, Robot robot) {
         robot.positionManager.updatePosition(robot);
-        final Point startLoc = robot.getPosition().getLocation();
-        Point currentLoc;
+        final double startX = robot.getPosition().getX();
+        final double startY = robot.getPosition().getY();
 
-        double totalDistance = getEuclideanDistance(startLoc, target);
+
+        double totalDistance = getEuclideanDistance(startX, startY, target.x, target.y);
 
         double power;
         boolean ramping = true;
+
         if (Math.abs(constantPower - 0.0) > FLOAT_EPSILON) {
             power = constantPower;
             ramping = false;
@@ -357,10 +357,11 @@ public class Navigation
         while (!finishedTravel) {
 
             robot.positionManager.updatePosition(robot);
-            currentLoc = robot.getPosition().getLocation();
+            double currentX = robot.getPosition().getX();
+            double currentY = robot.getPosition().getY();
 
-            distanceToTarget = getEuclideanDistance(currentLoc, target);
-            distanceTraveled = getEuclideanDistance(startLoc, currentLoc);
+            distanceToTarget = getEuclideanDistance(currentX, currentY, target.x, target.y);
+            distanceTraveled = getEuclideanDistance(startX, startY, currentX, currentY);
 
             if (ramping) {
                 if (distanceTraveled < totalDistance / 2) {
@@ -417,8 +418,8 @@ public class Navigation
 
     /** Calculates the angle at which the robot must strafe in order to get to a target location.
      */
-    private double getStrafeAngle(Point currentLoc, double currentOrientation, Point target) {
-        double strafeAngle = currentOrientation - getAngleBetween(currentLoc, target);
+    private double getStrafeAngle(Position currentLoc, Position target) {
+        double strafeAngle = currentLoc.getRotation() - getAngleBetween(currentLoc.getX(), currentLoc.getY(), target.getX(), target.getY());
         if (strafeAngle > Math.PI) {
             strafeAngle -= 2 * Math.PI;
         }
@@ -430,7 +431,7 @@ public class Navigation
 
     /** Determines the angle between the horizontal axis and the segment connecting A and B.
      */
-    private double getAngleBetween(Point a, Point b) { return Math.atan2((b.y - a.y), (b.x - a.x)); }
+    private double getAngleBetween(double x1, double y1, double x2, double y2) { return Math.atan2((y2 - y1), (x2 - x1)); }
 
     /** Calculates the euclidean distance between two points.
      *
@@ -438,8 +439,8 @@ public class Navigation
      *  @param b The point to find the distance to point A from.
      *  @return The Euclidean distance between the two points.
      */
-    private double getEuclideanDistance(Point a, Point b) {
-        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+    private double getEuclideanDistance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 
     /** Transforms the robot's path based on the alliance color and side of the field it is starting on.
@@ -447,10 +448,7 @@ public class Navigation
     private void transformPath(RobotManager.AllianceColor allianceColor, RobotManager.StartingSide startingSide) {
         for (int i = 0; i < path.size(); i++) {
             Position pos = path.get(i);
-            Position copy = new Position(
-                    new Point(pos.getX(), pos.getY(), pos.getLocation().name, pos.getLocation().action,
-                              pos.getLocation().strafePower, pos.getLocation().rotatePower),
-                    pos.getRotation());
+            Position copy = new Position(pos.getX(),pos.getY(), pos.getName(),pos.getAction(),pos.getStrafePower(),pos.getRotatePower(),pos.getRotation());
             if (allianceColor == RobotManager.AllianceColor.RED) {
                 copy.setY(-copy.getY() + RED_BARCODE_OFFSET);
                 if (startingSide == RobotManager.StartingSide.WAREHOUSE) {
@@ -521,14 +519,8 @@ public class Navigation
      * @param b value to be scaled
      * @return an array containing the scaled versions of a and b
      */
-    double[] scaleRange(double a,double b){
-        double max;
-        if (Math.abs(a) > Math.abs(b)) {
-            max = Math.abs(a);
-        }
-        else {
-            max = Math.abs(b);
-        }
+    double[] scaleRange(double a, double b) {
+        double max = Math.abs(a) > Math.abs(b) ? Math.abs(a) : Math.abs(b);
         return new double[] {a / max, b / max};
     }
 
@@ -804,6 +796,7 @@ public class Navigation
 
 /** Hardcoded paths through the playing field during the Autonomous period.
  */
+/*
 class AutonomousPaths {
     // Coordinates relative to starting location close to carousel.
 //    public static final Position allianceShippingHub =
@@ -904,6 +897,7 @@ class AutonomousPaths {
 //            warehouse
 //    ));
 
+
     // TESTING PATHS
     // =============
 
@@ -938,3 +932,4 @@ class AutonomousPaths {
 //            new Position(new Point(0, 0, "P1"), Math.PI)
 //    ));
 }
+*/
