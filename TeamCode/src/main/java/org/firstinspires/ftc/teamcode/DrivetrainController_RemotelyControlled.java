@@ -68,7 +68,15 @@ public class DrivetrainController_RemotelyControlled extends OpMode
     }
 
     private void initOdometry() {
-        //TODO Add values to constructors
+        //CPR = Ratio*PPR*4
+        int cpr = 20 * 7 * 4;
+        double rpm = 273.7882;
+        frontLeftDrive = new Motor(hardwareMap, "front_left_drive", cpr, rpm);
+        frontRightDrive = new Motor(hardwareMap, "front_right_drive", cpr, rpm);
+        rearLeftDrive = new Motor(hardwareMap, "rear_left_drive", cpr, rpm);
+        rearRightDrive = new Motor(hardwareMap, "rear_right_drive", cpr, rpm);
+        drivetrain = new MecanumDrive(frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive);
+
         Translation2d wheelFrontLeftLoc = new Translation2d(6,8.616);
         Translation2d wheelRearLeftLoc = new Translation2d(-6,8.616);
         Translation2d wheelFrontRightLoc = new Translation2d(6, -8.616);
