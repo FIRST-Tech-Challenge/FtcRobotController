@@ -26,8 +26,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name = "RedLeftPowerPlaySleeve", group = "")
-public class RedLeftPowerPlaySleeve extends LinearOpMode {
+@Autonomous(name = "LeftPowerPlaySleeveCone", group = "")
+public class LeftPowerPlaySleeveCone extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -114,9 +114,9 @@ public class RedLeftPowerPlaySleeve extends LinearOpMode {
         if (tfod != null) {
             tfod.activate();
 
-            tfod.setZoom(1.8, 16.0 / 9.0);
+            tfod.setZoom(1.5, 16.0 / 9.0);
         }
-        actuatorUtils.gripperClose(true);
+        actuatorUtils.gripperClose(false);
 
 
         waitForStart();
@@ -127,7 +127,7 @@ public class RedLeftPowerPlaySleeve extends LinearOpMode {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             while (!done && opModeIsActive()) {
-                if((currTime - startTime) < 4000){
+                if((currTime - startTime) < 3000){
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
                         telemetry.addData("# Objects Detected", updatedRecognitions.size());
@@ -174,59 +174,32 @@ public class RedLeftPowerPlaySleeve extends LinearOpMode {
         }
         telemetry.update();
         done = false;
+        //lift arm up
+        actuatorUtils.armPole(4);
         while (((currTime - startTime) < 30000)&& !done && opModeIsActive()) {
 
             switch (resultROI) {
                 case 1:
                     // Far left
-                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(82);
-                    moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(82);
-                    moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(45);
-                    actuatorUtils.armPole(3);
-                    moveUtils.goStraight(4,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.gripperOpen(true);
-                    moveUtils.goStraight(-4,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(135);
-                    moveUtils.goStraight(35,MAX_SPEED,MIN_SPEED,ACCEL);
+                    beginAuto();
+                    moveUtils.strafeBuddy(8);
+                    moveUtils.goStraight(-43,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.strafeBuddy(-4);
                     done=true;
                     break;
                 case 2:
                     // Middle
-                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(85);
-                    moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(85);
-                    moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(45);
-                    actuatorUtils.armPole(3);
-                    moveUtils.goStraight(4,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.gripperOpen(true);
-                    moveUtils.goStraight(-4,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(45);
-                    moveUtils.strafeBuddy(-38);
-                    moveUtils.goStraight(4,MAX_SPEED,MIN_SPEED,ACCEL);
+                    beginAuto();
+                    moveUtils.strafeBuddy(8);
+                    moveUtils.goStraight(-16,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.strafeBuddy(-4);
                     done=true;
                     break;
                 case 3:
                     // Far right
-                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(82);
-                    moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(82);
-                    moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(45);
-                    actuatorUtils.armPole(3);
-                    moveUtils.goStraight(4,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.gripperOpen(true);
-                    moveUtils.goStraight(-4,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(45);
+                    beginAuto();
                     actuatorUtils.armPole(4);
-                    moveUtils.strafeBuddy(4);
                     done=true;
-
                     break;
             }
 
@@ -234,6 +207,21 @@ public class RedLeftPowerPlaySleeve extends LinearOpMode {
 
         }
     }
+    private void beginAuto() throws InterruptedException {
+        moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCW(82);
+        moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCCW(82);
+        moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCW(46.5f);
+        actuatorUtils.armPole(3);
+        moveUtils.goStraight(4.1f,MAX_SPEED,MIN_SPEED,ACCEL);
+        actuatorUtils.gripperOpen(true);
+        moveUtils.goStraight(-5,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCW(40);
+
+    }
+
     void composeTelemetry() {
 
         // At the beginning of each telemetry update, grab a bunch of data
