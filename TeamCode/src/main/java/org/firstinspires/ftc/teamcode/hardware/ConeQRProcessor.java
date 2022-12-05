@@ -62,9 +62,9 @@ public class ConeQRProcessor  extends OpenCvPipeline {
         String qrCode = null;
 
         detectMsgBuf = new StringBuffer();
-        Mat brReverse = input;
+        Mat brReverse = new Mat();
 
-        //Imgproc.cvtColor(input, brReverse, Imgproc.COLOR_BGR2RGB);
+        Imgproc.cvtColor(input, brReverse, Imgproc.COLOR_BGR2RGB);
         //Imgproc.resize(input,brReverse, new Size(540,960 ));
 
         long startMills = 0;
