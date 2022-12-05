@@ -84,7 +84,8 @@ public class IronGiantOpMode extends OpMode {
     private final double MOTORSTALLVALUE = .7;
     //boolean variables
     private boolean calibrate = false;
-
+    //robot variable storage not used yet
+    Robot robot;
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing " + this.getClass() + "...");

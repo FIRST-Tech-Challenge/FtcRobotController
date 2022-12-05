@@ -3,71 +3,62 @@ package org.firstinspires.ftc.teamcode.robots.catbot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-public class ElevatorNClaw {
+class ElevatorNClaw {
     private DcMotorEx elevator = null;
     private Servo claw = null;
     private static final float DEADZONE = .1f;
     private static final int MAXELEVTICS = 4320;
     private static final int MINELEVTICS = 50;
     private int currElevTics = 0;
-    private double MOTORSTALLVALUE = 1 /*12.76*/;
+    private double MOTORSTALLVALUE = .7;
     private static boolean calibrate;
     private Telemetry telemetry;
-    private Gamepad gamepad1;
-    public ElevatorNClaw(Telemetry telemetry, Gamepad gamepad, Servo claw, DcMotorEx elevator) {
-        this.gamepad1 = gamepad;
+    private HardwareMap hardwareMap;
+    public ElevatorNClaw(Telemetry telemetry, HardwareMap hardwareMap) {
         this.telemetry = telemetry;
-        this.claw = claw;
-        this.elevator = elevator;
+        this.hardwareMap = hardwareMap;
         if (!calibrate)
             calib();
         else {
             elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            elevator.setTargetPosition(0);
             elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elevator.setTargetPosition(50);
-            elevator.setPower(1);
         }
     }
-    public void elevatorMove()
+    public void elevatorMove(int ticks)
     {
-        telemetry.addData("elevator position: ", elevator.getCurrentPosition());
-        calibrate = false;
-        if(gamepad1.right_trigger > DEADZONE)
-        {
-//            telemetry.addData("right trigger moved", currElevTics);
-//            telemetry.addData("right trigger moved", MAXELEVTICS);
-//            telemetry.addData("right trigger moved", elevator.isBusy());
-            if(currElevTics < MAXELEVTICS-250)
-                elevator.setTargetPosition(currElevTics+250);
+        elevator.setPower(1);
+//        if(gamepad1.dpad_down) {
+//            calibrate = false;
+//            calib();
+//        }
+//        else if (calibrate) {
+        if (ticks > 0) {
+            if (currElevTics < MAXELEVTICS - ticks)
+                elevator.setTargetPosition(currElevTics + ticks);
             else
                 elevator.setTargetPosition(MAXELEVTICS);
         }
-        if(gamepad1.left_trigger > DEADZONE)
-        {
-            if(currElevTics > MINELEVTICS+250)
-                elevator.setTargetPosition(currElevTics-250);
+        if (ticks < 0) {
+            if (currElevTics > MINELEVTICS + ticks)
+                elevator.setTargetPosition(currElevTics - ticks);
             else
                 elevator.setTargetPosition(MINELEVTICS);
         }
-        if(gamepad1.y)
-            elevator.setTargetPosition(3883);
-        if(gamepad1.b)
-            elevator.setTargetPosition(2300);
-        if(gamepad1.a)
-            elevator.setTargetPosition(50);
         currElevTics = elevator.getCurrentPosition();
+//        }
     }
-    public void clawMove() {
-        telemetry.addData("Claw servo position:", claw.getPosition());
-        if (gamepad1.left_bumper)
-            claw.setPosition(0.7);
-        if (gamepad1.right_bumper)
-            claw.setPosition(-1);
+    public void clawMove(int direction) {
+        if (direction > 0)
+            claw.setPosition(.5);
+        if (direction < 0)
+            claw.setPosition(0.2);
     }
     public void calib(){
         elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -80,5 +71,14 @@ public class ElevatorNClaw {
             calibrate = true;
             telemetry.addData("done calibrating", elevator.getCurrentPosition());
         }
+    }
+    public void motorInit()
+    {
+        elevator = this.hardwareMap.get(DcMotorEx.class, "elevator");
+        claw = this.hardwareMap.get(Servo.class, "claw");
+        elevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        elevator.setTargetPosition(0);
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.elevator.setDirection(DcMotorEx.Direction.REVERSE);
     }
 }
