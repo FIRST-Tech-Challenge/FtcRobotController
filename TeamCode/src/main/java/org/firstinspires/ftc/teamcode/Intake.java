@@ -13,7 +13,7 @@ public class Intake {
     double armMax = .8;
     double armMin = 0;
     double armMid = .40;
-    double endMod = .14;
+    double endMod = 0;
     double newPos;
 
     WristMode wristMode;
@@ -35,6 +35,9 @@ public class Intake {
         if (pos>armMax){
             newPos = armMax;
         }
+        else if (pos>armMin){
+            newPos = armMin;
+        }
         else {
             newPos = pos;
         }
@@ -43,7 +46,7 @@ public class Intake {
         armRight.setPosition(1-newPos);
 
         //if matched, make the wrist keep the cone upright
-        if (wristMode== WristMode.MATCHED){
+        /*if (wristMode== WristMode.MATCHED){
             if(newPos>armMid&&claw.getPosition()>0.4) {
                 runWrist(1);
             }
@@ -53,13 +56,16 @@ public class Intake {
             else {
                 runWrist(newPos);
             }
-        }
+        }*/
     }
 
     //moves arm to a position, changing the wristmode during only this function
     public void runArm(double pos, WristMode newWristMode){
         if (pos>armMax){
             newPos = armMax;
+        }
+        else if (pos>armMin){
+            newPos = armMin;
         }
         else {
             newPos = pos;
@@ -83,6 +89,12 @@ public class Intake {
     public void runArm(double pos, double wristMod){
         if (pos>armMax){
             newPos = armMax;
+        }
+        else if (pos>armMin){
+            newPos = armMin;
+        }
+        else if (pos>armMin){
+            newPos = armMin;
         }
         else {
             newPos = pos;
@@ -118,14 +130,14 @@ public class Intake {
         wrist.setPosition(pos);
     }
 
-    //this method moves the claw to a position
-    public void runClaw(double pos){
-        claw.setPosition(pos);
-    }
-
     //this method changes whether the wrist matches rotation of the arm
     public void changeWristMode(WristMode newWristMode){
         wristMode = newWristMode;
+    }
+
+    //this method moves the claw to a position
+    public void runClaw(double pos){
+        claw.setPosition(pos);
     }
 
     public void openClaw(){

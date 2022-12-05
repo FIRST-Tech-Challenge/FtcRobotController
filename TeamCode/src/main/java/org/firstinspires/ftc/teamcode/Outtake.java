@@ -3,15 +3,17 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Outtake {
     private DcMotor slide;
+    private Servo claw;
 
     private Telemetry telemetry;
 
-    final static int max = 1700;
+    final static int max = 1800;
     final static int min = 0;
     final static double autoSpeed = .8;
 
@@ -22,6 +24,7 @@ public class Outtake {
         slide.setDirection(DcMotorSimple.Direction.REVERSE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        claw = hardwareMap.get(Servo.class, "outtakeclaw");
         this.telemetry = telemetry;
     }
 
@@ -80,8 +83,6 @@ public class Outtake {
 
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slide.setPower(autoSpeed);
-        while (slide.isBusy()) {}
-        slide.setPower(0);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -94,4 +95,23 @@ public class Outtake {
     }
 
     public double showSlideValue() { return slide.getCurrentPosition(); }
+
+    //this method moves the claw to a position
+    public void runClaw(double pos){
+        claw.setPosition(pos);
+    }
+
+    public void openClaw(){
+        runClaw(.05);
+    }
+    public void closeClaw(){
+        runClaw(.4);
+    }
+
+    public void toggleClaw(){
+        if (claw.getPosition()>.2){
+            openClaw();
+        }
+        else{closeClaw();}
+    }
 }

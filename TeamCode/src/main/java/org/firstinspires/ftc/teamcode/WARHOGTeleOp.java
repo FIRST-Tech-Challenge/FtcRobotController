@@ -40,6 +40,7 @@ public class WARHOGTeleOp extends LinearOpMode {
 
 
         while (!isStarted() && !isStopRequested()) {
+            outtake.openClaw();
             try {
                 previousGamepad1.copy(currentGamepad1);
                 previousGamepad2.copy(currentGamepad2);
@@ -142,6 +143,11 @@ public class WARHOGTeleOp extends LinearOpMode {
             //open/close the claw
             if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
                 intake.toggleClaw();
+            }
+
+            if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+                outtake.toggleClaw();
+                telemetry.addLine("Toggle OuttakeClaw");
             }
 
             //move the outtake slides up and down

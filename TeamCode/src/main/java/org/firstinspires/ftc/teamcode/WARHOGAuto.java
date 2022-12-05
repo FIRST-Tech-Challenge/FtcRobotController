@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="WARHOGAuto_testing", group="")
+@Autonomous(name="WARHOGAuto", group="")
 public class WARHOGAuto extends LinearOpMode {
     public WARHOGAuto() throws InterruptedException {}
 
@@ -29,10 +29,16 @@ public class WARHOGAuto extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
+    Gamepad currentGamepad1 = new Gamepad();
+    Gamepad currentGamepad2 = new Gamepad();
+    Gamepad previousGamepad1 = new Gamepad();
+    Gamepad previousGamepad2 = new Gamepad();
+
     static final double FEET_PER_METER = 3.28084;
 
     int colorMod = 0;
     int posMod = 0;
+    int cycles = 0;
 
     static final double speed = .6;
 
@@ -88,23 +94,51 @@ public class WARHOGAuto extends LinearOpMode {
 
         telemetry.setMsTransmissionInterval(50);
 
+        //init loop
         while (!isStarted() && !isStopRequested()) {
-            //set up startPos
-            if (gamepad1.b) {
+            //set up inputs - have previous so that you can check rising edge
+            try {
+                previousGamepad1.copy(currentGamepad1);
+                previousGamepad2.copy(currentGamepad2);
+
+                currentGamepad1.copy(gamepad1);
+                currentGamepad2.copy(gamepad2);
+            }
+            catch (RobotCoreException e) {
+                // Swallow the possible exception, it should not happen as
+                // currentGamepad1/2 are being copied from valid Gamepads.
+            }
+
+            //set up initialization procedures
+            if (currentGamepad1.b) {
                 startPosColor = StartPosColor.RED;
             }
-            if (gamepad1.x) {
+            if (currentGamepad1.x) {
                 startPosColor = StartPosColor.BLUE;
             }
-            if (gamepad1.dpad_left) {
+            if (currentGamepad1.dpad_left) {
                 startPosPosition = StartPosPosition.LEFT;
             }
-            if (gamepad1.dpad_right) {
+            if (currentGamepad1.dpad_right) {
                 startPosPosition = StartPosPosition.RIGHT;
+            }
+
+            if(currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
+                cycles+=1;
+            }
+            if(currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
+                cycles-=1;
+            }
+            if(cycles>5){
+                cycles=5;
+            }
+            if(cycles<0){
+                cycles=0;
             }
 
             telemetry.addData("Color", startPosColor);
             telemetry.addData("Position", startPosPosition);
+            telemetry.addData("Cycles", cycles);
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             //detect apriltags
@@ -199,7 +233,7 @@ public class WARHOGAuto extends LinearOpMode {
         // turn to cone stack
         drivetrain.MoveForDis(-18, speed);
 
-        for(int i=0; i<0; i++) {
+        for(int i=0; i<cycles; i++) {
             //drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
             drivetrain.rotateToPosition(-90 * posMod, speed);
             intake.runArm(.2-.3*i);

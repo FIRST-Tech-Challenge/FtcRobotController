@@ -271,12 +271,12 @@ public class Drivetrain{
         rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // set power
-        for(int i =1; i<11; i++) {
-            leftFrontDrive.setPower(pow*i/10);
-            leftBackDrive.setPower(pow*i/10);
-            rightFrontDrive.setPower(pow*i/10);
-            rightBackDrive.setPower(pow*i/10);
-            sleep(20);
+        for(int i =1; i<21; i++) {
+            leftFrontDrive.setPower(pow*i/20);
+            leftBackDrive.setPower(pow*i/20);
+            rightFrontDrive.setPower(pow*i/20);
+            rightBackDrive.setPower(pow*i/20);
+            sleep(10);
         }
 
         // run for a while
@@ -284,12 +284,13 @@ public class Drivetrain{
                 leftBackDrive.isBusy() ||
                 rightFrontDrive.isBusy() ||
                 rightBackDrive.isBusy() ) {}
-
+/*
         // set power to 0
         leftFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
+*/
 
         // change encoder mode back to normal
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
