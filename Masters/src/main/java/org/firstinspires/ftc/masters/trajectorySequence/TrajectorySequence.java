@@ -2,7 +2,7 @@ package org.firstinspires.ftc.masters.trajectorySequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-import org.firstinspires.ftc.masters.trajectorysequence.sequencesegment.SequenceSegment;
+import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.SequenceSegment;
 
 import java.util.Collections;
 import java.util.List;
