@@ -49,7 +49,7 @@ public class RobotManager {
         robot = new Robot(hardwareMap, telemetry, elapsedTime);
 
         if (!path.isEmpty()) {
-            computerVision = new ComputerVision(hardwareMap, new AutonPipeline(robot, telemetry, allianceColor));
+            computerVision = new ComputerVision(hardwareMap, new AutonPipeline (robot, telemetry, allianceColor));
         }
 
         gamepads = new GamepadWrapper(gamepad1, gamepad2);

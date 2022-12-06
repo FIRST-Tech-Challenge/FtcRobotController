@@ -21,7 +21,7 @@ import java.util.Objects;
  */
 public class Navigation {
     public enum RotationDirection {CLOCKWISE, COUNTERCLOCKWISE}
-    public static enum Action {NONE}
+    public static enum Action {NONE, LIFT_CONE, DROP_CONE}
     // AUTON CONSTANTS
     // ===============
     public enum MovementMode {FORWARD_ONLY, STRAFE}
@@ -95,22 +95,22 @@ public class Navigation {
             switch (movementMode) {
                 case FORWARD_ONLY:
                     rotate(getAngleBetween(robot.getPosition().x, robot.getPosition().y, target.getPosition().x, target.getPosition().y) - Math.PI / 2,
-                            target.getLocation().rotatePower, robot);
+                            target.rotatePower, robot);
                     travelLinear(target, target.getStrafePower(), robot);
                     rotate(target.getRotation(), target.getRotatePower(), robot);
                     break;
                 case STRAFE:
-                    travelLinear(target.getLocation(), target.getLocation().strafePower, robot);
-                    rotate(target.getRotation(), target.getLocation().rotatePower, robot);
+                    travelLinear(target, target.strafePower, robot);
+                    rotate(target.getRotation(), target.rotatePower, robot);
                     break;
             }
 
             pathIndex++;
 
-            robot.telemetry.addData("Got to", target.getLocation().name);
+            robot.telemetry.addData("Got to", target.name);
             robot.telemetry.update();
 
-            if (target.getLocation().name.length() >= 3 && target.getLocation().name.substring(0, 3).equals("POI")) break;
+            if (target.name.length() >= 3 && target.name.substring(0, 3).equals("POI")) break;
         }
         return path.get(pathIndex - 1);
     }
@@ -947,6 +947,8 @@ class AutonomousPaths{
     //public Position startingPosition = new Position(0,0,0,"startingPosition");
     //Positions are written with the starting position of the robot being
 
+    //Orientation of zero for robot has linear slides facing away from the starting wall
+
     //Terminal & Substation
     public Position terminalPosition = new Position(2,0,(-Math.PI/2),"terminalPosition");
     public Position substationPosition = new Position(-1,0,Math.PI/2,"substationPosition");
@@ -963,14 +965,26 @@ class AutonomousPaths{
     public Position rightSmallJunction = new Position(0, 1, -Math.PI / 4, "rightSmallJunction");
 
     //Medium
-    public Positin mediumJunction = new Position(0,1,Math.PI/4,"mediumJunction");
+    public Position mediumJunction = new Position(-1,1,Math.PI/4,"mediumJunction");
+
+
+    //intermediateMedium
+    public Position intermediateMedium = new Position(-1,0,0, "intermediateMedium");
+
+
 
     //Large
-    public Position leftLargeJunction = new Position(-1,1 Math.PI / 4,"leftLargeJunction");
+    public Position leftLargeJunction = new Position(-1,1, Math.PI / 4,"leftLargeJunction");
     public Position centerLargeJunction = new Position(0,2, Math.PI / 4,"centerLargeJunction");
 
-    AutonomousPaths(){
+    //Paths
+    //Start 0, intermediatemedium 0, rightSmallJunction -pi/2,
+    public Position path = {
+        PLACEHOLDER , mediumJunction
+    };
 
+
+    AutonomousPaths(){
     }
 
 }
