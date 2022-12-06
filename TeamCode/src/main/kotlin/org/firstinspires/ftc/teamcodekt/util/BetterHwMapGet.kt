@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
  * val motor: DcMotorEx = hardwareMap("motor")
  * ```
  *
- * Also, for why I did not simply use `get`, it is because the `get` name is already
+ * Also, for why I did not simply use `get`, it's because the `get` name is already
  * taken by the `HardwareMap` class :(
  *
  * @param T The type of the component you want to get.

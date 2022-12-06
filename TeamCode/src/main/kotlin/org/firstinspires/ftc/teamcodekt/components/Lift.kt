@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.teamcodekt.util.DataSupplier
+import org.firstinspires.ftc.teamcodekt.util.clamp
 
 @Config
 object LiftConfig {
@@ -21,27 +23,35 @@ object LiftConfig {
     const val HIGH = 2471
 }
 
+/**
+ * This class represents a lift that can be moved to different heights.
+ *
+ * @param hwMap a [HardwareMap] object that contains information about the robot's hardware
+ * @param voltageScaler a [VoltageScaler] object that helps correct for voltage changes
+ * @author KG
+ */
 class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
-    private val motors: Triple<Motor, Motor, Motor>
-
-    private var liftHeight = 0
-    private var prevLiftHeight = 0
+    private val liftMotor: Motor
     private val liftPID: PIDFController
 
-    init {
-        motors = Triple(
-            Motor(hwMap, "L1", Motor.GoBILDA.RPM_435),
-            Motor(hwMap, "L2", Motor.GoBILDA.RPM_435),
-            Motor(hwMap, "L3", Motor.GoBILDA.RPM_435),
-        )
+    private var liftHeight = 0
 
-        transformMotors {
-            it.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
-            it.setRunMode(Motor.RunMode.VelocityControl)
-            it.resetEncoder()
+    /**
+     * The height of the lift. This property is clamped between [LiftConfig.ZERO] and
+     * [LiftConfig.HIGH]. Only should really be used for manual control.
+     */
+    var height: Int
+        get() = liftHeight
+        set(height) {
+            liftHeight = height.clamp(LiftConfig.ZERO, LiftConfig.HIGH).toInt()
         }
 
-        motors.second.inverted = true
+    init {
+        liftMotor = Motor(hwMap, "L1", Motor.GoBILDA.RPM_435)
+
+        liftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
+        liftMotor.setRunMode(Motor.RunMode.VelocityControl)
+        liftMotor.resetEncoder()
 
         liftPID = PIDFController(
             LiftConfig.P, LiftConfig.I,
@@ -49,57 +59,53 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
         )
     }
 
-    fun setFloating() = transformMotors {
-        it.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT)
-    }
-
-    fun setBrake() = transformMotors {
-        it.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
-    }
-
+    /**
+     * Move the lift to the zero height. Used for intaking or depositing on ground junctions/terminals.
+     */
     fun goToZero() {
-        prevLiftHeight = liftHeight
         liftHeight = LiftConfig.ZERO
     }
 
+    /**
+     * Move the lift to the low height. Used for low poles.
+     */
     fun goToLow() {
-        prevLiftHeight = liftHeight
         liftHeight = LiftConfig.LOW
     }
 
+    /**
+     * Move the lift to the mid height. Used for mid poles.
+     */
     fun goToMid() {
-        prevLiftHeight = liftHeight
         liftHeight = LiftConfig.MID
     }
 
+    /**
+     * Move the lift to the high height. Used for high poles.
+     */
     fun goToHigh() {
-        prevLiftHeight = liftHeight
         liftHeight = LiftConfig.HIGH
     }
 
-    fun manualLiftControl(power: Double) {
-        transformMotors {
-            it.setRunMode(Motor.RunMode.RawPower)
-            it.set(power)
-        }
-    }
-
-    var height: Int
-        get() = liftHeight
-        set(height) {
-            liftHeight = Math.max(0, Math.min(height, 3000))
-        }
-
-    private fun transformMotors(transformation: (Motor) -> Unit) =
-        motors.toList().forEach(transformation)
-
+    /**
+     * Update the lift's position using the PIDF controller and the voltage scaler.
+     */
     fun update() {
         val voltageCorrection = voltageScaler.voltageCorrection
 
-        val correction = liftPID.calculate(motors.first.currentPosition.toDouble(), liftHeight + voltageCorrection)
+        val correction =
+            liftPID.calculate(liftMotor.currentPosition.toDouble(), liftHeight + voltageCorrection)
 
-        transformMotors {
-            it.set(correction)
-        }
+        liftMotor.set(correction)
+    }
+
+    /**
+     * Log data about the lift to a telemetry object.
+     *
+     * @param telemetry a [Telemetry] object to log data to
+     * @param dataSupplier a [DataSupplier] that provides data about the lift motor
+     */
+    fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<Motor>) {
+        telemetry.addData("Lift motor", dataSupplier(liftMotor))
     }
 }

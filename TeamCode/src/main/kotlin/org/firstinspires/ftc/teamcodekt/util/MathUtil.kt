@@ -2,6 +2,9 @@
 
 package org.firstinspires.ftc.teamcodekt.util
 
+import kotlin.math.abs
+import kotlin.math.absoluteValue
+
 /**
  * Simple utility function to convert from cm to inces without having to type out a
  * long function name (and without having to do `<Int>.toDouble()` in Kotlin)
@@ -15,6 +18,8 @@ package org.firstinspires.ftc.teamcodekt.util
  * ```java
  * double inches = MU.toIn(30);
  * ```
+ *
+ * @return the number of inches in the given number of centimeters
  */
 fun Number.toIn() = this.toDouble() / 2.54
 
@@ -31,6 +36,8 @@ fun Number.toIn() = this.toDouble() / 2.54
  * ```java
  * double theta = MU.toRad(180);
  * ```
+ *
+ * @return the number of radians in the given number of degrees
  */
 fun Number.toRad() = Math.toRadians(this.toDouble())
 
@@ -55,8 +62,6 @@ fun Number.toRad() = Math.toRadians(this.toDouble())
  * MU.zeroIfNaN(doubleNaN); // returns 0.0
  * ```
  *
- * @param default The default value to return if 'double' is NaN
- *
  * @return 'double' if it is not NaN, otherwise 'default'
  *
  * @author KG
@@ -65,8 +70,7 @@ fun Double.zeroIfNaN() = if (isNaN()) 0.0 else this
 
 /**
  * Overloaded method of the above to accept floats
- *
- * @param default The degree value to convert
+
  *
  * @return 'float' if it is not NaN, otherwise 'default'
  *
@@ -86,6 +90,11 @@ fun Float.zeroIfNaN() = if (isNaN()) 0.0f else this
  * ```java
  * boolean willBeTrue = MU.inRange(5, 0, 10);
  * ```
+ *
+ * @param min The minimum value
+ * @param max The maximum value
+ *
+ * @return `true` if the given number is in between the given min and maxes
  */
 fun Number.isInRange(min: Number, max: Number) =
     this.toDouble() in min.toDouble()..max.toDouble()
@@ -131,5 +140,55 @@ fun Number.clamp(min: Number, max: Number) =
  * ```java
  * double average = MU.average(1, 2, 3, 4, 5);
  * ```
+ *
+ * @param xs The numbers to average
+ *
+ * @return The average of the given numbers
  */
 fun avg(vararg xs: Number) = xs.sumOf { it.toDouble() } / xs.size
+
+/**
+ * Finds the maximum absolute value of the given numbers
+ *
+ * Kotlin usage examples:
+ * ```kotlin
+ * val maxAbs = maxAbs(1, -2, 3, -4, -5) // maxAbs == 5
+ * ```
+ *
+ * Java usage examples:
+ * ```java
+ * double maxAbs = MU.maxAbs(1, -2, 3, -4, -5); // maxAbs == 5
+ * ```
+ *
+ * @param xs The numbers to find the maximum absolute value of
+ *
+ * @return The maximum absolute value of the given numbers
+ */
+fun maxMagnitude(vararg xs: Number) = xs.maxOfOrNull { it.toDouble().absoluteValue } ?: 0.0
+
+
+/**
+ * Returns the number unless it is within the given tolerance of the origin, in which case it
+ * returns the origin.
+ *
+ * Kotlin usage examples:
+ * ```kotlin
+ * val willBe0 = withDeadzone(0.1, 0.2)
+ * val willBe1 = withDeadzone(-.9, 0.2, 1.0)
+ * ```
+ *
+ * Java usage examples:
+ * ```java
+ * double willBe0 = MU.withDeadzone(0.1, 0.2);
+ * double willBe1 = MU.withDeadzone(0.9, 0.2, 1.0);
+ * ```
+ *
+ * @param x The number to check
+ * @param deadzone The tolerance of the origin
+ * @param origin The origin to check against
+ *
+ * @return `x` if it is not within `deadzone` of `origin`, otherwise `origin`
+ */
+@JvmOverloads
+fun withDeadzone(x: Number, deadzone: Number, origin: Number = 0.0) =
+    if (abs(x.toDouble() - origin.toDouble()) > deadzone.toDouble()) origin.toDouble() else x.toDouble()
