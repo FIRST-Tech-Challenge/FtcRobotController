@@ -67,7 +67,13 @@ class DriveTrain {
         motorBackLeft.setPower(powerBackLeft);
         motorBackRight.setPower(powerBackRight);
     }
-
+    public void telemetryOutput()
+    {
+        telemetry.addData("Back Right Position \t", motorBackRight.getCurrentPosition());
+        telemetry.addData("Back Left Position \t", motorBackLeft.getCurrentPosition());
+        telemetry.addData("Front Right Position \t", motorFrontRight.getCurrentPosition());
+        telemetry.addData("Front Left Position \t", motorFrontLeft.getCurrentPosition());
+    }
     public void motorInit()
     {
         motorFrontLeft = this.hardwareMap.get(DcMotorEx.class, "motorFrontLeft");

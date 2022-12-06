@@ -4,10 +4,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 class Autonomous {
-    Queue<Task> behaviors = new LinkedList<Task>();
-    public Autonomous(Queue<Task> behaviors)
+    Queue<Task> behaviors;
+    public Autonomous()
     {
-        this.behaviors=behaviors;
+        this.behaviors = new LinkedList<Task>();
     }
     public boolean runBehaviors()
     {
@@ -17,5 +17,9 @@ class Autonomous {
             return true;
         }
         return false;
+    }
+    public void add(Task task)
+    {
+        behaviors.offer(task);
     }
 }
