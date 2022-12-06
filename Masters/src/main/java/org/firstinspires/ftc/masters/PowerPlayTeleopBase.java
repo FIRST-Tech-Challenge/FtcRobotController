@@ -44,8 +44,8 @@ public class PowerPlayTeleopBase extends LinearOpMode {
     protected final double clawServoOpen = 0.14;
     protected final double clawServoClosed = 0.0;
     protected final int armServoBottom = 0;
-    protected final int armServoTop = 200;
-    protected final int armServoMid = 100;
+    protected final int armServoTop = 600;
+    protected final int armServoMid = 450;
 
 
 

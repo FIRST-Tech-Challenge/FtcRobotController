@@ -149,7 +149,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
         frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide");
-        THE_ARM = hardwareMap.get(DcMotorEx.class, "THE_ARM");
+        THE_ARM = hardwareMap.get(DcMotorEx.class, "armServo");
 
         THE_CLAW = hardwareMap.servo.get("clawServo");
 
