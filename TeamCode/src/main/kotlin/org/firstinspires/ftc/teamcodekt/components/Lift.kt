@@ -21,6 +21,8 @@ object LiftConfig {
     const val LOW = 1091
     const val MID = 1771
     const val HIGH = 2471
+
+    const val MANUAL_ADJUSTMENT_MULT = 50
 }
 
 /**

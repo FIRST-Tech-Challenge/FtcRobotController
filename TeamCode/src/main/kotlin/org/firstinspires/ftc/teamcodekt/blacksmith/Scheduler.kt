@@ -89,7 +89,7 @@ object Scheduler {
     /**
      * A block of code to run before each tick.
      */
-    private var beforeEach: Runnable? = null
+    private var beforeEach = Runnable {}
 
     /**
      * Sets a block of code to run before each tick.
@@ -132,11 +132,11 @@ object Scheduler {
      */
     @JvmStatic
     @JvmOverloads
-    fun start(opmode: LinearOpMode, afterEach: Runnable? = null) {
+    fun start(opmode: LinearOpMode, afterEach: Runnable = Runnable {}) {
         while (opmode.opModeIsActive() && !opmode.isStopRequested) {
-            beforeEach?.run()
+            beforeEach.run()
             tick()
-            afterEach?.run()
+            afterEach.run()
         }
     }
 
@@ -180,13 +180,13 @@ object Scheduler {
      */
     @JvmStatic
     @JvmOverloads
-    fun time(opmode: LinearOpMode, telemetry: Telemetry, afterEach: Runnable? = null) {
+    fun time(opmode: LinearOpMode, telemetry: Telemetry, afterEach: Runnable = Runnable {}) {
         while (opmode.opModeIsActive() && !opmode.isStopRequested) {
             val startTime = System.currentTimeMillis()
 
-            beforeEach?.run()
+            beforeEach.run()
             tick()
-            afterEach?.run()
+            afterEach.run()
 
             val endTime = System.currentTimeMillis()
             telemetry.addData("Loop time (ms)", endTime - startTime)

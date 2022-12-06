@@ -3,8 +3,8 @@
 package org.firstinspires.ftc.teamcodekt.blacksmith.listeners
 
 import org.firstinspires.ftc.teamcodekt.blacksmith.Scheduler
-import org.firstinspires.ftc.teamcodekt.blacksmith.Condition
-import org.firstinspires.ftc.teamcodekt.blacksmith.SignalEdgeDetector
+import org.firstinspires.ftc.teamcodekt.blacksmith.internal.Condition
+import org.firstinspires.ftc.teamcodekt.blacksmith.internal.SignalEdgeDetector
 import org.firstinspires.ftc.teamcodekt.util.runOnce
 
 /**

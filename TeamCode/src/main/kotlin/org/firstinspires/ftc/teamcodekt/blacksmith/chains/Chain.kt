@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcodekt.blacksmith.taskchains
+package org.firstinspires.ftc.teamcodekt.blacksmith.chains
 
 import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Listener
 
-interface TaskChain {
+interface Chain {
     fun invokeOn(listener: Listener)
 }

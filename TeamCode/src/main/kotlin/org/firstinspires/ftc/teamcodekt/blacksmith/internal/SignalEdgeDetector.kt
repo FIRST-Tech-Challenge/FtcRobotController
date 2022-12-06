@@ -1,6 +1,6 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
-package org.firstinspires.ftc.teamcodekt.blacksmith
+package org.firstinspires.ftc.teamcodekt.blacksmith.internal
 
 /**
  * Evaluates a condition, and checks if the state of the condition is on the rising edge, falling
@@ -34,16 +34,16 @@ class SignalEdgeDetector(private val condition: Condition) {
     }
 
     /**
-     * Checks if the condition is on the rising edge.
+     * Checks if the condition is on the rising edge, i.e. it goes from `false` to `true`.
      * @return True if the condition is on the rising edge, false otherwise.
      */
-    fun risingEdge() = currState && !lastState
+    fun risingEdge() = !lastState && currState
 
     /**
-     * Checks if the condition is on the falling edge.
+     * Checks if the condition is on the falling edge, i.e. it goes from `true` to `false`.
      * @return True if the condition is on the falling edge, false otherwise.
      */
-    fun fallingEdge() = !currState && lastState
+    fun fallingEdge() = lastState && currState
 
     /**
      * Checks if the condition is high.
