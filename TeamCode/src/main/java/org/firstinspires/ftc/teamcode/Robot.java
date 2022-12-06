@@ -57,7 +57,7 @@ public class Robot {
     HashMap<RobotConfig.DriveMotors, DcMotor> driveMotors = new HashMap<RobotConfig.DriveMotors, DcMotor>();
 
     // Hardware
-    public DcMotor carouselMotor, slidesMotor;
+    public DcMotor compliantWheelsMotorLeft, compliantWheelsMotorRight, slidesMotor;
     public Servo horseshoe;
     public Servo horseshoeIndicator;
 
@@ -78,13 +78,10 @@ public class Robot {
 
         desiredHorseshoeState = HorseshoeState.FRONT;
 
+        compliantWheelsMotorLeft = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.COMPLIANT_WHEELS_MOTOR_LEFT));
+        compliantWheelsMotorRight = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.COMPLIANT_WHEELS_MOTOR_RIGHT));
         slidesMotor = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR));
         horseshoe = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE));
-        slidesMotor = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR));
-        horseshoe = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE));
-//        clawLEDs=hardwareMap.get(DcMotor.class,"LED");
-//        clawLEDs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        clawLEDs.setDirection(DcMotorSimple.Direction.FORWARD);
         horseshoeIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE_INDICATOR));
 
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
@@ -120,12 +117,13 @@ public class Robot {
  *  pertaining to the robot's state.
  */
 class RobotConfig {
-    enum Motors {SLIDES_MOTOR}
+    enum Motors {COMPLIANT_WHEELS_MOTOR_LEFT, COMPLIANT_WHEELS_MOTOR_RIGHT, SLIDES_MOTOR}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
     enum Servos {HORSESHOE, HORSESHOE_INDICATOR}
 
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
-
+        put(Motors.COMPLIANT_WHEELS_MOTOR_LEFT, "cw_motor_left");
+        put(Motors.COMPLIANT_WHEELS_MOTOR_RIGHT, "cw_motor_right");
         put(Motors.SLIDES_MOTOR, "slides_motor");
     }};
 

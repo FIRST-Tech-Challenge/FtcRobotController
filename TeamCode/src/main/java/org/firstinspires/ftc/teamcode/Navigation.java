@@ -110,8 +110,6 @@ public class Navigation {
     }
 
     /** Updates the strafe power according to movement mode and gamepad 1 left trigger.
-     *
-     *  @return Whether the strafe power is greater than zero.
      */
     public void updateStrafePower(boolean hasMovementDirection, GamepadWrapper gamepads, Robot robot) {
         if (!hasMovementDirection) {
@@ -493,7 +491,7 @@ public class Navigation {
             double start = robot.elapsedTime.milliseconds();
             while (robot.elapsedTime.milliseconds() - start > 100) {}
             return;
-        };
+        }
 
         robot.driveMotors.get(RobotConfig.DriveMotors.REAR_LEFT).setPower((rawPowers[1] * power - turn) * wheel_speeds[0]);
         robot.driveMotors.get(RobotConfig.DriveMotors.REAR_RIGHT).setPower((rawPowers[0] * power + turn) * wheel_speeds[1]);
@@ -517,7 +515,7 @@ public class Navigation {
      * @return an array containing the scaled versions of a and b
      */
     double[] scaleRange(double a, double b) {
-        double max = Math.abs(a) > Math.abs(b) ? Math.abs(a) : Math.abs(b);
+        double max = Math.max(Math.abs(a), Math.abs(b));
         return new double[] {a / max, b / max};
     }
 

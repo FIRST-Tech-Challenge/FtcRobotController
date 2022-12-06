@@ -9,11 +9,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 /** Wraps a gamepad so that button mappings are stored in one place.
  */
 public class GamepadWrapper {
-    public enum DriverAction {RUN_CAROUSEL, SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,
-                              OPEN_CLAW, CLOSE_CLAW, ULTRA_FINE_MOVEMENT_TOGGLE,
-                              FINE_MOVEMENT_TOGGLE, MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT,
-                              MOVE_STRAIGHT_RIGHT, TOGGLE_AUTO_SPIN, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
-                              TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE
+    public enum DriverAction {SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,
+                              ULTRA_FINE_MOVEMENT_TOGGLE, FINE_MOVEMENT_TOGGLE, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
+                              MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT, MOVE_STRAIGHT_RIGHT,
+                              COMPLIANT_WHEELS_TOGGLE, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE
     }
 
     Gamepad gamepad1, gamepad2;

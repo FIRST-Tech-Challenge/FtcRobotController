@@ -130,12 +130,12 @@ public class PowerPlayAuton extends LinearOpMode {
                 break;
         }
 
-        if (startingSide.equals("CAROUSEL")) {
-            PowerPlayAuton.startingSide = RobotManager.StartingSide.CAROUSEL;
-        }
-        else if (startingSide.equals("WAREHOUSE")) {
-            PowerPlayAuton.startingSide = RobotManager.StartingSide.WAREHOUSE;
-        }
+//        if (startingSide.equals("CAROUSEL")) {
+//            PowerPlayAuton.startingSide = RobotManager.StartingSide.CAROUSEL;
+//        }
+//        else if (startingSide.equals("WAREHOUSE")) {
+//            PowerPlayAuton.startingSide = RobotManager.StartingSide.WAREHOUSE;
+//        }
 
         if (allianceColor.equals("BLUE")) {
             PowerPlayAuton.allianceColor = RobotManager.AllianceColor.BLUE;

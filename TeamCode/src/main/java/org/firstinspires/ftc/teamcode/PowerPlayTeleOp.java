@@ -60,15 +60,16 @@ public class PowerPlayTeleOp extends OpMode {
     private static RobotManager.AllianceColor allianceColor;
 
     public void initSharedPreferences() {
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.hardwareMap.appContext);
-
-        String allianceColor = sharedPrefs.getString("alliance_color", "ERROR");
-
-        if (allianceColor.equals("BLUE")) {
-            PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.BLUE;
-        }
-        else if (allianceColor.equals("RED")) {
-            PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.RED;
-        }
+//        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.hardwareMap.appContext);
+//
+//        String allianceColor = sharedPrefs.getString("alliance_color", "ERROR");
+//
+//        if (allianceColor.equals("BLUE")) {
+//            PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.BLUE;
+//        }
+//        else if (allianceColor.equals("RED")) {
+//            PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.RED;
+//        }
+        PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.BLUE;
     }
 }
