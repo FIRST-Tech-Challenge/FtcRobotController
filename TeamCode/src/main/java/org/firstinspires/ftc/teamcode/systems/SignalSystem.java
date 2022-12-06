@@ -45,8 +45,7 @@ public class SignalSystem extends SubsystemBase {
     /** Whether the system is active and getting results. */
     public boolean active = false;
     
-    /** Whether the system is ready to give a final result. */
-    public boolean resultReady = false;
+    boolean resultReady = false;
 
     /**
      * Initializes the subsystem. It does not open a connection to the camera.
@@ -134,6 +133,10 @@ public class SignalSystem extends SubsystemBase {
         resultReady = false;
 
         return true;
+    }
+    
+    public boolean isResultReady() {
+        return resultReady;
     }
 
     /**
