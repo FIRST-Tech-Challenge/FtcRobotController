@@ -40,6 +40,17 @@ public class PowerPlayRedRight extends LinearOpMode {
             telemetry.update();
         }
 
+        //        drive.liftTop();
+        TrajectorySequence startTo270Pole = drive.trajectorySequenceBuilder(startPose)
+                .splineToLinearHeading(new Pose2d( new Vector2d( 9,-50), Math.toRadians(90)), Math.toRadians(90))
+                .lineToLinearHeading(new Pose2d(new Vector2d(9,-36),Math.toRadians(45)))
+//                .lineToLinearHeading(westPoleDeposit)
+                .build();
+        drive.followTrajectorySequence(startTo270Pole);
+
+        //use vision to align
+        //drop cone
+        //drive.openClaw();
 
         //When parking
         switch (sleeveColor) {
@@ -52,19 +63,7 @@ public class PowerPlayRedRight extends LinearOpMode {
             case INDETERMINATE:
 
         }
-        drive.liftTop();
-        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(36, -60),Math.toRadians(0)))
-                .splineToLinearHeading(new Pose2d( new Vector2d(12,-48), Math.toRadians(90)), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(new Vector2d(12,-36),Math.toRadians(45)))
-                .lineToLinearHeading(new Pose2d(new Vector2d(12,-12),Math.toRadians(135)))
-                .build();
 
-        //use vision to align
-        //drop cone
-        drive.openClaw();
-
-        //park in the correct spot
-        //put lift down
     }
 
 }
