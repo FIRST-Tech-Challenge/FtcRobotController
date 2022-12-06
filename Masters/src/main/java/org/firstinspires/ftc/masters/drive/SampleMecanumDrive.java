@@ -28,13 +28,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.masters.PowerPlayRedLeft;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
 
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,7 +96,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap, Telemetry telemetry) {
+    public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,

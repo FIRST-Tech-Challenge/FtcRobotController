@@ -4,10 +4,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.MultipleCameraCV;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
@@ -22,7 +20,7 @@ public class PowerPlayRedRight extends LinearOpMode {
         PowerPlayComputerVisionPipelines CV = new PowerPlayComputerVisionPipelines(hardwareMap, telemetry);
         PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor sleeveColor = null;
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,  telemetry);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(new Vector2d(36, -60), Math.toRadians(0));
         drive.setPoseEstimate(startPose);
         waitForStart();

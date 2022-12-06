@@ -24,7 +24,7 @@ public class PowerPlayRedLeft extends LinearOpMode {
         PowerPlayComputerVisionPipelines CV = new PowerPlayComputerVisionPipelines(hardwareMap, telemetry);
         PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor sleeveColor = null;
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,  telemetry);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(new Vector2d(-36, -60), Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 

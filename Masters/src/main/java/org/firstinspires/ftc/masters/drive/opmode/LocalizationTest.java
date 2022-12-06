@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.masters.drive.opmode;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
-
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -17,17 +14,12 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
  * exercise is to ascertain whether the localizer has been configured properly (note: the pure
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
-//@Disabled
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
-
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
-
-
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, telemetry);
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
