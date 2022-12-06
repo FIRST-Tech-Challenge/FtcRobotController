@@ -24,14 +24,17 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.masters.PowerPlayRedLeft;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
 
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +57,20 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
+
+    //Fix values
+    public static int SLIDE_HIGH = 1320;
+    public static int SLIDE_MIDDLE = 710;
+    public static int SLIDE_BOTTOM = 0;
+
+    //Fix values
+    protected final double clawServoOpen = 0.14;
+    protected final double clawServoClosed = 0.0;
+    protected final double armServoBottom = 0.20;
+    protected final double armServoTop = 0.76;
+    protected final double armServoMid = 0.57;
+
+
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
@@ -72,11 +89,16 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
+    private DcMotorEx linearSlide;
+    private DcMotorEx frontSlide;
+    private DcMotorEx THE_ARM;
+
+    private Servo THE_CLAW;
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    public SampleMecanumDrive(HardwareMap hardwareMap, Telemetry telemetry) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
@@ -125,6 +147,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
+        linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
+        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide");
+        THE_ARM = hardwareMap.get(DcMotorEx.class, "THE_ARM");
+
+        THE_CLAW = hardwareMap.servo.get("clawServo");
+
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
@@ -149,6 +177,34 @@ public class SampleMecanumDrive extends MecanumDrive {
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
       //  setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+    }
+
+    public void openClaw(){
+        THE_CLAW.setPosition(clawServoOpen);
+    }
+
+    public void closeClaw(){
+        THE_CLAW.setPosition(clawServoClosed);
+    }
+
+    public void liftTop(){
+        linearSlide.setTargetPosition(SLIDE_HIGH);
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontSlide.setTargetPosition(SLIDE_HIGH);
+        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setPower(.6);
+        frontSlide.setPower(.6);
+        //set arm to middle
+    }
+
+    public void liftDown() {
+        closeClaw();
+        linearSlide.setTargetPosition(SLIDE_BOTTOM);
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontSlide.setTargetPosition(SLIDE_BOTTOM);
+        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setPower(.6);
+        frontSlide.setPower(.6);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
