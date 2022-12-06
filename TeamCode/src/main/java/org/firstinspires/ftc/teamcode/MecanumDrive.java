@@ -297,12 +297,14 @@ public final class MecanumDrive {
 
         private final TimeProfile profile;
         private double beginTs;
+        private final boolean reversed;
 
         private boolean active;
 
         public TurnAction(Pose2d beginPose, double angle) {
             this.beginPose = beginPose;
-            profile = new TimeProfile(Profiles.constantProfile(angle, 0, MAX_ANG_VEL, -MAX_ANG_ACCEL, MAX_ANG_ACCEL).baseProfile);
+            profile = new TimeProfile(Profiles.constantProfile(Math.abs(angle), 0, MAX_ANG_VEL, -MAX_ANG_ACCEL, MAX_ANG_ACCEL).baseProfile);
+            reversed = angle < 0;
         }
 
         @Override
@@ -327,6 +329,10 @@ public final class MecanumDrive {
             }
 
             DualNum<Time> x = profile.get(t);
+            if (reversed) {
+                x = x.unaryMinus();
+            }
+
             Pose2dDual<Time> txWorldTarget = Rotation2dDual.exp(x).times(beginPose);
 
             Twist2d robotVelRobot = updatePoseEstimateAndGetActualVel();
