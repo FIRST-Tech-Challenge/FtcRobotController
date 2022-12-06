@@ -92,6 +92,7 @@ public class IronGiantOpMode extends OpMode {
     @Override
     public void init() {
         robot = new Robot(telemetry, hardwareMap);
+        autonomous = new Autonomous(robot);
         telemetry.addData("Status", "Initializing " + this.getClass() + "...");
 //        telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();

@@ -5,15 +5,19 @@ import java.util.Queue;
 
 class Autonomous {
     Queue<Task> behaviors;
-    public Autonomous()
+    Robot robot;
+    public Autonomous(Robot robot)
     {
         this.behaviors = new LinkedList<Task>();
+        this.robot = robot;
     }
     public boolean runBehaviors()
     {
         if(behaviors.size() > 0) {
-            if (!behaviors.peek().run())
+            if (!behaviors.peek().run()) {
                 behaviors.poll();
+                robot.driveTrain.resetMotors();
+            }
             return true;
         }
         return false;
