@@ -30,7 +30,7 @@ public class AutoSignal extends OpMode {
     // Keep a rolling average of our signal results
     ArrayList<SignalState> signalResults = new ArrayList<>(16);
     // The final result for our signal state
-    SignalState signalState = SignalState.NotFound;
+    SignalState signalState = SignalState.Undetermined;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -77,7 +77,7 @@ public class AutoSignal extends OpMode {
             if (detections != null) {
                 if (detections.size() == 0) {
                     // We don't have any detections
-                    signalResults.add(SignalState.NotFound);
+                    signalResults.add(SignalState.Undetermined);
                 } else {
                     // TODO: We might see more than one apriltag, so it might be prudent to filter the results
                     

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 public enum SignalState {
-    NotFound,
+    Undetermined,
     One,
     Two,
     Three
