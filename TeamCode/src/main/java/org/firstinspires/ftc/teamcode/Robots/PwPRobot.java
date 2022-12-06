@@ -323,13 +323,13 @@ public class PwPRobot extends BasicRobot {
 //        } else {
             double[] vals = {op.gamepad1.left_stick_x, op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
             double[] minBoost = {0.1,0.1,0.05};
-            if (abs(op.gamepad1.left_stick_x) < 0.1) {
+            if (abs(op.gamepad1.left_stick_x) < 0.04) {
                 minBoost[0] = 0;
             }
         if (op.gamepad1.left_stick_x == 0) {
             vals[0] = 0.01;
         }
-            if (abs(op.gamepad1.left_stick_y) < 0.1) {
+            if (abs(op.gamepad1.left_stick_y) < 0.04) {
                 minBoost[1] = 0;
             }
         if (op.gamepad1.left_stick_y == 0) {
@@ -344,8 +344,8 @@ public class PwPRobot extends BasicRobot {
         }
             roadrun.setWeightedDrivePower(
                     new Pose2d(
-                            -vals[1] / abs(vals[1]) *(minBoost[1]+ 0.5 * pow(abs(vals[1]), 1) + 0.3*pow(abs(vals[1]), 4)),
-                            -vals[0] / abs(vals[0]) * (minBoost[0] + 0.5 * pow(abs(vals[0]), 1) + 0.3*pow(abs(vals[0]), 4)),
+                            -vals[1] / abs(vals[1]) *(minBoost[1]+ 0.3 * pow(abs(vals[1]), 1.0) +0.2 * pow(abs(vals[1]), 2.0) + 0.4*pow(abs(vals[1]), 3)),
+                            -vals[0] / abs(vals[0]) * (minBoost[0] + 0.3 * pow(abs(vals[0]), 1.0)+0.2 * pow(abs(vals[0]), 2.0) + 0.4*pow(abs(vals[0]), 3)),
                             -vals[2] / abs(vals[2]) *(minBoost[2] + 0.7 * pow(abs(vals[2]), 1.4))
                     )
             );
@@ -377,13 +377,13 @@ public class PwPRobot extends BasicRobot {
                     liftArm.raiseLiftArmToOuttake();
                 }
             }
-        field.closestDropPosition();
+        field.closestDropPosition(false);
             if (op.gamepad1.right_bumper) {
                 if(CLAW_CLOSED.getStatus()) {
                     claw.setLastOpenTime(op.getRuntime());
                     claw.openClaw();
                     if(ARM_OUTTAKE.getStatus()){
-//                        field.closestDropPosition();
+                        field.closestDropPosition(true);
                     }
                 }else{
                     claw.closeClawRaw();
