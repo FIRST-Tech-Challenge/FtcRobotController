@@ -67,16 +67,16 @@ public class Servotesting extends LinearOpMode {
             turning = gamepad2.b;
 
             if (strafeLeft) {
-                frontLeft.setPower(0.75);
-                frontRight.setPower(-0.75);
-                backLeft.setPower(-00.75);
-                backRight.setPower(0.75);
+                frontLeft.setPower(-0.9);
+                frontRight.setPower(-1);
+                backLeft.setPower(1);
+                backRight.setPower(1);
             }
             if (strafeRight) {
-                frontLeft.setPower(-0.75);
-                frontRight.setPower(0.75);
-                backLeft.setPower(0.75);
-                backRight.setPower(-0.75);
+                frontLeft.setPower(0.9);
+                frontRight.setPower(1);
+                backLeft.setPower(-1);
+                backRight.setPower(-1);
             }
 
 
