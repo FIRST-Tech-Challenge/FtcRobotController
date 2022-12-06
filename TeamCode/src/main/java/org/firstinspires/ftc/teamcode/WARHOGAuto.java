@@ -96,6 +96,7 @@ public class WARHOGAuto extends LinearOpMode {
 
         //init loop
         while (!isStarted() && !isStopRequested()) {
+            intake.runArm(Intake.Height.SIZING);
             //set up inputs - have previous so that you can check rising edge
             try {
                 previousGamepad1.copy(currentGamepad1);
@@ -218,7 +219,7 @@ public class WARHOGAuto extends LinearOpMode {
                 break;
         }
 
-
+        outtake.closeClaw();
 
         // drive to pole and raise slide
         drivetrain.MoveForDis(70, speed);
@@ -228,6 +229,7 @@ public class WARHOGAuto extends LinearOpMode {
         drivetrain.rotateToPosition(-45 * posMod, speed);
         drivetrain.MoveForDis(18, 0.2);
         //sleep(300);
+        outtake.openClaw();
         outtake.setHeight(Outtake.Height.GROUND);
 
         // turn to cone stack
@@ -252,9 +254,10 @@ public class WARHOGAuto extends LinearOpMode {
             //drivetrain.RotateForDegree(45 * posMod, speed);
             drivetrain.rotateToPosition(-45 * posMod, speed);
             intake.runArm(Intake.Height.UPRIGHT);
-            sleep(200);
+            outtake.closeClaw();
             outtake.setHeight(Outtake.Height.HIGH);
             drivetrain.MoveForDis(18, 0.2);
+            outtake.openClaw();
             //sleep(300);
             outtake.setHeight(Outtake.Height.GROUND);
 

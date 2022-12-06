@@ -41,6 +41,7 @@ public class WARHOGTeleOp extends LinearOpMode {
 
         while (!isStarted() && !isStopRequested()) {
             outtake.openClaw();
+            intake.runArm(Intake.Height.UPRIGHT);
             try {
                 previousGamepad1.copy(currentGamepad1);
                 previousGamepad2.copy(currentGamepad2);
@@ -116,22 +117,22 @@ public class WARHOGTeleOp extends LinearOpMode {
 
 
             //move arm
-            armpos += currentGamepad2.left_stick_y*.014;
+            armpos += currentGamepad2.left_stick_y*.03;
             if(armpos<0){armpos=0;}
-            if(armpos>.9){armpos=.8;}
+            if(armpos>1){armpos=1;}
             //defined positions
-            if(currentGamepad2.dpad_down){
+            if(currentGamepad2.dpad_up){
                 armpos = intake.runArm(Intake.Height.EXTENDED);
             }
             if(currentGamepad2.dpad_left){
                 armpos = intake.runArm(Intake.Height.UPRIGHT);
             }
-            if(currentGamepad2.dpad_up){
+            if(currentGamepad2.dpad_down){
                 armpos = intake.runArm(Intake.Height.RETRACTED);
             }
 
             //move the arm, modifying the wrist's position if right trigger is pressed
-            wristmod = (currentGamepad2.right_trigger-.2)*.625;
+            wristmod = (currentGamepad2.left_trigger-.2)*.625;
             if(wristmod>0){
                 intake.runArm(armpos, wristmod);
                 telemetry.addData("Wrist Mod", wristmod);
@@ -139,6 +140,7 @@ public class WARHOGTeleOp extends LinearOpMode {
             else {
                 intake.runArm(armpos);
             }
+            telemetry.addData("Arm Position", armpos);
 
             //open/close the claw
             if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
@@ -172,6 +174,8 @@ public class WARHOGTeleOp extends LinearOpMode {
 
             //end step
             telemetry.update();
+
+
         }
 
     }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -10,9 +12,14 @@ public class Intake {
     private Servo wrist;
     private Servo claw;
 
-    double armMax = .8;
+    double armMax = 1;
     double armMin = 0;
-    double armMid = .40;
+
+    double retracted = .9;
+    double extended = armMin;
+    double armMid = .50;
+    double sizing = .65;
+
     double endMod = 0;
     double newPos;
 
@@ -28,14 +35,14 @@ public class Intake {
     }
 
     public enum WristMode{INDEPENDENT, MATCHED, SIDEWAYS}
-    public enum Height{EXTENDED, UPRIGHT, RETRACTED}
+    public enum Height{EXTENDED, UPRIGHT, RETRACTED, SIZING}
 
     //moves arm to a position
-    public void runArm(double pos){
+    public void runArm(double pos) throws InterruptedException{
         if (pos>armMax){
             newPos = armMax;
         }
-        else if (pos>armMin){
+        else if (pos<armMin){
             newPos = armMin;
         }
         else {
@@ -46,17 +53,18 @@ public class Intake {
         armRight.setPosition(1-newPos);
 
         //if matched, make the wrist keep the cone upright
-        /*if (wristMode== WristMode.MATCHED){
-            if(newPos>armMid&&claw.getPosition()>0.4) {
+        if (wristMode== WristMode.MATCHED){
+            /*if(newPos>armMid&&claw.getPosition()>0.4) {
                 runWrist(1);
             }
             else if(newPos>.5){
                 runWrist(newPos + endMod);
+            }*/
+            if (Math.abs(newPos-getArmPos())>.5){
+                //sleep(200);
             }
-            else {
-                runWrist(newPos);
-            }
-        }*/
+            runWrist(newPos);
+        }
     }
 
     //moves arm to a position, changing the wristmode during only this function
@@ -109,17 +117,20 @@ public class Intake {
 
     }
 
-    public double runArm(Height height){
+    public double runArm(Height height) throws InterruptedException{
         switch(height){
             case EXTENDED:
-                runArm(armMin);
-                return armMin;
+                runArm(extended);
+                return extended;
             case UPRIGHT:
                 runArm(armMid);
                 return armMid;
             case RETRACTED:
-                runArm(armMax);
-                return armMax;
+                runArm(retracted);
+                return retracted;
+            case SIZING:
+                runArm(sizing);
+                return sizing;
             default:
                 return armMid;
         }
@@ -141,7 +152,7 @@ public class Intake {
     }
 
     public void openClaw(){
-        runClaw(.2);
+        runClaw(.05);
     }
     public void closeClaw(){
         runClaw(.55);
@@ -152,6 +163,16 @@ public class Intake {
             openClaw();
         }
         else{closeClaw();}
+    }
+
+    public void intakeCone() throws InterruptedException{
+        closeClaw();
+        sleep(25);
+        runArm(Height.RETRACTED);
+        sleep(200);
+        openClaw();
+        sleep(50);
+        runArm(Height.UPRIGHT);
     }
 
     //this method returns the arm's position

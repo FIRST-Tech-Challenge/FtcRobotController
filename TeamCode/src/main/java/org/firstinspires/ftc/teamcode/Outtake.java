@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -13,7 +15,7 @@ public class Outtake {
 
     private Telemetry telemetry;
 
-    final static int max = 1800;
+    final static int max = 1750;
     final static int min = 0;
     final static double autoSpeed = .8;
 
@@ -113,5 +115,18 @@ public class Outtake {
             openClaw();
         }
         else{closeClaw();}
+    }
+
+    public void outtakeCone(Height height) throws InterruptedException{
+        closeClaw();
+        sleep(25);
+        setHeight(height);
+
+        while(isSlideRunning()){}
+
+        openClaw();
+        sleep(25);
+
+        setHeight(Height.GROUND);
     }
 }
