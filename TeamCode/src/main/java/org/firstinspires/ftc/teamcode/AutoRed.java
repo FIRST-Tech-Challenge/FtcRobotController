@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.sun.source.util.DocTreePathScanner;
+
 @Autonomous(name = "Auto", preselectTeleOp = "Drive")
 
-public class Auto extends AutoGuts {
+public class AutoRed extends AutoGuts {
     Pipeline pipeline;
     // diagonal fov of camera 55 degrees
     // horizontal fov of camera is 49 degrees
