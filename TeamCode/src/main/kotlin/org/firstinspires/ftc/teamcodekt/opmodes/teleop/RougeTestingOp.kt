@@ -20,9 +20,11 @@ class RougeTestingOp : RougeBaseTele() {
         backwardsDepositChain.invokeOn(driver.y)
         backwardsDepositChain.cancelOn(driver.x)
 
-        driver.left_trigger(.1).whileHigh { powerMulti /= 2 }
+        driver.left_trigger(.1).whileHigh {
+            powerMulti /= 2
+        }
 
-        Listener { lift.height > LiftConfig.MID + 10 }
+        Listener { lift.height > LiftConfig.MID * 1.001 }
             .whileHigh { powerMulti /= 2 }
     }
 }
