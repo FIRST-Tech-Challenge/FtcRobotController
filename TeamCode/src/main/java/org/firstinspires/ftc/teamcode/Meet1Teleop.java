@@ -34,6 +34,7 @@ public class Meet1Teleop extends DriveMethods {
         double leftX;
         double rightX;
         double speedDiv = 2;
+        // Can we deleat Clamp & Relase Pos?
         // LOOK IN VARIABLES FOR GRIBBER POSISITIONS, SEE NUMBER ON GRIBBER
         double clampPosition = 0.19;
         //double clampPosition = 0.76;
@@ -125,7 +126,7 @@ public class Meet1Teleop extends DriveMethods {
                     }
                 }
 
-            //Change the target hight based on the height of the linear slide at the time.
+            //Change the target height based on the height of the linear slide at the time.
 
             if(gamepad2.right_bumper){
                 targetHeight = 4;
