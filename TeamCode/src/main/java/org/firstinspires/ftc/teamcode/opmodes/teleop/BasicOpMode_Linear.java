@@ -127,13 +127,15 @@ public class BasicOpMode_Linear extends LinearOpMode {
             if (gamepad2.a) armTarget = 0;
 
             if (gamepad2.left_bumper) {
+                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 gripper.setPower(1);
                 armTarget = 0;
             }
             if (gamepad2.right_bumper) gripper.setPower(-1);
 
-            if (gamepad2.dpad_up) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 - 75;
-            if (gamepad2.dpad_down) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 + 75;
+            if (gamepad2.dpad_up) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 - 70;
+            if (gamepad2.dpad_down) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 + 70;
 
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -176,7 +178,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             boolean targetChanged = false;
 
-            if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
+            while (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
                 leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //                if (gamepad2.left_stick_y > 0 || gamepad2.right_stick_y > 0) SetArmPower(0);
@@ -184,7 +186,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
 //                if (gamepad2.right_stick_y < 0) SetArmPower(gamepad2.right_stick_y * 0.5);
 
                 if (gamepad2.left_trigger > 0) SetArmPower(0);
-                if (gamepad2.right_trigger > 0) SetArmPower(-gamepad2.right_trigger);
+                if (gamepad2.right_trigger > 0) SetArmPower(-0.7);
 
                 telemetry.addData("Arm Power", (leftLift.getPower() + rightLift.getPower()) / 2.0);
                 telemetry.update();
