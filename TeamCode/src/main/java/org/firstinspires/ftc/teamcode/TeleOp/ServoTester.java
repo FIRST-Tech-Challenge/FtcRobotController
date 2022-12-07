@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -25,7 +25,7 @@ public class ServoTester extends OpMode {
     @Override
     public void loop() {
         if(gamepad1.dpad_right) {
-            rightClaw.setPosition(1);
+            rightClaw.setPosition(-1);
             leftClaw.setPosition(1);
         }
         if(gamepad1.dpad_left) {

@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+// Code to test the motor's encoders; DO NOT USE FOR AUTONOMOUS
+
+package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -43,7 +45,7 @@ public class EncoderTest extends LinearOpMode {
         }
     }
 
-    public void moveMotors(int rightSide, int leftSide, float motorSpeed) {
+    public void moveMotors(int metersOnRight, int metersOnLeft, float motorSpeed) {
         // Reset all encoders
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -60,8 +62,8 @@ public class EncoderTest extends LinearOpMode {
         float wheelCircumference = (float) 0.30787608005; // This is in meters
         int ticksPerMeter = (int) (ticksPerRevolution / wheelCircumference); //This should be ~4677 ticks
 
-        int rightMoveDistance = ticksPerMeter * rightSide;   // Ex. 1 meter would be 4677 ticks
-        int leftMoveDistance = ticksPerMeter * leftSide;     // Ex. 2 meters would be 9354 ticks
+        int rightMoveDistance = ticksPerMeter * metersOnRight;   // Ex. 1 meter would be 4677 ticks
+        int leftMoveDistance = ticksPerMeter * metersOnLeft;     // Ex. 2 meters would be 9354 ticks
 
         frontRightMotor.setTargetPosition(rightMoveDistance);
         backRightMotor.setTargetPosition(rightMoveDistance);
