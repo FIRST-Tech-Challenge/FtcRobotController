@@ -170,7 +170,7 @@ public class autoright extends LinearOpMode
         // get to the correct angle
         straight(0.25,670);
         stopRobot();
-        left(0.25, 850);
+        left(0.25, 830);
         stopRobot();
 
         // tighten on cone
@@ -181,20 +181,20 @@ public class autoright extends LinearOpMode
         // move lin slide oopar and go 2 pole
         LinearSlide(-1, 799);
         LinearSlide(0,1000);
-        straight(0.25, 760);
+        straight(0.25, 720);
         stopRobot();
         sleep(1000);
         ServoArm(-0.5, 220);
         ServoArm(0,1000);
 
         // move 2 og pos
-        straight(-0.25,750);
+        straight(-0.25,740);
         stopRobot();
         ServoArm(0.5, 220);
         ServoArm(0,1000);
         LinearSlide(1, 799);
         LinearSlide(0,1000);
-        right(0.25, 850);
+        right(0.25, 830);
         stopRobot();
         ServoArm(0.5, 250);
         ServoArm(0,1000);
@@ -213,7 +213,7 @@ public class autoright extends LinearOpMode
             strafeRight(0.5, 1100);
             stopRobot();
             sleep(1000);
-            straight(0.5, 1300);
+            straight(0.5, 800);
             stopRobot();
             stop();
         }
