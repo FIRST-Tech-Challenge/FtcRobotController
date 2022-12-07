@@ -411,8 +411,6 @@ public class Field {
 //            fullmovement.add(autoTileAim());
 //        }
     }
-
-    }
     public Pose2d getCurPos() {
         return roadrun.getPoseEstimate();
     }
