@@ -222,23 +222,23 @@ public class WARHOGAuto extends LinearOpMode {
         outtake.closeClaw();
 
         // drive to pole and raise slide
-        drivetrain.MoveForDis(70, speed);
-        drivetrain.MoveForDis(-17, speed);
-        outtake.setHeight(Outtake.Height.HIGH);
-        //drivetrain.RotateForDegree(-45*posMod, speed); //turn in different directions depending on start position
+        drivetrain.MoveForDis(60, speed);
+        drivetrain.MoveForDis(-7, speed);
         drivetrain.rotateToPosition(-45 * posMod, speed);
-        drivetrain.MoveForDis(18, 0.2);
-        //sleep(300);
+        drivetrain.MoveForDis(-5, speed);
+        outtake.setHeight(Outtake.Height.HIGH);
         outtake.openClaw();
         outtake.setHeight(Outtake.Height.GROUND);
 
         // turn to cone stack
-        drivetrain.MoveForDis(-18, speed);
+        drivetrain.MoveForDis(5, speed);
 
-        for(int i=0; i<cycles; i++) {
-            //drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
+        telemetry.addLine("Stage 1 complete");
+
+        for(int i = 0; i < cycles; i++) {
+            //drivetrain.RotateForDegree(-45 * posMod, speed);
             drivetrain.rotateToPosition(-90 * posMod, speed);
-            intake.runArm(.2-.3*i);
+            intake.runArm(.2-.1*i);
 
             // move backward toward cone stack
             drivetrain.MoveForDis(-18, speed);
@@ -255,18 +255,20 @@ public class WARHOGAuto extends LinearOpMode {
             drivetrain.rotateToPosition(-45 * posMod, speed);
             intake.runArm(Intake.Height.UPRIGHT);
             outtake.closeClaw();
+            drivetrain.MoveForDis(-5, 0.2);
             outtake.setHeight(Outtake.Height.HIGH);
-            drivetrain.MoveForDis(18, 0.2);
             outtake.openClaw();
             //sleep(300);
             outtake.setHeight(Outtake.Height.GROUND);
 
             // turn to cone stack
-            drivetrain.MoveForDis(-18, speed);
+            drivetrain.MoveForDis(5, speed);
         }
+        telemetry.addLine("Stage 2 complete");
+
         // park
-        //drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
         intake.runArm(Intake.Height.UPRIGHT);
+        //drivetrain.RotateForDegree(-45 * posMod, speed);
         drivetrain.rotateToPosition(-90 * posMod, speed);
         if(tagOfInterest == null || tagOfInterest.id == MIDDLE){
 
@@ -280,13 +282,10 @@ public class WARHOGAuto extends LinearOpMode {
 
         //drivetrain.RotateForDegree(90*posMod, speed);
         if(tagOfInterest==null || tagOfInterest.id!=3) {
-            drivetrain.rotateToPosition(0 * posMod, speed);
+            drivetrain.rotateToPosition(0, speed);
             drivetrain.MoveForDis(-12, speed);
         }
-
-
-        while(opModeIsActive()){sleep(20);}
-
+        telemetry.addLine("Stage 3 complete");
     }
 
     void tagToTelemetry(AprilTagDetection detection)

@@ -17,7 +17,7 @@ public class Outtake {
 
     final static int max = 1750;
     final static int min = 0;
-    final static double autoSpeed = .8;
+    final static double autoSpeed = .5;
 
     enum Height {GROUND, LOW, MEDIUM, HIGH};
 
@@ -86,6 +86,8 @@ public class Outtake {
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slide.setPower(autoSpeed);
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("Slide Position", slide.getCurrentPosition());
+        telemetry.update();
     }
 
     public void setHeight(int pos){
