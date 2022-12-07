@@ -388,7 +388,7 @@ public class Crane implements Subsystem {
             case defaultPosition:
                 setShoulderTargetAngle(SHOULDER_DEG_MAX);
                 robot.turret.setTargetHeading(0);
-                setExtendTargetPos(0.2);
+                setExtendTargetPos(0.2+craneLengthOffset);
                 break;
             case manual:
 
@@ -565,13 +565,13 @@ public class Crane implements Subsystem {
     double extendMeters = 0;
     double shoulderAmps, extenderAmps;
 
-    private double craneLengthOffset =  0.432;
+    public final double craneLengthOffset =  0.432;
 
 
 
     boolean inverseKinematic = false;
-    double targetHeight = 20;
-    double targetDistance = 20;
+    double targetHeight = 0.4;
+    double targetDistance = 0.4;
     double targetTurretAngle = 0;
 
     double angle;
@@ -604,6 +604,13 @@ public class Crane implements Subsystem {
             articulate(articulation);
 
         }
+
+        angle = Math.toDegrees(Math.atan(targetHeight / targetDistance));
+        length = (Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2)));
+        setShoulderTargetAngle(angle);
+        setExtendTargetPos(length);
+        robot.turret.setTargetHeading(targetTurretAngle);
+
         //update the turret's target
         robot.turret.setTargetHeading(targetTurretAngle);
         if(shoulderActivePID)
@@ -644,11 +651,11 @@ public class Crane implements Subsystem {
     }
 
     public double getHeight(){
-        return INCHES_PER_METER * getExtendMeters()*Math.sin(Math.toRadians(getShoulderAngle()));
+        return getExtendMeters()*Math.sin(Math.toRadians(getShoulderAngle()));
     }
 
     public double getDistance(){
-        return INCHES_PER_METER * getExtendMeters()*Math.cos(Math.toRadians(getShoulderAngle()));
+        return getExtendMeters()*Math.cos(Math.toRadians(getShoulderAngle()));
     }
     public boolean setTargets(FieldObject obj){
         return setTargets(obj.x(),obj.y(),obj.z());
@@ -675,9 +682,9 @@ public class Crane implements Subsystem {
         targetDistance = (Math.sqrt(Math.pow(y - axlePos.getY(),2) + Math.pow(x - axlePos.getX(),2)))/INCHES_PER_METER;
 
         angle = Math.toDegrees(Math.atan(targetHeight / targetDistance));
-        length = (Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2)) - craneLengthOffset);
-        setShoulderTargetDeg(angle);
-        setExtendTargetDistance(length);
+        length = (Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2)));
+        setShoulderTargetAngle(angle);
+        setExtendTargetPos(length);
         robot.turret.setTargetHeading(targetTurretAngle);
 
         return true;
@@ -764,12 +771,12 @@ public class Crane implements Subsystem {
         bulbGripped = true;
     }
 
-    CranePositionMemory pickup = new CranePositionMemory(0,20,0.2);
-    CranePositionMemory defaultPos = new CranePositionMemory(0,85,0);
-    CranePositionMemory drop = new CranePositionMemory(0,45,0.2);
+    CranePositionMemory pickup = new CranePositionMemory(0,20,0.2+craneLengthOffset);
+    CranePositionMemory defaultPos = new CranePositionMemory(0,85,craneLengthOffset);
+    CranePositionMemory drop = new CranePositionMemory(0,45,0.2+craneLengthOffset);
 
     private void recordPickup(){
-        pickup.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle+20,extendMeters);
+        pickup.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle+20,getExtendMeters());
     }
 
     public void pickupSequence(){
@@ -785,7 +792,7 @@ public class Crane implements Subsystem {
     }
 
     private void recordDrop(){
-        drop.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle,extendMeters);
+        drop.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle,getExtendMeters());
     }
 
     public void enableCalibrate(){
@@ -815,25 +822,21 @@ public class Crane implements Subsystem {
     public void setExtenderPwr(double pwrMin, double pwrMax){ extendPID.setOutputRange(pwrMin,pwrMax); }
     public void setextenderActivePID(boolean isActive){extenderActivePID = isActive;}
     public void setShoulderActivePID(boolean isActive){shoulderActivePID = isActive;}
-    public void setShoulderTargetDeg(double deg){
-        shoulderTargetAngle = deg;
-    }
-    public void setExtendTargetDistance(double dis){
-        setExtendTargetPos(dis);
-    }
+
+
     public void setShoulderPwr(double pwrMin, double pwrMax){ shoulderPID.setOutputRange(pwrMin,pwrMax); }
     public  void setShoulderTargetAngle(double t){ shoulderTargetAngle = (Math.max(Math.min(t,SHOULDER_TICK_MAX/SHOULDER_DIRECT_TICKS_PER_DEGREE),-10)); }
     public  double getShoulderTargetAngle(){ return shoulderTargetAngle; }
     public double getExtenderTargetPos(){ return extenderTargetPos; }
-    public  void setExtendTargetPos(double t){ extenderTargetPos = Math.min(3075/EXTEND_TICKS_PER_METER,Math.max(t, 0)); }
+    public  void setExtendTargetPos(double t){ extenderTargetPos = Math.min(3075/EXTEND_TICKS_PER_METER,Math.max(t, 0))-craneLengthOffset; }
     public boolean nearTargetShoulder(){
         if ((Math.abs( getShoulderAngle()- getShoulderTargetAngle()))<2) return true;
         else return false;
     }
 
     public double getShoulderAngle(){ return shoulderAngle;}
-    public double getExtendMeters(){return extendMeters;}
-    public double getExtendInches(){return extendMeters * INCHES_PER_METER; }
+    public double getExtendMeters(){return extendMeters+craneLengthOffset;}
+    public double getExtendInches(){return getExtendMeters() * INCHES_PER_METER; }
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {

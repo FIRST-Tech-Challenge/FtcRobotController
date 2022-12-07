@@ -234,7 +234,7 @@ public class Robot implements Subsystem {
                 break;
             case 4:
                 if(System.nanoTime() >= autonTime) {
-                    crane.setExtendTargetPos(0.54);
+                    crane.setExtendTargetPos(0.54+crane.craneLengthOffset);
                     crane.setShoulderTargetAngle(76.6);
                     if(withinError(crane.getExtendMeters(),crane.getExtenderTargetPos(),0.02) && withinError(crane.getShoulderAngle(),crane.getShoulderTargetAngle(),0.07)){
                         autonIndex++;
@@ -242,14 +242,14 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 5:
-                crane.setExtendTargetPos(0.05);
+                crane.setExtendTargetPos(0.05+crane.craneLengthOffset);
                 crane.setShoulderTargetAngle(45);
                 if(withinError(crane.getExtendMeters(),crane.getExtenderTargetPos(),0.08) && withinError(crane.getShoulderAngle(),crane.getShoulderTargetAngle(),0.07)){
                     autonIndex++;
                 }
                 break;
             case 6:
-                crane.setExtendTargetPos(0.0);
+                crane.setExtendTargetPos(crane.craneLengthOffset);
                 crane.setTargetTurretAngle(180);
                 if(withinError(turret.getHeading(),turret.getTargetHeading(),0.05)){
                     autonIndex++;
