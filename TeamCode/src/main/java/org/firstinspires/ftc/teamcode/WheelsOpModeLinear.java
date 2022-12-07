@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -50,7 +51,7 @@ import org.firstinspires.ftc.teamcode.hardware.Wheels;
  */
 
 @TeleOp(name="Wheels Basic: Linear OpMode", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class WheelsOpModeLinear extends LinearOpMode {
 
     // Declare OpMode members.

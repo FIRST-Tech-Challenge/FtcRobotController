@@ -40,8 +40,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.hardware.Elevator;
 
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear Opmode")
-//@Disabled
+@TeleOp(name = "Basic: Omni Linear OpMode", group = "Linear Opmode")
+@Disabled
 public class ElevatorOpModeLinear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
@@ -54,7 +54,8 @@ public class ElevatorOpModeLinear extends LinearOpMode {
 
         elevator = new Elevator(hardwareMap, telemetry);
         double power;
-boolean x = false;
+        boolean bButton = false;
+        boolean yButton = false;
         elevator.initMotors();
 
         // Wait for the game to start (driver presses PLAY)
@@ -68,27 +69,31 @@ boolean x = false;
         while (opModeIsActive()) {
 
 
-            power  = -gamepad2.left_stick_y ;
-           // elevator.setElevatorMotorPower(power);
+            power = -gamepad2.left_stick_y;
+            // elevator.setElevatorMotorPower(power);
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("gamepad2.b: ", gamepad2.b );
-            telemetry.addData("x: ", x );
-            if (x == false && gamepad2.b )
-            {
+            telemetry.addData("gamepad2.b: ", gamepad2.b);
+            telemetry.addData("bButton: ", bButton);
+            if (bButton == false && gamepad2.b) {
 //                if
 //                elevator.getLeftServo().setPosition(1);
 //                elevator.getRightServo().setPosition(0);
                 elevator.moveHands();
 
             }
-            telemetry.addData("clawstate ",elevator.clawState);
+            telemetry.addData("clawstate ", elevator.clawState);
             telemetry.update();
 
-            x=gamepad2.b;
+            bButton = gamepad2.b;
+
+            if (yButton == false && gamepad2.y) {
+                elevator.moveMainServo();
+            }
+            yButton = gamepad2.y;
+//            telemetry.addData("moveHands starts", true);
+//            telemetry.addData("mainservoState: ", elevator.mainServoState);
         }
-        if (gamepad2.y){
-            elevator.moveMainServo();
-            telemetry.update("mainservo ", elevator.)
-        }
-    }}
+
+    }
+}
