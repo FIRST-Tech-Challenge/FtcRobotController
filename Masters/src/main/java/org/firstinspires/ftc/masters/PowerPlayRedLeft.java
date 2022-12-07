@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -28,9 +27,11 @@ public class PowerPlayRedLeft extends LinearOpMode {
         Pose2d startPose = new Pose2d(new Vector2d(-36, -60), Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
-        waitForStart();
+        drive.closeClaw();
 
-        ElapsedTime elapsedTime = new ElapsedTime();
+        waitForStart();
+        drive.closeClaw();
+
 
         long startTime = new Date().getTime();
         long time = 0;
@@ -43,17 +44,34 @@ public class PowerPlayRedLeft extends LinearOpMode {
             telemetry.update();
         }
 
+        drive.closeClaw();
+
+        drive.setArmServoMiddle();
+
+        drive.liftTop();
+
 //        drive.liftTop();
         TrajectorySequence startTo270Pole = drive.trajectorySequenceBuilder(startPose)
                 .splineToLinearHeading(new Pose2d( new Vector2d(- 9,-50), Math.toRadians(90)), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(new Vector2d(-9,-36),Math.toRadians(45)))
-//                .lineToLinearHeading(westPoleDeposit)
+                .lineToLinearHeading(new Pose2d(new Vector2d(-8,-27),Math.toRadians(45)))
                 .build();
         drive.followTrajectorySequence(startTo270Pole);
 
+
+        drive.setArmServoMiddle();
+        while (drive.armMotor.isBusy() && opModeIsActive()) {
+
+        }
+
+        drive.liftDown();
+        while (drive.linearSlide.isBusy() && opModeIsActive()) {
+
+        }
+
         //use vision to align
+
         //drop cone
-        //drive.openClaw();
+        drive.openClaw();
 
         switch (sleeveColor) {
             case RED:

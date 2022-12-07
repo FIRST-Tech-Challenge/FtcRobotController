@@ -43,9 +43,9 @@ public class PowerPlayTeleopBase extends LinearOpMode {
     //Fix values
     protected final double clawServoOpen = 0.14;
     protected final double clawServoClosed = 0.0;
-    protected final int armServoBottom = 0;
-    protected final int armServoTop = 600;
-    protected final int armServoMid = 450;
+    protected final int armMotorBottom = 0;
+    protected final int armMotorTop = 600;
+    protected final int armMotorMid = 450;
 
 
 
@@ -189,7 +189,7 @@ public class PowerPlayTeleopBase extends LinearOpMode {
 
             if (gamepad2.dpad_up) {
                 clawServo.setPosition(clawServoClosed);
-                armMotor.setTargetPosition(armServoMid);
+                armMotor.setTargetPosition(armMotorMid);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
                 linearSlideMotor.setTargetPosition(SLIDE_HIGH);
@@ -202,7 +202,7 @@ public class PowerPlayTeleopBase extends LinearOpMode {
 
             if (gamepad2.dpad_right) {
                 clawServo.setPosition(clawServoClosed);
-                armMotor.setTargetPosition(armServoMid);
+                armMotor.setTargetPosition(armMotorMid);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
                 linearSlideMotor.setTargetPosition(SLIDE_MIDDLE);
@@ -215,7 +215,7 @@ public class PowerPlayTeleopBase extends LinearOpMode {
 
             if (gamepad2.dpad_down) {
                 clawServo.setPosition(clawServoClosed);
-                armMotor.setTargetPosition(armServoMid);
+                armMotor.setTargetPosition(armMotorMid);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
                 linearSlideMotor.setTargetPosition(SLIDE_BOTTOM);
@@ -234,13 +234,13 @@ public class PowerPlayTeleopBase extends LinearOpMode {
                 frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(-.4);
                 linearSlideMotor.setPower(-0.4);
-                armMotor.setTargetPosition(armServoBottom);
+                armMotor.setTargetPosition(armMotorBottom);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
             }
 
             if (gamepad2.left_bumper) {
-                armMotor.setTargetPosition(armServoTop);
+                armMotor.setTargetPosition(armMotorTop);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
             }
@@ -251,11 +251,11 @@ public class PowerPlayTeleopBase extends LinearOpMode {
 //            }
 
             if (gamepad2.right_stick_y > 0.6) {
-                armMotor.setTargetPosition(armServoBottom);
+                armMotor.setTargetPosition(armMotorBottom);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
             } else if (gamepad2.right_stick_y < -0.6) {
-                armMotor.setTargetPosition(armServoMid);
+                armMotor.setTargetPosition(armMotorMid);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
             }

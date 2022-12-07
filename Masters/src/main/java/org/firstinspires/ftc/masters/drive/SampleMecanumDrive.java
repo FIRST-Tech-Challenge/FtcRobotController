@@ -1,5 +1,17 @@
 package org.firstinspires.ftc.masters.drive;
 
+import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -31,24 +43,11 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
-
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -64,9 +63,9 @@ public class SampleMecanumDrive extends MecanumDrive {
     //Fix values
     protected final double clawServoOpen = 0.14;
     protected final double clawServoClosed = 0.0;
-    protected final double armServoBottom = 0.20;
-    protected final double armServoTop = 0.76;
-    protected final double armServoMid = 0.57;
+    protected final int armMotorBottom = 0;
+    protected final int armMotorTop = 600;
+    protected final int armMotorMid = 450;
 
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 0);
@@ -87,9 +86,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
-    private DcMotorEx linearSlide;
-    private DcMotorEx frontSlide;
-    private DcMotorEx THE_ARM;
+    public DcMotorEx linearSlide;
+    public DcMotorEx frontSlide;
+    public DcMotorEx armMotor;
 
     private Servo THE_CLAW;
 
@@ -146,8 +145,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
+        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide");
-        THE_ARM = hardwareMap.get(DcMotorEx.class, "armServo");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
 
         THE_CLAW = hardwareMap.servo.get("clawServo");
 
@@ -201,9 +201,28 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontSlide.setTargetPosition(SLIDE_BOTTOM);
         frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(.6);
-        frontSlide.setPower(.6);
+        linearSlide.setPower(.3);
+        frontSlide.setPower(.3);
     }
+
+    public void setArmServoTop() {
+        armMotor.setTargetPosition(armMotorTop);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(0.3);
+    }
+
+    public void setArmServoBottom() {
+        armMotor.setTargetPosition(armMotorBottom);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(0.3);
+    }
+
+    public void setArmServoMiddle() {
+        armMotor.setTargetPosition(armMotorMid);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(0.3);
+    }
+
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
