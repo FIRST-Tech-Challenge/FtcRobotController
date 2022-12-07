@@ -106,40 +106,55 @@ public class AutoBlueRight extends LinearOpMode {
         }
         TrajectorySequence seq = null;
         robot.setPoseEstimate(new Pose2d(-37, 60, Math.toRadians(270)));
-        if (tagOfInterest.id == LEFT) {
-            //insert trajectories for parking zone 1
-            seq = robot.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
-                    .turn(Math.toRadians(90))
-                    .forward(12)
-                    .turn(Math.toRadians(-90))
-                    .forward(3)
-                    .back(3)
-                    .turn(Math.toRadians(90))
-                    .forward(14)
-                    .turn(Math.toRadians(-90))
-                    .forward(26)
-                    .build();
+        if(tagOfInterest != null){
+            if (tagOfInterest.id == LEFT) {
+                //insert trajectories for parking zone 1
+                seq = robot.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
+                        .turn(Math.toRadians(90))
+                        .forward(12)
+                        .turn(Math.toRadians(-90))
+                        .forward(3)
+                        .back(3)
+                        .turn(Math.toRadians(90))
+                        .forward(14)
+                        .turn(Math.toRadians(-90))
+                        .forward(26)
+                        .build();
 
-        }
+            }
 
-        else if (tagOfInterest.id == MIDDLE) {
-            //insert trajectories for parking zone 2
+            else if (tagOfInterest.id == MIDDLE) {
+                //insert trajectories for parking zone 2
+                seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
+                        .turn(Math.toRadians(90))
+                        .forward(12)
+                        .turn(Math.toRadians(-90))
+                        .forward(3)
+                        .back(3)
+                        .turn(Math.toRadians(-90))
+                        .forward(10)
+                        .turn(Math.toRadians(90))
+                        .forward(26)
+                        .build();
+            }
+
+            else if (tagOfInterest.id == RIGHT) {
+                //insert trajectories for parking zone 3
+                seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
+                        .turn(Math.toRadians(90))
+                        .forward(12)
+                        .turn(Math.toRadians(-90))
+                        .forward(3)
+                        .back(3)
+                        .turn(Math.toRadians(-90))
+                        .forward(35)
+                        .turn(Math.toRadians(90))
+                        .forward(26)
+                        .build();
+            }
+        }else{
             seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
-                    .turn(Math.toRadians(90))
-                    .forward(12)
-                    .turn(Math.toRadians(-90))
-                    .forward(3)
-                    .back(3)
-                    .turn(Math.toRadians(-90))
-                    .forward(10)
-                    .turn(Math.toRadians(90))
-                    .forward(26)
-                    .build();
-        }
-
-        else if (tagOfInterest.id == RIGHT) {
-            //insert trajectories for parking zone 3
-            seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
+                    //failsafe trajectory
                     .turn(Math.toRadians(90))
                     .forward(12)
                     .turn(Math.toRadians(-90))
@@ -152,6 +167,10 @@ public class AutoBlueRight extends LinearOpMode {
                     .build();
         }
 
+        waitForStart();
+        if(!isStopRequested() && seq != null){
+            robot.followTrajectorySequence(seq);
+        }
 
     }
 
