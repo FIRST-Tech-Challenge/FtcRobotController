@@ -56,7 +56,7 @@ public class EncoderTest extends LinearOpMode {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        int ticksPerRevolution = 1440;
+        int ticksPerRevolution = 1440/60;
         float wheelCircumference = (float) 0.30787608005; // This is in meters
         int ticksPerMeter = (int) (ticksPerRevolution / wheelCircumference); //This should be ~4677 ticks
 
