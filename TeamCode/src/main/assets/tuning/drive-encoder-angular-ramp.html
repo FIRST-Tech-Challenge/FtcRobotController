@@ -94,10 +94,9 @@ function loadRegression(data) {
     document.getElementById('trackWidthChart'),
     angVels,
     angVels.map((_, i) => 
-      (leftEncVels.reduce((acc, vs) => acc - vs[i], 0)
-        + rightEncVels.reduce((acc, vs) => acc + vs[i], 0))
-        / (data.leftEncVels.length + data.rightEncVels.length)
-        * (data.type === 'mecanum' ? 1 : 2)
+      (leftEncVels.reduce((acc, vs) => acc - vs[i], 0) / data.leftEncVels.length
+        + rightEncVels.reduce((acc, vs) => acc + vs[i], 0) / data.rightEncVels.length)
+        * (data.type === 'mecanum' ? 0.5 : 1)
     ),
     {title: 'Track Width Regression', slope: 'track width'}
   );
