@@ -12,10 +12,10 @@ public class FieldCentricDrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Declare our motors
         // Make sure your ID's match your configuration
-        DcMotor leftFrontDrive = hardwareMap.dcMotor.get("leftFrontDrive");
-        DcMotor leftBackDrive = hardwareMap.dcMotor.get("leftBackDrive");
-        DcMotor rightFrontDrive = hardwareMap.dcMotor.get("rightFrontDrive");
-        DcMotor rightBackDrive = hardwareMap.dcMotor.get("rightBackDrive");
+        DcMotor leftFrontDrive = hardwareMap.dcMotor.get("left_front_drive");
+        DcMotor leftBackDrive = hardwareMap.dcMotor.get("left_back_drive");
+        DcMotor rightFrontDrive = hardwareMap.dcMotor.get("right_front_drive");
+        DcMotor rightBackDrive = hardwareMap.dcMotor.get("right_back_drive");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
