@@ -39,7 +39,7 @@ public class LinearSlide extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        liftMotor  = hardwareMap.get(DcMotor.class, "left_front_drive");
+        liftMotor  = hardwareMap.get(DcMotor.class, "lift_motor");
         liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
