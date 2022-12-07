@@ -132,6 +132,9 @@ public class BasicOpMode_Linear extends LinearOpMode {
             }
             if (gamepad2.right_bumper) gripper.setPower(-1);
 
+            if (gamepad2.dpad_up) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 - 75;
+            if (gamepad2.dpad_down) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 + 75;
+
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -166,22 +169,22 @@ public class BasicOpMode_Linear extends LinearOpMode {
             }
 
             // Send calculated power to wheels
-            motorFL.setPower(leftFrontPower * 0.6);
-            motorFR.setPower(rightFrontPower * 0.6);
-            motorBL.setPower(leftBackPower * 0.6);
-            motorBR.setPower(rightBackPower * 0.6);
+            motorFL.setPower(leftFrontPower * 0.7);
+            motorFR.setPower(rightFrontPower * 0.7);
+            motorBL.setPower(leftBackPower * 0.7);
+            motorBR.setPower(rightBackPower * 0.7);
 
             boolean targetChanged = false;
 
-            while(gamepad2.dpad_up || gamepad2.dpad_down) {
+            if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
                 leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //                if (gamepad2.left_stick_y > 0 || gamepad2.right_stick_y > 0) SetArmPower(0);
 //                if (gamepad2.left_stick_y < 0) SetArmPower(gamepad2.left_stick_y * 1.0);
 //                if (gamepad2.right_stick_y < 0) SetArmPower(gamepad2.right_stick_y * 0.5);
 
-                if (gamepad2.dpad_up) SetArmPower(-1.0);
-                if (gamepad2.dpad_down) SetArmPower(0);
+                if (gamepad2.left_trigger > 0) SetArmPower(0);
+                if (gamepad2.right_trigger > 0) SetArmPower(-gamepad2.right_trigger);
 
                 telemetry.addData("Arm Power", (leftLift.getPower() + rightLift.getPower()) / 2.0);
                 telemetry.update();
@@ -196,8 +199,10 @@ public class BasicOpMode_Linear extends LinearOpMode {
             leftLift.setTargetPosition(armTarget);
             rightLift.setTargetPosition(armTarget);
             if (rightLift.isBusy() && leftLift.isBusy()) {
-                if (leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()) SetArmPower(0.0);
-                else SetArmPower(1.0);
+                if (leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()) {
+                    if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < -350 && (!gamepad2.dpad_down || !gamepad2.dpad_up)) SetArmPower(-.25);
+                    else SetArmPower(0.0);
+                } else SetArmPower(1.0);
                 telemetry.addData("Arm Position", (leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2.0);
                 telemetry.addData("Target Position", (leftLift.getTargetPosition() + rightLift.getTargetPosition()) / 2.0);
                 telemetry.addData("Arm Power", (leftLift.getPower() + rightLift.getPower()) / 2.0);
