@@ -78,7 +78,7 @@ public class HuskyBot {
     public static final double ARM_SWIVEL_MAX_POWER = 0.35;
     public static final double ARM_LIFT_MAX_POWER = 0.5;
     public static final double ARM_LIFT_MIN_POWER = 0.01;
-    public static final double ARM_LIFT_POWER_AT_REST = 0.140;
+    public static final double ARM_LIFT_POWER_AT_REST = 0.134;
     public static final double ARM_SWIVEL_LIMIT = 570;
 
     public static final double ARM_ZERO_POSITION = 350;
@@ -167,9 +167,6 @@ public class HuskyBot {
         rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
         // https://docs.google.com/document/u/1/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/mobilebasic

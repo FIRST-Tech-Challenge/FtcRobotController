@@ -33,7 +33,9 @@ import static org.firstinspires.ftc.teamcode.HuskyBot.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -79,40 +81,26 @@ public class HuskyTeleOpMode extends LinearOpMode {
       Get Encoder
     }*/
 
-    void setConePickup()
-    {
-        huskyBot.armLiftMotor.setTargetPosition(-105);
-        huskyBot.clawLift.setPosition(0.9);
+    void setArmPosition(double timeoutSecs, int armLiftPos, double clawLiftPos, int armExtendPos){
+        huskyBot.armLiftMotor.setTargetPosition(armLiftPos);
+        huskyBot.clawLift.setPosition(clawLiftPos);
 
         //todo tune
-        huskyBot.armExtendMotor.setTargetPosition(-20);
-    }
+        huskyBot.armExtendMotor.setTargetPosition(armExtendPos);
 
-    void setLowJunction()
-    {
-        huskyBot.armLiftMotor.setTargetPosition(396);
-        huskyBot.clawLift.setPosition(0.45);
+        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //todo tune
-        huskyBot.armExtendMotor.setTargetPosition(-10);
-    }
 
-    void setMedJunction()
-    {
-        huskyBot.armLiftMotor.setTargetPosition(655);
-        huskyBot.clawLift.setPosition(0);
+        runtime.reset();
 
-        //todo tune
-        huskyBot.armExtendMotor.setTargetPosition(-60);
-    }
+        while (opModeIsActive() &&
+                (runtime.seconds() < timeoutSecs) &&
+                (huskyBot.armLiftMotor.isBusy())) {
+        }
 
-    void setHighJunction()
-    {
-        huskyBot.armLiftMotor.setTargetPosition(858);
-        huskyBot.clawLift.setPosition(0.15);
-
-        //todo tune
-        huskyBot.armExtendMotor.setTargetPosition(-75);
+        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 
@@ -172,13 +160,13 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
             // arm encoder preset values
             if(gamepad1.dpad_up)
-                setConePickup();
+                setArmPosition(2, -105, 0.9, -20);
             if(gamepad1.dpad_left)
-                setLowJunction();
+                setArmPosition(2, 396, 0.45, -10);
             if(gamepad1.dpad_down)
-                setMedJunction();
+                setArmPosition(2, 655, 0, -60);
             if(gamepad2.dpad_right)
-                setHighJunction();
+                setArmPosition(2, 858, 0.15, -75);
 
 
 
