@@ -19,7 +19,6 @@ public class BasicTeleOp extends OpMode {
     private Move move;
     private Rotate rotate;
     private ClawServos clawServos;
-    private ArmEncoder armEncoder;
     @Override
     public void init() {
         leftMotor = hardwareMap.dcMotor.get("FL");
@@ -31,7 +30,7 @@ public class BasicTeleOp extends OpMode {
         rightServo = hardwareMap.servo.get("RS");
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
-        armEncoder = new ArmEncoder(armMotor);
+
 
         clawServos = new ClawServos(leftServo, rightServo);
 
@@ -100,17 +99,6 @@ public class BasicTeleOp extends OpMode {
         {
             leftServo.setPosition(0);
             rightServo.setPosition(1);
-        }
-
-        if(gamepad1.dpad_up && armMotor.getCurrentPosition() < 0){
-            armEncoder.goTo(1000);
-        }
-        else if(gamepad1.dpad_down && armMotor.getCurrentPosition() > 0){
-            armEncoder.goTo(0);
-        }
-        else
-        {
-            armEncoder.goTo(500);
         }
         if(gamepad1.right_stick_y!=0)
         {

@@ -52,7 +52,7 @@ public class TestDavid extends OpMode {
         armMotorRight = hardwareMap.get(DcMotorEx.class, "AMR");
         armMotorLeft = hardwareMap.get(DcMotorEx.class, "AML");
         //arm = new Arm(armMotorLeft, armMotorRight);
-        armEncoder = new ArmEncoder(armMotorLeft, armMotorRight);
+      //  armEncoder = new ArmEncoder(armMotorLeft, armMotorRight);
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
        // vaccum = new Vacuum(vaccumLeft);

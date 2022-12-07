@@ -129,7 +129,7 @@ public class Webcam2 extends LinearOpMode {
         armMotorLeft = hardwareMap.get(DcMotorEx.class, "AML");
         armMotorChain = hardwareMap.get(DcMotor.class, "AMC");
         arm = new Arm(armMotorLeft, armMotorRight, armMotorChain);
-        armEncoder = new ArmEncoder(armMotorLeft, armMotorRight);
+        //
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         vaccum = new Vacuum(vaccumLeft);

@@ -96,7 +96,7 @@ public class Autonomous2022 extends LinearOpMode {
         vaccumLeft = hardwareMap.dcMotor.get("VL");
         armMotorRight = hardwareMap.get(DcMotorEx.class, "AMR");
         armMotorLeft = hardwareMap.get(DcMotorEx.class, "AML");
-        armEncoder = new ArmEncoder(armMotorLeft, armMotorRight);
+
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
