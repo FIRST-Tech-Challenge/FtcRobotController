@@ -17,13 +17,22 @@ public class MeepMeepTesting {
 
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-36, -60),Math.toRadians(0)))
+//                                .splineToLinearHeading(new Pose2d( new Vector2d(-12,-48), Math.toRadians(90)), Math.toRadians(90))
+//                                .lineToLinearHeading(new Pose2d(new Vector2d(-12,-36),Math.toRadians(45)))
                                 .splineToLinearHeading(new Pose2d( new Vector2d(-12,-48), Math.toRadians(90)), Math.toRadians(90))
                                 .lineToLinearHeading(new Pose2d(new Vector2d(-12,-36),Math.toRadians(45)))
-                                .lineToLinearHeading(new Pose2d(new Vector2d(-12,-12),Math.toRadians(135)))
-                                //deposit cone
-                                .lineToLinearHeading(new Pose2d(new Vector2d(-60,-12),Math.toRadians(180)))
-                                .lineToLinearHeading(new Pose2d(new Vector2d(-12,-12),Math.toRadians(135)))
-                                .lineToLinearHeading(new Pose2d(new Vector2d(-60,-12),Math.toRadians(180)))
+//                                .splineToLinearHeading(new Pose2d( new Vector2d(-12,-48), Math.toRadians(90)), Math.toRadians(90))
+//                                .lineToLinearHeading(new Pose2d(new Vector2d(-12,-36),Math.toRadians(45)))
+//                                .splineToLinearHeading(new Pose2d( new Vector2d(-12,-48), Math.toRadians(90)), Math.toRadians(90))
+//                                .lineToLinearHeading(new Pose2d(new Vector2d(-12,-36),Math.toRadians(45)))
+
+
+
+//                                .lineToLinearHeading(new Pose2d(new Vector2d(-12,-12),Math.toRadians(135)))
+//                                //deposit cone
+//                                .lineToLinearHeading(new Pose2d(new Vector2d(-60,-12),Math.toRadians(180)))
+//                                .lineToLinearHeading(new Pose2d(new Vector2d(-12,-12),Math.toRadians(135)))
+//                                .lineToLinearHeading(new Pose2d(new Vector2d(-60,-12),Math.toRadians(180)))
                                 .build()
                 )
                 ;
