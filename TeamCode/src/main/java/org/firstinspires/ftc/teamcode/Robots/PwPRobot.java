@@ -7,12 +7,11 @@ import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
-
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -26,6 +25,7 @@ import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
 
 import java.util.ArrayList;
 
@@ -39,6 +39,7 @@ public class PwPRobot extends BasicRobot {
     public Field field = null;
     public CVMaster cv = null;
     public SampleMecanumDrive roadrun = null;
+    private IMU imu = null;
     private ArrayList<Integer> seq;
 //    private LEDStrip leds = null;
 
@@ -46,9 +47,10 @@ public class PwPRobot extends BasicRobot {
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
         roadrun = new SampleMecanumDrive(opMode.hardwareMap);
-        cv = new CVMaster();
+//        cv = new CVMaster();
         gp = new RFGamepad();
-        field = new Field(roadrun, cv, gp);
+        imu = new IMU();
+        field = new Field(roadrun, cv, imu, gp);
 //        aligner = new Aligner();
         claw = new Claw();
         liftArm = new LiftArm();
@@ -83,7 +85,8 @@ public class PwPRobot extends BasicRobot {
             }
         }
     }
-    public void updateLiftArmStates(){
+
+    public void updateLiftArmStates() {
         liftArm.updateLiftArmStates();
     }
 
@@ -108,7 +111,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectory, boolean clawClosed) {
-        if (queuer.queue(false, !roadrun.isBusy()||CLAW_CLOSING.getStatus())) {
+        if (queuer.queue(false, !roadrun.isBusy() || CLAW_CLOSING.getStatus())) {
             if (!roadrun.isBusy()) {
                 roadrun.followTrajectorySequenceAsync(trajectory);
             }
@@ -137,7 +140,7 @@ public class PwPRobot extends BasicRobot {
     public void closeClaw(boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, CLAW_CLOSED.getStatus())) {
             claw.updateClawStates();
-                claw.closeClawRaw();
+            claw.closeClawRaw();
         }
     }
 
@@ -264,50 +267,52 @@ public class PwPRobot extends BasicRobot {
 
     private boolean mecZeroLogged = false;
     private boolean progNameLogged = false;
+    public void setPoseEstimate(Pose2d newPose){
+        roadrun.setPoseEstimate(newPose);
+        imu.setAngle(newPose.getHeading());
+    }
 
     public void teleOp() {
-        if(progNameLogged == false){
+        if (progNameLogged == false) {
             logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
             progNameLogged = true;
         }
 
-
         //omnidirectional movement + turning
 
-//        if (op.gamepad2.y) {
-//            lift.setLiftTarget(LIFT_HIGH_JUNCTION.getValue());
-//            liftArm.raiseLiftArmToOuttake();
-//        }
-//        if (op.gamepad2.b) {
-//            lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
-//            liftArm.raiseLiftArmToOuttake();
-//        }
-//        if (op.gamepad2.a) {
-//            liftArm.lowerLiftArmToIntake();
-//            lift.setLiftTarget(0);
-//        }
-//
-//        if (op.gamepad1.dpad_left && op.gamepad2.dpad_left) {
-//            lift.resetEncoder();
-//        }
-//        //manual lift up/down
-//        if (op.gamepad1.dpad_down && op.gamepad2.dpad_down) {
-//            lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger) / 3);
-//        } else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
-//            lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
-//            lift.updateLastManualTime();
-//        }
-//        else {
-////            lift.setLiftPower(0);
-//            lift.liftToTarget();
-//        }
-//
-//        if(op.gamepad2.dpad_down){
-//            lift.iterateConeStackDown();
-//        }
-//        if(op.gamepad2.dpad_up){
-//            lift.iterateConeStackUp();
-//        }
+        if (op.gamepad2.y) {
+            lift.setLiftTarget(LIFT_HIGH_JUNCTION.getValue());
+            liftArm.raiseLiftArmToOuttake();
+        }
+        if (op.gamepad2.b) {
+            lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
+            liftArm.raiseLiftArmToOuttake();
+        }
+        if (op.gamepad2.a) {
+            liftArm.lowerLiftArmToIntake();
+            lift.setLiftTarget(0);
+        }
+
+        if (op.gamepad1.dpad_left && op.gamepad2.dpad_left) {
+            lift.resetEncoder();
+        }
+        //manual lift up/down
+        if (op.gamepad1.dpad_down && op.gamepad2.dpad_down) {
+            lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger) / 3);
+        } else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
+            lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
+            lift.updateLastManualTime();
+        } else {
+//            lift.setLiftPower(0);
+            lift.liftToTarget();
+        }
+
+        if (op.gamepad2.dpad_down) {
+            lift.iterateConeStackDown();
+        }
+        if (op.gamepad2.dpad_up) {
+            lift.iterateConeStackUp();
+        }
         //when not manual lifting, automate lifting
 
 //        if (field.lookingAtPole() && op.gamepad1.dpad_up && !roadrun.isBusy()) {
@@ -316,21 +321,32 @@ public class PwPRobot extends BasicRobot {
 //        } else if (roadrun.isBusy()) {
 //            //nothin
 //        } else {
-            double[] vals = {op.gamepad1.left_stick_x,op.gamepad1.left_stick_y,op.gamepad1.right_stick_x};
-            if(op.gamepad1.left_stick_x==0){
-                vals[0]=0.01;
+            double[] vals = {op.gamepad1.left_stick_x, op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
+            double[] minBoost = {0.1,0.1,0.05};
+            if (abs(op.gamepad1.left_stick_x) < 0.04) {
+                minBoost[0] = 0;
             }
-            if(op.gamepad1.left_stick_y==0){
-                vals[1]=0.01;
+        if (op.gamepad1.left_stick_x == 0) {
+            vals[0] = 0.01;
+        }
+            if (abs(op.gamepad1.left_stick_y) < 0.04) {
+                minBoost[1] = 0;
             }
-            if(op.gamepad1.right_stick_x==0){
-                vals[2]=0.01;
+        if (op.gamepad1.left_stick_y == 0) {
+            vals[1] = 0.01;
+        }
+            if (abs(op.gamepad1.right_stick_x) < 0.03) {
+                minBoost[2] = 0;
+                //48.8,36.6,
             }
+        if (op.gamepad1.right_stick_x == 0) {
+            vals[2] = 0.01;
+        }
             roadrun.setWeightedDrivePower(
                     new Pose2d(
-                            -/*vals[1]**/0.8*vals[1]/abs(vals[1]) * pow(abs(vals[1]),1.55),
-                            -/*vals[0]**/0.8*vals[0]/abs(vals[0]) * pow(abs(vals[0]),1.55),
-                            -/*vals[2]**/0.8*vals[2]/abs(vals[2]) * pow(abs(vals[2]),1.55)
+                            -vals[1] / abs(vals[1]) *(minBoost[1]+ 0.3 * pow(abs(vals[1]), 1.0) +0.2 * pow(abs(vals[1]), 2.0) + 0.4*pow(abs(vals[1]), 3)),
+                            -vals[0] / abs(vals[0]) * (minBoost[0] + 0.3 * pow(abs(vals[0]), 1.0)+0.2 * pow(abs(vals[0]), 2.0) + 0.4*pow(abs(vals[0]), 3)),
+                            -vals[2] / abs(vals[2]) *(minBoost[2] + 0.7 * pow(abs(vals[2]), 1.4))
                     )
             );
             if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
@@ -361,10 +377,14 @@ public class PwPRobot extends BasicRobot {
                     liftArm.raiseLiftArmToOuttake();
                 }
             }
+        field.closestDropPosition(false);
             if (op.gamepad1.right_bumper) {
                 if(CLAW_CLOSED.getStatus()) {
                     claw.setLastOpenTime(op.getRuntime());
                     claw.openClaw();
+                    if(ARM_OUTTAKE.getStatus()){
+                        field.closestDropPosition(true);
+                    }
                 }else{
                     claw.closeClawRaw();
                 }
@@ -379,15 +399,12 @@ public class PwPRobot extends BasicRobot {
                 }
             }
 
-            if (op.gamepad1.dpad_right || op.gamepad1.dpad_left || op.gamepad1.dpad_up || op.gamepad1.dpad_down) {
-                field.autoMovement();
-            }
-
 
             //manual open/close claw (will jsut be open claw in the future)
 
             //will only close when detect cone
             //claw.closeClaw
+        op.telemetry.addData("imuangle", imu.updateAngle()*180/PI);
             gp.readGamepad(op.gamepad2.y, "gamepad1_y", "Status");
             gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
             gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");

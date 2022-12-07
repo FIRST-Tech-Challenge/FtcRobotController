@@ -13,9 +13,9 @@ public class LiftArm {
 
     private RFDualServo liftArmServo;
 
-    private final double LIFT_ARM_INTAKE_POS = 0.14;
+    private final double LIFT_ARM_INTAKE_POS = 0.8;
 
-    private final double LIFT_ARM_OUTTAKE_POS = 0.57;
+    private final double LIFT_ARM_OUTTAKE_POS = 0.16;
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
@@ -61,7 +61,7 @@ public class LiftArm {
     //constructor
     public LiftArm() {
         //init RFServo
-        liftArmServo = new RFDualServo("liftArmServo", "liftArmServo2", 0.7);
+        liftArmServo = new RFDualServo("liftArmServo", "liftArmServo2", 1);
         lowerLiftArmToIntake();
 
     }
