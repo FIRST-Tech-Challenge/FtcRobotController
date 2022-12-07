@@ -208,61 +208,61 @@ public class Field {
         Trajectory turnLeft = null; //initialize b4hand bc it be like that
         Trajectory turnRight = null; //^^^^
         //the outermost if statement checks if current angle is in between a margin of 30 deg from up/right/down/left
-        double curT = roadrun.getPoseEstimate().getHeading(); //current angle
+        double curT = nexttrajStartPos.getHeading(); //current angle
         if(curT < toRadians(315) && curT > toRadians(225)){ //up
             if(leftright == 0){ //left
-                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT)) //starting pos TODO: starting pos wont
+                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY+11.75, curT)) //starting pos TODO: starting pos wont
                         // TODO: be the center of the tile
-                        .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY - 17.625, //guessed values to get to pole
+                        .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY - 5.875, //guessed values to get to pole
                                 tileT + toRadians(30)), toRadians(270)) //turning left + end tangent
                         .build();
             }
             if(leftright == 1){ //right
-                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT)) //starting pos
-                        .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY - 17.625, //guessed values to get to pole
+                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY+11.75, curT)) //starting pos
+                        .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY - 5.875, //guessed values to get to pole
                                 tileT - toRadians(30)), toRadians(270)) //turning right + end tangent
                         .build(); //gobeeldah
             }
         }
         else if(curT < Math.toRadians(225) && curT > Math.toRadians(135)){ //right
             if(leftright == 0){
-                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
-                        .splineToSplineHeading(new Pose2d(tileX - 17.625 , tileY - 5.875,
+                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX+11.75, tileY, curT))
+                        .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY - 5.875,
                                 tileT + toRadians(30)), toRadians(180))
                         .build();
 
             }
             if(leftright == 1){
-                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
-                        .splineToSplineHeading(new Pose2d(tileX - 17.625 , tileY + 5.875,
+                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX+11.75, tileY, curT))
+                        .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY + 5.875,
                                 tileT - toRadians(30)), toRadians(180))
                         .build();
             }
         }
         else if(curT < Math.toRadians(135) && curT > Math.toRadians(45)){ //down
             if(leftright == 0){
-                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
-                        .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY + 17.625,
+                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY-11.75, curT))
+                        .splineToSplineHeading(new Pose2d(tileX - 5.875 , tileY + 5.875,
                                 tileT + toRadians(30)), toRadians(90))
                         .build();
             }
             if(leftright == 1){
-                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
-                        .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY + 17.625,
+                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY-11.75, curT))
+                        .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY + 5.875,
                                 tileT - toRadians(30)), toRadians(90))
                         .build();
             }
         }
         else if(curT < Math.toRadians(45) && curT > Math.toRadians(315)){ //left
             if(leftright == 0){
-                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
-                        .splineToSplineHeading(new Pose2d(tileX + 17.625 , tileY + 5.875,
+                turnLeft = roadrun.trajectoryBuilder(new Pose2d(tileX-11.75, tileY, curT))
+                        .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY + 5.875,
                                 tileT + toRadians(30)), toRadians(0))
                         .build();
             }
             if(leftright == 1){
-                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX, tileY, curT))
-                        .splineToSplineHeading(new Pose2d(tileX + 17.625 , tileY - 5.875,
+                turnRight = roadrun.trajectoryBuilder(new Pose2d(tileX-11.75, tileY, curT))
+                        .splineToSplineHeading(new Pose2d(tileX + 5.875 , tileY - 5.875,
                                 tileT - toRadians(30)), toRadians(0))
                         .build();
             }
