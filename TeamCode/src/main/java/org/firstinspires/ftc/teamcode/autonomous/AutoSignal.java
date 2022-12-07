@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ScheduleCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -21,12 +22,14 @@ public class AutoSignal extends CommandOpMode {
                 new InstantCommand(() -> signalSystem.startCamera()),
                 new WaitUntilCommand(this::isStarted),
                 new WaitUntilCommand(signalSystem::isResultReady),
-                new InstantCommand(() -> {
-                    telemetry.addLine("Detected signal " + signalSystem.GetResult().name());
-                    telemetry.update();
-                    
-                    signalSystem.stopCamera();
-                })
+                new ScheduleCommand(
+                        new InstantCommand(() -> {
+                            telemetry.addLine("Detected signal " + signalSystem.GetResult().name());
+                            telemetry.update();
+
+                            signalSystem.stopCamera();
+                        })
+                )
         );
     }
 }
