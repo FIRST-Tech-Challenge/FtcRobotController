@@ -136,7 +136,6 @@ public class teleop extends LinearOpMode {
                 Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Crain.setPower(1);
                 while (Crain.isBusy()){
-
                 }
             }
 
