@@ -1,4 +1,4 @@
-// go to far high junction; score at 1 high junction
+// go to close junction to drop off preloaded; score at 2 high junctions
 
 package com.example.meepmeeptesting;
 
@@ -8,7 +8,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class RedAutoCase2 {
+public class BlueAutoCase2 {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
@@ -17,10 +17,10 @@ public class RedAutoCase2 {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .setDimensions(16, 16)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(12, -62, Math.toRadians(90)))
-                                .splineTo(new Vector2d(24,-12), Math.toRadians(0))
-                                .lineTo(new Vector2d(48,-12))
-                                .lineTo(new Vector2d(0, -12))
+                        drive.trajectorySequenceBuilder(new Pose2d(12, 62, Math.toRadians(-90)))
+                                .splineTo(new Vector2d(24,12), Math.toRadians(0))
+                                .lineTo(new Vector2d(48, 12))
+                                .lineTo(new Vector2d(24, 12))
                                 .build()
                 );
 
