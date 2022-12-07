@@ -586,6 +586,7 @@ public class IronGiantOpMode extends OpMode {
                 }
             }
         }
+        autonInitialized = true;
     }
     // vision setup
     public void visionInit(){
