@@ -2,8 +2,8 @@ package org.firstinspires.ftc.blackswan;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -19,15 +19,17 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "AutonomousParkingTestDEV")
-public class ParkPositionDEV extends LinearOpMode {
+@Autonomous(name = "ParkingAutonomous")
+public class ParkingAutonomous extends LinearOpMode {
 
+    Robot robot;
     DeterminationPipeline pipeline;
     TelemetryPacket packet = new TelemetryPacket();
-
+    public static int ParkDot;
 
     @Override
     public void runOpMode() {
+        robot = new Robot(hardwareMap, telemetry, this);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
@@ -51,6 +53,19 @@ public class ParkPositionDEV extends LinearOpMode {
 
         waitForStart();
 
+        if (ParkDot == 1){
+            robot.forward(2.2,.5);
+            robot.left(2.2,.5);
+        }
+
+        if (ParkDot == 2){
+            robot.forward(2.2,.5);
+        }
+
+        if (ParkDot == 3){
+            robot.forward(2.2,.5);
+            robot.right(2.2, .5);
+        }
         while (opModeIsActive()) {
 
             telemetry.addData("Lightness", pipeline.AVG_L);
@@ -147,7 +162,7 @@ public class ParkPositionDEV extends LinearOpMode {
 
             telemetry.update();
 
-            int ParkDot = 0;
+
 
             // A = GM // B = BY
             // one dot values, GM 174, BY 124
@@ -188,6 +203,8 @@ public class ParkPositionDEV extends LinearOpMode {
         public int getAnalysis3() {
             return AVG_B;
         }
+
+
 
     }
 }
