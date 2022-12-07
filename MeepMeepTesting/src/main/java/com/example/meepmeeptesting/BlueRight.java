@@ -10,7 +10,7 @@ public class BlueRight {
     public static void main(String[] args) {
         //placeholder signal zone
         int signalZone = 3;
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(400);
         RoadRunnerBotEntity myBot = null;
 
         switch (signalZone){
@@ -22,16 +22,25 @@ public class BlueRight {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
-                                        .turn(Math.toRadians(90))
-                                        .forward(12)
+                                        .strafeLeft(25)
+                                        .forward(36)
                                         .turn(Math.toRadians(-90))
-                                        .forward(3)
-                                        // use claw
-                                        .back(3)
-                                        .turn(Math.toRadians(90))
-                                        .forward(14)
+                                        // drop cone
+                                        .strafeLeft(12)
+                                        .forward(50)
+                                        // pick up cone
+                                        .back(39)
                                         .turn(Math.toRadians(-90))
-                                        .forward(26)
+                                        // drop cone
+                                        .turn(Math.toRadians(90))
+                                        .forward(39)
+                                        // pick up cone
+                                        .back(39)
+                                        .turn(Math.toRadians(-90))
+                                        // drop cone
+                                        .turn(Math.toRadians(-90))
+                                        .forward(17)
+                                        // possibility for fourth cone idk
                                         .build()
                         );
                 break;
@@ -43,16 +52,25 @@ public class BlueRight {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
+                                        .strafeLeft(25)
+                                        .forward(36)
+                                        .turn(Math.toRadians(-90))
+                                        // drop cone
+                                        .strafeLeft(12)
+                                        .forward(50)
+                                        // pick up cone
+                                        .back(39)
+                                        .turn(Math.toRadians(-90))
+                                        // drop cone
+                                        .turn(Math.toRadians(90))
+                                        .forward(39)
+                                        // pick up cone
+                                        .back(39)
+                                        .turn(Math.toRadians(-90))
+                                        // drop cone
                                         .turn(Math.toRadians(90))
                                         .forward(12)
-                                        .turn(Math.toRadians(-90))
-                                        .forward(3)
-                                        // use claw
-                                        .back(3)
-                                        .turn(Math.toRadians(-90))
-                                        .forward(10)
-                                        .turn(Math.toRadians(90))
-                                        .forward(26)
+                                        // possibility for fourth cone idk
                                         .build()
                         );
                 break;
@@ -64,16 +82,24 @@ public class BlueRight {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
-                                        .turn(Math.toRadians(90))
-                                        .forward(12)
+                                        .strafeLeft(25)
+                                        .forward(36)
                                         .turn(Math.toRadians(-90))
-                                        .forward(3)
-                                        // use claw
-                                        .back(3)
+                                        // drop cone
+                                        .strafeLeft(12)
+                                        .forward(50)
+                                        // pick up cone
+                                        .back(39)
                                         .turn(Math.toRadians(-90))
-                                        .forward(35)
+                                        // drop cone
                                         .turn(Math.toRadians(90))
-                                        .forward(26)
+                                        .forward(39)
+                                        // pick up cone
+                                        .back(39)
+                                        .turn(Math.toRadians(-90))
+                                        // drop cone
+                                        .turn(Math.toRadians(90))
+                                        .forward(36)
                                         .build()
                         );
 

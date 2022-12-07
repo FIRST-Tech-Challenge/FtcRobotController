@@ -10,7 +10,7 @@ public class RedLeft {
     public static void main(String[] args) {
         //placeholder signal zone
         int signalZone = 3;
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(400);
         RoadRunnerBotEntity myBot = null;
 
         switch (signalZone){
@@ -21,32 +21,26 @@ public class RedLeft {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, Math.toRadians(90)))
-                                        /*
-                                        .strafeRight(25)
-                                        .forward(30)
-                                        .strafeLeft(13)
-                                        .forward(4)
-                                        //use claw
-                                        .back(4)
-                                        .strafeRight(13)
-                                        .back(30)
-                                        .strafeLeft(50)
-                                        .forward(30)
-                                        .build()
-                                         */
-
-                                        .forward(17.5)
+                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -63, Math.toRadians(90)))
                                         .turn(Math.toRadians(-90))
-                                        .forward(4)
-                                        //use claw
-                                        .back(4)
+                                        .forward(24)
+                                        .strafeLeft(40)
+                                        // drop cone
+                                        .strafeLeft(12)
+                                        .turn(Math.toRadians(180))
+                                        .forward(47)
+                                        // pick up cone
+                                        .back(35)
                                         .turn(Math.toRadians(-90))
-                                        .forward(17.5)
+                                        // drop cone
+                                        .turn(Math.toRadians(90))
+                                        .forward(35)
+                                        // pick up cone
+                                        .back(35)
                                         .turn(Math.toRadians(-90))
-                                        .forward(25)
-                                        .turn(Math.toRadians(-90))
-                                        .forward(25)
+                                        // drop cone
+                                        .turn(Math.toRadians(90))
+                                        .forward(35)
                                         .build()
                         );
                 break;
@@ -57,34 +51,26 @@ public class RedLeft {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
-
-                                        /*
-                                        .strafeRight(25)
-                                        .forward(30)
-                                        .strafeLeft(13)
-                                        .forward(4)
-                                        //use claw
-                                        .back(4)
-                                        .strafeRight(13)
-                                        .forward(25)
-                                        .strafeLeft(25)
-                                        .build()
-                                        */
-
-                                        .forward(17.5)
+                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -63, 1.57))
                                         .turn(Math.toRadians(-90))
-                                        .forward(4)
-                                        //use claw
-                                        .back(4)
+                                        .forward(24)
+                                        .strafeLeft(40)
+                                        // drop cone
+                                        .strafeLeft(12)
+                                        .turn(Math.toRadians(180))
+                                        .forward(47)
+                                        // pick up cone
+                                        .back(35)
                                         .turn(Math.toRadians(-90))
-                                        .forward(17.5)
+                                        // drop cone
                                         .turn(Math.toRadians(90))
-                                        .forward(25)
+                                        .forward(35)
+                                        // pick up cone
+                                        .back(35)
+                                        .turn(Math.toRadians(-90))
+                                        // drop cone
                                         .turn(Math.toRadians(90))
-                                        .forward(55)
-                                        .turn(Math.toRadians(90))
-                                        .forward(30)
+                                        .forward(15)
                                         .build()
                         );
                 break;
@@ -95,37 +81,26 @@ public class RedLeft {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
-                                        /*
-                                        .strafeRight(25)
-                                        .forward(30)
-                                        .strafeLeft(13)
-                                        .forward(4)
-                                        //use claw
-                                        .back(4)
-                                        .strafeRight(13)
-                                        //.forward(25)
-                                        //.strafeLeft(50)
-                                         */
-
-
-                                        /*.strafeRight(12)
-                                        .forward(10)
-                                        //use claw
-                                        .back(10)*/
-
-                                        .forward(17.5)
+                                drive.trajectorySequenceBuilder(new Pose2d(-35.5, -63, 1.57))
                                         .turn(Math.toRadians(-90))
-                                        .forward(4)
-                                        //use claw
-                                        .back(4)
+                                        .forward(24)
+                                        .strafeLeft(40)
+                                        // drop cone
+                                        .strafeLeft(12)
+                                        .turn(Math.toRadians(180))
+                                        .forward(47)
+                                        // pick up cone
+                                        .back(35)
                                         .turn(Math.toRadians(-90))
-                                        .forward(17.5)
+                                        // drop cone
                                         .turn(Math.toRadians(90))
-                                        .forward(25)
-                                        .turn(Math.toRadians(90))
-                                        .forward(55)
-                                        .turn(Math.toRadians(90))
+                                        .forward(35)
+                                        // pick up cone
+                                        .back(35)
+                                        .turn(Math.toRadians(-90))
+                                        // drop cone
+                                        .turn(Math.toRadians(-90))
+                                        .forward(12)
                                         .build()
                         );
 

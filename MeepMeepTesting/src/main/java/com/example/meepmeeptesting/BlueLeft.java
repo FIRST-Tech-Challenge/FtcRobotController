@@ -10,7 +10,7 @@ public class BlueLeft {
     public static void main(String[] args) {
         //placeholder signal zone
         int signalZone = 3;
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(400);
         RoadRunnerBotEntity myBot = null;
 
         switch (signalZone){
@@ -21,13 +21,26 @@ public class BlueLeft {
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(270)))
-                                        .turn(Math.toRadians(90))
+                                drive.trajectorySequenceBuilder(new Pose2d(35, 60, Math.toRadians(270)))
+                                        .turn(Math.toRadians(-90))
                                         .forward(22)
+                                        .strafeLeft(36)
+                                        // drop cone
+                                        .strafeLeft(12)
+                                        .turn(Math.toRadians(180))
+                                        .forward(50)
+                                        // pick up cone
+                                        .back(42)
                                         .turn(Math.toRadians(-90))
-                                        .forward(37)
+                                        // drop cone
+                                        .turn(Math.toRadians(90))
+                                        .forward(38)
+                                        // pick up cone
+                                        .back(38)
                                         .turn(Math.toRadians(-90))
-                                        .forward(3)
+                                        // drop cone
+                                        .turn(Math.toRadians(90))
+                                        .forward(38)
                                         .build()
                         );
                 break;
@@ -39,20 +52,25 @@ public class BlueLeft {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(270)))
-                                        .turn(Math.toRadians(90))
+                                        .turn(Math.toRadians(-90))
                                         .forward(22)
+                                        .strafeLeft(36)
+                                        // drop cone
+                                        .strafeLeft(12)
+                                        .turn(Math.toRadians(180))
+                                        .forward(50)
+                                        // pick up cone
+                                        .back(42)
                                         .turn(Math.toRadians(-90))
-                                        .forward(37)
-                                        .turn(Math.toRadians(-90))
-                                        .forward(3)
-                                        // use claw
-                                        .back(3)
-                                        .turn(Math.toRadians(-90))
-                                        .forward(37)
+                                        // drop cone
                                         .turn(Math.toRadians(90))
-                                        .forward(25)
+                                        .forward(38)
+                                        // pick up cone
+                                        .back(38)
+                                        .turn(Math.toRadians(-90))
+                                        // drop cone
                                         .turn(Math.toRadians(90))
-                                        .forward(35)
+                                        .forward(20)
                                         .build()
                         );
                 break;
@@ -64,20 +82,25 @@ public class BlueLeft {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(270)))
-                                        .turn(Math.toRadians(90))
+                                        .turn(Math.toRadians(-90))
                                         .forward(22)
+                                        .strafeLeft(36)
+                                        // drop cone
+                                        .strafeLeft(12)
+                                        .turn(Math.toRadians(180))
+                                        .forward(50)
+                                        // pick up cone
+                                        .back(42)
                                         .turn(Math.toRadians(-90))
-                                        .forward(37)
-                                        .turn(Math.toRadians(-90))
-                                        .forward(3)
-                                        // use claw
-                                        .back(3)
-                                        .turn(Math.toRadians(-90))
-                                        .forward(37)
+                                        // drop cone
                                         .turn(Math.toRadians(90))
-                                        .forward(46)
-                                        .turn(Math.toRadians(90))
-                                        .forward(35)
+                                        .forward(38)
+                                        // pick up cone
+                                        .back(38)
+                                        .turn(Math.toRadians(-90))
+                                        // drop cone
+                                        .turn(Math.toRadians(-90))
+                                        .forward(15)
                                         .build()
                         );
 
