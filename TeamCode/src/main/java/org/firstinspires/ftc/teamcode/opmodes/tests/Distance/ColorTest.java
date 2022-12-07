@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests.Distance;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -17,8 +16,8 @@ public class ColorTest extends LinearOpMode {
     // Define a variable for our color sensor
     TurtleRobotAuto robot = new TurtleRobotAuto(this);
 
-    ColorSensor color;
     DistanceSensor distance;
+    ColorRangeSensor color;
 
     private double ColorDistance;
     private Double StraightDistance;
@@ -36,8 +35,8 @@ public class ColorTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Get the color sensor from hardwareMap
-        color = hardwareMap.get(ColorSensor.class, "Color");
-        distance = hardwareMap.get(DistanceSensor.class, "Distance");
+        color = hardwareMap.get(ColorRangeSensor.class, "Color");
+
 
         // Wait for the Play button to be pressed
         waitForStart();
@@ -50,6 +49,9 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Distance", distance.getDistance(DistanceUnit.INCH));
             telemetry.addData("","");
 
+            telemetry.addData("Distance", color.getDistance(DistanceUnit.INCH));
+            Distance();
+
             telemetry.addData("Red", color.red());
             telemetry.addData("Green", color.green());
             telemetry.addData("Blue", color.blue());
@@ -59,8 +61,10 @@ public class ColorTest extends LinearOpMode {
 
     }
 
-    public void Distance(double Distance_from_Robot, double Alignment) {
-        distance.getDistance(DistanceUnit.INCH);
+
+
+    public void Distance() {
+        color.getDistance(DistanceUnit.INCH);
 
 
 

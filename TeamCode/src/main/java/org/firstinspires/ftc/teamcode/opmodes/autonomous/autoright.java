@@ -22,20 +22,18 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
+
 import java.util.ArrayList;
 
-@Autonomous(name="dont press auto right")
-//@Disabled
+@Autonomous(name = "press auto right")
 public class autoright extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -169,27 +167,42 @@ public class autoright extends LinearOpMode
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
-        right(0.5, 250);
+        // get to the correct angle
+        straight(0.25,670);
+        stopRobot();
+        left(0.25, 850);
+        stopRobot();
+
+        // tighten on cone
+        ServoArm(1,200);
+        ServoArm(0,1000);
+        sleep(1000);
+
+        // move lin slide oopar and go 2 pole
+        LinearSlide(-1, 799);
+        LinearSlide(0,1000);
+        straight(0.25, 760);
         stopRobot();
         sleep(1000);
-        LinearSlide(1, 500);
+        ServoArm(-0.5, 220);
+        ServoArm(0,1000);
+
+        // move 2 og pos
+        straight(-0.25,750);
+        stopRobot();
+        ServoArm(0.5, 220);
+        ServoArm(0,1000);
+        LinearSlide(1, 799);
         LinearSlide(0,1000);
-        straight(0.5, 700);
+        right(0.25, 850);
         stopRobot();
         ServoArm(0.5, 250);
         ServoArm(0,1000);
-        ServoArm(-0.5,250);
-        ServoArm(0,1000);
-        straight(-0.5,700);
-        stopRobot();
-        left(0.5, 250);
-        stopRobot();
-        /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
-            strafeLeft(0.5, 1000);
+            strafeLeft(0.5, 1250);
             stopRobot();
             sleep(1000);
-            straight(0.5, 900);
+            straight(0.5, 800);
             stopRobot();
             stop();
         }else if(tagOfInterest.id == MIDDLE){
@@ -197,10 +210,10 @@ public class autoright extends LinearOpMode
             stopRobot();
             stop();
         }else{
-            strafeRight(0.5, 1200);
+            strafeRight(0.5, 1100);
             stopRobot();
             sleep(1000);
-            straight(0.5, 1000);
+            straight(0.5, 1300);
             stopRobot();
             stop();
         }
@@ -263,7 +276,7 @@ public class autoright extends LinearOpMode
     }
     public void LinearSlide(double power, int time) {
         // Negative power = up
-        robot.leftslidemotor.setPower(power);
+//        robot.leftslidemotor.setPower(power);
         robot.rightslidemotor.setPower(power);
         sleep(time);
     }

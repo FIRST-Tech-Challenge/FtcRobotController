@@ -194,7 +194,7 @@ public class Autonomous_Right extends LinearOpMode {
         sleep(time); }
     public void LinearSlide(double power, int time) {
         // Negative power = up
-        robot.leftslidemotor.setPower(power);
+//        robot.leftslidemotor.setPower(power);
         robot.rightslidemotor.setPower(power);
         sleep(time);
     }

@@ -27,16 +27,15 @@ android {
         noCompress 'tflite'
     }
 }
-repositories{
+repositories {
     maven { url = 'https://maven.brott.dev/' }
     maven { url 'https://jitpack.io' }
 }
-
-
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:easyopencv:1.5.2'
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
     implementation 'org.openftc:apriltag:1.1.0'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
 }

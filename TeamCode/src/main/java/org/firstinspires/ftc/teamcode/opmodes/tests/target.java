@@ -119,14 +119,14 @@ public class target extends LinearOpMode
         while (opModeIsActive())
         {
             while (gamepad1.a) {
-                robot.leftslidemotor.setPower(-1);
+//                robot.leftslidemotor.setPower(-1);
                 robot.rightslidemotor.setPower(-1);
             }
             while (gamepad1.b) {
-                robot.leftslidemotor.setPower(1);
+//                robot.leftslidemotor.setPower(1);
                 robot.rightslidemotor.setPower(1);
             }
-            robot.leftslidemotor.setPower(0);
+//            robot.leftslidemotor.setPower(0);
             robot.rightslidemotor.setPower(0);
             // Look for first visible target, and save its pose.
             targetFound = false;
