@@ -222,18 +222,16 @@ public class WARHOGAuto extends LinearOpMode {
         outtake.closeClaw();
 
         // drive to pole and raise slide
-        drivetrain.MoveForDis(70, speed);
-        drivetrain.MoveForDis(-17, speed);
-        outtake.setHeight(Outtake.Height.HIGH);
-        //drivetrain.RotateForDegree(-45*posMod, speed); //turn in different directions depending on start position
+        drivetrain.MoveForDis(60, speed);
+        drivetrain.MoveForDis(-7, speed);
         drivetrain.rotateToPosition(-45 * posMod, speed);
-        drivetrain.MoveForDis(18, 0.2);
-        //sleep(300);
+        drivetrain.MoveForDis(-5, speed);
+        outtake.setHeight(Outtake.Height.HIGH);
         outtake.openClaw();
         outtake.setHeight(Outtake.Height.GROUND);
 
         // turn to cone stack
-        drivetrain.MoveForDis(-18, speed);
+        drivetrain.MoveForDis(5, speed);
 
         for(int i=0; i<cycles; i++) {
             //drivetrain.RotateForDegree(-45 * posMod, speed); //turn in different directions depending on start position
@@ -283,10 +281,6 @@ public class WARHOGAuto extends LinearOpMode {
             drivetrain.rotateToPosition(0 * posMod, speed);
             drivetrain.MoveForDis(-12, speed);
         }
-
-
-        while(opModeIsActive()){sleep(20);}
-
     }
 
     void tagToTelemetry(AprilTagDetection detection)
