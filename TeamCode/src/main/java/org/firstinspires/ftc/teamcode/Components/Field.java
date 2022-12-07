@@ -314,10 +314,11 @@ public class Field {
                 , nexttrajStartPos.getHeading() + movements[2]);
         Trajectory onemove = roadrun.trajectoryBuilder(new Pose2d(nexttrajStartPos.getX(), nexttrajStartPos.getY(),
                         nexttrajStartPos.getHeading()))
-                .splineToSplineHeading(new Pose2d(nexttrajStartPos.getX() + movements[0], nexttrajStartPos.getY() +
-                        movements[1], nexttrajStartPos.getHeading() + movements[2]), movements[3])
+                .splineToSplineHeading(target, movements[3])
                 .addDisplacementMarker(() -> gp.removeSequenceElement())
                 .build();
+
+        nexttrajStartPos = target;
 
         return onemove;
     }
@@ -330,14 +331,17 @@ public class Field {
         double centeryadjustment = 0;
         double forwardbackwardangleadjustment = 0;
         double leftrightangleadjustment = 0;
+        double endtangent = 0;
 
         if (tileMovement.get(0) == 1 || tileMovement.get(0) == 3) {
             if (tileMovement.get(0) == 1) {
                 centeryadjustment = min(nexttrajStartPos.getY() - currenttile[1], -2.5);
+                endtangent = toRadians(270);
             }
 
             else if (tileMovement.get(0) == 3) {
                 centeryadjustment = max(nexttrajStartPos.getY() - currenttile[1], 2.5);
+                endtangent = toRadians(90);
             }
 
 
@@ -348,14 +352,16 @@ public class Field {
                 forwardbackwardangleadjustment = toRadians(270);
             }
         }
-        else {
+        else if (tileMovement.get(0) == 2 || tileMovement.get(0) == 4){
 
             if (tileMovement.get(0) == 2) {
                 centerxadjustment = min(nexttrajStartPos.getX() - currenttile[0], -2.5);
+                endtangent = toRadians(180);
             }
 
             else if (tileMovement.get(0) == 4) {
                 centerxadjustment = max(nexttrajStartPos.getX() - currenttile[0], 2.5);
+                endtangent = toRadians(0);
             }
 
             if (abs(nexttrajStartPos.getHeading()) < abs(nexttrajStartPos.getHeading() - toRadians(180))) {
@@ -366,12 +372,17 @@ public class Field {
             }
         }
 
+        else {
+            //TODO: fill in with 5 and 6 once harry fixes
+        }
+
+        Pose2d target = new Pose2d(currenttile[0] + centerxadjustment, currenttile[1] + centeryadjustment,
+                forwardbackwardangleadjustment + leftrightangleadjustment);
+
 
         Trajectory adjustment = roadrun.trajectoryBuilder(new Pose2d(nexttrajStartPos.getX(), nexttrajStartPos.getY(),
                         nexttrajStartPos.getHeading()))
-                .splineToLinearHeading(new Pose2d(currenttile[0] + centerxadjustment, currenttile[1] +
-                                centeryadjustment, forwardbackwardangleadjustment + leftrightangleadjustment),
-                        toRadians(270))
+                .splineToLinearHeading(target, endtangent)
                 .build();
 
 
