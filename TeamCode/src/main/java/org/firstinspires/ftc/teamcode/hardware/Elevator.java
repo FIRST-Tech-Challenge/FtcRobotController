@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -16,7 +17,8 @@ public class Elevator {
     public Servo getLeftServo() {
         return leftServo;
     }
-    public boolean clawState = true; //true = open false = close
+    public static boolean mainServoState = true; // tbrue = 1 false = 0
+    public static boolean clawState = true; //true = open false = close
     private Servo leftServo = null;
 
     public Servo getRightServo() {
@@ -39,7 +41,7 @@ public class Elevator {
     public static final int MAX_ELEVATOR_POSITION = 30;
 
     public Elevator(HardwareMap hardwareMap, Telemetry telemetry){
-//        mainServo = hardwareMap.get(Servo.class, "elevator_main_servo");
+        mainServo = hardwareMap.get(Servo.class, "elevator_main_servo");
         leftServo = hardwareMap.get(Servo.class, "elevator_left_servo");
         rightServo = hardwareMap.get(Servo.class, "elevator_right_servo");
 //        elevatorMotor = hardwareMap.get(DcMotor.class, "elevator_motor");
@@ -47,7 +49,7 @@ public class Elevator {
     }
 
     public void initMotors(){
-        //mainServo.setPosition(Servo.MIN_POSITION);
+        mainServo.setPosition(Servo.MIN_POSITION);
         //mainServoPosition = Servo.MIN_POSITION);
         //elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
         //move elevator down - start position
@@ -61,8 +63,23 @@ public class Elevator {
         handsOffset = 0;
     }
 
-    public void moveHands() {
-        ServoPosition = leftServo.getPosition();
+    public void moveMainServo() {
+        telemetry.addData("moveHands starts", true);
+        telemetry.addData("mainservoState: ", mainServoState);
+        if (mainServoState) {
+            mainServo.setPosition(0);
+            mainServoState = false;
+            telemetry.addData("setPosition: ", 0);
+        } else {
+            mainServo.setPosition(1);
+            mainServoState = true;
+            telemetry.addData("setPosition: ", 1);
+        }
+        telemetry.update();
+    }
+
+    public void moveHands(){
+      //  ServoPosition = leftServo.getPosition();
         telemetry.addData("Servoposition", ServoPosition);
         if (clawState) {
             leftServo.setPosition(1);

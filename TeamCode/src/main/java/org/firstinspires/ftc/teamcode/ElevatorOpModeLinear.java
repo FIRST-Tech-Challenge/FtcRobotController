@@ -87,4 +87,8 @@ boolean x = false;
 
             x=gamepad2.b;
         }
+        if (gamepad2.y){
+            elevator.moveMainServo();
+            telemetry.update("mainservo ", elevator.)
+        }
     }}
