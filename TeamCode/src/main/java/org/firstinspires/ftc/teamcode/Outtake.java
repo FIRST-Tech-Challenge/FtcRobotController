@@ -92,8 +92,8 @@ public class Outtake {
         slide.setTargetPosition(pos);
     }
 
-    public boolean isSlideRunning(){
-        return slide.isBusy();
+    public boolean isSlideGoingToPosition(){
+        return (slide.getMode()==DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public double showSlideValue() { return slide.getCurrentPosition(); }
@@ -122,7 +122,7 @@ public class Outtake {
         sleep(25);
         setHeight(height);
 
-        while(isSlideRunning()){}
+        while(slide.isBusy()){}
 
         openClaw();
         sleep(25);

@@ -152,7 +152,12 @@ public class Intake {
     }
 
     public void openClaw(){
-        runClaw(.05);
+        if(getArmPos()>.5) {
+            runClaw(.15);
+        }
+        else{
+            runClaw(.05);
+        }
     }
     public void closeClaw(){
         runClaw(.55);
