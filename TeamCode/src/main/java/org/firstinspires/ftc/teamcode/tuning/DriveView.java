@@ -159,10 +159,12 @@ final class DriveView {
     public void setDrivePowers(Twist2d powers) {
         if (md != null) {
             md.setDrivePowers(powers);
+            return;
         }
 
         if (td != null) {
             td.setDrivePowers(powers);
+            return;
         }
 
         throw new AssertionError();
