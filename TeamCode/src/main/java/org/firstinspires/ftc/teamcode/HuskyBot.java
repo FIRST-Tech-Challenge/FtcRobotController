@@ -34,7 +34,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
 import org.openftc.easyopencv.OpenCvWebcam;
+
 
 /**
  * This is NOT an opmode.
@@ -61,21 +64,30 @@ public class HuskyBot {
     // Webcam
     public OpenCvWebcam webcam;
 
+    // Magnetic Limit Switches
+    public TouchSensor armExtendMax = null;
+    public TouchSensor armExtendMin = null;
+
     // goBILDA 5203 Series Yellow Jacket Planetary Gear Motor
     // max encoder ticks per second
     // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
     public static final double VELOCITY_CONSTANT = 537.7 * 312/60;
-    
-    public static final double ARM_SWIVEL_MAX_POWER = 0.4;
-    public static final double ARM_SWIVEL_LIMIT = 200;
+
+
+
+    public static final double ARM_SWIVEL_MAX_POWER = 0.35;
     public static final double ARM_LIFT_MAX_POWER = 0.5;
     public static final double ARM_LIFT_MIN_POWER = 0.01;
-    public static final double ARM_LIFT_POWER_AT_REST = 0.10;
+    public static final double ARM_LIFT_POWER_AT_REST = 0.134;
+    public static final double ARM_SWIVEL_LIMIT = 570;
+
+
+    public static final double ARM_ZERO_POSITION = 350;
+
     public static final double ARM_EXTENSION_MAX_POWER = 0.6;
-    public  static  final double ARM_LIFT_MAX_POSITION = 895;
+    public  static  final double ARM_LIFT_MAX_POSITION = 925;
 
-    public static final double CLAW_MOVE_INCREMENT = 0.01;
-
+    public static final double CLAW_MOVE_INCREMENT = 0.05;
     public static final double CLAW_LIFT_MIN_RANGE = 0.3;
     public static final double CLAW_LIFT_MAX_RANGE = 0.8;
     public static final double CLAW_LIFT_START_POSITION = 0.9;   // scaled, see MIN and MAX_RANGE
@@ -109,8 +121,13 @@ public class HuskyBot {
         armExtendMotor = hwMap.get(DcMotorEx.class, "arm_extend");
 
         // Define and Init. Claw Servos
+
         clawLift = hwMap.get(Servo.class, "claw_lift");
         clawGrab = hwMap.get(Servo.class, "claw_grab");
+
+        // Define and Init. Magnetic Limit Switches
+        armExtendMax = hwMap.get(TouchSensor.class, "arm_extend_max");
+        armExtendMin = hwMap.get(TouchSensor.class, "arm_extend_min");
 
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -135,6 +152,7 @@ public class HuskyBot {
 
         armExtendMotor.setPower(0);
 
+
         clawLift.scaleRange(CLAW_LIFT_MIN_RANGE, CLAW_LIFT_MAX_RANGE);
         clawGrab.scaleRange(CLAW_GRAB_MIN_RANGE, CLAW_GRAB_MAX_RANGE);
 
@@ -150,6 +168,7 @@ public class HuskyBot {
         rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         // https://docs.google.com/document/u/1/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/mobilebasic
         // todo these still need to be tuned
