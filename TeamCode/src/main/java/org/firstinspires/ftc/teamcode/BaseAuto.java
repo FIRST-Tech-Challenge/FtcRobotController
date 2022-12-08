@@ -38,6 +38,7 @@ public  class BaseAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         hdw = new Hardware2022(hardwareMap,telemetry ); //init hardware
+        hdw.createHardware();
 
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webCamName  = hardwareMap.get(WebcamName.class, "Webcam 1");
