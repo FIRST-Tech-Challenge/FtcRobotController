@@ -1,15 +1,24 @@
 package org.firstinspires.ftc.team417_PowerPlay;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+
 abstract public class BaseTeleOp extends BaseOpMode {
     boolean grabberOpen = false;
     double armPower = 0.0;
     int armLevel = 0;
     int armEncoderPosition = 0;
-    Toggler headingToggle = new Toggler();
-    boolean maintainingHeading = true;
-    double errorHeading;
+
+    ElapsedTime time;
 
     private static double DRIVING_SPEED = 0.5;
+
+    public void initializeTeleOp() {
+        initializeHardware();
+        time = new ElapsedTime();
+        time.reset();
+        grabberServo.setPosition(GRABBER_OPEN);
+    }
 
     public void driveUsingControllers() {
         double x = gamepad1.left_stick_x * DRIVING_SPEED;
@@ -32,7 +41,8 @@ abstract public class BaseTeleOp extends BaseOpMode {
     }
     public void buttonDriveArm() {
         if (gamepad2.right_trigger != 0) {
-            driveArm();
+            armEncoderPosition += (int) (gamepad2.left_stick_y * 10);
+            Range.clip(armEncoderPosition, MIN_ARM_POSITION, MAX_ARM_POSITION);
         } else {
             if (time.time() > 0.3) {
                 if (gamepad2.left_bumper) {
