@@ -33,12 +33,17 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveSlidesWithController() {
+        // if slides are above 600 ticks and going down then go down slowly
         if (-gamepad2.left_stick_y < 0 && motorLeftSlides.getCurrentPosition() > 600) {
             motorLeftSlides.setPower(-gamepad2.left_stick_y * 0.05);
             motorRightSlides.setPower(-gamepad2.left_stick_y * 0.05);
+
+        // if slides are below 600 ticks and going down then go down at full power
         } else if (-gamepad2.left_stick_y < 0 && motorLeftSlides.getCurrentPosition() <= 600) {
             motorLeftSlides.setPower(-gamepad2.left_stick_y);
             motorRightSlides.setPower(-gamepad2.left_stick_y);
+
+        // if slides are going up then go up at 75% power
         } else {
             motorLeftSlides.setPower(-gamepad2.left_stick_y * 0.75);
             motorRightSlides.setPower(-gamepad2.left_stick_y * 0.75);
