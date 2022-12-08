@@ -38,7 +38,7 @@ public class LinearSlide extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        
+
         waitForStart();
         runtime.reset();
 
