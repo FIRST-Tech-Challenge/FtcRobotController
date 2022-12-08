@@ -26,9 +26,9 @@ public class ConeQRProcessor  extends OpenCvPipeline {
     double meanVal =0.0;
 
     //Adjustable parameters here.
-    double sleev1Peak = 40;
+    double sleev1Peak = 30;
     double sleev2Peak = 100.0 ;
-    double sleev3Peak = 130.0;
+    double sleev3Peak = 150.0;
 
     //Range for background, mat is grey
     Scalar backgroundL = new Scalar(0, 0, 0 );
@@ -88,16 +88,19 @@ public class ConeQRProcessor  extends OpenCvPipeline {
 
         if ( !decoded) {
             startMills  = System.currentTimeMillis();
-            qrCode = decoder.detectAndDecodeCurved(brReverse, points);
+            Mat grey = new Mat();
+            Imgproc.cvtColor(brReverse, grey, Imgproc.COLOR_BGR2GRAY);
+            qrCode = decoder.detectAndDecodeCurved(grey, points);
             endMills  = System.currentTimeMillis();
             System.out.println(points.dump());
             if (!points.empty()) {
                 //Detected. However not necessary decode correctly.
                 System.out.println("QR code: " + qrCode);
+
                 for (int i = 0; i < points.cols(); i++) {
                     Point pt1 = new Point(points.get(0, i));
                     Point pt2 = new Point(points.get(0, (i + 1) % 4));
-                    Imgproc.line(brReverse, pt1, pt2, new Scalar(255, 0, 0), 3);
+                    Imgproc.line(brReverse, pt1, pt2, new Scalar(255, 0, 0), 1);
                 }
 
                 if ( qrCode == null || "".equals(qrCode)) {
@@ -128,12 +131,10 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                     Mat hsvResult = new Mat();
                     Imgproc.cvtColor(result, hsvResult, Imgproc.COLOR_BGR2HSV);
 
-                    List<Mat> hsvResultPlane = new ArrayList<>();
-                    Core.split(hsvResult , hsvResultPlane);
-
                     //Calculate the Hue average
-                    meanVal = calHueAvg(hsvImg);
+                    meanVal = calHueAvg(hsvResult);
                     System.out.println("Mean Value: " +  meanVal);
+                    //System.out.println( hsvResult.dump() );
 
                     //Calculate the diff to peak
                     double diff1 = Math.abs(meanVal - sleev1Peak);
@@ -151,7 +152,6 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                     }
 
                 }
-
 
                 decoded = true;
             }

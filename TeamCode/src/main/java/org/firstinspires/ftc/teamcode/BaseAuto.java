@@ -69,7 +69,10 @@ public  class BaseAuto extends LinearOpMode {
             }
         });
 
-        while ( !coneImgPipeline.isDecoded()) {
+        long startMills  = System.currentTimeMillis();
+
+        //Max try 10 seconds.
+        while ( !coneImgPipeline.isDecoded() & (System.currentTimeMillis() - startMills ) <10000 ) {
             telemetry.addData("Message : ", coneImgPipeline.getDetectMsg());
             telemetry.addData("Is decoded : ", coneImgPipeline.isDecoded());
             telemetry.addData("Sleeve: ", currentSide);
@@ -77,13 +80,12 @@ public  class BaseAuto extends LinearOpMode {
             sleep(100);
         }
         currentSide = coneImgPipeline.getSleeveSide();
+        webCam.closeCameraDevice();
 
         waitForStart();
         telemetry.addData("Message : ", coneImgPipeline.getDetectMsg());
         telemetry.addData("Sleeve: ", currentSide);
         telemetry.update();
-
-        //webCam.closeCameraDevice();
 
         switch ( currentSide) {
             case Sleev1: {
