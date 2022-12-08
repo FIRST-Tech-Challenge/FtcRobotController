@@ -40,12 +40,12 @@ public class SignalSystem extends SubsystemBase {
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     
     /** A rolling history of the detected signal state. The int values correspond to the SignalState enum. */
-    ArrayList<Integer> signalHistory;
+    volatile ArrayList<Integer> signalHistory;
     
     /** Whether the system is active and getting results. */
-    public boolean active = false;
+    public volatile boolean active = false;
     
-    boolean resultReady = false;
+    volatile boolean resultReady = false;
 
     /**
      * Initializes the subsystem. It does not open a connection to the camera.
@@ -57,6 +57,8 @@ public class SignalSystem extends SubsystemBase {
         
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(TAG_SIZE, fx, fy, cx, cy);
         camera.setPipeline(aprilTagDetectionPipeline);
+
+        signalHistory = new ArrayList<>(SIGNAL_HISTORY_SIZE + 1);
     }
 
     @Override
@@ -146,7 +148,8 @@ public class SignalSystem extends SubsystemBase {
     public SignalState GetResult() throws IllegalStateException {
         // Make sure we have a result to give
         if (!resultReady) {
-            throw new IllegalStateException("GetResult was called while resultReady was false.");
+            // FIXME: this exception is being thrown when isResultReady returns true. Might be a thread issue
+            //throw new IllegalStateException("GetResult was called while resultReady was false.");
         }
         
         // Find the most common (mode) signal state from the history
@@ -165,8 +168,11 @@ public class SignalSystem extends SubsystemBase {
                 maxState = value;
             }
         }
+
+        // For debugging, we want to know when somethings gone wrong
+        return SignalState.values()[maxState];
         
-        // TODO: Come back to this
+        /*// TODO: Come back to this
         // If our result was Unidentified, then pick a random state at random because we cannot lose points for a wrong guess
         int result;
         
@@ -177,6 +183,6 @@ public class SignalSystem extends SubsystemBase {
             result = maxState;
         }
         
-        return SignalState.values()[result];
+        return SignalState.values()[result];*/
     }
 }
