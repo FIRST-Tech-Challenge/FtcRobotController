@@ -56,8 +56,8 @@ import java.util.List;
 public class SampleMecanumDrive extends MecanumDrive {
 
     //Fix values
-    public static int SLIDE_HIGH = 1320;
-    public static int SLIDE_MIDDLE = 710;
+    public static int SLIDE_HIGH = 1160;
+    public static int SLIDE_MIDDLE = 550;
     public static int SLIDE_BOTTOM = 0;
 
     //Fix values
@@ -193,6 +193,16 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlide.setPower(.6);
         frontSlide.setPower(.6);
         //set arm to middle
+    }
+
+    public void liftMiddle() {
+        closeClaw();
+        linearSlide.setTargetPosition(SLIDE_MIDDLE);
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontSlide.setTargetPosition(SLIDE_MIDDLE);
+        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setPower(.2);
+        frontSlide.setPower(.2);
     }
 
     public void liftDown() {
