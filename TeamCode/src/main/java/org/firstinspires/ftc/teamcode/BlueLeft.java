@@ -75,13 +75,13 @@ public class BlueLeft extends LinearOpMode {
             Left.setPower(0);
 
             move(1,-500);
-            spin(140, -1600);
+            gyroTurning(180);
+            spin(100, -1600);
             sleep(1000);
-            move(1, -300);
+            move(1, 500);
 
             /*
-            gyroTurning(180);
-            move(1, -300);
+
             crane(-1500);
             Left.setPower(-1);
             crane(-1600);
