@@ -35,9 +35,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+
+import java.util.ArrayList;
 
 public class HuskyAutoBase extends LinearOpMode {
     /* Declare OpMode members. */
@@ -58,8 +61,6 @@ public class HuskyAutoBase extends LinearOpMode {
     public static final double AUTO_STRAFE_SPEED = 0.5;
     public static final int TURN_TRAVEL_INCHES = 19;
 
-    public static int INIT_WAIT_SECS = 0;
-
     // Lens intrinsics
     // UNITS ARE PIXELS
     // The intrinsics only matter if we are utilizing the translation and rotation values of the April tag, which we don't need in this game.
@@ -70,15 +71,16 @@ public class HuskyAutoBase extends LinearOpMode {
     double cy = 221.506;
 
     // UNITS ARE METERS
-    double aprilTagSize = 0.166;
+    double aprilTagSize = 0.02794;
 
     // Apriltag ID 1, 2, 3 from the 36h11 family
     final int LOCATION_1_TAG_ID = 1;
     final int LOCATION_2_TAG_ID = 2;
     final int LOCATION_3_TAG_ID = 3;
 
-    public static double FORWARD_DISTANCE = 28;
-    public static double STRAFE_DISTANCE = 26;
+    public static double FORWARD_DISTANCE = 29;
+    public static double STRAFE_DISTANCE = 27;
+    public static double BACKUP_STRAFE_DISTANCE = 8;
 
     OpenCVPipeline pipeline;
 
@@ -104,7 +106,7 @@ public class HuskyAutoBase extends LinearOpMode {
         huskyBot.webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
         huskyBot.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened() { huskyBot.webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); }
+            public void onOpened() { huskyBot.webcam.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT); }
 
             @Override
             public void onError(int errorCode) { }
@@ -124,6 +126,9 @@ public class HuskyAutoBase extends LinearOpMode {
         // target is same for all motors
         int target = (int) (distanceInches * COUNTS_PER_INCH);
         driveToTarget(speed, target, target, target, target, timeoutSecs);
+
+        // Wait after move is complete
+        sleep(250);
     }
 
     public void encoderTurn(double speed, double angleDegrees, double timeoutSecs) {
@@ -148,6 +153,9 @@ public class HuskyAutoBase extends LinearOpMode {
         // Determine new target position, and pass to motor controller
         int target = (int) (distanceInches * COUNTS_PER_INCH);
         driveToTarget(speed, (int) (target * 1.2), (int) (-target * 1.1), -target, target, timeoutSecs);
+
+        // Wait after move is complete
+        sleep(250);
     }
 
     private void resetDriveEncoders() {
@@ -211,6 +219,42 @@ public class HuskyAutoBase extends LinearOpMode {
 
             //  sleep(250);   // optional pause after each move
         }
+    }
+
+    public Location getParkLocation(){
+        boolean tagFound = false;
+        Location parkLocation = Location.LOCATION_0;
+
+        // get the park location with timeout of 3 seconds.
+        while (opModeIsActive() && (runtime.seconds() < 3)) {
+            ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
+
+            if(currentDetections.size() != 0) {
+                for(AprilTagDetection tag : currentDetections) {
+                    switch (tag.id){
+                        case LOCATION_1_TAG_ID:
+                            tagFound = true;
+                            parkLocation = Location.LOCATION_1;
+                            break;
+                        case LOCATION_2_TAG_ID:
+                            tagFound = true;
+                            parkLocation = Location.LOCATION_2;
+                            break;
+                        case LOCATION_3_TAG_ID:
+                            tagFound = true;
+                            parkLocation = Location.LOCATION_3;
+                            break;
+                    }
+                }
+            }
+
+            if(tagFound)
+                break;
+
+            sleep(50);
+        }
+
+        return parkLocation;
     }
 
     private void displayTelemetry() {

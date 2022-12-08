@@ -29,18 +29,10 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.HuskyBot.CLAW_GRAB_OPEN_POSITION;
-import static org.firstinspires.ftc.teamcode.HuskyBot.CLAW_LIFT_START_POSITION;
-import static org.firstinspires.ftc.teamcode.HuskyBot.CLAW_ROTATE_START_POSITION;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import org.openftc.apriltag.AprilTagDetection;
-import java.util.ArrayList;
 
 @Autonomous(name = "Auto", group = "Auto", preselectTeleOp = "Husky TeleOpMode")
 public class HuskyAuto extends HuskyAutoBase {
-    boolean tagFound = false;
-
     @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -48,70 +40,35 @@ public class HuskyAuto extends HuskyAutoBase {
         waitForStart();
         runtime.reset();
 
-        // initial wait time if needed
-        while (opModeIsActive() && (runtime.seconds() < INIT_WAIT_SECS)) {
+        this.parkLocation = getParkLocation();
+
+        // Backup plan for apriltag detection (move the robot little bit right and try to detect again
+        if(this.parkLocation == Location.LOCATION_0){
+            encoderStrafe(AUTO_STRAFE_SPEED, BACKUP_STRAFE_DISTANCE, 2);
+            this.parkLocation = getParkLocation();
+            encoderStrafe(AUTO_STRAFE_SPEED, -BACKUP_STRAFE_DISTANCE, 2);
         }
 
-        telemetry.addLine("Searching for the tag..");
-        telemetry.update();
-
-        runtime.reset();
-
-        // get the park location with timeout of 5 seconds.
-        while (opModeIsActive() && (runtime.seconds() < 5)) {
-            ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
-
-            if(currentDetections.size() != 0) {
-                for(AprilTagDetection tag : currentDetections) {
-                    switch (tag.id){
-                        case LOCATION_1_TAG_ID:
-                            this.tagFound = true;
-                            this.parkLocation = Location.LOCATION_1;
-                            break;
-                        case LOCATION_2_TAG_ID:
-                            this.tagFound = true;
-                            this.parkLocation = Location.LOCATION_2;
-                            break;
-                        case LOCATION_3_TAG_ID:
-                            this.tagFound = true;
-                            this.parkLocation = Location.LOCATION_3;
-                            break;
-                    }
-                }
-            }
-
-            sleep(50);
-        }
-
-        if(this.tagFound)
-            telemetry.addLine("Found the tag! Parking at location " + this.parkLocation);
-        else{
-            // Set the park location to 2 if it couldn't detect the apriltag.
+        // Set the park location to 2 if it couldn't detect the apriltag even after the backup plan
+        if(this.parkLocation == Location.LOCATION_0){
+            telemetry.addLine("No detection!");
             this.parkLocation = Location.LOCATION_2;
-            telemetry.addLine("Couldn't find the tag! Parking at location 2 (33.3% chance :D) " + this.parkLocation);
         }
 
-        telemetry.update();
-
-        // Open the claw before moving forward
-        huskyBot.clawLift.setPosition(CLAW_LIFT_START_POSITION);
-        huskyBot.clawGrab.setPosition(CLAW_GRAB_OPEN_POSITION);
-        huskyBot.clawRotate.setPosition(CLAW_ROTATE_START_POSITION);
-
-        if (this.parkLocation == Location.LOCATION_1) {
-            // If the park location is 1, park at location 1
-            encoderDrive(AUTO_DRIVE_SPEED, FORWARD_DISTANCE, 2);
-            encoderStrafe(AUTO_STRAFE_SPEED, -STRAFE_DISTANCE, 2);
-        } else if (this.parkLocation == Location.LOCATION_2) {
-            // If the park location is 2, park at location 2
-            encoderDrive(AUTO_DRIVE_SPEED, FORWARD_DISTANCE, 2);
-        } else if(this.parkLocation == Location.LOCATION_3) {
-            // If the park location is 1, park at location 3
-            encoderDrive(AUTO_DRIVE_SPEED, FORWARD_DISTANCE, 2);
-            encoderStrafe(AUTO_STRAFE_SPEED, STRAFE_DISTANCE, 2);
+        switch (this.parkLocation){
+            case LOCATION_1:
+                encoderDrive(AUTO_DRIVE_SPEED, FORWARD_DISTANCE, 2);
+                encoderStrafe(AUTO_STRAFE_SPEED, -STRAFE_DISTANCE, 2);
+                break;
+            case LOCATION_2:
+                encoderDrive(AUTO_DRIVE_SPEED, FORWARD_DISTANCE, 2);
+                break;
+            case LOCATION_3:
+                encoderDrive(AUTO_DRIVE_SPEED, FORWARD_DISTANCE, 2);
+                encoderStrafe(AUTO_STRAFE_SPEED, STRAFE_DISTANCE, 2);
+                break;
         }
 
-        telemetry.addData("Path", "Complete");
         telemetry.update();
     }
 }
