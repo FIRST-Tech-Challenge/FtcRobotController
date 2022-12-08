@@ -33,7 +33,7 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.6'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.7'
     implementation 'com.acmerobotics.roadrunner:core:1.0.0-beta0'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
