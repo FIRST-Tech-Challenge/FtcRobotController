@@ -36,8 +36,8 @@ public class PowerPlayTeleopBase extends LinearOpMode {
     double maxPowerConstraint = 0.75;
 
     //Fix values
-    public static int SLIDE_HIGH = 1320;
-    public static int SLIDE_MIDDLE = 710;
+    public static int SLIDE_HIGH = 1150;
+    public static int SLIDE_MIDDLE = 550;
     public static int SLIDE_BOTTOM = 0;
 
     //Fix values
@@ -46,6 +46,7 @@ public class PowerPlayTeleopBase extends LinearOpMode {
     protected final int armMotorBottom = 0;
     protected final int armMotorTop = 600;
     protected final int armMotorMid = 450;
+    protected final int armMotorBottomJunction = 400;
 
 
 
@@ -114,6 +115,7 @@ public class PowerPlayTeleopBase extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
 //        armMotor.setPosition(.15);
         clawServo.setPosition(clawServoOpen);
+        boolean moveArm = false;
 
         waitForStart();
         runtime.reset();
@@ -188,6 +190,7 @@ public class PowerPlayTeleopBase extends LinearOpMode {
             }
 
             if (gamepad2.dpad_up) {
+                moveArm = false;
                 clawServo.setPosition(clawServoClosed);
                 armMotor.setTargetPosition(armMotorMid);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -201,6 +204,7 @@ public class PowerPlayTeleopBase extends LinearOpMode {
             }
 
             if (gamepad2.dpad_right) {
+                moveArm = false;
                 clawServo.setPosition(clawServoClosed);
                 armMotor.setTargetPosition(armMotorMid);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -214,8 +218,9 @@ public class PowerPlayTeleopBase extends LinearOpMode {
             }
 
             if (gamepad2.dpad_down) {
+                moveArm = false;
                 clawServo.setPosition(clawServoClosed);
-                armMotor.setTargetPosition(armMotorMid);
+                armMotor.setTargetPosition(armMotorBottomJunction);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
                 linearSlideMotor.setTargetPosition(SLIDE_BOTTOM);
@@ -227,6 +232,7 @@ public class PowerPlayTeleopBase extends LinearOpMode {
             }
 
             if (gamepad2.dpad_left) {
+                moveArm = false;
                 clawServo.setPosition(clawServoClosed);
                 linearSlideMotor.setTargetPosition(SLIDE_BOTTOM);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -245,21 +251,35 @@ public class PowerPlayTeleopBase extends LinearOpMode {
                 armMotor.setPower(0.3);
             }
 
-//            if (Math.abs(gamepad2.left_stick_y) < 0.2) {
-//                linearSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//                linearSlideMotor.setPower(gamepad2.left_stick_y/2);
-//            }
 
             if (gamepad2.right_stick_y > 0.6) {
                 armMotor.setTargetPosition(armMotorBottom);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
+                moveArm= false;
             } else if (gamepad2.right_stick_y < -0.6) {
                 armMotor.setTargetPosition(armMotorMid);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
+                moveArm=false;
             }
 
+
+            if (gamepad2.left_stick_y>0.6){
+
+                armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                moveArm = true;
+                armMotor.setPower(-0.3);
+            }
+            else if (gamepad2.left_stick_y<-0.6){
+                moveArm = true;
+                armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armMotor.setPower(0.4);
+            }else if (moveArm) {
+                armMotor.setTargetPosition(armMotor.getCurrentPosition());
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(0.3);
+            }
 
             telemetry.update();
         }

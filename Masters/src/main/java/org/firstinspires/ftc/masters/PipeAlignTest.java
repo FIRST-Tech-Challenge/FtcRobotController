@@ -92,11 +92,16 @@ public class PipeAlignTest extends LinearOpMode {
                     leftRearMotor.setPower(-.14);
                     rightRearMotor.setPower(.14);
                 }
-                if (myPipeline.center.x >= 220) {
+                else if (myPipeline.center.x >= 220) {
                     leftFrontMotor.setPower(.14);
                     rightFrontMotor.setPower(-.14);
                     leftRearMotor.setPower(.14);
                     rightRearMotor.setPower(-.14);
+                } else {
+                    leftFrontMotor.setPower(0);
+                    rightFrontMotor.setPower(0);
+                    leftRearMotor.setPower(0);
+                    rightRearMotor.setPower(0);
                 }
                 telemetry.update();
 //            }
