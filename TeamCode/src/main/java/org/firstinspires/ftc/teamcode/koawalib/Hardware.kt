@@ -42,8 +42,10 @@ class Hardware(startPose: Pose) {
     val liftLeadMotor = MotorFactory("liftLead")
         .float
         .forward
+        .reverse
         .createEncoder(EncoderFactory(LiftConstants.ticksPerUnit)
             .zero(LiftConstants.homePos)
+            .reverse
         )
         .withPositionControl(
             PIDGains(LiftConstants.kP, LiftConstants.kI, LiftConstants.kD),
