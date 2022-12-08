@@ -35,6 +35,13 @@ public class LeftCornerAuto extends LinearOpMode {
             frontRightMotor.setPower(-1);
             backLeftMotor.setPower(-1);
             backRightMotor.setPower(-1);
+
+            sleep(10000);
+
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            backLeftMotor.setPower(0);
+            backRightMotor.setPower(0);
         }
     }
 }
