@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class RightCornerAuto extends LinearOpMode {
+public class LeftCornerAuto extends LinearOpMode {
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
     DcMotor backLeftMotor;
@@ -31,10 +31,10 @@ public class RightCornerAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Runs in a loop when the start button is pressed on the driver hub
-            frontLeftMotor.setPower(1);
-            frontRightMotor.setPower(1);
-            backLeftMotor.setPower(1);
-            backRightMotor.setPower(1);
+            frontLeftMotor.setPower(-1);
+            frontRightMotor.setPower(-1);
+            backLeftMotor.setPower(-1);
+            backRightMotor.setPower(-1);
         }
     }
 }
