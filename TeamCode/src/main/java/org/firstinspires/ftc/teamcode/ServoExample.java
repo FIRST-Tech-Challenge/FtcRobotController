@@ -157,7 +157,6 @@ public class ServoExample extends LinearOpMode {
             // This ensures that the robot maintains the desired motion.
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
 
-
             if (max > 1.0) {
                 leftFrontPower  /= max;
                 rightFrontPower /= max;

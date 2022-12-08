@@ -9,9 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.CRServo;
 
-//poop
-
-
 @TeleOp(name="LinearSlide", group="Linear Opmode")
 
 public class LinearSlide extends LinearOpMode {
