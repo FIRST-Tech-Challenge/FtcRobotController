@@ -141,7 +141,7 @@ public class HardwareSlimbot
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
-    public boolean          liftMotorLogging   = false; // only enable during development!!
+    public boolean          liftMotorLogging   = false; // only enable during development!! (RVS)
     public final static int LIFTMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
     protected double[]      liftMotorLogTime   = new double[LIFTMOTORLOG_SIZE];  // msec
     protected double[]      liftMotorLogAngle  = new double[LIFTMOTORLOG_SIZE];  // Angle [degrees]
@@ -171,15 +171,16 @@ public class HardwareSlimbot
     public Servo        leftTiltServo       = null;   // tilt GRABBER up/down (left arm)
     public Servo        rightTiltServo      = null;   // tilt GRABBER up/down (right arm)
 
-    public double       currentTilt         =  0.00;
-    public double       GRABBER_TILT_MAX    =  0.50;  // 0.5 (max) is up; -0.5 (min) is down
-    public double       GRABBER_TILT_BACK_H =  0.17;  // Backward scoring on the high pole
-    public double       GRABBER_TILT_INIT   =  0.00;  // Pointing straight up
-    public double       GRABBER_TILT_STORE  = -0.17;  // Stored angle for autonomous driving around
-    public double       GRABBER_TILT_AUTO_F = -0.17;  // 45deg tilt for front scoring in autonomous
-    public double       GRABBER_TILT_FRONT_H = -0.17;  // Stored angle for autonomous driving around
-    public double       GRABBER_TILT_GRAB   = -0.31;  // Out horizontal for grabbing in the front
-    public double       GRABBER_TILT_MIN    = -0.50;  // As far down as we can tilt (manual control)
+    public double       currentTilt          =  0.00;  // This holds the most recent grabber tilt command
+    public double       GRABBER_TILT_MAX     =  0.50;  // 0.5 (max) is up; -0.5 (min) is down
+    public double       GRABBER_TILT_BACK_H  =  0.17;  // Backward scoring on the high pole
+    public double       GRABBER_TILT_INIT    =  0.00;  // Pointing straight up (overlaps front lift motor at some heights!)
+    public double       GRABBER_TILT_SAFE    = -0.15;  // Maximum upward tilt that's safe to raise/lower collector past front lift motor
+    public double       GRABBER_TILT_STORE   = -0.17;  // Stored angle for autonomous driving around
+    public double       GRABBER_TILT_AUTO_F  = -0.17;  // 45deg tilt for front scoring in autonomous
+    public double       GRABBER_TILT_FRONT_H = -0.17; // Backward scoring on the high pole
+    public double       GRABBER_TILT_GRAB    = -0.31;  // Extended horizontal at ground level for grabbing (front)
+    public double       GRABBER_TILT_MIN     = -0.50;  // As far down as we can tilt (manual control)
 
     public Servo        rotateServo         = null;   // rotate GRABBER left/right
     public double       GRABBER_ROTATE_UP   = 0.335;  // normal (upright) orientation
@@ -602,6 +603,7 @@ public class HardwareSlimbot
             // Current distance from target (angle degrees)
             double degreesToGo = liftAngleTarget - liftAngle;
             // Have we achieved the target?
+            // (temporarily limit to 16 cycles when verifying any major math changes!)
 //          if( liftMotorCycles >= 16 ) {
             if( Math.abs(degreesToGo) < 0.8 ) {
                 liftMotorsSetPower( 0.0 );
@@ -617,18 +619,18 @@ public class HardwareSlimbot
                 // Are we LOWERING (little power required) or LIFTING (much power required)?
                 boolean lowering = (frontside && (degreesToGo > 0.0)) ||
                                   (!frontside && (degreesToGo < 0.0));
-                // Compute a base power setting based on distance-from-target
+                // Compute "base" motor power setting based on distance-from-target
                 //   15 deg = 0.60 motor power (0.30 lowering | 0.90 lifting)
                 //   10 deg = 0.50 motor power (0.25 lowering | 0.75 lifting)
                 //    5 deg = 0.40 motor power (0.20 lowering | 0.60 lifting)
                 //    1 deg = 0.32 motor power (0.16 lowering | 0.48 lifting)
                 double minPower = (degreesToGo > 0.0)? -0.30 : +0.30;
-                double liftMotorPower = minPower + (degreesToGo * -0.02);
-                // adjust for lowering/lifting
+                double liftMotorPower = minPower + (degreesToGo * -0.02); // our PID is just "P"
+                // adjust base power according to lowering/lifting (lowering cuts it; raising boosts it)
                 liftMotorPower *= (lowering)? 0.50 : 1.50;
-                // Never exceed 80% motor power, even if a long distance from target
-                if( liftMotorPower >  0.80 ) liftMotorPower =  0.80;
-                if( liftMotorPower < -0.80 ) liftMotorPower = -0.80;
+                // Never exceed 80% motor power, even if a long distance from target (gear slippage!)
+                if( liftMotorPower >  0.80 ) liftMotorPower =  0.80;    // 0.98? (RVS)
+                if( liftMotorPower < -0.80 ) liftMotorPower = -0.80;    // 0.98? (RVS)
                 liftMotorsSetPower( liftMotorPower );
                 // Reset the wait count back to zero
                 liftMotorWait = 0;
@@ -715,6 +717,8 @@ public class HardwareSlimbot
             // Current distance from target (angle degrees)
             double degreesToGo = turretAngleTarget - turretAngle;
             // Have we achieved the target?
+            // (temporarily limit to 16 cycles when verifying any major math changes!)
+//          if( turretMotorCycles >= 16 ) {
             if( Math.abs(degreesToGo) < 1.0 ) {
                 turretMotor.setPower( 0.0 );
                 if( ++turretMotorWait >= 2 ) {

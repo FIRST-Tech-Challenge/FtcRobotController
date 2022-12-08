@@ -42,11 +42,30 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     double robotEncoderWheelDistance            = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * robot.COUNTS_PER_INCH2;
     double horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
+
+    // NOTE: Initializing the odometry global X-Y and ANGLE to 0-0 and 0deg means the frame of reference for all movements is
+    // the starting positiong/orientation of the robot.  An alternative is to make the bottom-left corner of the field the 0-0
+    // point, with 0deg pointing forward.  That allows all absolute driveToPosition() commands to be an absolute x-y location
+    // on the field.
     double robotGlobalXCoordinatePosition       = 0.0;   // in odometer counts
     double robotGlobalYCoordinatePosition       = 0.0;
     double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
-
+    
+    double autoXpos                             = 0.0;   // Keeps track of our Autonomous X-Y position and Angle commands. 
+    double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
+    double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
+    
     int    fiveStackCycles                      = 0;
+
+    // gamepad controls for changing autonomous options
+    boolean gamepad1_l_bumper_last, gamepad1_l_bumper_now=false;
+    boolean gamepad1_r_bumper_last, gamepad1_r_bumper_now=false;
+
+    /*---------------------------------------------------------------------------------*/
+    void captureGamepad1Buttons() {
+        gamepad1_l_bumper_last = gamepad1_l_bumper_now;    gamepad1_l_bumper_now = gamepad1.left_bumper;
+        gamepad1_r_bumper_last = gamepad1_r_bumper_now;    gamepad1_r_bumper_now = gamepad1.right_bumper;
+    } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------------------
      * getAngle queries the current gyro angle
@@ -531,7 +550,6 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param drive_angle (degrees; 0deg is straight ahead)
      * @param move_power
      * @param turn_power
-     * @return boolean true/false for DONE?
      */
     public void driveToPosition( double x_target, double y_target, double drive_angle,
                                   double move_power, double turn_power ) {
@@ -618,7 +636,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             frontRight /= maxWheelPower;
         }
         // If the computed wheel powers drop below 5% (minimum needed to produce robot movement)
-        // go ahead and abort as we'll be stuck here forever if we don't
+        // go ahead and abort as we'll be stuck here forever if we don't (RVS)
         if( maxWheelPower < 0.05 ) {
             return true;
         }
