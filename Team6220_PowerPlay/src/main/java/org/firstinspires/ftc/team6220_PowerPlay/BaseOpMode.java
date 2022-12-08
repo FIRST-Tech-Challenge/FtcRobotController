@@ -89,7 +89,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION);
+        servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
 
     public void driveWithIMU(double xPower, double yPower, double tPower) {
@@ -135,14 +135,10 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     /**
      * this method will allow the grabber to open or close given a boolean input
-     * @param isOpen true for open grabber and false for closed grabber
+     * @param position the position of the grabber
      */
-    public void driveGrabber(boolean isOpen) {
-        if (isOpen) {
-            servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION);
-        } else {
-            servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
-        }
+    public void driveGrabber(double position) {
+        servoGrabber.setPosition(position);
     }
 
     /**
@@ -150,7 +146,36 @@ public abstract class BaseOpMode extends LinearOpMode {
      * @param targetPosition target position for vertical slides motors in ticks
      */
     public void driveSlides(int targetPosition) {
+        int error = targetPosition - motorLeftSlides.getCurrentPosition();
 
+        // slides not yet at target position
+        if (Math.abs(error) > 25) {
+
+            // slides going down
+            if (error < 0) {
+
+                // slides above low junction
+                if (motorLeftSlides.getCurrentPosition() > Constants.SLIDE_LOW) {
+                    motorLeftSlides.setPower(-0.05);
+                    motorRightSlides.setPower(-0.05);
+
+                // slides below low junction
+                } else {
+                    motorLeftSlides.setPower(-1);
+                    motorRightSlides.setPower(-1);
+                }
+
+            // slides going up
+            } else {
+                motorLeftSlides.setPower(0.75);
+                motorRightSlides.setPower(0.75);
+            }
+
+        // slides at target position so holding position
+        } else {
+            motorLeftSlides.setPower(0.1);
+            motorRightSlides.setPower(0.1);
+        }
     }
 
     /**

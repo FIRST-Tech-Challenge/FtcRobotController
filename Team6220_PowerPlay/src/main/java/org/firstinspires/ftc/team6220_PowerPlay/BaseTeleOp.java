@@ -26,17 +26,17 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
     public void driveGrabberWithController() {
         if (gamepad2.a) {
-            driveGrabber(false);
+            driveGrabber(Constants.GRABBER_CLOSE_POSITION);
         } else if (gamepad2.x) {
-            driveGrabber(true);
+            driveGrabber(Constants.GRABBER_OPEN_POSITION);
         }
     }
 
     public void driveSlidesWithController() {
-        if (-gamepad2.left_stick_y < 0 && motorLeftSlides.getCurrentPosition() > 600) {
+        if (-gamepad2.left_stick_y < 0 && motorLeftSlides.getCurrentPosition() > Constants.SLIDE_LOW) {
             motorLeftSlides.setPower(-gamepad2.left_stick_y * 0.05);
             motorRightSlides.setPower(-gamepad2.left_stick_y * 0.05);
-        } else if (-gamepad2.left_stick_y < 0 && motorLeftSlides.getCurrentPosition() <= 600) {
+        } else if (-gamepad2.left_stick_y < 0 && motorLeftSlides.getCurrentPosition() <= Constants.SLIDE_LOW) {
             motorLeftSlides.setPower(-gamepad2.left_stick_y);
             motorRightSlides.setPower(-gamepad2.left_stick_y);
         } else {
