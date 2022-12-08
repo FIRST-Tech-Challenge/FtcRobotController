@@ -38,18 +38,12 @@ public class LinearSlide extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        // If making a new Auto or TeleOp file, make sure to include waitForStart so it can pass
-        // inspection and you don't get dq-ed from tourneys (mainly for Auto)
+        
         waitForStart();
         runtime.reset();
 
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            // Look through old files to try to find POV Mode. Currently using tank drive code
-
             boolean liftUp = gamepad1.dpad_up;
             boolean liftDown = gamepad1.dpad_down;
 
@@ -63,7 +57,6 @@ public class LinearSlide extends LinearOpMode {
                 waitTime(.5);
                 liftMotor.setPower(0);
             }
-            // Show the elapsed game time and wheel power.
         }
     }
 }

@@ -124,7 +124,7 @@ public class ServoExample extends LinearOpMode {
                 waitTime(.5);
                 liftMotor.setPower(0);
             }
-            
+
             //Code for drivetrain (gamepad1)
             if(left < .05 && left> -.05){
                 left = 0;
