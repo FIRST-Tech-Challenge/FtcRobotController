@@ -6,17 +6,16 @@ public abstract class BaseTeleOp extends BaseOpMode {
     double tPower;
 
     public void driveChassisWithController() {
-        xPower = gamepad1.left_stick_x * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
-        yPower = gamepad1.left_stick_y * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
-        tPower = gamepad1.right_stick_x * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
+        xPower = gamepad1.left_stick_x * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
+        yPower = gamepad1.left_stick_y * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
+        tPower = gamepad1.right_stick_x * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
 
-        // atan2 determines angle between the two sticks
         // case for driving the robot left and right
-        if (Math.abs(Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x)) > Constants.DRIVE_DEADZONE_DEGREES) {
+        if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) < Constants.DRIVE_DEADZONE_DEGREES) {
             driveWithIMU(xPower, 0.0, tPower);
 
         // case for driving the robot forwards and backwards
-        } else if (Math.abs(Math.atan2(gamepad1.left_stick_x, gamepad1.left_stick_y)) > Constants.DRIVE_DEADZONE_DEGREES) {
+        } else if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) > Constants.DRIVE_DEADZONE_DEGREES) {
             driveWithIMU(0.0, yPower, tPower);
 
         // case for if the deadzone limits are passed, the robot drives normally
@@ -26,27 +25,37 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveGrabberWithController() {
-        if (gamepad2.x) {  // press x to close
+        if (gamepad2.a) {
             driveGrabber(false);
-        } else if (gamepad2.a) {  // press a to open
+        } else if (gamepad2.x) {
             driveGrabber(true);
         }
     }
 
     public void driveSlidesWithController() {
-        motorLVSlides.setPower(-gamepad2.left_stick_y);
-        motorRVSlides.setPower(-gamepad2.left_stick_y);
+        // if slides are above 600 ticks and going down then go down slowly
+        if (-gamepad2.left_stick_y < 0 && motorLeftSlides.getCurrentPosition() > 600) {
+            motorLeftSlides.setPower(-gamepad2.left_stick_y * 0.05);
+            motorRightSlides.setPower(-gamepad2.left_stick_y * 0.05);
 
-        if (motorLVSlides.getCurrentPosition() < 0) {
-            motorLVSlides.setPower(0.5);
-            motorRVSlides.setPower(0.5);
-        } else if (motorLVSlides.getCurrentPosition() > 9600) {
-            motorLVSlides.setPower(-0.5);
-            motorRVSlides.setPower(-0.5);
+        // if slides are below 600 ticks and going down then go down at full power
+        } else if (-gamepad2.left_stick_y < 0 && motorLeftSlides.getCurrentPosition() <= 600) {
+            motorLeftSlides.setPower(-gamepad2.left_stick_y);
+            motorRightSlides.setPower(-gamepad2.left_stick_y);
+
+        // if slides are going up then go up at 75% power
+        } else {
+            motorLeftSlides.setPower(-gamepad2.left_stick_y * 0.75);
+            motorRightSlides.setPower(-gamepad2.left_stick_y * 0.75);
+        }
+
+        if (motorLeftSlides.getCurrentPosition() < Constants.SLIDE_BOTTOM) {
+            motorLeftSlides.setPower(0.5);
+            motorRightSlides.setPower(0.5);
         }
     }
 
     public void driveTurntableWithController() {
-        driveTurntable(1.0, 0);
+        driveTurntable(0);
     }
 }

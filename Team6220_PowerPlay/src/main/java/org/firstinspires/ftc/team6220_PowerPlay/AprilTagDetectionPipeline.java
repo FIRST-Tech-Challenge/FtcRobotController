@@ -24,10 +24,10 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
     private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
 
     Mat cameraMatrix;
-    Scalar blue = new Scalar(7, 197, 235, 255);
-    Scalar red = new Scalar(255, 0, 0, 255);
-    Scalar green = new Scalar(0, 255, 0, 255);
-    Scalar white = new Scalar(255, 255, 255, 255);
+    private static final Scalar blue = new Scalar(7, 197, 235, 255);
+    private static final Scalar red = new Scalar(255, 0, 0, 255);
+    private static final Scalar green = new Scalar(0, 255, 0, 255);
+    private static final Scalar white = new Scalar(255, 255, 255, 255);
 
     double fx, fy, cx, cy;
     double tagSize, tagSizeX, tagSizeY;
@@ -106,7 +106,7 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
     }
 
     public void constructMatrix() {
-        cameraMatrix = new Mat(3,3, CvType.CV_32FC1);
+        cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
 
         cameraMatrix.put(0, 0, fx);
         cameraMatrix.put(0, 1, 0);
@@ -142,14 +142,14 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
 
     public void draw3DCubeMarker(Mat buffer, double length, double tagWidth, double tagHeight, int thickness, Mat rVector, Mat tVector, Mat cameraMatrix) {
         MatOfPoint3f axis = new MatOfPoint3f(
-                new Point3( -tagWidth / 2, tagHeight / 2, 0),
-                new Point3( tagWidth / 2, tagHeight / 2, 0),
-                new Point3( tagWidth / 2, -tagHeight / 2, 0),
-                new Point3( -tagWidth / 2, -tagHeight / 2, 0),
-                new Point3( -tagWidth / 2, tagHeight / 2, -length),
-                new Point3( tagWidth / 2, tagHeight / 2, -length),
-                new Point3( tagWidth / 2, -tagHeight / 2, -length),
-                new Point3( -tagWidth / 2, -tagHeight / 2, -length)
+                new Point3(-tagWidth / 2, tagHeight / 2, 0),
+                new Point3(tagWidth / 2, tagHeight / 2, 0),
+                new Point3(tagWidth / 2, -tagHeight / 2, 0),
+                new Point3(-tagWidth / 2, -tagHeight / 2, 0),
+                new Point3(-tagWidth / 2, tagHeight / 2, -length),
+                new Point3(tagWidth / 2, tagHeight / 2, -length),
+                new Point3(tagWidth / 2, -tagHeight / 2, -length),
+                new Point3(-tagWidth / 2, -tagHeight / 2, -length)
         );
 
         MatOfPoint2f matProjectedPoints = new MatOfPoint2f();

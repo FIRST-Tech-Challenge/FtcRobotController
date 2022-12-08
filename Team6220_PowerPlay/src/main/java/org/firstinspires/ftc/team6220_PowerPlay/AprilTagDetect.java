@@ -40,7 +40,7 @@ public abstract class AprilTagDetect extends BaseAutonomous {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(1920,1080, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -72,7 +72,7 @@ public abstract class AprilTagDetect extends BaseAutonomous {
                     telemetry.addLine("Tag found!\n\nLocation data:\n");
                     tagToTelemetry(tagOfInterest);
 
-                    // tag was detected at some point but isn't currently being detected
+                // tag was detected at some point but isn't currently being detected
                 } else {
                     telemetry.addLine("Tag not found :(\n\nBut the tag has been sen before, last seen at:\n");
                     tagToTelemetry(tagOfInterest);

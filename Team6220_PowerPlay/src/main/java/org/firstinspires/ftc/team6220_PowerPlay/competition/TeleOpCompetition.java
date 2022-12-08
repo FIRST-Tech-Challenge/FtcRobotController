@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_PowerPlay.Competition;
+package org.firstinspires.ftc.team6220_PowerPlay.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -24,7 +24,9 @@ public class TeleOpCompetition extends BaseTeleOp {
             driveChassisWithController();
             driveGrabberWithController();
             driveSlidesWithController();
-            idle();
+
+            telemetry.addData("slide", motorLeftSlides.getCurrentPosition());
+            telemetry.update();
         }
     }
 }

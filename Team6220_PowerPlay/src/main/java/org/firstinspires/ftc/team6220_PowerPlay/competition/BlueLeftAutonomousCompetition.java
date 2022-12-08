@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_PowerPlay.Competition;
+package org.firstinspires.ftc.team6220_PowerPlay.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -15,13 +15,12 @@ public class BlueLeftAutonomousCompetition extends AprilTagDetect {
     public void runOpMode() throws InterruptedException {
         initialize();
 
-        servoGrabber.setPosition(0.45);
-        driveTurntable(1.0, Constants.TURNTABLE_DEFAULT_POSITION);
+        driveTurntable(0);
         int signal = detectAprilTag();
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        driveWithIMU(0.25, 0.0, 0.0);
-        sleep(1688);
+        driveWithIMU(0.0, -0.25, 0.0);
+        sleep(1700);
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         driveWithIMU(0.0, 0.0, 0.0);
@@ -30,8 +29,8 @@ public class BlueLeftAutonomousCompetition extends AprilTagDetect {
         switch (signal) {
             case 0:
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                driveWithIMU(0.0, -0.25, 0.0);
-                sleep(1550);
+                driveWithIMU(-0.25, 0.0, 0.0);
+                sleep(1500);
 
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 driveWithIMU(0.0, 0.0, 0.0);
@@ -42,8 +41,8 @@ public class BlueLeftAutonomousCompetition extends AprilTagDetect {
 
             case 2:
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                driveWithIMU(0.0, 0.25, 0.0);
-                sleep(1400);
+                driveWithIMU(0.25, 0.0, 0.0);
+                sleep(1500);
 
                 IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 driveWithIMU(0.0, 0.0, 0.0);

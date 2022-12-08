@@ -5,76 +5,122 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public abstract class BaseAutonomous extends BaseOpMode {
 
     /**
-     * this method will allow the robot to drive straight in a specified direction using the IMU given a specified heading and distance
+     * this method will allow the robot to drive straight in a specified direction given a specified heading and distance
      * @param heading 360-degree direction robot should move (front is 0)
      * @param targetDistance distance robot should move in inches
      */
-    public void driveOmniInches(int heading, double targetDistance) {
-        Position position = new Position(DistanceUnit.INCH, 0.0, 0.0, 0.0, 0);
-        Velocity velocity = new Velocity(DistanceUnit.INCH, 0.0, 0.0, 0.0, 0);
-
-        imu.startAccelerationIntegration(position, velocity, 10);
-
-        boolean distanceReached = false;
-
-        double distanceTraveled;
-        double angleDeviation;
-        double motorPower;
+    public void driveInches(double heading, double targetDistance) {
+        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         double turningPower;
 
-        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        // looking at robot from the back, x is left/right and y is forwards/backwards
+        double xPosition;
+        double yPosition;
 
-        while (!distanceReached && opModeIsActive()) {
-            angleDeviation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle;
+        double traveledDistance;
+        double remainingDistance = targetDistance;
 
-            turningPower = angleDeviation / 50;
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            // todo - fix distance
-            distanceTraveled = Math.sqrt(Math.pow(imu.getPosition().x, 2) + Math.pow(imu.getPosition().y, 2));
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            // todo - max linear acceleration where encoders don't slip, then 0, then max linear deceleration where encoders don't slip
-            motorPower = Math.max(Math.sqrt(Math.sin(distanceTraveled / targetDistance * Math.PI)) * 0.25, 0.1);
+        while (remainingDistance > 0 && opModeIsActive()) {
+            turningPower = (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle) / 100.0;
 
-            if (distanceTraveled > targetDistance) {
-                motorFL.setPower(0.0);
-                motorFR.setPower(0.0);
-                motorBL.setPower(0.0);
-                motorBR.setPower(0.0);
+            motorFL.setPower(0.3 + turningPower);
+            motorFR.setPower(0.3 - turningPower);
+            motorBL.setPower(0.3 + turningPower);
+            motorBR.setPower(0.3 - turningPower);
 
-                distanceReached = true;
+            xPosition = (motorFL.getCurrentPosition() - motorFR.getCurrentPosition() - motorBL.getCurrentPosition() + motorBR.getCurrentPosition()) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES / 4.0;
+            yPosition = (motorFL.getCurrentPosition() + motorFR.getCurrentPosition() + motorBL.getCurrentPosition() + motorBR.getCurrentPosition()) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES / 4.0;
 
-                imu.stopAccelerationIntegration();
-            }
-
-            // todo - make work for any heading
-            if (heading == 0) {
-                motorFL.setPower(motorPower + turningPower);
-                motorFR.setPower(motorPower - turningPower);
-                motorBL.setPower(motorPower + turningPower);
-                motorBR.setPower(motorPower - turningPower);
-            } else if (heading == 90) {
-                motorFL.setPower(-motorPower + turningPower);
-                motorFR.setPower(-motorPower - turningPower);
-                motorBL.setPower(-motorPower + turningPower);
-                motorBR.setPower(-motorPower - turningPower);
-            } else if (heading == 180) {
-                motorFL.setPower(-motorPower + turningPower);
-                motorFR.setPower(motorPower - turningPower);
-                motorBL.setPower(motorPower + turningPower);
-                motorBR.setPower(-motorPower - turningPower);
-            } else if (heading == 270) {
-                motorFL.setPower(motorPower + turningPower);
-                motorFR.setPower(-motorPower - turningPower);
-                motorBL.setPower(-motorPower + turningPower);
-                motorBR.setPower(motorPower - turningPower);
-            }
+            traveledDistance = Math.sqrt(Math.pow(xPosition, 2) + Math.pow(yPosition, 2));
+            remainingDistance = targetDistance - traveledDistance;
         }
+
+        motorFL.setPower(0.0);
+        motorFR.setPower(0.0);
+        motorBL.setPower(0.0);
+        motorBR.setPower(0.0);
+    }
+
+    /**
+     * this method will allow the robot to turn to a specified absolute angle using the IMU
+     * @param targetAngle absolute angle robot should turn to
+     */
+    public void turnToAngle(double targetAngle) {
+        double currentAngle;
+        double angleError = 1.0;
+        double motorPower;
+
+        while (Math.abs(angleError) >= 1 && opModeIsActive()) {
+            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            angleError = targetAngle - currentAngle + 45.0;
+
+            if (angleError > 180.0) {
+                angleError -= 360.0;
+            } else if (angleError < -180.0) {
+                angleError += 360.0;
+            }
+
+            // robot is turning counter-clockwise
+            if (angleError > 0) {
+                motorPower = Math.min(angleError / -180.0, -0.2);
+
+            // robot is turning clockwise
+            } else {
+                motorPower = Math.max(angleError / -180.0, 0.2);
+            }
+
+            motorFL.setPower(motorPower);
+            motorFR.setPower(-motorPower);
+            motorBL.setPower(motorPower);
+            motorBR.setPower(-motorPower);
+
+            telemetry.addData("current", currentAngle);
+            telemetry.addData("error", angleError);
+            telemetry.addData("power", motorPower);
+            telemetry.update();
+        }
+
+        motorFL.setPower(0.0);
+        motorFR.setPower(0.0);
+        motorBL.setPower(0.0);
+        motorBR.setPower(0.0);
+    }
+
+    public void driveSlidesToPosition(int position) {
+        int error = position - motorLeftSlides.getCurrentPosition();
+
+        while (Math.abs(error) > 25 && opModeIsActive()) {
+            if (error < 0) {
+                if (motorLeftSlides.getCurrentPosition() > 600) {
+                    motorLeftSlides.setPower(-0.05);
+                    motorRightSlides.setPower(-0.05);
+                } else {
+                    motorLeftSlides.setPower(-1);
+                    motorRightSlides.setPower(-1);
+                }
+            } else {
+                motorLeftSlides.setPower(1);
+                motorRightSlides.setPower(1);
+            }
+
+            error = position - motorLeftSlides.getCurrentPosition();
+        }
+
+        motorLeftSlides.setPower(0.0);
+        motorRightSlides.setPower(0.0);
     }
 }

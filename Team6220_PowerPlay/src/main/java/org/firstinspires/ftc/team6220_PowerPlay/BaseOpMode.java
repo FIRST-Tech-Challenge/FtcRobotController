@@ -3,7 +3,7 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -14,14 +14,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public abstract class BaseOpMode extends LinearOpMode {
 
     // motors
-    public static DcMotor motorFL;
-    public static DcMotor motorFR;
-    public static DcMotor motorBL;
-    public static DcMotor motorBR;
+    public static DcMotorEx motorFL;
+    public static DcMotorEx motorFR;
+    public static DcMotorEx motorBL;
+    public static DcMotorEx motorBR;
 
-    public static DcMotor motorTurntable;
-    public static DcMotor motorLVSlides;
-    public static DcMotor motorRVSlides;
+    public static DcMotorEx motorTurntable;
+    public static DcMotorEx motorLeftSlides;
+    public static DcMotorEx motorRightSlides;
 
     // servos
     public static Servo servoGrabber;
@@ -35,43 +35,50 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
-
         // motors
-        motorFL = hardwareMap.dcMotor.get("motorFL");
-        motorFR = hardwareMap.dcMotor.get("motorFR");
-        motorBL = hardwareMap.dcMotor.get("motorBL");
-        motorBR = hardwareMap.dcMotor.get("motorBR");
-        motorTurntable = hardwareMap.dcMotor.get("motorTurntable");
-        motorLVSlides = hardwareMap.dcMotor.get("motorLVSlides");
-        motorRVSlides = hardwareMap.dcMotor.get("motorRVSlides");
+        motorFL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFL");
+        motorFR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFR");
+        motorBL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBL");
+        motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
+        motorTurntable = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorTurntable");
+        motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLVSlides");
+        motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRVSlides");
 
-        motorFL.setDirection(DcMotor.Direction.FORWARD);
-        motorFR.setDirection(DcMotor.Direction.REVERSE);
-        motorBL.setDirection(DcMotor.Direction.FORWARD);
-        motorBR.setDirection(DcMotor.Direction.REVERSE);
-        motorLVSlides.setDirection(DcMotor.Direction.FORWARD);
-        motorRVSlides.setDirection(DcMotor.Direction.FORWARD);
-        motorTurntable.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotorEx.Direction.FORWARD);
+        motorFR.setDirection(DcMotorEx.Direction.REVERSE);
+        motorBL.setDirection(DcMotorEx.Direction.FORWARD);
+        motorBR.setDirection(DcMotorEx.Direction.REVERSE);
+        motorLeftSlides.setDirection(DcMotorEx.Direction.FORWARD);
+        motorRightSlides.setDirection(DcMotorEx.Direction.FORWARD);
+        motorTurntable.setDirection(DcMotorEx.Direction.FORWARD);
 
-        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorTurntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorFR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorTurntable.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorLeftSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorRightSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorFL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         motorTurntable.setTargetPosition(0);
-        motorTurntable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorTurntable.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motorTurntable.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        motorLVSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRVSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorRightSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // servos
         servoGrabber = hardwareMap.servo.get("servoGrabber");
@@ -79,21 +86,13 @@ public abstract class BaseOpMode extends LinearOpMode {
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        // preset the IMU angles so it doesn't start on null since it will only later be read when turning
-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
+        servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION);
     }
 
-    public void driveWithIMU(double xPower, double yPower, double tPower)  {
-
+    public void driveWithIMU(double xPower, double yPower, double tPower) {
         // read imu when turning (when t != 0)
         boolean isTurning = (tPower != 0);
 
@@ -147,20 +146,18 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * this method will allow the slides to move upwards, downwards, outwards, and inwards given a specified x target position and y target position
-     * @param yTargetPosition target position for vertical slides motors in ticks
+     * this method will allow the slides to move upwards and downwards given a specified target position
+     * @param targetPosition target position for vertical slides motors in ticks
      */
-    public void driveSlides(/*int xTargetPosition,*/ int yTargetPosition) {
+    public void driveSlides(int targetPosition) {
 
     }
 
     /**
      * this method will allow the turntable to turn clockwise or counterclockwise given a specified power and position
-     * @param power power of turntable motor
      * @param position target position of turntable motor in ticks
      */
-    public void driveTurntable(double power, int position) {
-        motorTurntable.setPower(power);
+    public void driveTurntable(int position) {
         motorTurntable.setTargetPosition(position);
     }
 }
