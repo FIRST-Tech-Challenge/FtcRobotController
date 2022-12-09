@@ -117,6 +117,7 @@ public class Autonomous_Blue_Right extends LinearOpMode {
             //"wheel_forward @1 @0.1",
             "sleep @500",
             "grip_max",
+            "sleep @500",
             //"wheel_back @1 @0.1",
             "wheel_turn_left @9 @0.1",
             "park_ai_position",
@@ -129,6 +130,7 @@ public class Autonomous_Blue_Right extends LinearOpMode {
             //"wheel_forward @1 @0.1",
             "sleep @500",
             "grip_max",
+            "sleep @500",
             //"wheel_back @1 @0.1",
             "wheel_turn_right @7 @0.1",
             "park_ai_position",
@@ -309,6 +311,16 @@ public class Autonomous_Blue_Right extends LinearOpMode {
                     controlWheels();
             }
             //sleep(1);
+        }
+        if (autoMode == false) {
+            threadWheel.interrupt();
+            threadArm.interrupt();
+        }
+        if (useCamera) {
+            if (tfod != null) {
+                tfod.deactivate();
+                tfod.shutdown();
+            }
         }
     }
 
@@ -1038,6 +1050,7 @@ public class Autonomous_Blue_Right extends LinearOpMode {
             }
             catch (Exception e) {
                 System.out.println("Exception is caught");
+                return;
             }
         }
     }
@@ -1052,6 +1065,7 @@ public class Autonomous_Blue_Right extends LinearOpMode {
             }
             catch (Exception e) {
                 System.out.println("Exception is caught");
+                return;
             }
         }
     }

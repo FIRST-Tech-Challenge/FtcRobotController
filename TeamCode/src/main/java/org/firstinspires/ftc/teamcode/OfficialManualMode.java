@@ -49,7 +49,7 @@ public class OfficialManualMode extends LinearOpMode {
     public double shoulderDefaultPosition = 0.15;
     public double shoulderMaxPosition = 0.94;
     public double shoulderMinPosition = 0.144;
-    public double elbowMaxPosition = 0.06; // manual mode need a litter higher
+    public double elbowMaxPosition = 0.046; // manual mode need a litter higher
     public double elbowMinPosition = 0.5;
     public double elbowDefaultPosition = 0.90;
     public double platformDefaultPosition = 0.654 ;
@@ -117,6 +117,7 @@ public class OfficialManualMode extends LinearOpMode {
             //"wheel_forward @1 @0.1",
             "sleep @500",
             "grip_max",
+            "sleep @500",
             //"wheel_back @1 @0.1",
             "wheel_turn_left @9 @0.1",
             "park_ai_position",
@@ -129,6 +130,7 @@ public class OfficialManualMode extends LinearOpMode {
             //"wheel_forward @1 @0.1",
             "sleep @500",
             "grip_max",
+            "sleep @500",
             //"wheel_back @1 @0.1",
             "wheel_turn_right @7 @0.1",
             "park_ai_position",
@@ -276,7 +278,7 @@ public class OfficialManualMode extends LinearOpMode {
 
         moreTimeToStart.reset();
         while (opModeIsActive()) {
-                if (moreTimeToStart.milliseconds() < 100) {
+            if (moreTimeToStart.milliseconds() < 100) {
                 telemetry.addData("Waiting millisecond: ", moreTimeToStart.milliseconds()  );
                 telemetry.update();
                 continue;
@@ -309,6 +311,16 @@ public class OfficialManualMode extends LinearOpMode {
                     controlWheels();
             }
             //sleep(1);
+        }
+        if (autoMode == false) {
+            threadWheel.interrupt();
+            threadArm.interrupt();
+        }
+        if (useCamera) {
+            if (tfod != null) {
+                tfod.deactivate();
+                tfod.shutdown();
+            }
         }
     }
 
@@ -503,12 +515,14 @@ public class OfficialManualMode extends LinearOpMode {
             playAction("shoulder_down", true);
             return;
         }
-        if (debugMode && gamepad2.dpad_left || (enablePad1Control && gamepad1.dpad_left)) {
-            playAction("platform_left", true);
+        if (gamepad2.dpad_left || (enablePad1Control && gamepad1.dpad_left)) {
+            //playAction("platform_left", true);
+            _platform.setPosition(platformDefaultPosition);
             return;
         }
-        if (debugMode && gamepad2.dpad_right || (enablePad1Control && gamepad1.dpad_right)) {
-            playAction("platform_right", true);
+        if ( gamepad2.dpad_right || (enablePad1Control && gamepad1.dpad_right)) {
+            //playAction("platform_right", true);
+            _platform.setPosition(platformDefaultPosition);
             return;
         }
         if ((gamepad2.left_trigger > 0 && gamepad2.right_trigger == 0) ||
@@ -1038,6 +1052,7 @@ public class OfficialManualMode extends LinearOpMode {
             }
             catch (Exception e) {
                 System.out.println("Exception is caught");
+                return;
             }
         }
     }
@@ -1052,6 +1067,7 @@ public class OfficialManualMode extends LinearOpMode {
             }
             catch (Exception e) {
                 System.out.println("Exception is caught");
+                return;
             }
         }
     }
