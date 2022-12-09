@@ -46,7 +46,8 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.8898; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
+    public static double GEAR_RATIO = 1;
+    //1.015
     public static double TRACK_WIDTH = 15.02; // in
 
     /*
@@ -55,8 +56,10 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.01835;
-    public static double kA = 0.0025;
+    public static double kV = 0.01652;
+    //old value: 0.01835
+    public static double kA = 0.00214;
+    //old: 0.0025
     public static double kStatic = 0.07;
 
     /*
@@ -106,3 +109,4 @@ public class DriveConstants {
         return 32767 / ticksPerSecond;
     }
 }
+
