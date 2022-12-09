@@ -2,7 +2,6 @@ package org.firstinspires.ftc.masters.trajectorySequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-import org.firstinspires.ftc.masters.EmptySequenceException;
 import org.firstinspires.ftc.masters.trajectorySequence.sequencesegment.SequenceSegment;
 
 import java.util.Collections;

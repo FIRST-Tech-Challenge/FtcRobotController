@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Teleop")
-public class TeleopGOODOneController extends LinearOpMode {
+@TeleOp(name = "Teleop 2 controllers")
+public class Teleop2Controllers extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
@@ -45,22 +45,22 @@ public class TeleopGOODOneController extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 //3250
-            if (gamepad1.dpad_up) {
-                if (linearslide.getCurrentPosition() < 3250) {
+            if (gamepad2.dpad_up) {
+                //if (linearslide.getCurrentPosition() < 3250) {
                     move = true;
                     linearslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     linearslide.setPower(0.5);
-                } else {
-                    linearslide.setPower(0);
-                }
-            } else if (gamepad1.dpad_down) {
-                if (linearslide.getCurrentPosition() > 0) {
+//                } else {
+                    //linearslide.setPower(0);
+               // }
+            } else if (gamepad2.dpad_down) {
+               // if (linearslide.getCurrentPosition() > 0) {
                     move = true;
                     linearslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     linearslide.setPower(-0.5);
-                } else {
-                    linearslide.setPower(0);
-                }
+//                } else {
+//                    linearslide.setPower(0);
+//                }
             } else {
                 if (move) {
                     move = false;
@@ -70,12 +70,12 @@ public class TeleopGOODOneController extends LinearOpMode {
                 }
             }
 
-            if (gamepad1.a) {
-                clawservo.setPosition(0);
+            if (gamepad2.a) {
+                clawservo.setPosition(0.75);
             }
 
-            if (gamepad1.b) {
-                clawservo.setPosition(.20);
+            if (gamepad2.b) {
+                clawservo.setPosition(.45);
             }
 
                 telemetry.addData("GamepadX", x);

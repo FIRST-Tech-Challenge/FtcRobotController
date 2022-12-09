@@ -50,6 +50,9 @@ import java.util.Locale;
  * {@link SensorBNO055IMUCalibration} calibrates the IMU accelerometer per
  * "Section 3.11 Calibration" of the BNO055 specification.
  *
+ *  Note: this is a Legacy example that will not work with newer Control/Expansion Hubs that use a different IMU
+ *  Please use the new SensorIMUOrthogonal or SensorIMUNonOrthogonal samples for a more universal IMU interface.
+ *
  * <p>Manual calibration of the IMU is definitely NOT necessary: except for the magnetometer
  * (which is not used by the default {@link BNO055IMU.SensorMode#IMU
  * SensorMode#IMU}), the BNO055 is internally self-calibrating and thus can be very successfully

@@ -6,13 +6,11 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.TICKS_PER_REV;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.encoderTicksToInches;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
-import static java.lang.Math.abs;
 
 import androidx.annotation.NonNull;
 
@@ -23,7 +21,6 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -34,102 +31,75 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.FreightFrenzyConstants;
-import org.firstinspires.ftc.masters.MultipleCameraCV;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.masters.util.AxesSigns;
-import org.firstinspires.ftc.masters.util.BNO055IMUUtil;
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(7, 0, 0);
+
+    //Fix values
+    public static int SLIDE_HIGH = 1160;
+    public static int SLIDE_MIDDLE = 550;
+    public static int SLIDE_BOTTOM = 0;
+
+    //Fix values
+    protected final double clawServoOpen = 0.14;
+    protected final double clawServoClosed = 0.0;
+    protected final int armMotorBottom = 0;
+    protected final int armMotorTop = 600;
+    protected final int armMotorMid = 450;
+
+
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.14;
+    public static double LATERAL_MULTIPLIER = 42.0/38.0;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
-    protected final TrajectorySequenceRunner trajectorySequenceRunner;
+    private TrajectorySequenceRunner trajectorySequenceRunner;
 
-    protected TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
-    protected TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
+    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
+    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
-    protected TrajectoryFollower follower;
+    private TrajectoryFollower follower;
 
-    protected final DcMotorEx frontLeft;
-    protected final DcMotorEx backLeft;
-    protected final DcMotorEx backRight;
-    protected final DcMotorEx frontRight;
-    protected final DcMotorEx carousel;
-    public DcMotor intakeMotor, linearSlideMotor;
-   // public DistanceSensor distanceSensorLeft, distanceSensorRight;
-   public DistanceSensor distanceSensorIntake, distanceSensorTop;
-    public Servo linearSlideServo, capServo;
-    public DigitalChannel redLED, greenLED, redLED2, greenLED2;
-    RevColorSensorV3 colorSensorLeft;
-    RevColorSensorV3 colorSensorRight;
-    RevColorSensorV3 intakeColor;
+    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private List<DcMotorEx> motors;
+    public DcMotorEx linearSlide;
+    public DcMotorEx frontSlide;
+    public DcMotorEx armMotor;
 
-    protected final List<DcMotorEx> motors;
+    private Servo THE_CLAW;
 
-    protected final BNO055IMU imu;
-    protected final VoltageSensor batteryVoltageSensor;
-    protected LinearOpMode opmode;
-    public MultipleCameraCV CV;
-   // TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV duckCV;
-
-    HardwareMap hardwareMap;
-    Telemetry telemetry;
-
-    Queue<Double> voltageQueue = new LinkedList<>();
-    double sum= 0;
-    int MAX_SIZE= 500;
-
-    public Pose2d position;
+    private BNO055IMU imu;
+    private VoltageSensor batteryVoltageSensor;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
-        this(hardwareMap, null, null);
-    }
-
-    public SampleMecanumDrive(HardwareMap hardwareMap, LinearOpMode opmode, Telemetry telemetry) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-        this.opmode = opmode;
-        this.hardwareMap = hardwareMap;
-        this.telemetry = telemetry;
+
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.2);
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -145,38 +115,41 @@ public class SampleMecanumDrive extends MecanumDrive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
-        // upward (normal to the floor) using a command like the following:
+        // TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
+        // not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
+        //
+        //             | +Z axis
+        //             |
+        //             |
+        //             |
+        //      _______|_____________     +Y axis
+        //     /       |_____________/|__________
+        //    /   REV / EXPANSION   //
+        //   /       / HUB         //
+        //  /_______/_____________//
+        // |_______/_____________|/
+        //        /
+        //       / +X axis
+        //
+        // This diagram is derived from the axes in section 3.4 https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bno055-ds000.pdf
+        // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
+        //
+        // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
+        // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-        BNO055IMUUtil.remapAxes(imu, AxesOrder.XZY, AxesSigns.NPN);
+        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
+        rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
+        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
+        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
-        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
-        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
+        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
 
-        carousel = hardwareMap.get(DcMotorEx.class, "carouselMotor");
-        intakeMotor = hardwareMap.dcMotor.get("intake");
-        linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
-        linearSlideServo = hardwareMap.servo.get("dumpServo");
-        linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        capServo = hardwareMap.servo.get("capServo");
-        capServo.setPosition(0.79);
-
-        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
-        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
-
-        distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
-        intakeColor = hardwareMap.get(RevColorSensorV3.class, "intakeColor");
-        distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
-
-        redLED = (DigitalChannel) hardwareMap.get("red");
-        greenLED = (DigitalChannel) hardwareMap.get("green");
-        redLED2 = (DigitalChannel) hardwareMap.get("red2");
-        greenLED2 = (DigitalChannel) hardwareMap.get("green2");
-
-        motors = Arrays.asList(frontLeft, backLeft, backRight, frontRight);
+        THE_CLAW = hardwareMap.servo.get("clawServo");
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -195,547 +168,71 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-
+      //  setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
-
-
-    public void jevilTurnRedCarousel(double seconds) {
-        carousel.setVelocity(FreightFrenzyConstants.startVelocity+45);
-        pauseButInSecondsForThePlebeians(seconds);
-        carousel.setPower(0);
+    public void openClaw(){
+        THE_CLAW.setPosition(clawServoOpen);
     }
 
-    public void jevilTurnBlueCarousel(double seconds) {
-        carousel.setVelocity(-FreightFrenzyConstants.startVelocity+35);
-        pauseButInSecondsForThePlebeians(seconds);
-        carousel.setPower(0);
+    public void closeClaw(){
+        THE_CLAW.setPosition(clawServoClosed);
     }
 
-    public void stopMotors() {
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
+    public void liftTop(){
+        linearSlide.setTargetPosition(SLIDE_HIGH);
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontSlide.setTargetPosition(SLIDE_HIGH);
+        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setPower(.6);
+        frontSlide.setPower(.6);
+        //set arm to middle
     }
 
-    public void updateVoltage(){
-        double voltage = batteryVoltageSensor.getVoltage();
-        voltageQueue.add(voltage);
-
-        sum= sum + voltage;
-        if (voltageQueue.size()>=MAX_SIZE){
-            sum =sum - voltageQueue.remove();
-        }
+    public void liftMiddle() {
+        closeClaw();
+        linearSlide.setTargetPosition(SLIDE_MIDDLE);
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontSlide.setTargetPosition(SLIDE_MIDDLE);
+        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setPower(.2);
+        frontSlide.setPower(.2);
     }
 
-//    public boolean getDuck(){
-//
-//        int frontLeftInit= frontLeft.getCurrentPosition();
-//        int backLeftInit = backLeft.getCurrentPosition();
-//        int frontRightInit = frontRight.getCurrentPosition();
-//        int backRightInit = backRight.getCurrentPosition();
-//
-//        while (distanceSensorIntake.getDistance(DistanceUnit.CM)<7 && DriveConstants.encoderTicksToInches(Math.abs(frontLeftInit-frontLeft.getCurrentPosition()))<3
-//                && DriveConstants.encoderTicksToInches(Math.abs(frontRightInit-frontRight.getCurrentPosition()))<3
-//                && DriveConstants.encoderTicksToInches(Math.abs(backLeftInit-backLeft.getCurrentPosition()))<3
-//                && DriveConstants.encoderTicksToInches(Math.abs(backRightInit-backRight.getCurrentPosition()))<3
-//        ){
-//            intakeMotor.setPower(0.8);
-//            frontLeft.setPower(-0.2);
-//            frontRight.setPower(-0.2);
-//            backRight.setPower(-0.2);
-//            backLeft.setPower(-0.2);
-//        }
-//
-//        return DriveConstants.encoderTicksToInches(Math.abs(frontLeftInit - frontLeft.getCurrentPosition())) < 3 || DriveConstants.encoderTicksToInches(Math.abs(frontRightInit - frontRight.getCurrentPosition())) < 3
-//                || DriveConstants.encoderTicksToInches(Math.abs(backLeftInit - backLeft.getCurrentPosition())) < 3 || DriveConstants.encoderTicksToInches(Math.abs(backRightInit - backRight.getCurrentPosition())) < 3;
-//    }
-//
-//    public void aquireDuckRed(double speed, double secondaryStopConditionSeconds) {
-//        long startTime = new Date().getTime();
-//        long time = 0;
-//        double distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
-//
-//        boolean foundFreight = false;
-//
-//        intakeMotor.setPower(.8);
-//        setMotorPowers(-speed, -speed, -speed, -speed);
-//
-//
-//        while (distanceSensorValue > 3  && time < secondaryStopConditionSeconds * 1000) {
-//            //pause(50);
-//            time = new Date().getTime() - startTime;
-//            distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
-//            if (distanceSensorValue > 7) {
-//                foundFreight = true;
-//            }
-//        }
-//        stopMotors();
-//        intakeMotor.setPower(0);
-//    }
-
-    public void lightSet () {
-        redLED.setMode(DigitalChannel.Mode.OUTPUT);
-        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
-        redLED2.setMode(DigitalChannel.Mode.OUTPUT);
-        greenLED2.setMode(DigitalChannel.Mode.OUTPUT);
+    public void liftDown() {
+        closeClaw();
+        linearSlide.setTargetPosition(SLIDE_BOTTOM);
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontSlide.setTargetPosition(SLIDE_BOTTOM);
+        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setPower(.3);
+        frontSlide.setPower(.3);
     }
 
-    public boolean getCube (int searchTime) {
-        ElapsedTime elapsedTime = new ElapsedTime();
-        lightSet();
-        frontLeft.setPower(-.25);
-        frontRight.setPower(-.25);
-        backLeft.setPower(-.25);
-        backRight.setPower(-.25);
-        intakeMotor.setPower(1);
-        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-        double intakeDistance2 = intakeColor.getDistance(DistanceUnit.CM);
-        redLED.setState(true);
-
-        while ((intakeDistance>8 || intakeDistance2>7.5)  && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<searchTime) {
-            intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-            intakeDistance2 = intakeColor.getDistance(DistanceUnit.CM);
-            telemetry.addData("intake color", intakeDistance2);
-            telemetry.addData("intake", intakeDistance);
-            telemetry.update();
-        }
-        stopMotors();
-
-        telemetry.update();
-
-        if (intakeDistance<8 || intakeDistance2 <7.5){
-            pauseButInSecondsForThePlebeians(.2);
-            intakeMotor.setPower(-.8);
-            pauseButInSecondsForThePlebeians(.3);
-            intakeMotor.setPower(0);
-            redLED.setState(false);
-            redLED2.setState(false);
-            greenLED.setState(true);
-            greenLED2.setState(true);
-           // linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-            return true;
-        } else
-//            SUMMON THE DEMONS!/
-
-            return false;
+    public void setArmServoTop() {
+        armMotor.setTargetPosition(armMotorTop);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(0.3);
     }
 
-
-    public boolean getCubeVoltage () {
-
-        double voltage;
-        voltageQueue = new LinkedList<>();
-
-
-        lightSet();
-        frontLeft.setPower(-.35);
-        frontRight.setPower(-.35);
-        backLeft.setPower(-.35);
-        backRight.setPower(-.35);
-        intakeMotor.setPower(1);
-
-        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-
-        redLED.setState(true);
-        boolean found = false;
-        while (this.opmode.opModeIsActive() && voltageQueue.size()<100){
-            updateVoltage();
-        }
-        ElapsedTime elapsedTime = new ElapsedTime();
-
-        while ((intakeDistance>9 && ! found) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<3000) {
-            voltage= batteryVoltageSensor.getVoltage();
-
-            voltageQueue.add(voltage);
-
-            double avg = sum/voltageQueue.size();
-            telemetry.addData("avg", avg);
-            telemetry.addData("diff", voltage/avg);
-            if (voltage/ avg <0.90) {
-                found = true;
-                pauseButInSecondsForThePlebeians(0.35);
-                intakeMotor.setPower(0);
-                telemetry.addData("detected", true);
-            }
-            sum= sum + voltage;
-            if (voltageQueue.size()>=MAX_SIZE){
-                sum =sum - voltageQueue.remove();
-            }
-            intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-            if (intakeDistance<9){
-                found = true;
-            }
-
-            telemetry.addData("intake", intakeDistance);
-            telemetry.update();
-        }
-        stopMotors();
-        telemetry.addData("top distance", distanceSensorTop.getDistance(DistanceUnit.CM));
-        telemetry.update();
-
-        if (found){
-            pauseButInSecondsForThePlebeians(.3);
-            intakeMotor.setPower(-.8);
-            pauseButInSecondsForThePlebeians(.5);
-            intakeMotor.setPower(0);
-            redLED.setState(false);
-            redLED2.setState(false);
-            greenLED.setState(true);
-            greenLED2.setState(true);
-            // linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-            return true;
-        } else
-            return false;
+    public void setArmServoBottom() {
+        armMotor.setTargetPosition(armMotorBottom);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(0.3);
     }
 
-
-//    public void distanceSensorStrafeLeft(double speed) {
-//
-//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-//
-//        frontLeft.setPower(-speed);
-//        frontRight.setPower(speed);
-//        backLeft.setPower(speed);
-//        backRight.setPower(-speed);
-//
-//        while (rightDistance - leftDistance > 1) {
-//            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-//            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-//        }
-//        stopMotors();
-//    }
-//
-//    public void distanceSensorStrafeRight(double speed) {
-//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-//
-//        frontLeft.setPower(speed);
-//        frontRight.setPower(-speed);
-//        backLeft.setPower(-speed);
-//        backRight.setPower(speed);
-//
-//        while (leftDistance - rightDistance > 1) {
-//            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-//            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-//        }
-//        stopMotors();
-//    }
-//
-//    public void distanceSensorForward(double speed) {
-//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-//
-//        frontLeft.setPower(-speed);
-//        frontRight.setPower(-speed);
-//        backLeft.setPower(-speed);
-//        backRight.setPower(-speed);
-//
-//        while (leftDistance > 15) {
-//            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-//        }
-//        stopMotors();
-//    }
-//
-//    public void distanceSensorStuff() {
-//
-//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-//
-//
-//        if (leftDistance - rightDistance > 1) {
-//            distanceSensorStrafeRight(.3);
-//        } else if (rightDistance - leftDistance > 1) {
-//            distanceSensorStrafeLeft(.3);
-//        }
-//
-//        if (leftDistance > 15) {
-//            distanceSensorForward(.3);
-//        }
-//    }
-
-    public void dumpFreightBottom() {
-        linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_LOW);
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(.8);
-        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
-
-        }
-        pause(150);
-        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-        pause(1200);
-        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        linearSlideMotor.setTargetPosition(0);
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(-.4);
-        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
-
-        }
-        linearSlideMotor.setPower(0);
+    public void setArmServoMiddle() {
+        armMotor.setTargetPosition(armMotorMid);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(0.3);
     }
 
-    public void dumpFreightMiddle() {
-        linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_MIDDLE);
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(.9);
-        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
-        }
-        pause(150);
-        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);//1.5
-        pause(1200);
-        //forward(0.3, -0.4);
-        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        linearSlideMotor.setTargetPosition(0);
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(-.4);
-        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
-
-        }
-        linearSlideMotor.setPower(0);
-    }
-
-    public void dumpFreightTop() {
-        linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(.9);
-        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
-
-        }
-        pause(200);
-
-        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-        pause(800);
-        //forward(0.3, -0.2);
-        linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        linearSlideMotor.setTargetPosition(0);
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(-.4);
-        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
-
-        }
-        linearSlideMotor.setPower(0);
-    }
-
-    protected void motorSetMode(DcMotor.RunMode runMode) {
-        frontLeft.setMode(runMode);
-        frontRight.setMode(runMode);
-        backLeft.setMode(runMode);
-        backRight.setMode(runMode);
-    }
-
-    public void forward(double speed, double rotations) {
-        int leftCurrent = frontLeft.getCurrentPosition();
-        int rightCurrent = frontRight.getCurrentPosition();
-        int backLeftCurrent = backLeft.getCurrentPosition();
-        int backRightCurrent = backRight.getCurrentPosition();
-
-        double toPositionLeft = leftCurrent + rotations * TICKS_PER_REV;
-        double toPositionRight = rightCurrent + rotations * TICKS_PER_REV;
-        double toPositionbackLeft = backLeftCurrent + rotations * TICKS_PER_REV;
-        double toPositionbackRight = backRightCurrent + rotations * TICKS_PER_REV;
-
-        frontLeft.setTargetPosition((int) toPositionLeft);
-        frontRight.setTargetPosition((int) toPositionRight);
-        backLeft.setTargetPosition((int) toPositionbackLeft);
-        backRight.setTargetPosition((int) toPositionbackRight);
-
-        motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(abs(speed));
-        frontRight.setPower(abs(speed));
-        backLeft.setPower(abs(speed));
-        backRight.setPower(abs(speed));
-
-        while (this.opmode.opModeIsActive() &&
-                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
-
-        }
-        stopMotors();
-
-        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
-
-    public void strafeLeft(double speed, double rotations) {
-
-        int leftCurrent = frontLeft.getCurrentPosition();
-        int rightCurrent = frontRight.getCurrentPosition();
-        int backLeftCurrent = backLeft.getCurrentPosition();
-        int backRightCurrent = backRight.getCurrentPosition();
-
-        double toPositionLeft = leftCurrent - rotations * TICKS_PER_REV;
-        double toPositionRight = rightCurrent + rotations * TICKS_PER_REV;
-        double toPositionbackLeft = backLeftCurrent + rotations * TICKS_PER_REV;
-        double toPositionbackRight = backRightCurrent - rotations * TICKS_PER_REV;
-
-        frontLeft.setTargetPosition((int) toPositionLeft);
-        frontRight.setTargetPosition((int) toPositionRight);
-        backLeft.setTargetPosition((int) toPositionbackLeft);
-        backRight.setTargetPosition((int) toPositionbackRight);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(abs(-speed));
-        frontRight.setPower(abs(speed));
-        backLeft.setPower(abs(speed));
-        backRight.setPower(abs(-speed));
-        while (this.opmode.opModeIsActive() &&
-                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
-
-        }
-        stopMotors();
-
-        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
-
-    public void strafeRight(double speed, double rotations) {
-
-        int leftCurrent = frontLeft.getCurrentPosition();
-        int rightCurrent = frontRight.getCurrentPosition();
-        int backLeftCurrent = backLeft.getCurrentPosition();
-        int backRightCurrent = backRight.getCurrentPosition();
-
-        double toPositionLeft = leftCurrent + rotations * TICKS_PER_REV;
-        double toPositionRight = rightCurrent - rotations * TICKS_PER_REV;
-        double toPositionbackLeft = backLeftCurrent - rotations * TICKS_PER_REV;
-        double toPositionbackRight = backRightCurrent + rotations * TICKS_PER_REV;
-
-        frontLeft.setTargetPosition((int) toPositionLeft);
-        frontRight.setTargetPosition((int) toPositionRight);
-        backLeft.setTargetPosition((int) toPositionbackLeft);
-        backRight.setTargetPosition((int) toPositionbackRight);
-
-        motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(abs(speed));
-        frontRight.setPower(abs(-speed));
-        backLeft.setPower(abs(-speed));
-        backRight.setPower(abs(speed));
-        while (this.opmode.opModeIsActive() &&
-                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
-
-        }
-        stopMotors();
-
-        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void findDuckRed(){
-
-        //strafe right
-        double speed = 0.30 * 2792;
-
-        ElapsedTime elapsedTime= new ElapsedTime();
-
-        frontLeft.setVelocity(speed);
-        frontRight.setVelocity(-speed);
-        backLeft.setVelocity(-speed);
-        backRight.setVelocity(speed);
-
-        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
-                analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
-                && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
-
-        }
-
-        intakeMotor.setPower(0.8);
-        forward(0.4, -1);
-
-        stopMotors();
-    }
-
-    public void findDuckBlue(){
-
-        //strafe right
-        double speed = 0.30 * 2792;
-        ElapsedTime elapsedTime= new ElapsedTime();
-
-        frontLeft.setVelocity(-speed);
-        frontRight.setVelocity(speed);
-        backLeft.setVelocity(speed);
-        backRight.setVelocity(-speed);
-
-        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
-                analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
-                && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
-
-        }
-
-
-//        Trajectory findDuck = trajectoryBuilder(getLocalizer().getPoseEstimate())
-//                .strafeLeft(24, getVelocityConstraint(MAX_VEL/4, MAX_ANG_VEL/2, TRACK_WIDTH), getAccelerationConstraint(MAX_ACCEL/2))
-//                .build();
-//        followTrajectoryAsync(findDuck);
-//
-//        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
-//                analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
-//                && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && isBusy()){
-//            update();
-//            telemetry.addData("duck", analyzeDuck());
-//            telemetry.update();
-//        }
-//
-//        if (isBusy()){
-//            breakFollowing();
-//        }
-
-        intakeMotor.setPower(0.8);
-        forward(0.4, -1.6);
-
-        stopMotors();
-    }
-
-    public void openCVInnitShenanigans() {
-        CV = new MultipleCameraCV(hardwareMap, telemetry);
-    }
-
-//    public void openCVDuckInit(){
-//        duckCV = new TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV(hardwareMap, telemetry);
-//    }
-
-    public MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition analyze() {
-        return CV.pipeline.position;
-    }
-
-    public MultipleCameraCV.DuckDeterminationPipeline.DuckPosition analyzeDuck() {
-        return CV.duckPipeline.position;
-    }
-
-    public MultipleCameraCV.WarehousePipeline.FreightPosition analyzeWarehouse() {
-        telemetry.addData("is CvV null", CV==null?"null": "not null");
-        telemetry.addData("is pipeline null", CV==null || CV.warehousePipeline==null?"null":" not null");
-        telemetry.update();
-        return CV.warehousePipeline.freightPosition;
-    }
-
-    public void stopDuckCamera(){
-        CV.stopDuckCamera();
-    }
-
-    public void stopShippingElementCamera(){
-        CV.stopShippingElementCamera();
-    }
-
-    public void pause(int millis) {
-        long startTime = new Date().getTime();
-        long time = 0;
-
-        while (time < millis && opmode.opModeIsActive()) {
-            time = new Date().getTime() - startTime;
-        }
-    }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
@@ -767,13 +264,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void turn(double angle) {
         turnAsync(angle);
-        turnAsync(angle);
         waitForIdle();
     }
 
     public void followTrajectoryAsync(Trajectory trajectory) {
-        telemetry.addData("following", "2");
-        telemetry.update();
         trajectorySequenceRunner.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(trajectory.start())
                         .addTrajectory(trajectory)
@@ -806,9 +300,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void waitForIdle() {
-        while (!Thread.currentThread().isInterrupted() && isBusy()) {
+        while (!Thread.currentThread().isInterrupted() && isBusy())
             update();
-        }
     }
 
     public boolean isBusy() {
@@ -879,10 +372,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        frontLeft.setPower(v);
-        backLeft.setPower(v1);
-        backRight.setPower(v2);
-        frontRight.setPower(v3);
+        leftFront.setPower(v);
+        leftRear.setPower(v1);
+        rightRear.setPower(v2);
+        rightFront.setPower(v3);
     }
 
     @Override
@@ -892,30 +385,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public Double getExternalHeadingVelocity() {
-        // TODO: This must be changed to match your configuration
-        //                           | Z axis
-        //                           |
-        //     (Motor Port Side)     |   / X axis
-        //                       ____|__/____
-        //          Y axis     / *   | /    /|   (IO Side)
-        //          _________ /______|/    //      I2C
-        //                   /___________ //     Digital
-        //                  |____________|/      Analog
-        //
-        //                 (Servo Port Side)
-        //
-        // The positive x axis points toward the USB port(s)
-        //
-        // Adjust the axis rotation rate as necessary
-        // Rotate about the z axis is the default assuming your REV Hub/Control Hub is laying
-        // flat on a surface
-
-        // To work around an SDK bug, use -zRotationRate in place of xRotationRate 
-        // and -xRotationRate in place of zRotationRate (yRotationRate behaves as 
-        // expected). This bug does NOT affect orientation. 
-        //
-        // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-        return (double) -imu.getAngularVelocity().xRotationRate;
+        return (double) imu.getAngularVelocity().xRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
@@ -928,101 +398,4 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
-
-    public void pauseButInSecondsForThePlebeians(double seconds) {
-        long startTime = new Date().getTime();
-        long time = 0;
-
-        while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
-            time = new Date().getTime() - startTime;
-        }
-    }
-
-    public void retract(){
-        linearSlideMotor.setTargetPosition(0);
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(.4);
-    }
-
-
-    public boolean toLineRedTeleop(double seconds){
-        boolean found = false;
-        setMotorPowers(.4,.4,.4,.4);
-        long startTime = new Date().getTime();
-        long time = 0;
-        while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
-            time = new Date().getTime() - startTime;
-            if (colorSensorLeft.alpha() > 400 || colorSensorRight.alpha() > 400) {
-                position = new Pose2d(new Vector2d(31, -66),Math.toRadians(180));
-                setPoseEstimate(position);
-                found= true;
-                setMotorPowers(0,0,0,0);
-                break;
-            }
-        }
-        return found;
-    }
-
-
-    public boolean toLineBlueTeleop(double seconds){
-        boolean found = false;
-        setMotorPowers(.4,.4,.4,.4);
-        long startTime = new Date().getTime();
-        long time = 0;
-        while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
-            time = new Date().getTime() - startTime;
-            if (colorSensorLeft.alpha() > 400 || colorSensorRight.alpha() > 400) {
-                position = new Pose2d(new Vector2d(31, 66),Math.toRadians(180));
-                setPoseEstimate(position);
-                found= true;
-                break;
-            }
-        }
-        return found;
-    }
-
-    public void getWarehouseFreight() {
-        double speed = 0.35;
-
-        MultipleCameraCV.WarehousePipeline.FreightPosition analysis = analyzeWarehouse();
-        ElapsedTime elapsedTime= new ElapsedTime();
-
-        while (this.opmode.opModeIsActive() && analysis != MultipleCameraCV.WarehousePipeline.FreightPosition.CENTER && analysis != MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT1 && analysis != MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT1 && elapsedTime.milliseconds()<2500){
-            analysis = analyzeWarehouse();
-            if (analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT5
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT4
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT3
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT3
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT3
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT2
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT1) {
-
-                frontLeft.setPower(-speed);
-                frontRight.setPower(speed);
-                backLeft.setPower(speed);
-                backRight.setPower(-speed);
-            } else if (analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT5
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT4
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT3
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT3
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT3
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT2
-                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT1) {
-                frontLeft.setPower(speed);
-                frontRight.setPower(-speed);
-                backLeft.setPower(-speed);
-                backRight.setPower(speed);
-            }
-        }
-
-        intakeMotor.setPower(0.8);
-        forward(0.4, -2);
-
-        stopMotors();
-    }
-
-    public void breakFollowing() {
-
-    }
-
 }

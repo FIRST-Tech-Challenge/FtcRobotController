@@ -1,17 +1,17 @@
 //package org.firstinspires.ftc.masters.drive;
 //
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ACCEL;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ANG_ACCEL;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ANG_VEL;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_VEL;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MOTOR_VELO_PID;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.RUN_USING_ENCODER;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.TICKS_PER_REV;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.TRACK_WIDTH;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.encoderTicksToInches;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kA;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kStatic;
-//import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kV;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_VEL;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.MOTOR_VELO_PID;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.RUN_USING_ENCODER;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.TICKS_PER_REV;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.TRACK_WIDTH;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.encoderTicksToInches;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
+//import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
 //import static java.lang.Math.abs;
 //
 //import androidx.annotation.NonNull;
@@ -32,6 +32,7 @@
 //import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 //import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 //import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+//import com.qualcomm.hardware.bosch.BNO055IMU;
 //import com.qualcomm.hardware.lynx.LynxModule;
 //import com.qualcomm.hardware.rev.RevColorSensorV3;
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -52,24 +53,29 @@
 //import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 //import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 //import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
+//import org.firstinspires.ftc.masters.util.AxesSigns;
+//import org.firstinspires.ftc.masters.util.BNO055IMUUtil;
 //import org.firstinspires.ftc.masters.util.LynxModuleUtil;
 //import org.firstinspires.ftc.robotcore.external.Telemetry;
+//import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 //import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 //
 //import java.util.ArrayList;
 //import java.util.Arrays;
 //import java.util.Date;
+//import java.util.LinkedList;
 //import java.util.List;
+//import java.util.Queue;
 //
 ///*
 // * Simple mecanum drive hardware implementation for REV hardware.
 // */
 //@Config
-//public class SampleMecanumDrive extends MecanumDrive {
+//public class SampleMecanumDriveOld extends MecanumDrive {
 //    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(7, 0, 0);
 //    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 0);
 //
-//    public static double LATERAL_MULTIPLIER = 60/58.5;
+//    public static double LATERAL_MULTIPLIER = 1.14;
 //
 //    public static double VX_WEIGHT = 1;
 //    public static double VY_WEIGHT = 1;
@@ -86,17 +92,19 @@
 //    protected final DcMotorEx backLeft;
 //    protected final DcMotorEx backRight;
 //    protected final DcMotorEx frontRight;
-//    public DcMotor carousel, intakeMotor, linearSlideMotor;
+//    protected final DcMotorEx carousel;
+//    public DcMotor intakeMotor, linearSlideMotor;
 //   // public DistanceSensor distanceSensorLeft, distanceSensorRight;
 //   public DistanceSensor distanceSensorIntake, distanceSensorTop;
-//    public Servo linearSlideServo;
+//    public Servo linearSlideServo, capServo;
 //    public DigitalChannel redLED, greenLED, redLED2, greenLED2;
 //    RevColorSensorV3 colorSensorLeft;
 //    RevColorSensorV3 colorSensorRight;
+//    RevColorSensorV3 intakeColor;
 //
 //    protected final List<DcMotorEx> motors;
 //
-//    //protected final BNO055IMU imu;
+//    protected final BNO055IMU imu;
 //    protected final VoltageSensor batteryVoltageSensor;
 //    protected LinearOpMode opmode;
 //    public MultipleCameraCV CV;
@@ -104,6 +112,10 @@
 //
 //    HardwareMap hardwareMap;
 //    Telemetry telemetry;
+//
+//    Queue<Double> voltageQueue = new LinkedList<>();
+//    double sum= 0;
+//    int MAX_SIZE= 500;
 //
 //    public Pose2d position;
 //
@@ -117,7 +129,7 @@
 //        this.hardwareMap = hardwareMap;
 //        this.telemetry = telemetry;
 //        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-//                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+//                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.2);
 //
 //        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 //
@@ -127,16 +139,16 @@
 //            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
 //        }
 //
-////        // TODO: adjust the names of the following hardware devices to match your configuration
-////        imu = hardwareMap.get(BNO055IMU.class, "imu");
-////        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-////        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-////        imu.initialize(parameters);
-////
-////        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
-////        // upward (normal to the floor) using a command like the following:
-////
-////        BNO055IMUUtil.remapAxes(imu, AxesOrder.XZY, AxesSigns.NPN);
+//        // TODO: adjust the names of the following hardware devices to match your configuration
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
+//
+//        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
+//        // upward (normal to the floor) using a command like the following:
+//
+//        BNO055IMUUtil.remapAxes(imu, AxesOrder.XZY, AxesSigns.NPN);
 //
 //
 //        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
@@ -144,18 +156,19 @@
 //        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
 //        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
 //
-//        carousel = hardwareMap.get(DcMotor.class, "carouselMotor");
+//        carousel = hardwareMap.get(DcMotorEx.class, "carouselMotor");
 //        intakeMotor = hardwareMap.dcMotor.get("intake");
 //        linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
 //        linearSlideServo = hardwareMap.servo.get("dumpServo");
 //        linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        capServo = hardwareMap.servo.get("capServo");
+//        capServo.setPosition(0.79);
 //
 //        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
 //        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
 //
-////        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
-////        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
 //        distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
+//        intakeColor = hardwareMap.get(RevColorSensorV3.class, "intakeColor");
 //        distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
 //
 //        redLED = (DigitalChannel) hardwareMap.get("red");
@@ -186,15 +199,21 @@
 //        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 //
 //        // TODO: if desired, use setLocalizer() to change the localization method
-//         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+//        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 //
 //        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 //    }
 //
 //
 //
-//    public void jevilTurnCarousel(double speed, double seconds) {
-//        carousel.setPower(speed);
+//    public void jevilTurnRedCarousel(double seconds) {
+//        carousel.setVelocity(FreightFrenzyConstants.startVelocity+45);
+//        pauseButInSecondsForThePlebeians(seconds);
+//        carousel.setPower(0);
+//    }
+//
+//    public void jevilTurnBlueCarousel(double seconds) {
+//        carousel.setVelocity(-FreightFrenzyConstants.startVelocity+35);
 //        pauseButInSecondsForThePlebeians(seconds);
 //        carousel.setPower(0);
 //    }
@@ -204,6 +223,16 @@
 //        frontRight.setPower(0);
 //        backLeft.setPower(0);
 //        backRight.setPower(0);
+//    }
+//
+//    public void updateVoltage(){
+//        double voltage = batteryVoltageSensor.getVoltage();
+//        voltageQueue.add(voltage);
+//
+//        sum= sum + voltage;
+//        if (voltageQueue.size()>=MAX_SIZE){
+//            sum =sum - voltageQueue.remove();
+//        }
 //    }
 //
 ////    public boolean getDuck(){
@@ -259,7 +288,7 @@
 //        greenLED2.setMode(DigitalChannel.Mode.OUTPUT);
 //    }
 //
-//    public boolean getCube () {
+//    public boolean getCube (int searchTime) {
 //        ElapsedTime elapsedTime = new ElapsedTime();
 //        lightSet();
 //        frontLeft.setPower(-.25);
@@ -268,13 +297,83 @@
 //        backRight.setPower(-.25);
 //        intakeMotor.setPower(1);
 //        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-//        double bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
+//        double intakeDistance2 = intakeColor.getDistance(DistanceUnit.CM);
 //        redLED.setState(true);
 //
-//        while ((intakeDistance>10 && bucketdistance>13.5) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<3000) {
+//        while ((intakeDistance>8 || intakeDistance2>7.5)  && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<searchTime) {
 //            intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-//            bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
-//            telemetry.addData("top distance", bucketdistance);
+//            intakeDistance2 = intakeColor.getDistance(DistanceUnit.CM);
+//            telemetry.addData("intake color", intakeDistance2);
+//            telemetry.addData("intake", intakeDistance);
+//            telemetry.update();
+//        }
+//        stopMotors();
+//
+//        telemetry.update();
+//
+//        if (intakeDistance<8 || intakeDistance2 <7.5){
+//            pauseButInSecondsForThePlebeians(.2);
+//            intakeMotor.setPower(-.8);
+//            pauseButInSecondsForThePlebeians(.3);
+//            intakeMotor.setPower(0);
+//            redLED.setState(false);
+//            redLED2.setState(false);
+//            greenLED.setState(true);
+//            greenLED2.setState(true);
+//           // linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+//            return true;
+//        } else
+////            SUMMON THE DEMONS!/
+//
+//            return false;
+//    }
+//
+//
+//    public boolean getCubeVoltage () {
+//
+//        double voltage;
+//        voltageQueue = new LinkedList<>();
+//
+//
+//        lightSet();
+//        frontLeft.setPower(-.35);
+//        frontRight.setPower(-.35);
+//        backLeft.setPower(-.35);
+//        backRight.setPower(-.35);
+//        intakeMotor.setPower(1);
+//
+//        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+//
+//        redLED.setState(true);
+//        boolean found = false;
+//        while (this.opmode.opModeIsActive() && voltageQueue.size()<100){
+//            updateVoltage();
+//        }
+//        ElapsedTime elapsedTime = new ElapsedTime();
+//
+//        while ((intakeDistance>9 && ! found) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<3000) {
+//            voltage= batteryVoltageSensor.getVoltage();
+//
+//            voltageQueue.add(voltage);
+//
+//            double avg = sum/voltageQueue.size();
+//            telemetry.addData("avg", avg);
+//            telemetry.addData("diff", voltage/avg);
+//            if (voltage/ avg <0.90) {
+//                found = true;
+//                pauseButInSecondsForThePlebeians(0.35);
+//                intakeMotor.setPower(0);
+//                telemetry.addData("detected", true);
+//            }
+//            sum= sum + voltage;
+//            if (voltageQueue.size()>=MAX_SIZE){
+//                sum =sum - voltageQueue.remove();
+//            }
+//            intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+//            if (intakeDistance<9){
+//                found = true;
+//            }
+//
 //            telemetry.addData("intake", intakeDistance);
 //            telemetry.update();
 //        }
@@ -282,7 +381,7 @@
 //        telemetry.addData("top distance", distanceSensorTop.getDistance(DistanceUnit.CM));
 //        telemetry.update();
 //
-//        if (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM)<13.5){
+//        if (found){
 //            pauseButInSecondsForThePlebeians(.3);
 //            intakeMotor.setPower(-.8);
 //            pauseButInSecondsForThePlebeians(.5);
@@ -291,7 +390,7 @@
 //            redLED2.setState(false);
 //            greenLED.setState(true);
 //            greenLED2.setState(true);
-//            linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+//            // linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 //            return true;
 //        } else
 //            return false;
@@ -536,17 +635,19 @@
 //    public void findDuckRed(){
 //
 //        //strafe right
-//        double speed = 0.35;
+//        double speed = 0.30 * 2792;
 //
 //        ElapsedTime elapsedTime= new ElapsedTime();
+//
+//        frontLeft.setVelocity(speed);
+//        frontRight.setVelocity(-speed);
+//        backLeft.setVelocity(-speed);
+//        backRight.setVelocity(speed);
 //
 //        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
 //                analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
 //                && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
-//            frontLeft.setPower(speed);
-//            frontRight.setPower(-speed);
-//            backLeft.setPower(-speed);
-//            backRight.setPower(speed);
+//
 //        }
 //
 //        intakeMotor.setPower(0.8);
@@ -558,25 +659,45 @@
 //    public void findDuckBlue(){
 //
 //        //strafe right
-//        double speed = 0.35;
+//        double speed = 0.30 * 2792;
 //        ElapsedTime elapsedTime= new ElapsedTime();
+//
+//        frontLeft.setVelocity(-speed);
+//        frontRight.setVelocity(speed);
+//        backLeft.setVelocity(speed);
+//        backRight.setVelocity(-speed);
 //
 //        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
 //                analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
 //                && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
-//            frontLeft.setPower(-speed);
-//            frontRight.setPower(speed);
-//            backLeft.setPower(speed);
-//            backRight.setPower(-speed);
+//
 //        }
 //
+//
+////        Trajectory findDuck = trajectoryBuilder(getLocalizer().getPoseEstimate())
+////                .strafeLeft(24, getVelocityConstraint(MAX_VEL/4, MAX_ANG_VEL/2, TRACK_WIDTH), getAccelerationConstraint(MAX_ACCEL/2))
+////                .build();
+////        followTrajectoryAsync(findDuck);
+////
+////        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
+////                analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
+////                && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && isBusy()){
+////            update();
+////            telemetry.addData("duck", analyzeDuck());
+////            telemetry.update();
+////        }
+////
+////        if (isBusy()){
+////            breakFollowing();
+////        }
+//
 //        intakeMotor.setPower(0.8);
-//        forward(0.4, -1);
+//        forward(0.4, -1.6);
 //
 //        stopMotors();
 //    }
 //
-//    public void openCVInnitShenanigans(String color) {
+//    public void openCVInnitShenanigans() {
 //        CV = new MultipleCameraCV(hardwareMap, telemetry);
 //    }
 //
@@ -592,14 +713,13 @@
 //        return CV.duckPipeline.position;
 //    }
 //
+//    public MultipleCameraCV.WarehousePipeline.FreightPosition analyzeWarehouse() {
+//        telemetry.addData("is CvV null", CV==null?"null": "not null");
+//        telemetry.addData("is pipeline null", CV==null || CV.warehousePipeline==null?"null":" not null");
+//        telemetry.update();
+//        return CV.warehousePipeline.freightPosition;
+//    }
 //
-////    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
-////        return CV.pipeline.hub_position;
-////    }
-////
-////    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
-////        return CV.pipeline.hub_position;
-////    }
 //    public void stopDuckCamera(){
 //        CV.stopDuckCamera();
 //    }
@@ -652,6 +772,8 @@
 //    }
 //
 //    public void followTrajectoryAsync(Trajectory trajectory) {
+//        telemetry.addData("following", "2");
+//        telemetry.update();
 //        trajectorySequenceRunner.followTrajectorySequenceAsync(
 //                trajectorySequenceBuilder(trajectory.start())
 //                        .addTrajectory(trajectory)
@@ -684,8 +806,9 @@
 //    }
 //
 //    public void waitForIdle() {
-//        while (!Thread.currentThread().isInterrupted() && isBusy())
+//        while (!Thread.currentThread().isInterrupted() && isBusy()) {
 //            update();
+//        }
 //    }
 //
 //    public boolean isBusy() {
@@ -762,6 +885,10 @@
 //        frontRight.setPower(v3);
 //    }
 //
+//    @Override
+//    public double getRawExternalHeading() {
+//        return imu.getAngularOrientation().firstAngle;
+//    }
 //
 //    @Override
 //    public Double getExternalHeadingVelocity() {
@@ -788,7 +915,7 @@
 //        // expected). This bug does NOT affect orientation.
 //        //
 //        // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-//        return (double) 0;
+//        return (double) -imu.getAngularVelocity().xRotationRate;
 //    }
 //
 //    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
@@ -829,7 +956,7 @@
 //                position = new Pose2d(new Vector2d(31, -66),Math.toRadians(180));
 //                setPoseEstimate(position);
 //                found= true;
-//                //setMotorPowers(0,0,0,0);
+//                setMotorPowers(0,0,0,0);
 //                break;
 //            }
 //        }
@@ -837,21 +964,65 @@
 //    }
 //
 //
-//    public void toLineBlueTeleop(double seconds){
-//        setMotorPowers(.5,.5,.5,.5);
+//    public boolean toLineBlueTeleop(double seconds){
+//        boolean found = false;
+//        setMotorPowers(.4,.4,.4,.4);
 //        long startTime = new Date().getTime();
 //        long time = 0;
 //        while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
 //            time = new Date().getTime() - startTime;
 //            if (colorSensorLeft.alpha() > 400 || colorSensorRight.alpha() > 400) {
 //                position = new Pose2d(new Vector2d(31, 66),Math.toRadians(180));
+//                setPoseEstimate(position);
+//                found= true;
 //                break;
 //            }
 //        }
+//        return found;
 //    }
 //
-//    public double getRawExternalHeading() {
-//        return 0;
+//    public void getWarehouseFreight() {
+//        double speed = 0.35;
+//
+//        MultipleCameraCV.WarehousePipeline.FreightPosition analysis = analyzeWarehouse();
+//        ElapsedTime elapsedTime= new ElapsedTime();
+//
+//        while (this.opmode.opModeIsActive() && analysis != MultipleCameraCV.WarehousePipeline.FreightPosition.CENTER && analysis != MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT1 && analysis != MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT1 && elapsedTime.milliseconds()<2500){
+//            analysis = analyzeWarehouse();
+//            if (analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT5
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT4
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT3
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT3
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT3
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT2
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT1) {
+//
+//                frontLeft.setPower(-speed);
+//                frontRight.setPower(speed);
+//                backLeft.setPower(speed);
+//                backRight.setPower(-speed);
+//            } else if (analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT5
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT4
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT3
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT3
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT3
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT2
+//                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT1) {
+//                frontLeft.setPower(speed);
+//                frontRight.setPower(-speed);
+//                backLeft.setPower(-speed);
+//                backRight.setPower(speed);
+//            }
+//        }
+//
+//        intakeMotor.setPower(0.8);
+//        forward(0.4, -2);
+//
+//        stopMotors();
+//    }
+//
+//    public void breakFollowing() {
+//
 //    }
 //
 //}
