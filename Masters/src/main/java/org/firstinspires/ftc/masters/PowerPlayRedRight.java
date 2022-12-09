@@ -21,8 +21,9 @@ public class PowerPlayRedRight extends LinearOpMode {
         PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor sleeveColor = null;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(new Vector2d(36, -60), Math.toRadians(0));
+        Pose2d startPose = new Pose2d(new Vector2d(36, -60), Math.toRadians(90));
         drive.setPoseEstimate(startPose);
+        drive.closeClaw();
         waitForStart();
 
         ElapsedTime elapsedTime = new ElapsedTime();
@@ -38,25 +39,44 @@ public class PowerPlayRedRight extends LinearOpMode {
             telemetry.update();
         }
 
-        //        drive.liftTop();
+        drive.setArmServoMiddle();
+
+        drive.liftTop();
+
         TrajectorySequence startTo270Pole = drive.trajectorySequenceBuilder(startPose)
                 .splineToLinearHeading(new Pose2d( new Vector2d( 9,-50), Math.toRadians(90)), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(new Vector2d(9,-36),Math.toRadians(45)))
+                .lineToLinearHeading(new Pose2d(new Vector2d(8,-27),Math.toRadians(135)))
 //                .lineToLinearHeading(westPoleDeposit)
                 .build();
         drive.followTrajectorySequence(startTo270Pole);
 
         //use vision to align
         //drop cone
-        //drive.openClaw();
+        drive.openClaw();
+        sleep(300);
+
+        TrajectorySequence back = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .back(2)
+                .build();
+        drive.followTrajectorySequence(back);
+        drive.setArmServoBottom();
+        drive.turn(Math.toRadians(-45));
 
         //When parking
         switch (sleeveColor) {
             case RED:
+                TrajectorySequence park2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .strafeTo(new Vector2d(36, -34))
+                        .build();
+                drive.followTrajectorySequence(park2);
                 //Parking 2
             case GRAY:
-                //Parking 1
+
             case GREEN:
+                TrajectorySequence park1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .strafeTo(new Vector2d(62, -34))
+                        .build();
+                drive.followTrajectorySequence(park1);
                 //Parking 3
             case INDETERMINATE:
 
