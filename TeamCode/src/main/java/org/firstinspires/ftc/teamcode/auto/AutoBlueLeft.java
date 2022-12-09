@@ -137,7 +137,6 @@ public class AutoBlueLeft extends LinearOpMode {
                         .turn(Math.toRadians(-90))
                         .forward(22)
                         .strafeLeft(36)
-                        .build();
                         // drop cone
                         .strafeLeft(12)
                         .turn(Math.toRadians(180))
