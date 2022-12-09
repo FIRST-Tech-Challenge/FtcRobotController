@@ -59,6 +59,8 @@ public class AutoBlueLeft extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        double minPosition = 0.3f;
+        double maxPosition = 0.8f;
         SampleMecanumDrive robot = new SampleMecanumDrive(hardwareMap);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -125,6 +127,7 @@ public class AutoBlueLeft extends LinearOpMode {
             telemetry.update();
         }
         TrajectorySequence seq = null;
+        TrajectorySequence seq_1 = null;
         robot.setPoseEstimate(new Pose2d(37, 60, Math.toRadians(270)));
         if(tagOfInterest != null){
             if (tagOfInterest.id == LEFT) {
@@ -134,6 +137,7 @@ public class AutoBlueLeft extends LinearOpMode {
                         .turn(Math.toRadians(-90))
                         .forward(22)
                         .strafeLeft(36)
+                        .build();
                         // drop cone
                         .strafeLeft(12)
                         .turn(Math.toRadians(180))

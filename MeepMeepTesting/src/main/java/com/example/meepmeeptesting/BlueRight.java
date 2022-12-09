@@ -9,7 +9,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class BlueRight {
     public static void main(String[] args) {
         //placeholder signal zone
-        int signalZone = 2;
+        int signalZone = 1;
         MeepMeep meepMeep = new MeepMeep(400);
         RoadRunnerBotEntity myBot = null;
 

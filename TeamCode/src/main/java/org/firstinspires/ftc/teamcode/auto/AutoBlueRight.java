@@ -110,47 +110,75 @@ public class AutoBlueRight extends LinearOpMode {
             if (tagOfInterest.id == LEFT) {
                 //insert trajectories for parking zone 1
                 seq = robot.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
-                        .turn(Math.toRadians(90))
-                        .forward(12)
+                        .strafeLeft(25)
+                        .forward(36)
                         .turn(Math.toRadians(-90))
-                        .forward(3)
-                        .back(3)
-                        .turn(Math.toRadians(90))
-                        .forward(14)
+                        // drop cone
+                        .strafeLeft(12)
+                        .forward(50)
+                        // pick up cone
+                        .back(39)
                         .turn(Math.toRadians(-90))
-                        .forward(26)
+                        // drop cone
+                        .turn(Math.toRadians(90))
+                        .forward(39)
+                        // pick up cone
+                        .back(39)
+                        .turn(Math.toRadians(-90))
+                        // drop cone
+                        .strafeRight(17)
+                        // possibility for fourth cone idk
                         .build();
+
 
             }
 
             else if (tagOfInterest.id == MIDDLE) {
                 //insert trajectories for parking zone 2
-                seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
-                        .turn(Math.toRadians(90))
-                        .forward(12)
+                seq = robot.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
+                        .strafeLeft(25)
+                        .forward(36)
                         .turn(Math.toRadians(-90))
-                        .forward(3)
-                        .back(3)
+                        // drop cone
+                        .strafeLeft(12)
+                        .forward(50)
+                        // pick up cone
+                        .back(39)
                         .turn(Math.toRadians(-90))
-                        .forward(10)
+                        // drop cone
                         .turn(Math.toRadians(90))
-                        .forward(26)
+                        .forward(39)
+                        // pick up cone
+                        .back(39)
+                        .turn(Math.toRadians(-90))
+                        // drop cone
+                        .strafeLeft(12)
+                        // possibility for fourth cone idk
                         .build();
             }
 
             else if (tagOfInterest.id == RIGHT) {
                 //insert trajectories for parking zone 3
-                seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
-                        .turn(Math.toRadians(90))
-                        .forward(12)
+                seq = robot.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
+                        .strafeLeft(25)
+                        .forward(36)
                         .turn(Math.toRadians(-90))
-                        .forward(3)
-                        .back(3)
+                        // drop cone
+                        .strafeLeft(12)
+                        .forward(50)
+                        // pick up cone
+                        .back(39)
                         .turn(Math.toRadians(-90))
-                        .forward(35)
+                        // drop cone
                         .turn(Math.toRadians(90))
-                        .forward(26)
+                        .forward(39)
+                        // pick up cone
+                        .back(39)
+                        .turn(Math.toRadians(-90))
+                        // drop cone
+                        .strafeLeft(36)
                         .build();
+
             }
         }else{
             seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
