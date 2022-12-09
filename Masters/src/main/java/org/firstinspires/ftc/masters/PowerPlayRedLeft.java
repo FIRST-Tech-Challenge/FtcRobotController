@@ -58,10 +58,10 @@ public class PowerPlayRedLeft extends LinearOpMode {
         drive.followTrajectorySequence(startTo270Pole);
 
 
-        drive.setArmServoMiddle();
-        while (drive.armMotor.isBusy() && opModeIsActive()) {
-
-        }
+//        drive.setArmServoMiddle();
+//        while (drive.armMotor.isBusy() && opModeIsActive()) {
+//
+//        }
 
 //        drive.liftMiddle();
 //        while (drive.linearSlide.isBusy() && drive.frontSlide.isBusy() && opModeIsActive()) {
