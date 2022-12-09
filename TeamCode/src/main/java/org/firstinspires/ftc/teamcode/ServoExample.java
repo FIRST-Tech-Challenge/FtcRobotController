@@ -30,6 +30,7 @@ public class ServoExample extends LinearOpMode {
     static final double MIN_POS     =  0.0;
 
     int direction = 0;
+    int strafeDirection = 0; //-1 for left, 1 for right
     double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
 
     public void waitTime(double time){
@@ -85,6 +86,8 @@ public class ServoExample extends LinearOpMode {
             // Look through old files to try to find POV Mode. Currently using tank drive code
             double left  = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double right =  - gamepad1.right_stick_y;
+            boolean strafeLeft = gamepad1.left_bumper;
+            boolean strafeRight = gamepad1.right_bumper;
 
             //Switch this to gamepad1 to test if it works in the first place
             boolean servoOpen = gamepad2.dpad_up;
@@ -116,12 +119,12 @@ public class ServoExample extends LinearOpMode {
 
             if(liftUp){
                 liftMotor.setPower(.1);
-                waitTime(.5);
+                waitTime(.05);
                 liftMotor.setPower(0);
             }
             if(liftDown){
                 liftMotor.setPower(-.1);
-                waitTime(.5);
+                waitTime(.05);
                 liftMotor.setPower(0);
             }
 
@@ -146,6 +149,15 @@ public class ServoExample extends LinearOpMode {
                 right = right*right*-1;
             }
 
+            if(strafeLeft || strafeRight){
+                if(strafeLeft){
+                    strafeDirection = -1;
+                }else{
+                    strafeDirection = 1;
+                }
+            }else{
+                strafeDirection = 0;
+            }
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
             double leftFrontPower  = left;
@@ -182,10 +194,10 @@ public class ServoExample extends LinearOpMode {
             */
 
             // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftFrontDrive.setPower(leftFrontPower+strafeDirection);
+            rightFrontDrive.setPower(rightFrontPower-strafeDirection);
+            leftBackDrive.setPower(leftBackPower-strafeDirection);
+            rightBackDrive.setPower(rightBackPower+strafeDirection);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
