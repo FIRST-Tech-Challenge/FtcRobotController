@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.;
 
@@ -16,8 +17,8 @@ public class forward extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        Servo claw = hardwareMap.get(Servo.class, "claw");;
-        telemetry.addData("JServos", "wobble pos (%.2f), claw pos (%.2f)", claw.getPosition());
+
+        Servo clamp = null;
 
         //left front wheel
         DcMotor lf = hardwareMap.get(DcMotor.class, "lf");
@@ -29,18 +30,21 @@ public class forward extends LinearOpMode {
         DcMotor rb = hardwareMap.get(DcMotor.class, "rb");
         //arm motor 1
         DcMotor tower1 = hardwareMap.get(DcMotor.class, "tower1");
+        //Clamp
+        clamp = hardwareMap.servo.get("clamp");
+        telemetry.addData("JServos", "wobble pos (%.2f), claw pos (%.2f)", clamp.getPosition());
 
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        lf.setDirection(DcMotor.Direction.REVERSE);
-        rf.setDirection(DcMotor.Direction.FORWARD);
-        lb.setDirection(DcMotor.Direction.REVERSE);
-        rb.setDirection(DcMotor.Direction.FORWARD);
+        lf.setDirection(DcMotor.Direction.FORWARD);
+        rf.setDirection(DcMotor.Direction.REVERSE);
+        lb.setDirection(DcMotor.Direction.FORWARD);
+        rb.setDirection(DcMotor.Direction.REVERSE);
         tower1.setDirection(DcMotor.Direction.FORWARD);
-        claw.setDirection(Servo.Direction.FORWARD);
+        clamp.setDirection(Servo.Direction.FORWARD);
 
         waitForStart();
         gamepad1.rumble(1000);
@@ -48,14 +52,13 @@ public class forward extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-                //claw (NOTE: 0-right limit, left limit will break it)
-                if ((gamepad2.left_trigger) > 0.5) {
-                    claw.setPosition(0.5);
-                } else {
-                    claw.setPosition(1);
-                }
-
-                double lPower;
+            //clamp (NOTE: 0-right limit, left limit will break it)
+            if (gamepad2.left_trigger) {
+                clamp.setPosition(0.5);
+            } else {
+                clamp.setPosition(0.75);
+            }
+            double lPower;
                 double towerPower;
 
                 //powerMult = 0.8;
@@ -64,20 +67,22 @@ public class forward extends LinearOpMode {
 
                 lPower = gamepad1.left_stick_y;
                 double rPower = gamepad1.right_stick_y;
-                towerPower = gamepad2.right_trigger;
+               towerPower = gamepad2.right_trigger;
+                clamp = gamepad2.left_trigger;
 
-                if (towerPower <= deadzone) {
-                    towerPower = 0.0f;
-                }
 
 
                 lf.setPower(lPower * 0.5);
                 rf.setPower(rPower * 0.5);
                 lb.setPower(lPower * 0.5);
                 rb.setPower(rPower * 0.5);
-                tower1.setPower(towerPower);
+                tower1.setPower(towerPower * 1.0);
 
 
             }
         }
+
+    private void setPosition(double v) {
     }
+
+}

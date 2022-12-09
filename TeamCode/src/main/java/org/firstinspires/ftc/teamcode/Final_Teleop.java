@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.StrictMath.abs;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import static java.lang.StrictMath.abs;
 
 @TeleOp(name="Final_Teleop", group="Teleop")
 @Disabled
@@ -21,7 +21,7 @@ public class Final_Teleop extends LinearOpMode {
     private DcMotor lb = null;  //left back wheel
     private DcMotor rb = null;  //right back wheel
     private CRServo SoN = null;     //collector
-    private Servo pushover = null;//pushover
+    private Servo claw = null;//claw
     private Servo wobble = null;    //wobble goal arm
     private DcMotor spindoctorL = null; //shooter
     private DcMotor spindoctorR = null; //shooter (opposite, inverted)
@@ -37,7 +37,7 @@ public class Final_Teleop extends LinearOpMode {
         lb = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
         SoN = hardwareMap.get(CRServo.class, "SoN");
-        pushover = hardwareMap.get(Servo.class, "pushover");
+        claw = hardwareMap.get(Servo.class, "claw");
         wobble = hardwareMap.get(Servo.class, "wobble");
         spindoctorL = hardwareMap.get(DcMotor.class, "spinL");
         spindoctorR = hardwareMap.get(DcMotor.class, "spinR");
@@ -52,7 +52,7 @@ public class Final_Teleop extends LinearOpMode {
         spindoctorR.setDirection(DcMotorSimple.Direction.REVERSE);
         factory.setDirection(DcMotor.Direction.FORWARD);
         wobble.setDirection(Servo.Direction.FORWARD);
-        pushover.setDirection(Servo.Direction.FORWARD);
+        claw.setDirection(Servo.Direction.FORWARD);
 
         boolean bumperGate = false;
         double wobbleDown = -1;
@@ -148,12 +148,12 @@ public class Final_Teleop extends LinearOpMode {
                 rbPower = 1.0f;
             }
 
-            //pushover arm (NOTE: 0-right limit, left limit will break it)
+            //claw (NOTE: 0-right limit, left limit will break it)
             if((gamepad2.left_trigger) > 0.5){
-                pushover.setPosition(0.5);
+                claw.setPosition(0.5);
             }
             else{
-                pushover.setPosition(1);
+                claw.setPosition(1);
             }
 
             if(!gamepad2.left_bumper){
@@ -217,7 +217,7 @@ public class Final_Teleop extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f),leftback (%.2f), rightback (%.2f)", lfPower, rfPower, lbPower, rbPower);
             telemetry.addData("Servos", "power (%.2f)", SPower);
-            telemetry.addData("JServos", "wobble pos (%.2f), pushover pos (%.2f)", wobble.getPosition(), pushover.getPosition());
+            telemetry.addData("JServos", "wobble pos (%.2f), pushover pos (%.2f)", wobble.getPosition(), claw.getPosition());
             telemetry.update();
         }
     }

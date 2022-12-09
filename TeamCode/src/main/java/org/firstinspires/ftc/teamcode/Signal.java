@@ -15,7 +15,6 @@ public class Signal extends LinearOpMode {
     private DcMotor lb = null;  //left back wheel
     private DcMotor rb = null;  //right back wheel
     private DcMotor tower1 = null; //arm motor 1
-    private DcMotor tower2 = null; //arm motor 2
 
 
     @Override
@@ -28,7 +27,6 @@ public class Signal extends LinearOpMode {
         lb = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
         tower1 = hardwareMap.get(DcMotor.class, "tower1");
-        tower2 = hardwareMap.get(DcMotor.class, "tower2");
 
         double sidemult = -1.0; //Red side = 1.0 Blue = -1.0
 
@@ -38,8 +36,6 @@ public class Signal extends LinearOpMode {
         lb.setDirection(DcMotor.Direction.FORWARD);
         rb.setDirection(DcMotor.Direction.REVERSE);
         tower1.setDirection(DcMotor.Direction.FORWARD);
-        tower2.setDirection(DcMotor.Direction.FORWARD);
-
 
         waitForStart();
         runtime.reset();
@@ -47,7 +43,6 @@ public class Signal extends LinearOpMode {
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
 
             tower1.setPower(0);
-            tower2.setPower(0);
             lf.setPower(0);
             rf.setPower(0);
             lb.setPower(0);
@@ -57,13 +52,12 @@ public class Signal extends LinearOpMode {
 
 
             tower1.setPower(0);
-            tower2.setPower(0);
             lf.setPower(-0.5 * sidemult);
             rf.setPower(-0.5 * sidemult);
             lb.setPower(-0.5 * sidemult);
             rb.setPower(-0.5 * sidemult);
 
-            sleep(250); // Forward to low junction
+            sleep(575); // Forward to low junction
         }
     }
 }
