@@ -89,6 +89,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 
 //Start of Program
+@Disabled
 @Autonomous(name="PowerAuto", group ="Concept", preselectTeleOp="Power_TeleOp")
 
 public class PowerAuto extends LinearOpMode {
