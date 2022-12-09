@@ -36,14 +36,15 @@ class AutoHardware(startPose: Pose) {
 
     val liftLeadMotor = MotorFactory("liftLead")
         .float
-        .forward
-        .createEncoder(
-            EncoderFactory(LiftConstants.ticksPerUnit)
+        .reverse
+        .createEncoder(EncoderFactory(LiftConstants.ticksPerUnit)
             .zero(LiftConstants.homePos)
+            .reverse
         )
         .withPositionControl(
             PIDGains(LiftConstants.kP, LiftConstants.kI, LiftConstants.kD),
             FFGains(kS = LiftConstants.kS, kV = LiftConstants.kV, kA = LiftConstants.kA, kG = LiftConstants.kG),
+//            MotionConstraints(LiftConstants.maxVel, LiftConstants.maxAccel),
             allowedPositionError = LiftConstants.allowedPositionError,
             disabledPosition = LiftConstants.disabledPosition
         )

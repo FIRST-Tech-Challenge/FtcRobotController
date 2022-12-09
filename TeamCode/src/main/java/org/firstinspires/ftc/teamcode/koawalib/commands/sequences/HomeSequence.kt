@@ -17,11 +17,8 @@ class HomeSequence(
     claw : Claw,
     arm : Arm,
     armAngle : Double
-) : SequentialGroup(
-    ParallelGroup(
+) : ParallelGroup(
     LiftCmds.LiftHomeCmd(lift),
     ClawCmds.ClawOpenCmd(claw),
-    ),
-    WaitCmd(0.1),
-    InstantCmd({arm.setPos(armAngle)}, arm),
+    InstantCmd({arm.setPos(armAngle)}, arm)
 )
