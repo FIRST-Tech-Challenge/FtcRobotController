@@ -118,6 +118,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
+@Disabled
 @Autonomous(name="PowerAuto_2nd", group ="Concept")
 
 public class PowerAuto_2nd extends LinearOpMode {

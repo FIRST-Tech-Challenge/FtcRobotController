@@ -54,6 +54,7 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
  *
  * @see <a href="http://revrobotics.com">REV Robotics Web Page</a>
  */
+@Disabled
 @Autonomous(name = "Sensor: REV2mDistance", group = "Sensor")
 
 public class Distance_Test extends LinearOpMode {
