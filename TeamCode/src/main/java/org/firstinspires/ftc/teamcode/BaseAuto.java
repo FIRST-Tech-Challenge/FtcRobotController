@@ -21,8 +21,8 @@ import org.firstinspires.ftc.teamcode.hardware.MecanumWheels;
 
 //435 max ticks per second is 383.6
 
-@Autonomous(name = "BaseAuto")
-public  class BaseAuto extends LinearOpMode {
+//@Autonomous(name = "BaseAuto")
+public abstract class BaseAuto extends LinearOpMode {
 
     OpenCvWebcam webCam;
     ConeQRProcessor coneImgPipeline;
@@ -72,7 +72,7 @@ public  class BaseAuto extends LinearOpMode {
         long startMills  = System.currentTimeMillis();
 
         //Max try 10 seconds.
-        while ( !coneImgPipeline.isDecoded() & (System.currentTimeMillis() - startMills ) <10000 ) {
+        while ( !coneImgPipeline.isDecoded() & (System.currentTimeMillis() - startMills ) <15000 ) {
             telemetry.addData("Message : ", coneImgPipeline.getDetectMsg());
             telemetry.addData("Is decoded : ", coneImgPipeline.isDecoded());
             telemetry.addData("Sleeve: ", currentSide);
@@ -86,6 +86,7 @@ public  class BaseAuto extends LinearOpMode {
         telemetry.addData("Message : ", coneImgPipeline.getDetectMsg());
         telemetry.addData("Sleeve: ", currentSide);
         telemetry.update();
+        sleep(1000);
 
         switch ( currentSide) {
             case Sleev1: {
@@ -103,8 +104,9 @@ public  class BaseAuto extends LinearOpMode {
                 break;
             }
             case Unkown: {
-                parkZone2();
-
+                parkTerminal();
+                telemetry.addLine("Unknown, Move to Terminal");
+                telemetry.update();
             }
         }
 
@@ -119,15 +121,15 @@ public  class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        hdw.moveXAxis(24.0, -0.5);
-        hdw.moveYAxis( 36.0, 0.5);
+        hdw.moveXAxis(24.0, -0.3);
+        hdw.moveYAxis( 36.0, 0.3);
     }
 
     void parkZone2( ) {
         telemetry.addData("Park zone 2 ", this.currentSide);
         telemetry.update();
-        //Move forward
-        hdw.moveYAxis( 36.0, 0.5);
+        //Move forwardf
+        hdw.moveYAxis( 36.0, 0.3);
 
     }
 
@@ -135,11 +137,12 @@ public  class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 3 ", this.currentSide);
         telemetry.update();
         //Move right
-        hdw.moveXAxis(24.0, 0.5);
-        hdw.moveYAxis( 36.0, 0.5);
+        hdw.moveXAxis(24.0, 0.3);
+        hdw.moveYAxis( 36.0, 0.3);
 
     }
 
-    //abstract void movePark();
+
+    abstract void parkTerminal();
 
 }

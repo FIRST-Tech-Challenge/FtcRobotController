@@ -5,10 +5,12 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -35,9 +37,9 @@ public class Hardware2022 {
     private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
-    private final int CONE_SLIDE_LOW = 0 ;
+    private final int CONE_SLIDE_LOW = 36  ;
     private final int CONE_SLIDE_MID = 1200 ;
-    private final int CONE_SLIDE_HIGH = 2500 ;
+    private final int CONE_SLIDE_HIGH = 3800 ;
 
     private boolean debug = true;
     private Telemetry telemetry;
@@ -46,7 +48,7 @@ public class Hardware2022 {
     private double kP =0.0;
     private double kI = 0.0;
     private double kD = 0.0;
-    private double kF = 0.0 ;
+    private double kF = 0.0;
 
 
     public enum SlideHeight {
@@ -76,6 +78,9 @@ public class Hardware2022 {
     public DcMotorEx wheelBackRight = null;
     public DcMotorEx wheelBackLeft = null;
 
+    //Touch sensor
+    DigitalChannel clawTouch ;
+
     //IMU
     IMU imu =null ;
 
@@ -84,6 +89,7 @@ public class Hardware2022 {
     //public Servo grabberclaw = null;
     //public ColorSensor sensorColor = null;
     //public DistanceSensor sensorDistance = null;
+    public RevTouchSensor touchSensor = null;
 
     private int vsldieInitPosition = 0;
     /**
@@ -128,6 +134,8 @@ public class Hardware2022 {
 
         grabberclaw = hwMap.get(Servo.class, "grabberclaw");
         */
+        clawTouch = hwMap.get(DigitalChannel.class, "touch");
+        clawTouch.setMode(DigitalChannel.Mode.INPUT);
 
 
         //Get IMU.
@@ -374,7 +382,12 @@ public class Hardware2022 {
         {
             //telemetry.addLine().addData("We have power!", power );
             //telemetry.update();
-            vSlide.setVelocity(power * ANGULAR_RATE);
+            //Only give power when moving up, or moving down,but touch is not pushed.
+            if ( power > 0 || (power < 0 && clawTouch.getState()==true) ) {
+                vSlide.setVelocity(power * ANGULAR_RATE);
+            } else {
+                vSlide.setVelocity(0);
+            }
             //Thread.sleep(100);
         } else {
             vSlide.setVelocity(0);
@@ -419,6 +432,20 @@ public class Hardware2022 {
         vSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public void moveSlide(double power) {
+        telemetry.addLine("moveSLide");
+        telemetry.update();
+        vSlide.setPower(-0.5);
+        vSlide.setPower(0);
+
+    }
+
+    public void coneDropStop() {
+        touchSensor.getValue();
+        telemetry.addLine("touch works");
+        telemetry.update();
+    }
+
     public double getkP() {
         return kP;
     }
@@ -450,4 +477,5 @@ public class Hardware2022 {
     public void setkF(double kF) {
         this.kF = kF;
     }
+
 }

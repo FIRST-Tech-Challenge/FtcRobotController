@@ -74,10 +74,10 @@ public class ConeQRProcessor  extends OpenCvPipeline {
         String qrCode = null;
 
         detectMsgBuf = new StringBuffer();
-        Mat brReverse = input;
+        Mat brReverse = new Mat();
 
         //This is not needed for use with Carema.  If loading image from Disk not needed.
-        //Imgproc.cvtColor(input, brReverse, Imgproc.COLOR_BGR2RGB);
+        Imgproc.cvtColor(input, brReverse, Imgproc.COLOR_BGR2RGB);
 
         long startMills = 0;
         long endMills = 0;
@@ -158,7 +158,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
             triedTimes++;
         }
 
-        if (decoded) {
+        if (decoded && qrCode !=null ) {
             if (qrCode.equals("S1")) {
                 this.sideDetected = SleeveSide.Sleev1;
             } else if (qrCode.equals("S2")) {

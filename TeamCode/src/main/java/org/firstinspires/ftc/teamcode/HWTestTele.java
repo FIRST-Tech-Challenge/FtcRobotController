@@ -98,6 +98,14 @@ public class HWTestTele  extends LinearOpMode {
                 telemetry.update();
             }
 
+            if (gamepad1.start) {
+                hdw.moveSlide(1);
+
+            }
+
+            if (gamepad1.circle) {
+                hdw.coneDropStop();
+            }
         }
     }
 

@@ -1,22 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "LeftAuto")
-@Disabled
+@Autonomous(name = "LeftAuto")
 public class LeftAuto extends BaseAuto {
 
-    /**
-     * THis is the movement from the left side of field to park
-     */
-
-    void moveJunction() {
-        hdw.moveYAxis(12.0,0.7);
+    @Override
+    void parkTerminal() {
+        hdw.moveXAxis(-30, 0.5);
     }
-
-    { hdw.turn (90);
-
-    }
-
 }
