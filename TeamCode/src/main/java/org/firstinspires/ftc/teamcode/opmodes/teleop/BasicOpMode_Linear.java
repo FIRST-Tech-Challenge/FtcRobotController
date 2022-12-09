@@ -225,7 +225,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             rightLift.setTargetPosition(armTarget);
             if (rightLift.isBusy() && leftLift.isBusy()) {
                 if (leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()) {
-                    if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < -650 && armTarget != -630 && (!gamepad2.dpad_down || !gamepad2.dpad_up)) {
+                    if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < -630 && armTarget != -630 && (!gamepad2.dpad_down && !gamepad2.dpad_up)) {
                         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         SetArmPower(0.0);
