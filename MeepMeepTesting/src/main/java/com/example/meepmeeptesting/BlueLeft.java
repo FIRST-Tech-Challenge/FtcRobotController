@@ -39,8 +39,7 @@ public class BlueLeft {
                                         .back(38)
                                         .turn(Math.toRadians(-90))
                                         // drop cone
-                                        .turn(Math.toRadians(90))
-                                        .forward(38)
+                                        .strafeLeft(38)
                                         .build()
                         );
                 break;
@@ -69,8 +68,7 @@ public class BlueLeft {
                                         .back(38)
                                         .turn(Math.toRadians(-90))
                                         // drop cone
-                                        .turn(Math.toRadians(90))
-                                        .forward(20)
+                                        .strafeLeft(20)
                                         .build()
                         );
                 break;
@@ -99,8 +97,7 @@ public class BlueLeft {
                                         .back(38)
                                         .turn(Math.toRadians(-90))
                                         // drop cone
-                                        .turn(Math.toRadians(-90))
-                                        .forward(15)
+                                        .strafeRight(15)
                                         .build()
                         );
 

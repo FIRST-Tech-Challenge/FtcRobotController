@@ -9,7 +9,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class RedLeft {
     public static void main(String[] args) {
         //placeholder signal zone
-        int signalZone = 3;
+        int signalZone = 1;
         MeepMeep meepMeep = new MeepMeep(400);
         RoadRunnerBotEntity myBot = null;
 
@@ -38,9 +38,7 @@ public class RedLeft {
                                         // pick up cone
                                         .back(35)
                                         .turn(Math.toRadians(-90))
-                                        // drop cone
-                                        .turn(Math.toRadians(90))
-                                        .forward(35)
+                                        .strafeLeft(35)
                                         .build()
                         );
                 break;
@@ -69,8 +67,7 @@ public class RedLeft {
                                         .back(35)
                                         .turn(Math.toRadians(-90))
                                         // drop cone
-                                        .turn(Math.toRadians(90))
-                                        .forward(15)
+                                        .strafeLeft(15)
                                         .build()
                         );
                 break;
@@ -99,8 +96,7 @@ public class RedLeft {
                                         .back(35)
                                         .turn(Math.toRadians(-90))
                                         // drop cone
-                                        .turn(Math.toRadians(-90))
-                                        .forward(12)
+                                        .strafeRight(12)
                                         .build()
                         );
 
