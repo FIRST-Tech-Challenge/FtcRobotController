@@ -54,6 +54,16 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 # Release Information
 
+## Version 8.1.1 (20221201-150726)
+
+This is a bug fix only release to address the following four issues.
+
+* [Issue #495](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/495) - Can't create new blocks opmodes.
+* [Issue #492](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/492) - Remove the final modifier from the OpMode's Telemetry object.
+* [Issue #500](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/500) - Some devices cannot be configured when the Driver Station app has been updated to 8.1
+  * Updating either the Robot Controller app or the Driver Station app to 8.1.1 or later will fix this issue.
+* The Modern Robotics touch sensor was configurable as a  Digital Device. It can only be used as an Analog Device.
+
 ## Version 8.1 (20221121-115119)
 
 ### Breaking Changes
