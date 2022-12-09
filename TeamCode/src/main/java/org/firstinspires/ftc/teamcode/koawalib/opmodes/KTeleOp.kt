@@ -38,12 +38,12 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
             robot.drive,
             driver.leftStick,
             driver.rightStick,
-            0.9,
-            0.9,
-            0.8,
-            0.8,
-            0.8,
-            0.1
+            1.0,
+            1.0,
+            1.0,
+            0.5,
+            0.5,
+            0.5
         )
     }
 
