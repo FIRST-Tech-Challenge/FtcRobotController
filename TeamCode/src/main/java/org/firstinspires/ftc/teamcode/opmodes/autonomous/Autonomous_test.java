@@ -35,7 +35,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Autonomous :)")
 public class Autonomous_test extends LinearOpMode
 {
     private DcMotor motorFL = null;
