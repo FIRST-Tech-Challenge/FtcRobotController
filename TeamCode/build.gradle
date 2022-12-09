@@ -30,4 +30,6 @@ dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:apriltag:1.1.0'
     implementation 'org.openftc:easyopencv:1.5.2'
+    implementation 'org.openftc:apriltag:1.1.0'
+
 }
