@@ -20,7 +20,8 @@ public class AutoRedLeft extends LinearOpMode {
 
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     OpenCvCamera camera;
-
+    double minPosition = 0.3f;
+    double maxPosition = 0.8f;
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -104,26 +105,41 @@ public class AutoRedLeft extends LinearOpMode {
             telemetry.addLine("No tag snapshot available, never sighted(");
             telemetry.update();
         }
-        TrajectorySequence seq = null;
+        TrajectorySequence seq1 = null;
+        TrajectorySequence seq2 = null;
+        TrajectorySequence seq3 = null;
+        TrajectorySequence seq4 = null;
+        TrajectorySequence seq5 = null;
+        TrajectorySequence seq6 = null;
+
         Pose2d pos = new Pose2d(-35.5, -64.75, Math.toRadians(90));
         robot.setPoseEstimate(pos);
         if(tagOfInterest != null){
             if (tagOfInterest.id == LEFT) {
                 //insert trajectories for parking zone 1
-                seq = robot.trajectorySequenceBuilder(new Pose2d(-35.5, -63, Math.toRadians(90)))
+                seq1 = robot.trajectorySequenceBuilder(new Pose2d(-35.5, -63, Math.toRadians(90)))
                         .turn(Math.toRadians(-90))
                         .forward(24)
                         .strafeLeft(40)
+                        .build();
+
+                seq2 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         // drop cone
                         .strafeLeft(12)
                         .turn(Math.toRadians(180))
                         .forward(47)
+                        .build();
+                seq3 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         // pick up cone
                         .back(35)
                         .turn(Math.toRadians(-90))
+                        .build();
+                seq4 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         // drop cone
                         .turn(Math.toRadians(90))
                         .forward(35)
+                        .build();
+                seq5 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         // pick up cone
                         .back(35)
                         .turn(Math.toRadians(-90))
@@ -133,72 +149,123 @@ public class AutoRedLeft extends LinearOpMode {
 
             else if (tagOfInterest.id == MIDDLE) {
                 //insert trajectories for parking zone 2
-                seq = robot.trajectorySequenceBuilder(new Pose2d(-35.5, -63, 1.57))
+                seq1 = robot.trajectorySequenceBuilder(new Pose2d(-35.5, -63, 1.57))
                         .turn(Math.toRadians(-90))
                         .forward(24)
                         .strafeLeft(40)
                         // drop cone
+                        .build();
+                seq2 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         .strafeLeft(12)
                         .turn(Math.toRadians(180))
                         .forward(47)
                         // pick up cone
+                        .build();
+                seq3 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         .back(35)
                         .turn(Math.toRadians(-90))
                         // drop cone
+                        .build();
+                seq4 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         .turn(Math.toRadians(90))
                         .forward(35)
                         // pick up cone
+                        .build();
+                seq5 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         .back(35)
                         .turn(Math.toRadians(-90))
                         // drop cone
+                        .build();
+                seq6 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         .strafeLeft(15)
                         .build();
             }
 
             else if (tagOfInterest.id == RIGHT) {
                 //insert trajectories for parking zone 3
-                seq = robot.trajectorySequenceBuilder(new Pose2d(-35.5, -63, 1.57))
+                seq1 = robot.trajectorySequenceBuilder(new Pose2d(-35.5, -63, 1.57))
                         .turn(Math.toRadians(-90))
                         .forward(24)
                         .strafeLeft(40)
                         // drop cone
+                        .build();
+                seq2 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         .strafeLeft(12)
                         .turn(Math.toRadians(180))
                         .forward(47)
+
                         // pick up cone
+                        .build();
+                seq3 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         .back(35)
                         .turn(Math.toRadians(-90))
+                        .build();
                         // drop cone
+                seq4 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         .turn(Math.toRadians(90))
                         .forward(35)
+                        .build();
                         // pick up cone
+                seq5 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         .back(35)
                         .turn(Math.toRadians(-90))
+                        .build();
                         // drop cone
+                seq6 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                         .strafeRight(12)
                         .build();
             }
         }else{
             //failsafe trajectories
-            seq = robot.trajectorySequenceBuilder(pos)
-                    .forward(17.5)
+            //insert trajectories for parking zone 3
+            seq1 = robot.trajectorySequenceBuilder(new Pose2d(-35.5, -63, 1.57))
                     .turn(Math.toRadians(-90))
-                    .forward(4)
-                    //use claw
-                    .back(4)
+                    .forward(24)
+                    .strafeLeft(40)
+                    // drop cone
+                    .build();
+            seq2 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
+                    .strafeLeft(12)
+                    .turn(Math.toRadians(180))
+                    .forward(47)
+
+                    // pick up cone
+                    .build();
+            seq3 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
+                    .back(35)
                     .turn(Math.toRadians(-90))
-                    .forward(17.5)
+                    .build();
+            // drop cone
+            seq4 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
                     .turn(Math.toRadians(90))
-                    .forward(25)
-                    .turn(Math.toRadians(90))
-                    .forward(50)
-                    .turn(Math.toRadians(90))
+                    .forward(35)
+                    .build();
+            // pick up cone
+            seq5 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
+                    .back(35)
+                    .turn(Math.toRadians(-90))
+                    .build();
+            // drop cone
+            seq6 = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
+                    .strafeRight(12)
                     .build();
         }
 
         waitForStart();
-        if(!isStopRequested() && seq != null){
-            robot.followTrajectorySequence(seq);
+        if(!isStopRequested() && seq1 != null){
+            robot.followTrajectorySequence(seq1);
+            robot.servo.setPosition(maxPosition);
+            robot.followTrajectorySequence(seq2);
+            robot.servo.setPosition(minPosition);
+            robot.followTrajectorySequence(seq3);
+            robot.servo.setPosition(maxPosition);
+            robot.followTrajectorySequence(seq4);
+            robot.servo.setPosition(minPosition);
+            robot.followTrajectorySequence(seq5);
+            if(seq6 != null){
+                robot.servo.setPosition(maxPosition);
+                robot.followTrajectorySequence(seq6);
+            }
         }
 
 
