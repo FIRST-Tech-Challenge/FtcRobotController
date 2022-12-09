@@ -223,17 +223,23 @@ public class WARHOGAuto extends LinearOpMode {
 
         // drive to pole and raise slide
         drivetrain.MoveForDis(60, speed);
-        drivetrain.MoveForDis(-7, speed);
+        drivetrain.MoveForDis(-7.5, speed);
         drivetrain.rotateToPosition(-45 * posMod, speed);
-        drivetrain.MoveForDis(-5, speed);
+        drivetrain.MoveForDis(-3.5, speed);
+        telemetry.addLine("just before slides");
+        telemetry.update();
         outtake.setHeight(Outtake.Height.HIGH);
+        telemetry.addLine("height added");
+        telemetry.update();
+        sleep(1000);
         outtake.openClaw();
         outtake.setHeight(Outtake.Height.GROUND);
 
         // turn to cone stack
-        drivetrain.MoveForDis(5, speed);
+        drivetrain.MoveForDis(3.5, speed);
 
         telemetry.addLine("Stage 1 complete");
+        telemetry.update();
 
         for(int i = 0; i < cycles; i++) {
             //drivetrain.RotateForDegree(-45 * posMod, speed);
@@ -265,27 +271,29 @@ public class WARHOGAuto extends LinearOpMode {
             drivetrain.MoveForDis(5, speed);
         }
         telemetry.addLine("Stage 2 complete");
+        telemetry.update();
 
         // park
-        intake.runArm(Intake.Height.UPRIGHT);
+        intake.runArm(Intake.Height.SIZING);
         //drivetrain.RotateForDegree(-45 * posMod, speed);
         drivetrain.rotateToPosition(-90 * posMod, speed);
         if(tagOfInterest == null || tagOfInterest.id == MIDDLE){
 
-        }else if(tagOfInterest.id == LEFT){
+        }else if(tagOfInterest.id != LEFT){
 
             drivetrain.MoveForDis(24, speed);
 
         }else{
-            drivetrain.MoveForDis(-20, speed);
+            drivetrain.MoveForDis(-23, speed);
         }
 
         //drivetrain.RotateForDegree(90*posMod, speed);
-        if(tagOfInterest==null || tagOfInterest.id!=3) {
+        if(tagOfInterest==null || tagOfInterest.id!=LEFT) {
             drivetrain.rotateToPosition(0, speed);
             drivetrain.MoveForDis(-12, speed);
         }
         telemetry.addLine("Stage 3 complete");
+        telemetry.update();
     }
 
     void tagToTelemetry(AprilTagDetection detection)

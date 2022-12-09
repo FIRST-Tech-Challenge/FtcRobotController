@@ -17,10 +17,10 @@ public class Intake {
 
     double retracted = .9;
     double extended = armMin;
-    double armMid = .50;
-    double sizing = .65;
+    double armMid = .6;
+    double sizing = .83;
 
-    double endMod = 0;
+    double endMod = .1;
     double newPos;
 
     WristMode wristMode;
@@ -57,13 +57,20 @@ public class Intake {
             /*if(newPos>armMid&&claw.getPosition()>0.4) {
                 runWrist(1);
             }
-            else if(newPos>.5){
-                runWrist(newPos + endMod);
-            }*/
-            if (Math.abs(newPos-getArmPos())>.5){
-                //sleep(200);
+            else */if(newPos<.35){
+                if(isClawOpen()) {
+                    runWrist(newPos + endMod);
+                }
+                else{
+                    runWrist(.1);
+                }
             }
-            runWrist(newPos);
+            /*if (Math.abs(newPos-getArmPos())>.5){
+                //sleep(200);
+            }*/
+            else {
+                runWrist(newPos);
+            }
         }
     }
 
@@ -184,5 +191,14 @@ public class Intake {
     //0 is all the way out, 1 is all the way in
     public double getArmPos(){
         return armLeft.getPosition();
+    }
+
+    public boolean isClawOpen(){
+        if(claw.getPosition()<.3){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

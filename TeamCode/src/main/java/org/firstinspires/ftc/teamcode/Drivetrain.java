@@ -284,13 +284,7 @@ public class Drivetrain{
                 leftBackDrive.isBusy() ||
                 rightFrontDrive.isBusy() ||
                 rightBackDrive.isBusy() ) {}
-/*
-        // set power to 0
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
-*/
+
 
         // change encoder mode back to normal
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -302,6 +296,14 @@ public class Drivetrain{
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        // set power to 0
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+
     }
 
     // this function is designed for the auto part
@@ -367,6 +369,12 @@ public class Drivetrain{
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        // set power to 0
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
     }
 
     // this function is designed for the auto part
@@ -445,7 +453,7 @@ public class Drivetrain{
             angleMod=-360;
         }
 
-        while (abs(targetAngle-(angle+angleMod))>0.25){
+        while (abs(targetAngle-(angle+angleMod))>0.2){
             angle = getIMUData()*180/PI;
 
             if (abs(targetAngle-(angle+angleMod))<=30){

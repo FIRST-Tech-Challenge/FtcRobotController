@@ -26,7 +26,13 @@ public class WARHOGTeleOp extends LinearOpMode {
         Outtake outtake = new Outtake(hardwareMap, telemetry);
 
         //set up variables
-        double joyx, joyy, joyz, gas, basespeed, armpos, wristmod, offset;
+        double joyx, joyy, joyz, gas, basespeed, armpos, wristmod, offset, slideMovement;
+        boolean autoeject = false;
+        boolean autointake = false;
+        boolean pauseToResetMaxIncrease = false;
+        boolean stationary = false;
+        boolean outtakeGround, outtakeLow, outtakeMedium, outtakeHigh;
+
         offset = 0;
         Drivetrain.Centricity centricity = Drivetrain.Centricity.FIELD;
 
@@ -41,7 +47,7 @@ public class WARHOGTeleOp extends LinearOpMode {
 
         while (!isStarted() && !isStopRequested()) {
             outtake.openClaw();
-            intake.runArm(Intake.Height.UPRIGHT);
+            armpos = intake.runArm(Intake.Height.UPRIGHT);
             try {
                 previousGamepad1.copy(currentGamepad1);
                 previousGamepad2.copy(currentGamepad2);
@@ -116,19 +122,47 @@ public class WARHOGTeleOp extends LinearOpMode {
 
 
 
+            //switch between autointake and autoeject
+            if(currentGamepad2.start && !previousGamepad2.start){
+                if(autoeject==true){
+                    autoeject=false;
+                }
+                else{
+                    autoeject=true;
+                }
+            }
+            if(currentGamepad2.back && !previousGamepad2.back){
+                if(autointake==true){
+                    autointake=false;
+                }
+                else{
+                    autointake=true;
+                }
+            }
+
             //move arm
             armpos += currentGamepad2.left_stick_y*.03;
             if(armpos<0){armpos=0;}
             if(armpos>1){armpos=1;}
             //defined positions
+            if(autointake){
+                if(currentGamepad2.dpad_down){
+                    intake.intakeCone();
+                }
+            }
+            else{
+                if(currentGamepad2.dpad_down){
+                    armpos = intake.runArm(Intake.Height.RETRACTED);
+                }
+            }
             if(currentGamepad2.dpad_up){
                 armpos = intake.runArm(Intake.Height.EXTENDED);
             }
             if(currentGamepad2.dpad_left){
                 armpos = intake.runArm(Intake.Height.UPRIGHT);
             }
-            if(currentGamepad2.dpad_down){
-                armpos = intake.runArm(Intake.Height.RETRACTED);
+            if(currentGamepad2.dpad_right){
+                armpos = intake.runArm(Intake.Height.SIZING);
             }
 
             //move the arm, modifying the wrist's position if right trigger is pressed
@@ -147,30 +181,70 @@ public class WARHOGTeleOp extends LinearOpMode {
                 intake.toggleClaw();
             }
 
+            //open/close the outtake claw
             if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
                 outtake.toggleClaw();
                 telemetry.addLine("Toggle OuttakeClaw");
             }
 
-            //move the outtake slides up and down
-            if(!outtake.isSlideGoingToPosition()) {
-                outtake.run(-currentGamepad2.right_stick_y);
+            //increase slide maximum
+            if(outtake.showSlideValue()>1600) {
+                if (!pauseToResetMaxIncrease) {
+                    outtake.increaseMax(currentGamepad2.right_trigger * 50, currentGamepad2.right_stick_button && !previousGamepad2.right_stick_button);
+                    if (currentGamepad2.right_stick_button && !previousGamepad2.right_stick_button) {
+                        pauseToResetMaxIncrease = true;
+                    }
+                } else {
+                    if (currentGamepad2.right_trigger == 0) {
+                        pauseToResetMaxIncrease = false;
+                    }
+                }
             }
 
-            if(currentGamepad2.a){
-                outtake.setHeight(Outtake.Height.GROUND);
+
+            //change whether stationary mode is on
+            if(currentGamepad1.back && !previousGamepad1.back){
+                if(stationary==true){
+                    stationary=false;
+                }
+                else{
+                    stationary=true;
+                }
+            }
+            if(stationary=false){
+                slideMovement = -currentGamepad2.right_stick_y;
+                outtakeGround = currentGamepad2.a;
+                outtakeLow = currentGamepad2.x;
+                outtakeMedium = currentGamepad2.b;
+                outtakeHigh = currentGamepad2.y;
+            }
+            else{
+                slideMovement = -currentGamepad1.right_stick_y;
+                outtakeGround = currentGamepad1.a;
+                outtakeLow = currentGamepad1.x;
+                outtakeMedium = currentGamepad1.b;
+                outtakeHigh = currentGamepad1.y;
+            }
+
+            //move the outtake slides up and down
+            if(!outtake.isSlideGoingToPosition()) {
+                outtake.run(slideMovement);
+            }
+
+            if(outtakeGround){
+                outtake.setHeightWithoutWaiting(Outtake.Height.GROUND);
                 telemetry.addLine("A");
             }
-            if(currentGamepad2.x){
-                outtake.setHeight(Outtake.Height.LOW);
+            if(outtakeLow){
+                outtake.setHeightWithoutWaiting(Outtake.Height.LOW);
                 telemetry.addLine("X");
             }
-            if(currentGamepad2.b){
-                outtake.setHeight(Outtake.Height.MEDIUM);
+            if(outtakeMedium){
+                outtake.setHeightWithoutWaiting(Outtake.Height.MEDIUM);
                 telemetry.addLine("B");
             }
-            if(currentGamepad2.y){
-                outtake.setHeight(Outtake.Height.HIGH);
+            if(outtakeHigh){
+                outtake.setHeightWithoutWaiting(Outtake.Height.HIGH);
                 telemetry.addLine("Y");
             }
 
