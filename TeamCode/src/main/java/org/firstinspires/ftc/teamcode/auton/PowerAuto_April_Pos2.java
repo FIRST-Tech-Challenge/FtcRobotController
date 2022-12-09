@@ -37,7 +37,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -45,30 +44,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.NewHardwareMap;
-
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-import java.util.List;
-
 
 //Start of Program
-@Autonomous(name="PowerAuto_RedTerminal", group ="Concept", preselectTeleOp="Power_TeleOp")
+@Autonomous(name="PowerAuto_BlueTerminal", group ="Concept", preselectTeleOp="Power_TeleOp")
 
-public class PowerAuto_April extends LinearOpMode {
+public class PowerAuto_April_Pos2 extends LinearOpMode {
 
     /* Declare OpMode members. */
     NewHardwareMap robot =   new NewHardwareMap();
@@ -309,7 +297,7 @@ public class PowerAuto_April extends LinearOpMode {
         //Arm positions are 0.9 for closed and 0.5 for open
         //Drive to junction
         gyroDrive(0.4, 3, 0, 15.0);
-        gyroStrafe(STRAFE_SPEED, 20, 0, 15.0);
+        gyroStrafe(STRAFE_SPEED, -30, 0, 15.0);
         gyroDrive(0.5, 47, 0, 15.0);
         sleep(200);
 
@@ -320,13 +308,13 @@ public class PowerAuto_April extends LinearOpMode {
         robot.LiftMotor.setPower(0.05);
 
         //Detect the Junction
-        gyroSensorStrafe(0.2, -25, 0, 15.0);
-        //gyroStrafe(0.4, -4, 0, 15.0);
-
+        gyroSensorStrafe(0.2, 25, 0, 15.0);
         sensorNum = robot.sensorRange.getDistance(DistanceUnit.INCH);
         sensorNumIn = 6.5 - sensorNum;
-        gyroDrive(0.4, sensorNumIn, 0, 15.0);
 
+        gyroStrafe(0.2, -2, 0, 15.0);
+
+        gyroDrive(0.4, sensorNumIn, 0, 15.0);
         sleep(200);
         robot.LiftMotor.setPower(-0.5);
         sleep(400);
@@ -342,65 +330,65 @@ public class PowerAuto_April extends LinearOpMode {
         //sleep(500);
 
         //Drive to Cone Stack
-            gyroDrive(DRIVE_SPEED, -2, 0, 15.0);
-            gyroTurn(TURN_SPEED, 90);
+        gyroDrive(DRIVE_SPEED, -2, 0, 15.0);
+        gyroTurn(TURN_SPEED, -90);
 
-            while (!robot.touch.isPressed()) {
-                robot.LiftMotor.setPower(-0.8);
-            }
-            robot.LiftMotor.setPower(0);
-
-            gyroDrive(DRIVE_SPEED, 26, 90, 15.0);
-            //Pick up cone stack
-            robot.LiftMotor.setPower(1.0);
-            sleep(230);
-            robot.LiftMotor.setPower(0);
-            //gyroDrive(0.5, 8, 90, 15.0);
-            robot.Gray.setPower(1);
-            robot.Green.setPower(-1);
-            gyroDrive(0.4, 7, 90, 15.0);
-            sleep(500);
-            robot.Gray.setPower(0);
-            robot.Green.setPower(0);
-            //sleep(500);
-            robot.LiftMotor.setPower(0.6);
-            sleep(800);
-            robot.LiftMotor.setPower(0.05);
-            gyroDrive(0.5, -11, 90, 15.0);
-
-            //Deliver the second cone
-            gyroTurn(TURN_SPEED, 180);
-            sleep(100);
-            //robot.LiftMotor.setPower(-0.5);
-            //sleep(10);
-
-            //Deliver Cone
-            robot.Gray.setPower(-1);
-            robot.Green.setPower(1);
-            sleep(500);
-            robot.Gray.setPower(0);
-            robot.Green.setPower(0);
-            //sleep(500);
-
-
-            gyroDrive(DRIVE_SPEED,-2,180,15.0);
-            gyroTurn(TURN_SPEED, 90);
-            while (!robot.touch.isPressed()) {
+        while (!robot.touch.isPressed()) {
             robot.LiftMotor.setPower(-0.8);
-            }
-            robot.LiftMotor.setPower(0);
+        }
+        robot.LiftMotor.setPower(0);
 
-            //Drive to Target Zone
+        gyroDrive(DRIVE_SPEED, 28, -90, 15.0);
+        //Pick up cone stack
+        robot.LiftMotor.setPower(1.0);
+        sleep(230);
+        robot.LiftMotor.setPower(0);
+        //gyroDrive(0.5, 8, 90, 15.0);
+        robot.Gray.setPower(1);
+        robot.Green.setPower(-1);
+        gyroDrive(0.4, 7, -90, 15.0);
+        sleep(500);
+        robot.Gray.setPower(0);
+        robot.Green.setPower(0);
+        //sleep(500);
+        robot.LiftMotor.setPower(0.6);
+        sleep(800);
+        robot.LiftMotor.setPower(0.05);
+        gyroDrive(0.5, -11, -90, 15.0);
 
-            if(tagOfInterest.id == LEFT){
-            gyroDrive(DRIVE_SPEED, 9, 90, 15.0);
-            }
-            else if(tagOfInterest.id == MIDDLE){
-            gyroDrive(DRIVE_SPEED, -12, 90, 15.0);
-            }
-            else if(tagOfInterest.id == RIGHT){
-            gyroDrive(DRIVE_SPEED, -34, 90, 15.0);
-            }
+        //Deliver the second cone
+        gyroTurn(TURN_SPEED, -180);
+        sleep(100);
+        //robot.LiftMotor.setPower(-0.5);
+        //sleep(10);
+
+        //Deliver Cone
+        robot.Gray.setPower(-1);
+        robot.Green.setPower(1);
+        sleep(500);
+        robot.Gray.setPower(0);
+        robot.Green.setPower(0);
+        //sleep(500);
+
+
+        gyroDrive(DRIVE_SPEED,-2,-180,15.0);
+        gyroTurn(TURN_SPEED, -90);
+        while (!robot.touch.isPressed()) {
+            robot.LiftMotor.setPower(-0.8);
+        }
+        robot.LiftMotor.setPower(0);
+
+        //Drive to Target Zone
+
+        if(tagOfInterest.id == RIGHT){
+            gyroDrive(DRIVE_SPEED, 9, -90, 15.0);
+        }
+        else if(tagOfInterest.id == MIDDLE){
+            gyroDrive(DRIVE_SPEED, -12, -90, 15.0);
+        }
+        else if(tagOfInterest.id == LEFT){
+            gyroDrive(DRIVE_SPEED, -34, -90, 15.0);
+        }
 
     }
 
