@@ -9,7 +9,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class BlueLeft {
     public static void main(String[] args) {
         //placeholder signal zone
-        int signalZone = 3;
+        int signalZone = 1;
         MeepMeep meepMeep = new MeepMeep(400);
         RoadRunnerBotEntity myBot = null;
 
@@ -19,6 +19,7 @@ public class BlueLeft {
                 myBot = new DefaultBotBuilder(meepMeep)
                         // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                        // change maxAngVel to 270 cuts down 1.5 sec
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(35, 60, Math.toRadians(270)))
