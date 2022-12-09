@@ -131,69 +131,99 @@ public class AutoBlueLeft extends LinearOpMode {
                 //insert trajectories for parking zone 1
                 // drive.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(270)))
                 seq = robot.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(270)))
-                        .forward(3)
+                        .turn(Math.toRadians(-90))
+                        .forward(22)
+                        .strafeLeft(36)
+                        // drop cone
+                        .strafeLeft(12)
+                        .turn(Math.toRadians(180))
+                        .forward(50)
+                        // pick up cone
+                        .back(42)
+                        .turn(Math.toRadians(-90))
+                        // drop cone
+                        .turn(Math.toRadians(90))
+                        .forward(38)
+                        // pick up cone
+                        .back(38)
+                        .turn(Math.toRadians(-90))
+                        // drop cone
+                        .turn(Math.toRadians(90))
+                        .forward(38)
                         .build();
-                int lmotorpos = lmotor.getCurrentPosition();
-                lmotor.setTargetPosition(lmotorpos + 60);
-                lmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                lmotor.setPower(0.8);
-                telemetry.addData("Current position", lmotor.getCurrentPosition());
-                robot.servo.setPosition(0);
             }
 
             else if (tagOfInterest.id == MIDDLE) {
                 //insert trajectories for parking zone 2
                 seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
-                        .turn(Math.toRadians(90))
-                        .forward(26)
                         .turn(Math.toRadians(-90))
-                        .forward(40)
+                        .forward(22)
+                        .strafeLeft(36)
+                        // drop cone
+                        .strafeLeft(12)
+                        .turn(Math.toRadians(180))
+                        .forward(50)
+                        // pick up cone
+                        .back(42)
                         .turn(Math.toRadians(-90))
-                        .forward(3)
-                        .back(3)
+                        // drop cone
+                        .turn(Math.toRadians(90))
+                        .forward(38)
+                        // pick up cone
+                        .back(38)
                         .turn(Math.toRadians(-90))
-                        .forward(40)
+                        // drop cone
                         .turn(Math.toRadians(90))
-                        .forward(25)
-                        .turn(Math.toRadians(90))
-                        .forward(35)
+                        .forward(20)
                         .build();
             }
 
             else if (tagOfInterest.id == RIGHT) {
                 //insert trajectories for parking zone 3
                 seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
-                        .turn(Math.toRadians(90))
-                        .forward(26)
                         .turn(Math.toRadians(-90))
-                        .forward(40)
+                        .forward(22)
+                        .strafeLeft(36)
+                        // drop cone
+                        .strafeLeft(12)
+                        .turn(Math.toRadians(180))
+                        .forward(50)
+                        // pick up cone
+                        .back(42)
                         .turn(Math.toRadians(-90))
-                        .forward(3)
-                        .back(3)
+                        // drop cone
+                        .turn(Math.toRadians(90))
+                        .forward(38)
+                        // pick up cone
+                        .back(38)
                         .turn(Math.toRadians(-90))
-                        .forward(40)
-                        .turn(Math.toRadians(90))
-                        .forward(46)
-                        .turn(Math.toRadians(90))
-                        .forward(35)
+                        // drop cone
+                        .turn(Math.toRadians(-90))
+                        .forward(15)
                         .build();
             }
         }else{
             //failsafe trajectories
             seq = robot.trajectorySequenceBuilder(robot.getPoseEstimate())
-                    .turn(Math.toRadians(90))
-                    .forward(26)
                     .turn(Math.toRadians(-90))
-                    .forward(40)
+                    .forward(22)
+                    .strafeLeft(36)
+                    // drop cone
+                    .strafeLeft(12)
+                    .turn(Math.toRadians(180))
+                    .forward(50)
+                    // pick up cone
+                    .back(42)
                     .turn(Math.toRadians(-90))
-                    .forward(3)
-                    .back(3)
+                    // drop cone
+                    .turn(Math.toRadians(90))
+                    .forward(38)
+                    // pick up cone
+                    .back(38)
                     .turn(Math.toRadians(-90))
-                    .forward(40)
-                    .turn(Math.toRadians(90))
-                    .forward(46)
-                    .turn(Math.toRadians(90))
-                    .forward(35)
+                    // drop cone
+                    .turn(Math.toRadians(-90))
+                    .forward(15)
                     .build();
         }
 
