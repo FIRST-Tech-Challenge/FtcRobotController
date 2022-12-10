@@ -39,12 +39,12 @@ class TestAuto : AutoOpMode() {
     private val intakePath = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
         Pose(-9.0, -26.0, 230.0.radians),
-        Pose(-14.0, -55.0, 270.0.radians)
+        Pose(-14.0, -56.0, 270.0.radians)
     )
 
     private val depositPath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
-        Pose(-14.0, -55.0, 90.0.radians),
+        Pose(-14.0, -56.0, 90.0.radians),
         Pose(-7.0, -28.0, 50.0.radians)
     )
 
