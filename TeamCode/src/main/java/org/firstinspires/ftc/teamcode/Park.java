@@ -7,57 +7,27 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-@Autonomous(name = "PowerPlaybotAuto", group = "pp")
+@Autonomous(name = "PowerPlayAuto", group = "pp")
 public class Park extends LinearOpMode {
-    private DcMotor RightDrive;
-    private DcMotor LeftDrive;
-    static final double HD_COUNTS_PER_REV = 28;
-    static final double DRIVE_GEAR_REDUCTION = 20.15293;
-    static final double WHEEL_CIRCUMFERENCE_MM = 90 * Math.PI;
-    static final double DRIVE_COUNTS_PER_MM = (HD_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE_MM;
-    static final double DRIVE_COUNTS_PER_IN = DRIVE_COUNTS_PER_MM * 25.4;
-
+    final double speedScalar = 0.8;
     Ppbot robot = new Ppbot();
     private ElapsedTime  runtime = new ElapsedTime();
-    private void drive(double power, double leftInches, double rightInches) {
-        int rightTarget;
-        int leftTarget;
-
-        if (opModeIsActive()) {
-            // Create target positions
-            rightTarget = RightDrive.getCurrentPosition() + (int)(rightInches * DRIVE_COUNTS_PER_IN);
-            leftTarget = LeftDrive.getCurrentPosition() + (int)(leftInches * DRIVE_COUNTS_PER_IN);
-
-            // set target position
-            LeftDrive.setTargetPosition(leftTarget);
-            RightDrive.setTargetPosition(rightTarget);
-
-            //switch to run to position mode
-            LeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            RightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            //run to position at the designated power
-            LeftDrive.setPower(power);
-            RightDrive.setPower(power);
-
-            // wait until both motors are no longer busy running to position
-            while (opModeIsActive() && (LeftDrive.isBusy() || RightDrive.isBusy())) {
-            }
-            // set motor power back to 0
-            LeftDrive.setPower(0);
-            RightDrive.setPower(0);
-        }
-    }
 
     @Override
     public void runOpMode() {
-        RightDrive = hardwareMap.get(DcMotor.class, "RightDrive");
-        LeftDrive = hardwareMap.get(DcMotor.class, "LeftDrive");
-        LeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-
         waitForStart();
-        if (opModeIsActive()) {
-            drive(0.7, 30, 15);
+        robot.BLeft.setPower(speedScalar * -0.7);
+        robot.BRight.setPower(speedScalar * 0.7);
+        robot.FRight.setPower(speedScalar);
+        robot.FLeft.setPower(speedScalar * 0.85);
+
+        sleep(1000);
+        if (opModeIsActive() && runtime.seconds() > 2) {
+            robot.Take1.setPosition(0.0);
+            robot.BLeft.setPower(0);
+            robot.BRight.setPower(0);
+            robot.FRight.setPower(0);
+            robot.FLeft.setPower(0);
         }
     }
 }
