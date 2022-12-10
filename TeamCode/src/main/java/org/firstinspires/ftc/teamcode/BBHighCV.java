@@ -55,7 +55,7 @@ public class BBHighCV extends DriveMethods{
         driveForDistance(1.22, Variables.Direction.FORWARD,0.35,0);
         driveForDistance(0.35, Variables.Direction.RIGHT, 0.35,0);
         goToHigh();
-        driveForDistance(0.17, Variables.Direction.FORWARD,0.2,0);
+        driveForDistance(0.15, Variables.Direction.FORWARD,0.2,0);
         sleep(500);
         clawRelease();
         sleep(200);
@@ -65,7 +65,7 @@ public class BBHighCV extends DriveMethods{
         driveForDistance(0.35, Variables.Direction.LEFT, 0.35,0);
         switch(result){
             case "purple":
-                driveForDistance(1.35, Variables.Direction.RIGHT, 0.35,0);
+                driveForDistance(1.50, Variables.Direction.RIGHT, 0.35,0);
                 break;
             case "yellow":
                 driveForDistance(0.7, Variables.Direction.RIGHT, 0.35,0);

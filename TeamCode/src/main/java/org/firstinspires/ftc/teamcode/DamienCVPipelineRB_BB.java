@@ -71,6 +71,13 @@ public class DamienCVPipelineRB_BB extends OpenCvPipeline {
                 currentResultStr = "yellow";
                 break;
         }
+
+//        input.release();
+//        inputRGB.release();
+//        inputGreen.release();
+//        inputPurple.release();
+//        inputYellow.release();
+//        hsvInput.release();
         return returnedMat;
     }
     public int getCurrentResults() {
@@ -88,6 +95,7 @@ public class DamienCVPipelineRB_BB extends OpenCvPipeline {
                 currentResultStr = "yellow";
                 break;
         }
+
         return currentResultStr;
     }
 

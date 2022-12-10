@@ -81,6 +81,15 @@ public class DamienCVPipelineBR_RR extends OpenCvPipeline {
                 currentResultStr = "yellow";
                 break;
         }
+//        input.release();
+//        inputRGB.release();
+//        inputGreen.release();
+//        inputPurple.release();
+//        inputYellow.release();
+//        hsvInput.release();
+//        subGreen.release();
+//        subPurple.release();
+//        subYellow.release();
         return returnedMat;
     }
     public int getCurrentResults() {

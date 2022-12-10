@@ -422,7 +422,7 @@ public class DriveMethods extends LinearOpMode{
             dif = (target - Math.abs(motorSlide.getCurrentPosition()));
             motorSlide.setPower(((dif / aggressiveness) + holdingPower));
             if(target == 0 && motorSlide.getCurrentPosition() < 150){
-                aggressiveness = 325;
+                aggressiveness = 250;
             }
         }
         motorSlide.setPower(holdingPower);

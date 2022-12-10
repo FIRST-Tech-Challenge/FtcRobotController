@@ -5,15 +5,12 @@ import static org.firstinspires.ftc.teamcode.Variables.motorBR;
 import static org.firstinspires.ftc.teamcode.Variables.motorFL;
 import static org.firstinspires.ftc.teamcode.Variables.motorFR;
 import static org.firstinspires.ftc.teamcode.Variables.motorSlide;
-import static org.firstinspires.ftc.teamcode.Variables.servoGrabberThing;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name="Meet1Teleop", group = "A")
-@Disabled
-public class Meet1Teleop extends DriveMethods {
+@TeleOp(name="Meet2Teleop", group = "A")
+public class Meet2Teleop extends DriveMethods {
 
    
 
@@ -106,7 +103,7 @@ public class Meet1Teleop extends DriveMethods {
                             break;
                         case 1:
                             slideTarget = 200;
-                            aggressiveness = 1200;
+                            aggressiveness = 1000;
                             holdingPower = 0.06;
                             break;
                         case 2:
