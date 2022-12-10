@@ -26,18 +26,18 @@ public class WARHOGTeleOp extends LinearOpMode {
         Outtake outtake = new Outtake(hardwareMap, telemetry);
 
         //set up variables
-        double joyx, joyy, joyz, gas, basespeed, armpos, wristmod, offset, slideMovement;
+        double joyx, joyy, joyz, gas, basespeed, armpos, wristmod, offset, slideMovement, maxIncrease;
         boolean autoeject = false;
         boolean autointake = false;
         boolean pauseToResetMaxIncrease = false;
         boolean stationary = false;
-        boolean outtakeGround, outtakeLow, outtakeMedium, outtakeHigh;
+        boolean outtakeGround, outtakeLow, outtakeMedium, outtakeHigh, clawtoggle;
 
         offset = 0;
         Drivetrain.Centricity centricity = Drivetrain.Centricity.FIELD;
 
         basespeed = .4;
-        armpos = 0;
+        armpos = intake.runArm(Intake.Height.UPRIGHT);
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
@@ -181,14 +181,47 @@ public class WARHOGTeleOp extends LinearOpMode {
                 intake.toggleClaw();
             }
 
+
+            //change whether stationary mode is on
+            if(currentGamepad1.back && !previousGamepad1.back){
+                if(stationary){
+                    stationary=false;
+                }
+                else{
+                    stationary=true;
+                }
+            }
+
+            telemetry.addData("Stationary", stationary);
+
+            //set up slide commands based on whether stationary mode is on
+            if(!stationary){
+                slideMovement = -currentGamepad2.right_stick_y;
+                outtakeGround = currentGamepad2.a;
+                outtakeLow = currentGamepad2.x;
+                outtakeMedium = currentGamepad2.b;
+                outtakeHigh = currentGamepad2.y;
+                clawtoggle = currentGamepad2.right_bumper && !previousGamepad2.right_bumper;
+                maxIncrease = currentGamepad2.right_trigger*100;
+            }
+            else{
+                slideMovement = -currentGamepad1.right_stick_y;
+                outtakeGround = currentGamepad1.a;
+                outtakeLow = currentGamepad1.x;
+                outtakeMedium = currentGamepad1.b;
+                outtakeHigh = currentGamepad1.y;
+                clawtoggle = currentGamepad1.right_bumper && !previousGamepad1.right_bumper;
+                maxIncrease = currentGamepad1.left_trigger*100;
+            }
+
             //open/close the outtake claw
-            if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+            if(clawtoggle){
                 outtake.toggleClaw();
                 telemetry.addLine("Toggle OuttakeClaw");
             }
 
             //increase slide maximum
-            if(outtake.showSlideValue()>1600) {
+            if(outtake.showSlideValue()>1600 && currentGamepad2.left_trigger>0) {
                 if (!pauseToResetMaxIncrease) {
                     outtake.increaseMax(currentGamepad2.right_trigger * 50, currentGamepad2.right_stick_button && !previousGamepad2.right_stick_button);
                     if (currentGamepad2.right_stick_button && !previousGamepad2.right_stick_button) {
@@ -201,34 +234,10 @@ public class WARHOGTeleOp extends LinearOpMode {
                 }
             }
 
-
-            //change whether stationary mode is on
-            if(currentGamepad1.back && !previousGamepad1.back){
-                if(stationary==true){
-                    stationary=false;
-                }
-                else{
-                    stationary=true;
-                }
-            }
-            if(stationary=false){
-                slideMovement = -currentGamepad2.right_stick_y;
-                outtakeGround = currentGamepad2.a;
-                outtakeLow = currentGamepad2.x;
-                outtakeMedium = currentGamepad2.b;
-                outtakeHigh = currentGamepad2.y;
-            }
-            else{
-                slideMovement = -currentGamepad1.right_stick_y;
-                outtakeGround = currentGamepad1.a;
-                outtakeLow = currentGamepad1.x;
-                outtakeMedium = currentGamepad1.b;
-                outtakeHigh = currentGamepad1.y;
-            }
-
             //move the outtake slides up and down
             if(!outtake.isSlideGoingToPosition()) {
-                outtake.run(slideMovement);
+                outtake.run(slideMovement, maxIncrease);
+                telemetry.addLine("moving using stick");
             }
 
             if(outtakeGround){
@@ -248,7 +257,7 @@ public class WARHOGTeleOp extends LinearOpMode {
                 telemetry.addLine("Y");
             }
 
-            telemetry.addData("slide pos:", outtake.showSlideValue());
+            telemetry.addData("slide max", outtake.getMax());
 
             //end step
             telemetry.update();

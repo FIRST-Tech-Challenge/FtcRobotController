@@ -40,7 +40,7 @@ public class WARHOGAuto extends LinearOpMode {
     int posMod = 0;
     int cycles = 0;
 
-    static final double speed = .6;
+    double speed = .85;
 
     //this stuff does not need to be changed
     // Lens intrinsics
@@ -133,13 +133,27 @@ public class WARHOGAuto extends LinearOpMode {
             if(cycles>5){
                 cycles=5;
             }
-            if(cycles<0){
-                cycles=0;
+            if(cycles<-1){
+                cycles=-1;
+            }
+
+            if(currentGamepad1.y && !previousGamepad1.y){
+                speed+=.05;
+            }
+            if(currentGamepad1.a && !previousGamepad1.a){
+                speed-=.05;
+            }
+            if(speed>1){
+                speed=1;
+            }
+            if(speed<.4){
+                speed=.4;
             }
 
             telemetry.addData("Color", startPosColor);
             telemetry.addData("Position", startPosPosition);
             telemetry.addData("Cycles", cycles);
+            telemetry.addData("Speed", speed);
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             //detect apriltags
@@ -224,51 +238,61 @@ public class WARHOGAuto extends LinearOpMode {
         // drive to pole and raise slide
         drivetrain.MoveForDis(60, speed);
         drivetrain.MoveForDis(-7.5, speed);
-        drivetrain.rotateToPosition(-45 * posMod, speed);
-        drivetrain.MoveForDis(-3.5, speed);
-        telemetry.addLine("just before slides");
-        telemetry.update();
-        outtake.setHeight(Outtake.Height.HIGH);
-        telemetry.addLine("height added");
-        telemetry.update();
-        sleep(1000);
-        outtake.openClaw();
-        outtake.setHeight(Outtake.Height.GROUND);
-
-        // turn to cone stack
-        drivetrain.MoveForDis(3.5, speed);
-
-        telemetry.addLine("Stage 1 complete");
-        telemetry.update();
-
-        for(int i = 0; i < cycles; i++) {
-            //drivetrain.RotateForDegree(-45 * posMod, speed);
-            drivetrain.rotateToPosition(-90 * posMod, speed);
-            intake.runArm(.2-.1*i);
-
-            // move backward toward cone stack
-            drivetrain.MoveForDis(-18, speed);
-
-            // take another cone
-            intake.closeClaw();
-            intake.runArm(Intake.Height.RETRACTED);
-
-            // turn back
-            drivetrain.MoveForDis(18, speed);
-            intake.openClaw();
-            //sleep(500);
-            //drivetrain.RotateForDegree(45 * posMod, speed);
-            drivetrain.rotateToPosition(-45 * posMod, speed);
-            intake.runArm(Intake.Height.UPRIGHT);
-            outtake.closeClaw();
-            drivetrain.MoveForDis(-5, 0.2);
+        if(cycles>-1) {
+            drivetrain.rotateToPosition(-45 * posMod, speed - .25);
+            drivetrain.MoveForDis(-1.5, speed);
+            telemetry.addLine("just before slides");
+            telemetry.update();
             outtake.setHeight(Outtake.Height.HIGH);
+            telemetry.addLine("height added");
+            telemetry.update();
+            outtake.setHeight(1500);
             outtake.openClaw();
-            //sleep(300);
             outtake.setHeight(Outtake.Height.GROUND);
 
             // turn to cone stack
-            drivetrain.MoveForDis(5, speed);
+            //drivetrain.MoveForDis(1, speed);
+
+            telemetry.addLine("Stage 1 complete");
+        }
+        else{
+            cycles = 0;
+        }
+
+        for(int i = 0; i < cycles; i++) {
+            //drivetrain.RotateForDegree(-45 * posMod, speed);
+            drivetrain.rotateToPosition(-90 * posMod, speed-.35);
+            intake.runArm(.2-.04*i);
+            sleep(500);
+
+            // move backward toward cone stack
+            drivetrain.MoveForDis(-15, speed-.2);
+
+            // take another cone
+            intake.closeClaw();
+            sleep(1000);
+            intake.runArm(.4);
+            sleep(1000);
+            intake.runArm(Intake.Height.RETRACTED);
+
+            // turn back
+            drivetrain.MoveForDis(15, speed);
+            intake.openClaw();
+            //sleep(500);
+            //drivetrain.RotateForDegree(45 * posMod, speed);
+            drivetrain.rotateToPosition(-45 * posMod, speed-.25);
+            intake.runArm(Intake.Height.UPRIGHT);
+            outtake.closeClaw();
+            drivetrain.MoveForDis(-1, 0.2);
+            outtake.setHeight(Outtake.Height.HIGH);
+            telemetry.addLine("height added");
+            telemetry.update();
+            outtake.setHeight(1500);
+            outtake.openClaw();
+            outtake.setHeight(Outtake.Height.GROUND);
+
+            // turn to cone stack
+            drivetrain.MoveForDis(1, speed);
         }
         telemetry.addLine("Stage 2 complete");
         telemetry.update();
@@ -276,22 +300,23 @@ public class WARHOGAuto extends LinearOpMode {
         // park
         intake.runArm(Intake.Height.SIZING);
         //drivetrain.RotateForDegree(-45 * posMod, speed);
-        drivetrain.rotateToPosition(-90 * posMod, speed);
+        drivetrain.rotateToPosition(-90 * posMod, speed-.25);
         if(tagOfInterest == null || tagOfInterest.id == MIDDLE){
 
-        }else if(tagOfInterest.id != LEFT){
+        }else if((tagOfInterest.id-2)*posMod==1){
 
-            drivetrain.MoveForDis(24, speed);
+            drivetrain.MoveForDis(-24, speed);
 
         }else{
-            drivetrain.MoveForDis(-23, speed);
+            drivetrain.MoveForDis(24, speed);
         }
 
         //drivetrain.RotateForDegree(90*posMod, speed);
-        if(tagOfInterest==null || tagOfInterest.id!=LEFT) {
-            drivetrain.rotateToPosition(0, speed);
+        if(tagOfInterest==null || (tagOfInterest.id-2)*posMod==-1 || tagOfInterest.id==MIDDLE) {
+            drivetrain.rotateToPosition(0, speed-.25);
             drivetrain.MoveForDis(-12, speed);
         }
+        intake.runArm(Intake.Height.RETRACTED);
         telemetry.addLine("Stage 3 complete");
         telemetry.update();
     }

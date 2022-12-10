@@ -17,7 +17,7 @@ public class Outtake {
 
     int max = 1850;
     int min = 0;
-    final static double autoSpeed = .8;
+    final static double autoSpeed = 1;
 
     enum Height {GROUND, LOW, MEDIUM, HIGH};
 
@@ -41,6 +41,41 @@ public class Outtake {
         }
         else{
             if (pos>max){
+                if (pow<0){
+                    slide.setPower(pow);
+                }
+                else {
+                    //slide.setTargetPosition(max);
+                    slide.setPower(0);
+                }
+            }
+            else if (pos<min){
+                if (pow>0){
+                    slide.setPower(pow);
+                }
+                else {
+                    //slide.setTargetPosition(min);
+                    slide.setPower(0);
+                }
+            }
+            else{
+                slide.setPower(0);
+            }
+        }
+        telemetry.addData("Slide Position", pos);
+    }
+
+    //method to input a power to the slide motor
+    public void run(double pow, double maxIncrease){
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slide.setDirection(DcMotor.Direction.FORWARD);
+
+        int pos = slide.getCurrentPosition();
+        if (pos<=max && pos>=min){
+            slide.setPower(pow);
+        }
+        else{
+            if (pos>max+(int)maxIncrease){
                 if (pow<0){
                     slide.setPower(pow);
                 }
@@ -126,13 +161,15 @@ public class Outtake {
     public void setHeight(int pos){
         slide.setTargetPosition(pos);
 
+        telemetry.addLine("setting height");
+
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slide.setDirection(DcMotor.Direction.FORWARD);
-        slide.setPower(autoSpeed);/*
+        slide.setPower(autoSpeed);
         while(slide.isBusy()) {
             telemetry.addData("Slide Position", slide.getCurrentPosition());
             telemetry.update();
-        }*/
+        }
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slide.setPower(0);
     }
@@ -176,7 +213,7 @@ public class Outtake {
     }
 
     public void increaseMax(double increase, boolean permanent){
-        setHeight(max+(int)increase);
+        telemetry.addLine("increasingmax");
         if(permanent){
             max += (int)increase;
         }
@@ -193,5 +230,9 @@ public class Outtake {
     }
     public void decreaseMin(double decrease){
         setHeight(min-(int)decrease);
+    }
+
+    public int getMax(){
+        return max;
     }
 }

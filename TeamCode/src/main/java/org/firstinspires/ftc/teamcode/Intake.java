@@ -15,16 +15,15 @@ public class Intake {
     double armMax = 1;
     double armMin = 0;
 
-    double retracted = .9;
+    double retracted = 1;
     double extended = armMin;
     double armMid = .6;
-    double sizing = .83;
+    double sizing = .78;
 
     double endMod = .1;
     double newPos;
 
     WristMode wristMode;
-
     //set up servos and variables
     Intake(HardwareMap hardwareMap, Telemetry telemetry){
         armLeft = hardwareMap.get(Servo.class, "armLeft");
@@ -58,8 +57,8 @@ public class Intake {
                 runWrist(1);
             }
             else */if(newPos<.35){
-                if(isClawOpen()) {
                     runWrist(newPos + endMod);
+                if(isClawOpen()) {
                 }
                 else{
                     runWrist(.1);
@@ -71,6 +70,10 @@ public class Intake {
             else {
                 runWrist(newPos);
             }
+        }
+
+        if(isClawOpen()){
+            openClaw();
         }
     }
 
@@ -98,6 +101,10 @@ public class Intake {
                 runWrist(newPos);
             }
         }
+
+        if(isClawOpen()){
+            openClaw();
+        }
     }
 
     //moves arm to a position
@@ -122,6 +129,10 @@ public class Intake {
 
         runWrist(newPos+wristMod);
 
+
+        if(isClawOpen()){
+            openClaw();
+        }
     }
 
     public double runArm(Height height) throws InterruptedException{
@@ -139,8 +150,13 @@ public class Intake {
                 runArm(sizing);
                 return sizing;
             default:
-                return armMid;
+                break;
         }
+
+        if(isClawOpen()){
+            openClaw();
+        }
+        return armMid;
     }
 
     //this method moves the wrist to a position
