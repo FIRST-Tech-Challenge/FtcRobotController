@@ -32,7 +32,11 @@ public class ConeQRProcessor  extends OpenCvPipeline {
 
     //Range for background, mat is grey
     Scalar backgroundL = new Scalar(0, 0, 0 );
-    Scalar backgroundH = new Scalar(255, 120, 255 );
+    Scalar backgroundH = new Scalar(255, 150, 255 );
+
+    //Range for too dark part of pic
+    Scalar darkL = new Scalar(0, 0, 0 );
+    Scalar darkH = new Scalar(179, 255, 50 );
 
     QRCodeDetector decoder = new QRCodeDetector();
     SleeveSide sideDetected = SleeveSide.Unkown;
@@ -56,9 +60,12 @@ public class ConeQRProcessor  extends OpenCvPipeline {
         for (int i = 0; i < files.length; i++) {
             if (files[i].isFile()) {
                 Mat test01 = Imgcodecs.imread(files[i].getAbsolutePath());
+                Mat bgr = new Mat();
                 proc.triedTimes = 0;
                 proc.decoded = false;
                 System.out.println("File: " + files[i].getAbsolutePath());
+                //After Read file, convert it to BGR color space, before send to processing.
+                //Imgproc.cvtColor(test01, bgr, Imgproc.COLOR_RGB2BGR);
                 Mat result = proc.processFrame(test01);
                 System.out.println("Message: " + proc.getDetectMsg());
                 System.out.println("Detected: " + proc.isDecoded() + "\n");
@@ -74,10 +81,6 @@ public class ConeQRProcessor  extends OpenCvPipeline {
         String qrCode = null;
 
         detectMsgBuf = new StringBuffer();
-        Mat brReverse = new Mat();
-
-        //This is not needed for use with Carema.  If loading image from Disk not needed.
-        Imgproc.cvtColor(input, brReverse, Imgproc.COLOR_BGR2RGB);
 
         long startMills = 0;
         long endMills = 0;
@@ -89,7 +92,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
         if ( !decoded) {
             startMills  = System.currentTimeMillis();
             Mat grey = new Mat();
-            Imgproc.cvtColor(brReverse, grey, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.cvtColor(input, grey, Imgproc.COLOR_BGR2GRAY);
             qrCode = decoder.detectAndDecodeCurved(grey, points);
             endMills  = System.currentTimeMillis();
             System.out.println(points.dump());
@@ -100,7 +103,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                 for (int i = 0; i < points.cols(); i++) {
                     Point pt1 = new Point(points.get(0, i));
                     Point pt2 = new Point(points.get(0, (i + 1) % 4));
-                    Imgproc.line(brReverse, pt1, pt2, new Scalar(255, 0, 0), 1);
+                    Imgproc.line(input, pt1, pt2, new Scalar(255, 0, 0), 1);
                 }
 
                 if ( qrCode == null || "".equals(qrCode)) {
@@ -109,24 +112,26 @@ public class ConeQRProcessor  extends OpenCvPipeline {
 
                     //Crop image from point 0 and point 3
                     Rect range = new Rect(new Point(points.get(0, 1)),  new Point(points.get(0, 3))  );
-                    croppedQR = new Mat ( brReverse, range);
+                    croppedQR = new Mat ( input, range);
 
                     //get HSV
                     Mat hsvImg = new Mat();
                     hsvImg.create(croppedQR.size(), CvType.CV_8U);
                     Imgproc.cvtColor( croppedQR, hsvImg, Imgproc.COLOR_BGR2HSV);
 
-                    //Remove background with low saturation
-                    Mat backgroundTrd = new Mat();
-                    Core.inRange(hsvImg, backgroundL, backgroundH, backgroundTrd);
+                    //Remove black part.
+                    Mat darkTrd = new Mat();
+                    Core.inRange(hsvImg, darkL, darkH, darkTrd);
+                    //Imgcodecs.imwrite("c:/sdcard/FIRST/background.jpg",darkTrd );
 
                     //Get reversed Mask
                     Mat tobeRemove = new Mat();
-                    Core.bitwise_not(backgroundTrd,tobeRemove);
+                    Core.bitwise_not(darkTrd,tobeRemove);
 
                     //Apply mask to input image, and copy to new image.
                     Mat result  = new Mat(croppedQR.size(), CvType.CV_8UC3, new Scalar(255, 255, 255));
                     croppedQR.copyTo(result, tobeRemove);
+                    //Imgcodecs.imwrite("c:/sdcard/FIRST/crop-removed.jpg",result );
 
                     Mat hsvResult = new Mat();
                     Imgproc.cvtColor(result, hsvResult, Imgproc.COLOR_BGR2HSV);
@@ -171,8 +176,8 @@ public class ConeQRProcessor  extends OpenCvPipeline {
         }
 
         if (debug) {
+            Imgcodecs.imwrite("/sdcard/FIRST/qr-result.jpg", input);
 
-            Imgcodecs.imwrite("/sdcard/FIRST/qr-result.jpg", brReverse);
             if ( croppedQR !=null ) {
                 Imgcodecs.imwrite("/sdcard/FIRST/qr-cropeed.jpg", croppedQR);
             }
@@ -184,7 +189,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
         detectMsgBuf.append(" Duration: " + (endMills - startMills) );
         detectMsg = detectMsgBuf.toString();
 
-        return brReverse;
+        return input;
     }
 
 
