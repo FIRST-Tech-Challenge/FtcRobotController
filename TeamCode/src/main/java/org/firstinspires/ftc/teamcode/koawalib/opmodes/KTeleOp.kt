@@ -39,8 +39,8 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
             driver.leftStick,
             driver.rightStick,
             0.9,
-            0.9,
             0.7,
+            0.5,
         )
     }
 
@@ -52,6 +52,8 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
         driver.dpadDown.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.groundPos, LiftConstants.groundPos))
         driver.dpadLeft.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
         driver.b.onPress(ClawCmds.ClawOpenCmd(robot.claw))
+        gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(-10.0)}))
+        gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(250.0)}))
     }
 
     private fun scheduleTest() {
