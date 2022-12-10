@@ -134,6 +134,9 @@ public class Pp extends LinearOpMode{
             if (gamepad1.right_bumper) { // stopper
                 Slidepos += Slidespeed / 8;
             }
+            if (Math.abs(gamepad1.left_trigger) > 0.0) {
+                Slidepos -= Slidespeed / 4;
+            }
             //open close :)
             if (gamepad1.x) {
                 closed = true;
@@ -143,7 +146,7 @@ public class Pp extends LinearOpMode{
             if (closed) {
                 robot.Take1.setPosition(0);
             } else {
-                robot.Take1.setPosition(0.5);
+                robot.Take1.setPosition(0.35);
             }
             //set power and position for grabby and shit
             robot.Slider.setPower(Slidepos);
