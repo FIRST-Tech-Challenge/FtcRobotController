@@ -27,7 +27,7 @@ class Ppbot{
         FLeft = maps.dcMotor.get("fl");
         FRight = maps.dcMotor.get("fr");
         Take1 = maps.servo.get("grabber");
-        Take2 = maps.servo.get("grabber");
+        //Take2 = maps.servo.get("grabber2");
         Slider = maps.dcMotor.get("slider");
 
         BLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -41,8 +41,8 @@ class Ppbot{
         FLeft.setPower(0.0);
         FRight.setPower(0.0);
         Slider.setPower(0.0);
-        Take1.setPosition(0.0); // change these 2 later when we figure out the servo positions
-        Take2.setPosition(0.0);
+        //Take1.setPosition(0.0); // change these 2 later when we figure out the servo positions
+        //Take2.setPosition(0.0);
 
         BLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -67,6 +67,10 @@ public class Pp extends LinearOpMode{
     final double rotationScalar = 0.5;
     final double speedScalar = 0.8;
     double drivespeed = 0.2;
+    boolean closed = true;
+
+    double pos1 = 0;
+    double pos2 = 0;
 
     @Override
 
@@ -84,7 +88,6 @@ public class Pp extends LinearOpMode{
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
 
-            //great fun math
 
             //if not turning, do a little driving.
             if (gamepad1.dpad_up)
@@ -122,34 +125,43 @@ public class Pp extends LinearOpMode{
                 robot.FLeft.setPower(0);
                 robot.FRight.setPower(0);
             }
-            //uppy downy.
+            //uppy downy. <- NOT DOWNY madge
             // this stuff needs changing i think
             // maybe add stopper
             Slidepos = 0.0;
-            if (Math.abs(gamepad1.right_trigger) > 0.0)
-                Slidepos -= Slidespeed;
-            if (Math.abs(gamepad1.left_trigger) > 0.0)
+            if (Math.abs(gamepad1.right_trigger) > 0.0) // uppy
                 Slidepos += Slidespeed;
+            if (gamepad1.right_bumper) { // stopper
+                Slidepos += Slidespeed / 8;
+            }
+            if (Math.abs(gamepad1.left_trigger) > 0.0) {
+                Slidepos -= Slidespeed / 4;
+            }
             //open close :)
-            if (gamepad1.x)
-                Armpos1 -= Armspeed;
-                Armpos2 += Armspeed;
-            if (gamepad1.b)
-                Armpos1 += Armspeed;
-                Armpos2 -= Armspeed;
+            if (gamepad1.x) {
+                closed = true;
+            } else if (gamepad1.b) {
+                closed = false;
+            }
+            if (closed) {
+                robot.Take1.setPosition(0);
+            } else {
+                robot.Take1.setPosition(0.35);
+            }
             //set power and position for grabby and shit
             robot.Slider.setPower(Slidepos);
 
+            // this code does nothing; dead variable
             Armpos1 = Range.clip(Armpos1, 0.0, 0.45);
             Armpos2 = Range.clip(Armpos2, 0.0, 0.45);
-            robot.Take1.setPosition(Armpos1);
-            robot.Take2.setPosition(Armpos2);
+            //robot.Take1.setPosition(Armpos1);
+            //robot.Take2.setPosition(Armpos2);
 
             //telemetry :nerd_emoji:
             telemetry.addData("x","%.2f", x);
             telemetry.addData("y","%.2f", y);
-            telemetry.addData("servo1","%.2f", Armpos1);
-            telemetry.addData("servo2","%.2f", Armpos2); // REMEMBER TO CONFIGURE THIS ON PHONE
+            telemetry.addData("servo1","%.2f", robot.Take1.getPosition());
+            //telemetry.addData("servo2","%.2f", robot.Take2.getPosition()); // REMEMBER TO CONFIGURE THIS ON PHONE
             telemetry.update();
 
             sleep(50);
