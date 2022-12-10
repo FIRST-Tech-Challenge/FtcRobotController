@@ -78,8 +78,8 @@ public class Queuer {
                         break;
                     }
                     for (int j = i+1; j < queueElements.size(); j++) {
-                        if (!queueElements.get(queueElements.size() - j - 1).isAsynchronous()) {
-                            startCondition = queueElements.size() - j - 1;
+                        if (!queueElements.get(queueElements.size() - j).isAsynchronous()) {
+                            startCondition = queueElements.size() - j;
                             break;
                         }
                     }
@@ -88,12 +88,13 @@ public class Queuer {
             }
         }
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition));
+            logger.log("/RobotLogs/GeneralRobot", queueElements.size()-1+"StartCondition" + startCondition);
         }
         else{
             mustFinish = false;
             startCondition = mustStartCondition;
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition,true));
-            logger.log("/RobotLogs/GeneralRobot", queueElements.size()-1+"StartCondition" + mustStartCondition);
+            logger.log("/RobotLogs/GeneralRobot", queueElements.size()-1+"mustStartCondition" + mustStartCondition);
         }
     }
     /** update which element is currently being queued(processed) and which element is currently being executed*/
@@ -138,7 +139,6 @@ public class Queuer {
         if(firstLoop) {
             mustFinish = true;
             mustStartCondition = p_startCondition;
-            logger.log("/RobotLogs/GeneralRobot", currentlyQueueing+1+"mustStartCondition" + mustStartCondition);
         }
     }
 }

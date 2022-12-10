@@ -13,16 +13,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
 @Config
 public class RFMotor extends Motor {
     private DcMotorEx rfMotor = null;
     private ArrayList<Double> coefs = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.000004, D2 = 0, minVelocity = -1200, VEL_TO_ANALOG = .001, kA = 0;
+    public static double D = 0.000000, D2 = 0, minVelocity = -5000, VEL_TO_ANALOG = .001, kA = 0;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
-    private double GRAVITY_CONSTANT = 0.09;
+    private double GRAVITY_CONSTANT = 0.3;
     private double lastError = 0, lastTime = 0;
     private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 5;
     private double power = 0;
@@ -128,40 +129,49 @@ public class RFMotor extends Motor {
         if (distance > 0) {
             for (int i = 0; i < coefs.size(); i++) {
                 if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
-                    targetVelocity += pow(distance, coefs.size() - i - 1) * coefs.get(i);
+                    if (coefs.size() - i - 1 == 2) {
+                        targetVelocity += pow(distance, 0.5) * coefs.get(i);
+                    } else {
+                        targetVelocity += pow(distance, coefs.size() - i - 1) * coefs.get(i);
+                    }
                 }
             }
             for (int i = 0; i < coefs.size(); i++) {
                 if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
-                    targetAccelVelocity += pow(distance-targetVelocity/10, coefs.size() - i - 1) * coefs.get(i);                }
+                    targetAccelVelocity += pow(distance - targetVelocity / 10, coefs.size() - i - 1) * coefs.get(i);
+                }
             }
         } else if (distance < 0) {
             for (int i = 0; i < coefs.size(); i++) {
                 if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
-                    targetVelocity -= abs(pow(distance, coefs.size() - i - 1)) * coefs.get(i);
+                    if (coefs.size() - i - 1 == 2) {
+                        targetVelocity -= pow(abs(distance), 0.5) * coefs.get(i);
+                    } else {
+                        targetVelocity -= abs(pow(distance, coefs.size() - i - 1)) * coefs.get(i);
+                    }
                 }
             }
             for (int i = 0; i < coefs.size(); i++) {
                 if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
-                    targetAccelVelocity -= pow(distance-targetVelocity/10, coefs.size() - i - 1) * coefs.get(i);                }
+                    targetAccelVelocity -= pow(distance - targetVelocity / 10, coefs.size() - i - 1) * coefs.get(i);
+                }
             }
         }
 
-        if(targetVelocity<minVelocity){
+        if (targetVelocity < minVelocity) {
             targetVelocity = minVelocity;
         }
         double currentVelocity = rfMotor.getVelocity();
         double error = targetVelocity - currentVelocity;
         double dStuff = 0;
-        if(abs(error)<abs(lastError)){
-            dStuff = (error-lastError)/(op.getRuntime()-lastTime)*D2;
+        if (abs(error) < abs(lastError)) {
+            dStuff = (error - lastError) / (op.getRuntime() - lastTime) * D2;
+        } else {
+            dStuff = (error - lastError) / (op.getRuntime() - lastTime) * D2 / 2;
         }
-        else{
-            dStuff = (error-lastError)/(op.getRuntime()-lastTime)*D2/2;
-        }
-        double accelPow = (targetAccelVelocity-targetVelocity)*kA;
-        power = dStuff+error * VEL_TO_ANALOG;
-        rfMotor.setPower(dStuff +error *D +targetVelocity* VEL_TO_ANALOG + GRAVITY_CONSTANT + accelPow);
+        double accelPow = (targetAccelVelocity - targetVelocity) * kA;
+        power = dStuff + error * VEL_TO_ANALOG;
+        rfMotor.setPower(dStuff + error * D + targetVelocity * VEL_TO_ANALOG + GRAVITY_CONSTANT + accelPow);
         lastError = error;
         lastTime = op.getRuntime();
     }
@@ -172,10 +182,12 @@ public class RFMotor extends Motor {
 //        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
         rfMotor.setPower(power);
     }
-    public double getPower(){
+
+    public double getPower() {
         return rfMotor.getPower();
     }
-    public double getGRAVITY_CONSTANT(){
+
+    public double getGRAVITY_CONSTANT() {
         return GRAVITY_CONSTANT;
     }
 

@@ -13,9 +13,9 @@ public class LiftArm {
 
     private RFDualServo liftArmServo;
 
-    private final double LIFT_ARM_INTAKE_POS = 0.8;
+    private final double LIFT_ARM_INTAKE_POS = 0.78;
 
-    private final double LIFT_ARM_OUTTAKE_POS = 0.16;
+    private final double LIFT_ARM_OUTTAKE_POS = 0.0;
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
@@ -62,7 +62,13 @@ public class LiftArm {
     public LiftArm() {
         //init RFServo
         liftArmServo = new RFDualServo("liftArmServo", "liftArmServo2", 1);
-        lowerLiftArmToIntake();
+        //set servo position
+        liftArmServo.setPositions(LIFT_ARM_INTAKE_POS);
+
+        //set state of claw open to true
+        ARM_INTAKE.setStatus(true);
+
+        liftArmServo.setLasttime(-0.5);
 
     }
 

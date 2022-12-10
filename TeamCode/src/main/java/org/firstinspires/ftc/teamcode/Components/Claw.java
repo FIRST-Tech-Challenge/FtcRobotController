@@ -31,12 +31,15 @@ public class Claw {
     //temporary
     private final double CLAW_OPEN_POS = 0.53;
 
+    private final double CLAW_WIDE_POS = 0.63;
+
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
     private double lastCheckTime = 0;
 
     public double clawServoLastSwitchTime = 0;
     private double lastOpenTime =-10;
+    private double clawPos = 0.45;
     //temporary
     public final double CLAW_SERVO_SWITCH_TIME = 0.2;
     boolean shouldUseClawSensor = true;
@@ -86,9 +89,10 @@ public class Claw {
         coneObserver = op.hardwareMap.get(Rev2mDistanceSensor.class, "coneObserver");
 
         if(!isTeleop){
-            CLAW_OPEN.setStatus(true);
-            closeClaw();
-            shouldUseClawSensor = true;
+            claw.setPosition(CLAW_CLOSED_POS);
+            CLAW_CLOSED.setStatus(true);
+            clawServoLastSwitchTime=0;
+            claw.setFlipTime(-2);
         }
         else{
             claw.setPosition(CLAW_OPEN_POS);
@@ -132,7 +136,21 @@ public class Claw {
         logger.log("/RobotLogs/GeneralRobot", clawServoLastSwitchTime + " " +
                 CLAW_SERVO_SWITCH_TIME + " " + op.getRuntime());
     }
-
+    public void wideClaw(){
+        if(!CLAW_OPENING.getStatus()&&clawPos!=CLAW_WIDE_POS){
+            claw.setPosition(CLAW_WIDE_POS);
+            CLAW_OPENING.setStatus(true);
+            clawPos = CLAW_WIDE_POS;
+        }
+    }
+    public boolean isClawWide(){
+        if(CLAW_OPEN.getStatus()&&clawPos==CLAW_WIDE_POS){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     //close the claw
     public void closeClaw() {
         //no input
@@ -163,7 +181,7 @@ public class Claw {
         if (CLAW_OPEN.status) {
             //set servo position
             claw.setPosition(CLAW_CLOSED_POS);
-
+            clawPos=CLAW_CLOSED_POS;
             //set state of claw closed to true
             CLAW_CLOSING.setStatus(true);
 
@@ -187,7 +205,7 @@ public class Claw {
 
             //set state of claw open to true
             CLAW_OPENING.setStatus(true);
-
+            clawPos= CLAW_OPEN_POS;
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
                     + ",Claw Opened", true);
@@ -206,7 +224,7 @@ public class Claw {
 
             //set state of claw open to true
             CLAW_OPENING.setStatus(true);
-
+            clawPos= CLAW_OPEN_POS;
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
                     + ",Claw Opened", true);

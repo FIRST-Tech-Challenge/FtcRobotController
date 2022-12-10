@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 @Config
 public class Lift {
-    private final int MAX_LIFT_TICKS = 1675;
+    private final int MAX_LIFT_TICKS = 1740/*1675*/;
     private final double LIFT_GRAVITY_CONSTANT = 0.075;
     //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
@@ -38,7 +38,7 @@ public class Lift {
     private RFMotor liftMotor;
     private Claw LC = new Claw();
     private double liftTarget = 0;
-    public static double dfco1 = 0.0122, dfco2 = 1.0 / 3, dfco3 = 300;
+    public static double dfco1 = 38, dfco2 = 2, dfco3 = 150;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
@@ -49,7 +49,6 @@ public class Lift {
     public Lift() { //constructor
         // hardware map
         Claw LC = new Claw();
-        //logger.createFile("/RobotLogs/GeneralRobot", "Time Component Function Action");
         coefficients.add(dfco1);
         coefficients.add(dfco2);
         coefficients.add(dfco3);
@@ -58,8 +57,8 @@ public class Lift {
             liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        liftMotor.setTICK_BOUNDARY_PADDING(10);
-        liftMotor.setTICK_STOP_PADDING(10);
+        liftMotor.setTICK_BOUNDARY_PADDING(5);
+        liftMotor.setTICK_STOP_PADDING(5);
     }
 
     public enum LiftStates {
@@ -98,8 +97,8 @@ public class Lift {
     }
 
     public enum LiftConstants {
-        LIFT_HIGH_JUNCTION(1675, false),
-        LIFT_MED_JUNCTION(812, false),
+        LIFT_HIGH_JUNCTION(1740, false),
+        LIFT_MED_JUNCTION(1152, false),
         LIFT_LOW_JUNCTION(15, false),
         LIFT_GROUND_JUNCTION(0, false),
         LIFT_GROUND(0, true);

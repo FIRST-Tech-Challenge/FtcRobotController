@@ -66,6 +66,9 @@ public class RFDualServo implements Servo {
 
         rfDualServoName = deviceName1;
     }
+    public void setLasttime(double p_lastTime){
+        lasttime = p_lastTime;
+    }
 
     public void flipServosMax (){
         if (op.getRuntime() - lasttime > 0.2) {

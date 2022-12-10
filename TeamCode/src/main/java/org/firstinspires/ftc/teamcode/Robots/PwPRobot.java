@@ -47,7 +47,7 @@ public class PwPRobot extends BasicRobot {
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
         roadrun = new SampleMecanumDrive(opMode.hardwareMap);
-//        cv = new CVMaster();
+        cv = new CVMaster();
         gp = new RFGamepad();
         imu = new IMU();
         field = new Field(roadrun, cv, imu, gp);
@@ -168,7 +168,11 @@ public class PwPRobot extends BasicRobot {
             lift.liftToPosition(targetJunction);
         }
     }
-
+    public void wideClaw(){
+        if (queuer.queue(true, claw.isClawWide())) {
+            claw.wideClaw();
+        }
+    }
     public void liftToTargetAuto() {
         lift.liftToTargetAuto();
     }
@@ -322,31 +326,31 @@ public class PwPRobot extends BasicRobot {
 //            //nothin
 //        } else {
             double[] vals = {op.gamepad1.left_stick_x, op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
-            double[] minBoost = {0.1,0.1,0.05};
-            if (abs(op.gamepad1.left_stick_x) < 0.04) {
+            double[] minBoost = {0.1,0.1,0.02};
+            if (abs(op.gamepad1.left_stick_x) < 0.15) {
                 minBoost[0] = 0;
             }
         if (op.gamepad1.left_stick_x == 0) {
-            vals[0] = 0.01;
+            vals[0] = 0.0001;
         }
             if (abs(op.gamepad1.left_stick_y) < 0.04) {
                 minBoost[1] = 0;
             }
         if (op.gamepad1.left_stick_y == 0) {
-            vals[1] = 0.01;
+            vals[1] = 0.0001;
         }
             if (abs(op.gamepad1.right_stick_x) < 0.03) {
                 minBoost[2] = 0;
                 //48.8,36.6,
             }
         if (op.gamepad1.right_stick_x == 0) {
-            vals[2] = 0.01;
+            vals[2] = 0.0001;
         }
             roadrun.setWeightedDrivePower(
                     new Pose2d(
-                            -vals[1] / abs(vals[1]) *(minBoost[1]+ 0.3 * pow(abs(vals[1]), 1.0) +0.2 * pow(abs(vals[1]), 2.0) + 0.4*pow(abs(vals[1]), 3)),
-                            -vals[0] / abs(vals[0]) * (minBoost[0] + 0.3 * pow(abs(vals[0]), 1.0)+0.2 * pow(abs(vals[0]), 2.0) + 0.4*pow(abs(vals[0]), 3)),
-                            -vals[2] / abs(vals[2]) *(minBoost[2] + 0.7 * pow(abs(vals[2]), 1.4))
+                             abs(vals[1]-0.0001)/-vals[1] *(minBoost[1]+ 0.3 * pow(abs(vals[1]), 1.0) +0.2 * pow(abs(vals[1]), 2.0) + 0.4*pow(abs(vals[1]), 3)),
+                            abs(vals[0]-0.0001)/-vals[0] * (minBoost[0] + 0.3 * pow(abs(vals[0]), 1.0)+0.2 * pow(abs(vals[0]), 2.0) + 0.4*pow(abs(vals[0]), 3)),
+                            abs(vals[2]-0.0001)/-vals[2] * (minBoost[2] + 0.6 * pow(abs(vals[2]), 1.1))
                     )
             );
             if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
