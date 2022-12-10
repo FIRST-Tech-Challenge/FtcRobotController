@@ -346,24 +346,24 @@ public class PwPRobot extends BasicRobot {
         if (op.gamepad1.right_stick_x == 0) {
             vals[2] = 0.0001;
         }
-            roadrun.setWeightedDrivePower(
-                    new Pose2d(
-                             abs(vals[1]-0.0001)/-vals[1] *(minBoost[1]+ 0.3 * pow(abs(vals[1]), 1.0) +0.2 * pow(abs(vals[1]), 2.0) + 0.4*pow(abs(vals[1]), 3)),
-                            abs(vals[0]-0.0001)/-vals[0] * (minBoost[0] + 0.3 * pow(abs(vals[0]), 1.0)+0.2 * pow(abs(vals[0]), 2.0) + 0.4*pow(abs(vals[0]), 3)),
-                            abs(vals[2]-0.0001)/-vals[2] * (minBoost[2] + 0.6 * pow(abs(vals[2]), 1.1))
-                    )
-            );
-            if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
-                logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + "= " + "0 | 0 | 0", true);
-                mecZeroLogged = true;
-            }
-            else if((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == true)){
-                //nutting
-            }
-            else {
-                logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + -op.gamepad1.left_stick_y * 0.7 + " | " + -op.gamepad1.left_stick_x + " | " + -op.gamepad1.right_stick_x * 0.8, true);
-                mecZeroLogged = false;
-            }
+        roadrun.setWeightedDrivePower(
+                new Pose2d(
+                         abs(vals[1]-0.0001)/-vals[1] *(minBoost[1]+ 0.3 * pow(abs(vals[1]), 1.0) +0.2 * pow(abs(vals[1]), 2.0) + 0.4*pow(abs(vals[1]), 3)),
+                        abs(vals[0]-0.0001)/-vals[0] * (minBoost[0] + 0.3 * pow(abs(vals[0]), 1.0)+0.2 * pow(abs(vals[0]), 2.0) + 0.4*pow(abs(vals[0]), 3)),
+                        abs(vals[2]-0.0001)/-vals[2] * (minBoost[2] + 0.6 * pow(abs(vals[2]), 1.1))
+                )
+        );
+        if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
+            logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + "= " + "0 | 0 | 0", true);
+            mecZeroLogged = true;
+        }
+        else if((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == true)){
+            //nutting
+        }
+        else {
+            logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + -op.gamepad1.left_stick_y * 0.7 + " | " + -op.gamepad1.left_stick_x + " | " + -op.gamepad1.right_stick_x * 0.8, true);
+            mecZeroLogged = false;
+        }
 //        //toggle automate lift target to higher junc
 //        if (op.gamepad2.dpad_up) {
 //            lift.toggleLiftPosition(1);
@@ -372,42 +372,42 @@ public class PwPRobot extends BasicRobot {
 //        if (op.gamepad2.dpad_down) {
 //            lift.toggleLiftPosition(-1);
 //        }
-            //toggle liftArm position
-            if (op.gamepad2.right_bumper) {
-                if (ARM_OUTTAKE.getStatus()) {
-                    liftArm.lowerLiftArmToIntake();
+        //toggle liftArm position
+        if (op.gamepad2.right_bumper) {
+            if (ARM_OUTTAKE.getStatus()) {
+                liftArm.lowerLiftArmToIntake();
 
-                } else {
-                    liftArm.raiseLiftArmToOuttake();
-                }
+            } else {
+                liftArm.raiseLiftArmToOuttake();
             }
+        }
         field.closestDropPosition(false);
-            if (op.gamepad1.right_bumper) {
-                if(CLAW_CLOSED.getStatus()) {
-                    claw.setLastOpenTime(op.getRuntime());
-                    claw.openClaw();
-                    if(ARM_OUTTAKE.getStatus()){
-                        field.closestDropPosition(true);
-                    }
-                }else{
-                    claw.closeClawRaw();
+        if (op.gamepad1.right_bumper) {
+            if(CLAW_CLOSED.getStatus()) {
+                claw.setLastOpenTime(op.getRuntime());
+                claw.openClaw();
+                if(ARM_OUTTAKE.getStatus()){
+                    field.closestDropPosition(true);
                 }
+            }else{
+                claw.closeClawRaw();
             }
-            claw.closeClaw();
-            if (op.getRuntime() - claw.getLastTime() > .3 && op.getRuntime() - claw.getLastTime() < .5 && CLAW_CLOSED.getStatus()) {
-                if(lift.getLiftPosition()>120) {
-                    lift.raiseLiftOffStack();
-                }
-                else {
-                    liftArm.raiseLiftArmToOuttake();
-                }
-            }
+        }
+        claw.closeClaw();
+//        if (op.getRuntime() - claw.getLastTime() > .3 && op.getRuntime() - claw.getLastTime() < .5 && CLAW_CLOSED.getStatus()) {
+//            if(lift.getLiftPosition()>120) {
+//                lift.raiseLiftOffStack();
+//            }
+//            else {
+//                liftArm.raiseLiftArmToOuttake();
+//            }
+//        }
 
 
-            //manual open/close claw (will jsut be open claw in the future)
+        //manual open/close claw (will jsut be open claw in the future)
 
-            //will only close when detect cone
-            //claw.closeClaw
+        //will only close when detect cone
+        //claw.closeClaw
         op.telemetry.addData("imuangle", imu.updateAngle()*180/PI);
             gp.readGamepad(op.gamepad2.y, "gamepad1_y", "Status");
             gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
