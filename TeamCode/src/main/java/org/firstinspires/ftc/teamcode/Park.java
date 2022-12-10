@@ -22,12 +22,15 @@ public class Park extends LinearOpMode {
         robot.FLeft.setPower(speedScalar * 0.85);
 
         sleep(1000);
-        if (opModeIsActive() && runtime.seconds() > 2) {
-            robot.Take1.setPosition(0.0);
-            robot.BLeft.setPower(0);
-            robot.BRight.setPower(0);
-            robot.FRight.setPower(0);
-            robot.FLeft.setPower(0);
-        }
+        
+        robot.Take1.setPosition(0.0);
+        robot.BLeft.setPower(0);
+        robot.BRight.setPower(0);
+        robot.FRight.setPower(0);
+        robot.FLeft.setPower(0);
+
+        //if (opModeIsActive() && runtime.seconds() > 2) {
+
+        //}
     }
 }
