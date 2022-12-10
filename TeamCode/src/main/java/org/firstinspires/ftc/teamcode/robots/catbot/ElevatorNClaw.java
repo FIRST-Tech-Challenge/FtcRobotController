@@ -45,7 +45,6 @@ class ElevatorNClaw {
                 elevator.setTargetPosition(MINELEVTICS);
         }
         currElevTics = elevator.getCurrentPosition();
-//        }
     }
     public void elevatorMove(char c)
     {
@@ -92,7 +91,12 @@ class ElevatorNClaw {
         elevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         elevator.setTargetPosition(0);
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.elevator.setDirection(DcMotorEx.Direction.REVERSE);
+//        this.elevator.setDirection(DcMotorEx.Direction.REVERSE);
+    }
+    public void runToTestEncoders()
+    {
+        elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public int getElevatorPosition(){return elevator.getCurrentPosition();}
 }

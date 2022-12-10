@@ -30,12 +30,12 @@ class DriveTrain {
     }
     public void resetMotors() {
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         mechanumDrive(0, 0, 0);
     }
@@ -43,10 +43,10 @@ class DriveTrain {
         powerRight = 0;
         powerLeft = 0;
         if (Math.abs(left) > DEADZONE) {
-            powerLeft = -left;
+            powerLeft = left;
         }
         if (Math.abs(right) > DEADZONE) {
-            powerRight = -right;
+            powerRight = right;
         }
         motorFrontRight.setPower(powerRight);
         motorFrontLeft.setPower(powerLeft);
@@ -88,8 +88,8 @@ class DriveTrain {
         motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        this.motorBackLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        this.motorFrontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+//        this.motorBackLeft.setDirection(DcMotorEx.Direction.REVERSE);
+//        this.motorFrontLeft.setDirection(DcMotorEx.Direction.REVERSE);
     }
     public int getMotorFrontLeftPosition(){return motorFrontLeft.getCurrentPosition();}
 }
