@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robots.catbot;
 class Drive implements Task{
     private Robot robot;
     private double tiles;
-    private static final int TICKSPERTILE = 2500;
     // negative tiles is backwards
     public Drive(Robot robot, double tiles)
     {
