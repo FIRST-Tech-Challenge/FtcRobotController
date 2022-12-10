@@ -49,7 +49,7 @@ public class TeleopMeet1 extends LinearOpMode {
         telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
         telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
         telemetry.addData("VSlider Encoder", robot.vSlider.getCurrentPosition());
-        telemetry.addData("Robot Location: ", robot.Location);
+        telemetry.addData("Claw Position", robot.claw.getPosition());
         telemetry.update();
 
         waitForStart();
@@ -83,45 +83,44 @@ public class TeleopMeet1 extends LinearOpMode {
             robot.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power * 0.36);
             robot.BRMotor.setPower(DRIVETRAIN_SPEED * br_power * 0.50);
 
-            /** Testing Accurate Movement**/
-
-            if(gamepad1.x) {
-                robot.Drive(0.1, 60);
-            } else if (gamepad1.y) {
-                robot.Drive(0.1, -60);
-            } else if (gamepad1.a) {
-                robot.Strafe(0.1, 30);
-            } else if (gamepad1.b) {
-                robot.Strafe(0.1, -30);
-            }
-
-
-
             /** Claw **/
             if(gamepad2.x) {
                 robot.claw.setPosition(1);
-                telemetry.addData("Claw Position", robot.claw.getPosition());
-                telemetry.update();
+                sleep(500);
+                robot.claw.setPosition(0);
             }
             if(gamepad2.y) {
-                robot.claw.setPosition(0.20);
+                robot.claw.setPosition(1);
                 telemetry.addData("Claw Position", robot.claw.getPosition());
                 telemetry.update();
             }
 
             /** Slider **/
-            double vSliderPower =  gamepad2.left_stick_y * 0.75;
+            double vSliderPower =  gamepad2.left_stick_y * 2;
             double hSliderPower = -gamepad2.right_stick_x * 0.75;
+            double vsliderPos = robot.vSlider.getCurrentPosition();
 
-            robot.vSlider.setPower(vSliderPower + holdingPower);
+//            if((vSliderPower > 0 && vsliderPos < 15000) || (vSliderPower < 0 && vsliderPos > -100 ))
+//            {
+//                //Moving up.                                Moving down.
+                robot.DriveSlider(-vSliderPower);
+//            }
+//            else {
+//                robot.DriveSlider(0);
+//            }
+
             robot.hSlider.setPower(hSliderPower);
+
 
             telemetry.addData("FL Motor Encoder", robot.FLMotor.getCurrentPosition());
             telemetry.addData("BL Motor Encoder", robot.BLMotor.getCurrentPosition());
             telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
             telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
-            telemetry.addData("vSlider Encoder", robot.vSlider.getCurrentPosition());
             telemetry.addData("vSliderPower", vSliderPower);
+            telemetry.addData("vSlider Encoder", vsliderPos);
+            telemetry.addData("vSlider2 Encoder", robot.vSlider2.getCurrentPosition());
+            telemetry.addData("Claw Position", robot.claw.getPosition());
+
             telemetry.update();
 
         }

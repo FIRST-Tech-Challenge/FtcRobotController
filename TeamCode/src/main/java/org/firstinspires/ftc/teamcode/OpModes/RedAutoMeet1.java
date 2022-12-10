@@ -35,7 +35,7 @@ public class RedAutoMeet1 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
-    public int parkingTarget;
+    public int parkingTarget = 2;
     RobotMeet1 robot = new RobotMeet1();
 
     public enum AutoSteps {
@@ -55,14 +55,14 @@ public class RedAutoMeet1 extends LinearOpMode {
         if (tfod != null) {
             tfod.activate();
 
-            tfod.setZoom(1.0, 16.0 / 9.0);
+            tfod.setZoom(1.25, 16.0 / 9.0);
         }
 
         robot.vSlider.setTargetPosition(-165);
         robot.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.vSlider.setPower(0.6);
 
-        robot.claw.setPosition(0);
+        robot.claw.setPosition(0.6);
 
 
         /** Wait for the game to begin */
@@ -99,7 +99,6 @@ public class RedAutoMeet1 extends LinearOpMode {
                             } else if (objectLabel == "3 Panel") {
                                 parkingTarget = 3;
                             }
-
                             telemetry.addData("", " ");
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
                             telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
@@ -114,18 +113,25 @@ public class RedAutoMeet1 extends LinearOpMode {
                     case detectSignal:
                         telemetry.addData("Parking Target ", parkingTarget);
                         telemetry.update();
-                        Step = AutoSteps.goToPole;
+                        Step = AutoSteps.park;
                         break;
 
+                        //Not using this
                     case goToPole:
+                        robot.claw.setPosition(1);
                         robot.DriveToPosition(0.3, 15, 45);
+                        robot.MoveSliderToPosition(0.6, 500);
                         Step = AutoSteps.deliver;
 
+                        //Not using this
                     case deliver:
                         int sliderPos = 500;
-                        robot.MoveSlider(0.3, sliderPos);
-                        robot.claw.setPosition(0);
+                        int hSliderPos = 100;
+                        robot.MoveSliderToPosition(0.3, sliderPos);
+                        robot.ExtendSlider(0.3, hSliderPos);
+                        robot.claw.setPosition(1);
                         Step = AutoSteps.park;
+
                     case park:
                         Park(parkingTarget);
                         Step = AutoSteps.endAuto;

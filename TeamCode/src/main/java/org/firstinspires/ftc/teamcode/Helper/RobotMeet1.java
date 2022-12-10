@@ -28,6 +28,7 @@ public class RobotMeet1 {
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
     public DcMotor vSlider;
+    public DcMotor vSlider2;
     public DcMotor hSlider;
     public Servo claw;
 
@@ -47,8 +48,6 @@ public class RobotMeet1 {
     //IMU
     //How many times the encoder counts a tick per revolution of the motor.
     static final double COUNTS_PER_MOTOR_REV_Hex= 538; // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
-    static final double COUNTS_PER_MOTOR_REV_D = 385; // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-13-7-1-ratio-24mm-length-8mm-rex-shaft-435-rpm-3-3-5v-encoder/
-
     //Gear ratio of the motor to the wheel. 1:1 would mean that 1 turn of the motor is one turn of the wheel, 2:1 would mean two turns of the motor is one turn of the wheel, and so on.
     static final double DRIVE_GEAR_REDUCTION= 1; // This is < 1.0 if geared UP
 
@@ -57,8 +56,6 @@ public class RobotMeet1 {
 
     //How many times the encoder counts a tick per CM moved. (Ticks per rev * Gear ration) / perimeter
     static final double COUNTS_PER_CM_Hex = (COUNTS_PER_MOTOR_REV_Hex * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_CM * 3.1415);
-    static final double COUNTS_PER_CM_D = (COUNTS_PER_MOTOR_REV_D * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_CM * 3.1415);
-
 
 
     /* local OpMode members. */
@@ -87,6 +84,7 @@ public class RobotMeet1 {
         //Init motors and servos
         claw = hwMap.get(Servo.class, "claw");
         vSlider = hwMap.get(DcMotor.class, "vSlider");
+        vSlider2 = hwMap.get(DcMotor.class, "vSlider2");
         hSlider = hwMap.get(DcMotor.class, "hSlider");
 
         //Init motors and servos
@@ -101,9 +99,11 @@ public class RobotMeet1 {
         FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlider2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         claw.setDirection(Servo.Direction.FORWARD);
         vSlider.setDirection(DcMotorSimple.Direction.FORWARD);
+        vSlider2.setDirection(DcMotorSimple.Direction.FORWARD);
         hSlider.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Setting the direction
@@ -117,18 +117,21 @@ public class RobotMeet1 {
         FRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vSlider2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         FLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlider2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         FLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         FRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         vSlider.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        vSlider2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
 
     }
@@ -151,7 +154,7 @@ public class RobotMeet1 {
         int BLPos = this.BLMotor.getCurrentPosition();
         int BRPos = this.BRMotor.getCurrentPosition();
 
-        targetFR = FRPos + (int) (distance * COUNTS_PER_CM_D);
+        targetFR = FRPos + (int) (distance * COUNTS_PER_CM_Hex);
         targetBR = BRPos + (int) (distance * COUNTS_PER_CM_Hex);
         targetFL = FLPos + (int) (distance * COUNTS_PER_CM_Hex);
         targetBL = BLPos + (int) (distance * COUNTS_PER_CM_Hex);
@@ -170,7 +173,7 @@ public class RobotMeet1 {
 
         //Set the power of the motor.
         FLMotor.setPower(speed);
-        FRMotor.setPower(speed/1.38);
+        FRMotor.setPower(speed);
         BLMotor.setPower(speed);
         BRMotor.setPower(speed);
 
@@ -200,7 +203,7 @@ public class RobotMeet1 {
         int BLPos = this.BLMotor.getCurrentPosition();
         int BRPos = this.BRMotor.getCurrentPosition();
 
-        targetFR = FRPos - (int) (distance * COUNTS_PER_CM_D);
+        targetFR = FRPos - (int) (distance * COUNTS_PER_CM_Hex);
         targetBR = BRPos + (int) (distance * COUNTS_PER_CM_Hex);
         targetFL = FLPos + (int) (distance * COUNTS_PER_CM_Hex);
         targetBL = BLPos - (int) (distance * COUNTS_PER_CM_Hex);
@@ -219,7 +222,7 @@ public class RobotMeet1 {
 
         //Set the power of the motor.
         FLMotor.setPower(speed);
-        FRMotor.setPower(speed/1.38);
+        FRMotor.setPower(speed);
         BLMotor.setPower(speed);
         BRMotor.setPower(speed);
 
@@ -249,7 +252,7 @@ public class RobotMeet1 {
         System.out.println(Arrays.toString(Location));
     }
 
-    public void MoveSlider(double speed, int Position) {
+    public void MoveSliderToPosition(double speed, int Position) {
         timeout_ms = 3000;
 
         this.vSlider.setTargetPosition(Position);
@@ -263,5 +266,25 @@ public class RobotMeet1 {
         while ((runtime.milliseconds() < timeout_ms) && (this.vSlider.isBusy())) {
 
         }
+    }
+
+    public void ExtendSlider(double speed, int position) {
+        timeout_ms = 3000;
+
+        this.hSlider.setTargetPosition(position);
+
+        //set the mode to go to the target position
+        this.hSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Set the power of the motor.
+        hSlider.setPower(speed);
+
+        while ((runtime.milliseconds() < timeout_ms) && (this.hSlider.isBusy())) {
+
+        }
+    }
+    public void DriveSlider(double speed) {
+        this.vSlider.setPower( speed);
+        this.vSlider2.setPower(-speed);
     }
 }
