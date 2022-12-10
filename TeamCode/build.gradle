@@ -38,4 +38,6 @@ dependencies {
 
     implementation 'org.openftc:easyopencv:1.5.2'
     implementation 'org.openftc:apriltag:1.1.0'
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 }

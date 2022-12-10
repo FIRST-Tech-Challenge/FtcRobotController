@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcodekt.blacksmith
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback
+import kotlinx.coroutines.*
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.*
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.*
@@ -23,6 +24,8 @@ class Anvil(val drive: SampleMecanumDrive, startPose: Pose2d) {
         ): Anvil {
             return builder(Anvil(drive, startPose))
         }
+
+        private val builderScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     }
 
     val trajectorySequenceBuilder = TrajectorySequenceBuilder(
@@ -36,6 +39,8 @@ class Anvil(val drive: SampleMecanumDrive, startPose: Pose2d) {
         set(value) {
             _endPose = value
         }
+
+    private val preconceivedTrajectories = mutableMapOf<Any, Deferred<TrajectorySequence>>()
 
     fun forward(distance: Double) = this.apply {
         trajectorySequenceBuilder.forward(distance.toIn())
@@ -79,10 +84,8 @@ class Anvil(val drive: SampleMecanumDrive, startPose: Pose2d) {
     fun thenRunAsync(
         nextTrajectory: (Pose2d) -> Anvil,
         startPose: Pose2d = endPose
-    ) = this.apply {
-        trajectorySequenceBuilder.addTemporalMarker {
-            nextTrajectory(startPose).runAsync()
-        }
+    ) = this.addTemporalMarker {
+        nextTrajectory(startPose).runAsync()
     }
 
     @JvmOverloads
@@ -93,6 +96,34 @@ class Anvil(val drive: SampleMecanumDrive, startPose: Pose2d) {
     ) = this.apply {
         if (predicate()) {
             thenRunAsync(nextTrajectory, startPose)
+        }
+    }
+
+    @JvmOverloads
+    fun formTrajectoryInAdvance(
+        key: Any,
+        nextTrajectory: (Pose2d) -> Anvil,
+        startPose: Pose2d = endPose
+    ) = this.apply {
+        preconceivedTrajectories[key] = builderScope.async { nextTrajectory(startPose).finish() }
+    }
+
+    fun thenRunAsync(
+        key: Any
+    ) = this.addTemporalMarker {
+        drive.followTrajectorySequenceAsync(
+            runBlocking {
+                preconceivedTrajectories[key]?.await()
+            }
+        )
+    }
+
+    fun thenRunAsyncIf(
+        key: Any,
+        predicate: () -> Boolean
+    ) = this.apply {
+        if (predicate()) {
+            thenRunAsync(key)
         }
     }
 
