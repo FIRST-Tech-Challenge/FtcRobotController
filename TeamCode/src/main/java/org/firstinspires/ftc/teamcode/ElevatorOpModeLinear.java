@@ -70,7 +70,7 @@ public class ElevatorOpModeLinear extends LinearOpMode {
 
 
             power = -gamepad2.left_stick_y;
-            // elevator.setElevatorMotorPower(power);
+             elevator.setElevatorMotorPower(power);
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("gamepad2.b: ", gamepad2.b);

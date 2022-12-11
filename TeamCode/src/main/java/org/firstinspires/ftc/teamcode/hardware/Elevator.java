@@ -95,13 +95,13 @@ public class Elevator {
     public void setElevatorMotorPower(double power){
         int currentPosition = elevatorMotor.getCurrentPosition();
         if (currentPosition >= MAX_ELEVATOR_POSITION || currentPosition<= 0){
-            elevatorMotor.setPower(0);
+            elevatorMotor.setPower(power);
         }
         else {
             elevatorMotor.setPower(power * ELEVATOR_MOTOR_SPEED);
         }
 
-        telemetry.addData("position", elevatorMotor.getCurrentPosition());
+//        telemetry.addData("position", elevatorMotor.getCurrentPosition());
         telemetry.update();
     }
 
