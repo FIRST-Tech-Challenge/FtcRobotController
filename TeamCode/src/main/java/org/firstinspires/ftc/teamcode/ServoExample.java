@@ -24,15 +24,15 @@ public class ServoExample extends LinearOpMode {
     private DcMotor liftMotor = null;
     private Servo servoGrabber1 = null;
     private Servo servoGrabber2 = null;
-
-    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
-    static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_POS     =  180;     // Maximum rotational position
+    
+    static final double MAX_POS     =  270;
     static final double MAX_POS2    =    0;
-    static final double MIN_POS     =  0.0;
+    static final double MIN_POS     =  150;
+    static final double MIN_POS2    =  120;
 
     int direction = 0;
-    double  position = 0;
+    double position = 270;
+    double position2 = 0;
 
     int strafeDirection = 0; //-1 for left, 1 for right
 
@@ -93,35 +93,11 @@ public class ServoExample extends LinearOpMode {
             boolean strafeLeft = gamepad1.left_bumper;
             boolean strafeRight = gamepad1.right_bumper;
 
-            //Switch this to gamepad1 to test if it works in the first place
-            boolean servoOpen = gamepad2.dpad_up;
-            boolean servoClose = gamepad2.dpad_down;
-
             double lift = -gamepad2.right_stick_y;
+            boolean openGrabber = gamepad2.dpad_up;
+            boolean closeGrabber = gamepad2.dpad_down;
 
             // Code for lift and grabber (gamepad2
-            if(servoOpen){
-                direction = -1;
-                if(position<MAX_POS) {
-                    position = position + 0.05;
-                }
-                if(position > 1.0){
-                    position=1.0;
-                }
-                telemetry.addData("Forward", "servo: " + position);
-                servoGrabber1.setPosition(position);
-            }
-
-            if(servoClose){
-                direction = 1;
-                position= position -0.05;
-                if(position < 0.0){
-                    position=0.0;
-                }
-                telemetry.addData("back", "servo: " + position);
-                servoGrabber1.setPosition(position);
-            }
-
             if(lift > .05){
                 liftMotor.setPower(1);
             }else{
@@ -131,6 +107,33 @@ public class ServoExample extends LinearOpMode {
                 liftMotor.setPower(-.3);
             }else{
                 liftMotor.setPower(0);
+            }
+
+            if(openGrabber){
+                direction = -1;
+                if(position<MAX_POS && position2>MAX_POS2) {
+                    position = position + 1;
+                    position2 = position2 - 1;
+                }
+                if(position > 1.0){
+                    position=1.0;
+                }
+                telemetry.addData("Forward", "servo: " + position);
+                servoGrabber1.setPosition(position);
+                servoGrabber2.setPosition(position2);
+            }
+
+            if(closeGrabber){
+                direction = 1;
+                position = position - 1;
+                position2 = position2 + 1;
+                if(position < MIN_POS || position2 > MIN_POS2){
+                    position = 0.0;
+                    position2 = 120.0;
+                }
+                telemetry.addData("back", "servo: " + position);
+                servoGrabber1.setPosition(position);
+                servoGrabber2.setPosition(position2);
             }
 
             //Code for drivetrain (gamepad1)
