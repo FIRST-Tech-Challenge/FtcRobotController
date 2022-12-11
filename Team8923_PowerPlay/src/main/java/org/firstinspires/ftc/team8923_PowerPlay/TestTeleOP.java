@@ -31,6 +31,7 @@ public class TestTeleOP extends BaseTeleOp{
             driveMecanumGyro(angle, power, rotationalPower);
 
             driveRobotSpeed();
+            driveMechanism();
 
             idle();
         }
