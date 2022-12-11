@@ -18,14 +18,15 @@ import java.util.ArrayList;
 public class RFMotor extends Motor {
     private DcMotorEx rfMotor = null;
     private ArrayList<Double> coefs = null;
+    private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.000000, D2 = 0, minVelocity = -5000, VEL_TO_ANALOG = .001, kA = 0;
+    public static double D = 0.00000, D2 = 0, minVelocity = -5000, VEL_TO_ANALOG = .0014, kA = 0;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
-    private double GRAVITY_CONSTANT = 0.3;
+    private double GRAVITY_CONSTANT = 0.1;
     private double lastError = 0, lastTime = 0;
-    private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 5;
+    private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 10;
     private double power = 0;
     private String rfMotorName;
 
@@ -170,6 +171,13 @@ public class RFMotor extends Motor {
             dStuff = (error - lastError) / (op.getRuntime() - lastTime) * D2 / 2;
         }
         double accelPow = (targetAccelVelocity - targetVelocity) * kA;
+//        if(targetVelocity<0){
+//            VEL_TO_ANALOG=0.001;
+//            D=0;
+//        }else{
+//            VEL_TO_ANALOG=0.0022;
+//            D=0.00000507;
+//        }
         power = dStuff + error * VEL_TO_ANALOG;
         rfMotor.setPower(dStuff + error * D + targetVelocity * VEL_TO_ANALOG + GRAVITY_CONSTANT + accelPow);
         lastError = error;

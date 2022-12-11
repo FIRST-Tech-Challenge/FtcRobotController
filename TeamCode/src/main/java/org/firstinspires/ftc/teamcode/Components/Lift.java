@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 @Config
 public class Lift {
-    private final int MAX_LIFT_TICKS = 1740/*1675*/;
+    private final int MAX_LIFT_TICKS = 1690/*1675*/;
     private final double LIFT_GRAVITY_CONSTANT = 0.075;
     //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
@@ -37,8 +37,7 @@ public class Lift {
     //TODO: RFMotor
     private RFMotor liftMotor;
     private Claw LC = new Claw();
-    private double liftTarget = 0;
-    public static double dfco1 = 38, dfco2 = 2, dfco3 = 150;
+    private double liftTarget = 0,dfco1 = 40, dfco2 = 3, dfco3 = 0;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
@@ -97,7 +96,7 @@ public class Lift {
     }
 
     public enum LiftConstants {
-        LIFT_HIGH_JUNCTION(1740, false),
+        LIFT_HIGH_JUNCTION(1690, false),
         LIFT_MED_JUNCTION(1152, false),
         LIFT_LOW_JUNCTION(15, false),
         LIFT_GROUND_JUNCTION(0, false),
@@ -142,6 +141,7 @@ public class Lift {
 
     public void updateLiftStates() {
         int liftPos = liftMotor.getCurrentPosition();
+        done = (abs(liftTarget-liftPos) < liftMotor.getTICK_BOUNDARY_PADDING());
         op.telemetry.addData("ticks", liftPos);
         double liftVelocity = liftMotor.getVelocity();
         if (liftPos < 20 && abs(liftVelocity) < 20) {

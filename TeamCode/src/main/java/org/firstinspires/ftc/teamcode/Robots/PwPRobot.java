@@ -173,12 +173,12 @@ public class PwPRobot extends BasicRobot {
             claw.wideClaw();
         }
     }
-    public void liftToTargetAuto() {
+        public void liftToTargetAuto() {
         lift.liftToTargetAuto();
     }
 
     public void liftToPosition(int tickTarget) {
-        if (queuer.queue(true, lift.isDone())) {
+        if (queuer.queue(true, lift.isDone()&&abs(lift.getLiftPosition()-tickTarget)<20)) {
             lift.liftToPosition(tickTarget);
         }
     }
@@ -204,7 +204,13 @@ public class PwPRobot extends BasicRobot {
             liftArm.lowerLiftArmToIntake();
         }
     }
+    public void cycleLiftArmToCycle(boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, liftArm.isCylce())) {
 
+            liftArm.updateLiftArmStates();
+            liftArm.cycleLiftArmToCylce();
+        }
+    }
     public void raiseLiftArmToOuttake() {
         raiseLiftArmToOuttake(true);
     }

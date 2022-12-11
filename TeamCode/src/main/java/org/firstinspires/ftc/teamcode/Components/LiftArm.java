@@ -13,13 +13,15 @@ public class LiftArm {
 
     private RFDualServo liftArmServo;
 
-    private final double LIFT_ARM_INTAKE_POS = 0.78;
+    private final double LIFT_ARM_INTAKE_POS = 0.74;
+    private final double LIFT_ARM_CYCLE_POS = 0.69;
 
-    private final double LIFT_ARM_OUTTAKE_POS = 0.0;
+    private final double LIFT_ARM_OUTTAKE_POS = 0.05;
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
     public final double LIFT_ARM_SERVO_SWITCH_TIME = 0.2;
+    double liftPos =0.0;
 
     //States:
     //ARM_INTAKE
@@ -101,6 +103,29 @@ public class LiftArm {
 
             //set state of claw open to true
             ARM_LOWERING.setStatus(true);
+            liftPos = LIFT_ARM_INTAKE_POS;
+
+            //log to general robot log that the claw has been opened through function openClaw()
+            logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",lowerLiftArmToIntake()"
+                    + ",Lift Arm Lowered to Intake Position", true);
+        }
+    }
+    public boolean isCylce(){
+        if(ARM_INTAKE.getStatus()&&liftPos == LIFT_ARM_CYCLE_POS){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public void cycleLiftArmToCylce(){
+        if (ARM_OUTTAKE.status&&liftPos != LIFT_ARM_CYCLE_POS) {
+
+            //set servo position
+            liftArmServo.setPositions(LIFT_ARM_CYCLE_POS);
+
+            //set state of claw open to true
+            ARM_LOWERING.setStatus(true);
+            liftPos = LIFT_ARM_CYCLE_POS;
 
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",lowerLiftArmToIntake()"
@@ -125,6 +150,7 @@ public class LiftArm {
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",raiseLiftArmToOuttake()"
                     + ",Lift Arm Raised to Outtake Position", true);
+            liftPos = LIFT_ARM_OUTTAKE_POS;
         }
         else {
             logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",raiseLiftArmToOuttake()"
