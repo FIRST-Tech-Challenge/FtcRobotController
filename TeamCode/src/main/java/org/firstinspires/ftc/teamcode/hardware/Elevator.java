@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Elevator {
     public   double ServoPosition = 0;
     private Servo mainServo = null;
-    public final double OPEN_POSITION_LEFT = 0.7;
+    public final double OPEN_POSITION_LEFT = 0.8;
     public final double OPEN_POSITION_RIGHT = 0.3;
     public Servo getLeftServo() {
         return leftServo;
