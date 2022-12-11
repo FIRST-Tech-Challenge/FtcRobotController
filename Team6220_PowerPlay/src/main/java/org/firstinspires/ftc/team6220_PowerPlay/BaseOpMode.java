@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -48,35 +49,35 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorFR.setDirection(DcMotorEx.Direction.REVERSE);
         motorBL.setDirection(DcMotorEx.Direction.FORWARD);
         motorBR.setDirection(DcMotorEx.Direction.REVERSE);
-        motorLeftSlides.setDirection(DcMotorEx.Direction.FORWARD);
-        motorRightSlides.setDirection(DcMotorEx.Direction.FORWARD);
-        motorTurntable.setDirection(DcMotorEx.Direction.FORWARD);
 
         motorFL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorFL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        motorFR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-        motorTurntable.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        motorLeftSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        motorRightSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
         motorFL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        motorTurntable.setTargetPosition(0);
-        motorTurntable.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motorTurntable.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorFL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorFR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+        motorTurntable.setDirection(DcMotorEx.Direction.FORWARD);
+        motorLeftSlides.setDirection(DcMotorEx.Direction.FORWARD);
+        motorRightSlides.setDirection(DcMotorEx.Direction.REVERSE);
+
+        motorTurntable.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorLeftSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorRightSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorTurntable.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         motorRightSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorTurntable.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorLeftSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorRightSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
@@ -142,47 +143,36 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * this method will allow the slides to move upwards and downwards given a specified target position
-     * @param targetPosition target position for vertical slides motors in ticks
+     * this method will allow the slides to move given a target position
+     * @param targetPosition target position for slides motors in ticks
      */
     public void driveSlides(int targetPosition) {
         int error = targetPosition - motorLeftSlides.getCurrentPosition();
+        double motorPower = Math.max(error * 0.005, 0.2);
 
         // slides not yet at target position
-        if (Math.abs(error) > 25) {
-
-            // slides going down
+        if (Math.abs(error) > 20) {
+            // slides going down - constant speed
             if (error < 0) {
-
-                // slides above low junction
-                if (motorLeftSlides.getCurrentPosition() > Constants.SLIDE_LOW) {
-                    motorLeftSlides.setPower(-0.05);
-                    motorRightSlides.setPower(-0.05);
-
-                // slides below low junction
-                } else {
-                    motorLeftSlides.setPower(-1);
-                    motorRightSlides.setPower(-1);
-                }
-
-            // slides going up
+                motorLeftSlides.setPower(-0.75);
+                motorRightSlides.setPower(-0.75);
+            // slides going up - proportional control
             } else {
-                motorLeftSlides.setPower(0.75);
-                motorRightSlides.setPower(0.75);
+                motorLeftSlides.setPower(motorPower);
+                motorRightSlides.setPower(motorPower);
             }
-
-        // slides at target position so holding position
+        // slides at target position
         } else {
-            motorLeftSlides.setPower(0.1);
-            motorRightSlides.setPower(0.1);
+            motorLeftSlides.setPower(0.05);
+            motorRightSlides.setPower(0.05);
         }
     }
 
     /**
-     * this method will allow the turntable to turn clockwise or counterclockwise given a specified power and position
-     * @param position target position of turntable motor in ticks
+     * this method will allow the turntable to turn given a target position
+     * @param targetPosition target position for turntable motor in ticks
      */
-    public void driveTurntable(int position) {
-        motorTurntable.setTargetPosition(position);
+    public void driveTurntable(double targetPosition) {
+
     }
 }
