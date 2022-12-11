@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit
  *
  * @see Scheduler
  * @see Listener
- * @see GamepadEx2
+ * @see ReforgedGamepad
  */
 class Timer @JvmOverloads constructor(length: Long, unit: TimeUnit = TimeUnit.MILLISECONDS) {
 

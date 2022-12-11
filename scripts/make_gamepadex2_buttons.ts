@@ -1,15 +1,24 @@
 import * as fsp from 'node:fs/promises';
 
-const GAMEPAD_EX2_PATH = 'TeamCode/src/main/kotlin/org/firstinspires/ftc/teamcodekt/blacksmith/listeners/GamepadEx2.kt';
+const GAMEPAD_EX2_PATH = 'TeamCode/src/main/kotlin/org/firstinspires/ftc/teamcodekt/blacksmith/listeners/ReforgedGamepad.kt';
 
 (async () => {
   let generated_code = '\n';
 
-  getButtons().forEach(button => {
-    if (button.type == 'boolean') {
-      generated_code += generateBooleanButton(button.name) + '\n\n';
-    } else {
-      generated_code += generateFloatButton(button.name) + '\n\n';
+  getButtons().forEach(buttonSlashPadding => {
+    const padding_comment = buttonSlashPadding as Padding
+    const button = buttonSlashPadding as GamepadButton
+
+    switch(true) {
+      case typeof buttonSlashPadding === "string":
+        generated_code += `    // -- ${padding_comment} --\n`; // Spacer to group together related buttons
+        break;
+      case button.type === 'boolean':
+        generated_code += generateBooleanButton(button.name) + '\n\n';
+        break;
+      case button.type === 'float':
+        generated_code += generateFloatButton(button.name) + '\n\n';
+        break;
     }
   });
 
@@ -31,7 +40,7 @@ function generateBooleanButton(name: string): string {
     ` * gamepad_x1.${name}.${randomUsageFunction()}(this::doSomething);`,
     ` */`,
     `@JvmField`,
-    `val ${name} = Listener(gamepad::${name})`,
+    `val ${name} = GamepadBooleanListener(gamepad::${name})`,
   ]
 
   return generated_code.map(line => `    ${line}`).join('\n');
@@ -58,8 +67,8 @@ function generateFloatButton(name: string): string {
     ` * \`\`\``,
     ` * @param deadzone The minimum value that the ${name} must be above to trigger the event.`,
     ` */`,
-    `fun ${name}(deadzone: Double): Listener {`,
-    `    return Listener { abs(gamepad.${name}) > deadzone }`,
+    `fun ${name}(deadzone: Double): GamepadAnalogueListener {`,
+    `    return GamepadAnalogueListener(deadzone, gamepad::${name})`,
     `}`,
   ];
 
@@ -93,35 +102,46 @@ interface GamepadButton {
   name: string
 }
 
-function getButtons(): GamepadButton[] {
+type Padding = string
+
+function getButtons(): (GamepadButton | Padding)[] {
   return [
+    'Main gamepad buttons',
     { type: 'boolean', name: 'a' },
     { type: 'boolean', name: 'b' },
     { type: 'boolean', name: 'x' },
     { type: 'boolean', name: 'y' },
+    'Dpad',
     { type: 'boolean', name: 'dpad_up' },
     { type: 'boolean', name: 'dpad_down' },
     { type: 'boolean', name: 'dpad_left' },
     { type: 'boolean', name: 'dpad_right' },
+    'Bumpers',
     { type: 'boolean', name: 'left_bumper' },
     { type: 'boolean', name: 'right_bumper' },
+    'Joysticks',
     { type: 'float',   name: 'left_stick_x' },
     { type: 'float',   name: 'left_stick_y' },
     { type: 'float',   name: 'right_stick_x' },
     { type: 'float',   name: 'right_stick_y' },
+    'Triggers',
     { type: 'float',   name: 'left_trigger' },
     { type: 'float',   name: 'right_trigger' },
+    'Joystick buttons',
     { type: 'boolean', name: 'left_stick_button' },
     { type: 'boolean', name: 'right_stick_button' },
+    'PS4 controller buttons',
     { type: 'boolean', name: 'circle' },
     { type: 'boolean', name: 'cross' },
     { type: 'boolean', name: 'triangle' },
     { type: 'boolean', name: 'square' },
+    'Random buttons',
     { type: 'boolean', name: 'share' },
     { type: 'boolean', name: 'options' },
     { type: 'boolean', name: 'guide' },
     { type: 'boolean', name: 'start' },
     { type: 'boolean', name: 'back' },
+    'Touchpad buttons & triggers',
     { type: 'boolean', name: 'touchpad' },
     { type: 'boolean', name: 'touchpad_finger_1' },
     { type: 'boolean', name: 'touchpad_finger_2' },
@@ -129,6 +149,7 @@ function getButtons(): GamepadButton[] {
     { type: 'float',   name: 'touchpad_finger_1_y' },
     { type: 'float',   name: 'touchpad_finger_2_x' },
     { type: 'float',   name: 'touchpad_finger_2_y' },
+    'Whatever this is',
     { type: 'boolean', name: 'ps' },
   ];
 }

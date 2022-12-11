@@ -14,7 +14,7 @@ import kotlin.math.abs
  * ```java
  * @Override
  * public void runOpMode() throws InterruptedException {
- *     GamepadEx2 gamepadx1 = new GamepadEx2(gamepad1);
+ *     ReforgedGamepad gamepadx1 = new ReforgedGamepad(gamepad1);
  *
  *     // Use onRise and onFall to run the action once when the
  *     // condition is first true or first false.
@@ -49,26 +49,27 @@ import kotlin.math.abs
  * @see Scheduler
  * @see Listener
  */
-class GamepadEx2(val gamepad: Gamepad) {
+class ReforgedGamepad(val gamepad: Gamepad) {
     // -- START MACHINE GENERATED CODE --
 
+    // -- Main gamepad buttons --
     /**
      * Allows client to perform an action when the gamepad's 'a' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.a.onRise(this::doSomething);
+     * gamepad_x1.a.whileLow(this::doSomething);
      */
     @JvmField
-    val a = Listener(gamepad::a)
+    val a = GamepadBooleanListener(gamepad::a)
 
     /**
      * Allows client to perform an action when the gamepad's 'b' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.b.whileLow(this::doSomething);
+     * gamepad_x1.b.onFall(this::doSomething);
      */
     @JvmField
-    val b = Listener(gamepad::b)
+    val b = GamepadBooleanListener(gamepad::b)
 
     /**
      * Allows client to perform an action when the gamepad's 'x' button's state is mutated.
@@ -77,25 +78,26 @@ class GamepadEx2(val gamepad: Gamepad) {
      * gamepad_x1.x.onFall(this::doSomething);
      */
     @JvmField
-    val x = Listener(gamepad::x)
+    val x = GamepadBooleanListener(gamepad::x)
 
     /**
      * Allows client to perform an action when the gamepad's 'y' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.y.whileLow(this::doSomething);
+     * gamepad_x1.y.onRise(this::doSomething);
      */
     @JvmField
-    val y = Listener(gamepad::y)
+    val y = GamepadBooleanListener(gamepad::y)
 
+    // -- Dpad --
     /**
      * Allows client to perform an action when the gamepad's 'dpad_up' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.dpad_up.whileLow(this::doSomething);
+     * gamepad_x1.dpad_up.onFall(this::doSomething);
      */
     @JvmField
-    val dpad_up = Listener(gamepad::dpad_up)
+    val dpad_up = GamepadBooleanListener(gamepad::dpad_up)
 
     /**
      * Allows client to perform an action when the gamepad's 'dpad_down' button's state is mutated.
@@ -104,16 +106,16 @@ class GamepadEx2(val gamepad: Gamepad) {
      * gamepad_x1.dpad_down.whileHigh(this::doSomething);
      */
     @JvmField
-    val dpad_down = Listener(gamepad::dpad_down)
+    val dpad_down = GamepadBooleanListener(gamepad::dpad_down)
 
     /**
      * Allows client to perform an action when the gamepad's 'dpad_left' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.dpad_left.onFall(this::doSomething);
+     * gamepad_x1.dpad_left.whileHigh(this::doSomething);
      */
     @JvmField
-    val dpad_left = Listener(gamepad::dpad_left)
+    val dpad_left = GamepadBooleanListener(gamepad::dpad_left)
 
     /**
      * Allows client to perform an action when the gamepad's 'dpad_right' button's state is mutated.
@@ -122,8 +124,9 @@ class GamepadEx2(val gamepad: Gamepad) {
      * gamepad_x1.dpad_right.whileLow(this::doSomething);
      */
     @JvmField
-    val dpad_right = Listener(gamepad::dpad_right)
+    val dpad_right = GamepadBooleanListener(gamepad::dpad_right)
 
+    // -- Bumpers --
     /**
      * Allows client to perform an action when the gamepad's 'left_bumper' button's state is mutated.
      * ```java
@@ -131,22 +134,23 @@ class GamepadEx2(val gamepad: Gamepad) {
      * gamepad_x1.left_bumper.whileLow(this::doSomething);
      */
     @JvmField
-    val left_bumper = Listener(gamepad::left_bumper)
+    val left_bumper = GamepadBooleanListener(gamepad::left_bumper)
 
     /**
      * Allows client to perform an action when the gamepad's 'right_bumper' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.right_bumper.whileHigh(this::doSomething);
+     * gamepad_x1.right_bumper.onFall(this::doSomething);
      */
     @JvmField
-    val right_bumper = Listener(gamepad::right_bumper)
+    val right_bumper = GamepadBooleanListener(gamepad::right_bumper)
 
+    // -- Joysticks --
     /**
      * Allows client to perform an action when the gamepad's 'left_stick_x' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(left_stick_x) > .5)
-     * gamepad_x1.left_stick_x.whileLow(this::doSomething);
+     * gamepad_x1.left_stick_x.onFall(this::doSomething);
      */
     @JvmField
     val left_stick_x = left_stick_x(deadzone = .5)
@@ -155,19 +159,19 @@ class GamepadEx2(val gamepad: Gamepad) {
      * Allows client to perform an action when the gamepad's 'left_stick_x' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(left_stick_x) > the_given_deadzone)
-     * gamepad_x1.left_stick_x(.1).whileLow(this::doSomething);
+     * gamepad_x1.left_stick_x(.1).onFall(this::doSomething);
      * ```
      * @param deadzone The minimum value that the left_stick_x must be above to trigger the event.
      */
-    fun left_stick_x(deadzone: Double): Listener {
-        return Listener { abs(gamepad.left_stick_x) > deadzone }
+    fun left_stick_x(deadzone: Double): GamepadAnalogueListener {
+        return GamepadAnalogueListener(deadzone, gamepad::left_stick_x)
     }
 
     /**
      * Allows client to perform an action when the gamepad's 'left_stick_y' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(left_stick_y) > .5)
-     * gamepad_x1.left_stick_y.whileLow(this::doSomething);
+     * gamepad_x1.left_stick_y.whileHigh(this::doSomething);
      */
     @JvmField
     val left_stick_y = left_stick_y(deadzone = .5)
@@ -176,19 +180,19 @@ class GamepadEx2(val gamepad: Gamepad) {
      * Allows client to perform an action when the gamepad's 'left_stick_y' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(left_stick_y) > the_given_deadzone)
-     * gamepad_x1.left_stick_y(.1).whileLow(this::doSomething);
+     * gamepad_x1.left_stick_y(.1).whileHigh(this::doSomething);
      * ```
      * @param deadzone The minimum value that the left_stick_y must be above to trigger the event.
      */
-    fun left_stick_y(deadzone: Double): Listener {
-        return Listener { abs(gamepad.left_stick_y) > deadzone }
+    fun left_stick_y(deadzone: Double): GamepadAnalogueListener {
+        return GamepadAnalogueListener(deadzone, gamepad::left_stick_y)
     }
 
     /**
      * Allows client to perform an action when the gamepad's 'right_stick_x' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(right_stick_x) > .5)
-     * gamepad_x1.right_stick_x.whileLow(this::doSomething);
+     * gamepad_x1.right_stick_x.whileHigh(this::doSomething);
      */
     @JvmField
     val right_stick_x = right_stick_x(deadzone = .5)
@@ -197,19 +201,19 @@ class GamepadEx2(val gamepad: Gamepad) {
      * Allows client to perform an action when the gamepad's 'right_stick_x' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(right_stick_x) > the_given_deadzone)
-     * gamepad_x1.right_stick_x(.1).whileLow(this::doSomething);
+     * gamepad_x1.right_stick_x(.1).whileHigh(this::doSomething);
      * ```
      * @param deadzone The minimum value that the right_stick_x must be above to trigger the event.
      */
-    fun right_stick_x(deadzone: Double): Listener {
-        return Listener { abs(gamepad.right_stick_x) > deadzone }
+    fun right_stick_x(deadzone: Double): GamepadAnalogueListener {
+        return GamepadAnalogueListener(deadzone, gamepad::right_stick_x)
     }
 
     /**
      * Allows client to perform an action when the gamepad's 'right_stick_y' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(right_stick_y) > .5)
-     * gamepad_x1.right_stick_y.onRise(this::doSomething);
+     * gamepad_x1.right_stick_y.whileLow(this::doSomething);
      */
     @JvmField
     val right_stick_y = right_stick_y(deadzone = .5)
@@ -218,14 +222,15 @@ class GamepadEx2(val gamepad: Gamepad) {
      * Allows client to perform an action when the gamepad's 'right_stick_y' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(right_stick_y) > the_given_deadzone)
-     * gamepad_x1.right_stick_y(.1).onRise(this::doSomething);
+     * gamepad_x1.right_stick_y(.1).whileLow(this::doSomething);
      * ```
      * @param deadzone The minimum value that the right_stick_y must be above to trigger the event.
      */
-    fun right_stick_y(deadzone: Double): Listener {
-        return Listener { abs(gamepad.right_stick_y) > deadzone }
+    fun right_stick_y(deadzone: Double): GamepadAnalogueListener {
+        return GamepadAnalogueListener(deadzone, gamepad::right_stick_y)
     }
 
+    // -- Triggers --
     /**
      * Allows client to perform an action when the gamepad's 'left_trigger' button's state is mutated.
      * ```java
@@ -243,15 +248,15 @@ class GamepadEx2(val gamepad: Gamepad) {
      * ```
      * @param deadzone The minimum value that the left_trigger must be above to trigger the event.
      */
-    fun left_trigger(deadzone: Double): Listener {
-        return Listener { abs(gamepad.left_trigger) > deadzone }
+    fun left_trigger(deadzone: Double): GamepadAnalogueListener {
+        return GamepadAnalogueListener(deadzone, gamepad::left_trigger)
     }
 
     /**
      * Allows client to perform an action when the gamepad's 'right_trigger' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(right_trigger) > .5)
-     * gamepad_x1.right_trigger.whileLow(this::doSomething);
+     * gamepad_x1.right_trigger.onFall(this::doSomething);
      */
     @JvmField
     val right_trigger = right_trigger(deadzone = .5)
@@ -260,32 +265,34 @@ class GamepadEx2(val gamepad: Gamepad) {
      * Allows client to perform an action when the gamepad's 'right_trigger' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(right_trigger) > the_given_deadzone)
-     * gamepad_x1.right_trigger(.1).whileLow(this::doSomething);
+     * gamepad_x1.right_trigger(.1).onFall(this::doSomething);
      * ```
      * @param deadzone The minimum value that the right_trigger must be above to trigger the event.
      */
-    fun right_trigger(deadzone: Double): Listener {
-        return Listener { abs(gamepad.right_trigger) > deadzone }
+    fun right_trigger(deadzone: Double): GamepadAnalogueListener {
+        return GamepadAnalogueListener(deadzone, gamepad::right_trigger)
     }
 
+    // -- Joystick buttons --
     /**
      * Allows client to perform an action when the gamepad's 'left_stick_button' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.left_stick_button.whileLow(this::doSomething);
+     * gamepad_x1.left_stick_button.onFall(this::doSomething);
      */
     @JvmField
-    val left_stick_button = Listener(gamepad::left_stick_button)
+    val left_stick_button = GamepadBooleanListener(gamepad::left_stick_button)
 
     /**
      * Allows client to perform an action when the gamepad's 'right_stick_button' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.right_stick_button.onFall(this::doSomething);
+     * gamepad_x1.right_stick_button.onRise(this::doSomething);
      */
     @JvmField
-    val right_stick_button = Listener(gamepad::right_stick_button)
+    val right_stick_button = GamepadBooleanListener(gamepad::right_stick_button)
 
+    // -- PS4 controller buttons --
     /**
      * Allows client to perform an action when the gamepad's 'circle' button's state is mutated.
      * ```java
@@ -293,35 +300,36 @@ class GamepadEx2(val gamepad: Gamepad) {
      * gamepad_x1.circle.whileLow(this::doSomething);
      */
     @JvmField
-    val circle = Listener(gamepad::circle)
+    val circle = GamepadBooleanListener(gamepad::circle)
 
     /**
      * Allows client to perform an action when the gamepad's 'cross' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.cross.whileLow(this::doSomething);
+     * gamepad_x1.cross.onRise(this::doSomething);
      */
     @JvmField
-    val cross = Listener(gamepad::cross)
+    val cross = GamepadBooleanListener(gamepad::cross)
 
     /**
      * Allows client to perform an action when the gamepad's 'triangle' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.triangle.whileHigh(this::doSomething);
+     * gamepad_x1.triangle.whileLow(this::doSomething);
      */
     @JvmField
-    val triangle = Listener(gamepad::triangle)
+    val triangle = GamepadBooleanListener(gamepad::triangle)
 
     /**
      * Allows client to perform an action when the gamepad's 'square' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.square.onFall(this::doSomething);
+     * gamepad_x1.square.onRise(this::doSomething);
      */
     @JvmField
-    val square = Listener(gamepad::square)
+    val square = GamepadBooleanListener(gamepad::square)
 
+    // -- Random buttons --
     /**
      * Allows client to perform an action when the gamepad's 'share' button's state is mutated.
      * ```java
@@ -329,7 +337,7 @@ class GamepadEx2(val gamepad: Gamepad) {
      * gamepad_x1.share.onFall(this::doSomething);
      */
     @JvmField
-    val share = Listener(gamepad::share)
+    val share = GamepadBooleanListener(gamepad::share)
 
     /**
      * Allows client to perform an action when the gamepad's 'options' button's state is mutated.
@@ -338,7 +346,7 @@ class GamepadEx2(val gamepad: Gamepad) {
      * gamepad_x1.options.onRise(this::doSomething);
      */
     @JvmField
-    val options = Listener(gamepad::options)
+    val options = GamepadBooleanListener(gamepad::options)
 
     /**
      * Allows client to perform an action when the gamepad's 'guide' button's state is mutated.
@@ -347,34 +355,35 @@ class GamepadEx2(val gamepad: Gamepad) {
      * gamepad_x1.guide.onFall(this::doSomething);
      */
     @JvmField
-    val guide = Listener(gamepad::guide)
+    val guide = GamepadBooleanListener(gamepad::guide)
 
     /**
      * Allows client to perform an action when the gamepad's 'start' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.start.onRise(this::doSomething);
+     * gamepad_x1.start.onFall(this::doSomething);
      */
     @JvmField
-    val start = Listener(gamepad::start)
+    val start = GamepadBooleanListener(gamepad::start)
 
     /**
      * Allows client to perform an action when the gamepad's 'back' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.back.onFall(this::doSomething);
+     * gamepad_x1.back.onRise(this::doSomething);
      */
     @JvmField
-    val back = Listener(gamepad::back)
+    val back = GamepadBooleanListener(gamepad::back)
 
+    // -- Touchpad buttons & triggers --
     /**
      * Allows client to perform an action when the gamepad's 'touchpad' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.touchpad.onFall(this::doSomething);
+     * gamepad_x1.touchpad.onRise(this::doSomething);
      */
     @JvmField
-    val touchpad = Listener(gamepad::touchpad)
+    val touchpad = GamepadBooleanListener(gamepad::touchpad)
 
     /**
      * Allows client to perform an action when the gamepad's 'touchpad_finger_1' button's state is mutated.
@@ -383,7 +392,7 @@ class GamepadEx2(val gamepad: Gamepad) {
      * gamepad_x1.touchpad_finger_1.whileLow(this::doSomething);
      */
     @JvmField
-    val touchpad_finger_1 = Listener(gamepad::touchpad_finger_1)
+    val touchpad_finger_1 = GamepadBooleanListener(gamepad::touchpad_finger_1)
 
     /**
      * Allows client to perform an action when the gamepad's 'touchpad_finger_2' button's state is mutated.
@@ -392,7 +401,7 @@ class GamepadEx2(val gamepad: Gamepad) {
      * gamepad_x1.touchpad_finger_2.onRise(this::doSomething);
      */
     @JvmField
-    val touchpad_finger_2 = Listener(gamepad::touchpad_finger_2)
+    val touchpad_finger_2 = GamepadBooleanListener(gamepad::touchpad_finger_2)
 
     /**
      * Allows client to perform an action when the gamepad's 'touchpad_finger_1_x' button's state is mutated.
@@ -411,15 +420,15 @@ class GamepadEx2(val gamepad: Gamepad) {
      * ```
      * @param deadzone The minimum value that the touchpad_finger_1_x must be above to trigger the event.
      */
-    fun touchpad_finger_1_x(deadzone: Double): Listener {
-        return Listener { abs(gamepad.touchpad_finger_1_x) > deadzone }
+    fun touchpad_finger_1_x(deadzone: Double): GamepadAnalogueListener {
+        return GamepadAnalogueListener(deadzone, gamepad::touchpad_finger_1_x)
     }
 
     /**
      * Allows client to perform an action when the gamepad's 'touchpad_finger_1_y' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(touchpad_finger_1_y) > .5)
-     * gamepad_x1.touchpad_finger_1_y.whileLow(this::doSomething);
+     * gamepad_x1.touchpad_finger_1_y.onFall(this::doSomething);
      */
     @JvmField
     val touchpad_finger_1_y = touchpad_finger_1_y(deadzone = .5)
@@ -428,19 +437,19 @@ class GamepadEx2(val gamepad: Gamepad) {
      * Allows client to perform an action when the gamepad's 'touchpad_finger_1_y' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(touchpad_finger_1_y) > the_given_deadzone)
-     * gamepad_x1.touchpad_finger_1_y(.1).whileLow(this::doSomething);
+     * gamepad_x1.touchpad_finger_1_y(.1).onFall(this::doSomething);
      * ```
      * @param deadzone The minimum value that the touchpad_finger_1_y must be above to trigger the event.
      */
-    fun touchpad_finger_1_y(deadzone: Double): Listener {
-        return Listener { abs(gamepad.touchpad_finger_1_y) > deadzone }
+    fun touchpad_finger_1_y(deadzone: Double): GamepadAnalogueListener {
+        return GamepadAnalogueListener(deadzone, gamepad::touchpad_finger_1_y)
     }
 
     /**
      * Allows client to perform an action when the gamepad's 'touchpad_finger_2_x' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(touchpad_finger_2_x) > .5)
-     * gamepad_x1.touchpad_finger_2_x.onRise(this::doSomething);
+     * gamepad_x1.touchpad_finger_2_x.whileHigh(this::doSomething);
      */
     @JvmField
     val touchpad_finger_2_x = touchpad_finger_2_x(deadzone = .5)
@@ -449,19 +458,19 @@ class GamepadEx2(val gamepad: Gamepad) {
      * Allows client to perform an action when the gamepad's 'touchpad_finger_2_x' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(touchpad_finger_2_x) > the_given_deadzone)
-     * gamepad_x1.touchpad_finger_2_x(.1).onRise(this::doSomething);
+     * gamepad_x1.touchpad_finger_2_x(.1).whileHigh(this::doSomething);
      * ```
      * @param deadzone The minimum value that the touchpad_finger_2_x must be above to trigger the event.
      */
-    fun touchpad_finger_2_x(deadzone: Double): Listener {
-        return Listener { abs(gamepad.touchpad_finger_2_x) > deadzone }
+    fun touchpad_finger_2_x(deadzone: Double): GamepadAnalogueListener {
+        return GamepadAnalogueListener(deadzone, gamepad::touchpad_finger_2_x)
     }
 
     /**
      * Allows client to perform an action when the gamepad's 'touchpad_finger_2_y' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(touchpad_finger_2_y) > .5)
-     * gamepad_x1.touchpad_finger_2_y.onRise(this::doSomething);
+     * gamepad_x1.touchpad_finger_2_y.whileHigh(this::doSomething);
      */
     @JvmField
     val touchpad_finger_2_y = touchpad_finger_2_y(deadzone = .5)
@@ -470,22 +479,33 @@ class GamepadEx2(val gamepad: Gamepad) {
      * Allows client to perform an action when the gamepad's 'touchpad_finger_2_y' button's state is mutated.
      * ```java
      * //e.g: (Triggers when abs(touchpad_finger_2_y) > the_given_deadzone)
-     * gamepad_x1.touchpad_finger_2_y(.1).onRise(this::doSomething);
+     * gamepad_x1.touchpad_finger_2_y(.1).whileHigh(this::doSomething);
      * ```
      * @param deadzone The minimum value that the touchpad_finger_2_y must be above to trigger the event.
      */
-    fun touchpad_finger_2_y(deadzone: Double): Listener {
-        return Listener { abs(gamepad.touchpad_finger_2_y) > deadzone }
+    fun touchpad_finger_2_y(deadzone: Double): GamepadAnalogueListener {
+        return GamepadAnalogueListener(deadzone, gamepad::touchpad_finger_2_y)
     }
 
+    // -- Whatever this is --
     /**
      * Allows client to perform an action when the gamepad's 'ps' button's state is mutated.
      * ```java
      * //e.g:
-     * gamepad_x1.ps.onFall(this::doSomething);
+     * gamepad_x1.ps.onRise(this::doSomething);
      */
     @JvmField
-    val ps = Listener(gamepad::ps)
+    val ps = GamepadBooleanListener(gamepad::ps)
 
     // -- END MACHINE GENERATED CODE --
+
+    class GamepadBooleanListener(val input: () -> Boolean) : Listener(input) {
+        operator fun invoke() = input()
+        fun get() = input()
+    }
+
+    class GamepadAnalogueListener(deadzone: Double, val input: () -> Float) : Listener({ abs(input()) > deadzone }) {
+        operator fun invoke() = input()
+        fun get() = input()
+    }
 }

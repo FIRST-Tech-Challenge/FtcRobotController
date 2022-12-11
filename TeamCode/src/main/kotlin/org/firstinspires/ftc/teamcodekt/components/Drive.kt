@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcodekt.util.maxMagnitude
 import org.firstinspires.ftc.teamcodekt.util.withDeadzone
 import kotlin.math.*
 
-class DriveMotors(hwMap: HardwareMap) {
+class Drivetrain(hwMap: HardwareMap) {
     private val frontLeft  = hwMap<DcMotorEx>("FL").apply { direction = Direction.REVERSE }
     private val frontRight = hwMap<DcMotorEx>("FR")
     private val backLeft   = hwMap<DcMotorEx>("BL").apply { direction = Direction.REVERSE }

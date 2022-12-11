@@ -54,7 +54,7 @@ import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Listener
  *     });
  *
  *     // Usage of scheduler through a more convenient method
- *     GamepadEx2 gamepadx1 = new GamepadEx2(gamepad1);
+ *     ReforgedGamepad gamepadx1 = new ReforgedGamepad(gamepad1);
  *     gamepadx1.a.onHigh(this::doSomething);
  *
  *     // Usage of scheduler through the raw API
@@ -77,7 +77,7 @@ import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Listener
  *
  * @see Listener
  * @see Condition
- * @see GamepadEx2
+ * @see ReforgedGamepad
  * @see Timer
  */
 object Scheduler {

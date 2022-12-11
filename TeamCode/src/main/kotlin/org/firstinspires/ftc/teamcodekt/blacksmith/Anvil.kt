@@ -72,6 +72,10 @@ class Anvil(val drive: SampleMecanumDrive, startPose: Pose2d) {
         setReversed(false)
     }
 
+    fun withRawBuilder(builder: TrajectorySequenceBuilder.() -> Unit) = this.apply {
+        builder(trajectorySequenceBuilder)
+    }
+
     @JvmOverloads
     fun addTemporalMarker(
         offset: Double = 0.0,
@@ -108,9 +112,7 @@ class Anvil(val drive: SampleMecanumDrive, startPose: Pose2d) {
         preconceivedTrajectories[key] = builderScope.async { nextTrajectory(startPose).finish() }
     }
 
-    fun thenRunAsync(
-        key: Any
-    ) = this.addTemporalMarker {
+    fun thenRunAsync(key: Any) = this.addTemporalMarker {
         drive.followTrajectorySequenceAsync(
             runBlocking {
                 preconceivedTrajectories[key]?.await()
@@ -118,10 +120,7 @@ class Anvil(val drive: SampleMecanumDrive, startPose: Pose2d) {
         )
     }
 
-    fun thenRunAsyncIf(
-        key: Any,
-        predicate: () -> Boolean
-    ) = this.apply {
+    fun thenRunAsyncIf(key: Any, predicate: () -> Boolean) = this.apply {
         if (predicate()) {
             thenRunAsync(key)
         }

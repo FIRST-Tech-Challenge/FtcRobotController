@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 
 fun createTeleOpBotComponents(hardwareMap: HardwareMap) =
     TeleOpBotComponents(
-        DriveMotors(hardwareMap),
+        Drivetrain(hardwareMap),
         Claw(hardwareMap),
         Intake(hardwareMap),
         Arm(hardwareMap),
@@ -13,7 +13,7 @@ fun createTeleOpBotComponents(hardwareMap: HardwareMap) =
     )
 
 data class TeleOpBotComponents(
-    val driveMotors: DriveMotors,
+    val drivetrain: Drivetrain,
     val claw: Claw,
     val intake: Intake,
     val arm: Arm,

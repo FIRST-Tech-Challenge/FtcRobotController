@@ -20,11 +20,29 @@ class RougeTestingOp : RougeBaseTele() {
         backwardsDepositChain.invokeOn(driver.y)
         backwardsDepositChain.cancelOn(driver.x)
 
-        driver.left_trigger(.1).whileHigh {
-            powerMulti /= 2
+        driver.right_trigger(.1).whileHigh {
+            powerMulti *= 1 - (driver.right_trigger() * driver.right_trigger() * driver.right_trigger())
         }
 
-        Listener { lift.height > LiftConfig.MID * 1.001 }
+        driver.left_trigger.whileHigh {
+            if (driver.right_stick_y() > .1) {
+                lift.height += (50 * -driver.right_stick_y()).toInt()
+            }
+
+            if (driver.left_stick_x() < -.5) {
+                claw.openForIntakeWide()
+            }
+
+            if (driver.left_stick_x() > .5) {
+                claw.close()
+            }
+        }
+
+        driver.left_trigger.whileLow {
+            bot.drivetrain.drive(driver.gamepad, powerMulti)
+        }
+
+        Listener { lift.height > LiftConfig.MID * 1.01 }
             .whileHigh { powerMulti /= 2 }
     }
 }

@@ -4,15 +4,15 @@ package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcodekt.blacksmith.Scheduler
-import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.GamepadEx2
+import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.ReforgedGamepad
 import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.chains.BackwardsDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.ForwardsDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
 
 abstract class RougeBaseTele : LinearOpMode() {
-    protected val driver   = GamepadEx2(gamepad1)
-    protected val codriver = GamepadEx2(gamepad2)
+    protected val driver   = ReforgedGamepad(gamepad1)
+    protected val codriver = ReforgedGamepad(gamepad2)
 
     protected var powerMulti  = 0.0
 
@@ -36,14 +36,9 @@ abstract class RougeBaseTele : LinearOpMode() {
         Scheduler.start(this@RougeBaseTele) {
             lift.update()
             wrist.update()
-            driveMotors.drive(gamepad1, powerMulti)
             telemetry.update()
-
-            doEveryLoop()
         }
     }
 
     abstract fun describeControls()
-
-    open fun doEveryLoop() {}
 }

@@ -46,10 +46,10 @@ import org.firstinspires.ftc.teamcodekt.util.runOnce
  * @author KG
  *
  * @see Scheduler
- * @see GamepadEx2
+ * @see ReforgedGamepad
  * @see Timer
  */
-class Listener(val condition: Condition) {
+open class Listener(val condition: Condition) {
     /**
      * The subscribed set of [actions][Runnable] that are performed when the given
      * condition's state matches the given [SignalTrigger][SignalTrigger].
@@ -126,20 +126,25 @@ class Listener(val condition: Condition) {
             if (condition.evaluate()) action.run()
         }
 
-    /**
-     * Evaluates and returns the current state of the listener's [Condition].
-     *
-     * @return `true` if the condition is true, `false` otherwise.
-     */
-    fun evaluateCondition(): Boolean = condition.evaluate()
+    companion object {
+        private val alwaysActiveListener = Listener { true }
+
+        /**
+         * Subscribes the given action to run every tick.
+         * @param action The action to run.
+         * @return This [Listener] instance.
+         */
+        @JvmStatic
+        fun always(action: Runnable) = alwaysActiveListener.whileHigh(action)
+    }
 
     // ---------------------------------------------------------------
     // Listener builders
     // ---------------------------------------------------------------
 
-    fun and(otherCondition: Condition) = Listener { condition() && otherCondition.evaluate() }
+    fun and(otherCondition: Condition) = Listener { condition() && otherCondition() }
 
-    fun or(otherCondition: Condition) = Listener { condition() || otherCondition.evaluate() }
+    fun or(otherCondition: Condition) = Listener { condition() || otherCondition() }
 
     fun xor(otherCondition: Condition) = Listener { condition() xor otherCondition() }
 
@@ -149,19 +154,27 @@ class Listener(val condition: Condition) {
 
     fun xnor(otherCondition: Condition) = Listener { condition() == otherCondition() }
 
+    operator fun plus(otherCondition: Condition) = and(otherCondition)
 
-    fun and(other: Listener) = Listener { condition() && other.evaluateCondition() }
-
-    fun or(other: Listener) = Listener { condition() || other.evaluateCondition() }
-
-    fun xor(other: Listener) = Listener { condition() xor other.evaluateCondition() }
-
-    fun nand(other: Listener) = Listener { !(condition() && other.evaluateCondition()) }
-
-    fun nor(other: Listener) = Listener { !(condition() || other.evaluateCondition()) }
-
-    fun xnor(other: Listener) = Listener { condition() == other.evaluateCondition() }
+    operator fun div(otherCondition: Condition) = or(otherCondition)
 
 
-    fun not() = Listener { !condition.evaluate() }
+    fun and(other: Listener) = Listener { condition() && other.condition() }
+
+    fun or(other: Listener) = Listener { condition() || other.condition() }
+
+    fun xor(other: Listener) = Listener { condition() xor other.condition() }
+
+    fun nand(other: Listener) = Listener { !(condition() && other.condition()) }
+
+    fun nor(other: Listener) = Listener { !(condition() || other.condition()) }
+
+    fun xnor(other: Listener) = Listener { condition() == other.condition() }
+
+    operator fun plus(other: Listener) = and(other)
+
+    operator fun div(other: Listener) = or(other)
+
+
+    operator fun not() = Listener { !condition.evaluate() }
 }

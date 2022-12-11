@@ -11,7 +11,7 @@ package org.firstinspires.ftc.teamcodekt.util
  *
  * Example of usage; probably will not be used in your own code
  * ```
- * fun DriveMotors.logMotorData(dataSupplier: DataSupplier<DcMotorEx>) {
+ * fun Drivetrain.logMotorData(dataSupplier: DataSupplier<DcMotorEx>) {
  *   telemetry.addData("Front-left motor:", dataSupplier(frontLeft))
  *   telemetry.addData("Front-right motor:", dataSupplier(frontRight))
  *   //...etc
@@ -25,7 +25,7 @@ package org.firstinspires.ftc.teamcodekt.util
  * ```
  * ```java
  * public static void main(String... args) {
- *   DriveMotors driveMotors = //...
+ *   Drivetrain driveMotors = //...
  *   driveMotors.logMotorData(DcMotorEx::getPower); // logs the drive motors' powers
  *   driveMotors.logMotorData((motor) -> motor.getVelocity()); // logs velocities
  * }
