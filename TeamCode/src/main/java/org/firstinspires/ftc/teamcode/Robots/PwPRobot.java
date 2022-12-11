@@ -281,6 +281,16 @@ public class PwPRobot extends BasicRobot {
             logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
             progNameLogged = true;
         }
+        gp.readGamepad(op.gamepad2.y, "gamepad1_y", "Status");
+        gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
+        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
+        gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
+        gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
+        gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Value");
+        gp.readGamepad(op.gamepad1.right_stick_x, "gamepad1_right_stick_x", "Value");
+        gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Value");
+        gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Value");
+        gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
 
         //omnidirectional movement + turning
 
@@ -313,9 +323,11 @@ public class PwPRobot extends BasicRobot {
 
         if (op.gamepad2.dpad_down) {
             lift.iterateConeStackDown();
+            logger.log("/RobotLogs/GeneralRobot", "Lift,iterateConeStackDown(),Cone Stack Lowered by 1", true);
         }
         if (op.gamepad2.dpad_up) {
             lift.iterateConeStackUp();
+            logger.log("/RobotLogs/GeneralRobot", "Lift,iterateConeStackUp(),Cone Stack Raised by 1", true);
         }
         //when not manual lifting, automate lifting
 
@@ -354,14 +366,14 @@ public class PwPRobot extends BasicRobot {
                 )
         );
         if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
-            logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + "= " + "0 | 0 | 0", true);
+            logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Mec = 0 | 0 | 0", true);
             mecZeroLogged = true;
         }
         else if((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == true)){
             //nutting
         }
         else {
-            logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Set driving to FWD/BWD | Strafe | Angle " + -op.gamepad1.left_stick_y * 0.7 + " | " + -op.gamepad1.left_stick_x + " | " + -op.gamepad1.right_stick_x * 0.8, true);
+            logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Mec =  " + -op.gamepad1.left_stick_y * 0.7 + " | " + -op.gamepad1.left_stick_x + " | " + -op.gamepad1.right_stick_x * 0.8, true);
             mecZeroLogged = false;
         }
 //        //toggle automate lift target to higher junc
@@ -408,17 +420,7 @@ public class PwPRobot extends BasicRobot {
 
         //will only close when detect cone
         //claw.closeClaw
-        op.telemetry.addData("imuangle", imu.updateAngle()*180/PI);
-            gp.readGamepad(op.gamepad2.y, "gamepad1_y", "Status");
-            gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
-            gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
-            gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
-            gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
-            gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Value");
-            gp.readGamepad(op.gamepad1.right_stick_x, "gamepad1_right_stick_x", "Value");
-            gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Value");
-            gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Value");
-            gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
+            op.telemetry.addData("imuangle", imu.updateAngle()*180/PI);
             gp.getSequence();
             op.telemetry.addData("stacklevel", lift.getStackLevel());
             roadrun.update();

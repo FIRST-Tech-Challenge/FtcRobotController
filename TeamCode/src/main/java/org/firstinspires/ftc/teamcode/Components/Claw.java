@@ -240,8 +240,8 @@ public class Claw {
         //no setting state
         //log to general robot log that the cone has been observed through function closeClaw()
         double distance = coneObserver.getDistance(INCH);
-                logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",getConeDistance()"
-                + coneObserver.getDistance(INCH) +"inches", true);
+                logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",getConeDistance(),"
+                + coneObserver.getDistance(INCH) + " inches", true);
         op.telemetry.addData("coneDist",distance);
         if(distance>2000){
             shouldUseClawSensor = false;

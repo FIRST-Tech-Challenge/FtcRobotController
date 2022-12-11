@@ -38,7 +38,7 @@ public class Lift {
     private RFMotor liftMotor;
     private Claw LC = new Claw();
     private double liftTarget = 0;
-    public static double dfco1 = 38, dfco2 = 2, dfco3 = 150;
+    public static double dfco1 = 38, dfco2 = 2, dfco3 = 300;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
