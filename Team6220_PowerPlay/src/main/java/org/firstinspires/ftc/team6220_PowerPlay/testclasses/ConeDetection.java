@@ -16,7 +16,7 @@ public abstract class ConeDetection extends BaseAutonomous
     ConeDetectionPipeline ConeDetectionPipeline;
     public boolean toGrab = false;
 
-    public boolean detectGrab()
+    public void detectGrab()
     {
 
         // initializes camera
@@ -38,11 +38,6 @@ public abstract class ConeDetection extends BaseAutonomous
 
             }
         });
-
-        while (!isStarted() && !isStopRequested()){
-            toGrab = ConeDetectionPipeline.grab;
-        }
-        return toGrab;
     }
 }
 

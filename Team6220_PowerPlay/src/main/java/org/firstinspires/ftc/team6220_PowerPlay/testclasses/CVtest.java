@@ -17,7 +17,7 @@ public class CVtest extends ConeDetection {
     public void runOpMode() throws InterruptedException {
         initialize();
         waitForStart();
-        boolean shouldGrab = detectGrab();
         telemetry.addData("distance to center", ConeDetectionPipeline.dist);
+        telemetry.addData("grab boolean", ConeDetectionPipeline.grab);
     }
 }
