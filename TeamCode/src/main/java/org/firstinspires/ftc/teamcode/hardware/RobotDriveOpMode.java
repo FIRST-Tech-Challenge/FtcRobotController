@@ -47,13 +47,14 @@ public class RobotDriveOpMode extends LinearOpMode {
 
             telemetry.addData("Left JoyStick", "X: %f, Y: %f", xAxis, yAxis);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
+           // telemetry.update();
 
 
 
             power = -gamepad2.left_stick_y;
              tevelRobot.getElevator().setElevatorMotorPower(power);
             // Show the elapsed game time and wheel power.
+            telemetry.addData("power" , power);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("gamepad2.b: ", gamepad2.b);
             telemetry.addData("bButton: ", bButton);
@@ -62,7 +63,7 @@ public class RobotDriveOpMode extends LinearOpMode {
 
             }
             telemetry.addData("clawstate ", tevelRobot.getElevator().clawState);
-            telemetry.update();
+
 
             bButton = gamepad2.b;
 
@@ -70,6 +71,8 @@ public class RobotDriveOpMode extends LinearOpMode {
                 tevelRobot.getElevator().moveMainServo();
             }
             yButton = gamepad2.y;
+
+            telemetry.update();
         }
     }
 }

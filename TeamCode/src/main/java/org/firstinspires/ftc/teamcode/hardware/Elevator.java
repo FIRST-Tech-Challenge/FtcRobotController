@@ -38,7 +38,7 @@ public class Elevator {
     public static final double LEFT_RIGHT_SERVO_SPEED = 0.2;
 
     public static final double ELEVATOR_MOTOR_SPEED = 0.5;
-    public static final int MAX_ELEVATOR_POSITION = 30;
+    public static final int MAX_ELEVATOR_POSITION = 4800;
 
     public Elevator(HardwareMap hardwareMap, Telemetry telemetry){
         mainServo = hardwareMap.get(Servo.class, "elevator_main_servo");
@@ -51,13 +51,16 @@ public class Elevator {
     public void initMotors(){
         mainServo.setPosition(Servo.MIN_POSITION);
         elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
+        elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevatorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.addData("Starting at",  "%7d", elevatorMotor.getCurrentPosition());
-        telemetry.update();
+
 
         leftServo.setPosition(OPEN_POSITION_LEFT);
         rightServo.setPosition(OPEN_POSITION_RIGHT);
+        telemetry.addData("startPosition", elevatorMotor.getCurrentPosition());
+        telemetry.update();
         handsOffset = 0;
     }
 
@@ -73,7 +76,7 @@ public class Elevator {
             mainServoState = true;
             telemetry.addData("setPosition: ", 1);
         }
-        telemetry.update();
+        //telemetry.update();
     }
 
     public void moveHands(){
@@ -89,20 +92,22 @@ public class Elevator {
             clawState = true;
         }
 
-        telemetry.update();
+    //    telemetry.update();
     }
 
     public void setElevatorMotorPower(double power){
         int currentPosition = elevatorMotor.getCurrentPosition();
-        if (currentPosition >= MAX_ELEVATOR_POSITION || currentPosition<= 0){
-            elevatorMotor.setPower(power);
+        telemetry.addData("position", currentPosition);
+        telemetry.addData("power in function", power);
+        if ((currentPosition >= MAX_ELEVATOR_POSITION && power>0) || (currentPosition <0 && power<0) ){
+            elevatorMotor.setPower(0);
         }
         else {
             elevatorMotor.setPower(power * ELEVATOR_MOTOR_SPEED);
         }
-
-//        telemetry.addData("position", elevatorMotor.getCurrentPosition());
-        telemetry.update();
+//        if (currentPosition <0 && power<0)
+//            elevatorMotor.setPower(0);
+//        telemetry.addData("position", currentPosition);
     }
 
     public void moveHands(int direction) {
