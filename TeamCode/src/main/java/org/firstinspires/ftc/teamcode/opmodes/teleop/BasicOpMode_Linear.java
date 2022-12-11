@@ -120,28 +120,14 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double left_y = gamepad1.left_stick_y;
             double left_x = gamepad1.left_stick_x;
             double strafe_side = gamepad1.right_stick_x;
-            int position = -900;
 
-            if (gamepad2.x) {
-                position = armTarget;
-                armTarget = lowJunction;
-            }
-            if (gamepad2.b) {
-                position = armTarget;
-                armTarget = middleJunction;
-            }
-            if (gamepad2.y) {
-                position = armTarget;
-                armTarget = highJunction;
-            }
-            if (gamepad2.a) {
-                position = armTarget;
-                armTarget = 0;
-            }
+            if (gamepad2.x) armTarget = lowJunction;
+            if (gamepad2.b) armTarget = middleJunction;
+            if (gamepad2.y) armTarget = highJunction;
+            if (gamepad2.a) armTarget = 0;
 
             if (gamepad2.left_bumper) {
                 gripper.setPower(1);
-                position = armTarget;
                 armTarget = 0;
             }
             if (gamepad2.right_bumper) gripper.setPower(-1);
@@ -189,10 +175,10 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 leftBackPower *= 0.5;
             }
             else {
-                leftFrontPower *= 0.75;
-                rightBackPower *= 0.75;
-                rightFrontPower *= 0.75;
-                leftBackPower *= 0.75;
+                leftFrontPower *= 0.7;
+                rightBackPower *= 0.7;
+                rightFrontPower *= 0.7;
+                leftBackPower *= 0.7;
             }
 
             // Send calculated power to wheels
@@ -208,7 +194,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 targetChanged = true;
             }
             if (gamepad2.right_trigger > 0) {
-                SetArmPower(-0.7);
+                SetArmPower(-1);
                 targetChanged = true;
             }
 
@@ -225,7 +211,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             rightLift.setTargetPosition(armTarget);
             if (rightLift.isBusy() && leftLift.isBusy()) {
                 if (leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()) {
-                    if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < -630 && armTarget != -630 && (!gamepad2.dpad_down && !gamepad2.dpad_up)) {
+                    if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < -700 && armTarget != -630 && (!gamepad2.dpad_down && !gamepad2.dpad_up)) {
                         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         SetArmPower(0.0);
