@@ -25,23 +25,26 @@ abstract public class ConeDetectionPipeline extends OpenCvPipeline
 {
     public double distance;
     public double size;
-    public int centerX = 240;
+    public int centerX = 1920 / 2;
     double dist = 0;
     double coneSize = 0;
     public boolean grab = false;
+    public int[] lowerBlue = {42, 128, 114};
+    public int[] upperBlue = {168, 242, 255};
 
-    public Mat maskFrame(Mat input, int[] lower, int[] upper){
+    public Mat maskFrame(Mat input, int[] lower, int[] upper)
+    {
         Mat HSV = new Mat();
-        Size blurSize = new Size(5,5);
+        Size blurSize = new Size(5, 5);
         Imgproc.cvtColor(input, HSV, Imgproc.COLOR_BGR2HSV);
         Imgproc.blur(HSV, HSV, blurSize);
-        return(HSV);
+        return (HSV);
     }
 
     @Override
-    public Mat processFrame(Mat input, int[] lower, int[] upper)
+    public Mat processFrame(Mat input)
     {
-        Mat mask = maskFrame(input, lower, upper);
+        Mat mask = maskFrame(input, lowerBlue, upperBlue);
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -74,6 +77,5 @@ abstract public class ConeDetectionPipeline extends OpenCvPipeline
             }
         }
         return input;
-    }
     }
 }
