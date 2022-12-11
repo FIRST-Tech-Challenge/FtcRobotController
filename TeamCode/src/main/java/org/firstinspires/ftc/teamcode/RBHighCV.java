@@ -12,7 +12,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 //@Disabled
 public class RBHighCV extends DriveMethods{
     OpenCvWebcam webcam;
-    String result;
+    private String result;
 
     public void runOpMode() {
 
@@ -54,7 +54,7 @@ public class RBHighCV extends DriveMethods{
         driveForDistance(0.1, Variables.Direction.FORWARD,0.35,0);
         driveForDistance(0.65, Variables.Direction.LEFT,0.35,0);
         driveForDistance(1.22, Variables.Direction.FORWARD,0.35,0);
-        driveForDistance(0.36, Variables.Direction.RIGHT, 0.35,0);
+        driveForDistance(0.38, Variables.Direction.RIGHT, 0.35,0);
         goToHigh();
         driveForDistance(0.13, Variables.Direction.FORWARD,0.2,0);
         sleep(500);
@@ -71,6 +71,7 @@ public class RBHighCV extends DriveMethods{
                 break;
             case "yellow":
                 driveForDistance(0.7, Variables.Direction.RIGHT, 0.35,0);
+                break;
             case "green":
                 //You're where you need to be!
                 break;
