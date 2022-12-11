@@ -25,8 +25,8 @@ public class LinearSlide extends LinearOpMode {
     static final double MIN_POS2    =  120;
 
     int direction = 0;
-    double position = 0;
-    double position2 = 120;
+    double position = 270;
+    double position2 = 0;
 
 
     public void waitTime(double time){
@@ -88,7 +88,7 @@ public class LinearSlide extends LinearOpMode {
                 direction = 1;
                 position = position - 1;
                 position2 = position2 + 1;
-                if(position < MIN_POS && position2 > MIN_POS2){
+                if(position < MIN_POS || position2 > MIN_POS2){
                     position = 0.0;
                     position2 = 120.0;
                 }
