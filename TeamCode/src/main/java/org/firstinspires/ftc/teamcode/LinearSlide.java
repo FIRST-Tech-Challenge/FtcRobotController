@@ -19,9 +19,9 @@ public class LinearSlide extends LinearOpMode {
     private Servo servoGrabber1 = null;
     private Servo servoGrabber2 = null;
 
-    static final double MAX_POS     =  120;
+    static final double MAX_POS     =  270;
     static final double MAX_POS2    =    0;
-    static final double MIN_POS     =    0;
+    static final double MIN_POS     =  150;
     static final double MIN_POS2    =  120;
 
     int direction = 0;
