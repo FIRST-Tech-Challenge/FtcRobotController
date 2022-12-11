@@ -99,9 +99,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         if (isTurning || turnFlag) {
             IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // set original angle
 
-            if (!turnFlag) {
-                turnFlag = true;
-            }
+            turnFlag = true;
 
         // otherwise read imu for correction
         } else {
