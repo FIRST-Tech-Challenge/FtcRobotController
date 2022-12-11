@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.koawalib.constants.ArmConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
 
 @Autonomous
+@Disabled
 class MidAuto : KOpMode() {
     private val robot by lazy { Robot(startPose) }
 

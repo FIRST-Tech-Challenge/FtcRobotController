@@ -9,8 +9,10 @@ import org.firstinspires.ftc.teamcode.koawalib.Robot
 import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.command.commands.*
 import com.asiankoala.koawalib.logger.LoggerConfig
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 
 @TeleOp
+@Disabled
 @Config
 class BlueOp : KOpMode(photonEnabled = false) {
     private val startPose = Pose(0.0, 0.0, 0.0.radians)

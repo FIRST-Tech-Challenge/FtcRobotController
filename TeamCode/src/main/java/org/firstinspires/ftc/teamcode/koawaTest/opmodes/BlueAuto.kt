@@ -16,9 +16,11 @@ import com.asiankoala.koawalib.path.gvf.MotionProfiledGVFController
 import com.asiankoala.koawalib.path.gvf.SimpleGVFController
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.teamcode.koawalib.constants.GVFConfig
 
 @Autonomous
+@Disabled
 class BlueAuto : KOpMode() {
 
     private val startPose = Pose(-59.0, -36.0, 0.0.radians)

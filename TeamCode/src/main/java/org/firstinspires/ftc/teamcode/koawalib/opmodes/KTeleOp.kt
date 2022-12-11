@@ -6,7 +6,7 @@ import com.asiankoala.koawalib.command.commands.MecanumCmd
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.subsystem.odometry.Odometry
-import com.asiankoala.koawalib.util.Alliance
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.koawalib.Robot
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.HomeSequence
@@ -15,7 +15,8 @@ import org.firstinspires.ftc.teamcode.koawalib.constants.ArmConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
 
-open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = true) {
+@TeleOp
+open class KTeleOp() : KOpMode(photonEnabled = true) {
     private val robot by lazy { Robot(Odometry.lastPose) }
 
     override fun mInit() {
@@ -26,14 +27,6 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
     }
 
     private fun scheduleDrive() {
-//        robot.drive.defaultCommand = DriveHackCmd(
-//            robot.drive,
-//            driver.leftStick,
-//            driver.rightStick,
-//            driver.leftTrigger::isToggled,
-//            driver.a::isToggled,
-//            robot.drive::pose
-//        )
         robot.drive.defaultCommand = MecanumCmd(
             robot.drive,
             driver.leftStick,
@@ -49,10 +42,10 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
         driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.highPos, LiftConstants.highPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
         driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos))
-        driver.dpadDown.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.groundPos, LiftConstants.groundPos))
-        driver.dpadLeft.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
+        driver.x.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.groundPos, LiftConstants.groundPos))
+        driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
         driver.b.onPress(ClawCmds.ClawOpenCmd(robot.claw))
-        gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(-10.0)}))
+        gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(-17.0)}))
         gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(250.0)}))
     }
 
@@ -66,10 +59,6 @@ open class KTeleOp(private val alliance: Alliance) : KOpMode(photonEnabled = tru
     }
 
     override fun mLoop() {
-//        Logger.addTelemetryData("state", RobotState.state)
-//        Logger.addTelemetryData("strat", RobotState.strategy)
-//        Logger.addTelemetryData("aimbot", driver.a.isToggled)
-//        Logger.addTelemetryData("spaceglide", driver.leftTrigger.isToggled)
         Logger.addVar("robot vel", robot.hardware.liftLeadMotor.vel)
         Logger.addTelemetryData("arm pos", robot.hardware.armMotor.pos)
         Logger.addTelemetryData("lift pos", robot.hardware.liftLeadMotor.pos)
