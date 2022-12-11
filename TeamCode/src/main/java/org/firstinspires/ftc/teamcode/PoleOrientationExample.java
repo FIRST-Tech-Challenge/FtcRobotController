@@ -46,14 +46,14 @@ import java.util.List;
 
 /*
  * This is an advanced sample showcasing detecting and determining the orientation
- * of multiple cones, switching the viewport output, and communicating the results
+ * of multiple poles, switching the viewport output, and communicating the results
  * of the vision processing to usercode.
  */
-@TeleOp(name="Cone-Test", group="Skunkworks")
-public class ConeOrientationExample extends LinearOpMode
+@TeleOp(name="Pole-Test", group="Skunkworks")
+public class PoleOrientationExample extends LinearOpMode
 {
     OpenCvCamera webcam;
-    ConeOrientationAnalysisPipeline pipeline;
+    PoleOrientationAnalysisPipeline pipeline;
 
     @Override
     public void runOpMode()
@@ -77,7 +77,7 @@ public class ConeOrientationExample extends LinearOpMode
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                pipeline = new ConeOrientationAnalysisPipeline();
+                pipeline = new PoleOrientationAnalysisPipeline();
                 webcam.setPipeline(pipeline);
             }
 
@@ -101,17 +101,17 @@ public class ConeOrientationExample extends LinearOpMode
             // we're not doing anything else
             sleep(20);
 
-            // Figure out which cones the pipeline detected, and print them to telemetry
-            ArrayList<ConeOrientationAnalysisPipeline.AnalyzedCone> cones = pipeline.getDetectedCones();
-            if(cones.isEmpty())
+            // Figure out which poles the pipeline detected, and print them to telemetry
+            ArrayList<PoleOrientationAnalysisPipeline.AnalyzedPole> poles = pipeline.getDetectedPoles();
+            if(poles.isEmpty())
             {
-                telemetry.addLine("No cones detected");
+                telemetry.addLine("No poles detected");
             }
             else
             {
-                for(ConeOrientationAnalysisPipeline.AnalyzedCone cone : cones)
+                for(PoleOrientationAnalysisPipeline.AnalyzedPole pole : poles)
                 {
-                    telemetry.addLine(String.format("Cone: Orientation=%s, Angle=%f", cone.orientation.toString(), cone.angle));
+                    telemetry.addLine(String.format("Pole: Orientation=%s, Angle=%f", pole.orientation.toString(), pole.angle));
                 }
             }
 
@@ -119,7 +119,7 @@ public class ConeOrientationExample extends LinearOpMode
         }
     }
 
-    static class ConeOrientationAnalysisPipeline extends OpenCvPipeline
+    static class PoleOrientationAnalysisPipeline extends OpenCvPipeline
     {
         /*
          * Our working image buffers
@@ -132,7 +132,7 @@ public class ConeOrientationExample extends LinearOpMode
         /*
          * Threshold values
          */
-        static final int CB_CHAN_MASK_THRESHOLD = 160;
+        static final int CB_CHAN_MASK_THRESHOLD = 80;
         static final double DENSITY_UPRIGHT_THRESHOLD = 0.03;
 
         /*
@@ -153,20 +153,20 @@ public class ConeOrientationExample extends LinearOpMode
         static final int CONTOUR_LINE_THICKNESS = 2;
         static final int CB_CHAN_IDX = 2;
 
-        static class AnalyzedCone
+        static class AnalyzedPole
         {
-            ConeOrientation orientation;
+            PoleOrientation orientation;
             double angle;
         }
 
-        enum ConeOrientation
+        enum PoleOrientation
         {
             UPRIGHT,
             NOT_UPRIGHT
         }
 
-        ArrayList<AnalyzedCone> internalConeList = new ArrayList<>();
-        volatile ArrayList<AnalyzedCone> clientConeList = new ArrayList<>();
+        ArrayList<AnalyzedPole> internalPoleList = new ArrayList<>();
+        volatile ArrayList<AnalyzedPole> clientPoleList = new ArrayList<>();
 
         /*
          * Some stuff to handle returning our various buffers
@@ -207,7 +207,7 @@ public class ConeOrientationExample extends LinearOpMode
         public Mat processFrame(Mat input)
         {
             // We'll be updating this with new data below
-            internalConeList.clear();
+            internalPoleList.clear();
 
             /*
              * Run the image processing
@@ -217,7 +217,7 @@ public class ConeOrientationExample extends LinearOpMode
                 analyzeContour(contour, input);
             }
 
-            clientConeList = new ArrayList<>(internalConeList);
+            clientPoleList = new ArrayList<>(internalPoleList);
 
             /*
              * Decide which buffer to send to the viewport
@@ -253,9 +253,9 @@ public class ConeOrientationExample extends LinearOpMode
             return input;
         }
 
-        public ArrayList<AnalyzedCone> getDetectedCones()
+        public ArrayList<AnalyzedPole> getDetectedPoles()
         {
-            return clientConeList;
+            return clientPoleList;
         }
 
         ArrayList<MatOfPoint> findContours(Mat input)
@@ -268,7 +268,7 @@ public class ConeOrientationExample extends LinearOpMode
             Core.extractChannel(cbMat, cbMat, CB_CHAN_IDX);
 
             // Threshold the Cb channel to form a mask, then run some noise reduction
-            Imgproc.threshold(cbMat, thresholdMat, CB_CHAN_MASK_THRESHOLD, 255, Imgproc.THRESH_BINARY);
+            Imgproc.threshold(cbMat, thresholdMat, CB_CHAN_MASK_THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
             morphMask(thresholdMat, morphedThreshold);
 
             // Ok, now actually look for the contours! We only look for external contours.
@@ -346,18 +346,18 @@ public class ConeOrientationExample extends LinearOpMode
             }
 
             // We're going to draw line from the center of the bounding rect, to outside the bounding rect, in the
-            // direction of the side of the cone with the nubs.
-            Point displOfOrientationLinePoint2 = computeDisplacementForSecondPointOfConeOrientationLine(rotatedRectFitToContour, rotRectAngle);
+            // direction of the side of the pole with the nubs.
+            Point displOfOrientationLinePoint2 = computeDisplacementForSecondPointOfPoleOrientationLine(rotatedRectFitToContour, rotRectAngle);
 
             /*
              * If the difference in the densities of the two regions exceeds the threshold,
-             * then we assume the cone is on its side. Otherwise, if the difference is inside
+             * then we assume the pole is on its side. Otherwise, if the difference is inside
              * of the threshold, we assume it's upright.
              */
             if(aboveMidlineMetrics.density < belowMidlineMetrics.density - DENSITY_UPRIGHT_THRESHOLD)
             {
                 /*
-                 * Assume the cone is on its side, with the top contour region  being the
+                 * Assume the pole is on its side, with the top contour region  being the
                  * one which contains the nubs
                  */
 
@@ -376,21 +376,21 @@ public class ConeOrientationExample extends LinearOpMode
                 // We outline the contour region that we assumed to be the side with the nubs
                 Imgproc.drawContours(input, aboveMidlineMetrics.listHolderOfMatOfPoint, -1, TEAL, 2, 8);
 
-                // Compute the absolute angle of the cone
+                // Compute the absolute angle of the pole
                 double angle = -(rotRectAngle-90);
 
-                // "Tag" the cone with text stating its absolute angle
+                // "Tag" the pole with text stating its absolute angle
                 drawTagText(rotatedRectFitToContour, Integer.toString((int) Math.round(angle))+" deg", input);
 
-                AnalyzedCone analyzedCone = new AnalyzedCone();
-                analyzedCone.angle = angle;
-                analyzedCone.orientation = ConeOrientation.NOT_UPRIGHT;
-                internalConeList.add(analyzedCone);
+                AnalyzedPole analyzedPole = new AnalyzedPole();
+                analyzedPole.angle = angle;
+                analyzedPole.orientation = PoleOrientation.NOT_UPRIGHT;
+                internalPoleList.add(analyzedPole);
             }
             else if(belowMidlineMetrics.density < aboveMidlineMetrics.density - DENSITY_UPRIGHT_THRESHOLD)
             {
                 /*
-                 * Assume the cone is on its side, with the bottom contour region being the
+                 * Assume the pole is on its side, with the bottom contour region being the
                  * one which contains the nubs
                  */
 
@@ -409,29 +409,29 @@ public class ConeOrientationExample extends LinearOpMode
                 // We outline the contour region that we assumed to be the side with the nubs
                 Imgproc.drawContours(input, belowMidlineMetrics.listHolderOfMatOfPoint, -1, TEAL, 2, 8);
 
-                // Compute the absolute angle of the cone
+                // Compute the absolute angle of the pole
                 double angle = -(rotRectAngle-270);
 
-                // "Tag" the cone with text stating its absolute angle
+                // "Tag" the pole with text stating its absolute angle
                 drawTagText(rotatedRectFitToContour,  Integer.toString((int) Math.round(angle))+" deg", input);
 
-                AnalyzedCone analyzedCone = new AnalyzedCone();
-                analyzedCone.angle = angle;
-                analyzedCone.orientation = ConeOrientation.NOT_UPRIGHT;
-                internalConeList.add(analyzedCone);
+                AnalyzedPole analyzedPole = new AnalyzedPole();
+                analyzedPole.angle = angle;
+                analyzedPole.orientation = PoleOrientation.NOT_UPRIGHT;
+                internalPoleList.add(analyzedPole);
             }
             else
             {
                 /*
-                 * Assume the cone is upright
+                 * Assume the pole is upright
                  */
 
                 drawTagText(rotatedRectFitToContour, "UPRIGHT", input);
 
-                AnalyzedCone analyzedCone = new AnalyzedCone();
-                analyzedCone.angle = rotRectAngle;
-                analyzedCone.orientation = ConeOrientation.UPRIGHT;
-                internalConeList.add(analyzedCone);
+                AnalyzedPole analyzedPole = new AnalyzedPole();
+                analyzedPole.angle = rotRectAngle;
+                analyzedPole.orientation = PoleOrientation.UPRIGHT;
+                internalPoleList.add(analyzedPole);
             }
         }
 
@@ -496,7 +496,7 @@ public class ConeOrientationExample extends LinearOpMode
             }
         }
 
-        static Point computeDisplacementForSecondPointOfConeOrientationLine(RotatedRect rect, double unambiguousAngle)
+        static Point computeDisplacementForSecondPointOfPoleOrientationLine(RotatedRect rect, double unambiguousAngle)
         {
             // Note: we return a point, but really it's not a point in space, we're
             // simply using it to hold X & Y displacement values from the middle point
