@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * navigate to https://192.168.49.1:8080/dash). Make sure to save the values here after you
  * adjust them in the dashboard; **config variable changes don't persist between app restarts**.
  *
- * These are not the only parameters; some are located in the localizer classes, drive base classes,
+ * These are not theonly parameters; some are located in the localizer classes, drive base classes,
  * and op modes themselves.
  */
 @Config
@@ -23,7 +23,7 @@ public class DriveConstants {
      * These are motor constants that should be listed online for your motors.
      */
     public static final double TICKS_PER_REV = 537.7;
-    public static final double MAX_RPM = 312;
+    public static final double MAX_RPM = 312*19.2;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -33,7 +33,7 @@ public class DriveConstants {
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
      */
-    public static final boolean RUN_USING_ENCODER = false;
+    public static final boolean RUN_USING_ENCODER = true;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
@@ -55,9 +55,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.04654;
-    public static double kA = 0.00002;
-    public static double kStatic = 0.06050;
+    public static double kV = 0.003;
+    public static double kA = 0.001;
+    public static double kStatic = 0.0188;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -88,7 +88,7 @@ public class DriveConstants {
 
      */
     public static double MAX_VEL = ((MAX_RPM / 60) * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI) * 0.85;
-    public static double MAX_ACCEL = 52.48291908330528;
+    public static double MAX_ACCEL = MAX_VEL;
     public static double MAX_ANG_VEL = Math.toRadians(259.2284275862069);
     public static double MAX_ANG_ACCEL = Math.toRadians(259.2284275862069);
 
