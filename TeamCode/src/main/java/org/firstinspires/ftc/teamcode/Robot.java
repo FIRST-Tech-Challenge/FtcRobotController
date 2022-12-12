@@ -142,7 +142,7 @@ class RobotConfig {
     }};
 
     public static final Map<Servos, String> ServoNames = new HashMap<Servos, String>() {{
-        put(Servos.HORSESHOE, "Horseshoe");
-        put(Servos.HORSESHOE_INDICATOR, "Horseshoe Indicator");
+        put(Servos.HORSESHOE, "horseshoe");
+        put(Servos.HORSESHOE_INDICATOR, "horseshoe_indicator");
     }};
 }

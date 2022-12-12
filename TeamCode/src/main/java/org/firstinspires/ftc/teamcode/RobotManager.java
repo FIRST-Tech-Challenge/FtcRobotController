@@ -67,16 +67,16 @@ public class RobotManager {
     public void readControllerInputs() {
         // Linear slides
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
-            robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
+            Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
         }
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
-            robot.desiredSlidesState = Robot.SlidesState.LOW;
+            Robot.desiredSlidesState = Robot.SlidesState.LOW;
         }
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_MEDIUM)) {
-            robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
+            Robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
         }
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
-            robot.desiredSlidesState = Robot.SlidesState.HIGH;
+            Robot.desiredSlidesState = Robot.SlidesState.HIGH;
         }
 
         // Fine movement/rotation.
@@ -148,9 +148,9 @@ public class RobotManager {
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
      */
     public void driveMechanisms() {
-//        mechanismDriving.updateCarousel(robot);
-//        mechanismDriving.updateClaw(robot);
-//        mechanismDriving.updateSlides(robot);
+       mechanismDriving.updateHorseshoe(robot);
+       mechanismDriving.updateCompliantWheels(robot);
+       mechanismDriving.updateSlides(robot);
     }
 
     /** Changes drivetrain motor inputs based off the controller inputs.

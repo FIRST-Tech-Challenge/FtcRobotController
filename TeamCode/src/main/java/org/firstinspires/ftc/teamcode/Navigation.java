@@ -152,7 +152,7 @@ public class Navigation {
      */
     public boolean moveStraight(boolean forward, boolean backward, boolean left, boolean right, Robot robot) {
         double direction;
-        if (forward) {
+        if (forward || backward) {
             if (left) {
                 direction = Math.PI * 0.75;
             }
@@ -162,16 +162,8 @@ public class Navigation {
             else {
                 direction = Math.PI * 0.5;
             }
-        }
-        else if (backward) {
-            if (left) {
-                direction = -Math.PI * 0.75;
-            }
-            else if (right) {
-                direction = -Math.PI * 0.25;
-            }
-            else {
-                direction = -Math.PI * 0.5;
+            if (backward) {
+                direction *= -1;
             }
         }
         else if (left) {
@@ -201,7 +193,7 @@ public class Navigation {
         if (turnC) {
             turn = ROTATION_POWER;
         }
-        if (-RobotManager.JOYSTICK_DEAD_ZONE_SIZE < turn && turn < RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
+        if (Math.abs(turn) < RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
             turn = 0;
         }
         switch (robot.movementMode) {
