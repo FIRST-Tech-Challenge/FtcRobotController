@@ -24,14 +24,12 @@ public abstract class ConeDetection extends BaseAutonomous
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         camera.setPipeline(ConeDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened()
             {
                 camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
-
             @Override
             public void onError(int errorCode)
             {

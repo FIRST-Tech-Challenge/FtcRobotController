@@ -19,15 +19,17 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "JunctionDetectionTest", group = "Autonomous")
 public class AutonomousJunctionDetection extends BaseAutonomous {
+
     OpenCvCamera webcam;
+    JunctionDetectPipeline pipeline = new JunctionDetectPipeline();
+
     @Override
     public void runOpMode() throws InterruptedException {
         //initialize();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        webcam.setPipeline(new JunctionDetectPipeline());
-
+        webcam.setPipeline(pipeline);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -45,9 +47,9 @@ public class AutonomousJunctionDetection extends BaseAutonomous {
         waitForStart();
         while (opModeIsActive()) {
 
-            telemetry.addData("x", JunctionDetectPipeline.detectedRect.x);
-            telemetry.addData("y", JunctionDetectPipeline.detectedRect.y);
-            telemetry.addData("running", JunctionDetectPipeline.isRunning);
+            telemetry.addData("x", pipeline.detectedRect.x);
+            telemetry.addData("y", pipeline.detectedRect.y);
+            telemetry.addData("running", pipeline.isRunning);
             telemetry.update();
         }
 

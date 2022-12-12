@@ -23,7 +23,8 @@ import java.util.List;
 
 public class JunctionDetectPipeline extends ColorDetectPipeline {
     @Override
-    public Mat processFrame(Mat input) {
+    public Mat processFrame(Mat input) throws IllegalArgumentException {
+
         if(input == null) { throw new IllegalArgumentException("Input cannot be null"); }
         int[] ca = {43, 255, 255};
         int[] co = {50, 25, 200};
