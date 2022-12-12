@@ -13,9 +13,8 @@ public class TeleOpCompetition extends BaseTeleOp {
     @Override
     public void runOpMode() {
         initialize();
+        sleep(3000);
         waitForStart();
-
-        driveTurntableWithController();
 
         // get angle after startup to prevent jitter on startup
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
