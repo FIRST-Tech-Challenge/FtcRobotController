@@ -22,16 +22,19 @@ public class ServoExample extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor liftMotor = null;
-    private Servo servoGrabber = null;
-
-    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
-    static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.0;
+    private Servo servoGrabber1 = null;
+    private Servo servoGrabber2 = null;
+    
+    static final double MAX_POS     =  270;
+    static final double MAX_POS2    =    0;
+    static final double MIN_POS     =  150;
+    static final double MIN_POS2    =  120;
 
     int direction = 0;
+    double position = 270;
+    double position2 = 0;
+
     int strafeDirection = 0; //-1 for left, 1 for right
-    double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
 
     public void waitTime(double time){
         runtime.reset();
@@ -49,7 +52,8 @@ public class ServoExample extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
-        servoGrabber = hardwareMap.get(Servo.class, "servo_grabber");
+        servoGrabber1 = hardwareMap.get(Servo.class, "servo_grabber_one");
+        servoGrabber2 = hardwareMap.get(Servo.class,"servo_grabber_two");
         liftMotor = hardwareMap.get(DcMotor.class, "lift_motor");
 
         // ########################################################################################
@@ -89,43 +93,47 @@ public class ServoExample extends LinearOpMode {
             boolean strafeLeft = gamepad1.left_bumper;
             boolean strafeRight = gamepad1.right_bumper;
 
-            //Switch this to gamepad1 to test if it works in the first place
-            boolean servoOpen = gamepad2.dpad_up;
-            boolean servoClose = gamepad2.dpad_down;
-
-            boolean liftUp = gamepad1.dpad_up;
-            boolean liftDown = gamepad1.dpad_down;
+            double lift = -gamepad2.right_stick_y;
+            boolean openGrabber = gamepad2.dpad_up;
+            boolean closeGrabber = gamepad2.dpad_down;
 
             // Code for lift and grabber (gamepad2
-            if(servoOpen){
+            if(lift > .05){
+                liftMotor.setPower(1);
+            }else{
+                liftMotor.setPower(0);
+            }
+            if(lift < -.05){
+                liftMotor.setPower(-.3);
+            }else{
+                liftMotor.setPower(0);
+            }
+
+            if(openGrabber){
                 direction = -1;
-                position = position +0.05;
+                if(position<MAX_POS && position2>MAX_POS2) {
+                    position = position + 1;
+                    position2 = position2 - 1;
+                }
                 if(position > 1.0){
                     position=1.0;
                 }
                 telemetry.addData("Forward", "servo: " + position);
-                servoGrabber.setPosition(position);
+                servoGrabber1.setPosition(position);
+                servoGrabber2.setPosition(position2);
             }
 
-            if(servoClose){
+            if(closeGrabber){
                 direction = 1;
-                position= position -0.05;
-                if(position < 0.0){
-                    position=0.0;
+                position = position - 1;
+                position2 = position2 + 1;
+                if(position < MIN_POS || position2 > MIN_POS2){
+                    position = 0.0;
+                    position2 = 120.0;
                 }
                 telemetry.addData("back", "servo: " + position);
-                servoGrabber.setPosition(position);
-            }
-
-            if(liftUp){
-                liftMotor.setPower(.1);
-                waitTime(.05);
-                liftMotor.setPower(0);
-            }
-            if(liftDown){
-                liftMotor.setPower(-.1);
-                waitTime(.05);
-                liftMotor.setPower(0);
+                servoGrabber1.setPosition(position);
+                servoGrabber2.setPosition(position2);
             }
 
             //Code for drivetrain (gamepad1)
