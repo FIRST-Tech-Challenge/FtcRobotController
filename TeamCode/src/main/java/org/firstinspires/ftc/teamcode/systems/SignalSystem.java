@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.systems;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -53,7 +54,9 @@ public class SignalSystem extends SubsystemBase {
     public SignalSystem(final HardwareMap hardwareMap, final String name) {
         // Create the OpenCV Webcam and pipeline
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, name), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, name));
+        
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
         
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(TAG_SIZE, fx, fy, cx, cy);
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -72,11 +75,16 @@ public class SignalSystem extends SubsystemBase {
         // If no new frames have been processed, then detections will be null
         if (detections == null) return;
         
-        // TODO: What if there is more than one apriltag detected? Some filtering might be needed
-        // The id of the apriltag is different from its representation as an enum
-        int detected = detections.get(0).id + 1;
+        if (detections.size() > 0) {
+            // TODO: What if there is more than one apriltag detected? Some filtering might be needed
+            // The id of the apriltag is different from its representation as an enum
+            int detected = detections.get(0).id + 1;
 
-        signalHistory.add(detected);
+            signalHistory.add(detected);
+        } else {
+            // We did not detect any apriltags
+            signalHistory.add(0);
+        }
 
         // If we are at the max size of the history, remove the oldest element to make room
         if (signalHistory.size() >= SIGNAL_HISTORY_SIZE) {
@@ -97,6 +105,8 @@ public class SignalSystem extends SubsystemBase {
             // We can't open a camera twice
             return false;
         }
+
+        resultReady = false;
         
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -132,7 +142,6 @@ public class SignalSystem extends SubsystemBase {
         camera.closeCameraDeviceAsync(() -> {});
 
         active = false;
-        resultReady = false;
 
         return true;
     }
@@ -149,7 +158,7 @@ public class SignalSystem extends SubsystemBase {
         // Make sure we have a result to give
         if (!resultReady) {
             // FIXME: this exception is being thrown when isResultReady returns true. Might be a thread issue
-            //throw new IllegalStateException("GetResult was called while resultReady was false.");
+            throw new IllegalStateException("GetResult was called while resultReady was false.");
         }
         
         // Find the most common (mode) signal state from the history

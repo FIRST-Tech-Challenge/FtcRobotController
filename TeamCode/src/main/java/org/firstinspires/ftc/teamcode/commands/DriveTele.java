@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.systems.DriveSystem;
 
@@ -18,6 +19,15 @@ public class DriveTele extends CommandBase {
 
     @Override
     public void execute() {
-        system.drive(driveOp.getLeftX(), driveOp.getLeftY(), driveOp.getRightX());
+        int strafeInput = 0;
+        
+        if (driveOp.getButton(GamepadKeys.Button.DPAD_LEFT))
+            strafeInput--;
+        if (driveOp.getButton(GamepadKeys.Button.DPAD_RIGHT))
+            strafeInput++;
+        
+        system.setStrafe(strafeInput);
+        system.setForward(driveOp.getLeftY());
+        system.setTurn(driveOp.getRightX());
     }
 }

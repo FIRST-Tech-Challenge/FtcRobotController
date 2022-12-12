@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ScheduleCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -21,10 +23,20 @@ public class AutoSignal extends CommandOpMode {
             new SequentialCommandGroup(
                 new DetectSignal(signalSystem),
                 new InstantCommand(() -> {
-                    telemetry.addLine("Detected signal " + signalSystem.GetResult().name());
+                    telemetry.addLine("Signal State: " + signalSystem.GetResult().name());
                     telemetry.update();
-                })
-            )
-        );
+                }),
+                new CommandBase() {
+                    @Override
+                    public void initialize() {
+                        
+                    }
+
+                    @Override
+                    public void execute() {
+                        
+                    }
+                }
+            ));
     }
 }
