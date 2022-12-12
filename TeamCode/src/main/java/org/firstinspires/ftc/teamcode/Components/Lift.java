@@ -97,7 +97,7 @@ public class Lift {
 
     public enum LiftConstants {
         LIFT_HIGH_JUNCTION(1690, false),
-        LIFT_MED_JUNCTION(1152, false),
+        LIFT_MED_JUNCTION(860, false),
         LIFT_LOW_JUNCTION(15, false),
         LIFT_GROUND_JUNCTION(0, false),
         LIFT_GROUND(0, true);

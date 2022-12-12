@@ -123,8 +123,7 @@ public class LiftArm {
             //set servo position
             liftArmServo.setPositions(LIFT_ARM_CYCLE_POS);
 
-            //set state of claw open to true
-            ARM_LOWERING.setStatus(true);
+            ARM_INTAKE.setStatus(true);
             liftPos = LIFT_ARM_CYCLE_POS;
 
             //log to general robot log that the claw has been opened through function openClaw()

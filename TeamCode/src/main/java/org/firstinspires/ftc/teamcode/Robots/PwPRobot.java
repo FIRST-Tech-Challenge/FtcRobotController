@@ -9,7 +9,6 @@ import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.AR
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
-import static java.lang.Math.pow;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -344,7 +343,7 @@ public class PwPRobot extends BasicRobot {
 //            //nothin
 //        } else {
             double[] vals = {op.gamepad1.left_stick_x, op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
-            double[] minBoost = {0.1,0.1,0.02};
+            double[] minBoost = {0.1,0.1,0.05};
             if (abs(op.gamepad1.left_stick_x) < 0.15) {
                 minBoost[0] = 0;
             }
@@ -366,9 +365,9 @@ public class PwPRobot extends BasicRobot {
         }
         roadrun.setWeightedDrivePower(
                 new Pose2d(
-                         abs(vals[1]-0.0001)/-vals[1] *(minBoost[1]+ 0.3 * pow(abs(vals[1]), 1.0) +0.2 * pow(abs(vals[1]), 2.0) + 0.4*pow(abs(vals[1]), 3)),
-                        abs(vals[0]-0.0001)/-vals[0] * (minBoost[0] + 0.3 * pow(abs(vals[0]), 1.0)+0.2 * pow(abs(vals[0]), 2.0) + 0.4*pow(abs(vals[0]), 3)),
-                        abs(vals[2]-0.0001)/-vals[2] * (minBoost[2] + 0.6 * pow(abs(vals[2]), 1.1))
+                         abs(vals[1]-0.0001)/-vals[1] *(minBoost[1]+ 0.4*abs(vals[1])),
+                        abs(vals[0]-0.0001)/-vals[0] * (minBoost[0] + 0.4*abs(vals[0])),
+                        abs(vals[2]-0.0001)/-vals[2] * (minBoost[2] + 0.4*abs(vals[2]))
                 )
         );
         if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
@@ -404,22 +403,19 @@ public class PwPRobot extends BasicRobot {
             if(CLAW_CLOSED.getStatus()) {
                 claw.setLastOpenTime(op.getRuntime());
                 claw.openClaw();
-                if(ARM_OUTTAKE.getStatus()){
-                    field.closestDropPosition(true);
-                }
             }else{
                 claw.closeClawRaw();
             }
         }
         claw.closeClaw();
-//        if (op.getRuntime() - claw.getLastTime() > .3 && op.getRuntime() - claw.getLastTime() < .5 && CLAW_CLOSED.getStatus()) {
-//            if(lift.getLiftPosition()>120) {
-//                lift.raiseLiftOffStack();
-//            }
-//            else {
-//                liftArm.raiseLiftArmToOuttake();
-//            }
-//        }
+        if (op.getRuntime() - claw.getLastTime() > .5 && op.getRuntime() - claw.getLastTime() < .8 && CLAW_CLOSED.getStatus()) {
+            if(lift.getLiftPosition()>120&&lift.getLiftPosition()<500) {
+                lift.raiseLiftOffStack();
+            }
+            else {
+                liftArm.raiseLiftArmToOuttake();
+            }
+        }
 
 
         //manual open/close claw (will jsut be open claw in the future)
