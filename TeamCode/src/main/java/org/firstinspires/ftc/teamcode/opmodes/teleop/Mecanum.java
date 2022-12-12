@@ -44,37 +44,39 @@ public class Mecanum extends LinearOpMode {
             while (gamepad2.right_bumper) {
                 robot.ArmServo.setPower(1);
             }
-            if (frontLeftDrive>0 && frontRightDrive<0 && backLeftDrive>0 && backRightDrive<0 || frontLeftDrive<0 && frontRightDrive>0 && backLeftDrive<0 && backRightDrive>0) {
+            if (frontLeftDrive > 0 && frontRightDrive < 0 && backLeftDrive > 0 && backRightDrive < 0 || frontLeftDrive < 0 && frontRightDrive > 0 && backLeftDrive < 0 && backRightDrive > 0) {
                 telemetry.addLine("Strafing");
-        while (!isStopRequested()) {
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x*0.5
-                    )
-            );
-            drive.update();
+                while (!isStopRequested()) {
+                    drive.setWeightedDrivePower(
+                            new Pose2d(
+                                    -gamepad1.left_stick_y,
+                                    -gamepad1.left_stick_x,
+                                    -gamepad1.right_stick_x * 0.5
+                            )
+                    );
+                    drive.update();
 //
-            robot.leftslidemotor.setPower(gamepad2.right_trigger-gamepad2.left_trigger);
-            robot.rightslidemotor.setPower(gamepad2.right_trigger-gamepad2.left_trigger);
-            while (gamepad2.right_bumper) {
-                robot.ArmServo.setPower(1);
+                    robot.leftslidemotor.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
+                    robot.rightslidemotor.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
+                    while (gamepad2.right_bumper) {
+                        robot.ArmServo.setPower(1);
+                    }
+
+                    while (gamepad2.left_bumper) {
+                        robot.ArmServo.setPower(-1);
+                    }
+                    robot.ArmServo.setPower(0);
+
+                    telemetry.addLine("motor name               motor speed");
+                    telemetry.addLine();
+                    telemetry.addData("Front right drive power = ", frontRightDrive);
+                    telemetry.addData("Front left drive power  = ", frontLeftDrive);
+                    telemetry.addData("Back right drive power  = ", backRightDrive);
+                    telemetry.addData("Back left drive power   = ", backLeftDrive);
+                    telemetry.update();
+                }
             }
 
-            while (gamepad2.left_bumper) {
-                robot.ArmServo.setPower(-1);
-            }
-            robot.ArmServo.setPower(0);
-
-            telemetry.addLine("motor name               motor speed");
-            telemetry.addLine();
-            telemetry.addData("Front right drive power = ", frontRightDrive);
-            telemetry.addData("Front left drive power  = ", frontLeftDrive);
-            telemetry.addData("Back right drive power  = ", backRightDrive);
-            telemetry.addData("Back left drive power   = ", backLeftDrive);
-            telemetry.update();
         }
     }
-
 }

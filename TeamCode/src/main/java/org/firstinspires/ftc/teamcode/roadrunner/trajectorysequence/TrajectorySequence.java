@@ -20,9 +20,7 @@ public class TrajectorySequence {
         return sequenceList.get(0).getStartPose();
     }
 
-    public Pose2d end() {
-        return sequenceList.get(sequenceList.size() - 1).getEndPose();
-    }
+    public Pose2d end() {return sequenceList.get(sequenceList.size() - 1).getEndPose();}
 
     public double duration() {
         double total = 0.0;
