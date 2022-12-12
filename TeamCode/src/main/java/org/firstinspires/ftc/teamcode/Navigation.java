@@ -94,7 +94,7 @@ public class Navigation {
             robot.telemetry.update();
             switch (movementMode) {
                 case FORWARD_ONLY:
-                    rotate(getAngleBetween(robot.getPosition().x, robot.getPosition().y, target.getPosition().x, target.getPosition().y) - Math.PI / 2,
+                    rotate(getAngleBetween(robot.getPosition().x, robot.getPosition().y, target.getX(), target.getY() - Math.PI / 2),
                             target.rotatePower, robot);
                     travelLinear(target, target.getStrafePower(), robot);
                     rotate(target.getRotation(), target.getRotatePower(), robot);
@@ -391,7 +391,7 @@ public class Navigation {
                 power = STRAFE_CORRECTION_POWER;
             }
 
-            double strafeAngle = getStrafeAngle(currentLoc, robot.getPosition().getRotation(), target);
+            double strafeAngle = getStrafeAngle(robot.getPosition(), target);
 
             setDriveMotorPowers(strafeAngle, power, 0.0, robot, false);
 
@@ -441,8 +441,10 @@ public class Navigation {
 
     /** Calculates the euclidean distance between two points.
      *
-     *  @param a A 2D point on the playing field.
-     *  @param b The point to find the distance to point A from.
+     *  @param x1 A 2D point on the playing field. (x1, y1)
+     *  @param y1
+     *  @param x2 The point (x2, y2) to find the distance to point A from.
+     *  @param y2
      *  @return The Euclidean distance between the two points.
      */
     private double getEuclideanDistance(double x1, double y1, double x2, double y2) {
@@ -941,6 +943,8 @@ class AutonomousPaths {
 */
 
 class AutonomousPaths{
+    public static enum SignalParking {LOCATION1, LOCATION2, LOCATION3}
+    public static enum StartingLocation {LEFT, RIGHT}
     public final double FIELD_WIDTH = 6;//placeholder - field is 6 x 6 square
 
     //Units are in field tiles.
@@ -958,45 +962,96 @@ class AutonomousPaths{
 
     //Junctions
     //Ground
-    public Position closeLeftGroundJunction = new Position(-1, 0, "closeLeftGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
-    public Position closeRightGroundJunction = new Position(0, 0, "closeRightGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -3 / 4 * Math.PI);
+    public static Position closeLeftGroundJunction = new Position(-1, 0, "closeLeftGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
+    public static Position closeRightGroundJunction = new Position(0, 0, "closeRightGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -3 / 4 * Math.PI);
 
     //Small
-    public Position leftSmallJunction = new Position(0, 0, "leftSmallJunction", Navigation.Action.DROP_CONE, 1, 1, 3 / 4 * Math.PI);
-    public Position rightSmallJunction = new Position(0, 1, "rightSmallJunction", Navigation.Action.DROP_CONE, 1, 1, Math.PI / 4);
+    public static Position leftSmallJunction = new Position(0, 0, "leftSmallJunction", Navigation.Action.DROP_CONE, 1, 1, 3 / 4 * Math.PI);
+    public static Position rightSmallJunction = new Position(0, 1, "rightSmallJunction", Navigation.Action.DROP_CONE, 1, 1, Math.PI / 4);
 
     //Medium
-    public Position mediumJunction = new Position(-1, 1, "mediumJunction", Navigation.Action.DROP_CONE, 1, 1, Math.PI / 4);
+    public static Position mediumJunction = new Position(-1, 1, "mediumJunction", Navigation.Action.DROP_CONE, 1, 1, Math.PI / 4);
 
     //Large
-    public Position leftLargeJunction = new Position(-1,1, "leftLargeJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
-    public Position rightLargeJunction = new Position(0,2, "rightLargeJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
+    public static Position leftLargeJunction = new Position(-1,1, "leftLargeJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
+    public static Position rightLargeJunction = new Position(0,2, "rightLargeJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
 
 
     //Signal locations
     //Cone
-    public Position signalCone = new Position(0, 1, "signalCone", Navigation.Action.DROP_CONE, 1, 1, Math.PI); //This might be wrong because the robot might rotate after you get to the desired position
+    public static Position signalCone = new Position(0, 1, "signalCone", Navigation.Action.DROP_CONE, 1, 1, Math.PI); //This might be wrong because the robot might rotate after you get to the desired position
 
     //IMPORTANT NOTE: locations on the right side are not symmetrical with their counterparts on left side
-    public Position leftSideSignalLocation1 = new Position(-1, 1.5, 0, "leftSideSignalLocation1");
-    public Position leftSideSignalLocation2 = new Position(0, 1.5, 0, "leftSideSignalLocation2");
-    public Position leftSideSignalLocation3 = new Position(1, 1.5, 0, "leftSideSignalLocation3");
+    public static Position leftSideSignalLocation1 = new Position(-1, 1.5, 0, "leftSideSignalLocation1");
+    public static Position leftSideSignalLocation2 = new Position(0, 1.5, 0, "leftSideSignalLocation2");
+    public static Position leftSideSignalLocation3 = new Position(1, 1.5, 0, "leftSideSignalLocation3");
 
-    public Position rightSideSignalLocation1 = new Position(-1, 1.5, 0, "rightSideSignalLocation1");
-    public Position rightSideSignalLocation2 = new Position(0, 1.5, 0, "rightSideSignalLocation2");
-    public Position rightSideSignalLocation3 = new Position(1, 1.5, 0, "rightSideSignalLocation3");
+    public static Position rightSideSignalLocation1 = new Position(-1, 1.5, 0, "rightSideSignalLocation1");
+    public static Position rightSideSignalLocation2 = new Position(0, 1.5, 0, "rightSideSignalLocation2");
+    public static Position rightSideSignalLocation3 = new Position(1, 1.5, 0, "rightSideSignalLocation3");
 
 
     //Intermediate positions (positions that you need to go to on the way to your destination)
-    public Position intermediateMedium = new Position(-1, 0, 0, "intermediateMedium");
+    public static Position intermediateMedium = new Position(-1, 0, 0, "intermediateMedium");
 
 
     //Paths
-    public Position[] path = {
-        intermediateMedium, mediumJunction, signalCone, rightLargeJunction
+    public static ArrayList<Position> path = new ArrayList<Position>() {
+        {
+            add(intermediateMedium);
+            add(mediumJunction);
+            add(signalCone);
+            add(rightLargeJunction);
+        }
     };
 
-    AutonomousPaths(){
-    }
+    //Location is for parking location retrieved from signal and starting location is for whether the robot started on the left or the right
+    public static void setSignalParkingSpot(SignalParking location, StartingLocation startingLocation) {
+        switch(location) {
+            case LOCATION1:
+                switch(startingLocation) {
+                    case LEFT:
+                        path.add(leftSideSignalLocation1);
 
+                        break;
+
+                    case RIGHT:
+                        path.add(rightSideSignalLocation1);
+
+                        break;
+                }
+
+                break;
+
+            case LOCATION2:
+                switch(startingLocation) {
+                    case LEFT:
+                        path.add(leftSideSignalLocation2);
+
+                        break;
+
+                    case RIGHT:
+                        path.add(rightSideSignalLocation2);
+
+                        break;
+                }
+
+                break;
+
+            case LOCATION3:
+                switch(startingLocation) {
+                    case LEFT:
+                        path.add(leftSideSignalLocation3);
+
+                        break;
+
+                    case RIGHT:
+                        path.add(rightSideSignalLocation3);
+
+                        break;
+                }
+
+                break;
+        }
+    }
 }

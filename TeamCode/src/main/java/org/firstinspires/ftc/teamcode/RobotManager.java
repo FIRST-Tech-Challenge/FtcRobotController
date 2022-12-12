@@ -303,12 +303,24 @@ public class RobotManager {
 
     /** Closes the claw.
      */
+     /*
     public void closeClaw() {
         robot.desiredClawState = Robot.ClawState.CLOSED;
         double startingTime = robot.elapsedTime.milliseconds();
         mechanismDriving.updateClaw(robot);
         // Wait for claw to close.
         while (robot.elapsedTime.milliseconds() - startingTime < MechanismDriving.CLAW_SERVO_TIME) {}
+    }
+      */
+
+    public void liftCone(Robot.SlidesState level) {
+        //need to add proper operation of intake system
+
+        robot.desiredSlidesState = level;
+    }
+
+    public void dropCone() {
+        //pull out something to make cone drop from intake mechanism
     }
 
     /** Delivers a piece of freight to a particular level of the alliance shipping hub.

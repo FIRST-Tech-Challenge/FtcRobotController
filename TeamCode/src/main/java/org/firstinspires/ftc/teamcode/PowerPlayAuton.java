@@ -23,6 +23,8 @@ public class PowerPlayAuton extends LinearOpMode {
                                         PowerPlayAuton.movementMode, telemetry, elapsedTime);
 
         IMUPositioning.Initialize(this);
+
+        /*
         robotManager.computerVision.startStreaming();
 
         Robot.SlidesState hubLevel;
@@ -35,7 +37,23 @@ public class PowerPlayAuton extends LinearOpMode {
 
         robotManager.computerVision.stopStreaming();
 
-        telemetry.addData("level", hubLevel.name());
+         */
+
+        robotManager.computerVision.startStreaming();
+
+        AutonomousPaths.SignalParking signalParkLocation;
+        do {
+            signalParkLocation = robotManager.readSignal();//Read in signal from computer vision here
+        }
+        while (!isStarted());
+
+//        hubLevel = Robot.SlidesState.L3;
+
+        robotManager.computerVision.stopStreaming();
+
+        AutonomousPaths.setSignalParkingSpot(signalParkLocation, startingLocation); //Starting location needs to be gotten from shared preferences
+
+        telemetry.addData("signal result", signalParkLocation.name());
         telemetry.update();
 
 //        waitForStart(); // Wait for the play button to be pressed
@@ -55,10 +73,10 @@ public class PowerPlayAuton extends LinearOpMode {
             telemetry.update();
             switch (lastPOI.action) {
                 case LIFT_CONE:
-                    robotManager.deliverToShippingHub(hubLevel);
+                    robotManager.liftCone(hubLevel);
                     break;
                 case DROP_CONE:
-                    robotManager.deliverDuck();
+                    robotManager.dropCone();
                     break;
             }
         }
