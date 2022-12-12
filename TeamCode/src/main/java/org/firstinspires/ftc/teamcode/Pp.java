@@ -41,7 +41,7 @@ class Ppbot{
         FLeft.setPower(0.0);
         FRight.setPower(0.0);
         Slider.setPower(0.0);
-        //Take1.setPosition(0.0); // change these 2 later when we figure out the servo positions
+        //Take1.setPosition(0.35); // change these 2 later when we figure out the servo positions
         //Take2.setPosition(0.0);
 
         BLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
