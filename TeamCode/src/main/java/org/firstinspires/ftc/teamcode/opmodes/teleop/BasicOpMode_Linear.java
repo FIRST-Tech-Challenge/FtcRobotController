@@ -144,15 +144,15 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double rightBackPower;
 
             if (Math.abs(left_y) < 0.2) {
-                leftFrontPower = -left_x - strafe_side;
-                rightFrontPower = left_x + strafe_side;
-                leftBackPower = left_x - strafe_side;
-                rightBackPower = -left_x + strafe_side;
+                leftFrontPower = -left_x * 0.8 - strafe_side * 0.6;
+                rightFrontPower = left_x * 0.8 + strafe_side * 0.6;
+                leftBackPower = left_x * 0.8 - strafe_side * 0.6;
+                rightBackPower = -left_x * 0.8 + strafe_side * 0.6;
             } else {
-                leftFrontPower = left_y - left_x - strafe_side;
-                rightFrontPower = left_y + left_x + strafe_side;
-                leftBackPower = left_y + left_x - strafe_side;
-                rightBackPower = left_y - left_x + strafe_side;
+                leftFrontPower = (left_y - left_x) * 0.8 - strafe_side * 0.6;
+                rightFrontPower = (left_y + left_x) * 0.8 + strafe_side * 0.6;
+                leftBackPower = (left_y + left_x) * 0.8 - strafe_side * 0.6;
+                rightBackPower = (left_y - left_x) * 0.8 + strafe_side * 0.6;
             }
 
             // Normalize the values so no wheel power exceeds 100%
@@ -169,16 +169,16 @@ public class BasicOpMode_Linear extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                leftFrontPower *= 0.5;
-                rightBackPower *= 0.5;
-                rightFrontPower *= 0.5;
-                leftBackPower *= 0.5;
+                leftFrontPower *= 0.75;
+                rightBackPower *= 0.75;
+                rightFrontPower *= 0.75;
+                leftBackPower *= 0.75;
             }
             else {
-                leftFrontPower *= 0.7;
-                rightBackPower *= 0.7;
-                rightFrontPower *= 0.7;
-                leftBackPower *= 0.7;
+                leftFrontPower *= 1;
+                rightBackPower *= 1;
+                rightFrontPower *= 1;
+                leftBackPower *= 1;
             }
 
             // Send calculated power to wheels
