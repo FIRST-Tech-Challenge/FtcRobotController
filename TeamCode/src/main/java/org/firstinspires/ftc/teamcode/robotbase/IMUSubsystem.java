@@ -32,8 +32,6 @@ public class IMUSubsystem extends SubsystemBase {
 //        parameters.loggingTag = "IMU";
 //        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        imu.invertGyro();
-
         this.telemetry = telemetry;
         this.dashboardTelemetry = dashboardTelemetry;
     }

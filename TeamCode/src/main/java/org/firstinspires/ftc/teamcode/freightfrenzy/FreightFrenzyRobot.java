@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode.freightfrenzy;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.PerpetualCommand;
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.vuforia.InstanceId;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robotbase.RobotEx;
 
@@ -38,14 +42,34 @@ public class FreightFrenzyRobot extends RobotEx {
                 .whileActiveContinuous(new InstantCommand(carousel::rotateCounterClockwise, carousel))
                 .whenInactive(new InstantCommand(carousel::stop, carousel));
 
+        //Carousel Proc
+        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .toggleWhenPressed(
+                        new PerpetualCommand(new SequentialCommandGroup(
+                                    new RunCommand(carousel::rotateClockwise, carousel),
+                                    new WaitCommand(8000),
+                                    new RunCommand(carousel::stop, carousel),
+                                    new WaitCommand(1000)
+                        )),
+                        new InstantCommand(carousel::stop, carousel)
+                );
+
         ////////////////////////////////////////// Slider //////////////////////////////////////////
         slider = new SliderSubsystem(hardwareMap);
+
+        //Levels
         toolOp.getGamepadButton(GamepadKeys.Button.X)
                 .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.ONE));
         toolOp.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.TWO));
         toolOp.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.THREE));
+                .whileHeld(new SliderCommand(slider, SliderSubsystem.Level.THREE));
+
+        //Manual Height Adjustment
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whileHeld(new SliderManualCommand(slider, -1));
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                .whileHeld(new SliderManualCommand(slider, 1));
 
         ////////////////////////////////////////// Intake //////////////////////////////////////////
         intake = new IntakeSubsystem(hardwareMap);
@@ -66,6 +90,20 @@ public class FreightFrenzyRobot extends RobotEx {
                                         new InstantCommand(intake::stop, intake)
                                 )
                         )
+                );
+
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new InstantCommand(intake::reverse, slider)
+                ).whenReleased(
+                        new InstantCommand(intake::stop, slider)
+                );
+
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(
+                        new InstantCommand(intake::forward, slider)
+                ).whenReleased(
+                        new InstantCommand(intake::stop, slider)
                 );
     }
 }

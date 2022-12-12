@@ -52,7 +52,7 @@ public class RobotEx {
 
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
         drive = new MecanumDriveSubsystem(hardwareMap);
-        driveCommand = new MecanumDriveCommand(drive, driverOp::getLeftX, driverOp::getLeftY,
+        driveCommand = new MecanumDriveCommand(drive, driverOp::getLeftY, driverOp::getLeftX,
                 this::drivetrainTurn, gyro::getRawValue,
                 () -> driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
 

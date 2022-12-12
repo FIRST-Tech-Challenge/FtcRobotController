@@ -9,7 +9,7 @@ public class MecanumDriveSubsystem  extends SubsystemBase {
     private final MotorEx frontLeft, frontRight, rearRight, rearLeft;
     private final MecanumDrive drive;
 
-    public MecanumDriveSubsystem(HardwareMap hardwareMap) { //, final double diameter) {
+    public MecanumDriveSubsystem(HardwareMap hardwareMap) { //, final double wheelDiameter) {
         frontLeft = new MotorEx(hardwareMap, "frontLeft");
         frontRight = new MotorEx(hardwareMap, "frontRight");
         rearRight = new MotorEx(hardwareMap, "rearRight");
@@ -21,6 +21,6 @@ public class MecanumDriveSubsystem  extends SubsystemBase {
     void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading,
                double maxSpeed) {
         drive.setMaxSpeed(0.5 * (1 + maxSpeed));
-        drive.driveFieldCentric(-strafeSpeed, forwardSpeed, -turnSpeed, heading);
+        drive.driveFieldCentric(-strafeSpeed, -forwardSpeed, -turnSpeed, heading);
     }
 }

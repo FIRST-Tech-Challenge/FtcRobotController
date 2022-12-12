@@ -1,26 +1,28 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
-public class SliderCommand extends CommandBase {
+public class SliderManualCommand extends CommandBase {
     private final SliderSubsystem slider;
-    private final SliderSubsystem.Level targetLevel;
+    private final int direction;
+    private static final int step = 20;
 
-    public SliderCommand(SliderSubsystem slider, SliderSubsystem.Level levelPicked){
+    public SliderManualCommand(SliderSubsystem slider, int direction){
         this.slider = slider;
-        targetLevel = levelPicked;
+        this.direction = direction;
         addRequirements(this.slider);
     }
 
     @Override
     public void initialize() {
-        slider.setLevel(targetLevel);
-        slider.setAuto();
+//        slider.setHeight(slider.getHeight() + step*direction);
+        slider.setManual();
     }
 
     @Override
     public void execute() {
-        slider.run();
+        slider.setPower(0.4*direction);
     }
 
     @Override
@@ -30,7 +32,7 @@ public class SliderCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return slider.atTargetLevel();
+        return false;
     }
 
 

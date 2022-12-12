@@ -8,7 +8,7 @@ public class IntakeSubsystem extends SubsystemBase{
     private final MotorEx motor;
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
-        motor = hardwareMap.get(MotorEx.class, "intake");
+        motor = new MotorEx(hardwareMap, "intake");
     }
 
     public void forward() {

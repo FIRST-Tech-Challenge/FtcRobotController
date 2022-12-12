@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -11,25 +12,26 @@ public class SliderSubsystem extends SubsystemBase {
         PARK, INTAKE, ONE, TWO, THREE;
     }
 
-    private Level level = Level.PARK;
+    private Level level;
 
     private int[] levelPositions = {0, 200, 533, 1121, 1678};
 
     public SliderSubsystem(HardwareMap hardwareMap) {
-        this.motor = hardwareMap.get(MotorEx.class, "slider");
+        motor = new MotorEx(hardwareMap, "slider");
         motor.setInverted(true);
-        this.motor.setRunMode(MotorEx.RunMode.PositionControl);
-        this.motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        this.motor.setPositionTolerance(10);   // allowed maximum error
+        motor.setRunMode(MotorEx.RunMode.PositionControl);
+        motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        motor.setPositionTolerance(10);   // allowed maximum error
         level = Level.PARK;
+        setLevel(Level.PARK);
     }
 
     public void run() {
-        motor.set(0.3);
+        motor.set(0.1);
     }
 
     public void stop() {
-        motor.stopMotor();
+        motor.set(0);
     }
 
     public void setLevel(Level levelPicked) {
@@ -46,6 +48,21 @@ public class SliderSubsystem extends SubsystemBase {
             levelIdx = 0;
 
         motor.setTargetPosition(levelPositions[levelIdx]);
+    }
+
+    public void setManual() { motor.setRunMode(Motor.RunMode.RawPower); }
+    public void setAuto() { motor.setRunMode(Motor.RunMode.PositionControl); }
+
+    public void setPower(double power) {
+        motor.set(power);
+    }
+
+    public int getHeight(){
+        return motor.getCurrentPosition();
+    }
+
+    public void setHeight(int pos) {
+        motor.setTargetPosition(pos);
     }
 
     public Level getLevel() {
