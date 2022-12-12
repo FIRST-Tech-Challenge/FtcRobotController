@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
-import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
-
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -34,6 +31,7 @@ public class BlueRightPark extends LinearOpMode {
         robot.roadrun.setPoseEstimate(startPose);
         robot.cv.observeSleeve();
         TrajectorySequence parkTrajectory = robot.roadrun.trajectorySequenceBuilder(startPose)
+                .setReversed(true)
                 .splineToSplineHeading(new Pose2d(-36, 36, toRadians(90)), toRadians(90))
                 .build();
         Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,36,toRadians(90)))

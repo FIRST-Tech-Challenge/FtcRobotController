@@ -131,7 +131,7 @@ public class RFMotor extends Motor {
             for (int i = 0; i < coefs.size(); i++) {
                 if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
                     if (coefs.size() - i - 1 == 2) {
-                        targetVelocity += pow(distance, 0.5) * coefs.get(i);
+                        targetVelocity += pow(distance, 0.6) * coefs.get(i);
                     } else {
                         targetVelocity += pow(distance, coefs.size() - i - 1) * coefs.get(i);
                     }
@@ -146,7 +146,7 @@ public class RFMotor extends Motor {
             for (int i = 0; i < coefs.size(); i++) {
                 if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
                     if (coefs.size() - i - 1 == 2) {
-                        targetVelocity -= pow(abs(distance), 0.5) * coefs.get(i);
+                        targetVelocity -= pow(abs(distance), 0.6) * coefs.get(i);
                     } else {
                         targetVelocity -= abs(pow(distance, coefs.size() - i - 1)) * coefs.get(i);
                     }
