@@ -29,7 +29,7 @@ public abstract class ConeDetection extends BaseAutonomous
             @Override
             public void onOpened()
             {
-                camera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override

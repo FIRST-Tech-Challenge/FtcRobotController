@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
@@ -25,12 +26,18 @@ public class ConeDetectionPipeline extends OpenCvPipeline
 {
     public double distance;
     public double size;
-    public int centerX = 1920 / 2;
+    public int centerX = 1280 / 2;
     double dist = 0;
     double coneSize = 0;
     public boolean grab = false;
     private int[] lowerBlue = {42, 128, 114};
     private int[] upperBlue = {168, 242, 255};
+
+    Scalar int2Scalar(int[] a) {
+        if(a.length != 3)
+            throw new IllegalArgumentException("Input must be a three-item array");
+        return new Scalar(a[0], a[1], a[2]);
+    }
 
     public Mat maskFrame(Mat input, int[] lower, int[] upper)
     {
@@ -38,6 +45,7 @@ public class ConeDetectionPipeline extends OpenCvPipeline
         Size blurSize = new Size(5, 5);
         Imgproc.cvtColor(input, HSV, Imgproc.COLOR_BGR2HSV);
         Imgproc.blur(HSV, HSV, blurSize);
+        Core.inRange(HSV, int2Scalar(lower), int2Scalar(upper), HSV);
         return (HSV);
     }
 
@@ -49,31 +57,28 @@ public class ConeDetectionPipeline extends OpenCvPipeline
         Mat hierarchy = new Mat();
         Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         MatOfPoint largestContour = new MatOfPoint();
-
-        double maxVal = 0.0;
-        int maxValIdx = 0;
-        for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++)
-        {
-            double contourArea = Imgproc.contourArea(contours.get(contourIdx));
-            if (maxVal < contourArea)
-            {
-                maxVal = contourArea;
-                maxValIdx = contourIdx;
+        if(contours.size() > 0) {
+            double maxVal = 0.0;
+            int maxValIdx = 0;
+            for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
+                double contourArea = Imgproc.contourArea(contours.get(contourIdx));
+                if (maxVal < contourArea) {
+                    maxVal = contourArea;
+                    maxValIdx = contourIdx;
+                }
             }
-        }
-        Rect xywh = Imgproc.boundingRect(contours.get(maxValIdx));
-        Moments m = Imgproc.moments(contours.get(maxValIdx), false);
-        if(m.get_m00() > 0)
-        {
-            double cX = (m.get_m10() / m.get_m00());
-            dist = centerX - cX;
-            coneSize = xywh.width * xywh.height;
-            if (Math.abs(distance) < 30 && coneSize < 3000)
-            {
-                grab = true;
-            } else
-            {
-                grab = false;
+
+            Rect xywh = Imgproc.boundingRect(contours.get(maxValIdx));
+            Moments m = Imgproc.moments(contours.get(maxValIdx), false);
+            if (m.get_m00() > 0) {
+                double cX = (m.get_m10() / m.get_m00());
+                dist = centerX - cX;
+                coneSize = xywh.width * xywh.height;
+                if (Math.abs(distance) < 30 && coneSize < 3000) {
+                    grab = true;
+                } else {
+                    grab = false;
+                }
             }
         }
         return input;

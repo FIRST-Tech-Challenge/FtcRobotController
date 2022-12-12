@@ -22,6 +22,7 @@ public class CVtest extends ConeDetection
         {
             telemetry.addData("distance to center", ConeDetectionPipeline.dist);
             telemetry.addData("grab boolean", ConeDetectionPipeline.grab);
+            telemetry.update();
         }
     }
 }
