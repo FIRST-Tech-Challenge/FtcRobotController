@@ -54,10 +54,10 @@ public class PowerPlayAuton extends LinearOpMode {
             telemetry.addData("Action", lastPOI.action.name());
             telemetry.update();
             switch (lastPOI.action) {
-                case Navigation.Action.LIFT_CONE:
+                case LIFT_CONE:
                     robotManager.deliverToShippingHub(hubLevel);
                     break;
-                case Navigation.Action.DROP_CONE:
+                case DROP_CONE:
                     robotManager.deliverDuck();
                     break;
             }

@@ -943,46 +943,58 @@ class AutonomousPaths {
 class AutonomousPaths{
     public final double FIELD_WIDTH = 6;//placeholder - field is 6 x 6 square
 
+    //Units are in field tiles.
+
     //origin is the staring position of the robot, a zero angle is pointing towards the terminal
     //public Position startingPosition = new Position(0,0,0,"startingPosition");
     //Positions are written with the starting position of the robot being
 
-    //Orientation of zero for robot has linear slides facing away from the starting wall
+    //Angle of zero for robot has intake to the left relative to our team's side
 
     //Terminal & Substation
-    public Position terminalPosition = new Position(2,0,(-Math.PI/2),"terminalPosition");
-    public Position substationPosition = new Position(-1,0,Math.PI/2,"substationPosition");
+    public Position terminalPosition = new Position(1,0, 0,"terminalPosition");
+    public Position substationPosition = new Position(-1,0,Math.PI / 2,"substationPosition");
+
 
     //Junctions
     //Ground
-    public Position closeLeftGroundJunction = new Position(-1, 0, Math.PI / 4, "leftGroundJunction");
-    public Position closeRightGroundJunction = new Position(0,0,-Math.PI / 4,"rightGroundJunction");
-    public Position centerGroundJunction = new Position(-1,2, Math.PI / 4, "centerGroundJunction");
-    public Position farRightGroundJunction = new Position(0,2,-Math.PI / 4,"farRightGroundJunction");
+    public Position closeLeftGroundJunction = new Position(-1, 0, "closeLeftGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
+    public Position closeRightGroundJunction = new Position(0, 0, "closeRightGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -3 / 4 * Math.PI);
 
     //Small
-    public Position leftSmallJunction = new Position(0, 0, Math.PI / 4, "leftSmallJunction");
-    public Position rightSmallJunction = new Position(0, 1, -Math.PI / 4, "rightSmallJunction");
+    public Position leftSmallJunction = new Position(0, 0, "leftSmallJunction", Navigation.Action.DROP_CONE, 1, 1, 3 / 4 * Math.PI);
+    public Position rightSmallJunction = new Position(0, 1, "rightSmallJunction", Navigation.Action.DROP_CONE, 1, 1, Math.PI / 4);
 
     //Medium
-    public Position mediumJunction = new Position(-1,1,Math.PI/4,"mediumJunction");
-
-
-    //intermediateMedium
-    public Position intermediateMedium = new Position(-1,0,0, "intermediateMedium");
-
-
+    public Position mediumJunction = new Position(-1, 1, "mediumJunction", Navigation.Action.DROP_CONE, 1, 1, Math.PI / 4);
 
     //Large
-    public Position leftLargeJunction = new Position(-1,1, Math.PI / 4,"leftLargeJunction");
-    public Position centerLargeJunction = new Position(0,2, Math.PI / 4,"centerLargeJunction");
+    public Position leftLargeJunction = new Position(-1,1, "leftLargeJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
+    public Position rightLargeJunction = new Position(0,2, "rightLargeJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
+
+
+    //Signal locations
+    //Cone
+    public Position signalCone = new Position(0, 1, "signalCone", Navigation.Action.DROP_CONE, 1, 1, Math.PI); //This might be wrong because the robot might rotate after you get to the desired position
+
+    //IMPORTANT NOTE: locations on the right side are not symmetrical with their counterparts on left side
+    public Position leftSideSignalLocation1 = new Position(-1, 1.5, 0, "leftSideSignalLocation1");
+    public Position leftSideSignalLocation2 = new Position(0, 1.5, 0, "leftSideSignalLocation2");
+    public Position leftSideSignalLocation3 = new Position(1, 1.5, 0, "leftSideSignalLocation3");
+
+    public Position rightSideSignalLocation1 = new Position(-1, 1.5, 0, "rightSideSignalLocation1");
+    public Position rightSideSignalLocation2 = new Position(0, 1.5, 0, "rightSideSignalLocation2");
+    public Position rightSideSignalLocation3 = new Position(1, 1.5, 0, "rightSideSignalLocation3");
+
+
+    //Intermediate positions (positions that you need to go to on the way to your destination)
+    public Position intermediateMedium = new Position(-1, 0, 0, "intermediateMedium");
+
 
     //Paths
-    //Start 0, intermediatemedium 0, rightSmallJunction -pi/2,
-    public Position path = {
-        PLACEHOLDER , mediumJunction
+    public Position[] path = {
+        intermediateMedium, mediumJunction, signalCone, rightLargeJunction
     };
-
 
     AutonomousPaths(){
     }

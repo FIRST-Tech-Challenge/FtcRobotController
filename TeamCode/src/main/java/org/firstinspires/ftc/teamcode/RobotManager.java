@@ -49,7 +49,7 @@ public class RobotManager {
         robot = new Robot(hardwareMap, telemetry, elapsedTime);
 
         if (!path.isEmpty()) {
-            computerVision = new ComputerVision(hardwareMap, new AutonPipeline (robot, telemetry, allianceColor));
+            computerVision = new ComputerVision(hardwareMap, new AutonPipeline(robot, telemetry, allianceColor));
         }
 
         gamepads = new GamepadWrapper(gamepad1, gamepad2);
@@ -267,6 +267,7 @@ public class RobotManager {
 
     /** Delivers a duck by spinning the carousel.
      */
+    /*
     public void deliverDuck() {
         robot.desiredCarouselState = Robot.CarouselState.STOPPED;
         mechanismDriving.updateCarousel(robot);
@@ -288,6 +289,7 @@ public class RobotManager {
         robot.desiredCarouselState = Robot.CarouselState.STOPPED;
         mechanismDriving.updateCarousel(robot);
     }
+     */
 
     /** Opens the claw.
      */
@@ -313,6 +315,7 @@ public class RobotManager {
      *
      *  @param level the level to which the cargo needs to be delivered.
      */
+    /*
     public void deliverToShippingHub(Robot.SlidesState level) {
         // Extend slides.
         robot.desiredSlidesState = level;
@@ -364,6 +367,7 @@ public class RobotManager {
 
         closeClaw();
     }
+     */
 
     /** Returns whether the driver is attempting to move the robot linearly
      *
