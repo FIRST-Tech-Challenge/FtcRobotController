@@ -30,7 +30,7 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
     public static double dropX = -30, dropY = 19.8, dropA = toRadians(100), dropET = toRadians(40);
 
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
-    public static double pickupX2 = -63.2, pickupY2 = 10, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
+    public static double pickupX2 = -63.2, pickupY2 = 10.75, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
 
     double[] stackPos = {450, 360, 240, 120,0};
 
@@ -44,21 +44,25 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
         //store in variable
         robot.cv.observeSleeve();
         TrajectorySequence initialtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29.6, 62.25, toRadians(90)))
-                .setReversed(true).splineToSplineHeading(new Pose2d(-38, 48, toRadians(100)), toRadians(250))
+                .setReversed(true)
+                .splineToSplineHeading(new Pose2d(-34, 46, toRadians(90)), toRadians(270))
 //                .splineToSplineHeading(new Pose2d(-33, 35, toRadians(105)), toRadians(285))
-                .splineToSplineHeading(new Pose2d(-26,30, toRadians(110)), toRadians(290))
+                .splineToSplineHeading(new Pose2d(-32, 32, toRadians(135)), toRadians(270))
 //                .setReversed(true).splineToSplineHeading(new Pose2d(-38, 48, toRadians(70)), toRadians(250))
 //                .splineToSplineHeading(new Pose2d(-33, 35, toRadians(105)), toRadians(285))
 //                .splineToSplineHeading(new Pose2d(-26,30, toRadians(120)), toRadians(290))
                 .build();
         TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-28,30, toRadians(90)))
-                .splineToSplineHeading(new Pose2d(pickupX1, pickupY1, pickupA1), pickupET1)
+                .setReversed(false)
+                .splineToLinearHeading(new Pose2d(-34,13, toRadians(180)),toRadians(240))
                 .splineToSplineHeading(new Pose2d(pickupX2, pickupY2, pickupA2), pickupET2)
                 .build();
-        TrajectorySequence dropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(pickupX2, pickupY2, pickupA2)).setReversed(true)
+        TrajectorySequence dropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(pickupX2, pickupY2, pickupA2))
+                .setReversed(true)
                 .splineToSplineHeading(new Pose2d(dropX,dropY, dropA), dropET)
                 .build();
         TrajectorySequence pickupTrajectory2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY, dropA))
+                .setReversed(false)
                 .splineToSplineHeading(new Pose2d(-45.5, 10, toRadians(180)), toRadians(180))
                 .splineToSplineHeading(new Pose2d(-63.2, 10, toRadians(180)), toRadians(180))
                 .build();

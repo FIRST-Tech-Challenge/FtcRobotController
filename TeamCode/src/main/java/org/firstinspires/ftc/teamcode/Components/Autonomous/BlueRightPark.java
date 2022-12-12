@@ -6,6 +6,7 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -32,16 +33,17 @@ public class BlueRightPark extends LinearOpMode {
         robot.cv.observeSleeve();
         TrajectorySequence parkTrajectory = robot.roadrun.trajectorySequenceBuilder(startPose)
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(-36, 36, toRadians(90)), toRadians(90))
+                .lineTo(new Vector2d(-36, 62.25))
+                .lineTo(new Vector2d(-36, 36))
                 .build();
         Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,36,toRadians(90)))
-                .lineToLinearHeading(new Pose2d(-12, 33, toRadians(90)))
+                .lineTo(new Vector2d(-12, 36))
                 .build();
 //        Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,36,toRadians(90)))
 //                .lineToLinearHeading(new Pose2d(-36,36, toRadians(90)))
 //                .build();
         Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,36,toRadians(90)))
-                .lineToLinearHeading(new Pose2d(-57, 33, toRadians(90)))
+                .lineTo(new Vector2d(-57, 36))
                 .build();
         while (!isStarted()) {
             telemetry.addData("pos", robot.cv.getPosition());
