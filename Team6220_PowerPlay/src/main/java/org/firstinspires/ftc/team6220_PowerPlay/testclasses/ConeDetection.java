@@ -13,7 +13,7 @@ import java.util.Locale;
 public abstract class ConeDetection extends BaseAutonomous
 {
     OpenCvCamera camera;
-    ConeDetectionPipeline ConeDetectionPipeline;
+    ConeDetectionPipeline ConeDetectionPipeline = new ConeDetectionPipeline();
     public boolean toGrab = false;
 
     public void detectGrab()

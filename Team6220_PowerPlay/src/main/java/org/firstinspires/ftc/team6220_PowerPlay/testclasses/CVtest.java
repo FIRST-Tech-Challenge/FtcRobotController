@@ -11,14 +11,17 @@ import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetect;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
 @Autonomous(name = "CVtest", group = "Test")
-public class CVtest extends ConeDetection {
-
+public class CVtest extends ConeDetection
+{
     @Override
-    public void runOpMode() throws InterruptedException {
-        initialize();
-        waitForStart();
+    public void runOpMode() throws InterruptedException
+    {
         detectGrab();
-        telemetry.addData("distance to center", ConeDetectionPipeline.dist);
-        telemetry.addData("grab boolean", ConeDetectionPipeline.grab);
+        waitForStart();
+        while (opModeIsActive())
+        {
+            telemetry.addData("distance to center", ConeDetectionPipeline.dist);
+            telemetry.addData("grab boolean", ConeDetectionPipeline.grab);
+        }
     }
 }

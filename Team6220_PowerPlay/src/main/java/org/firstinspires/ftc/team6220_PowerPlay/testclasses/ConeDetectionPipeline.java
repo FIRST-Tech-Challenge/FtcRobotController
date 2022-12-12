@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-abstract public class ConeDetectionPipeline extends OpenCvPipeline
+public class ConeDetectionPipeline extends OpenCvPipeline
 {
     public double distance;
     public double size;
@@ -29,8 +29,8 @@ abstract public class ConeDetectionPipeline extends OpenCvPipeline
     double dist = 0;
     double coneSize = 0;
     public boolean grab = false;
-    public int[] lowerBlue = {42, 128, 114};
-    public int[] upperBlue = {168, 242, 255};
+    private int[] lowerBlue = {42, 128, 114};
+    private int[] upperBlue = {168, 242, 255};
 
     public Mat maskFrame(Mat input, int[] lower, int[] upper)
     {
