@@ -18,6 +18,7 @@ public class PowerPlayAuton extends LinearOpMode {
     @Override
     public void runOpMode() {
         initSharedPreferences();
+        wefwefwgewefwefwefwef //Problem: path is currently not set to the desired path in autonomous paths!
         robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, PowerPlayAuton.navigationPath,
                                         PowerPlayAuton.allianceColor, PowerPlayAuton .startingSide,
                                         PowerPlayAuton.movementMode, telemetry, elapsedTime);
@@ -51,7 +52,7 @@ public class PowerPlayAuton extends LinearOpMode {
 
         robotManager.computerVision.stopStreaming();
 
-        AutonomousPaths.setSignalParkingSpot(signalParkLocation, startingLocation); //Starting location needs to be gotten from shared preferences
+        AutonomousPaths.setSignalParkingSpot(signalParkLocation, startingSide); //Starting location is initialized from shared preferences
 
         telemetry.addData("signal result", signalParkLocation.name());
         telemetry.update();
@@ -148,11 +149,14 @@ public class PowerPlayAuton extends LinearOpMode {
                 break;
         }
 
-        if (startingSide.equals("CAROUSEL")) {
-            PowerPlayAuton.startingSide = RobotManager.StartingSide.CAROUSEL;
-        }
-        else if (startingSide.equals("WAREHOUSE")) {
-            PowerPlayAuton.startingSide = RobotManager.StartingSide.WAREHOUSE;
+        switch(startingSide) {
+            case "LEFT":
+                PowerPlayAuton.startingSide = RobotManager.StartingSide.LEFT;
+                break;
+
+            case "RIGHT":
+                PowerPlayAuton.startingSide = RobotManager.StartingSide.RIGHT;
+                break;
         }
 
         if (allianceColor.equals("BLUE")) {

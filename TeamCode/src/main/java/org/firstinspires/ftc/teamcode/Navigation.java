@@ -944,7 +944,6 @@ class AutonomousPaths {
 
 class AutonomousPaths{
     public static enum SignalParking {LOCATION1, LOCATION2, LOCATION3}
-    public static enum StartingLocation {LEFT, RIGHT}
     public final double FIELD_WIDTH = 6;//placeholder - field is 6 x 6 square
 
     //Units are in field tiles.
@@ -1006,7 +1005,7 @@ class AutonomousPaths{
     };
 
     //Location is for parking location retrieved from signal and starting location is for whether the robot started on the left or the right
-    public static void setSignalParkingSpot(SignalParking location, StartingLocation startingLocation) {
+    public static void setSignalParkingSpot(SignalParking location, RobotManager.StartingSide startingLocation) {
         switch(location) {
             case LOCATION1:
                 switch(startingLocation) {

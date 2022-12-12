@@ -22,7 +22,8 @@ public class RobotManager {
     static final double TRIGGER_DEAD_ZONE_SIZE = 0.05;
 
     public enum AllianceColor {BLUE, RED}
-    public enum StartingSide {WAREHOUSE, CAROUSEL}
+    //public enum StartingSide {WAREHOUSE, CAROUSEL}
+    public enum StartingSide {LEFT, RIGHT}
 
     public Robot robot;
 
