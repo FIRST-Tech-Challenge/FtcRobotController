@@ -1,17 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.exception.RobotCoreException;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
-import static java.lang.Math.*;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import static java.lang.Math.*;
 
 @TeleOp(name="WARHOGTeleOp", group="")
 public class WARHOGTeleOp extends LinearOpMode {
@@ -236,7 +230,7 @@ public class WARHOGTeleOp extends LinearOpMode {
 
             //move the outtake slides up and down
             if(!outtake.isSlideGoingToPosition()) {
-                outtake.run(slideMovement, maxIncrease);
+                outtake.moveSlides(slideMovement, maxIncrease);
                 telemetry.addLine("moving using stick");
             }
 

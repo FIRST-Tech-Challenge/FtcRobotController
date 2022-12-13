@@ -31,7 +31,7 @@ public class Outtake {
     }
 
     //method to input a power to the slide motor
-    public void run(double pow){
+    public void moveSlides(double pow){
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slide.setDirection(DcMotor.Direction.FORWARD);
 
@@ -66,7 +66,7 @@ public class Outtake {
     }
 
     //method to input a power to the slide motor
-    public void run(double pow, double maxIncrease){
+    public void moveSlides(double pow, double maxIncrease){
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slide.setDirection(DcMotor.Direction.FORWARD);
 
@@ -100,7 +100,7 @@ public class Outtake {
         telemetry.addData("Slide Position", pos);
     }
 
-    //methods to tell the motor to run to certain positions. The below are placeholder values.
+    //methods to tell the motor to moveSlides to certain positions. The below are placeholder values.
     public void setHeight(Height height){
         switch(height){
             case GROUND:
@@ -234,5 +234,18 @@ public class Outtake {
 
     public int getMax(){
         return max;
+    }
+
+
+
+    private class OuttakeThread extends Thread{
+        public OuttakeThread(){
+            this.setName("OuttakeThread");
+        }
+
+        @Override
+        public void run(){
+
+        }
     }
 }
