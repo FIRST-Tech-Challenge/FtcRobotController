@@ -65,7 +65,7 @@ public class Move{
      */
     public void MoveRaw(int direction, double power){
         try{
-            currentDirection =direction;
+            currentDirection = direction;
             switch(direction){
                 case 1:
                     leftMotor.setPower(-power);
