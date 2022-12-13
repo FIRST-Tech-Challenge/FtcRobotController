@@ -21,6 +21,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -54,6 +56,10 @@ public class PoleOrientationExample extends LinearOpMode
 {
     OpenCvCamera webcam;
     PoleOrientationAnalysisPipeline pipeline;
+    /* Declare OpMode members. */
+    HardwareSlimbot robot = new HardwareSlimbot();
+    boolean aligning = false;
+    boolean ranging = false;
 
     @Override
     public void runOpMode()
@@ -92,6 +98,8 @@ public class PoleOrientationExample extends LinearOpMode
 
         // Tell telemetry to update faster than the default 250ms period :)
         telemetry.setMsTransmissionInterval(20);
+        /* Declare OpMode members. */
+        robot.init(hardwareMap,false);
 
         waitForStart();
 
@@ -106,19 +114,85 @@ public class PoleOrientationExample extends LinearOpMode
             if(poles.isEmpty())
             {
                 telemetry.addLine("No poles detected");
+                if(aligning) {
+                    robot.stopMotion();
+                    aligning = false;
+                    ranging = false;
+                }
             }
             else
             {
-                for(PoleOrientationAnalysisPipeline.AnalyzedPole pole : poles)
+                ArrayList<PoleOrientationAnalysisPipeline.AnalyzedPole> localPoles = new ArrayList(poles);
+                for(PoleOrientationAnalysisPipeline.AnalyzedPole pole : localPoles)
                 {
-                    telemetry.addLine(String.format("Pole: Center=%s, Central Offset=%f", pole.corners.center.toString(), pole.centralOffset));
+                    telemetry.addLine(String.format("Pole: Center=%s, Central Offset=%f, Centered:%s", pole.corners.center.toString(), pole.centralOffset, pole.poleAligned));
+                    telemetry.addLine(String.format("Pole Width=%f Pole Height=%f", pole.corners.size.width, pole.corners.size.height));
+                    if(!pole.poleAligned){
+                        aligning = true;
+                        rotateToCenterPole(localPoles.get(0));
+                    } else if(aligning) {
+                        robot.stopMotion();
+                        aligning = false;
+                    }
+                    // Get distance from pole
+                    if(pole.poleAligned) {
+                        distanceToPole();
+                        ranging = true;
+                    }
                 }
             }
+            telemetry.addData("Sonar Range (Front)", "%.1f", robot.updateSonarRangeF() );
 
             telemetry.update();
         }
     }
 
+    void distanceToPole() {
+        // Value in inches?
+        double fineDriveSpeed   = 0.10;
+        double rearLeft, rearRight, frontLeft, frontRight;
+        double desiredDistance = 32.0;
+        double range = robot.updateSonarRangeF();
+        double rangeErr = range - desiredDistance;
+        if(abs(rangeErr) > 1.0) {
+            if(rangeErr > 0.0) {
+                // Drive towards the pole.
+                frontLeft  = fineDriveSpeed;
+                frontRight = fineDriveSpeed;
+                rearLeft   = fineDriveSpeed;
+                rearRight  = fineDriveSpeed;
+            } else {
+                // Drive away from the pole.
+                frontLeft  = -fineDriveSpeed;
+                frontRight = -fineDriveSpeed;
+                rearLeft   = -fineDriveSpeed;
+                rearRight  = -fineDriveSpeed;
+            }
+            robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight);
+        } else {
+            robot.stopMotion();
+            ranging = false;
+        }
+    }
+    void rotateToCenterPole(PoleOrientationAnalysisPipeline.AnalyzedPole thePole)
+    {
+        double fineTurnSpeed   = 0.10;
+        double rearLeft, rearRight, frontLeft, frontRight;
+        if(thePole.centralOffset > 0) {
+            // turn to the right.
+            frontLeft  = -fineTurnSpeed;
+            frontRight =  fineTurnSpeed;
+            rearLeft   = -fineTurnSpeed;
+            rearRight  =  fineTurnSpeed;
+        } else {
+            // turn to the left.
+            frontLeft  =  fineTurnSpeed;
+            frontRight = -fineTurnSpeed;
+            rearLeft   =  fineTurnSpeed;
+            rearRight  = -fineTurnSpeed;
+        }
+        robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight);
+    }
     static class PoleOrientationAnalysisPipeline extends OpenCvPipeline
     {
         /*
@@ -165,11 +239,12 @@ public class PoleOrientationExample extends LinearOpMode
         {
             RotatedRect corners;
             double centralOffset;
+            boolean poleAligned = false;
         }
 
         ArrayList<AnalyzedPole> internalPoleList = new ArrayList<>();
         volatile ArrayList<AnalyzedPole> clientPoleList = new ArrayList<>();
-        AnalyzedPole thePole;
+        volatile AnalyzedPole thePole = new AnalyzedPole();
 
         /*
          * Some stuff to handle returning our various buffers
@@ -221,17 +296,19 @@ public class PoleOrientationExample extends LinearOpMode
                 analyzeContour(contour, input);
             }
 
+            clientPoleList = new ArrayList<>();
             if(findThePole())
             {
-                if (thePole.centralOffset <= MAX_POLE_OFFSET)
+                clientPoleList.add(thePole);
+                if (abs(thePole.centralOffset) <= MAX_POLE_OFFSET)
                 {
                     drawRotatedRect(thePole.corners, input, GREEN);
+                    thePole.poleAligned = true;
                 } else {
                     drawRotatedRect(thePole.corners, input, RED);
+                    thePole.poleAligned = false;
                 }
             }
-
-            clientPoleList = new ArrayList<>(internalPoleList);
 
             /*
              * Decide which buffer to send to the viewport
@@ -269,7 +346,7 @@ public class PoleOrientationExample extends LinearOpMode
 
         public ArrayList<AnalyzedPole> getDetectedPoles()
         {
-            return clientPoleList;
+            return new ArrayList<>(clientPoleList);
         }
 
         ArrayList<MatOfPoint> findContours(Mat input)
@@ -310,22 +387,19 @@ public class PoleOrientationExample extends LinearOpMode
         boolean isPole(RotatedRect rect)
         {
             // We can put whatever logic in here we want to determine the poleness
-            return (rect.size.width < rect.size.height);
+            return (rect.size.width > rect.size.height);
+//            return true;
         }
 
         boolean findThePole()
         {
             boolean foundPole = false;
-            double poleArea = 0.0;
-            double thePoleArea = 0.0;
             thePole.centralOffset = 0;
             thePole.corners = new RotatedRect(new double[]{0, 0, 0, 0});
             for(AnalyzedPole aPole : internalPoleList)
             {
-                poleArea = aPole.corners.size.width * aPole.corners.size.height;
-                if(poleArea > thePoleArea)
+                if(aPole.corners.size.height > thePole.corners.size.height)
                 {
-                    thePoleArea = poleArea;
                     thePole = aPole;
                     foundPole = true;
                 }
