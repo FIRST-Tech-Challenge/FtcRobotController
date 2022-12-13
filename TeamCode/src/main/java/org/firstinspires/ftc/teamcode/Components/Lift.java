@@ -36,24 +36,32 @@ public class Lift {
 
     //TODO: RFMotor
     private RFMotor liftMotor;
-    private Claw LC = new Claw();
     private double liftTarget = 0,dfco1 = 40, dfco2 = 3, dfco3 = 0;
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    private double[] coneStack = {460, 370, 240, 120};
+    private double[] coneStack = {380, 270, 170, 80, 0};
     private int stackLevel = 0;
     private double lastStackTime =0;
 
     public Lift() { //constructor
         // hardware map
-        Claw LC = new Claw();
         coefficients.add(dfco1);
+        if(isTeleop){
+            dfco2=0.5;
+        }
+        else{
+            dfco2=3;
+        }
         coefficients.add(dfco2);
         coefficients.add(dfco3);
         liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, false, coefficients, MAX_LIFT_TICKS, 0);
         if (!isTeleop) {
             liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftMotor.setVelToAnalog(.0014);
+        }
+        if(isTeleop){
+            liftMotor.setVelToAnalog(.0005);
         }
         liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         liftMotor.setTICK_BOUNDARY_PADDING(5);
@@ -299,7 +307,7 @@ public class Lift {
     }
 
     public void iterateConeStackDown() {
-        if(op.getRuntime()-lastStackTime>0.2) {
+        if(op.getRuntime()-lastStackTime>0.3) {
             if (stackLevel != 3) {
                 stackLevel++;
             }

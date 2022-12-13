@@ -7,7 +7,6 @@ import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -282,10 +281,10 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void teleOp() {
-        if (progNameLogged == false) {
-            logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
-            progNameLogged = true;
-        }
+//        if (progNameLogged == false) {
+//            logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
+//            progNameLogged = true;
+//        }
         gp.readGamepad(op.gamepad2.y, "gamepad1_y", "Status");
         gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
         gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
@@ -328,10 +327,12 @@ public class PwPRobot extends BasicRobot {
 
         if (op.gamepad2.dpad_down) {
             lift.iterateConeStackDown();
+            liftArm.cycleLiftArmToCylce();
             logger.log("/RobotLogs/GeneralRobot", "Lift,iterateConeStackDown(),Cone Stack Lowered by 1", true);
         }
         if (op.gamepad2.dpad_up) {
             lift.iterateConeStackUp();
+            liftArm.cycleLiftArmToCylce();
             logger.log("/RobotLogs/GeneralRobot", "Lift,iterateConeStackUp(),Cone Stack Raised by 1", true);
         }
         //when not manual lifting, automate lifting
@@ -365,9 +366,9 @@ public class PwPRobot extends BasicRobot {
         }
         roadrun.setWeightedDrivePower(
                 new Pose2d(
-                         abs(vals[1]-0.0001)/-vals[1] *(minBoost[1]+ 0.4*abs(vals[1])),
-                        abs(vals[0]-0.0001)/-vals[0] * (minBoost[0] + 0.4*abs(vals[0])),
-                        abs(vals[2]-0.0001)/-vals[2] * (minBoost[2] + 0.4*abs(vals[2]))
+                         abs(vals[1]-0.0001)/-vals[1] *(minBoost[1]+ 0.5*abs(vals[1])),
+                        abs(vals[0]-0.0001)/-vals[0] * (minBoost[0] + 0.5*abs(vals[0])),
+                        abs(vals[2]-0.0001)/-vals[2] * (minBoost[2] + 0.5*abs(vals[2]))
                 )
         );
         if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
@@ -408,13 +409,8 @@ public class PwPRobot extends BasicRobot {
             }
         }
         claw.closeClaw();
-        if (op.getRuntime() - claw.getLastTime() > .5 && op.getRuntime() - claw.getLastTime() < .8 && CLAW_CLOSED.getStatus()) {
-            if(lift.getLiftPosition()>120&&lift.getLiftPosition()<500) {
-                lift.raiseLiftOffStack();
-            }
-            else {
+        if (op.getRuntime() - claw.getLastTime() > .4 && op.getRuntime() - claw.getLastTime() < .7 && CLAW_CLOSED.getStatus()) {
                 liftArm.raiseLiftArmToOuttake();
-            }
         }
 
 
@@ -422,15 +418,12 @@ public class PwPRobot extends BasicRobot {
 
         //will only close when detect cone
         //claw.closeClaw
-            op.telemetry.addData("imuangle", imu.updateAngle()*180/PI);
             gp.getSequence();
-            op.telemetry.addData("stacklevel", lift.getStackLevel());
             roadrun.update();
             liftArm.updateLiftArmStates();
             claw.updateClawStates();
             lift.updateLiftStates();
-            seq = gp.getSequence();
-            logger.log("/RobotLogs/GeneralRobot", seq.toString(), false);
+//            logger.log("/RobotLogs/GeneralRobot", seq.toString(), false);
             //USE THE RFGAMEPAD FUNCTION CALLED getSequence(), WILL RETURN ARRAYLIST OF INTS:
             //1 = down, 2 = right, 3 = up, 4 = left
 //        }

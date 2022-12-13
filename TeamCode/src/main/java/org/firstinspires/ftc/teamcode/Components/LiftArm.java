@@ -13,10 +13,10 @@ public class LiftArm {
 
     private RFDualServo liftArmServo;
 
-    private final double LIFT_ARM_INTAKE_POS = 0.74;
-    private final double LIFT_ARM_CYCLE_POS = 0.69;
+    private final double LIFT_ARM_INTAKE_POS = 1;
+    private final double LIFT_ARM_CYCLE_POS = 0.93;
 
-    private final double LIFT_ARM_OUTTAKE_POS = 0.0;
+    private final double LIFT_ARM_OUTTAKE_POS = 0.335;
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
@@ -118,7 +118,7 @@ public class LiftArm {
         }
     }
     public void cycleLiftArmToCylce(){
-        if (ARM_OUTTAKE.status&&liftPos != LIFT_ARM_CYCLE_POS) {
+        if (liftPos != LIFT_ARM_CYCLE_POS) {
 
             //set servo position
             liftArmServo.setPositions(LIFT_ARM_CYCLE_POS);

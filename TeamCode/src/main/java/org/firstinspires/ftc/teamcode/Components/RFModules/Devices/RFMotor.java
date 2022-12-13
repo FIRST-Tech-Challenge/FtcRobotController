@@ -105,6 +105,9 @@ public class RFMotor extends Motor {
         logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
                 "Function               Action");
     }
+    public void setVelToAnalog(double velToAnalog){
+        VEL_TO_ANALOG = velToAnalog;
+    }
 
     public void setPosition(double targetpos) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

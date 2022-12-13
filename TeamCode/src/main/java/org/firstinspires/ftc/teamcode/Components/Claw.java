@@ -41,7 +41,7 @@ public class Claw {
     private double lastOpenTime =-10;
     private double clawPos = 0.45;
     //temporary
-    public final double CLAW_SERVO_SWITCH_TIME = 0.9;
+    public double CLAW_SERVO_SWITCH_TIME = 0.9;
     boolean shouldUseClawSensor = true;
 
     //States:
@@ -97,8 +97,12 @@ public class Claw {
         else{
             claw.setPosition(CLAW_OPEN_POS);
             CLAW_OPEN.setStatus(true);
+            CLAW_SERVO_SWITCH_TIME = 0.3;
         }
         shouldUseClawSensor = true;
+    }
+    public void setClawFlipTime(double flipTime){
+        CLAW_SERVO_SWITCH_TIME = flipTime;
     }
 
     public void updateClawStates() {

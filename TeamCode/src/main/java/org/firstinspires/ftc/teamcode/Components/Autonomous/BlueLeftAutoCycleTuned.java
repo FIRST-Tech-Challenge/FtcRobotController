@@ -3,13 +3,10 @@ package org.firstinspires.ftc.teamcode.Components.Autonomous;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
-
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -138,7 +135,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.delay(1.5);
             robot.wideClaw();
             robot.delay(0.2);
-            robot.liftToPosition((int) stackPos[0] - 60);
+            robot.liftToPosition((int) stackPos[0]);
             robot.followTrajectorySequenceAsync(pickupTrajectory);
             robot.waitForFinish();
             robot.closeClaw(false);
@@ -156,7 +153,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
                 robot.delay(1.7);
                 robot.wideClaw();
                 robot.delay(0.6);
-                robot.liftToPosition((int) stackPos[i+1] - 60);
+                robot.liftToPosition((int) stackPos[i+1]);
                 robot.delay(0.2);
                 robot.followTrajectorySequenceAsync(pickupTrajectory);
                 robot.waitForFinish();
