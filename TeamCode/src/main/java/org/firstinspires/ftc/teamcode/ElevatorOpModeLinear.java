@@ -41,7 +41,7 @@ import org.firstinspires.ftc.teamcode.hardware.Elevator;
 
 
 @TeleOp(name = "Basic: Omni Linear OpMode", group = "Linear Opmode")
-@Disabled
+//@Disabled
 public class ElevatorOpModeLinear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
@@ -54,7 +54,7 @@ public class ElevatorOpModeLinear extends LinearOpMode {
 
         elevator = new Elevator(hardwareMap, telemetry);
         double power;
-        boolean bButton = false;
+        boolean rightBumper = false;
         boolean yButton = false;
         elevator.initMotors();
 
@@ -69,13 +69,23 @@ public class ElevatorOpModeLinear extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-            power = -gamepad2.left_stick_y;
-             elevator.setElevatorMotorPower(power);
+            if (gamepad2.b){
+                elevator.setElevatorPosition(elevator.firstFloor);
+            }
+            if (gamepad2.a){
+                elevator.setElevatorPosition(elevator.secondFloor);
+            }
+            if (gamepad2.x){
+                elevator.setElevatorPosition(elevator.thirdFloor);
+            }
+            if (gamepad2.dpad_down){
+                elevator.setElevatorPosition(elevator.groundFloor);
+            }
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("gamepad2.b: ", gamepad2.b);
-            telemetry.addData("bButton: ", bButton);
-            if (bButton == false && gamepad2.b) {
+            telemetry.addData("rightBumper: ", rightBumper);
+            if (rightBumper == false && gamepad2.right_bumper) {
 //                if
 //                elevator.getLeftServo().setPosition(1);
 //                elevator.getRightServo().setPosition(0);
@@ -85,7 +95,7 @@ public class ElevatorOpModeLinear extends LinearOpMode {
             telemetry.addData("clawstate ", elevator.clawState);
             telemetry.update();
 
-            bButton = gamepad2.b;
+            rightBumper = gamepad2.right_bumper;
 
             if (yButton == false && gamepad2.y) {
                 elevator.moveMainServo();

@@ -30,6 +30,11 @@ public class Elevator {
 
     private Telemetry telemetry;
 
+    public final int firstFloor = 200;
+    public final int secondFloor = 400;
+    public final int thirdFloor = 600;
+    public final int groundFloor = 0;
+
     private static double mainServoPosition;
     private static double handsOffset;
     public static final double HANDS_MAX_POSITION = 0.5;
@@ -95,19 +100,24 @@ public class Elevator {
     //    telemetry.update();
     }
 
-    public void setElevatorMotorPower(double power){
+    public void setElevatorMotorPower(double power) {
         int currentPosition = elevatorMotor.getCurrentPosition();
         telemetry.addData("position", currentPosition);
         telemetry.addData("power in function", power);
-        if ((currentPosition >= MAX_ELEVATOR_POSITION && power>0) || (currentPosition <0 && power<0) ){
+        if ((currentPosition >= MAX_ELEVATOR_POSITION && power > 0) || (currentPosition < 0 && power < 0)) {
             elevatorMotor.setPower(0);
-        }
-        else {
+        } else {
             elevatorMotor.setPower(power * ELEVATOR_MOTOR_SPEED);
         }
 //        if (currentPosition <0 && power<0)
 //            elevatorMotor.setPower(0);
 //        telemetry.addData("position", currentPosition);
+    }
+    public void setElevatorPosition(int elevetorPosition){
+        elevatorMotor.setTargetPosition(elevetorPosition);
+        elevatorMotor.setPower(ELEVATOR_MOTOR_SPEED);
+        elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     public void moveHands(int direction) {
