@@ -2,6 +2,7 @@
 
 package org.firstinspires.ftc.teamcodekt.util
 
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 
@@ -21,7 +22,8 @@ import kotlin.math.absoluteValue
  *
  * @return the number of inches in the given number of centimeters
  */
-fun Number.toIn() = this.toDouble() / 2.54
+@JvmOverloads
+fun Number.toIn(from: DistanceUnit = DistanceUnit.CM): Double = from.toIn(this.toDouble())
 
 /**
  * Simple utility function to convert from inches to cm without having to type out a
@@ -39,7 +41,7 @@ fun Number.toIn() = this.toDouble() / 2.54
  *
  * @return the number of centimeters in the given number of inches
  */
-fun Number.toCm() = this.toDouble() * 2.54
+fun Number.toCm(from: DistanceUnit = DistanceUnit.INCHES): Double = from.toIn(this.toDouble()) * 2.54
 
 /**
  * Simple utility function to convert from degrees to radians without having to type out a
@@ -57,7 +59,7 @@ fun Number.toCm() = this.toDouble() * 2.54
  *
  * @return the number of radians in the given number of degrees
  */
-fun Number.toRad() = Math.toRadians(this.toDouble())
+fun Number.toRad(from: AngleUnit = AngleUnit.DEGREES) = from.toDegrees(this.toDouble()) * PI / 180
 
 /**
  * Simple utility function to return a default value if the given double is NaN

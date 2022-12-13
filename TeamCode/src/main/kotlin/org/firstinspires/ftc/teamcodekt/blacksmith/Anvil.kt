@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.*
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder
+import org.firstinspires.ftc.teamcodekt.util.AngleUnit
+import org.firstinspires.ftc.teamcodekt.util.DistanceUnit
 import org.firstinspires.ftc.teamcodekt.util.toIn
 import org.firstinspires.ftc.teamcodekt.util.toRad
 
@@ -21,19 +23,20 @@ import org.firstinspires.ftc.teamcodekt.util.toRad
  *
  * Usage example:
  * ```kotlin
- * // In the `runOpMode` method:
- * val startPose = Pose2d(91.toIn(), (-159).toIn(), 90.toRad())
- * val startTraj = goForwardAndRaiseLift(startPose)
+ * override fun runOpMode() {
+ *     val startPose = Pose2d(91.toIn(), (-159).toIn(), 90.toRad())
+ *     val startTraj = goForwardAndRaiseLift(startPose)
  *
- * // Starts auto + sets drive's pose estimate to the startPose
- * // Uses `drive.followTrajectorySequenceAsync` to run the trajectory in parallel,
- * // so it should be updated every loop (Scheduler recommended for this).
- * Anvil.startAsyncAutoWith(startTraj)
+ *     // Starts auto + sets drive's pose estimate to the startPose
+ *     // Uses `drive.followTrajectorySequenceAsync` to run the trajectory in parallel,
+ *     // so it should be updated every loop (Scheduler recommended for this).
+ *     Anvil.startAsyncAutoWith(startTraj)
  *
- * // Of course, you don't need to use Scheduler, but it's cool
- * Scheduler.start(this) {
- *     drive.update()
- *     // Other PID stuff and such...
+ *     // Of course, you don't need to use Scheduler, but it's cool
+ *     Scheduler.start(this) {
+ *         drive.update()
+ *         // Other PID stuff and such...
+ *     }
  * }
  *
  * var cycles = 0
@@ -96,7 +99,7 @@ import org.firstinspires.ftc.teamcodekt.util.toRad
  * @see Scheduler
  * @see TrajectorySequenceBuilder
  */
-class Anvil private constructor(val drive: SampleMecanumDrive, private val startPose: Pose2d) {
+class Anvil(val drive: SampleMecanumDrive, private val startPose: Pose2d) {
     companion object {
         /**
          * Creates a new [Anvil] instance with the given [drive] and [startPose]. This is the entry
@@ -109,6 +112,11 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
          *         forward(24) // Note there are no '.'s, this uses
          *         turn(90) // Kotlin's 'lambda with reciever' syntax
          *     }
+         *
+         * fun trajectory2(): Anvil =
+         *     Anvil.formTrajectory(drive, startPose)
+         *         .forward(24) // Also usable without a lambda
+         *         .turn(90) // (hi mom)
          * ```
          *
          * @param drive The [SampleMecanumDrive] to use for the trajectory
@@ -118,36 +126,12 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
          * @return The [Anvil] instance
          */
         @JvmStatic
-        fun formTrajectory(
+        @JvmOverloads
+        inline fun formTrajectory(
             drive: SampleMecanumDrive,
             startPose: Pose2d,
-            builder: Anvil.() -> Anvil
-        ): Anvil {
-            return builder(Anvil(drive, startPose))
-        }
-
-        /**
-         * A version of the above which simply returns the [Anvil] instance without providing
-         * a builder lambda.
-         *
-         * Usage example:
-         * ```kotlin
-         * fun trajectory1(): Anvil =
-         *     Anvil.formTrajectory(drive, startPose)
-         *         .forward(24)
-         *         .turn(90)
-         * ```
-         *
-         * @param drive The [SampleMecanumDrive] to use for the trajectory
-         * @param startPose The starting pose of the trajectory
-         *
-         * @return The [Anvil] instance
-         */
-        @JvmStatic
-        fun formTrajectory(
-            drive: SampleMecanumDrive,
-            startPose: Pose2d,
-        ) = Anvil(drive, startPose)
+            builder: Anvil.() -> Anvil = { this }
+        ): Anvil = builder(Anvil(drive, startPose))
 
         /**
          * Starts the given Anvil instance asynchronously. This is the entry point for the auto.
@@ -174,6 +158,20 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
             builder.setPoseEstimate().runAsync()
         }
 
+        /**
+         * Allows you to change the units of distance measurements in the builder API.
+         *
+         * Defaults to [DistanceUnit.INCHES]
+         */
+        var distanceUnit = DistanceUnit.INCHES
+
+        /**
+         * Allows you to change the units of angle measurements in the builder API.
+         *
+         * Defaults to [AngleUnit.RADIANS]
+         */
+        var angleUnit = AngleUnit.RADIANS
+
         // Private coroutine scope used for async trajectory creation, dw about it
         private val builderScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     }
@@ -181,13 +179,11 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
     /**
      * The [TrajectorySequenceBuilder] instance used to build the trajectory.
      */
-    val trajectorySequenceBuilder = TrajectorySequenceBuilder(
-        startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT, MAX_ANG_VEL, MAX_ANG_ACCEL
-    )
+    val trajectorySequenceBuilder = drive.trajectorySequenceBuilder(startPose)!!
 
     /**
-     * The end position of the trajectory. This should NOT be called EITHER before the trajectory is
-     * finished building, or unless the end pose was set manually.
+     * The end position of the trajectory. This should NOT be accessed EITHER before the trajectory
+     * is finished building, or unless the end pose was set manually.
      *
      * Intended for fine corrections by tricking the robot into thinking it's at a different position
      * to combat constant drift.
@@ -209,21 +205,21 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
      * Maps to the [TrajectorySequenceBuilder.forward] method.
      */
     fun forward(distance: Double) = this.apply {
-        trajectorySequenceBuilder.forward(distance.toIn())
+        trajectorySequenceBuilder.forward(distance.toIn(distanceUnit))
     }
 
     /**
      * Maps to the [TrajectorySequenceBuilder.back] method.
      */
     fun back(distance: Double) = this.apply {
-        trajectorySequenceBuilder.back(distance.toIn())
+        trajectorySequenceBuilder.back(distance.toIn(distanceUnit))
     }
 
     /**
      * Maps to the [TrajectorySequenceBuilder.turn] method.
      */
     fun turn(angle: Double) = this.apply {
-        trajectorySequenceBuilder.turn(angle.toRad())
+        trajectorySequenceBuilder.turn(angle.toRad(angleUnit))
     }
 
     /**
@@ -232,7 +228,7 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
      * Note that it internally creates the [Vector2d] for you.
      */
     fun splineTo(x: Double, y: Double, heading: Double) = this.apply {
-        trajectorySequenceBuilder.splineTo(Vector2d(x.toIn(), y.toIn()), heading.toRad())
+        trajectorySequenceBuilder.splineTo(Vector2d(x.toIn(distanceUnit), y.toIn(distanceUnit)), heading.toRad(angleUnit))
     }
 
     /**
@@ -265,7 +261,7 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
      *    doStuff() // Note no '.'s
      * }
      */
-    fun inReverse(pathsToDoInReverse: Anvil.() -> Unit) = this.apply {
+    inline fun inReverse(pathsToDoInReverse: Anvil.() -> Unit) = this.apply {
         setReversed(true)
         pathsToDoInReverse(this)
         setReversed(false)
@@ -281,7 +277,7 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
      *     splineToLinearHeading(stuff) // Again, no '.'s
      * }
      */
-    fun withRawBuilder(builder: TrajectorySequenceBuilder.() -> Unit) = this.apply {
+    inline fun withRawBuilder(builder: TrajectorySequenceBuilder.() -> Unit) = this.apply {
         builder(trajectorySequenceBuilder)
     }
 
@@ -323,8 +319,8 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
      *     // ...
      */
     @JvmOverloads
-    fun thenRunAsync(
-        nextTrajectory: (Pose2d) -> Anvil,
+    inline fun thenRunAsync(
+        crossinline nextTrajectory: (Pose2d) -> Anvil,
         startPose: Pose2d = endPose
     ) = this.addTemporalMarker {
         nextTrajectory(startPose).runAsync()
@@ -351,8 +347,8 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
      *        .thenRUnAsync(::park)
      */
     @JvmOverloads
-    fun thenRunAsyncIf(
-        nextTrajectory: (Pose2d) -> Anvil,
+    inline fun thenRunAsyncIf(
+        crossinline nextTrajectory: (Pose2d) -> Anvil,
         startPose: Pose2d = endPose,
         predicate: () -> Boolean
     ) = this.apply {
@@ -369,16 +365,19 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
      * A key (of [Any] type) is required to identify the trajectory. Using a key allows you to
      * preform multiple trajectories concurrently, and conditionally execute one later.
      *
+     * *This should be called as early in the trajectory sequence as possible to maximize
+     * the concurrent building time.*
+     *
      * Usage example:
      * ```kotlin
      * fun goToPole(startPose: Pose2d): Anvil =
      *     Anvil.formTrajectory(drive, startPose)
      *        .preform(key = 0, ::depositCone)
      *
-     *        .forward(24.0)
-     *        .turn(90.0)
+     *        .forward(24.0) // The 'depositCone' trajectory is being built concurrently
+     *        .turn(90.0) // while these are being executed
      *
-     *        .thenRunAsyncIf(key = 0)
+     *        .thenRunAsyncIf(key = 0) // This will run after the both goes forwards and turns
      */
     @JvmOverloads
     fun preform(
@@ -406,7 +405,7 @@ class Anvil private constructor(val drive: SampleMecanumDrive, private val start
     /**
      * Love child of the above method and the other `thenRunAsyncIf`.
      */
-    fun thenRunAsyncIf(key: Any, predicate: () -> Boolean) = this.apply {
+    inline fun thenRunAsyncIf(key: Any, predicate: () -> Boolean) = this.apply {
         if (predicate()) {
             thenRunAsync(key)
         }
