@@ -143,7 +143,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double rightFrontPower;
             double rightBackPower;
 
-            if (Math.abs(left_y) < 0.2) {
+            if (Math.asin(left_y) < Math.PI/6) {
                 leftFrontPower = -left_x * 0.8 - strafe_side * 0.6;
                 rightFrontPower = left_x * 0.8 + strafe_side * 0.6;
                 leftBackPower = left_x * 0.8 - strafe_side * 0.6;
