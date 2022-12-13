@@ -51,6 +51,8 @@ public abstract class BaseAuto extends LinearOpMode {
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
         //webCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        //This is here so it starts recog after start
+        waitForStart();
 
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -82,7 +84,7 @@ public abstract class BaseAuto extends LinearOpMode {
         currentSide = coneImgPipeline.getSleeveSide();
         webCam.closeCameraDevice();
 
-        waitForStart();
+
         telemetry.addData("Message : ", coneImgPipeline.getDetectMsg());
         telemetry.addData("Sleeve: ", currentSide);
         telemetry.update();
@@ -121,7 +123,7 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        hdw.moveXAxis(24.0, -0.3);
+        hdw.moveXAxis(-24.0, -0.3);
         hdw.moveYAxis( 36.0, 0.3);
     }
 

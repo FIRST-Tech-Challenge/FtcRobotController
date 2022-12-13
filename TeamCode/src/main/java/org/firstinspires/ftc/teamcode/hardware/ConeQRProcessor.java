@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import org.opencv.core.Core;
+import  org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
@@ -26,7 +26,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
     double meanVal =0.0;
 
     //Adjustable parameters here.
-    double sleev1Peak = 30;
+    double sleev1Peak = 50;
     double sleev2Peak = 100.0 ;
     double sleev3Peak = 150.0;
 
@@ -92,7 +92,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
         if ( !decoded) {
             startMills  = System.currentTimeMillis();
             Mat grey = new Mat();
-            Imgproc.cvtColor(input, grey, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);
             qrCode = decoder.detectAndDecodeCurved(grey, points);
             endMills  = System.currentTimeMillis();
             System.out.println(points.dump());
@@ -117,7 +117,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                     //get HSV
                     Mat hsvImg = new Mat();
                     hsvImg.create(croppedQR.size(), CvType.CV_8U);
-                    Imgproc.cvtColor( croppedQR, hsvImg, Imgproc.COLOR_BGR2HSV);
+                    Imgproc.cvtColor( croppedQR, hsvImg, Imgproc.COLOR_RGB2HSV);
 
                     //Remove black part.
                     Mat darkTrd = new Mat();
@@ -134,7 +134,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                     //Imgcodecs.imwrite("c:/sdcard/FIRST/crop-removed.jpg",result );
 
                     Mat hsvResult = new Mat();
-                    Imgproc.cvtColor(result, hsvResult, Imgproc.COLOR_BGR2HSV);
+                    Imgproc.cvtColor(result, hsvResult, Imgproc.COLOR_RGB2HSV);
 
                     //Calculate the Hue average
                     meanVal = calHueAvg(hsvResult);
@@ -143,7 +143,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
 
                     //Calculate the diff to peak
                     double diff1 = Math.abs(meanVal - sleev1Peak);
-                    double diff2 = Math.abs(meanVal - sleev2Peak);
+                    double  diff2 = Math.abs(meanVal - sleev2Peak);
                     double diff3 = Math.abs(meanVal - sleev3Peak);
 
                     double smallest = Math.min(diff1, Math.min(diff2, diff3));
