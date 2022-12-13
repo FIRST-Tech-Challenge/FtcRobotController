@@ -6,7 +6,7 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 /**
- * Simple utility function to convert from cm to inces without having to type out a
+ * Simple utility function to convert from cm to inches without having to type out a
  * long function name (and without having to do `<Int>.toDouble()` in Kotlin)
  *
  * Kotlin usage examples:
@@ -22,6 +22,24 @@ import kotlin.math.absoluteValue
  * @return the number of inches in the given number of centimeters
  */
 fun Number.toIn() = this.toDouble() / 2.54
+
+/**
+ * Simple utility function to convert from inches to cm without having to type out a
+ * long function name (and without having to do `<Int>.toDouble()` in Kotlin)
+ *
+ * Kotlin usage examples:
+ * ```
+ * val cm = 30.toCm()
+ * ```
+ *
+ * Java usage examples:
+ * ```java
+ * double cm = MU.toCm(30);
+ * ```
+ *
+ * @return the number of centimeters in the given number of inches
+ */
+fun Number.toCm() = this.toDouble() * 2.54
 
 /**
  * Simple utility function to convert from degrees to radians without having to type out a

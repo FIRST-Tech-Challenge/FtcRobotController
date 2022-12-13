@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.chains.BackwardsDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.ForwardsDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
+import org.firstinspires.ftc.teamcodekt.util.LateInitVal
 
 abstract class RougeBaseTele : LinearOpMode() {
     protected val driver   = ReforgedGamepad(gamepad1)
@@ -16,13 +17,15 @@ abstract class RougeBaseTele : LinearOpMode() {
 
     protected var powerMulti  = 0.0
 
-    protected val bot = createTeleOpBotComponents(hardwareMap)
+    protected var bot by LateInitVal<TeleOpBotComponents>()
 
     protected val intakeChain = IntakeChain(bot, 200)
     protected val forwardsDepositChain = ForwardsDepositChain(bot, 500)
     protected val backwardsDepositChain = BackwardsDepositChain(bot, 500)
 
     override fun runOpMode() = with(bot) {
+        bot = createTeleOpBotComponents(hardwareMap, VoltageScaler(hardwareMap))
+
         waitForStart()
 
         Scheduler.beforeEach {
