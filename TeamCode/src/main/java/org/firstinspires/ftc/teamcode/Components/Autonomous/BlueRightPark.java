@@ -34,16 +34,16 @@ public class BlueRightPark extends LinearOpMode {
         TrajectorySequence parkTrajectory = robot.roadrun.trajectorySequenceBuilder(startPose)
                 .setReversed(true)
                 .lineTo(new Vector2d(-36, 62.25))
-                .lineTo(new Vector2d(-36, 36))
+                .lineTo(new Vector2d(-36, 34))
                 .build();
-        Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,36,toRadians(90)))
-                .lineTo(new Vector2d(-12, 36))
+        Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,34,toRadians(90)))
+                .lineTo(new Vector2d(-12, 34))
                 .build();
 //        Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,36,toRadians(90)))
 //                .lineToLinearHeading(new Pose2d(-36,36, toRadians(90)))
 //                .build();
-        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,36,toRadians(90)))
-                .lineTo(new Vector2d(-57, 36))
+        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,34,toRadians(90)))
+                .lineTo(new Vector2d(-57, 34))
                 .build();
         while (!isStarted()) {
             telemetry.addData("pos", robot.cv.getPosition());

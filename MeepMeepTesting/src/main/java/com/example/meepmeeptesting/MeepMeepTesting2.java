@@ -25,13 +25,13 @@ public class MeepMeepTesting2 {
                                 drive.trajectorySequenceBuilder(new Pose2d(42, 63.25, toRadians(90)))
                                         .setReversed(true).splineToSplineHeading(new Pose2d(38, 51, toRadians(70)), toRadians(250))
                                         .splineToSplineHeading(new Pose2d(34, 17, toRadians(90)), toRadians(270))
-                                        .splineToSplineHeading(new Pose2d(30,8, toRadians(50)), toRadians(230))
+                                        .splineToSplineHeading(new Pose2d(31.5,10, toRadians(50)), toRadians(230))
 
                                         .setReversed(false)
-                                        .splineToSplineHeading(new Pose2d(45, 12, Math.toRadians(0)), Math.toRadians(0))
-                                        .splineToSplineHeading(new Pose2d(63, 12, Math.toRadians(0)), Math.toRadians(0))
+                                        .splineToSplineHeading(new Pose2d(45, 13, Math.toRadians(0)), Math.toRadians(0))
+                                        .splineToSplineHeading(new Pose2d(63, 14, Math.toRadians(0)), Math.toRadians(0))
                                         .setReversed(true)
-                                        .splineToSplineHeading(new Pose2d(30.5, 6.5, Math.toRadians(40)), Math.toRadians(220))
+                                        .splineToSplineHeading(new Pose2d(33.5, 8, Math.toRadians(40)), Math.toRadians(220))
 
 //                                .setReversed(false)
 //                                .splineToSplineHeading(new Pose2d(45, 12, Math.toRadians(0)), Math.toRadians(0))
