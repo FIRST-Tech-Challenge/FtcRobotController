@@ -62,14 +62,16 @@ public class ColorDetectPipeline extends OpenCvPipeline {
     Rect getBiggestContourBoundingBox(List<MatOfPoint> contours) {
         return Imgproc.boundingRect(getBiggestContour(contours));
     }
+
     @Override
     public Mat processFrame(Mat input) throws IllegalArgumentException {
-        isRunning = true;
-        if(input == null) {
-            throw new IllegalArgumentException("Input cannot be null");
-        }
-        return input;
+
+        if(input == null) { throw new IllegalArgumentException("Input cannot be null"); }
+        int[] ca = {43, 255, 255};
+        int[] co = {50, 25, 200};
+        return processFrameWithRange(input, ca, co);
     }
+
     public Mat processFrameWithRange(Mat input, int[] colorTarget, int[] colorTolerance) {
         isRunning = true;
         if(input == null) {
