@@ -96,7 +96,7 @@ public class TeleopMeet1 extends LinearOpMode {
             }
 
             /** Slider **/
-            double vSliderPower =  gamepad2.left_stick_y * 2;
+            double vSliderPower =  gamepad2.left_stick_y;
             double hSliderPower = -gamepad2.right_stick_x * 0.75;
             double vsliderPos = robot.vSlider.getCurrentPosition();
 

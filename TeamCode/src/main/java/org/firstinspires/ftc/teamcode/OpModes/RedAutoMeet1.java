@@ -178,15 +178,15 @@ public class RedAutoMeet1 extends LinearOpMode {
 
     private void Park(int location) {
         if (location == 1) {
-            robot.DriveToPosition(0.3, 75, -75);
+            robot.DriveToPosition(0.3, 75, -70);
         }
 
         if (location == 2) {
-            robot.DriveToPosition(0.3, 0, -75);
+            robot.DriveToPosition(0.3, 0, -70);
         }
 
         if (location == 3) {
-            robot.DriveToPosition(0.3, -75, -75);
+            robot.DriveToPosition(0.3, -75, -70);
 
         }
     }
