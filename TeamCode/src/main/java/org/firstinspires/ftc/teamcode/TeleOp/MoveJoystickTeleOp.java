@@ -33,6 +33,9 @@ public class MoveJoystickTeleOp extends OpMode {
             telemetry.addLine("gamepad1.left_stick_x:" + gamepad1.left_stick_x);
             telemetry.addLine("\ngamepad1.left_stick_y:" + gamepad1.left_stick_y);
             telemetry.update();
+
+
+            
         }
     }
 }
