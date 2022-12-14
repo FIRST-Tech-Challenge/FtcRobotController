@@ -131,7 +131,9 @@ class Anvil(val drive: SampleMecanumDrive, private val startPose: Pose2d) {
             drive: SampleMecanumDrive,
             startPose: Pose2d,
             builder: Anvil.() -> Anvil = { this }
-        ): Anvil = builder(Anvil(drive, startPose))
+        ): Anvil {
+            return builder( Anvil(drive, startPose) )
+        }
 
         /**
          * Starts the given Anvil instance asynchronously. This is the entry point for the auto.
@@ -248,14 +250,7 @@ class Anvil(val drive: SampleMecanumDrive, private val startPose: Pose2d) {
     /**
      * Uses a 'lambda with receiver' to make running a path in reverse cleaner.
      *
-     * Equivalent to:
-     * ```kotlin
-     * .setReversed(true)
-     * .doStuff()
-     * .setReversed(false)
-     * ```
-     *
-     * Acutal usage example:
+     * Usage example:
      * ```kotlin
      * .inReverse {
      *    doStuff() // Note no '.'s
@@ -323,7 +318,7 @@ class Anvil(val drive: SampleMecanumDrive, private val startPose: Pose2d) {
         crossinline nextTrajectory: (Pose2d) -> Anvil,
         startPose: Pose2d = endPose
     ) = this.addTemporalMarker {
-        nextTrajectory(startPose).runAsync()
+        thenRunAsyncIf(nextTrajectory, startPose) { true }
     }
 
     /**
@@ -350,10 +345,10 @@ class Anvil(val drive: SampleMecanumDrive, private val startPose: Pose2d) {
     inline fun thenRunAsyncIf(
         crossinline nextTrajectory: (Pose2d) -> Anvil,
         startPose: Pose2d = endPose,
-        predicate: () -> Boolean
-    ) = this.apply {
+        crossinline predicate: () -> Boolean
+    ) = this.addTemporalMarker {
         if (predicate()) {
-            thenRunAsync(nextTrajectory, startPose)
+            nextTrajectory(startPose).runAsync()
         }
     }
 
@@ -385,7 +380,7 @@ class Anvil(val drive: SampleMecanumDrive, private val startPose: Pose2d) {
         nextTrajectory: (Pose2d) -> Anvil,
         startPose: Pose2d = endPose
     ) = this.apply {
-        preformedTrajectories[key] = builderScope.async { nextTrajectory(startPose).finish() }
+        preformedTrajectories[key] = builderScope.async { nextTrajectory(startPose).build() }
     }
 
     /**
@@ -394,34 +389,40 @@ class Anvil(val drive: SampleMecanumDrive, private val startPose: Pose2d) {
      * already created by the time the trajectory reaches this point (in the actual trajectory,
      * not just in the builder).*
      */
-    fun thenRunAsync(key: Any) = this.addTemporalMarker {
-        drive.followTrajectorySequenceAsync(
-            runBlocking {
-                preformedTrajectories[key]?.await()
-            }
-        )
+    fun thenRunAsync(
+        key: Any
+    ) = this.addTemporalMarker {
+        thenRunAsyncIf(key) { true }
     }
 
     /**
      * Love child of the above method and the other `thenRunAsyncIf`.
      */
-    inline fun thenRunAsyncIf(key: Any, predicate: () -> Boolean) = this.apply {
-        if (predicate()) {
-            thenRunAsync(key)
+    fun thenRunAsyncIf(
+        key: Any,
+        predicate: () -> Boolean
+    ) = this.addTemporalMarker {
+        if (key !in preformedTrajectories) {
+            throw IllegalArgumentException("No preformed trajectory with key '$key'")
         }
+
+        if (predicate())
+            drive.followTrajectorySequenceAsync(
+                runBlocking { preformedTrajectories[key]?.await() }
+            )
     }
 
     /**
      * Maps to the [TrajectorySequenceBuilder.build] method, and returns the resulting
      * [TrajectorySequence].
      */
-    fun finish(): TrajectorySequence = trajectorySequenceBuilder.build()
+    fun build(): TrajectorySequence = trajectorySequenceBuilder.build()
 
     /**
      * Builds the [Anvil] instance into a [TrajectorySequence], and then runs it asynchronously
      * with the given [SampleMecanumDrive]
      */
-    fun runAsync(): Unit = drive.followTrajectorySequenceAsync(finish())
+    fun runAsync(): Unit = drive.followTrajectorySequenceAsync(build())
 
     // Just used for the "static" 'startAsyncAutoWith' function
     private fun setPoseEstimate() = this.apply {

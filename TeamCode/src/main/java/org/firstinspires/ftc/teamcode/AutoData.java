@@ -38,3 +38,4 @@ public class AutoData {
     public static int AUTO_INTAKE_LIFT_HEIGHT_4 = 112;
     public static int AUTO_INTAKE_LIFT_HEIGHT_5 = 0;
 }
+

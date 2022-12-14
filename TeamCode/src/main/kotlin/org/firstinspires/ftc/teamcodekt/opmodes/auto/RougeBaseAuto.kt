@@ -56,7 +56,7 @@ abstract class RougeBaseAuto : LinearOpMode() {
             }
 
             override fun onError(errorCode: Int) {
-//                throw new RuntimeException("Error opening camera! Error code " + errorCode);
+                throw RuntimeException("Error opening camera! Error code $errorCode");
             }
         })
     }
@@ -117,10 +117,6 @@ abstract class RougeBaseAuto : LinearOpMode() {
 
             return pos
         }
-
-    private fun toCentimeters(inches: Double): Double {
-        return inches * 2.54
-    }
 
     companion object {
         // Lens intrinsics
