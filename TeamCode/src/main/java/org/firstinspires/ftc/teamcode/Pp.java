@@ -27,7 +27,7 @@ class Ppbot{
         FLeft = maps.dcMotor.get("fl");
         FRight = maps.dcMotor.get("fr");
         Take1 = maps.servo.get("grabber");
-        //Take2 = maps.servo.get("grabber2");
+        Take2 = maps.servo.get("grabber2");
         Slider = maps.dcMotor.get("slider");
 
         BLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -41,8 +41,8 @@ class Ppbot{
         FLeft.setPower(0.0);
         FRight.setPower(0.0);
         Slider.setPower(0.0);
-        //Take1.setPosition(0.35); // change these 2 later when we figure out the servo positions
-        //Take2.setPosition(0.0);
+        Take1.setPosition(0.53); // change these 2 later when we figure out the servo positions
+        Take2.setPosition(0);
 
         BLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -144,9 +144,11 @@ public class Pp extends LinearOpMode{
                 closed = false;
             }
             if (closed) {
-                robot.Take1.setPosition(0);
+                robot.Take1.setPosition(0.53);
+                robot.Take2.setPosition(0);
             } else {
-                robot.Take1.setPosition(0.35);
+                robot.Take1.setPosition(0);
+                robot.Take2.setPosition(0.53);
             }
             //set power and position for grabby and shit
             robot.Slider.setPower(Slidepos);
@@ -161,7 +163,7 @@ public class Pp extends LinearOpMode{
             telemetry.addData("x","%.2f", x);
             telemetry.addData("y","%.2f", y);
             telemetry.addData("servo1","%.2f", robot.Take1.getPosition());
-            //telemetry.addData("servo2","%.2f", robot.Take2.getPosition()); // REMEMBER TO CONFIGURE THIS ON PHONE
+            telemetry.addData("servo2","%.2f", robot.Take2.getPosition()); // REMEMBER TO CONFIGURE THIS ON PHONE
             telemetry.update();
 
             sleep(50);

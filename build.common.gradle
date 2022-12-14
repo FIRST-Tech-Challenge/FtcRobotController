@@ -125,5 +125,9 @@ repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
+    repositories {
+        // ...
+        jcenter()
+    }
 }
 
