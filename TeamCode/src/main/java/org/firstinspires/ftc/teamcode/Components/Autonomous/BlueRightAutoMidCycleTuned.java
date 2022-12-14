@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
-import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
-
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -54,7 +52,7 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
 //                .splineToSplineHeading(new Pose2d(-33, 35, toRadians(105)), toRadians(285))
 //                .splineToSplineHeading(new Pose2d(-26,30, toRadians(120)), toRadians(290))
                 .build();
-        TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-30,28, toRadians(90)))
+        TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-30,28, toRadians(135)))
                 .setReversed(false)
                 .splineToLinearHeading(new Pose2d(-34,11.5, toRadians(180)),toRadians(240))
                 .splineToSplineHeading(new Pose2d(pickupX2, pickupY2, pickupA2), pickupET2)

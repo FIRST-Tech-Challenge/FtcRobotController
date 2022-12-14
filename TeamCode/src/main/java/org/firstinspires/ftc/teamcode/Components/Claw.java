@@ -26,7 +26,7 @@ public class Claw {
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 0.46;
+    private final double CLAW_CLOSED_POS = 0.45;
 
     //temporary
     private final double CLAW_OPEN_POS = 0.54;
@@ -41,7 +41,7 @@ public class Claw {
     private double lastOpenTime =-10;
     private double clawPos = 0.45;
     //temporary
-    public double CLAW_SERVO_SWITCH_TIME = 0.9;
+    public double CLAW_SERVO_SWITCH_TIME = 0.3;
     boolean shouldUseClawSensor = true;
 
     //States:

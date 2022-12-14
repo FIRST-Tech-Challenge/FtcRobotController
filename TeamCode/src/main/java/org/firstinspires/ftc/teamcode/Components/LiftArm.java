@@ -111,7 +111,7 @@ public class LiftArm {
         }
     }
     public boolean isCylce(){
-        if(ARM_INTAKE.getStatus()&&liftPos == LIFT_ARM_CYCLE_POS){
+        if(liftPos == LIFT_ARM_CYCLE_POS){
             return true;
         }else{
             return false;
