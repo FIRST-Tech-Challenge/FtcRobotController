@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -9,6 +11,9 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
@@ -61,6 +66,9 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean gamepad1_l_bumper_last, gamepad1_l_bumper_now=false;
     boolean gamepad1_r_bumper_last, gamepad1_r_bumper_now=false;
 
+    // Vision stuff
+    PoleOrientationPipeline pipeline;
+
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {
         gamepad1_l_bumper_last = gamepad1_l_bumper_now;    gamepad1_l_bumper_now = gamepad1.left_bumper;
@@ -76,6 +84,38 @@ public abstract class AutonomousBase extends LinearOpMode {
         globalCoordinatePositionUpdate();
         robot.liftPosRun();
         robot.turretPosRun();
+    }
+
+    void distanceToPole() {
+        // Value in inches?
+        double desiredDistance = 28.0;
+        double distanceTolerance = 1.0;
+        double range = robot.updateSonarRangeF();
+        double rangeErr = range - desiredDistance;
+        while (opModeIsActive() && (abs(rangeErr) > distanceTolerance)) {
+            performEveryLoop();
+            range = robot.updateSonarRangeF();
+            rangeErr = range - desiredDistance;
+            robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.10 : -0.10);
+        }
+        robot.stopMotion();
+    }
+
+    void rotateToCenterPole()
+    {
+        List<PoleOrientationPipeline.AnalyzedPole> localPoles = Collections.synchronizedList(pipeline.getDetectedPoles());
+        if(!localPoles.isEmpty()) {
+            PoleOrientationPipeline.AnalyzedPole thePole = localPoles.get(0);
+            while (opModeIsActive() && !thePole.poleAligned) {
+                performEveryLoop();
+                robot.driveTrainTurn((thePole.centralOffset > 0) ? +0.10 : -0.10);
+                localPoles = Collections.synchronizedList(pipeline.getDetectedPoles());
+                if(!localPoles.isEmpty()) {
+                    thePole = localPoles.get(0);
+                }
+            }
+            robot.stopMotion();
+        }
     }
 
     /*---------------------------------------------------------------------------------------------

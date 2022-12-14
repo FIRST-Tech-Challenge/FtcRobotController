@@ -64,7 +64,6 @@ public class AutonomousLeft extends AutonomousBase {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-
         {
             @Override
             public void onOpened()
@@ -113,6 +112,27 @@ public class AutonomousLeft extends AutonomousBase {
         }
 
         webcam.closeCameraDevice();
+
+        // Open async and start streaming inside opened callback
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+                pipeline = new PoleOrientationPipeline();
+                webcam.setPipeline(pipeline);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
 
         //---------------------------------------------------------------------------------
         // UNIT TEST: The following methods verify our basic robot actions.
@@ -165,9 +185,21 @@ public class AutonomousLeft extends AutonomousBase {
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "moveToTallJunction");
             telemetry.update();
-            moveToTallJunction();
-//          moveToTallJunction2();
-//          moveToTallJunction3();
+            moveToTallJunction2();
+        }
+
+        // Center pole
+        if( opModeIsActive()) {
+            telemetry.addData("Skill", "alignPole");
+            telemetry.update();
+            alignPole();
+        }
+
+        // Distance to pole
+        if( opModeIsActive()) {
+            telemetry.addData("Skill", "distanceToPole");
+            telemetry.update();
+            distanceToPole();
         }
 
         // Deposit cone on junction
@@ -185,7 +217,6 @@ public class AutonomousLeft extends AutonomousBase {
                 signalZoneParking0( signalZone );
             }
         }
-
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
@@ -239,14 +270,14 @@ public class AutonomousLeft extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     /* AVOID TRAPPING BEACON CONE BY TURNING WHILE DRIVING                                        */
     private void moveToTallJunction2() {
-
-        // Tilt grabber down from autonomous starting position (vertical)
-        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-
         // Drive away from wall at slow speed to avoid mecanum roller slippage
         // Turn so we don't entrap the beacon cone
         autoYpos=18.0;  autoXpos=0.0;  autoAngle=+80.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+
+        // Tilt grabber down from autonomous starting position (vertical)
+        // Moving here avoids hitting low pole
+        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
         // Perform setup to center turret and raise lift to scoring position
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
@@ -286,7 +317,6 @@ public class AutonomousLeft extends AutonomousBase {
         while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
             performEveryLoop();
         }
-
     } // moveToTallJunction2
 
     /*--------------------------------------------------------------------------------------------*/
@@ -348,6 +378,11 @@ public class AutonomousLeft extends AutonomousBase {
     } // moveToTallJunction3
 
     /*--------------------------------------------------------------------------------------------*/
+    private void alignPole() {
+        rotateToCenterPole();
+    }
+
+    /*--------------------------------------------------------------------------------------------*/
     private void scoreCone() {
 
         // Eject the cone
@@ -355,6 +390,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.grabberSpinEject();
         // Wait 300 msec
         while( opModeIsActive() && (releaseTimer.milliseconds() < 300) ) {
+            performEveryLoop();
         }
         // Stop the ejector
         robot.grabberSpinStop();

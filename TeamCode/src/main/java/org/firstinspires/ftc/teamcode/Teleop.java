@@ -764,8 +764,14 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Raise lift to MEDIUM junction
             robot.grabberSpinStop();
-            robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-            robot.liftPosInit( robot.LIFT_ANGLE_MED );
+            grabberTarget1 = robot.GRABBER_TILT_STORE;
+            needFlip       = (rearScoring)? true : false;  // collector flipped/REAR or normal/FRONT
+            grabberTarget2 = (rearScoring)? robot.GRABBER_TILT_BACK_M : robot.GRABBER_TILT_FRONT_M;
+            liftTarget     = (rearScoring)? robot.LIFT_ANGLE_MED_B   : robot.LIFT_ANGLE_MED;
+            liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
+            liftCycleCount = LIFT_CYCLECOUNT_START;
+//            robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+//            robot.liftPosInit( robot.LIFT_ANGLE_MED );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)

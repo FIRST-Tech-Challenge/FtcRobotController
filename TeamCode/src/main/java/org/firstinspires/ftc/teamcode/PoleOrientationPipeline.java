@@ -23,13 +23,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
@@ -37,147 +32,13 @@ import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/*
- * This is an advanced sample showcasing detecting and determining the orientation
- * of multiple poles, switching the viewport output, and communicating the results
- * of the vision processing to usercode.
- */
-@TeleOp(name="Pole-Test", group="Skunkworks")
-public class PoleOrientationExample extends LinearOpMode
-{
-    OpenCvCamera webcam;
-    PoleOrientationAnalysisPipeline pipeline;
-    /* Declare OpMode members. */
-    HardwareSlimbot robot = new HardwareSlimbot();
-    boolean aligning = false;
-    boolean ranging = false;
-
-    @Override
-    public void runOpMode()
-    {
-        /**
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera2Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
-         */
-
-        // Create camera instance
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
-        // Open async and start streaming inside opened callback
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-
-                pipeline = new PoleOrientationAnalysisPipeline();
-                webcam.setPipeline(pipeline);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
-
-        // Tell telemetry to update faster than the default 250ms period :)
-        telemetry.setMsTransmissionInterval(20);
-        /* Declare OpMode members. */
-        robot.init(hardwareMap,false);
-
-        waitForStart();
-
-        // Perform setup needed to center turret
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-
-        while (opModeIsActive())
-        {
-            // Don't burn an insane amount of CPU cycles in this sample because
-            // we're not doing anything else
-            sleep(20);
-
-            // Execute the automatic turret movement code   
-            robot.readBulkData();
-            robot.turretPosRun();
-
-            // Figure out which poles the pipeline detected, and print them to telemetry
-            ArrayList<PoleOrientationAnalysisPipeline.AnalyzedPole> poles = pipeline.getDetectedPoles();
-            if(poles.isEmpty())
-            {
-                telemetry.addLine("No poles detected");
-                if(aligning) {
-                    robot.stopMotion();
-                    aligning = false;
-                    ranging = false;
-                }
-            }
-            else
-            {
-                List<PoleOrientationAnalysisPipeline.AnalyzedPole> localPoles = Collections.synchronizedList(poles);
-                for(PoleOrientationAnalysisPipeline.AnalyzedPole pole : localPoles)
-                {
-                    telemetry.addLine(String.format("Pole: Center=%s, Central Offset=%f, Centered:%s", pole.corners.center.toString(), pole.centralOffset, pole.poleAligned));
-                    telemetry.addLine(String.format("Pole Width=%f Pole Height=%f", pole.corners.size.width, pole.corners.size.height));
-                    // Ensure we're ALIGNED to pole before we attempt to use Ultrasonic RANGING
-                    if(!pole.poleAligned){
-                        aligning = true;
-                        rotateToCenterPole(localPoles.get(0));
-                    }
-                    // We've achieved ALIGNMENT, so halt the left/right rotation
-                    else if( aligning ) {
-                        robot.stopMotion();
-                        aligning = false;
-                        ranging = true;
-                    }
-                    // If aligned, adjust the distance to the pole
-                    if( pole.poleAligned && ranging ) {
-                        distanceToPole();
-                    }
-                }
-            }
-            telemetry.addData("Sonar Range (Front)", "%.1f", robot.updateSonarRangeF() );
-            telemetry.update();
-        }
-    }
-
-    void distanceToPole() {
-        // Value in inches?
-        double desiredDistance = 28.0;
-        double distanceTolerance = 1.0;
-        double range = robot.updateSonarRangeF();
-        double rangeErr = range - desiredDistance;
-        if( abs(rangeErr) > distanceTolerance ) {
-            // Drive towards/away from the pole
-            robot.driveTrainFwdRev( (rangeErr>0.0)? +0.10 : -0.10 );
-        } else {
-            robot.stopMotion();
-            ranging = false;
-        }
-    }
-
-    void rotateToCenterPole(PoleOrientationAnalysisPipeline.AnalyzedPole thePole)
-    {
-        robot.driveTrainTurn( (thePole.centralOffset>0)? +0.10 : -0.10 );
-    }
-
-    static class PoleOrientationAnalysisPipeline extends OpenCvPipeline
+    class PoleOrientationPipeline extends OpenCvPipeline
     {
         /*
          * Our working image buffers
@@ -202,7 +63,7 @@ public class PoleOrientationExample extends LinearOpMode
         /*
          * The box constraint that considers a pole "centered"
          */
-        RotatedRect CENTERED_POLE = new RotatedRect(new double[]{210.0, 120.0, 48.0, 240.0});
+        RotatedRect CENTERED_POLE = new RotatedRect(new double[]{160.0, 120.0, 48.0, 240.0});
 
         /*
          * Colors
@@ -230,41 +91,6 @@ public class PoleOrientationExample extends LinearOpMode
         volatile List<AnalyzedPole> clientPoleList = Collections.synchronizedList(new ArrayList<AnalyzedPole>());
         volatile AnalyzedPole thePole = new AnalyzedPole();
 
-        /*
-         * Some stuff to handle returning our various buffers
-         */
-        enum Stage
-        {
-            FINAL,
-            Cb,
-            MASK,
-            MASK_NR,
-            CONTOURS;
-        }
-
-        Stage[] stages = Stage.values();
-
-        // Keep track of what stage the viewport is showing
-        int stageNum = 0;
-
-        @Override
-        public void onViewportTapped()
-        {
-            /*
-             * Note that this method is invoked from the UI thread
-             * so whatever we do here, we must do quickly.
-             */
-
-            int nextStageNum = stageNum + 1;
-
-            if(nextStageNum >= stages.length)
-            {
-                nextStageNum = 0;
-            }
-
-            stageNum = nextStageNum;
-        }
-
         @Override
         public Mat processFrame(Mat input)
         {
@@ -280,7 +106,7 @@ public class PoleOrientationExample extends LinearOpMode
                 analyzeContour(contour, input);
             }
 
-            clientPoleList = Collections.synchronizedList(new ArrayList<>());
+            clientPoleList.clear();
             if(findThePole())
             {
                 clientPoleList.add(thePole);
@@ -291,37 +117,6 @@ public class PoleOrientationExample extends LinearOpMode
                 } else {
                     drawRotatedRect(thePole.corners, input, RED);
                     thePole.poleAligned = false;
-                }
-            }
-
-            /*
-             * Decide which buffer to send to the viewport
-             */
-            switch (stages[stageNum])
-            {
-                case Cb:
-                {
-                    return cbMat;
-                }
-
-                case FINAL:
-                {
-                    return input;
-                }
-
-                case MASK:
-                {
-                    return thresholdMat;
-                }
-
-                case MASK_NR:
-                {
-                    return morphedThreshold;
-                }
-
-                case CONTOURS:
-                {
-                    return contoursOnPlainImageMat;
                 }
             }
 
@@ -424,4 +219,3 @@ public class PoleOrientationExample extends LinearOpMode
            }
        }
     }
-}
