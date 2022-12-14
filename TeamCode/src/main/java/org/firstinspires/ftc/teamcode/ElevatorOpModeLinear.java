@@ -101,6 +101,7 @@ public class ElevatorOpModeLinear extends LinearOpMode {
                 elevator.moveMainServo();
             }
             yButton = gamepad2.y;
+            telemetry.addData("position", elevator.elevatorMotor.getCurrentPosition());
 //            telemetry.addData("moveHands starts", true);
 //            telemetry.addData("mainservoState: ", elevator.mainServoState);
         }

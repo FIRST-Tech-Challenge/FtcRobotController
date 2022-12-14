@@ -17,10 +17,11 @@ public class TevelRobot {
         return wheels;
     }
 
-    public TevelRobot(LinearOpMode opMode){
+    public TevelRobot(LinearOpMode opMode) {
         elevator = new Elevator(opMode.hardwareMap, opMode.telemetry);
-         wheels = new Wheels(opMode);
+        wheels = new Wheels(opMode);
     }
+
     public void init() {
         elevator.initMotors();
     }

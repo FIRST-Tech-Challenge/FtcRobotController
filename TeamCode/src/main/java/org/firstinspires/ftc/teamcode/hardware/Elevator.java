@@ -26,7 +26,7 @@ public class Elevator {
     }
 
     private Servo rightServo = null;
-    private DcMotor elevatorMotor = null;
+    public DcMotor elevatorMotor = null;
 
     private Telemetry telemetry;
 
@@ -117,7 +117,6 @@ public class Elevator {
         elevatorMotor.setTargetPosition(elevetorPosition);
         elevatorMotor.setPower(ELEVATOR_MOTOR_SPEED);
         elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
     }
 
     public void moveHands(int direction) {

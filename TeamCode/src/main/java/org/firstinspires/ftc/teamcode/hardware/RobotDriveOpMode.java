@@ -18,7 +18,7 @@ public class RobotDriveOpMode extends LinearOpMode {
 //        elevator = new Elevator(hardwareMap, telemetry);
         TevelRobot tevelRobot = new TevelRobot(this);
         double power;
-        boolean bButton = false;
+        boolean rightBumper = false;
         boolean yButton = false;
        tevelRobot.init();
 
@@ -50,29 +50,34 @@ public class RobotDriveOpMode extends LinearOpMode {
            // telemetry.update();
 
 
-
             power = -gamepad2.left_stick_y;
              tevelRobot.getElevator().setElevatorMotorPower(power);
             // Show the elapsed game time and wheel power.
+            telemetry.addData("e", tevelRobot.elevator.elevatorMotor.getCurrentPosition());
             telemetry.addData("power" , power);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("gamepad2.b: ", gamepad2.b);
-            telemetry.addData("bButton: ", bButton);
-            if (bButton == false && gamepad2.b) {
+            telemetry.addData("gamepad2.rightBumper: ", gamepad2.right_bumper);
+            telemetry.addData("rightBumper: ", rightBumper);
+            if(gamepad2.b){
+                tevelRobot.elevator.setElevatorPosition(tevelRobot.elevator.firstFloor);
+            }
+            if (gamepad2.a){
+                tevelRobot.elevator.setElevatorPosition(tevelRobot.elevator.secondFloor);
+            }
+            if (gamepad2.x){
+                tevelRobot.elevator.setElevatorPosition(tevelRobot.elevator.thirdFloor);
+            }
+            if (gamepad2.dpad_down){
+                tevelRobot.elevator.setElevatorPosition(tevelRobot.elevator.groundFloor);
+            }
+            if (rightBumper == false && gamepad2.right_bumper) {
                 tevelRobot.getElevator().moveHands();
-
             }
-            telemetry.addData("clawstate ", tevelRobot.getElevator().clawState);
 
-
-            bButton = gamepad2.b;
-
-            if (yButton == false && gamepad2.y) {
-                tevelRobot.getElevator().moveMainServo();
-            }
-            yButton = gamepad2.y;
+                yButton = gamepad2.y;
 
             telemetry.update();
-        }
+
+            }
     }
 }
