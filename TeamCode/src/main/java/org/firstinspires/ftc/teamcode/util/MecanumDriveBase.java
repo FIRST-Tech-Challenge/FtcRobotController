@@ -29,10 +29,11 @@ public class MecanumDriveBase {
         lb = hardwareMap.get(DcMotor.class, "lb");
         lf = hardwareMap.get(DcMotor.class, "lf");
 
-        rb.setDirection(DcMotor.Direction.REVERSE);
+        lf.setDirection(DcMotor.Direction.FORWARD);
         rf.setDirection(DcMotor.Direction.REVERSE);
         lb.setDirection(DcMotor.Direction.FORWARD);
-        lf.setDirection(DcMotor.Direction.FORWARD);
+        rb.setDirection(DcMotor.Direction.REVERSE);
+
         // Run Without Encoders
         lf.setMode(runmode);
         rf.setMode(runmode);
@@ -57,6 +58,7 @@ public class MecanumDriveBase {
           speedFactor = .5 + .5 * gamepad.right_trigger;
           driveMotors(drive, turn, strafe, speedFactor);
       }
+
       public void driveMotors(double drive,double turn,double strafe,double speedFactor){
 
           leftPowerFront  = (drive + turn + strafe) * speedFactor;
