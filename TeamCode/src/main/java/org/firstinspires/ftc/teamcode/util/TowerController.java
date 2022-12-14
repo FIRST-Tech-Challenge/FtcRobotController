@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TowerController
@@ -55,17 +54,17 @@ public class TowerController
 
         //setup encoder
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        screw.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //
-//        screwLevel = 1000;
+//        screwLevel = 100000;
 //        screw.setDirection(DcMotor.Direction.FORWARD);
 //        screw.setTargetPosition(screwLevel);
 //        screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //
 //        screw.setPower(-0.3);
 //
-//        while ((screw.isBusy() && (screw.getCurrentPosition() <= 1000)) || (screw.isBusy() && (lowSensor.isPressed())))
+//        while ((screw.isBusy() && (screw.getCurrentPosition() <= 100000)) || (screw.isBusy() && (lowSensor.isPressed())))
 //        {
 //            if (lowSensor.isPressed())
 //            {
@@ -79,75 +78,75 @@ public class TowerController
 //        screwLevel = 0;
     }
 
-    /**
-     *
-     * @param uBarTarget
-     * @param speed
-     * @param telemetry
-     */
-    private void driveUBarUp(double uBarTarget, double speed, Telemetry telemetry)
-    {
-        uBarLevel -= uBarTarget;
-        uBar.setTargetPosition(uBarLevel);
-//        uBar.setDirection(DcMotor.Direction.REVERSE);
-        uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        uBar.setPower(speed);
-
-        while (uBar.isBusy() && ((/*-1 */ uBar.getCurrentPosition()) <= uBarTarget))
-        //while (uBar.isBusy())
-        {
-            telemetry.addData("UBar ticks = ", "%d", uBar.getCurrentPosition());
-            telemetry.update();
-            uBar.setPower(speed);
-        }
-
-        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        uBar.setPower(0);
-        uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        uBarLevel = 0;
-    }
-
-    private void driveUBarDown(double uBarTarget, double speed, Telemetry telemetry)
-    {
-        uBarLevel += uBarTarget;
-        uBar.setTargetPosition(uBarLevel);
-//        uBar.setDirection(DcMotor.Direction.FORWARD);
-        uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        uBar.setPower(-speed);
-
-        while (uBar.isBusy() && ((-1 * uBar.getCurrentPosition()) <= uBarTarget))
-        {
-            telemetry.addData("UBar ticks = ", "%d", -1 * uBar.getCurrentPosition());
-            telemetry.update();
-            uBar.setPower(speed);
-        }
-        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        uBar.setPower(0);
-        uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        uBarLevel = 0;
-    }
-
-    public void uBarUp(Gamepad gamepad)
-    {
-        while (gamepad.y)
-        {
-            uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            uBar.setPower(1);
-        }
-        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        uBar.setPower(0);
-    }
-
-    public void uBarDown(Gamepad gamepad)
-    {
-        while (gamepad.a)
-        {
-            uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            uBar.setPower(-1);
-        }
-        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        uBar.setPower(0);
-    }
+//    /**
+//     *
+//     * @param uBarTarget
+//     * @param speed
+//     * @param telemetry
+//     */
+////    private void driveUBarUp(double uBarTarget, double speed, Telemetry telemetry)
+////    {
+////        uBarLevel -= uBarTarget;
+////        uBar.setTargetPosition(uBarLevel);
+//////        uBar.setDirection(DcMotor.Direction.REVERSE);
+////        uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+////        uBar.setPower(speed);
+////
+////        while (uBar.isBusy() && ((/*-1 */ uBar.getCurrentPosition()) <= uBarTarget))
+////        //while (uBar.isBusy())
+////        {
+////            telemetry.addData("UBar ticks = ", "%d", uBar.getCurrentPosition());
+////            telemetry.update();
+////            uBar.setPower(speed);
+////        }
+////
+////        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+////        uBar.setPower(0);
+////        uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+////        uBarLevel = 0;
+////    }
+////
+////    private void driveUBarDown(double uBarTarget, double speed, Telemetry telemetry)
+////    {
+////        uBarLevel += uBarTarget;
+////        uBar.setTargetPosition(uBarLevel);
+//////        uBar.setDirection(DcMotor.Direction.FORWARD);
+////        uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+////        uBar.setPower(-speed);
+////
+////        while (uBar.isBusy() && ((-1 * uBar.getCurrentPosition()) <= uBarTarget))
+////        {
+////            telemetry.addData("UBar ticks = ", "%d", -1 * uBar.getCurrentPosition());
+////            telemetry.update();
+////            uBar.setPower(speed);
+////        }
+////        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+////        uBar.setPower(0);
+////        uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+////        uBarLevel = 0;
+////    }
+////
+////    public void uBarUp(Gamepad gamepad)
+////    {
+////        while (gamepad.y)
+////        {
+////            uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+////            uBar.setPower(1);
+////        }
+////        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+////        uBar.setPower(0);
+////    }
+////
+////    public void uBarDown(Gamepad gamepad)
+////    {
+////        while (gamepad.a)
+////        {
+////            uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+////            uBar.setPower(-1);
+////        }
+////        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+////        uBar.setPower(0);
+////    }
 
     private void driveScrewUp(double screwTarget, double speed, Telemetry telemetry)
     {
@@ -222,64 +221,64 @@ public class TowerController
         screwLevel = 0;
     }
 
-    public void handleIntake (double intakeTarget, double speed, Telemetry telemetry)
-    {
-//        if(intakePick == 1)
-//        {
-//            intake2.setPosition(1);
-//            intake2.getPosition();
-////            while (intake2.getPosition() == 0.5){}
-//            intakePick = 1954;
-//        }
-//        else  if (intakePick == 0)
-//        {
-//            intake2.setPosition(0);
-//            intake2.getPosition();
-////            while (intake2.getPosition() == 0){}
-//            intakeTarget = 1954;
-//        }
-
-        // Wheels
-//        if(intakePick)
-//        {
-//            intakeLevel -= intakeTarget;
-//            intake.setDirection(DcMotor.Direction.FORWARD);
-//            intake.setTargetPosition(screwLevel);
-//            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//    public void handleIntake (double intakeTarget, double speed, Telemetry telemetry)
+//    {
+////        if(intakePick == 1)
+////        {
+////            intake2.setPosition(1);
+////            intake2.getPosition();
+//////            while (intake2.getPosition() == 0.5){}
+////            intakePick = 1954;
+////        }
+////        else  if (intakePick == 0)
+////        {
+////            intake2.setPosition(0);
+////            intake2.getPosition();
+//////            while (intake2.getPosition() == 0){}
+////            intakeTarget = 1954;
+////        }
 //
-//            screw.setPower(speed);
-//            while ((intake.isBusy() && (intake.getCurrentPosition() <= intakeTarget)))
-//            {
-//                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-//                telemetry.update();
-//            }
-//
-//            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            screw.setPower(0);
-//            screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            screwLevel = 0;
-//        }
-//
-//        if (!intakePick)
-//        {
-//            intakeLevel -= intakeTarget;
-//            intake.setDirection(DcMotor.Direction.REVERSE);
-//            intake.setTargetPosition(screwLevel);
-//            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//            screw.setPower(speed);
-//            while ((intake.isBusy() && (intake.getCurrentPosition() <= intakeTarget)))
-//            {
-//                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-//                telemetry.update();
-//            }
-//
-//            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            screw.setPower(0);
-//            screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            screwLevel = 0;
-//        }
-    }
+//        // Wheels
+////        if(intakePick)
+////        {
+////            intakeLevel -= intakeTarget;
+////            intake.setDirection(DcMotor.Direction.FORWARD);
+////            intake.setTargetPosition(screwLevel);
+////            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+////
+////            screw.setPower(speed);
+////            while ((intake.isBusy() && (intake.getCurrentPosition() <= intakeTarget)))
+////            {
+////                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
+////                telemetry.update();
+////            }
+////
+////            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+////            screw.setPower(0);
+////            screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+////            screwLevel = 0;
+////        }
+////
+////        if (!intakePick)
+////        {
+////            intakeLevel -= intakeTarget;
+////            intake.setDirection(DcMotor.Direction.REVERSE);
+////            intake.setTargetPosition(screwLevel);
+////            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+////
+////            screw.setPower(speed);
+////            while ((intake.isBusy() && (intake.getCurrentPosition() <= intakeTarget)))
+////            {
+////                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
+////                telemetry.update();
+////            }
+////
+////            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+////            screw.setPower(0);
+////            screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+////            screwLevel = 0;
+////        }
+//    }
 
     public void screwDriveToLevelUp(int screwTarget, double speed, Telemetry telemetry)
     {
@@ -416,14 +415,14 @@ public class TowerController
 //        }
 
         //Screw spin
-        if(gamepad.dpad_up)
-        {
-            driveScrewUp(2000, 100, telemetry);
-        }
-        if(gamepad.dpad_down)
-        {
-            driveScrewDown(2000, 100, telemetry);
-        }
+//        if(gamepad.dpad_up)
+//        {
+//            driveScrewUp(2000, 100, telemetry);
+//        }
+//        if(gamepad.dpad_down)
+//        {
+//            driveScrewDown(2000, 100, telemetry);
+//        }
 
         // for go to level
 //        if (gamepad.dpad_up && level < 4)
@@ -478,10 +477,24 @@ public class TowerController
 //            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        }
 
+        double screwPower;
+
+        double driveScrew = gamepad.left_stick_y;
+        screwPower = Range.clip(driveScrew, -1, 1);
+        if ((screwPower < 0 && !highSensor.isPressed()) || screwPower > 0 && !lowSensor.isPressed())
+        {
+            screw.setPower(screwPower);
+        }
+        else
+        {
+            screw.setPower(0);
+            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
         double uBarPower;
 
-        double drive = -gamepad.left_stick_y;
-        uBarPower = Range.clip(drive, -1, 1);
+        double driveUBar = -gamepad.right_stick_y;
+        uBarPower = Range.clip(driveUBar, -1, 1);
         uBar.setPower(uBarPower);
 
         if (/*gamepad.left_stick_y == 0*/ uBarPower == 0 /* drive == 0 */)
