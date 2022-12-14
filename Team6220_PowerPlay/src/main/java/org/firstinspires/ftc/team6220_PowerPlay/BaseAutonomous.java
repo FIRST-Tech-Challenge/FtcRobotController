@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 public abstract class BaseAutonomous extends BaseOpMode {
+    public int stackHeight = 4;
 
     /**
      * this method will allow the robot to drive straight in a specified direction given a specified heading and distance
@@ -20,6 +21,10 @@ public abstract class BaseAutonomous extends BaseOpMode {
         // looking at robot from the back, x is left/right and y is forwards/backwards
         double xPosition;
         double yPosition;
+
+        // power for any heading
+        double xPower = Math.cos(Math.toRadians(heading + 90)) * 0.4;
+        double yPower = Math.sin(Math.toRadians(heading + 90)) * 0.4;
 
         double traveledDistance;
         double remainingDistance = targetDistance;
@@ -37,10 +42,10 @@ public abstract class BaseAutonomous extends BaseOpMode {
         while (remainingDistance > 0 && opModeIsActive()) {
             turningPower = (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle) / 100.0;
 
-            motorFL.setPower(0.3 + turningPower);
-            motorFR.setPower(0.3 - turningPower);
-            motorBL.setPower(0.3 + turningPower);
-            motorBR.setPower(0.3 - turningPower);
+            motorFL.setPower(yPower + xPower + turningPower);
+            motorFR.setPower(yPower - xPower - turningPower);
+            motorBL.setPower(yPower - xPower + turningPower);
+            motorBR.setPower(yPower + xPower - turningPower);
 
             xPosition = (motorFL.getCurrentPosition() - motorFR.getCurrentPosition() - motorBL.getCurrentPosition() + motorBR.getCurrentPosition()) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES / 4.0;
             yPosition = (motorFL.getCurrentPosition() + motorFR.getCurrentPosition() + motorBL.getCurrentPosition() + motorBR.getCurrentPosition()) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES / 4.0;
@@ -60,13 +65,13 @@ public abstract class BaseAutonomous extends BaseOpMode {
      * @param targetAngle absolute angle robot should turn to
      */
     public void turnToAngle(double targetAngle) {
-        double currentAngle;
-        double angleError = 1.0;
+        double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        double angleError = targetAngle - currentAngle + startAngle;
         double motorPower;
 
         while (Math.abs(angleError) >= 1 && opModeIsActive()) {
             currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            angleError = targetAngle - currentAngle + 45.0;
+            angleError = targetAngle - currentAngle + startAngle;
 
             if (angleError > 180.0) {
                 angleError -= 360.0;
@@ -76,11 +81,11 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
             // robot is turning counter-clockwise
             if (angleError > 0) {
-                motorPower = Math.min(angleError / -180.0, -0.2);
+                motorPower = Math.min(angleError / -250.0, -0.05);
 
             // robot is turning clockwise
             } else {
-                motorPower = Math.max(angleError / -180.0, 0.2);
+                motorPower = Math.max(angleError / -250.0, 0.05);
             }
 
             motorFL.setPower(motorPower);
@@ -98,5 +103,25 @@ public abstract class BaseAutonomous extends BaseOpMode {
         motorFR.setPower(0.0);
         motorBL.setPower(0.0);
         motorBR.setPower(0.0);
+    }
+
+    public void driveInches(int inches, int heading) {
+        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        if (heading == 0) {
+            driveWithIMU(0.0, -0.25, 0.0);
+        } else if (heading == 90) {
+            driveWithIMU(-0.25, 0.0, 0.0);
+        } else if (heading == 180) {
+            driveWithIMU(0.0, 0.25, 0.0);
+        } else if (heading == 270) {
+            driveWithIMU(0.25, 0.0, 0.0);
+        }
+
+        sleep((int) (inches / 24.0 * 1500));
+
+        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        driveWithIMU(0.0, 0.0, 0.0);
+        sleep(500);
     }
 }

@@ -29,6 +29,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     // IMU
     public BNO055IMU imu;
     public Orientation IMUOriginalAngles; // original angle reading from imu that will be used to find unwanted angle offset during drive
+    public double startAngle;
 
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
@@ -88,6 +89,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        sleep(3000);
+
+        startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }

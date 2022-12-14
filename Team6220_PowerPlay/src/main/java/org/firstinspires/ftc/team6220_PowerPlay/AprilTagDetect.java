@@ -9,7 +9,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public abstract class AprilTagDetect extends BaseAutonomous {
+public abstract class AprilTagDetect extends ConeDetection {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -98,6 +98,8 @@ public abstract class AprilTagDetect extends BaseAutonomous {
             telemetry.addLine("No tag seen during initialization :(");
             telemetry.update();
         }
+
+        camera.stopStreaming();
 
         // return default
         if (tagOfInterest == null) {
