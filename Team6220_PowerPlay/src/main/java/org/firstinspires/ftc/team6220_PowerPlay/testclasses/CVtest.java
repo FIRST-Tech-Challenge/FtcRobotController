@@ -2,13 +2,8 @@ package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.ConceptCompassCalibration;
-import org.firstinspires.ftc.robotcore.external.Const;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetect;
-import org.firstinspires.ftc.team6220_PowerPlay.Constants;
+import org.firstinspires.ftc.team6220_PowerPlay.ConeDetection;
+import org.firstinspires.ftc.team6220_PowerPlay.ConeDetectionPipeline;
 
 @Autonomous(name = "CVtest", group = "Test")
 public class CVtest extends ConeDetection
@@ -20,7 +15,7 @@ public class CVtest extends ConeDetection
         waitForStart();
         while (opModeIsActive())
         {
-            telemetry.addData("distance to center", ConeDetectionPipeline.dist);
+            telemetry.addData("distance to center", ConeDetectionPipeline.distance);
             telemetry.addData("grab boolean", ConeDetectionPipeline.grab);
             telemetry.update();
         }

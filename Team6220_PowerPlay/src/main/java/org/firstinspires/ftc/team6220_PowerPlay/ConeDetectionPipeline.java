@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
+package org.firstinspires.ftc.team6220_PowerPlay;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -24,11 +24,9 @@ import java.util.List;
 
 public class ConeDetectionPipeline extends OpenCvPipeline
 {
-    public double distance;
-    public double size;
     public int centerX = 1280 / 2;
-    double dist = 0;
-    double coneSize = 0;
+    public double distance = 0;
+    public double coneSize = 0;
     public boolean grab = false;
     private int[] lowerBlue = {42, 128, 114};
     private int[] upperBlue = {168, 242, 255};
@@ -56,7 +54,6 @@ public class ConeDetectionPipeline extends OpenCvPipeline
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-        MatOfPoint largestContour = new MatOfPoint();
         if(contours.size() > 0) {
             double maxVal = 0.0;
             int maxValIdx = 0;
@@ -68,12 +65,12 @@ public class ConeDetectionPipeline extends OpenCvPipeline
                 }
             }
 
-            Rect xywh = Imgproc.boundingRect(contours.get(maxValIdx));
+            Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
             Moments m = Imgproc.moments(contours.get(maxValIdx), false);
             if (m.get_m00() > 0) {
                 double cX = (m.get_m10() / m.get_m00());
-                dist = centerX - cX;
-                coneSize = xywh.width * xywh.height;
+                distance = centerX - cX;
+                coneSize = boundingRect.width * boundingRect.height;
                 if (Math.abs(distance) < 30 && coneSize < 3000) {
                     grab = true;
                 } else {
