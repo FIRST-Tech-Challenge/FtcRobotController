@@ -32,6 +32,7 @@ public class TestTeleOP extends BaseTeleOp{
 
             driveRobotSpeed();
             driveMechanism();
+            driveClaw();
 
             idle();
         }

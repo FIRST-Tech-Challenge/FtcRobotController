@@ -9,8 +9,8 @@ abstract public class BaseTeleOp extends BaseOpMode {
 
     private Toggle driveSpeedToggle = new Toggle();
 
-    double driveSpeed = 1.0;
-    double mechanismSpeed = 0.5;
+    double driveSpeed = 0.8;
+    double mechanismSpeed = 0.9;
 
     public void driveRobot() {
         double y = -gamepad1.left_stick_y;
@@ -27,9 +27,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
     public void driveRobotSpeed() {
         isSlowMode = driveSpeedToggle.toggle(gamepad1.left_bumper);
         if (isSlowMode) {
-            driveSpeed = 0.50;
+            driveSpeed = 0.3;
         } else {
-            driveSpeed = 1.0;
+            driveSpeed = 0.8;
         }
     }
 
@@ -41,7 +41,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
         if (gamepad2.dpad_up) {
             motorSlideLeft.setPower(mechanismSpeed);
             motorSlideRight.setPower(mechanismSpeed);
-        } else if (gamepad2.dpad_down) {
+        } else if (gamepad2.dpad_down
+                && motorSlideLeft.getCurrentPosition() > bottomMotorSlideLeft
+                && motorSlideRight.getCurrentPosition() > bottomMotorSlideRight) {
             motorSlideLeft.setPower(-mechanismSpeed);
             motorSlideRight.setPower(-mechanismSpeed);
         } else {

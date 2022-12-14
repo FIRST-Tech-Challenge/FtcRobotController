@@ -23,6 +23,8 @@ abstract public class BaseOpMode extends LinearOpMode {
     public double referenceAngle;
 
     public BNO055IMU imu;
+    double bottomMotorSlideLeft;
+    double bottomMotorSlideRight;
 
     public void initHardware() {
         // init drive motors
@@ -68,6 +70,9 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         motorSlideLeft.setDirection(DcMotor.Direction.FORWARD);
         motorSlideRight.setDirection(DcMotor.Direction.REVERSE);
+
+        bottomMotorSlideLeft = motorSlideLeft.getCurrentPosition();
+        bottomMotorSlideRight = motorSlideRight.getCurrentPosition();
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
