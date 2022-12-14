@@ -198,6 +198,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public void setTargetHeading(double vel){
         headingPID.setSetpoint(vel);
+        targetHeading = vel;
     }
 
     public void setTargetHeadingDeg(double vel){
@@ -282,6 +283,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         telemetryMap.put("turnStuff", turnAngle - poseEstimate.getHeading());
 
         if (debug) {
+            telemetryMap.put("Grid Drive Index", gridDriveIndex);
+            telemetryMap.put("Target Heading", targetHeading);
+            telemetryMap.put("Heading", heading);
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
             telemetryMap.put("x target", driveTargetPos.getX());
@@ -660,6 +664,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                     gridDriveIndex = 0;
                     return true;
                 default:
+                    gridDriveIndex = 0;
                     return false;
 
             }

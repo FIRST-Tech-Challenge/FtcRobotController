@@ -47,6 +47,28 @@ public class DriverControls {
 
     void joystickDrive() {
 
+        if(gamepad1.y){
+            robot.driveTrain.DriveTo(2.5*Field.INCHES_PER_GRID,-1.5*Field.INCHES_PER_GRID,20,true);
+        }
+
+        if(stickyGamepad1.left_bumper){
+            robot.crane.decNudgeIndex();
+        }
+
+        if(stickyGamepad1.right_bumper){
+            robot.crane.incNudgeIndex();
+        }
+
+        if(stickyGamepad1.a) {
+            robot.crane.pickupSequence();
+
+        }
+
+        if(stickyGamepad1.b){
+            robot.crane.dropSequence();
+        }
+
+
         if(gamepad1.dpad_down) {
             if (gamepad1.right_stick_x < -TURRET_DEADZONE || gamepad1.right_stick_x > TURRET_DEADZONE)
                 robot.crane.adjustTurretAngle(-0.6*gamepad1.right_stick_x);
@@ -55,24 +77,6 @@ public class DriverControls {
 
             if (gamepad1.right_trigger>.05) robot.crane.adjustDistance(0.7*gamepad1.right_trigger);
             if (gamepad1.left_trigger>.05) robot.crane.adjustDistance(-0.7*gamepad1.left_trigger);
-
-            if(stickyGamepad1.left_bumper){
-                robot.crane.decNudgeIndex();
-            }
-
-            if(stickyGamepad1.right_bumper){
-                robot.crane.incNudgeIndex();
-            }
-
-
-            if(stickyGamepad1.a) {
-                robot.crane.pickupSequence();
-
-            }
-
-            if(stickyGamepad1.b){
-                robot.crane.dropSequence();
-            }
 
             //manual override of drivetrain
             if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
@@ -88,29 +92,6 @@ public class DriverControls {
 
             if (gamepad1.right_trigger>.05) robot.crane.adjustDistance(gamepad1.right_trigger);
             if (gamepad1.left_trigger>.05) robot.crane.adjustDistance(-gamepad1.left_trigger);
-
-            if(stickyGamepad1.left_bumper){
-                robot.crane.decNudgeIndex();
-            }
-
-            if(stickyGamepad1.right_bumper){
-                robot.crane.incNudgeIndex();
-            }
-
-
-
-            if(stickyGamepad1.a) {
-                robot.crane.pickupSequence();
-
-            }
-
-            if(stickyGamepad1.b){
-                robot.crane.dropSequence();
-            }
-
-            if(gamepad1.y){
-                robot.crane.setTargets(20,-35,30);
-            }
 
             //manual override of drivetrain
             if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
