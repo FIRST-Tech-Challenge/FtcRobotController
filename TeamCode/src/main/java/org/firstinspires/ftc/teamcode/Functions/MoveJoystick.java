@@ -27,7 +27,7 @@ public class MoveJoystick {
         Init();
     }
 
-    public void MoveRaw(int direction, double power){
+    public void MoveJoystickRaw(int direction, double power){
         try{
             currentDirection =direction;
             switch(direction){
@@ -56,6 +56,19 @@ public class MoveJoystick {
                     rightMotor.setPower(-power);
                     break;
             }
+        }
+        catch(NullPointerException e){
+            // telemetry.addData("Status Move", "ERROR NAME:"+e.ToString());
+        }
+    }
+
+    public void MoveJoystickStop(){
+        try{
+            currentDirection =0;
+            leftMotor.setPower(0);
+            leftMotorBack.setPower(0);
+            rightMotorBack.setPower(0);
+            rightMotor.setPower(0);
         }
         catch(NullPointerException e){
             // telemetry.addData("Status Move", "ERROR NAME:"+e.ToString());
