@@ -14,11 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ColorDetectPipeline extends OpenCvPipeline {
-    public boolean isRunning = false;
+
     Size blurSize = new Size(49, 49);
     double erodeSize = 220;
+
+    public boolean isRunning = false;
     public Rect detectedRect = new Rect();
     public int counter = 0;
+    public boolean rectDetected = false;
 
     Mat targetToleranceMatte(Mat img, int[] ca, int[] co) {
         double[] lower = new double[3], upper = new double[3];
@@ -31,50 +34,6 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         Mat dst = new Mat();
         Core.inRange(img, new Scalar(lower), new Scalar(upper), dst);
         return dst;
-    }
-
-    MatOfPoint getBiggestContour(List<MatOfPoint> contours) {
-        if (contours.isEmpty()) {
-            return new MatOfPoint();
-        }
-
-        if (contours.size() == 1) {
-            return contours.get(0);
-        }
-
-        double maxArea = -1;
-        MatOfPoint maxAreaContour = new MatOfPoint();
-
-        for (MatOfPoint c : contours) {
-            double currentArea = Imgproc.contourArea(c);
-
-            if (currentArea > maxArea) {
-                maxArea = currentArea;
-                maxAreaContour = c;
-            }
-        }
-
-        return maxAreaContour;
-    }
-
-    Rect getBiggestContourBoundingBox(List<MatOfPoint> contours) {
-        if (contours.isEmpty()) {
-            return new Rect(new Point(0, 0), new Point(0,0));
-        }
-
-        double maxArea = -1;
-        MatOfPoint maxAreaContour = new MatOfPoint();
-
-        for (MatOfPoint c : contours) {
-            double currentArea = Imgproc.contourArea(c);
-
-            if (currentArea > maxArea) {
-                maxArea = currentArea;
-                maxAreaContour = c;
-            }
-        }
-
-        return Imgproc.boundingRect(maxAreaContour);
     }
 
     @Override
@@ -114,9 +73,9 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         Mat hierarchy = new Mat();
         Imgproc.findContours(frame, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        // Find largest contour and then draw a rectangle around it for display
         double maxArea;
         int maxAreaContour;
-
         if (contours.size() > 0) {
             maxArea = 0.0;
             maxAreaContour = -1;
@@ -130,9 +89,12 @@ public class ColorDetectPipeline extends OpenCvPipeline {
 
             detectedRect = Imgproc.boundingRect(contours.get(maxAreaContour));
             Imgproc.rectangle(input, detectedRect, new Scalar(40, 200, 0), 10);
+            // Transform the detected rectangle's coordinates so that (0, 0) is at the center of the image,
+            // and instead of detectedRect.x and detectedRect.y corresponding to the top-left corner they correspond to the center of the rectangle
             detectedRect.x -= input.width() * 0.5 - detectedRect.width * 0.5;
             detectedRect.y -= input.height() * 0.5 - detectedRect.height * 0.5;
         }
+        rectDetected = contours.size() > 0;
 
         counter = contours.size();
         Imgproc.cvtColor(input, input, Imgproc.COLOR_HSV2BGR);
