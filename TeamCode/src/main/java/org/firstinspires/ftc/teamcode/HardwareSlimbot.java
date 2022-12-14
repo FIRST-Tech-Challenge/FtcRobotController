@@ -480,6 +480,26 @@ public class HardwareSlimbot
     } // driveTrainMotors
 
     /*--------------------------------------------------------------------------------------------*/
+    /* Set all motors to same power to drive straight forward (Ex: +0.10) or reverse (Ex: -0.10)  */
+    public void driveTrainFwdRev( double motorPower )
+    {
+        frontLeftMotor.setPower( motorPower );
+        frontRightMotor.setPower( motorPower );
+        rearLeftMotor.setPower( motorPower );
+        rearRightMotor.setPower( motorPower );
+    } // driveTrainFwdRev
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* Set left/right motor powers to turn right (Ex: +0.10) or left (Ex: -0.10)                  */
+    public void driveTrainTurn( double motorPower )
+    {
+        frontLeftMotor.setPower( -motorPower );
+        frontRightMotor.setPower( motorPower );
+        rearLeftMotor.setPower( -motorPower );
+        rearRightMotor.setPower( motorPower );
+    } // driveTrainTurn
+
+    /*--------------------------------------------------------------------------------------------*/
     public void driveTrainMotorsZero()
     {
         frontLeftMotor.setPower( 0.0 );

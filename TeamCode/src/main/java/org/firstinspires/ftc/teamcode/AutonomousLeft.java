@@ -166,6 +166,8 @@ public class AutonomousLeft extends AutonomousBase {
             telemetry.addData("Motion", "moveToTallJunction");
             telemetry.update();
             moveToTallJunction();
+//          moveToTallJunction2();
+//          moveToTallJunction3();
         }
 
         // Deposit cone on junction
@@ -187,6 +189,7 @@ public class AutonomousLeft extends AutonomousBase {
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
+    /* ORIGINAL                                                                                   */
     private void moveToTallJunction() {
 
         // Tilt grabber down from autonomous starting position (vertical)
@@ -232,6 +235,117 @@ public class AutonomousLeft extends AutonomousBase {
         }
 
     } // moveToTallJunction
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* AVOID TRAPPING BEACON CONE BY TURNING WHILE DRIVING                                        */
+    private void moveToTallJunction2() {
+
+        // Tilt grabber down from autonomous starting position (vertical)
+        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+
+        // Drive away from wall at slow speed to avoid mecanum roller slippage
+        // Turn so we don't entrap the beacon cone
+        autoYpos=18.0;  autoXpos=0.0;  autoAngle=+80.0;    // (inches, inches, degrees)
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+
+        // Perform setup to center turret and raise lift to scoring position
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.liftPosInit( robot.LIFT_ANGLE_AUTO_H );
+
+        // Strafe nearly sideways into beacon cone (still avoiding beacon entrapment)
+        autoYpos=24.0;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_40, TURN_SPEED_40 );
+
+        // Drive the main distance quickly (while lift moves)
+        autoYpos=46.0;  autoAngle=0.0;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_55, TURN_SPEED_55 );
+
+        // Finish the drive to the tall junction pole at a lower speed (stop accurately)
+        autoYpos=51.0;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+        robot.driveTrainMotorsZero();
+
+        // Both mechanisms should be finished, but pause here if they haven't (until they do)
+        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+            performEveryLoop();
+        }
+
+        // Turn toward pole
+        autoAngle=43.5;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+        robot.driveTrainMotorsZero();
+
+        // Tilt grabber down to final scoring position
+        robot.grabberSetTilt( robot.GRABBER_TILT_AUTO_F );
+
+        // Drive closer to the pole in order to score (and re-center turret in case it moved)
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        driveToPosition( (autoYpos+2.8), (autoXpos+2.8), autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+        robot.driveTrainMotorsZero();
+        // Make sure the turret movement has finished
+        while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
+            performEveryLoop();
+        }
+
+    } // moveToTallJunction2
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* AVOID BEACON BLOCKING LOWER CAMERA BY PUSHING IT TO THE CENTER LINE                        */
+    private void moveToTallJunction3() {
+
+        // Tilt grabber down from autonomous starting position (vertical)
+        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+
+        // Drive away from wall at slow speed to avoid mecanum roller slippage
+        autoYpos=4.0;  autoXpos=0.0;  autoAngle=0.0;    // (inches, inches, degrees)
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+
+        // Perform setup to center turret and raise lift to scoring position
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.liftPosInit( robot.LIFT_ANGLE_AUTO_H );
+
+        // Drive the main distance quickly (while lift moves)
+        autoYpos=46.0;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_55, TURN_SPEED_55 );
+
+        // Tilt grabber up and back while we're close to the opposing alliance (no entanglement!)
+        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
+
+        // Finish the drive to the edge of our alliance at lower speed (stop accurately)
+        autoYpos=56.0;   // TODO: is this the right number for the center line??
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+
+        // Drive backward to the tall junction pole now that we've left the beacon cone behind
+        autoYpos=51.0;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+        robot.driveTrainMotorsZero();
+
+        // Both mechanisms should be finished, but pause here if they haven't (until they do)
+        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+            performEveryLoop();
+        }
+
+        // Tilt grabber partway toward scoring position (wait until we've over the pole before FULLY lowering)
+        robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
+
+        // Turn toward pole
+        autoAngle=43.5;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+        robot.driveTrainMotorsZero();
+
+        // Tilt grabber down to final scoring position
+        robot.grabberSetTilt( robot.GRABBER_TILT_AUTO_F );
+
+        // Drive closer to the pole in order to score (and re-center turret in case it moved)
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        driveToPosition( (autoYpos+2.8), (autoXpos+2.8), autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+        robot.driveTrainMotorsZero();
+        // Make sure the turret movement has finished
+        while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
+            performEveryLoop();
+        }
+
+    } // moveToTallJunction3
 
     /*--------------------------------------------------------------------------------------------*/
     private void scoreCone() {

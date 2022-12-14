@@ -103,11 +103,18 @@ public class PoleOrientationExample extends LinearOpMode
 
         waitForStart();
 
+        // Perform setup needed to center turret
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+
         while (opModeIsActive())
         {
             // Don't burn an insane amount of CPU cycles in this sample because
             // we're not doing anything else
             sleep(20);
+
+            // Execute the automatic turret movement code   
+            robot.readBulkData();
+            robot.turretPosRun();
 
             // Figure out which poles the pipeline detected, and print them to telemetry
             ArrayList<PoleOrientationAnalysisPipeline.AnalyzedPole> poles = pipeline.getDetectedPoles();
@@ -127,72 +134,48 @@ public class PoleOrientationExample extends LinearOpMode
                 {
                     telemetry.addLine(String.format("Pole: Center=%s, Central Offset=%f, Centered:%s", pole.corners.center.toString(), pole.centralOffset, pole.poleAligned));
                     telemetry.addLine(String.format("Pole Width=%f Pole Height=%f", pole.corners.size.width, pole.corners.size.height));
+                    // Ensure we're ALIGNED to pole before we attempt to use Ultrasonic RANGING
                     if(!pole.poleAligned){
                         aligning = true;
                         rotateToCenterPole(localPoles.get(0));
-                    } else if(aligning) {
+                    }
+                    // We've achieved ALIGNMENT, so halt the left/right rotation
+                    else if( aligning ) {
                         robot.stopMotion();
                         aligning = false;
-                    }
-                    // Get distance from pole
-                    if(pole.poleAligned) {
-                        distanceToPole();
                         ranging = true;
+                    }
+                    // If aligned, adjust the distance to the pole
+                    if( pole.poleAligned && ranging ) {
+                        distanceToPole();
                     }
                 }
             }
             telemetry.addData("Sonar Range (Front)", "%.1f", robot.updateSonarRangeF() );
-
             telemetry.update();
         }
     }
 
     void distanceToPole() {
         // Value in inches?
-        double fineDriveSpeed   = 0.10;
-        double rearLeft, rearRight, frontLeft, frontRight;
         double desiredDistance = 32.0;
+        double distanceTolerance = 1.0;
         double range = robot.updateSonarRangeF();
         double rangeErr = range - desiredDistance;
-        if(abs(rangeErr) > 1.0) {
-            if(rangeErr > 0.0) {
-                // Drive towards the pole.
-                frontLeft  = fineDriveSpeed;
-                frontRight = fineDriveSpeed;
-                rearLeft   = fineDriveSpeed;
-                rearRight  = fineDriveSpeed;
-            } else {
-                // Drive away from the pole.
-                frontLeft  = -fineDriveSpeed;
-                frontRight = -fineDriveSpeed;
-                rearLeft   = -fineDriveSpeed;
-                rearRight  = -fineDriveSpeed;
-            }
-            robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight);
+        if( abs(rangeErr) > distanceTolerance ) {
+            // Drive towards/away from the pole
+            robot.driveTrainFwdRev( (rangeErr>0.0)? +0.10 : -0.10 );
         } else {
             robot.stopMotion();
             ranging = false;
         }
     }
+
     void rotateToCenterPole(PoleOrientationAnalysisPipeline.AnalyzedPole thePole)
     {
-        double fineTurnSpeed   = 0.10;
-        double rearLeft, rearRight, frontLeft, frontRight;
-        if(thePole.centralOffset > 0) {
-            // turn to the right.
-            frontLeft  = -fineTurnSpeed;
-            frontRight =  fineTurnSpeed;
-            rearLeft   = -fineTurnSpeed;
-            rearRight  =  fineTurnSpeed;
-        } else {
-            // turn to the left.
-            frontLeft  =  fineTurnSpeed;
-            frontRight = -fineTurnSpeed;
-            rearLeft   =  fineTurnSpeed;
-            rearRight  = -fineTurnSpeed;
-        }
-        robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight);
+        robot.driveTrainTurn( (thePole.centralOffset>0)? +0.10 : -0.10 );
     }
+
     static class PoleOrientationAnalysisPipeline extends OpenCvPipeline
     {
         /*
@@ -233,8 +216,8 @@ public class PoleOrientationExample extends LinearOpMode
         static final int CB_CHAN_IDX = 2;
 
         // This is the allowable distance from the center of the pole to the "center"
-        // of the image.
-        static final int MAX_POLE_OFFSET = 16;
+        // of the image.  Pole is ~32 pixels wide, so our tolerance is 1/4 of that.
+        static final int MAX_POLE_OFFSET = 8;
         static class AnalyzedPole
         {
             RotatedRect corners;
