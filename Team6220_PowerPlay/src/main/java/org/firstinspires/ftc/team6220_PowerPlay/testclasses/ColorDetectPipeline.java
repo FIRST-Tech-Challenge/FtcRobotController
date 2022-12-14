@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
+import androidx.annotation.NonNull;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -26,6 +28,7 @@ public class ColorDetectPipeline extends OpenCvPipeline {
     double erodeSize = 220;
 
     public Rect detectedRect = new Rect();
+    public int counter = 0;
 
     Mat targetToleranceMatte(Mat img, int[] ca, int[] co) {
         double[] lower = new double[3], upper = new double[3];
@@ -40,7 +43,7 @@ public class ColorDetectPipeline extends OpenCvPipeline {
 
     MatOfPoint getBiggestContour(List<MatOfPoint> contours) {
         if(contours.isEmpty()) {
-            return null;
+            return new MatOfPoint();
         }
         if(contours.size() == 1) {
             return contours.get(0);
@@ -60,30 +63,48 @@ public class ColorDetectPipeline extends OpenCvPipeline {
     }
 
     Rect getBiggestContourBoundingBox(List<MatOfPoint> contours) {
-        return Imgproc.boundingRect(getBiggestContour(contours));
+        if(contours.isEmpty()) {
+            return new Rect(new Point(0, 0), new Point(0,0));
+        }
+        double maxArea = -1;
+        MatOfPoint maxAreaContour = new MatOfPoint();
+
+        for(MatOfPoint c : contours) {
+            double currentArea = Imgproc.contourArea(c);
+            if(currentArea > maxArea){
+                maxArea = currentArea;
+                maxAreaContour = c;
+            }
+        }
+
+        return Imgproc.boundingRect(maxAreaContour);
     }
 
     @Override
-    public Mat processFrame(Mat input) throws IllegalArgumentException {
+    public Mat processFrame(Mat input)/* throws IllegalArgumentException */{
 
         if(input == null) { throw new IllegalArgumentException("Input cannot be null"); }
-        int[] ca = {43, 255, 255};
-        int[] co = {50, 25, 200};
+        isRunning = true;
+        int[] ca = {43, 200, 127};
+        int[] co = {100, 50, 127};
+        counter++;
         return processFrameWithRange(input, ca, co);
     }
 
-    public Mat processFrameWithRange(Mat input, int[] colorTarget, int[] colorTolerance) {
+    public Mat processFrameWithRange(Mat input, int[] colorTarget, int[] colorTolerance) throws IllegalArgumentException {
         isRunning = true;
-        if(input == null) {
+        if (input == null) {
             throw new IllegalArgumentException("Input cannot be null");
         }
-        Mat frame = new Mat();
+
+        Mat frame = input;
 
         // Convert color to HSV
         Imgproc.cvtColor(input, frame, Imgproc.COLOR_BGR2HSV);
 
         // Threshold the image
         frame = targetToleranceMatte(frame, colorTarget, colorTolerance);
+
         // Blur and then threshold to remove small details and sort of "erode" the matte
         Imgproc.GaussianBlur(frame, frame, blurSize, 0);
         Imgproc.threshold(frame, frame, erodeSize, 255, Imgproc.THRESH_BINARY);
@@ -93,13 +114,30 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         Mat hierarchy = new Mat();
         Imgproc.findContours(frame, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // Get the bounding box of the largest contour
-        Rect tempRect = getBiggestContourBoundingBox(contours);
-        tempRect.x -= frame.size().width*0.5;
-        tempRect.y -= frame.size().height*0.5;
+        double maxArea;
+        int maxAreaContour;
 
-        detectedRect = tempRect;
+        if (contours.size() > 0) {
+            maxArea = 0.0;
+            maxAreaContour = -1;
 
-        return frame;
+            for (int i = 0; i < contours.size(); i++) {
+
+                if (Imgproc.contourArea(contours.get(i)) > maxArea) {
+                    maxArea = Imgproc.contourArea(contours.get(i));
+                    maxAreaContour = i;
+                }
+
+            }
+            detectedRect = Imgproc.boundingRect(contours.get(maxAreaContour));
+            Imgproc.rectangle(input, detectedRect, new Scalar(40, 200, 0), 10);
+            detectedRect.x -= input.width()*0.5-detectedRect.width*0.5;
+            detectedRect.y -= input.height()*0.5-detectedRect.height*0.5;
+        }
+        counter = contours.size();
+
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_HSV2BGR);
+
+        return input;
     }
 }
