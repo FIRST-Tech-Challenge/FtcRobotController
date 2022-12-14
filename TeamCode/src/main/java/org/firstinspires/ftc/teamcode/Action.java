@@ -204,7 +204,7 @@ final class ParallelAction implements Action {
     @Override
     public void draw(Canvas c) {
         for (Action a : actions) {
-            draw(c);
+            a.draw(c);
         }
     }
 }
@@ -255,7 +255,7 @@ final class SequentialAction implements Action {
     @Override
     public void draw(Canvas c) {
         for (Action a : actions) {
-            draw(c);
+            a.draw(c);
         }
     }
 }
