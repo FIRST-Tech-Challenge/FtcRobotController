@@ -20,3 +20,5 @@ The `AutoOpMode` is a WIP of the code which will be used for the autonomous peri
 
 To connect to the controller hub wirelessly: `adb connect <IP ADDRESS>>:5555`  
 It should be `adb connect 192.168.43.1:5555` for our robot.  
+
+trollololololololo
