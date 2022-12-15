@@ -21,9 +21,9 @@ public class DriveTele extends CommandBase {
     public void execute() {
         int strafeInput = 0;
         
-        if (driveOp.getButton(GamepadKeys.Button.DPAD_LEFT))
+        if (driveOp.getButton(GamepadKeys.Button.LEFT_BUMPER))
             strafeInput--;
-        if (driveOp.getButton(GamepadKeys.Button.DPAD_RIGHT))
+        if (driveOp.getButton(GamepadKeys.Button.RIGHT_BUMPER))
             strafeInput++;
         
         system.setStrafe(strafeInput);

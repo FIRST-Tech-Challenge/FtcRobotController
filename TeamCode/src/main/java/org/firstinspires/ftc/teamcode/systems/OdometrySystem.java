@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.xyzOrientation;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
@@ -12,6 +14,7 @@ import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.RobotConfig;
 
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -38,8 +41,10 @@ public class OdometrySystem extends SubsystemBase {
     
     MecanumDriveKinematics kinematics;
     MecanumDriveOdometry odometry;
+
+    FtcDashboard dash;
     
-    Pose2d pose;
+    volatile Pose2d pose;
     
     // FIXME: The control hub is slightly rotated, so these values need to be adjusted.
     //  The Z rotation should be increasing when the robot is turning left
@@ -50,6 +55,9 @@ public class OdometrySystem extends SubsystemBase {
     
     public OdometrySystem(final HardwareMap hardwareMap, Pose2d start, ElapsedTime elapsedTime) {
         this.elapsedTime = elapsedTime;
+        
+        // FIXME: This should be done outside the system. Hardcoded for Red Alliance Left
+        start = new Pose2d(-36, -60, new Rotation2d(0));
         
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -70,22 +78,41 @@ public class OdometrySystem extends SubsystemBase {
         );
         
         odometry = new MecanumDriveOdometry(kinematics, getAngle(), start);
+        
+        dash = FtcDashboard.getInstance();
     }
 
     @Override
     public void periodic() {
+        MecanumDriveWheelSpeeds wheelSpeeds = getWheelSpeeds();
+        
+        pose = odometry.updateWithTime(elapsedTime.seconds(), getAngle(), wheelSpeeds);
+
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay().clear();
+        packet.fieldOverlay()
+            .setFill("blue")
+            // FIXME: Get accurate dimensions for the robot
+            // TODO: The rectangle should be rotated with the heading
+            .fillRect(pose.getX(), pose.getY(), 18, 18);
+    }
+    
+    public Pose2d getPose() {
+        return pose;
+    }
+    
+    private Rotation2d getAngle() {
+       return Rotation2d.fromDegrees(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+    }
+    
+    private MecanumDriveWheelSpeeds getWheelSpeeds() {
         // FIXME: These need to be set to meters/sec
-        MecanumDriveWheelSpeeds wheelSpeeds = new MecanumDriveWheelSpeeds(
+        //  Linear or rotational speed?
+        return new MecanumDriveWheelSpeeds(
             frontLeftMotor.getRate(),
             frontRightMotor.getRate(),
             backLeftMotor.getRate(),
             backRightMotor.getRate()
         );
-        
-        pose = odometry.updateWithTime(elapsedTime.seconds(), getAngle(), wheelSpeeds);
-    }
-    
-    private Rotation2d getAngle() {
-       return Rotation2d.fromDegrees(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
     }
 }
