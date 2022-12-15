@@ -13,9 +13,9 @@ public class Slide {
     private Motor slideLeft, slideRight;
 
     //TODO: change values into actual tested positions instead of placeholders
-    public static double HIGH_JUNCTION= 1900; //<-- 12.90V, 2150 ;
-    public static double MID_JUNCTION = 780; //<-- 12.90V, 1550 ;
-    public static double LOW_JUNCTION = 1800;  //<-- 12.90V, 500 ;
+    public static double HIGH_JUNCTION= 1900; //<-- 12.90V, 2150;
+    public static double MID_JUNCTION = 780; //<-- 12.90V, 1550;
+    public static double LOW_JUNCTION = 1860;  //<-- 12.90V, 500;
     public static double ZERO_POSITION = 10;//5V;
     private final double MAX = 2500;
 

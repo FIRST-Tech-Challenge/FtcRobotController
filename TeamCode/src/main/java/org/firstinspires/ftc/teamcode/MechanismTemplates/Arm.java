@@ -18,7 +18,7 @@ public class Arm {
     private double armKd = 0.000005;
     private double armKf = 0.000004;
 
-    public static double EXTAKE_POS = 1200; // 1255 Actual position based on encoder readings; 1150 old val
+    public static double EXTAKE_POS = 1155; // 1255 Actual position based on encoder readings; 1150 old val
     public static double INTAKE_POS = 0; // -42.45391238 was the old value
     private final double MAX = 1350;
 
