@@ -123,15 +123,15 @@ import java.util.List;
             return input;
         }
 
-        public ArrayList<AnalyzedPole> getDetectedPoles()
+        public List<AnalyzedPole> getDetectedPoles()
         {
-            return new ArrayList<>(clientPoleList);
+            return Collections.synchronizedList(clientPoleList);
         }
 
-        ArrayList<MatOfPoint> findContours(Mat input)
+        List<MatOfPoint> findContours(Mat input)
         {
             // A list we'll be using to store the contours we find
-            ArrayList<MatOfPoint> contoursList = new ArrayList<>();
+            List<MatOfPoint> contoursList = new ArrayList<>();
 
             // Convert the input image to YCrCb color space, then extract the Cb channel
             Imgproc.cvtColor(input, cbMat, Imgproc.COLOR_RGB2YCrCb);
@@ -167,7 +167,6 @@ import java.util.List;
         {
             // We can put whatever logic in here we want to determine the poleness
             return (rect.size.width > rect.size.height);
-//            return true;
         }
 
         boolean findThePole()

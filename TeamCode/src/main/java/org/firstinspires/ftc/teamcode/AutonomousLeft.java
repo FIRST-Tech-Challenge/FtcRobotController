@@ -10,8 +10,6 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-import java.lang.Math;
-
 /**
  * This program implements robot movement based on Gyro heading and encoder counts.
  * It uses the Mecanumbot hardware class to define the drive on the robot.
@@ -102,6 +100,9 @@ public class AutonomousLeft extends AutonomousBase {
             idle();
         } // !isStarted
 
+        // Start the autonomous timer so we know how much time is remaining for cone cycling
+        autonomousTimer.reset();
+
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
 
@@ -121,7 +122,7 @@ public class AutonomousLeft extends AutonomousBase {
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                pipeline = new PoleOrientationPipeline();
+                pipeline = new PowerPlayObjectsPipeline();
                 webcam.setPipeline(pipeline);
             }
 
@@ -192,14 +193,14 @@ public class AutonomousLeft extends AutonomousBase {
         if( opModeIsActive()) {
             telemetry.addData("Skill", "alignPole");
             telemetry.update();
-            alignPole();
+            rotateToCenterPole();
         }
 
         // Distance to pole
         if( opModeIsActive()) {
             telemetry.addData("Skill", "distanceToPole");
             telemetry.update();
-            distanceToPole();
+            distanceFromFront(28.0, 1.0);
         }
 
         // Deposit cone on junction
@@ -209,15 +210,86 @@ public class AutonomousLeft extends AutonomousBase {
             scoreCone();
         }
 
-        if( fiveStackCycles < 1) {
-            // Park immediately in signal zone
-            if( opModeIsActive() ) {
-                telemetry.addData("Motion", "signalZoneParking0");
+        // Lets cycle
+        // Step 1. Rotate towards stack and get a decent starting position
+        // Step 2. Align to cone, this is going to require red/blue
+        // Step 3. Range from cone
+        // Step 4. Collect cone, custom heights
+        // Step 5. Rotate towards pole and get a decent starting position
+        // Step 6. Score cone
+        // Step 7. Profit
+        while (opModeIsActive() && (autonomousTimer.milliseconds() < 26000) && (fiveStackCycles > 0)) {
+            if (opModeIsActive()) {
+                telemetry.addData("Skill", "moveToConeStack");
                 telemetry.update();
-                signalZoneParking0( signalZone );
+                moveToConeStack();
             }
+
+            if (opModeIsActive()) {
+                telemetry.addData("Skill", "rotateToBlueCone");
+                telemetry.update();
+                rotateToCenterBlueCone();
+            }
+
+            // Distance to pole
+            if( opModeIsActive()) {
+                telemetry.addData("Skill", "distanceToBlueCone");
+                telemetry.update();
+                distanceFromFront(28.0, 1.0);
+            }
+
+            if (opModeIsActive()) {
+                telemetry.addData("Skill", "moveToConeStack");
+                telemetry.update();
+                collectCone(fiveStackCycles);
+            }
+
+            if (opModeIsActive()) {
+                telemetry.addData("Skill", "moveToTallJunctionFromStack");
+                telemetry.update();
+                moveToTallJunctionFromStack();
+            }
+
+            // Center pole
+            if( opModeIsActive()) {
+                telemetry.addData("Skill", "alignPoleFromStack");
+                telemetry.update();
+                rotateToCenterPole();
+            }
+
+            // Distance to pole
+            if( opModeIsActive()) {
+                telemetry.addData("Skill", "distanceToPoleFromStack");
+                telemetry.update();
+                distanceFromFront(28.0, 1.0);
+            }
+
+            // Deposit cone on junction
+            if( opModeIsActive() ) {
+                telemetry.addData("Skill", "scoreStackCone");
+                telemetry.update();
+                scoreCone();
+            }
+
+            fiveStackCycles--;
+        }
+
+        // Park in signal zone
+        if( opModeIsActive() ) {
+            telemetry.addData("Motion", "signalZoneParking0");
+            telemetry.update();
+            signalZoneParking0( signalZone );
         }
     } // mainAutonomous
+
+    private void moveToTallJunctionFromStack() {
+    } // moveToTallJunctionFromStack
+
+    private void moveToConeStack() {
+    } // moveToConeStack
+
+    private void collectCone(int coneLevel) {
+    } // collectCone
 
     /*--------------------------------------------------------------------------------------------*/
     /* ORIGINAL                                                                                   */
@@ -376,11 +448,6 @@ public class AutonomousLeft extends AutonomousBase {
         }
 
     } // moveToTallJunction3
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void alignPole() {
-        rotateToCenterPole();
-    }
 
     /*--------------------------------------------------------------------------------------------*/
     private void scoreCone() {

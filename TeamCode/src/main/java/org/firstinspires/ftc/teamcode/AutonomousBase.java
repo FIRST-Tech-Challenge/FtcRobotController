@@ -11,8 +11,6 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class AutonomousBase extends LinearOpMode {
@@ -61,13 +59,14 @@ public abstract class AutonomousBase extends LinearOpMode {
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
     
     int    fiveStackCycles                      = 0;
+    ElapsedTime autonomousTimer = new ElapsedTime();
 
     // gamepad controls for changing autonomous options
     boolean gamepad1_l_bumper_last, gamepad1_l_bumper_now=false;
     boolean gamepad1_r_bumper_last, gamepad1_r_bumper_now=false;
 
     // Vision stuff
-    PoleOrientationPipeline pipeline;
+    PowerPlayObjectsPipeline pipeline;
 
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {
@@ -86,10 +85,8 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.turretPosRun();
     }
 
-    void distanceToPole() {
+    void distanceFromFront(double desiredDistance, double distanceTolerance) {
         // Value in inches?
-        double desiredDistance = 28.0;
-        double distanceTolerance = 1.0;
         double range = robot.updateSonarRangeF();
         double rangeErr = range - desiredDistance;
         while (opModeIsActive() && (abs(rangeErr) > distanceTolerance)) {
@@ -101,15 +98,49 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.stopMotion();
     }
 
+    void rotateToCenterRedCone()
+    {
+        List<PowerPlayObjectsPipeline.AnalyzedCone> localCones = pipeline.getDetectedRedCones();
+        if(!localCones.isEmpty()) {
+            PowerPlayObjectsPipeline.AnalyzedCone theCone = localCones.get(0);
+            while (opModeIsActive() && !theCone.coneAligned) {
+                performEveryLoop();
+                robot.driveTrainTurn((theCone.centralOffset > 0) ? +0.10 : -0.10);
+                localCones = pipeline.getDetectedRedCones();
+                if(!localCones.isEmpty()) {
+                    theCone = localCones.get(0);
+                }
+            }
+            robot.stopMotion();
+        }
+    }
+
+    void rotateToCenterBlueCone()
+    {
+        List<PowerPlayObjectsPipeline.AnalyzedCone> localCones = pipeline.getDetectedBlueCones();
+        if(!localCones.isEmpty()) {
+            PowerPlayObjectsPipeline.AnalyzedCone theCone = localCones.get(0);
+            while (opModeIsActive() && !theCone.coneAligned) {
+                performEveryLoop();
+                robot.driveTrainTurn((theCone.centralOffset > 0) ? +0.10 : -0.10);
+                localCones = pipeline.getDetectedBlueCones();
+                if(!localCones.isEmpty()) {
+                    theCone = localCones.get(0);
+                }
+            }
+            robot.stopMotion();
+        }
+    }
+
     void rotateToCenterPole()
     {
-        List<PoleOrientationPipeline.AnalyzedPole> localPoles = Collections.synchronizedList(pipeline.getDetectedPoles());
+        List<PowerPlayObjectsPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
         if(!localPoles.isEmpty()) {
-            PoleOrientationPipeline.AnalyzedPole thePole = localPoles.get(0);
+            PowerPlayObjectsPipeline.AnalyzedPole thePole = localPoles.get(0);
             while (opModeIsActive() && !thePole.poleAligned) {
                 performEveryLoop();
                 robot.driveTrainTurn((thePole.centralOffset > 0) ? +0.10 : -0.10);
-                localPoles = Collections.synchronizedList(pipeline.getDetectedPoles());
+                localPoles = pipeline.getDetectedPoles();
                 if(!localPoles.isEmpty()) {
                     thePole = localPoles.get(0);
                 }
