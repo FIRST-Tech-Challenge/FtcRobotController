@@ -58,9 +58,15 @@ public class GamePad1 extends OpMode {
           //  robot.viperSlide.setPower(-.5);
         //}
 
+        if(gamepad1.dpad_left){
+        robot.claw1.setPosition(.3);
+        }
+        if(gamepad1.dpad_right){
+            robot.claw1.setPosition(1);
+        }
 
         if (gamepad1.left_bumper) {//low
-            setLevelDown(slideDown - 710);
+            setLevelDown(slideDown - 1060);
         }
         if (gamepad1.left_trigger > .5) {//down all way
             setLevelDown(slideDown + 23);
@@ -68,14 +74,17 @@ public class GamePad1 extends OpMode {
         }
 
         if (gamepad1.right_bumper) {/////////medium
-            setLevelUp(slideDown - 1350);
+            setLevelUp(slideDown - 1600);
         }
 
         if (gamepad1.right_trigger > .5) {//all the way up
-            setLevelDown(slideDown - 2000);
+            setLevelDown(slideDown - 2550);
 
         }
 
+        if(gamepad1.dpad_down){
+        robot.viperSlide.setPower(.5);
+        }
 
         //////////////////////////////////////Levels
 

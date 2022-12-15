@@ -27,8 +27,7 @@ public class HardwarePushbot {
     public static HardwareMap hwMap = null;
 
     public static Servo claw1 = null;
-    public static Servo claw2 = null;
-    public static Servo claw3 = null;
+
 
     //////////Servos
 //////////No Servos Yet
@@ -68,8 +67,7 @@ public class HardwarePushbot {
         viperSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         claw1 = hwMap.get(Servo.class, "claw1");
-        claw2 = hwMap.get(Servo.class, "claw2");
-        claw3 = hwMap.get(Servo.class, "claw3");
+
 
     }
     public static void autoinit (HardwareMap ahwMap){
