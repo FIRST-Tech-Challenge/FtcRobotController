@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.;
 
@@ -12,13 +11,26 @@ import com.qualcomm.robotcore.hardware.Servo;
 //@Disabled
 public class forward extends LinearOpMode {
 
+        // Drive motor and arm variables
+        DcMotor lf = null;
+        DcMotor rf = null;
+        DcMotor lb = null;
+        DcMotor rb = null;
+
+        DcMotor tower1 = null;
+
+        // Servo Variables
+        Servo clamp = null;
+
+        double SpinLeft = 0.1;
+        double STOP = 0.5;
+        double SpinRight = 0.9;
+
     @Override
     public void runOpMode() {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        Servo clamp = null;
 
         //left front wheel
         DcMotor lf = hardwareMap.get(DcMotor.class, "lf");
@@ -44,7 +56,7 @@ public class forward extends LinearOpMode {
         lb.setDirection(DcMotor.Direction.FORWARD);
         rb.setDirection(DcMotor.Direction.REVERSE);
         tower1.setDirection(DcMotor.Direction.FORWARD);
-        clamp.setDirection(Servo.Direction.FORWARD);
+        clamp.setPosition(1);
 
         waitForStart();
         gamepad1.rumble(1000);
@@ -53,10 +65,10 @@ public class forward extends LinearOpMode {
 
 
             //clamp (NOTE: 0-right limit, left limit will break it)
-            if (gamepad2.left_trigger) {
+            if (gamepad2.a) {
                 clamp.setPosition(0.5);
             } else {
-                clamp.setPosition(0.75);
+                clamp.setPosition(1);
             }
             double lPower;
                 double towerPower;
@@ -68,7 +80,7 @@ public class forward extends LinearOpMode {
                 lPower = gamepad1.left_stick_y;
                 double rPower = gamepad1.right_stick_y;
                towerPower = gamepad2.right_trigger;
-                clamp = gamepad2.left_trigger;
+              
 
 
 
