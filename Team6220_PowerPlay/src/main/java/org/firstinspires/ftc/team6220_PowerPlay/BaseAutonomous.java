@@ -105,9 +105,31 @@ public abstract class BaseAutonomous extends BaseOpMode {
         motorBR.setPower(0.0);
     }
 
-    public void driveSlides(int targetPosition) {
-        while (Math.abs(targetPosition - motorLeftSlides.getCurrentPosition()) > 20 && opModeIsActive()) {
-            super.driveSlides(targetPosition);
+    /**
+     * this method will allow the slides to move to a specified target position
+     * @param targetPosition target position for slides motors in ticks
+     */
+    public void driveSlidesAutonomous(int targetPosition) {
+        int error = targetPosition - motorLeftSlides.getCurrentPosition();
+        double motorPower;
+
+        // while slides aren't at target position
+        while (Math.abs(error) > 20 && opModeIsActive()) {
+            error = targetPosition - motorLeftSlides.getCurrentPosition();
+            motorPower = error * 0.01;
+
+            // slides going down - full speed
+            if (error < 0) {
+                motorLeftSlides.setPower(-1.0);
+                motorRightSlides.setPower(-1.0);
+            // slides going up - proportional control
+            } else {
+                motorLeftSlides.setPower(motorPower);
+                motorRightSlides.setPower(motorPower);
+            }
         }
+
+        motorLeftSlides.setPower(0.05);
+        motorRightSlides.setPower(0.05);
     }
 }

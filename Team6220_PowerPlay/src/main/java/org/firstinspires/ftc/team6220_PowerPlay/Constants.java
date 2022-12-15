@@ -9,9 +9,10 @@ public class Constants {
     public static final int SLIDE_HIGH = 3800;
     public static final int SLIDE_MEDIUM = 2750;
     public static final int SLIDE_LOW = 1650;
+    public static final int SLIDE_STOW = 300;
     public static final int SLIDE_BOTTOM = 0;
 
-    public static final double DRIVE_SPEED_MULTIPLIER = 0.5;
+    public static final double DRIVE_SPEED_MULTIPLIER = 0.6;
     public static final int DRIVE_DEADZONE_DEGREES = 45;
 
     public static final double GRABBER_INITIALIZE_POSITION = 0.7;

@@ -145,31 +145,27 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * this method will allow the slides to move given a target position
+     * this method will allow the slides to move to a specified target position
      * @param targetPosition target position for slides motors in ticks
      */
     public void driveSlides(int targetPosition) {
         int error = targetPosition - motorLeftSlides.getCurrentPosition();
-        double motorPower = Math.max(error * 0.02, 0.2);
-        boolean joystickActive = Math.abs(gamepad2.left_stick_y) > 0.1;
+        double motorPower = error * 0.01;
 
         // slides not yet at target position
         if (Math.abs(error) > 20) {
-            // if joystick is being used to drive slides
-            if (joystickActive) {
-                motorLeftSlides.setPower(gamepad2.left_stick_y * 0.4);
-                motorRightSlides.setPower(gamepad2.left_stick_y * 0.4);
-            // if bumpers are being used to drive slides
+            // slides going down - joystick
+            if (error < 0 && error > -200) {
+                motorLeftSlides.setPower(-0.3);
+                motorRightSlides.setPower(-0.3);
+            // slides going down - bumpers
+            } else if (error < -200) {
+                motorLeftSlides.setPower(-1.0);
+                motorRightSlides.setPower(-1.0);
+            // slides going up - proportional control
             } else {
-                // slides going down - full speed
-                if (error < 0) {
-                    motorLeftSlides.setPower(-1.0);
-                    motorRightSlides.setPower(-1.0);
-                // slides going up - proportional control
-                } else {
-                    motorLeftSlides.setPower(motorPower);
-                    motorRightSlides.setPower(motorPower);
-                }
+                motorLeftSlides.setPower(motorPower);
+                motorRightSlides.setPower(motorPower);
             }
         // slides at target position
         } else {
