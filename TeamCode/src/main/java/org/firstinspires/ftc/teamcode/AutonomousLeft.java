@@ -77,8 +77,9 @@ public class AutonomousLeft extends AutonomousBase {
             }
         });
 
-        // Wait for the game to start (driver presses PLAY).  While waiting, poll for team color/number
+        // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
+            telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
             telemetry.addData("STARTING", "%s", "LEFT");
             telemetry.addData("Signal Detect", "R: " + PipelinePowerPlay.avgR + " G: " +
                     PipelinePowerPlay.avgG + " B: " + PipelinePowerPlay.avgB + " Zone: " +
@@ -86,8 +87,16 @@ public class AutonomousLeft extends AutonomousBase {
             telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
             telemetry.addData("(use %s bumpers to modify", "LEFT/RIGHT");
             telemetry.update();
-            // Check for operator changes to Autonomous options
+            // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
+            // Change to RED/BLUE alliance?
+            if( gamepad1_circle_now && !gamepad1_circle_last ) {
+                blueAlliance = false;  // gamepad circle is colored RED
+            }
+            else if( gamepad1_cross_now && !gamepad1_cross_last ) {
+                blueAlliance = true;   // gamepad cross is colored BLUE
+            }            
+            // Change number of 5-stack to attempt?
             if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last ) {
               fiveStackCycles -= 1;
               if( fiveStackCycles < 0 ) fiveStackCycles=0;              
@@ -153,6 +162,7 @@ public class AutonomousLeft extends AutonomousBase {
     } /* runOpMode() */
 
     /*--------------------------------------------------------------------------------------------*/
+    // TEST CODE: Verify gyro/encoder-based motion functions against a tape measure
     private void testGyroDrive() {
         double startAngle;
         gyroDrive(DRIVE_SPEED_50, DRIVE_Y, 24.0, 999.9, DRIVE_THRU ); // Drive FWD 24" along current heading
@@ -186,19 +196,19 @@ public class AutonomousLeft extends AutonomousBase {
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "moveToTallJunction");
             telemetry.update();
-            moveToTallJunction2();
+            moveToTallJunction();
         }
 
-        // Center pole
+        // Center on pole
         if( opModeIsActive()) {
-            telemetry.addData("Skill", "alignPole");
+            telemetry.addData("Skill", "rotateToCenterPole");
             telemetry.update();
             rotateToCenterPole();
         }
 
-        // Distance to pole
+        // Adjust distance to pole
         if( opModeIsActive()) {
-            telemetry.addData("Skill", "distanceToPole");
+            telemetry.addData("Skill", "distanceFromFront");
             telemetry.update();
             distanceFromFront(28.0, 1.0);
         }
@@ -210,9 +220,9 @@ public class AutonomousLeft extends AutonomousBase {
             scoreCone();
         }
 
-        // Lets cycle
+        // Lets cycle:
         // Step 1. Rotate towards stack and get a decent starting position
-        // Step 2. Align to cone, this is going to require red/blue
+        // Step 2. Align to cone (red/blue specific logic)
         // Step 3. Range from cone
         // Step 4. Collect cone, custom heights
         // Step 5. Rotate towards pole and get a decent starting position
@@ -226,22 +236,24 @@ public class AutonomousLeft extends AutonomousBase {
             }
 
             if (opModeIsActive()) {
-                telemetry.addData("Skill", "rotateToBlueCone");
+                telemetry.addData("Skill", "rotateToConeStack");
                 telemetry.update();
-                rotateToCenterBlueCone();
+                if( blueAlliance )
+                  rotateToCenterBlueCone();
+                else
+                  rotateToCenterRedCone();
             }
 
-            // Distance to pole
             if( opModeIsActive()) {
-                telemetry.addData("Skill", "distanceToBlueCone");
+                telemetry.addData("Skill", "distanceToConeStack");
                 telemetry.update();
                 distanceFromFront(28.0, 1.0);
             }
 
             if (opModeIsActive()) {
-                telemetry.addData("Skill", "moveToConeStack");
+                telemetry.addData("Skill", "collectCone");
                 telemetry.update();
-                collectCone(fiveStackCycles);
+                collectCone();  // decrements fiveStackHeight!
             }
 
             if (opModeIsActive()) {
@@ -250,21 +262,18 @@ public class AutonomousLeft extends AutonomousBase {
                 moveToTallJunctionFromStack();
             }
 
-            // Center pole
             if( opModeIsActive()) {
-                telemetry.addData("Skill", "alignPoleFromStack");
+                telemetry.addData("Skill", "rotateToCenterPole");
                 telemetry.update();
                 rotateToCenterPole();
             }
 
-            // Distance to pole
             if( opModeIsActive()) {
-                telemetry.addData("Skill", "distanceToPoleFromStack");
+                telemetry.addData("Skill", "distanceFromFront");
                 telemetry.update();
                 distanceFromFront(28.0, 1.0);
             }
 
-            // Deposit cone on junction
             if( opModeIsActive() ) {
                 telemetry.addData("Skill", "scoreStackCone");
                 telemetry.update();
@@ -272,83 +281,25 @@ public class AutonomousLeft extends AutonomousBase {
             }
 
             fiveStackCycles--;
-        }
+        } // while()
 
         // Park in signal zone
         if( opModeIsActive() ) {
-            telemetry.addData("Motion", "signalZoneParking0");
+            telemetry.addData("Motion", "signalZoneParking");
             telemetry.update();
-            signalZoneParking0( signalZone );
+            signalZoneParking( signalZone );
         }
     } // mainAutonomous
 
-    private void moveToTallJunctionFromStack() {
-    } // moveToTallJunctionFromStack
-
-    private void moveToConeStack() {
-    } // moveToConeStack
-
-    private void collectCone(int coneLevel) {
-    } // collectCone
-
     /*--------------------------------------------------------------------------------------------*/
-    /* ORIGINAL                                                                                   */
     private void moveToTallJunction() {
-
-        // Tilt grabber down from autonomous starting position (vertical)
-        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-
-        // Drive away from wall at slow speed to avoid mecanum roller slippage
-        autoYpos=4.0;  autoXpos=0.0;  autoAngle=0.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
-
-        // Perform setup to center turret and raise lift to scoring position
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_AUTO_H );
-
-        // Drive the main distance quickly (while lift moves)
-        autoYpos=46.0;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_55, TURN_SPEED_55 );
-
-        // Finish the drive to the tall junction pole at a lower speed (stop accurately)
-        autoYpos=51.0;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
-        robot.driveTrainMotorsZero();
-
-        // Both mechanisms should be finished, but pause here if they haven't (until they do)
-        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
-            performEveryLoop();
-        }
-
-        // Turn toward pole
-        autoAngle=43.5;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
-        robot.driveTrainMotorsZero();
-
-        // Tilt grabber down to final scoring position
-        robot.grabberSetTilt( robot.GRABBER_TILT_AUTO_F );
-
-        // Drive closer to the pole in order to score (and re-center turret in case it moved)
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        driveToPosition( (autoYpos+2.8), (autoXpos+2.8), autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
-        robot.driveTrainMotorsZero();
-        // Make sure the turret movement has finished
-        while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
-            performEveryLoop();
-        }
-
-    } // moveToTallJunction
-
-    /*--------------------------------------------------------------------------------------------*/
-    /* AVOID TRAPPING BEACON CONE BY TURNING WHILE DRIVING                                        */
-    private void moveToTallJunction2() {
         // Drive away from wall at slow speed to avoid mecanum roller slippage
         // Turn so we don't entrap the beacon cone
         autoYpos=18.0;  autoXpos=0.0;  autoAngle=+80.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
 
         // Tilt grabber down from autonomous starting position (vertical)
-        // Moving here avoids hitting low pole
+        // (must wait or we'll hit the low pole)
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
         // Perform setup to center turret and raise lift to scoring position
@@ -389,65 +340,7 @@ public class AutonomousLeft extends AutonomousBase {
         while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
             performEveryLoop();
         }
-    } // moveToTallJunction2
-
-    /*--------------------------------------------------------------------------------------------*/
-    /* AVOID BEACON BLOCKING LOWER CAMERA BY PUSHING IT TO THE CENTER LINE                        */
-    private void moveToTallJunction3() {
-
-        // Tilt grabber down from autonomous starting position (vertical)
-        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-
-        // Drive away from wall at slow speed to avoid mecanum roller slippage
-        autoYpos=4.0;  autoXpos=0.0;  autoAngle=0.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
-
-        // Perform setup to center turret and raise lift to scoring position
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_AUTO_H );
-
-        // Drive the main distance quickly (while lift moves)
-        autoYpos=46.0;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_55, TURN_SPEED_55 );
-
-        // Tilt grabber up and back while we're close to the opposing alliance (no entanglement!)
-        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
-
-        // Finish the drive to the edge of our alliance at lower speed (stop accurately)
-        autoYpos=56.0;   // TODO: is this the right number for the center line??
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
-
-        // Drive backward to the tall junction pole now that we've left the beacon cone behind
-        autoYpos=51.0;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
-        robot.driveTrainMotorsZero();
-
-        // Both mechanisms should be finished, but pause here if they haven't (until they do)
-        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
-            performEveryLoop();
-        }
-
-        // Tilt grabber partway toward scoring position (wait until we've over the pole before FULLY lowering)
-        robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
-
-        // Turn toward pole
-        autoAngle=43.5;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
-        robot.driveTrainMotorsZero();
-
-        // Tilt grabber down to final scoring position
-        robot.grabberSetTilt( robot.GRABBER_TILT_AUTO_F );
-
-        // Drive closer to the pole in order to score (and re-center turret in case it moved)
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        driveToPosition( (autoYpos+2.8), (autoXpos+2.8), autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
-        robot.driveTrainMotorsZero();
-        // Make sure the turret movement has finished
-        while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
-            performEveryLoop();
-        }
-
-    } // moveToTallJunction3
+    } // moveToTallJunction
 
     /*--------------------------------------------------------------------------------------------*/
     private void scoreCone() {
@@ -469,6 +362,70 @@ public class AutonomousLeft extends AutonomousBase {
     } // scoreCone
 
     /*--------------------------------------------------------------------------------------------*/
+    private void moveToConeStack() {
+
+        // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
+        autoYpos=51.0;  autoXpos=0.0;  autoAngle=-90.0;    // (inches, inches, degrees)
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_40, TURN_SPEED_40 );
+
+        // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
+        // TODO: refine this distance!!
+        autoXpos=-12.0;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_40, TURN_SPEED_40 );
+        robot.driveTrainMotorsZero();
+
+    } // moveToConeStack
+
+    /*--------------------------------------------------------------------------------------------*/
+    // Assumes we've already completed the alignment on the 5-stack (rotateToCenterBlueCone or
+    // rotateToCenterRedCone and distanceFromFront so we're ready to actually collect the cone
+    private void collectCone() {
+        double liftAngle5stack;
+
+        // Lower the collector to the horizontal collecting position
+        robot.grabberSetTilt( robot.GRABBER_TILT_GRAB );
+
+        // Determine the correct lift-angle height based on how many cones remain
+        switch( fiveStackHeight ) {
+            case 5  : liftAngle5stack =  90.0; break;   // TODO:  use Teleop to determine these lift angles!
+            case 4  : liftAngle5stack =  95.0; break;
+            case 3  : liftAngle5stack = 100.0; break;
+            case 2  : liftAngle5stack = 105.0; break;
+            case 1  : liftAngle5stack = 110.0; break;
+            default : liftAngle5stack = 110.0; break;
+        } // switch()
+
+        // Lower the lift to the desired height (and ensure we're centered)
+        // TODO: ideally this could at least partially happen during moveToConeStack()
+        // and we only do the final adjustment here (to be faster)
+        robot.liftPosInit( liftAngle5stack );
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+            performEveryLoop();
+        }
+
+        // Start the collector spinning
+        robot.grabberSpinCollect();
+        // start to slowly lower onto cone
+        robot.liftMotorsSetPower( -0.20 );
+        sleep( 600 );  // 0.6 sec
+        // stop the collector
+        robot.grabberSpinStop();
+        // reverse the lift to raise off the cone stack
+        robot.liftMotorsSetPower( 0.40 );
+        sleep( 1500 );  // 1.5 sec
+        // halt lift motors
+        robot.liftMotorsSetPower( 0.0 );
+
+        // Reduce the remaining cone-count
+        fiveStackHeight--;
+    } // collectCone
+
+    /*--------------------------------------------------------------------------------------------*/
+    private void moveToTallJunctionFromStack() {
+    } // moveToTallJunctionFromStack
+
+    /*--------------------------------------------------------------------------------------------*/
     /* +---+---H---+     H = Tall/High junction pole on RIGHT                                     */
     /* | 1 | 2 | 3 |                                                                              */
     /* +---+---+---+                                                                              */
@@ -476,7 +433,12 @@ public class AutonomousLeft extends AutonomousBase {
     /* +---+---+---+                                                                              */
     /* |   | S |   |     S = Starting floor tile                                                  */
     /* +---+---+---/                                                                              */
-    private void signalZoneParking0( int signalZoneLocation ) {
+    private void signalZoneParking( int signalZoneLocation ) {
+
+        // TODO: This code assumes autoYpos, autoXpos, autoAngle carry over from
+        // scoring on the tall poll.  If that changes (ie, we go for a different pole,
+        // or don't complete that operation, then autoYpos and autoXpos will need to
+        // be redefined here to the correct values.
 
         switch( signalZoneLocation ) {
            case 3  : autoAngle=+90.0; break; // Turn fully to +90deg (BLUE)
@@ -525,6 +487,6 @@ public class AutonomousLeft extends AutonomousBase {
         // Raise collector straight up (prevents "droop" when power is removed)
         robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
 
-    } // signalZoneParking0
+    } // signalZoneParking
 
 } /* AutonomousLeft */

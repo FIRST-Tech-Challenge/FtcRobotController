@@ -57,11 +57,15 @@ public abstract class AutonomousBase extends LinearOpMode {
     double autoXpos                             = 0.0;   // Keeps track of our Autonomous X-Y position and Angle commands. 
     double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
-    
-    int    fiveStackCycles                      = 0;
+
+    boolean     blueAlliance    = true;  // Can be toggled during the init phase of autonomous
+    int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
+    int         fiveStackCycles = 0;     // How many we want to attempt to collect/score?
     ElapsedTime autonomousTimer = new ElapsedTime();
 
     // gamepad controls for changing autonomous options
+    boolean gamepad1_circle_last,   gamepad1_circle_now  =false;
+    boolean gamepad1_cross_last,    gamepad1_cross_now   =false;
     boolean gamepad1_l_bumper_last, gamepad1_l_bumper_now=false;
     boolean gamepad1_r_bumper_last, gamepad1_r_bumper_now=false;
 
@@ -70,6 +74,8 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {
+        gamepad1_circle_last   = gamepad1_circle_now;      gamepad1_circle_now   = gamepad1.circle;
+        gamepad1_cross_last    = gamepad1_cross_now;       gamepad1_cross_now    = gamepad1.cross;
         gamepad1_l_bumper_last = gamepad1_l_bumper_now;    gamepad1_l_bumper_now = gamepad1.left_bumper;
         gamepad1_r_bumper_last = gamepad1_r_bumper_now;    gamepad1_r_bumper_now = gamepad1.right_bumper;
     } // captureGamepad1Buttons
@@ -83,8 +89,9 @@ public abstract class AutonomousBase extends LinearOpMode {
         globalCoordinatePositionUpdate();
         robot.liftPosRun();
         robot.turretPosRun();
-    }
+    } // performEveryLoop
 
+    /*---------------------------------------------------------------------------------*/
     void distanceFromFront(double desiredDistance, double distanceTolerance) {
         // Value in inches?
         double range = robot.updateSonarRangeF();
@@ -96,16 +103,20 @@ public abstract class AutonomousBase extends LinearOpMode {
             robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.10 : -0.10);
         }
         robot.stopMotion();
-    }
+    } // distanceFromFront
 
-    void rotateToCenterRedCone()
-    {
+    /*---------------------------------------------------------------------------------*/
+    void rotateToCenterRedCone() {
         List<PowerPlayObjectsPipeline.AnalyzedCone> localCones = pipeline.getDetectedRedCones();
         if(!localCones.isEmpty()) {
             PowerPlayObjectsPipeline.AnalyzedCone theCone = localCones.get(0);
             while (opModeIsActive() && !theCone.coneAligned) {
                 performEveryLoop();
+                // TODO: rotation is not sufficient;  we also need to be aligned along the
+                // tape stripe if we're going to know our true odometry location.
+                // That implies a combinatino of TURN and LEFT/RIGHT stafing.
                 robot.driveTrainTurn((theCone.centralOffset > 0) ? +0.10 : -0.10);
+//              robot.driveTrainRightLeft((theCone.centralOffset > 0) ? +0.10 : -0.10);
                 localCones = pipeline.getDetectedRedCones();
                 if(!localCones.isEmpty()) {
                     theCone = localCones.get(0);
@@ -115,25 +126,31 @@ public abstract class AutonomousBase extends LinearOpMode {
         }
     }
 
-    void rotateToCenterBlueCone()
-    {
+    /*---------------------------------------------------------------------------------*/
+    void rotateToCenterBlueCone() {
         List<PowerPlayObjectsPipeline.AnalyzedCone> localCones = pipeline.getDetectedBlueCones();
         if(!localCones.isEmpty()) {
             PowerPlayObjectsPipeline.AnalyzedCone theCone = localCones.get(0);
             while (opModeIsActive() && !theCone.coneAligned) {
                 performEveryLoop();
+                // TODO: rotation is not sufficient;  we also need to be aligned along the
+                // tape stripe if we're going to know our true odometry location.
+                // That implies a combinatino of TURN and LEFT/RIGHT stafing.
                 robot.driveTrainTurn((theCone.centralOffset > 0) ? +0.10 : -0.10);
+//              robot.driveTrainRightLeft((theCone.centralOffset > 0) ? +0.10 : -0.10);
                 localCones = pipeline.getDetectedBlueCones();
                 if(!localCones.isEmpty()) {
                     theCone = localCones.get(0);
                 }
             }
             robot.stopMotion();
+            // TODO: can we use this aligned position along the tape to update our known
+            // odometry world position? (offsetting any drift-error that has accumulated?
         }
-    }
+    } // rotateToCenterBlueCone
 
-    void rotateToCenterPole()
-    {
+    /*---------------------------------------------------------------------------------*/
+    void rotateToCenterPole() {
         List<PowerPlayObjectsPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
         if(!localPoles.isEmpty()) {
             PowerPlayObjectsPipeline.AnalyzedPole thePole = localPoles.get(0);
@@ -146,8 +163,10 @@ public abstract class AutonomousBase extends LinearOpMode {
                 }
             }
             robot.stopMotion();
+            // TODO: can we use this aligned position along the tape to update our known
+            // odometry world position? (offsetting any drift-error that has accumulated?
         }
-    }
+    } // rotateToCenterPole
 
     /*---------------------------------------------------------------------------------------------
      * getAngle queries the current gyro angle

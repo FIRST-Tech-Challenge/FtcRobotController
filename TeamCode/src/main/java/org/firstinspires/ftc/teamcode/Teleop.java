@@ -856,7 +856,7 @@ public abstract class Teleop extends LinearOpMode {
                 }
                 // Is second phase complete?
                 else if( (elapsedTime >= 900) && grabberLifting ) {
-                    // half lift motors
+                    // halt lift motors
                     robot.liftMotorsSetPower( 0.0 );
                     grabberRunning = false;
                 }

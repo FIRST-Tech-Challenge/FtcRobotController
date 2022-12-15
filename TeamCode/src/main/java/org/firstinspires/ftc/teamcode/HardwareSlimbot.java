@@ -131,12 +131,12 @@ public class HardwareSlimbot
     // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
     public double       LIFT_ANGLE_ASTART  = 114.3;   // lift position for starting autonomous
     public double       LIFT_ANGLE_COLLECT = 110.4;   // lift position for collecting cones
-    public double       LIFT_ANGLE_GROUND  = 108.0;   // lift position for collecting cones
+    public double       LIFT_ANGLE_GROUND  = 108.0;   // lift position for GROUND junction
     public double       LIFT_ANGLE_LOW     =  99.5;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  84.0;   // lift position for cleaning front turret motor
-    public double       LIFT_ANGLE_MED     =  71.6;   // lift position for MEDIUM junction
-    public double       LIFT_ANGLE_MED_B   = -76.6;   // lift position for MEDIUM junction
-    public double       LIFT_ANGLE_HIGH    =  44.0;   // lift position for HIGH junction (FRONT Telecop)
+    public double       LIFT_ANGLE_MED     =  71.6;   // lift position for MEDIUM junction (FRONT Teleop)
+    public double       LIFT_ANGLE_MED_B   = -76.6;   // lift position for MEDIUM junction (BACK Teleop)
+    public double       LIFT_ANGLE_HIGH    =  44.0;   // lift position for HIGH junction (FRONT Teleop)
     public double       LIFT_ANGLE_AUTO_H  =  35.0;   // lift position for AUTONOMOUS (HIGH junction)
     public double       LIFT_ANGLE_HIGH_B  = -47.0;   // lift position for HIGH junction (BACK Teleop)
 
@@ -186,10 +186,8 @@ public class HardwareSlimbot
     public double       GRABBER_TILT_MIN     = -0.50;  // As far down as we can tilt (manual control)
 
     public Servo        rotateServo         = null;   // rotate GRABBER left/right
-//    public double       GRABBER_ROTATE_UP   = 0.335;  // normal (upright) orientation
-//    public double       GRABBER_ROTATE_DOWN = 1.000;  // flipped (upside-down) orientation
-    public double       GRABBER_ROTATE_UP   = 0.33;  // normal (upright) orientation
-    public double       GRABBER_ROTATE_DOWN = 1.0;  // flipped (upside-down) orientation
+    public double       GRABBER_ROTATE_UP   = 0.330;  // normal (upright) orientation
+    public double       GRABBER_ROTATE_DOWN = 1.000;  // flipped (upside-down) orientation
 
     public CRServo      leftSpinServo       = null;   // continuous rotation/spin (left side)
     public CRServo      rightSpinServo      = null;   // continuous rotation/spin (right side)
@@ -483,23 +481,33 @@ public class HardwareSlimbot
     } // driveTrainMotors
 
     /*--------------------------------------------------------------------------------------------*/
-    /* Set all motors to same power to drive straight forward (Ex: +0.10) or reverse (Ex: -0.10)  */
+    /* Set all 4 motor powers to drive straight FORWARD (Ex: +0.10) or REVERSE (Ex: -0.10)        */
     public void driveTrainFwdRev( double motorPower )
     {
-        frontLeftMotor.setPower( motorPower );
+        frontLeftMotor.setPower(  motorPower );
         frontRightMotor.setPower( motorPower );
-        rearLeftMotor.setPower( motorPower );
-        rearRightMotor.setPower( motorPower );
+        rearLeftMotor.setPower(   motorPower );
+        rearRightMotor.setPower(  motorPower );
     } // driveTrainFwdRev
 
     /*--------------------------------------------------------------------------------------------*/
-    /* Set left/right motor powers to turn right (Ex: +0.10) or left (Ex: -0.10)                  */
+    /* Set all 4 motor powers to strafe RIGHT (Ex: +0.10) or LEFT (Ex: -0.10)                     */
+    public void driveTrainRightLeft( double motorPower )
+    {
+        frontLeftMotor.setPower(   motorPower );
+        frontRightMotor.setPower( -motorPower );
+        rearLeftMotor.setPower(   -motorPower );
+        rearRightMotor.setPower(   motorPower );
+    } // driveTrainRightLeft
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* Set all 4 motor powers to turn clockwise (Ex: +0.10) or counterclockwise (Ex: -0.10)       */
     public void driveTrainTurn( double motorPower )
     {
         frontLeftMotor.setPower( -motorPower );
         frontRightMotor.setPower( motorPower );
-        rearLeftMotor.setPower( -motorPower );
-        rearRightMotor.setPower( motorPower );
+        rearLeftMotor.setPower(  -motorPower );
+        rearRightMotor.setPower(  motorPower );
     } // driveTrainTurn
 
     /*--------------------------------------------------------------------------------------------*/
@@ -653,9 +661,9 @@ public class HardwareSlimbot
                 double liftMotorPower = minPower + (degreesToGo * -0.02); // our PID is just "P"
                 // adjust base power according to lowering/lifting (lowering cuts it; raising boosts it)
                 liftMotorPower *= (lowering)? 0.50 : 1.50;
-                // Never exceed 80% motor power, even if a long distance from target (gear slippage!)
-                if( liftMotorPower >  0.80 ) liftMotorPower =  0.80;    // 0.98? (RVS)
-                if( liftMotorPower < -0.80 ) liftMotorPower = -0.80;    // 0.98? (RVS)
+                // Never exceed 85% motor power, even if a long distance from target (gear slippage!)
+                if( liftMotorPower >  0.85 ) liftMotorPower =  0.85;
+                if( liftMotorPower < -0.85 ) liftMotorPower = -0.85;
                 liftMotorsSetPower( liftMotorPower );
                 // Reset the wait count back to zero
                 liftMotorWait = 0;
