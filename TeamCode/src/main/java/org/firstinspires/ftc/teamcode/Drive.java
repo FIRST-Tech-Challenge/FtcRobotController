@@ -33,6 +33,8 @@ public class Drive extends Control {
         boolean start = gamepad1.start;
         boolean DpadUp = gamepad2.dpad_up;
         boolean DpadDown = gamepad2.dpad_down;
+        boolean DpadLeft = gamepad2.dpad_left;
+        boolean DpadRight = gamepad2.dpad_right;
         boolean DpadPressed;
         double rightTurn = 0;
         double leftTurn = 0;
@@ -77,8 +79,8 @@ public class Drive extends Control {
 
         //System for cascade level system
 
-        if(gamepad2.dpad_up){
-            switch(zHeight){
+        if(gamepad2.dpad_right){
+            switch(zHeight){// it go up if it already low
                 case GROUND:
                     zHeight = Level.LOW;
                     break;
@@ -91,8 +93,8 @@ public class Drive extends Control {
             }
             cascadeLift(zHeight);
         }
-        if(gamepad2.dpad_down){
-            switch(zHeight) {
+            if(gamepad2.dpad_left){
+            switch(zHeight) {//it go down if already up
                 case HIGH:
                     zHeight = Level.MEDIUM;
                     break;
@@ -106,5 +108,13 @@ public class Drive extends Control {
 
             }
         }
+
+            if(gamepad2.dpad_up) cascadeLiftManual(1);
+            else if(gamepad2.dpad_down) cascadeLiftManual(-1);
+            else cascadeLiftManual(0);
+
+        }
+
+
+
     }
-}

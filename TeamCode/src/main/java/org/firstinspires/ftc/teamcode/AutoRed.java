@@ -18,14 +18,27 @@ public class AutoRed extends AutoGuts {
         double width = pipeline.getRectWidth();
         int height = pipeline.getRectHeight();
         double area = pipeline.getRectArea();
+        double greenPixels = pipeline.returnGreen();
+        double cyanPixels = pipeline.returnCyan();
+        double magentaPixels = pipeline.returnMagenta();
+        boolean greenPixelsBool = false;
+        boolean magentaPixelsBool = false;
+        boolean cyanPixelsBool= false;
 
         //TODO: figure out tick per inch ratio for movement
 
         //TODO: START SIDEWAYS
         //start
-        double greenPixels = pipeline.returnGreen();
-        double cyanPixels = pipeline.returnCyan();
-        double magentaPixels = pipeline.returnMagenta();
+        if(greenPixels > cyanPixels && greenPixels > magentaPixels) {
+            greenPixelsBool = true;
+        }
+        if(magentaPixels > cyanPixels && magentaPixels > greenPixels){
+            magentaPixelsBool = true;
+        }
+        if(cyanPixels > greenPixels && cyanPixels > magentaPixels){
+            cyanPixelsBool = true;
+        }
+
         //first movement
         driveEncoder(-60 * TICKS_PER_INCH , 0, 1);
         turn(.5,45);
@@ -35,14 +48,14 @@ public class AutoRed extends AutoGuts {
         turn(.5, -45);
         driveEncoder(48 * TICKS_PER_INCH, 0, 1);
 
-        if(greenPixels > cyanPixels && greenPixels > magentaPixels) {
+        if(greenPixelsBool) {
             driveEncoder(0,12,1);
             //park place 3
         }
-        if(magentaPixels > cyanPixels && magentaPixels > greenPixels){
+        if(magentaPixelsBool){
             //park place 2
         }
-        if(cyanPixels > greenPixels && cyanPixels > magentaPixels){
+        if(cyanPixelsBool){
             driveEncoder(0,-12,1);
             //park place 1
         }
