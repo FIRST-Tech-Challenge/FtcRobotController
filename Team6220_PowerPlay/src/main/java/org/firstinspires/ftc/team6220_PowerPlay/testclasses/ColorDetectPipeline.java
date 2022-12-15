@@ -63,8 +63,10 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         frame = targetToleranceMatte(frame, colorTarget, colorTolerance);
 
         // Blur and then threshold to remove small details and sort of "erode" the matte
-        Imgproc.GaussianBlur(frame, frame, blurSize, 0);
-        Imgproc.threshold(frame, frame, erodeSize, 255, Imgproc.THRESH_BINARY);
+        Mat output1;
+        Imgproc.GaussianBlur(frame, output1, blurSize, 0);
+        Mat output2 = null;
+        Imgproc.threshold(frame, output2, erodeSize, 255, Imgproc.THRESH_BINARY);
 
         // Get the contours of the image
         List<MatOfPoint> contours = new ArrayList<>();
@@ -95,12 +97,13 @@ public class ColorDetectPipeline extends OpenCvPipeline {
 
         rectDetected = contours.size() > 0;
         counter = contours.size();
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_HSV2BGR);
+        Mat finalOutput;
+        Imgproc.cvtColor(input, finalOutput, Imgproc.COLOR_HSV2BGR);
 
         frame = null;
         contours = null;
         hierarchy = null;
 
-        return input;
+        return finalOutput;
     }
 }
