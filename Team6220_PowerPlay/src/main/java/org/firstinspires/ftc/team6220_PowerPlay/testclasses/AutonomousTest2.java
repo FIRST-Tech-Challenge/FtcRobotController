@@ -11,7 +11,7 @@ import org.firstinspires.ftc.team6220_PowerPlay.ConeDetection;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
 //@Disabled
-@Autonomous(name = "AutonomousTest2", group = "Test")
+@Autonomous(name = "StackGrabbingAuto", group = "Test")
 public class AutonomousTest2 extends AprilTagDetect {
     int stackHeight = 4;
     @Override
@@ -47,24 +47,33 @@ public class AutonomousTest2 extends AprilTagDetect {
         telemetry.update();
         turnToAngle(90);
         driveInches(0, 52);
-        detectGrab();
         //Robot centers itself on the cone
-        while(coneDetectionPipeline.distance > 50){
-            motorFR.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
-            motorFL.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
-            motorBR.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
-            motorBL.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
-        }
-        //the robot moves until the cone is in range
-        while(coneDetectionPipeline.coneSize > 3000){
-            motorFR.setPower(0.25);
-            motorFL.setPower(-0.25);
-            motorBR.setPower(0.25);
-            motorBL.setPower(-0.25);
-        }
-        //60 is the height of the cone, multiply it by stack height
-        driveSlides(stackHeight*60);
-        servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
-        sleep(1500);
-        driveSlides(Constants.SLIDE_TOP);
-    }}
+        while(stackHeight >= 0){
+            detectGrab();
+            while(coneDetectionPipeline.distance > 50){
+                motorFR.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
+                motorFL.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
+                motorBR.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
+                motorBL.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
+            }
+            //the robot moves until the cone is in range
+            while(coneDetectionPipeline.coneSize > 3000){
+                motorFR.setPower(0.25);
+                motorFL.setPower(-0.25);
+                motorBR.setPower(0.25);
+                motorBL.setPower(-0.25);
+            }
+            //60 is the height of the cone, multiply it by stack height
+            driveSlides(stackHeight*60);
+            servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
+            sleep(1500);
+            driveSlides(Constants.SLIDE_TOP);
+            driveInches(0,-52);
+            driveInches(-90, 10);
+            servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION);
+            stackHeight -= 1;
+            driveInches(0,-5);
+            driveInches(90, 10);
+            driveInches(0,56);
+
+    }}}
