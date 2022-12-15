@@ -12,7 +12,7 @@ public abstract class ConeDetection extends BaseAutonomous {
     public void detectGrab() {
         // initializes camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
         coneDetectionPipeline = new ConeDetectionPipeline();
 
         camera.setPipeline(coneDetectionPipeline);

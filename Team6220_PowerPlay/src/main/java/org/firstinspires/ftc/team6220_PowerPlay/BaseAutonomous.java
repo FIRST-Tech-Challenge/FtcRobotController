@@ -23,8 +23,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
         double yPosition;
 
         // power for any heading
-        double xPower = Math.cos(Math.toRadians(heading + 90)) * 0.4;
-        double yPower = Math.sin(Math.toRadians(heading + 90)) * 0.4;
+        double xPower = Math.cos(Math.toRadians(heading + 90)) * 0.2;
+        double yPower = Math.sin(Math.toRadians(heading + 90)) * 0.2;
 
         double traveledDistance;
         double remainingDistance = targetDistance;
@@ -105,23 +105,9 @@ public abstract class BaseAutonomous extends BaseOpMode {
         motorBR.setPower(0.0);
     }
 
-    public void driveInches(int inches, int heading) {
-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        if (heading == 0) {
-            driveWithIMU(0.0, -0.25, 0.0);
-        } else if (heading == 90) {
-            driveWithIMU(-0.25, 0.0, 0.0);
-        } else if (heading == 180) {
-            driveWithIMU(0.0, 0.25, 0.0);
-        } else if (heading == 270) {
-            driveWithIMU(0.25, 0.0, 0.0);
+    public void driveSlides(int targetPosition) {
+        while (Math.abs(targetPosition - motorLeftSlides.getCurrentPosition()) > 20 && opModeIsActive()) {
+            super.driveSlides(targetPosition);
         }
-
-        sleep((int) (inches / 24.0 * 1500));
-
-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        driveWithIMU(0.0, 0.0, 0.0);
-        sleep(500);
     }
 }

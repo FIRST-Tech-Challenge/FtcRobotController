@@ -14,14 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ColorDetectPipeline extends OpenCvPipeline {
-
     Size blurSize = new Size(49, 49);
     double erodeSize = 220;
-
-    public boolean isRunning = false;
-    public Rect detectedRect = new Rect();
-    public int counter = 0;
-    public boolean rectDetected = false;
+    boolean isRunning = false;
+    Rect detectedRect = new Rect();
+    int counter = 0;
+    boolean rectDetected = false;
 
     Mat targetToleranceMatte(Mat img, int[] ca, int[] co) {
         double[] lower = new double[3], upper = new double[3];
@@ -94,8 +92,8 @@ public class ColorDetectPipeline extends OpenCvPipeline {
             detectedRect.x -= input.width() * 0.5 - detectedRect.width * 0.5;
             detectedRect.y -= input.height() * 0.5 - detectedRect.height * 0.5;
         }
-        rectDetected = contours.size() > 0;
 
+        rectDetected = contours.size() > 0;
         counter = contours.size();
         Imgproc.cvtColor(input, input, Imgproc.COLOR_HSV2BGR);
         return input;

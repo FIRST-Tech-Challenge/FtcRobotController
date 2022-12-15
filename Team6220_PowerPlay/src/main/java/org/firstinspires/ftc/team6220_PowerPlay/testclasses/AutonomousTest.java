@@ -20,75 +20,40 @@ public class AutonomousTest extends AprilTagDetect {
 
         int signal = detectAprilTag();
 
-        driveInches(1, 0);
-        driveInches(1, 180);
-
+        driveInches(0, 1);
+        sleep(500);
+        driveInches(180, 1);
+        sleep(500);
         servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
+        sleep(1500);
         driveSlides(300);
-
-        driveInches(52, 0);
-        driveInches(12, 270);
-
+        sleep(500);
+        driveInches(0, 52);
+        sleep(500);
+        driveInches(270, 12);
+        sleep(500);
         driveSlides(Constants.SLIDE_HIGH);
-        driveInches(2, 0);
+        sleep(500);
+        driveInches(0, 2);
+        sleep(500);
         servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION);
-        driveInches(2, 180);
+        sleep(500);
+        driveInches(180, 2);
+        sleep(500);
         driveSlides(800);
-
-        driveInches(30, 90);
-
-        detectGrab();
-
-        while (Math.abs(coneDetectionPipeline.distance) > 50 && opModeIsActive()) {
-            motorFL.setPower(-0.25);
-            motorFR.setPower(0.25);
-            motorBL.setPower(-0.25);
-            motorBR.setPower(0.25);
-        }
-
-        motorFL.setPower(0);
-        motorFR.setPower(0);
-        motorBL.setPower(0);
-        motorBR.setPower(0);
-
-        while (coneDetectionPipeline.coneSize > 3000 && opModeIsActive()) {
-            motorFL.setPower(0.25);
-            motorFR.setPower(0.25);
-            motorBL.setPower(0.25);
-            motorBR.setPower(0.25);
-        }
-
-        motorFL.setPower(0);
-        motorFR.setPower(0);
-        motorBL.setPower(0);
-        motorBR.setPower(0);
-
-        driveSlides(stackHeight * 60);
-        servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
-        driveSlides(800);
-
-        driveInches(46, 180);
+        sleep(500);
 
         switch (signal) {
             case 0:
-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                driveWithIMU(-0.25, 0.0, 0.0);
-                sleep(1500);
-
-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                driveWithIMU(0.0, 0.0, 0.0);
+                driveInches(90, 34);
                 break;
 
             case 1:
+                driveInches(90, 10);
                 break;
 
             case 2:
-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                driveWithIMU(0.25, 0.0, 0.0);
-                sleep(1500);
-
-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                driveWithIMU(0.0, 0.0, 0.0);
+                driveInches(270, 10);
                 break;
         }
     }

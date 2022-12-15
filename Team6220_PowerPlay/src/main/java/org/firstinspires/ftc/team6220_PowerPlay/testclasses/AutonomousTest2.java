@@ -11,14 +11,14 @@ import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.ConeDetection;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
-//@Disabled
+@Disabled
 @Autonomous(name = "AutonomousTest2", group = "Test")
 public class AutonomousTest2 extends BaseAutonomous {
 
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-
-        driveInches(0, 40);
+        waitForStart();
+        driveInches(0, 48.0);
     }
 }

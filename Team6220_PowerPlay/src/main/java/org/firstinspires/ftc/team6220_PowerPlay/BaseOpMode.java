@@ -28,7 +28,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // IMU
     public BNO055IMU imu;
-    public Orientation IMUOriginalAngles; // original angle reading from imu that will be used to find unwanted angle offset during drive
+    public Orientation IMUOriginalAngles;
     public double startAngle;
 
     // flag to say whether we should disable the correction system
@@ -92,8 +92,8 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         sleep(3000);
 
+        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
 
@@ -150,20 +150,28 @@ public abstract class BaseOpMode extends LinearOpMode {
      */
     public void driveSlides(int targetPosition) {
         int error = targetPosition - motorLeftSlides.getCurrentPosition();
-        double motorPower = Math.max(error * 0.005, 0.2);
+        double motorPower = Math.max(error * 0.02, 0.2);
+        boolean joystickActive = Math.abs(gamepad2.left_stick_y) > 0.1;
 
         // slides not yet at target position
         if (Math.abs(error) > 20) {
-            // slides going down - constant speed
-            if (error < 0) {
-                motorLeftSlides.setPower(-0.4);
-                motorRightSlides.setPower(-0.4);
-                // slides going up - proportional control
+            // if joystick is being used to drive slides
+            if (joystickActive) {
+                motorLeftSlides.setPower(gamepad2.left_stick_y * 0.4);
+                motorRightSlides.setPower(gamepad2.left_stick_y * 0.4);
+            // if bumpers are being used to drive slides
             } else {
-                motorLeftSlides.setPower(motorPower);
-                motorRightSlides.setPower(motorPower);
+                // slides going down - full speed
+                if (error < 0) {
+                    motorLeftSlides.setPower(-1.0);
+                    motorRightSlides.setPower(-1.0);
+                // slides going up - proportional control
+                } else {
+                    motorLeftSlides.setPower(motorPower);
+                    motorRightSlides.setPower(motorPower);
+                }
             }
-            // slides at target position
+        // slides at target position
         } else {
             motorLeftSlides.setPower(0.05);
             motorRightSlides.setPower(0.05);

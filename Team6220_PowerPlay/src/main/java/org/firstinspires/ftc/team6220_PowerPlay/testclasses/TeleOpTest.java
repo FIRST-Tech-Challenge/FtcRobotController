@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
-@Disabled
+//@Disabled
 @TeleOp(name = "TeleOpTest", group = "Test")
 public class TeleOpTest extends BaseTeleOp {
 
@@ -19,7 +19,10 @@ public class TeleOpTest extends BaseTeleOp {
         waitForStart();
 
         while (opModeIsActive()) {
+            servoGrabber.setPosition(-0.5 * gamepad1.left_stick_y + 0.5);
 
+            telemetry.addData("servo", -0.5 * gamepad1.left_stick_y + 0.5);
+            telemetry.update();
         }
     }
 
