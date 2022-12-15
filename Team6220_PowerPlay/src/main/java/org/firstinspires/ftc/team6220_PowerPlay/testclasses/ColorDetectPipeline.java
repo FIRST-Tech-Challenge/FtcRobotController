@@ -96,6 +96,11 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         rectDetected = contours.size() > 0;
         counter = contours.size();
         Imgproc.cvtColor(input, input, Imgproc.COLOR_HSV2BGR);
+
+        frame = null;
+        contours = null;
+        hierarchy = null;
+
         return input;
     }
 }
