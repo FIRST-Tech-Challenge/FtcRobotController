@@ -6,14 +6,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class TheSebastianSpecial extends OpMode {
+public class SebastiansSpecialOpMode extends OpMode {
 
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
     DcMotor backLeftMotor;
     DcMotor backRightMotor;
 
-    // DcMotor armMotor;
+    DcMotor armMotor;
 
     Servo rightClaw;
     Servo leftClaw;
@@ -33,7 +33,7 @@ public class TheSebastianSpecial extends OpMode {
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        // armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
+        armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
         // coneClaw = hardwareMap.get(Servo.class, "Claw");
 
         telemetry.addData("Status", "Initialized");
@@ -45,8 +45,8 @@ public class TheSebastianSpecial extends OpMode {
 
         double leftStick = gamepad1.left_stick_y;
         double rightStick = gamepad1.right_stick_y;
-        double rightTrigger = gamepad1.right_trigger;
-        double leftTrigger = gamepad1.left_trigger;
+        double leftTrigger = gamepad1.right_trigger;
+        double rightTrigger = gamepad1.left_trigger;
 
         double FLeft = 0;
         double FRight = 0;
@@ -77,6 +77,14 @@ public class TheSebastianSpecial extends OpMode {
         if(gamepad1.dpad_left) {
             // rightClaw.setPosition(0.25);
             leftClaw.setPosition(0.3);
+        }
+
+        if(gamepad1.dpad_up) {
+            armMotor.setPower(1);
+        } else if(gamepad1.dpad_down) {
+            armMotor.setPower(-1);
+        } else {
+            armMotor.setPower(0);
         }
     }
 }
