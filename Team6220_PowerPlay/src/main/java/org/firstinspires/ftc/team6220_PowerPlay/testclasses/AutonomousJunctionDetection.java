@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class AutonomousJunctionDetection extends BaseAutonomous {
 
     OpenCvCamera webcam;
-    ColorDetectPipeline pipeline = new ColorDetectPipeline();
+    ColorDetectPipeline pipeline = new JunctionDetectPipeline();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -50,6 +50,10 @@ public class AutonomousJunctionDetection extends BaseAutonomous {
 
         waitForStart();
         while (opModeIsActive()) {
+
+            if(pipeline.rectDetected) {
+                driveWithIMU(pipeline.detectedRect.x/1280, pipeline.detectedRect.y/720, 0);
+            }
 
             telemetry.addData("x", pipeline.detectedRect.x);
             telemetry.addData("y", pipeline.detectedRect.y);
