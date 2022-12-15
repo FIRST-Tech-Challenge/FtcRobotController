@@ -27,9 +27,9 @@ public class automethods extends LinearOpMode {
 
     HardwarePushbot robot = new HardwarePushbot();// Use a Pushbot's hardware
     ElapsedTime timer = new ElapsedTime();
-    String slideDataSTR;
-    int slideDown;
-    int slideTarget;
+    String viperDataSTR;
+    int viperDown;
+    int viperTarget;
     double pusherPushing = .09;
     double pusherClose = .2;
 
@@ -324,130 +324,118 @@ public class automethods extends LinearOpMode {
 
 
     }
-/*
+
     public void setLevel(double level){
         if (level == 1){
-            slideTarget = slideDown-1000;
-            slideDataSTR = "BOTTOM";
-            robot.slide.setTargetPosition(slideTarget);
-            //move the slide
-            robot.door.setPosition(doorClose);
-            robot.slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.slide.setPower(.9);
+            viperTarget = viperDown-1000;
+            viperDataSTR = "BOTTOM";
+            robot.viperSlide.setTargetPosition(viperTarget);
+            //move the viperSlide
+            robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.viperSlide.setPower(.9);
 
-            while (robot.slide.isBusy()){
-                telemetry.addData("SLIDE", "running to %7d : %7d",
-                        slideTarget,
-                        robot.slide.getCurrentPosition());
-                //telemetry.addData(slideDataSTR);
+            while (robot.viperSlide.isBusy()){
+                telemetry.addData("viperSlide", "running to %7d : %7d",
+                        viperTarget,
+                        robot.viperSlide.getCurrentPosition());
+                //telemetry.addData(viperSlideDataSTR);
                 telemetry.update();
             }
-            robot.slide.setPower(0);
-            robot.pusher.setPosition(pusherClose);
-            robot.door.setPosition(doorClose);
-            robot.twister.setPosition(twisterDeliver);
+            robot.viperSlide.setPower(0);
+
 
             timer.reset();
             while(timer.time(TimeUnit.MILLISECONDS) < 300){
-                robot.pusher.setPosition(pusherPushing);
-                robot.door.setPosition(doorOpen);
+
             }
         }
 
         else if (level == 2){
-            slideTarget = slideDown-1300;
-            slideDataSTR = "MIDDLE";
-            robot.slide.setTargetPosition(slideTarget);
-            //move the slide
-            robot.door.setPosition(doorClose);
-            robot.slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.slide.setPower(.9);
+            viperTarget = viperDown-1300;
+            viperDataSTR = "MIDDLE";
+            robot.viperSlide.setTargetPosition(viperTarget);
+            //move the viperSlide
+            robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.viperSlide.setPower(.9);
 
-            while (robot.slide.isBusy()){
-                telemetry.addData("SLIDE", "running to %7d : %7d",
-                        slideTarget,
-                        robot.slide.getCurrentPosition());
-                //telemetry.addData(slideDataSTR);
+            while (robot.viperSlide.isBusy()){
+                telemetry.addData("viperSlide", "running to %7d : %7d",
+                        viperTarget,
+                        robot.viperSlide.getCurrentPosition());
+                //telemetry.addData(viperSlideDataSTR);
                 telemetry.update();
             }
-            robot.slide.setPower(0);
-            robot.pusher.setPosition(pusherClose);
-            robot.door.setPosition(doorClose);
-            robot.twister.setPosition(twisterDeliver);
+            robot.viperSlide.setPower(0);
+
 
             timer.reset();
             while(timer.time(TimeUnit.MILLISECONDS) < 300){
-                robot.pusher.setPosition(pusherPushing);
-                robot.door.setPosition(doorOpen);
+
             }
         }
         else if (level == 3){
-            slideTarget = slideDown-1509;
-            slideDataSTR = "TOP";
-            robot.slide.setTargetPosition(slideTarget);
-            //move the slide
-            robot.door.setPosition(doorClose);
-            robot.slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.slide.setPower(.9);
+            viperTarget = viperDown-1509;
+            viperDataSTR = "TOP";
+            robot.viperSlide.setTargetPosition(viperTarget);
+            //move the viperSlide
+            robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.viperSlide.setPower(.9);
 
-            while (robot.slide.isBusy()){
-                telemetry.addData("SLIDE", "running to %7d : %7d",
-                        slideTarget,
-                        robot.slide.getCurrentPosition());
-                //telemetry.addData(slideDataSTR);
+            while (robot.viperSlide.isBusy()){
+                telemetry.addData("viperSlide", "running to %7d : %7d",
+                        viperTarget,
+                        robot.viperSlide.getCurrentPosition());
+                //telemetry.addData(viperSlideDataSTR);
                 telemetry.update();
             }
-            robot.slide.setPower(0);
-            robot.pusher.setPosition(pusherClose);
-            robot.door.setPosition(doorClose);
-            robot.twister.setPosition(twisterDeliver);
+            robot.viperSlide.setPower(0);
+
 
             timer.reset();
             while(timer.time(TimeUnit.MILLISECONDS) < 300){
-                robot.pusher.setPosition(pusherPushing);
-                robot.door.setPosition(doorOpen);
+
             }
         }
 
-        robot.slide.setTargetPosition(slideTarget);
-        //move the slide
+        robot.viperSlide.setTargetPosition(viperTarget);
+        //move the viperSlide
 
-        robot.slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (robot.slide.isBusy()){
-            telemetry.addData("SLIDE", "running to %7d : %7d",
-                    slideTarget,
-                    robot.slide.getCurrentPosition());
-            //telemetry.addData(slideDataSTR);
+        robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (robot.viperSlide.isBusy()){
+            telemetry.addData("viperSlide", "running to %7d : %7d",
+                    viperTarget,
+                    robot.viperSlide.getCurrentPosition());
+            //telemetry.addData(viperSlideDataSTR);
             telemetry.update();
         }
 
 
     }
-    public void setLevelDown(int slideTarget){
+    public void setLevelDown(int viperTarget){
         timer.reset();
         while(timer.time(TimeUnit.MILLISECONDS) < 1000){
-            robot.pusher.setPosition(pusherClose);
-            robot.door.setPosition(doorClose);
-            robot.twister.setPosition(twisterNeutral);
+          //  robot.pusher.setPosition(pusherClose);
+            //robot.door.setPosition(doorClose);
+            //robot.twister.setPosition(twisterNeutral);
         }
 
-        robot.slide.setTargetPosition(slideTarget);
-        //move the slide
+        robot.viperSlide.setTargetPosition(viperTarget);
+        //move the viperSlide
 
 
-        robot.slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.slide.setPower(-.9);
+        robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.viperSlide.setPower(-.9);
 
-        while (robot.slide.isBusy()){
-            telemetry.addData("SLIDE", "running to %7d : %7d",
-                    slideTarget,
-                    robot.slide.getCurrentPosition());
-            //telemetry.addData(slideDataSTR);
+        while (robot.viperSlide.isBusy()){
+            telemetry.addData("viperSlide", "running to %7d : %7d",
+                    viperTarget,
+                    robot.viperSlide.getCurrentPosition());
+            //telemetry.addData(viperSlideDataSTR);
             telemetry.update();
         }
-        robot.slide.setPower(0);
-        robot.door.setPosition(doorOpen);
+        robot.viperSlide.setPower(0);
+        //robot.door.setPosition(doorOpen);
 
     }
-*/
+
 }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import android.app.Activity;
 import android.view.View;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -13,69 +15,71 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+//////////Motors
 public class HardwarePushbot {
-
-    ///Motors
     public static DcMotor frontLeft = null;
     public static DcMotor backLeft = null;
     public static DcMotor frontRight = null;
     public static DcMotor backRight = null;
-
+    public static DcMotor viperSlide = null;
     public static BNO055IMU imu;// Additional Gyro device
-    /* local OpMode members. */
-    static HardwareMap hwMap = null;
-    private ElapsedTime period = new ElapsedTime();
 
-    public HardwarePushbot() {
+    public static HardwareMap hwMap = null;
 
-    }
+    public static Servo claw1 = null;
+    public static Servo claw2 = null;
+    public static Servo claw3 = null;
 
+    //////////Servos
+//////////No Servos Yet
     public static void init(HardwareMap ahwMap) {
-        // Save reference to Hardware map
+
         hwMap = ahwMap;
 
-        // Define and Initialize Motors
+
         frontLeft = hwMap.get(DcMotor.class, "frontLeft");
         backLeft = hwMap.get(DcMotor.class, "backLeft");
         frontRight = hwMap.get(DcMotor.class, "frontRight");
         backRight = hwMap.get(DcMotor.class, "backRight");
-
-        imu = hwMap.get(BNO055IMU.class, "imu");
-
-        // Set
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
-
-        // Set all motors to zero power
+        viperSlide = hwMap.get(DcMotor.class, "viperSlide");
+//////////directions
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
+        viperSlide.setDirection(DcMotor.Direction.FORWARD);
+//////////setPower
         frontLeft.setPower(0);
         backLeft.setPower(0);
         frontRight.setPower(0);
         backRight.setPower(0);
-
-        // Set zero power behavior
+        viperSlide.setPower(0);
+//////////setZeroPowerBehavior
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//////////Encoders
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        viperSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        claw1 = hwMap.get(Servo.class, "claw1");
+        claw2 = hwMap.get(Servo.class, "claw2");
+        claw3 = hwMap.get(Servo.class, "claw3");
+
+    }
+    public static void autoinit (HardwareMap ahwMap){
+        // Save reference to Hardware map
+        hwMap = ahwMap;
+        int viperStart = viperSlide.getCurrentPosition();
         //imu stuff
         imu = hwMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
-
-    public static void autoinit (HardwareMap ahwMap){
-        // Save reference to Hardware map
-        hwMap = ahwMap;
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled = true;
@@ -83,4 +87,10 @@ public class HardwarePushbot {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
 
-    }}
+
+        //////close claw
+        //
+    }
+
+
+}
