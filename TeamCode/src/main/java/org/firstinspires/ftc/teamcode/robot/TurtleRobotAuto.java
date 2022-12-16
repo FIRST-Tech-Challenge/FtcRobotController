@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class TurtleRobotAuto {
@@ -14,7 +15,7 @@ public class TurtleRobotAuto {
     public DcMotor rightbackmotor = null;
     public DcMotor leftfrontmotor = null;
     public DcMotor leftbackmotor = null;
-    public CRServo ArmServo = null;
+    public Servo ArmServo = null;
     public DcMotor leftslidemotor = null;
     public DcMotor rightslidemotor = null;
     public DistanceSensor distance = null;
@@ -40,7 +41,7 @@ public class TurtleRobotAuto {
         leftbackmotor = hwMap.get(DcMotor.class, "leftbackmotor");
         rightfrontmotor = hwMap.get(DcMotor.class, "rightfrontmotor");
         rightbackmotor = hwMap.get(DcMotor.class, "rightbackmotor");
-        ArmServo = hwMap.get(CRServo.class, "ArmServo");
+        ArmServo = hwMap.get(Servo.class, "ArmServo");
         leftslidemotor = hwMap.get(DcMotor.class, "leftEncoder");
         rightslidemotor = hwMap.get(DcMotor.class, "rightslidemotor");
         distance = hwMap.get(DistanceSensor.class, "Distance");
@@ -57,7 +58,7 @@ public class TurtleRobotAuto {
         leftbackmotor.setPower(0);
         rightfrontmotor.setPower(0);
         rightbackmotor.setPower(0);
-        //ClawMotor.setPower(0);
+        ArmServo.setPosition(0);
         leftslidemotor.setPower(0);
         rightslidemotor.setPower(0);
 

@@ -14,7 +14,7 @@ public class TurtleRobotTeleOp {
     public DcMotor rightbackmotor = null;
     public DcMotor leftfrontmotor = null;
     public DcMotor leftbackmotor = null;
-    public CRServo ArmServo = null;
+    public Servo ArmServo = null;
     public DcMotor leftslidemotor = null;
     public DcMotor rightslidemotor = null;
     public ElapsedTime runtime = new ElapsedTime();
@@ -38,7 +38,7 @@ public class TurtleRobotTeleOp {
         leftbackmotor = hwMap.get(DcMotor.class, "leftbackmotor");
         rightfrontmotor = hwMap.get(DcMotor.class, "rightfrontmotor");
         rightbackmotor = hwMap.get(DcMotor.class, "rightbackmotor");
-        ArmServo = hwMap.get(CRServo.class, "ArmServo");
+        ArmServo = hwMap.get(Servo.class, "ArmServo");
         leftslidemotor = hwMap.get(DcMotor.class, "leftEncoder");
         rightslidemotor = hwMap.get(DcMotor.class, "rightslidemotor");
 
@@ -54,7 +54,7 @@ public class TurtleRobotTeleOp {
         leftbackmotor.setPower(0);
         rightfrontmotor.setPower(0);
         rightbackmotor.setPower(0);
-        //ClawMotor.setPower(0);
+        ArmServo.setPosition(0);
         leftslidemotor.setPower(0);
         rightslidemotor.setPower(0);
 
