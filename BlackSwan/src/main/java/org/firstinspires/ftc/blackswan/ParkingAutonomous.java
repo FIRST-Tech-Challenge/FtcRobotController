@@ -56,15 +56,13 @@ public class ParkingAutonomous extends LinearOpMode {
         if (ParkDot == 1){
             robot.forward(2.2,.5);
             robot.left(2.2,.5);
-        }
-
-        if (ParkDot == 2){
+        } else if (ParkDot == 2){
             robot.forward(2.2,.5);
-        }
-
-        if (ParkDot == 3){
+        }else if (ParkDot == 3){
             robot.forward(2.2,.5);
             robot.right(2.2, .5);
+        } else {
+            robot.forward(2.2, .5);
         }
         while (opModeIsActive()) {
 
@@ -99,7 +97,7 @@ public class ParkingAutonomous extends LinearOpMode {
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
-        static final Point DETECTION_ANCHOR = new Point(200, 200);
+        static final Point DETECTION_ANCHOR = new Point(200, 60);
 
         static final int DETECTION_WIDTH = 20;
         static final int DETECTION_HEIGHT = 20;

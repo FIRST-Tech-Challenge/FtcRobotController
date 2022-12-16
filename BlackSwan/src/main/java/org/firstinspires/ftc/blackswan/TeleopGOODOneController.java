@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Teleop")
+@TeleOp(name = "Teleop 1 controllers")
 public class TeleopGOODOneController extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -46,21 +46,21 @@ public class TeleopGOODOneController extends LinearOpMode {
             double backRightPower = (y + x - rx) / denominator;
 //3250
             if (gamepad1.dpad_up) {
-                if (linearslide.getCurrentPosition() < 3250) {
-                    move = true;
-                    linearslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    linearslide.setPower(0.5);
-                } else {
-                    linearslide.setPower(0);
-                }
+                //if (linearslide.getCurrentPosition() < 3250) {
+                move = true;
+                linearslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                linearslide.setPower(0.5);
+//                } else {
+                //linearslide.setPower(0);
+                // }
             } else if (gamepad1.dpad_down) {
-                if (linearslide.getCurrentPosition() > 0) {
-                    move = true;
-                    linearslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    linearslide.setPower(-0.5);
-                } else {
-                    linearslide.setPower(0);
-                }
+                // if (linearslide.getCurrentPosition() > 0) {
+                move = true;
+                linearslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                linearslide.setPower(-0.5);
+//                } else {
+//                    linearslide.setPower(0);
+//                }
             } else {
                 if (move) {
                     move = false;
@@ -71,23 +71,23 @@ public class TeleopGOODOneController extends LinearOpMode {
             }
 
             if (gamepad1.a) {
-                clawservo.setPosition(0);
+                clawservo.setPosition(0.45);
             }
 
             if (gamepad1.b) {
-                clawservo.setPosition(.20);
+                clawservo.setPosition(0);
             }
 
-                telemetry.addData("GamepadX", x);
-                telemetry.addData("GamepadY", y);
-                telemetry.addData("servopos", clawservo.getPosition());
-                telemetry.addData("Linear Slide Position", linearslide.getCurrentPosition());
-                telemetry.update();
+            telemetry.addData("GamepadX", x);
+            telemetry.addData("GamepadY", y);
+            telemetry.addData("servopos", clawservo.getPosition());
+            telemetry.addData("Linear Slide Position", linearslide.getCurrentPosition());
+            telemetry.update();
 
-                motorFrontLeft.setPower(frontLeftPower);
-                motorBackLeft.setPower(backLeftPower);
-                motorFrontRight.setPower(frontRightPower);
-                motorBackRight.setPower(backRightPower);
-            }
+            motorFrontLeft.setPower(frontLeftPower);
+            motorBackLeft.setPower(backLeftPower);
+            motorFrontRight.setPower(frontRightPower);
+            motorBackRight.setPower(backRightPower);
         }
     }
+}
