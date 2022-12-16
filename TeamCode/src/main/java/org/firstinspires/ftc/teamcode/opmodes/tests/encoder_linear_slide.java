@@ -128,11 +128,11 @@ public class encoder_linear_slide extends LinearOpMode {
 
             // Turn On RUN_TO_POSITION
 //            robot.leftslidemotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightslidemotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.rightslidemotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-//            robot.leftslidemotor.setPower(Math.abs(speed));
+            robot.leftslidemotor.setPower(Math.abs(speed));
             robot.rightslidemotor.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
@@ -156,12 +156,12 @@ public class encoder_linear_slide extends LinearOpMode {
             }
 
             // Stop all motion;
-//            robot.leftslidemotor.setPower(0);
+            robot.leftslidemotor.setPower(0);
             robot.rightslidemotor.setPower(0);
 
             // Turn off RUN_TO_POSITION
 //            robot.leftslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            robot.rightslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }

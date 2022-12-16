@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.opmodes.tests.Distance;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -13,8 +16,8 @@ public class ColorTest extends LinearOpMode {
     // Define a variable for our color sensor
     TurtleRobotAuto robot = new TurtleRobotAuto(this);
 
+    ColorSensor color;
     DistanceSensor distance;
-    //ColorRangeSensor color;
 
     private double ColorDistance;
     private Double StraightDistance;
@@ -53,10 +56,22 @@ public class ColorTest extends LinearOpMode {
             //telemetry.addData("Red", color.red());
             //telemetry.addData("Green", color.green());
             //telemetry.addData("Blue", color.blue());
-            telemetry.update();
 
+            // While the Op Mode is running, update the telemetry values.
+            while (opModeIsActive()) {
+                Alignment();
+                telemetry.addData("ColorDistance", distance.getDistance(DistanceUnit.INCH));
+                telemetry.addData("", "");
+                telemetry.addData("Distance", distance.getDistance(DistanceUnit.INCH));
+                telemetry.addData("", "");
+
+                telemetry.addData("Red", color.red());
+                telemetry.addData("Green", color.green());
+                telemetry.addData("Blue", color.blue());
+                telemetry.update();
+
+            }
         }
-
     }
 
 
@@ -153,6 +168,8 @@ public class ColorTest extends LinearOpMode {
 
         }
     } */
+    
+
     public void straight(double power, int time) {
         robot.leftfrontmotor.setPower(power);
         robot.leftbackmotor.setPower(power);
@@ -161,4 +178,3 @@ public class ColorTest extends LinearOpMode {
         sleep(time);
     }
 }
-
