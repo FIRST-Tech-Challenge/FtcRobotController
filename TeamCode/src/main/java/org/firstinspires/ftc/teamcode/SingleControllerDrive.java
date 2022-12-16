@@ -98,8 +98,8 @@ public class SingleControllerDrive extends LinearOpMode {
                 liftMotor.setPower(0);
             }
 
-            /*if(grabber>.1 || grabber<-.1){
-                if(grabber<.05){
+            if(grabberClose || grabberOpen){
+                if(grabberOpen){
                     direction = .1;
                 }else{
                     direction = -.1;
@@ -122,7 +122,7 @@ public class SingleControllerDrive extends LinearOpMode {
             }
 
             servoGrabber1.setPosition(position);
-            servoGrabber2.setPosition(position2);*/
+            servoGrabber2.setPosition(position2);
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
