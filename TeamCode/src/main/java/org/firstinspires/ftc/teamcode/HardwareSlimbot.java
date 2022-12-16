@@ -137,7 +137,7 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_MED     =  71.6;   // lift position for MEDIUM junction (FRONT Teleop)
     public double       LIFT_ANGLE_MED_B   = -76.6;   // lift position for MEDIUM junction (BACK Teleop)
     public double       LIFT_ANGLE_HIGH    =  44.0;   // lift position for HIGH junction (FRONT Teleop)
-    public double       LIFT_ANGLE_AUTO_H  =  35.0;   // lift position for AUTONOMOUS (HIGH junction)
+    public double       LIFT_ANGLE_AUTO_H  =  33.0;   // lift position for AUTONOMOUS (HIGH junction)
     public double       LIFT_ANGLE_HIGH_B  = -47.0;   // lift position for HIGH junction (BACK Teleop)
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture

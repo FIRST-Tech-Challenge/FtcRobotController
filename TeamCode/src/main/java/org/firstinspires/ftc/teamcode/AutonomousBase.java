@@ -70,7 +70,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean gamepad1_r_bumper_last, gamepad1_r_bumper_now=false;
 
     // Vision stuff
-    PowerPlayObjectsPipeline pipeline;
+    PowerPlaySuperPipeline pipeline;
 
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {
@@ -94,28 +94,28 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void distanceFromFront(double desiredDistance, double distanceTolerance) {
         // Value in inches?
-        double range = robot.updateSonarRangeF();
+        double range = robot.singleSonarRangeF();
         double rangeErr = range - desiredDistance;
         while (opModeIsActive() && (abs(rangeErr) > distanceTolerance)) {
             performEveryLoop();
-            range = robot.updateSonarRangeF();
+            range = robot.singleSonarRangeF();
             rangeErr = range - desiredDistance;
-            robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.10 : -0.10);
+            robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.07 : -0.07);
         }
         robot.stopMotion();
     } // distanceFromFront
 
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterRedCone() {
-        List<PowerPlayObjectsPipeline.AnalyzedCone> localCones = pipeline.getDetectedRedCones();
+        List<PowerPlaySuperPipeline.AnalyzedCone> localCones = pipeline.getDetectedRedCones();
         if(!localCones.isEmpty()) {
-            PowerPlayObjectsPipeline.AnalyzedCone theCone = localCones.get(0);
+            PowerPlaySuperPipeline.AnalyzedCone theCone = localCones.get(0);
             while (opModeIsActive() && !theCone.coneAligned) {
                 performEveryLoop();
                 // TODO: rotation is not sufficient;  we also need to be aligned along the
                 // tape stripe if we're going to know our true odometry location.
                 // That implies a combinatino of TURN and LEFT/RIGHT stafing.
-                robot.driveTrainTurn((theCone.centralOffset > 0) ? +0.10 : -0.10);
+                robot.driveTrainTurn((theCone.centralOffset > 0) ? +0.07 : -0.07);
 //              robot.driveTrainRightLeft((theCone.centralOffset > 0) ? +0.10 : -0.10);
                 localCones = pipeline.getDetectedRedCones();
                 if(!localCones.isEmpty()) {
@@ -128,19 +128,30 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterBlueCone() {
-        List<PowerPlayObjectsPipeline.AnalyzedCone> localCones = pipeline.getDetectedBlueCones();
-        if(!localCones.isEmpty()) {
-            PowerPlayObjectsPipeline.AnalyzedCone theCone = localCones.get(0);
+        PowerPlaySuperPipeline.AnalyzedCone theCone = null;
+        synchronized(pipeline.lockBlueCone) {
+            List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedBlueCones();
+            if (!cones.isEmpty()) {
+                theCone.coneAligned = cones.get(0).coneAligned;
+                theCone.centralOffset = cones.get(0).centralOffset;
+                theCone.corners = cones.get(0).corners;
+            }
+        }
+        if(theCone != null) {
             while (opModeIsActive() && !theCone.coneAligned) {
                 performEveryLoop();
                 // TODO: rotation is not sufficient;  we also need to be aligned along the
                 // tape stripe if we're going to know our true odometry location.
                 // That implies a combinatino of TURN and LEFT/RIGHT stafing.
-                robot.driveTrainTurn((theCone.centralOffset > 0) ? +0.10 : -0.10);
+                robot.driveTrainTurn((theCone.centralOffset > 0) ? +0.07 : -0.07);
 //              robot.driveTrainRightLeft((theCone.centralOffset > 0) ? +0.10 : -0.10);
-                localCones = pipeline.getDetectedBlueCones();
-                if(!localCones.isEmpty()) {
-                    theCone = localCones.get(0);
+                synchronized(pipeline.lockBlueCone) {
+                    List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedBlueCones();
+                    if (!cones.isEmpty()) {
+                        theCone.coneAligned = cones.get(0).coneAligned;
+                        theCone.centralOffset = cones.get(0).centralOffset;
+                        theCone.corners = cones.get(0).corners;
+                    }
                 }
             }
             robot.stopMotion();
@@ -151,15 +162,26 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterPole() {
-        List<PowerPlayObjectsPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
-        if(!localPoles.isEmpty()) {
-            PowerPlayObjectsPipeline.AnalyzedPole thePole = localPoles.get(0);
+        PowerPlaySuperPipeline.AnalyzedPole thePole = null;
+        synchronized(pipeline.lockPole) {
+            List<PowerPlaySuperPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
+            if (!localPoles.isEmpty()) {
+                thePole.poleAligned = localPoles.get(0).poleAligned;
+                thePole.centralOffset = localPoles.get(0).centralOffset;
+                thePole.corners = localPoles.get(0).corners;
+            }
+        }
+        if(thePole != null) {
             while (opModeIsActive() && !thePole.poleAligned) {
                 performEveryLoop();
-                robot.driveTrainTurn((thePole.centralOffset > 0) ? +0.10 : -0.10);
-                localPoles = pipeline.getDetectedPoles();
-                if(!localPoles.isEmpty()) {
-                    thePole = localPoles.get(0);
+                robot.driveTrainTurn((thePole.centralOffset > 0) ? +0.07 : -0.07);
+                synchronized(pipeline.lockPole) {
+                    List<PowerPlaySuperPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
+                    if (!localPoles.isEmpty()) {
+                        thePole.poleAligned = localPoles.get(0).poleAligned;
+                        thePole.centralOffset = localPoles.get(0).centralOffset;
+                        thePole.corners = localPoles.get(0).corners;
+                    }
                 }
             }
             robot.stopMotion();

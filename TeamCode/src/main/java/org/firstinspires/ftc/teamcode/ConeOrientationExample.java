@@ -27,24 +27,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /*
@@ -56,7 +43,7 @@ import java.util.List;
 public class ConeOrientationExample extends LinearOpMode
 {
     OpenCvCamera webcam;
-    PowerPlayObjectsPipeline pipeline;
+    PowerPlaySuperPipeline pipeline;
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
     boolean aligning = false;
@@ -84,7 +71,7 @@ public class ConeOrientationExample extends LinearOpMode
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                pipeline = new PowerPlayObjectsPipeline();
+                pipeline = new PowerPlaySuperPipeline();
                 webcam.setPipeline(pipeline);
             }
 
@@ -107,6 +94,14 @@ public class ConeOrientationExample extends LinearOpMode
         // Perform setup needed to center turret
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
 
+        PowerPlaySuperPipeline.AnalyzedCone cone = new PowerPlaySuperPipeline.AnalyzedCone();
+        cone.corners = new RotatedRect(new double[]{0.0, 0.0, 0.0, 0.0});
+        cone.centralOffset = 0;
+        cone.coneAligned = false;
+        PowerPlaySuperPipeline.AnalyzedCone lastCone = new PowerPlaySuperPipeline.AnalyzedCone();
+        lastCone.corners = new RotatedRect(new double[]{0.0, 0.0, 0.0, 0.0});
+        lastCone.centralOffset = 0;
+        lastCone.coneAligned = false;
         while (opModeIsActive())
         {
             // Don't burn an insane amount of CPU cycles in this sample because
@@ -118,37 +113,34 @@ public class ConeOrientationExample extends LinearOpMode
             robot.turretPosRun();
 
             // Figure out which poles the pipeline detected, and print them to telemetry
-            List<PowerPlayObjectsPipeline.AnalyzedCone> cones = pipeline.getDetectedBlueCones();
-            if(cones.isEmpty())
-            {
-                telemetry.addLine("No cones detected");
-                if(aligning) {
-                    robot.stopMotion();
-                    aligning = false;
-                    ranging = false;
+            List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedBlueCones();
+            synchronized(pipeline.lockBlueCone) {
+                if (cones.isEmpty()) {
+                    cone = lastCone;
+                } else {
+                    cone.coneAligned = cones.get(0).coneAligned;
+                    cone.centralOffset = cones.get(0).centralOffset;
+                    cone.corners = cones.get(0).corners;
+                    lastCone = cone;
                 }
             }
-            else
-            {
-                for(PowerPlayObjectsPipeline.AnalyzedCone cone : cones)
-                {
-                    telemetry.addLine(String.format("Cone: Center=%s, Central Offset=%f, Centered:%s", cone.corners.center.toString(), cone.centralOffset, cone.coneAligned));
-                    telemetry.addLine(String.format("Cone Width=%f Cone Height=%f", cone.corners.size.width, cone.corners.size.height));
-                    // Ensure we're ALIGNED to pole before we attempt to use Ultrasonic RANGING
-                    if(!cone.coneAligned){
-                        aligning = true;
-                        rotateToCenterCone(cones.get(0));
-                    }
-                    // We've achieved ALIGNMENT, so halt the left/right rotation
-                    else if( aligning ) {
-                        robot.stopMotion();
-                        aligning = false;
-                        ranging = true;
-                    }
-                    // If aligned, adjust the distance to the pole
-                    if( cone.coneAligned && ranging ) {
-                        distanceToCone();
-                    }
+            if(cone != null) {
+                telemetry.addLine(String.format("Cone: Center=%s, Central Offset=%f, Centered:%s", cone.corners.center.toString(), cone.centralOffset, cone.coneAligned));
+                telemetry.addLine(String.format("Cone Width=%f Cone Height=%f", cone.corners.size.width, cone.corners.size.height));
+                // Ensure we're ALIGNED to pole before we attempt to use Ultrasonic RANGING
+                if (!cone.coneAligned) {
+                    aligning = true;
+//              rotateToCenterCone(cones.get(0));
+                }
+                // We've achieved ALIGNMENT, so halt the left/right rotation
+                else if (aligning) {
+                    robot.stopMotion();
+                    aligning = false;
+                    ranging = true;
+                }
+                // If aligned, adjust the distance to the pole
+                if (cone.coneAligned && ranging) {
+//              distanceToCone();
                 }
             }
             telemetry.addData("Sonar Range (Front)", "%.1f", robot.updateSonarRangeF() );
@@ -171,7 +163,7 @@ public class ConeOrientationExample extends LinearOpMode
         }
     }
 
-    void rotateToCenterCone(PowerPlayObjectsPipeline.AnalyzedCone theCone)
+    void rotateToCenterCone(PowerPlaySuperPipeline.AnalyzedCone theCone)
     {
         robot.driveTrainTurn( (theCone.centralOffset>0)? +0.10 : -0.10 );
     }

@@ -38,15 +38,58 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class PowerPlayObjectsPipeline extends OpenCvPipeline
+class PowerPlaySuperPipeline extends OpenCvPipeline
 {
+    public Object lockBlueCone = new Object();
+    public Object lockRedCone = new Object();
+    public Object lockPole = new Object();
+    Mat contoursOnPlainImageMat = new Mat();
+    /*
+     * Some stuff to handle returning our various buffers
+     */
+    enum Stage
+    {
+        FINAL,
+        Cb,
+        MASK,
+        MASK_NR,
+        CONTOURS;
+    }
+
+    PoleOrientationExample.PoleOrientationAnalysisPipeline.Stage[] stages = PoleOrientationExample.PoleOrientationAnalysisPipeline.Stage.values();
+
+    // Keep track of what stage the viewport is showing
+    int stageNum = 0;
+
+    @Override
+    public void onViewportTapped()
+    {
+        /*
+         * Note that this method is invoked from the UI thread
+         * so whatever we do here, we must do quickly.
+         */
+
+        int nextStageNum = stageNum + 1;
+
+        if(nextStageNum >= stages.length)
+        {
+            nextStageNum = 0;
+        }
+
+        stageNum = nextStageNum;
+    }
+
     /*
      * Our working image buffers
      */
     Mat cbMat = new Mat();
     Mat crMat = new Mat();
-    Mat thresholdMat = new Mat();
-    Mat morphedThreshold = new Mat();
+    Mat thresholdBlueMat = new Mat();
+    Mat thresholdRedMat = new Mat();
+    Mat thresholdYellowMat = new Mat();
+    Mat morphedBlueThreshold = new Mat();
+    Mat morphedRedThreshold = new Mat();
+    Mat morphedYellowThreshold = new Mat();
 
     /*
      * Threshold values
@@ -81,7 +124,7 @@ class PowerPlayObjectsPipeline extends OpenCvPipeline
 
     // This is the allowable distance from the center of the pole to the "center"
     // of the image.  Pole is ~32 pixels wide, so our tolerance is 1/4 of that.
-    static final int MAX_POLE_OFFSET = 8;
+    static final int MAX_POLE_OFFSET = 4;
     static class AnalyzedPole
     {
         RotatedRect corners;
@@ -89,7 +132,7 @@ class PowerPlayObjectsPipeline extends OpenCvPipeline
         boolean poleAligned = false;
     }
 
-    static final int MAX_CONE_OFFSET = 8;
+    static final int MAX_CONE_OFFSET = 4;
     static class AnalyzedCone
     {
         RotatedRect corners;
@@ -119,70 +162,98 @@ class PowerPlayObjectsPipeline extends OpenCvPipeline
         internalPoleList.clear();
         internalBlueConeList.clear();
         internalRedConeList.clear();
-        drawRotatedRect(CENTERED_OBJECT, input, BLUE);
 
         /*
          * Run the image processing
          *
          * Run analysis for yellow poles
          */
-        for(MatOfPoint contour : findYellowContours(input))
-        {
-            AnalyzePoleContour(contour, input);
-        }
+        synchronized(lockPole) {
+            for (MatOfPoint contour : findYellowContours(input)) {
+                AnalyzePoleContour(contour, input);
+            }
 
-        clientPoleList.clear();
-        if(findThePole())
-        {
-            clientPoleList.add(thePole);
-            if (thePole.poleAligned)
-            {
-                drawRotatedRect(thePole.corners, input, GREEN);
-            } else {
-                drawRotatedRect(thePole.corners, input, RED);
+            clientPoleList.clear();
+            if (findThePole()) {
+                clientPoleList.add(thePole);
             }
         }
 
         /*
          * Run analysis for blue cones
          */
-        for(MatOfPoint contour : findBlueContours(input))
-        {
-            AnalyzeBlueConeContour(contour, input);
-        }
-
-        clientBlueConeList.clear();
-        if(findTheBlueCone())
-        {
-            clientBlueConeList.add(theBlueCone);
-            if (theBlueCone.coneAligned)
+        synchronized(lockBlueCone) {
+            for(MatOfPoint contour : findBlueContours(input))
             {
-                drawRotatedRect(theBlueCone.corners, input, GREEN);
-            } else {
-                drawRotatedRect(theBlueCone.corners, input, RED);
+                AnalyzeBlueConeContour(contour, input);
+            }
+
+            clientBlueConeList.clear();
+            if (findTheBlueCone()) {
+                clientBlueConeList.add(theBlueCone);
             }
         }
 
         /*
          * Run analysis for red cones
          */
-        for(MatOfPoint contour : findRedContours(input))
-        {
-            AnalyzeRedConeContour(contour, input);
-        }
+        synchronized(lockRedCone) {
+            for (MatOfPoint contour : findRedContours(input)) {
+                AnalyzeRedConeContour(contour, input);
+            }
 
-        clientRedConeList.clear();
-        if(findTheRedCone())
-        {
-            clientRedConeList.add(theRedCone);
-            if (theRedCone.coneAligned)
-            {
-                drawRotatedRect(theRedCone.corners, input, GREEN);
-            } else {
-                drawRotatedRect(theRedCone.corners, input, RED);
+            clientRedConeList.clear();
+            if (findTheRedCone()) {
+                clientRedConeList.add(theRedCone);
             }
         }
 
+        if (thePole.poleAligned) {
+            drawRotatedRect(thePole.corners, input, GREEN);
+        } else {
+            drawRotatedRect(thePole.corners, input, RED);
+        }
+        if (theBlueCone.coneAligned) {
+            drawRotatedRect(theBlueCone.corners, input, GREEN);
+        } else {
+            drawRotatedRect(theBlueCone.corners, input, RED);
+        }
+        if (theRedCone.coneAligned) {
+            drawRotatedRect(theRedCone.corners, input, GREEN);
+        } else {
+            drawRotatedRect(theRedCone.corners, input, RED);
+        }
+        drawRotatedRect(CENTERED_OBJECT, input, BLUE);
+        /*
+         * Decide which buffer to send to the viewport
+         */
+        switch (stages[stageNum])
+        {
+            case Cb:
+            {
+                return cbMat;
+            }
+
+            case FINAL:
+            {
+                return input;
+            }
+
+            case MASK:
+            {
+                return thresholdBlueMat;
+            }
+
+            case MASK_NR:
+            {
+                return morphedBlueThreshold;
+            }
+
+            case CONTOURS:
+            {
+                return contoursOnPlainImageMat;
+            }
+        }
         return input;
     }
 
@@ -201,11 +272,15 @@ class PowerPlayObjectsPipeline extends OpenCvPipeline
         Core.extractChannel(crMat, crMat, CR_CHAN_IDX);
 
         // Threshold the Cr channel to form a mask, then run some noise reduction
-        Imgproc.threshold(cbMat, thresholdMat, CR_CHAN_MASK_RED_THRESHOLD, 255, Imgproc.THRESH_BINARY);
-        morphMask(thresholdMat, morphedThreshold);
+        Imgproc.threshold(cbMat, thresholdRedMat, CR_CHAN_MASK_RED_THRESHOLD, 255, Imgproc.THRESH_BINARY);
+        morphMask(thresholdRedMat, morphedRedThreshold);
 
         // Ok, now actually look for the contours! We only look for external contours.
-        Imgproc.findContours(morphedThreshold, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
+        Imgproc.findContours(morphedRedThreshold, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
+
+        // We do draw the contours we find, but not to the main input buffer.
+        input.copyTo(contoursOnPlainImageMat);
+        Imgproc.drawContours(contoursOnPlainImageMat, contoursList, -1, BLUE, CONTOUR_LINE_THICKNESS, 8);
 
         return contoursList;
     }
@@ -258,11 +333,11 @@ class PowerPlayObjectsPipeline extends OpenCvPipeline
         // We have the blue channel extracted from the pole detection. No need to do it here.
 
         // Threshold the Cb channel to form a mask, then run some noise reduction
-        Imgproc.threshold(cbMat, thresholdMat, CB_CHAN_MASK_BLUE_THRESHOLD, 255, Imgproc.THRESH_BINARY);
-        morphMask(thresholdMat, morphedThreshold);
+        Imgproc.threshold(cbMat, thresholdBlueMat, CB_CHAN_MASK_BLUE_THRESHOLD, 255, Imgproc.THRESH_BINARY);
+        morphMask(thresholdBlueMat, morphedBlueThreshold);
 
         // Ok, now actually look for the contours! We only look for external contours.
-        Imgproc.findContours(morphedThreshold, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
+        Imgproc.findContours(morphedBlueThreshold, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
 
         return contoursList;
     }
@@ -305,7 +380,8 @@ class PowerPlayObjectsPipeline extends OpenCvPipeline
     boolean isCone(RotatedRect rect)
     {
         // We can put whatever logic in here we want to determine the coneness
-        return (rect.size.width > rect.size.height);
+//        return (rect.size.width > rect.size.height);
+        return true;
     }
 
     public List<AnalyzedPole> getDetectedPoles()
@@ -323,11 +399,11 @@ class PowerPlayObjectsPipeline extends OpenCvPipeline
         Core.extractChannel(cbMat, cbMat, CB_CHAN_IDX);
 
         // Threshold the Cb channel to form a mask, then run some noise reduction
-        Imgproc.threshold(cbMat, thresholdMat, CB_CHAN_MASK_YELLOW_THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
-        morphMask(thresholdMat, morphedThreshold);
+        Imgproc.threshold(cbMat, thresholdYellowMat, CB_CHAN_MASK_YELLOW_THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
+        morphMask(thresholdYellowMat, morphedYellowThreshold);
 
         // Ok, now actually look for the contours! We only look for external contours.
-        Imgproc.findContours(morphedThreshold, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
+        Imgproc.findContours(morphedYellowThreshold, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
 
         return contoursList;
     }
