@@ -71,11 +71,11 @@ public class Teleop2Controllers extends LinearOpMode {
             }
 
             if (gamepad2.a) {
-                clawservo.setPosition(0.75);
+                clawservo.setPosition(0.45);
             }
 
             if (gamepad2.b) {
-                clawservo.setPosition(.45);
+                clawservo.setPosition(0);
             }
 
                 telemetry.addData("GamepadX", x);

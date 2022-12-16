@@ -212,7 +212,6 @@ public class Robot {
         stopMotors();
     }
 
-
     protected void motorSetMode(DcMotor.RunMode runMode) {
         motorFrontLeft.setMode(runMode);
         motorFrontRight.setMode(runMode);
