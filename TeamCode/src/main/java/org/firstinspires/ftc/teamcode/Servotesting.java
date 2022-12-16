@@ -62,8 +62,8 @@ public class Servotesting extends LinearOpMode {
             crainpower = gamepad2.right_stick_y;
             spinpowerup = gamepad2.dpad_right;
             spinpowerdown =gamepad2.dpad_left;
-            pickup = gamepad2.x;
-            dropoff = gamepad2.y;
+            pickup = gamepad2.left_bumper;
+            dropoff = gamepad2.right_bumper;
             turning = gamepad2.b;
 
             if (strafeLeft) {
