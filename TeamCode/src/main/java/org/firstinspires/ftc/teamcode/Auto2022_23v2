@@ -29,7 +29,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
+    //private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
     private static final String[] LABELS = {
             "1 Bolt",
@@ -56,7 +56,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
     //Wheel constants
     public double maxVelocity = 340 * 537.6; //for AndyMark NeveRest 20 motor when using .setVelocity()
     public double rpm = 340;
-    public double radius = 11; //cm
+    public double radius = 10; //cm
     public double oneFootTime = oneFootCm/(getVelo(radius,rpm)*.75); //using a velo of maxVelocity * .75; change the distance unit depending on radius units
 
     private static final String VUFORIA_KEY =
@@ -112,7 +112,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
                                     break;
                                 }
                             }else{
-                                strafeVelo(true,.25,.5);
+                                strafeVelo(false,.25,.5);
                                 count++;
                             }
                         }
@@ -143,17 +143,17 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         telemetry.addData("Detected:",signal);
         double timeAdjustment = getDistance(radius,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
         if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
-            strafeVelo(true,.75,oneFootTime-timeAdjustment);
+            strafeVelo(true,.75,oneFootTime+timeAdjustment);
             setVelo(true,.75,oneFootTime);
         }
 
         if(signal.equals("2 Bulb")){ // go to location 2 (return to start and forward)
-            strafeVelo(false,.75,timeAdjustment);
+            strafeVelo(true,.75,timeAdjustment);
             setVelo(true,.75,oneFootTime);
         }
 
         if(signal.equals("3 Panel")){ // go to location 3 (right and forward)
-            strafeVelo(false,.75,oneFootTime+timeAdjustment);
+            strafeVelo(false,.75,oneFootTime-timeAdjustment);
             setVelo(true,.75,oneFootTime);
         }
     }
