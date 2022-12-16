@@ -136,7 +136,15 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     static final int MAX_POLE_OFFSET = 4;
     static class AnalyzedPole
     {
+        public AnalyzedPole() {};
+        public AnalyzedPole(AnalyzedPole copyPole) {
+            corners = copyPole.corners;
+            alignedCount = copyPole.alignedCount;
+            centralOffset = copyPole.centralOffset;
+            poleAligned = copyPole.poleAligned;
+        }
         RotatedRect corners;
+        int alignedCount = 0;
         double centralOffset;
         boolean poleAligned = false;
     }
@@ -144,7 +152,15 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     static final int MAX_CONE_OFFSET = 4;
     static class AnalyzedCone
     {
+        public AnalyzedCone() {};
+        public AnalyzedCone(AnalyzedCone copyCone) {
+            corners = copyCone.corners;
+            alignedCount = copyCone.alignedCount;
+            centralOffset = copyCone.centralOffset;
+            coneAligned = copyCone.coneAligned;
+        }
         RotatedRect corners;
+        int alignedCount = 0;
         double centralOffset;
         boolean coneAligned = false;
     }
@@ -224,22 +240,28 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
         if(detectPole) {
             if (thePole.poleAligned) {
+                thePole.alignedCount++;
                 drawRotatedRect(thePole.corners, input, GREEN);
             } else {
+                thePole.alignedCount = 0;
                 drawRotatedRect(thePole.corners, input, RED);
             }
         }
         if(detectBlueCone) {
             if (theBlueCone.coneAligned) {
+                theBlueCone.alignedCount++;
                 drawRotatedRect(theBlueCone.corners, input, GREEN);
             } else {
+                theBlueCone.alignedCount = 0;
                 drawRotatedRect(theBlueCone.corners, input, RED);
             }
         }
         if(detectRedCone) {
             if (theRedCone.coneAligned) {
+                theRedCone.alignedCount++;
                 drawRotatedRect(theRedCone.corners, input, GREEN);
             } else {
+                theRedCone.alignedCount = 0;
                 drawRotatedRect(theRedCone.corners, input, RED);
             }
         }
@@ -333,7 +355,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         {
             if(aCone.corners.size.height > theRedCone.corners.size.height)
             {
-                theRedCone = aCone;
+                theRedCone.corners = aCone.corners;
+                theRedCone.centralOffset = aCone.centralOffset;
                 foundCone = true;
             }
         }
@@ -392,7 +415,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         {
             if(aCone.corners.size.height > theBlueCone.corners.size.height)
             {
-                theBlueCone = aCone;
+                theBlueCone.corners = aCone.corners;
+                theBlueCone.centralOffset = aCone.centralOffset;
                 foundCone = true;
             }
         }
@@ -445,7 +469,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         {
             if(aPole.corners.size.height > thePole.corners.size.height)
             {
-                thePole = aPole;
+                thePole.centralOffset = aPole.centralOffset;
+                thePole.corners = aPole.corners;
                 foundPole = true;
             }
         }

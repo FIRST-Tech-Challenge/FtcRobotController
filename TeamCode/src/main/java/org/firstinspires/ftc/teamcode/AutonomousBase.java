@@ -94,13 +94,22 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void distanceFromFront(double desiredDistance, double distanceTolerance) {
         // Value in inches?
+        int atRange = 0;
         double range = robot.singleSonarRangeF();
         double rangeErr = range - desiredDistance;
-        while (opModeIsActive() && (abs(rangeErr) > distanceTolerance)) {
+        while (opModeIsActive() && (atRange < 10)) {
             performEveryLoop();
             range = robot.singleSonarRangeF();
             rangeErr = range - desiredDistance;
-            robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.07 : -0.07);
+            telemetry.addData("Sonar Range (F)", "Set: %.1f  Range: %.1f Err: %.1f", desiredDistance, range, rangeErr);
+            telemetry.update();
+            if(abs(rangeErr) <= distanceTolerance){
+                robot.stopMotion();
+                atRange++;
+            } else {
+                atRange = 0;
+                robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.07 : -0.07);
+            }
         }
         robot.stopMotion();
     } // distanceFromFront
@@ -179,21 +188,17 @@ public abstract class AutonomousBase extends LinearOpMode {
         synchronized(pipeline.lockPole) {
             List<PowerPlaySuperPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
             if (!localPoles.isEmpty()) {
-                thePole.poleAligned = localPoles.get(0).poleAligned;
-                thePole.centralOffset = localPoles.get(0).centralOffset;
-                thePole.corners = localPoles.get(0).corners;
+                thePole = new PowerPlaySuperPipeline.AnalyzedPole(localPoles.get(0));
             }
         }
         if(thePole != null) {
-            while (opModeIsActive() && !thePole.poleAligned) {
+            while (opModeIsActive() && (thePole.alignedCount < 10)) {
                 performEveryLoop();
                 robot.driveTrainTurn((thePole.centralOffset > 0) ? +0.07 : -0.07);
                 synchronized(pipeline.lockPole) {
                     List<PowerPlaySuperPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
                     if (!localPoles.isEmpty()) {
-                        thePole.poleAligned = localPoles.get(0).poleAligned;
-                        thePole.centralOffset = localPoles.get(0).centralOffset;
-                        thePole.corners = localPoles.get(0).corners;
+                        thePole = new PowerPlaySuperPipeline.AnalyzedPole(localPoles.get(0));
                     }
                 }
             }

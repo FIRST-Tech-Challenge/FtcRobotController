@@ -279,7 +279,7 @@ public class AutonomousLeft extends AutonomousBase {
             if( opModeIsActive()) {
                 telemetry.addData("Skill", "distanceFromFront");
                 telemetry.update();
-                distanceFromFront(28.0, 1.0);
+                distanceFromFront(35.0, 1.0);
             }
 
             if( opModeIsActive() ) {
