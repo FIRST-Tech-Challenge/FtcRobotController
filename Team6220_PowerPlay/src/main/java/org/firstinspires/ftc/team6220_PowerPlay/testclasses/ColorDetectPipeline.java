@@ -63,7 +63,7 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         frame = targetToleranceMatte(frame, colorTarget, colorTolerance);
 
         // Blur and then threshold to remove small details and sort of "erode" the matte
-        Mat output1;
+        Mat output1 = null;
         Imgproc.GaussianBlur(frame, output1, blurSize, 0);
         Mat output2 = null;
         Imgproc.threshold(frame, output2, erodeSize, 255, Imgproc.THRESH_BINARY);
@@ -97,7 +97,7 @@ public class ColorDetectPipeline extends OpenCvPipeline {
 
         rectDetected = contours.size() > 0;
         counter = contours.size();
-        Mat finalOutput;
+        Mat finalOutput = null;
         Imgproc.cvtColor(input, finalOutput, Imgproc.COLOR_HSV2BGR);
 
         frame = null;

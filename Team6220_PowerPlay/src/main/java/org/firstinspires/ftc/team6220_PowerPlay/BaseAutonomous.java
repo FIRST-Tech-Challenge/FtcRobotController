@@ -23,8 +23,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
         double yPosition;
 
         // power for any heading
-        double xPower = Math.cos(Math.toRadians(heading + 90)) * 0.2;
-        double yPower = Math.sin(Math.toRadians(heading + 90)) * 0.2;
+        double xPower = Math.cos(Math.toRadians(heading + 95)) * 0.3;
+        double yPower = Math.sin(Math.toRadians(heading + 95)) * 0.3;
 
         double traveledDistance;
         double remainingDistance = targetDistance;
@@ -40,7 +40,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (remainingDistance > 0 && opModeIsActive()) {
-            turningPower = (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle) / 100.0;
+            turningPower = (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle) / 50.0;
 
             motorFL.setPower(yPower + xPower + turningPower);
             motorFR.setPower(yPower - xPower - turningPower);
@@ -114,14 +114,14 @@ public abstract class BaseAutonomous extends BaseOpMode {
         double motorPower;
 
         // while slides aren't at target position
-        while (Math.abs(error) > 20 && opModeIsActive()) {
+        while (Math.abs(error) > 50 && opModeIsActive()) {
             error = targetPosition - motorLeftSlides.getCurrentPosition();
             motorPower = error * 0.01;
 
             // slides going down - full speed
             if (error < 0) {
-                motorLeftSlides.setPower(-1.0);
-                motorRightSlides.setPower(-1.0);
+                motorLeftSlides.setPower(-0.75);
+                motorRightSlides.setPower(-0.75);
             // slides going up - proportional control
             } else {
                 motorLeftSlides.setPower(motorPower);
