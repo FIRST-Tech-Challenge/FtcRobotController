@@ -78,6 +78,9 @@ public class Elevator {
     public void moveMainServo() {
         telemetry.addData("moveHands starts", true);
         telemetry.addData("mainservoState: ", mainServoState);
+        if (elevatorMotor.getCurrentPosition()<400){//TODO: find real limit
+            return;
+        }
         if (mainServoState) {
             mainServo.setPosition(1);
             mainServoState = false;
@@ -126,7 +129,12 @@ public class Elevator {
         elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-public void setElevetorDown(){
-        elevatorMotor.setTargetPosition(currentFloor - 400);
+public void setElevetorDown(boolean isDown) {
+        if(isDown && groundFloor!= currentFloor){
+            elevatorMotor.setTargetPosition(currentFloor + 400);
+        }
+        else{
+            elevatorMotor.setTargetPosition(currentFloor);
+        }
     }
 }

@@ -82,9 +82,9 @@ public class RobotDriveOpMode extends LinearOpMode {
 
 
             yButton = gamepad2.y;
-            if(gamepad2.right_trigger){
-                tevelRobot.elevator.setElevetorDown();
-            }
+
+            tevelRobot.elevator.setElevetorDown(gamepad2.right_trigger > 0.1);
+
             telemetry.update();
             }
     }
