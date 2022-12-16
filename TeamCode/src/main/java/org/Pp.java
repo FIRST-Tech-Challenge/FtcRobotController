@@ -143,11 +143,11 @@ public class Pp extends LinearOpMode{
                 closed = false;
             }
             if (closed) {
-                robot.Take1.setPosition(0.42);
-                robot.Take2.setPosition(0.39);
+                robot.Take1.setPosition(0.42);// take 1 closed pos
+                robot.Take2.setPosition(0.39);// take 2 closed pos
             } else {
-                robot.Take1.setPosition(0.52);
-                robot.Take2.setPosition(0.25);
+                robot.Take1.setPosition(0.54);// take 1 open pos
+                robot.Take2.setPosition(0.3);// take 2 open pos
             }
             //set power and position for grabby and shit
             robot.Slider.setPower(Slidepos);
