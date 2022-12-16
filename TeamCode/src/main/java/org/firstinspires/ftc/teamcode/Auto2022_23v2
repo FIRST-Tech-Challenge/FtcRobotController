@@ -123,13 +123,10 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
                                     moveToZone(updatedRecognitions.get(0).getLabel(),count);
                                     break;
                                 }
-                            }else{
-                                strafeVelo(false,.25,.1);
+                            }else {
+                                strafeVelo(false, .25, .1);
                                 count++;
                                 waitTime(.1);
-                            }
-                            if(count>10){
-                                break;
                             }
                         }
                     }
