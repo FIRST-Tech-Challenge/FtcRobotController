@@ -12,24 +12,17 @@ public class AutonomousTest extends AprilTagDetect {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-        int signal = detectAprilTag();
         waitForStart();
-
-        // drive forwards to move cone forwards
-        driveInches(0, 1);
-        sleep(500);
-
-        // drive backwards to grab cone
-        driveInches(180, 1);
-        sleep(500);
 
         // grab cone
         servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
         sleep(1500);
 
         // drive slides upwards a few inches
-        driveSlidesAutonomous(Constants.SLIDE_STOW);
-        sleep(500);
+        driveSlidesAutonomous(Constants.SLIDE_LOW);
+        sleep(1000);
+
+        int signal = detectAprilTag();
 
         // drive to furthest tile in our quadrant
         driveInches(0, 54);
@@ -49,11 +42,11 @@ public class AutonomousTest extends AprilTagDetect {
 
         // drive slides to high junction
         driveSlidesAutonomous(Constants.SLIDE_HIGH - 200);
-        sleep(1500);
+        sleep(1000);
 
         // release cone
         servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION);
-        sleep(1500);
+        sleep(1000);
 
         // drive backwards from high junction
         driveInches(180, 5 * Math.sqrt(2));

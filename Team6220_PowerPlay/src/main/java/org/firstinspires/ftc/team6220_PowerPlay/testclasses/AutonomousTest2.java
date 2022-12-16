@@ -24,21 +24,16 @@ public class AutonomousTest2 extends AprilTagDetect {
         coneDetectionPipeline.setRanges(lowerBlue, upperBlue);
         int signal = detectAprilTag();
         //Move the cone to a grabbing position
-        driveInches(0, 1);
-        sleep(500);
-        driveInches(180, 1);
-        sleep(500);
-        //Grab cone
         servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
         sleep(1500);
         //Raise slides
-        driveSlidesAutonomous(Constants.SLIDE_HIGH);
         sleep(500);
         //Drive forward to the tile next to the junction
         driveInches(0, 52);
         sleep(500);
+        driveSlidesAutonomous(Constants.SLIDE_HIGH);
         //Move right towards the junction
-        driveInches(270, 10);
+        driveInches(270, 7);
         sleep(500);
         sleep(500);
         //Drive towards junction
@@ -62,15 +57,23 @@ public class AutonomousTest2 extends AprilTagDetect {
         driveInches(0, 35);
         //Robot centers itself on the cone
         detectGrab();
+        driveSlides(60*stackHeight);
+        //Strafe until robot centered
         while(Math.abs(coneDetectionPipeline.distance) > 50){
-
+            motorFL.setPower(0.25*Math.signum(coneDetectionPipeline.distance));
+            motorFR.setPower(0.25*Math.signum(coneDetectionPipeline.distance));
+            motorBL.setPower(0.25*Math.signum(coneDetectionPipeline.distance));
+            motorBR.setPower(0.25*Math.signum(coneDetectionPipeline.distance));
         }
+        motorFL.setPower(0);
+        motorFR.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+
         //the robot moves until the cone is in range
-        while(coneDetectionPipeline.coneSize > 3000){
-            motorFL.setPower(0.25);
-            motorFR.setPower(0.25);
-            motorBL.setPower(0.25);
-            motorBR.setPower(0.25);
+        while(coneDetectionPipeline.coneSize > 500){
+            telemetry.addData("coneSize", coneDetectionPipeline.coneSize);
+            telemetry.update();
 
         }
         driveSlidesAutonomous(0);

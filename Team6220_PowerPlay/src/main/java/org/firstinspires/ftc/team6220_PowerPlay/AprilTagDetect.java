@@ -30,6 +30,7 @@ public abstract class AprilTagDetect extends ConeDetection {
     AprilTagDetection tagOfInterest = null;
 
     public int detectAprilTag() {
+        long start = System.currentTimeMillis();
 
         // initializes camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -51,7 +52,7 @@ public abstract class AprilTagDetect extends ConeDetection {
 
         // replaces waitForStart()
         // detects AprilTags during initialization
-        while (!isStarted() && !isStopRequested()) {
+        while (tagOfInterest != null && System.currentTimeMillis() - start < 5000 && opModeIsActive()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             // tag has been detected at one point
