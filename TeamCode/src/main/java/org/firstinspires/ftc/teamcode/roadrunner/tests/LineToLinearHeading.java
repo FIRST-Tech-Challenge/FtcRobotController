@@ -32,15 +32,11 @@ public class LineToLinearHeading extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
-<<<<<<< Updated upstream
-//                .lineToLinearHeading(new Pose2d(40, 40, Math.toRadians(90)))
-                .forward(25)
+               .lineToLinearHeading(new Pose2d(40, 40, Math.toRadians(90)))
+//                .forward(25)
 //                .strafeLeft(15)
                 .build();
         Trajectory traj2 = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(45)
-                .build();
-=======
                 .forward(40)
                 .build();
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
@@ -58,7 +54,6 @@ public class LineToLinearHeading extends LinearOpMode {
 
 
 
->>>>>>> Stashed changes
         waitForStart();
 
         if(isStopRequested()) return;
@@ -102,11 +97,6 @@ public class LineToLinearHeading extends LinearOpMode {
         robot.rightslidemotor.setPower(speed);
         sleep(time);
 
-<<<<<<< Updated upstream
-//        drive.followTrajectory(traj1);
-        drive.followTrajectory(traj1);
-=======
->>>>>>> Stashed changes
     }
 }
 
