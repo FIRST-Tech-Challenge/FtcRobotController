@@ -3,6 +3,14 @@ package org.firstinspires.ftc.teamcodekt.components
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 
+abstract class BaseBotComponents {
+    abstract val claw: Claw
+    abstract val intake: Intake
+    abstract val arm: Arm
+    abstract val wrist: Wrist
+    abstract val lift: Lift
+}
+
 fun createTeleOpBotComponents(hwMap: HardwareMap, voltageScaler: VoltageScaler) =
     TeleOpBotComponents(
         Drivetrain(hwMap),
@@ -15,12 +23,12 @@ fun createTeleOpBotComponents(hwMap: HardwareMap, voltageScaler: VoltageScaler) 
 
 data class TeleOpBotComponents(
     val drivetrain: Drivetrain,
-    val claw: Claw,
-    val intake: Intake,
-    val arm: Arm,
-    val wrist: Wrist,
-    val lift: Lift,
-)
+    override val claw: Claw,
+    override val intake: Intake,
+    override val arm: Arm,
+    override val wrist: Wrist,
+    override val lift: Lift,
+) : BaseBotComponents()
 
 fun createAutoBotComponents(hwMap: HardwareMap, voltageScaler: VoltageScaler) =
     AutoBotComponents(
@@ -34,9 +42,9 @@ fun createAutoBotComponents(hwMap: HardwareMap, voltageScaler: VoltageScaler) =
 
 data class AutoBotComponents(
     val drive: SampleMecanumDrive,
-    val claw: Claw,
-    val intake: Intake,
-    val arm: Arm,
-    val wrist: Wrist,
-    val lift: Lift,
-)
+    override val claw: Claw,
+    override val intake: Intake,
+    override val arm: Arm,
+    override val wrist: Wrist,
+    override val lift: Lift,
+) : BaseBotComponents()

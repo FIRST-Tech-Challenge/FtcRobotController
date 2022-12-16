@@ -33,7 +33,7 @@ class RougeRightAuto : RougeBaseAuto() {
 
         Anvil.startAsyncAutoWith(startTraj)
 
-        Scheduler.start(this@RougeRightAuto) {
+        Scheduler.launch(this@RougeRightAuto) {
             lift.update()
             wrist.update()
             drive.update()

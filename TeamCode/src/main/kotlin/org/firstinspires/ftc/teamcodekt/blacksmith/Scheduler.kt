@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Listener
  * // --- VS: ---
  *
  * gamepadx1.a.onRise(claw::open); // So clean and cool wow the person who made
- * Scheduler.start(this);  // this was probably so smart and a genius I'm so jealous!!
+ * Scheduler.launch(this);  // this was probably so smart and a genius I'm so jealous!!
  * ```
  *
  * The performance impact of this component is minimal, with [Listeners][Listener] being lazily
@@ -63,7 +63,7 @@ import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Listener
  *         .onFall(this::doYetAnotherThing);
  *
  *     // Runs the code while the OpMode is active.
- *     Scheduler.start(this, () -> {
+ *     Scheduler.launch(this, () -> {
  *         // Optional block of code to be run after the above listeners
  *         // This parameter may be omitted if unnecessary.
  *         updateSomething();
@@ -110,21 +110,14 @@ object Scheduler {
      *
      *    waitForStart();
      *
-     *    Scheduler.start(this, () -> {
+     *    Scheduler.launch(this);
+     *
+     *    //or
+     *
+     *    Scheduler.launch(this, () -> {
      *        updateSomething();
      *        updateTelemetry(telemetry);
      *    });
-     * }
-     *
-     * //or
-     *
-     * @Override
-     * public void runOpMode() throws InterruptedException {
-     *    // Instantiate listeners...
-     *
-     *    waitForStart();
-     *
-     *    Scheduler.start(this);
      * }
      * ```
      * @param opmode The [LinearOpMode] to run the [Scheduler] in.
@@ -132,7 +125,7 @@ object Scheduler {
      */
     @JvmStatic
     @JvmOverloads
-    fun start(opmode: LinearOpMode, afterEach: Runnable = Runnable {}) {
+    fun launch(opmode: LinearOpMode, afterEach: Runnable = Runnable {}) {
         while (opmode.opModeIsActive() && !opmode.isStopRequested) {
             beforeEach.run()
             tick()
@@ -200,13 +193,21 @@ object Scheduler {
     private fun tick() = listeners.forEach(Listener::tick)
 
     /**
-     * Gets the [Listener] with the given [id], or creates and registers one if it doesn't exist.
-     * @param id The unique ID of the [Listener].
-     * @param condition The [Condition] to check.
-     * @return The [Listener] with the given [id] and [condition].
+     * Registers the given [Listener] to this Scheduler. By doing so, the [Listener] will be
+     * updated on every tick unless it is unregistered or the Scheduler is reset.
+     * @param listener The [Listener] to subscribe.
      */
     @JvmStatic
-    fun hookListener(listener: Listener) = listener.also {
+    fun hookListener(listener: Listener) {
         listeners += listener
+    }
+
+    /**
+     * Unregisters the given [Listener] from this Scheduler.
+     * @param listener The [Listener] to unsubscribe.
+     */
+    @JvmStatic
+    fun unhookListener(listener: Listener) {
+        listeners -= listener
     }
 }

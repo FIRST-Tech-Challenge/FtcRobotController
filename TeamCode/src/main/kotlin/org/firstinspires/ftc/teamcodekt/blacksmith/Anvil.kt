@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcodekt.util.toRad
  *     Anvil.startAsyncAutoWith(startTraj)
  *
  *     // Of course, you don't need to use Scheduler, but it's cool
- *     Scheduler.start(this) {
+ *     Scheduler.launch(this) {
  *         drive.update()
  *         // Other PID stuff and such...
  *     }

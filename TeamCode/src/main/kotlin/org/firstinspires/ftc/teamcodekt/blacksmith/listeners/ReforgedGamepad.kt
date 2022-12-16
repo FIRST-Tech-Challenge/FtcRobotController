@@ -33,7 +33,7 @@ import kotlin.math.abs
  *     // `gamepadx1.left_trigger(.1)` triggers when abs(left_trigger) > .1
  *     // `gamepadx1.left_trigger` triggers when abs(left_trigger) > .5
  *
- *     Scheduler.start(this);
+ *     Scheduler.launch(this);
  * }
  *
  * private void openClaw() {

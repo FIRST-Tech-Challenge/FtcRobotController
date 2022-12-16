@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
  *     gamepadx1.a.onHigh(timer::reset);
  *
  *     // Starts the timer
- *     Scheduler.start(this);
+ *     Scheduler.launch(this);
  * }
  * ```
  *
@@ -98,6 +98,12 @@ class Timer @JvmOverloads constructor(length: Long, unit: TimeUnit = TimeUnit.MI
     fun setPending() {
         isPending = true
     }
+
+    fun setPendingOn(listener: (Runnable) -> Any) = this.also { listener(this::setPending) }
+
+    fun startTimerOn(listener: (Runnable) -> Any) = this.also { listener(this::start) }
+
+    fun isDone() = listener.condition()
 
     /**
      * Gets the current time in milliseconds.

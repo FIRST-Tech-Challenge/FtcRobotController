@@ -7,40 +7,36 @@ import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Listener
 import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Timer
 import org.firstinspires.ftc.teamcodekt.components.TeleOpBotComponents
 
-class BackwardsDepositChain(val bot: TeleOpBotComponents, clawOpeningTime: Long) : CancellableChain {
-    private val depositTimer = Timer(clawOpeningTime)
+class BackwardsDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
+    private val depositTimer = Timer(500)
     private val liftTimer = Timer(200)
 
     private var isCancelled = false
 
     override fun invokeOn(button: Listener) {
+        val startDepositing = Listener { !button.condition() && !isCancelled }::onRise
+
         button
-            .onRise {
-                depositTimer.setPending()
-                isCancelled = false
-            }
-            .onFall {
-                if (!isCancelled) {
-                    bot.claw.openForDeposit()
-                    depositTimer.start()
-                } else {
-                    depositTimer.finishPrematurely()
-                }
-            }
+            .onRise { isCancelled = false }
+            .onFall(bot.claw::openForDeposit)
 
         depositTimer
+            .setPendingOn(button::onRise)
+            .startTimerOn(startDepositing)
+
             .whileWaiting {
-                if (!isCancelled) {
-                    bot.arm.setToBackwardsPos()
-                    bot.wrist.setToBackwardsPos()
+                if (isCancelled) {
+                    depositTimer.finishPrematurely()
                 }
-            }
-            .onDone {
-                bot.claw.close()
-                liftTimer.start()
+
+                bot.arm.setToBackwardsPos()
+                bot.wrist.setToBackwardsPos()
             }
 
+            .onDone(bot.claw::close)
+
         liftTimer
+            .startTimerOn(depositTimer::onDone)
             .onDone(bot.lift::goToZero)
     }
 

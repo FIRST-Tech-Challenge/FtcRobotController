@@ -28,14 +28,9 @@ public class AutoData {
 
     public static int DEPOSIT_DROP_AMOUNT = 800;
 
-    // DEPRICATED
-    public static int INTAKING_START_POS = 420;
-    public static int INTAKING_DECREMENT = 55;
-
     public static int AUTO_INTAKE_LIFT_HEIGHT_1 = 373;
     public static int AUTO_INTAKE_LIFT_HEIGHT_2 = 297;
     public static int AUTO_INTAKE_LIFT_HEIGHT_3 = 182;
     public static int AUTO_INTAKE_LIFT_HEIGHT_4 = 112;
     public static int AUTO_INTAKE_LIFT_HEIGHT_5 = 0;
 }
-

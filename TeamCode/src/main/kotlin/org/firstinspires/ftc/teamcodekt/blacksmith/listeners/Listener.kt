@@ -37,7 +37,7 @@ import org.firstinspires.ftc.teamcodekt.util.runOnce
  *     listener.whileLow(this::doElseSomething);
  *
  *     // Must be called to start the main loop.
- *     Scheduler.start(this);
+ *     Scheduler.launch(this);
  * }
  * ```
  *
@@ -126,8 +126,13 @@ open class Listener(val condition: Condition) {
             if (condition.evaluate()) action.run()
         }
 
+    fun destroy() {
+        Scheduler.unhookListener(this)
+        actions.clear()
+    }
+
     companion object {
-        private val alwaysActiveListener = Listener { true }
+        val alwaysActiveListener = Listener { true }
 
         /**
          * Subscribes the given action to run every tick.

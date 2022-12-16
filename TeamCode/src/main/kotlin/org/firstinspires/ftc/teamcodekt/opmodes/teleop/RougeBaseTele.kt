@@ -21,7 +21,7 @@ abstract class RougeBaseTele : LinearOpMode() {
 
     protected val intakeChain = IntakeChain(bot, 200)
     protected val forwardsDepositChain = ForwardsDepositChain(bot, 500)
-    protected val backwardsDepositChain = BackwardsDepositChain(bot, 500)
+    protected val backwardsDepositChain = BackwardsDepositChain(bot)
 
     override fun runOpMode() = with(bot) {
         bot = createTeleOpBotComponents(hardwareMap, VoltageScaler(hardwareMap))
@@ -36,7 +36,7 @@ abstract class RougeBaseTele : LinearOpMode() {
 
         describeControls()
 
-        Scheduler.start(this@RougeBaseTele) {
+        Scheduler.launch(this@RougeBaseTele) {
             lift.update()
             wrist.update()
             telemetry.update()
