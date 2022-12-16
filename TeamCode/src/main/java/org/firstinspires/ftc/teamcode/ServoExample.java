@@ -98,16 +98,6 @@ public class ServoExample extends LinearOpMode {
             double grabber = -gamepad2.right_stick_y;
 
             // Code for lift and grabber (gamepad2)
-            if(lift > .05){
-                liftMotor.setPower(1);
-            }else{
-                liftMotor.setPower(0);
-            }
-            if(lift < -.05){
-                liftMotor.setPower(-.3);
-            }else{
-                liftMotor.setPower(0);
-            }
 
             if(lift > .05){
                 liftMotor.setPower(1);
