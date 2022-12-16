@@ -72,6 +72,7 @@ public class RobotDriveOpMode extends LinearOpMode {
                 tevelRobot.elevator.setElevatorPosition(tevelRobot.elevator.groundFloor);
             }
             if (rightBumper == false && gamepad2.right_bumper) {
+                gamepad2.rumble(1000);
                 tevelRobot.getElevator().moveHands();
             }
             if (yButton == false && gamepad2.y) {

@@ -78,7 +78,7 @@ public class Elevator {
     public void moveMainServo() {
         telemetry.addData("moveHands starts", true);
         telemetry.addData("mainservoState: ", mainServoState);
-        if (elevatorMotor.getCurrentPosition()<400){//TODO: find real limit
+        if (elevatorMotor.getCurrentPosition()>-700){//TODO: find real limit
             return;
         }
         if (mainServoState) {
