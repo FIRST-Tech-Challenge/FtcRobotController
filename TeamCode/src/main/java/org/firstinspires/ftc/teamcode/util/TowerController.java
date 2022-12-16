@@ -20,7 +20,7 @@ public class TowerController
     private double uBarPower;
 
     private DcMotor screw;
-    private int screwLevel;
+    private int screwLevel = 0;
     private TouchSensor highSensor;
     private TouchSensor lowSensor;
     private int previousLevel;
@@ -32,7 +32,7 @@ public class TowerController
 //    private TouchSensor intakeSensor;
     public int intakePick = 0;
 
-    public TowerController (HardwareMap hardwareMap)
+    public TowerController (HardwareMap hardwareMap , Telemetry telemetry)
     {
 
         //Setup motors
@@ -54,8 +54,10 @@ public class TowerController
 
         //setup encoder
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        screw.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //
 //        screwLevel = 100000;
 //        screw.setDirection(DcMotor.Direction.FORWARD);
@@ -76,6 +78,9 @@ public class TowerController
 //        uBar.setPower(0);
 //        uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        screwLevel = 0;
+
+        // init screw to bottom level
+        driveScrewDown(10000, 0.5, telemetry);
     }
 
 //    /**
@@ -147,6 +152,7 @@ public class TowerController
 ////        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 ////        uBar.setPower(0);
 ////    }
+
 
     private void driveScrewUp(double screwTarget, double speed, Telemetry telemetry)
     {
@@ -282,23 +288,23 @@ public class TowerController
 
     public void screwDriveToLevelUp(int screwTarget, double speed, Telemetry telemetry)
     {
-        screwLevel -= screwTarget;
+        screwLevel = screwTarget;
         screw.setDirection(DcMotor.Direction.FORWARD);
         screw.setTargetPosition(screwLevel);
         screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-//        telemetry.update();
+        telemetry.update();
 
         screw.setPower(speed);
 
-        while ((screw.isBusy() && (screw.getCurrentPosition() <= screwTarget)) || (screw.isBusy() && (highSensor.isPressed())))
+        while ((screw.isBusy() && (screw.getCurrentPosition() >= screwTarget)) || (screw.isBusy() && (highSensor.isPressed())))
         {
             telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-//            telemetry.update();
+            telemetry.update();
 
 
-            if (lowSensor.isPressed())
+            if (highSensor.isPressed())
             {
                 telemetry.addData("highSensor is pressed", "");
                 telemetry.update();
@@ -311,11 +317,12 @@ public class TowerController
         screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         screw.setPower(0);
         screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        screwLevel *= -1;
     }
 
     public void screwDriveToLevelDown(int screwTarget, double speed, Telemetry telemetry)
     {
-        screwLevel -= screwTarget;
+        screwLevel = screwTarget;
         screw.setDirection(DcMotor.Direction.REVERSE);
         screw.setTargetPosition(screwLevel);
         screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -333,7 +340,7 @@ public class TowerController
 
             if (lowSensor.isPressed())
             {
-                telemetry.addData("highSensor is pressed", "");
+                telemetry.addData("lowSensor is pressed", "");
                 telemetry.update();
                 break;
             }
@@ -348,38 +355,41 @@ public class TowerController
 
     public void switchLevel(Telemetry telemetry)
     {
+        telemetry.addData("", "&s", "entered switchLevel");
+        telemetry.update();
+
         switch (level)
         {
             case 1:
                 if (level < previousLevel)
                 {
-                    screwDriveToLevelDown(screwLevel - 0, 1, telemetry);
+                    screwDriveToLevelDown(screwLevel - 0, 0.2, telemetry);
                 }
                 else
                 {
-                    screwDriveToLevelUp(0 - screwLevel, 1, telemetry);
+                    screwDriveToLevelUp(screwLevel - 0, 0.2, telemetry);
                 }
                 break;
 
             case 2:
                 if (level < previousLevel)
                 {
-                    screwDriveToLevelDown(screwLevel - 1000, 1, telemetry);
+                    screwDriveToLevelDown(screwLevel - 1000, 0.2, telemetry);
                 }
                 else
                 {
-                    screwDriveToLevelUp(1000 - screwLevel, 1, telemetry);
+                    screwDriveToLevelUp(screwLevel - 1000 , 0.2, telemetry);
                 }
                 break;
 
             case 3:
                 if (level < previousLevel)
                 {
-                    screwDriveToLevelDown(screwLevel - 2000, 1, telemetry);
+                    screwDriveToLevelDown(screwLevel - 2000, 0.2, telemetry);
                 }
                 else
                 {
-                    screwDriveToLevelUp(2000 - screwLevel, 1, telemetry);
+                    screwDriveToLevelUp(screwLevel - 2000, 0.2, telemetry);
                 }
                 break;
 
@@ -387,17 +397,20 @@ public class TowerController
                 if (level < previousLevel)
                 {
 
-                    screwDriveToLevelDown(screwLevel - 3000, 1, telemetry);
+                    screwDriveToLevelDown(screwLevel - 3000, 0.2, telemetry);
                 }
                 else
                 {
-                    screwDriveToLevelUp(3000 - screwLevel, 1, telemetry);
+                    screwDriveToLevelUp(screwLevel - 3000, 0.2, telemetry);
                 }
                 break;
 
             default:
                 break;
         }
+
+        telemetry.addData("", "&s", "exiting switchLevel");
+        telemetry.update();
     }
 
     public void handleGamepad(Gamepad gamepad, Telemetry telemetry)
@@ -424,19 +437,84 @@ public class TowerController
 //            driveScrewDown(2000, 100, telemetry);
 //        }
 
-        // for go to level
+//        // for go to level
 //        if (gamepad.dpad_up && level < 4)
 //        {
 //            previousLevel = level;
 //            level++;
+//            telemetry.addData("Level", "&d", level);
+//            telemetry.update();
 //            switchLevel(telemetry);
 //        }
 //        if (gamepad.dpad_down && level > 1)
 //        {
 //            previousLevel = level;
 //            level--;
+//            telemetry.addData("Level", "&d", level);
+//            telemetry.update();
 //            switchLevel(telemetry);
 //        }
+//        telemetry.addData("Level", "&d", level);
+//        telemetry.update();
+
+
+        //4 button screw position set
+        if (gamepad.y)
+        {
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(4520);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(-1);
+            while (screw.isBusy())
+            {
+                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
+                telemetry.update();
+            }
+            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            screw.setPower(0);
+        }
+        else if (!gamepad.start && gamepad.b)
+        {
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(2260);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(-1);
+            while (screw.isBusy())
+            {
+                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
+                telemetry.update();
+            }
+            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            screw.setPower(0);
+        }
+        else if (gamepad.x)
+        {
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(1130);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(1);
+            while (screw.isBusy())
+            {
+                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
+                telemetry.update();
+            }
+            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            screw.setPower(0);
+        }
+        else if (gamepad.a)
+        {
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(0);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(-1);
+            while (screw.isBusy())
+            {
+                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
+                telemetry.update();
+            }
+            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            screw.setPower(0);
+        }
 
         //U Bar
 //        if(gamepad.b && !gamepad.start)
@@ -477,19 +555,28 @@ public class TowerController
 //            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        }
 
+        telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
+        telemetry.update();
+
         double screwPower;
 
+        screw.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double driveScrew = gamepad.left_stick_y;
         screwPower = Range.clip(driveScrew, -1, 1);
         if ((screwPower < 0 && !highSensor.isPressed()) || screwPower > 0 && !lowSensor.isPressed())
         {
-            screw.setPower(screwPower);
+            screw.setPower(-screwPower);
         }
         else
         {
             screw.setPower(0);
             screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+
+
+
+
+
 
         double uBarPower;
 

@@ -10,7 +10,7 @@ public class ScrewTest extends OpMode
     @Override
     public void init()
     {
-        towerController = new TowerController(hardwareMap);
+        towerController = new TowerController(hardwareMap, telemetry);
     }
 
     @Override
