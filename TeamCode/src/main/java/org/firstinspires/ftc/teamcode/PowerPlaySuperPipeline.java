@@ -43,7 +43,15 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public Object lockBlueCone = new Object();
     public Object lockRedCone = new Object();
     public Object lockPole = new Object();
-    Mat contoursOnPlainImageMat = new Mat();
+    boolean detectPole, detectRedCone, detectBlueCone;
+
+    public PowerPlaySuperPipeline(boolean poleDetection, boolean redConeDetection, boolean blueConeDetection)
+    {
+        detectPole = poleDetection;
+        detectRedCone = redConeDetection;
+        detectBlueCone = blueConeDetection;
+    }
+
     /*
      * Some stuff to handle returning our various buffers
      */
@@ -90,6 +98,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     Mat morphedBlueThreshold = new Mat();
     Mat morphedRedThreshold = new Mat();
     Mat morphedYellowThreshold = new Mat();
+    Mat contoursOnPlainImageMat = new Mat();
 
     /*
      * Threshold values
@@ -168,60 +177,71 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
          *
          * Run analysis for yellow poles
          */
-        synchronized(lockPole) {
-            for (MatOfPoint contour : findYellowContours(input)) {
-                AnalyzePoleContour(contour, input);
-            }
+        if(detectPole) {
+            synchronized (lockPole) {
+                for (MatOfPoint contour : findYellowContours(input)) {
+                    AnalyzePoleContour(contour, input);
+                }
 
-            clientPoleList.clear();
-            if (findThePole()) {
-                clientPoleList.add(thePole);
+                clientPoleList.clear();
+                if (findThePole()) {
+                    clientPoleList.add(thePole);
+                }
             }
         }
 
         /*
          * Run analysis for blue cones
          */
-        synchronized(lockBlueCone) {
-            for(MatOfPoint contour : findBlueContours(input))
-            {
-                AnalyzeBlueConeContour(contour, input);
-            }
+        if(detectBlueCone) {
+            synchronized (lockBlueCone) {
+                for (MatOfPoint contour : findBlueContours(input)) {
+                    AnalyzeBlueConeContour(contour, input);
+                }
 
-            clientBlueConeList.clear();
-            if (findTheBlueCone()) {
-                clientBlueConeList.add(theBlueCone);
+                clientBlueConeList.clear();
+                if (findTheBlueCone()) {
+                    clientBlueConeList.add(theBlueCone);
+                }
             }
         }
 
         /*
          * Run analysis for red cones
          */
-        synchronized(lockRedCone) {
-            for (MatOfPoint contour : findRedContours(input)) {
-                AnalyzeRedConeContour(contour, input);
-            }
+        if(detectRedCone) {
+            synchronized (lockRedCone) {
+                for (MatOfPoint contour : findRedContours(input)) {
+                    AnalyzeRedConeContour(contour, input);
+                }
 
-            clientRedConeList.clear();
-            if (findTheRedCone()) {
-                clientRedConeList.add(theRedCone);
+                clientRedConeList.clear();
+                if (findTheRedCone()) {
+                    clientRedConeList.add(theRedCone);
+                }
             }
         }
 
-        if (thePole.poleAligned) {
-            drawRotatedRect(thePole.corners, input, GREEN);
-        } else {
-            drawRotatedRect(thePole.corners, input, RED);
+        if(detectPole) {
+            if (thePole.poleAligned) {
+                drawRotatedRect(thePole.corners, input, GREEN);
+            } else {
+                drawRotatedRect(thePole.corners, input, RED);
+            }
         }
-        if (theBlueCone.coneAligned) {
-            drawRotatedRect(theBlueCone.corners, input, GREEN);
-        } else {
-            drawRotatedRect(theBlueCone.corners, input, RED);
+        if(detectBlueCone) {
+            if (theBlueCone.coneAligned) {
+                drawRotatedRect(theBlueCone.corners, input, GREEN);
+            } else {
+                drawRotatedRect(theBlueCone.corners, input, RED);
+            }
         }
-        if (theRedCone.coneAligned) {
-            drawRotatedRect(theRedCone.corners, input, GREEN);
-        } else {
-            drawRotatedRect(theRedCone.corners, input, RED);
+        if(detectRedCone) {
+            if (theRedCone.coneAligned) {
+                drawRotatedRect(theRedCone.corners, input, GREEN);
+            } else {
+                drawRotatedRect(theRedCone.corners, input, RED);
+            }
         }
         drawRotatedRect(CENTERED_OBJECT, input, BLUE);
         /*
@@ -330,7 +350,9 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // A list we'll be using to store the contours we find
         List<MatOfPoint> contoursList = new ArrayList<>();
 
-        // We have the blue channel extracted from the pole detection. No need to do it here.
+        // Convert the input image to YCrCb color space, then extract the Cb channel
+        Imgproc.cvtColor(input, cbMat, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(cbMat, cbMat, CB_CHAN_IDX);
 
         // Threshold the Cb channel to form a mask, then run some noise reduction
         Imgproc.threshold(cbMat, thresholdBlueMat, CB_CHAN_MASK_BLUE_THRESHOLD, 255, Imgproc.THRESH_BINARY);

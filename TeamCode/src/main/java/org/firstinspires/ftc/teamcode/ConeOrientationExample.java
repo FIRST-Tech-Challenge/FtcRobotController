@@ -71,7 +71,7 @@ public class ConeOrientationExample extends LinearOpMode
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                pipeline = new PowerPlaySuperPipeline();
+                pipeline = new PowerPlaySuperPipeline(true, true, true);
                 webcam.setPipeline(pipeline);
             }
 

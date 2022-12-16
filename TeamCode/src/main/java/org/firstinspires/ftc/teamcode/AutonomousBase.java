@@ -107,9 +107,16 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterRedCone() {
-        List<PowerPlaySuperPipeline.AnalyzedCone> localCones = pipeline.getDetectedRedCones();
-        if(!localCones.isEmpty()) {
-            PowerPlaySuperPipeline.AnalyzedCone theCone = localCones.get(0);
+        PowerPlaySuperPipeline.AnalyzedCone theCone = null;
+        synchronized(pipeline.lockRedCone) {
+            List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedRedCones();
+            if (!cones.isEmpty()) {
+                theCone.coneAligned = cones.get(0).coneAligned;
+                theCone.centralOffset = cones.get(0).centralOffset;
+                theCone.corners = cones.get(0).corners;
+            }
+        }
+        if(theCone != null) {
             while (opModeIsActive() && !theCone.coneAligned) {
                 performEveryLoop();
                 // TODO: rotation is not sufficient;  we also need to be aligned along the
@@ -117,12 +124,18 @@ public abstract class AutonomousBase extends LinearOpMode {
                 // That implies a combinatino of TURN and LEFT/RIGHT stafing.
                 robot.driveTrainTurn((theCone.centralOffset > 0) ? +0.07 : -0.07);
 //              robot.driveTrainRightLeft((theCone.centralOffset > 0) ? +0.10 : -0.10);
-                localCones = pipeline.getDetectedRedCones();
-                if(!localCones.isEmpty()) {
-                    theCone = localCones.get(0);
+                synchronized(pipeline.lockRedCone) {
+                    List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedRedCones();
+                    if (!cones.isEmpty()) {
+                        theCone.coneAligned = cones.get(0).coneAligned;
+                        theCone.centralOffset = cones.get(0).centralOffset;
+                        theCone.corners = cones.get(0).corners;
+                    }
                 }
             }
             robot.stopMotion();
+            // TODO: can we use this aligned position along the tape to update our known
+            // odometry world position? (offsetting any drift-error that has accumulated?
         }
     }
 
@@ -669,10 +682,6 @@ public abstract class AutonomousBase extends LinearOpMode {
         while( opModeIsActive() ) {
             // Tend to any automatic mechanism movement updates
             performEveryLoop();
-            // Bulk-query all odometry data (delta since last reading)
-            robot.readBulkData();
-            // Compute updated robot position/orientation
-            globalCoordinatePositionUpdate();
             // Power drivetrain motors to move to where we WANT to be
             if( moveToPosition( x_target, y_target, drive_angle, move_power, turn_power ) )
                 break;

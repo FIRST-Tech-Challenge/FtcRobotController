@@ -131,7 +131,7 @@ public class AutonomousLeft extends AutonomousBase {
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                pipeline = new PowerPlaySuperPipeline();
+                pipeline = new PowerPlaySuperPipeline(true, !blueAlliance, blueAlliance);
                 webcam.setPipeline(pipeline);
             }
 
@@ -342,7 +342,7 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Drive closer to the pole in order to score (and re-center turret in case it moved)
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        driveToPosition( (autoYpos+2.8), (autoXpos+2.8), autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
+//        driveToPosition( (autoYpos+2.8), (autoXpos+2.8), autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
         robot.driveTrainMotorsZero();
         // Make sure the turret movement has finished
         while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
