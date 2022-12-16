@@ -46,6 +46,9 @@ public class ConeDetectionPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        if(input == null){
+            throw new IllegalArgumentException("Input cannot be null");
+        }
         Mat mask = maskFrame(input, lowerRange, upperRange);
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();

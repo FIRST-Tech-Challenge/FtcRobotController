@@ -11,8 +11,8 @@ import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetect;
 import org.firstinspires.ftc.team6220_PowerPlay.ConeDetectionPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
-@Autonomous(name = "StackGrabbingAuto", group = "Test")
-public class AutonomousTest2 extends AprilTagDetect {
+@Autonomous(name = "StackGrabbingAuto_Blue", group = "Test")
+public class StackGrabbingAuto_Blueside extends AprilTagDetect {
     int stackHeight = 4;
     int[] lowerBlue = {42, 128, 114};
     int[] upperBlue = {168, 242, 255};
@@ -23,23 +23,17 @@ public class AutonomousTest2 extends AprilTagDetect {
         ConeDetectionPipeline coneDetectionPipeline = new ConeDetectionPipeline();
         coneDetectionPipeline.setRanges(lowerBlue, upperBlue);
         int signal = detectAprilTag();
-        //Move the cone to a grabbing position
-        driveInches(0, 1);
-        sleep(500);
-        driveInches(180, 1);
-        sleep(500);
         //Grab cone
         servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
         sleep(1500);
-        //Raise slides
-        driveSlidesAutonomous(Constants.SLIDE_HIGH);
         sleep(500);
         //Drive forward to the tile next to the junction
         driveInches(0, 52);
         sleep(500);
+        //Raise slides
+        driveSlidesAutonomous(Constants.SLIDE_HIGH);
         //Move right towards the junction
         driveInches(270, 10);
-        sleep(500);
         sleep(500);
         //Drive towards junction
         driveInches(0, 1.5);
@@ -58,23 +52,107 @@ public class AutonomousTest2 extends AprilTagDetect {
         //Turn left
         driveInches(90, 10);
         turnToAngle(90);
-        driveSlidesAutonomous(400);
         driveInches(0, 35);
-        //Robot centers itself on the cone
         detectGrab();
-        while(Math.abs(coneDetectionPipeline.distance) > 50){
-
+        //Strafe until the robot is centered on the cone
+        while(stackHeight >= 0) {
+            while (Math.abs(coneDetectionPipeline.distance) > 50) {
+                motorFL.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
+                motorFR.setPower(-0.25 * Math.signum(coneDetectionPipeline.distance));
+                motorBL.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
+                motorBR.setPower(-0.25 * Math.signum(coneDetectionPipeline.distance));
+            }
+            //Drive slides to current stack height
+            driveSlidesAutonomous(stackHeight * 60);
+            motorFL.setPower(0);
+            motorFR.setPower(0);
+            motorBR.setPower(0);
+            motorBR.setPower(0);
+            //the robot moves until the cone is in range
+            while (coneDetectionPipeline.coneSize > 100) {
+                telemetry.addData("distance to cone", coneDetectionPipeline.distance);
+            }
+            driveSlidesAutonomous(0);
+            driveGrabber(Constants.GRABBER_CLOSE_POSITION);
         }
-        //the robot moves until the cone is in range
-        while(coneDetectionPipeline.coneSize > 3000){
-            motorFL.setPower(0.25);
-            motorFR.setPower(0.25);
-            motorBL.setPower(0.25);
-            motorBR.setPower(0.25);
-
-        }
-        driveSlidesAutonomous(0);
-        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
-
+        driveSlidesAutonomous((stackHeight * 60)+100);
             //60 is the height of the cone, multiply it by stack height
     }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
