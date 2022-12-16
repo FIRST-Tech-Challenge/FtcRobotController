@@ -3,24 +3,52 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="FieldCentricDrive", group="Linear Opmode")
 public class FieldCentricDrive extends LinearOpMode {
+
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotorEx leftFrontDrive = null;
+    private DcMotorEx leftBackDrive = null;
+    private DcMotorEx rightFrontDrive = null;
+    private DcMotorEx rightBackDrive = null;
+
+    private DcMotor liftMotor = null;
+    private Servo servoGrabber1 = null;
+    private Servo servoGrabber2 = null;
+
+    static final double MAX_POS     =    .5;
+    static final double MAX_POS2    =    .50;
+    static final double MIN_POS     =     1;
+    static final double MIN_POS2    =     0;
+
+    double direction = 0;
+    double position = 1;
+    double position2 = 0;
+
     @Override
-    public void runOpMode() throws InterruptedException {
-        // Declare our motors
+    public void runOpMode() {
         // Make sure your ID's match your configuration
         DcMotor leftFrontDrive = hardwareMap.dcMotor.get("left_front_drive");
         DcMotor leftBackDrive = hardwareMap.dcMotor.get("left_back_drive");
         DcMotor rightFrontDrive = hardwareMap.dcMotor.get("right_front_drive");
         DcMotor rightBackDrive = hardwareMap.dcMotor.get("right_back_drive");
 
+        liftMotor  = hardwareMap.get(DcMotor.class, "lift_motor");
+        servoGrabber1 = hardwareMap.get(Servo.class, "servo_grabber_one");
+        servoGrabber2 = hardwareMap.get(Servo.class, "servo_grabber_two");
+
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
-        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Retrieve the IMU from the hardware map
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -30,7 +58,14 @@ public class FieldCentricDrive extends LinearOpMode {
         // Without this, data retrieving from the IMU throws an exception
         imu.initialize(parameters);
 
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        servoGrabber1.setPosition(position);
+        servoGrabber2.setPosition(position2);
+
         waitForStart();
+        runtime.reset();
 
         if (isStopRequested()) return;
 
@@ -38,6 +73,46 @@ public class FieldCentricDrive extends LinearOpMode {
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
+
+            double lift = -gamepad2.left_stick_y;
+            double grabber = -gamepad2.right_stick_y;
+
+            if(lift > .05){
+                liftMotor.setPower(1);
+            }else{
+                liftMotor.setPower(0);
+            }
+            if(lift < -.05){
+                liftMotor.setPower(-.4);
+            }else{
+                liftMotor.setPower(0);
+            }
+
+            if(grabber>.1 || grabber<-.1){
+                if(grabber<.05){
+                    direction = .1;
+                }else{
+                    direction = -.1;
+                }
+            }else{
+                direction = 0;
+            }
+
+            position+=direction;
+            position2+= -direction;
+
+            if(position < MAX_POS || position2 > MAX_POS2){
+                position=MAX_POS;
+                position2=MAX_POS2;
+            }
+
+            if(position > MIN_POS || position2 < MIN_POS2){
+                position=MIN_POS;
+                position2=MIN_POS2;
+            }
+
+            servoGrabber1.setPosition(position);
+            servoGrabber2.setPosition(position2);
 
             // Read inverse IMU heading, as the IMU heading is CW positive
             double botHeading = -imu.getAngularOrientation().firstAngle;

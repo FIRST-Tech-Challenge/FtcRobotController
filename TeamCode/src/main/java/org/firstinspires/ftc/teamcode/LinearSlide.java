@@ -12,22 +12,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class LinearSlide extends LinearOpMode {
 
-    // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
 
     private DcMotor liftMotor = null;
     private Servo servoGrabber1 = null;
     private Servo servoGrabber2 = null;
 
-    static final double MAX_POS     =  270;
-    static final double MAX_POS2    =    0;
-    static final double MIN_POS     =  150;
-    static final double MIN_POS2    =  120;
+    static final double MAX_POS     =    .5;
+    static final double MAX_POS2    =    .50;
+    static final double MIN_POS     =     1;
+    static final double MIN_POS2    =     0;
 
-    int direction = 0;
-    double position = 270;
+    double direction = 0;
+    double position = 1;
     double position2 = 0;
-
 
     public void waitTime(double time){
         runtime.reset();
@@ -44,20 +42,22 @@ public class LinearSlide extends LinearOpMode {
         servoGrabber1 = hardwareMap.get(Servo.class, "servo_grabber_one");
         servoGrabber2 = hardwareMap.get(Servo.class, "servo_grabber_two");
 
-        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        servoGrabber1.setPosition(position);
+        servoGrabber2.setPosition(position2);
 
         waitForStart();
         runtime.reset();
 
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double lift = -gamepad2.right_stick_y;
-            boolean openGrabber = gamepad2.dpad_up;
-            boolean closeGrabber = gamepad2.dpad_down;
+            double lift = -gamepad2.left_stick_y;
+            double grabber = -gamepad2.right_stick_y;
 
             if(lift > .05){
                 liftMotor.setPower(1);
@@ -65,37 +65,38 @@ public class LinearSlide extends LinearOpMode {
                 liftMotor.setPower(0);
             }
             if(lift < -.05){
-                liftMotor.setPower(-.3);
+                liftMotor.setPower(-.4);
             }else{
                 liftMotor.setPower(0);
             }
 
-            if(openGrabber){
-                direction = -1;
-                if(position<MAX_POS && position2>MAX_POS2) {
-                    position = position + 1;
-                    position2 = position2 - 1;
+            if(grabber>.1 || grabber<-.1){
+                if(grabber<.05){
+                    direction = .1;
+                }else{
+                    direction = -.1;
                 }
-                if(position > 1.0){
-                    position=1.0;
-                }
-                telemetry.addData("Forward", "servo: " + position);
-                servoGrabber1.setPosition(position);
-                servoGrabber2.setPosition(position2);
+            }else{
+                direction = 0;
             }
 
-            if(closeGrabber){
-                direction = 1;
-                position = position - 1;
-                position2 = position2 + 1;
-                if(position < MIN_POS || position2 > MIN_POS2){
-                    position = 0.0;
-                    position2 = 120.0;
-                }
-                telemetry.addData("back", "servo: " + position);
-                servoGrabber1.setPosition(position);
-                servoGrabber2.setPosition(position2);
+            position+=direction;
+            position2+= -direction;
+
+            if(position < MAX_POS || position2 > MAX_POS2){
+                position=MAX_POS;
+                position2=MAX_POS2;
             }
+
+            if(position > MIN_POS || position2 < MIN_POS2){
+                position=MIN_POS;
+                position2=MIN_POS2;
+            }
+
+            servoGrabber1.setPosition(position);
+            servoGrabber2.setPosition(position2);
+            telemetry.addData("Status", "Direction: " + direction);
+            telemetry.update();
         }
     }
 }
