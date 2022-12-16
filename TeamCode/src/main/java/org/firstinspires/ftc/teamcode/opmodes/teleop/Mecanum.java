@@ -77,6 +77,15 @@ public class Mecanum extends LinearOpMode {
                 }
             }
 
+
+                    telemetry.addLine("motor name               motor speed");
+                    telemetry.addLine();
+                    telemetry.addData("Front right drive power = ", frontRightDrive);
+                    telemetry.addData("Front left drive power  = ", frontLeftDrive);
+                    telemetry.addData("Back right drive power  = ", backRightDrive);
+                    telemetry.addData("Back left drive power   = ", backLeftDrive);
+                    telemetry.update();
+                }
+            }
         }
-    }
-}
+
