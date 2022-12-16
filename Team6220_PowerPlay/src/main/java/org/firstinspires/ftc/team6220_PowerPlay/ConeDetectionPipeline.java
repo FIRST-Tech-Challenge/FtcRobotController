@@ -18,8 +18,8 @@ public class ConeDetectionPipeline extends OpenCvPipeline {
     public double distance = 0;
     public double coneSize = 0;
     public boolean grab = false;
-    private final int[] lowerBlue = {42, 128, 114};
-    private final int[] upperBlue = {168, 242, 255};
+    private int[] lowerRange = {42, 128, 114};
+    private int[] upperRange = {168, 242, 255};
 
     Scalar intToScalar(int[] a) {
         if (a.length != 3) {
@@ -38,9 +38,15 @@ public class ConeDetectionPipeline extends OpenCvPipeline {
         return (HSV);
     }
 
+    public void setRanges(int[] lower, int[] upper){
+        lowerRange = lower;
+        upperRange = upper;
+    }
+
+
     @Override
     public Mat processFrame(Mat input) {
-        Mat mask = maskFrame(input, lowerBlue, upperBlue);
+        Mat mask = maskFrame(input, lowerRange, upperRange);
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);

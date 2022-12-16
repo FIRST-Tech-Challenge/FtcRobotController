@@ -1,24 +1,25 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetect;
-import org.firstinspires.ftc.team6220_PowerPlay.ConeDetection;
+import org.firstinspires.ftc.team6220_PowerPlay.ConeDetectionPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
-//@Disabled
 @Autonomous(name = "StackGrabbingAuto", group = "Test")
 public class AutonomousTest2 extends AprilTagDetect {
     int stackHeight = 4;
+    int[] lowerBlue = {42, 128, 114};
+    int[] upperBlue = {168, 242, 255};
     @Override
     public void runOpMode() throws InterruptedException
     {
         initialize();
-
+        coneDetectionPipeline.setRanges(lowerBlue, upperBlue);
         int signal = detectAprilTag();
 
         driveInches(0, 1);
