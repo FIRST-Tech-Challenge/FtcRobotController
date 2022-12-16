@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.tests.Distance;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -168,7 +166,7 @@ public class ColorTest extends LinearOpMode {
 
         }
     } */
-    
+
 
     public void straight(double power, int time) {
         robot.leftfrontmotor.setPower(power);

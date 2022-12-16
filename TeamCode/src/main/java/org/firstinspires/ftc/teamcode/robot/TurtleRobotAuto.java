@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class TurtleRobotAuto {
@@ -17,6 +17,7 @@ public class TurtleRobotAuto {
     public CRServo ArmServo = null;
     public DcMotor leftslidemotor = null;
     public DcMotor rightslidemotor = null;
+    public DistanceSensor distance = null;
     public ElapsedTime runtime = new ElapsedTime();
     public LinearOpMode myOpMode = null;
 
@@ -42,6 +43,7 @@ public class TurtleRobotAuto {
         ArmServo = hwMap.get(CRServo.class, "ArmServo");
         leftslidemotor = hwMap.get(DcMotor.class, "leftEncoder");
         rightslidemotor = hwMap.get(DcMotor.class, "rightslidemotor");
+        distance = hwMap.get(DistanceSensor.class, "Distance");
 
         leftfrontmotor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         leftbackmotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
