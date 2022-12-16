@@ -12,13 +12,16 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Elevator {
     public   double ServoPosition = 0;
     private Servo mainServo = null;
+    public final double CLOSE_POSITION_LEFT = 1;
+    public final double CLOSE_POSITION_RIGHT = 0.5;
+
     public final double OPEN_POSITION_LEFT = 0.8;
-    public final double OPEN_POSITION_RIGHT = 0.3;
+    public final double OPEN_POSITION_RIGHT = 0.6;
     public Servo getLeftServo() {
         return leftServo;
     }
-    public static boolean mainServoState = true; // tbrue = 1 false = 0
-    public static boolean clawState = true; //true = open false = close
+    public static boolean mainServoState = true; // trrue = 1 false = 0
+    public static boolean clawState = false; //true = open false = close
     private Servo leftServo = null;
 
     public Servo getRightServo() {
@@ -30,10 +33,13 @@ public class Elevator {
 
     private Telemetry telemetry;
 
-    public final int firstFloor = 200;
-    public final int secondFloor = 400;
-    public final int thirdFloor = 600;
+
+    public final int firstFloor = -1658;
+    public final int secondFloor = -2837;
+    public final int thirdFloor = -3967;
     public final int groundFloor = 0;
+
+    public int currentFloor = groundFloor;
 
     private static double mainServoPosition;
     private static double handsOffset;
@@ -62,8 +68,8 @@ public class Elevator {
         telemetry.addData("Starting at",  "%7d", elevatorMotor.getCurrentPosition());
 
 
-        leftServo.setPosition(OPEN_POSITION_LEFT);
-        rightServo.setPosition(OPEN_POSITION_RIGHT);
+        leftServo.setPosition(CLOSE_POSITION_LEFT);
+        rightServo.setPosition(CLOSE_POSITION_RIGHT);
         telemetry.addData("startPosition", elevatorMotor.getCurrentPosition());
         telemetry.update();
         handsOffset = 0;
@@ -73,13 +79,13 @@ public class Elevator {
         telemetry.addData("moveHands starts", true);
         telemetry.addData("mainservoState: ", mainServoState);
         if (mainServoState) {
-            mainServo.setPosition(0);
-            mainServoState = false;
-            telemetry.addData("setPosition: ", 0);
-        } else {
             mainServo.setPosition(1);
-            mainServoState = true;
+            mainServoState = false;
             telemetry.addData("setPosition: ", 1);
+        } else {
+            mainServo.setPosition(0);
+            mainServoState = true;
+            telemetry.addData("setPosition: ", 0);
         }
         //telemetry.update();
     }
@@ -88,7 +94,7 @@ public class Elevator {
         telemetry.addData("Servoposition", ServoPosition);
         if (clawState) {
             leftServo.setPosition(1);
-            rightServo.setPosition(0);
+            rightServo.setPosition(0.5);
             clawState = false;
         }
         else {
@@ -114,20 +120,13 @@ public class Elevator {
 //        telemetry.addData("position", currentPosition);
     }
     public void setElevatorPosition(int elevetorPosition){
+        currentFloor = elevetorPosition;
         elevatorMotor.setTargetPosition(elevetorPosition);
         elevatorMotor.setPower(ELEVATOR_MOTOR_SPEED);
         elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void moveHands(int direction) {
-
-        handsOffset = handsOffset + direction * LEFT_RIGHT_SERVO_SPEED;
-        handsOffset = Range.clip(handsOffset , HANDS_MIN_POSITION, HANDS_MAX_POSITION);
-        leftServo.setPosition(HANDS_MID_POSITION + handsOffset);
-        rightServo.setPosition(HANDS_MID_POSITION + handsOffset);
-
-        telemetry.addData("left servo position: ", leftServo.getPosition());
-        telemetry.addData("right servo position: ", rightServo.getPosition());
-        telemetry.update();
+public void setElevetorDown(){
+        elevatorMotor.setTargetPosition(currentFloor - 400);
     }
 }
