@@ -24,15 +24,20 @@ public class LineToLinearHeading extends LinearOpMode {
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(40, 40, Math.toRadians(90)))
+        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
+//                .lineToLinearHeading(new Pose2d(40, 40, Math.toRadians(90)))
+                .forward(25)
+//                .strafeLeft(15)
                 .build();
-
+        Trajectory traj2 = drive.trajectoryBuilder(new Pose2d())
+                .strafeLeft(45)
+                .build();
         waitForStart();
 
         if(isStopRequested()) return;
 
-        drive.followTrajectory(myTrajectory);
+//        drive.followTrajectory(traj1);
+        drive.followTrajectory(traj1);
     }
 }
 
