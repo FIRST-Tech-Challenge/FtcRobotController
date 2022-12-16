@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class SebastiansSpecialOpMode extends OpMode {
+public class TheSebastianSpecial extends OpMode {
 
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
