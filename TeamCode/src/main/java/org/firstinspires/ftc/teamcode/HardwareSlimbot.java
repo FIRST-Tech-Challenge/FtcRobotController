@@ -134,6 +134,7 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_GROUND  = 108.0;   // lift position for GROUND junction
     public double       LIFT_ANGLE_LOW     =  99.5;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  84.0;   // lift position for cleaning front turret motor
+    public double       LIFT_ANGLE_5STACK  =  75.0;   // lift position for 5-stack ultrasonic reading
     public double       LIFT_ANGLE_MED     =  71.6;   // lift position for MEDIUM junction (FRONT Teleop)
     public double       LIFT_ANGLE_MED_B   = -76.6;   // lift position for MEDIUM junction (BACK Teleop)
     public double       LIFT_ANGLE_HIGH    =  44.0;   // lift position for HIGH junction (FRONT Teleop)

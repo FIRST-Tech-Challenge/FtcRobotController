@@ -1,4 +1,4 @@
-/* FTC Team 7572 - Version 1.1 (11/26/2022)
+/* FTC Team 7572 - Version 1.2 (12/15/2022)
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -229,7 +229,7 @@ public class AutonomousLeft extends AutonomousBase {
         // Step 6. Score cone
         // Step 7. Profit
         double cycleDistance = 28.0;
-        fiveStackCycles = 1;
+        fiveStackCycles = 1;    // FORCE TO 1 FOR TOURNY4 (see default in AutonomousBase)`
         while (opModeIsActive() && (autonomousTimer.milliseconds() < 20000) && (fiveStackCycles > 0)) {
             if (opModeIsActive()) {
                 telemetry.addData("Skill", "moveToConeStack");
@@ -248,9 +248,9 @@ public class AutonomousLeft extends AutonomousBase {
 
             if( opModeIsActive()) {
                 switch(fiveStackHeight) {
-                    case 5: cycleDistance = 30.0; break;
-                    case 4: cycleDistance = 30.0; break;
-                    case 3: cycleDistance = 30.0; break;
+                    case 5:  cycleDistance = 30.0; break;
+                    case 4:  cycleDistance = 30.0; break;
+                    case 3:  cycleDistance = 30.0; break;
                     default: cycleDistance = 30.0;
                 }
                 telemetry.addData("Skill", "distanceToConeStack");
@@ -377,11 +377,10 @@ public class AutonomousLeft extends AutonomousBase {
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_40, TURN_SPEED_40 );
 
         // Move the lift to a position where the ultrasonic works
-        robot.liftPosInit( 75.0 );
+        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
 
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
-        // TODO: refine this distance!!
         autoXpos=-12.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_40, TURN_SPEED_40 );
         robot.driveTrainMotorsZero();
@@ -404,17 +403,15 @@ public class AutonomousLeft extends AutonomousBase {
         // 80.6 height to light cone to after collecting, and for sonar
         // Range 28, 28, 29
         switch( fiveStackHeight ) {
-            case 5  : liftAngle5stack =  94.3; break;   // TODO:  use Teleop to determine these lift angles!
+            case 5  : liftAngle5stack =  94.3; break;
             case 4  : liftAngle5stack =  97.9; break;
             case 3  : liftAngle5stack = 101.7; break;
-            case 2  : liftAngle5stack = 105.0; break; // Not measured
-            case 1  : liftAngle5stack = 110.0; break; // Not measured
-            default : liftAngle5stack = 94.3; break;
+            case 2  : liftAngle5stack = 105.0; break; // TODO: Not measured
+            case 1  : liftAngle5stack = 110.0; break; // TODO: Not measured
+            default : liftAngle5stack = 94.3;
         } // switch()
 
         // Lower the lift to the desired height (and ensure we're centered)
-        // TODO: ideally this could at least partially happen during moveToConeStack()
-        // and we only do the final adjustment here (to be faster)
         robot.liftPosInit( liftAngle5stack );
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
@@ -440,22 +437,23 @@ public class AutonomousLeft extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void moveToTallJunctionFromStack() {
+
         // Perform setup to center turret and raise lift to scoring position
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         robot.liftPosInit( robot.LIFT_ANGLE_AUTO_H );
         robot.grabberSetTilt( robot.GRABBER_TILT_AUTO_F );
 
+        // Drive back to tall junction (adjusting lift along the way)
         autoYpos=51.0;  autoXpos=0.0;  autoAngle=35.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_40, TURN_SPEED_40 );
-
-
         robot.driveTrainMotorsZero();
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
 
-        // Make sure the turret movement has finished
+        // Re-center turret again (if it shifted while driving)
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
             performEveryLoop();
         }
+
     } // moveToTallJunctionFromStack
 
     /*--------------------------------------------------------------------------------------------*/

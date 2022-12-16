@@ -60,7 +60,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     boolean     blueAlliance    = true;  // Can be toggled during the init phase of autonomous
     int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
-    int         fiveStackCycles = 0;     // How many we want to attempt to collect/score?
+    int         fiveStackCycles = 1;     // How many we want to attempt to collect/score? (adjustable during init)
     ElapsedTime autonomousTimer = new ElapsedTime();
 
     // gamepad controls for changing autonomous options
