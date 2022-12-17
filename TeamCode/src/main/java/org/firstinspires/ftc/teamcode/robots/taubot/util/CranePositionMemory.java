@@ -2,28 +2,28 @@ package org.firstinspires.ftc.teamcode.robots.taubot.util;
 
 public class CranePositionMemory {
     private double MemoryTurretHeading;
-    private double MemoryShoulderTick;
-    private double MemoryExtendTick;
+    private double MemoryDistance;
+    private double MemoryHeight;
 
-    public CranePositionMemory(double heading, double shoulder, double extend){
+    public CranePositionMemory(double heading, double distance, double height){
         MemoryTurretHeading = heading;
-        MemoryShoulderTick = shoulder;
-        MemoryExtendTick = extend;
+        MemoryDistance = distance;
+        MemoryHeight = height;
     }
 
-    public void setCranePositionMemory(double heading, double shoulder, double extend){
+    public void setCranePositionMemory(double heading, double distance, double height){
         MemoryTurretHeading = heading;
-        MemoryShoulderTick = shoulder;
-        MemoryExtendTick = extend;
+        MemoryDistance = distance;
+        MemoryHeight = height;
     }
 
     public double getHeadingMemory(){
         return MemoryTurretHeading;
     }
-    public double getShoulderMemory(){
-        return MemoryShoulderTick;
+    public double getDistanceMemory(){
+        return MemoryDistance;
     }
-    public double getExtendMemory(){
-        return MemoryExtendTick;
+    public double getHeightMemory(){
+        return MemoryHeight;
     }
 }

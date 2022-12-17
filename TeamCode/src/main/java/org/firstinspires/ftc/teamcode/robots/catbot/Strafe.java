@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robots.catbot;
 public class Strafe implements Task{
     private Robot robot;
     private double tiles;
-    private static final int TICKSPERTILE = 2800;
     // negative tiles is left
     public Strafe(Robot robot, double tiles)
     {
@@ -12,7 +11,7 @@ public class Strafe implements Task{
     }
     @Override
     public boolean run() {
-        if(robot.driveTrain.getMotorFrontLeftPosition() < tiles*TICKSPERTILE) {
+        if(robot.driveTrain.getMotorFrontLeftPosition() < tiles*STRAFETICKSPERTILE) {
             robot.driveTrain.mechanumDrive(0, (tiles/Math.abs(tiles)), 0);
             return true;
         }

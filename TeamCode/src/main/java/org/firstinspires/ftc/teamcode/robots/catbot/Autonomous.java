@@ -26,4 +26,8 @@ class Autonomous {
     {
         behaviors.offer(task);
     }
+    public boolean hasBehaviors()
+    {
+        return behaviors.size() > 0;
+    }
 }

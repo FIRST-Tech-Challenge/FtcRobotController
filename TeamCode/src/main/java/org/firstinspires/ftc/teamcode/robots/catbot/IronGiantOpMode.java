@@ -23,6 +23,7 @@ public class IronGiantOpMode extends OpMode {
     //autonomous variables
     private boolean auton = false; // controls if auton will run set to true to run with auton
     private boolean autonInitialized = false;
+    private boolean autonTesting = false;
 //    private boolean goto1 = false;
 //    private boolean needsReset = true;
 //    private boolean turning = false;
@@ -40,7 +41,7 @@ public class IronGiantOpMode extends OpMode {
 //    private boolean forwardDone = false;
 //    private boolean strafeDone = false;
 //    private boolean shouldStrafe = true;
-    private boolean red = true;
+    private boolean red = true; // team boolean variable
 //    private boolean swivelDone = false;
 //    private boolean shouldSwivel = true;
 //    private boolean motorsReset = false;
@@ -114,27 +115,48 @@ public class IronGiantOpMode extends OpMode {
     @Override
     public void loop() {
         telemetryOutput();
-//        tankDrive();
-        if (auton) {
+        if (auton && !autonTesting) {
             autonDrive();
-        } else {
-            robot.driveTrain.mechanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            robot.elevatorNClaw.clawMove(gamepad1.left_bumper?1:gamepad1.right_bumper?-1:0);
-            if(calibrate)
-                 robot.elevatorNClaw.elevatorMove(gamepad1.left_trigger > DEADZONE?-gamepad1.left_trigger:gamepad1.right_trigger > DEADZONE?gamepad1.right_trigger:0);
-            else
-                calibrate = robot.elevatorNClaw.calib();
-            if(gamepad1.dpad_down) {
-                calibrate = false;
+        } else if(!autonTesting){
+            if(autonomous.hasBehaviors())
+                autonomous.runBehaviors();
+            else {
+                robot.driveTrain.mechanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+//                robot.driveTrain.tankDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+                robot.elevatorNClaw.clawMove(gamepad1.left_bumper ? 1 : gamepad1.right_bumper ? -1 : 0);
+                if (calibrate)
+                    robot.elevatorNClaw.elevatorMove(gamepad1.left_trigger > DEADZONE ? -gamepad1.left_trigger : gamepad1.right_trigger > DEADZONE ? gamepad1.right_trigger : 0);
+                else
+                    calibrate = robot.elevatorNClaw.calib();
+                if (gamepad1.dpad_down) {
+                    calibrate = false;
+                }
+                if (gamepad1.y)
+                    robot.elevatorNClaw.elevatorMove('y');
+                if (gamepad1.b)
+                    robot.elevatorNClaw.elevatorMove('b');
+                if (gamepad1.a)
+                    robot.elevatorNClaw.elevatorMove('a');
+                if (gamepad1.x)
+                    robot.elevatorNClaw.elevatorMove('x');
+                if(gamepad1.dpad_up)
+                {
+                    autonomous.add(new Turn(robot, 180));
+                }
+                if(gamepad1.dpad_left)
+                {
+                    autonomous.add(new Turn(robot, 90));
+                }
+                if(gamepad1.dpad_right)
+                {
+                    autonomous.add(new Turn(robot, -90));
+                }
             }
-            if (gamepad1.y)
-                robot.elevatorNClaw.elevatorMove('y');
-            if (gamepad1.b)
-                robot.elevatorNClaw.elevatorMove('b');
-            if (gamepad1.a)
-                robot.elevatorNClaw.elevatorMove('a');
-            if(gamepad1.x)
-                robot.elevatorNClaw.elevatorMove('x');
+        }
+        else
+        {
+            robot.elevatorNClaw.runToTestEncoders();
+            robot.driveTrain.resetMotors();
         }
     }
 
