@@ -60,6 +60,7 @@ public class StackGrabbingAuto_Blueside extends ConeDetection {
                 motorBR.setPower(-0.25 * Math.signum(coneDetectionPipeline.distance));
             }
             //Drive slides to current stack height
+            //60 is the height of the cone, multiply it by stack height
             driveSlidesAutonomous(stackHeight * 60);
             motorFL.setPower(0);
             motorFR.setPower(0);
@@ -73,6 +74,8 @@ public class StackGrabbingAuto_Blueside extends ConeDetection {
             driveSlidesAutonomous(0);
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
         }
+        //drive slides above the stack.
+        driveSlidesAutonomous((stackHeight * 60)+100);
         //Drive backwards to re-calibrating location
         driveInches(0,-10);
         //Re-center robot
@@ -82,8 +85,7 @@ public class StackGrabbingAuto_Blueside extends ConeDetection {
             motorBL.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
             motorBR.setPower(-0.25 * Math.signum(coneDetectionPipeline.distance));
         }
-        driveSlidesAutonomous((stackHeight * 60)+100);
-        //60 is the height of the cone, multiply it by stack height
+
     }}
 
 
