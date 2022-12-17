@@ -50,7 +50,7 @@ public class Hraezlyr {
 
         cascadeMotor1 = hwmap.get(DcMotor.class, "cascadeMotor1");
         cascadeMotor2 = hwmap.get(DcMotor.class, "cascadeMotor2");
-        servoClawMove = hwmap.get(Servo.class, "servoClawMove");
+
         servoClawClose =  hwmap.get(Servo.class, "servoClawClose");
 
 
@@ -60,8 +60,8 @@ public class Hraezlyr {
 
         IMU = hwmap.get(BNO055IMU.class, "imu");
 
-        WebcamName webcamName = hwmap.get(WebcamName.class,"Webcam 1");
-        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
+        //WebcamName webcamName = hwmap.get(WebcamName.class,"Webcam 1");
+        //camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
 
         topLeft.setZeroPowerBehavior(BRAKE);
         topRight.setZeroPowerBehavior(BRAKE);
