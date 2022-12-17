@@ -15,7 +15,7 @@ import java.util.Collections;
 
 /** Autonomous OpMode for Freight Frenzy.
  */
-@TeleOp(name="Freight Frenzy Tele-Op", group="TeleOp OpMode")
+@TeleOp(name="Power Play Tele-Op", group="TeleOp OpMode")
 public class PowerPlayTeleOp extends OpMode {
 
     private RobotManager robotManager;
@@ -25,8 +25,8 @@ public class PowerPlayTeleOp extends OpMode {
     public void init() {
         initSharedPreferences();
         robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, new ArrayList<>(Collections.emptyList()),
-                                        allianceColor, RobotManager.StartingSide.OUR_COLOR,
-                                        Navigation.MovementMode.STRAFE, telemetry, elapsedTime);
+                allianceColor, RobotManager.StartingSide.OUR_COLOR,
+                Navigation.MovementMode.STRAFE, telemetry, elapsedTime);
         IMUPositioning.Initialize(this);
     }
 

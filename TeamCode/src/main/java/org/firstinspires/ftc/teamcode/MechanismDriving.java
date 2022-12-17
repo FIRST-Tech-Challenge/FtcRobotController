@@ -15,11 +15,8 @@ public class MechanismDriving {
     public static final int LOWERING_AMOUNT = 100;
     public static final Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
        put(Robot.SlidesState.RETRACTED, 0);
-       put(Robot.SlidesState.LOW_LOWERED, slidePositions.get(Robot.SlidesState.LOW) - LOWERING_AMOUNT);
        put(Robot.SlidesState.LOW, 700);
-       put(Robot.SlidesState.MEDIUM_LOWERED, slidePositions.get(Robot.SlidesState.MEDIUM) - LOWERING_AMOUNT);
        put(Robot.SlidesState.MEDIUM, 1850);
-       put(Robot.SlidesState.HIGH_LOWERED, slidePositions.get(Robot.SlidesState.HIGH) - LOWERING_AMOUNT);
        put(Robot.SlidesState.HIGH, 3500);
     }};
     //public static final int RETRACTED_POS = 0, LOW_POS = 700, MEDIUM_POS = 1850, HIGH_POS = 3500;
@@ -37,7 +34,11 @@ public class MechanismDriving {
 
     public static final int slidesAdjustmentSpeed = 2;
 
-    MechanismDriving() {}
+    public MechanismDriving() {
+        slidePositions.put(Robot.SlidesState.LOW_LOWERED, slidePositions.get(Robot.SlidesState.LOW) - LOWERING_AMOUNT);
+        slidePositions.put(Robot.SlidesState.MEDIUM_LOWERED, slidePositions.get(Robot.SlidesState.MEDIUM) - LOWERING_AMOUNT);
+        slidePositions.put(Robot.SlidesState.HIGH_LOWERED, slidePositions.get(Robot.SlidesState.HIGH) - LOWERING_AMOUNT);
+    }
 
     /** Sets the horseshoe position to the robot's desired state.
      */
