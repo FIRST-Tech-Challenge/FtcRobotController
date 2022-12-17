@@ -40,7 +40,7 @@ public class Lift {
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    private double[] coneStack = {390, 290, 200, 80, 0};
+    private double[] coneStack = {400, 290, 200, 80, 0};
     private int stackLevel = 0;
     private double lastStackTime =0;
 
@@ -51,14 +51,14 @@ public class Lift {
             dfco2=0.5;
         }
         else{
-            dfco2=3;
+            dfco2=2;
         }
         coefficients.add(dfco2);
         coefficients.add(dfco3);
         liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, false, coefficients, MAX_LIFT_TICKS, 0);
         if (!isTeleop) {
             liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            liftMotor.setVelToAnalog(.0013);
+            liftMotor.setVelToAnalog(.0014);
         }
         if(isTeleop){
             liftMotor.setVelToAnalog(.0005);
