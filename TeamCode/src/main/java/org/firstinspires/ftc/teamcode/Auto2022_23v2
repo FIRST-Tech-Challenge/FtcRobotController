@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -50,7 +51,6 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
 
     public double off = 0.0;
     public double corrections = 1.0;
-    public boolean hasMoved = false;
     public int count = 0;
 
     //Wheel constants
@@ -82,7 +82,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                if (tfod != null) {
+                /*if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -92,45 +92,25 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
                         // step through the list of recognitions and display image position/size information for each one
                         // Note: "Image number" refers to the randomized image orientation/number
                         for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                            double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                            double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
+                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
 
-                            telemetry.addData(""," ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
+                            telemetry.addData("", " ");
+                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
                         }
                         telemetry.update();
-
-                        while(true){
-                            for (Recognition recognition : updatedRecognitions) {
-                                double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                                double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                                double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                                double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-
-                                telemetry.addData(""," ");
-                                telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                                telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                                telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
-                            }
-                            telemetry.update();
-                            if(updatedRecognitions.size() > 0){
-                                if(!hasMoved){
-                                    //change move to zone to account for positioning
-                                    moveToZone(updatedRecognitions.get(0).getLabel(),count);
-                                    break;
-                                }
-                            }else {
-                                strafeVelo(false, .25, .1);
-                                count++;
-                                waitTime(.1);
-                            }
+                        if (updatedRecognitions.size() > 0) {
+                            //change move to zone to account for positioning
+                            moveToZone(updatedRecognitions.get(0).getLabel(), count);
                         }
                     }
-                }
+                }*/
+                turnNinety(true);
+                turnNinety(false);
             }
         }
     }
@@ -223,7 +203,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
             direction = 1;
         }
         runtime.reset();
-        while(runtime.seconds() < time){
+        while(opModeIsActive() && runtime.seconds() < time){
             leftVelo(maxPercent*direction);
             rightVelo(maxPercent*direction);
         }
@@ -239,7 +219,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
             direction = 1;
         }
         runtime.reset();
-        while(runtime.seconds() < time){
+        while(opModeIsActive() && runtime.seconds() < time){
             leftWheel(maxPercent * direction);
             rightWheel(maxPercent * direction * -1);
             leftBackWheel(maxPercent * direction * -1);
@@ -250,30 +230,36 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         }
     }
 
-    public void turnFourtyFive(boolean CW){
-        //Turns 45 degrees either clockwise or counter clockwise, depending on value of CW
+    public void turnNinety(boolean CW){
+        //Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
         //currently not measured, will have to test this to be (close to) exact
-        int time = 5;
-        runtime.reset();
+        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        // Technically this is the default, however specifying it is clearer
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        // Without this, data retrieving from the IMU throws an exception
+        imu.initialize(parameters);
+
+        double newAngle = -imu.getAngularOrientation().firstAngle;
+        double originalAngle = newAngle;
+
         if(CW){
             //left = +; right = -
-            while(runtime.seconds() < time) {
+            while(opModeIsActive() && newAngle > originalAngle - 90) {
                 leftVelo(.75);
                 rightVelo(-.75);
-            }
-            if(runtime.seconds() >= time){
-                motorsOff();
+                newAngle = -imu.getAngularOrientation().firstAngle;
             }
         }else{
             //left = -; right = +
-            while(runtime.seconds() < time) {
+            while(opModeIsActive() && newAngle < originalAngle + 90) {
                 leftVelo(-.75);
                 rightVelo(.75);
-            }
-            if(runtime.seconds() >= time){
-                motorsOff();
+                newAngle = -imu.getAngularOrientation().firstAngle;
             }
         }
+        motorsOff();
+
     }
 
     public void leftVelo(double maxPercent){ //sets power for left wheels
@@ -289,16 +275,16 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
 
     //Power each motor with .setVelocity()
     public void leftWheel(double percent){
-        leftDrive.setVelocity(maxVelocity*percent);
+        leftDrive.setPower(percent);
     }
     public void rightWheel(double percent){
-        rightDrive.setVelocity(maxVelocity*percent);
+        rightDrive.setPower(percent);
     }
     public void leftBackWheel(double percent){
-        leftBackDrive.setVelocity(maxVelocity*percent);
+        leftBackDrive.setPower(percent);
     }
     public void rightBackWheel(double percent){
-        rightBackDrive.setVelocity(maxVelocity*percent);
+        rightBackDrive.setPower(percent);
     }
 
 
@@ -306,7 +292,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
 
     public void waitTime(double time){ //waits for however long time is in seconds
         runtime.reset();
-        while(runtime.seconds()<time){
+        while(opModeIsActive() && runtime.seconds()<time){
         }
     }
 
