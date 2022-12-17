@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
 @Autonomous(group="drive")
-public class AutoRight extends LinearOpMode {
+public class AutoLeft extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     TurtleRobotAuto robot = new TurtleRobotAuto(this);
@@ -147,9 +147,9 @@ public class AutoRight extends LinearOpMode {
 //                .build();
 
         TrajectorySequence goToHigh = drive.trajectorySequenceBuilder(new Pose2d())
-                .strafeRight(27)
+                .strafeLeft(19)
                 .forward(45)
-                .strafeLeft(11.5)
+                .strafeRight(11.75)
                 .build();
         Trajectory prepareToDrop = drive.trajectoryBuilder(goToHigh.end())
                 .forward(3)
@@ -157,19 +157,18 @@ public class AutoRight extends LinearOpMode {
 
 
         TrajectorySequence parkAtOne = drive.trajectorySequenceBuilder(prepareToDrop.end())
-                .strafeLeft(33)
+                .strafeLeft(12)
                 .back(4)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .build();
         TrajectorySequence parkAtTwo = drive.trajectorySequenceBuilder(prepareToDrop.end())
-                .strafeLeft(11)
+                .strafeRight(10)
                 .back(4)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .build();
         TrajectorySequence parkAtThree = drive.trajectorySequenceBuilder(prepareToDrop.end())
-                .strafeRight(12)
-                .back(4)
-                .turn(Math.toRadians(90))
+                .strafeRight(31)
+                .back(22)
                 .build();
 
 

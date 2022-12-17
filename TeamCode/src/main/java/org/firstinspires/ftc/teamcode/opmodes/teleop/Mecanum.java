@@ -44,6 +44,9 @@ public class Mecanum extends LinearOpMode {
             while (gamepad2.right_bumper) {
                 robot.ArmServo.setPosition(1);
             }
+            while (gamepad2.left_bumper) {
+                robot.ArmServo.setPosition(0);
+            }
             if (frontLeftDrive > 0 && frontRightDrive < 0 && backLeftDrive > 0 && backRightDrive < 0 || frontLeftDrive < 0 && frontRightDrive > 0 && backLeftDrive < 0 && backRightDrive > 0) {
                 telemetry.addLine("Strafing");
                 while (!isStopRequested()) {

@@ -52,6 +52,7 @@ public class TurtleRobotAuto {
         rightbackmotor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        ArmServo.setDirection(Servo.Direction.REVERSE);
 
         // Set all motors to zero power
         leftfrontmotor.setPower(0);
