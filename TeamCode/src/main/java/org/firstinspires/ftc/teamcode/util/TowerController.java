@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+
 public class TowerController
 {
 
@@ -45,7 +46,7 @@ public class TowerController
         intake = hardwareMap.get(DcMotor.class, "intake");
 
         screw.setDirection(DcMotor.Direction.FORWARD);
-        uBar.setDirection(DcMotor.Direction.FORWARD);
+        uBar.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Commit out if no intake sensor
@@ -55,104 +56,16 @@ public class TowerController
         //setup encoder
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
-//        screwLevel = 100000;
-//        screw.setDirection(DcMotor.Direction.FORWARD);
-//        screw.setTargetPosition(screwLevel);
-//        screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//        screw.setPower(-0.3);
-//
-//        while ((screw.isBusy() && (screw.getCurrentPosition() <= 100000)) || (screw.isBusy() && (lowSensor.isPressed())))
-//        {
-//            if (lowSensor.isPressed())
-//            {
-//                break;
-//            }
-//        }
-//
-//        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        uBar.setPower(0);
-//        uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        screwLevel = 0;
 
         // init screw to bottom level
+        driveScrewUp(500,0.5, telemetry);
         driveScrewDown(10000, 0.5, telemetry);
+        screw.setDirection(DcMotor.Direction.REVERSE);
     }
-
-//    /**
-//     *
-//     * @param uBarTarget
-//     * @param speed
-//     * @param telemetry
-//     */
-////    private void driveUBarUp(double uBarTarget, double speed, Telemetry telemetry)
-////    {
-////        uBarLevel -= uBarTarget;
-////        uBar.setTargetPosition(uBarLevel);
-//////        uBar.setDirection(DcMotor.Direction.REVERSE);
-////        uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-////        uBar.setPower(speed);
-////
-////        while (uBar.isBusy() && ((/*-1 */ uBar.getCurrentPosition()) <= uBarTarget))
-////        //while (uBar.isBusy())
-////        {
-////            telemetry.addData("UBar ticks = ", "%d", uBar.getCurrentPosition());
-////            telemetry.update();
-////            uBar.setPower(speed);
-////        }
-////
-////        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-////        uBar.setPower(0);
-////        uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-////        uBarLevel = 0;
-////    }
-////
-////    private void driveUBarDown(double uBarTarget, double speed, Telemetry telemetry)
-////    {
-////        uBarLevel += uBarTarget;
-////        uBar.setTargetPosition(uBarLevel);
-//////        uBar.setDirection(DcMotor.Direction.FORWARD);
-////        uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-////        uBar.setPower(-speed);
-////
-////        while (uBar.isBusy() && ((-1 * uBar.getCurrentPosition()) <= uBarTarget))
-////        {
-////            telemetry.addData("UBar ticks = ", "%d", -1 * uBar.getCurrentPosition());
-////            telemetry.update();
-////            uBar.setPower(speed);
-////        }
-////        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-////        uBar.setPower(0);
-////        uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-////        uBarLevel = 0;
-////    }
-////
-////    public void uBarUp(Gamepad gamepad)
-////    {
-////        while (gamepad.y)
-////        {
-////            uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-////            uBar.setPower(1);
-////        }
-////        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-////        uBar.setPower(0);
-////    }
-////
-////    public void uBarDown(Gamepad gamepad)
-////    {
-////        while (gamepad.a)
-////        {
-////            uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-////            uBar.setPower(-1);
-////        }
-////        uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-////        uBar.setPower(0);
-////    }
-
 
     private void driveScrewUp(double screwTarget, double speed, Telemetry telemetry)
     {
@@ -213,7 +126,7 @@ public class TowerController
 
             if (lowSensor.isPressed())
             {
-                telemetry.addData("highSensor is pressed", "");
+                telemetry.addData("LowSensor is pressed", "");
                 telemetry.update();
                 break;
             }
@@ -227,242 +140,13 @@ public class TowerController
         screwLevel = 0;
     }
 
-//    public void handleIntake (double intakeTarget, double speed, Telemetry telemetry)
-//    {
-////        if(intakePick == 1)
-////        {
-////            intake2.setPosition(1);
-////            intake2.getPosition();
-//////            while (intake2.getPosition() == 0.5){}
-////            intakePick = 1954;
-////        }
-////        else  if (intakePick == 0)
-////        {
-////            intake2.setPosition(0);
-////            intake2.getPosition();
-//////            while (intake2.getPosition() == 0){}
-////            intakeTarget = 1954;
-////        }
-//
-//        // Wheels
-////        if(intakePick)
-////        {
-////            intakeLevel -= intakeTarget;
-////            intake.setDirection(DcMotor.Direction.FORWARD);
-////            intake.setTargetPosition(screwLevel);
-////            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-////
-////            screw.setPower(speed);
-////            while ((intake.isBusy() && (intake.getCurrentPosition() <= intakeTarget)))
-////            {
-////                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-////                telemetry.update();
-////            }
-////
-////            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-////            screw.setPower(0);
-////            screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-////            screwLevel = 0;
-////        }
-////
-////        if (!intakePick)
-////        {
-////            intakeLevel -= intakeTarget;
-////            intake.setDirection(DcMotor.Direction.REVERSE);
-////            intake.setTargetPosition(screwLevel);
-////            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-////
-////            screw.setPower(speed);
-////            while ((intake.isBusy() && (intake.getCurrentPosition() <= intakeTarget)))
-////            {
-////                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-////                telemetry.update();
-////            }
-////
-////            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-////            screw.setPower(0);
-////            screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-////            screwLevel = 0;
-////        }
-//    }
-
-    public void screwDriveToLevelUp(int screwTarget, double speed, Telemetry telemetry)
+    public void handleScrewLevelSet(Gamepad gamepad, Telemetry telemetry)
     {
-        screwLevel = screwTarget;
-        screw.setDirection(DcMotor.Direction.FORWARD);
-        screw.setTargetPosition(screwLevel);
-        screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-        telemetry.update();
-
-        screw.setPower(speed);
-
-        while ((screw.isBusy() && (screw.getCurrentPosition() >= screwTarget)) || (screw.isBusy() && (highSensor.isPressed())))
-        {
-            telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-            telemetry.update();
-
-
-            if (highSensor.isPressed())
-            {
-                telemetry.addData("highSensor is pressed", "");
-                telemetry.update();
-                break;
-            }
-            telemetry.update();
-
-        }
-
-        screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        screw.setPower(0);
-        screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        screwLevel *= -1;
-    }
-
-    public void screwDriveToLevelDown(int screwTarget, double speed, Telemetry telemetry)
-    {
-        screwLevel = screwTarget;
-        screw.setDirection(DcMotor.Direction.REVERSE);
-        screw.setTargetPosition(screwLevel);
-        screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-//        telemetry.update();
-
-        screw.setPower(-speed);
-
-        while ((screw.isBusy() && (screw.getCurrentPosition() <= screwTarget)) || (screw.isBusy() && (lowSensor.isPressed())))
-        {
-            telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-//            telemetry.update();
-
-
-            if (lowSensor.isPressed())
-            {
-                telemetry.addData("lowSensor is pressed", "");
-                telemetry.update();
-                break;
-            }
-            telemetry.update();
-
-        }
-
-        screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        screw.setPower(0);
-        screw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-    public void switchLevel(Telemetry telemetry)
-    {
-        telemetry.addData("", "&s", "entered switchLevel");
-        telemetry.update();
-
-        switch (level)
-        {
-            case 1:
-                if (level < previousLevel)
-                {
-                    screwDriveToLevelDown(screwLevel - 0, 0.2, telemetry);
-                }
-                else
-                {
-                    screwDriveToLevelUp(screwLevel - 0, 0.2, telemetry);
-                }
-                break;
-
-            case 2:
-                if (level < previousLevel)
-                {
-                    screwDriveToLevelDown(screwLevel - 1000, 0.2, telemetry);
-                }
-                else
-                {
-                    screwDriveToLevelUp(screwLevel - 1000 , 0.2, telemetry);
-                }
-                break;
-
-            case 3:
-                if (level < previousLevel)
-                {
-                    screwDriveToLevelDown(screwLevel - 2000, 0.2, telemetry);
-                }
-                else
-                {
-                    screwDriveToLevelUp(screwLevel - 2000, 0.2, telemetry);
-                }
-                break;
-
-            case 4:
-                if (level < previousLevel)
-                {
-
-                    screwDriveToLevelDown(screwLevel - 3000, 0.2, telemetry);
-                }
-                else
-                {
-                    screwDriveToLevelUp(screwLevel - 3000, 0.2, telemetry);
-                }
-                break;
-
-            default:
-                break;
-        }
-
-        telemetry.addData("", "&s", "exiting switchLevel");
-        telemetry.update();
-    }
-
-    public void handleGamepad(Gamepad gamepad, Telemetry telemetry)
-    {
-          // Intake sensor prints message on whether or not the intake has a cone
-//        if (intakeSensor.isPressed())
-//        {
-//            telemetry.addData("Intake Sensor", "&s", "Pressed");
-//            telemetry.update();
-//        }
-//        else
-//        {
-//            telemetry.addData("Intake Sensor", "&s", "NOT Pressed");
-//            telemetry.update();
-//        }
-
-        //Screw spin
-//        if(gamepad.dpad_up)
-//        {
-//            driveScrewUp(2000, 100, telemetry);
-//        }
-//        if(gamepad.dpad_down)
-//        {
-//            driveScrewDown(2000, 100, telemetry);
-//        }
-
-//        // for go to level
-//        if (gamepad.dpad_up && level < 4)
-//        {
-//            previousLevel = level;
-//            level++;
-//            telemetry.addData("Level", "&d", level);
-//            telemetry.update();
-//            switchLevel(telemetry);
-//        }
-//        if (gamepad.dpad_down && level > 1)
-//        {
-//            previousLevel = level;
-//            level--;
-//            telemetry.addData("Level", "&d", level);
-//            telemetry.update();
-//            switchLevel(telemetry);
-//        }
-//        telemetry.addData("Level", "&d", level);
-//        telemetry.update();
-
-
-        //4 button screw position set
-        if (gamepad.y)
+        //4/3 button screw position set
+        if (gamepad.dpad_up)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(4520);
+            screw.setTargetPosition(4270);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(-1);
             while (screw.isBusy())
@@ -473,10 +157,10 @@ public class TowerController
             screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             screw.setPower(0);
         }
-        else if (!gamepad.start && gamepad.b)
+        else if (gamepad.dpad_left)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(2260);
+            screw.setTargetPosition(303);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(-1);
             while (screw.isBusy())
@@ -487,10 +171,10 @@ public class TowerController
             screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             screw.setPower(0);
         }
-        else if (gamepad.x)
+        else if (gamepad.dpad_right)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(1130);
+            screw.setTargetPosition(4557);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(1);
             while (screw.isBusy())
@@ -501,10 +185,10 @@ public class TowerController
             screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             screw.setPower(0);
         }
-        else if (gamepad.a)
+        else if (gamepad.dpad_down)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(0);
+            screw.setTargetPosition(809);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(-1);
             while (screw.isBusy())
@@ -516,50 +200,102 @@ public class TowerController
             screw.setPower(0);
         }
 
-        //U Bar
-//        if(gamepad.b && !gamepad.start)
-//        {
-//            gamepad.b = false;
-//            driveUBarUp(330.06875, 0.3, telemetry);
-//            //60 degrees 330.06875
-//        }
-//        if(gamepad.a)
-//        {
-//            gamepad.a = false;
-//            driveUBarUp(165.034375, 0.3, telemetry);
-//            //30 degrees 165.034375
-//        }
-//        if(gamepad.x)
-//        {
-//            gamepad.x = false;
-//            driveUBarDown(5000, 0.3, telemetry);
-//            //60 degrees
-//        }
-//        if(gamepad.y)
-//        {
-//            gamepad.y = false;
-//            driveUBarDown(5000, 0.3, telemetry);
-//            //30 degrees
-//        }
+    }
+    public void handleUBarLevelSet(Gamepad gamepad, Telemetry telemetry)
+    {
+        uBar.setDirection(DcMotorSimple.Direction.REVERSE);
 
-//        if (gamepad.y)
-//        {
-//            uBarUp(gamepad);
-//        }
-//        else if (gamepad.a)
-//        {
-//            uBarDown(gamepad);
-//        }
-//        else
-//        {
-//            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        }
-
-        telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
+        telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
         telemetry.update();
 
-        double screwPower;
+        //4 button Ubar position set
 
+        // High Juction
+        if (gamepad.y)
+        {
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(-4370);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(0.5);
+            while (uBar.isBusy())
+            {
+                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+                telemetry.update();
+            }
+            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            uBar.setPower(0);
+        }
+
+        // Middle Juction
+        else if (!gamepad.start && gamepad.b)
+        {
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(-4315);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(0.5);
+            while (uBar.isBusy())
+            {
+                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+                telemetry.update();
+            }
+            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            uBar.setPower(0);
+        }
+
+        // Low Juction
+        else if (gamepad.x)
+        {
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(-2158);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(-0.5);
+            while (uBar.isBusy())
+            {
+                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+                telemetry.update();
+            }
+            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            uBar.setPower(0);
+        }
+
+        // Pickup Juction
+        else if (gamepad.a)
+        {
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(32);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(0.5);
+            while (uBar.isBusy())
+            {
+                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+                telemetry.update();
+            }
+            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            uBar.setPower(0);
+        }
+    }
+
+    public void handleIntake(Gamepad gamepad)
+    {
+        if (gamepad.right_bumper)
+        {
+            intake.setPower(1);
+        }
+        else if (gamepad.left_bumper)
+        {
+            intake.setPower(-1);
+        }
+        else
+        {
+            intake.setPower(0);
+            intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+    }
+
+    public void handleGamepad(Gamepad gamepad, Telemetry telemetry)
+    {
+
+        double screwPower;
         screw.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double driveScrew = gamepad.left_stick_y;
         screwPower = Range.clip(driveScrew, -1, 1);
@@ -573,52 +309,31 @@ public class TowerController
             screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-
-
-
-
-
         double uBarPower;
-
-        double driveUBar = -gamepad.right_stick_y;
+        uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double driveUBar = gamepad.right_stick_y;
         uBarPower = Range.clip(driveUBar, -1, 1);
-        uBar.setPower(uBarPower);
-
-        if (/*gamepad.left_stick_y == 0*/ uBarPower == 0 /* drive == 0 */)
+        if (!(uBarPower == 0))
         {
-            telemetry.addData( "Breaking", "", "");
-            telemetry.update();
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
-
-        //intake wheel
-        if (gamepad.left_bumper)
-        {
-            intake.setPower(1);
-        }
-        else if (gamepad.right_bumper)
-        {
-            intake.setPower(-1);
+            uBar.setPower(uBarPower);
         }
         else
         {
-            intake.setPower(0);
-            intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            telemetry.addData("breaking", "", "");
+            uBar.setPower(0);
+            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
+        handleIntake(gamepad);
+        handleScrewLevelSet(gamepad, telemetry);
+         handleUBarLevelSet(gamepad, telemetry);
 
-        //Intake scissor cone
-//        if(gamepad.right_bumper)
-//        {
-//            intakePick = 1;
-//            handleIntake(50, 1, telemetry);
-//        }
-//        if(gamepad.left_bumper)
-//        {
-//            intakePick = 0;
-//            handleIntake(50, 1, telemetry);
-//        }
+        telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
+        telemetry.addData("Speed", uBarPower);
+        telemetry.addData("Ubar ticks = ", "%d", uBar.getCurrentPosition());
+        telemetry.update();
 
     }
 }
+
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     //hi. you found me. -SECRET COMMENT

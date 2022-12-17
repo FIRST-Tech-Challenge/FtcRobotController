@@ -12,6 +12,7 @@ public class DriveForTest
     private DcMotor rightFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
+    private double speedFactor = 0.25;
 
     public DriveForTest(HardwareMap hardwareMap)
     {
@@ -58,10 +59,19 @@ public class DriveForTest
         double turn = gamepad.left_stick_x;
         double strafe = gamepad.right_stick_x;
 
-        leftFrontPower = Range.clip(drive + turn + strafe, -1.0, 1.0);
-        rightFrontPower = Range.clip(drive - turn - strafe, -1.0, 1.0);
-        leftBackPower = Range.clip(drive - turn + strafe, -1.0, 1.0);
-        rightBackPower = Range.clip(drive + turn - strafe, -1.0, 1.0);
+        if (gamepad.right_bumper)
+        {
+            speedFactor = 0.5;
+        }
+        else
+        {
+            speedFactor = 1;
+        }
+
+        leftFrontPower = Range.clip(drive + turn + strafe, -speedFactor, speedFactor);
+        rightFrontPower = Range.clip(drive - turn - strafe, -speedFactor, speedFactor);
+        leftBackPower = Range.clip(drive - turn + strafe, -speedFactor, speedFactor);
+        rightBackPower = Range.clip(drive + turn - strafe, -speedFactor, speedFactor);
 
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
