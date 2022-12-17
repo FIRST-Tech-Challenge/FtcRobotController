@@ -120,13 +120,11 @@ public abstract class AutonomousBase extends LinearOpMode {
         synchronized(pipeline.lockRedCone) {
             List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedRedCones();
             if (!cones.isEmpty()) {
-                theCone.coneAligned = cones.get(0).coneAligned;
-                theCone.centralOffset = cones.get(0).centralOffset;
-                theCone.corners = cones.get(0).corners;
+                theCone = new PowerPlaySuperPipeline.AnalyzedCone((cones.get(0)));
             }
         }
         if(theCone != null) {
-            while (opModeIsActive() && !theCone.coneAligned) {
+            while (opModeIsActive() && (theCone.alignedCount < 10)) {
                 performEveryLoop();
                 // TODO: rotation is not sufficient;  we also need to be aligned along the
                 // tape stripe if we're going to know our true odometry location.
@@ -136,9 +134,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 synchronized(pipeline.lockRedCone) {
                     List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedRedCones();
                     if (!cones.isEmpty()) {
-                        theCone.coneAligned = cones.get(0).coneAligned;
-                        theCone.centralOffset = cones.get(0).centralOffset;
-                        theCone.corners = cones.get(0).corners;
+                        theCone = new PowerPlaySuperPipeline.AnalyzedCone((cones.get(0)));
                     }
                 }
             }
@@ -151,61 +147,77 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterBlueCone() {
         PowerPlaySuperPipeline.AnalyzedCone theCone = null;
+        int alignedCount = 0;
         synchronized(pipeline.lockBlueCone) {
             List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedBlueCones();
             if (!cones.isEmpty()) {
-                theCone.coneAligned = cones.get(0).coneAligned;
-                theCone.centralOffset = cones.get(0).centralOffset;
-                theCone.corners = cones.get(0).corners;
+                theCone = new PowerPlaySuperPipeline.AnalyzedCone((cones.get(0)));
+                alignedCount = theCone.alignedCount;
             }
         }
-        if(theCone != null) {
-            while (opModeIsActive() && !theCone.coneAligned) {
-                performEveryLoop();
+        while (opModeIsActive() && (alignedCount < 10)) {
+            performEveryLoop();
+            if(theCone != null) {
                 // TODO: rotation is not sufficient;  we also need to be aligned along the
                 // tape stripe if we're going to know our true odometry location.
                 // That implies a combinatino of TURN and LEFT/RIGHT stafing.
                 robot.driveTrainTurn((theCone.centralOffset > 0) ? +0.07 : -0.07);
 //              robot.driveTrainRightLeft((theCone.centralOffset > 0) ? +0.10 : -0.10);
-                synchronized(pipeline.lockBlueCone) {
-                    List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedBlueCones();
-                    if (!cones.isEmpty()) {
-                        theCone.coneAligned = cones.get(0).coneAligned;
-                        theCone.centralOffset = cones.get(0).centralOffset;
-                        theCone.corners = cones.get(0).corners;
-                    }
+            }
+            synchronized(pipeline.lockBlueCone) {
+                List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedBlueCones();
+                if (!cones.isEmpty()) {
+                    theCone = new PowerPlaySuperPipeline.AnalyzedCone((cones.get(0)));
+                    alignedCount = theCone.alignedCount;
                 }
             }
-            robot.stopMotion();
-            // TODO: can we use this aligned position along the tape to update our known
-            // odometry world position? (offsetting any drift-error that has accumulated?
         }
+        robot.stopMotion();
+        // TODO: can we use this aligned position along the tape to update our known
+        // odometry world position? (offsetting any drift-error that has accumulated?
     } // rotateToCenterBlueCone
 
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterPole() {
-        PowerPlaySuperPipeline.AnalyzedPole thePole = null;
+        PowerPlaySuperPipeline.AnalyzedPole theLocalPole = null;
+        int alignedCount = 0;
         synchronized(pipeline.lockPole) {
             List<PowerPlaySuperPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
             if (!localPoles.isEmpty()) {
-                thePole = new PowerPlaySuperPipeline.AnalyzedPole(localPoles.get(0));
+                theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(localPoles.get(0));
+                alignedCount = theLocalPole.alignedCount;
             }
         }
-        if(thePole != null) {
-            while (opModeIsActive() && (thePole.alignedCount < 10)) {
-                performEveryLoop();
-                robot.driveTrainTurn((thePole.centralOffset > 0) ? +0.07 : -0.07);
-                synchronized(pipeline.lockPole) {
-                    List<PowerPlaySuperPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
-                    if (!localPoles.isEmpty()) {
-                        thePole = new PowerPlaySuperPipeline.AnalyzedPole(localPoles.get(0));
-                    }
+        int loops = 0;
+        while (opModeIsActive() && (alignedCount < 10)) {
+            loops++;
+            performEveryLoop();
+            telemetry.addData("RotateToPole", "Loop count: %d", loops);
+            telemetry.addData("RotateToPole", "AlignmentCount: %d", alignedCount);
+            if(theLocalPole != null) {
+                if(theLocalPole.poleAligned) {
+                    telemetry.addData("RotateToPole", "Robot Aligned!");
+                    robot.stopMotion();
+                } else {
+                    telemetry.addData("RotateToPole", "Robot Not Aligned!");
+                    robot.driveTrainTurn((theLocalPole.centralOffset > 0) ? +0.07 : -0.07);
                 }
             }
-            robot.stopMotion();
-            // TODO: can we use this aligned position along the tape to update our known
-            // odometry world position? (offsetting any drift-error that has accumulated?
+            synchronized(pipeline.lockPole) {
+                List<PowerPlaySuperPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
+                if (!localPoles.isEmpty()) {
+                    telemetry.addData("RotateToPole", "Getting new pole.");
+                    theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(localPoles.get(0));
+                    alignedCount = theLocalPole.alignedCount;
+                } else {
+                    telemetry.addData("RotateToPole", "Returned Pole list is empty.");
+                }
+            }
+            telemetry.update();
         }
+        robot.stopMotion();
+        // TODO: can we use this aligned position along the tape to update our known
+        // odometry world position? (offsetting any drift-error that has accumulated?
     } // rotateToCenterPole
 
     /*---------------------------------------------------------------------------------------------

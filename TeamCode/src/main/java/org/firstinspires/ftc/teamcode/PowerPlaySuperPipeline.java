@@ -45,11 +45,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public Object lockPole = new Object();
     boolean detectPole, detectRedCone, detectBlueCone;
 
-    public PowerPlaySuperPipeline(boolean poleDetection, boolean redConeDetection, boolean blueConeDetection)
+    public PowerPlaySuperPipeline(boolean poleDetection, boolean redConeDetection, boolean blueConeDetection, double center)
     {
         detectPole = poleDetection;
         detectRedCone = redConeDetection;
         detectBlueCone = blueConeDetection;
+        CENTERED_OBJECT.center.y = center;
     }
 
     /*
@@ -64,7 +65,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         CONTOURS;
     }
 
-    PoleOrientationExample.PoleOrientationAnalysisPipeline.Stage[] stages = PoleOrientationExample.PoleOrientationAnalysisPipeline.Stage.values();
+    Stage[] stages = Stage.values();
 
     // Keep track of what stage the viewport is showing
     int stageNum = 0;
@@ -116,7 +117,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     /*
      * The box constraint that considers a pole "centered"
      */
-    RotatedRect CENTERED_OBJECT = new RotatedRect(new double[]{160.0, 120.0, 48.0, 240.0});
+    RotatedRect CENTERED_OBJECT = new RotatedRect(new double[]{160.0, 120.0, 48.0, 320.0});
 
     /*
      * Colors
@@ -167,18 +168,18 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     // For detecting poles
     List<AnalyzedPole> internalPoleList = new ArrayList<>();
-    volatile List<AnalyzedPole> clientPoleList = Collections.synchronizedList(new ArrayList<>());
-    volatile AnalyzedPole thePole = new AnalyzedPole();
+    List<AnalyzedPole> clientPoleList = new ArrayList<>();
+    AnalyzedPole thePole = new AnalyzedPole();
 
     // For detecting red cones
     List<AnalyzedCone> internalRedConeList = new ArrayList<>();
-    volatile List<AnalyzedCone> clientRedConeList = Collections.synchronizedList(new ArrayList<>());
-    volatile AnalyzedCone theRedCone = new AnalyzedCone();
+    List<AnalyzedCone> clientRedConeList = new ArrayList<>();
+    AnalyzedCone theRedCone = new AnalyzedCone();
 
     // For detecting blue cones
     List<AnalyzedCone> internalBlueConeList = new ArrayList<>();
-    volatile List<AnalyzedCone> clientBlueConeList = Collections.synchronizedList(new ArrayList<>());
-    volatile AnalyzedCone theBlueCone = new AnalyzedCone();
+    List<AnalyzedCone> clientBlueConeList = new ArrayList<>();
+    AnalyzedCone theBlueCone = new AnalyzedCone();
 
     @Override
     public Mat processFrame(Mat input)
@@ -351,12 +352,14 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         boolean foundCone = false;
         theRedCone.centralOffset = 0;
         theRedCone.corners = new RotatedRect(new double[]{0, 0, 0, 0});
+        theRedCone.coneAligned = false;
         for(AnalyzedCone aCone : internalRedConeList)
         {
             if(aCone.corners.size.height > theRedCone.corners.size.height)
             {
                 theRedCone.corners = aCone.corners;
                 theRedCone.centralOffset = aCone.centralOffset;
+                theRedCone.coneAligned = aCone.coneAligned;
                 foundCone = true;
             }
         }
@@ -411,12 +414,14 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         boolean foundCone = false;
         theBlueCone.centralOffset = 0;
         theBlueCone.corners = new RotatedRect(new double[]{0, 0, 0, 0});
+        theBlueCone.coneAligned = false;
         for(AnalyzedCone aCone : internalBlueConeList)
         {
             if(aCone.corners.size.height > theBlueCone.corners.size.height)
             {
                 theBlueCone.corners = aCone.corners;
                 theBlueCone.centralOffset = aCone.centralOffset;
+                theBlueCone.coneAligned = aCone.coneAligned;
                 foundCone = true;
             }
         }
@@ -432,7 +437,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     public List<AnalyzedPole> getDetectedPoles()
     {
-        return Collections.synchronizedList(clientPoleList);
+        return clientPoleList;
     }
 
     List<MatOfPoint> findYellowContours(Mat input)
@@ -465,12 +470,14 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         boolean foundPole = false;
         thePole.centralOffset = 0;
         thePole.corners = new RotatedRect(new double[]{0, 0, 0, 0});
+        thePole.poleAligned = false;
         for(AnalyzedPole aPole : internalPoleList)
         {
             if(aPole.corners.size.height > thePole.corners.size.height)
             {
                 thePole.centralOffset = aPole.centralOffset;
                 thePole.corners = aPole.corners;
+                thePole.poleAligned = aPole.poleAligned;
                 foundPole = true;
             }
         }

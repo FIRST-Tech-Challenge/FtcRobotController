@@ -123,23 +123,27 @@ public class HardwareSlimbot
     
     protected AnalogInput liftEncoder      = null;    // US Digital absolute magnetic encoder (MA3)
     public double       liftAngle          = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
-    public double       liftAngleOffset    = 138.2;   // allows us to adjust the 0-360 deg range
+    public double       liftAngleOffset    = 130.2;   // allows us to adjust the 0-360 deg range
     public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)
 
-    public double       LIFT_ANGLE_MAX     = 125.0;   // absolute encoder angle at maximum rotation FRONT
-    public double       LIFT_ANGLE_MIN     = -77.7;   // absolute encoder angle at maximum rotation REAR
+    public double       LIFT_ANGLE_MAX     = 110.2;   // absolute encoder angle at maximum rotation FRONT
+    public double       LIFT_ANGLE_MIN     = -69.9;   // absolute encoder angle at maximum rotation REAR
+    public final double LIFT_MOTOR_MAX     =  1.0;   // The Maximum power to power the lift with
     // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
-    public double       LIFT_ANGLE_ASTART  = 114.3;   // lift position for starting autonomous
-    public double       LIFT_ANGLE_COLLECT = 110.4;   // lift position for collecting cones
-    public double       LIFT_ANGLE_GROUND  = 108.0;   // lift position for GROUND junction
-    public double       LIFT_ANGLE_LOW     =  99.5;   // lift position for LOW junction
-    public double       LIFT_ANGLE_MOTORS  =  84.0;   // lift position for cleaning front turret motor
-    public double       LIFT_ANGLE_5STACK  =  75.0;   // lift position for 5-stack ultrasonic reading
-    public double       LIFT_ANGLE_MED     =  71.6;   // lift position for MEDIUM junction (FRONT Teleop)
-    public double       LIFT_ANGLE_MED_B   = -76.6;   // lift position for MEDIUM junction (BACK Teleop)
-    public double       LIFT_ANGLE_HIGH    =  44.0;   // lift position for HIGH junction (FRONT Teleop)
-    public double       LIFT_ANGLE_AUTO_H  =  33.0;   // lift position for AUTONOMOUS (HIGH junction)
-    public double       LIFT_ANGLE_HIGH_B  = -47.0;   // lift position for HIGH junction (BACK Teleop)
+    public double       LIFT_ANGLE_ASTART  = 123.1;   // lift position for starting autonomous
+    // 119.2
+    //
+    // +11.8
+    public double       LIFT_ANGLE_COLLECT = 119.2;   // lift position for collecting cones
+    public double       LIFT_ANGLE_GROUND  = 116.8;   // lift position for GROUND junction
+    public double       LIFT_ANGLE_LOW     = 108.3;   // lift position for LOW junction
+    public double       LIFT_ANGLE_MOTORS  =  92.8;   // lift position for cleaning front turret motor
+    public double       LIFT_ANGLE_5STACK  =  83.8;   // lift position for 5-stack ultrasonic reading
+    public double       LIFT_ANGLE_MED     =  80.4;   // lift position for MEDIUM junction (FRONT Teleop)
+    public double       LIFT_ANGLE_MED_B   = -67.8;   // lift position for MEDIUM junction (BACK Teleop)
+    public double       LIFT_ANGLE_HIGH    =  52.8;   // lift position for HIGH junction (FRONT Teleop)
+    public double       LIFT_ANGLE_AUTO_H  =  41.8;   // lift position for AUTONOMOUS (HIGH junction)
+    public double       LIFT_ANGLE_HIGH_B  = -38.2;   // lift position for HIGH junction (BACK Teleop)
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -663,8 +667,8 @@ public class HardwareSlimbot
                 // adjust base power according to lowering/lifting (lowering cuts it; raising boosts it)
                 liftMotorPower *= (lowering)? 0.50 : 1.50;
                 // Never exceed 85% motor power, even if a long distance from target (gear slippage!)
-                if( liftMotorPower >  0.85 ) liftMotorPower =  0.85;
-                if( liftMotorPower < -0.85 ) liftMotorPower = -0.85;
+                if( liftMotorPower >  LIFT_MOTOR_MAX ) liftMotorPower =  LIFT_MOTOR_MAX;
+                if( liftMotorPower < -LIFT_MOTOR_MAX ) liftMotorPower = -LIFT_MOTOR_MAX;
                 liftMotorsSetPower( liftMotorPower );
                 // Reset the wait count back to zero
                 liftMotorWait = 0;

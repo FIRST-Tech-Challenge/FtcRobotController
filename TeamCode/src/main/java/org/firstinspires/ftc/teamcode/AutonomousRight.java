@@ -131,7 +131,7 @@ public class AutonomousRight extends AutonomousBase {
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                pipeline = new PowerPlaySuperPipeline(true, !blueAlliance, blueAlliance);
+                pipeline = new PowerPlaySuperPipeline(true, !blueAlliance, blueAlliance, 160.0);
                 webcam.setPipeline(pipeline);
             }
 
@@ -279,7 +279,7 @@ public class AutonomousRight extends AutonomousBase {
             if( opModeIsActive()) {
                 telemetry.addData("Skill", "distanceFromFront");
                 telemetry.update();
-                distanceFromFront(28.0, 1.0);
+                distanceFromFront(35.0, 1.0);
             }
 
             if( opModeIsActive() ) {
@@ -333,7 +333,7 @@ public class AutonomousRight extends AutonomousBase {
         }
 
         // Turn toward pole
-        autoAngle=-42.0;
+        autoAngle=-53.5;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
         robot.driveTrainMotorsZero();
 
@@ -342,7 +342,6 @@ public class AutonomousRight extends AutonomousBase {
 
         // Drive closer to the pole in order to score (and re-center turret in case it moved)
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-//        driveToPosition( (autoYpos+2.8), (autoXpos-2.8), autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
         robot.driveTrainMotorsZero();
         // Make sure the turret movement has finished
         while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
@@ -373,7 +372,7 @@ public class AutonomousRight extends AutonomousBase {
     private void moveToConeStack() {
 
         // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
-        autoYpos=51.0;  autoXpos=0.0;  autoAngle=+90.0;    // (inches, inches, degrees)
+        autoYpos=51.0;  autoXpos=0.0;  autoAngle=+85.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_40, TURN_SPEED_40 );
 
         // Move the lift to a position where the ultrasonic works
@@ -381,7 +380,7 @@ public class AutonomousRight extends AutonomousBase {
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
 
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
-        autoXpos=+12.0;
+        autoXpos=+16.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_40, TURN_SPEED_40 );
         robot.driveTrainMotorsZero();
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {

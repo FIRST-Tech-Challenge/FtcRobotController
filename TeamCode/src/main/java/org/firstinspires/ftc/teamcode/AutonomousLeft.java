@@ -131,7 +131,7 @@ public class AutonomousLeft extends AutonomousBase {
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                pipeline = new PowerPlaySuperPipeline(true, !blueAlliance, blueAlliance);
+                pipeline = new PowerPlaySuperPipeline(true, !blueAlliance, blueAlliance, 160.0);
                 webcam.setPipeline(pipeline);
             }
 

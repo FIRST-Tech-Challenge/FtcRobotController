@@ -284,8 +284,8 @@ public abstract class Teleop extends LinearOpMode {
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
     /*---------------------------------------------------------------------------------*/
     boolean processDpadDriveMode() {
-        double fineDriveSpeed  = 0.40;
-        double fineStrafeSpeed = 0.35;
+        double fineDriveSpeed  = 0.25;
+        double fineStrafeSpeed = 0.25;
         double autoDriveSpeed  = 0.56;
         double fineTurnSpeed   = 0.05;
         boolean dPadMode = true;
@@ -625,7 +625,7 @@ public abstract class Teleop extends LinearOpMode {
            }
            // Driver must be assisting with SCORING? (rotate turret toward junction pole)
            else {
-              robot.turretPosInit( -38.0 );
+              robot.turretPosInit( -50.5 );
            }
         }
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
@@ -637,7 +637,7 @@ public abstract class Teleop extends LinearOpMode {
            }
            // Driver must be assisting with SCORING? (rotate turret toward junction pole)
            else {
-              robot.turretPosInit( +38.0 );
+              robot.turretPosInit( +50.5 );
            }
         }
         //===================================================================
