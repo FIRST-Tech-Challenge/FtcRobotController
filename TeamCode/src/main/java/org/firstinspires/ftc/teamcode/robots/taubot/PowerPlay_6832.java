@@ -290,7 +290,7 @@ public class PowerPlay_6832 extends OpMode {
                         dc.joystickDrive();
                         break;
                     case DEMO:
-                        //demo();
+                        dc.joystickDriveDemoMode();
                         break;
                     case MANUAL_DIAGNOSTIC:
                         //handleManualDiagnostic();

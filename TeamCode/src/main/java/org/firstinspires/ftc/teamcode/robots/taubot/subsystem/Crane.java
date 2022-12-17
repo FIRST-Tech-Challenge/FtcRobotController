@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.servoNormalize;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.INCHES_PER_METER;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.withinError;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -62,7 +63,7 @@ public class Crane implements Subsystem {
 
     public static double kF = 0.0;
 
-    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.06, 0.001, 0.006);
+    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.04, 0.001, 0.006);
     public static double SHOULDER_MAX_PID_OUTPUT = 1;
     public static double SHOULDER_MIN_PID_OUTPUT = -1;
     public static double SHOULDER_TOLERANCE = 1;
@@ -120,10 +121,14 @@ public class Crane implements Subsystem {
 
     private Servo nudgeStickServo;
 
-    BNO055IMU imu;
+    BNO055IMU shoulderImu;
+    BNO055IMU turretImu;
 
     Orientation angles;
     Acceleration gravity;
+
+    Orientation turretAngles;
+    Acceleration turretGravity;
 
     StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
 
@@ -161,10 +166,13 @@ public class Crane implements Subsystem {
             parameters.loggingTag          = "IMU";
             parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-            imu = hardwareMap.get(BNO055IMU.class, "shoulderIMU");
-            imu.initialize(parameters);
+            shoulderImu = hardwareMap.get(BNO055IMU.class, "shoulderIMU");
+            shoulderImu.initialize(parameters);
+            turretImu = hardwareMap.get(BNO055IMU.class, "turretIMU");
+            turretImu.initialize(parameters);
 
-            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+            shoulderImu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+            turretImu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
 
         }
@@ -388,9 +396,9 @@ public class Crane implements Subsystem {
 
         switch(articulation){
             case defaultPosition:
-                setShoulderTargetAngle(SHOULDER_DEG_MAX);
+                setDistance(20);
                 robot.turret.setTargetHeading(0);
-                setExtendTargetPos(0.2+craneLengthOffset);
+                setHeight(20);
                 break;
             case manual:
 
@@ -449,8 +457,8 @@ public class Crane implements Subsystem {
             case 2: //waiting on initial lift, then move arm to defaultpos - this is usually a retraction and a lift
                 if(System.nanoTime() > pickupTimer)
                 {
-                    setShoulderTargetAngle(defaultPos.getShoulderMemory());
-                    setExtendTargetPos(defaultPos.getExtendMemory());
+                    setDistance(defaultPos.getDistanceMemory());
+                    setHeight(defaultPos.getHeightMemory());
                     pickupTimer = futureTime(1.5); //typical time to retract enough to start turntable
                     pickupConeStage++;
                 }
@@ -462,15 +470,15 @@ public class Crane implements Subsystem {
                 if(System.nanoTime() > pickupTimer) {
                     //move to previous drop location with a little extra height
                     //robot.turret.setTargetHeading(drop.getHeadingMemory());
-                    targetTurretAngle = drop.getHeadingMemory();
-                    setShoulderTargetAngle(drop.getShoulderMemory());
+                    setTargetTurretAngle(drop.getHeadingMemory());
+                    setHeight(drop.getHeightMemory());
                     pickupTimer = futureTime(0.7);
                     pickupConeStage++;
                 }
                 break;
             case 4:
                 if(System.nanoTime() > pickupTimer){
-                    setExtendTargetPos(drop.getExtendMemory());
+                    setDistance(drop.getDistanceMemory());
                     pickupConeStage = 0;
                     return true;
                 }
@@ -517,14 +525,15 @@ public class Crane implements Subsystem {
                 if(System.nanoTime() > dropTimer)
                 {
                     nudgeLeft();
-                    setExtendTargetPos(defaultPos.getExtendMemory());
+                    setDistance(defaultPos.getDistanceMemory());
+
                     dropTimer = futureTime(0.7); //typical time to retract enough to start turntable
                     dropConeStage++;
                 }
                 break;
             case 4:
                 if(System.nanoTime() > dropTimer){
-                    setShoulderTargetAngle(defaultPos.getShoulderMemory());
+                    setHeight(defaultPos.getHeightMemory());
                     dropTimer = futureTime(0.7);
                     dropConeStage++;
                 }
@@ -534,7 +543,7 @@ public class Crane implements Subsystem {
 
                 //todo - this is currently time based and it should maybe be based on lift achieved (if achievable - long extensions can't actually lift due to torque needed)
                 if(System.nanoTime() > dropTimer) {
-                    targetTurretAngle = pickup.getHeadingMemory();
+                    setTargetTurretAngle(pickup.getHeadingMemory());
                     //move to previous drop location with a little extra height
                     //robot.turret.setTargetHeading(pickup.getHeadingMemory()); //doesn't work cause - gets overriden
                     dropConeStage++;
@@ -543,14 +552,14 @@ public class Crane implements Subsystem {
                 break;
             case 6:
                 if(System.nanoTime() > dropTimer){
-                    setShoulderTargetAngle(pickup.getShoulderMemory()); //return high
+                    setDistance(pickup.getDistanceMemory()); //return high
                     dropConeStage++;
                     pickupTimer = futureTime(0.7);
                 }
                 break;
             case 7:
                 if(System.nanoTime() > pickupTimer){
-                    setExtendTargetPos(pickup.getExtendMemory());
+                    setHeight(pickup.getHeightMemory());
                     dropConeStage = 0;
                     return true;
                 }
@@ -584,6 +593,11 @@ public class Crane implements Subsystem {
     double deltaTime = 0;
     long lastTime = 0;
 
+    public static boolean antiTipping = true;
+    public static boolean robotIsNotTipping = true;
+
+    double turretPitch;
+
     @Override
     public void update(Canvas fieldOverlay) {
         deltaTime = (System.nanoTime()-lastTime)/1e9;
@@ -602,10 +616,19 @@ public class Crane implements Subsystem {
 
         currentStateMachine.execute();
 
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        gravity  = imu.getGravity();
+        angles   = shoulderImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        gravity  = shoulderImu.getGravity();
 
         shoulderAngle = -AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
+
+        turretAngles = turretImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        turretGravity = turretImu.getGravity();
+
+        turretPitch = -AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(turretAngles.angleUnit, turretAngles.thirdAngle));
+
+        if(antiTipping) {
+            robotIsNotTipping = withinError(turretPitch, 0, 4); //checks if robot is happy
+        }
 
         if(calibrated) {
             //run the current articulation
@@ -621,15 +644,17 @@ public class Crane implements Subsystem {
 
         //update the turret's target
         robot.turret.setTargetHeading(targetTurretAngle);
-        if(shoulderActivePID)
-            movePIDShoulder(SHOULDER_PID.kP, SHOULDER_PID.kI, SHOULDER_PID.kD, shoulderAngle, shoulderTargetAngle);
-        else
-            shoulderTargetAngle = shoulderAngle;
+        if(robotIsNotTipping) {
+            if (shoulderActivePID)
+                movePIDShoulder(SHOULDER_PID.kP, SHOULDER_PID.kI, SHOULDER_PID.kD, shoulderAngle, shoulderTargetAngle);
+            else
+                shoulderTargetAngle = shoulderAngle;
 
-        if(extenderActivePID)
-            movePIDExtend(EXTENDER_PID.kP, EXTENDER_PID.kI, EXTENDER_PID.kD, extendMeters, extenderTargetPos);
-        else
-            extenderTargetPos = extendMeters;
+            if (extenderActivePID)
+                movePIDExtend(EXTENDER_PID.kP, EXTENDER_PID.kI, EXTENDER_PID.kD, extendMeters, extenderTargetPos);
+            else
+                extenderTargetPos = extendMeters;
+        }
 
         if(bulbGripped) {
             bulbServo.setPosition(servoNormalize(BULB_CLOSED_POS));
@@ -639,23 +664,23 @@ public class Crane implements Subsystem {
     }
 
     public void adjustTurretAngle(double speed){
-        targetTurretAngle = robot.turret.getHeading() + (TURRET_ADJUST * speed);
+        if(robotIsNotTipping)targetTurretAngle = robot.turret.getHeading() + (TURRET_ADJUST * speed);
     }
 
     public void adjustDistance(double speed){
-        setDistance(targetDistance + deltaTime*(DISTANCE_ADJUST * speed));
+        if(robotIsNotTipping)setDistance(targetDistance + deltaTime*(DISTANCE_ADJUST * speed));
     }
 
     public void adjustHeight(double speed){
-        setHeight(targetHeight + deltaTime*(HEIGHT_ADJUST * speed));
+        if(robotIsNotTipping)setHeight(targetHeight + deltaTime*(HEIGHT_ADJUST * speed));
     }
 
     public void adjustExtend(double speed){
-        setExtendTargetPos((getExtendMeters() + EXTEND_ADJUST * speed));
+        if(robotIsNotTipping)setExtendTargetPos((getExtendMeters() + EXTEND_ADJUST * speed));
     }
 
     public void adjustShoulder(double distance){
-        setShoulderTargetAngle((getShoulderAngle() + SHOULDER_ADJUST * distance));
+        if(robotIsNotTipping)setShoulderTargetAngle((getShoulderAngle() + SHOULDER_ADJUST * distance));
     }
 
     public double getHeight(){
@@ -675,7 +700,7 @@ public class Crane implements Subsystem {
     public static double axleOffset = -9;
     public static double shoulderHeight = 0.14;
 
-    public boolean setTargets(double x, double y, double z){
+    public boolean setTargets(double x, double y, double z){ //THIS IS IN INCHES!!!!!!!!
 
         z /= INCHES_PER_METER;
 
@@ -696,6 +721,20 @@ public class Crane implements Subsystem {
         robot.turret.setTargetHeading(targetTurretAngle);
 
         return true;
+    }
+
+    double orbit_time = 0.0;
+    public static double orbit_speed = 1.0;
+    public static double orbit_radius = 8.0;
+    public static double orbit_distance = 30;
+    public static double orbit_height = 25;
+
+    public void doOrbit(){
+
+        Pose2d robotPos = robot.driveTrain.getPoseEstimate();
+        setTargets(orbit_distance + orbit_radius*Math.sin(orbit_time),-35 + orbit_radius*Math.cos(orbit_time),orbit_height);
+
+        orbit_time += orbit_speed*deltaTime;
     }
 
     public void setTargetTurretAngle(double target){
@@ -779,12 +818,12 @@ public class Crane implements Subsystem {
         bulbGripped = true;
     }
 
-    CranePositionMemory pickup = new CranePositionMemory(0,20,0.2+craneLengthOffset);
-    CranePositionMemory defaultPos = new CranePositionMemory(0,85,craneLengthOffset);
-    CranePositionMemory drop = new CranePositionMemory(0,45,0.2+craneLengthOffset);
+    CranePositionMemory pickup = new CranePositionMemory(0,0.70,0.20);
+    CranePositionMemory defaultPos = new CranePositionMemory(0,0.40,0.30);
+    CranePositionMemory drop = new CranePositionMemory(0,0.50,0.40);
 
     private void recordPickup(){
-        pickup.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle+20,getExtendMeters());
+        pickup.setCranePositionMemory(robot.turret.getHeading(), getDistance(),getHeight() + 0.1);
     }
 
     public void pickupSequence(){
@@ -800,7 +839,7 @@ public class Crane implements Subsystem {
     }
 
     private void recordDrop(){
-        drop.setCranePositionMemory(robot.turret.getHeading(), shoulderAngle,getExtendMeters());
+        drop.setCranePositionMemory(robot.turret.getHeading(), getDistance(),getHeight() + 0.1);
     }
 
     public void enableCalibrate(){
@@ -856,6 +895,7 @@ public class Crane implements Subsystem {
 
         if (debug) {
             telemetryMap.put("Delta Time", deltaTime);
+            telemetryMap.put("Turret Pitch", turretPitch);
             telemetryMap.put("Robot X", robot.driveTrain.getPoseEstimate().getX());
             telemetryMap.put("Robot Y", robot.driveTrain.getPoseEstimate().getY());
             telemetryMap.put("Turret X", robot.turret.getTurretPosition(robot.driveTrain.getPoseEstimate()).getX());

@@ -100,39 +100,62 @@ public class DriverControls {
                 robot.driveTrain.ManualDriveOff();
             }
         }
+    }
 
+    void joystickDriveDemoMode(){
+        if(gamepad1.y){
+            robot.crane.doOrbit();
+        }
 
-        /*
-        if( stickyGamepad1.a){
-            robot.updateFieldTargetPose(0, -1);
-        }
-        if( stickyGamepad1.y){
-            robot.updateFieldTargetPose(0, 1);
-        }
-        if( stickyGamepad1.x){
-            robot.updateFieldTargetPose(-1, 0);
-        }
-        if( stickyGamepad1.b){
-            robot.updateFieldTargetPose(1, 0);
+        if(stickyGamepad1.left_bumper){
+            robot.crane.decNudgeIndex();
         }
 
         if(stickyGamepad1.right_bumper){
-            robot.field.goToHighPole(robot);
+            robot.crane.incNudgeIndex();
         }
-        else if (stickyGamepad1.left_bumper) {
-            robot.field.goToStack(robot);
+
+        if(stickyGamepad1.a) {
+            robot.crane.pickupSequence();
+
         }
-        //if (notJoystickDeadZone(gamepad1.right_stick_x))
-            //pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
+
+        if(stickyGamepad1.b){
+            robot.crane.dropSequence();
+        }
 
 
-        if (nearZero(pwrFwd) && nearZero(pwrRot) && robot.isNavigating) {
-        } else {
-            robot.isNavigating = false; // take control back from any auton navigation if any joystick input is running
-            robot.autonTurnInitialized = false;
-            robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
+        if(gamepad1.dpad_down) {
+            if (gamepad1.right_stick_x < -TURRET_DEADZONE || gamepad1.right_stick_x > TURRET_DEADZONE)
+                robot.crane.adjustTurretAngle(-0.6*gamepad1.right_stick_x);
+
+            if (notJoystickDeadZone(gamepad1.right_stick_y)) robot.crane.adjustHeight(-0.7*gamepad1.right_stick_y);
+
+            if (gamepad1.right_trigger>.05) robot.crane.adjustDistance(0.7*gamepad1.right_trigger);
+            if (gamepad1.left_trigger>.05) robot.crane.adjustDistance(-0.7*gamepad1.left_trigger);
+
+            //manual override of drivetrain
+            if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
+                robot.driveTrain.ManualArcadeDrive(-0.7*gamepad1.left_stick_y,  0.7*gamepad1.left_stick_x);
+            else {
+                robot.driveTrain.ManualDriveOff();
+            }
+        }else{
+            if (notJoystickDeadZone(gamepad1.right_stick_x))
+                robot.crane.adjustTurretAngle(-2*gamepad1.right_stick_x);
+
+            if (notJoystickDeadZone(gamepad1.right_stick_y)) robot.crane.adjustHeight(-gamepad1.right_stick_y);
+
+            if (gamepad1.right_trigger>.05) robot.crane.adjustDistance(gamepad1.right_trigger);
+            if (gamepad1.left_trigger>.05) robot.crane.adjustDistance(-gamepad1.left_trigger);
+
+            //manual override of drivetrain
+            if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
+                robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y,  gamepad1.left_stick_x);
+            else {
+                robot.driveTrain.ManualDriveOff();
+            }
         }
-        */
     }
 
     void joystickDrivePregameMode() {
