@@ -21,6 +21,7 @@ public class Variables {
         LEFT,
         ROTATE_LEFT,
         ROTATE_RIGHT,
+        ROTATE,
         ;
     }
 

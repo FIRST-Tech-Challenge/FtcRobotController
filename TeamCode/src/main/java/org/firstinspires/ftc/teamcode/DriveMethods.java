@@ -297,6 +297,7 @@ public class DriveMethods extends LinearOpMode{
         motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        int doRotateOnly = 0;
         power = Math.abs(power);
         switch (movementDirection) {
             case FORWARD:
@@ -333,6 +334,7 @@ public class DriveMethods extends LinearOpMode{
                  motorFR.setPower(power);
                  motorBR.setPower(power);
                 // targetZ = getCurrentZ();
+                targetZ = targetRotation;
 
                 break;
             case ROTATE_RIGHT:
@@ -341,7 +343,23 @@ public class DriveMethods extends LinearOpMode{
                  motorFR.setPower(-power);
                  motorBR.setPower(-power);
                 // targetZ = getCurrentZ();
+                targetZ = targetRotation;
 
+                break;
+            case ROTATE:
+                if(targetZ > getCurrentZ()) {
+                    motorFL.setPower(power);
+                    motorBL.setPower(power);
+                    motorFR.setPower(-power);
+                    motorBR.setPower(-power);
+                    // swap if broken
+                } if(targetZ < getCurrentZ()) {
+                    motorFL.setPower(-power);
+                    motorBL.setPower(-power);
+                    motorFR.setPower(power);
+                    motorBR.setPower(power);
+                }
+                doRotateOnly = 1;
                 break;
 
         }
@@ -364,7 +382,7 @@ public class DriveMethods extends LinearOpMode{
         double currentZ = getCurrentZ();
         double rotateError = targetZ - currentZ;
 
-        while (targetPos >= avgPosition) {
+        while ((targetPos >= avgPosition) & doRotateOnly == 0) {
             FLPosition = Math.abs(motorFL.getCurrentPosition());
             BLPosition = Math.abs(motorBL.getCurrentPosition());
             FRPosition = Math.abs(motorFR.getCurrentPosition());
@@ -375,10 +393,37 @@ public class DriveMethods extends LinearOpMode{
 
             avgPosition = (int) (FLPosition + BLPosition + FRPosition + BRPosition) / 4;
             motorFL.setPower(FLPower - (rotateError / 150));
-            motorBL.setPower(BLPower - (rotateError / 150));
-            motorFR.setPower(FRPower + (rotateError / 150));
-            motorBR.setPower(BRPower + (rotateError / 150));
+                motorBL.setPower(BLPower - (rotateError / 150));
+                motorFR.setPower(FRPower + (rotateError / 150));
+                motorBR.setPower(BRPower + (rotateError / 150));
 
+            telemetry.addLine("MotorFL Power " + motorFL.getPower());
+            telemetry.addLine("MotorBL Power " + motorBL.getPower());
+            telemetry.addLine("MotorFR Power " + motorFR.getPower());
+            telemetry.addLine("MotorBR Power " + motorBR.getPower());
+
+            telemetry.addLine("Current Position: " + avgPosition);
+            telemetry.addLine("targetPos " + targetPos);
+
+            telemetry.addLine("Cumulative Z " + getCumulativeZ());
+            telemetry.addLine("Current Z " + getCurrentZ());
+            telemetry.addLine("Error " + rotateError);
+            telemetry.update();
+        }
+        while (doRotateOnly == 1 & (getCurrentZ() != targetZ)) {
+            FLPosition = Math.abs(motorFL.getCurrentPosition());
+            BLPosition = Math.abs(motorBL.getCurrentPosition());
+            FRPosition = Math.abs(motorFR.getCurrentPosition());
+            BRPosition = Math.abs(motorBR.getCurrentPosition());
+
+            currentZ = getCurrentZ();
+            rotateError = targetZ - currentZ;
+
+            avgPosition = (int) (FLPosition + BLPosition + FRPosition + BRPosition) / 4;
+            motorFL.setPower(-(rotateError / 150));
+            motorBL.setPower(-(rotateError / 150));
+            motorFR.setPower(rotateError / 150);
+            motorBR.setPower(rotateError / 150);
             telemetry.addLine("MotorFL Power " + motorFL.getPower());
             telemetry.addLine("MotorBL Power " + motorBL.getPower());
             telemetry.addLine("MotorFR Power " + motorFR.getPower());
