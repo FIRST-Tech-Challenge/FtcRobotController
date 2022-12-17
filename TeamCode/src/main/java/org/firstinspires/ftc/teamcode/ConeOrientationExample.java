@@ -71,7 +71,7 @@ public class ConeOrientationExample extends LinearOpMode
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                pipeline = new PowerPlaySuperPipeline(true, true, true, 160.0);
+                pipeline = new PowerPlaySuperPipeline(false, true, false, 160.0);
                 webcam.setPipeline(pipeline);
             }
 
@@ -113,16 +113,8 @@ public class ConeOrientationExample extends LinearOpMode
             robot.turretPosRun();
 
             // Figure out which poles the pipeline detected, and print them to telemetry
-            List<PowerPlaySuperPipeline.AnalyzedCone> cones = pipeline.getDetectedBlueCones();
-            synchronized(pipeline.lockBlueCone) {
-                if (cones.isEmpty()) {
-                    cone = lastCone;
-                } else {
-                    cone.coneAligned = cones.get(0).coneAligned;
-                    cone.centralOffset = cones.get(0).centralOffset;
-                    cone.corners = cones.get(0).corners;
-                    lastCone = cone;
-                }
+            synchronized(pipeline.lockRedCone) {
+                cone = pipeline.getDetectedRedCone();
             }
             if(cone != null) {
                 telemetry.addLine(String.format("Cone: Center=%s, Central Offset=%f, Centered:%s", cone.corners.center.toString(), cone.centralOffset, cone.coneAligned));

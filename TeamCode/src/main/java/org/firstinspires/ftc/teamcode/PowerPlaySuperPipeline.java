@@ -169,17 +169,17 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     // For detecting poles
     List<AnalyzedPole> internalPoleList = new ArrayList<>();
     List<AnalyzedPole> clientPoleList = new ArrayList<>();
-    AnalyzedPole thePole = new AnalyzedPole();
+    static AnalyzedPole thePole = new AnalyzedPole();
 
     // For detecting red cones
     List<AnalyzedCone> internalRedConeList = new ArrayList<>();
     List<AnalyzedCone> clientRedConeList = new ArrayList<>();
-    AnalyzedCone theRedCone = new AnalyzedCone();
+    static AnalyzedCone theRedCone = new AnalyzedCone();
 
     // For detecting blue cones
     List<AnalyzedCone> internalBlueConeList = new ArrayList<>();
     List<AnalyzedCone> clientBlueConeList = new ArrayList<>();
-    AnalyzedCone theBlueCone = new AnalyzedCone();
+    static AnalyzedCone theBlueCone = new AnalyzedCone();
 
     @Override
     public Mat processFrame(Mat input)
@@ -200,10 +200,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     AnalyzePoleContour(contour, input);
                 }
 
-                clientPoleList.clear();
-                if (findThePole()) {
-                    clientPoleList.add(thePole);
-                }
+                findThePole();
             }
         }
 
@@ -216,10 +213,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     AnalyzeBlueConeContour(contour, input);
                 }
 
-                clientBlueConeList.clear();
-                if (findTheBlueCone()) {
-                    clientBlueConeList.add(theBlueCone);
-                }
+                findTheBlueCone();
             }
         }
 
@@ -232,10 +226,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     AnalyzeRedConeContour(contour, input);
                 }
 
-                clientRedConeList.clear();
-                if (findTheRedCone()) {
-                    clientRedConeList.add(theRedCone);
-                }
+                findTheRedCone();
             }
         }
 
@@ -274,7 +265,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         {
             case Cb:
             {
-                return cbMat;
+                return crMat;
             }
 
             case FINAL:
@@ -284,12 +275,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
             case MASK:
             {
-                return thresholdBlueMat;
+                return thresholdRedMat;
             }
 
             case MASK_NR:
             {
-                return morphedBlueThreshold;
+                return morphedRedThreshold;
             }
 
             case CONTOURS:
@@ -304,18 +295,22 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         return Collections.synchronizedList(clientRedConeList);
     }
+    public AnalyzedCone getDetectedRedCone()
+    {
+        return theRedCone;
+    }
 
     List<MatOfPoint> findRedContours(Mat input)
     {
         // A list we'll be using to store the contours we find
         List<MatOfPoint> contoursList = new ArrayList<>();
 
-        // Convert the input image to YCrCb color space, then extract the Cb channel
+        // Convert the input image to YCrCb color space, then extract the Cr channel
         Imgproc.cvtColor(input, crMat, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(crMat, crMat, CR_CHAN_IDX);
 
         // Threshold the Cr channel to form a mask, then run some noise reduction
-        Imgproc.threshold(cbMat, thresholdRedMat, CR_CHAN_MASK_RED_THRESHOLD, 255, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(crMat, thresholdRedMat, CR_CHAN_MASK_RED_THRESHOLD, 255, Imgproc.THRESH_BINARY);
         morphMask(thresholdRedMat, morphedRedThreshold);
 
         // Ok, now actually look for the contours! We only look for external contours.
@@ -369,6 +364,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public List<AnalyzedCone> getDetectedBlueCones()
     {
         return Collections.synchronizedList(clientBlueConeList);
+    }
+    public AnalyzedCone getDetectedBlueCone()
+    {
+        return theBlueCone;
     }
 
     List<MatOfPoint> findBlueContours(Mat input)
@@ -435,9 +434,16 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         return true;
     }
 
+    public AnalyzedPole getDetectedPole()
+    {
+        return thePole;
+    }
+
     public List<AnalyzedPole> getDetectedPoles()
     {
-        return clientPoleList;
+        List localList = new ArrayList<>();
+        localList.add(thePole);
+        return localList;
     }
 
     List<MatOfPoint> findYellowContours(Mat input)

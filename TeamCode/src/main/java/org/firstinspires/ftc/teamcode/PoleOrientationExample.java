@@ -126,37 +126,28 @@ public class PoleOrientationExample extends LinearOpMode
 
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterPole() {
+        PowerPlaySuperPipeline.AnalyzedPole theLocalPole = null;
         int alignedCount = 0;
         synchronized(pipeline.lockPole) {
-            List<PowerPlaySuperPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
-            if (!localPoles.isEmpty()) {
-                thePole = new PowerPlaySuperPipeline.AnalyzedPole(localPoles.get(0));
-                alignedCount = thePole.alignedCount;
-            }
+            theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
+            alignedCount = theLocalPole.alignedCount;
         }
         int loops = 0;
         while (opModeIsActive() && (alignedCount < 10)) {
             loops++;
             telemetry.addData("RotateToPole", "Loop count: %d", loops);
             telemetry.addData("RotateToPole", "AlignmentCount: %d", alignedCount);
-            if(thePole != null) {
-                if(thePole.poleAligned) {
-                    telemetry.addData("RotateToPole", "Robot Aligned!");
-                    robot.stopMotion();
-                } else {
-                    telemetry.addData("RotateToPole", "Robot Not Aligned!");
-                    robot.driveTrainTurn((thePole.centralOffset > 0) ? +0.07 : -0.07);
-                }
+            if(theLocalPole.poleAligned) {
+                telemetry.addData("RotateToPole", "Robot Aligned!");
+                robot.stopMotion();
+            } else {
+                telemetry.addData("RotateToPole", "Robot Not Aligned!");
+                robot.driveTrainTurn((theLocalPole.centralOffset > 0) ? +0.07 : -0.07);
             }
             synchronized(pipeline.lockPole) {
-                List<PowerPlaySuperPipeline.AnalyzedPole> localPoles = pipeline.getDetectedPoles();
-                if (!localPoles.isEmpty()) {
-                    telemetry.addData("RotateToPole", "Getting new pole.");
-                    thePole = new PowerPlaySuperPipeline.AnalyzedPole(localPoles.get(0));
-                    alignedCount = thePole.alignedCount;
-                } else {
-                    telemetry.addData("RotateToPole", "Returned Pole list is empty.");
-                }
+                telemetry.addData("RotateToPole", "Getting new pole.");
+                theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
+                alignedCount = theLocalPole.alignedCount;
             }
             telemetry.update();
         }
