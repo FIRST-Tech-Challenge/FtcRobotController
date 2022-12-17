@@ -25,11 +25,11 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
 
     public static double dummyP = 3;
 
-    public static double dropX = -31.2, dropY = 3.4, dropA = toRadians(140), dropET = toRadians(320);
+    public static double dropX = -31, dropY = 3.2, dropA = toRadians(140), dropET = toRadians(320);
 
     public static double pickupX1 = -45.5, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
     public static double pickupX2 = -63.2, pickupY2 = 10.5, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
-    double[] stackPos = {420, 300, 190, 90, 0};
+    double[] stackPos = {390, 290, 200, 80, 0};
 
 
     public void runOpMode() {
@@ -44,7 +44,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
         TrajectorySequence initialtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29.6, 62.25, toRadians(90)))
                 .setReversed(true).splineToSplineHeading(new Pose2d(-36, 40, toRadians(70)), toRadians(250))
                 .splineToSplineHeading(new Pose2d(-36, 26, toRadians(105)), toRadians(285))
-                .splineToSplineHeading(new Pose2d(-27.5, 7.4, toRadians(120)), toRadians(290))
+                .splineToSplineHeading(new Pose2d(-27.5, 6.4, toRadians(120)), toRadians(290))
                 .build();
         TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-27.5, 7.4, toRadians(120)))
                 .splineToSplineHeading(new Pose2d(pickupX1, pickupY1, pickupA1), pickupET1)
@@ -90,7 +90,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
             logger.loopcounter++;
             robot.followTrajectorySequenceAsync(initialtrajectory);
             robot.raiseLiftArmToOuttake(true);
-            robot.delay(0.8);
+            robot.delay(0.9);
             robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.waitForFinish();
             robot.openClaw(false);
@@ -133,19 +133,19 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
             }
 //            robot.followTrajectorySequenceAsync(parkTrajectory);
 //            robot.delay(1);
-            robot.delay(0.5);
+            robot.delay(0.7);
             robot.liftToPosition(0);
-            robot.delay(0.5);
+            robot.delay(0.7);
             robot.lowerLiftArmToIntake(true);
 
             if (dummyP == 1) {
-                robot.delay(0.5);
+                robot.delay(0.7);
                 robot.followTrajectorySequenceAsync(park1trajectory);
             } else if (dummyP == 3) {
-                robot.delay(0.5);
+                robot.delay(0.7);
                 robot.followTrajectoryAsync(park3trajectory);
             } else {
-                robot.delay(0.5);
+                robot.delay(0.7);
                 robot.followTrajectorySequenceAsync(park2trajectory);
             }
 

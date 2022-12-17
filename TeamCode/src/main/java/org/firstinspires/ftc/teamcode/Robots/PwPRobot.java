@@ -418,6 +418,7 @@ public class PwPRobot extends BasicRobot {
 
         //will only close when detect cone
         //claw.closeClaw
+        op.telemetry.addData("stacklevel", lift.getStackLevel());
             gp.getSequence();
             roadrun.update();
             liftArm.updateLiftArmStates();

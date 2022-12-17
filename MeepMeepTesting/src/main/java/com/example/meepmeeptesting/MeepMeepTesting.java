@@ -11,10 +11,10 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 
 public class MeepMeepTesting {
-    public static double dropX = -30, dropY = 20 , dropA = toRadians(210), dropET = toRadians(30);
+    public static double dropX = -31, dropY = 19 , dropA = toRadians(210), dropET = toRadians(30);
 
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
-    public static double pickupX2 = -63.2, pickupY2 = 13, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
+    public static double pickupX2 = -63.2, pickupY2 = 11.5, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
 
     public static void main(String[] args) {
 
@@ -29,7 +29,7 @@ public class MeepMeepTesting {
                                 drive.trajectorySequenceBuilder(new Pose2d(-29.6, 62.25, toRadians(90)))
                                         .setReversed(true)
                                         .splineToSplineHeading(new Pose2d(-34, 46, toRadians(90)), toRadians(270))
-                                        .splineToSplineHeading(new Pose2d(-30, 28, toRadians(135)), toRadians(270))
+                                        .splineToSplineHeading(new Pose2d(-30.5, 29, toRadians(135)), toRadians(270))
                                         .setReversed(false)
                                         .splineToLinearHeading(new Pose2d(-34,11.5, toRadians(180)),toRadians(240))
                                         .splineToSplineHeading(new Pose2d(pickupX2, pickupY2, pickupA2), pickupET2)
@@ -37,7 +37,9 @@ public class MeepMeepTesting {
                                         .setReversed(true)
                                         .splineToSplineHeading(new Pose2d(dropX,dropY, dropA), dropET)
                                         .setReversed(false)
-                                        .splineToSplineHeading(new Pose2d(-63.2, 13, toRadians(180)), toRadians(180))
+                                        .splineToSplineHeading(new Pose2d(-50, 11, toRadians(180)), toRadians(180))
+                                        .setReversed(true)
+                                        .splineToSplineHeading(new Pose2d(-10, 11, toRadians(180)), toRadians(180))
                                         .build()
                 );
 
