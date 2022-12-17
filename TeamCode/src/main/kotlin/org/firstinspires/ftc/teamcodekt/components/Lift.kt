@@ -49,7 +49,7 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
         }
 
     init {
-        liftMotor = Motor(hwMap, "L1", Motor.GoBILDA.RPM_435)
+        liftMotor = Motor(hwMap, DeviceNames.LIFT_MOTOR, Motor.GoBILDA.RPM_435)
 
         liftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
         liftMotor.setRunMode(Motor.RunMode.VelocityControl)

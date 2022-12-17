@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Listener
+import ftc.rouge.blacksmith.listeners.Listener
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 
 @TeleOp

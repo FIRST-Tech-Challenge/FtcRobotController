@@ -17,7 +17,7 @@ object IntakeConfig {
  * @author KG
  */
 class Intake(hwMap: HardwareMap?) {
-    private val intakeServo = CRServo(hwMap, "IN")
+    private val intakeServo = CRServo(hwMap, DeviceNames.INTAKE_SERVO)
 
     /**
      * Enable the intake. Used for intaking cones (great for simply driving into the cones, which

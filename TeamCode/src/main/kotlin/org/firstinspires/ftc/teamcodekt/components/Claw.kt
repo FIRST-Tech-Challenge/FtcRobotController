@@ -19,7 +19,7 @@ object ClawConfig {
  * @author KG
  */
 class Claw(hwMap: HardwareMap) {
-    private val clawServo = SimpleServo(hwMap, "CL", 0.0, 180.0)
+    private val clawServo = SimpleServo(hwMap, DeviceNames.CLAW_SERVO, 0.0, 180.0)
 
     /**
      * Open the claw to the narrow position for intaking objects. Used primarily for tele as it

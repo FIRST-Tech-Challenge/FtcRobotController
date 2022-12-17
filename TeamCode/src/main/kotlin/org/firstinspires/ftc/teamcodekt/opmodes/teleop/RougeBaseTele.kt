@@ -3,8 +3,8 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.teamcodekt.blacksmith.Scheduler
-import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.ReforgedGamepad
+import ftc.rouge.blacksmith.Scheduler
+import ftc.rouge.blacksmith.listeners.ReforgedGamepad
 import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.chains.BackwardsDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.ForwardsDepositChain

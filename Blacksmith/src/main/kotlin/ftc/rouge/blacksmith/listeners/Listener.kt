@@ -3,7 +3,6 @@
 package ftc.rouge.blacksmith.listeners
 
 import ftc.rouge.blacksmith.Scheduler
-import ftc.rouge.blacksmith.internal.Condition
 import ftc.rouge.blacksmith.internal.SignalEdgeDetector
 import ftc.rouge.blacksmith.util.runOnce
 
@@ -49,12 +48,12 @@ import ftc.rouge.blacksmith.util.runOnce
  * @see ReforgedGamepad
  * @see Timer
  */
-open class Listener(val condition: Condition) {
+open class Listener(val condition: () -> Boolean) {
     /**
      * The subscribed set of [actions][Runnable] that are performed when the given
      * condition's state matches the given [SignalTrigger][SignalTrigger].
      */
-    private val actions = mutableMapOf<Runnable, Condition>()
+    private val actions = mutableMapOf<Runnable, () -> Boolean>()
 
     /**
      * A listener that evaluates the [condition][Condition] and checks whether the state of the
@@ -70,7 +69,7 @@ open class Listener(val condition: Condition) {
      */
     fun onRise(action: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::risingEdge as Condition
+        actions[action] = conditionSED::risingEdge
     }
 
     /**
@@ -80,7 +79,7 @@ open class Listener(val condition: Condition) {
      */
     fun onFall(action: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::fallingEdge as Condition
+        actions[action] = conditionSED::fallingEdge
     }
 
     /**
@@ -90,7 +89,7 @@ open class Listener(val condition: Condition) {
      */
     fun whileHigh(action: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::isHigh as Condition
+        actions[action] = conditionSED::isHigh
     }
 
     /**
@@ -100,7 +99,7 @@ open class Listener(val condition: Condition) {
      */
     fun whileLow(action: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::isLow as Condition
+        actions[action] = conditionSED::isLow
     }
 
     /**
@@ -115,16 +114,11 @@ open class Listener(val condition: Condition) {
      */
     fun tick() {
         conditionSED.update()
-        doActiveActions()
-    }
 
-    /**
-     * Performs the actions who's conditions evaluate to true.
-     */
-    fun doActiveActions(): Unit =
         actions.forEach { (action, condition) ->
-            if (condition.evaluate()) action.run()
+            if (condition()) action.run()
         }
+    }
 
     fun destroy() {
         Scheduler.unhookListener(this)
@@ -147,21 +141,21 @@ open class Listener(val condition: Condition) {
     // Listener builders
     // ---------------------------------------------------------------
 
-    fun and(otherCondition: Condition) = Listener { condition() && otherCondition() }
+    fun and(otherCondition: () -> Boolean) = Listener { condition() && otherCondition() }
 
-    fun or(otherCondition: Condition) = Listener { condition() || otherCondition() }
+    fun or(otherCondition: () -> Boolean) = Listener { condition() || otherCondition() }
 
-    fun xor(otherCondition: Condition) = Listener { condition() xor otherCondition() }
+    fun xor(otherCondition: () -> Boolean) = Listener { condition() xor otherCondition() }
 
-    fun nand(otherCondition: Condition) = Listener { !(condition() && otherCondition()) }
+    fun nand(otherCondition: () -> Boolean) = Listener { !(condition() && otherCondition()) }
 
-    fun nor(otherCondition: Condition) = Listener { !(condition() || otherCondition()) }
+    fun nor(otherCondition: () -> Boolean) = Listener { !(condition() || otherCondition()) }
 
-    fun xnor(otherCondition: Condition) = Listener { condition() == otherCondition() }
+    fun xnor(otherCondition: () -> Boolean) = Listener { condition() == otherCondition() }
 
-    operator fun plus(otherCondition: Condition) = and(otherCondition)
+    operator fun plus(otherCondition: () -> Boolean) = and(otherCondition)
 
-    operator fun div(otherCondition: Condition) = or(otherCondition)
+    operator fun div(otherCondition: () -> Boolean) = or(otherCondition)
 
 
     fun and(other: Listener) = Listener { condition() && other.condition() }
@@ -181,5 +175,5 @@ open class Listener(val condition: Condition) {
     operator fun div(other: Listener) = or(other)
 
 
-    operator fun not() = Listener { !condition.evaluate() }
+    operator fun not() = Listener { !condition() }
 }

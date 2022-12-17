@@ -2,9 +2,9 @@
 
 package org.firstinspires.ftc.teamcodekt.components.chains
 
-import org.firstinspires.ftc.teamcodekt.blacksmith.chains.Chain
-import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Listener
-import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Timer
+import ftc.rouge.blacksmith.chains.Chain
+import ftc.rouge.blacksmith.listeners.Listener
+import ftc.rouge.blacksmith.listeners.Timer
 import org.firstinspires.ftc.teamcodekt.components.TeleOpBotComponents
 
 class IntakeChain(val bot: TeleOpBotComponents, clawClosingTime: Long) : Chain {

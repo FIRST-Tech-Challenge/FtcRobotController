@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
-import org.firstinspires.ftc.teamcodekt.blacksmith.Scheduler
-import org.firstinspires.ftc.teamcodekt.blacksmith.listeners.Listener
-import org.firstinspires.ftc.teamcodekt.components.Drivetrain
+import ftc.rouge.blacksmith.listeners.Listener
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 
 class RougeCompOp : RougeBaseTele() {

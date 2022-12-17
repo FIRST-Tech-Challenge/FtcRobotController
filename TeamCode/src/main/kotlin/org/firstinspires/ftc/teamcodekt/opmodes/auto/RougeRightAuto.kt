@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import org.firstinspires.ftc.teamcodekt.blacksmith.Anvil
-import org.firstinspires.ftc.teamcodekt.blacksmith.Scheduler
+import ftc.rouge.blacksmith.Anvil
+import ftc.rouge.blacksmith.Scheduler
+import org.firstinspires.ftc.teamcode.AutoData.*
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 import org.firstinspires.ftc.teamcodekt.util.toIn
 import org.firstinspires.ftc.teamcodekt.util.toRad
-import org.firstinspires.ftc.teamcode.AutoData.*
 
 @Suppress("RemoveRedundantQualifierName")
 class RougeRightAuto : RougeBaseAuto() {
@@ -71,7 +71,7 @@ class RougeRightAuto : RougeBaseAuto() {
                 bot.claw.openForDeposit()
             }
 
-            .waitSeconds(DEPOSIT_DELAY + .05)
+            .waitTime(DEPOSIT_DELAY + .05)
 
             .thenRunAsync(key = 0)
 
@@ -113,7 +113,7 @@ class RougeRightAuto : RougeBaseAuto() {
                 wristPosFunction = bot.wrist::setToForwardsPos
             }
 
-            .waitSeconds(INTAKE_DELAY + 0.25)
+            .waitTime(INTAKE_DELAY + 0.25)
 
             .thenRunAsync(key = 0)
 

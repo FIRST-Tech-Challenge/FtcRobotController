@@ -1,18 +1,19 @@
-@file:Suppress("MemberVisibilityCanBePrivate")
+@file:Suppress("MemberVisibilityCanBePrivate", "KDocUnresolvedReference", "unused")
 
 package ftc.rouge.blacksmith
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback
-import ftc.rouge.blacksmith.adapters._SampleMecanumDrive
-import ftc.rouge.blacksmith.adapters._TrajectorySequenceBuilder
-import kotlinx.coroutines.*
-import ftc.rouge.blacksmith.roadrunner.drive.DriveConstants.*
-import ftc.rouge.blacksmith.roadrunner.drive.SampleMecanumDrive.*
-import ftc.rouge.blacksmith.roadrunner.trajectorysequence.TrajectorySequence
-import ftc.rouge.blacksmith.roadrunner.trajectorysequence.TrajectorySequenceBuilder
+import com.acmerobotics.roadrunner.trajectory.Trajectory
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint
+import ftc.rouge.blacksmith.proxies._SampleMecanumDrive
+import ftc.rouge.blacksmith.units.AngleUnit
+import ftc.rouge.blacksmith.units.DistanceUnit
+import ftc.rouge.blacksmith.units.TimeUnit
 import ftc.rouge.blacksmith.util.*
+import kotlinx.coroutines.*
 
 /**
  * A WIP component that wraps around the [TrajectorySequenceBuilder] to provide a much cleaner API
@@ -51,7 +52,7 @@ import ftc.rouge.blacksmith.util.*
  *      .preform(key = 0, ::goBackwardAndLowerLift, startPose)
  *
  *      .temporalMarker {
- *          // Raise lift
+ *          // ...
  *      }
  *      .forward(24)
  *
@@ -68,7 +69,7 @@ import ftc.rouge.blacksmith.util.*
  *      .preform(key = "park", ::park, startPose)
  *
  *      .temporalMarker {
- *          // Lower lift
+ *          // ...
  *      }
  *      .back(24)
  *
@@ -154,8 +155,8 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          * @param builder The [Anvil] instance to run asynchronously
          */
         @JvmStatic
-        fun startAsyncAutoWith(builder: Anvil) {
-            builder.setPoseEstimate().runAsync()
+        fun startAsyncAutoWith(anvil: Anvil) {
+            anvil.setPoseEstimate().runAsync()
         }
 
         /**
@@ -172,75 +173,145 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          */
         var angleUnit = AngleUnit.RADIANS
 
+        /**
+         * Allows you to change the units of time measurements in the builder API.
+         *
+         * Defaults to [TimeUnit.SECONDS]
+         */
+        var timeUnit = TimeUnit.SECONDS
+
+        /**
+         * Changes all of the units in the builder API to the given units.
+         */
+        @JvmStatic
+        fun setUnits(distanceUnit: DistanceUnit, angleUnit: AngleUnit, timeUnit: TimeUnit) {
+            this.distanceUnit = distanceUnit
+            this.angleUnit = angleUnit
+            this.timeUnit = timeUnit
+        }
+
         // Private coroutine scope used for async trajectory creation, dw about it
-        private val builderScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+        @PublishedApi
+        internal val builderScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     }
 
-    val drive = _SampleMecanumDrive(drive)
+    @PublishedApi
+    internal val driveProxy = _SampleMecanumDrive(drive)
 
-    /**
-     * The [TrajectorySequenceBuilder] instance used to build the trajectory.
-     */
-    val trajectorySequenceBuilder = this.drive.getBuilder(startPose)
+    @PublishedApi
+    internal val builderProxy = this.driveProxy.getBuilderProxy(startPose)
 
-    lateinit var builtTrajectory: Any
+    @PublishedApi
+    internal val preformedTrajectories = mutableMapOf<Any, Deferred<Any>>()
 
-    // Stores all of the preformed trajectories in this Anvil instance
-    // Since the keys are 'Any', you can use whatever you want as a key
-    private val preformedTrajectories = mutableMapOf<Any, Deferred<Any>>()
+    @PublishedApi
+    internal lateinit var builtTrajectory: Any
 
-    /**
-     * Maps to the [TrajectorySequenceBuilder.forward] method.
-     */
+    // -- Direct path mappings (Basic) --
+
     fun forward(distance: Double) = this.apply {
-        trajectorySequenceBuilder.forward(distance.toIn(distanceUnit))
+        builderProxy.forward(distance.toIn)
     }
 
-    /**
-     * Maps to the [TrajectorySequenceBuilder.back] method.
-     */
     fun back(distance: Double) = this.apply {
-        trajectorySequenceBuilder.back(distance.toIn(distanceUnit))
+        builderProxy.back(distance.toIn)
     }
 
-    /**
-     * Maps to the [TrajectorySequenceBuilder.turn] method.
-     */
     fun turn(angle: Double) = this.apply {
-        trajectorySequenceBuilder.turn(angle.toRad(angleUnit))
+        builderProxy.turn(angle.toRad)
     }
 
-    /**
-     * Maps to the [TrajectorySequenceBuilder.splineTo] method.
-     *
-     * Note that it internally creates the [Vector2d] for you.
-     */
-    fun splineTo(x: Double, y: Double, heading: Double) = this.apply {
-        trajectorySequenceBuilder.splineTo(Vector2d(x.toIn(distanceUnit), y.toIn(distanceUnit)), heading.toRad(angleUnit))
+    fun strafeLeft(distance: Double) = this.apply {
+        builderProxy.strafeLeft(distance.toIn)
     }
 
-    /**
-     * Maps to the [TrajectorySequenceBuilder.waitSeconds] method.
-     */
-    fun waitSeconds(time: Double) = this.apply {
-        trajectorySequenceBuilder.waitSeconds(time)
+    fun strafeRight(distance: Double) = this.apply {
+        builderProxy.strafeRight(distance.toIn)
     }
 
-    /**
-     * Maps to the [TrajectorySequenceBuilder.setReversed] method.
-     */
+    // -- Direct path mappings (Lines) --
+
+    fun lineToConstantHeading(x: Double, y: Double) = this.apply {
+        builderProxy.strafeTo( Vector2d(x.toIn, y.toIn) )
+    }
+
+    fun lineToLinearHeading(x: Double, y: Double, heading: Double) = this.apply {
+        builderProxy.lineToLinearHeading( Pose2d(x.toIn, y.toIn, heading.toRad) )
+    }
+
+    fun lineToSplineHeading(x: Double, y: Double, heading: Double) = this.apply {
+        builderProxy.lineToSplineHeading( Pose2d(x.toIn, y.toIn, heading.toRad) )
+    }
+
+    // -- Direct path mappings (Splines) --
+
+    fun splineTo(x: Double, y: Double, endTangent: Double) = this.apply {
+        builderProxy.splineTo(Vector2d(x.toIn, y.toIn), endTangent.toRad)
+    }
+
+    fun splineToConstantHeading(x: Double, y: Double, endTangent: Double) = this.apply {
+        builderProxy.splineToConstantHeading( Vector2d(x.toIn, y.toIn), endTangent.toRad)
+    }
+
+    fun splineToLinearHeading(x: Double, y: Double, heading: Double, endTangent: Double) = this.apply {
+        builderProxy.splineToLinearHeading( Pose2d(x.toIn, y.toIn, heading.toRad), endTangent.toRad)
+    }
+
+    fun splineToSplineHeading(x: Double, y: Double, heading: Double, endTangent: Double) = this.apply {
+        builderProxy.splineToSplineHeading( Pose2d(x.toIn, y.toIn, heading.toRad), endTangent.toRad)
+    }
+
+    // -- Advanced mappings --
+
+    fun waitTime(time: Double) = this.apply {
+        builderProxy.waitSeconds(time.toSec)
+    }
+
     fun setReversed(reversed: Boolean) = this.apply {
-        trajectorySequenceBuilder.setReversed(reversed)
+        builderProxy.setReversed(reversed)
     }
 
+    fun addTrajectory(trajectory: Trajectory) = this.apply {
+        builderProxy.addTrajectory(trajectory)
+    }
+
+    // -- Markers --
+
+    @JvmOverloads
+    fun addTemporalMarker(
+        offset: Double = 0.0,
+        action: MarkerCallback
+    ) = this.apply {
+        builderProxy.UNSTABLE_addTemporalMarkerOffset(offset, action)
+    }
+
+    @JvmOverloads
+    fun addDisplacementMarker(
+        offset: Double = 0.0,
+        action: MarkerCallback
+    ) = this.apply {
+        builderProxy.UNSTABLE_addDisplacementMarkerOffset(offset, action)
+    }
+
+    fun addSpatialMarker(
+        offset: Vector2d,
+        action: MarkerCallback
+    ) = this.apply {
+        builderProxy.addSpatialMarker(offset, action)
+    }
+
+    // -- Utilities --
+
     /**
-     * Uses a 'lambda with receiver' to make running a path in reverse cleaner.
+     * Provides a new scope in which the trajectories are reversed.
      *
      * Usage example:
-     * ```kotlin
-     * .inReverse {
-     *    doStuff() // Note no '.'s
-     * }
+     * ```
+     * // Java:                        |   // Kotlin:
+     * anvil                            |   anvil
+     *     .inReverse((builder) -> {   |       .inReverse {
+     *         builder.splineTo(...);  |          splineTo(...)
+     *     });                         |       }
      */
     inline fun inReverse(pathsToDoInReverse: Anvil.() -> Unit) = this.apply {
         setReversed(true)
@@ -253,29 +324,74 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      * of methods not included in this class.
      *
      * Usage example:
-     * ```kotlin
-     * .withRawBuilder<TrajectorySequenceBuilder> {
-     *     splineToLinearHeading(stuff) // Again, no '.'s
-     * }
+     * ```
+     * // Java:
+     * anvil
+     *    .<TrajectorySequenceBuilder>rawBuilder((builder) -> {
+     *        builder.splineTo(...);
+     *    };
+     *
+     * // Kotlin:
+     * anvil
+     *     .withRawBuilder<TrajectorySequenceBuilder> {
+     *         splineTo(...)
+     *     }
      */
     @Suppress("UNCHECKED_CAST")
     inline fun <T> withRawBuilder(builder: T.() -> Unit) = this.apply {
-        builder(trajectorySequenceBuilder.internalBuilder as T)
+        builder(builderProxy.internalBuilder as T)
     }
 
     /**
-     * Maps to the [TrajectorySequenceBuilder.UNSTABLE_addTemporalMarkerOffset] method.
+     * Does the things to the builder `n` times.
      *
-     * Note that if you don't pass in an `offset`, it's equivalent to the
-     * [TrajectorySequenceBuilder.addTemporalMarker] method.
+     * Usage example:
+     * ```
+     * // (Goes forwards and backwards 3 times)
+     * // Java:                         |   // Kotlin:
+     * anvil                            |   anvil
+     *     .doTimes(3, (builder) -> {   |       .doTimes(3) {
+     *         builder.forward(...);    |          forward(...)
+     *         builder.back(...);       |          back(...)
+     *     });                          |       }
      */
-    @JvmOverloads
-    fun addTemporalMarker(
-        offset: Double = 0.0,
-        action: MarkerCallback
-    ) = this.apply {
-        trajectorySequenceBuilder.UNSTABLE_addTemporalMarkerOffset(offset, action)
+    inline fun doTimes(times: Int, pathsToDo: Anvil.(Int) -> Unit) = this.apply {
+        repeat(times) {
+            pathsToDo(this, it)
+        }
     }
+
+    // -- Constraints --
+
+    fun resetConstraints() = this.apply {
+        builderProxy.resetConstraints()
+    }
+
+    fun setVelConstraint(velConstraint: TrajectoryVelocityConstraint) = this.apply {
+        builderProxy.setVelConstraint(velConstraint)
+    }
+
+    fun resetVelConstraint() = this.apply {
+        builderProxy.resetVelConstraint()
+    }
+
+    fun setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = this.apply {
+        builderProxy.setAccelConstraint(accelConstraint)
+    }
+
+    fun resetAccelConstraint() = this.apply {
+        builderProxy.resetAccelConstraint()
+    }
+
+    fun setTurnConstraint(maxAngVel: Double, maxAngAccel: Double) = this.apply {
+        builderProxy.setTurnConstraint(maxAngVel, maxAngAccel)
+    }
+
+    fun resetTurnConstraint() = this.apply {
+        builderProxy.resetTurnConstraint()
+    }
+
+    // -- Building, creating, running --
 
     /**
      * Preforming creates a new [TrajectorySequence] via [Anvil] in parallel to the current
@@ -292,49 +408,74 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      * ```kotlin
      * fun goToPole(startPose: Pose2d): Anvil =
      *     Anvil.formTrajectory(drive, startPose)
-     *        .preform(key = 0, ::depositCone)
+     *         .preform(key = 0, ::depositCone) // Starts when actual traj reaches this point
      *
-     *        .forward(24.0) // The 'depositCone' trajectory is being built concurrently
-     *        .turn(90.0) // while these are being executed
+     *         .forward(24.0) // The 'depositCone' trajectory is being built concurrently
+     *         .turn(90.0) // while these are being executed
      *
-     *        .thenRunAsyncIf(key = 0) // This will run after the both goes forwards and turns
+     *         .thenRunAsync(key = 0) // This will run after the both goes forwards and turns
      */
     @JvmOverloads
-    fun preform(
+    inline fun preform(
         key: Any,
-        nextTrajectory: (Pose2d) -> Anvil,
-        startPose: () -> Pose2d = { builtTrajectory.invokeMethodRethrowing("end") }
-    ) = this.addTemporalMarker {
-        preformedTrajectories[key] = builderScope.async { nextTrajectory(startPose()).build() }
+        crossinline nextTrajectory: (Pose2d) -> Anvil,
+        crossinline nextStartPose: () -> Pose2d = { builtTrajectory.invokeMethodRethrowing("end") }
+    ): Anvil {
+        addTemporalMarker {
+            preformedTrajectories[key] = builderScope.async { nextTrajectory( nextStartPose() ).build() }
+        }
+        return this
     }
 
     /**
-     * Like the other `thenRunAsync`, but runs a preformed trajectory associated with the given key.
-     * *This is blocking and will wait for the trajectory to be finished creating if it's not
-     * already created by the time the trajectory reaches this point (in the actual trajectory,
-     * not just in the builder).*
+     * Runs a preformed trajectory when the current trajectory reaches this function.
+     *
+     * Usage example:
+     * ```kotlin
+     * anvil
+     *     .preform(key, ...)
+     *     .forward(...)  // Goes forwards like normal
+     *     .thenRunAsync(key) // Runs the preformed trajectory after going forwards
+     *     .back(...)  // This is ignored as the drive switches trajectories
+     *
      */
     fun thenRunAsync(
         key: Any
-    ) = this.addTemporalMarker {
+    ) = this.apply {
         thenRunAsyncIf(key) { true }
     }
 
     /**
-     * Love child of the above method and the other `thenRunAsyncIf`.
+     * Conditionally runs a preformed trajectory when the current trajectory reaches this function.
+     * This is useful for loops or conditional trajectories.
+     *
+     * The given lambda is only evaluated when the trajectory reaches this point.
+     *
+     * Usage example:
+     * ```kotlin
+     * anvil
+     *     .preform(key, ...)
+     *     .forward(...)  // Goes forwards like normal
+     *     .thenRunAsyncIf(key) { false}  // Doesn't go anything as the condition is false
+     *     .back(...)  // Goes back like normal
+     *
      */
-    fun thenRunAsyncIf(
+    inline fun thenRunAsyncIf(
         key: Any,
-        predicate: () -> Boolean
-    ) = this.addTemporalMarker {
-        if (key !in preformedTrajectories) {
-            throw IllegalArgumentException("No preformed trajectory with key '$key'")
-        }
+        crossinline predicate: () -> Boolean
+    ): Anvil {
+        addTemporalMarker {
+            if (key !in preformedTrajectories) {
+                throw IllegalArgumentException("No preformed trajectory with key '$key'")
+            }
 
-        if (predicate())
-            drive.followTrajectorySequenceAsync(
-                runBlocking { preformedTrajectories[key]?.await() }!!
-            )
+            if (predicate()) {
+                driveProxy.followTrajectorySequenceAsync(
+                    runBlocking { preformedTrajectories[key]?.await() }!!
+                )
+            }
+        }
+        return this
     }
 
     /**
@@ -342,16 +483,24 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      * [TrajectorySequence].
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> build(): T = (trajectorySequenceBuilder.build() as T).also { builtTrajectory = it }
+    fun <T : Any> build(): T = (builderProxy.build() as T).also { builtTrajectory = it }
 
     /**
      * Builds the [Anvil] instance into a [TrajectorySequence], and then runs it asynchronously
      * with the given [SampleMecanumDrive]
      */
-    fun runAsync() { drive.followTrajectorySequenceAsync(build()) }
+    fun runAsync() = driveProxy.followTrajectorySequenceAsync(build())
+
+    // -- Internal --
 
     // Just used for the "static" 'startAsyncAutoWith' function
     private fun setPoseEstimate() = this.apply {
-        drive.setPoseEstimate(startPose)
+        driveProxy.setPoseEstimate(startPose)
     }
+
+    private val Number.toIn get() = distanceUnit.toIn(this.toDouble())
+
+    private val Number.toRad get() = angleUnit.toRad(this.toDouble())
+
+    private val Number.toSec get() = timeUnit.toSec(this.toDouble())
 }

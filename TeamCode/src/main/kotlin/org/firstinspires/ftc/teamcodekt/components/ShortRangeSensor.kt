@@ -9,8 +9,8 @@ object ShortRangeSensorConfig {
     // TODO: Empirically determine model values. Requires a tuning process.
 }
 
-class ShortRangeSensor @JvmOverloads constructor(name: String, hwMap: HardwareMap, private val telemetry: Telemetry? = null) {
-    private val sensor = hwMap<AnalogInput>(name)
+class ShortRangeSensor @JvmOverloads constructor(hwMap: HardwareMap, private val telemetry: Telemetry? = null) {
+    private val sensor = hwMap<AnalogInput>(DeviceNames.SHORT_RANGE_SENSOR)
 
     val distance: Double
         get() = model(sensor.voltage).also {

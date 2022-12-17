@@ -30,4 +30,3 @@ inline fun <reified T> Any.invokeMethodRethrowingInfer(name: String, vararg para
         throw e.targetException
     }
 }
-

@@ -1,8 +1,8 @@
 package ftc.rouge.blacksmith
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.robotcore.external.Telemetry
 import ftc.rouge.blacksmith.listeners.Listener
+import org.firstinspires.ftc.robotcore.external.Telemetry
 
 /**
  * A component that simplifies the process of scheduling actions to be performed at a

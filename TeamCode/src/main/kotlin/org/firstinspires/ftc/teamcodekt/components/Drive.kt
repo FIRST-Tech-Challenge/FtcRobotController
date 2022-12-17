@@ -14,10 +14,10 @@ import org.firstinspires.ftc.teamcodekt.util.withDeadzone
 import kotlin.math.*
 
 class Drivetrain(hwMap: HardwareMap) {
-    private val frontLeft  = hwMap<DcMotorEx>("FL").apply { direction = Direction.REVERSE }
-    private val frontRight = hwMap<DcMotorEx>("FR")
-    private val backLeft   = hwMap<DcMotorEx>("BL").apply { direction = Direction.REVERSE }
-    private val backRight  = hwMap<DcMotorEx>("BR")
+    private val frontLeft  = hwMap<DcMotorEx>(DeviceNames.DRIVE_FL).apply { direction = Direction.REVERSE }
+    private val frontRight = hwMap<DcMotorEx>(DeviceNames.DRIVE_FR)
+    private val backLeft   = hwMap<DcMotorEx>(DeviceNames.DRIVE_BL).apply { direction = Direction.REVERSE }
+    private val backRight  = hwMap<DcMotorEx>(DeviceNames.DRIVE_BR)
 
     fun drive(gamepad: Gamepad, powerMulti: Double = 0.0) {
         val (x, y, r) = gamepad.getDriveSticks()

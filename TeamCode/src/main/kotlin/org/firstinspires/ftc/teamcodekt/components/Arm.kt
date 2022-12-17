@@ -21,7 +21,7 @@ class Arm(hwMap: HardwareMap) {
     /**
      * The servo that controls the arm. This is actually two servos acting like they are one.
      */
-    private val armServo = SimpleServo(hwMap, "AR", 0.0, 180.0)
+    private val armServo = SimpleServo(hwMap, DeviceNames.ARM_SERVO, 0.0, 180.0)
 
     /**
      * Move the arm to the forward position. Intended for intaking or reverse depositing.

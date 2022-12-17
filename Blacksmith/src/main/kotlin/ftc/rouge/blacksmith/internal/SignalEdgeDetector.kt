@@ -13,24 +13,24 @@ package ftc.rouge.blacksmith.internal
  * @see Condition
  * @see SignalTrigger
  */
-class SignalEdgeDetector(private val condition: Condition) {
+class SignalEdgeDetector(private val condition: () -> Boolean) {
     /**
      * The current state of the condition
      */
-    var currState = false
+    var currState = condition()
         private set
 
     /**
      * The previous state of the condition
      */
-    private var lastState = false
+    private var lastState = currState
 
     /**
      * Evaluates the condition and updates the state.
      */
     fun update() {
         lastState = currState
-        currState = condition.evaluate()
+        currState = condition()
     }
 
     /**
@@ -43,7 +43,7 @@ class SignalEdgeDetector(private val condition: Condition) {
      * Checks if the condition is on the falling edge, i.e. it goes from `true` to `false`.
      * @return True if the condition is on the falling edge, false otherwise.
      */
-    fun fallingEdge() = lastState && currState
+    fun fallingEdge() = lastState && !currState
 
     /**
      * Checks if the condition is high.

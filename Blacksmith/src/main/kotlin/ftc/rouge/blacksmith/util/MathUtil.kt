@@ -2,6 +2,8 @@
 
 package ftc.rouge.blacksmith.util
 
+import ftc.rouge.blacksmith.units.AngleUnit
+import ftc.rouge.blacksmith.units.DistanceUnit
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.absoluteValue
@@ -59,7 +61,7 @@ fun Number.toCm(from: DistanceUnit = DistanceUnit.INCHES): Double = from.toIn(th
  *
  * @return the number of radians in the given number of degrees
  */
-fun Number.toRad(from: AngleUnit = AngleUnit.DEGREES) = from.toDegrees(this.toDouble()) * PI / 180
+fun Number.toRad(from: AngleUnit = AngleUnit.DEGREES): Double = from.toDeg(this.toDouble()) * PI / 180
 
 /**
  * Simple utility function to return a default value if the given double is NaN
@@ -170,6 +172,8 @@ fun avg(vararg xs: Number) = xs.sumOf { it.toDouble() } / xs.size
 /**
  * Finds the maximum absolute value of the given numbers
  *
+ * _If there are multiple numbers with the same absolute value, the first one will be returned_
+ *
  * Kotlin usage examples:
  * ```kotlin
  * val maxAbs = maxAbs(1, -2, 3, -4, -5) // maxAbs == 5
@@ -184,8 +188,7 @@ fun avg(vararg xs: Number) = xs.sumOf { it.toDouble() } / xs.size
  *
  * @return The maximum absolute value of the given numbers
  */
-fun maxMagnitude(vararg xs: Number) = xs.maxOfOrNull { it.toDouble().absoluteValue } ?: 0.0
-
+fun maxMagnitude(vararg xs: Number) = xs.maxByOrNull { it.toDouble().absoluteValue } ?: 0.0
 
 /**
  * Returns the number unless it is within the given tolerance of the origin, in which case it
@@ -211,4 +214,4 @@ fun maxMagnitude(vararg xs: Number) = xs.maxOfOrNull { it.toDouble().absoluteVal
  */
 @JvmOverloads
 fun withDeadzone(x: Number, deadzone: Number, origin: Number = 0.0) =
-    if (abs(x.toDouble() - origin.toDouble()) > deadzone.toDouble()) origin.toDouble() else x.toDouble()
+    if (abs(x.toDouble() - origin.toDouble()) < abs(deadzone.toDouble())) origin.toDouble() else x.toDouble()

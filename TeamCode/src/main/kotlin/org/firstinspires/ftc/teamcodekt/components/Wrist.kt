@@ -12,7 +12,7 @@ object WristConfig {
 }
 
 class Wrist(hwMap: HardwareMap) {
-    private val wristServo = SimpleServo(hwMap, "WR", 0.0, 180.0)
+    private val wristServo = SimpleServo(hwMap, DeviceNames.WRIST_SERVO, 0.0, 180.0)
 
     var wristPosition = 0.0
 
