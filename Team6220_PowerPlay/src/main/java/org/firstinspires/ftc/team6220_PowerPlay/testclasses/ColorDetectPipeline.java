@@ -13,12 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ColorDetectPipeline extends OpenCvPipeline {
-    Size blurSize = new Size(49, 49);
-    double erodeSize = 220;
-    boolean isRunning = false;
-    Rect detectedRect = new Rect();
-    int counter = 0;
-    boolean rectDetected = false;
+    private Size blurSize = new Size(49, 49);
+    private double erodeSize = 220;
+
+    public boolean isRunning = false;
+    public Rect detectedRect = new Rect();
+    public boolean rectDetected = false;
+    public int counter = 0;
+
+    private Mat frame = new Mat();
+    private Mat matte = new Mat();
+    private Mat blurMatte = new Mat();
+    private Mat thresholdMatte = new Mat();
+    private Mat hierarchy = new Mat();
+    private ArrayList<MatOfPoint> contours = new ArrayList<>();
+    private Mat finalOutput = new Mat();
 
     Mat targetToleranceMatte(Mat img, int[] ca, int[] co) {
         double[] lower = new double[3], upper = new double[3];
@@ -53,23 +62,17 @@ public class ColorDetectPipeline extends OpenCvPipeline {
             throw new IllegalArgumentException("Input cannot be null");
         }
 
-        Mat frame = input;
-
         // Convert color to HSV
         Imgproc.cvtColor(input, frame, Imgproc.COLOR_BGR2HSV);
 
         // Threshold the image
-        frame = targetToleranceMatte(frame, colorTarget, colorTolerance);
+        matte = targetToleranceMatte(frame, colorTarget, colorTolerance);
 
         // Blur and then threshold to remove small details and sort of "erode" the matte
-        Mat output1 = null;
-        Imgproc.GaussianBlur(frame, output1, blurSize, 0);
-        Mat output2 = null;
-        Imgproc.threshold(frame, output2, erodeSize, 255, Imgproc.THRESH_BINARY);
+        Imgproc.GaussianBlur(matte, blurMatte, blurSize, 0);
+        Imgproc.threshold(blurMatte, thresholdMatte, erodeSize, 255, Imgproc.THRESH_BINARY);
 
         // Get the contours of the image
-        List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
         Imgproc.findContours(frame, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Find largest contour and then draw a rectangle around it for display
@@ -97,12 +100,8 @@ public class ColorDetectPipeline extends OpenCvPipeline {
 
         rectDetected = contours.size() > 0;
         counter = contours.size();
-        Mat finalOutput = null;
-        Imgproc.cvtColor(input, finalOutput, Imgproc.COLOR_HSV2BGR);
 
-        frame = null;
-        contours = null;
-        hierarchy = null;
+        Imgproc.cvtColor(input, finalOutput, Imgproc.COLOR_HSV2BGR);
 
         return finalOutput;
     }
