@@ -2,27 +2,20 @@ package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-
-import org.checkerframework.checker.units.qual.C;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetect;
-import org.firstinspires.ftc.team6220_PowerPlay.ConeDetectionPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
+//@Disabled
 @Autonomous(name = "StackGrabbingAuto_Red", group = "Test")
-public class StackGrabbingAuto_Redside extends AprilTagDetect {
+public class StackGrabbingAuto_Redside extends ConeDetection {
     int stackHeight = 4;
     int[] lowerRed = {42, 128, 114};
     int[] upperRed = {168, 242, 255};
+
     @Override
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
         initialize();
         ConeDetectionPipeline coneDetectionPipeline = new ConeDetectionPipeline();
         coneDetectionPipeline.setRanges(lowerRed, upperRed);
-        int signal = detectAprilTag();
         //Grab cone
         servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
         sleep(1500);
@@ -55,7 +48,7 @@ public class StackGrabbingAuto_Redside extends AprilTagDetect {
         driveInches(0, 35);
         detectGrab();
         //Strafe until the robot is centered on the cone
-        while(stackHeight >= 0) {
+        while (stackHeight >= 0) {
             while (Math.abs(coneDetectionPipeline.distance) > 50) {
                 motorFL.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
                 motorFR.setPower(-0.25 * Math.signum(coneDetectionPipeline.distance));
@@ -75,9 +68,10 @@ public class StackGrabbingAuto_Redside extends AprilTagDetect {
             driveSlidesAutonomous(0);
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
         }
-        driveSlidesAutonomous((stackHeight * 60)+100);
+        driveSlidesAutonomous((stackHeight * 60) + 100);
         //60 is the height of the cone, multiply it by stack height
-    }}
+    }
+}
 
 
 

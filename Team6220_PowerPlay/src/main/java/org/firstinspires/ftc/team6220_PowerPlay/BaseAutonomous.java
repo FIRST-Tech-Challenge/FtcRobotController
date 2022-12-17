@@ -7,8 +7,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 public abstract class BaseAutonomous extends BaseOpMode {
-    public int stackHeight = 4;
-
     /**
      * this method will allow the robot to drive straight in a specified direction given a specified heading and distance
      * @param heading 360-degree direction robot should move (front is 0)

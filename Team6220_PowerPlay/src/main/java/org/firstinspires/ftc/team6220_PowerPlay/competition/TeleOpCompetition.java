@@ -2,12 +2,9 @@ package org.firstinspires.ftc.team6220_PowerPlay.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 
-@TeleOp(name = "TeleOpCompetition", group = "Competition")
+@TeleOp(name = "TeleOp Competition", group = "Competition")
 public class TeleOpCompetition extends BaseTeleOp {
 
     @Override

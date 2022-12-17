@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.team6220_PowerPlay;
+package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +35,10 @@ public class ConeDetectionPipeline extends OpenCvPipeline {
         Imgproc.cvtColor(input, HSV, Imgproc.COLOR_BGR2HSV);
         Imgproc.blur(HSV, HSV, blurSize);
         Core.inRange(HSV, intToScalar(lower), intToScalar(upper), HSV);
-        return (HSV);
+        return HSV;
     }
 
-    public void setRanges(int[] lower, int[] upper){
+    public void setRanges(int[] lower, int[] upper) {
         lowerRange = lower;
         upperRange = upper;
     }
@@ -46,9 +46,10 @@ public class ConeDetectionPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        if(input == null){
+        if (input == null) {
             throw new IllegalArgumentException("Input cannot be null");
         }
+
         Mat mask = maskFrame(input, lowerRange, upperRange);
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
@@ -74,7 +75,6 @@ public class ConeDetectionPipeline extends OpenCvPipeline {
                 double cX = (m.get_m10() / m.get_m00());
                 distance = centerX - cX;
                 coneSize = boundingRect.width * boundingRect.height;
-
                 grab = Math.abs(distance) < 30 && coneSize < 3000;
             }
         }

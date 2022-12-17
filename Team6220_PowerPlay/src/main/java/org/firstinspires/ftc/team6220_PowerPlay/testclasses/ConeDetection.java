@@ -1,13 +1,14 @@
-package org.firstinspires.ftc.team6220_PowerPlay;
+package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 public abstract class ConeDetection extends BaseAutonomous {
-    OpenCvCamera camera;
     public ConeDetectionPipeline coneDetectionPipeline;
+    OpenCvCamera camera;
 
     public void detectGrab() {
         // initializes camera

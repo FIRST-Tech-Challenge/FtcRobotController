@@ -6,10 +6,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetect;
-import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
-@Autonomous(name = "BlueLeft", group = "Competition")
-public class BlueLeftAutonomousCompetition extends AprilTagDetect {
+@Autonomous(name = "Red Terminal", group = "Competition")
+public class RedTerminal extends AprilTagDetect {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -17,6 +16,22 @@ public class BlueLeftAutonomousCompetition extends AprilTagDetect {
 
         driveTurntable(0);
         int signal = detectAprilTag();
+
+        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        driveWithIMU(-0.25, 0.0, 0.0);
+        sleep(1400);
+
+        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        driveWithIMU(0.0, 0.0, 0.0);
+        sleep(500);
+
+        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        driveWithIMU(0.25, 0.0, 0.0);
+        sleep(1400);
+
+        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        driveWithIMU(0.0, 0.0, 0.0);
+        sleep(500);
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         driveWithIMU(0.0, -0.25, 0.0);

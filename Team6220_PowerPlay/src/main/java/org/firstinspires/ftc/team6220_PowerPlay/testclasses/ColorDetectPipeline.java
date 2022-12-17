@@ -4,11 +4,10 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
-import org.opencv.core.Size;
-import org.openftc.easyopencv.OpenCvPipeline;
-import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +88,7 @@ public class ColorDetectPipeline extends OpenCvPipeline {
 
             detectedRect = Imgproc.boundingRect(contours.get(maxAreaContour));
             Imgproc.rectangle(input, detectedRect, new Scalar(40, 200, 0), 10);
+
             // Transform the detected rectangle's coordinates so that (0, 0) is at the center of the image,
             // and instead of detectedRect.x and detectedRect.y corresponding to the top-left corner they correspond to the center of the rectangle
             detectedRect.x -= input.width() * 0.5 - detectedRect.width * 0.5;

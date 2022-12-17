@@ -1,14 +1,12 @@
-package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
+package org.firstinspires.ftc.team6220_PowerPlay.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetect;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
-@Disabled
-@Autonomous(name = "AutonomousTest", group = "Test")
-public class AutonomousTest extends AprilTagDetect {
+@Autonomous(name = "Blue Left Preload", group = "Competition")
+public class BlueLeftPreload extends AprilTagDetect {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -17,11 +15,11 @@ public class AutonomousTest extends AprilTagDetect {
 
         // grab cone
         servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
-        sleep(1500);
+        sleep(1000);
 
         // drive slides upwards a few inches
         driveSlidesAutonomous(Constants.SLIDE_LOW);
-        sleep(1000);
+        sleep(500);
 
         int signal = detectAprilTag();
 
@@ -30,7 +28,7 @@ public class AutonomousTest extends AprilTagDetect {
         sleep(500);
 
         // turn to -45 degrees
-        turnToAngle(45);
+        turnToAngle(-45);
         sleep(500);
 
         // drive slides to high junction
@@ -53,45 +51,32 @@ public class AutonomousTest extends AprilTagDetect {
         driveInches(180, 5 * Math.sqrt(2));
         sleep(500);
 
-        // drive slides to high junction
+        // drive slides to bottom
         driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
+        sleep(500);
+
+        // open grabber to initialize position
+        servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
+        sleep(500);
+
+        // turn to 0 degrees
+        turnToAngle(0);
         sleep(500);
 
         switch (signal) {
             case 0:
-                // turn to 90 degrees
-                turnToAngle(90);
-                sleep(500);
-
                 // drive to signal zone 1
-                driveInches(0, 24);
-                sleep(500);
-
-                // turn to 0 degrees
-                turnToAngle(0);
+                driveInches(90, 24);
                 break;
 
             case 1:
-                // turn to 0 degrees
-                turnToAngle(0);
-                sleep(500);
-
-                // drive to signal zone 2
+                // drive to signal zone 1
                 driveInches(180, 2);
-                sleep(500);
                 break;
 
             case 2:
-                // turn to 90 degrees
-                turnToAngle(90);
-                sleep(500);
-
                 // drive to signal zone 3
-                driveInches(180, 24);
-                sleep(500);
-
-                // turn to 0 degrees
-                turnToAngle(0);
+                driveInches(270, 24);
                 break;
         }
     }
