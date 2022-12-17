@@ -32,7 +32,7 @@ public class LiamArmTest extends DriveMethods {
 
         waitForStart();
 
-        goToScissorHeight(700);
+        goToScissorHeight(5\5);
 
         while (opModeIsActive()) {
 
@@ -42,7 +42,7 @@ public class LiamArmTest extends DriveMethods {
 
 
     // !!!!!! NO MORE THAN 1100 Clicks !!!!!!
-    public void goToScissorHeight(int Clicks) {
+    public void goToScissorHeight(double angle30) {
         /**
          * 60 rpm motor travels twice the distance and goes the opposite direction of the 30 rpm motor
          */
@@ -53,8 +53,10 @@ public class LiamArmTest extends DriveMethods {
 
         int clicksPerRot30 = 5281;
         int clicksPerRot60 = 2786;
-        int target30 = Clicks;
-        int target60 = Clicks; //target60 despite having half the value, needs to travel twice the distance, so they are in fact the same value :)
+
+        int targetClicks = (int)((angle30/360)*clicksPerRot30);
+        int target30 = targetClicks;
+        int target60 = targetClicks; //target60 despite having half the value, needs to travel twice the distance, so they are in fact the same value :)
         double current30 = motorScissor30.getCurrentPosition();
         double current60 = motorScissor60.getCurrentPosition();
         double error30 = target30 - current30; //error of the 30rpm motor
@@ -75,7 +77,7 @@ public class LiamArmTest extends DriveMethods {
 
         sleep(500);
 
-        while(Math.abs(error30) >= 10 && Math.abs(error60) >= 10){
+        while(error30 >= 0 && error60 >= 0){
             current30 = motorScissor30.getCurrentPosition();
             current60 = motorScissor60.getCurrentPosition(); //This value's resolution is half the resolution of the above value
 
@@ -85,10 +87,11 @@ public class LiamArmTest extends DriveMethods {
             currentAngle30 = (current30/clicksPerRot30)*360;
             currentAngle60 = (current60/clicksPerRot60)*360;
 
-            power30 = 0.52*(1 - (currentAngle30/110) + error30/900);
-            power60 = 0.43*(1- (currentAngle60/180) + error60/450);
+            power30 = 0.52*(1 - (currentAngle30/90)) + error30/400;
+            power60 = 0.41*(1- (currentAngle60/180)) + error60/600;
 
             motorScissor30.setPower(power30);
+
             motorScissor60.setPower(power60); //the 60 rpm is traveling twice the distance of the 30 rpm at all times
 
             telemetry.addLine("30Position: " + motorScissor30.getCurrentPosition());
@@ -102,11 +105,11 @@ public class LiamArmTest extends DriveMethods {
 
             telemetry.update();
 
-            if(currentAngle30 > 80 || currentAngle60 > 160) {
-                motorScissor60.setPower(0);
-                motorScissor30.setPower(0);
-                break;
-            }
+//            if(currentAngle30 > 80 || currentAngle60 > 160) {
+//                motorScissor60.setPower(0);
+//                motorScissor30.setPower(0);
+//                break;
+//            }
             i++;
         }
 
