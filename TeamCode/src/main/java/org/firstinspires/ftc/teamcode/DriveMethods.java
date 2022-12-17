@@ -284,6 +284,8 @@ public class DriveMethods extends LinearOpMode{
 //            motorBR.setPower(BRPower + (rotateError / 100));
 //        }
 //    }
+
+
     public void driveForDistance(double distanceMeters, Direction movementDirection, double power, double targetRotation) { // distance: 2, strafe: false, power: 0.5
         targetZ = targetRotation;
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -442,6 +444,31 @@ public class DriveMethods extends LinearOpMode{
         motorBL.setPower(0);
         motorFR.setPower(0);
         motorBR.setPower(0);
+    }
+
+    //This is a universal heading
+    public void rotateToHeading(int angleHeading){
+        double target = angleHeading;
+        double current = getCumulativeZ();
+        double error = target- current;
+
+        while(Math.abs(error) < 2) {
+            current = getCumulativeZ();
+            error = target - current;
+            
+            motorFL.setPower((error / 120) + 0.05);
+            motorBL.setPower((error / 120) + 0.05);
+            motorFR.setPower((error / 120) + 0.05);
+            motorBR.setPower((error / 120) + 0.05);
+
+
+            telemetry.addLine("Current (Cumulative) Z:  " + current);
+            telemetry.addLine("Target Z: " + target);
+            telemetry.addLine("Error " + error);
+            telemetry.addLine("Power: " + (error/120));
+            telemetry.update();
+
+        }
     }
 
     public void GoToHeight(int Clicks) {
