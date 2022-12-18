@@ -31,7 +31,7 @@ public class FieldObject {
     }
 
     public double y(){
-        return pos.y;
+        return -pos.y;
     }
 
     public double z() {

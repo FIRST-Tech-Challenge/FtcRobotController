@@ -18,11 +18,11 @@ public class Field {
 
     public FieldObject[] objects = new FieldObject[37];
 
-    public FieldObject[] substationRightPattern = new FieldObject[8];
-    public FieldObject[] substationLeftPattern = new FieldObject[8];
+    public FieldObject[] substationRightPattern = new FieldObject[9];
+    public FieldObject[] substationLeftPattern = new FieldObject[9];
 
-    public FieldObject[] coneStackRightPattern = new FieldObject[8];
-    public FieldObject[] coneStackLeftPattern = new FieldObject[8];
+    public FieldObject[] coneStackRightPattern = new FieldObject[9];
+    public FieldObject[] coneStackLeftPattern = new FieldObject[9];
     public boolean isBlue;
 
     //todo decide on start position
@@ -62,8 +62,8 @@ public class Field {
         mapObjects.put("AllianceStack", new FieldObject[]{objects[4], objects[5]});
         mapObjects.put("EnemyStack", new FieldObject[]{objects[6], objects[7]} );
 
-        objects[8] = new FieldObject("AllianceSubstation",0,0.5,0);
-        objects[9] = new FieldObject("EnemySubstation",0,5.5,0);
+        objects[8] = new FieldObject("AllianceSubstationLeft",-0.2,0.5,0);
+        objects[9] = new FieldObject("AllianceSubstationRight",0.2,0.5,0);
 
         mapObjects.put("AllianceSubstation", new FieldObject[]{objects[8]});
         mapObjects.put("EnemySubstation", new FieldObject[]{objects[9]} );
@@ -110,85 +110,97 @@ public class Field {
         initPatterns();
     }
 
-    int subRPatInd = 0;
-    int subLPatInd = 0;
-    int coneRPatInd = 0;
-    int coneLPatInd = 0;
-
-    public void incSubRightPat(){
-        subRPatInd++;
-    }
-    public void incSubLeftPat(){
-        subLPatInd++;
+    public int getScoringTargetIndex(){
+        return scoringTargetIndex;
     }
 
-    public void decSubRightPat(){
-        subRPatInd--;
-    }
-    public void decSubLeftPat(){
-        subLPatInd--;
+    public int getPatternIndex(){
+        return  patternIndex;
     }
 
-    public void incConeRightPat(){
-        coneRPatInd++;
+    int scoringTargetIndex = 1;
+
+    public void incTarget(){
+        scoringTargetIndex++;
     }
-    public void decConeRightPat(){
-        coneRPatInd--;
+    public void decTarget(){
+        if(scoringTargetIndex > 1) scoringTargetIndex--;
     }
 
-    public void incConeLeftPat(){
-        coneLPatInd++;
+    int patternIndex = 0;
+
+    public void incScoringPattern(){
+
+        if(patternIndex < 4) patternIndex++;
     }
-    public void decConeLeftPat(){
-        coneLPatInd--;
+    public void decScoringPattern(){
+        if(patternIndex > 0) patternIndex--;
     }
 
-    public FieldObject getSubRightObject(){
-        return substationRightPattern[subRPatInd];
+    public FieldObject getConeSource(){
+        switch (patternIndex){
+            case 0:
+                return substationLeftPattern[0];
+            case 1:
+                return substationRightPattern[0];
+            case 2:
+                return coneStackLeftPattern[0];
+            case 3:
+                return coneStackRightPattern[0];
+            default:
+                return null;
+        }
     }
 
-    public FieldObject getSubLeftObject(){
-        return substationLeftPattern[subLPatInd];
-    }
-
-    public FieldObject getConeRightObject(){
-        return coneStackRightPattern[coneRPatInd];
-    }
-
-    public FieldObject getConeLeftObject(){
-        return coneStackLeftPattern[coneLPatInd];
+    public FieldObject getPatternObject(){
+        switch (patternIndex){
+            case 0:
+                return substationLeftPattern[scoringTargetIndex];
+            case 1:
+                return substationRightPattern[scoringTargetIndex];
+            case 2:
+                return coneStackLeftPattern[scoringTargetIndex];
+            case 3:
+                return coneStackRightPattern[scoringTargetIndex];
+            default:
+                return null;
+        }
     }
 
     public void initPatterns(){
-        substationRightPattern[0] = objects[34];
-        substationRightPattern[1] = objects[33];
-        substationRightPattern[2] = objects[30];
-        substationRightPattern[3] = objects[24];
-        substationRightPattern[4] = objects[26];
-        substationRightPattern[5] = objects[29];
-        substationRightPattern[6] = objects[25];
-        substationRightPattern[7] = objects[32];
+        substationRightPattern[0] = objects[9];
+        substationRightPattern[1] = objects[34];
+        substationRightPattern[2] = objects[33];
+        substationRightPattern[3] = objects[30];
+        substationRightPattern[4] = objects[24];
+        substationRightPattern[5] = objects[26];
+        substationRightPattern[6] = objects[29];
+        substationRightPattern[7] = objects[25];
+        substationRightPattern[8] = objects[32];
 
-        substationLeftPattern[0] = objects[34];
-        substationLeftPattern[1] = objects[32];
-        substationLeftPattern[2] = objects[29];
-        substationLeftPattern[3] = objects[23];
-        substationLeftPattern[4] = objects[25];
-        substationLeftPattern[5] = objects[30];
-        substationLeftPattern[6] = objects[26];
-        substationLeftPattern[7] = objects[33];
+        substationLeftPattern[0] = objects[8];
+        substationLeftPattern[1] = objects[34];
+        substationLeftPattern[2] = objects[32];
+        substationLeftPattern[3] = objects[29];
+        substationLeftPattern[4] = objects[23];
+        substationLeftPattern[5] = objects[25];
+        substationLeftPattern[6] = objects[30];
+        substationLeftPattern[7] = objects[26];
+        substationLeftPattern[8] = objects[33];
 
-        coneStackRightPattern[0] = objects[33];
-        coneStackRightPattern[1] = objects[34];
-        coneStackRightPattern[2] = objects[30];
-        coneStackRightPattern[3] = objects[28];
-        coneStackRightPattern[4] = objects[24];
+        coneStackRightPattern[0] = objects[5];
+        coneStackRightPattern[1] = objects[33];
+        coneStackRightPattern[2] = objects[34];
+        coneStackRightPattern[3] = objects[30];
+        coneStackRightPattern[4] = objects[28];
+        coneStackRightPattern[5] = objects[24];
 
-        coneStackLeftPattern[0] = objects[32];
-        coneStackLeftPattern[1] = objects[34];
-        coneStackLeftPattern[2] = objects[29];
-        coneStackLeftPattern[3] = objects[27];
-        coneStackLeftPattern[4] = objects[23];
+        coneStackLeftPattern[0] = objects[4];
+        coneStackLeftPattern[1] = objects[32];
+        coneStackLeftPattern[2] = objects[34];
+        coneStackLeftPattern[3] = objects[29];
+        coneStackLeftPattern[4] = objects[27];
+        coneStackLeftPattern[5] = objects[23];
 
     }
 
@@ -416,7 +428,7 @@ public class Field {
         FieldObject nearestStack = getNearestObject("AllianceStack", poseToCoordinates(currentPose));
 
         StateMachine path = Utils.getStateMachine(new Stage())
-                .addState(() -> robot.crane.setTargets( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
+                .addState(() -> robot.crane.calculateFieldTargeting( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
                 .addState(() -> robot.crane.goToTarget())
                 .stateEndAction(() -> {robot.crane.setCurrentStateMachineToPickUp();})
                 .build();
@@ -427,7 +439,7 @@ public class Field {
         FieldObject nearestStack = getNearestObject("HighPole", poseToCoordinates(currentPose));
 
         StateMachine path = Utils.getStateMachine(new Stage())
-                .addState(() -> robot.crane.setTargets( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
+                .addState(() -> robot.crane.calculateFieldTargeting( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
                 .addState(() -> robot.crane.goToTarget())
                 .stateEndAction(() -> {robot.crane.setCurrentStateMachineToDropCone();})
                 .build();
@@ -439,7 +451,7 @@ public class Field {
         FieldObject nearestStack = getNearestObject("MidPole", poseToCoordinates(currentPose));
 
         StateMachine path = Utils.getStateMachine(new Stage())
-                .addState(() -> robot.crane.setTargets( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
+                .addState(() -> robot.crane.calculateFieldTargeting( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
                 .addState(() -> robot.crane.goToTarget())
                 .stateEndAction(() -> {robot.crane.setCurrentStateMachineToDropCone();})
                 .build();
@@ -450,7 +462,7 @@ public class Field {
         FieldObject nearestStack = getNearestObject("LowPole", poseToCoordinates(currentPose));
 
         StateMachine path = Utils.getStateMachine(new Stage())
-                .addState(() -> robot.crane.setTargets( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
+                .addState(() -> robot.crane.calculateFieldTargeting( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
                 .addState(() -> robot.crane.goToTarget())
                 .stateEndAction(() -> {robot.crane.setCurrentStateMachineToDropCone();})
                 .build();
@@ -462,7 +474,7 @@ public class Field {
         FieldObject nearestStack = getNearestObject("GroundStation", poseToCoordinates(currentPose));
 
         StateMachine path = Utils.getStateMachine(new Stage())
-                .addState(() -> robot.crane.setTargets( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
+                .addState(() -> robot.crane.calculateFieldTargeting( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
                 .addState(() -> robot.crane.goToTarget())
                 .stateEndAction(() -> {robot.crane.setCurrentStateMachineToDropCone();})
                 .build();

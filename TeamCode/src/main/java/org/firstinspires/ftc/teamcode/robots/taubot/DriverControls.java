@@ -47,10 +47,6 @@ public class DriverControls {
 
     void joystickDrive() {
 
-        if(gamepad1.y){
-            robot.driveTrain.DriveTo(2.5*Field.INCHES_PER_GRID,-1.5*Field.INCHES_PER_GRID,20,true);
-        }
-
         if(stickyGamepad1.left_bumper){
             robot.crane.decNudgeIndex();
         }
@@ -66,6 +62,26 @@ public class DriverControls {
 
         if(stickyGamepad1.b){
             robot.crane.dropSequence();
+        }
+
+        if(stickyGamepad1.x){
+            robot.field.incTarget();
+            robot.crane.updateScoringPattern();
+        }
+
+        if(stickyGamepad1.y){
+            robot.field.decTarget();
+            robot.crane.updateScoringPattern();
+        }
+
+        if(stickyGamepad1.dpad_right){
+            robot.field.incScoringPattern();
+            robot.crane.updateScoringPattern();
+        }
+
+        if(stickyGamepad1.dpad_left){
+            robot.field.decScoringPattern();
+            robot.crane.updateScoringPattern();
         }
 
 

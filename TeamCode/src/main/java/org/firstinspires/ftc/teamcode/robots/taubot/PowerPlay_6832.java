@@ -229,7 +229,7 @@ public class PowerPlay_6832 extends OpMode {
         forwardSmoother = new ExponentialSmoother(FORWARD_SMOOTHING_FACTOR);
         rotateSmoother = new ExponentialSmoother(ROTATE_SMOOTHING_FACTOR);
 
-        robot.crane.nudgeRight();
+        robot.crane.nudgeLeft();
 
         debugTelemetry = true;
         if (debugTelemetry)
@@ -266,6 +266,7 @@ public class PowerPlay_6832 extends OpMode {
         startTime = System.currentTimeMillis();
 
         robot.driveTrain.resetGridDrive(startingPosition);
+        robot.crane.updateScoringPattern();
 
         rumble();
 

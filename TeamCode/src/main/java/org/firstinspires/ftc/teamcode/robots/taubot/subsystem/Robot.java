@@ -108,6 +108,8 @@ public class Robot implements Subsystem {
         telemetryMap.put(" Y", current_dy);
         telemetryMap.put("imu heading",driveTrain.getRawHeading());
         telemetryMap.put("turn until degrees done", turnUntilDegreesDone);
+        telemetryMap.put("Scoring Pattern", field.getPatternIndex());
+        telemetryMap.put("Pole Index", field.getScoringTargetIndex());
 
 
         return telemetryMap;
@@ -205,13 +207,13 @@ public class Robot implements Subsystem {
                 crane.nudgeLeft();
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
                     crane.setTargetTurretAngle(312);
-                    if(turret.isTurretNearTarget()){
+                    if(withinError(turret.getHeading(),turret.getTargetHeading(),0.03)){
                         autonIndex++;
                         autonTime = futureTime(3);
                     }
                 }else{
                     crane.setTargetTurretAngle(25);
-                    if(turret.isTurretNearTarget()){
+                    if(withinError(turret.getHeading(),turret.getTargetHeading(),0.03)){
                         autonIndex++;
                         autonTime = futureTime(3);
                     }
@@ -219,16 +221,20 @@ public class Robot implements Subsystem {
                 break;
             case 3:
                 if(startingPosition.equals( Constants.Position.START_LEFT)) {
-                    crane.setTargets(3*Field.INCHES_PER_GRID,Field.INCHES_PER_GRID,36);
+                    crane.calculateFieldTargeting(3*Field.INCHES_PER_GRID,Field.INCHES_PER_GRID,36);
+                    crane.goToCalculatedTarget();
                     if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
                         crane.setGripper(false);
                         autonTime = futureTime(0.3);
+                        autonIndex++;
                     }
                 }else{
-                    crane.setTargets(3*Field.INCHES_PER_GRID,-Field.INCHES_PER_GRID,36);
+                    crane.calculateFieldTargeting(3*Field.INCHES_PER_GRID,-Field.INCHES_PER_GRID,36);
+                    crane.goToCalculatedTarget();
                     if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
                         crane.setGripper(false);
                         autonTime = futureTime(0.3);
+                        autonIndex++;
                     }
                 }
                 break;
