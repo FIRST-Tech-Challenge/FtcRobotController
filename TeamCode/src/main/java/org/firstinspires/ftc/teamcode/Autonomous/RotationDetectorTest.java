@@ -45,7 +45,7 @@ public class RotationDetectorTest extends LinearOpMode {
         rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
         waitForStart();
 
-        int angle = 180;
+        double angle = 180.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
             rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
@@ -53,7 +53,7 @@ public class RotationDetectorTest extends LinearOpMode {
         }
         rotate.MoveStop();
         sleep(2000);
-        angle = 0;
+        angle = 0.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
             rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
@@ -62,7 +62,7 @@ public class RotationDetectorTest extends LinearOpMode {
         }
         rotate.MoveStop();
         sleep(2000);
-        angle = 160;
+        angle = 160.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
             rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
@@ -71,7 +71,7 @@ public class RotationDetectorTest extends LinearOpMode {
         }
         rotate.MoveStop();
         sleep(1000);
-        angle = 45;
+        angle = 45.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
             rotate.RotateRaw(2,rotationDetector.MotorPower(angle));
@@ -80,7 +80,7 @@ public class RotationDetectorTest extends LinearOpMode {
         rotate.MoveStop();
     }
 
-    void DebugData(float angle){
+    void DebugData(double angle){
         telemetry.addData("Current rotation", rotationDetector.ReturnPositiveRotation());
         telemetry.addData("Target rotation", angle);
         telemetry.update();

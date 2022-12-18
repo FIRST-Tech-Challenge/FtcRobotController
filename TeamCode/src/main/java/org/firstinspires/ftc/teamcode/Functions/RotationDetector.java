@@ -6,7 +6,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.Functions.MV.MVVariables;
-
+import org.firstinspires.ftc.teamcode.Functions.MV.MVPIDController;
 
 public class RotationDetector {
     /**
@@ -20,16 +20,22 @@ public class RotationDetector {
      */
 
     double startingRotation = 0;
-
     BNO055IMU Gyro;
+    MVPIDController MotorPID;
+
     public RotationDetector(BNO055IMU gyro){
+        MotorPID.pidController(0.5, 0.1, 0.25,0.0001);
+        MotorPID.setContinuous(true);
+        MotorPID.setInputRange(-180,180);
+        MotorPID.setOutputRange(-1,1);
+
         Gyro =gyro;
         BNO055IMU.Parameters par = new BNO055IMU.Parameters();
         par.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         par.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         Gyro.initialize(par);
         while(!Gyro.isGyroCalibrated()){
-
+            // Wait for the Gyro sensor to be calibrated
         }
         startingRotation =ReturnPositiveRotation();
 
@@ -77,7 +83,7 @@ public class RotationDetector {
      * @param targetRotation : (int) given angle
      * @return : true if the targetRotation has been reached, otherwise false
      */
-    public boolean WaitForRotation(int targetRotation){
+    public boolean WaitForRotation(double targetRotation){
         if(AngleCorrection(targetRotation) == AngleCorrection((int)ReturnPositiveRotation()))
         {
             return false;
@@ -111,12 +117,7 @@ public class RotationDetector {
         return 1;
     }
 
-    /**
-     * This method makes sure that the robot slowly stops when it reaches its desire angle
-     * @param targetRotation
-     * @return (double) [-1, 1] dcmotor power
-     */
-    public double MotorPower(int targetRotation){
+    /*public double MotorPower(int targetRotation){
         //calculam distanta
         int modifier= DirectionCalculator(targetRotation);
         double firstDistance = Math.abs(targetRotation-(int)ReturnPositiveRotation());
@@ -146,20 +147,37 @@ public class RotationDetector {
         {
             return 0.4*modifier;
         }
-    }
+    }*/
+
+
+
+     /**
+     * This method makes sure that the robot slowly stops when it reaches its desire angle
+     * @param targetRotation
+      * * @return (double) [-1, 1] dcmotor power
+     */
+     public double MotorPower(double targetRotation){
+         double outputPower = MotorPID.calculate(targetRotation);
+
+         return outputPower;
+
+     }
+
+
+
 
     /**
      * This method corrects an angle that's above 360 degrees.
      * @param angle : (int) given angle
      * @return : (int) corrected angle
      */
-    public int AngleCorrection(int angle){
-        int auxAngle=angle;
-        while(auxAngle<0){
-            auxAngle=auxAngle+360;
+    public double AngleCorrection(double angle){
+        double auxAngle=angle;
+        while(auxAngle < 0.0){
+            auxAngle = auxAngle + 360.0;
         }
-        while(auxAngle>=360){
-            auxAngle=auxAngle-360;
+        while(auxAngle >= 360.0){
+            auxAngle = auxAngle - 360.0;
         }
         return auxAngle;
     }
