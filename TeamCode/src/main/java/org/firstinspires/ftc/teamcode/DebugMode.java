@@ -1,31 +1,28 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@TeleOp(name = "1 Manual Left", group = "Match")
-public class OfficialManualModeLeft extends LinearOpMode {
-    public String workingMode = "red_left";
+@TeleOp(name = "3 --- DEBUG MODE ---", group = "Match")
+public class DebugMode extends LinearOpMode {
+    public String workingMode = "red_right";
     public boolean autoMode = false;
     public boolean useCamera = false;
-    public boolean debugMode = false;
+    public boolean debugMode = true;
 
     public int defaultParkingPosition = 3;
     public double inchesOneSquare = 26;
@@ -42,7 +39,7 @@ public class OfficialManualModeLeft extends LinearOpMode {
     public double perStepSizeShoulder = 0.002;
     public double perStepSizeElbow = 0.002;
     public double perStepSizeGrip = 0.01;
-    public boolean enablePad1Control = false;
+    public boolean enablePad1Control = true;
     public int minTimeOfTwoOperations = 20; //milliseconds, 0.05 second
     public double ratioPad2WheelSpeed = 0.1; //pad2 can control wheel at the ratio speed of pad1, 0 means pad2 stick can't wheels, 1 means same as pad1
 
@@ -80,7 +77,7 @@ public class OfficialManualModeLeft extends LinearOpMode {
     public boolean prepareForManual = true;
     public boolean autoE2E = false;
     public int stepsShoulderFromMinToMax = (int) ((shoulderMaxPosition - shoulderMinTriplePosition) / perStepSizeShoulder) + 1;
-    public boolean platformCheckShoulderPosition = true;
+    public boolean platformCheckShoulderPosition = false;
     // "wheel_forward @10 @0.5", wheel_back 10inch and speed is 0.5
     // wheel_left/wheel_right/wheel_back
     // platform and shoulder elbow remain still, position / direction not changed
@@ -126,17 +123,17 @@ public class OfficialManualModeLeft extends LinearOpMode {
             "shoulder_up @10 @0.2",
             "both_max",
             "platform_default",
-            "wheel_forward @16 @0.2",
+            "wheel_forward @16 @0.3",
             "ai_get_parkposition",
-            "wheel_forward @23 @0.2",
+            "wheel_forward @23 @0.3",
             "sleep @100",
-            "wheel_back @13 @0.2",
+            "wheel_back @13 @0.3",
             "nextstep @presetActionsStep2"
     ));
 
     public ArrayList<String> presetActionsStep2_left = new ArrayList<String>(Arrays.asList(
             "wheel_right @31 @0.2",
-            "wheel_forward @3 @0.2",
+            "wheel_forward @4 @0.2",
             "platform_right @25 @0.2",
             //"wheel_turn_right @8.6 @0.1",
             //"wheel_forward @1 @0.1",
@@ -147,7 +144,7 @@ public class OfficialManualModeLeft extends LinearOpMode {
             //"wheel_turn_left @8.6 @0.1",
             "platform_left @25 @0.2",
             "park_ai_position",
-            "wheel_back @3 @0.2",
+            "wheel_back @4 @0.2",
             "sleep @100",
             //"wheel_turn_right @16.5 @0.2",
             "both_default"
@@ -155,9 +152,9 @@ public class OfficialManualModeLeft extends LinearOpMode {
     ));
 
     public ArrayList<String> presetActionsStep2_right = new ArrayList<String>(Arrays.asList(
-            "wheel_left @31.5 @0.2",
-            "wheel_forward @3 @0.2",
-            "platform_left @25 @0.2",
+            "wheel_left @30.5 @0.25",
+            "wheel_forward @4 @0.2",
+            "platform_left @23 @0.2",
             //"wheel_turn_left @7 @0.1",
             //"wheel_forward @1 @0.1",
             "sleep @500",
@@ -165,13 +162,13 @@ public class OfficialManualModeLeft extends LinearOpMode {
             "sleep @500",
             //"wheel_back @1 @0.1",
             //"wheel_turn_right @7 @0.1",
-            "platform_right @25 @0.2",
+            "platform_right @23 @0.2",
             "park_ai_position",
-            "wheel_back @2 @0.2",
+            "wheel_back @4 @0.2",
             "sleep @100",
-            //"wheel_turn_left @16.5 @0.2",
-            "both_default",
-            "sleep @5000"
+            "wheel_turn_left @16.5 @0.2",
+            "both_default"
+            //"elbow_up @2 @0.2"
     ));
 
     public ArrayList<String> presetActionsAutoE2E = new ArrayList<String>(Arrays.asList(
@@ -290,7 +287,7 @@ public class OfficialManualModeLeft extends LinearOpMode {
         // Reverse left motors if you are using NeveRests
         _fl.setDirection(DcMotorSimple.Direction.FORWARD);
         _fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        _rl.setDirection(DcMotorSimple.Direction.FORWARD);
+        _rl.setDirection(DcMotorSimple.Direction.REVERSE);
         _rr.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // RUN_USING_ENCODER, RUN_WITHOUT_ENCODER, RUN_TO_POSITION, STOP_AND_RESET_ENCODER
@@ -1448,26 +1445,26 @@ public class OfficialManualModeLeft extends LinearOpMode {
         if (workingMode.equals("red_left")) {
             operation = "wheel_left";
             if (parkingPosition == 3) {
-                distance = 3;
+                distance = 6;
             }
             else if (parkingPosition == 2) {
                 distance += 1 * inchesOneSquare;
             }
             else if (parkingPosition == 1) {
-                distance += 2 * inchesOneSquare + 2;
+                distance += 2 * inchesOneSquare + 4;
             }
         }
         // begin in red right column 1
         else if (workingMode.equals("red_right")) {
             operation = "wheel_right";
             if (parkingPosition == 3) {
-                distance += 2 * inchesOneSquare + 2;
+                distance += 2 * inchesOneSquare + 4;
             }
             else if (parkingPosition == 2) {
                 distance += 1 * inchesOneSquare;
             }
             else if (parkingPosition == 1) {
-                distance = 3;
+                distance = 6;
             }
         }
         // begin in blue left column 1

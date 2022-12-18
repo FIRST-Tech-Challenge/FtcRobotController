@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 @Autonomous(name = "red_left", group = "Match")
 public class Autonomous_Red_Left extends LinearOpMode {
     public String workingMode = "red_left";
@@ -41,13 +40,13 @@ public class Autonomous_Red_Left extends LinearOpMode {
     private ElapsedTime recentActionTime = new ElapsedTime();
     public double perStepSizePlatform = 0.002;
     public double perStepSizeShoulder = 0.002;
-    public double perStepSizeElbow = 0.01;
+    public double perStepSizeElbow = 0.002;
     public double perStepSizeGrip = 0.01;
     public boolean enablePad1Control = false;
     public int minTimeOfTwoOperations = 20; //milliseconds, 0.05 second
     public double ratioPad2WheelSpeed = 0.1; //pad2 can control wheel at the ratio speed of pad1, 0 means pad2 stick can't wheels, 1 means same as pad1
 
-    public double shoulderDefaultPosition = 0.531;
+    public double shoulderDefaultPosition = 0.536;
     public double shoulderMaxPosition = 0.708; // 0.72 vertical
     public double shoulderMiddlePosition = 0.63;
     public double shoulderPlatformSafeMin = 0.59;
@@ -61,12 +60,12 @@ public class Autonomous_Red_Left extends LinearOpMode {
     public double elbowMinTriplePosition = 0.505;
     public double elbowDefaultPosition = 0.9; //0.85;
     public double platformMinPosition = 0.05 ;
-    public double platformDefaultPosition = 0.168 ;
+    public double platformDefaultPosition = 0.15667 ;
     public double platformMaxPosition = 0.3;
     public double platformMinPositionTriple_Right = 0.25;
     public double platformMaxPositionTriple_Right = 0.063;
-    public double platformMinPositionTriple_Left = 0.063;
-    public double platformMaxPositionTriple_Left = 0.25;
+    public double platformMinPositionTriple_Left = 0.05667;
+    public double platformMaxPositionTriple_Left = 0.23889;
     public double gripMinPosition = 0.178;
     public double gripMaxPosition = 0.69;
     public boolean elbowSlowMotionInitial = true;
@@ -81,6 +80,7 @@ public class Autonomous_Red_Left extends LinearOpMode {
     public boolean prepareForManual = true;
     public boolean autoE2E = false;
     public int stepsShoulderFromMinToMax = (int) ((shoulderMaxPosition - shoulderMinTriplePosition) / perStepSizeShoulder) + 1;
+    public boolean platformCheckShoulderPosition = true;
     // "wheel_forward @10 @0.5", wheel_back 10inch and speed is 0.5
     // wheel_left/wheel_right/wheel_back
     // platform and shoulder elbow remain still, position / direction not changed
@@ -126,68 +126,59 @@ public class Autonomous_Red_Left extends LinearOpMode {
             "shoulder_up @10 @0.2",
             "both_max",
             "platform_default",
-            "wheel_forward @16 @0.3",
+            "wheel_forward @16 @0.2",
             "ai_get_parkposition",
-            "wheel_forward @23 @0.3",
+            "wheel_forward @23 @0.2",
             "sleep @100",
-            "wheel_back @9 @0.3",
-            "nextstep @presetActionsStep2"
-    ));
-
-    public ArrayList<String> presetActionsStep1_bak = new ArrayList<String>(Arrays.asList(
-            "grip_min",
-            "sleep @500",
-            "both_default",
-            "sleep @1000",
-            "shoulder_up @10 @0.2",
-            "both_max",
-            "wheel_forward @16 @0.3",
-            "ai_get_parkposition",
-            "wheel_forward @23 @0.3",
-            "sleep @100",
-            "wheel_back @11 @0.3",
+            "wheel_back @13 @0.2",
             "nextstep @presetActionsStep2"
     ));
 
     public ArrayList<String> presetActionsStep2_left = new ArrayList<String>(Arrays.asList(
             "wheel_right @31 @0.2",
-            "wheel_turn_right @8.6 @0.1",
+            "wheel_forward @3 @0.2",
+            "platform_right @25 @0.2",
+            //"wheel_turn_right @8.6 @0.1",
             //"wheel_forward @1 @0.1",
             "sleep @500",
             "grip_max",
             "sleep @500",
             //"wheel_back @1 @0.1",
-            "wheel_turn_left @8.6 @0.1",
+            //"wheel_turn_left @8.6 @0.1",
+            "platform_left @25 @0.2",
             "park_ai_position",
-            "wheel_back @4 @0.2",
+            "wheel_back @3 @0.2",
             "sleep @100",
             //"wheel_turn_right @16.5 @0.2",
-            "both_default"
-            //"elbow_up @2 @0.2"
+            "both_default",
+            "wheel_back @1 @0.2"
     ));
 
     public ArrayList<String> presetActionsStep2_right = new ArrayList<String>(Arrays.asList(
-            "wheel_left @30.5 @0.25",
-            "wheel_turn_left @7 @0.1",
+            "wheel_left @31.5 @0.2",
+            "wheel_forward @3 @0.2",
+            "platform_left @25 @0.2",
+            //"wheel_turn_left @7 @0.1",
             //"wheel_forward @1 @0.1",
             "sleep @500",
             "grip_max",
             "sleep @500",
             //"wheel_back @1 @0.1",
-            "wheel_turn_right @7 @0.1",
+            //"wheel_turn_right @7 @0.1",
+            "platform_right @25 @0.2",
             "park_ai_position",
-            "wheel_back @4 @0.2",
+            "wheel_back @2 @0.2",
             "sleep @100",
-            "wheel_turn_left @16.5 @0.2",
-            "both_default"
-            //"elbow_up @2 @0.2"
+            //"wheel_turn_left @16.5 @0.2",
+            "both_default",
+            "wheel_back @1 @0.2"
     ));
 
     public ArrayList<String> presetActionsAutoE2E = new ArrayList<String>(Arrays.asList(
             "triple_min",
             "sleep @500",
             "grip_min",
-            "sleep @500",
+            "sleep @800",
             "triple_max",
             "sleep @1500",
             "grip_max",
@@ -234,7 +225,7 @@ public class Autonomous_Red_Left extends LinearOpMode {
             "triple_middle"
     ));
     public ArrayList<String> presetActionsPad2X_2 = new ArrayList<String>(Arrays.asList(
-            //"park_ai_position"
+            "platform_default"
     ));
     public ArrayList<String> presetActionsPad2Y_2 = new ArrayList<String>(Arrays.asList(
             "both_max"
@@ -299,7 +290,7 @@ public class Autonomous_Red_Left extends LinearOpMode {
         // Reverse left motors if you are using NeveRests
         _fl.setDirection(DcMotorSimple.Direction.FORWARD);
         _fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        _rl.setDirection(DcMotorSimple.Direction.REVERSE);
+        _rl.setDirection(DcMotorSimple.Direction.FORWARD);
         _rr.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // RUN_USING_ENCODER, RUN_WITHOUT_ENCODER, RUN_TO_POSITION, STOP_AND_RESET_ENCODER
@@ -686,7 +677,7 @@ public class Autonomous_Red_Left extends LinearOpMode {
         }
         logAction(actionName);
         if (actionName.equals("platform_left")) {
-            if (_shoulder.getPosition() < shoulderPlatformSafeMin)
+            if (platformCheckShoulderPosition && _shoulder.getPosition() < shoulderPlatformSafeMin)
                 return;
             double targetPosition = _platform.getPosition() + perStepSizePlatform;
             if (targetPosition > platformMaxPosition) {
@@ -695,7 +686,7 @@ public class Autonomous_Red_Left extends LinearOpMode {
             _platform.setPosition(targetPosition);
         }
         else if (actionName.equals("platform_right")) {
-            if (_shoulder.getPosition() < shoulderPlatformSafeMin)
+            if (platformCheckShoulderPosition && _shoulder.getPosition() < shoulderPlatformSafeMin)
                 return;
             double targetPosition = _platform.getPosition() - perStepSizePlatform;
             if (targetPosition < platformMinPosition) {
@@ -704,7 +695,7 @@ public class Autonomous_Red_Left extends LinearOpMode {
             _platform.setPosition(targetPosition);
         }
         else if (actionName.equals("platform_default")) {
-            if (_shoulder.getPosition() < shoulderPlatformSafeMin)
+            if (platformCheckShoulderPosition && _shoulder.getPosition() < shoulderPlatformSafeMin)
                 return;
             _platform.setPosition(platformDefaultPosition);
         }
@@ -1457,7 +1448,7 @@ public class Autonomous_Red_Left extends LinearOpMode {
         if (workingMode.equals("red_left")) {
             operation = "wheel_left";
             if (parkingPosition == 3) {
-                distance = 6;
+                distance = 3;
             }
             else if (parkingPosition == 2) {
                 distance += 1 * inchesOneSquare;
@@ -1476,7 +1467,7 @@ public class Autonomous_Red_Left extends LinearOpMode {
                 distance += 1 * inchesOneSquare;
             }
             else if (parkingPosition == 1) {
-                distance = 6;
+                distance = 3;
             }
         }
         // begin in blue left column 1
