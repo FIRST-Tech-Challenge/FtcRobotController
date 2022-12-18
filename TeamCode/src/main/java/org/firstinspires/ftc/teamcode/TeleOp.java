@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.DriveForTest;
 import org.firstinspires.ftc.teamcode.util.IntegratedLocalizerIMU;
 import org.firstinspires.ftc.teamcode.util.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.util.TowerController;
-import org.firstinspires.ftc.teamcode.util.UBarThread;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="ClobberHope", group="Basic drive")
 public class TeleOp extends OpMode

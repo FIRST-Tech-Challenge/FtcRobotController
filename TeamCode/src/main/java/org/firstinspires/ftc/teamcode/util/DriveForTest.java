@@ -61,11 +61,11 @@ public class DriveForTest
 
         if (gamepad.right_bumper)
         {
-            speedFactor = 0.5;
+            speedFactor = 1;
         }
         else
         {
-            speedFactor = 1;
+            speedFactor = 0.5;
         }
 
         leftFrontPower = Range.clip(drive + turn + strafe, -speedFactor, speedFactor);
