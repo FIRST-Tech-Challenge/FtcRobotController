@@ -15,7 +15,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import java.lang.Math.*;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "Auto 2022", group = "Linear Opmode")
 //@Disabled
@@ -53,6 +55,8 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
     public double corrections = 1.0;
     public int count = 0;
 
+    public boolean hasMoved = false;
+
     //Wheel constants
     public double maxVelocity = 340 * 537.6; //for AndyMark NeveRest 20 motor when using .setVelocity()
     public double rpm = 340;
@@ -77,12 +81,13 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
 
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
+
         waitForStart();
         runtime.reset();
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                /*if (tfod != null) {
+                if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -103,14 +108,12 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
                             telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
                         }
                         telemetry.update();
-                        if (updatedRecognitions.size() > 0) {
-                            //change move to zone to account for positioning
+                        if (updatedRecognitions.size() > 0 && !hasMoved) {
                             moveToZone(updatedRecognitions.get(0).getLabel(), count);
+                            hasMoved = true;
                         }
                     }
-                }*/
-                turnNinety(true);
-                turnNinety(false);
+                }
             }
         }
     }
@@ -136,18 +139,19 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         telemetry.addData("Detected:",signal);
         double timeAdjustment = getDistance(radius,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
         if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
-            strafeVelo(true,.75,oneFootTime+timeAdjustment);
-            setVelo(true,.75,oneFootTime);
+            setVelo(true,.75,oneFootTime*3.7);
+            turnNinety(false);
+            setVelo(true,.75,oneFootTime*3.7);
         }
 
         if(signal.equals("2 Bulb")){ // go to location 2 (return to start and forward)
-            strafeVelo(true,.75,timeAdjustment);
-            setVelo(true,.75,oneFootTime);
+            setVelo(true,.75,oneFootTime*3.7);
         }
 
         if(signal.equals("3 Panel")){ // go to location 3 (right and forward)
-            strafeVelo(false,.75,oneFootTime-timeAdjustment);
-            setVelo(true,.75,oneFootTime);
+            setVelo(true,.75,oneFootTime*3.7);
+            turnNinety(true);
+            setVelo(true,.75,oneFootTime*3.7);
         }
     }
 
@@ -158,10 +162,10 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         rightDrive = hardwareMap.get(DcMotorEx.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotorEx.class, "right_back_drive");
         // Makes all motors go forward, if they don't, switch this stuff
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
     }
 
 
@@ -240,22 +244,37 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         // Without this, data retrieving from the IMU throws an exception
         imu.initialize(parameters);
 
-        double newAngle = -imu.getAngularOrientation().firstAngle;
-        double originalAngle = newAngle;
+        double originalAngle = -imu.getAngularOrientation().firstAngle + .90;
+
+        double time = .7;
+        runtime.reset();
+
+        /*if(CW){
+            while(opModeIsActive() && runtime.seconds() < time){
+                leftVelo(.75);
+                rightVelo(-.75);
+            }
+        }else{
+            while(opModeIsActive() && runtime.seconds() < time){
+                leftVelo(-.75);
+                rightVelo(.75);
+            }
+        }
+        if(time >= runtime.seconds()){
+            motorsOff();
+        }*/
 
         if(CW){
             //left = +; right = -
-            while(opModeIsActive() && newAngle > originalAngle - 90) {
+            while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + .90 > originalAngle - .9) {
                 leftVelo(.75);
                 rightVelo(-.75);
-                newAngle = -imu.getAngularOrientation().firstAngle;
             }
         }else{
             //left = -; right = +
-            while(opModeIsActive() && newAngle < originalAngle + 90) {
+            while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + .90 < originalAngle + .9) {
                 leftVelo(-.75);
                 rightVelo(.75);
-                newAngle = -imu.getAngularOrientation().firstAngle;
             }
         }
         motorsOff();
