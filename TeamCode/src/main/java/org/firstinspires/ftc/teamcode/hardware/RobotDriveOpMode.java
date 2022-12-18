@@ -18,7 +18,9 @@ public class RobotDriveOpMode extends LinearOpMode {
 //        elevator = new Elevator(hardwareMap, telemetry);
         TevelRobot tevelRobot = new TevelRobot(this);
         double power;
-        boolean rightBumper = false;
+        boolean bumper = false;
+//        boolean leftBumper = false;
+//        boolean rightBumper = false;
         boolean yButton = false;
        tevelRobot.init();
 
@@ -57,8 +59,8 @@ public class RobotDriveOpMode extends LinearOpMode {
             telemetry.addData("position", tevelRobot.elevator.elevatorMotor.getCurrentPosition());
             telemetry.addData("power" , power);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("gamepad2.rightBumper: ", gamepad2.right_bumper);
-            telemetry.addData("rightBumper: ", rightBumper);
+           // telemetry.addData("gamepad2.rightBumper: ", gamepad2.right_bumper);
+            telemetry.addData("rightBumper: ",bumper);
             if(gamepad2.b){
                 tevelRobot.elevator.setElevatorPosition(tevelRobot.elevator.firstFloor);
             }
@@ -71,15 +73,25 @@ public class RobotDriveOpMode extends LinearOpMode {
             if (gamepad2.dpad_down){
                 tevelRobot.elevator.setElevatorPosition(tevelRobot.elevator.groundFloor);
             }
-            if (rightBumper == false && gamepad2.right_bumper) {
+          //  bumper = gamepad2.right_bumper || gamepad2.left_bumper;
+
+            if (bumper == false && (gamepad2.right_bumper || gamepad2.left_bumper )) {
                 gamepad2.rumble(1000);
                 tevelRobot.getElevator().moveHands();
+
             }
+//            if (bumper == false && gamepad2.left_bumper){
+//                tevelRobot.getElevator().moveHands();
+//                gamepad2.rumble(1000);}
+//
+//
+//                {
+//            rightBumper = gamepad2.right_bumper;
+            bumper = gamepad2.right_bumper || gamepad2.left_bumper;
             if (yButton == false && gamepad2.y) {
                 tevelRobot.elevator.moveMainServo();
             }
             yButton = gamepad2.y;
-            rightBumper = gamepad2.right_bumper;
 
 
             yButton = gamepad2.y;

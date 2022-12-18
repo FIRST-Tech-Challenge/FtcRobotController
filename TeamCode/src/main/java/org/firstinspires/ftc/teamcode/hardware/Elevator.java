@@ -34,9 +34,9 @@ public class Elevator {
     private Telemetry telemetry;
 
 
-    public final int firstFloor = -1658;
-    public final int secondFloor = -2837;
-    public final int thirdFloor = -3967;
+    public final int firstFloor = -1300;
+    public final int secondFloor = -3137;
+    public final int thirdFloor = -4400;
     public final int groundFloor = 0;
 
     public int currentFloor = groundFloor;
@@ -97,7 +97,7 @@ public class Elevator {
         telemetry.addData("Servoposition", ServoPosition);
         if (clawState) {
             leftServo.setPosition(1);
-            rightServo.setPosition(0.5);
+            rightServo.setPosition(0);
             clawState = false;
         }
         else {
@@ -118,9 +118,9 @@ public class Elevator {
         } else {
             elevatorMotor.setPower(power * ELEVATOR_MOTOR_SPEED);
         }
-//        if (currentPosition <0 && power<0)
-//            elevatorMotor.setPower(0);
-//        telemetry.addData("position", currentPosition);
+        if (currentPosition <0 && power<0)
+            elevatorMotor.setPower(0);
+        telemetry.addData("position", currentPosition);
     }
     public void setElevatorPosition(int elevetorPosition){
         currentFloor = elevetorPosition;
@@ -131,7 +131,7 @@ public class Elevator {
 
 public void setElevetorDown(boolean isDown) {
         if(isDown && groundFloor!= currentFloor){
-            elevatorMotor.setTargetPosition(currentFloor + 400);
+            elevatorMotor.setTargetPosition(currentFloor + 700);
         }
         else{
             elevatorMotor.setTargetPosition(currentFloor);
