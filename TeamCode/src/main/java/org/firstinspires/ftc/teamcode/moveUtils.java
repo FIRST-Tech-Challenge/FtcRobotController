@@ -27,15 +27,15 @@ public class moveUtils {
 
     // Things specific to this class
     private static final float TURN_SPEED_HIGH = 1f;
-    private static final float TURN_SPEED_LOW = 0.15f;
+    private static final float TURN_SPEED_LOW = 0.1f; //original = 0.15f
     private static final float TURN_HIGH_ANGLE = 45.0f;
-    private static final float TURN_LOW_ANGLE = 5.0f;
+    private static final float TURN_LOW_ANGLE = 3.0f; //original = 5.0f
 
     static final float EncoderTicks = 537.6f;
     static final float WHEEL_DIAMETER_INCHES = 4.0f;
-    static final float REVS_PER_INCH_MOD = 50f/49f;
+    static final float REVS_PER_INCH_MOD = 50f/72f;
     static final float COUNTS_PER_INCH = (EncoderTicks * REVS_PER_INCH_MOD) / (3.1416f * WHEEL_DIAMETER_INCHES);
-    static final float SCALE_ADJUST_FWD = 3.0f;
+    static final float SCALE_ADJUST_FWD = 5.0f;
 
     static final float STRAFE_MOD = 18f;
     static final float MAX_STRAFE_SPEED = 1.0f;
@@ -55,7 +55,8 @@ public class moveUtils {
         if (desiredHeading < -180) {
             desiredHeading += 360;
         }
-        turnToHeading();
+        //turnToHeading();
+        errorCorrect();
     }
 
     public static void turnCCW(float turnDegrees) {
@@ -63,7 +64,43 @@ public class moveUtils {
         if (desiredHeading > 180) {
             desiredHeading -= 360;
         }
-        turnToHeading();
+        //turnToHeading();
+        errorCorrect();
+    }
+
+    public static void errorCorrect() {
+        boolean isCW = deltaHeading() > 0;
+        //float desiredTurnSpeed = TURN_SPEED_LOW;
+        if (isCW) {
+
+            if (deltaHeading() > TURN_LOW_ANGLE) {
+                setAllMotorsTurnPower(TURN_SPEED_LOW);
+                while (deltaHeading() > TURN_LOW_ANGLE) {
+
+                  /*  if(deltaHeading() > 30){
+                 //       desiredTurnSpeed += 0.01f;
+                        if (desiredTurnSpeed>TURN_SPEED_HIGH){desiredTurnSpeed=TURN_SPEED_HIGH;}
+                        setAllMotorsTurnPower(desiredTurnSpeed);
+                    }
+                    else{
+                        desiredTurnSpeed = TURN_SPEED_LOW;
+                        if (desiredTurnSpeed<TURN_SPEED_LOW){desiredTurnSpeed=TURN_SPEED_LOW;}
+                        setAllMotorsTurnPower(desiredTurnSpeed);
+                    }*/
+
+                }
+
+
+            }
+        } else { // Going CCW
+            // 2nd stage - low power fine heading.
+            if (deltaHeading() < -TURN_LOW_ANGLE) {
+                setAllMotorsTurnPower(-TURN_SPEED_LOW);
+                while (deltaHeading() < -TURN_LOW_ANGLE) {
+                }
+            }
+        }
+        resetEncoders();
     }
 
     public static void turnToHeading() {
