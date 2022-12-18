@@ -3,10 +3,11 @@ package org.firstinspires.ftc.teamcodekt.opmodes.auto
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import ftc.rouge.blacksmith.Anvil
 import ftc.rouge.blacksmith.Scheduler
+import ftc.rouge.blacksmith.units.DistanceUnit
+import ftc.rouge.blacksmith.util.toIn
+import ftc.rouge.blacksmith.util.toRad
 import org.firstinspires.ftc.teamcode.AutoData.*
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
-import org.firstinspires.ftc.teamcodekt.util.toIn
-import org.firstinspires.ftc.teamcodekt.util.toRad
 
 @Suppress("RemoveRedundantQualifierName")
 class RougeRightAuto : RougeBaseAuto() {
@@ -27,6 +28,8 @@ class RougeRightAuto : RougeBaseAuto() {
         signalZone = waitForStartWithVision()
         telemetry.addData("Final signal zone", signalZone)
         telemetry.update()
+
+        Anvil.setUnits(distanceUnit = DistanceUnit.CM)
 
         val startPose = Pose2d(91.toIn(), (-159).toIn(), 90.toRad())
         val startTraj = preload(startPose)
@@ -56,7 +59,7 @@ class RougeRightAuto : RougeBaseAuto() {
 
             .splineTo(DEPOSIT_X + .75, DEPOSIT_Y + .5, DEPOSIT_ANGLE - 3)
 
-            .thenRunAsync(key = 0)
+            .thenRunPreformed(key = 0)
 
 
     private fun deposit(startPose: Pose2d): Anvil =
@@ -73,7 +76,7 @@ class RougeRightAuto : RougeBaseAuto() {
 
             .waitTime(DEPOSIT_DELAY + .05)
 
-            .thenRunAsync(key = 0)
+            .thenRunPreformed(key = 0)
 
 
     private fun intakeCycle(startPose: Pose2d): Anvil =
@@ -93,7 +96,7 @@ class RougeRightAuto : RougeBaseAuto() {
                 splineTo(INTAKE_X + 0.325, INTAKE_Y + 2, 0.0)
             }
 
-            .thenRunAsync(key = 0)
+            .thenRunPreformed(key = 0)
 
 
     private fun intake(startPose: Pose2d): Anvil =
@@ -115,7 +118,7 @@ class RougeRightAuto : RougeBaseAuto() {
 
             .waitTime(INTAKE_DELAY + 0.25)
 
-            .thenRunAsync(key = 0)
+            .thenRunPreformed(key = 0)
 
 
     private fun depositCycle(startPose: Pose2d): Anvil =
@@ -126,15 +129,10 @@ class RougeRightAuto : RougeBaseAuto() {
             .splineTo(
                 DEPOSIT_X + 1.125,
                 DEPOSIT_Y + 0.625,
-                DEPOSIT_ANGLE + 2 + DEPOSIT_ANGLE_ADJUSTMENT * cycleNumber
+                DEPOSIT_ANGLE + 2
             )
 
-            .addTemporalMarker {
-                cycleNumber++
-            }
-
-            .thenRunAsyncIf(key = 0) { cycleNumber <= MAX_CYCLES }
-            .thenRunAsyncIf(key = 1) { cycleNumber > MAX_CYCLES }
+            .thenBranchPreformed(trueKey = 0, elseKey = 1) { cycleNumber++ < MAX_CYCLES }
 
 
     private fun parkPrep(startPose: Pose2d): Anvil =
@@ -160,7 +158,7 @@ class RougeRightAuto : RougeBaseAuto() {
                 bot.claw.close()
             }
 
-            .thenRunAsync(key = 0)
+            .thenRunPreformed(key = 0)
 
 
     private fun park(startPose: Pose2d): Anvil =

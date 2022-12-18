@@ -35,8 +35,9 @@ dependencies {
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation "io.mockk:mockk:1.13.3"
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 

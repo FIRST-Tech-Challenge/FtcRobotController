@@ -1,11 +1,13 @@
 package ftc.rouge.blacksmith.listeners
 
 import ftc.rouge.blacksmith.Scheduler
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ListenerTest {
     private val hookedListeners = Scheduler::class.java.getDeclaredField("listeners").let {
         it.isAccessible = true
@@ -14,7 +16,7 @@ internal class ListenerTest {
 
     @BeforeEach
     fun setUp() {
-        hookedListeners.clear()
+        Scheduler.reset()
     }
 
     @Test
@@ -59,17 +61,23 @@ internal class ListenerTest {
     fun `subscribing to listener hooks it on the first time`() {
         val listener = Listener { true }
 
-        assertEquals(0, hookedListeners.size)
+        val initialSize = hookedListeners.size
 
         listener.whileHigh { }
-        assertEquals(1, hookedListeners.size)
+        val firstSize = hookedListeners.size
 
         listener.whileHigh { }
-        assertEquals(1, hookedListeners.size)
+        val secondSize = hookedListeners.size
+
+        assertAll(
+            { assertEquals(0, initialSize) },
+            { assertEquals(1, firstSize) },
+            { assertEquals(1, secondSize) }
+        )
     }
 
     @Test
-    fun `destroying listener clears it's added actions`() {
+    fun `destroying listener clears its added actions`() {
         val listener = Listener { true }
         listener.onRise {}
 
@@ -78,9 +86,14 @@ internal class ListenerTest {
             field.get(listener) as MutableMap<*, *>
         }
 
-        assertEquals(1, actions.size)
+        val initialSize = actions.size
         listener.destroy()
-        assertEquals(0, actions.size)
+        val clearedSize = actions.size
+
+        assertAll(
+            { assertEquals(1, initialSize) },
+            { assertEquals(0, clearedSize) }
+        )
     }
 
     @Test
@@ -88,9 +101,14 @@ internal class ListenerTest {
         val listener = Listener { true }
 
         listener.onRise {}
-        assertEquals(1, hookedListeners.size)
+        val initialSize = hookedListeners.size
 
         listener.destroy()
-        assertEquals(0, hookedListeners.size)
+        val clearedSize = hookedListeners.size
+
+        assertAll(
+            { assertEquals(1, initialSize) },
+            { assertEquals(0, clearedSize) }
+        )
     }
 }

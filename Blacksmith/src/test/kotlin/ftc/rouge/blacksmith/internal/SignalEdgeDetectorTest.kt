@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import kotlin.test.assertTrue
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class SignalEdgeDetectorTest {
     private var boolean = false
     private val detector = SignalEdgeDetector { boolean }

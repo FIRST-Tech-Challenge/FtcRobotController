@@ -210,4 +210,9 @@ object Scheduler {
     fun unhookListener(listener: Listener) {
         listeners -= listener
     }
+
+    @JvmStatic
+    fun reset() {
+        listeners.clear()
+    }
 }

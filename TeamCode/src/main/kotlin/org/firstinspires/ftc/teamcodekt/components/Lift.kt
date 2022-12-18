@@ -3,12 +3,10 @@ package org.firstinspires.ftc.teamcodekt.components
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.controller.PIDFController
 import com.arcrobotics.ftclib.hardware.motors.Motor
-import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rouge.blacksmith.util.clamp
 import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
-import org.firstinspires.ftc.teamcodekt.util.clamp
 
 @Config
 object LiftConfig {

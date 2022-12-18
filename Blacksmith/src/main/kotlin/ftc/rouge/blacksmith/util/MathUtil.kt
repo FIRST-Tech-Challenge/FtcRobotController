@@ -213,5 +213,5 @@ fun maxMagnitude(vararg xs: Number) = xs.maxByOrNull { it.toDouble().absoluteVal
  * @return `x` if it is not within `deadzone` of `origin`, otherwise `origin`
  */
 @JvmOverloads
-fun withDeadzone(x: Number, deadzone: Number, origin: Number = 0.0) =
-    if (abs(x.toDouble() - origin.toDouble()) < abs(deadzone.toDouble())) origin.toDouble() else x.toDouble()
+fun Number.withDeadzone(deadzone: Number, origin: Number = 0.0) =
+    if (abs(this.toDouble() - origin.toDouble()) < abs(deadzone.toDouble())) origin.toDouble() else this.toDouble()

@@ -156,7 +156,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          */
         @JvmStatic
         fun startAsyncAutoWith(anvil: Anvil) {
-            anvil.setPoseEstimate().runAsync()
+            anvil.setPoseEstimate().run()
         }
 
         /**
@@ -164,7 +164,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          *
          * Defaults to [DistanceUnit.INCHES]
          */
-        var distanceUnit = DistanceUnit.INCHES
+        var distanceUnit = DistanceUnit.CM
 
         /**
          * Allows you to change the units of angle measurements in the builder API.
@@ -184,7 +184,11 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          * Changes all of the units in the builder API to the given units.
          */
         @JvmStatic
-        fun setUnits(distanceUnit: DistanceUnit, angleUnit: AngleUnit, timeUnit: TimeUnit) {
+        fun setUnits(
+            distanceUnit: DistanceUnit = DistanceUnit.CM,
+            angleUnit: AngleUnit = AngleUnit.RADIANS,
+            timeUnit: TimeUnit = TimeUnit.SECONDS,
+        ) {
             this.distanceUnit = distanceUnit
             this.angleUnit = angleUnit
             this.timeUnit = timeUnit
@@ -271,8 +275,16 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         builderProxy.setReversed(reversed)
     }
 
+    fun setTangent(tangent: Double) = this.apply {
+        builderProxy.setTangent(tangent)
+    }
+
     fun addTrajectory(trajectory: Trajectory) = this.apply {
         builderProxy.addTrajectory(trajectory)
+    }
+
+    fun addTrajectory(trajectory: () -> Trajectory) = this.apply {
+        builderProxy.addTrajectory(trajectory())
     }
 
     // -- Markers --
@@ -308,7 +320,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      * Usage example:
      * ```
      * // Java:                        |   // Kotlin:
-     * anvil                            |   anvil
+     * anvil                           |   anvil
      *     .inReverse((builder) -> {   |       .inReverse {
      *         builder.splineTo(...);  |          splineTo(...)
      *     });                         |       }
@@ -328,13 +340,13 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      * // Java:
      * anvil
      *    .<TrajectorySequenceBuilder>rawBuilder((builder) -> {
-     *        builder.splineTo(...);
+     *        builder.setTangent(...);
      *    };
      *
      * // Kotlin:
      * anvil
      *     .withRawBuilder<TrajectorySequenceBuilder> {
-     *         splineTo(...)
+     *         setTangent(...)
      *     }
      */
     @Suppress("UNCHECKED_CAST")
@@ -396,7 +408,9 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     /**
      * Preforming creates a new [TrajectorySequence] via [Anvil] in parallel to the current
      * trajectory using coroutines (like multi-threading). This allows for the on-the-fly creation
-     * of trajectories without slowing down your auto as it may take a bit to create.
+     * of trajectories without slowing down your auto as TrajectorySequences may take a notable
+     * amount of time to build, especially if they're long (as in they cover a not insignificant
+     * distance).
      *
      * A key (of [Any] type) is required to identify the trajectory. Using a key allows you to
      * preform multiple trajectories concurrently, and conditionally execute one later.
@@ -419,7 +433,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     inline fun preform(
         key: Any,
         crossinline nextTrajectory: (Pose2d) -> Anvil,
-        crossinline nextStartPose: () -> Pose2d = { builtTrajectory.invokeMethodRethrowing("end") }
+        crossinline nextStartPose: () -> Pose2d = ::getEndPose
     ): Anvil {
         addTemporalMarker {
             preformedTrajectories[key] = builderScope.async { nextTrajectory( nextStartPose() ).build() }
@@ -435,14 +449,16 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      * anvil
      *     .preform(key, ...)
      *     .forward(...)  // Goes forwards like normal
-     *     .thenRunAsync(key) // Runs the preformed trajectory after going forwards
+     *     .thenRunPreformed(key) // Runs the preformed trajectory after going forwards
      *     .back(...)  // This is ignored as the drive switches trajectories
      *
      */
-    fun thenRunAsync(
-        key: Any
+    @JvmOverloads
+    fun thenRunPreformed(
+        key: Any,
+        async: Boolean = true,
     ) = this.apply {
-        thenRunAsyncIf(key) { true }
+        thenRunPreformedIf(key, async) { true }
     }
 
     /**
@@ -456,12 +472,13 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      * anvil
      *     .preform(key, ...)
      *     .forward(...)  // Goes forwards like normal
-     *     .thenRunAsyncIf(key) { false}  // Doesn't go anything as the condition is false
+     *     .thenRunPreformedIf(key) { false }  // Doesn't go anything as the condition is false
      *     .back(...)  // Goes back like normal
-     *
      */
-    inline fun thenRunAsyncIf(
+    @JvmOverloads
+    inline fun thenRunPreformedIf(
         key: Any,
+        async: Boolean = true,
         crossinline predicate: () -> Boolean
     ): Anvil {
         addTemporalMarker {
@@ -469,13 +486,80 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
                 throw IllegalArgumentException("No preformed trajectory with key '$key'")
             }
 
+            var followerFunction: (Any) -> Unit = driveProxy::followTrajectorySequence
+
+            if (async) { // Have to do this or else the compiler crashes for some reason
+                followerFunction = driveProxy::followTrajectorySequenceAsync
+            }
+
+//            val followerFunction: (Any) -> Unit = if (async) {    Does anyone know why
+//                driveProxy::followTrajectorySequenceAsync         this crashes it?
+//            } else {
+//                driveProxy::followTrajectorySequence              org.jetbrains.kotlin.backend.common.BackendException:
+//            }                                                     Backend Internal error: Exception during psi2ir
+
+//            The root cause java.lang.NullPointerException was thrown at:
+//            org.jetbrains.kotlin.psi2ir.generators.ReflectionReferencesGenerator.generateCallableReference(ReflectionReferencesGenerator.kt:75)
+//            null: KtCallableReferenceExpression: driveProxy::followTrajectorySequenceAsync
+
             if (predicate()) {
-                driveProxy.followTrajectorySequenceAsync(
+                followerFunction(
                     runBlocking { preformedTrajectories[key]?.await() }!!
                 )
             }
         }
         return this
+    }
+
+    /**
+     * Syntactic sugar for:
+     * ```
+     * anvil
+     *     .thenRunPreformedIf(key) { condition }
+     *     .thenRunPreformedIf(key) { !condition }
+     */
+    @JvmOverloads
+    inline fun thenBranchPreformed(
+        trueKey: Any,
+        elseKey: Any,
+        async: Boolean = true,
+        crossinline predicate: () -> Boolean,
+    ) = this.apply {
+        thenRunPreformedIf(trueKey, async) { predicate() }
+        thenRunPreformed(elseKey, async)
+    }
+
+    @JvmOverloads
+    inline fun thenRun(
+        crossinline action: () -> Anvil,
+        async: Boolean = true,
+    ) = this.apply {
+        thenRunIf(action, async) { true }
+    }
+
+    @JvmOverloads
+    inline fun thenRunIf(
+        crossinline action: () -> Anvil,
+        async: Boolean = true,
+        crossinline predicate: () -> Boolean,
+    ): Anvil {
+        addTemporalMarker {
+            if (predicate()) {
+                action().run(async)
+            }
+        }
+        return this
+    }
+
+    @JvmOverloads
+    inline fun thenBranch(
+        crossinline trueAction: () -> Anvil,
+        crossinline elseAction: () -> Anvil,
+        async: Boolean = true,
+        crossinline predicate: () -> Boolean,
+    ) = this.apply {
+        thenRunIf(trueAction, async) { predicate() }
+        thenRun(elseAction, async)
     }
 
     /**
@@ -489,7 +573,12 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      * Builds the [Anvil] instance into a [TrajectorySequence], and then runs it asynchronously
      * with the given [SampleMecanumDrive]
      */
-    fun runAsync() = driveProxy.followTrajectorySequenceAsync(build())
+    @JvmOverloads
+    fun run(async: Boolean = true) = if (async) {
+        driveProxy.followTrajectorySequenceAsync(builtTrajectory)
+    } else {
+        driveProxy.followTrajectorySequence(builtTrajectory)
+    }
 
     // -- Internal --
 
@@ -503,4 +592,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     private val Number.toRad get() = angleUnit.toRad(this.toDouble())
 
     private val Number.toSec get() = timeUnit.toSec(this.toDouble())
+
+    @PublishedApi
+    internal fun getEndPose() = builtTrajectory.invokeMethodRethrowing<Pose2d>("end")
 }

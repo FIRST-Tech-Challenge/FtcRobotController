@@ -6,11 +6,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rouge.blacksmith.util.maxMagnitude
+import ftc.rouge.blacksmith.util.withDeadzone
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
 import org.firstinspires.ftc.teamcodekt.util.invoke
-import org.firstinspires.ftc.teamcodekt.util.maxMagnitude
-import org.firstinspires.ftc.teamcodekt.util.withDeadzone
 import kotlin.math.*
 
 class Drivetrain(hwMap: HardwareMap) {
@@ -28,7 +28,7 @@ class Drivetrain(hwMap: HardwareMap) {
         val xComponent = power * cos(theta - PI / 4)
         val yComponent = power * sin(theta - PI / 4)
 
-        val max = maxMagnitude(xComponent, yComponent)
+        val max = maxMagnitude<Double>(xComponent, yComponent)
 
         val powers = doubleArrayOf(
             power * (xComponent / max) + r,
@@ -44,7 +44,7 @@ class Drivetrain(hwMap: HardwareMap) {
         val _powerMulti = if (!gamepad.isAnyJoystickTriggered()) 0.0 else powerMulti
 
         powers.onEach {
-            withDeadzone((it * it * it) * _powerMulti, 0.05)
+            (it * it * it * _powerMulti).withDeadzone(0.05)
         }
 
         withEachMotor {

@@ -13,11 +13,15 @@ internal class _SampleMecanumDrive(private val drive: Any) {
             drive.invokeMethodInfer("trajectorySequenceBuilder", startPose)
         )
 
+    fun followTrajectorySequence(builder: Any) {
+        drive.invokeMethodInfer<Any?>("followTrajectorySequence", builder)
+    }
+
     fun followTrajectorySequenceAsync(builder: Any) {
-        drive.invokeMethodInfer<Any>("followTrajectorySequenceAsync", builder)
+        drive.invokeMethodInfer<Any?>("followTrajectorySequenceAsync", builder)
     }
 
     fun setPoseEstimate(pose: Pose2d) {
-        drive.invokeMethodInfer<Any>("setPoseEstimate", pose)
+        drive.invokeMethodInfer<Any?>("setPoseEstimate", pose)
     }
 }
