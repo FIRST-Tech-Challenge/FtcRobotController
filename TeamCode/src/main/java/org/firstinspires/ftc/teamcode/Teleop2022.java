@@ -24,7 +24,7 @@ public class Teleop2022 extends OpMode {
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
 
     private double PowerFactor = 1.0f; //Max power available for wheels
-    private int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
+    private int maxEncode = 4250; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private int minEncode = 110; //Minimum so string on arm lift doesn't break and position 0
     private int pos1 = 1850; //Position 1
     private int pos2 = 3000; //Position 2
