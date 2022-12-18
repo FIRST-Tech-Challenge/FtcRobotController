@@ -31,25 +31,25 @@ public class MoveJoystick {
         try{
             currentDirection =direction;
             switch(direction){
-                case 1:
+                case 0: //fata
                     leftMotor.setPower(-power);
                     leftMotorBack.setPower(-power);
                     rightMotorBack.setPower(power);
                     rightMotor.setPower(power);
                     break;
-                case 2:
+                case 2: //spate
                     leftMotor.setPower(power);
                     leftMotorBack.setPower(power);
                     rightMotorBack.setPower(-power);
                     rightMotor.setPower(-power);
                     break;
-                case 3:
+                case 1: //dreapta
                     leftMotor.setPower(power);
                     leftMotorBack.setPower(-power);
                     rightMotorBack.setPower(-power);
                     rightMotor.setPower(power);
                     break;
-                case 4:
+                case 3: //stanga
                     leftMotor.setPower(-power);
                     leftMotorBack.setPower(power);
                     rightMotorBack.setPower(power);
