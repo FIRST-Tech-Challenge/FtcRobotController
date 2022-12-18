@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.koawalib.opmodes
+package teamcode.opmodes
 
 import com.asiankoala.koawalib.command.commands.*
 import com.asiankoala.koawalib.command.group.SequentialGroup
