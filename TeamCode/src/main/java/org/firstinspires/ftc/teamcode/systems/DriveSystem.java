@@ -19,11 +19,13 @@ public class DriveSystem extends SubsystemBase {
     double strafe = 0;
     double forward = 0;
     double turn = 0;
+    double elevatorInput = 0;
     
     public Motor frontLeft;
     public Motor frontRight;
     public Motor backLeft;
     public Motor backRight;
+    public Motor elevator;
     
     FtcDashboard dash;
     
@@ -37,6 +39,7 @@ public class DriveSystem extends SubsystemBase {
         frontRight = new Motor(hardwareMap, "front_right_drive");
         backLeft = new Motor(hardwareMap, "rear_left_drive");
         backRight = new Motor(hardwareMap, "rear_right_drive");
+        elevator = new Motor(hardwareMap, "elevator");
             
         drive = new MecanumDrive(frontLeft, frontRight, backLeft, backRight);
         
@@ -49,6 +52,7 @@ public class DriveSystem extends SubsystemBase {
     @Override
     public void periodic() {
         drive.driveRobotCentric(strafe, forward, turn, squareInputs);
+        elevator.set(elevatorInput);
         
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("strafe", strafe);
@@ -73,4 +77,10 @@ public class DriveSystem extends SubsystemBase {
     public void setTurn(double input) {
         turn = input;
     }
+
+    public void stop() {
+        strafe = forward = turn = 0;
+    }
+
+    public void setElevator(double input) {elevatorInput = input;}
 }

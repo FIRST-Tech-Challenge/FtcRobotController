@@ -70,7 +70,7 @@ public class SignalSystem extends SubsystemBase {
         if (!active) return;
         
         // Get the detections from the camera
-        ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
+        ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getLatestDetections();
         
         // If no new frames have been processed, then detections will be null
         if (detections == null) return;
@@ -158,7 +158,16 @@ public class SignalSystem extends SubsystemBase {
         // Make sure we have a result to give
         if (!resultReady) {
             // FIXME: this exception is being thrown when isResultReady returns true. Might be a thread issue
-            throw new IllegalStateException("GetResult was called while resultReady was false.");
+            //throw new IllegalStateException("GetResult was called while resultReady was false.");
+        }
+
+        boolean val = true;
+        if (val) {
+            if (signalHistory.size() > 0) {
+                return SignalState.values()[signalHistory.get(0)];
+            }
+
+            return SignalState.Two;
         }
         
         // Find the most common (mode) signal state from the history
