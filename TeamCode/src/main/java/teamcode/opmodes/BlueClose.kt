@@ -30,26 +30,26 @@ class BlueClose : AutoOpMode() {
     private val path1 = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
         Pose(startPose.x, startPose.y, 0.0),
-        Pose(-24.0, -36.0, 0.0.radians),
-        Pose(-8.0, -24.0, 50.0.radians)
+        Pose(-24.0, -33.0, 0.0.radians),
+        Pose(-8.0, -23.0, 50.0.radians)
     )
 
     private val intakePath = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-8.0, -24.0, 200.0.radians),
-        Pose(-14.0, -53.0, 270.0.radians)
+        Pose(-8.0, -23.0, 200.0.radians),
+        Pose(-12.0, -53.0, 270.0.radians)
     )
 
     private val intakePath2 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-8.0, -24.0, 200.0.radians),
-        Pose(-15.0, -54.5, 270.0.radians)
+        Pose(-8.0, -23.0, 200.0.radians),
+        Pose(-12.0, -54.0, 270.0.radians)
     )
 
     private val intakePath3 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-8.0, -24.0, 200.0.radians),
-        Pose(-15.0, -56.0, 270.0.radians)
+        Pose(-8.0, -23.0, 200.0.radians),
+        Pose(-12.0, -55.0, 270.0.radians)
     )
 
     private val depositPath = HermitePath(
@@ -94,25 +94,25 @@ class BlueClose : AutoOpMode() {
             InstantCmd({robot.arm.setPos(170.0)}),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(path1, 0.6, 20.0, 10.0, 0.7, 5.0, 10.0),
+                SimpleGVFController(path1, 0.6, 20.0, 6.0, 0.7, 5.0, 10.0),
                 Pair(DepositSequence(robot.lift, robot.arm, robot.claw, 145.0, LiftConstants.highPos), ProjQuery(
-                    Vector(-50.0, -36.0)
+                    Vector(-60.0, -36.0)
                 )
                 )
             ),
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
-            WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -33.0),
+            WaitCmd(0.25),
+            HomeSequence(robot.lift, robot.claw, robot.arm, -36.5),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath, 0.6, 15.0, 4.0, 0.3, 5.0, 10.0)
             ),
             WaitCmd(0.5),
             ClawCmds.ClawCloseCmd(robot.claw),
-            WaitCmd(0.5),
+            WaitCmd(0.25),
             InstantCmd({robot.lift.setPos(10.0)}),
-            WaitCmd(0.5),
+            WaitCmd(0.25),
             DepositSequence(robot.lift, robot.arm, robot.claw, 153.0, LiftConstants.highPos),
             GVFCmd(
                 robot.drive,
@@ -120,17 +120,17 @@ class BlueClose : AutoOpMode() {
             ),
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
-            WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -38.0),
+            WaitCmd(0.25),
+            HomeSequence(robot.lift, robot.claw, robot.arm, -41.5),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath2, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
             ),
             WaitCmd(0.5),
             ClawCmds.ClawCloseCmd(robot.claw),
-            WaitCmd(0.5),
+            WaitCmd(0.25),
             InstantCmd({robot.lift.setPos(10.0)}),
-            WaitCmd(0.5),
+            WaitCmd(0.25),
             DepositSequence(robot.lift, robot.arm, robot.claw, 153.0, LiftConstants.highPos),
             GVFCmd(
                 robot.drive,
@@ -138,17 +138,17 @@ class BlueClose : AutoOpMode() {
             ),
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
-            WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -43.0),
+            WaitCmd(0.25),
+            HomeSequence(robot.lift, robot.claw, robot.arm, -46.5),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath2, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
             ),
             WaitCmd(0.5),
             ClawCmds.ClawCloseCmd(robot.claw),
-            WaitCmd(0.5),
+            WaitCmd(0.25),
             InstantCmd({robot.lift.setPos(10.0)}),
-            WaitCmd(0.5),
+            WaitCmd(0.25),
             DepositSequence(robot.lift, robot.arm, robot.claw, 153.0, LiftConstants.highPos),
             GVFCmd(
                 robot.drive,
@@ -156,17 +156,17 @@ class BlueClose : AutoOpMode() {
             ),
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
-            WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -48.0),
+            WaitCmd(0.25),
+            HomeSequence(robot.lift, robot.claw, robot.arm, -51.5),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath3, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
             ),
             WaitCmd(0.5),
             ClawCmds.ClawCloseCmd(robot.claw),
-            WaitCmd(0.5),
+            WaitCmd(0.25),
             InstantCmd({robot.lift.setPos(10.0)}),
-            WaitCmd(0.5),
+            WaitCmd(0.25),
             DepositSequence(robot.lift, robot.arm, robot.claw, 153.0, LiftConstants.highPos),
             GVFCmd(
                 robot.drive,
@@ -174,17 +174,17 @@ class BlueClose : AutoOpMode() {
             ),
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
-            WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -53.0),
+            WaitCmd(0.25),
+            HomeSequence(robot.lift, robot.claw, robot.arm, -56.5),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath3, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
             ),
             WaitCmd(0.5),
             ClawCmds.ClawCloseCmd(robot.claw),
-            WaitCmd(0.5),
+            WaitCmd(0.25),
             InstantCmd({robot.lift.setPos(10.0)}),
-            WaitCmd(0.5),
+            WaitCmd(0.25),
             DepositSequence(robot.lift, robot.arm, robot.claw, 153.0, LiftConstants.highPos),
             GVFCmd(
                 robot.drive,
@@ -192,6 +192,7 @@ class BlueClose : AutoOpMode() {
             ),
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
+            WaitCmd(0.25),
 //            ChooseCmd(
 //                GVFCmd(robot.drive,
 //                    SimpleGVFController(rightPath, 0.5, 20.0, 6.0, 0.5, 5.0, 10.0)),
