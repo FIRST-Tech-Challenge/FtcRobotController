@@ -47,17 +47,10 @@ public class Drive extends Control {
             resetIMU = hraezlyr.resetIMU();
         }
         // angle of controller stick
-       if (rightX > 0) {
-            rightTurn = rightX;
-        }
-        if (rightX < 0) {
-            leftTurn = rightX;
-        }
-
 
         double angle = Math.toDegrees(Math.atan2(leftY, leftX));
         angle = angle - hraezlyr.getHeading() + resetIMU;
-        angle = constrainAngle(angle);
+        //angle = constrainAngle(angle);
         // scope orientation
 
         double power = Math.max(-1, Math.min(1, Math.sqrt((leftX * leftX) + (leftY * leftY))));
@@ -71,10 +64,10 @@ public class Drive extends Control {
 
 
         // Power for drivetrain
-        hraezlyr.topLeft.setPower(powerGroup1 - leftTurn + rightTurn);
-        hraezlyr.topRight.setPower(powerGroup2 - rightTurn + leftTurn);
-        hraezlyr.bottomLeft.setPower(powerGroup2 - leftTurn + rightTurn);
-        hraezlyr.bottomRight.setPower(powerGroup1 - rightTurn + leftTurn);
+        hraezlyr.topLeft.setPower(powerGroup1 - rightX);
+        hraezlyr.topRight.setPower(powerGroup2 + rightX);
+        hraezlyr.bottomLeft.setPower(powerGroup2 - rightX);
+        hraezlyr.bottomRight.setPower(powerGroup1 + rightX);
 
         telemetry.addData("Angle", angle);
         telemetry.addData("Distance", power);
@@ -114,14 +107,18 @@ public class Drive extends Control {
                 case LOW:
                     zHeight = Level.GROUND;
                     break;
-
-
             }
         }
 
-            if(DpadUp) cascadeLiftManual(1);
-            else if(DpadDown) cascadeLiftManual(-1);
-            else cascadeLiftManual(0);
+            if(DpadUp && !DpadDown) {
+                cascadeLiftManual(1);
+            }
+            if(DpadDown && !DpadUp) {
+                cascadeLiftManual(-1);
+            }
+            if(!DpadDown && !DpadUp){
+                cascadeLiftManual(0);
+            }
         hraezlyr.servoClawClose.setDirection(Servo.Direction.FORWARD);
 
         if(buttonA){

@@ -56,6 +56,7 @@ public class Hraezlyr {
 
         topRight.setDirection(DcMotorSimple.Direction.REVERSE);
         bottomRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        cascadeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         IMU = hwmap.get(BNO055IMU.class, "imu");
@@ -67,6 +68,12 @@ public class Hraezlyr {
         topRight.setZeroPowerBehavior(BRAKE);
         bottomLeft.setZeroPowerBehavior(BRAKE);
         bottomRight.setZeroPowerBehavior(BRAKE);
+
+
+
+
+        cascadeMotor1.setZeroPowerBehavior(BRAKE);
+        cascadeMotor2.setZeroPowerBehavior(BRAKE);
 
 
         cascadeMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
