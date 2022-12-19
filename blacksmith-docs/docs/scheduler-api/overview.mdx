@@ -1,0 +1,159 @@
+---
+sidebar_position: 0
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Overview
+
+## What is the Scheduler API?
+
+Simple- it's a small library that streamlines the creation of your OpModes- **especially your TeleOps!**
+
+It's provided functionality makes your code easier to create, read, and maintain. 😮
+
+*✨ Creating TeleOps has never been easier! ✨*
+
+## Yeah, we get it, but what does it do?
+
+Let's take a look at some basic bog-standard TeleOp code:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+```java
+public class NotCoolTeleOp extends OpMode {
+    @Override
+    public void init() {
+        // Initialize hardware
+    }
+
+    @Override
+    public void loop() {
+        // Loop code
+    }
+
+    // ...300 billion lines later...
+
+    private boolean gamepad1aPreviousState = //...;
+
+    private void checkIfShouldDoSomething() {
+       if (gamepad2.a && !gamepad1aPreviousState) { // Messy and ugly and ew 🤮
+           claw.intake();
+       } else if (!gamepad2.a && gamepad1aPreviousState) { // Disgusting unreadable signal edge detectors
+           claw.close();
+       } // Can't tell if the driver does this or the codriver at the quick glance
+       gamepad1aPreviousState = //...;
+    } // ugh imperative hell
+}
+```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+```kotlin
+class `NotCoolTeleOp😔` : OpMode() {
+    override fun init() {
+        // Initialize hardware
+    }
+
+    override fun loop() {
+        // Loop code
+    }
+
+    // ...300 billion lines later...
+
+    private var gamepad1aPreviousState = //... (mutable state!!!1!1!1)
+
+    private fun checkIfShouldDoSomething() {
+       if (gamepad2.a && !gamepad1aPreviousState) { // Messy and ugly and ew 🤮
+           claw.intake()
+       } else if (!gamepad2.a && gamepad1aPreviousState) { // Disgusting unreadable signal edge detectors
+           claw.close()
+       } // Can't tell if the driver does this or the codriver at the quick glance
+       gamepad1aPreviousState = //...
+    } // ugh imperative hell
+}
+```
+
+</TabItem>
+</Tabs>
+
+Now the same TelpOp after receiving the Scheduler treatment:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+```java
+public class CoolTeleOp extends LinearOpMode {
+    private ReforgedGamepad codriver = new ReforgedGamepad(gamepad2);
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        // Initialize hardware
+
+        describeControls(); // Good idea to move it to a method for readability
+
+        Scheduler.launchWhenReady(this, () -> {
+            // Any extra loop code (runs after every Listener)
+        });
+    }
+
+    private void describeControls() {
+        codriver.a.onRise(() -> claw.intake()); // Simple and easy to read
+        codriver.a.onFall(() -> claw.close()); // Complexity is abstracted away
+    }
+}
+```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+```kotlin
+class `CoolTeleOp😎` : LinearOpMode() {
+    private val codriver = ReforgedGamepad(gamepad2)
+
+    override fun runOpMode() {
+        // Initialize hardware
+
+        describeControls() // Good idea to move it to a method for readability
+
+        Scheduler.launchWhenReady(this) {
+            // Any extra loop code (runs after every Listener)
+        }
+    }
+
+    private fun describeControls() {
+        codriver.a.onRise(claw::intake) // Simple and easy to read
+        codriver.a.onFall(claw::close) // Complexity is abstracted away
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+As you can see, it dramatically improves code quality and readability, and makes it easier to develop and maintain-
+after all, you no longer have to deal with any logic (at least with the basics).
+
+🚀 *You just have to tell it what to do!*
+
+## Okay... but what about performance?
+
+The performance impact is negligible; CPUs are fast, and you have other things to worry about in terms of performance,
+especially hardware calls.
+
+This API is simply a layer or two of abstraction on top of the existing FTC SDK, and it's in no way computationally
+expensive.
+
+## Uh, what are those weird symbols (like `() ->`)?
+
+Those are called [lambdas](https://en.wikipedia.org/wiki/Anonymous_function#Java), and they're simply a way of
+passing in functions to other functions to be called later.
+
+The Scheduler API does require some medium-level knowledge of Java, but it's not too hard to learn. You just need to
+have surface level knowledge of lambdas and what `this` is and such to use this API.
+
+(You can also use Kotlin if you'd like, but I'm assuming if you're using Kotlin, you're already familiar with
+higher level concepts)

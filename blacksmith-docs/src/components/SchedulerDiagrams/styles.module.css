@@ -1,0 +1,16 @@
+.cuteSun {
+    color: #dce191;
+    position: relative;
+    scale: 85%;
+    margin-left: 25vw;
+    margin-top: -32vh;
+    transform: translateY(20vh);
+    rotate: 10deg;
+}
+
+@media (max-width: 768px) {
+    .cuteSun {
+        width: 0;
+        height: 0;
+    }
+}

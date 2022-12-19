@@ -1,0 +1,52 @@
+:root {
+    --highlight-color: #6a9bd3
+}
+
+[data-theme='dark'] {
+    --highlight-color: #407bb2
+}
+
+.paramHeader {
+    font-weight: bolder;
+}
+
+.paramList {
+    margin-left: 1ch;
+    margin-top: 1ch;
+    list-style: '- ';
+    font-size: 1.05em;
+}
+
+.paramName {
+    color: var(--highlight-color);
+    font-weight: bold;
+}
+
+.paramType {
+    color: var(--highlight-color);
+    font-weight: bold;
+    font-style: italic;
+}
+
+.paramDesc {
+    font-size: .975em;
+}
+
+.link:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.paramDefaultsToHeader {
+    color: var(--highlight-color);
+    font-weight: bold;
+    margin-left: 3ch;
+    font-size: .92em;
+    font-style: italic;
+}
+
+
+.paramDefaults {
+    font-size: .765em;
+    font-style: italic;
+}

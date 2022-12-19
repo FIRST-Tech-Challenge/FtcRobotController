@@ -1,0 +1,87 @@
+.logoWrapper {
+    height: 20vh;
+    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.28));
+}
+
+.logo {
+    height: 100%;
+    stroke: var(--blacksmith-white);
+    fill: var(--blacksmith-white);
+}
+
+.logoBit {
+    stroke: var(--blacksmith-white);
+    fill: var(--blacksmith-white);
+    height: 25%;
+    position: relative;
+    transition: all 0.5s;
+}
+
+.logoBit1 {
+    transform: rotate(223deg);
+    bottom: 26.5%;
+    left: 8%;
+}
+
+.logoBit2 {
+    transform: rotate(43deg);
+    bottom: 48.3%;
+    right: 8%;
+}
+
+.logoWrapper:hover .logoBit1 {
+    bottom: 28.5%;
+    left: 0;
+}
+
+.logoWrapper:hover .logoBit2 {
+    bottom: 46.5%;
+    right: 1%;
+}
+
+
+.logoWrapperAnimation {
+    animation: logoAnimation 2s cubic-bezier(.3, 1.3, 0.4, 2.2) .5s 3;
+}
+
+.logoBit1Animation {
+    animation: inOut1 2s ease-out .45s 3;
+}
+
+.logoBit2Animation {
+    animation: inOut2 2s ease-out .45s 3;
+}
+
+@keyframes logoAnimation {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(720deg);
+    }
+    100% {
+        transform: rotate(720deg);
+    }
+}
+
+@keyframes inOut1 {
+    6%, 48% {
+        bottom: 23.53%;
+        left: 16%;
+    }
+    55% {
+        bottom: 26.5%;
+        left: 8%;
+    }
+}
+
+@keyframes inOut2 {
+    6%, 48% {
+        bottom: 51.25%;
+        right: 17.3%;
+    }
+    55% {
+        bottom: 48.3%;
+        right: 8%;
+    }
+}

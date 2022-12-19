@@ -1,0 +1,38 @@
+.gradientBackground {
+    position:fixed;
+    padding:0;
+    margin:0;
+
+    top:0;
+    left:0;
+
+    width: 100%;
+    height: 100%;
+
+    background: linear-gradient(25deg, #1fa588 30%, #205d3b 100%);
+
+    z-index: -1;
+}
+
+.designWrapper {
+    top: 0;
+    right: 0;
+    height: 100vmin;
+    width: 100vmin;
+}
+
+.backgroundSVG {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    fill: #d5e5dd;
+    stroke: #d5e5dd;
+
+    z-index: -1;
+}
+
+/*.gradientBackground[data-theme="dark"] {*/
+/*    background: linear-gradient(25deg, var(--ifm-color-primary-lightest) 30%, var(--ifm-color-primary-light) 100%);*/
+/*}*/

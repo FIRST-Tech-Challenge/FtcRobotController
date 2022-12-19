@@ -95,8 +95,8 @@ object Scheduler {
      * Sets a block of code to run before each tick.
      */
     @JvmStatic
-    fun beforeEach(runnable: Runnable) {
-        beforeEach = runnable
+    fun beforeEach(block: Runnable) {
+        beforeEach = block
     }
 
     /**
@@ -131,6 +131,13 @@ object Scheduler {
             tick()
             afterEach.run()
         }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun launchWhenReady(opmode: LinearOpMode, afterEach: Runnable = Runnable {}) {
+        opmode.waitForStart()
+        launch(opmode, afterEach)
     }
 
     /**
@@ -198,7 +205,7 @@ object Scheduler {
      * @param listener The [Listener] to subscribe.
      */
     @JvmStatic
-    fun hookListener(listener: Listener) {
+    internal fun hookListener(listener: Listener) {
         listeners += listener
     }
 
@@ -207,12 +214,13 @@ object Scheduler {
      * @param listener The [Listener] to unsubscribe.
      */
     @JvmStatic
-    fun unhookListener(listener: Listener) {
+    internal fun unhookListener(listener: Listener) {
         listeners -= listener
     }
 
     @JvmStatic
     fun reset() {
         listeners.clear()
+        beforeEach = Runnable {}
     }
 }

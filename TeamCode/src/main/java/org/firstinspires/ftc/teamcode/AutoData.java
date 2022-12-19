@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import ftc.rouge.blacksmith.Scheduler;
+
 // TODO: Find better file location for this
 
 @Config
@@ -33,4 +35,8 @@ public class AutoData {
     public static int AUTO_INTAKE_LIFT_HEIGHT_3 = 182;
     public static int AUTO_INTAKE_LIFT_HEIGHT_4 = 112;
     public static int AUTO_INTAKE_LIFT_HEIGHT_5 = 0;
+
+    {
+        Scheduler.launch(null, () -> {});
+    }
 }

@@ -1,0 +1,151 @@
+---
+sidebar_position: 1
+---
+
+import { CuteSun, EmptyLoopDiagram, OrderedLoopDiagram } from '../../src/components/SchedulerDiagrams';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# The Scheduler model
+
+The Scheduler model is quite simply really—it's just a fancy loop.
+
+<EmptyLoopDiagram/>
+
+Okay, it's slightly more complicated than that, but that's what it is at it's very core.
+
+<OrderedLoopDiagram/>
+
+Yeahhh okay, that's not as helpful as I thought. Anyway...
+
+## The Scheduler is a glorified loop
+
+The Scheduler model is a loop that runs until the OpMode is stopped, and this loop is made up of a few different parts.
+
+### Listeners👂
+
+👀 This is the juicy bit, what makes your code so nice. It runs *before* `beforeEach` and *after* `afterEach` (🤯)
+
+Listeners are objects which hold a condition which hook to and are updated every cycle of the Scheduler. They can be
+subscribed to to perform certain actions when certain events are in certain states.
+
+yeah I know that was a mouthful, so here's a more practical example:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  @Override
+  public void runOpMode() throws InterruptedException {
+      Listener listener = Listener(() -> gamepad1.a);
+
+      listener.onRise(() -> System.out.println("A was pressed!"));
+      listener.onFall(() -> System.out.println("A was released!"));
+
+      listener.whileHigh(() -> System.out.println("A is being held!"));
+      listener.whileLow(() -> System.out.println("A is not being touched!"));
+
+      Scheduler.start(this);
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  override fun runOpMode() {
+      val listener = Listener { gamepad1.a }
+
+      listener.onRise { println("A was pressed!") }
+      listener.onFall { println("A was released!") }
+
+      listener.whileHigh { println("A is being held!") }
+      listener.whileLow { println("A is not being touched!") }
+
+      Scheduler.start(this)
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+**Note:** This is a very rough overview of the Listener concept; if you're confused or want more information, check out
+the [Listeners](./listeners) page.
+
+We created a Listener which checks if the `a` button was pressed, and then we subscribed to a few sub-conditions, i.e.
+`onRise`, `onFall`, `whileHigh`, and `whileLow`.
+
+The `onRise` and `onFall` refer to rising and falling edge states (was *just* pressed and was *just* released), and the
+`whileHigh` and `whileLow` refer to the high and low states (is being held and is not being touched).
+
+Again, the Listener is being updated every loop of the Scheduler, and is functionally equivalent to:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java title="(Using normal OpMode)"
+  private boolean gamepad1AWasJustPressed = false;
+
+  @Override
+  public void loop {
+      if (gamepad1.a && !gamepad1AWasJustPressed) { // onRise
+          System.out.println("A was pressed!");
+          gamepad1AWasJustPressed = true;
+      } else if (!gamepad1.a && gamepad1AWasJustPressed) { // onFall
+          System.out.println("A was released!");
+          gamepad1AWasJustPressed = false;
+      }
+
+      if (gamepad1.a) { // whileHigh
+          System.out.println("A is being held!");
+      } else { // whileLow
+          System.out.println("A is not being touched!");
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin title="(Using normal OpMode)"
+  private var gamepad1AWasJustPressed = false
+
+  override fun loop() {
+      if (gamepad1.a && !gamepad1AWasJustPressed) { // onRise
+          println("A was pressed!")
+          gamepad1AWasJustPressed = true
+      } else if (!gamepad1.a && gamepad1AWasJustPressed) { // onFall
+          println("A was released!")
+          gamepad1AWasJustPressed = false
+      }
+
+      if (gamepad1.a) { // whileHigh
+          println("A is being held!")
+      } else { // whileLow
+          println("A is not being touched!")
+      }
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+(And this gets even cleaner with the [Reforged Gamepad](./reforged-gamepad)!
+
+### beforeEach
+
+This is a block of code which runs at the very start of every loop.
+
+I myself just use it to reset variables that need to be reset every loop, but you can use it for whatever you want I
+guess lol.
+
+You can find an example of how to use this right [here](./scheduler#schedulerbeforeeach).
+
+### afterEach
+
+This is `beforeEach`'s evil twin. It runs at the very end of every loop. It's very useful for actions that you
+want to run every loop, like PIDs, driving, or telemetry.
+
+Example [here](./scheduler#schedulerlaunch-).
+
+<CuteSun/>
