@@ -33,11 +33,11 @@ public class Drive extends Control {
         boolean start = gamepad1.start;
         boolean DpadUp = gamepad2.dpad_up;
         boolean DpadDown = gamepad2.dpad_down;
-        boolean DpadLeft = gamepad2.dpad_left;
-        boolean DpadRight = gamepad2.dpad_right;
+        boolean dpadLeft = gamepad2.dpad_left;
+        boolean dpadRight = gamepad2.dpad_right;
         boolean buttonA = gamepad2.a;
         boolean buttonB = gamepad2.b;
-        boolean DpadPressed;
+
         double rightTurn = 0;
         double leftTurn = 0;
         double resetIMU = 0;
@@ -59,25 +59,25 @@ public class Drive extends Control {
         angle = angle - hraezlyr.getHeading() + resetIMU;
         angle = constrainAngle(angle);
         // scope orientation
-        // distance is the power of the controller stick
-        double distance = Math.max(-1, Math.min(1, Math.sqrt((leftX * leftX) + (leftY * leftY))));
 
+        double power = Math.max(-1, Math.min(1, Math.sqrt((leftX * leftX) + (leftY * leftY))));
 
         // topLeftPower and bottomRightPower
-        double topLeft = ((Math.sin(Math.toRadians(angle))) - (Math.cos(Math.toRadians(angle)))) * distance;
-        double bottomRight = ((Math.sin(Math.toRadians(angle))) - (Math.cos(Math.toRadians(angle)))) * distance;
+        double powerGroup1 = ((Math.sin(Math.toRadians(angle))) - (Math.cos(Math.toRadians(angle)))) * power;
         // topRightPower and bottomLeftPower
-        double topRight = ((Math.sin(Math.toRadians(angle))) + (Math.cos(Math.toRadians(angle)))) * distance;
-        double bottomleft = ((Math.sin(Math.toRadians(angle))) + (Math.cos(Math.toRadians(angle)))) * distance;;
+        double powerGroup2 = ((Math.sin(Math.toRadians(angle))) + (Math.cos(Math.toRadians(angle)))) * power;
+
+
+
 
         // Power for drivetrain
-        hraezlyr.topLeft.setPower(topLeft + leftTurn - rightTurn);
-        hraezlyr.topRight.setPower(topRight + rightTurn - leftTurn);
-        hraezlyr.bottomLeft.setPower(bottomleft - rightTurn + leftTurn);
-        hraezlyr.bottomRight.setPower(bottomRight - leftTurn + rightTurn);
+        hraezlyr.topLeft.setPower(powerGroup1 - leftTurn + rightTurn);
+        hraezlyr.topRight.setPower(powerGroup2 - rightTurn + leftTurn);
+        hraezlyr.bottomLeft.setPower(powerGroup2 - leftTurn + rightTurn);
+        hraezlyr.bottomRight.setPower(powerGroup1 - rightTurn + leftTurn);
 
         telemetry.addData("Angle", angle);
-        telemetry.addData("Distance", distance);
+        telemetry.addData("Distance", power);
         telemetry.addData("rightX", rightX);
         telemetry.addData( "leftTurn", leftTurn);
         telemetry.addData("rightTurn", rightTurn);
@@ -89,7 +89,7 @@ public class Drive extends Control {
 
         //System for cascade level system
 
-        /*if(gamepad2.dpad_right){
+        if(dpadRight){
             switch(zHeight){// it go up if it already low
                 case GROUND:
                     zHeight = Level.LOW;
@@ -103,7 +103,7 @@ public class Drive extends Control {
             }
             cascadeLift(zHeight);
         }
-            if(gamepad2.dpad_left){
+            if(dpadLeft){
             switch(zHeight) {//it go down if already up
                 case HIGH:
                     zHeight = Level.MEDIUM;
@@ -118,24 +118,24 @@ public class Drive extends Control {
 
             }
         }
-            */
-            if(gamepad2.dpad_up) cascadeLiftManual(1);
-            else if(gamepad2.dpad_down) cascadeLiftManual(-1);
+
+            if(DpadUp) cascadeLiftManual(1);
+            else if(DpadDown) cascadeLiftManual(-1);
             else cascadeLiftManual(0);
         hraezlyr.servoClawClose.setDirection(Servo.Direction.FORWARD);
 
-        if(gamepad2.a){
+        if(buttonA){
 
             hraezlyr.servoClawClose.setPosition(1);
 
         }
 
-        if(gamepad2.b) {
+        if(buttonB) {
 
             hraezlyr.servoClawClose.setPosition(-1);
         }
-        }
-
-
-
     }
+
+
+
+}
