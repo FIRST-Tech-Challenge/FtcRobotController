@@ -938,7 +938,9 @@ class AutonomousPaths {
 */
 
 class AutonomousPaths {
-    public final double FIELD_WIDTH = 6;//placeholder - field is 6 x 6 square
+    public static final double TILE_SIZE = 23.5625;//placeholder - field is 6 x 6 square
+
+    public static final double FIELD_WIDTH = 6;//placeholder - field is 6 x 6 square
 
     //Units are in field tiles.
 
@@ -949,8 +951,8 @@ class AutonomousPaths {
     //Angle of zero for robot has intake to the left relative to our team's side
 
     //Terminal & Substation
-    public Position terminalPosition = new Position(1,0, 0,"terminalPosition");
-    public Position substationPosition = new Position(-1,0,Math.PI / 2,"substationPosition");
+    public Position terminalPosition = new Position(1 * TILE_SIZE,0, 0,"terminalPosition");
+    public Position substationPosition = new Position(-1 * TILE_SIZE,0,Math.PI / 2,"substationPosition");
 
 
     //Junctions
@@ -960,33 +962,33 @@ class AutonomousPaths {
 
     //Small
     public static Position leftSmallJunction = new Position(0, 0, "POI leftSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, 3 / 4 * Math.PI);
-    public static Position rightSmallJunction = new Position(0, 1, "POI rightSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, Math.PI / 4);
+    public static Position rightSmallJunction = new Position(0, 1 * TILE_SIZE, "POI rightSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, Math.PI / 4);
 
     //Medium
-    public static Position mediumJunction = new Position(-1, 1.5, "POI mediumJunction", Navigation.Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
+    public static Position mediumJunction = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, "POI mediumJunction", Navigation.Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
 
     //Large
-    public static Position leftLargeJunction = new Position(-1,1, "POI leftLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4);
+    public static Position leftLargeJunction = new Position(-1 * TILE_SIZE,1 * TILE_SIZE, "POI leftLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4);
     //public static Position rightLargeJunction = new Position(0,2, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4); //maybe the deliver to pole method should allow for delivering cone from different positions
-    public static Position rightLargeJunction = new Position(-1,2.5, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, 0);
+    public static Position rightLargeJunction = new Position(-1 * TILE_SIZE,2.5 * TILE_SIZE, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, 0);
 
     //Signal locations
     //Cone
-    public static Position signalCone = new Position(0, 1, "POI signalCone", Navigation.Action.PICK_UP_CONE, 1, 1, Math.PI); //This might be wrong because the robot might rotate after you get to the desired position
+    public static Position signalCone = new Position(0, 1 * TILE_SIZE, "POI signalCone", Navigation.Action.PICK_UP_CONE, 1, 1, Math.PI); //This might be wrong because the robot might rotate after you get to the desired position
 
     //IMPORTANT NOTE: locations on the right side are not symmetrical with their counterparts on left side
-    public static Position leftSideSignalLocation1 = new Position(-1, 1.5, 0, "leftSideSignalLocation1");
-    public static Position leftSideSignalLocation2 = new Position(0, 1.5, 0, "leftSideSignalLocation2");
-    public static Position leftSideSignalLocation3 = new Position(1, 1.5, 0, "leftSideSignalLocation3");
+    public static Position leftSideSignalLocation1 = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "leftSideSignalLocation1");
+    public static Position leftSideSignalLocation2 = new Position(0, 1.5 * TILE_SIZE, 0, "leftSideSignalLocation2");
+    public static Position leftSideSignalLocation3 = new Position(1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "leftSideSignalLocation3");
 
-    public static Position rightSideSignalLocation1 = new Position(-1, 1.5, 0, "rightSideSignalLocation1");
-    public static Position rightSideSignalLocation2 = new Position(0, 1.5, 0, "rightSideSignalLocation2");
-    public static Position rightSideSignalLocation3 = new Position(1, 1.5, 0, "rightSideSignalLocation3");
+    public static Position rightSideSignalLocation1 = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "rightSideSignalLocation1");
+    public static Position rightSideSignalLocation2 = new Position(0, 1.5 * TILE_SIZE, 0, "rightSideSignalLocation2");
+    public static Position rightSideSignalLocation3 = new Position(1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "rightSideSignalLocation3");
 
 
     //Intermediate positions (positions that you need to go to on the way to your destination)
-    public static Position intermediateBottomLeft = new Position(-1, 0, 0, "intermediateBottomLeft");
-    public static Position intermediateCenterLeft = new Position(-1, 1, 0, "intermediateCenterLeft");
+    public static Position intermediateBottomLeft = new Position(-1 * TILE_SIZE, 0, 0, "intermediateBottomLeft");
+    public static Position intermediateCenterLeft = new Position(-1 * TILE_SIZE, 1 * TILE_SIZE, 0, "intermediateCenterLeft");
 
 
     //Paths/Strategies
