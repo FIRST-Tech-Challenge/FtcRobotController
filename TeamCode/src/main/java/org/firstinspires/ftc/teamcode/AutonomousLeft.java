@@ -121,29 +121,10 @@ public class AutonomousLeft extends AutonomousBase {
             PipelinePowerPlay.saveLastAutoImage();
         }
 
-        webcam.closeCameraDevice();
-
-        // Open async and start streaming inside opened callback
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-
-                pipeline = new PowerPlaySuperPipeline(true, !blueAlliance, blueAlliance, 160.0);
-                webcam.setPipeline(pipeline);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
+        // Start the new object detecting pipeline.
+        pipeline = new PowerPlaySuperPipeline(true, !blueAlliance, blueAlliance, 160.0);
+        webcam.setPipeline(pipeline);
+        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
         //---------------------------------------------------------------------------------
         // UNIT TEST: The following methods verify our basic robot actions.
@@ -231,7 +212,7 @@ public class AutonomousLeft extends AutonomousBase {
         // Step 7. Profit
         double cycleDistance = 28.0;
         fiveStackCycles = 1;    // FORCE TO 1 FOR TOURNY4 (see default in AutonomousBase)`
-        while (opModeIsActive() && (autonomousTimer.milliseconds() < 20000) && (fiveStackCycles > 0)) {
+        while (opModeIsActive() && (autonomousTimer.milliseconds() < 16000) && (fiveStackCycles > 0)) {
             if (opModeIsActive()) {
                 telemetry.addData("Skill", "moveToConeStack");
                 telemetry.update();

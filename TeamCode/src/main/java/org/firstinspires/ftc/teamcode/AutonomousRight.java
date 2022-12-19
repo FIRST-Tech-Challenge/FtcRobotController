@@ -231,7 +231,7 @@ public class AutonomousRight extends AutonomousBase {
         // Step 7. Profit
         double cycleDistance = 28.0;
         fiveStackCycles = 1;    // FORCE TO 1 FOR TOURNY4 (see default in AutonomousBase)`
-        while (opModeIsActive() && (autonomousTimer.milliseconds() < 20000) && (fiveStackCycles > 0)) {
+        while (opModeIsActive() && (autonomousTimer.milliseconds() < 16000) && (fiveStackCycles > 0)) {
             if (opModeIsActive()) {
                 telemetry.addData("Skill", "moveToConeStack");
                 telemetry.update();

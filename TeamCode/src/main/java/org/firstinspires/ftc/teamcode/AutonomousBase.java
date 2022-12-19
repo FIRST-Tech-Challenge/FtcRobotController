@@ -97,7 +97,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         int atRange = 0;
         double range = robot.singleSonarRangeF();
         double rangeErr = range - desiredDistance;
-        while (opModeIsActive() && (atRange < 10)) {
+        while (opModeIsActive() && (atRange < 7)) {
             performEveryLoop();
             range = robot.singleSonarRangeF();
             rangeErr = range - desiredDistance;
@@ -108,7 +108,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 atRange++;
             } else {
                 atRange = 0;
-                robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.07 : -0.07);
+                robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.10 : -0.10);
             }
         }
         robot.stopMotion();
@@ -127,7 +127,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             if(theLocalCone.coneAligned) {
                 robot.stopMotion();
             } else {
-                robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.07 : -0.07);
+                robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.085 : -0.085);
             }
             synchronized(pipeline.lockRedCone) {
                 theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipeline.getDetectedRedCone());
@@ -152,7 +152,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             if(theLocalCone.coneAligned) {
                 robot.stopMotion();
             } else {
-                robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.07 : -0.07);
+                robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.085 : -0.085);
             }
             synchronized(pipeline.lockBlueCone) {
                 theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipeline.getDetectedBlueCone());

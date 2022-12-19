@@ -291,10 +291,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         return input;
     }
 
-    public List<AnalyzedCone> getDetectedRedCones()
-    {
-        return Collections.synchronizedList(clientRedConeList);
-    }
     public AnalyzedCone getDetectedRedCone()
     {
         return theRedCone;
@@ -361,10 +357,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         return foundCone;
     }
 
-    public List<AnalyzedCone> getDetectedBlueCones()
-    {
-        return Collections.synchronizedList(clientBlueConeList);
-    }
     public AnalyzedCone getDetectedBlueCone()
     {
         return theBlueCone;
@@ -437,13 +429,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public AnalyzedPole getDetectedPole()
     {
         return thePole;
-    }
-
-    public List<AnalyzedPole> getDetectedPoles()
-    {
-        List localList = new ArrayList<>();
-        localList.add(thePole);
-        return localList;
     }
 
     List<MatOfPoint> findYellowContours(Mat input)
