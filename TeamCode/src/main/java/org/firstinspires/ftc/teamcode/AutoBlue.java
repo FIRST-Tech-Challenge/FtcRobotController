@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "AutoBlue", preselectTeleOp = "Drive")
+@Autonomous(name = "Auto", preselectTeleOp = "Drive")
 
 public class AutoBlue extends AutoGuts {
     Pipeline pipeline;
