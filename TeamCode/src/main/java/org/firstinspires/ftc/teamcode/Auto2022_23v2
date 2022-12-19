@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -15,9 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import java.lang.Math.*;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "Auto 2022", group = "Linear Opmode")
 //@Disabled
@@ -139,19 +136,19 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         telemetry.addData("Detected:",signal);
         double timeAdjustment = getDistance(radius,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
         if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
-            setVelo(true,.75,oneFootTime*3.7);
+            moveTwoFeet(true);
             turnNinety(false);
-            setVelo(true,.75,oneFootTime*3.7);
+            moveTwoFeet(true);
         }
 
         if(signal.equals("2 Bulb")){ // go to location 2 (return to start and forward)
-            setVelo(true,.75,oneFootTime*3.7);
+            moveTwoFeet(true);
         }
 
         if(signal.equals("3 Panel")){ // go to location 3 (right and forward)
-            setVelo(true,.75,oneFootTime*3.7);
+            moveTwoFeet(true);
             turnNinety(true);
-            setVelo(true,.75,oneFootTime*3.7);
+            moveTwoFeet(true);
         }
     }
 
@@ -201,7 +198,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
     }
 
     //Drive functions
-    public void setVelo(boolean forward, double maxPercent, double time){ //Move forward or backward
+    public void setVelo(boolean forward, double maxPercent, double time){ // Move forward or backward
         int direction = -1;
         if(forward){
             direction = 1;
@@ -235,8 +232,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
     }
 
     public void turnNinety(boolean CW){
-        //Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
-        //currently not measured, will have to test this to be (close to) exact
+        // Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         // Technically this is the default, however specifying it is clearer
@@ -244,9 +240,9 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         // Without this, data retrieving from the IMU throws an exception
         imu.initialize(parameters);
 
-        double originalAngle = -imu.getAngularOrientation().firstAngle + .90;
+        double originalAngle = -imu.getAngularOrientation().firstAngle + 1.80;
 
-        double time = .7;
+        double time = .8;
         runtime.reset();
 
         /*if(CW){
@@ -266,19 +262,68 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
 
         if(CW){
             //left = +; right = -
-            while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + .90 > originalAngle - .9) {
+            while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + 1.80 > originalAngle - .9) {
                 leftVelo(.75);
                 rightVelo(-.75);
             }
         }else{
             //left = -; right = +
-            while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + .90 < originalAngle + .9) {
+            while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + 1.80 < originalAngle + .9) {
                 leftVelo(-.75);
                 rightVelo(.75);
             }
         }
         motorsOff();
+    }
 
+    public void turnOneEighty(){
+        turnNinety(true);
+        turnNinety(true);
+    }
+
+    public void moveOneFoot(boolean forward){
+        //using motor encoders
+        double oneRotationDistance = 10 * Math.PI; // In cm
+        int ticksPerRotation = 538;
+
+        double rotationAmount = oneFootCm / oneRotationDistance;
+        int totalTicks = (int) rotationAmount * ticksPerRotation;
+
+        resetEncoders();
+
+        if(forward){
+            encoderTarget(totalTicks);
+            leftVelo(.75);
+            rightVelo(.75);
+            while(opModeIsActive() && leftDrive.isBusy()){
+                telemetry.addData("Left encoder", leftDrive.getCurrentPosition() + "  busy=" + leftDrive.isBusy());
+                telemetry.addData("Right encoder", rightDrive.getCurrentPosition() + "  busy=" + rightDrive.isBusy());
+                telemetry.update();
+                idle();
+            }
+        }else{
+            encoderTarget(-totalTicks);
+            leftVelo(.75);
+            rightVelo(.75);
+            while(opModeIsActive() && leftDrive.isBusy()){
+                telemetry.addData("Left encoder", leftDrive.getCurrentPosition() + "  busy=" + leftDrive.isBusy());
+                telemetry.addData("Right encoder", rightDrive.getCurrentPosition() + "  busy=" + rightDrive.isBusy());
+                telemetry.update();
+                idle();
+            }
+        }
+        motorsOff();
+        resetEncoders();
+    }
+
+    public void moveTwoFeet(boolean forward){
+        if(forward){
+            moveOneFoot(true);
+            moveOneFoot(true);
+        }else{
+            moveOneFoot(false);
+            moveOneFoot(false);
+        }
     }
 
     public void leftVelo(double maxPercent){ //sets power for left wheels
@@ -291,8 +336,6 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         rightBackWheel(maxPercent);
     }
 
-
-    //Power each motor with .setVelocity()
     public void leftWheel(double percent){
         leftDrive.setPower(percent);
     }
@@ -309,17 +352,46 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
 
     //Primitive functions
 
-    public void waitTime(double time){ //waits for however long time is in seconds
+    public void waitTime(double time){ // Waits for time (seconds)
         runtime.reset();
         while(opModeIsActive() && runtime.seconds()<time){
         }
     }
 
-    public void motorsOff(){ //turns all motors off
+    public void motorsOff(){ // Turns all motors off
         leftDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightDrive.setPower(0);
         rightBackDrive.setPower(0);
+    }
+
+    public void resetEncoders() { // Reset all encoder positions
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void encoderTarget(int target){
+        leftDrive.setTargetPosition(target);
+        leftBackDrive.setTargetPosition(target);
+        rightDrive.setTargetPosition(target);
+        rightBackDrive.setTargetPosition(target);
+
+        leftDrive.setTargetPositionTolerance(4);
+        leftBackDrive.setTargetPositionTolerance(4);
+        rightDrive.setTargetPositionTolerance(4);
+        rightBackDrive.setTargetPositionTolerance(4);
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     // Some physics equations put into functions
