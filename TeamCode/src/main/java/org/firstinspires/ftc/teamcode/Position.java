@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode;
  *  More generally, it contains an x-y point and a rotation.
  */
 public class Position {
-
     // A rotation, in radians, in the interval (-pi, pi]
     private double rotation;
 

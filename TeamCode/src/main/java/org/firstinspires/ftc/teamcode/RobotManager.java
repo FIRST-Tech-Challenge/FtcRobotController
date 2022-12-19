@@ -6,7 +6,6 @@ package org.firstinspires.ftc.teamcode;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,10 +21,10 @@ public class RobotManager {
     static final double TRIGGER_DEAD_ZONE_SIZE = 0.05;
 
     public enum AllianceColor {BLUE, RED}
-    //public enum StartingSide {WAREHOUSE, CAROUSEL}
-    public enum StartingSide {LEFT, RIGHT}
-
+    public enum StartingSide {OUR_COLOR, THEIR_COLOR} //add starting side here later
     public Robot robot;
+    public AllianceColor allianceColor;
+    public StartingSide startingSide;
 
     public MechanismDriving mechanismDriving;
     public Navigation navigation;
@@ -42,6 +41,8 @@ public class RobotManager {
 
         this.telemetry = telemetry;
         this.elapsedTime = elapsedTime;
+        this.allianceColor = allianceColor;
+        this.startingSide = startingSide;
 
         elapsedTime.reset();
         navigation = new Navigation(path, allianceColor, startingSide, movementMode);
@@ -49,17 +50,13 @@ public class RobotManager {
 
         robot = new Robot(hardwareMap, telemetry, elapsedTime);
 
-        if (!path.isEmpty()) {
-            computerVision = new ComputerVision(hardwareMap, new AutonPipeline(robot, telemetry, allianceColor));
-        }
+//        if (!path.isEmpty()) {
+//            computerVision = new ComputerVision(hardwareMap, new AutonPipeline(robot, telemetry, allianceColor));
+//        }
 
         gamepads = new GamepadWrapper(gamepad1, gamepad2);
         previousStateGamepads = new GamepadWrapper();
         previousStateGamepads.copyGamepads(gamepads);
-
-        if (allianceColor == AllianceColor.BLUE) {
-            robot.carouselMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        }
     }
 
     // TELE-OP
@@ -68,51 +65,18 @@ public class RobotManager {
     /** Determine new robot desired states based on controller input (checks for button releases)
      */
     public void readControllerInputs() {
-        // Carousel
-        if (getButtonRelease(GamepadWrapper.DriverAction.RUN_CAROUSEL)) {
-            switch (robot.desiredCarouselState) {
-                case STOPPED:
-                    robot.desiredCarouselState = Robot.CarouselState.SPINNING;
-                    mechanismDriving.carouselStartTime = elapsedTime.milliseconds();
-                    break;
-                case SPINNING:
-                    robot.desiredCarouselState = Robot.CarouselState.STOPPED;
-                    break;
-            }
-        }
-        if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_AUTO_SPIN)) {
-            if (robot.desiredCarouselState != Robot.CarouselState.AUTO_SPIN) {
-                robot.desiredCarouselState = Robot.CarouselState.AUTO_SPIN;
-                mechanismDriving.carouselStartTime = elapsedTime.milliseconds();
-            }
-            else {
-                robot.desiredCarouselState = Robot.CarouselState.STOPPED;
-            }
-        }
-
-        // Claw
-        if (getButtonRelease(GamepadWrapper.DriverAction.OPEN_CLAW)) {
-            robot.desiredClawState = Robot.ClawState.OPEN;
-        }
-        if (getButtonRelease(GamepadWrapper.DriverAction.CLOSE_CLAW)) {
-            robot.desiredClawState = Robot.ClawState.CLOSED;
-        }
-
         // Linear slides
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
             robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
         }
-        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_L1)) {
-            robot.desiredSlidesState = Robot.SlidesState.L1;
+        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
+            robot.desiredSlidesState = Robot.SlidesState.LOW;
         }
-        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_L2)) {
-            robot.desiredSlidesState = Robot.SlidesState.L2;
+        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_MEDIUM)) {
+            robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
         }
-        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_L3)) {
-            robot.desiredSlidesState = Robot.SlidesState.L3;
-        }
-        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_CAPPING)) {
-            robot.desiredSlidesState = Robot.SlidesState.CAPPING;
+        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
+            robot.desiredSlidesState = Robot.SlidesState.HIGH;
         }
 
         // Fine movement/rotation.
@@ -166,6 +130,8 @@ public class RobotManager {
             if (gamepads.getAnalogValues().gamepad2RightStickX < -0.5) {
                 navigation.wheel_speeds[3] -= 0.01;
             }
+
+            // TODO: Add button for compliant wheels (on and off switch)
         }
 
         mechanismDriving.adjustDesiredSlideHeight(gamepads.getAnalogValues(), robot);
@@ -182,9 +148,9 @@ public class RobotManager {
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
      */
     public void driveMechanisms() {
-        mechanismDriving.updateCarousel(robot);
-        mechanismDriving.updateClaw(robot);
-        mechanismDriving.updateSlides(robot);
+//        mechanismDriving.updateCarousel(robot);
+//        mechanismDriving.updateClaw(robot);
+//        mechanismDriving.updateSlides(robot);
     }
 
     /** Changes drivetrain motor inputs based off the controller inputs.
@@ -224,32 +190,16 @@ public class RobotManager {
         return navigation.travelToNextPOI(robot);
     }
 
-
-    /** Converts a result from the barcode scanner into a level on which to place the preload box
-     * @param result The result of the barcode scanning. This will NEVER be WRONG_CAPS or WRONG_TAPE, it will always be a valid barcode state
-     * @return A SlidesState that represents the scoring level to deposit to
-     */
-    private Robot.SlidesState barcodeResultToSlidesState(Robot.BarcodeScanResult result) {
-
-        switch (result) {
-            case LEFT: return Robot.SlidesState.L1;
-            case CENTER: return Robot.SlidesState.L2;
-            case RIGHT: return Robot.SlidesState.L3;
-        }
-
-        return Robot.SlidesState.L1;
-    }
-
-
     /** Determines the position of the capstone on the barcode.
      */
-    public Robot.SlidesState readBarcode() {
+    public Robot.ParkingPosition readBarcode() {
         // Reset the barcode scanning counters and states
-        robot.barcodeScanResult = Robot.BarcodeScanResult.WRONG_CAPS;
-        robot.resetBarcodeScanMap();
+//        robot.barcodeScanResult = Robot.BarcodeScanResult.WRONG_CAPS;
+//        robot.resetBarcodeScanMap();
+//        robot.numBarcodeAttempts = 0;
+//        robot.barcodeScanState = Robot.BarcodeScanState.SCAN;
 
-        robot.barcodeScanState = Robot.BarcodeScanState.SCAN;
-        robot.numBarcodeAttempts = 0;
+        // TODO: call CV function
 
         // Wait for CV to determine a finalized barcodeScanResult value (this is blocking!)
         while (robot.barcodeScanState == Robot.BarcodeScanState.SCAN) {
@@ -259,77 +209,52 @@ public class RobotManager {
             catch (InterruptedException e) {}
         }
 
-        return barcodeResultToSlidesState(robot.barcodeScanResult);
-    }
+        boolean flipped = (allianceColor == AllianceColor.RED && startingSide == StartingSide.OUR_COLOR) || (allianceColor == AllianceColor.BLUE && startingSide == StartingSide.THEIR_COLOR);
 
+        switch (robot.barcodeScanResult) {
+            case LEFT: return flipped ? Robot.ParkingPosition.OUTSIDE : Robot.ParkingPosition.INSIDE;
+            case RIGHT: return flipped ? Robot.ParkingPosition.INSIDE : Robot.ParkingPosition.OUTSIDE;
+            default: return Robot.ParkingPosition.MIDDLE;
+        }
+    }
 
     // Each of these methods manually sets the robot state so that a specific task is started, and forces these tasks to
     // be synchronous by repeatedly calling the mechanism driving methods. These are to be used in an autonomous OpMode.
 
-    /** Delivers a duck by spinning the carousel.
+    /** Horse shoe code
+     *  This horse shoe code here is part of the linear slides and helps the cone position into the poles.
      */
-    /*
-    public void deliverDuck() {
-        robot.desiredCarouselState = Robot.CarouselState.STOPPED;
-        mechanismDriving.updateCarousel(robot);
-
-        robot.desiredCarouselState = Robot.CarouselState.SPINNING;
-        mechanismDriving.updateCarousel(robot);
-
-        int sleepTime = 0;
-        for (int interval : MechanismDriving.CAROUSEL_TIMES) {
-            sleepTime += interval;
+    public void flipHorseshoe() {
+        switch (robot.desiredHorseshoeState) {
+            case FRONT: robot.desiredHorseshoeState = Robot.HorseshoeState.REAR;
+            case REAR: robot.desiredHorseshoeState = Robot.HorseshoeState.FRONT;
         }
-
-        telemetry.addData("sleepTime", sleepTime);
-        telemetry.update();
-
-        double startingTime = robot.elapsedTime.milliseconds();
-        while (robot.elapsedTime.milliseconds() - startingTime < sleepTime) {}
-
-        robot.desiredCarouselState = Robot.CarouselState.STOPPED;
-        mechanismDriving.updateCarousel(robot);
+        double startTime = robot.elapsedTime.milliseconds(); //Starts the time of the robot in milliseconds.
+        mechanismDriving.updateHorseshoe(robot);
+        //case Robot.HorseshoeState.FRONT/REAR (Remove the / in between if needed to be added back. Only set 1 variable at a time)
+        //Waiting for servo to finish rotation
+        while (robot.elapsedTime.milliseconds() - startTime < MechanismDriving.HORSESHOE_TIME) {}
     }
+
+    /** Finds the lowered SlidesState given a standard SlidesState
+     *
+     *  @param currentSlidesState the current state of the linear slides
+     *  @return the lowered SlidesState (or the retracted SlidesState if it was already retracted)
      */
-
-    /** Opens the claw.
-     */
-    public void openClaw() {
-        robot.desiredClawState = Robot.ClawState.OPEN;
-        double startingTime = robot.elapsedTime.milliseconds();
-        mechanismDriving.updateClaw(robot);
-        // Wait for claw to open.
-        while (robot.elapsedTime.milliseconds() - startingTime < MechanismDriving.CLAW_SERVO_TIME) {}
-    }
-
-    /** Closes the claw.
-     */
-     /*
-    public void closeClaw() {
-        robot.desiredClawState = Robot.ClawState.CLOSED;
-        double startingTime = robot.elapsedTime.milliseconds();
-        mechanismDriving.updateClaw(robot);
-        // Wait for claw to close.
-        while (robot.elapsedTime.milliseconds() - startingTime < MechanismDriving.CLAW_SERVO_TIME) {}
-    }
-      */
-
-    public void liftCone(Robot.SlidesState level) {
-        //need to add proper operation of intake system
-
-        robot.desiredSlidesState = level;
-    }
-
-    public void dropCone() {
-        //pull out something to make cone drop from intake mechanism
+    public Robot.SlidesState getLoweredSlidesState(Robot.SlidesState currentSlidesState) {
+        switch (currentSlidesState) {
+            case LOW: return Robot.SlidesState.LOW_LOWERED;
+            case MEDIUM: return Robot.SlidesState.MEDIUM_LOWERED;
+            case HIGH: return Robot.SlidesState.HIGH_LOWERED;
+            default: return Robot.SlidesState.RETRACTED;
+        }
     }
 
     /** Delivers a piece of freight to a particular level of the alliance shipping hub.
      *
      *  @param level the level to which the cargo needs to be delivered.
      */
-    /*
-    public void deliverToShippingHub(Robot.SlidesState level) {
+    public void deliverToPole(Robot.SlidesState level, Robot robot) {
         // Extend slides.
         robot.desiredSlidesState = level;
         boolean extended = mechanismDriving.updateSlides(robot);
@@ -339,33 +264,23 @@ public class RobotManager {
 
         // Move into drop-off position.
         robot.positionManager.updatePosition(robot);
-        Position startPos = new Position(
-                new Point(robot.getPosition().getX(), robot.getPosition().getY(), "POI startPos"),
-                robot.getPosition().getRotation());
+        Position startPos = new Position(robot.getPosition().getX(), robot.getPosition().getY(),
+                robot.getPosition().getRotation(), "POI startPos");
 
-        double forwardDistance = Navigation.CLAW_SIZE;
-        switch (level) {
-            case L1:
-                forwardDistance -= 3;
-                break;
-            case L2:
-                forwardDistance -= 4;
-                break;
-            case L3:
-                forwardDistance -= 7;
-                break;
+        navigation.path.add(navigation.pathIndex,
+                new Position(startPos.getX() + Navigation.HORSESHOE_SIZE, startPos.getY(),
+                        startPos.getRotation(), "POI dropoff"));
+
+        travelToNextPOI();
+
+        flipHorseshoe();
+
+        // Lower linear slides
+        robot.desiredSlidesState = getLoweredSlidesState(robot.desiredSlidesState);
+        boolean lowered = mechanismDriving.updateSlides(robot);
+        while (!lowered) {
+            lowered = mechanismDriving.updateSlides(robot);
         }
-//        if (level == Robot.SlidesState.L1) {forwardDistance -= 0.75;}
-
-        if (forwardDistance > 0) {
-            navigation.path.add(navigation.pathIndex,
-                    new Position(new Point(startPos.getX() + forwardDistance, startPos.getY(), "POI dropoff",
-                            Point.Action.NONE, 0.4, 0.0), startPos.getRotation()));
-
-            travelToNextPOI();
-        }
-
-        openClaw();
 
         // Move back to starting position.
         navigation.path.add(navigation.pathIndex, startPos);
@@ -378,9 +293,21 @@ public class RobotManager {
             retracted = mechanismDriving.updateSlides(robot);
         }
 
-        closeClaw();
+        flipHorseshoe();
     }
+
+    /** Picks up a cone.
      */
+    public void pickUpCone() {
+        // Suck the cone into the horseshoe
+        // robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.ON;
+        double startTime = elapsedTime.milliseconds();
+//        while (elapsedTime.milliseconds() - startTime < MechanismDriving.COMPLIANT_WHEELS_TIME)
+//            mechanismDriving.updateCompliantWheels(robot);
+        // Turns off compliant wheels
+//        robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.OFF;
+//        mechanismDriving.updateCompliantWheels(robot);
+    }
 
     /** Returns whether the driver is attempting to move the robot linearly
      *

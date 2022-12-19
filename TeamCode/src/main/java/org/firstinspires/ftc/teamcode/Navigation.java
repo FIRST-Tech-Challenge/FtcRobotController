@@ -21,7 +21,7 @@ import java.util.Objects;
  */
 public class Navigation {
     public enum RotationDirection {CLOCKWISE, COUNTERCLOCKWISE}
-    public static enum Action {NONE, LIFT_CONE, DROP_CONE}
+    public static enum Action {NONE, DELIVER_CONE_LOW, DELIVER_CONE_MEDIUM, DELIVER_CONE_HIGH, PICK_UP_CONE}
     // AUTON CONSTANTS
     // ===============
     public enum MovementMode {FORWARD_ONLY, STRAFE}
@@ -45,7 +45,7 @@ public class Navigation {
     static final double RED_BARCODE_OFFSET = 0;
 
     // Distances between where the robot extends/retracts the linear slides and where it opens the claw.
-    static final double CLAW_SIZE = 8.9;
+    static final double HORSESHOE_SIZE = 8.9;
 
     static final double FLOAT_EPSILON = 0.001;
 
@@ -94,7 +94,7 @@ public class Navigation {
             robot.telemetry.update();
             switch (movementMode) {
                 case FORWARD_ONLY:
-                    rotate(getAngleBetween(robot.getPosition().x, robot.getPosition().y, target.getX(), target.getY() - Math.PI / 2),
+                    rotate(getAngleBetween(robot.getPosition().x, robot.getPosition().y, target.x, target.y) - Math.PI / 2,
                             target.rotatePower, robot);
                     travelLinear(target, target.getStrafePower(), robot);
                     rotate(target.getRotation(), target.getRotatePower(), robot);
@@ -110,7 +110,7 @@ public class Navigation {
             robot.telemetry.addData("Got to", target.name);
             robot.telemetry.update();
 
-            if (target.name.length() >= 3 && target.name.substring(0, 3).equals("POI")) break;
+            if (target.name.startsWith("POI")) break;
         }
         return path.get(pathIndex - 1);
     }
@@ -341,7 +341,6 @@ public class Navigation {
         final double startX = robot.getPosition().getX();
         final double startY = robot.getPosition().getY();
 
-
         double totalDistance = getEuclideanDistance(startX, startY, target.x, target.y);
 
         double power;
@@ -441,11 +440,7 @@ public class Navigation {
 
     /** Calculates the euclidean distance between two points.
      *
-     *  @param x1 A 2D point on the playing field. (x1, y1)
-     *  @param y1
-     *  @param x2 The point (x2, y2) to find the distance to point A from.
-     *  @param y2
-     *  @return The Euclidean distance between the two points.
+     *  TODO: make this take two Positions
      */
     private double getEuclideanDistance(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
@@ -459,12 +454,12 @@ public class Navigation {
             Position copy = new Position(pos.getX(),pos.getY(), pos.getName(),pos.getAction(),pos.getStrafePower(),pos.getRotatePower(),pos.getRotation());
             if (allianceColor == RobotManager.AllianceColor.RED) {
                 copy.setY(-copy.getY() + RED_BARCODE_OFFSET);
-                if (startingSide == RobotManager.StartingSide.WAREHOUSE) {
+                if (startingSide == RobotManager.StartingSide.OUR_COLOR){
                     copy.setY(copy.getY() + DISTANCE_BETWEEN_START_POINTS);
                 }
                 copy.setRotation((copy.getRotation() + Math.PI) * -1);
             }
-            else if (startingSide == RobotManager.StartingSide.WAREHOUSE) {
+            else if (startingSide == RobotManager.StartingSide.OUR_COLOR) {
                 copy.setY(copy.getY() - DISTANCE_BETWEEN_START_POINTS);
             }
             path.set(i, copy);
@@ -528,7 +523,7 @@ public class Navigation {
      * @return an array containing the scaled versions of a and b
      */
     double[] scaleRange(double a, double b) {
-        double max = Math.abs(a) > Math.abs(b) ? Math.abs(a) : Math.abs(b);
+        double max = Math.max(Math.abs(a), Math.abs(b));
         return new double[] {a / max, b / max};
     }
 
@@ -930,7 +925,7 @@ class AutonomousPaths {
 //    ));
 //    public static final ArrayList<Position> PARK_STORAGE_UNIT = new ArrayList<>(Arrays.asList(
 //            new Position(new Point(0, 10, "Out from wall1"), 0),
-//            new Position(new Point(29, 10, "Out from w=all2"), 0),
+//            new Position(new Point(29, 10, "Out from wall2"), 0),
 //            new Position(new Point(29, 25, "POI storage unit"), 0)
 //    ));
 //    public static final ArrayList<Position> MOVE_STRAIGHT = new ArrayList<>(Arrays.asList(
@@ -942,8 +937,7 @@ class AutonomousPaths {
 }
 */
 
-class AutonomousPaths{
-    public static enum SignalParking {LOCATION1, LOCATION2, LOCATION3}
+class AutonomousPaths {
     public final double FIELD_WIDTH = 6;//placeholder - field is 6 x 6 square
 
     //Units are in field tiles.
@@ -961,24 +955,24 @@ class AutonomousPaths{
 
     //Junctions
     //Ground
-    public static Position closeLeftGroundJunction = new Position(-1, 0, "closeLeftGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
-    public static Position closeRightGroundJunction = new Position(0, 0, "closeRightGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -3 / 4 * Math.PI);
+    //public static Position closeLeftGroundJunction = new Position(-1, 0, "closeLeftGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
+    //public static Position closeRightGroundJunction = new Position(0, 0, "closeRightGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -3 / 4 * Math.PI);
 
     //Small
-    public static Position leftSmallJunction = new Position(0, 0, "leftSmallJunction", Navigation.Action.DROP_CONE, 1, 1, 3 / 4 * Math.PI);
-    public static Position rightSmallJunction = new Position(0, 1, "rightSmallJunction", Navigation.Action.DROP_CONE, 1, 1, Math.PI / 4);
+    public static Position leftSmallJunction = new Position(0, 0, "POI leftSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, 3 / 4 * Math.PI);
+    public static Position rightSmallJunction = new Position(0, 1, "POI rightSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, Math.PI / 4);
 
     //Medium
-    public static Position mediumJunction = new Position(-1, 1, "mediumJunction", Navigation.Action.DROP_CONE, 1, 1, Math.PI / 4);
+    public static Position mediumJunction = new Position(-1, 1.5, "POI mediumJunction", Navigation.Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
 
     //Large
-    public static Position leftLargeJunction = new Position(-1,1, "leftLargeJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
-    public static Position rightLargeJunction = new Position(0,2, "rightLargeJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
-
+    public static Position leftLargeJunction = new Position(-1,1, "POI leftLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4);
+    //public static Position rightLargeJunction = new Position(0,2, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4); //maybe the deliver to pole method should allow for delivering cone from different positions
+    public static Position rightLargeJunction = new Position(-1,2.5, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, 0);
 
     //Signal locations
     //Cone
-    public static Position signalCone = new Position(0, 1, "signalCone", Navigation.Action.DROP_CONE, 1, 1, Math.PI); //This might be wrong because the robot might rotate after you get to the desired position
+    public static Position signalCone = new Position(0, 1, "POI signalCone", Navigation.Action.PICK_UP_CONE, 1, 1, Math.PI); //This might be wrong because the robot might rotate after you get to the desired position
 
     //IMPORTANT NOTE: locations on the right side are not symmetrical with their counterparts on left side
     public static Position leftSideSignalLocation1 = new Position(-1, 1.5, 0, "leftSideSignalLocation1");
@@ -991,20 +985,24 @@ class AutonomousPaths{
 
 
     //Intermediate positions (positions that you need to go to on the way to your destination)
-    public static Position intermediateMedium = new Position(-1, 0, 0, "intermediateMedium");
+    public static Position intermediateBottomLeft = new Position(-1, 0, 0, "intermediateBottomLeft");
+    public static Position intermediateCenterLeft = new Position(-1, 1, 0, "intermediateCenterLeft");
 
 
-    //Paths
-    public static ArrayList<Position> path = new ArrayList<Position>() {
-        {
-            add(intermediateMedium);
-            add(mediumJunction);
-            add(signalCone);
-            add(rightLargeJunction);
-        }
-    };
+    //Paths/Strategies
+    public static final ArrayList<Position> MEDIUM_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, mediumJunction, intermediateCenterLeft, signalCone, intermediateCenterLeft, rightLargeJunction));
+
+    public static final ArrayList<Position> SMALL_LARGE = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, rightLargeJunction));
+
+    public static final ArrayList<Position> SMALL_MEDIUM = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, mediumJunction));
+
+    public static final ArrayList<Position> SMALL_SMALL = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, rightSmallJunction));
+
+    public static final ArrayList<Position> LARGE_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, leftLargeJunction, signalCone, rightLargeJunction));
+
 
     //Location is for parking location retrieved from signal and starting location is for whether the robot started on the left or the right
+    /*
     public static void setSignalParkingSpot(SignalParking location, RobotManager.StartingSide startingLocation) {
         switch(location) {
             case LOCATION1:
@@ -1051,6 +1049,10 @@ class AutonomousPaths{
                 }
 
                 break;
+
+
+
         }
     }
+     */
 }

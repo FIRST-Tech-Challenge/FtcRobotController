@@ -18,10 +18,10 @@ public class PowerPlayAuton extends LinearOpMode {
     @Override
     public void runOpMode() {
         initSharedPreferences();
-        wefwefwgewefwefwefwef //Problem: path is currently not set to the desired path in autonomous paths!
+        //Problem: path is currently not set to the desired path in autonomous paths!
         robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, PowerPlayAuton.navigationPath,
-                                        PowerPlayAuton.allianceColor, PowerPlayAuton .startingSide,
-                                        PowerPlayAuton.movementMode, telemetry, elapsedTime);
+                PowerPlayAuton.allianceColor, PowerPlayAuton.startingSide,
+                PowerPlayAuton.movementMode, telemetry, elapsedTime);
 
         IMUPositioning.Initialize(this);
 
@@ -40,44 +40,31 @@ public class PowerPlayAuton extends LinearOpMode {
 
          */
 
-        robotManager.computerVision.startStreaming();
-
-        AutonomousPaths.SignalParking signalParkLocation;
-        do {
-            signalParkLocation = robotManager.readSignal();//Read in signal from computer vision here
-        }
         while (!isStarted());
-
-//        hubLevel = Robot.SlidesState.L3;
-
-        robotManager.computerVision.stopStreaming();
-
-        AutonomousPaths.setSignalParkingSpot(signalParkLocation, startingSide); //Starting location is initialized from shared preferences
-
-        telemetry.addData("signal result", signalParkLocation.name());
-        telemetry.update();
 
 //        waitForStart(); // Wait for the play button to be pressed
 
         double startTime = robotManager.elapsedTime.milliseconds();
         while (robotManager.elapsedTime.milliseconds() - startTime < waitTime * 1000) {}
 
-        robotManager.closeClaw();
         Position lastPOI;
-
-//        hubLevel = Robot.SlidesState.L1;
-
         while ((lastPOI = robotManager.travelToNextPOI()) != null) {
             telemetry.update();
             telemetry.addData("POI", lastPOI.name);
             telemetry.addData("Action", lastPOI.action.name());
             telemetry.update();
             switch (lastPOI.action) {
-                case LIFT_CONE:
-                    robotManager.liftCone(hubLevel);
+                case PICK_UP_CONE:
+                    robotManager.pickUpCone(); //Robot should move forward a bit so it can put the cone into the intake
                     break;
-                case DROP_CONE:
-                    robotManager.dropCone();
+                case DELIVER_CONE_LOW:
+                    robotManager.deliverToPole(Robot.SlidesState.LOW, robotManager.robot);
+                    break;
+                case DELIVER_CONE_MEDIUM:
+                    robotManager.deliverToPole(Robot.SlidesState.MEDIUM, robotManager.robot);
+                    break;
+                case DELIVER_CONE_HIGH:
+                    robotManager.deliverToPole(Robot.SlidesState.HIGH, robotManager.robot);
                     break;
             }
         }
@@ -124,7 +111,7 @@ public class PowerPlayAuton extends LinearOpMode {
 
         switch (movementMode) {
             case "STRAFE":
-               PowerPlayAuton.movementMode = Navigation.MovementMode.STRAFE;
+                PowerPlayAuton.movementMode = Navigation.MovementMode.STRAFE;
                 break;
             case "FORWARD_ONLY":
                 PowerPlayAuton.movementMode = Navigation.MovementMode.FORWARD_ONLY;
@@ -150,12 +137,12 @@ public class PowerPlayAuton extends LinearOpMode {
         }
 
         switch(startingSide) {
-            case "LEFT":
-                PowerPlayAuton.startingSide = RobotManager.StartingSide.LEFT;
+            case "THEIR_COLOR":
+                PowerPlayAuton.startingSide = RobotManager.StartingSide.THEIR_COLOR;
                 break;
 
-            case "RIGHT":
-                PowerPlayAuton.startingSide = RobotManager.StartingSide.RIGHT;
+            case "OUR_COLOR":
+                PowerPlayAuton.startingSide = RobotManager.StartingSide.OUR_COLOR;
                 break;
         }
 
@@ -166,6 +153,24 @@ public class PowerPlayAuton extends LinearOpMode {
             PowerPlayAuton.allianceColor = RobotManager.AllianceColor.RED;
         }
 
+        switch (autonMode) {
+            case "MEDIUM_LARGE":
+                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.MEDIUM_LARGE.clone();
+                break;
+            case "SMALL_LARGE":
+                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.SMALL_LARGE.clone();
+                break;
+            case "SMALL_MEDIUM":
+                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.SMALL_MEDIUM.clone();
+                break;
+            case "SMALL_SMALL":
+                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.SMALL_SMALL.clone();
+                break;
+            case "LARGE_LARGE":
+                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.LARGE_LARGE.clone();
+                break;
+        }
+/*
         switch (autonMode) {
             case "PARK_ASU":
                 PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PARK_ASU.clone();
@@ -220,5 +225,7 @@ public class PowerPlayAuton extends LinearOpMode {
 //                FreightFrenzyAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.ROTATE_180.clone();
 //                break;
         }
+        */
+
     }
 }
