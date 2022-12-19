@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ElevatorFeedforward;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.RobotConfig;
+import org.firstinspires.ftc.teamcode.Config;
 
 public class ElevatorSystem extends SubsystemBase {
     Motor motor;
@@ -15,18 +15,11 @@ public class ElevatorSystem extends SubsystemBase {
 
     public ElevatorSystem(final HardwareMap hardwareMap) {
         motor = new Motor(hardwareMap, "elevator");
-
-        feedforward = new ElevatorFeedforward(
-                RobotConfig.elevatorKs,
-                RobotConfig.elevatorKg,
-                RobotConfig.elevatorKv,
-                RobotConfig.elevatorKa
-        );
     }
 
     @Override
     public void periodic() {
-        double output = feedforward.calculate(RobotConfig.elevatorVel, RobotConfig.elevatorAcc);
+
     }
 
     public void setTarget(double input) {

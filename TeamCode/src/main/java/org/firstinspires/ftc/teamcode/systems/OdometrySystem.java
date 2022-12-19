@@ -14,7 +14,6 @@ import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.RobotConfig;
 
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
