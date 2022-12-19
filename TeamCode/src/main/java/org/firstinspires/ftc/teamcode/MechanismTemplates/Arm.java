@@ -18,8 +18,8 @@ public class Arm {
     private double armKd = 0.000005;
     private double armKf = 0.000004;
 
-    private final double EXTAKE_POS = 1150; // 1255 Actual position based on encoder readings
-    private final double INTAKE_POS = 0; // -42.45391238 was the old value
+    public static double EXTAKE_POS = 1155; // 1255 Actual position based on encoder readings; 1150 old val
+    public static double INTAKE_POS = 0; // -42.45391238 was the old value
     private final double MAX = 1350;
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
@@ -29,7 +29,7 @@ public class Arm {
     private double targetPos = 0.0;
 
     public Arm(HardwareMap hardwareMap){
-        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_60); // Pin ___
+        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_60); // Pin 0 on control hub
         armMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         armMotor.setRunMode(Motor.RunMode.VelocityControl);
 

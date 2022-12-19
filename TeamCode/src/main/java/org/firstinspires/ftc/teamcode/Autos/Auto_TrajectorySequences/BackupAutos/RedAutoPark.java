@@ -10,12 +10,12 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "RedAutoPark")
 public class RedAutoPark extends PowerPlay_AprilTagDetection {
-    public void initilize(){
+    public void initialize(){
         super.runOpMode();
     }
     @Override
     public void runOpMode() {
-        initilize();
+        initialize();
         Pose2d startPose = new Pose2d(-35, 62, Math.toRadians(270));
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
         bot.setPoseEstimate(startPose);

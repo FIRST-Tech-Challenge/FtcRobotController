@@ -19,9 +19,7 @@ import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 public class PP_MecanumTeleOp extends OpMode
 {
     //"MC ABHI IS ON THE REPO!!!"
-    boolean isAuto = false; // yes I know this is stupid
-    boolean lastTriggerPress = false;
-//    public final double TURN_PRECESION = 0.5;
+    public final double TURN_PRECESION = 0.65;
 
     // Declaring drivetrain motors
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
@@ -41,7 +39,7 @@ public class PP_MecanumTeleOp extends OpMode
 
     private GamepadEx driverOp;
 
-    private final double PRECISIONREDUCTION = 0.3;
+    private final double PRECISIONREDUCTION = 0.39;
     /**
      * Get the maximum absolute value from a static array of doubles
      *
@@ -89,7 +87,7 @@ public class PP_MecanumTeleOp extends OpMode
 
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
-        clawControl = new Claw(hardwareMap, isAuto, () -> gamepad2.right_bumper, () -> gamepad2.a);
+        clawControl = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
     }// INIT()
 
     @Override
@@ -118,8 +116,8 @@ public class PP_MecanumTeleOp extends OpMode
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
         double rx = -gamepad1.right_stick_x*0.75;
-//      if(precisionToggle)
-//          rx *= TURN_PRECESION;
+        if(precisionToggle)
+            rx *= TURN_PRECESION;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
@@ -177,14 +175,13 @@ public class PP_MecanumTeleOp extends OpMode
             clawControl.toggleWristRotate();
         }
         else if (gamepad2_B.isRisingEdge()) {
-            armControl.setExtake();
-            slideControl.setMidJunction();
-            clawControl.toggleWristRotate();
+           armControl.setExtake();
+           slideControl.setMidJunction();
+           clawControl.toggleWristRotate();
+
         }
         else if (gamepad2_A.isRisingEdge()) {
-            armControl.setExtake();
             slideControl.setLowJunction();
-            clawControl.toggleWristRotate();
         }
         else if (gamepad2_X.isRisingEdge()){
             clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
@@ -195,10 +192,10 @@ public class PP_MecanumTeleOp extends OpMode
         }
 
         if(gamepad2.dpad_right)
-            armControl.manualArm(100);
+            armControl.manualArm(50);
 
         if(gamepad2.dpad_left)
-            armControl.manualArm(-100);
+            armControl.manualArm(-50);
     }
 
     public void claw() {

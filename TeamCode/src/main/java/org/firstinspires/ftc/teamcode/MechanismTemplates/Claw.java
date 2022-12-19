@@ -15,8 +15,8 @@ public class Claw {
     private boolean isAuto;
 
     // claw positions
-    private final double OPEN = 0.69;
-    private final double CLOSE = 0.44;
+    public static double OPEN = 0.69;
+    public static double CLOSE = 0.44;
 
     // wrist positions
     public final double WRIST_INTAKE_POSITION = 0.72; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
@@ -25,25 +25,28 @@ public class Claw {
     SignalEdgeDetector isOpen;
     SignalEdgeDetector isIntakePosition;
 
-    public Claw(HardwareMap hardwareMap, boolean isAuton, BooleanSupplier rightBumper, BooleanSupplier aButton) {
-        isAuto = isAuton;
+    public Claw(HardwareMap hardwareMap, BooleanSupplier rightBumper, BooleanSupplier aButton) {
 
+        // Control Hub Pins
         wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
         clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
-        //isOpen = true; // our claw begins in the open position
 
-        if (isAuto) {
-            clawJoint.setPosition(CLOSE);
-            wristJoint.setPosition(WRIST_EXTAKE_POSITION);
-            //isWristIntakePosition = false; // our wrist does NOT start at the intake position in auto
-        } else { // if it is teleOp
-            clawJoint.setPosition(OPEN);
-            wristJoint.setPosition(WRIST_INTAKE_POSITION);
-            //isWristIntakePosition = true; // our wrist starts at the intake position in tele
-        }
+        // Presets for teleOp
+        clawJoint.setPosition(OPEN);
+        wristJoint.setPosition(WRIST_INTAKE_POSITION);
 
         isOpen = new SignalEdgeDetector(rightBumper);
         isIntakePosition = new SignalEdgeDetector(aButton);
+    }
+
+    // Overloaded method for autonomous
+    public Claw(HardwareMap hardwareMap){
+        // Control Hub Pins
+        wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
+        clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
+
+        clawJoint.setPosition(CLOSE);
+        wristJoint.setPosition(WRIST_INTAKE_POSITION);
     }
 
     private boolean clawToggled;
