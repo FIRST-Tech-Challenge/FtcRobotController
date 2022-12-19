@@ -103,56 +103,43 @@ public class PoleOrientationExample extends LinearOpMode
             robot.readBulkData();
             robot.turretPosRun();
 
-            rotateToCenterPole();
+            // Let us see if we can use the camera for distance.
+            alignToPole();
             telemetry.addLine("Just a stupid line.");
             telemetry.update();
         }
     }
 
-    void distanceToPole() {
-        // Value in inches?
-        double desiredDistance = 28.0;
-        double distanceTolerance = 1.0;
-        double range = robot.updateSonarRangeF();
-        double rangeErr = range - desiredDistance;
-        if( abs(rangeErr) > distanceTolerance ) {
-            // Drive towards/away from the pole
-//            robot.driveTrainFwdRev( (rangeErr>0.0)? +0.10 : -0.10 );
-        } else {
-            robot.stopMotion();
-            ranging = false;
-        }
-    }
-
     /*---------------------------------------------------------------------------------*/
-    void rotateToCenterPole() {
-        PowerPlaySuperPipeline.AnalyzedPole theLocalPole = null;
-        int alignedCount = 0;
-        synchronized(pipeline.lockPole) {
-            theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
-            alignedCount = theLocalPole.alignedCount;
-        }
-        int loops = 0;
-        while (opModeIsActive() && (alignedCount < 10)) {
-            loops++;
-            telemetry.addData("RotateToPole", "Loop count: %d", loops);
-            telemetry.addData("RotateToPole", "AlignmentCount: %d", alignedCount);
+    void alignToPole() {
+        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
+        double turnPower;
+        double drivePower;
+        double fr, fl, br, bl;
+        theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
+        while (opModeIsActive() && (theLocalPole.alignedCount < 2) && theLocalPole.properDistanceHighCount < 2) {
             if(theLocalPole.poleAligned) {
-                telemetry.addData("RotateToPole", "Robot Aligned!");
+                turnPower = 0;
+            } else {
+                // Rotate right or left
+                turnPower = theLocalPole.centralOffset > 0 ? 0.07 : -0.07;
+            }
+            if(theLocalPole.properDistanceHigh) {
+                drivePower = 0;
+            } else {
+                drivePower = theLocalPole.highDistanceOffset > 0 ? 0.07 : -0.07;
+            }
+            if(abs(drivePower) < 0.01 && abs(turnPower) < 0.01) {
                 robot.stopMotion();
             } else {
-                telemetry.addData("RotateToPole", "Robot Not Aligned!");
-                robot.driveTrainTurn((theLocalPole.centralOffset > 0) ? +0.07 : -0.07);
+                fl = drivePower - turnPower;
+                fr = drivePower + turnPower;
+                br = drivePower - turnPower;
+                bl = drivePower + turnPower;
+                robot.driveTrainMotors(fl, fr, bl, br);
             }
-            synchronized(pipeline.lockPole) {
-                telemetry.addData("RotateToPole", "Getting new pole.");
-                theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
-                alignedCount = theLocalPole.alignedCount;
-            }
-            telemetry.update();
+            theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
         }
         robot.stopMotion();
-        // TODO: can we use this aligned position along the tape to update our known
-        // odometry world position? (offsetting any drift-error that has accumulated?
-    } // rotateToCenterPole
+    } // alignToPole
 }

@@ -116,23 +116,16 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterRedCone() {
-        PowerPlaySuperPipeline.AnalyzedCone theLocalCone = null;
-        int alignedCount = 0;
-        synchronized(pipeline.lockRedCone) {
-            theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipeline.getDetectedRedCone());
-            alignedCount = theLocalCone.alignedCount;
-        }
-        while (opModeIsActive() && (alignedCount < 2)) {
+        PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
+        theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipeline.getDetectedRedCone());
+        while (opModeIsActive() && (theLocalCone.alignedCount < 2)) {
             performEveryLoop();
             if(theLocalCone.coneAligned) {
                 robot.stopMotion();
             } else {
                 robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.085 : -0.085);
             }
-            synchronized(pipeline.lockRedCone) {
-                theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipeline.getDetectedRedCone());
-                alignedCount = theLocalCone.alignedCount;
-            }
+            theLocalCone = pipeline.getDetectedRedCone();
         }
         robot.stopMotion();
             // TODO: can we use this aligned position along the tape to update our known
@@ -141,23 +134,16 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterBlueCone() {
-        PowerPlaySuperPipeline.AnalyzedCone theLocalCone = null;
-        int alignedCount = 0;
-        synchronized(pipeline.lockBlueCone) {
-            theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipeline.getDetectedBlueCone());
-            alignedCount = theLocalCone.alignedCount;
-        }
-        while (opModeIsActive() && (alignedCount < 2)) {
+        PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
+        theLocalCone = pipeline.getDetectedBlueCone();
+        while (opModeIsActive() && (theLocalCone.alignedCount < 2)) {
             performEveryLoop();
             if(theLocalCone.coneAligned) {
                 robot.stopMotion();
             } else {
                 robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.085 : -0.085);
             }
-            synchronized(pipeline.lockBlueCone) {
-                theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipeline.getDetectedBlueCone());
-                alignedCount = theLocalCone.alignedCount;
-            }
+            theLocalCone = pipeline.getDetectedBlueCone();
         }
         robot.stopMotion();
         // TODO: can we use this aligned position along the tape to update our known
@@ -166,23 +152,16 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterPole() {
-        PowerPlaySuperPipeline.AnalyzedPole theLocalPole = null;
-        int alignedCount = 0;
-        synchronized(pipeline.lockPole) {
-            theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
-            alignedCount = theLocalPole.alignedCount;
-        }
-        while (opModeIsActive() && (alignedCount < 2)) {
+        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
+        theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
+        while (opModeIsActive() && (theLocalPole.alignedCount < 2)) {
             performEveryLoop();
             if(theLocalPole.poleAligned) {
                 robot.stopMotion();
             } else {
                 robot.driveTrainTurn((theLocalPole.centralOffset > 0) ? +0.07 : -0.07);
             }
-            synchronized(pipeline.lockPole) {
-                theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
-                alignedCount = theLocalPole.alignedCount;
-            }
+            theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
         }
         robot.stopMotion();
         // TODO: can we use this aligned position along the tape to update our known

@@ -135,19 +135,30 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     // This is the allowable distance from the center of the pole to the "center"
     // of the image.  Pole is ~32 pixels wide, so our tolerance is 1/4 of that.
     static final int MAX_POLE_OFFSET = 4;
+    // This  is how wide a pole is at the proper scoring distance on a high pole
+    static final int POLE_HIGH_DISTANCE = 32;
+    // This is how many pixels wide the pole can vary at the proper scoring distance
+    // on a high pole.
+    static final int MAX_HIGH_DISTANCE_OFFSET = 3;
     static class AnalyzedPole
     {
         public AnalyzedPole() {};
         public AnalyzedPole(AnalyzedPole copyPole) {
-            corners = copyPole.corners;
+            corners = copyPole.corners.clone();
             alignedCount = copyPole.alignedCount;
+            properDistanceHighCount = copyPole.properDistanceHighCount;
             centralOffset = copyPole.centralOffset;
+            highDistanceOffset = copyPole.highDistanceOffset;
             poleAligned = copyPole.poleAligned;
+            properDistanceHigh = copyPole.properDistanceHigh;
         }
         RotatedRect corners;
         int alignedCount = 0;
+        int properDistanceHighCount = 0;
         double centralOffset;
+        double highDistanceOffset;
         boolean poleAligned = false;
+        boolean properDistanceHigh = false;
     }
 
     static final int MAX_CONE_OFFSET = 4;
@@ -155,7 +166,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         public AnalyzedCone() {};
         public AnalyzedCone(AnalyzedCone copyCone) {
-            corners = copyCone.corners;
+            corners = copyCone.corners.clone();
             alignedCount = copyCone.alignedCount;
             centralOffset = copyCone.centralOffset;
             coneAligned = copyCone.coneAligned;
@@ -168,17 +179,14 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     // For detecting poles
     List<AnalyzedPole> internalPoleList = new ArrayList<>();
-    List<AnalyzedPole> clientPoleList = new ArrayList<>();
     static AnalyzedPole thePole = new AnalyzedPole();
 
     // For detecting red cones
     List<AnalyzedCone> internalRedConeList = new ArrayList<>();
-    List<AnalyzedCone> clientRedConeList = new ArrayList<>();
     static AnalyzedCone theRedCone = new AnalyzedCone();
 
     // For detecting blue cones
     List<AnalyzedCone> internalBlueConeList = new ArrayList<>();
-    List<AnalyzedCone> clientBlueConeList = new ArrayList<>();
     static AnalyzedCone theBlueCone = new AnalyzedCone();
 
     @Override
@@ -195,66 +203,71 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
          * Run analysis for yellow poles
          */
         if(detectPole) {
-            synchronized (lockPole) {
-                for (MatOfPoint contour : findYellowContours(input)) {
-                    AnalyzePoleContour(contour, input);
-                }
-
-                findThePole();
+            for (MatOfPoint contour : findYellowContours(input)) {
+                AnalyzePoleContour(contour, input);
             }
+
+            findThePole();
         }
 
         /*
          * Run analysis for blue cones
          */
         if(detectBlueCone) {
-            synchronized (lockBlueCone) {
-                for (MatOfPoint contour : findBlueContours(input)) {
-                    AnalyzeBlueConeContour(contour, input);
-                }
-
-                findTheBlueCone();
+            for (MatOfPoint contour : findBlueContours(input)) {
+                AnalyzeBlueConeContour(contour, input);
             }
+
+            findTheBlueCone();
         }
 
         /*
          * Run analysis for red cones
          */
         if(detectRedCone) {
-            synchronized (lockRedCone) {
-                for (MatOfPoint contour : findRedContours(input)) {
-                    AnalyzeRedConeContour(contour, input);
-                }
-
-                findTheRedCone();
+            for (MatOfPoint contour : findRedContours(input)) {
+                AnalyzeRedConeContour(contour, input);
             }
+
+            findTheRedCone();
         }
 
         if(detectPole) {
-            if (thePole.poleAligned) {
-                thePole.alignedCount++;
-                drawRotatedRect(thePole.corners, input, GREEN);
-            } else {
-                thePole.alignedCount = 0;
-                drawRotatedRect(thePole.corners, input, RED);
+            synchronized(lockPole) {
+                if (thePole.poleAligned) {
+                    thePole.alignedCount++;
+                    drawRotatedRect(thePole.corners, input, GREEN);
+                } else {
+                    thePole.alignedCount = 0;
+                    drawRotatedRect(thePole.corners, input, RED);
+                }
+                if(thePole.properDistanceHigh) {
+                    thePole.properDistanceHighCount++;
+                } else {
+                    thePole.properDistanceHighCount = 0;
+                }
             }
         }
         if(detectBlueCone) {
-            if (theBlueCone.coneAligned) {
-                theBlueCone.alignedCount++;
-                drawRotatedRect(theBlueCone.corners, input, GREEN);
-            } else {
-                theBlueCone.alignedCount = 0;
-                drawRotatedRect(theBlueCone.corners, input, RED);
+            synchronized(lockBlueCone) {
+                if (theBlueCone.coneAligned) {
+                    theBlueCone.alignedCount++;
+                    drawRotatedRect(theBlueCone.corners, input, GREEN);
+                } else {
+                    theBlueCone.alignedCount = 0;
+                    drawRotatedRect(theBlueCone.corners, input, RED);
+                }
             }
         }
         if(detectRedCone) {
-            if (theRedCone.coneAligned) {
-                theRedCone.alignedCount++;
-                drawRotatedRect(theRedCone.corners, input, GREEN);
-            } else {
-                theRedCone.alignedCount = 0;
-                drawRotatedRect(theRedCone.corners, input, RED);
+            synchronized(lockRedCone) {
+                if (theRedCone.coneAligned) {
+                    theRedCone.alignedCount++;
+                    drawRotatedRect(theRedCone.corners, input, GREEN);
+                } else {
+                    theRedCone.alignedCount = 0;
+                    drawRotatedRect(theRedCone.corners, input, RED);
+                }
             }
         }
         drawRotatedRect(CENTERED_OBJECT, input, BLUE);
@@ -293,7 +306,9 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     public AnalyzedCone getDetectedRedCone()
     {
-        return theRedCone;
+        synchronized(lockRedCone) {
+            return new AnalyzedCone(theRedCone);
+        }
     }
 
     List<MatOfPoint> findRedContours(Mat input)
@@ -341,17 +356,17 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     boolean findTheRedCone()
     {
         boolean foundCone = false;
-        theRedCone.centralOffset = 0;
-        theRedCone.corners = new RotatedRect(new double[]{0, 0, 0, 0});
-        theRedCone.coneAligned = false;
-        for(AnalyzedCone aCone : internalRedConeList)
-        {
-            if(aCone.corners.size.height > theRedCone.corners.size.height)
-            {
-                theRedCone.corners = aCone.corners;
-                theRedCone.centralOffset = aCone.centralOffset;
-                theRedCone.coneAligned = aCone.coneAligned;
-                foundCone = true;
+        synchronized(lockRedCone) {
+            theRedCone.centralOffset = 0;
+            theRedCone.corners = new RotatedRect(new double[]{0, 0, 0, 0});
+            theRedCone.coneAligned = false;
+            for (AnalyzedCone aCone : internalRedConeList) {
+                if (aCone.corners.size.height > theRedCone.corners.size.height) {
+                    theRedCone.corners = aCone.corners.clone();
+                    theRedCone.centralOffset = aCone.centralOffset;
+                    theRedCone.coneAligned = aCone.coneAligned;
+                    foundCone = true;
+                }
             }
         }
         return foundCone;
@@ -359,7 +374,9 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     public AnalyzedCone getDetectedBlueCone()
     {
-        return theBlueCone;
+        synchronized(lockBlueCone) {
+            return new AnalyzedCone(theBlueCone);
+        }
     }
 
     List<MatOfPoint> findBlueContours(Mat input)
@@ -403,17 +420,17 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     boolean findTheBlueCone()
     {
         boolean foundCone = false;
-        theBlueCone.centralOffset = 0;
-        theBlueCone.corners = new RotatedRect(new double[]{0, 0, 0, 0});
-        theBlueCone.coneAligned = false;
-        for(AnalyzedCone aCone : internalBlueConeList)
-        {
-            if(aCone.corners.size.height > theBlueCone.corners.size.height)
-            {
-                theBlueCone.corners = aCone.corners;
-                theBlueCone.centralOffset = aCone.centralOffset;
-                theBlueCone.coneAligned = aCone.coneAligned;
-                foundCone = true;
+        synchronized(lockBlueCone) {
+            theBlueCone.centralOffset = 0;
+            theBlueCone.corners = new RotatedRect(new double[]{0, 0, 0, 0});
+            theBlueCone.coneAligned = false;
+            for (AnalyzedCone aCone : internalBlueConeList) {
+                if (aCone.corners.size.height > theBlueCone.corners.size.height) {
+                    theBlueCone.corners = aCone.corners.clone();
+                    theBlueCone.centralOffset = aCone.centralOffset;
+                    theBlueCone.coneAligned = aCone.coneAligned;
+                    foundCone = true;
+                }
             }
         }
         return foundCone;
@@ -428,7 +445,9 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     public AnalyzedPole getDetectedPole()
     {
-        return thePole;
+        synchronized(lockPole) {
+            return new AnalyzedPole(thePole);
+        }
     }
 
     List<MatOfPoint> findYellowContours(Mat input)
@@ -459,17 +478,21 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     boolean findThePole()
     {
         boolean foundPole = false;
-        thePole.centralOffset = 0;
-        thePole.corners = new RotatedRect(new double[]{0, 0, 0, 0});
-        thePole.poleAligned = false;
-        for(AnalyzedPole aPole : internalPoleList)
-        {
-            if(aPole.corners.size.height > thePole.corners.size.height)
-            {
-                thePole.centralOffset = aPole.centralOffset;
-                thePole.corners = aPole.corners;
-                thePole.poleAligned = aPole.poleAligned;
-                foundPole = true;
+        synchronized (lockPole) {
+            thePole.centralOffset = 0;
+            thePole.highDistanceOffset = 0;
+            thePole.corners = new RotatedRect(new double[]{0, 0, 0, 0});
+            thePole.poleAligned = false;
+            thePole.properDistanceHigh = false;
+            for (AnalyzedPole aPole : internalPoleList) {
+                if (aPole.corners.size.height > thePole.corners.size.height) {
+                    thePole.centralOffset = aPole.centralOffset;
+                    thePole.highDistanceOffset = aPole.highDistanceOffset;
+                    thePole.corners = aPole.corners.clone();
+                    thePole.poleAligned = aPole.poleAligned;
+                    thePole.properDistanceHigh = aPole.properDistanceHigh;
+                    foundPole = true;
+                }
             }
         }
         return foundPole;
@@ -489,7 +512,9 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             AnalyzedPole analyzedPole = new AnalyzedPole();
             analyzedPole.corners = rotatedRectFitToContour;
             analyzedPole.centralOffset = CENTERED_OBJECT.center.x - rotatedRectFitToContour.center.x;
+            analyzedPole.highDistanceOffset = POLE_HIGH_DISTANCE - rotatedRectFitToContour.size.height;
             analyzedPole.poleAligned = abs(analyzedPole.centralOffset) <= MAX_POLE_OFFSET;
+            analyzedPole.properDistanceHigh = abs(analyzedPole.highDistanceOffset) <= MAX_HIGH_DISTANCE_OFFSET;
             internalPoleList.add(analyzedPole);
         }
     }
