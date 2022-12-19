@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.ColorSpace;
-
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -30,28 +28,29 @@ public class Drive extends Control {
         double leftX = gamepad1.left_stick_x;
         double leftY = gamepad1.left_stick_y;
         double rightX = gamepad1.right_stick_x;
+
         Level zHeight = Level.GROUND;
         boolean start = gamepad1.start;
-        ColorSpace.Rgb.TransferParameters gamepad2;
         boolean DpadUp = gamepad2.dpad_up;
         boolean DpadDown = gamepad2.dpad_down;
         boolean DpadLeft = gamepad2.dpad_left;
         boolean DpadRight = gamepad2.dpad_right;
-        boolean buttonA = gamepad2.a;
-        boolean buttonB = gamepad2.b;
         boolean DpadPressed;
-        double leftTurn = 0;
         double rightTurn = 0;
+        double leftTurn = 0;
         double resetIMU = 0;
 
         // changes power based on direction of turn to turn robot instead of strafe
         if (start) {
             resetIMU = hraezlyr.resetIMU();
         }
-        if(rightX > 0) leftTurn = rightX;
-        if(rightX < 0) rightTurn = rightX;
-
-
+        // angle of controller stick
+        if (rightX > 0) {
+            rightTurn = rightX;
+        }
+        if (rightX < 0) {
+            leftTurn = rightX;
+        }
         double angle = Math.toDegrees(Math.atan2(leftY, leftX));
         angle = angle - hraezlyr.getHeading() + resetIMU;
         angle = constrainAngle(angle);
@@ -61,18 +60,18 @@ public class Drive extends Control {
 
 
         // topLeftPower and bottomRightPower
-        double topLeft = ((Math.sin(Math.toRadians(angle))) - (Math.cos(Math.toRadians(angle)))) * distance;
-        double bottomRight = ((Math.sin(Math.toRadians(angle))) - (Math.cos(Math.toRadians(angle)))) * distance;
+        double powerGroup1 = ((Math.sin(Math.toRadians(angle))) - (Math.cos(Math.toRadians(angle)))) * distance;
         // topRightPower and bottomLeftPower
-        double topRight = ((Math.sin(Math.toRadians(angle))) + (Math.cos(Math.toRadians(angle)))) * distance;
-        double bottomLeft = ((Math.sin(Math.toRadians(angle))) + (Math.cos(Math.toRadians(angle)))) * distance;
+        double powerGroup2 = ((Math.sin(Math.toRadians(angle))) + (Math.cos(Math.toRadians(angle)))) * distance;
 
         // Power for drivetrain
-        hraezlyr.topLeft.setPower(topLeft - leftTurn + rightTurn);
-        hraezlyr.topRight.setPower(topRight + leftTurn - rightTurn);
-        hraezlyr.bottomLeft.setPower(bottomLeft - leftTurn + rightTurn);
-        hraezlyr.bottomRight.setPower(bottomRight + leftTurn - rightTurn);
+        hraezlyr.topLeft.setPower(powerGroup1 - leftTurn + rightTurn);
+        hraezlyr.topRight.setPower(powerGroup2 - rightTurn + leftTurn);
+        hraezlyr.bottomLeft.setPower(powerGroup2 - rightTurn +leftTurn);
+        hraezlyr.bottomRight.setPower(powerGroup1 - leftTurn +rightTurn);
 
+        telemetry.addData("Drive power1", powerGroup1);
+        telemetry.addData("Drive power2", powerGroup2);
         telemetry.addData("Angle", angle);
         telemetry.addData("Distance", distance);
         //telemetry.addData("Cascade Height", hraezlyr.cascadeMotor1.getCurrentPosition());
@@ -113,9 +112,6 @@ public class Drive extends Control {
             if(gamepad2.dpad_up) cascadeLiftManual(1);
             else if(gamepad2.dpad_down) cascadeLiftManual(-1);
             else cascadeLiftManual(0);
-
-            if(gamepad2.a) hraezlyr.servoClawClose.setPosition(1);
-            else if(gamepad.2) hraezlyr.servoClawClose.setPosition(-1);
 
         }
 
