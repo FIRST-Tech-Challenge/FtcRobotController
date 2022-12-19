@@ -25,11 +25,11 @@ public class Robot {
     public enum SlidesState {RETRACTED, LOW, LOW_LOWERED, MEDIUM, MEDIUM_LOWERED, HIGH, HIGH_LOWERED, UNREADY}
     public enum ParkingPosition {INSIDE, MIDDLE, OUTSIDE}
     public enum HorseshoeState {FRONT, REAR}
-    // public enum CompliantWheelsState {OFF, ON}
+    public enum CompliantWheelsState {OFF, ON}
 
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
     public HorseshoeState desiredHorseshoeState;
-    // public CompliantWheelsState desiredCompliantWheelsState;
+    public CompliantWheelsState desiredCompliantWheelsState;
 
     enum BarcodeScanState {CHECK_SCAN, SCAN}
 
@@ -58,7 +58,7 @@ public class Robot {
     HashMap<RobotConfig.DriveMotors, DcMotor> driveMotors = new HashMap<RobotConfig.DriveMotors, DcMotor>();
 
     // Hardware
-    public DcMotor slidesLeft, slidesRight;
+    public DcMotor compliantWheelsMotorLeft, compliantWheelsMotorRight, slidesMotor;
     public Servo horseshoe;
     public Servo horseshoeIndicator;
 
@@ -79,17 +79,16 @@ public class Robot {
 
         desiredHorseshoeState = HorseshoeState.FRONT;
 
-        slidesLeft = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_LEFT));
-        slidesRight = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_RIGHT));
+        compliantWheelsMotorLeft = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.COMPLIANT_WHEELS_MOTOR_LEFT));
+        compliantWheelsMotorRight = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.COMPLIANT_WHEELS_MOTOR_RIGHT));
+        slidesMotor = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR));
         horseshoe = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE));
-//        clawLEDs=hardwareMap.get(DcMotor.class,"LED");
-//        clawLEDs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        clawLEDs.setDirection(DcMotorSimple.Direction.FORWARD);
         horseshoeIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE_INDICATOR));
 
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
             driveMotors.put(motor, hardwareMap.get(DcMotor.class, RobotConfig.DriveMotorNames.get(motor)));
             Objects.requireNonNull(driveMotors.get(motor)).setDirection(RobotConfig.DriveMotorsDirections.get(motor));
+            // TODO: figure out these settings
             Objects.requireNonNull(driveMotors.get(motor)).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Objects.requireNonNull(driveMotors.get(motor)).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //            Objects.requireNonNull(driveMotors.get(motor)).setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -98,18 +97,14 @@ public class Robot {
 //            Objects.requireNonNull(driveMotors.get(motor)).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        slidesLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        slidesRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        slidesMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        if(desiredSlidesState ==SlidesState.UNREADY) {//if the slides have yet to be initialised then reset the encoders for the slides and set the slide state to retracted
-            slidesLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            slidesRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            slidesLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            slidesRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if (desiredSlidesState == SlidesState.UNREADY) {//if the slides have yet to be initialised then reset the encoders for the slides and set the slide state to retracted
+            slidesMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slidesMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             desiredSlidesState = SlidesState.RETRACTED;
         }
-        slidesLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slidesRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /** Returns the position of the robot.
@@ -124,14 +119,14 @@ public class Robot {
  *  pertaining to the robot's state.
  */
 class RobotConfig {
-    enum Motors {SLIDES_LEFT, SLIDES_RIGHT}
+    enum Motors {COMPLIANT_WHEELS_MOTOR_LEFT, COMPLIANT_WHEELS_MOTOR_RIGHT, SLIDES_MOTOR}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
     enum Servos {HORSESHOE, HORSESHOE_INDICATOR}
 
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
-
-        put(Motors.SLIDES_LEFT, "slides_left");
-        put(Motors.SLIDES_RIGHT, "slides_right");
+        put(Motors.COMPLIANT_WHEELS_MOTOR_LEFT, "cw_motor_left");
+        put(Motors.COMPLIANT_WHEELS_MOTOR_RIGHT, "cw_motor_right");
+        put(Motors.SLIDES_MOTOR, "slides_motor");
     }};
 
     public static final Map<DriveMotors, String> DriveMotorNames = new HashMap<DriveMotors, String>() {{
@@ -149,7 +144,7 @@ class RobotConfig {
     }};
 
     public static final Map<Servos, String> ServoNames = new HashMap<Servos, String>() {{
-        put(Servos.HORSESHOE, "Horseshoe");
-        put(Servos.HORSESHOE_INDICATOR, "Horseshoe Indicator");
+        put(Servos.HORSESHOE, "horseshoe");
+        put(Servos.HORSESHOE_INDICATOR, "horseshoe_indicator");
     }};
 }

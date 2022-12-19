@@ -9,11 +9,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 /** Wraps a gamepad so that button mappings are stored in one place.
  */
 public class GamepadWrapper {
-    public enum DriverAction {RUN_CAROUSEL, SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,
-                              OPEN_CLAW, CLOSE_CLAW, ULTRA_FINE_MOVEMENT_TOGGLE,
-                              FINE_MOVEMENT_TOGGLE, MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT,
-                              MOVE_STRAIGHT_RIGHT, TOGGLE_AUTO_SPIN, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
-                              TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE
+    public enum DriverAction {SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,
+                              ULTRA_FINE_MOVEMENT_TOGGLE, FINE_MOVEMENT_TOGGLE, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
+                              MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT, MOVE_STRAIGHT_RIGHT,
+                              COMPLIANT_WHEELS_TOGGLE, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE
     }
 
     Gamepad gamepad1, gamepad2;
@@ -42,8 +41,6 @@ public class GamepadWrapper {
      */
     public boolean getButtonState(DriverAction driverAction) {
         switch (driverAction) {
-            case RUN_CAROUSEL:
-                return gamepad2.a;
             case SET_SLIDES_RETRACTED:
                 return gamepad2.dpad_down;
             case SET_SLIDES_LOW:
@@ -52,10 +49,6 @@ public class GamepadWrapper {
                 return gamepad2.dpad_right;
             case SET_SLIDES_HIGH:
                 return gamepad2.dpad_up;
-            case CLOSE_CLAW:
-                return gamepad2.b;
-            case OPEN_CLAW:
-                return gamepad2.y;
             case FINE_MOVEMENT_TOGGLE:
                 return gamepad1.left_bumper;
             case ULTRA_FINE_MOVEMENT_TOGGLE:
@@ -68,8 +61,6 @@ public class GamepadWrapper {
                 return gamepad1.x;
             case MOVE_STRAIGHT_RIGHT:
                 return gamepad1.b;
-            case TOGGLE_AUTO_SPIN:
-                return gamepad2.x;
             case TOGGLE_WHEEL_SPEED_ADJUSTMENT:
                 return gamepad2.left_bumper;
             case TURN_COUNTER_CLOCKWISE:
