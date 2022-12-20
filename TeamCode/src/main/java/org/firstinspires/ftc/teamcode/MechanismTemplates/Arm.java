@@ -13,12 +13,12 @@ public class Arm {
     private Motor armMotor;
 
     // Declaring and Initializing PIDF values
-    private double armKp = 0.0026;
-    private double armKi = 0.000029;
-    private double armKd = 0.000005;
-    private double armKf = 0.000004;
+    public static double armKp = 0.003;
+    public static double armKi = 0.000001;
+    public static double armKd = 0.000005;
+    public static double armKf = 0.0000001;
 
-    public static double EXTAKE_POS = 1155; // 1255 Actual position based on encoder readings; 1150 old val
+    public static double EXTAKE_POS = 945; // 1255 Actual position based on encoder readings; 1155 old val
     public static double INTAKE_POS = 0; // -42.45391238 was the old value
     private final double MAX = 1350;
 
@@ -29,7 +29,7 @@ public class Arm {
     private double targetPos = 0.0;
 
     public Arm(HardwareMap hardwareMap){
-        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_60); // Pin 0 on control hub
+        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_84); // Pin 0 on control hub -> pin 1 control hub
         armMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         armMotor.setRunMode(Motor.RunMode.VelocityControl);
 
@@ -44,10 +44,10 @@ public class Arm {
         // Correction represents the error term of the PIDF loop
         double correction = armPIDF.calculate(armMotor.getCurrentPosition(), targetPos);
 
-       // telemetry.addData("Correction: ", correction);
-        //telemetry.addData("Target Position: ", targetPos);
-       // telemetry.addData("Motor Position: ", armMotor.getCurrentPosition());
-       // telemetry.update();
+        telemetry.addData("Correction: ", correction);
+        telemetry.addData("Target Position: ", targetPos);
+       telemetry.addData("Motor Position: ", armMotor.getCurrentPosition());
+       telemetry.update();
 
         armMotor.set(correction);
     }
