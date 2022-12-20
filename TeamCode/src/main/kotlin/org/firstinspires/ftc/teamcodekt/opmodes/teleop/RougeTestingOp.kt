@@ -36,13 +36,15 @@ class RougeTestingOp : RougeBaseTele() {
             if (driver.left_stick_x() > .5) {
                 claw.close()
             }
+
+            bot.drivetrain.drive(driver.gamepad, 0.0)
         }
 
         driver.left_trigger.whileLow {
             bot.drivetrain.drive(driver.gamepad, powerMulti)
         }
 
-        Listener { lift.height > LiftConfig.MID * 1.01 }
-            .whileHigh { powerMulti /= 2 }
+//        Listener { lift.height > LiftConfig.MID * 1.01 }
+//            .whileHigh { powerMulti /= 2 }
     }
 }

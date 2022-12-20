@@ -2,8 +2,595 @@
 sidebar_position: 3
 ---
 
+
+import { TypeLinks } from '../../src/util/type-links';
 import ParamsList from '../../src/components/ParamsList';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Listeners
+
+**Sort of important: Listeners are always executed in the order that they are hooked**
+
+*okay, now that that's out of the way...*
+
+Listeners... ah, the pièce de résistance of the Scheduler API!
+
+Just as 9-year-olds like and subscribe and smash that notification bell to get notified of Mr. Beast's content asap,
+so may we also subscribe to a Listener to get notified of certain events, and do something when it happens.
+
+If we were to strip all the fancy abstraction off of a listener that's been [hooked](#the-concept-of-hooking)
+to the Scheduler, we would end up with something like this:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  while (true) { // The loop is the scheduler
+      if (condition) { // The if is the listener
+        // do something
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  while (true) { // The loop is the scheduler
+      if (condition) { // The if is the listener
+        // do something
+      }
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+Pretty simple, right? Well, that's exactly what a listener is. It just checks for a condition, and does something if it's true.
+Except it's more versatile than just that.
+
+For example, let's say we want to alert our driver when the lift is too high, and slow the robot down...
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  // Creates the listener by passing in the condition to listen to
+  new Listener(() -> lift.getHeight() > 1000)
+
+      // Runs only once when the condition becomes true
+      .onRise(() -> telemetry.addLine("Lift is too high, we're slowing the bot down!"))
+
+      // Constantly called while the condition is true
+      .whileHigh(() -> drive.setPowerMultiplier(.5));
+
+  Scheduler.launch(this) // Listener only works when the Scheduler is running, needs to be in a LinearOpMode
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  // Creates the listener by passing in the condition to listen to
+  Listener { lift.height > 1000 }
+
+      // Runs only once when the condition becomes true
+      .onRise { telemetry.addLine("Lift is too high, we're slowing the bot down!") }
+
+      // Constantly called while the condition is true
+      .whileHigh { drive.powerMultiplier = .5 }
+
+  Scheduler.launch(this) // Listener only works when the Scheduler is running, needs to be in a LinearOpMode
+  ```
+
+</TabItem>
+</Tabs>
+
+Every time the Scheduler loops, it'll evaluate the passed in lambda, and fire all the events subscribed to the
+corresponding state.
+
+You might have noticed the `onRise` and `onFall`, and may be a little confused right now... Well here's a diagram to help:
+
+![Listener Diagram](/img/diagrams/signal-edge.svg)
+
+You can see four distinct words:
+ - Low:  The condition is false
+ - High: The condition is true
+ - Rise: The condition went from false to true
+ - Fall: The condition went from true to false
+
+Similarly, the Listener class has four subscription methods:
+ - `whileLow`
+ - `whileHigh`
+ - `onRise`
+ - `onFall`
+
+You're a smart cookie; you can probably figure out what they do. If not, it's fine! Just look at the method
+documentation for more detailed examples!
+
+## The concept of hooking🪝
+
+*This isn't super important to know, so you could skip it if you really wanted—I just wanted to explain it real
+quick as it comes up a bit.*
+
+When you first create a Listener, nothing happens. It's not evaluated and updated every loop by the Scheduler; it just
+sits there and looks pretty.
+
+It's only when you subscribe to the listener (or run `Listener.hook`) that it starts being evaluated and updated (i.e.
+it gets hooked).
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Listener listener = new Listener(() -> true); // Not hooked (not in Scheduler's list of listeners)
+
+  listener.whileHigh(() -> ...); // Now it's hooked automagically
+
+  listener.hook(); // Also hooks it w/out subscribing to any events (No diff made here b/c it's already hooked)
+
+  listener.whileHigh(() -> ...); // It's already hooked, so nothing changes
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val listener = Listener { true } // Not hooked (not in Scheduler's list of listeners)
+
+  listener.whileHigh { ... } // Now it's hooked automagically
+
+  listener.hook() // Also hooks it w/out subscribing to any events (No diff made here b/c it's already hooked)
+
+  listener.whileHigh { ... } // It's already hooked, so nothing changes
+  ```
+
+</TabItem>
+</Tabs>
+
+# Creation
+
+Constructs a new Listener without hooking it (see: [hooking](#the-concept-of-hooking)).
+
+<NewListenerParams/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  long startTime = System.currentTimeMillis();
+
+  // Creates a new Listener that checks if 5 seconds have passed
+  Listener timer = new Listener(() -> System.currentTimeMillis() - startTime > 5000);
+
+  // Creates a listener which always evaluates to true, so it'll always be high
+  Listener alwaysTrue = new Listener(() -> true);
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val startTime = System.currentTimeMillis()
+
+  // Creates a new Listener that checks if 5 seconds have passed
+  val timer = Listener { System.currentTimeMillis() - startTime > 5000 }
+
+  // Creates a listener which always evaluates to true, so it'll always be high
+  val alwaysTrue = Listener { true }
+  ```
+
+</TabItem>
+</Tabs>
+
+## listener.onRise()
+
+Runs the given callback whenever the condition goes from false to true (i.e. it's on the rising edge)
+
+Equivalent to
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  boolean wasHigh = false;
+
+  while (true) {
+      boolean isHigh = condition();
+
+      if (isHigh && !wasHigh) {
+          //Do thing
+      }
+
+      wasHigh = isHigh;
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  var wasHigh = false
+
+  while (true) {
+      val isHigh = condition()
+
+      if (isHigh && !wasHigh) {
+          //Do thing
+      }
+
+      wasHigh = isHigh
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+<OnRiseParams/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Listener gamepadA = new Listener(() -> gamepad1.a);
+
+  // Runs only once when the gamepad1.a goes from false to true
+  // i.e. when gamepad1.a was JUST pressed
+  gamepadA.onRise(() -> telemetry.addLine("A was pressed!"));
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val gamepadA = Listener { gamepad1.a }
+
+  // Runs only once when the gamepad1.a goes from false to true
+  // i.e. when gamepad1.a was JUST pressed
+  gamepadA.onRise { telemetry.addLine("A was pressed!") }
+  ```
+
+</TabItem>
+</Tabs>
+
+## listener.onFall()
+
+Runs the given callback whenever the condition goes from true to false (i.e. it's on the falling edge)
+
+Equivalent to
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  boolean wasHigh = false;
+
+  while (true) {
+      boolean isHigh = condition();
+
+      if (!isHigh && wasHigh) {
+          //Do thing
+      }
+
+      wasHigh = isHigh;
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  var wasHigh = false
+
+  while (true) {
+      val isHigh = condition()
+
+      if (!isHigh && wasHigh) {
+          //Do thing
+      }
+
+      wasHigh = isHigh
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+<OnFallParams/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Listener gamepadA = new Listener(() -> gamepad1.a);
+
+  // Runs only once when the gamepad1.a goes from true to false
+  // i.e. when the A button was JUST released
+  gamepadA.onFall(() -> telemetry.addLine("A button released!"))
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val gamepadA = Listener { gamepad1.a }
+
+  // Runs only once when the gamepad1.a goes from true to false
+  // i.e. when the A button was JUST released
+  gamepadA.onFall { telemetry.addLine("A button released!") }
+  ```
+
+</TabItem>
+</Tabs>
+
+## listener.whileHigh()
+
+Runs the given callback while the condition is true.
+
+Equivalent to
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  while (true) {
+      if (condition()) {
+          //Do thing
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  while (true) {
+      if (condition()) {
+          //Do thing
+      }
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+<WhileHighParams/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Listener gamepadA = new Listener(() -> gamepad1.a);
+
+  // Runs every loop while the A button is pressed
+  gamepadA.whileHigh(() -> telemetry.addLine("A button is being held!"));
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val gamepadA = Listener { gamepad1.a }
+
+  // Runs every loop while the A button is pressed
+  gamepadA.whileHigh { telemetry.addLine("A button is being held!") }
+  ```
+
+</TabItem>
+</Tabs>
+
+## listener.whileLow()
+
+Runs the given callback while the condition is false.
+
+Equivalent to
+
+<Tabs groupId="programming-language">
+
+<TabItem value="java" label="Java">
+
+  ```java
+  while (true) {
+      if (!condition()) {
+          //Do thing
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  while (true) {
+      if (!condition()) {
+          //Do thing
+      }
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+<WhileLowParams/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Listener gamepadA = new Listener(() -> gamepad1.a);
+
+  // Runs every loop while the A button is not pressed
+  gamepadA.whileLow(() -> telemetry.addLine("A button is not being held!"));
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val gamepadA = Listener { gamepad1.a }
+
+  // Runs every loop while the A button is not pressed
+  gamepadA.whileLow { telemetry.addLine("A button is not being held!") }
+  ```
+
+</TabItem>
+</Tabs>
+
+## listener.hook()
+
+[Hooks](#the-concept-of-hooking) the Listener to the Scheduler, does nothing if it's already hooked.
+
+Only reason I'd imagine you'd want to do this is if you did [Scheduler.reset](./scheduler#schedulerreset) and want
+to hook the Listener back up. I don't know why you'd reset the Scheduler in the first place, but you go, girl!!!
+
+Actually, I guess you can use it for hooking up a listener before another certain listener in advance, to keep things
+running in the right order, but that's a very nice case...
+
+Anyway, here's an example:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Listener listener = new Listener(() -> ...);
+
+  listener.hook(); // Hooks the listener to the Scheduler
+
+  Scheduler.reset(); // Resets the Scheduler
+
+  listener.hook(); // Hooks the listener back up
+
+  listener.hook(); // Does nothing since it's already hooked
+  ```
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val listener = Listener { ... }
+
+  listener.hook() // Hooks the listener to the Scheduler
+
+  Scheduler.reset() // Resets the Scheduler
+
+  listener.hook() // Hooks the listener back up
+
+  listener.hook() // Does nothing since it's already hooked
+  ```
+
+</TabItem>
+</Tabs>
+
+## listener.destroy()
+
+Destroys the Listener, removing it from the Scheduler, and clearing its actions. Leaves the condition alone, though.
+
+Again, not entirely sure why you'd do this, but if you have a good enough reason to do it, you can probably figure out
+how to use it yourself. Knock yourself out!!!
+
+## Listener.always()
+
+A static instance of a Listener that's always true, useful for when you want to run something every loop, but don't
+want to (or can't) use the [beforeEach](./scheduler-model#beforeeach) or [afterEach](./scheduler-model#aftereach)
+blocks for whatever reason.
+
+**Note that you can only pass in a method to run every loop; you can't use `onRise`, `onFall` or `whileLow` with this
+Listener; It implicitly calls `whileHigh`**
+
+Keep in mind that this is only hooked the first time it's used (unless you explicitly hook it, of course)
+
+<AlwaysListenerParams/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Listener.always(() -> telemetry.addLine("This will run every loop!"));
+  ```
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Listener.always { telemetry.addLine("This will run every loop!") }
+  ```
+
+</TabItem>
+</Tabs>
+
+export function NewListenerParams() {
+  return (
+    <ParamsList params={[
+      {
+        name: 'condition',
+        type: '() -> Boolean',
+        desc: 'The condition to listen to',
+        typeLink: TypeLinks.LAMBDA,
+      },
+    ]}/>
+  );
+}
+
+export function OnRiseParams() {
+  return (
+    <ParamsList params={[
+      {
+        name: 'callback',
+        type: 'Runnable',
+        desc: 'The callback to run on the rising edge',
+        typeLink: TypeLinks.LAMBDA,
+      },
+    ]}/>
+  );
+}
+
+export function WhileHighParams() {
+  return (
+    <ParamsList params={[
+      {
+        name: 'callback',
+        type: 'Runnable',
+        desc: 'The callback to run while the condition is true',
+        typeLink: TypeLinks.LAMBDA,
+      },
+    ]}/>
+  );
+}
+
+export function OnFallParams() {
+  return (
+    <ParamsList params={[
+      {
+        name: 'callback',
+        type: 'Runnable',
+        desc: 'The callback to run on the falling edge',
+        typeLink: TypeLinks.LAMBDA,
+      },
+    ]}/>
+  );
+}
+
+export function WhileLowParams() {
+  return (
+    <ParamsList params={[
+      {
+        name: 'callback',
+        type: 'Runnable',
+        desc: 'The callback to run while the condition is false',
+        typeLink: TypeLinks.LAMBDA,
+      },
+    ]}/>
+  );
+}
+
+export function AlwaysListenerParams() {
+  return (
+    <ParamsList params={[
+      {
+        name: 'callback',
+        type: 'Runnable',
+        desc: 'The callback to run every loop',
+        typeLink: TypeLinks.LAMBDA,
+      },
+    ]}/>
+  );
+}

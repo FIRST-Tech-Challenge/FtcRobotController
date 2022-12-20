@@ -6,18 +6,15 @@ const GAMEPAD_EX2_PATH = 'TeamCode/src/main/kotlin/org/firstinspires/ftc/teamcod
   let generated_code = '\n';
 
   getButtons().forEach(buttonSlashPadding => {
-    const padding_comment = buttonSlashPadding as Padding
-    const button = buttonSlashPadding as GamepadButton
-
     switch(true) {
       case typeof buttonSlashPadding === "string":
-        generated_code += `    // -- ${padding_comment} --\n`; // Spacer to group together related buttons
+        generated_code += `    // -- ${buttonSlashPadding} --\n`; // Spacer to group together related buttons
         break;
       case button.type === 'boolean':
-        generated_code += generateBooleanButton(button.name) + '\n\n';
+        generated_code += generateBooleanButton(buttonSlashPadding.name) + '\n\n';
         break;
       case button.type === 'float':
-        generated_code += generateFloatButton(button.name) + '\n\n';
+        generated_code += generateFloatButton(buttonSlashPadding.name) + '\n\n';
         break;
     }
   });
@@ -31,7 +28,7 @@ const GAMEPAD_EX2_PATH = 'TeamCode/src/main/kotlin/org/firstinspires/ftc/teamcod
   await fsp.writeFile(GAMEPAD_EX2_PATH, generated_file);
 })();
 
-function generateBooleanButton(name: string): string {
+function generateBooleanButton(name) {
   const generated_code = [
     `/**`,
     ` * Allows client to perform an action when the gamepad's '${name}' button's state is mutated.`,
@@ -46,7 +43,7 @@ function generateBooleanButton(name: string): string {
   return generated_code.map(line => `    ${line}`).join('\n');
 }
 
-function generateFloatButton(name: string): string {
+function generateFloatButton(name) {
   const random_usage_function = randomUsageFunction();
 
   const generated_code = [
@@ -75,7 +72,7 @@ function generateFloatButton(name: string): string {
   return generated_code.map(line => `    ${line}`).join('\n');
 }
 
-function addCodeIntoTemplate(template: string, code: string): string {
+function addCodeIntoTemplate(template, code) {
   const template_start_index = template.indexOf('// -- START MACHINE GENERATED CODE --') + '// -- START MACHINE GENERATED CODE --'.length;
   const template_end_index = template.indexOf('    // -- END MACHINE GENERATED CODE --');
 
@@ -97,14 +94,7 @@ function randomUsageFunction() {
   ][~~(Math.random() * 4)];
 }
 
-interface GamepadButton {
-  type: 'float' | 'boolean',
-  name: string
-}
-
-type Padding = string
-
-function getButtons(): (GamepadButton | Padding)[] {
+function getButtons() {
   return [
     'Main gamepad buttons',
     { type: 'boolean', name: 'a' },

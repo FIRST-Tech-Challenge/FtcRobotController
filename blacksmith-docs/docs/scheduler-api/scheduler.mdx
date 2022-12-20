@@ -2,6 +2,8 @@
 sidebar_position: 2
 ---
 
+
+import { TypeLinks } from '../../src/util/type-links';
 import ParamsList from '../../src/components/ParamsList';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -247,8 +249,19 @@ or if `listener.rehook` is called on them.
 export function SchedulerLaunchParamList() {
   return (
     <ParamsList params={[
-      { name: 'opmode',    type: 'LinearOpMode', desc: 'The LinearOpMode to run the Scheduler in',                                         typeLink: 'https://ftc-tricks.com/overview-linear-opmode/' },
-      { name: 'afterEach', type: 'Runnable',     desc: 'An optional block of code to run after every cycle, after the listeners have ran', typeLink: 'https://stackoverflow.com/a/68116405', defaultsTo: '() -> {}' }
+      {
+        name: 'opmode',
+        type: 'LinearOpMode',
+        desc: 'The LinearOpMode to run the Scheduler in',
+        typeLink: TypeLinks.LINEAR_OP_MODE,
+      },
+      {
+        name: 'afterEach',
+        type: 'Runnable',
+        desc: 'An optional block of code to run after every cycle, after the listeners have ran',
+        typeLink: TypeLinks.LAMBDA,
+        defaultsTo: '() -> {}',
+      }
     ]}/>
   )
 }
@@ -256,7 +269,12 @@ export function SchedulerLaunchParamList() {
 export function SchedulerBeforeEachParamList() {
   return (
     <ParamsList params={[
-      { name: 'block', type: 'Runnable', desc: 'The block of code to run at the start of each Scheduler loop', typeLink: 'https://stackoverflow.com/a/68116405' }
+      {
+        name: 'block',
+        type: 'Runnable',
+        desc: 'The block of code to run at the start of each Scheduler loop',
+        typeLink: TypeLinks.LAMBDA,
+      }
     ]}/>
   )
 }
@@ -264,9 +282,25 @@ export function SchedulerBeforeEachParamList() {
 export function SchedulerTimeParamList() {
   return (
     <ParamsList params={[
-      { name: 'opmode',    type: 'LinearOpMode', desc: 'The LinearOpMode to run the Scheduler in',                                        typeLink: 'https://ftc-tricks.com/overview-linear-opmode/' },
-      { name: 'telemetry', type: 'Telemetry',    desc: 'The Telemetry object to log the times to - NOTE: will be updated at end of loop', typeLink: 'https://gm0.org/en/latest/docs/software/tutorials/using-telemetry.html' },
-      { name: 'afterEach', type: 'Runnable',     desc: 'An optional block of code to run every tick, after the listeners have ran',       typeLink: 'https://stackoverflow.com/a/68116405', defaultsTo: '() -> {}' }
+      {
+        name: 'opmode',
+        type: 'LinearOpMode',
+        desc: 'The LinearOpMode to run the Scheduler in',
+        typeLink: TypeLinks.LINEAR_OP_MODE,
+      },
+      {
+        name: 'telemetry',
+        type: 'Telemetry',
+        desc: 'The Telemetry object to log the times to - NOTE: will be updated at end of loop',
+        typeLink: TypeLinks.TELEMETRY,
+      },
+      {
+        name: 'afterEach',
+        type: 'Runnable',
+        desc: 'An optional block of code to run every tick, after the listeners have ran',
+        typeLink: TypeLinks.LAMBDA,
+        defaultsTo: '() -> {}'
+      }
     ]}/>
   )
 }

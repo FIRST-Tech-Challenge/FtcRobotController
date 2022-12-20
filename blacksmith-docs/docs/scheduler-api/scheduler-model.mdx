@@ -37,7 +37,7 @@ yeah I know that was a mouthful, so here's a more practical example:
   ```java
   @Override
   public void runOpMode() throws InterruptedException {
-      Listener listener = Listener(() -> gamepad1.a);
+      Listener listener = new Listener(() -> gamepad1.a);
 
       listener.onRise(() -> System.out.println("A was pressed!"));
       listener.onFall(() -> System.out.println("A was released!"));

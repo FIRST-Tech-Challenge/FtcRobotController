@@ -60,16 +60,16 @@ open class Listener(val condition: () -> Boolean) {
      * signal is [high][SignalTrigger.IS_HIGH], [low][SignalTrigger.IS_LOW],
      * [rising][SignalTrigger.RISING_EDGE], and/or [falling][SignalTrigger.FALLING_EDGE].
      */
-    private var conditionSED = SignalEdgeDetector(condition)
+    private val conditionSED = SignalEdgeDetector(condition)
 
     /**
      * Schedules the given action to run when the trigger [condition][Condition] changes from false to true.
-     * @param action The action to run.
+     * @param callback The action to run.
      * @return This [Listener] instance.
      */
-    fun onRise(action: Runnable) = this.also {
+    fun onRise(callback: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::risingEdge
+        actions[callback] = conditionSED::risingEdge
     }
 
     /**
@@ -77,9 +77,9 @@ open class Listener(val condition: () -> Boolean) {
      * @param action The action to run.
      * @return This [Listener] instance.
      */
-    fun onFall(action: Runnable) = this.also {
+    fun onFall(callback: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::fallingEdge
+        actions[callback] = conditionSED::fallingEdge
     }
 
     /**
@@ -87,9 +87,9 @@ open class Listener(val condition: () -> Boolean) {
      * @param action The action to run.
      * @return This [Listener] instance.
      */
-    fun whileHigh(action: Runnable) = this.also {
+    fun whileHigh(callback: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::isHigh
+        actions[callback] = conditionSED::isHigh
     }
 
     /**
@@ -97,10 +97,12 @@ open class Listener(val condition: () -> Boolean) {
      * @param action The action to run.
      * @return This [Listener] instance.
      */
-    fun whileLow(action: Runnable) = this.also {
+    fun whileLow(callback: Runnable) = this.also {
         hookIfNotHooked()
-        actions[action] = conditionSED::isLow
+        actions[callback] = conditionSED::isLow
     }
+
+    fun hook() = hookIfNotHooked()
 
     /**
      * Hooks this listener to the [Scheduler] if it has not already been hooked.
@@ -112,7 +114,7 @@ open class Listener(val condition: () -> Boolean) {
     /**
      * Runs every tick to update the [conditionSED] and perform the subscribed actions.
      */
-    fun tick() {
+    internal fun tick() {
         conditionSED.update()
 
         actions.forEach { (action, condition) ->
@@ -126,7 +128,7 @@ open class Listener(val condition: () -> Boolean) {
     }
 
     companion object {
-        val alwaysActiveListener = Listener { true }
+        private val alwaysActiveListener = Listener { true }
 
         /**
          * Subscribes the given action to run every tick.
@@ -134,7 +136,9 @@ open class Listener(val condition: () -> Boolean) {
          * @return This [Listener] instance.
          */
         @JvmStatic
-        fun always(action: Runnable) = alwaysActiveListener.whileHigh(action)
+        fun always(action: Runnable) {
+            alwaysActiveListener.whileHigh(action)
+        }
     }
 
     // ---------------------------------------------------------------

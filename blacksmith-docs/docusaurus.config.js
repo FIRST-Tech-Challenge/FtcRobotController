@@ -1,13 +1,10 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
-
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'Blacksmith Docs',
+  tagline: 'Cars are cool',
   url: 'https://your-docusaurus-test-site.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -16,8 +13,8 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'RR9527', // Usually your GitHub org/user name.
+  projectName: 'Blacksmith', // Usually your repo name.
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -52,7 +49,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: 'Blacksmith Docs',
+        title: 'Blacksmith',
         logo: {
           alt: 'Blacksmith Logo',
           src: 'img/logo/sentinel-temp-logo-thingy.svg',
@@ -84,6 +81,10 @@ const config = {
               {
                 label: 'Scheduler',
                 to: '/scheduler-api/overview',
+              },
+              {
+                label: 'Anvil',
+                to: '/anvil/overview',
               }
             ],
           },
@@ -113,7 +114,7 @@ const config = {
       },
       prism: {
         additionalLanguages: ['java', 'kotlin'],
-        theme: lightCodeTheme,
+        theme: require('prism-react-renderer/themes/github'),
         darkTheme: require('prism-react-renderer/themes/vsDark'),
       },
     }),

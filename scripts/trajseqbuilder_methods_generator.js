@@ -3,11 +3,6 @@ import * as fsp from 'node:fs/promises';
 const OUTPUT_FILE_PATH = 'Blacksmith/src/main/kotlin/ftc/rouge/blacksmith/adapters/_TrajectorySequenceBuilder.kt';
 const INPUT_FILE_PATH = 'scripts/traj_seq_builder_methods_to_adapt.txt';
 
-type Method = {
-  name: string;
-  params: { name: string, type: string }[];
-}
-
 (async () => {
   const code = (await fsp.readFile(INPUT_FILE_PATH, 'utf-8'))
     .replace('\n', '')
@@ -27,7 +22,7 @@ type Method = {
   await fsp.writeFile(OUTPUT_FILE_PATH, addCodeIntoTemplate(template, code));
 })();
 
-function codeToMethod(code: string) {
+function codeToMethod(code) {
   const name = code.split('(')[0];
 
   const params = code.split('(')[1].slice(0, -1).split(', ').filter(s => s).map(param => {
@@ -38,7 +33,7 @@ function codeToMethod(code: string) {
   return { name, params };
 }
 
-function methodToActualMethod(method: Method): string {
+function methodToActualMethod(method) {
   const params = method.params.map(param => {
     const name = param.name;
     const type = param.type;
@@ -67,7 +62,7 @@ function methodToActualMethod(method: Method): string {
   return generatedCode.map(line => `    ${line}`).join('\n');
 }
 
-function addCodeIntoTemplate(template: string, code: string): string {
+function addCodeIntoTemplate(template, code) {
   const template_start_index = template.indexOf('// -- START MACHINE GENERATED CODE --') + '// -- START MACHINE GENERATED CODE --'.length;
   const template_end_index = template.indexOf('    // -- END MACHINE GENERATED CODE --');
 
