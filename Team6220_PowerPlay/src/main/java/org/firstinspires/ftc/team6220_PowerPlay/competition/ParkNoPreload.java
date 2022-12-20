@@ -13,8 +13,6 @@ public class ParkNoPreload extends AprilTagDetect {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-
-        driveTurntable(0);
         int signal = detectAprilTag();
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);

@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public abstract class AprilTagDetect extends BaseAutonomous {
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
     // units are pixels
     // calibration is for Logitech C920 webcam at 1920 x 1080
     final double fx = 1387.853; // focal length x
@@ -24,14 +27,9 @@ public abstract class AprilTagDetect extends BaseAutonomous {
     final int ID_TAG_OF_INTEREST_1 = 1; // tag 1 from the 36h11 family
     final int ID_TAG_OF_INTEREST_2 = 2; // tag 2 from the 36h11 family
 
-    OpenCvCamera camera;
-
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
     AprilTagDetection tagOfInterest = null;
 
     public int detectAprilTag() {
-        long start = System.currentTimeMillis();
-
         // initializes camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
@@ -52,7 +50,7 @@ public abstract class AprilTagDetect extends BaseAutonomous {
 
         // replaces waitForStart()
         // detects AprilTags during initialization
-        while (tagOfInterest != null && System.currentTimeMillis() - start < 5000 && opModeIsActive()) {
+        while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             // tag has been detected at one point
@@ -70,19 +68,19 @@ public abstract class AprilTagDetect extends BaseAutonomous {
 
                 // tag has been detected and is still being detected
                 if (tagFound) {
-                    telemetry.addLine("tag found!\n\nlocation data:\n");
+                    telemetry.addLine("Tag found!\n\nLocation data:\n");
                     tagToTelemetry(tagOfInterest);
 
-                // tag was detected at some point but isn't currently being detected
+                    // tag was detected at some point but isn't currently being detected
                 } else {
-                    telemetry.addLine("tag not found :(\n\nbut the tag has been seen before, last seen at:\n");
+                    telemetry.addLine("Tag not found :(\n\nBut the tag has been sen before, last seen at:\n");
                     tagToTelemetry(tagOfInterest);
                 }
 
-            // tag has never been detected
+                // tag has never been detected
             } else {
-                telemetry.addLine("didn't see tag of interest :(\n");
-                telemetry.addLine("the tag has never been seen");
+                telemetry.addLine("Don't see tag of interest :(\n");
+                telemetry.addLine("The tag has never been seen");
             }
 
             telemetry.update();
@@ -90,17 +88,15 @@ public abstract class AprilTagDetect extends BaseAutonomous {
 
         // tag was detected during initialization
         if (tagOfInterest != null) {
-            telemetry.addLine("tag seen!\n\nlocation data:\n");
+            telemetry.addLine("Tag seen!\n\nLocation data:\n");
             tagToTelemetry(tagOfInterest);
             telemetry.update();
 
-        // tag was not detected during initialization
+            // tag was not detected during initialization
         } else {
-            telemetry.addLine("no tag seen :(");
+            telemetry.addLine("No tag seen during initialization :(");
             telemetry.update();
         }
-
-        camera.stopStreaming();
 
         // return default
         if (tagOfInterest == null) {

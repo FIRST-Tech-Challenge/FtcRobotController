@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 
@@ -9,15 +10,17 @@ import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 @TeleOp(name = "TeleOpTest", group = "Test")
 public class TeleOpTest extends BaseTeleOp {
 
+    public static Servo servoGrabber;
+
     @Override
     public void runOpMode() {
-        initialize();
+        servoGrabber = hardwareMap.servo.get("servoGrabber");
         waitForStart();
 
         while (opModeIsActive()) {
             servoGrabber.setPosition(-0.5 * gamepad1.left_stick_y + 0.5);
 
-            telemetry.addData("servo", -0.5 * gamepad1.left_stick_y + 0.5);
+            telemetry.addData("servo", servoGrabber.getPosition());
             telemetry.update();
         }
     }
