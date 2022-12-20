@@ -50,6 +50,8 @@ public class PowerPlayRedRight extends LinearOpMode {
                 .build();
         drive.followTrajectorySequence(startTo270Pole);
 
+        drive.liftMiddle();
+
         //use vision to align
         //drop cone
         drive.openClaw();

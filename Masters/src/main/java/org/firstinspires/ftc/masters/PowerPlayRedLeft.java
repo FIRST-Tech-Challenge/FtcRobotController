@@ -71,6 +71,9 @@ public class PowerPlayRedLeft extends LinearOpMode {
         //use vision to align
 
         //drop cone
+
+        drive.liftMiddle();
+
         drive.openClaw();
         sleep(300);
         TrajectorySequence back = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
