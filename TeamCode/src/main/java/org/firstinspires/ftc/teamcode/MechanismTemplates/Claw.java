@@ -19,8 +19,8 @@ public class Claw {
     public static double CLOSE = 0.44;
 
     // wrist positions
-    public final double WRIST_INTAKE_POSITION = 0.72; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
-    private final double WRIST_EXTAKE_POSITION = 0.05; // wrist rotates to extake on junction
+    public static double WRIST_INTAKE_POSITION = 0.255; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
+    public static double WRIST_EXTAKE_POSITION = 0.9; // wrist rotates to extake on junction
 
     SignalEdgeDetector isOpen;
     SignalEdgeDetector isIntakePosition;

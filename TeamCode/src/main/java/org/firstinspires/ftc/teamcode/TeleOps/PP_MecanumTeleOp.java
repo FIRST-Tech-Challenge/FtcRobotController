@@ -64,7 +64,7 @@ public class PP_MecanumTeleOp extends OpMode
         driverOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER);
 
         // Expansion Hub Pins
-        motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("FL"); // Pin 2
+        motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("FL"); // Pin 2 -> pin 3
         motorBackLeft = (DcMotorEx) hardwareMap.dcMotor.get("BL"); // Pin 1
 
         // Control Hub Pins
@@ -176,26 +176,22 @@ public class PP_MecanumTeleOp extends OpMode
         }
         else if (gamepad2_B.isRisingEdge()) {
            armControl.setExtake();
-           slideControl.setMidJunction();
-           clawControl.toggleWristRotate();
+          // slideControl.setMidJunction();
+          clawControl.toggleWristRotate();
 
         }
         else if (gamepad2_A.isRisingEdge()) {
             slideControl.setLowJunction();
         }
         else if (gamepad2_X.isRisingEdge()){
-            clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
-            clawControl.wristInExtakePosition = false;
+           clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
+           clawControl.wristInExtakePosition = false;
             armControl.setIntake();
-            slideControl.setIntakeOrGround();
+           // slideControl.setIntakeOrGround();
 
         }
 
-        if(gamepad2.dpad_right)
-            armControl.manualArm(50);
 
-        if(gamepad2.dpad_left)
-            armControl.manualArm(-50);
     }
 
     public void claw() {

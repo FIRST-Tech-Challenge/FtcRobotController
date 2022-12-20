@@ -19,10 +19,10 @@ public class Slide {
     public static double ZERO_POSITION = 10;//5V;
     private final double MAX = 2500;
 
-    private static double slideKp = 0.003; //0.00326; //0.0039;
-    private static double slideKi = 0.000000325; //0.00000325;
-    private static double slideKd = 0.000001; //0.000001;
-    private static double slideKf = 0.000069; //0.000069;
+    public static double slideKp = 0.003; //0.00326; //0.0039;
+    public static double slideKi = 0.000000325; //0.00000325;
+    public static double slideKd = 0.000001; //0.000001;
+    public static double slideKf = 0.000069; //0.000069;
 
     private final double[] PIDF_COFFECIENTS = {slideKp, slideKi, slideKd, slideKf};
 
@@ -32,7 +32,7 @@ public class Slide {
 
     public Slide(HardwareMap hardwareMap){
         slideLeft = new Motor(hardwareMap, "SL", Motor.GoBILDA.RPM_312); // Pin 0 on expansion hub
-        slideRight = new Motor(hardwareMap,"SR", Motor.GoBILDA.RPM_312); // Pin 1 on control hubm
+        slideRight = new Motor(hardwareMap,"SR", Motor.GoBILDA.RPM_312); // Pin 1 on control hub -> pin 0 control hub
 
         slideLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
