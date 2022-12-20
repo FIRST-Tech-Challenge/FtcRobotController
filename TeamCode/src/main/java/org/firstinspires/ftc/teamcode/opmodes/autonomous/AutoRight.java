@@ -149,15 +149,15 @@ public class AutoRight extends LinearOpMode {
         TrajectorySequence goToHigh = drive.trajectorySequenceBuilder(new Pose2d())
                 .strafeRight(27)
                 .forward(45)
-                .strafeLeft(11.5)
+                .strafeLeft(10.5)
                 .build();
         Trajectory prepareToDrop = drive.trajectoryBuilder(goToHigh.end())
-                .forward(3)
+                .forward(3.2)
                 .build();
 
 
         TrajectorySequence parkAtOne = drive.trajectorySequenceBuilder(prepareToDrop.end())
-                .strafeLeft(33)
+                .strafeLeft(32)
                 .back(4)
                 .turn(Math.toRadians(90))
                 .build();
@@ -170,6 +170,14 @@ public class AutoRight extends LinearOpMode {
                 .strafeRight(12)
                 .back(4)
                 .turn(Math.toRadians(90))
+                .build();
+        TrajectorySequence scoreAtOneOne = drive.trajectorySequenceBuilder(parkAtOne.end())
+                .strafeRight(4)
+                .forward(8)
+                .build();
+        TrajectorySequence scoreAtOneTwo = drive.trajectorySequenceBuilder(scoreAtOneOne.end())
+                .back(30)
+                .turn(Math.toRadians(0))
                 .build();
 
 
@@ -186,12 +194,19 @@ public class AutoRight extends LinearOpMode {
         LinearSlide(0, 0);
         sleep(300);
         drive.followTrajectory(prepareToDrop);
-        sleep(300);
+        sleep(600);
         robot.ArmServo.setPosition(1);
-        sleep(300);
+        sleep(600);
         //drive.followTrajectory(traj3);
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
             drive.followTrajectorySequence(parkAtOne);
+            sleep(100);
+            //LinearSlide(0.7, 1800);
+            //LinearSlide(0, 0);
+            //drive.followTrajectorySequence(scoreAtOneOne);
+            //robot.ArmServo.setPosition(0);
+            //sleep(300);
+            //drive.followTrajectorySequence(scoreAtOneTwo);
         } else if (tagOfInterest.id == MIDDLE) {
             drive.followTrajectorySequence(parkAtTwo);
         } else {

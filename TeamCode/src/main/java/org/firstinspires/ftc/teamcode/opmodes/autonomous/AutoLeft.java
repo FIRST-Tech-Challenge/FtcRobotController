@@ -149,10 +149,10 @@ public class AutoLeft extends LinearOpMode {
         TrajectorySequence goToHigh = drive.trajectorySequenceBuilder(new Pose2d())
                 .strafeLeft(19)
                 .forward(45)
-                .strafeRight(11.75)
+                .strafeRight(10.5)
                 .build();
         Trajectory prepareToDrop = drive.trajectoryBuilder(goToHigh.end())
-                .forward(3)
+                .forward(3.12)
                 .build();
 
 
@@ -167,7 +167,7 @@ public class AutoLeft extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 .build();
         TrajectorySequence parkAtThree = drive.trajectorySequenceBuilder(prepareToDrop.end())
-                .strafeRight(31)
+                .strafeRight(32.1)
                 .back(22)
                 .build();
 
@@ -183,7 +183,7 @@ public class AutoLeft extends LinearOpMode {
         drive.followTrajectorySequence(goToHigh);
         LinearSlide(-0.7, SLIDE);
         LinearSlide(0, 0);
-        sleep(300);
+        sleep(500);
         drive.followTrajectory(prepareToDrop);
         sleep(300);
         robot.ArmServo.setPosition(1);

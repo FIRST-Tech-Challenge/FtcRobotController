@@ -42,27 +42,27 @@ public class Mecanum extends LinearOpMode {
             robot.leftslidemotor.setPower((gamepad2.right_trigger - gamepad2.left_trigger));
             robot.rightslidemotor.setPower((gamepad2.right_trigger - gamepad2.left_trigger));
             while (gamepad2.right_bumper) {
-                robot.ArmServo.setPosition(1);
+                robot.ArmServo.setPosition(0);
             }
             while (gamepad2.left_bumper) {
-                robot.ArmServo.setPosition(0);
+                robot.ArmServo.setPosition(1);
             }
             if (frontLeftDrive > 0 && frontRightDrive < 0 && backLeftDrive > 0 && backRightDrive < 0 || frontLeftDrive < 0 && frontRightDrive > 0 && backLeftDrive < 0 && backRightDrive > 0) {
                 telemetry.addLine("Strafing");
                 while (!isStopRequested()) {
                     drive.setWeightedDrivePower(
                             new Pose2d(
-                                    -gamepad1.left_stick_y,
-                                    -gamepad1.left_stick_x,
-                                    -gamepad1.right_stick_x * 0.5
+                                    -gamepad1.left_stick_y*(1.2),
+                                    -gamepad1.left_stick_x*1.2,
+                                    -gamepad1.right_stick_x * 0.6
                             )
                     );
                     drive.update();
 //
                     robot.leftslidemotor.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
                     robot.rightslidemotor.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
-                    if (gamepad2.right_bumper) {
-                        robot.ArmServo.setPosition(1);
+                    while (gamepad2.right_bumper) {
+                        robot.ArmServo.setPosition(0);
                     }
 
                     telemetry.addLine("motor name               motor speed");
