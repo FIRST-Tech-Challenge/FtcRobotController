@@ -60,22 +60,46 @@ public class BlueLeft extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         waitForStart();//possubly the problem
         if (opModeIsActive()) {
 
 
 
-            move(1, 1900);
+            move(.5,200);
+            strafeLeft(1,1000);
+            gyroTurning(0);
+            sleep(2000);
+            move(1,2000);
+            gyroTurning(-90);
+            move(1,600);
+            //crane(2,-8200);
+            Crane.setTargetPosition(-8200);
+            Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Crane.setPower(1);
+            while (Crane.isBusy()&&opModeIsActive()) {
+
+            }
+
+
+
+
+
+
+
+
+            /*move(1, 1900);
             gyroTurning(90);
             move(1, 750);
 
-            Left.setPower(-1);
+            Left.setPower(1);
             craneinput();
             sleep(1000);
             Left.setPower(0);
 
-            move(1,-500);
-            gyroTurning(180);
+            move(.5,-500);
+            gyroTurning(-90);
             spin(100, -1600);
             sleep(1000);
             move(1, 500);
@@ -195,8 +219,8 @@ public class BlueLeft extends LinearOpMode {
 
     }
     public void craneinput() {
-        crane(-500);
-        move(0.5, 350);
+        crane(1,-550);
+        move(0.2, 350);
         //Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Crane.setTargetPosition(0);
         Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -205,22 +229,57 @@ public class BlueLeft extends LinearOpMode {
         }
     }
 
-    public void strafeLeft(double power, int time) throws InterruptedException {
-        frontLeft.setPower(-power);
+    public void strafeLeft(double power, int position) throws InterruptedException {
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontRight.setTargetPosition(-position);
+        frontLeft.setTargetPosition(-position);
+        backRight.setTargetPosition(position);
+        backLeft.setTargetPosition(position);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         frontRight.setPower(power);
+        frontLeft.setPower(power);
+        backRight.setPower(power);
         backLeft.setPower(power);
-        backRight.setPower(-power);
-        sleep(time);
-        stopMotors();
+
+        while (frontLeft.isBusy() && opModeIsActive()) {
+
+        }
+
     }
 
-    public void strafeRight(double power, int time) throws InterruptedException {
+    public void strafeRight(double power, int position) throws InterruptedException {
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontRight.setTargetPosition(position);
+        frontLeft.setTargetPosition(position);
+        backRight.setTargetPosition(-position);
+        backLeft.setTargetPosition(-position);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontRight.setPower(power);
         frontLeft.setPower(power);
-        frontRight.setPower(-power);
-        backLeft.setPower(-power);
         backRight.setPower(power);
-        sleep(time);
-        stopMotors();
+        backLeft.setPower(power);
+
+        while (frontLeft.isBusy() && opModeIsActive()) {
+
+        }
     }
 
     public void intake(int direction, long time) throws InterruptedException {
@@ -240,7 +299,7 @@ public class BlueLeft extends LinearOpMode {
 
     public void spin(int SpinPosition,int CranePosition) {
         Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Spin.setTargetPosition(SpinPosition);
         Crane.setTargetPosition(CranePosition);
         Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -252,11 +311,10 @@ public class BlueLeft extends LinearOpMode {
         }
     }
 
-    public void crane(int position) {
-        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void crane(double power, int position) {
         Crane.setTargetPosition(position);
         Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Crane.setPower(1);
+        Crane.setPower(power);
         while (Crane.isBusy()&&opModeIsActive()) {
 
         }
