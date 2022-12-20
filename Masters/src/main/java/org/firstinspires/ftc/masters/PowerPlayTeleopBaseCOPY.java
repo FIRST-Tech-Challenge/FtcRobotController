@@ -9,12 +9,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Power Play TeleOp single", group = "competition")
+@TeleOp(name="Power Play TeleOp Single", group = "competition")
 public class PowerPlayTeleopBaseCOPY extends LinearOpMode {
 
 
     //RobotClass robot;
-   // SampleMecanumDriveCancelable drive;
+    // SampleMecanumDriveCancelable drive;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
 
@@ -26,25 +26,29 @@ public class PowerPlayTeleopBaseCOPY extends LinearOpMode {
     DcMotor rightRearMotor = null;
     //DcMotor intakeMotor = null;
     DcMotor linearSlideMotor = null;
+    DcMotor frontSlide = null;
 
     Servo clawServo = null;
-    Servo armServo = null;
+    DcMotor armMotor = null;
+
+
 
 
 
     double maxPowerConstraint = 0.75;
 
     //Fix values
-    public static int SLIDE_HIGH = 1320;
-    public static int SLIDE_MIDDLE = 710;
+    public static int SLIDE_HIGH = 1150;
+    public static int SLIDE_MIDDLE = 550;
     public static int SLIDE_BOTTOM = 0;
 
     //Fix values
     protected final double clawServoOpen = 0.14;
     protected final double clawServoClosed = 0.0;
-    protected final double armServoBottom = 0.20;
-    protected final double armServoTop = 0.76;
-    protected final double armServoMid = 0.57;
+    protected final int armMotorBottom = 0;
+    protected final int armMotorTop = 600;
+    protected final int armMotorMid = 450;
+    protected final int armMotorBottomJunction = 400;
 
 
 
@@ -71,7 +75,7 @@ public class PowerPlayTeleopBaseCOPY extends LinearOpMode {
 
         */
         telemetry.addData("Status", "Initialized");
-       // telemetry.update();
+        // telemetry.update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         /* Initialize the hardware variables. Note that the strings used here as parameters
@@ -83,9 +87,10 @@ public class PowerPlayTeleopBaseCOPY extends LinearOpMode {
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
+        frontSlide = hardwareMap.dcMotor.get("frontSlide");
 
         clawServo = hardwareMap.servo.get("clawServo");
-        armServo = hardwareMap.servo.get("armServo");
+        armMotor = hardwareMap.dcMotor.get("armServo");
 
         // Set the drive motor direction:
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -101,11 +106,16 @@ public class PowerPlayTeleopBaseCOPY extends LinearOpMode {
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        frontSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        frontSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // Wait for the game to start (driver presses PLAY)
-        armServo.setPosition(.15);
+//        armMotor.setPosition(.15);
         clawServo.setPosition(clawServoOpen);
 
         waitForStart();
@@ -118,9 +128,9 @@ public class PowerPlayTeleopBaseCOPY extends LinearOpMode {
             double y = 0;
             double x = 0;
             double rx = 0;
-            telemetry.addData("left y", gamepad1.left_stick_y);
-            telemetry.addData("left x", gamepad1.left_stick_x);
-            telemetry.addData("right x", gamepad1.right_stick_x);
+            telemetry.addData("left y", gamepad2.left_stick_y);
+            telemetry.addData("left x", gamepad2.left_stick_x);
+            telemetry.addData("right x", gamepad2.right_stick_x);
 
             y = -gamepad2.left_stick_y;
             x = gamepad2.left_stick_x;
@@ -182,51 +192,61 @@ public class PowerPlayTeleopBaseCOPY extends LinearOpMode {
 
             if (gamepad2.dpad_up) {
                 clawServo.setPosition(clawServoClosed);
-                armServo.setPosition(armServoMid);
+                armMotor.setTargetPosition(armMotorMid);
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(0.3);
                 linearSlideMotor.setTargetPosition(SLIDE_HIGH);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setPower(.6);
+                frontSlide.setTargetPosition(SLIDE_HIGH);
+                frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearSlideMotor.setPower(.3);
+                frontSlide.setPower(.3);
             }
 
             if (gamepad2.dpad_right) {
                 clawServo.setPosition(clawServoClosed);
-                armServo.setPosition(armServoMid);
+                armMotor.setTargetPosition(armMotorMid);
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(0.3);
                 linearSlideMotor.setTargetPosition(SLIDE_MIDDLE);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setPower(.6);
+                frontSlide.setTargetPosition(SLIDE_MIDDLE);
+                frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                frontSlide.setPower(0.3);
+                linearSlideMotor.setPower(.3);
             }
 
             if (gamepad2.dpad_down) {
                 clawServo.setPosition(clawServoClosed);
-                armServo.setPosition(armServoMid);
+                armMotor.setTargetPosition(armMotorBottomJunction);
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(0.3);
                 linearSlideMotor.setTargetPosition(SLIDE_BOTTOM);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                linearSlideMotor.setPower(.6);
+                frontSlide.setTargetPosition(SLIDE_BOTTOM);
+                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearSlideMotor.setPower(.3);
+                frontSlide.setPower(0.3);
             }
 
             if (gamepad2.dpad_left) {
                 clawServo.setPosition(clawServoClosed);
                 linearSlideMotor.setTargetPosition(SLIDE_BOTTOM);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                frontSlide.setTargetPosition(SLIDE_BOTTOM);
+                frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(-.4);
-                armServo.setPosition(armServoBottom);
+                linearSlideMotor.setPower(-0.4);
+                armMotor.setTargetPosition(armMotorBottom);
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(0.3);
             }
 
             if (gamepad2.left_bumper) {
-                armServo.setPosition(armServoTop);
+                armMotor.setTargetPosition(armMotorTop);
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(0.3);
             }
-
-//            if (Math.abs(gamepad2.left_stick_y) < 0.2) {
-//                linearSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//                linearSlideMotor.setPower(gamepad2.left_stick_y/2);
-//            }
-
-            if (gamepad2.right_stick_y > 0.6) {
-                armServo.setPosition(armServoBottom);
-            } else if (gamepad2.right_stick_y < -0.6) {
-                armServo.setPosition(armServoMid);
-            }
-
 
             telemetry.update();
         }

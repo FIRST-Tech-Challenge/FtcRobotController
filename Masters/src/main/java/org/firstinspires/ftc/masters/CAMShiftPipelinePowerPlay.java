@@ -32,8 +32,8 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
         THE_MADNESS_OF_CTHULHU
     }
 
-    double heightWidthRatio;
-    int numCones;
+    public double heightWidthRatio;
+    public int numCones;
 
     public enum ConeOrientation {
         UPRIGHT,
@@ -49,7 +49,6 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
     private final Rect trackWindow = new Rect(150, 60, 63, 125);
     Telemetry telemetry;
     private final TelemetryPacket packet;
-
 
     public CAMShiftPipelinePowerPlay(Telemetry telemetry, TelemetryPacket packet) {
         this.telemetry = telemetry;
@@ -79,8 +78,22 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
     int difFromRedCone; //a
     int difFromBlueCone; //b
 
-    Point center;
-    Size size;
+    public Point center;
+    public Size size;
+
+    TermCriteria term_crit;
+
+    RotatedRect rot_rect;
+
+    Mat roi, roi_hist, hsv, dst;
+    MatOfFloat range = new MatOfFloat(0, 256);
+
+    MatOfInt histSize = new MatOfInt(180);
+    MatOfInt channels = new MatOfInt(0);
+
+    Point[] points;
+
+    FtcDashboard dashboard = FtcDashboard.getInstance();
 
     void inputToLAB(Mat input) {
 
@@ -92,33 +105,30 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-        Mat roi = input.submat(trackWindow);
+        roi = input.submat(trackWindow);
         Imgproc.cvtColor(roi, hsv_roi, Imgproc.COLOR_BGR2HSV);
         Core.inRange(hsv_roi, new Scalar(0, 60, 32), new Scalar(180, 255, 255), mask);
 
-        MatOfFloat range = new MatOfFloat(0, 256);
-        Mat roi_hist = new Mat();
-        MatOfInt histSize = new MatOfInt(180);
-        MatOfInt channels = new MatOfInt(0);
+        roi_hist = new Mat();
         Imgproc.calcHist(Collections.singletonList(hsv_roi), channels, mask, roi_hist, histSize, range);
         Core.normalize(roi_hist, roi_hist, 0, 255, Core.NORM_MINMAX);
 
-        TermCriteria term_crit = new TermCriteria(TermCriteria.EPS | TermCriteria.COUNT, 100, .1);
+        term_crit = new TermCriteria(TermCriteria.EPS | TermCriteria.COUNT, 100, .1);
 
 
-        Mat hsv = new Mat() , dst = new Mat();
+        hsv = new Mat();
+        dst = new Mat();
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
         Imgproc.calcBackProject(Collections.singletonList(hsv), channels, roi_hist, dst, range, 1);
 
-        RotatedRect rot_rect = Video.CamShift(dst, trackWindow, term_crit);
+        rot_rect = Video.CamShift(dst, trackWindow, term_crit);
 
-        Point[] points = new Point[4];
+        points = new Point[4];
         rot_rect.points(points);
         for (int i = 0; i < 4 ;i++) {
             Imgproc.line(input, points[i], points[(i+1)%4], new Scalar(255, 0, 0),2);
         }
 
-        FtcDashboard dashboard = FtcDashboard.getInstance();
         data = rot_rect.toString();
         telemetry.addData("rot_rect: ", rot_rect.toString());
         packet.put("rot_rect: ", rot_rect.toString());
@@ -134,6 +144,7 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
         } else if (angle > 75 && angle < 105) {
             orientation = ConeOrientation.TIPPED;
         }
+
         telemetry.addData("Orientation: ", orientation);
         packet.put("Orientation: ", orientation);
 

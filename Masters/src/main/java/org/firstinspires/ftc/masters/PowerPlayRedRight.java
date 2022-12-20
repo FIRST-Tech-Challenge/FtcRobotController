@@ -31,6 +31,8 @@ public class PowerPlayRedRight extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(new Vector2d(12,-12),Math.toRadians(135)))
                 .build();
 
+        drive.liftMiddle();
+
         //use vision to align
         //drop cone
         drive.openClaw();
