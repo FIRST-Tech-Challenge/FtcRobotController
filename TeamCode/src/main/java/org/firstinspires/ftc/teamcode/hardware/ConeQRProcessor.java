@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import android.util.Log;
+
 import  org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -76,6 +78,10 @@ public class ConeQRProcessor  extends OpenCvPipeline {
 
     }
 
+    public void setDecoded(boolean decoded) {
+        this.decoded = decoded;
+    }
+
     @Override
     public Mat processFrame (Mat input) {
         String qrCode = null;
@@ -98,13 +104,15 @@ public class ConeQRProcessor  extends OpenCvPipeline {
             System.out.println(points.dump());
             if (!points.empty()) {
                 //Detected. However not necessary decode correctly.
-                System.out.println("QR code: " + qrCode);
 
+                Log.d("TeamCode", "QR code: " + qrCode);
+
+                /*
                 for (int i = 0; i < points.cols(); i++) {
                     Point pt1 = new Point(points.get(0, i));
                     Point pt2 = new Point(points.get(0, (i + 1) % 4));
                     Imgproc.line(input, pt1, pt2, new Scalar(255, 0, 0), 1);
-                }
+                }*/
 
                 if ( qrCode == null || "".equals(qrCode)) {
                     //If not decoded correctly, tried to get color to find out qrCode.

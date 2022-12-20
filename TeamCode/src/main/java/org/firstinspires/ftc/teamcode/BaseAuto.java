@@ -54,12 +54,15 @@ public abstract class BaseAuto extends LinearOpMode {
         //This is here so it starts recog after start
         waitForStart();
 
+        hdw.moveYAxis(6, 0.3);
+        sleep(100);
+
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                webCam.startStreaming(1920,1080, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                webCam.startStreaming(1280,720, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
@@ -70,6 +73,9 @@ public abstract class BaseAuto extends LinearOpMode {
                  */
             }
         });
+
+        //waitForStart();
+        coneImgPipeline.setDecoded(false);
 
         long startMills  = System.currentTimeMillis();
 
@@ -83,7 +89,6 @@ public abstract class BaseAuto extends LinearOpMode {
         }
         currentSide = coneImgPipeline.getSleeveSide();
         webCam.closeCameraDevice();
-
 
         telemetry.addData("Message : ", coneImgPipeline.getDetectMsg());
         telemetry.addData("Sleeve: ", currentSide);
@@ -123,15 +128,15 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        hdw.moveXAxis(-24.0, -0.3);
-        hdw.moveYAxis( 36.0, 0.3);
+        hdw.moveYAxis(28.0, -0.3);
+        hdw.moveXAxis( -25.0, 0.3);
     }
 
     void parkZone2( ) {
         telemetry.addData("Park zone 2 ", this.currentSide);
         telemetry.update();
-        //Move forwardf
-        hdw.moveYAxis( 36.0, 0.3);
+        //Move forward
+        hdw.moveYAxis( 28.0, 0.3);
 
     }
 
@@ -139,8 +144,8 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 3 ", this.currentSide);
         telemetry.update();
         //Move right
-        hdw.moveXAxis(24.0, 0.3);
-        hdw.moveYAxis( 36.0, 0.3);
+        hdw.moveYAxis(28, 0.3);
+        hdw.moveXAxis( 23.0, 0.3);
 
     }
 
