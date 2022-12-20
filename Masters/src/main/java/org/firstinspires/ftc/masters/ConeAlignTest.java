@@ -16,8 +16,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Date;
 
-@Autonomous(name="Pipe Align Test", group="drive")
-public class PipeAlignTest extends LinearOpMode {
+@Autonomous(name="Cone Align Test", group="drive")
+public class ConeAlignTest extends LinearOpMode {
     private OpenCvCamera webcam;
 
     private static final int CAMERA_WIDTH  = 640; // width  of wanted camera resolution
@@ -35,7 +35,7 @@ public class PipeAlignTest extends LinearOpMode {
     {
         // OpenCV webcam
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcamSleeve"), cameraMonitorViewId);
         //OpenCV Pipeline
         CAMShiftPipelinePowerPlay myPipeline;
         webcam.setPipeline(myPipeline = new CAMShiftPipelinePowerPlay(telemetry,packet));
@@ -86,6 +86,8 @@ public class PipeAlignTest extends LinearOpMode {
         CAMShiftPipelinePowerPlay.DetectedObject detectedObject = null;
         Size size = null;
         Point center = null;
+        int numCones;
+        CAMShiftPipelinePowerPlay.ConeOrientation orientation;
 
         waitForStart();
 
@@ -98,13 +100,14 @@ public class PipeAlignTest extends LinearOpMode {
             detectedObject = myPipeline.detectedObject;
             size = myPipeline.size;
             center = myPipeline.center;
+            numCones = myPipeline.numCones;
+            orientation = myPipeline.orientation;
 
             telemetry.addData("Position", detectedObject);
             telemetry.update();
         }
 
-        double leftThresh = 0;
-        double rightThresh = 0;
+
 
         //Center to Pole 14.5 in
         //Webcam to Pole 15 in
@@ -112,46 +115,49 @@ public class PipeAlignTest extends LinearOpMode {
 
 
 
-        while (opModeIsActive())
-        {
-            if (myPipeline.center.x >= rightThresh) {
-                leftFrontMotor.setPower(.14);
-                rightFrontMotor.setPower(-.14);
-                leftRearMotor.setPower(.14);
-                rightRearMotor.setPower(-.14);
-            } else if (myPipeline.center.x <= leftThresh) {
-                leftFrontMotor.setPower(-.14);
-                rightFrontMotor.setPower(.14);
-                leftRearMotor.setPower(-.14);
-                rightRearMotor.setPower(.14);
-            }
-            if (myPipeline.center.x <= rightThresh && myPipeline.center.x >= leftThresh) {
-                break;
-            }
+//        while (opModeIsActive())
+//        {
 //
-//            telemetry.addData("Width:", myPipeline.size.width);
-//            telemetry.update();
-//
-//            if (myPipeline.size.width <= 63) {
-//               leftFrontMotor.setPower(.15);
-//               rightFrontMotor.setPower(.15);
-//               leftRearMotor.setPower(.15);
-//               rightRearMotor.setPower(.15);
-//           } else if (myPipeline.size.width >= 69) {
-//               leftFrontMotor.setPower(-.15);
-//               rightFrontMotor.setPower(-.15);
-//               leftRearMotor.setPower(-.15);
-//               rightRearMotor.setPower(-.15);
-//           } else {
-//               leftFrontMotor.setPower(0);
-//               rightFrontMotor.setPower(0);
-//               leftRearMotor.setPower(0);
-//               rightRearMotor.setPower(0);
+////            while (myPipeline.center.x <= 190 && myPipeline.center.x >= 220) {
+//                telemetry.addData("Center X:", myPipeline.center.x);
+//                if (myPipeline.center.x <= 200) {
+//                    leftFrontMotor.setPower(-.14);
+//                    rightFrontMotor.setPower(.14);
+//                    leftRearMotor.setPower(-.14);
+//                    rightRearMotor.setPower(.14);
+//                }
+//                else if (myPipeline.center.x >= 220) {
+//                    leftFrontMotor.setPower(.14);
+//                    rightFrontMotor.setPower(-.14);
+//                    leftRearMotor.setPower(.14);
+//                    rightRearMotor.setPower(-.14);
+//                } else {
+//                    leftFrontMotor.setPower(0);
+//                    rightFrontMotor.setPower(0);
+//                    leftRearMotor.setPower(0);
+//                    rightRearMotor.setPower(0);
+//                }
+//                telemetry.update();
+////            }
+////            telemetry.addData("Width:", myPipeline.size.width);
+////            telemetry.update();
+////
+////            if (myPipeline.size.width <= 63) {
+////               leftFrontMotor.setPower(.15);
+////               rightFrontMotor.setPower(.15);
+////               leftRearMotor.setPower(.15);
+////               rightRearMotor.setPower(.15);
+////           } else if (myPipeline.size.width >= 69) {
+////               leftFrontMotor.setPower(-.15);
+////               rightFrontMotor.setPower(-.15);
+////               leftRearMotor.setPower(-.15);
+////               rightRearMotor.setPower(-.15);
+////           } else {
+////               leftFrontMotor.setPower(0);
+////               rightFrontMotor.setPower(0);
+////               leftRearMotor.setPower(0);
+////               rightRearMotor.setPower(0);
 //           }
-        }
-        leftFrontMotor.setPower(0);
-        rightFrontMotor.setPower(0);
-        leftRearMotor.setPower(0);
-        rightRearMotor.setPower(0);
+//        }
     }
 }
