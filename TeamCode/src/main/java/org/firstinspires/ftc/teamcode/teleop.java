@@ -121,7 +121,7 @@ public class Servotesting extends LinearOpMode {
             }
 
 
-            if (turning){
+            /*if (turning){
                 Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 Crain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 Spin.setTargetPosition(0);
@@ -140,7 +140,7 @@ public class Servotesting extends LinearOpMode {
 
                 }
             }
-
+*/
         }
 
 

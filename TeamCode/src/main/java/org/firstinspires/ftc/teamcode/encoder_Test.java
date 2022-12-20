@@ -12,10 +12,12 @@ public class encoder_Test extends LinearOpMode {
 
     public void runOpMode() {
         crane = hardwareMap.get(DcMotor.class, "Crane");
-
+        crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        crane.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         waitForStart();
 
         while (opModeIsActive()) {
+
             double throttle;
             throttle = gamepad1.left_stick_y;
 
