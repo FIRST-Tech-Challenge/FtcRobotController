@@ -2,10 +2,15 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Config;
 
 /**
  * Responsible for controlling the drivetrain of the robot.
@@ -13,57 +18,55 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  * desired drivetrain commands can be more effectively called to this.
  */
 public class DriveSystem extends SubsystemBase {
+    IMU imu;
     MecanumDrive drive;
-    boolean squareInputs;
     
     double strafe = 0;
     double forward = 0;
     double turn = 0;
-    double elevatorInput = 0;
-    
-    public Motor frontLeft;
-    public Motor frontRight;
-    public Motor backLeft;
-    public Motor backRight;
-    public Motor elevator;
-    
-    FtcDashboard dash;
     
     /**
      * Creates a new DriveSystem.
-     * @param hardwareMap The hardwareMap for the robot.
-     * @param auto Whether the subsystem will be used for autonomous.
      */
-    public DriveSystem(HardwareMap hardwareMap, boolean auto) {
-        frontLeft = new Motor(hardwareMap, "front_left_drive");
-        frontRight = new Motor(hardwareMap, "front_right_drive");
-        backLeft = new Motor(hardwareMap, "rear_left_drive");
-        backRight = new Motor(hardwareMap, "rear_right_drive");
-        elevator = new Motor(hardwareMap, "elevator");
+    public DriveSystem(final HardwareMap hardwareMap) {
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(
+            new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.FORWARD, 
+                    RevHubOrientationOnRobot.UsbFacingDirection.UP
+                )
+            )
+        );
+        
+        Motor frontLeft = new Motor(hardwareMap, Config.DRIVE_FRONT_LEFT);
+        Motor frontRight = new Motor(hardwareMap, Config.DRIVE_FRONT_RIGHT);
+        Motor backLeft = new Motor(hardwareMap, Config.DRIVE_BACK_LEFT);
+        Motor backRight = new Motor(hardwareMap, Config.DRIVE_BACK_RIGHT);
             
         drive = new MecanumDrive(frontLeft, frontRight, backLeft, backRight);
-        
-        // For autonomous control, the inputs should not be curved
-        squareInputs = !auto;
-        
-        dash = FtcDashboard.getInstance();
     }
 
     @Override
     public void periodic() {
-        drive.driveRobotCentric(strafe, forward, turn, squareInputs);
-        elevator.set(elevatorInput);
-        
         TelemetryPacket packet = new TelemetryPacket();
+        packet.put("heading", getHeading());
         packet.put("strafe", strafe);
         packet.put("forward", forward);
         packet.put("turn", turn);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
         
-        packet.put("frontLeft", frontLeft.getRate());
-        packet.put("frontRight", frontRight.getRate());
-        packet.put("backLeft", backLeft.getRate());
-        packet.put("backRight", backRight.getRate());
-        dash.sendTelemetryPacket(packet);
+        if (Config.DRIVE_FIELD_CENTRIC) {
+            drive.driveFieldCentric(strafe, forward, turn, getHeading());
+        } else {
+            drive.driveRobotCentric(strafe, forward, turn);
+        }
+    }
+    
+    public void setAll(double strafe, double forward, double turn) {
+        this.strafe = strafe;
+        this.forward = forward;
+        this.turn = turn;
     }
     
     public void setStrafe(double input) {
@@ -80,7 +83,10 @@ public class DriveSystem extends SubsystemBase {
 
     public void stop() {
         strafe = forward = turn = 0;
+        drive.stop();
     }
-
-    public void setElevator(double input) {elevatorInput = input;}
+    
+    private double getHeading() {
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    }
 }

@@ -22,9 +22,4 @@ public class DetectSignal extends CommandBase {
     public void end(boolean interrupted) {
         system.stopCamera();
     }
-
-    @Override
-    public boolean isFinished() {
-        return system.isResultReady();
-    }
 }
