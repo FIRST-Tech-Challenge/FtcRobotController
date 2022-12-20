@@ -11,6 +11,8 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.encoderTicksToI
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.masters.drive.StandardTrackingWheelLocalizer.X_MULTIPLIER;
+import static org.firstinspires.ftc.masters.drive.StandardTrackingWheelLocalizer.Y_MULTIPLIER;
 
 import androidx.annotation.NonNull;
 
@@ -43,6 +45,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.masters.util.Encoder;
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -56,7 +59,7 @@ import java.util.List;
 public class SampleMecanumDrive extends MecanumDrive {
 
     //Fix values
-    public static int SLIDE_HIGH = 1160;
+    public static int SLIDE_HIGH = 1350;
     public static int SLIDE_MIDDLE = 550;
     public static int SLIDE_BOTTOM = 0;
 
@@ -85,6 +88,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private TrajectoryFollower follower;
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    //private Encoder leftEncoder, rightEncoder, middleEncoder;
     private List<DcMotorEx> motors;
     public DcMotorEx linearSlide;
     public DcMotorEx frontSlide;
@@ -110,10 +114,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
 
         // TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
         // not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
@@ -141,6 +145,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
         rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+
+//        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "encoderLeft"));
+//        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontLeft"));
+//        middleEncoder  = new Encoder(hardwareMap.get(DcMotorEx.class, "backLeft"));
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -173,8 +181,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-      //  setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+       setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void openClaw(){
@@ -211,8 +222,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontSlide.setTargetPosition(SLIDE_BOTTOM);
         frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlide.setPower(.3);
-        frontSlide.setPower(.3);
+        linearSlide.setPower(.4);
+        frontSlide.setPower(.4);
+
     }
 
     public void setArmServoTop() {
@@ -363,6 +375,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public List<Double> getWheelVelocities() {
+
         List<Double> wheelVelocities = new ArrayList<>();
         for (DcMotorEx motor : motors) {
             wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
@@ -380,7 +393,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
+        return 0;
+
+//        return imu.getAngularOrientation().firstAngle;
     }
 
     @Override

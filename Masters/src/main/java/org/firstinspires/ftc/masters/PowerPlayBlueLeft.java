@@ -11,7 +11,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Power Play Blue Left")
+//@Autonomous(name = "Power Play Blue Left")
 public class PowerPlayBlueLeft extends LinearOpMode{
 
     @Override
