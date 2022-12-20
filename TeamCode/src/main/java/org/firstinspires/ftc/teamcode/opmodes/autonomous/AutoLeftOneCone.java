@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
 @Autonomous(group="drive")
-public class AutoRight extends LinearOpMode {
+public class AutoLeftOneCone extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     TurtleRobotAuto robot = new TurtleRobotAuto(this);
@@ -147,37 +147,28 @@ public class AutoRight extends LinearOpMode {
 //                .build();
 
         TrajectorySequence goToHigh = drive.trajectorySequenceBuilder(new Pose2d())
-                .strafeRight(27)
+                .strafeLeft(19)
                 .forward(45)
-                .strafeLeft(10.5)
+                .strafeRight(10.5)
                 .build();
         Trajectory prepareToDrop = drive.trajectoryBuilder(goToHigh.end())
-                .forward(3.2)
+                .forward(3.12)
                 .build();
 
 
         TrajectorySequence parkAtOne = drive.trajectorySequenceBuilder(prepareToDrop.end())
-                .strafeLeft(32)
+                .strafeLeft(12)
                 .back(4)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .build();
         TrajectorySequence parkAtTwo = drive.trajectorySequenceBuilder(prepareToDrop.end())
-                .strafeLeft(11)
+                .strafeRight(10)
                 .back(4)
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .build();
         TrajectorySequence parkAtThree = drive.trajectorySequenceBuilder(prepareToDrop.end())
-                .strafeRight(12)
-                .back(4)
-                .turn(Math.toRadians(90))
-                .build();
-        TrajectorySequence scoreAtOneOne = drive.trajectorySequenceBuilder(parkAtOne.end())
-                .strafeRight(4)
-                .forward(8)
-                .build();
-        TrajectorySequence scoreAtOneTwo = drive.trajectorySequenceBuilder(scoreAtOneOne.end())
-                .back(30)
-                .turn(Math.toRadians(0))
+                .strafeRight(32.1)
+                .back(22)
                 .build();
 
 
@@ -192,21 +183,14 @@ public class AutoRight extends LinearOpMode {
         drive.followTrajectorySequence(goToHigh);
         LinearSlide(-0.7, SLIDE);
         LinearSlide(0, 0);
-        sleep(300);
+        sleep(500);
         drive.followTrajectory(prepareToDrop);
-        sleep(600);
+        sleep(300);
         robot.ArmServo.setPosition(1);
-        sleep(600);
+        sleep(300);
         //drive.followTrajectory(traj3);
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
             drive.followTrajectorySequence(parkAtOne);
-            sleep(100);
-            //LinearSlide(0.7, 1800);
-            //LinearSlide(0, 0);
-            //drive.followTrajectorySequence(scoreAtOneOne);
-            //robot.ArmServo.setPosition(0);
-            //sleep(300);
-            //drive.followTrajectorySequence(scoreAtOneTwo);
         } else if (tagOfInterest.id == MIDDLE) {
             drive.followTrajectorySequence(parkAtTwo);
         } else {
