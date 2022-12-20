@@ -83,7 +83,6 @@ public class PipeAlignTest extends LinearOpMode {
 
         while (opModeIsActive())
         {
-
 //            while (myPipeline.center.x <= 190 && myPipeline.center.x >= 220) {
                 telemetry.addData("Center X:", myPipeline.center.x);
                 if (myPipeline.center.x <= 200) {
