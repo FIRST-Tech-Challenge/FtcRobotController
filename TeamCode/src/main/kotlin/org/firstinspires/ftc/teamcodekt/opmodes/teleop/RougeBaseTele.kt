@@ -12,33 +12,42 @@ import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
 import org.firstinspires.ftc.teamcodekt.util.LateInitVal
 
 abstract class RougeBaseTele : LinearOpMode() {
-    protected val driver   = ReforgedGamepad(gamepad1)
-    protected val codriver = ReforgedGamepad(gamepad2)
+    protected var driver   by LateInitVal<ReforgedGamepad>()
+    protected var codriver by LateInitVal<ReforgedGamepad>()
 
     protected var powerMulti  = 0.0
 
     protected var bot by LateInitVal<TeleOpBotComponents>()
 
-    protected val intakeChain = IntakeChain(bot, 200)
-    protected val forwardsDepositChain = ForwardsDepositChain(bot, 500)
-    protected val backwardsDepositChain = BackwardsDepositChain(bot)
+    protected var intakeChain by LateInitVal<IntakeChain>()
+    protected var forwardsDepositChain by LateInitVal<ForwardsDepositChain>()
+    protected var backwardsDepositChain by LateInitVal<BackwardsDepositChain>()
 
-    override fun runOpMode() = with(bot) {
+    override fun runOpMode() {
+        driver   = ReforgedGamepad(gamepad1)
+        codriver = ReforgedGamepad(gamepad2)
+
         bot = createTeleOpBotComponents(hardwareMap, VoltageScaler(hardwareMap))
+
+        intakeChain = IntakeChain(bot, 200)
+        forwardsDepositChain = ForwardsDepositChain(bot, 500)
+        backwardsDepositChain = BackwardsDepositChain(bot)
+
+        describeControls()
 
         waitForStart()
 
         Scheduler.beforeEach {
-            arm.setToRestingPos()
-            wrist.setToRestingPos()
+            bot.arm.setToRestingPos()
+            bot.wrist.setToRestingPos()
             powerMulti = 1.0
         }
 
-        describeControls()
-
         Scheduler.launch(this@RougeBaseTele) {
-            lift.update()
-            wrist.update()
+            bot.lift.update()
+            bot.wrist.update()
+            bot.arm.update()
+            bot.claw.update()
             telemetry.update()
         }
     }

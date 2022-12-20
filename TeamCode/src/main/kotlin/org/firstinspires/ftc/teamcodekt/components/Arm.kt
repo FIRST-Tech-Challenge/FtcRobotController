@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 
 @Config
 object ArmConfig {
-    const val FORWARDS = 0.0
-    const val BACKWARDS = 1.0
-    const val RESTING = 0.5
+    const val FORWARDS = 135.0
+    const val BACKWARDS = 39.9
+    const val RESTING = 97.0
 }
 
 /**
@@ -23,18 +23,20 @@ class Arm(hwMap: HardwareMap) {
      */
     private val armServo = SimpleServo(hwMap, DeviceNames.ARM_SERVO, 0.0, 180.0)
 
+    private var targetAngle = ArmConfig.RESTING;
+
     /**
      * Move the arm to the forward position. Intended for intaking or reverse depositing.
      */
     fun setToForwardsPos() {
-        armServo.position = ArmConfig.FORWARDS
+        targetAngle = ArmConfig.FORWARDS
     }
 
     /**
      * Move the arm to the backward position. Intended for normal depositing.
      */
     fun setToBackwardsPos() {
-        armServo.position = ArmConfig.BACKWARDS
+        targetAngle = ArmConfig.BACKWARDS
     }
 
     /**
@@ -42,6 +44,10 @@ class Arm(hwMap: HardwareMap) {
      * and depositing positions.
      */
     fun setToRestingPos() {
-        armServo.position = ArmConfig.RESTING
+        targetAngle = ArmConfig.RESTING
+    }
+
+    fun update() {
+        armServo.turnToAngle(targetAngle)
     }
 }

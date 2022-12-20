@@ -17,11 +17,11 @@ class Wrist(hwMap: HardwareMap) {
     var wristPosition = 0.0
 
     fun setToBackwardsPos() {
-        wristPosition = WristConfig.FORWARDS
+        wristPosition = WristConfig.BACKWARDS
     }
 
     fun setToForwardsPos() {
-        wristPosition = WristConfig.BACKWARDS
+        wristPosition = WristConfig.FORWARDS
     }
 
     fun setToRestingPos() {

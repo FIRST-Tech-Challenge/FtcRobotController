@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcodekt.components
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.controller.PIDFController
 import com.arcrobotics.ftclib.hardware.motors.Motor
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import ftc.rouge.blacksmith.util.clamp
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
+import org.firstinspires.ftc.teamcodekt.util.invoke
 
 @Config
 object LiftConfig {
@@ -31,7 +33,7 @@ object LiftConfig {
  * @author KG
  */
 class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
-    private val liftMotor: Motor
+    private val liftMotor: DcMotorSimple
     private val liftPID: PIDFController
 
     private var liftHeight = 0
@@ -47,11 +49,12 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
         }
 
     init {
-        liftMotor = Motor(hwMap, DeviceNames.LIFT_MOTOR, Motor.GoBILDA.RPM_435)
+//        liftMotor = Motor(hwMap, DeviceNames.LIFT_MOTOR, Motor.GoBILDA.RPM_435)
+        liftMotor = hwMap("LI")
 
-        liftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
-        liftMotor.setRunMode(Motor.RunMode.VelocityControl)
-        liftMotor.resetEncoder()
+//        liftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
+//        liftMotor.setRunMode(Motor.RunMode.VelocityControl)
+//        liftMotor.resetEncoder()
 
         liftPID = PIDFController(
             LiftConfig.P, LiftConfig.I,
@@ -93,10 +96,10 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
     fun update() {
         val voltageCorrection = voltageScaler.voltageCorrection
 
-        val correction =
-            liftPID.calculate(liftMotor.currentPosition.toDouble(), liftHeight + voltageCorrection)
-
-        liftMotor.set(correction)
+//        val correction =
+//            liftPID.calculate(liftMotor.currentPosition.toDouble(), liftHeight + voltageCorrection)
+//
+//        liftMotor.set(correction)
     }
 
     /**
@@ -105,7 +108,7 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
      * @param telemetry a [Telemetry] object to log data to
      * @param dataSupplier a [DataSupplier] that provides data about the lift motor
      */
-    fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<Motor>) {
+    fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<DcMotorSimple>) {
         telemetry.addData("Lift motor", dataSupplier(liftMotor))
     }
 }

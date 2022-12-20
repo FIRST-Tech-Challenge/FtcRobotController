@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 
 @Config
 object ClawConfig {
-    const val INTAKE_WIDE   = 0.55
-    const val INTAKE_NARROW = 0.48
-    const val DEPOSIT       = 0.55
+    const val INTAKE_WIDE   = 0.66
+    const val INTAKE_NARROW = 0.575
+    const val DEPOSIT       = 0.666
     const val CLOSE         = 0.35
 }
 
@@ -21,12 +21,14 @@ object ClawConfig {
 class Claw(hwMap: HardwareMap) {
     private val clawServo = SimpleServo(hwMap, DeviceNames.CLAW_SERVO, 0.0, 180.0)
 
+    private var targetPos = ClawConfig.CLOSE
+
     /**
      * Open the claw to the narrow position for intaking objects. Used primarily for tele as it
      * allows for sucking in the cone at high speeds.
      */
     fun openForIntakeNarrow() {
-        clawServo.position = ClawConfig.INTAKE_NARROW
+        targetPos = ClawConfig.INTAKE_NARROW
     }
 
     /**
@@ -34,20 +36,24 @@ class Claw(hwMap: HardwareMap) {
      * for a higher chance of grabbing the cone.
      */
     fun openForIntakeWide() {
-        clawServo.position = ClawConfig.INTAKE_WIDE
+        targetPos = ClawConfig.INTAKE_WIDE
     }
 
     /**
      * Open the claw to the deposit position for depositing objects.
      */
     fun openForDeposit() {
-        clawServo.position = ClawConfig.DEPOSIT
+        targetPos = ClawConfig.DEPOSIT
     }
 
     /**
      * Close the claw.
      */
     fun close() {
-        clawServo.position = ClawConfig.CLOSE
+        targetPos = ClawConfig.CLOSE
+    }
+
+    fun update() {
+        clawServo.position = targetPos
     }
 }
