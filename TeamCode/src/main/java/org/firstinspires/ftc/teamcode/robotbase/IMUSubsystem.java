@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotbase;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.hardware.RevIMU;
+import org.firstinspires.ftc.teamcode.RevIMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;

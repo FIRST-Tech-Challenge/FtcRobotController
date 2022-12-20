@@ -24,20 +24,20 @@ public class PowerPlayRobot extends RobotEx {
                 .whenPressed(new ClawCommand(claw));
 
         ////////////////////////////////////////// Slider //////////////////////////////////////////
-        slider = new SliderSubsystem(hardwareMap);
-
-        //Levels
-        toolOp.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.ONE));
-        toolOp.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.TWO));
-        toolOp.getGamepadButton(GamepadKeys.Button.B)
-                .whileHeld(new SliderCommand(slider, SliderSubsystem.Level.THREE));
+//        slider = new SliderSubsystem(hardwareMap);
+//
+//        //Levels
+//        toolOp.getGamepadButton(GamepadKeys.Button.X)
+//                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.ONE));
+//        toolOp.getGamepadButton(GamepadKeys.Button.Y)
+//                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.TWO));
+//        toolOp.getGamepadButton(GamepadKeys.Button.B)
+//                .whileHeld(new SliderCommand(slider, SliderSubsystem.Level.THREE));
 
         //Manual Height Adjustment
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whileHeld(new SliderManualCommand(slider, -1));
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whileHeld(new SliderManualCommand(slider, 1));
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+//                .whileHeld(new SliderManualCommand(slider, -1));
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+//                .whileHeld(new SliderManualCommand(slider, 1));
     }
 }

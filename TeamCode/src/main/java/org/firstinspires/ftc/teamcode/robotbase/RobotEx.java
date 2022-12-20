@@ -21,18 +21,23 @@ public class RobotEx {
     protected final MecanumDriveCommand driveCommand;
 
     protected final IMUSubsystem gyro;
-    protected final Camera camera;
+    protected Camera camera;
 
-    protected final HeadingControllerSubsystem gyroFollow;
-    protected final HeadingControllerSubsystem cameraFollow;
+    protected HeadingControllerSubsystem gyroFollow;
+    protected HeadingControllerSubsystem cameraFollow;
+    protected final Boolean initCamera;
 
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
                    GamepadEx toolOp) {
-        this(hardwareMap, telemetry, driverOp, toolOp, true);
+        this(hardwareMap, telemetry, driverOp, toolOp, false, true,
+                false, false, false, false);
     }
 
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                   GamepadEx toolOp, Boolean useCameraFollower) {
+                   GamepadEx toolOp, Boolean initCamera, Boolean useCameraFollower,
+                   Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
+                   Boolean rearRightInvert) {
+        this.initCamera = initCamera;
         ///////////////////////////////////////// Gamepads /////////////////////////////////////////
         this.driverOp = driverOp;
         this.toolOp = toolOp;
@@ -43,15 +48,20 @@ public class RobotEx {
         this.telemetry = telemetry;
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
+
         gyro = new IMUSubsystem(hardwareMap, this.telemetry, dashboardTelemetry);
         CommandScheduler.getInstance().registerSubsystem(gyro);
 
+
         ////////////////////////////////////////// Camera //////////////////////////////////////////
-        camera = new Camera(hardwareMap, dashboard, telemetry,
-                () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
+        if (initCamera) {
+            camera = new Camera(hardwareMap, dashboard, telemetry,
+                    () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
+        }
 
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
-        drive = new MecanumDriveSubsystem(hardwareMap);
+        drive = new MecanumDriveSubsystem(hardwareMap, frontLeftInvert, frontRightInvert,
+                rearLeftInvert, rearRightInvert);
         driveCommand = new MecanumDriveCommand(drive, driverOp::getLeftY, driverOp::getLeftX,
                 this::drivetrainTurn, gyro::getRawValue,
                 () -> driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
@@ -82,11 +92,11 @@ public class RobotEx {
                 .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
         ////////////////////////////////////// Camera Follower /////////////////////////////////////
-        cameraFollow = new HeadingControllerSubsystem(camera::getObject_x);
-        if (useCameraFollower)
+        if (initCamera && useCameraFollower) {
+            cameraFollow = new HeadingControllerSubsystem(camera::getObject_x);
             driverOp.getGamepadButton(GamepadKeys.Button.START)
                     .whenPressed(new InstantCommand(cameraFollow::toggleState, cameraFollow));
-
+        }
         ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
         initMechanisms(hardwareMap);
     }
@@ -98,8 +108,10 @@ public class RobotEx {
     public double drivetrainTurn() {
         if (gyroFollow.isEnabled())
             return gyroFollow.calculateTurn();
-        if (cameraFollow.isEnabled())
-            return cameraFollow.calculateTurn();
+        if(initCamera) {
+            if (cameraFollow.isEnabled())
+                return cameraFollow.calculateTurn();
+        }
         return driverOp.getRightX();
     }
 

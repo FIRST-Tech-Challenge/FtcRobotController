@@ -14,7 +14,7 @@ public class ClawSubsystem extends SubsystemBase {
     State state;
 
     public ClawSubsystem(HardwareMap hardwareMap) {
-        this.servo = hardwareMap.get(Servo.class, "bucket");
+        this.servo = hardwareMap.get(Servo.class, "claw");
         this.release();
     }
 
