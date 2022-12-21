@@ -59,32 +59,27 @@ public class BlueLeft extends LinearOpMode {
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+    //Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         waitForStart();//possubly the problem
         if (opModeIsActive()) {
 
 
-
-            move(.5,200);
-            strafeLeft(1,1000);
-            gyroTurning(0);
-            sleep(2000);
-            move(1,2000);
+            crane(-1,400);
+            move(.5,100);
+            strafeLeft(1,1100);
+            //gyroTurning(0);
+            sleep(200);
+            move(1,1900);
             gyroTurning(-90);
             move(1,600);
-            //crane(2,-8200);
-            Crane.setTargetPosition(-8200);
-            Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Crane.setPower(1);
-            while (Crane.isBusy()&&opModeIsActive()) {
-
-            }
-
-
-
-
+            crane(-1,3600);
+            gyroTurning(-65);
+            move(.5,800);
+            Left.setPower(1);
+            sleep(300);
+            Left.setPower(0);
 
 
 
@@ -311,13 +306,10 @@ public class BlueLeft extends LinearOpMode {
         }
     }
 
-    public void crane(double power, int position) {
-        Crane.setTargetPosition(position);
-        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Crane.setPower(power);
-        while (Crane.isBusy()&&opModeIsActive()) {
-
-        }
+    public void crane(double power, int time) {
+       Crane.setPower(power);
+       sleep(time);
+       Crane.setPower(0);
 
     }
 }
