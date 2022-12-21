@@ -62,9 +62,43 @@ public class MoveJoystick {
         }
     }
 
+
+    public void JoystickCurveBy(int direction) {
+        switch (direction) {
+            //merge in fata
+            case 1: // fata stanga = scad puterea motoarelor din stanga
+                leftMotor.setPower(-0.5);
+                leftMotorBack.setPower(-0.5);
+                rightMotor.setPower(1);
+                rightMotorBack.setPower(1);
+                break;
+            case 0: //fata dreapta = scad puterea motoarelor din dreapta
+                leftMotor.setPower(-1);
+                leftMotorBack.setPower(-1);
+                rightMotor.setPower(0.5);
+                rightMotorBack.setPower(0.5);
+                break;
+
+            //merge in spate
+            case 2: //spate stanga = scad puterea motoarelor din stanga
+                leftMotor.setPower(0.5);
+                leftMotorBack.setPower(0.5);
+                rightMotor.setPower(-1);
+                rightMotorBack.setPower(-1);
+                break;
+            case 3: //spate dreapta = scad puterea motoarelor din dreapta
+                leftMotor.setPower(1);
+                leftMotorBack.setPower(1);
+                rightMotor.setPower(-0.5);
+                rightMotorBack.setPower(-0.5);
+                break;
+
+        }
+    }
+
     public void MoveJoystickStop(){
         try{
-            currentDirection =0;
+            currentDirection = 0;
             leftMotor.setPower(0);
             leftMotorBack.setPower(0);
             rightMotorBack.setPower(0);

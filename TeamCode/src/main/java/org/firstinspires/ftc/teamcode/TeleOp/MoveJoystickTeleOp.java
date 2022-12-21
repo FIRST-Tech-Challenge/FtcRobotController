@@ -71,34 +71,34 @@ public class MoveJoystickTeleOp extends OpMode {
 
         double orientation = rotationDetector.ReturnPositiveRotation();
 
-        if ((int)orientation % 90 != 0) AutocorrectAngle(orientation);
-        orientation = rotationDetector.ReturnPositiveRotation();
+//        if ((int)orientation % 90 != 0) AutocorrectAngle(orientation);
+//        orientation = rotationDetector.ReturnPositiveRotation();
 
 
-        int direction = (int)Math.ceil(orientation / 90);
+        int direction = (int)Math.ceil(orientation / 90) % 4;
 
 
         if (gamepad1.right_bumper) AutocorrectAngle(orientation);
 
 
 
-        if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0) {
-            if (Math.abs(gamepad1.left_stick_x) < Math.abs(gamepad1.left_stick_y)){
-                if (gamepad1.left_stick_y > 0) moveJoystick.MoveJoystickRaw(direction,gamepad1.left_stick_y);
-                else moveJoystick.MoveJoystickRaw(direction,gamepad1.left_stick_y);
+        if (gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
+            if (Math.abs(gamepad1.right_stick_x) < Math.abs(gamepad1.right_stick_y)){
+                if (gamepad1.right_stick_y < 0) moveJoystick.MoveJoystickRaw(direction,gamepad1.right_stick_y);
+                else moveJoystick.MoveJoystickRaw((direction + 2) % 4,gamepad1.right_stick_y);
 
 
             }
-            else if (Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)){
-                if (gamepad1.left_stick_x > 0) moveJoystick.MoveJoystickRaw(direction,gamepad1.left_stick_x);
-                else moveJoystick.MoveJoystickRaw(direction,gamepad1.left_stick_x);
+            else if (Math.abs(gamepad1.right_stick_x) > Math.abs(gamepad1.right_stick_y)){
+                if (gamepad1.right_stick_x > 0) moveJoystick.MoveJoystickRaw((direction + 1) % 4,gamepad1.right_stick_x);
+                else moveJoystick.MoveJoystickRaw((direction + 3) % 4,gamepad1.right_stick_x);
             }
-            else{
-                if (gamepad1.left_stick_x < 0 && gamepad1.left_stick_y > 0) rotateMoveTest.CurveBy(1);
-                if (gamepad1.left_stick_x > 0 && gamepad1.left_stick_y > 0) rotateMoveTest.CurveBy(2);
-                if (gamepad1.left_stick_x < 0 && gamepad1.left_stick_y < 0) rotateMoveTest.CurveBy(3);
-                if (gamepad1.left_stick_x > 0 && gamepad1.left_stick_y < 0) rotateMoveTest.CurveBy(4);
-            }
+//            else{
+//                if (gamepad1.right_stick_x > 0.3 && gamepad1.right_stick_y < 0.3) moveJoystick.JoystickCurveBy(direction);
+//                if (gamepad1.right_stick_x < 0.3 && gamepad1.right_stick_y < 0.3) moveJoystick.JoystickCurveBy((direction + 1) % 4);
+//                if (gamepad1.right_stick_x > 0.3 && gamepad1.right_stick_y > 0.3) moveJoystick.JoystickCurveBy((direction + 3) % 4);
+//                if (gamepad1.right_stick_x < 0.3 && gamepad1.right_stick_y > 0.3) moveJoystick.JoystickCurveBy((direction + 2) % 4);
+//            }
 
 
             telemetry.addLine("gamepad1.left_stick_x:" + gamepad1.left_stick_x);
@@ -109,9 +109,9 @@ public class MoveJoystickTeleOp extends OpMode {
         else move.MoveStop();
 
 
-        if (gamepad1.right_stick_x != 0){
-            if (gamepad1.right_stick_x > 0) rotate.RotateRaw(2, gamepad1.right_stick_x);
-            else rotate.RotateRaw(1, gamepad1.right_stick_x);
+        if (gamepad1.left_stick_x != 0){
+            if (gamepad1.left_stick_x > 0) rotate.RotateRaw(2, gamepad1.left_stick_x);
+            else rotate.RotateRaw(1, gamepad1.left_stick_x);
         } //alternativa pt rotatie
 
 
