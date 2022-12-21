@@ -347,13 +347,11 @@ public class PowerPlayIronCore extends OpMode {
         return (double)((Math.abs(motorBackLeft.getCurrentPosition())+ Math.abs(motorBackRight.getCurrentPosition())+ Math.abs(motorFrontLeft.getCurrentPosition()) + Math.abs(motorFrontRight.getCurrentPosition())))/4.0;
     }
 
-
-
     double encoderAvg = 0.0;
     boolean autonStage1Complete = false;
     public boolean autonMove(AprilTagDetection detection){
         encoderAvg = avgMotorEncoder();
-        if (encoderAvg < 1595){
+        if (encoderAvg < 1000){
             mecanumDrive(1,0,0);
         }
         else { //we moved forward to next tile
@@ -363,7 +361,7 @@ public class PowerPlayIronCore extends OpMode {
             if(detection.id == 2) return true; //end of auton
         }
 
-        if (autonStage1Complete & detection.id == 1) {
+        if (autonStage1Complete && detection.id == 1) {
             if (encoderAvg < 1600) {
                 mecanumDrive(0, -1, 0);
             }
@@ -372,6 +370,7 @@ public class PowerPlayIronCore extends OpMode {
                 return true;
             }
         }
+
         if(autonStage1Complete && detection.id == 3) {
             if (encoderAvg < 1600) {
                 mecanumDrive(0, 1, 0);
