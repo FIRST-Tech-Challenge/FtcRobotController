@@ -49,10 +49,10 @@ public class driveByIMUAndEncoder extends BasicOpMode_Linear {
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFrontPosition = 0;
         leftBackPosition = 0;
@@ -62,6 +62,8 @@ public class driveByIMUAndEncoder extends BasicOpMode_Linear {
 
         waitForStart();
 
+
+
         angels = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         runtime.reset();
 
@@ -69,68 +71,130 @@ public class driveByIMUAndEncoder extends BasicOpMode_Linear {
         drive(1000, 1000, 1000, 1000, 0.5, 100000, angels.firstAngle);
     }
 
+        private void drive ( int leftFrontTarget,
+        int leftBackTarget,
+        int rightFrontTarget,
+        int rightBackTarget, double speed, double ticks, float targetAngle){
 
-    private void drive(int leftFrontTarget,
-                       int leftBackTarget,
-                       int rightFrontTarget,
-                       int rightBackTarget, double speed, double ticks, float targetAngle) {
-
-        while (leftFrontDrive.getCurrentPosition() < ticks && rightFrontDrive.getCurrentPosition() <
-                ticks && leftBackDrive.getCurrentPosition() < ticks && rightBackDrive.getCurrentPosition()
-                < ticks) {
-            angels = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-            telemetry.addData("yaw:", " %f", angels.firstAngle);
-            telemetry.addData("pitch", "%f", angels.secondAngle);
-            telemetry.addData("role", "%f", angels.thirdAngle);
-            telemetry.addData("angel:", "%f", angels.firstAngle);
-            telemetry.update();
-
+            double leftFrontPower = speed;
+            double leftBackPower = speed;
+            double rightFrontPower = speed;
+            double rightBackPower = speed;
+//
+//            rightFrontDrive.setPower(rightFrontPower);
+//            leftFrontDrive.setPower(leftFrontPower);
+//            leftBackDrive.setPower(leftBackPower);
+//            rightBackDrive.setPower(rightBackPower);
+//
+//            leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + 3 );
+//            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + 3);
+//            rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + 3);
+//            rightBackDrive.setTargetPosition(rightBackDrive.getTargetPosition() + 3);
 
 
-            if(angels.firstAngle < targetAngle){
-                angels.firstAngle += angels.firstAngle;
-                telemetry.addData("angle: ","%f",angels.firstAngle);
+
+
+            while (leftFrontDrive.getCurrentPosition() < ticks && rightFrontDrive.getCurrentPosition() <
+                    ticks && leftBackDrive.getCurrentPosition() < ticks && rightBackDrive.getCurrentPosition()
+                    < ticks && opModeIsActive()) {
+                angels = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+                telemetry.addData("yaw:", " %f", angels.firstAngle);
+                telemetry.addData("pitch", "%f", angels.secondAngle);
+                telemetry.addData("role", "%f", angels.thirdAngle);
+                telemetry.addData("angel:", "%f", angels.firstAngle);
+                telemetry.addData("Encoder count: ","%7d",leftFrontDrive.getCurrentPosition());
+                telemetry.addData("Encoder count: ","%7d",leftBackDrive.getCurrentPosition());
+                telemetry.addData("Encoder count: ","%7d",rightFrontDrive.getCurrentPosition());
+                telemetry.addData("Encoder count: ","%7d",rightBackDrive.getCurrentPosition());
+                telemetry.update();
+
+
+                if (angels.firstAngle < targetAngle || angels.firstAngle > targetAngle) {
+                    double yaw = checkDirection();
+
+                    leftFrontPower += yaw;
+                    leftBackPower += yaw;
+                    rightFrontPower -= yaw;
+                    rightBackPower -= yaw;
+
+//                    rightFrontDrive.setPower(rightFrontPower);
+//                    leftFrontDrive.setPower(leftFrontPower);
+//                    leftBackDrive.setPower(leftBackPower);
+//                    rightBackDrive.setPower(rightBackPower);
+
+
+                    telemetry.addData("angle: ", "%f", angels.firstAngle);
+                }
+
+
+
+                leftFrontPosition += leftFrontTarget;
+                leftBackPosition += leftBackTarget;
+                rightFrontPosition += rightFrontTarget;
+                rightBackPosition += rightBackTarget;
+
+//                leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + 3 );
+//                leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + 3);
+//                rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + 3);
+//                rightBackDrive.setTargetPosition(rightBackDrive.getTargetPosition() + 3);
+//
+                leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
             }
-            if(angels.firstAngle > targetAngle){
-                angels.firstAngle -= angels.firstAngle;
-                telemetry.addData("angle: ","%f",angels.firstAngle);
-            }
-            else {
-                rightFrontDrive.setPower(1.0);
-                leftFrontDrive.setPower(1.0);
-                leftBackDrive.setPower(1.0);
-                rightBackDrive.setPower(1.0);
             }
 
-            leftFrontPosition += leftFrontTarget;
-            leftBackPosition += leftBackTarget;
-            rightFrontPosition += rightFrontTarget;
-            rightBackPosition += rightBackTarget;
-
-            leftFrontDrive.setTargetPosition(leftFrontPosition);
-            leftBackDrive.setTargetPosition(leftBackPosition);
-            rightFrontDrive.setTargetPosition(rightFrontPosition);
-            rightBackDrive.setTargetPosition(rightBackPosition);
-
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            leftFrontDrive.setPower(0);
-            leftBackDrive.setPower(0);
-            rightFrontDrive.setPower(0);
-            rightBackDrive.setPower(0);
-
-            resetRuntime();
 
 
-        }
 
+    private float Angle() {
 
-        }
+        float targetAngle = angels.firstAngle;
+        float CurrentAngle;
+        Orientation angels2 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        CurrentAngle = angels2.firstAngle;
+
+        float deltaAngle = targetAngle - CurrentAngle;
+
+        return deltaAngle;
     }
+
+    private double checkDirection()
+    {
+        // The gain value determines how sensitive the correction is to direction changes.
+        // You will have to experiment with your robot to get small smooth direction changes
+        // to stay on a straight line.
+        double correction, angle, gain = .10,yaw;
+
+        angle = Angle();
+
+        if (angle == 0) {
+            correction = 0;
+        }// no adjustment.
+        else {
+            correction = -angle;        // reverse sign of angle for correction.
+        }
+        correction = correction * gain;
+
+        yaw = correction;
+
+
+
+        return correction;
+    }
+
+
+   }
+
+
+
+
+
 
 
 
