@@ -24,20 +24,30 @@ public class RotationDetector {
     MVPIDController MotorPID;
 
     public RotationDetector(BNO055IMU gyro){
-        MotorPID.pidController(0.5, 0.1, 0.25,0.0001);
-        MotorPID.setContinuous(true);
-        MotorPID.setInputRange(-180,180);
-        MotorPID.setOutputRange(-1,1);
-
-        Gyro =gyro;
-        BNO055IMU.Parameters par = new BNO055IMU.Parameters();
-        par.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        par.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        Gyro.initialize(par);
-        while(!Gyro.isGyroCalibrated()){
-            // Wait for the Gyro sensor to be calibrated
+        if (gyro == null){
+            throw new NullPointerException("Error: object gryo is null")
         }
-        startingRotation =ReturnPositiveRotation();
+        try {
+            Gyro =gyro;
+            BNO055IMU.Parameters par = new BNO055IMU.Parameters();
+            par.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            par.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            Gyro.initialize(par);
+            while(!Gyro.isGyroCalibrated()){
+                // Wait for the Gyro sensor to be calibrated
+            }
+            startingRotation =ReturnPositiveRotation();
+            MotorPID.pidController(0.5, 0.1, 0.25,0.0001);
+            MotorPID.setContinuous(true);
+            MotorPID.setInputRange(-180,180);
+            MotorPID.setOutputRange(-1,1);
+        }
+        catch(Exception e){
+            System.out.println("Exception caught in setting RotationDetector: " + e.getMessage());
+        }
+
+
+
 
     }
 
