@@ -4,12 +4,14 @@ package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import ftc.rouge.blacksmith.Scheduler
+import ftc.rouge.blacksmith.chains.CancellableChain
+import ftc.rouge.blacksmith.chains.Chain
 import ftc.rouge.blacksmith.listeners.ReforgedGamepad
 import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.chains.BackwardsDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.ForwardsDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
-import org.firstinspires.ftc.teamcodekt.util.LateInitVal
+import ftc.rouge.blacksmith.util.kt.LateInitVal
 
 abstract class RougeBaseTele : LinearOpMode() {
     protected var driver   by LateInitVal<ReforgedGamepad>()
@@ -19,9 +21,9 @@ abstract class RougeBaseTele : LinearOpMode() {
 
     protected var bot by LateInitVal<TeleOpBotComponents>()
 
-    protected var intakeChain by LateInitVal<IntakeChain>()
-    protected var forwardsDepositChain by LateInitVal<ForwardsDepositChain>()
-    protected var backwardsDepositChain by LateInitVal<BackwardsDepositChain>()
+    protected var intakeChain by LateInitVal<Chain>()
+    protected var forwardsDepositChain by LateInitVal<CancellableChain>()
+    protected var backwardsDepositChain by LateInitVal<CancellableChain>()
 
     override fun runOpMode() {
         driver   = ReforgedGamepad(gamepad1)
@@ -29,8 +31,8 @@ abstract class RougeBaseTele : LinearOpMode() {
 
         bot = createTeleOpBotComponents(hardwareMap, VoltageScaler(hardwareMap))
 
-        intakeChain = IntakeChain(bot, 200)
-        forwardsDepositChain = ForwardsDepositChain(bot, 500)
+        intakeChain = IntakeChain(bot)
+        forwardsDepositChain = ForwardsDepositChain(bot)
         backwardsDepositChain = BackwardsDepositChain(bot)
 
         describeControls()
@@ -38,16 +40,11 @@ abstract class RougeBaseTele : LinearOpMode() {
         waitForStart()
 
         Scheduler.beforeEach {
-            bot.arm.setToRestingPos()
-            bot.wrist.setToRestingPos()
             powerMulti = 1.0
         }
 
         Scheduler.launch(this@RougeBaseTele) {
-            bot.lift.update()
-            bot.wrist.update()
-            bot.arm.update()
-            bot.claw.update()
+            bot.updateComponents()
             telemetry.update()
         }
     }

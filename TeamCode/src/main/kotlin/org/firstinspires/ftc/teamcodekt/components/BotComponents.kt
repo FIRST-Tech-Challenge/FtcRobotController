@@ -9,6 +9,13 @@ abstract class BaseBotComponents {
     abstract val arm: Arm
     abstract val wrist: Wrist
     abstract val lift: Lift
+
+    fun updateComponents() {
+        claw.update()
+        arm.update()
+        wrist.update()
+        lift.update()
+    }
 }
 
 fun createTeleOpBotComponents(hwMap: HardwareMap, voltageScaler: VoltageScaler) =

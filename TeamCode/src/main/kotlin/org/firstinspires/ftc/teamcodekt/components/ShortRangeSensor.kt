@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcodekt.components
 import com.qualcomm.robotcore.hardware.AnalogInput
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.firstinspires.ftc.teamcodekt.util.invoke
+import ftc.rouge.blacksmith.util.kt.invoke
 
 object ShortRangeSensorConfig {
     // TODO: Empirically determine model values. Requires a tuning process.

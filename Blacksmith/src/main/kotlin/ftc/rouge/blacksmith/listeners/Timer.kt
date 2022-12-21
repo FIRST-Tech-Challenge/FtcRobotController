@@ -1,6 +1,9 @@
+@file:Suppress("ClassName")
+
 package ftc.rouge.blacksmith.listeners
 
-import java.util.concurrent.TimeUnit
+import ftc.rouge.blacksmith.units.TimeUnit
+import kotlin.properties.Delegates
 
 /**
  * A timer that can be used to schedule actions to be performed at a specific time.
@@ -42,17 +45,17 @@ class Timer @JvmOverloads constructor(length: Long, unit: TimeUnit = TimeUnit.MI
     /**
      * The internal representation of the timer
      */
-    private val listener = Listener { !isPending && System.currentTimeMillis() - startTime >= unit.toMillis(length) }
+    private val listener = Listener { !isPending && System.currentTimeMillis() - startTime >= unit.toMs(length) }
 
     /**
      * The length of the timer in milliseconds.
      */
-    private val length = unit.toMillis(length)
+    private val length = unit.toMs(length)
 
     /**
      * The time at which the timer started.
      */
-    private var startTime = System.currentTimeMillis()
+    private var startTime by Delegates.notNull<Long>()
 
     /**
      * Determines whether the timer is running or simply waiting to start.
@@ -73,17 +76,11 @@ class Timer @JvmOverloads constructor(length: Long, unit: TimeUnit = TimeUnit.MI
      */
     fun onDone(action: Runnable) = this.also { listener.onRise(action) }
 
-    /**
-     * Resets the timer and sets it to not pending.
-     */
     fun start() {
         isPending = false
         startTime = System.currentTimeMillis()
     }
 
-    /**
-     * Resets the timer.
-     */
     fun reset() {
         startTime = System.currentTimeMillis()
     }
@@ -92,24 +89,26 @@ class Timer @JvmOverloads constructor(length: Long, unit: TimeUnit = TimeUnit.MI
         startTime = System.currentTimeMillis() + length
     }
 
-    /**
-     * Sets the timer to `pending`.
-     */
     fun setPending() {
         isPending = true
     }
 
-    fun setPendingOn(listener: (Runnable) -> Any) = this.also { listener(this::setPending) }
-
-    fun startTimerOn(listener: (Runnable) -> Any) = this.also { listener(this::start) }
+    fun destroy() {
+        listener.destroy()
+    }
 
     fun isDone() = listener.condition()
+}
 
-    /**
-     * Gets the current time in milliseconds.
-     * @return The current time in milliseconds.
-     */
-    private fun timeMs(): Long {
-        return if (isPending) -1 else System.currentTimeMillis() - startTime
-    }
+class after(val time: Long) {
+    fun milliseconds(callback: Runnable) = unit(TimeUnit.MILLISECONDS, callback)
+
+    fun seconds(callback: Runnable) = unit(TimeUnit.SECONDS, callback)
+
+    fun unit(unit: TimeUnit, callback: Runnable) = Timer(time, unit)
+        .run {
+            onDone(callback)
+            onDone(::destroy)
+            start()
+        }
 }

@@ -7,12 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
-import ftc.rouge.blacksmith.util.maxMagnitude
-import ftc.rouge.blacksmith.util.withDeadzone
-import ftc.rouge.blacksmith.util.zeroIfNaN
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
-import org.firstinspires.ftc.teamcodekt.util.invoke
+import ftc.rouge.blacksmith.util.kt.invoke
 import kotlin.math.*
 
 class Drivetrain(hwMap: HardwareMap) {

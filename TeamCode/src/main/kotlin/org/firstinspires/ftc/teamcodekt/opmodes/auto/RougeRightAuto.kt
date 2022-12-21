@@ -4,8 +4,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import ftc.rouge.blacksmith.Anvil
 import ftc.rouge.blacksmith.Scheduler
 import ftc.rouge.blacksmith.units.DistanceUnit
-import ftc.rouge.blacksmith.util.toIn
-import ftc.rouge.blacksmith.util.toRad
+import ftc.rouge.blacksmith.util.kt.toIn
+import ftc.rouge.blacksmith.util.kt.toRad
 import org.firstinspires.ftc.teamcode.AutoData.*
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 

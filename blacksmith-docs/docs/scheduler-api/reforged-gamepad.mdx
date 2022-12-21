@@ -6,4 +6,104 @@ import ParamsList from '../../src/components/ParamsList';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# The Reforged Gamepad
+# Reforged Gamepads
+
+While [Listeners](./listeners) may be quite versatile, they often aren't the prettiest and most concise, especially for
+TeleOps, where you may have many controls mapped to many buttons.
+
+This is where the Reforged Gamepad come in! It turns your TeleOp from this:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  boolean gamepad1AWasPreviouslyTrue = false; // Mutable state
+  boolean gamepad2BWasPreviouslyTrue = false; // Gamepad1 vs 2, have to be paying attention!
+
+  @Override
+  public void loop() {
+      // Can't tell if this is the driver or not at first glance
+      // Also ugly to read and takes a second to mentally parse
+      if (gamepad1.a && !gamepad1AWasPreviouslyTrue) {
+          // Do something on the rising edge
+      }
+
+      // This one is the co-driver, but it's not obvious
+      if (!gamepad2.b && gamepad2BWasPreviouslyTrue) {
+          // Do something on the falling edge
+      }
+
+      // Have to do this for every button too...
+      gamepad1AWasPreviouslyTrue = gamepad1.a;
+      gamepad2BWasPreviouslyTrue = gamepad2.b;
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  var gamepad1AWasPreviouslyTrue = false // Unidiomatic mutable state
+  var gamepad2BWasPreviouslyTrue = false // Gamepad1 vs 2, have to be paying attention!
+
+  override fun loop() {
+      // Can't tell if this is the driver or not at first glance
+      // Also ugly to read and takes a second to mentally parse
+      if (gamepad1.a && !gamepad1AWasPreviouslyTrue) {
+          // Do something on the rising edge
+      }
+
+      // This one is the co-driver, but it's not obvious
+      if (!gamepad2.b && gamepad2BWasPreviouslyTrue) {
+          // Do something on the falling edge
+      }
+
+      // Have to do this for every button too...
+      gamepad1AWasPreviouslyTrue = gamepad1.a
+      gamepad2BWasPreviouslyTrue = gamepad2.b
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+into this!:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java title="(LinearOpMode btw)"
+  @Override
+  public void runOpMode() throws InterruptedException {
+      ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
+      ReforgedGamepad codriver = new ReforgedGamepad(gamepad2);
+
+      driver.onRise(() -> ...); // Self describing
+      codriver.onFall(() -> ...); // And no unnecessary logic or mutable state
+
+      Scheduler.launchWhenReady(this)
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin title="(LinearOpMode btw)"
+  override fun runOpMode() {
+      val driver = ReforgedGamepad(gamepad1)
+      val codriver = ReforgedGamepad(gamepad2)
+
+      driver.onRise { ... } // Self describing
+      codriver.onFall { ... } // And no unnecessary logic or unidiomatic mutable state
+
+      Scheduler.launchWhenReady(this)
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+Behind the pretty veil, it's essentially just a collection of pre-made listeners, but it does come with one extra
+handy feature:
+
+##

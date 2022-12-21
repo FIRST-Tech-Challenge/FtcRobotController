@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import ftc.rouge.blacksmith.listeners.Listener
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
+import kotlin.math.pow
 
 class RougeCompOp : RougeBaseTele() {
     override fun describeControls() {
@@ -10,11 +11,11 @@ class RougeCompOp : RougeBaseTele() {
     }
 
     private fun describeDriverControls() = with(bot) {
-//        Listener { lift.height > LiftConfig.MID * 1.01 }
-//            .whileHigh { powerMulti /= 2 }
+        Listener { lift.height > LiftConfig.MID * 1.01 }
+            .whileHigh { powerMulti /= 2 }
 
         driver.right_trigger(.1).whileHigh {
-            powerMulti *= 1 - (driver.right_trigger() * driver.right_trigger() * driver.right_trigger())
+            powerMulti *= 1 - (driver.right_trigger().pow(3))
         }
 
         Listener.always {
@@ -28,6 +29,8 @@ class RougeCompOp : RougeBaseTele() {
         codriver.dpad_right.onRise(lift::goToMid)
         codriver.dpad_left .onRise(lift::goToLow)
 
+        // -- TASK CHAINS --
+
         intakeChain.invokeOn(codriver.left_bumper)
 
         forwardsDepositChain.invokeOn(codriver.right_bumper)
@@ -36,15 +39,21 @@ class RougeCompOp : RougeBaseTele() {
         backwardsDepositChain.invokeOn(codriver.y)
         backwardsDepositChain.cancelOn(codriver.x)
 
+        // -- MANUAL CLAW CONTROLS --
+
         codriver.left_stick_x.whileHigh {
             if (codriver.left_stick_x() > .5) {
                 claw.openForIntakeWide()
+                intake.enable()
             }
 
             if (codriver.left_stick_x() < -.5) {
+                intake.disable()
                 claw.close()
             }
         }
+
+        // -- MANUAL LIFT CONTROLS --
 
         codriver.right_trigger.whileHigh {
             lift.height += (50 * codriver.right_trigger()).toInt()

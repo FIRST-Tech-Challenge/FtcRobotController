@@ -154,7 +154,7 @@ class ReforgedGamepad(val gamepad: Gamepad) {
      */
     @JvmField
     val left_stick_x = left_stick_x(deadzone = .5)
-    
+
     /**
      * Allows client to perform an action when the gamepad's 'left_stick_x' button's state is mutated.
      * ```java
@@ -175,7 +175,7 @@ class ReforgedGamepad(val gamepad: Gamepad) {
      */
     @JvmField
     val left_stick_y = left_stick_y(deadzone = .5)
-    
+
     /**
      * Allows client to perform an action when the gamepad's 'left_stick_y' button's state is mutated.
      * ```java
@@ -196,7 +196,7 @@ class ReforgedGamepad(val gamepad: Gamepad) {
      */
     @JvmField
     val right_stick_x = right_stick_x(deadzone = .5)
-    
+
     /**
      * Allows client to perform an action when the gamepad's 'right_stick_x' button's state is mutated.
      * ```java
@@ -217,7 +217,7 @@ class ReforgedGamepad(val gamepad: Gamepad) {
      */
     @JvmField
     val right_stick_y = right_stick_y(deadzone = .5)
-    
+
     /**
      * Allows client to perform an action when the gamepad's 'right_stick_y' button's state is mutated.
      * ```java
@@ -239,7 +239,7 @@ class ReforgedGamepad(val gamepad: Gamepad) {
      */
     @JvmField
     val left_trigger = left_trigger(deadzone = .5)
-    
+
     /**
      * Allows client to perform an action when the gamepad's 'left_trigger' button's state is mutated.
      * ```java
@@ -260,7 +260,7 @@ class ReforgedGamepad(val gamepad: Gamepad) {
      */
     @JvmField
     val right_trigger = right_trigger(deadzone = .5)
-    
+
     /**
      * Allows client to perform an action when the gamepad's 'right_trigger' button's state is mutated.
      * ```java
@@ -411,7 +411,7 @@ class ReforgedGamepad(val gamepad: Gamepad) {
      */
     @JvmField
     val touchpad_finger_1_x = touchpad_finger_1_x(deadzone = .5)
-    
+
     /**
      * Allows client to perform an action when the gamepad's 'touchpad_finger_1_x' button's state is mutated.
      * ```java
@@ -432,7 +432,7 @@ class ReforgedGamepad(val gamepad: Gamepad) {
      */
     @JvmField
     val touchpad_finger_1_y = touchpad_finger_1_y(deadzone = .5)
-    
+
     /**
      * Allows client to perform an action when the gamepad's 'touchpad_finger_1_y' button's state is mutated.
      * ```java
@@ -453,7 +453,7 @@ class ReforgedGamepad(val gamepad: Gamepad) {
      */
     @JvmField
     val touchpad_finger_2_x = touchpad_finger_2_x(deadzone = .5)
-    
+
     /**
      * Allows client to perform an action when the gamepad's 'touchpad_finger_2_x' button's state is mutated.
      * ```java
@@ -474,7 +474,7 @@ class ReforgedGamepad(val gamepad: Gamepad) {
      */
     @JvmField
     val touchpad_finger_2_y = touchpad_finger_2_y(deadzone = .5)
-    
+
     /**
      * Allows client to perform an action when the gamepad's 'touchpad_finger_2_y' button's state is mutated.
      * ```java
@@ -499,12 +499,12 @@ class ReforgedGamepad(val gamepad: Gamepad) {
 
     // -- END MACHINE GENERATED CODE --
 
-    class GamepadBooleanListener(val input: () -> Boolean) : Listener(input) {
+    class GamepadBooleanListener internal constructor(val input: () -> Boolean) : Listener(input) {
         operator fun invoke() = input()
         fun get() = input()
     }
 
-    class GamepadAnalogueListener(deadzone: Double, val input: () -> Float) : Listener({ abs(input()) > deadzone }) {
+    class GamepadAnalogueListener internal constructor(deadzone: Double, val input: () -> Float) : Listener({ abs(input()) > deadzone }) {
         operator fun invoke() = input()
         fun get() = input()
     }

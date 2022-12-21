@@ -2,13 +2,12 @@ package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.controller.PIDFController
-import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
-import ftc.rouge.blacksmith.util.clamp
+import ftc.rouge.blacksmith.util.kt.clamp
+import ftc.rouge.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
-import org.firstinspires.ftc.teamcodekt.util.invoke
 
 @Config
 object LiftConfig {
@@ -45,7 +44,7 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
     var height: Int
         get() = liftHeight
         set(height) {
-            liftHeight = height.clamp(LiftConfig.ZERO, LiftConfig.HIGH).toInt()
+            liftHeight = height.clamp(LiftConfig.ZERO, LiftConfig.HIGH)
         }
 
     init {
