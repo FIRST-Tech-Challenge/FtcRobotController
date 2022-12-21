@@ -1,28 +1,14 @@
 package org.firstinspires.ftc.teamcodekt.components
 
-import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.controller.PIDFController
+import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import ftc.rouge.blacksmith.util.kt.clamp
 import ftc.rouge.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.teamcode.RobotConstants.LiftConfig
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
-
-@Config
-object LiftConfig {
-    const val P = 0.0011
-    const val I = 0.2
-    const val D = 0.0001
-    const val F = 0.00001
-
-    const val ZERO = 0
-    const val LOW = 1091
-    const val MID = 1771
-    const val HIGH = 2471
-
-    const val MANUAL_ADJUSTMENT_MULT = 50
-}
 
 /**
  * This class represents a lift that can be moved to different heights.
@@ -33,27 +19,27 @@ object LiftConfig {
  */
 class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
     private val liftMotor: DcMotorSimple
+
+    val liftEncoder: Motor
     private val liftPID: PIDFController
 
-    private var liftHeight = 0
+    var targetHeight = 0
 
     /**
      * The height of the lift. This property is clamped between [LiftConfig.ZERO] and
      * [LiftConfig.HIGH]. Only should really be used for manual control.
      */
     var height: Int
-        get() = liftHeight
+        get() = targetHeight
         set(height) {
-            liftHeight = height.clamp(LiftConfig.ZERO, LiftConfig.HIGH)
+            targetHeight = height.clamp(LiftConfig.ZERO, LiftConfig.HIGH)
         }
 
     init {
-//        liftMotor = Motor(hwMap, DeviceNames.LIFT_MOTOR, Motor.GoBILDA.RPM_435)
         liftMotor = hwMap("LI")
 
-//        liftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
-//        liftMotor.setRunMode(Motor.RunMode.VelocityControl)
-//        liftMotor.resetEncoder()
+        liftEncoder = Motor(hwMap, "FR")
+        liftEncoder.resetEncoder()
 
         liftPID = PIDFController(
             LiftConfig.P, LiftConfig.I,
@@ -65,40 +51,42 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
      * Move the lift to the zero height. Used for intaking or depositing on ground junctions/terminals.
      */
     fun goToZero() {
-        liftHeight = LiftConfig.ZERO
+        targetHeight = LiftConfig.ZERO
     }
 
     /**
      * Move the lift to the low height. Used for low poles.
      */
     fun goToLow() {
-        liftHeight = LiftConfig.LOW
+        targetHeight = LiftConfig.LOW
     }
 
     /**
      * Move the lift to the mid height. Used for mid poles.
      */
     fun goToMid() {
-        liftHeight = LiftConfig.MID
+        targetHeight = LiftConfig.MID
     }
 
     /**
      * Move the lift to the high height. Used for high poles.
      */
     fun goToHigh() {
-        liftHeight = LiftConfig.HIGH
+        targetHeight = LiftConfig.HIGH
     }
 
     /**
      * Update the lift's position using the PIDF controller and the voltage scaler.
      */
-    fun update() {
+    fun update(telemetry: Telemetry) {
         val voltageCorrection = voltageScaler.voltageCorrection
 
-//        val correction =
-//            liftPID.calculate(liftMotor.currentPosition.toDouble(), liftHeight + voltageCorrection)
-//
-//        liftMotor.set(correction)
+        val correction =
+            liftPID.calculate(-liftEncoder.currentPosition.toDouble(), targetHeight.toDouble())
+
+        telemetry.addData("Corection", correction)
+
+        liftMotor.power = correction
     }
 
     /**
@@ -107,7 +95,7 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
      * @param telemetry a [Telemetry] object to log data to
      * @param dataSupplier a [DataSupplier] that provides data about the lift motor
      */
-    fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<DcMotorSimple>) {
-        telemetry.addData("Lift motor", dataSupplier(liftMotor))
+    fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<Lift>) {
+        telemetry.addData("Lift motor", dataSupplier(this))
     }
 }

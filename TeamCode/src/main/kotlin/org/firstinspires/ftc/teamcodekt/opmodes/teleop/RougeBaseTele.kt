@@ -39,12 +39,20 @@ abstract class RougeBaseTele : LinearOpMode() {
 
         waitForStart()
 
+        bot.arm.setToRestingPos()
+        bot.wrist.setToRestingPos()
+
         Scheduler.beforeEach {
             powerMulti = 1.0
         }
 
         Scheduler.launch(this@RougeBaseTele) {
             bot.updateComponents()
+
+            bot.lift.update(telemetry)
+            telemetry.addData("Target eihgt", bot.lift.targetHeight)
+            telemetry.addData("Actual heihgt", bot.lift.liftEncoder.currentPosition)
+
             telemetry.update()
         }
     }

@@ -14,7 +14,6 @@ abstract class BaseBotComponents {
         claw.update()
         arm.update()
         wrist.update()
-        lift.update()
     }
 }
 

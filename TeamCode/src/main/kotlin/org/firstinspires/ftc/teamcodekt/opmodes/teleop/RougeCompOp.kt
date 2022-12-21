@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import ftc.rouge.blacksmith.listeners.Listener
-import org.firstinspires.ftc.teamcodekt.components.LiftConfig
+import org.firstinspires.ftc.teamcode.RobotConstants.LiftConfig
 import kotlin.math.pow
 
+@TeleOp
 class RougeCompOp : RougeBaseTele() {
     override fun describeControls() {
         describeCodriverControls()
@@ -56,11 +58,11 @@ class RougeCompOp : RougeBaseTele() {
         // -- MANUAL LIFT CONTROLS --
 
         codriver.right_trigger.whileHigh {
-            lift.height += (50 * codriver.right_trigger()).toInt()
+            lift.height += (8 * codriver.right_trigger()).toInt()
         }
 
         codriver.left_trigger.whileHigh {
-            lift.height -= (50 * codriver.left_trigger()).toInt()
+            lift.height -= (8 * codriver.left_trigger()).toInt()
         }
     }
 }

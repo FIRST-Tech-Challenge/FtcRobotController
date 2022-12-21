@@ -7,7 +7,7 @@ import ftc.rouge.blacksmith.units.DistanceUnit
 import ftc.rouge.blacksmith.util.kt.toIn
 import ftc.rouge.blacksmith.util.kt.toRad
 import org.firstinspires.ftc.teamcode.AutoData.*
-import org.firstinspires.ftc.teamcodekt.components.LiftConfig
+import org.firstinspires.ftc.teamcode.RobotConstants.LiftConfig
 
 @Suppress("RemoveRedundantQualifierName")
 class RougeRightAuto : RougeBaseAuto() {
@@ -37,7 +37,7 @@ class RougeRightAuto : RougeBaseAuto() {
         Anvil.startAsyncAutoWith(startTraj)
 
         Scheduler.launch(this@RougeRightAuto) {
-            lift.update()
+            lift.update(telemetry)
             wrist.update()
             drive.update()
             telemetry.update()

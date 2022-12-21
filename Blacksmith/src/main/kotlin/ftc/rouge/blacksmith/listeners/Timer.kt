@@ -55,7 +55,7 @@ class Timer @JvmOverloads constructor(length: Long, unit: TimeUnit = TimeUnit.MI
     /**
      * The time at which the timer started.
      */
-    private var startTime by Delegates.notNull<Long>()
+    private var startTime = System.currentTimeMillis()
 
     /**
      * Determines whether the timer is running or simply waiting to start.
@@ -108,7 +108,7 @@ class after(val time: Long) {
     fun unit(unit: TimeUnit, callback: Runnable) = Timer(time, unit)
         .run {
             onDone(callback)
-            onDone(::destroy)
+//            onDone(::destroy)
             start()
         }
 }

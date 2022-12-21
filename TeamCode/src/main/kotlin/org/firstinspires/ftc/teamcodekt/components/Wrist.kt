@@ -1,15 +1,8 @@
 package org.firstinspires.ftc.teamcodekt.components
 
-import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.SimpleServo
 import com.qualcomm.robotcore.hardware.HardwareMap
-
-@Config
-object WristConfig {
-    const val FORWARDS  = 0.86
-    const val BACKWARDS = 0.185
-    const val REST      = 0.5
-}
+import org.firstinspires.ftc.teamcode.RobotConstants.WristConfig
 
 class Wrist(hwMap: HardwareMap) {
     private val wristServo = SimpleServo(hwMap, DeviceNames.WRIST_SERVO, 0.0, 180.0)
