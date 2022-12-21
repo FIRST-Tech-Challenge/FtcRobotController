@@ -26,6 +26,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.FieldObject;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
 
@@ -36,6 +37,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.PIDController;
+import org.firstinspires.ftc.teamcode.util.Vector3;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -183,7 +185,7 @@ public class Crane implements Subsystem {
         shoulderPID.setIntegralCutIn(40);
         shoulderPID.enableIntegralZeroCrossingReset(false);
 
-        shoulderTargetAngle = 5;
+        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+10,robot.driveTrain.getPoseEstimate().getY(),8);
     }
 
     int calibrateStage=0;
@@ -431,6 +433,7 @@ public class Crane implements Subsystem {
         return target;
     }
 
+
     int pickupConeStage = 0;
     long pickupTimer;
     boolean pickupCone() {
@@ -438,71 +441,57 @@ public class Crane implements Subsystem {
             case 0:
                 //save values for next pickup
                 grab();
-
                 //set timer to allow bulb gripper enough time to change
                 pickupTimer = futureTime(.5);
                 pickupConeStage++;
-
+                holdFieldPosition = false;
                 break;
 
             case 1: //initial cone lift
 
                 if(System.nanoTime() > pickupTimer) //waiting until gripped, then start lifting:
                 {
-                    calculateFieldTargeting(targetPole);
-                    setHeight(getHeight() + 0.15);
-                    nudgeLeft();
-                    //enough  time for the cone to lift a cone off of a stack so it doesn't drag the stack down when retracting
-                    /*
-                    if(robot.turret.distanceBetweenAngles(robot.turret.getHeading(),calculatedTurretAngle) < 0){
-                        nudgeCenter(true);
-                    }else{
-                        nudgeCenter(false);
-                    }
 
-                     */
+                    nudgeLeft();
                     pickupTimer = futureTime(.5);
                     pickupConeStage++;
-
+                    setExtendTargetPos(craneLengthOffset);
                 }
                 break;
             case 2:
                 if(System.nanoTime() > pickupTimer){
-                    setHeight(defaultPos.getHeightMemory());
-                    setDistance(defaultPos.getDistanceMemory());
-                    pickupTimer = futureTime(.5);
+                    pickupTimer = futureTime(0.7);
                     pickupConeStage++;
+                    holdFieldPosition = true;
+                    fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX(),robot.driveTrain.getPoseEstimate().getY(),22);
                 }
                 break;
             case 3: //waiting on initial lift, then move arm to defaultpos - this is usually a retraction and a lift
                 //todo - this is currently time based and it should maybe be based on lift achieved (if achievable - long extensions can't actually lift due to torque needed)
                 if(System.nanoTime() > pickupTimer) {
-                    setTargetTurretAngle(calculatedTurretAngle);
                     pickupConeStage++;
-                    pickupTimer = futureTime(0.7);
+                    pickupTimer = futureTime(0.2);
                 }
                 break;
             case 4:
                 if(System.nanoTime() > pickupTimer){
-                    setHeight(calculatedHeight + 0.2); //return high
                     pickupConeStage++;
-                    pickupTimer = futureTime(0.4);
+                    pickupTimer = futureTime(0.6);
+                    holdFieldPosition = false;
+                    calculateFieldTargeting(targetPole);
                 }
                 break;
             case 5:
                 if(System.nanoTime() > pickupTimer){
-                    setDistance(calculatedDistance);
-                    pickupTimer = futureTime(0.7);
+                    setExtendTargetPos(calculatedLength);
+                    pickupTimer = futureTime(1.5);
                     pickupConeStage++;
                 }
                 break;
             case 6:
-                if(System.nanoTime() > pickupTimer){
-                    setHeight(calculatedHeight);
-                    pickupConeStage = 0;
-                    return true;
-                }
-                break;
+                holdFieldPosition = true;
+                pickupConeStage = 0;
+                return true;
             default:
                 return false;
         }
@@ -516,9 +505,10 @@ public class Crane implements Subsystem {
 
             case 0:
                 release();
+                holdFieldPosition = false;
                 dropTimer = futureTime(0.3); //enough time for cone to start dropping
                 dropConeStage++;
-                calculateFieldTargeting(source);
+
                 break;
             case 1:
                 if(System.nanoTime() > dropTimer){
@@ -531,7 +521,8 @@ public class Crane implements Subsystem {
 
                      */
                     nudgeLeft();
-                    dropTimer = futureTime(0.5); //time for nudge right to complete
+                    setExtendTargetPos(craneLengthOffset);
+                    dropTimer = futureTime(1.3); //time for nudge right to complete
                     dropConeStage++;
                 }
                 break;
@@ -539,60 +530,39 @@ public class Crane implements Subsystem {
 
                 if(System.nanoTime() > dropTimer) //waiting until released, then start lifting:
                 {
-                    setHeight(getHeight()+0.15);
+                    holdFieldPosition = true;
                     //enough  time for the cone to lift a cone off of a stack so it doesn't drag the stack down when retracting
-                    dropTimer = futureTime(.3);
+                    fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX(),robot.driveTrain.getPoseEstimate().getY(),22);
+                    dropTimer = futureTime(0.6);
                     dropConeStage++;
-
                 }
                 break;
+            case 3:
+                if(System.nanoTime() > dropTimer){
 
-            case 3: //waiting on lift, then move arm to defaultpos - this is usually a retraction and a lift
-                if(System.nanoTime() > dropTimer)
-                {
-                    nudgeLeft();
-                    setDistance(defaultPos.getDistanceMemory());
-
-                    dropTimer = futureTime(0.7); //typical time to retract enough to start turntable
+                    dropTimer = futureTime(0.2);
                     dropConeStage++;
                 }
                 break;
             case 4:
                 if(System.nanoTime() > dropTimer){
-                    setHeight(defaultPos.getHeightMemory());
-                    dropTimer = futureTime(0.7);
+                    holdFieldPosition = false;
+                    calculateFieldTargeting(source);
                     dropConeStage++;
+                    dropTimer = futureTime(0.7);
                 }
                 break;
-
-            case 5: //move to previously set pickup position
-                //todo - this is currently time based and it should maybe be based on lift achieved (if achievable - long extensions can't actually lift due to torque needed)
-                if(System.nanoTime() > dropTimer) {
-                    setTargetTurretAngle(calculatedTurretAngle);
+            case 5:
+                if(System.nanoTime() > dropTimer){
+                    setExtendTargetPos(calculatedLength);
+                    dropTimer = futureTime(3);
                     dropConeStage++;
-                    dropTimer = futureTime(0.7);
                 }
                 break;
             case 6:
-                if(System.nanoTime() > dropTimer){
-                    setDistance(calculatedDistance); //return high
-                    dropConeStage++;
-                    dropTimer = futureTime(0.7);
-                }
-                break;
-            case 7:
-                if(System.nanoTime() > dropTimer){
-                    setHeight(calculatedHeight + 0.2);
-                    dropTimer = futureTime(0.4);
-                }
-                break;
-            case 8:
-                if(System.nanoTime() > dropTimer){
-                    setHeight(calculatedHeight);
-                    dropConeStage = 0;
-                    return true;
-                }
-                break;
+                holdFieldPosition = true;
+                dropConeStage = 0;
+                return true;
             default:
                 return false;
         }
@@ -627,6 +597,8 @@ public class Crane implements Subsystem {
     public static boolean robotIsNotTipping = true;
 
     double turretPitch;
+
+    Vector3 fieldPositionTarget;
 
     @Override
     public void update(Canvas fieldOverlay) {
@@ -666,15 +638,23 @@ public class Crane implements Subsystem {
 
         }
 
-        angle = Math.toDegrees(Math.atan(targetHeight / targetDistance));
-        length = (Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2)));
-        setShoulderTargetAngle(angle);
-        setExtendTargetPos(length);
-        robot.turret.setTargetHeading(targetTurretAngle);
+        turretPos = robot.turret.getTurretPosition();
+        axlePos = robot.turret.getAxlePosition();
 
         //update the turret's target
         robot.turret.setTargetHeading(targetTurretAngle);
         if(robotIsNotTipping) {
+            calculateFieldTargeting(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
+
+            setTargetTurretAngle(calculatedTurretAngle);
+            setShoulderTargetAngle(calculatedAngle);
+
+            if(holdFieldPosition){
+                goToCalculatedTarget();
+            }else{
+                //todo relative targeting
+            }
+
             if (shoulderActivePID)
                 movePIDShoulder(SHOULDER_PID.kP, SHOULDER_PID.kI, SHOULDER_PID.kD, shoulderAngle, shoulderTargetAngle);
             else
@@ -693,24 +673,42 @@ public class Crane implements Subsystem {
         }
     }
 
+    boolean holdFieldPosition = true;
+    boolean driverInControl = true;
+
+    public void driverTakeControl(){
+        holdFieldPosition = false;
+        driverInControl = true;
+    }
+
+    public void driverGiveControl(){
+        holdFieldPosition = true;
+        driverInControl = false;
+    }
+
     public void adjustTurretAngle(double speed){
         if(robotIsNotTipping)targetTurretAngle = robot.turret.getHeading() + (TURRET_ADJUST * speed);
+        driverTakeControl();
     }
 
     public void adjustDistance(double speed){
         if(robotIsNotTipping)setDistance(targetDistance + deltaTime*(DISTANCE_ADJUST * speed));
+        driverTakeControl();
     }
 
     public void adjustHeight(double speed){
         if(robotIsNotTipping)setHeight(targetHeight + deltaTime*(HEIGHT_ADJUST * speed));
+        driverTakeControl();
     }
 
     public void adjustExtend(double speed){
         if(robotIsNotTipping)setExtendTargetPos((getExtendMeters() + EXTEND_ADJUST * speed));
+        driverTakeControl();
     }
 
     public void adjustShoulder(double distance){
         if(robotIsNotTipping)setShoulderTargetAngle((getShoulderAngle() + SHOULDER_ADJUST * distance));
+        driverTakeControl();
     }
 
     public double getHeight(){
@@ -721,40 +719,44 @@ public class Crane implements Subsystem {
         return getExtendMeters()*Math.cos(Math.toRadians(getShoulderAngle()));
     }
     public boolean calculateFieldTargeting(FieldObject obj){
-        return calculateFieldTargeting(obj.x(),obj.y(),obj.z());
+        Pose2d coords = Field.convertToInches(obj.getPosition());
+        fieldPositionTarget = new Vector3(coords.getX(),coords.getY(),obj.z());
+        return true;
     }
 
     Pose2d turretPos = new Pose2d();
     Pose2d axlePos = new Pose2d();
 
-    public static double axleOffset = -9;
     public static double shoulderHeight = 0.14;
 
     double calculatedTurretAngle;
     double calculatedHeight;
     double calculatedDistance;
+    double calculatedAngle;
+    double calculatedLength;
 
     public boolean calculateFieldTargeting(double x, double y, double z){ //THIS IS IN INCHES!!!!!!!!
 
         z /= INCHES_PER_METER;
 
-        Pose2d robotPos = robot.driveTrain.getPoseEstimate();
-        turretPos = robot.turret.getTurretPosition(robotPos);
         calculatedTurretAngle = Math.toDegrees(Math.atan2(y - turretPos.getY(), x-turretPos.getX()));
-
-        axlePos = new Pose2d(turretPos.getX()+axleOffset*Math.cos(Math.toRadians(robot.turret.getHeading())), turretPos.getY()+axleOffset*Math.sin(Math.toRadians(robot.turret.getHeading())));
 
         calculatedHeight = z-shoulderHeight;
 
         calculatedDistance = (Math.sqrt(Math.pow(y - axlePos.getY(),2) + Math.pow(x - axlePos.getX(),2)))/INCHES_PER_METER;
 
+        calculatedAngle = Math.toDegrees(Math.atan2(calculatedHeight, calculatedDistance));
+        calculatedLength = (Math.sqrt(Math.pow(calculatedHeight, 2) + Math.pow(calculatedDistance, 2)));
+
         return true;
     }
 
     public void goToCalculatedTarget(){
-        targetTurretAngle = calculatedTurretAngle;
+        setTargetTurretAngle(calculatedTurretAngle);
         targetHeight = calculatedHeight;
         targetDistance = calculatedDistance;
+        setShoulderTargetAngle(calculatedAngle);
+        setExtendTargetPos(calculatedLength);
     }
 
     double orbit_time = 0.0;
@@ -907,17 +909,24 @@ public class Crane implements Subsystem {
             telemetryMap.put("Turret Pitch", turretPitch);
             telemetryMap.put("Robot X", robot.driveTrain.getPoseEstimate().getX());
             telemetryMap.put("Robot Y", robot.driveTrain.getPoseEstimate().getY());
-            telemetryMap.put("Turret X", robot.turret.getTurretPosition(robot.driveTrain.getPoseEstimate()).getX());
-            telemetryMap.put("Turret Y", robot.turret.getTurretPosition(robot.driveTrain.getPoseEstimate()).getY());
+            telemetryMap.put("Turret X", turretPos.getX());
+            telemetryMap.put("Turret Y", turretPos.getY());
             telemetryMap.put("Axle X", axlePos.getX());
             telemetryMap.put("Axle Y", axlePos.getY());
             telemetryMap.put("Target Distance", targetDistance);
             telemetryMap.put("Target Height", targetHeight);
             telemetryMap.put("Target Turret Angle", targetTurretAngle);
-            telemetryMap.put("Target Shoulder Angle", shoulderTargetAngle /SHOULDER_TICKS_PER_DEGREE);
-            telemetryMap.put("Target Extension", extenderTargetPos/EXTEND_TICKS_PER_METER);
             telemetryMap.put("Target Angle", angle);
-            telemetryMap.put("Length", length);
+            telemetryMap.put("Target Length", length);
+            telemetryMap.put("IK ON", inverseKinematic);
+            telemetryMap.put("Calculated Turret Angle", calculatedTurretAngle);
+            telemetryMap.put("Calculated Height", calculatedHeight);
+            telemetryMap.put("Calculated Distance", calculatedDistance);
+            telemetryMap.put("Calculated Angle", calculatedAngle);
+            telemetryMap.put("Calculated Length", calculatedLength);
+            telemetryMap.put("Field Target X", fieldPositionTarget.x);
+            telemetryMap.put("Field Target Y", fieldPositionTarget.y);
+            telemetryMap.put("Field Target Z", fieldPositionTarget.z);
             telemetryMap.put("Distance", getDistance());
             telemetryMap.put("Height", getHeight());
             telemetryMap.put("Calibrate Stage", calibrateStage);

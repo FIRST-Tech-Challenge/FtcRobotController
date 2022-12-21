@@ -240,7 +240,7 @@ public class Field {
         switch (h) {
             case 1:
                 for (int i = 10; i < 19; i++) {
-                    if (Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min) {
+                    if (Vector2.magnitude(objects[i].getPositionVec().subtract(pos)) < min) {
                         minIndex = i;
                     }
                 }
@@ -248,7 +248,7 @@ public class Field {
 
             case 2:
                 for (int i = 19; i < 27; i++) {
-                    if (Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min) {
+                    if (Vector2.magnitude(objects[i].getPositionVec().subtract(pos)) < min) {
                         minIndex = i;
                     }
                 }
@@ -256,7 +256,7 @@ public class Field {
 
             case 3:
                 for (int i = 27; i < 31; i++) {
-                    if (Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min) {
+                    if (Vector2.magnitude(objects[i].getPositionVec().subtract(pos)) < min) {
                         minIndex = i;
                     }
                 }
@@ -264,14 +264,14 @@ public class Field {
 
             case 4:
                 for (int i = 31; i < 35; i++) {
-                    if (Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min) {
+                    if (Vector2.magnitude(objects[i].getPositionVec().subtract(pos)) < min) {
                         minIndex = i;
                     }
                 }
 
             case -1:
                 for (int i = 35; i < 37; i++) {
-                    if (Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min) {
+                    if (Vector2.magnitude(objects[i].getPositionVec().subtract(pos)) < min) {
                         minIndex = i;
                     }
                 }

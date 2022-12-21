@@ -41,7 +41,10 @@ public class Turret implements Subsystem {
 
     Orientation imuAngles;
 
-    public Turret(HardwareMap hardwareMap, boolean simulated) {
+    private Robot robot;
+
+    public Turret( HardwareMap hardwareMap, Robot robot, boolean simulated) {
+        this.robot = robot;
         this.simulated = simulated;
         motor = simulated ? new DcMotorExSim(USE_MOTOR_SMOOTHING) : hardwareMap.get(DcMotorEx.class, "turret");
         turretIMU = hardwareMap.get(BNO055IMU.class, "turretIMU");
@@ -161,17 +164,20 @@ public class Turret implements Subsystem {
 
     public static double localX = -5;
 
-    public Pose2d getTurretPosition(Pose2d robot){
+    public static double robotRadius = 17.5/2;
+    public static double turretRadius = 6;
+    public static double turretOffset = robotRadius-turretRadius;
+    public static double axleDistanceFromRotation = 5;
 
-        double robotHeading = robot.getHeading();
 
-        double robotX = robot.getX();
-        double robotY = robot.getY();
+    public Pose2d getTurretPosition(){
+        Pose2d robotPosition = robot.driveTrain.getPoseEstimate();
+        return new Pose2d (robotPosition.getX()-turretOffset*Math.sin(robotPosition.getHeading() + Math.PI/2),robotPosition.getY()+turretOffset*Math.cos(robotPosition.getHeading()+ Math.PI/2));
+    }
 
-        double worldX = robotX + (localX)*Math.cos(-robotHeading);
-        double worldY = robotY - (localX)*Math.sin(-robotHeading);
-
-       return new Pose2d(worldX,worldY,heading);
+    public Pose2d getAxlePosition(){
+        Pose2d turretPosition = getTurretPosition();
+        return new Pose2d(turretPosition.getX() - axleDistanceFromRotation*Math.sin(Math.toRadians(heading)+ Math.PI/2), turretPosition.getY() + axleDistanceFromRotation*Math.cos(Math.toRadians(heading)+ Math.PI/2) );
     }
 
     public boolean isTurretNearTarget(){
