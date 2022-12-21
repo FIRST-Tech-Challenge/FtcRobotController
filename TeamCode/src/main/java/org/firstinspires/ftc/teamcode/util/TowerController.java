@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.TeleOp;
 
 
 public class TowerController
@@ -180,8 +181,11 @@ public class TowerController
                 telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
                 telemetry.update();
             }
-            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            screw.setPower(0);
+//            if (!screw.isBusy())
+//            {
+                screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                screw.setPower(0);
+//            }
         }
 
     }
@@ -195,75 +199,75 @@ public class TowerController
 
         //4 button Ubar position set
 
-        // High Juction
+        // High Junction
         if (gamepad.y)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             uBar.setTargetPosition(-4370);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(0.5);
-//            while (uBar.isBusy())
-//            {
-//                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-//                telemetry.update();
-//            }
-//            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            uBar.setPower(0);
+            while (uBar.isBusy())
+            {
+                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+                telemetry.update();
+            }
+            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            uBar.setPower(0);
         }
 
-        // Middle Juction
+        // Middle Junction
         else if (!gamepad.start && gamepad.b)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             uBar.setTargetPosition(-4315);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(0.5);
-//            while (uBar.isBusy())
-//            {
-//                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-//                telemetry.update();
-//            }
-//            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            uBar.setPower(0);
+            while (uBar.isBusy())
+            {
+                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+                telemetry.update();
+            }
+            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            uBar.setPower(0);
         }
 
-        // Low Juction
+        // Low Junction
         else if (gamepad.x)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             uBar.setTargetPosition(-2158);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(-0.5);
-//            while (uBar.isBusy())
-//            {
-//                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-//                telemetry.update();
-//            }
-//            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            uBar.setPower(0);
+            while (uBar.isBusy())
+            {
+                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+                telemetry.update();
+            }
+            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            uBar.setPower(0);
         }
 
-        // Pickup Juction
+        // Pickup Junction
         else if (gamepad.a)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             uBar.setTargetPosition(32);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(0.5);
-//            while (uBar.isBusy())
-//            {
-//                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-//                telemetry.update();
-//            }
-//            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            uBar.setPower(0);
-        }
-
-        if (!uBar.isBusy())
-        {
+            while (uBar.isBusy())
+            {
+                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+                telemetry.update();
+            }
             uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             uBar.setPower(0);
         }
+
+//        if (!uBar.isBusy())
+//        {
+            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            uBar.setPower(0);
+//        }
 
         if (gamepad.left_trigger > 0.5)
         {
@@ -301,8 +305,8 @@ public class TowerController
         }
         else
         {
-            screw.setPower(0);
-            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            screw.setPower(0)
+//            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
     }
 
