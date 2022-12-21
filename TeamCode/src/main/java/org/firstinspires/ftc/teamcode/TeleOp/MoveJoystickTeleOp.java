@@ -94,10 +94,10 @@ public class MoveJoystickTeleOp extends OpMode {
                 else moveJoystick.MoveJoystickRaw((direction + 3) % 4,gamepad1.right_stick_x);
             }
 //            else{
-//                if (gamepad1.right_stick_x > 0.3 && gamepad1.right_stick_y < 0.3) moveJoystick.JoystickCurveBy(direction);
-//                if (gamepad1.right_stick_x < 0.3 && gamepad1.right_stick_y < 0.3) moveJoystick.JoystickCurveBy((direction + 1) % 4);
+//                if (gamepad1.right_stick_x > 0.3 && gamepad1.right_stick_y < -0.3) moveJoystick.JoystickCurveBy(direction);
+//                if (gamepad1.right_stick_x < -0.3 && gamepad1.right_stick_y < -0.3) moveJoystick.JoystickCurveBy((direction + 1) % 4);
 //                if (gamepad1.right_stick_x > 0.3 && gamepad1.right_stick_y > 0.3) moveJoystick.JoystickCurveBy((direction + 3) % 4);
-//                if (gamepad1.right_stick_x < 0.3 && gamepad1.right_stick_y > 0.3) moveJoystick.JoystickCurveBy((direction + 2) % 4);
+//                if (gamepad1.right_stick_x < -0.3 && gamepad1.right_stick_y > 0.3) moveJoystick.JoystickCurveBy((direction + 2) % 4);
 //            }
 
 
