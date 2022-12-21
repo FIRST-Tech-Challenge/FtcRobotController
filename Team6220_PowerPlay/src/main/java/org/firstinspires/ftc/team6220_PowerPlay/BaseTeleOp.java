@@ -10,9 +10,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
     int[] junctions = {0, 0};
 
     public void driveChassisWithController() {
-        xPower = gamepad1.left_stick_x * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
-        yPower = gamepad1.left_stick_y * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
-        tPower = gamepad1.right_stick_x * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
+        xPower = stickCurve(gamepad1.left_stick_x, Constants.DRIVE_MOVE_CURVE_FAC, Constants.DRIVE_STICK_DEADZONE)* (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
+        yPower = stickCurve(gamepad1.left_stick_y, Constants.DRIVE_MOVE_CURVE_FAC, Constants.DRIVE_STICK_DEADZONE)* (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
+        tPower = stickCurve(gamepad1.right_stick_x, Constants.DRIVE_TURN_CURVE_FAC, Constants.DRIVE_STICK_DEADZONE) * (1 - gamepad1.left_trigger * 0.5) * Constants.DRIVE_SPEED_MULTIPLIER;
 
         // case for driving the robot left and right
         if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) < Constants.DRIVE_DEADZONE_DEGREES) {
@@ -97,5 +97,10 @@ public abstract class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveTurntableWithController() {
+    }
+    
+    public double stickCurve(double x, double a, double d) {
+        x = Math.signum(x)*Math.max(0, Math.min(1, (Math.abs(x)-d)/(1-d))); // Remap x with deadzone
+        return a*x+(1-a)*x*x*x;
     }
 }

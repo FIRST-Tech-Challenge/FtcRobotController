@@ -14,6 +14,9 @@ public class Constants {
 
     public static final double DRIVE_SPEED_MULTIPLIER = 0.5;
     public static final int DRIVE_DEADZONE_DEGREES = 45;
+    public static final double DRIVE_MOVE_CURVE_FAC = 0.4;
+    public static final double DRIVE_TURN_CURVE_FAC = 0.4;
+    public static final double DRIVE_STICK_DEADZONE = 0.025;
 
     public static final double GRABBER_INITIALIZE_POSITION = 1.0;
     public static final double GRABBER_OPEN_POSITION = 0.57;
