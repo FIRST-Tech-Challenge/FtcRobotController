@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 
 //@Config
 object IntakeConfig {
-    const val INTAKING = -1.0
-    const val REVERSED =  1.0
-    const val DISABLED =  0.0
+    @JvmField var INTAKING = -1.0
+    @JvmField var REVERSED =  1.0
+    @JvmField var DISABLED =  0.0
 }
 
 /**

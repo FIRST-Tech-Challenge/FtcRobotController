@@ -8,8 +8,8 @@ import ftc.rouge.blacksmith.chains.CancellableChain
 import ftc.rouge.blacksmith.chains.Chain
 import ftc.rouge.blacksmith.listeners.ReforgedGamepad
 import org.firstinspires.ftc.teamcodekt.components.*
-import org.firstinspires.ftc.teamcodekt.components.chains.BackwardsDepositChain
-import org.firstinspires.ftc.teamcodekt.components.chains.ForwardsDepositChain
+import org.firstinspires.ftc.teamcodekt.components.chains.ReverseDepositChain
+import org.firstinspires.ftc.teamcodekt.components.chains.RegularDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
 import ftc.rouge.blacksmith.util.kt.LateInitVal
 
@@ -32,8 +32,8 @@ abstract class RougeBaseTele : LinearOpMode() {
         bot = createTeleOpBotComponents(hardwareMap, VoltageScaler(hardwareMap))
 
         intakeChain = IntakeChain(bot)
-        forwardsDepositChain = ForwardsDepositChain(bot)
-        backwardsDepositChain = BackwardsDepositChain(bot)
+        forwardsDepositChain = RegularDepositChain(bot)
+        backwardsDepositChain = ReverseDepositChain(bot)
 
         describeControls()
 

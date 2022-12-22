@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 
 @Config
 object ArmConfig {
-    const val FORWARDS = 135.0
-    const val BACKWARDS = 39.9
-    const val RESTING = 97.0
+    @JvmField var FORWARDS = 135.0
+    @JvmField var BACKWARDS = 39.9
+    @JvmField var RESTING = 97.0
 }
 
 /**

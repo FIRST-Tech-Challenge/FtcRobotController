@@ -86,6 +86,9 @@ object Scheduler {
      */
     private val listeners = mutableSetOf<Listener>()
 
+    private val listenersToAdd = mutableSetOf<Listener>()
+    private val listenersToRemove = mutableSetOf<Listener>()
+
     /**
      * A block of code to run before each tick.
      */
@@ -127,6 +130,8 @@ object Scheduler {
     @JvmOverloads
     fun launch(opmode: LinearOpMode, afterEach: Runnable = Runnable {}) {
         while (opmode.opModeIsActive() && !opmode.isStopRequested) {
+            updateListenersSet()
+
             beforeEach.run()
             tick()
             afterEach.run()
@@ -184,6 +189,8 @@ object Scheduler {
         while (opmode.opModeIsActive() && !opmode.isStopRequested) {
             val startTime = System.currentTimeMillis()
 
+            updateListenersSet()
+
             beforeEach.run()
             tick()
             afterEach.run()
@@ -194,10 +201,11 @@ object Scheduler {
         }
     }
 
-    /**
-     * Runs each hooked Listener's `tick` method.
-     */
-    private fun tick() = listeners.forEach(Listener::tick)
+    @JvmStatic
+    fun reset() {
+        listeners.clear()
+        beforeEach = Runnable {}
+    }
 
     /**
      * Registers the given [Listener] to this Scheduler. By doing so, the [Listener] will be
@@ -206,7 +214,7 @@ object Scheduler {
      */
     @JvmStatic
     internal fun hookListener(listener: Listener) {
-        listeners += listener
+        listenersToAdd += listener
     }
 
     /**
@@ -215,12 +223,19 @@ object Scheduler {
      */
     @JvmStatic
     internal fun unhookListener(listener: Listener) {
-        listeners -= listener
+        listenersToRemove += listener
     }
 
-    @JvmStatic
-    fun reset() {
-        listeners.clear()
-        beforeEach = Runnable {}
+    private fun updateListenersSet() {
+        listeners += listenersToAdd
+        listenersToAdd.clear()
+
+        listeners -= listenersToRemove
+        listenersToRemove.clear()
     }
+
+    /**
+     * Runs each hooked Listener's `tick` method.
+     */
+    private fun tick() = listeners.forEach(Listener::tick)
 }

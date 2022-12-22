@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 
 @Config
 object ClawConfig {
-    const val INTAKE_WIDE   = 0.66
-    const val INTAKE_NARROW = 0.575
-    const val DEPOSIT       = 0.666
-    const val CLOSE         = 0.35
+    @JvmField var INTAKE_WIDE   = 0.66
+    @JvmField var INTAKE_NARROW = 0.575
+    @JvmField var DEPOSIT       = 0.666
+    @JvmField var CLOSE         = 0.35
 }
 
 /**

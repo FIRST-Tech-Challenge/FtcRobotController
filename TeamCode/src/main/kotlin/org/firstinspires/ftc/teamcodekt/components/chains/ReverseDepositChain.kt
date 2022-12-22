@@ -4,11 +4,10 @@ package org.firstinspires.ftc.teamcodekt.components.chains
 
 import ftc.rouge.blacksmith.chains.CancellableChain
 import ftc.rouge.blacksmith.listeners.Listener
-import ftc.rouge.blacksmith.listeners.Timer
 import ftc.rouge.blacksmith.listeners.after
 import org.firstinspires.ftc.teamcodekt.components.TeleOpBotComponents
 
-class BackwardsDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
+class ReverseDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
     private var isCancelled = false
 
     override fun invokeOn(button: Listener) = button

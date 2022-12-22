@@ -9,11 +9,6 @@ import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ListenerTest {
-    private val hookedListeners = Scheduler::class.java.getDeclaredField("listeners").let {
-        it.isAccessible = true
-        it.get(Scheduler) as MutableSet<Listener>
-    }
-
     @BeforeEach
     fun setUp() {
         Scheduler.reset()
@@ -58,25 +53,6 @@ internal class ListenerTest {
     }
 
     @Test
-    fun `subscribing to listener hooks it on the first time`() {
-        val listener = Listener { true }
-
-        val initialSize = hookedListeners.size
-
-        listener.whileHigh { }
-        val firstSize = hookedListeners.size
-
-        listener.whileHigh { }
-        val secondSize = hookedListeners.size
-
-        assertAll(
-            { assertEquals(0, initialSize) },
-            { assertEquals(1, firstSize) },
-            { assertEquals(1, secondSize) }
-        )
-    }
-
-    @Test
     fun `destroying listener clears its added actions`() {
         val listener = Listener { true }
         listener.onRise {}
@@ -89,22 +65,6 @@ internal class ListenerTest {
         val initialSize = actions.size
         listener.destroy()
         val clearedSize = actions.size
-
-        assertAll(
-            { assertEquals(1, initialSize) },
-            { assertEquals(0, clearedSize) }
-        )
-    }
-
-    @Test
-    fun `destroying listener removes it from the scheduler`() {
-        val listener = Listener { true }
-
-        listener.onRise {}
-        val initialSize = hookedListeners.size
-
-        listener.destroy()
-        val clearedSize = hookedListeners.size
 
         assertAll(
             { assertEquals(1, initialSize) },
