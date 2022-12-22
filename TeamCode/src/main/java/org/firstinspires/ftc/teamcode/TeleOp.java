@@ -20,6 +20,9 @@ public class TeleOp extends OpMode
     public void init() {
         // Commented out till merge with master
         telemetry.addData("Status", "Initialized");
+
+
+
 //        localizer = new IntegratedLocalizerIMU(hardwareMap);
 //        mecanumDriveBase = new MecanumDriveBase(hardwareMap);
         towerController = new TowerController(hardwareMap, telemetry);
@@ -46,7 +49,6 @@ public class TeleOp extends OpMode
 //        telemetry.addData("TeleOp heading", localizer.getHeading() );
 //        pacMan.handlePacMan(gamepad1, telemetry);
         driveForTest.drive(gamepad1);
-        telemetry.addData("", driveForTest.leftFront.getCurrentPosition());
         telemetry.update();
     }
 }
