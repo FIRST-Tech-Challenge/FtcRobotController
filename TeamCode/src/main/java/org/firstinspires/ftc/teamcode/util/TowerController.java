@@ -133,28 +133,14 @@ public class TowerController
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             screw.setTargetPosition(4270);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            screw.setPower(-1);
-            while (screw.isBusy())
-            {
-                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-                telemetry.update();
-            }
-            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            screw.setPower(0);
+            screw.setPower(1);
         }
         else if (gamepad.dpad_left)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(303);
+            screw.setTargetPosition(851);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            screw.setPower(-1);
-            while (screw.isBusy())
-            {
-                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-                telemetry.update();
-            }
-            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            screw.setPower(0);
+            screw.setPower(1);
         }
         else if (gamepad.dpad_right)
         {
@@ -162,30 +148,13 @@ public class TowerController
             screw.setTargetPosition(4557);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(1);
-            while (screw.isBusy())
-            {
-                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-                telemetry.update();
-            }
-            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            screw.setPower(0);
         }
         else if (gamepad.dpad_down)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(809);
+            screw.setTargetPosition(759);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            screw.setPower(-1);
-            while (screw.isBusy())
-            {
-                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-                telemetry.update();
-            }
-//            if (!screw.isBusy())
-//            {
-                screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                screw.setPower(0);
-//            }
+            screw.setPower(1);
         }
 
     }
@@ -194,8 +163,8 @@ public class TowerController
     {
         uBar.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-        telemetry.update();
+//        telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+//        telemetry.update();
 
         //4 button Ubar position set
 
@@ -203,71 +172,38 @@ public class TowerController
         if (gamepad.y)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(-4370);
+            uBar.setTargetPosition(-2966);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(0.5);
-            while (uBar.isBusy())
-            {
-                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-                telemetry.update();
-            }
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            uBar.setPower(0);
         }
 
         // Middle Junction
         else if (!gamepad.start && gamepad.b)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(-4315);
+            uBar.setTargetPosition(-1454);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(0.5);
-            while (uBar.isBusy())
-            {
-                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-                telemetry.update();
-            }
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            uBar.setPower(0);
         }
 
         // Low Junction
         else if (gamepad.x)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(-2158);
+            uBar.setTargetPosition(-2854);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(-0.5);
-            while (uBar.isBusy())
-            {
-                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-                telemetry.update();
-            }
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            uBar.setPower(0);
         }
 
         // Pickup Junction
         else if (gamepad.a)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(32);
+            uBar.setTargetPosition(985);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(0.5);
-            while (uBar.isBusy())
-            {
-                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-                telemetry.update();
-            }
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            uBar.setPower(0);
         }
 
-//        if (!uBar.isBusy())
-//        {
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            uBar.setPower(0);
-//        }
 
         if (gamepad.left_trigger > 0.5)
         {
@@ -296,42 +232,93 @@ public class TowerController
     public void screwAnlogControler(Gamepad gamepad, Telemetry telemetry)
     {
         double screwPower;
-        screw.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double driveScrew = gamepad.left_stick_y;
         screwPower = Range.clip(driveScrew, -1, 1);
-        if ((screwPower < 0 && !highSensor.isPressed()) || screwPower > 0 && !lowSensor.isPressed())
+//        if ((screwPower < 0 && !highSensor.isPressed()) || screwPower > 0 && !lowSensor.isPressed())
+//        {
+//            screw.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            screw.setPower(-screwPower);
+//        }
+//        else
+//        {
+////            screw.setPower(0)
+////            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        }
+
+        //Stick is active, within bounds
+        //Stick is active, out of bounds
+        //Stick is not active
+
+        if (Math.abs(screwPower) > 0)
         {
-            screw.setPower(-screwPower);
+            if (lowSensor.isPressed() && screwPower > 0)
+            {
+                //Out of bounds.  Kill power!
+                screw.setPower(0);
+            }
+            else if (highSensor.isPressed() && screwPower < 0)
+            {
+                screw.setPower(0);
+            }
+            else
+            {
+                screw.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                screw.setPower(-screwPower);
+            }
         }
-        else
+        else if (screw.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         {
-//            screw.setPower(0)
-//            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //Ensure motor is not moving.
+            screw.setTargetPosition(screw.getCurrentPosition());
+            screw.setPower(0);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        else if (screw.getMode() == DcMotor.RunMode.RUN_TO_POSITION)
+        {
+            //Do nothing
         }
     }
 
     public void uBarAnlogControler(Gamepad gamepad, Telemetry telemetry)
     {
         double uBarPower;
-        uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double driveUBar = gamepad.right_stick_y;
         uBarPower = Range.clip(driveUBar, -1, 1);
-        if (!(uBarPower == 0))
+//        if (!(uBarPower == 0))
+//        {
+//            uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            uBar.setPower(uBarPower);
+//        }
+//        else
+//        {
+// //           uBar.setPower(0);
+// //           uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        }
+
+//        telemetry.addData("UBar stick", "&f", uBarPower);
+
+        if (Math.abs(uBarPower) > 0)
         {
-            uBar.setPower(uBarPower);
+            //stick is active.  Break out of RunTo mode and run without encoder
+            uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            uBar.setPower(-uBarPower);
         }
-        else
+        else if (uBar.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         {
-            uBar.setPower(0);
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //Ensure motor is not moving. Will "active lock" to this location.
+            uBar.setTargetPosition(uBar.getCurrentPosition());
+            uBar.setPower(1);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        else if (uBar.getMode() == DcMotor.RunMode.RUN_TO_POSITION)
+        {
+            //Do nothing, stick is idle
         }
     }
 
     public void handleGamepad(Gamepad gamepad, Telemetry telemetry)
     {
         //Screw methods
-//        driveScrewDown();
-//        driveScrewUp();
         handleScrewLevelSet(gamepad, telemetry);
         screwAnlogControler(gamepad, telemetry);
 
@@ -348,9 +335,9 @@ public class TowerController
 
     public void telemetryOutput(Telemetry telemetry)
     {
-        telemetry.addData("UBar Breaking", "&s", " It should stop moving");
         telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-        telemetry.addData("Ubar ticks = ", "%d", uBar.getCurrentPosition());
+        telemetry.addData("Ubar  ticks = ", "%d", uBar.getCurrentPosition());
+
         telemetry.update();
     }
 }

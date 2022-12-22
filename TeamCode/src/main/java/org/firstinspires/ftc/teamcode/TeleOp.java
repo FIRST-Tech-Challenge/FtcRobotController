@@ -20,6 +20,9 @@ public class TeleOp extends OpMode
     public void init() {
         // Commented out till merge with master
         telemetry.addData("Status", "Initialized");
+
+
+
 //        localizer = new IntegratedLocalizerIMU(hardwareMap);
 //        mecanumDriveBase = new MecanumDriveBase(hardwareMap);
         towerController = new TowerController(hardwareMap, telemetry);
