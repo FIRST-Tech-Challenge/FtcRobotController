@@ -4,8 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name="MecanumAuto", group="Linear Opmode")
+@Autonomous(name="MecanumAutonomous", group="Linear Opmode")
 //@Disabled
 public class MecanumAuto_Linear extends LinearOpMode {
 
@@ -25,7 +26,7 @@ public class MecanumAuto_Linear extends LinearOpMode {
     private double fast = 0.5; // Fast speed
     private double medium = 0.3; // Medium speed
     private double slow = 0.1; // Slow speed
-    private double clicksPerInch = 87.5; // empirically measured
+    private double clicksPerInch = 10.0; // empirically measured
     private double clicksPerDeg = 21.94; // empirically measured
 
     @Override
@@ -44,25 +45,30 @@ public class MecanumAuto_Linear extends LinearOpMode {
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
 
-        // Set the drive motor run modes:
+        // Reset encoders:
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        /*
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        */
+        //
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Wait for the game to start (driver presses PLAY)
+        // Let driver know encoders are reset:
+        telemetry.addData("Starting at", "%7d :%7d :%7d :%7d", leftFrontMotor.getCurrentPosition(),
+                rightFrontMotor.getCurrentPosition(), leftBackMotor.getCurrentPosition(),
+                rightBackMotor.getCurrentPosition());
+        telemetry.update();
+
+        // Wait for the game to start:
         waitForStart();
 
         // *****************Dead reckoning list*************
         // Distances in inches, angles in deg, speed 0.0 to 0.6
-        moveForward(16, fast);
+        moveForward(5, slow);
     }
 
     private void moveForward(int howMuch, double speed) {
@@ -74,27 +80,28 @@ public class MecanumAuto_Linear extends LinearOpMode {
         lrPos = leftBackMotor.getCurrentPosition();
         rrPos = rightBackMotor.getCurrentPosition();
 
+        // Calculate new targets based on input:
+        lfPos = -100; //howMuch * clicksPerInch;
+        rfPos = -100; //howMuch * clicksPerInch;
+        lrPos = -100; //howMuch * clicksPerInch;
+        rrPos = -100; //howMuch * clicksPerInch;
+
+        // Move robot to new position:
+        leftFrontMotor.setTargetPosition(-100);
+        rightFrontMotor.setTargetPosition(-100);
+        leftBackMotor.setTargetPosition(-100);
+        rightBackMotor.setTargetPosition(-100);
+
         // Set the drive motor run modes to prepare for move to encoder:
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // Calculate new targets based on input:
-        lfPos += howMuch * clicksPerInch;
-        rfPos += howMuch * clicksPerInch;
-        lrPos += howMuch * clicksPerInch;
-        rrPos += howMuch * clicksPerInch;
-
-        // Move robot to new position:
-        leftFrontMotor.setTargetPosition(lfPos);
-        rightFrontMotor.setTargetPosition(rfPos);
-        leftBackMotor.setTargetPosition(lrPos);
-        rightBackMotor.setTargetPosition(rrPos);
-        leftFrontMotor.setPower(speed);
-        rightFrontMotor.setPower(speed);
-        leftBackMotor.setPower(speed);
-        rightBackMotor.setPower(speed);
+        leftFrontMotor.setPower(-speed);
+        rightFrontMotor.setPower(-speed);
+        leftBackMotor.setPower(-speed);
+        rightBackMotor.setPower(-speed);
 
         // Wait for move to complete:
         while (leftFrontMotor.isBusy() && rightFrontMotor.isBusy() &&
@@ -102,8 +109,8 @@ public class MecanumAuto_Linear extends LinearOpMode {
 
             // Display info for the driver:
             telemetry.addLine("Move Forward");
-            telemetry.addData("Target", "%7d :%7d", lfPos, rfPos, lrPos, rrPos);
-            telemetry.addData("Actual", "%7d :%7d", leftFrontMotor.getCurrentPosition(),
+            telemetry.addData("Target", "%7d :%7d :%7d :%7d", lfPos, rfPos, lrPos, rrPos);
+            telemetry.addData("Actual", "%7d :%7d :%7d :%7d", leftFrontMotor.getCurrentPosition(),
                     rightFrontMotor.getCurrentPosition(), leftBackMotor.getCurrentPosition(),
                     rightBackMotor.getCurrentPosition());
             telemetry.update();
