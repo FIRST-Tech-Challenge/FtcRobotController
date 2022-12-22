@@ -46,6 +46,7 @@ public class TeleOp extends OpMode
 //        telemetry.addData("TeleOp heading", localizer.getHeading() );
 //        pacMan.handlePacMan(gamepad1, telemetry);
         driveForTest.drive(gamepad1);
+        telemetry.addData("", driveForTest.leftFront.getCurrentPosition());
         telemetry.update();
     }
 }

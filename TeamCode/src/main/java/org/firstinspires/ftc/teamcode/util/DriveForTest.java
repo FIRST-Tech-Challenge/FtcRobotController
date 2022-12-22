@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 public class DriveForTest
 {
     // Declare OpMode members.
-    private DcMotor leftFront = null;
+    public DcMotor leftFront = null;
     private DcMotor rightFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;

@@ -133,28 +133,14 @@ public class TowerController
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             screw.setTargetPosition(4270);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            screw.setPower(-1);
-            while (screw.isBusy())
-            {
-                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-                telemetry.update();
-            }
-            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            screw.setPower(0);
+            screw.setPower(1);
         }
         else if (gamepad.dpad_left)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             screw.setTargetPosition(303);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            screw.setPower(-1);
-            while (screw.isBusy())
-            {
-                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-                telemetry.update();
-            }
-            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            screw.setPower(0);
+            screw.setPower(1);
         }
         else if (gamepad.dpad_right)
         {
@@ -162,30 +148,13 @@ public class TowerController
             screw.setTargetPosition(4557);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(1);
-            while (screw.isBusy())
-            {
-                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-                telemetry.update();
-            }
-            screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            screw.setPower(0);
         }
         else if (gamepad.dpad_down)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             screw.setTargetPosition(809);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            screw.setPower(-1);
-            while (screw.isBusy())
-            {
-                telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
-                telemetry.update();
-            }
-//            if (!screw.isBusy())
-//            {
-                screw.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                screw.setPower(0);
-//            }
+            screw.setPower(1);
         }
 
     }
@@ -194,8 +163,8 @@ public class TowerController
     {
         uBar.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-        telemetry.update();
+//        telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+//        telemetry.update();
 
         //4 button Ubar position set
 
@@ -206,13 +175,13 @@ public class TowerController
             uBar.setTargetPosition(-4370);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(0.5);
-            while (uBar.isBusy())
-            {
-                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-                telemetry.update();
-            }
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            uBar.setPower(0);
+//            while (uBar.isBusy())
+//            {
+//                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+//                telemetry.update();
+//            }
+//            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            uBar.setPower(0);
         }
 
         // Middle Junction
@@ -222,13 +191,13 @@ public class TowerController
             uBar.setTargetPosition(-4315);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(0.5);
-            while (uBar.isBusy())
-            {
-                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-                telemetry.update();
-            }
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            uBar.setPower(0);
+//            while (uBar.isBusy())
+//            {
+//                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+//                telemetry.update();
+//            }
+//            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            uBar.setPower(0);
         }
 
         // Low Junction
@@ -238,13 +207,13 @@ public class TowerController
             uBar.setTargetPosition(-2158);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(-0.5);
-            while (uBar.isBusy())
-            {
-                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-                telemetry.update();
-            }
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            uBar.setPower(0);
+//            while (uBar.isBusy())
+//            {
+//                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+//                telemetry.update();
+//            }
+//            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            uBar.setPower(0);
         }
 
         // Pickup Junction
@@ -254,19 +223,19 @@ public class TowerController
             uBar.setTargetPosition(32);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(0.5);
-            while (uBar.isBusy())
-            {
-                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-                telemetry.update();
-            }
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            uBar.setPower(0);
+//            while (uBar.isBusy())
+//            {
+//                telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
+//                telemetry.update();
+//            }
+//            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            uBar.setPower(0);
         }
 
 //        if (!uBar.isBusy())
 //        {
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            uBar.setPower(0);
+//            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            uBar.setPower(0);
 //        }
 
         if (gamepad.left_trigger > 0.5)
@@ -296,11 +265,11 @@ public class TowerController
     public void screwAnlogControler(Gamepad gamepad, Telemetry telemetry)
     {
         double screwPower;
-        screw.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double driveScrew = gamepad.left_stick_y;
         screwPower = Range.clip(driveScrew, -1, 1);
         if ((screwPower < 0 && !highSensor.isPressed()) || screwPower > 0 && !lowSensor.isPressed())
         {
+            screw.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             screw.setPower(-screwPower);
         }
         else
@@ -313,25 +282,25 @@ public class TowerController
     public void uBarAnlogControler(Gamepad gamepad, Telemetry telemetry)
     {
         double uBarPower;
-        uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double driveUBar = gamepad.right_stick_y;
         uBarPower = Range.clip(driveUBar, -1, 1);
         if (!(uBarPower == 0))
         {
+            uBar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             uBar.setPower(uBarPower);
         }
         else
         {
-            uBar.setPower(0);
-            uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+ //           uBar.setPower(0);
+ //           uBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+
+//        telemetry.addData("UBar stick", "&f", uBarPower);
     }
 
     public void handleGamepad(Gamepad gamepad, Telemetry telemetry)
     {
         //Screw methods
-//        driveScrewDown();
-//        driveScrewUp();
         handleScrewLevelSet(gamepad, telemetry);
         screwAnlogControler(gamepad, telemetry);
 
@@ -348,9 +317,10 @@ public class TowerController
 
     public void telemetryOutput(Telemetry telemetry)
     {
-        telemetry.addData("UBar Breaking", "&s", " It should stop moving");
+//        telemetry.addData("UBar Breaking", "&s", " It should stop moving");
         telemetry.addData("Screw ticks = ", "%d", screw.getCurrentPosition());
         telemetry.addData("Ubar ticks = ", "%d", uBar.getCurrentPosition());
+
         telemetry.update();
     }
 }
