@@ -67,16 +67,16 @@ public class Servotesting extends LinearOpMode {
             turning = gamepad2.b;
 
             if (strafeLeft) {
-                frontLeft.setPower(-0.9);
-                frontRight.setPower(-1);
+                frontLeft.setPower(-1);
+                frontRight.setPower(1);
                 backLeft.setPower(1);
-                backRight.setPower(1);
+                backRight.setPower(-1);
             }
             if (strafeRight) {
-                frontLeft.setPower(0.9);
-                frontRight.setPower(1);
+                frontLeft.setPower(1);
+                frontRight.setPower(-1);
                 backLeft.setPower(-1);
-                backRight.setPower(-1);
+                backRight.setPower(1);
             }
 
 
@@ -93,10 +93,10 @@ public class Servotesting extends LinearOpMode {
             Crain.setPower(crainpower);
 
             if (spinpowerup){
-                Spin.setPower(.5);
+                Spin.setPower(1);
             }
             if (spinpowerdown){
-                Spin.setPower(-.5);
+                Spin.setPower(-1);
             }
 
             if (!spinpowerdown && !spinpowerup){
@@ -121,26 +121,10 @@ public class Servotesting extends LinearOpMode {
             }
 
 
-            /*if (turning){
-                Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                Crain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                Spin.setTargetPosition(0);
-                Crain.setTargetPosition(0);
-                Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Spin.setPower(1);
-                Crain.setPower(1);
-                while(Spin.isBusy()){
-
-                }
-                Crain.setTargetPosition(1);
-                Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Crain.setPower(1);
-                while (Crain.isBusy()){
-
-                }
+            if (turning){
+                frontLeft.setPower(1);
             }
-*/
+
         }
 
 

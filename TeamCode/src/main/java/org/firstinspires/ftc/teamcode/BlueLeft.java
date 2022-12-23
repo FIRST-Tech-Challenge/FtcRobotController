@@ -79,9 +79,7 @@ public class BlueLeft extends LinearOpMode {
             move(.5,740);
             Left.setPower(-1);
             sleep(1300);
-            Left.setPower(0);-
-            telemetry.addData("Angle", imu.getAngularOrientation());
-            telemetry.update();
+            Left.setPower(0);
 
 
 
