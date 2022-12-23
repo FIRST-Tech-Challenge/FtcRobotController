@@ -65,18 +65,19 @@ public class BlueLeft extends LinearOpMode {
         waitForStart();//possubly the problem
         if (opModeIsActive()) {
 
-
+            Left.setPower(.3);
+            sleep(500);
             crane(-1,400);
             move(.5,100);
-            strafeLeft(1,1100);
-            //gyroTurning(0);
+            strafeLeft(1,1000);
+            gyroTurning(0);
             sleep(200);
             move(1,1900);
             gyroTurning(-90);
             move(1,750);
             crane(-1,3600);
             gyroTurning(-55);
-            move(.5,740);
+            move(.5,400);
             Left.setPower(-1);
             sleep(1300);
             Left.setPower(0);
@@ -231,9 +232,9 @@ public class BlueLeft extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         frontRight.setTargetPosition(-position);
-        frontLeft.setTargetPosition(-position);
+        frontLeft.setTargetPosition(position);
         backRight.setTargetPosition(position);
-        backLeft.setTargetPosition(position);
+        backLeft.setTargetPosition(-position);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -258,9 +259,9 @@ public class BlueLeft extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         frontRight.setTargetPosition(position);
-        frontLeft.setTargetPosition(position);
+        frontLeft.setTargetPosition(-position);
         backRight.setTargetPosition(-position);
-        backLeft.setTargetPosition(-position);
+        backLeft.setTargetPosition(position);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
