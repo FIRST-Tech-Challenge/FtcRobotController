@@ -835,6 +835,60 @@ public class HardwareSlimbot
     // a) getDistanceSync()  sends a new ping and WAITS 50msec for the return
     // b) getDistanceAsync() sends a new ping and RETURNS IMMEDIATELY with the most recent value
 
+    enum UltrasonicsInstances
+    {
+        SONIC_RANGE_LEFT,
+        SONIC_RANGE_RIGHT,
+        SONIC_RANGE_FRONT,
+        SONIC_RANGE_BACK;
+    }
+
+    enum UltrasonicsModes
+    {
+        SONIC_FIRST_PING,
+        SONIC_MOST_RECENT;
+    }
+
+    /*--------------------------------------------------------------------------------------------*/
+    public int slowSonarRange( UltrasonicsInstances sensorInstance ) {
+        // This is the SLOW version that sends an ultrasonic ping, waits 50 msec for the result,
+        // and returns a value.  The returned valued is based on SINGLE reading (no averaging).
+        // This version is intended for 1-time readings where the 50msec is okay (not control loops).
+        int cm = 0;
+        switch( sensorInstance ) {
+            case SONIC_RANGE_LEFT  : cm = sonarRangeL.getDistanceSync(); break;
+            case SONIC_RANGE_RIGHT : cm = sonarRangeR.getDistanceSync(); break;
+            case SONIC_RANGE_FRONT : cm = sonarRangeF.getDistanceSync(); break;
+            case SONIC_RANGE_BACK  : cm = sonarRangeB.getDistanceSync(); break;
+            default                : cm = 0;
+        } // switch()
+        return cm;
+    } // slowSonarRange
+
+    /*--------------------------------------------------------------------------------------------*/
+    public int fastSonarRange( UltrasonicsInstances sensorInstance, UltrasonicsModes mode ) {
+        // This is the FAST version that assumes there's a continuous sequence of pings being
+        // triggered so it simply returns the "most recent" answer (no waiting!). This function is
+        // intended for control loops that can't afford to incur a 50msec delay in the loop time.
+        // The first call should pass SONIC_FIRST_PING and ignore the result; All subsequent calls
+        // (assuming at least 50 msec has elapsed) should pass SONIC_MOST_RECENT and use the distance
+        // returned.
+        int cm = 0;
+        switch( sensorInstance ) {
+            case SONIC_RANGE_LEFT  : cm = sonarRangeL.getDistanceAsync(); break;
+            case SONIC_RANGE_RIGHT : cm = sonarRangeR.getDistanceAsync(); break;
+            case SONIC_RANGE_FRONT : cm = sonarRangeF.getDistanceAsync(); break;
+            case SONIC_RANGE_BACK  : cm = sonarRangeB.getDistanceAsync(); break;
+            default                : cm = 0;
+        } // switch()
+        // Do we need to zero-out the value returned (likely from another time/place)?
+        if( mode == HardwareSlimbot.UltrasonicsModes.SONIC_FIRST_PING ) {
+            cm = 0;
+        }
+        // Return 
+        return cm;
+    } // fastSonarRange
+
     /*--------------------------------------------------------------------------------------------*/
     public int singleSonarRangeL() {
         // Query the current range sensor reading and wait for a response

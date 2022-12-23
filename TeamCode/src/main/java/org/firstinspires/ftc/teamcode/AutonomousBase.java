@@ -115,6 +115,38 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // distanceFromFront
 
     /*---------------------------------------------------------------------------------*/
+    void distanceFromFront( int desiredDistance, int distanceTolerance ) {   // centimeters
+        // We're in position, so trigger the first ultrasonic ping
+        // NOTE: sonar ranges only update every 50 msec (no matter how much faster we loop
+        // than that.  That implies fast control loops will have multiple cycles that use
+        // the same range value before a new/different "most recent" ultrasonic range occurs.
+        robot.fastSonarRange( HardwareSlimbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwareSlimbot.UltrasonicsModes.SONIC_FIRST_PING );
+        // Wait 50 msec (DEFAULT_SONAR_PROPAGATION_DELAY_MS)
+        sleep( 50 );
+        // Begin the control loop
+        for( int loops=0; loops<100; loops++ ) {
+            // Has autonomous ended or been aborted?
+            if( opModeIsActive() == false ) break;
+            // Handle background tasks
+            performEveryLoop();
+            // Query the current distance
+            int currDistance = robot.fastSonarRange( HardwareSlimbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwareSlimbot.UltrasonicsModes.SONIC_MOST_RECENT );
+            // Compute the range error
+            int rangeErr = currDistance - desiredDistance;
+            telemetry.addData("Sonar Range (F)", "Set: %d  Range: %d Err: %d", desiredDistance, currDistance, rangeErr);
+            telemetry.update();
+            // Are we done?
+            if( Math.abs(rangeErr) <= distanceTolerance ) break;
+            // Initiate robot movement closer/further to achieve desired range
+            robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.10 : -0.10);
+            // Don't loop too fast (there's no point) but don't wait too long in case
+            // we "just missed" the most recent ultrasonic range measurement update
+            sleep( 10 );
+        } // for()
+        robot.stopMotion();
+    } // distanceFromFront
+
+    /*---------------------------------------------------------------------------------*/
     void rotateToCenterRedCone() {
         PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
         theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipeline.getDetectedRedCone());
@@ -159,7 +191,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             if(theLocalPole.poleAligned) {
                 robot.stopMotion();
             } else {
-                robot.driveTrainTurn((theLocalPole.centralOffset > 0) ? +0.07 : -0.07);
+                robot.driveTrainTurn((theLocalPole.centralOffset > 0) ? +0.085 : -0.085);
             }
             theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
         }
