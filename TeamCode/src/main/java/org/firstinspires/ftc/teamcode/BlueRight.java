@@ -332,9 +332,9 @@ public class BlueRight extends LinearOpMode {
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             frontRight.setTargetPosition(-position);
-            frontLeft.setTargetPosition(-position);
+            frontLeft.setTargetPosition(position);
             backRight.setTargetPosition(position);
-            backLeft.setTargetPosition(position);
+            backLeft.setTargetPosition(-position);
 
             frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -359,9 +359,9 @@ public class BlueRight extends LinearOpMode {
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             frontRight.setTargetPosition(position);
-            frontLeft.setTargetPosition(position);
+            frontLeft.setTargetPosition(-position);
             backRight.setTargetPosition(-position);
-            backLeft.setTargetPosition(-position);
+            backLeft.setTargetPosition(position);
 
             frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
