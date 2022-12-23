@@ -73,13 +73,15 @@ public class BlueLeft extends LinearOpMode {
             sleep(200);
             move(1,1900);
             gyroTurning(-90);
-            move(1,600);
+            move(1,750);
             crane(-1,3600);
-            gyroTurning(-65);
-            move(.5,800);
-            Left.setPower(1);
-            sleep(300);
-            Left.setPower(0);
+            gyroTurning(-55);
+            move(.5,740);
+            Left.setPower(-1);
+            sleep(1300);
+            Left.setPower(0);-
+            telemetry.addData("Angle", imu.getAngularOrientation());
+            telemetry.update();
 
 
 
@@ -149,30 +151,30 @@ public class BlueLeft extends LinearOpMode {
 
             } else if (angles.firstAngle >= targetAngle + 0.5) {
                 if (angles.firstAngle <= targetAngle - 5) {
-                    frontLeft.setPower(0.2);
-                    frontRight.setPower(-0.2);
-                    backLeft.setPower(0.2);
-                    backRight.setPower(-0.2);
+                    frontLeft.setPower(0.25);
+                    frontRight.setPower(-0.25);
+                    backLeft.setPower(0.25);
+                    backRight.setPower(-0.25);
                     foundAngle = false;
                 } else {
-                    frontLeft.setPower(-0.2);
-                    frontRight.setPower(0.2);
-                    backLeft.setPower(-0.2);
-                    backRight.setPower(0.2);
+                    frontLeft.setPower(-0.25);
+                    frontRight.setPower(0.25);
+                    backLeft.setPower(-0.25);
+                    backRight.setPower(0.25);
                     foundAngle = false;
                 }
             } else if (angles.firstAngle <= targetAngle - 0.5) {
                 if (angles.firstAngle >= targetAngle + 5) {
-                    frontLeft.setPower(-0.2);
-                    frontRight.setPower(0.2);
-                    backLeft.setPower(-0.2);
-                    backRight.setPower(0.2);
+                    frontLeft.setPower(-0.25);
+                    frontRight.setPower(0.25);
+                    backLeft.setPower(-0.25);
+                    backRight.setPower(0.25);
                     foundAngle = false;
                 } else {
-                    frontLeft.setPower(.2);
-                    frontRight.setPower(-.2);
-                    backLeft.setPower(.2);
-                    backRight.setPower(-.2);
+                    frontLeft.setPower(.25);
+                    frontRight.setPower(-.25);
+                    backLeft.setPower(.25);
+                    backRight.setPower(-.25);
                     foundAngle = false;
                 }
             }
