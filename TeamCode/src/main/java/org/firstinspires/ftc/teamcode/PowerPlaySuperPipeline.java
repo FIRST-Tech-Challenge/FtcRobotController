@@ -62,7 +62,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         Cb,
         MASK,
         MASK_NR,
-        CONTOURS;
+        CONTOURS,
+        RECTANGLES;
     }
 
     Stage[] stages = Stage.values();
@@ -100,6 +101,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     Mat morphedRedThreshold = new Mat();
     Mat morphedYellowThreshold = new Mat();
     Mat contoursOnPlainImageMat = new Mat();
+    Mat rectanglesOnPlainImageMat = new Mat();
 
     /*
      * Threshold values
@@ -111,8 +113,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     /*
      * The elements we use for noise reduction
      */
-    Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
-    Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
+    Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 3));
+    Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 6));
 
     /*
      * The box constraint that considers a pole "centered"
@@ -203,9 +205,19 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
          * Run analysis for yellow poles
          */
         if(detectPole) {
-            for (MatOfPoint contour : findYellowContours(input)) {
+            // We do draw the contours we find, but not to the main input buffer.
+            input.copyTo(rectanglesOnPlainImageMat);
+            List<MatOfPoint> localList;
+
+            localList = findYellowContours(input);
+            for (MatOfPoint contour : localList) {
                 AnalyzePoleContour(contour, input);
             }
+            // We do draw the contours we find, but not to the main input buffer.
+            input.copyTo(contoursOnPlainImageMat);
+            Imgproc.drawContours(contoursOnPlainImageMat, localList, -1, BLUE, CONTOUR_LINE_THICKNESS, 8);
+
+            drawRotatedRects(internalPoleList, rectanglesOnPlainImageMat, BLUE);
 
             findThePole();
         }
@@ -278,7 +290,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         {
             case Cb:
             {
-                return crMat;
+                return cbMat;
             }
 
             case FINAL:
@@ -288,17 +300,22 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
             case MASK:
             {
-                return thresholdRedMat;
+                return thresholdYellowMat;
             }
 
             case MASK_NR:
             {
-                return morphedRedThreshold;
+                return morphedYellowThreshold;
             }
 
             case CONTOURS:
             {
                 return contoursOnPlainImageMat;
+            }
+
+            case RECTANGLES:
+            {
+                return rectanglesOnPlainImageMat;
             }
         }
         return input;
@@ -395,6 +412,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // Ok, now actually look for the contours! We only look for external contours.
         Imgproc.findContours(morphedBlueThreshold, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
 
+        // We do draw the contours we find, but not to the main input buffer.
+        input.copyTo(contoursOnPlainImageMat);
+        Imgproc.drawContours(contoursOnPlainImageMat, contoursList, -1, BLUE, CONTOUR_LINE_THICKNESS, 8);
+
         return contoursList;
     }
 
@@ -472,7 +493,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     boolean isPole(RotatedRect rect)
     {
         // We can put whatever logic in here we want to determine the poleness
-        return (rect.size.width > rect.size.height);
+        return (rect.size.height > rect.size.width);
+//        return true;
     }
 
     boolean findThePole()
@@ -485,7 +507,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             thePole.poleAligned = false;
             thePole.properDistanceHigh = false;
             for (AnalyzedPole aPole : internalPoleList) {
-                if (aPole.corners.size.height > thePole.corners.size.height) {
+                if (aPole.corners.size.width > thePole.corners.size.width) {
                     thePole.centralOffset = aPole.centralOffset;
                     thePole.highDistanceOffset = aPole.highDistanceOffset;
                     thePole.corners = aPole.corners.clone();
@@ -512,7 +534,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             AnalyzedPole analyzedPole = new AnalyzedPole();
             analyzedPole.corners = rotatedRectFitToContour;
             analyzedPole.centralOffset = CENTERED_OBJECT.center.x - rotatedRectFitToContour.center.x;
-            analyzedPole.highDistanceOffset = POLE_HIGH_DISTANCE - rotatedRectFitToContour.size.height;
+            analyzedPole.highDistanceOffset = POLE_HIGH_DISTANCE - rotatedRectFitToContour.size.width;
             analyzedPole.poleAligned = abs(analyzedPole.centralOffset) <= MAX_POLE_OFFSET;
             analyzedPole.properDistanceHigh = abs(analyzedPole.highDistanceOffset) <= MAX_HIGH_DISTANCE_OFFSET;
             internalPoleList.add(analyzedPole);
@@ -529,6 +551,22 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
         Imgproc.dilate(output, output, dilateElement);
         Imgproc.dilate(output, output, dilateElement);
+    }
+
+    static void drawRotatedRects(List<AnalyzedPole> rects, Mat drawOn, Scalar color)
+    {
+        /*
+         * Draws a rotated rect by drawing each of the 4 lines individually
+         */
+        Point[] points = new Point[4];
+        for(AnalyzedPole aPole : rects) {
+            aPole.corners.points(points);
+
+            for(int i = 0; i < 4; ++i)
+            {
+                Imgproc.line(drawOn, points[i], points[(i+1)%4], color, 2);
+            }
+        }
     }
 
    static void drawRotatedRect(RotatedRect rect, Mat drawOn, Scalar color)

@@ -40,6 +40,10 @@ import java.util.List;
 @TeleOp(name="Pole-Test", group="Skunkworks")
 public class PoleOrientationExample extends LinearOpMode
 {
+    final int LOGSIZE = 10;
+    double[]  angleOffset = new double[LOGSIZE];  // pixel offset error (left/right)
+    double[]  distOffset  = new double[LOGSIZE];  // pixel offset error (too narrow/wide)
+
     OpenCvCamera webcam;
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
@@ -58,9 +62,10 @@ public class PoleOrientationExample extends LinearOpMode
 
     @Override
     public void runOpMode() throws InterruptedException {
+
         // Create camera instance
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam front"), cameraMonitorViewId);
 
         // Open async and start streaming inside opened callback
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -68,7 +73,7 @@ public class PoleOrientationExample extends LinearOpMode
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN );
 
                 pipeline = new PowerPlaySuperPipeline(true, false, false, 160.0);
                 webcam.setPipeline(pipeline);
@@ -106,7 +111,12 @@ public class PoleOrientationExample extends LinearOpMode
             // Let us see if we can use the camera for distance.
             alignToPole();
             telemetry.addLine("Aligned... waiting for kick");
+            for( int index=0; index<LOGSIZE; index++ ) {
+                telemetry.addData(" ","%d = %.1f %.1f pix",
+                        index, angleOffset[index], distOffset[index] );
+            }
             telemetry.update();
+            sleep( 2000 );
         }
     }
 
@@ -117,13 +127,13 @@ public class PoleOrientationExample extends LinearOpMode
         double drivePower;
         double fr, fl, br, bl;
         theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
-//      while (opModeIsActive() && (theLocalPole.alignedCount < 2) && theLocalPole.properDistanceHighCount < 2) {
-        while (opModeIsActive() ) {
+        while (opModeIsActive() && ((theLocalPole.alignedCount <= 3) || theLocalPole.properDistanceHighCount <= 3)) {
+//      while (opModeIsActive() ) {
             if(theLocalPole.poleAligned) {
                 turnPower = 0.0;
             } else {
                 // Rotate right or left
-                turnPower = theLocalPole.centralOffset > 0 ? 0.085 : -0.085;
+                turnPower = theLocalPole.centralOffset > 0 ? 0.08 : -0.08;
             }
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
@@ -139,14 +149,24 @@ public class PoleOrientationExample extends LinearOpMode
                 br = drivePower + turnPower;
                 robot.driveTrainMotors(fl, fr, bl, br);
             }
-            telemetry.addData("POLE","angle=%c offset=%.1f pix",
+
+            // Shift all previous instrumentation readings down one entry
+            for( int index=1; index<LOGSIZE; index++ ) {
+                angleOffset[index-1] = angleOffset[index];
+                distOffset[index-1]  = distOffset[index];
+            }
+            // Add the latest numbers to the end
+            angleOffset[LOGSIZE-1] = theLocalPole.centralOffset;
+            distOffset[LOGSIZE-1]  = theLocalPole.highDistanceOffset;
+            telemetry.addData("POLE","angle=%c distance=%c",
                     ((theLocalPole.poleAligned)? 'Y':'n'),
-                    theLocalPole.centralOffset );
-            telemetry.addData("POLE","distance=%c offset=%.1f width=%.1f pix",
-                    ((theLocalPole.properDistanceHigh)? 'Y':'n'),
-                    theLocalPole.highDistanceOffset,
-                    theLocalPole.corners.size.height );
+                    ((theLocalPole.properDistanceHigh)? 'Y':'n') );
+            for( int index=0; index<LOGSIZE; index++ ) {
+                telemetry.addData(" ","%d = %.1f  %.1f pix",
+                        index, angleOffset[index], distOffset[index] );
+            }
             telemetry.update();
+            // sleep( 40 );
             theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
         }
         robot.stopMotion();
