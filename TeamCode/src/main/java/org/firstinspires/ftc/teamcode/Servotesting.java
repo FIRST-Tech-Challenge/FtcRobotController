@@ -104,7 +104,7 @@ public class Servotesting extends LinearOpMode {
                 Spin.setPower(-1);
             }
 
-            if (!spinpowerdown && !spinpowerup){
+            if (!spinpowerdown && !spinpowerup ||Spin.getCurrentPosition()<=-31){
                 Spin.setPower(0);
             }
 
