@@ -15,7 +15,7 @@ public class Servotesting extends LinearOpMode {
     private DcMotor backRight;
 
 
-    private CRServo Right;
+
     private CRServo Left;
     private DcMotor Crain;
     private DcMotor Spin;
@@ -40,6 +40,8 @@ public class Servotesting extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         waitForStart();
         while (opModeIsActive()) {
             double turn;
@@ -52,7 +54,8 @@ public class Servotesting extends LinearOpMode {
             boolean spinpowerup;
             boolean spinpowerdown;
             double crainpower;
-            boolean turning;
+            boolean spincenter;
+            boolean opspincenter;
 
             throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
@@ -61,10 +64,12 @@ public class Servotesting extends LinearOpMode {
 
             crainpower = gamepad2.right_stick_y;
             spinpowerup = gamepad2.dpad_right;
+            spincenter = gamepad2.y;
+            opspincenter = gamepad2.x;
             spinpowerdown =gamepad2.dpad_left;
             pickup = gamepad2.left_trigger;
             dropoff = gamepad2.right_trigger;
-            turning = gamepad2.b;
+
 
             if (strafeLeft) {
                 frontLeft.setPower(-.9);
@@ -103,6 +108,22 @@ public class Servotesting extends LinearOpMode {
                 Spin.setPower(0);
             }
 
+            if (spincenter){
+                Spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Spin.setTargetPosition(0);
+                Spin.setPower(1);
+                Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+
+            if (opspincenter){
+                Spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Spin.setTargetPosition(-30);
+                Spin.setPower(1);
+                Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+
             if (pickup>0) {
 
                 Left.setPower(-1);
@@ -119,12 +140,6 @@ public class Servotesting extends LinearOpMode {
                 Left.setPower(0);
 
             }
-
-
-            if (turning){
-                frontLeft.setPower(1);
-            }
-
         }
 
 
