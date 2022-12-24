@@ -1,50 +1,162 @@
 package org.firstinspires.ftc.teamcode;
-import static java.lang.Thread.sleep;
+        import static java.lang.Thread.sleep;
+        import com.qualcomm.hardware.bosch.BNO055IMU;
+        import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.robotcore.hardware.DcMotor;
+        import com.qualcomm.robotcore.hardware.DcMotorSimple;
+        import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+        import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+        import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+        import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+        import com.qualcomm.robotcore.hardware.CRServo;
+        import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+        import org.openftc.easyopencv.OpenCvCamera;
+        import org.openftc.easyopencv.OpenCvCameraFactory;
+        import org.openftc.easyopencv.OpenCvCameraRotation;
+        import org.openftc.apriltag.AprilTagDetection;
+        import java.util.ArrayList;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorImplEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
-
-import com.qualcomm.robotcore.hardware.CRServo;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous
-
 public class BlueLeft extends LinearOpMode {
+    OpenCvCamera webcam;
+    Pipeline aprilTagDetectionPipeline;
 
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
-    OpenCvWebcam webcam;
-    private DcMotor Spin;
-    private DcMotor Crane;
-    private CRServo Left;
+    static final double FEET_PER_METER = 3.28084;
+
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+
+    // UNITS ARE METERS
+    double tagsize = 0.166;
+
+    // Tag ID 1,2,3 from the 36h11 family
+    int LEFT = 1;
+    int MIDDLE = 2;
+    int RIGHT = 3;
+
+    int location;
+
+    AprilTagDetection tagOfInterest = null;
+    DcMotor frontLeft;
+    DcMotor frontRight;
+    DcMotor backLeft;
+    DcMotor backRight;
+    DcMotor Spin;
+    DcMotor Crane;
+    CRServo Left;
 
 
     BNO055IMU imu;
     Orientation angles;
 
-    public void runOpMode() throws InterruptedException {
+
+
+    @Override
+    public void runOpMode() {
         initGyro();
+        int cameraMonitorViewId = hardwareMap.appContext
+                .getResources().getIdentifier("cameraMonitorViewId",
+                        "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new Pipeline(tagsize, fx, fy, cx, cy);
+
+        webcam.setPipeline(aprilTagDetectionPipeline);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
+
+        telemetry.setMsTransmissionInterval(50);
+
+        /*
+         * The INIT-loop:
+         * This REPLACES waitForStart!
+         */
+        while (!isStarted() && !isStopRequested()) {
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+            if (currentDetections.size() != 0) {
+                boolean tagFound = false;
+
+                for (AprilTagDetection tag : currentDetections) {
+                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                }
+
+                if (tagFound) {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
+                } else {
+                    telemetry.addLine("Don't see tag of interest :(");
+
+                    if (tagOfInterest == null) {
+                        telemetry.addLine("(The tag has never been seen)");
+                    } else {
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                        tagToTelemetry(tagOfInterest);
+                    }
+                }
+
+            } else {
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if (tagOfInterest == null) {
+                    telemetry.addLine("(The tag has never been seen)");
+                } else {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+
+            }
+
+            telemetry.update();
+            sleep(20);
+        }
+
+        /*
+         * The START command just came in: now work off the latest snapshot acquired
+         * during the init loop.
+         */
+
+        /* Update the telemetry */
+        if (tagOfInterest != null) {
+            telemetry.addLine("Tag snapshot:\n");
+            tagToTelemetry(tagOfInterest);
+            telemetry.update();
+        } else {
+            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            telemetry.update();
+        }
+
+        /* Actually do something useful */
+        if (tagOfInterest == null) {
+            location=0;
+        } else if (tagOfInterest.id == LEFT) {
+            location=1;
+        } else if (tagOfInterest.id == MIDDLE) {
+            location=2;
+        } else {
+            location=3;
+        }
+
 
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -59,10 +171,8 @@ public class BlueLeft extends LinearOpMode {
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-    //Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
-        waitForStart();//possubly the problem
+        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
         if (opModeIsActive()) {
 
             Left.setPower(.3);
@@ -70,6 +180,7 @@ public class BlueLeft extends LinearOpMode {
             crane(-1,400);
             move(.5,100);
             strafeLeft(1,1000);
+            stopMotors();
             gyroTurning(0);
             sleep(200);
             move(1,1900);
@@ -82,39 +193,26 @@ public class BlueLeft extends LinearOpMode {
             sleep(1300);
             Left.setPower(0);
 
+            switch (location){
+                case 0:
+                    //
+                    break;
+                case 1:
+                    //
+                    break;
+                case 2:
+                    //
+                    break;
 
-
-
-            /*move(1, 1900);
-            gyroTurning(90);
-            move(1, 750);
-
-            Left.setPower(1);
-            craneinput();
-            sleep(1000);
-            Left.setPower(0);
-
-            move(.5,-500);
-            gyroTurning(-90);
-            spin(100, -1600);
-            sleep(1000);
-            move(1, 500);
-
-            /*
-
-            crane(-1500);
-            Left.setPower(-1);
-            crane(-1600);
-            move(1,-200);
-            crane(0);
-            */
-
-
+                case 3:
+                    //
+                    break;
+            }
         }
     }
 
 
-    public void initGyro() {
+    public void initGyro () {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
@@ -125,7 +223,16 @@ public class BlueLeft extends LinearOpMode {
         imu.initialize(parameters);
         sleep(250);
     }
-
+    void tagToTelemetry (AprilTagDetection detection)
+    {
+        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x * FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y * FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z * FEET_PER_METER));
+        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
     public boolean gyroTurning(double targetAngle) {
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -181,7 +288,7 @@ public class BlueLeft extends LinearOpMode {
         return foundAngle;
     }
 
-    public void stopMotors() throws InterruptedException {
+    public void stopMotors() {
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
@@ -225,7 +332,7 @@ public class BlueLeft extends LinearOpMode {
         }
     }
 
-    public void strafeLeft(double power, int position) throws InterruptedException {
+    public void strafeLeft(double power, int position)  {
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -252,7 +359,7 @@ public class BlueLeft extends LinearOpMode {
 
     }
 
-    public void strafeRight(double power, int position) throws InterruptedException {
+    public void strafeRight(double power, int position)  {
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -308,10 +415,14 @@ public class BlueLeft extends LinearOpMode {
     }
 
     public void crane(double power, int time) {
-       Crane.setPower(power);
-       sleep(time);
-       Crane.setPower(0);
+        Crane.setPower(power);
+        sleep(time);
+        Crane.setPower(0);
 
     }
+
+
 }
+
+
 

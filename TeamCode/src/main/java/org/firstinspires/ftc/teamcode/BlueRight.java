@@ -175,15 +175,23 @@ public class BlueRight extends LinearOpMode {
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
         if (opModeIsActive()) {
 
-            crane(-1, 400);
-            move(.5, 200);
-            strafeLeft(1, 1000);
+            Left.setPower(.3);
+            sleep(500);
+            crane(-1,400);
+            move(.5,100);
+            strafeRight(1,1000);
+            stopMotors();
             gyroTurning(0);
-            sleep(2000);
-            move(1, 2000);
-            gyroTurning(-90);
-            move(1, 600);
-            crane(-1, 3600);
+            sleep(200);
+            move(1,1900);
+            gyroTurning(90);
+            move(1,750);
+            crane(-1,3600);
+            gyroTurning(145);
+            move(.5,400);
+            Left.setPower(-1);
+            sleep(1300);
+            Left.setPower(0);
 
             switch (location){
                 case 0:
@@ -281,7 +289,7 @@ public class BlueRight extends LinearOpMode {
             return foundAngle;
         }
 
-        public void stopMotors () throws InterruptedException {
+        public void stopMotors () {
             frontLeft.setPower(0);
             frontRight.setPower(0);
             backLeft.setPower(0);
@@ -352,7 +360,7 @@ public class BlueRight extends LinearOpMode {
 
         }
 
-        public void strafeRight ( double power, int position) throws InterruptedException {
+        public void strafeRight ( double power, int position)  {
             frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
