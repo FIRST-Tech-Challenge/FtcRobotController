@@ -8,7 +8,7 @@ public class ClawSubsystem extends SubsystemBase {
     private final Servo servo;
 
     public enum State {
-        GRAB, RELEASE
+        REST, INTAKE, RELEASE
     };
 
     State state;
@@ -20,7 +20,7 @@ public class ClawSubsystem extends SubsystemBase {
 
     public void grab() {
         servo.setPosition(0.75);
-        state = State.GRAB;
+        state = State.REST;
     }
 
     public void release() {
