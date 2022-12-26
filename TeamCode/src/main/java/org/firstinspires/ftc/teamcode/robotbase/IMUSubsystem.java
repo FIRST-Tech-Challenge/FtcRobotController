@@ -14,10 +14,12 @@ public class IMUSubsystem extends SubsystemBase {
     private final Telemetry telemetry;
     private final Telemetry dashboardTelemetry;
 
-    private double previousRawValue = 0;
+    private double previousRawYaw = 0;
     private double turns = 0;
-    private double rawValue;
-    private double contValue;
+    private double rawYaw, rawPitch, rawRoll;
+    private double contYaw;
+
+    private double[] angles;
 
     public IMUSubsystem(HardwareMap hardwareMap, Telemetry telemetry,
                         Telemetry dashboardTelemetry) {
@@ -37,29 +39,46 @@ public class IMUSubsystem extends SubsystemBase {
     }
 
     public void periodic() {
-        rawValue = imu.getHeading();
+        angles = imu.getYawPitchRoll();
+        rawYaw = angles[0];
+        rawPitch = angles[1];
+        rawRoll = angles[2];
 
         calculateContinuousValue();
 
-        telemetry.addData("Gyro Value:", rawValue);
-        telemetry.addData("Continuous Gyro Value:", contValue);
-        dashboardTelemetry.addData("Raw Gyro Value: ", rawValue);
+        telemetry.addData("Gyro Yaw:", rawYaw);
+        telemetry.addData("Gyro Pitch:", rawPitch);
+        telemetry.addData("Gyro Roll:", rawRoll);
+        telemetry.addData("Continuous Gyro Value:", contYaw);
+
+        dashboardTelemetry.addData("Raw Gyro Value: ", rawYaw);
+        dashboardTelemetry.addData("Gyro Pitch:", rawPitch);
+        dashboardTelemetry.addData("Gyro Roll:", rawRoll);
+        dashboardTelemetry.addData("Continuous Gyro Value:", contYaw);
     }
 
-    public double getValue() {
-        return contValue;
+    public double getYaw() {
+        return contYaw;
     }
 
-    public double getRawValue() {
-        return rawValue;
+    public double getRawYaw() {
+        return rawYaw;
+    }
+
+    public double getPitch() {
+        return rawPitch;
+    }
+
+    public double getRoll() {
+        return rawRoll;
     }
 
     public int findClosestOrientationTarget() {
-        double dist, minDist = Math.abs(contValue);
+        double dist, minDist = Math.abs(contYaw);
         int minDistIdx = 0;
-        int maxIdx = (int) Math.ceil(Math.abs(contValue) / 90);
+        int maxIdx = (int) Math.ceil(Math.abs(contYaw) / 90);
         for (int i = -maxIdx; i <= maxIdx; ++i) {
-            dist = Math.abs(i * 90 - contValue);
+            dist = Math.abs(i * 90 - contYaw);
             if (dist < minDist) {
                 minDistIdx = i;
                 minDist = dist;
@@ -70,10 +89,10 @@ public class IMUSubsystem extends SubsystemBase {
     }
 
     private void calculateContinuousValue() {
-        if (Math.abs(rawValue - previousRawValue) >= 180)
-            turns += (rawValue > previousRawValue) ? -1 : 1;
+        if (Math.abs(rawYaw - previousRawYaw) >= 180)
+            turns += (rawYaw > previousRawYaw) ? -1 : 1;
 
-        previousRawValue = rawValue;
-        contValue = rawValue + 360 * turns;
+        previousRawYaw = rawYaw;
+        contYaw = rawYaw + 360 * turns;
     }
 }

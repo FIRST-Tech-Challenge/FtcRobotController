@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.hardware.GyroEx;
 //import com.qualcomm.hardware.IMU;
+import com.arcrobotics.ftclib.hardware.HardwareDevice;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.bosch.BHI260IMU;
@@ -15,9 +16,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Disabled
-public class RevIMU extends GyroEx {
+public class RevIMU implements HardwareDevice {
 
     private IMU revIMU;
 
@@ -98,51 +100,35 @@ public class RevIMU extends GyroEx {
     }
 
     /**
-     * @return Relative heading of the robot
-     */
-    public double getHeading() {
-        // Return yaw
-        return getAbsoluteHeading() - offset;
-    }
-
-    /**
      * @return Absolute heading of the robot
      */
-    @Override
-    public double getAbsoluteHeading() {
-        return revIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) * multiplier;
-    }
+//    @Override
+//    public double getYaw() {
+//        return revIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) * multiplier;
+//    }
+//
+//    @Override
+//    public double getPitch() {
+//        return revIMU.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES) * multiplier;
+//    }
+//
+//    @Override
+//    public double getRoll() {
+//        return revIMU.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES) * multiplier;
+//    }
 
     /**
      * @return X, Y, Z angles of gyro
      */
-    public double[] getAngles() {
+    public double[] getYawPitchRoll() {
         // make a singular hardware call
-        Orientation orientation = revIMU.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-        return new double[]{orientation.firstAngle, orientation.secondAngle, orientation.thirdAngle};
+        YawPitchRollAngles ypr_angles = revIMU.getRobotYawPitchRollAngles();
+        return new double[]{ypr_angles.getYaw(AngleUnit.DEGREES),
+                ypr_angles.getPitch(AngleUnit.DEGREES), ypr_angles.getRoll(AngleUnit.DEGREES)};
     }
 
-    /**
-     * @return Transforms heading into {@link Rotation2d}
-     */
-    @Override
-    public Rotation2d getRotation2d() {
-        return Rotation2d.fromDegrees(getHeading());
-    }
-
-    @Override
     public void disable() {
         revIMU.close();
-    }
-
-    @Override
-    public void reset() {
-        offset += getHeading();
-    }
-
-    @Override
-    public String getDeviceType() {
-        return "Rev Expansion Hub IMU";
     }
 
     /**
@@ -150,6 +136,11 @@ public class RevIMU extends GyroEx {
      */
     public IMU getRevIMU() {
         return revIMU;
+    }
+
+    @Override
+    public String getDeviceType() {
+        return "Rev Control Hub IMU";
     }
 
 }

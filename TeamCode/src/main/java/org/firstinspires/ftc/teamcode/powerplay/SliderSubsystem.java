@@ -9,7 +9,7 @@ public class SliderSubsystem extends SubsystemBase {
     private final MotorEx motor;
 
     public enum Level {
-        PARK, INTAKE, ONE, TWO, THREE;
+        PARK, GRAB, LOW, MID, HIGH;
     }
 
     private Level level;
@@ -38,13 +38,13 @@ public class SliderSubsystem extends SubsystemBase {
         level = levelPicked;
         int levelIdx = 1;
 
-        if(level == Level.ONE)
+        if(level == Level.LOW)
             levelIdx = 2;
-        else if (level == Level.TWO)
+        else if (level == Level.MID)
             levelIdx = 3;
-        else if (level == Level.THREE)
+        else if (level == Level.HIGH)
             levelIdx = 4;
-        else if (level == Level.INTAKE)
+        else if (level == Level.GRAB)
             levelIdx = 0;
 
         motor.setTargetPosition(levelPositions[levelIdx]);

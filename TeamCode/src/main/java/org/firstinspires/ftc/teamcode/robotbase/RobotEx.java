@@ -27,16 +27,19 @@ public class RobotEx {
     protected HeadingControllerSubsystem cameraFollow;
     protected final Boolean initCamera;
 
+    protected BalancingSubsystem balancer;
+
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
                    GamepadEx toolOp) {
         this(hardwareMap, telemetry, driverOp, toolOp, false, true,
-                false, false, false, false);
+                false, false, false, false,
+                false);
     }
 
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
                    GamepadEx toolOp, Boolean initCamera, Boolean useCameraFollower,
                    Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
-                   Boolean rearRightInvert) {
+                   Boolean rearRightInvert, Boolean useBalancingController) {
         this.initCamera = initCamera;
         ///////////////////////////////////////// Gamepads /////////////////////////////////////////
         this.driverOp = driverOp;
@@ -62,15 +65,16 @@ public class RobotEx {
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
         drive = new MecanumDriveSubsystem(hardwareMap, frontLeftInvert, frontRightInvert,
                 rearLeftInvert, rearRightInvert);
-        driveCommand = new MecanumDriveCommand(drive, driverOp::getLeftY, driverOp::getLeftX,
-                this::drivetrainTurn, gyro::getRawValue,
+        driveCommand = new MecanumDriveCommand(drive, this::drivetrainForward,
+                this::drivetrainStrafe, this::drivetrainTurn, gyro::getRawYaw,
                 () -> driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
 
         CommandScheduler.getInstance().registerSubsystem(drive);
         drive.setDefaultCommand(driveCommand);
 
         /////////////////////////////////////// Gyro Follower //////////////////////////////////////
-        gyroFollow = new HeadingControllerSubsystem(gyro::getValue,
+
+        gyroFollow = new HeadingControllerSubsystem(gyro::getYaw,
                 gyro::findClosestOrientationTarget);
         new Trigger(() -> driverOp.getRightY() >= 0.8).whenActive(
                 new InstantCommand(() -> gyroFollow.setGyroTarget(0), gyroFollow));
@@ -91,6 +95,13 @@ public class RobotEx {
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
+        /////////////////////////////////// Balancing Controller ///////////////////////////////////
+        if (useBalancingController) {
+            balancer = new BalancingSubsystem(gyro::getPitch, gyro::getRoll);
+        }
+
+        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
+                .whenPressed(new InstantCommand(balancer::toggleState, balancer));
         ////////////////////////////////////// Camera Follower /////////////////////////////////////
         if (initCamera && useCameraFollower) {
             cameraFollow = new HeadingControllerSubsystem(camera::getObject_x);
@@ -103,6 +114,20 @@ public class RobotEx {
 
     public void initMechanisms(HardwareMap hardwareMap) {
         // should be overridden by child class
+    }
+
+    public double drivetrainStrafe() {
+        if (balancer.isEnabled())
+            return balancer.getRollCorrection() + driverOp.getLeftX();
+
+        return driverOp.getLeftX();
+    }
+
+    public double drivetrainForward() {
+        if (balancer.isEnabled())
+            return balancer.getPitchCorrection() + driverOp.getLeftY();
+
+        return driverOp.getLeftY();
     }
 
     public double drivetrainTurn() {
