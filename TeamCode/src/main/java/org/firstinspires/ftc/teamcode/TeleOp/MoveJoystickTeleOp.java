@@ -99,12 +99,6 @@ public class MoveJoystickTeleOp extends OpMode {
 //                if (gamepad1.right_stick_x > 0.3 && gamepad1.right_stick_y > 0.3) moveJoystick.JoystickCurveBy((direction + 3) % 4);
 //                if (gamepad1.right_stick_x < -0.3 && gamepad1.right_stick_y > 0.3) moveJoystick.JoystickCurveBy((direction + 2) % 4);
 //            }
-
-
-            telemetry.addLine("gamepad1.left_stick_x:" + gamepad1.left_stick_x);
-            telemetry.addLine("gamepad1.left_stick_y:" + gamepad1.left_stick_y);
-            telemetry.addLine("orientation:" + rotationDetector.ReturnPositiveRotation());
-            telemetry.update();
         }
         else move.MoveStop();
 
@@ -120,7 +114,12 @@ public class MoveJoystickTeleOp extends OpMode {
 //        else move.MoveStop(); //posibil sa interfereze cu primul nest
 
 
-
+        telemetry.addLine("gamepad1.left_stick_x:" + gamepad1.left_stick_x);
+        telemetry.addLine("gamepad1.left_stick_y:" + gamepad1.left_stick_y);
+        telemetry.addLine("gamepad1.right_stick_x:" + gamepad1.right_stick_x);
+        telemetry.addLine("gamepad1.right_stick_y:" + gamepad1.right_stick_y);
+        telemetry.addLine("orientation:" + rotationDetector.ReturnPositiveRotation());
+        telemetry.update();
     }
 
 
