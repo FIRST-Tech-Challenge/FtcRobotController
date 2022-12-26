@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.powerplay;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robotbase.RobotEx;
 public class PowerPlayRobot extends RobotEx {
     private ClawSubsystem claw;
     private SliderSubsystem slider;
+    private ArmSubsystem arm;
 
     public PowerPlayRobot(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
                           GamepadEx toolOp) {
@@ -24,20 +28,32 @@ public class PowerPlayRobot extends RobotEx {
                 .whenPressed(new ClawCommand(claw));
 
         ////////////////////////////////////////// Slider //////////////////////////////////////////
-//        slider = new SliderSubsystem(hardwareMap);
-//
-//        //Levels
-//        toolOp.getGamepadButton(GamepadKeys.Button.X)
-//                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.ONE));
-//        toolOp.getGamepadButton(GamepadKeys.Button.Y)
-//                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.TWO));
-//        toolOp.getGamepadButton(GamepadKeys.Button.B)
-//                .whileHeld(new SliderCommand(slider, SliderSubsystem.Level.THREE));
+        slider = new SliderSubsystem(hardwareMap);
 
-        //Manual Height Adjustment
-//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-//                .whileHeld(new SliderManualCommand(slider, -1));
-//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-//                .whileHeld(new SliderManualCommand(slider, 1));
+        //Levels
+        toolOp.getGamepadButton(GamepadKeys.Button.X)
+                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.ONE));
+        toolOp.getGamepadButton(GamepadKeys.Button.Y)
+                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.TWO));
+        toolOp.getGamepadButton(GamepadKeys.Button.B)
+                .whileHeld(new SliderCommand(slider, SliderSubsystem.Level.THREE));
+
+//        Manual Height Adjustment
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whileHeld(new SliderManualCommand(slider, -1));
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                .whileHeld(new SliderManualCommand(slider, 1));
+
+        ////////////////////////////////////////// Auto Actions //////////////////////////////////////////
+        arm = new ArmSubsystem(hardwareMap);
+
+        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new SequentialCommandGroup(
+                        new ParallelCommandGroup(
+                                new InstantCommand(arm::backward, arm),
+                                new InstantCommand(claw::release, claw)
+                        ),
+                        new SliderCommand(slider, SliderSubsystem.Level.GRABBING)
+                ));
     }
 }

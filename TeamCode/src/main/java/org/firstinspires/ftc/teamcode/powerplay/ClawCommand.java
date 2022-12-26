@@ -9,7 +9,7 @@ public class ClawCommand extends CommandBase {
 
     public ClawCommand(ClawSubsystem claw) {
         this.claw = claw;
-        addRequirements(this.claw);
+        addRequirements(claw);
     }
 
     @Override
@@ -18,7 +18,7 @@ public class ClawCommand extends CommandBase {
 
         if (clawState == ClawSubsystem.State.RELEASE)
             claw.grab();
-        else if (clawState == ClawSubsystem.State.REST)
+        else if (clawState == ClawSubsystem.State.GRAB)
             claw.release();
     }
 
