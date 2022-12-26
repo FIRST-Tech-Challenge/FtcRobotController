@@ -84,14 +84,14 @@ public class MoveJoystickTeleOp extends OpMode {
 
         if (gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0) {
             if (Math.abs(gamepad1.right_stick_x) < Math.abs(gamepad1.right_stick_y)){
-                if (gamepad1.right_stick_y < 0) moveJoystick.MoveJoystickRaw(direction,gamepad1.right_stick_y);
-                else moveJoystick.MoveJoystickRaw((direction + 2) % 4,gamepad1.right_stick_y);
+                if (gamepad1.right_stick_y < 0) moveJoystick.MoveJoystickRaw(direction, Math.abs(gamepad1.right_stick_y));
+                else moveJoystick.MoveJoystickRaw((direction + 2) % 4, Math.abs(gamepad1.right_stick_y));
 
 
             }
             else if (Math.abs(gamepad1.right_stick_x) > Math.abs(gamepad1.right_stick_y)){
-                if (gamepad1.right_stick_x > 0) moveJoystick.MoveJoystickRaw((direction + 1) % 4,gamepad1.right_stick_x);
-                else moveJoystick.MoveJoystickRaw((direction + 3) % 4,gamepad1.right_stick_x);
+                if (gamepad1.right_stick_x > 0) moveJoystick.MoveJoystickRaw((direction + 1) % 4, Math.abs(gamepad1.right_stick_x));
+                else moveJoystick.MoveJoystickRaw((direction + 3) % 4, Math.abs(gamepad1.right_stick_x));
             }
 //            else{
 //                if (gamepad1.right_stick_x > 0.3 && gamepad1.right_stick_y < -0.3) moveJoystick.JoystickCurveBy(direction);
