@@ -32,8 +32,6 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.List;
-
 /*
  * This is an advanced sample showcasing detecting and determining the orientation
  * of multiple cones, switching the viewport output, and communicating the results
@@ -71,7 +69,9 @@ public class ConeOrientationExample extends LinearOpMode
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                pipeline = new PowerPlaySuperPipeline(false, true, false, 160.0);
+                pipeline = new PowerPlaySuperPipeline(false, false,
+                        true, false, 160.0, false,
+                        false);
                 webcam.setPipeline(pipeline);
             }
 
@@ -113,9 +113,7 @@ public class ConeOrientationExample extends LinearOpMode
             robot.turretPosRun();
 
             // Figure out which poles the pipeline detected, and print them to telemetry
-            synchronized(pipeline.lockRedCone) {
-                cone = pipeline.getDetectedRedCone();
-            }
+            cone = pipeline.getDetectedRedCone();
             if(cone != null) {
                 telemetry.addLine(String.format("Cone: Center=%s, Central Offset=%f, Centered:%s", cone.corners.center.toString(), cone.centralOffset, cone.coneAligned));
                 telemetry.addLine(String.format("Cone Width=%f Cone Height=%f", cone.corners.size.width, cone.corners.size.height));

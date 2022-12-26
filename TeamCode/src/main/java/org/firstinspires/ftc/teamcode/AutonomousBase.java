@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
-import java.util.List;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
@@ -70,7 +69,9 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean gamepad1_r_bumper_last, gamepad1_r_bumper_now=false;
 
     // Vision stuff
-    PowerPlaySuperPipeline pipeline;
+    PowerPlaySuperPipeline pipelineLow;
+    PowerPlaySuperPipeline pipelineFront;
+    PowerPlaySuperPipeline pipelineBack;
 
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {
@@ -149,7 +150,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterRedCone() {
         PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
-        theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipeline.getDetectedRedCone());
+        theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipelineLow.getDetectedRedCone());
         while (opModeIsActive() && (theLocalCone.alignedCount < 2)) {
             performEveryLoop();
             if(theLocalCone.coneAligned) {
@@ -157,7 +158,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             } else {
                 robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.085 : -0.085);
             }
-            theLocalCone = pipeline.getDetectedRedCone();
+            theLocalCone = pipelineLow.getDetectedRedCone();
         }
         robot.stopMotion();
             // TODO: can we use this aligned position along the tape to update our known
@@ -167,7 +168,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterBlueCone() {
         PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
-        theLocalCone = pipeline.getDetectedBlueCone();
+        theLocalCone = pipelineLow.getDetectedBlueCone();
         while (opModeIsActive() && (theLocalCone.alignedCount < 2)) {
             performEveryLoop();
             if(theLocalCone.coneAligned) {
@@ -175,7 +176,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             } else {
                 robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.085 : -0.085);
             }
-            theLocalCone = pipeline.getDetectedBlueCone();
+            theLocalCone = pipelineLow.getDetectedBlueCone();
         }
         robot.stopMotion();
         // TODO: can we use this aligned position along the tape to update our known
@@ -185,7 +186,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
+        theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipelineLow.getDetectedPole());
         while (opModeIsActive() && (theLocalPole.alignedCount < 2)) {
             performEveryLoop();
             if(theLocalPole.poleAligned) {
@@ -193,7 +194,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             } else {
                 robot.driveTrainTurn((theLocalPole.centralOffset > 0) ? +0.085 : -0.085);
             }
-            theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
+            theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipelineLow.getDetectedPole());
         }
         robot.stopMotion();
         // TODO: can we use this aligned position along the tape to update our known

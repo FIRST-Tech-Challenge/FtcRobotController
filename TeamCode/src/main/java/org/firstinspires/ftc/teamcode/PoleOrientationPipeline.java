@@ -57,8 +57,8 @@ import java.util.List;
         /*
          * The elements we use for noise reduction
          */
-        Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
-        Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
+        Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 3));
+        Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 6));
 
         /*
          * The box constraint that considers a pole "centered"
@@ -88,8 +88,8 @@ import java.util.List;
         }
 
         ArrayList<AnalyzedPole> internalPoleList = new ArrayList<>();
-        volatile List<AnalyzedPole> clientPoleList = Collections.synchronizedList(new ArrayList<AnalyzedPole>());
-        volatile AnalyzedPole thePole = new AnalyzedPole();
+        List<AnalyzedPole> clientPoleList = Collections.synchronizedList(new ArrayList<AnalyzedPole>());
+        AnalyzedPole thePole = new AnalyzedPole();
 
         @Override
         public Mat processFrame(Mat input)

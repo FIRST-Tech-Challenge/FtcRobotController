@@ -30,7 +30,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import java.util.List;
 
 /*
  * This is an advanced sample showcasing detecting and determining the orientation
@@ -75,7 +74,9 @@ public class PoleOrientationExample extends LinearOpMode
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN );
 
-                pipeline = new PowerPlaySuperPipeline(true, false, false, 160.0);
+                pipeline = new PowerPlaySuperPipeline(false, true,
+                        false, false, 160.0, false,
+                        false);
                 webcam.setPipeline(pipeline);
             }
 

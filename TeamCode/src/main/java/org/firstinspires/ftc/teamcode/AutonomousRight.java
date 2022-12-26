@@ -42,7 +42,9 @@ public class AutonomousRight extends AutonomousBase {
 
 //  double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
-    OpenCvCamera webcam;
+    OpenCvCamera webcamLow;
+    OpenCvCamera webcamFront;
+    OpenCvCamera webcamBack;
     public int signalZone = 0;   // dynamic (gets updated every cycle during INIT)
 
     ElapsedTime releaseTimer = new ElapsedTime();
@@ -60,20 +62,65 @@ public class AutonomousRight extends AutonomousBase {
         telemetry.addData("State", "Initializing webcam (please wait)");
         telemetry.update();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
+                .splitLayoutForMultipleViewports(
+                        cameraMonitorViewId, //The container we're splitting
+                        3, //The number of sub-containers to create
+                        OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
+        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam Low"), viewportContainerIds[0]);
+        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                webcam.setPipeline(new PipelinePowerPlay(true, true));
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                pipelineLow = new PowerPlaySuperPipeline(true, false,
+                        false, false, 160.0, blueAlliance, false);
+                webcamLow.setPipeline(pipelineLow);
+                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
             public void onError(int errorCode)
             {
-               // This will be called if the camera could not be opened
+                // This will be called if the camera could not be opened
+            }
+        });
+
+        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam Front"), viewportContainerIds[1]);
+        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineFront = new PowerPlaySuperPipeline(false, true,
+                        false, false, 160.0, blueAlliance, false);
+                webcamFront.setPipeline(pipelineFront);
+                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
+
+        webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam Back"), viewportContainerIds[2]);
+        webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineBack = new PowerPlaySuperPipeline(false, true,
+                        false, false, 160.0, blueAlliance, false);
+                webcamBack.setPipeline(pipelineBack);
+                webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
             }
         });
 
@@ -81,9 +128,9 @@ public class AutonomousRight extends AutonomousBase {
         while (!isStarted()) {
             telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
             telemetry.addData("STARTING", "%s", "RIGHT");
-            telemetry.addData("Signal Detect", "R: " + PipelinePowerPlay.avgR + " G: " +
-                    PipelinePowerPlay.avgG + " B: " + PipelinePowerPlay.avgB + " Zone: " +
-                    PipelinePowerPlay.signalZone);
+            telemetry.addData("Signal Detect", "R: " + pipelineLow.avgR + " G: " +
+                    pipelineLow.avgG + " B: " + pipelineLow.avgB + " Zone: " +
+                    pipelineLow.signalZone);
             telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
             telemetry.addData("(use %s bumpers to modify", "LEFT/RIGHT");
             telemetry.update();
@@ -112,38 +159,19 @@ public class AutonomousRight extends AutonomousBase {
         // Start the autonomous timer so we know how much time is remaining for cone cycling
         autonomousTimer.reset();
 
-        // Sampling is completed during the INIT stage; No longer need camera active/streaming
-        webcam.stopStreaming();
-
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
-            signalZone = PipelinePowerPlay.signalZone;
-            PipelinePowerPlay.saveLastAutoImage();
+            signalZone = pipelineLow.signalZone;
+            pipelineLow.saveLastAutoImage();
         }
-
-        webcam.closeCameraDevice();
-
-        // Open async and start streaming inside opened callback
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-
-                pipeline = new PowerPlaySuperPipeline(true, !blueAlliance, blueAlliance, 160.0);
-                webcam.setPipeline(pipeline);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
+        // Turn off detecting the signal.
+        pipelineLow.signalDetection(false);
+        // Enable objectdetection of objects we are interested in
+        if(blueAlliance) {
+            pipelineLow.blueConeDetection(true);
+        } else {
+            pipelineLow.redConeDetection(true);
+        }
 
         //---------------------------------------------------------------------------------
         // UNIT TEST: The following methods verify our basic robot actions.
