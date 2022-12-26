@@ -20,16 +20,57 @@ public class PipePoleTracker extends OpenCvPipeline {
     static boolean level2Capable = false;
     static int x_resolution;
     static int y_resolution;
-    static int focusRectWidth;
-    static int focusRectHeight;
+    static int focusRectWidth = 0;
+    static int focusRectHeight = 0;
     static int minimumWidth;
     static int minimumHeight;
+    static int box_width = 0;
+    static int box_height = 0;
+
+    static int boxBL_x;
+    static int boxBL_y;
+
 
     Mat inputHSV = new Mat();
     Mat inputMask = new Mat();
     Mat inputOriginal = new Mat();
     Mat inputMaskOriginal = new Mat();
     Mat mat = new Mat();
+
+    int gridX = 20;
+    int gridY = 20;
+    int gridTotal = gridX * gridY;
+
+    static boolean level1Assigment = true;
+    static boolean level2 = false;
+    static boolean level2Assignment = false;
+//    level2Capable = false;
+    static boolean level3 = false;
+
+    Rect focusRect = new Rect();
+
+    Rect[][] rectanglesGrid = new Rect[gridY][gridX];
+    Rect[][] rectanglesGridDraw = new Rect[gridY][gridX];
+    Mat[][] matsGrid = new Mat[gridY][gridX];
+    boolean[][] identifiedBoxesBoolean = new boolean[gridY][gridX];
+    int[][] centersX = new int[gridY][gridX];
+    int[][] centersXDraw = new int[gridY][gridX];
+    int[][] centersY = new int[gridY][gridX];
+    int[][] centersYDraw = new int[gridY][gridX];
+
+
+    Scalar white = new Scalar(0, 0, 0); // In grey scale
+    Scalar grey = new Scalar(75, 0, 0); // In grey scale
+    Scalar red = new Scalar(0, 0, 255); // in BGR
+    Scalar blue = new Scalar(255, 0, 0); // in BGR
+    Scalar green = new Scalar(0, 255, 0); // in BGR
+    Scalar yellow = new Scalar(0,255,255); // in BGR
+
+
+    static int lowestX = 0;
+    static int highestX = 0;
+    static int lowestY = 0;
+    static int highestY = 0;
 
     PipePoleTracker(String level){
         levelString = level;
@@ -39,53 +80,24 @@ public class PipePoleTracker extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
 
 
-        Scalar white = new Scalar(0, 0, 0); // In grey scale
-        Scalar grey = new Scalar(75, 0, 0); // In grey scale
-        Scalar red = new Scalar(0, 0, 255); // in BGR
-        Scalar blue = new Scalar(255, 0, 0); // in BGR
-        Scalar green = new Scalar(0, 255, 0); // in BGR
-        Scalar yellow = new Scalar(0,255,255); // in BGR
-
-
         Imgproc.cvtColor(input,inputHSV,Imgproc.COLOR_BGR2HSV);
         Core.inRange(inputHSV, new Scalar(81, 115, 164), new Scalar(107, 255, 255), inputMask);
 
-        int gridX = 20;
-        int gridY = 20;
-        int gridTotal = gridX * gridY;
+
 
         x_resolution = input.cols();
         y_resolution = input.rows();
 
-        int box_width = (int)(x_resolution/gridX);
-        int box_height = (int)(y_resolution/gridY);
+        box_width = (int)(x_resolution/gridX);
+        box_height = (int)(y_resolution/gridY);
 
-        boolean level1Assigment = true;
-        boolean level2 = false;
-        boolean level2Assignment = false;
-        level2Capable = false;
-        boolean level3 = false;
-
-        Rect focusRect = new Rect();
-
-        Rect[][] rectanglesGrid = new Rect[gridY][gridX];
-        Rect[][] rectanglesGridDraw = new Rect[gridY][gridX];
-        Mat[][] matsGrid = new Mat[gridY][gridX];
-        boolean[][] identifiedBoxesBoolean = new boolean[gridY][gridX];
-        int[][] centersX = new int[gridY][gridX];
-        int[][] centersXDraw = new int[gridY][gridX];
-        int[][] centersY = new int[gridY][gridX];
-        int[][] centersYDraw = new int[gridY][gridX];
-
-
-        int lowestX = (int)x_resolution;
-        int highestX = 0;
-        int lowestY = (int)y_resolution;
-        int highestY = 0;
-        focusRectWidth = 0;
-        focusRectHeight = 0;
         minimumWidth = box_width*5; //Pole SHOULD be 2 boxes wide, but focus rect adds 1.5 on each side
         minimumHeight = box_height*11; //Pole SHOULD be 10 boxes high, but focus rect adds 0.5 on each side
+
+
+//        focusRectWidth = 0;
+//        focusRectHeight = 0;
+
 
 
 
@@ -124,14 +136,13 @@ public class PipePoleTracker extends OpenCvPipeline {
 
             //"input" is image operated on, whereas "inputOriginal" will be drawn on
             inputOriginal = input;
-//            input.copyTo(inputOriginal);
             inputMaskOriginal = inputMask;
 
             percentColor = Core.countNonZero(inputMask);
 
 
 
-            // Level1 and Level2 Run the same grid code, so they are in the same 'grouping.' The only difference is the
+            // Level1 and Level2 run the same grid code, so they are in the same 'grouping.' The only difference is the
             // beginning below where the region of interest (full image or focusRect) is established.
             if(levelString.equals("one") || levelString.equals("two")) {
 
@@ -143,8 +154,15 @@ public class PipePoleTracker extends OpenCvPipeline {
                     x_resolution = inputMask.cols();
                     y_resolution = inputMask.rows();
 
+                    lowestX = (int)x_resolution;
+                    highestX = 0;
+                    lowestY = (int)y_resolution;
+                    highestY = 0;
+
                     box_width = (int) (x_resolution / gridX);
                     box_height = (int) (y_resolution / gridY);
+
+
 
                     // Creating grid's rectangles
                     for (int i = 0; i < gridY; i++) {
@@ -157,7 +175,9 @@ public class PipePoleTracker extends OpenCvPipeline {
                             rectanglesGridDraw[i][j] = new Rect(rectTL, rectBR);
                         }
                     }
+
                     level1Assigment = true;
+                    level2Assignment = false;
                 }
 
                 /**
@@ -169,6 +189,9 @@ public class PipePoleTracker extends OpenCvPipeline {
                 if (levelString.equals("two") && level2Assignment == true) {
                     input = input.submat(focusRect);
                     inputMask = inputMask.submat(focusRect);
+
+                    x_resolution = inputMask.cols();
+                    y_resolution = inputMask.rows();
                 }
 
                 if (levelString.equals("two") && level2Assignment == false && focusRect != null) {
@@ -196,8 +219,13 @@ public class PipePoleTracker extends OpenCvPipeline {
 
 
                     level2Assignment = true;
+                    level1Assigment = false;
                     System.out.println("_______________Level2Assigment!_______________");
                 }
+
+                boxBL_x = rectanglesGridDraw[gridY-1][gridX-1].x;
+                boxBL_y = rectanglesGridDraw[gridY-1][gridX-1].y;
+
 
                 // Creating grid's subMats
                 for (int i = 0; i < gridY; i++) {
@@ -545,7 +573,7 @@ public class PipePoleTracker extends OpenCvPipeline {
                     //If we are in level one, we continue drawing a rectangle around the largest object (prep for level 2 & 3)
                     if (levelString.equals("one")) {
 
-                        focusRect = null;
+//                        focusRect = null;
 
                         lowestX = (int) x_resolution;
                         highestX = 0;
@@ -601,9 +629,9 @@ public class PipePoleTracker extends OpenCvPipeline {
 
 
 
-                        focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
+//                        focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
                         Mat focusSubMat = inputMask.submat(focusRect);
-                        Imgproc.rectangle(inputOriginal, focusRect, red, 2);
+//                        Imgproc.rectangle(inputOriginal, focusRect, red, 2);
 
                     }
 
@@ -648,8 +676,12 @@ public class PipePoleTracker extends OpenCvPipeline {
              * outside of the level bracket (runs regardless of level) below
              */
 
-            focusRectWidth = focusRect.width;
-            focusRectHeight = focusRect.height;
+
+        focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
+        Imgproc.rectangle(inputOriginal, focusRect, red, 2);
+
+        focusRectWidth = focusRect.width;
+        focusRectHeight = focusRect.height;
 
             //For the moment, let's assume that the min width is 2 boxes, and min height 10 boxes
 
@@ -662,13 +694,14 @@ public class PipePoleTracker extends OpenCvPipeline {
             }
 
 
+
         inputMask.release();
         inputMaskOriginal.release();
         inputHSV.release();
 //        inputOriginal.release();
 
 
-        return input;
+        return inputOriginal;
     }
 
 
@@ -705,5 +738,45 @@ public class PipePoleTracker extends OpenCvPipeline {
     public static int getMinRectHeight(){
         return minimumHeight;
     }
+
+    public static int getBoxWidth(){
+        return box_width;
+    }
+
+    public static int getBoxHeight(){
+        return box_height;
+    }
+
+    public static int getLowestX(){
+        return lowestX;
+    }
+
+    public static int getHighestX(){
+        return highestX;
+    }
+
+    public static int getLowestY(){
+        return lowestY;
+    }
+
+    public static int getHighestY(){
+        return highestY;
+    }
+
+    public static int getBoxBL_X(){return boxBL_x;}
+
+    public static int getBoxBL_Y(){
+        return boxBL_y;
+    }
+
+    public static boolean getLevel1Assigment(){
+        return level1Assigment;
+    }
+
+    public static boolean getLevel2Assigment(){
+        return level2Assignment;
+    }
+
+
 
 }
