@@ -71,10 +71,10 @@ public class PP_MecanumTeleOp extends OpMode
         motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("FR"); // Pin 3
         motorBackRight = (DcMotorEx) hardwareMap.dcMotor.get("BR"); // Pin 2
 
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Running without an encoder does NOT disable encoder counting
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Running without an encoder does NOT disable encoder counting
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -176,7 +176,7 @@ public class PP_MecanumTeleOp extends OpMode
         }
         else if (gamepad2_B.isRisingEdge()) {
            armControl.setExtake();
-          // slideControl.setMidJunction();
+          slideControl.setMidJunction();
           clawControl.toggleWristRotate();
 
         }
@@ -187,7 +187,7 @@ public class PP_MecanumTeleOp extends OpMode
            clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
            clawControl.wristInExtakePosition = false;
             armControl.setIntake();
-           // slideControl.setIntakeOrGround();
+            slideControl.setIntakeOrGround();
 
         }
 
