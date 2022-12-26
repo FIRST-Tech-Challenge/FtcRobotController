@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import ftc.rouge.blacksmith.listeners.Listener
-import org.firstinspires.ftc.teamcode.RobotConstants.LiftConfig
+import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 
 @TeleOp
 class RougeTestingOp : RougeBaseTele() {

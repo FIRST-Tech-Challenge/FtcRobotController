@@ -7,7 +7,7 @@ import ftc.rouge.blacksmith.units.DistanceUnit
 import ftc.rouge.blacksmith.util.kt.toIn
 import ftc.rouge.blacksmith.util.kt.toRad
 import org.firstinspires.ftc.teamcode.AutoData.*
-import org.firstinspires.ftc.teamcode.RobotConstants.LiftConfig
+import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 
 @Suppress("RemoveRedundantQualifierName")
 class RougeRightAuto : RougeBaseAuto() {
