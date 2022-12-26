@@ -3,6 +3,10 @@
     filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.28));
 }
 
+.logoWrapperAnimation {
+    animation: logoAnimation 2s cubic-bezier(.3, 1.3, 0.4, 2.2) .5s 3;
+}
+
 .logo {
     height: 100%;
     stroke: var(--blacksmith-white);
@@ -23,29 +27,24 @@
     left: 8%;
 }
 
+.logoWrapper:hover .logoBit1 {
+    bottom: 28.5%;
+    left: 0;
+}
+
+.logoBit1Animation {
+    animation: inOut1 2s ease-out .45s 3;
+}
+
 .logoBit2 {
     transform: rotate(43deg);
     bottom: 48.3%;
     right: 8%;
 }
 
-.logoWrapper:hover .logoBit1 {
-    bottom: 28.5%;
-    left: 0;
-}
-
 .logoWrapper:hover .logoBit2 {
     bottom: 46.5%;
     right: 1%;
-}
-
-
-.logoWrapperAnimation {
-    animation: logoAnimation 2s cubic-bezier(.3, 1.3, 0.4, 2.2) .5s 3;
-}
-
-.logoBit1Animation {
-    animation: inOut1 2s ease-out .45s 3;
 }
 
 .logoBit2Animation {
@@ -56,10 +55,7 @@
     0% {
         transform: rotate(0deg);
     }
-    50% {
-        transform: rotate(720deg);
-    }
-    100% {
+    50%, 100% {
         transform: rotate(720deg);
     }
 }

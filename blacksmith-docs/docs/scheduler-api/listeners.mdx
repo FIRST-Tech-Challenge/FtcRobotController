@@ -3,6 +3,7 @@ sidebar_position: 3
 ---
 
 
+import Returns from '../../src/components/Returns';
 import { TypeLinks } from '../../src/util/type-links';
 import ParamsList from '../../src/components/ParamsList';
 import Tabs from '@theme/Tabs';
@@ -10,14 +11,19 @@ import TabItem from '@theme/TabItem';
 
 # Listeners
 
-**Sort of important: Listeners are always executed in the order that they are hooked**
+:::note
+Listeners are always executed in the order that they are [hooked](#the-concept-of-hooking), so the order in which
+they're hooked may be important.
+:::
+
+## Overview
 
 *okay, now that that's out of the way...*
 
-Listeners... ah, the pièce de résistance of the Scheduler API!
+Listeners... the pièce de résistance of the Scheduler API!
 
-Just as 9-year-olds like and subscribe and smash that notification bell to get notified of Mr. Beast's content asap,
-so may we also subscribe to a Listener to get notified of certain events, and do something when it happens.
+Like 9-year-olds may subscribe to Mr. Beast to watch the latest 100,000$ boys vs girls last to leave cheeseburger
+challenge when it comes out, we can also subscribe to events with the Listener to do things when the event occurs!
 
 If we were to strip all the fancy abstraction off of a listener that's been [hooked](#the-concept-of-hooking)
 to the Scheduler, we would end up with something like this:
@@ -42,6 +48,13 @@ to the Scheduler, we would end up with something like this:
         // do something
       }
   }
+  ```
+
+</TabItem>
+<TabItem value="bf" label="Brainf***">
+
+  ```brainfuck
+  +[>condition[do something[-]]<]
   ```
 
 </TabItem>
@@ -86,6 +99,11 @@ For example, let's say we want to alert our driver when the lift is too high, an
 
 </TabItem>
 </Tabs>
+
+:::tip
+`onRise`, `onFall`, `whileHigh`, and `whileLow` all return the same Listener object, so you can chain them together as
+seen above, instead of explicitly stating the object name every time.
+:::
 
 Every time the Scheduler loops, it'll evaluate the passed in lambda, and fire all the events subscribed to the
 corresponding state.
@@ -149,11 +167,25 @@ it gets hooked).
 </TabItem>
 </Tabs>
 
-# Creation
+:::tip
+This can actually be used to your advantage with [listener.hook](#listenerhook) by pre-hooking a listener
+before some other to run the former listener first.
+
+I mean, that *is* a very niche situation, so do with it what you will Ig lol.
+:::
+
+# Construction
 
 Constructs a new Listener without hooking it (see: [hooking](#the-concept-of-hooking)).
 
-<NewListenerParams/>
+<ParamsList params={[
+  {
+    name: 'condition',
+    type: '() -> Boolean',
+    desc: 'The condition to listen to',
+    typeLink: TypeLinks.LAMBDA,
+  },
+]}/>
 
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">
@@ -188,46 +220,31 @@ Constructs a new Listener without hooking it (see: [hooking](#the-concept-of-hoo
 
 Runs the given callback whenever the condition goes from false to true (i.e. it's on the rising edge)
 
-Equivalent to
+:::info Equivalent to:
+```java
+boolean wasHigh = false;
 
-<Tabs groupId="programming-language">
-<TabItem value="java" label="Java">
+while (true) {
+    boolean isHigh = condition();
 
-  ```java
-  boolean wasHigh = false;
+    if (isHigh && !wasHigh) {
+        // Do thing
+    }
 
-  while (true) {
-      boolean isHigh = condition();
+    wasHigh = isHigh;
+}
+```
+:::
 
-      if (isHigh && !wasHigh) {
-          //Do thing
-      }
-
-      wasHigh = isHigh;
-  }
-  ```
-
-</TabItem>
-<TabItem value="kt" label="Kotlin">
-
-  ```kotlin
-  var wasHigh = false
-
-  while (true) {
-      val isHigh = condition()
-
-      if (isHigh && !wasHigh) {
-          //Do thing
-      }
-
-      wasHigh = isHigh
-  }
-  ```
-
-</TabItem>
-</Tabs>
-
-<OnRiseParams/>
+<ParamsList params={[
+  {
+    name: 'callback',
+    type: 'Runnable',
+    desc: 'The callback to run on the rising edge',
+    typeLink: TypeLinks.LAMBDA,
+  },
+]}/>
+<ReturnsItself/>
 
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">
@@ -258,46 +275,31 @@ Equivalent to
 
 Runs the given callback whenever the condition goes from true to false (i.e. it's on the falling edge)
 
-Equivalent to
+:::info Equivalent to:
+```java
+boolean wasHigh = false;
 
-<Tabs groupId="programming-language">
-<TabItem value="java" label="Java">
+while (true) {
+    boolean isHigh = condition();
 
-  ```java
-  boolean wasHigh = false;
+    if (!isHigh && wasHigh) {
+        // Do thing
+    }
 
-  while (true) {
-      boolean isHigh = condition();
+    wasHigh = isHigh;
+}
+```
+:::
 
-      if (!isHigh && wasHigh) {
-          //Do thing
-      }
-
-      wasHigh = isHigh;
-  }
-  ```
-
-</TabItem>
-<TabItem value="kt" label="Kotlin">
-
-  ```kotlin
-  var wasHigh = false
-
-  while (true) {
-      val isHigh = condition()
-
-      if (!isHigh && wasHigh) {
-          //Do thing
-      }
-
-      wasHigh = isHigh
-  }
-  ```
-
-</TabItem>
-</Tabs>
-
-<OnFallParams/>
+<ParamsList params={[
+  {
+    name: 'callback',
+    type: 'Runnable',
+    desc: 'The callback to run on the falling edge',
+    typeLink: TypeLinks.LAMBDA,
+  },
+]}/>
+<ReturnsItself/>
 
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">
@@ -328,34 +330,25 @@ Equivalent to
 
 Runs the given callback while the condition is true.
 
-Equivalent to
+:::info Equivalent to:
+```java
+while (true) {
+    if (condition()) {
+        // Do thing
+    }
+}
+```
+:::
 
-<Tabs groupId="programming-language">
-<TabItem value="java" label="Java">
-
-  ```java
-  while (true) {
-      if (condition()) {
-          //Do thing
-      }
-  }
-  ```
-
-</TabItem>
-<TabItem value="kt" label="Kotlin">
-
-  ```kotlin
-  while (true) {
-      if (condition()) {
-          //Do thing
-      }
-  }
-  ```
-
-</TabItem>
-</Tabs>
-
-<WhileHighParams/>
+<ParamsList params={[
+  {
+    name: 'callback',
+    type: 'Runnable',
+    desc: 'The callback to run while the condition is true',
+    typeLink: TypeLinks.LAMBDA,
+  },
+]}/>
+<ReturnsItself/>
 
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">
@@ -384,35 +377,25 @@ Equivalent to
 
 Runs the given callback while the condition is false.
 
-Equivalent to
+:::info Equivalent to:
+```java
+while (true) {
+    if (!condition()) {
+        // Do thing
+    }
+}
+```
+:::
 
-<Tabs groupId="programming-language">
-
-<TabItem value="java" label="Java">
-
-  ```java
-  while (true) {
-      if (!condition()) {
-          //Do thing
-      }
-  }
-  ```
-
-</TabItem>
-<TabItem value="kt" label="Kotlin">
-
-  ```kotlin
-  while (true) {
-      if (!condition()) {
-          //Do thing
-      }
-  }
-  ```
-
-</TabItem>
-</Tabs>
-
-<WhileLowParams/>
+<ParamsList params={[
+  {
+    name: 'callback',
+    type: 'Runnable',
+    desc: 'The callback to run while the condition is false',
+    typeLink: TypeLinks.LAMBDA,
+  },
+]}/>
+<ReturnsItself/>
 
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">
@@ -499,7 +482,15 @@ Listener; It implicitly calls `whileHigh`**
 
 Keep in mind that this is only hooked the first time it's used (unless you explicitly hook it, of course)
 
-<AlwaysListenerParams/>
+<ParamsList params={[
+  {
+    name: 'callback',
+    type: 'Runnable',
+    desc: 'The callback to run every loop',
+    typeLink: TypeLinks.LAMBDA,
+  },
+]}/>
+<ReturnsItself/>
 
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">
@@ -517,80 +508,12 @@ Keep in mind that this is only hooked the first time it's used (unless you expli
 </TabItem>
 </Tabs>
 
-export function NewListenerParams() {
+export function ReturnsItself() {
   return (
-    <ParamsList params={[
-      {
-        name: 'condition',
-        type: '() -> Boolean',
-        desc: 'The condition to listen to',
-        typeLink: TypeLinks.LAMBDA,
-      },
-    ]}/>
-  );
-}
-
-export function OnRiseParams() {
-  return (
-    <ParamsList params={[
-      {
-        name: 'callback',
-        type: 'Runnable',
-        desc: 'The callback to run on the rising edge',
-        typeLink: TypeLinks.LAMBDA,
-      },
-    ]}/>
-  );
-}
-
-export function WhileHighParams() {
-  return (
-    <ParamsList params={[
-      {
-        name: 'callback',
-        type: 'Runnable',
-        desc: 'The callback to run while the condition is true',
-        typeLink: TypeLinks.LAMBDA,
-      },
-    ]}/>
-  );
-}
-
-export function OnFallParams() {
-  return (
-    <ParamsList params={[
-      {
-        name: 'callback',
-        type: 'Runnable',
-        desc: 'The callback to run on the falling edge',
-        typeLink: TypeLinks.LAMBDA,
-      },
-    ]}/>
-  );
-}
-
-export function WhileLowParams() {
-  return (
-    <ParamsList params={[
-      {
-        name: 'callback',
-        type: 'Runnable',
-        desc: 'The callback to run while the condition is false',
-        typeLink: TypeLinks.LAMBDA,
-      },
-    ]}/>
-  );
-}
-
-export function AlwaysListenerParams() {
-  return (
-    <ParamsList params={[
-      {
-        name: 'callback',
-        type: 'Runnable',
-        desc: 'The callback to run every loop',
-        typeLink: TypeLinks.LAMBDA,
-      },
-    ]}/>
+    <Returns returns={{
+      type: 'Listener',
+      desc: 'The Listener itself to allow for method chaining',
+      typeLink: TypeLinks.LISTENER,
+    }}/>
   );
 }

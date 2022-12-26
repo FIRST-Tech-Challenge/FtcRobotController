@@ -19,6 +19,7 @@
     right: 0;
     height: 100vmin;
     width: 100vmin;
+    position: absolute;
 }
 
 .backgroundSVG {
@@ -33,6 +34,12 @@
     z-index: -1;
 }
 
-/*.gradientBackground[data-theme="dark"] {*/
-/*    background: linear-gradient(25deg, var(--ifm-color-primary-lightest) 30%, var(--ifm-color-primary-light) 100%);*/
-/*}*/
+.pattern {
+    opacity: .9;
+}
+
+@media screen and (max-width: 1700px) {
+    .pattern {
+        opacity: .75;
+    }
+}

@@ -500,12 +500,16 @@ class ReforgedGamepad(val gamepad: Gamepad) {
     // -- END MACHINE GENERATED CODE --
 
     class GamepadBooleanListener internal constructor(val input: () -> Boolean) : Listener(input) {
-        operator fun invoke() = input()
         fun get() = input()
+
+        @JvmSynthetic
+        operator fun invoke() = input()
     }
 
     class GamepadAnalogueListener internal constructor(deadzone: Double, val input: () -> Float) : Listener({ abs(input()) > deadzone }) {
-        operator fun invoke() = input()
         fun get() = input()
+
+        @JvmSynthetic
+        operator fun invoke() = input()
     }
 }

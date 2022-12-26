@@ -9,7 +9,7 @@ const config = {
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/logo/sentinel-temp-logo-thingy.svg',
+  favicon: 'img/logo/blacksmith-logo.svg',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -51,7 +51,7 @@ const config = {
         title: 'Blacksmith',
         logo: {
           alt: 'Blacksmith Logo',
-          src: 'img/logo/sentinel-temp-logo-thingy.svg',
+          src: 'img/logo/blacksmith-logo.svg',
         },
         items: [
           {
@@ -112,7 +112,7 @@ const config = {
         ],
       },
       prism: {
-        additionalLanguages: ['java', 'kotlin'],
+        additionalLanguages: ['java', 'kotlin', 'brainfuck'],
         theme: require('prism-react-renderer/themes/github'),
         darkTheme: require('prism-react-renderer/themes/vsDark'),
       },

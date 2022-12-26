@@ -17,11 +17,6 @@
     font-size: 1.05em;
 }
 
-.paramName {
-    color: var(--highlight-color);
-    font-weight: bold;
-}
-
 .paramType {
     color: var(--highlight-color);
     font-weight: bold;

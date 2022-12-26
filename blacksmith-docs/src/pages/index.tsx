@@ -1,5 +1,5 @@
 import React from 'react';
-import { GradientBackgroundWithLineDesign } from "@site/src/components/CoolLineBackground/index.tx";
+import { GradientBackgroundWithLineDesign } from "@site/src/components/CoolLineBackground";
 
 import styles from "./styles.module.css";
 import ExpandingLogo from "@site/src/components/ExpandingLogo";
@@ -12,7 +12,7 @@ export default function Home(): JSX.Element {
 
   return (
     <Layout noFooter={true}>
-      <GradientBackgroundWithLineDesign designClassName={styles.pattern}>
+      <GradientBackgroundWithLineDesign>
         <div className={styles.container}>
           <ExpandingLogo className={styles.logoWrapperOuter}/>
           <button className={styles.button} onClick={handleClick}>GO TO DOCS</button>

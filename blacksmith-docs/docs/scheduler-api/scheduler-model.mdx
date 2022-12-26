@@ -24,7 +24,7 @@ The Scheduler model is a loop that runs until the OpMode is stopped, and this lo
 
 ### Listeners👂
 
-👀 This is the juicy bit, what makes your code so nice. It runs *before* `beforeEach` and *after* `afterEach` (🤯)
+👀 This is the juicy bit, they're what makes your code so clean. They run *before* `beforeEach` and *after* `afterEach` (🤯)
 
 Listeners are objects which hold a condition which hook to and are updated every cycle of the Scheduler. They can be
 subscribed to to perform certain actions when certain events are in certain states.
@@ -68,6 +68,15 @@ yeah I know that was a mouthful, so here's a more practical example:
 
 </TabItem>
 </Tabs>
+
+:::tip
+Because the above 4 methods return the Listener instance, it can actually chain these methods together, so you can
+actually do something like this:
+```java
+listener.onRise(() -> ...)
+        .onFall(() -> ...);
+```
+:::
 
 **Note:** This is a very rough overview of the Listener concept; if you're confused or want more information, check out
 the [Listeners](./listeners) page.

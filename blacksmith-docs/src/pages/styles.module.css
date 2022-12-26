@@ -19,16 +19,6 @@
     margin: -4vh 0 0;
 }
 
-.pattern {
-    opacity: .9;
-}
-
-@media screen and (max-width: 1700px) {
-    .pattern {
-        opacity: .75;
-    }
-}
-
 .button {
     background-color: transparent;
     background-image: linear-gradient(92.88deg, #21af7488 9.16%, #1fa57688 43.89%, #31bb8e88 94.72%);

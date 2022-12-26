@@ -2,11 +2,13 @@
 sidebar_position: 4
 ---
 
+import { TypeLinks } from '../../src/util/type-links';
 import ParamsList from '../../src/components/ParamsList';
+import Returns from '../../src/components/Returns';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Reforged Gamepads
+# Reforged Gamepad
 
 While [Listeners](./listeners) may be quite versatile, they often aren't the prettiest and most concise, especially for
 TeleOps, where you may have many controls mapped to many buttons.
@@ -104,6 +106,75 @@ into this!:
 </Tabs>
 
 Behind the pretty veil, it's essentially just a collection of pre-made listeners, but it does come with one extra
-handy feature:
+handy feature: You can get the value of any button without having to use the raw gamepad.
 
-##
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  driver.a.get(); // Returns the current state of the A button (i.e. if it's pressed or not)
+
+  driver.right_stick_x.get(); // Returns the current state of the right stick's X axis
+  driver.right_stick_x(/*deadzone=*/ .2).get(); // (as a float)
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  /* `operator fun invoke()` is overriden, so you can use it like a function */
+
+  driver.a() // Returns the current state of the A button (i.e. if it's pressed or not)
+
+  driver.right_stick_x() // Returns the current state of the right stick's X axis
+  driver.right_stick_x(deadzone = .2)() // (as a float) (also notice the double ()s)
+
+  driver.b.get() // You can also use .get() if you prefer
+  ```
+
+</TabItem>
+</Tabs>
+
+:::note
+I understand that you may not be entirely sure what this syntax means, but read on and come back to it later if
+you need to.
+:::
+
+## Construction
+
+Constructs a new Reforged Gamepad from a given gamepad. You'll likely construct two in your programs; one for the
+driver, and one for the co-driver.
+
+<ParamsList params={[
+  {
+    name: 'gamepad',
+    type: 'Gamepad',
+    desc: 'The gamepad to wrap',
+    typeLink: TypeLinks.GAMEPAD,
+  },
+]}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
+  ReforgedGamepad codriver = new ReforgedGamepad(gamepad2);
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val driver = ReforgedGamepad(gamepad1)
+  val codriver = ReforgedGamepad(gamepad2)
+  ```
+
+</TabItem>
+</Tabs>
+
+## Boolean triggers
+
+Boolean triggers refer to buttons that are either pressed or not pressed (i.e. either `true` or `false`).
+
+The ReforgedGamepad *should* support all the buttons on the gamepad, but there's a chance that I missed one.
