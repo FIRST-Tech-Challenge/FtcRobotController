@@ -57,10 +57,8 @@ class LateInitVal<T> {
         }
         value = _value
     }
-}
 
-/**
- * Object used to represent an uninitialized value. This is used to check if a [LateInitVal] is
- * initialized or not.
- */
-private object Uninitialized
+    companion object {
+        private object Uninitialized
+    }
+}

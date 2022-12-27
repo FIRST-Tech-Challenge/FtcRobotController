@@ -28,10 +28,10 @@ object LiftConfig {
 class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
     private val liftMotor: DcMotorSimple
 
-    val liftEncoder: Motor
+    private val liftEncoder: Motor
     private val liftPID: PIDFController
 
-    var targetHeight = 0
+    private var targetHeight = 0
 
     var height: Int
         get() = targetHeight
@@ -40,9 +40,9 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
         }
 
     init {
-        liftMotor = hwMap("LI")
+        liftMotor = hwMap(DeviceNames.LIFT_MOTOR)
 
-        liftEncoder = Motor(hwMap, "FR")
+        liftEncoder = Motor(hwMap, DeviceNames.LIFT_ENCODER)
         liftEncoder.resetEncoder()
 
         liftPID = PIDController(LiftConfig.P, LiftConfig.I, LiftConfig.D)

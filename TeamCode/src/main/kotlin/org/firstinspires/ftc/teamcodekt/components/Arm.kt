@@ -2,13 +2,15 @@ package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.SimpleServo
+import com.arcrobotics.ftclib.kotlin.extensions.hardware.range
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.Servo
 
 @Config
 object ArmConfig {
     @JvmField var FORWARDS = 135.0
     @JvmField var BACKWARDS = 39.9
-    @JvmField var RESTING = 97.0
+    @JvmField var RESTING = 96.0
 }
 
 /**
@@ -23,7 +25,7 @@ class Arm(hwMap: HardwareMap) {
      */
     private val armServo = SimpleServo(hwMap, DeviceNames.ARM_SERVO, 0.0, 180.0)
 
-    private var targetAngle = ArmConfig.RESTING;
+    private var targetAngle = ArmConfig.RESTING
 
     /**
      * Move the arm to the forward position. Intended for intaking or reverse depositing.

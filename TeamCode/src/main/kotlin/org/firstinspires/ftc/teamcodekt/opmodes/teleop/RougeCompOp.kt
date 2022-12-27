@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import ftc.rouge.blacksmith.listeners.Listener
+import ftc.rouge.blacksmith.util.kt.pow
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
-import kotlin.math.pow
 
 @TeleOp
 class RougeCompOp : RougeBaseTele() {
@@ -17,7 +17,7 @@ class RougeCompOp : RougeBaseTele() {
             .whileHigh { powerMulti /= 2 }
 
         driver.right_trigger(.1).whileHigh {
-            powerMulti *= 1 - (driver.right_trigger().pow(3))
+            powerMulti *= 1 - (driver.right_trigger() pow 3)
         }
 
         Listener.always {
@@ -35,11 +35,11 @@ class RougeCompOp : RougeBaseTele() {
 
         intakeChain.invokeOn(codriver.left_bumper)
 
-        forwardsDepositChain.invokeOn(codriver.right_bumper)
-        forwardsDepositChain.cancelOn(codriver.x)
+        regularDepositChain.invokeOn(codriver.right_bumper)
+        regularDepositChain.cancelOn(codriver.x)
 
-        backwardsDepositChain.invokeOn(codriver.y)
-        backwardsDepositChain.cancelOn(codriver.x)
+        reverseDepositChain.invokeOn(codriver.y)
+        reverseDepositChain.cancelOn(codriver.x)
 
         // -- MANUAL CLAW CONTROLS --
 

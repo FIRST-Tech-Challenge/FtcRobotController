@@ -9,17 +9,18 @@ import org.firstinspires.ftc.teamcodekt.components.TeleOpBotComponents
 
 class ReverseDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
     private var isCancelled = false
+    private var isRunning = false
 
     override fun invokeOn(button: Listener) = button
         .onRise {
             isCancelled = false
+            isRunning = true
 
             bot.arm.setToBackwardsPos()
             bot.wrist.setToBackwardsPos()
         }
         .onFall {
             if (isCancelled) {
-                finish()
                 return@onFall
             }
 
@@ -35,13 +36,20 @@ class ReverseDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
         }
         .hook()
 
-    override fun cancelOn(button: Listener) {
-        button.onRise { isCancelled = true }
-    }
+    override fun cancelOn(button: Listener) = button
+        .onRise {
+            isCancelled = true
+
+            if (isRunning) {
+                finish()
+            }
+        }
+        .hook()
 
     private fun finish() {
         bot.claw.close()
         bot.arm.setToRestingPos()
         bot.wrist.setToRestingPos()
+        isRunning = false
     }
 }

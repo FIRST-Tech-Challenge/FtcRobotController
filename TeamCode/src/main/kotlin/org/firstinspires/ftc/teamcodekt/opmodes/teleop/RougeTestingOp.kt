@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import ftc.rouge.blacksmith.listeners.Listener
+import ftc.rouge.blacksmith.util.kt.pow
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 
 @TeleOp
@@ -14,14 +15,14 @@ class RougeTestingOp : RougeBaseTele() {
 
         intakeChain.invokeOn(driver.left_bumper)
 
-        forwardsDepositChain.invokeOn(driver.right_bumper)
-        forwardsDepositChain.cancelOn(driver.x)
+        regularDepositChain.invokeOn(driver.right_bumper)
+        regularDepositChain.cancelOn(driver.x)
 
-        backwardsDepositChain.invokeOn(driver.y)
-        backwardsDepositChain.cancelOn(driver.x)
+        reverseDepositChain.invokeOn(driver.y)
+        reverseDepositChain.cancelOn(driver.x)
 
         driver.right_trigger(.1).whileHigh {
-            powerMulti *= 1 - (driver.right_trigger() * driver.right_trigger() * driver.right_trigger())
+            powerMulti *= 1 - (driver.right_trigger() pow 3)
         }
 
         driver.left_trigger.whileHigh {

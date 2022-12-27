@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcodekt.components
 
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 
 abstract class BaseBotComponents {
@@ -10,10 +11,11 @@ abstract class BaseBotComponents {
     abstract val wrist: Wrist
     abstract val lift: Lift
 
-    fun updateComponents() {
+    fun updateComponents(telemetry: Telemetry) {
         claw.update()
         arm.update()
         wrist.update()
+        lift.update(telemetry)
     }
 }
 

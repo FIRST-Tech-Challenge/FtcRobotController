@@ -13,6 +13,7 @@ object DeviceNames {
     const val DRIVE_BR = "BR"
 
     const val LIFT_MOTOR = "LI"
+    const val LIFT_ENCODER = "FR"
 
     const val SHORT_RANGE_SENSOR = "LC"
     const val WEBCAM1 = "Webcam 1"

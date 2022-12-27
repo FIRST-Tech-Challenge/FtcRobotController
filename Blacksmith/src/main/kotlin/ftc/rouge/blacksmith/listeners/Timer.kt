@@ -98,6 +98,8 @@ class Timer @JvmOverloads constructor(length: Long, unit: TimeUnit = TimeUnit.MI
     }
 
     fun isDone() = listener.condition()
+
+    fun after(time: Long) = ftc.rouge.blacksmith.listeners.after(time)
 }
 
 class after(val time: Long) {
@@ -108,7 +110,7 @@ class after(val time: Long) {
     fun unit(unit: TimeUnit, callback: Runnable) = Timer(time, unit)
         .run {
             onDone(callback)
-//            onDone(::destroy)
+            onDone(::destroy)
             start()
         }
 }

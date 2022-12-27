@@ -2,58 +2,42 @@
 
 package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import ftc.rouge.blacksmith.BlackOp
 import ftc.rouge.blacksmith.Scheduler
-import ftc.rouge.blacksmith.chains.CancellableChain
-import ftc.rouge.blacksmith.chains.Chain
 import ftc.rouge.blacksmith.listeners.ReforgedGamepad
+import ftc.rouge.blacksmith.util.kt.CreateOnStartR
+import ftc.rouge.blacksmith.util.kt.createOnStart
 import org.firstinspires.ftc.teamcodekt.components.*
-import org.firstinspires.ftc.teamcodekt.components.chains.ReverseDepositChain
-import org.firstinspires.ftc.teamcodekt.components.chains.RegularDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
-import ftc.rouge.blacksmith.util.kt.LateInitVal
+import org.firstinspires.ftc.teamcodekt.components.chains.RegularDepositChain
+import org.firstinspires.ftc.teamcodekt.components.chains.ReverseDepositChain
 
-abstract class RougeBaseTele : LinearOpMode() {
-    protected var driver   by LateInitVal<ReforgedGamepad>()
-    protected var codriver by LateInitVal<ReforgedGamepad>()
+abstract class RougeBaseTele : BlackOp() {
+    protected val driver   by createOnStart<ReforgedGamepad>({ gamepad1 })
+    protected val codriver by createOnStart<ReforgedGamepad>({ gamepad2 })
 
-    protected var powerMulti  = 0.0
+    protected var powerMulti = 0.0
 
-    protected var bot by LateInitVal<TeleOpBotComponents>()
+    protected val bot by createOnStart {
+        createTeleOpBotComponents(hwMap, VoltageScaler( hwMap ))
+    }
 
-    protected var intakeChain by LateInitVal<Chain>()
-    protected var forwardsDepositChain by LateInitVal<CancellableChain>()
-    protected var backwardsDepositChain by LateInitVal<CancellableChain>()
+    protected val intakeChain by createOnStart<IntakeChain>({ bot })
+    protected val regularDepositChain by createOnStart<RegularDepositChain>({ bot })
+    protected val reverseDepositChain by createOnStart<ReverseDepositChain>({ bot })
 
-    override fun runOpMode() {
-        driver   = ReforgedGamepad(gamepad1)
-        codriver = ReforgedGamepad(gamepad2)
-
-        bot = createTeleOpBotComponents(hardwareMap, VoltageScaler(hardwareMap))
-
-        intakeChain = IntakeChain(bot)
-        forwardsDepositChain = RegularDepositChain(bot)
-        backwardsDepositChain = ReverseDepositChain(bot)
-
+    final override fun run() {
         describeControls()
 
         waitForStart()
-
-        bot.arm.setToRestingPos()
-        bot.wrist.setToRestingPos()
 
         Scheduler.beforeEach {
             powerMulti = 1.0
         }
 
         Scheduler.launch(this@RougeBaseTele) {
-            bot.updateComponents()
-
-            bot.lift.update(telemetry)
-            telemetry.addData("Target eihgt", bot.lift.targetHeight)
-            telemetry.addData("Actual heihgt", bot.lift.liftEncoder.currentPosition)
-
-            telemetry.update()
+            bot.updateComponents(mTelemetry)
+            mTelemetry.update()
         }
     }
 

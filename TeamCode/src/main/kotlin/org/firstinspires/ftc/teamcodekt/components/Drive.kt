@@ -10,94 +10,56 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
 import ftc.rouge.blacksmith.util.kt.invoke
+import ftc.rouge.blacksmith.util.kt.maxMagnitude
+import ftc.rouge.blacksmith.util.kt.maxMagnitudeAbs
+import ftc.rouge.blacksmith.util.kt.withDeadzone
+import ftc.rouge.blacksmith.util.zeroIfNaN
 import kotlin.math.*
 
 class Drivetrain(hwMap: HardwareMap) {
-    private val frontLeft  = hwMap<DcMotorEx>(DeviceNames.DRIVE_FL).apply {
-        direction = Direction.REVERSE
-        zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+    private val frontLeft  = hwMap<DcMotorEx>(DeviceNames.DRIVE_FL).apply { direction = Direction.REVERSE }
+    private val frontRight = hwMap<DcMotorEx>(DeviceNames.DRIVE_FR)
+    private val backLeft   = hwMap<DcMotorEx>(DeviceNames.DRIVE_BL).apply { direction = Direction.REVERSE }
+    private val backRight  = hwMap<DcMotorEx>(DeviceNames.DRIVE_BR)
+
+    init {
+        withEachMotor {
+            zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+            mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        }
     }
 
-    private val frontRight = hwMap<DcMotorEx>(DeviceNames.DRIVE_FR).apply {
-        zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-    }
+    fun drive(gamepad: Gamepad, powerMulti: Double = 0.0) {
+        val (x, y, r) = gamepad.getDriveSticks()
 
-    private val backLeft   = hwMap<DcMotorEx>(DeviceNames.DRIVE_BL).apply {
-        direction = Direction.REVERSE
-        zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-    }
+        val theta = atan2(y, x)
+        val power = hypot(x, y)
 
-    private val backRight  = hwMap<DcMotorEx>(DeviceNames.DRIVE_BR).apply {
-        zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-    }
+        val xComponent = power * cos(theta - PI / 4)
+        val yComponent = power * sin(theta - PI / 4)
 
-    fun drive(gamepad: Gamepad, _powerMulti: Double = 0.0) {
-//        val (x, y, r) = gamepad.getDriveSticks()
-//
-//        val theta = atan2(y, x)
-//        val power = hypot(x, y)
-//
-//        val xComponent = power * cos(theta - PI / 4)
-//        val yComponent = power * sin(theta - PI / 4)
-//
-//        val max = maxMagnitude<Double>(xComponent, yComponent)
-//
-//        val powers = doubleArrayOf(
-//            power * (xComponent / max).zeroIfNaN() + r,
-//            power * (yComponent / max).zeroIfNaN() - r,
-//            power * (yComponent / max).zeroIfNaN() + r,
-//            power * (xComponent / max).zeroIfNaN() - r,
-//        )
-//
-//        if (power + abs(r) > 1) {
-//            powers.onEach { it / (power + abs(r)) }
-//        }
-//
-//        val _powerMulti = if (!gamepad.isAnyJoystickTriggered()) 0.0 else powerMulti
-//
-//        powers.onEach {
-//            (it * it * it * _powerMulti).withDeadzone(0.05)
-//        }
-//
-//        withEachMotor {
-//            this.power = powers[it]
-//        }
+        val max = maxMagnitudeAbs<Double>(xComponent, yComponent, 1e-16)
 
-        val (strafe, speed, rotation) = gamepad.getDriveSticks()
+        val powers = doubleArrayOf(
+            power * (xComponent / max) + r,
+            power * (yComponent / max) - r,
+            power * (yComponent / max) + r,
+            power * (xComponent / max) - r,
+        )
 
-        val direction = atan2(speed, strafe)
-        val power = sqrt(speed * speed + strafe * strafe)
+        if (power + abs(r) > 1) {
+            powers.onEach { it / (power + abs(r)) }
+        }
 
-        val xComponent = sin(direction - PI / 4) * power
-        val yComponent = cos(direction - PI / 4) * power
+        val _powerMulti = if (!gamepad.isAnyJoystickTriggered()) 0.0 else powerMulti
 
-        val max = max(abs(xComponent), abs(yComponent))
+        powers.onEach {
+            (it * it * it * _powerMulti).withDeadzone<Double>(0.025)
+        }
 
-        val flp = ((yComponent / max).takeUnless(kotlin.Double::isNaN) ?: .0) + rotation
-        val frp = ((xComponent / max).takeUnless(kotlin.Double::isNaN) ?: .0) - rotation
-        val blp = ((xComponent / max).takeUnless(kotlin.Double::isNaN) ?: .0) + rotation
-        val brp = ((yComponent / max).takeUnless(kotlin.Double::isNaN) ?: .0) - rotation
-
-        val powerScale = listOf(flp, frp, blp, brp, 1.0).maxOf { abs(it) }
-
-        val powerMulti = if (!gamepad.isAnyJoystickTriggered()) 0.0 else _powerMulti
-
-        setPowers(flp, frp, blp, brp)
-        transformPowers { it * powerMulti / powerScale }
-    }
-
-    fun setPowers(flp: Number, frp: Number, blp: Number, brp: Number) {
-        frontLeft.power = flp.toDouble()
-        frontRight.power = frp.toDouble()
-        backLeft.power = blp.toDouble()
-        backRight.power = brp.toDouble()
-    }
-
-    fun transformPowers(scaleFunction: (Double) -> Double) {
-        frontLeft.power = scaleFunction(frontLeft.power)
-        frontRight.power = scaleFunction(frontRight.power)
-        backLeft.power = scaleFunction(backLeft.power)
-        backRight.power = scaleFunction(backRight.power)
+        withEachMotor {
+            this.power = powers[it]
+        }
     }
 
     fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<DcMotorEx>) {
