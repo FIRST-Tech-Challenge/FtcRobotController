@@ -22,7 +22,7 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 1425.1;
+    public static final double TICKS_PER_REV = 312;
     public static final double MAX_RPM = 84;
 
     /*
@@ -46,7 +46,7 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.8898; // in
-    public static double GEAR_RATIO = 0.9230769230769231; // output (wheel) speed / input (motor) speed
+    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 9.681; // in
 
     /*
@@ -55,8 +55,8 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0;
+    public static double kV = 0.0177;
+    public static double kA = 0.0053;
     public static double kStatic = 0;
 
     /*
@@ -87,8 +87,8 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
 
      */
-    public static double MAX_VEL = 45.96832779774762*0.9;
-    public static double MAX_ACCEL = 13.043092316561076;
+    public static double MAX_VEL = 40;
+    public static double MAX_ACCEL = 26;
     public static double MAX_ANG_VEL = Math.toRadians(77.19389954947438);
     public static double MAX_ANG_ACCEL = Math.toRadians(77.19389954947438);
 
