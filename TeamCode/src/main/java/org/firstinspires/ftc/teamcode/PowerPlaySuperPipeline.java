@@ -21,6 +21,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.ConeBlue;
+import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.Pole;
 import static java.lang.Math.abs;
 
 import android.os.Environment;
@@ -175,14 +177,21 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     enum Stage
     {
         FINAL,
-        Cb,
+        Cx,
         MASK,
         MASK_NR,
         CONTOURS,
         RECTANGLES;
     }
 
+    enum DebugObjects
+    {
+        Pole,
+        ConeRed,
+        ConeBlue
+    }
     Stage[] stages = Stage.values();
+    public DebugObjects debugType = ConeBlue;
 
     // Keep track of what stage the viewport is showing
     int stageNum = 0;
@@ -460,9 +469,16 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
          */
         switch (stages[stageNum])
         {
-            case Cb:
+            case Cx:
             {
-                return cbMat;
+                switch(debugType) {
+                    case Pole:
+                        return cyMat;
+                    case ConeRed:
+                        return crMat;
+                    case ConeBlue:
+                        return cbMat;
+                }
             }
 
             case FINAL:
@@ -472,12 +488,26 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
             case MASK:
             {
-                return thresholdBlueMat;
+                switch(debugType) {
+                    case Pole:
+                        return thresholdYellowMat;
+                    case ConeRed:
+                        return thresholdRedMat;
+                    case ConeBlue:
+                        return thresholdBlueMat;
+                }
             }
 
             case MASK_NR:
             {
-                return morphedBlueThreshold;
+                switch(debugType) {
+                    case Pole:
+                        return morphedYellowThreshold;
+                    case ConeRed:
+                        return morphedRedThreshold;
+                    case ConeBlue:
+                        return morphedBlueThreshold;
+                }
             }
 
             case CONTOURS:
@@ -591,6 +621,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // This might not be the best way to do this, but we split the image in two to detect
         // the cones in the upper half, tape in the lower half.
 //        Mat coneHalf = morphedBlueThreshold.submat(0, 120, 0, 320);
+        int greatDivide = findConeTapeVortex(morphedBlueThreshold);
         Mat tapeHalf = morphedBlueThreshold.submat(0, 240, 0, 320);
 
         // Ok, now actually look for the contours! We only look for external contours.
@@ -599,10 +630,32 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // We do draw the contours we find, but not to the main input buffer.
         Imgproc.drawContours(contoursOnPlainImageMat, contoursList, -1, BLUE, CONTOUR_LINE_THICKNESS, 8);
 
+        Point leftSide = new Point(0, greatDivide);
+        Point rightSide = new Point(320, greatDivide);
+        Imgproc.line(contoursOnPlainImageMat, leftSide, rightSide, PURPLE, 2);
 //        coneHalf.release();
         tapeHalf.release();
 
         return contoursList;
+    }
+
+    int findConeTapeVortex(Mat tapeConeImage) {
+        int startingRow = 160;
+        int vortexRow = 0;
+        Scalar lastRowAmplitude;
+        Scalar thisRowAmplitude;
+
+        lastRowAmplitude = Core.sumElems(tapeConeImage.row(startingRow));
+        for(int row = startingRow;row >= 1;row--) {
+            thisRowAmplitude = Core.sumElems(tapeConeImage.row(row));
+            if((lastRowAmplitude.val[0] - thisRowAmplitude.val[0]) > 10) {
+                vortexRow = row;
+                break;
+            } else {
+                lastRowAmplitude = thisRowAmplitude;
+            }
+        }
+        return vortexRow;
     }
 
     void AnalyzeBlueConeContour(MatOfPoint contour, Mat input)

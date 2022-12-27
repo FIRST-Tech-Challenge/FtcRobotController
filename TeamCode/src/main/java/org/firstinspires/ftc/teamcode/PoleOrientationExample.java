@@ -122,7 +122,7 @@ public class PoleOrientationExample extends LinearOpMode
             public void onOpened()
             {
                 pipelineLow = new PowerPlaySuperPipeline(true, false,
-                        false, false, 160.0, true, false);
+                        false, true, 160.0, true, false);
                 webcamLow.setPipeline(pipelineLow);
                 webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
