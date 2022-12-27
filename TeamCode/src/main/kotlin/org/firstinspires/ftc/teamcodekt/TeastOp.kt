@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcodekt
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -18,12 +20,14 @@ class TeastOp : LinearOpMode() {
         br.resetEncoder()
         bl.resetEncoder()
 
+        val mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
+
         Scheduler.launchWhenReady(this) {
-            telemetry.addData("FR", fr.currentPosition)
-            telemetry.addData("FL", fl.currentPosition)
-            telemetry.addData("BR", br.currentPosition)
-            telemetry.addData("BL", bl.currentPosition)
-            telemetry.update()
+            mTelemetry.addData("FR", fr.currentPosition)
+            mTelemetry.addData("FL", fl.currentPosition)
+            mTelemetry.addData("BR", br.currentPosition)
+            mTelemetry.addData("BL", bl.currentPosition)
+            mTelemetry.update()
         }
     }
 }

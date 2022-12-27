@@ -2,6 +2,7 @@
 
 package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
+import com.arcrobotics.ftclib.hardware.motors.Motor
 import ftc.rouge.blacksmith.BlackOp
 import ftc.rouge.blacksmith.Scheduler
 import ftc.rouge.blacksmith.listeners.ReforgedGamepad
@@ -29,6 +30,14 @@ abstract class RougeBaseTele : BlackOp() {
     final override fun run() {
         describeControls()
 
+        val fl = Motor(hardwareMap, "FL") // Left Deadwheel
+        val br = Motor(hardwareMap, "BR") // Right Deadhweel
+        val bl = Motor(hardwareMap, "BL") // Horizontal deadwheel
+
+        fl.resetEncoder()
+        br.resetEncoder()
+        bl.resetEncoder()
+
         waitForStart()
 
         Scheduler.beforeEach {
@@ -37,6 +46,9 @@ abstract class RougeBaseTele : BlackOp() {
 
         Scheduler.launch(this@RougeBaseTele) {
             bot.updateComponents(mTelemetry)
+            mTelemetry.addData("Left Deadwheel", fl.currentPosition)
+            mTelemetry.addData("Right Deadwheel", br.currentPosition)
+            mTelemetry.addData("Horizontal Deadwheel", bl.currentPosition)
             mTelemetry.update()
         }
     }
