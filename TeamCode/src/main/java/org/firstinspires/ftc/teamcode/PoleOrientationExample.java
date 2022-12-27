@@ -69,48 +69,113 @@ public class PoleOrientationExample extends LinearOpMode
         telemetry.addLine("Robot initializing, wait for completion.");
         telemetry.update();
 
-        int cameraCount = 2;
+        /*
+        // This code intializes the cameras synchronously. So when telemtry says ready, the streams
+        // are running.
         // Create camera instances
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId",
                 "id", hardwareMap.appContext.getPackageName());
         int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
                 .splitLayoutForMultipleViewports(
                         cameraMonitorViewId, //The container we're splitting
-                        cameraCount, //The number of sub-containers to create
+                        3, //The number of sub-containers to create
                         OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY); //Whether to split the container vertically or horizontally
-        if(cameraCount >= 1) {
-            webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                    "Webcam Low"), viewportContainerIds[0]);
-            pipelineLow = new PowerPlaySuperPipeline(true, false,
-                    false, true, 160.0, true,
-                    false);
-            webcamLow.openCameraDevice();
-            webcamLow.setPipeline(pipelineLow);
-            webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            webcamLow.showFpsMeterOnViewport(false);
-        }
-        if(cameraCount >= 2) {
-            webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                    "Webcam Front"), viewportContainerIds[1]);
-            pipelineFront = new PowerPlaySuperPipeline(false, true,
-                    false, false, 160.0, true,
-                    false);
-            webcamFront.openCameraDevice();
-            webcamFront.setPipeline(pipelineFront);
-            webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
-            webcamFront.showFpsMeterOnViewport(false);
-        }
-        if(cameraCount >= 3) {
-            webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                    "Webcam Back"), viewportContainerIds[2]);
-            pipelineBack = new PowerPlaySuperPipeline(false, true,
-                    false, false, 160.0, true,
-                    false);
-            webcamBack.openCameraDevice();
-            webcamBack.setPipeline(pipelineBack);
-            webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            webcamBack.showFpsMeterOnViewport(false);
-        }
+        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Low"), viewportContainerIds[0]);
+        pipelineLow = new PowerPlaySuperPipeline(true, false,
+                false, true, 160.0, true,
+                false);
+        webcamLow.openCameraDevice();
+        webcamLow.setPipeline(pipelineLow);
+        webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+        webcamLow.showFpsMeterOnViewport(false);
+        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Front"), viewportContainerIds[1]);
+        pipelineFront = new PowerPlaySuperPipeline(false, true,
+                false, false, 160.0, true,
+                false);
+        webcamFront.openCameraDevice();
+        webcamFront.setPipeline(pipelineFront);
+        webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+        webcamFront.showFpsMeterOnViewport(false);
+        webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Back"), viewportContainerIds[2]);
+        pipelineBack = new PowerPlaySuperPipeline(false, true,
+                false, false, 160.0, true,
+                false);
+        webcamBack.openCameraDevice();
+        webcamBack.setPipeline(pipelineBack);
+        webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+        webcamBack.showFpsMeterOnViewport(false);
+         */
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
+                .splitLayoutForMultipleViewports(
+                        cameraMonitorViewId, //The container we're splitting
+                        3, //The number of sub-containers to create
+                        OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY); //Whether to split the container vertically or horizontally
+        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Low"), viewportContainerIds[0]);
+        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineLow = new PowerPlaySuperPipeline(true, false,
+                        false, false, 160.0, true, false);
+                webcamLow.setPipeline(pipelineLow);
+                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
+        webcamLow.showFpsMeterOnViewport(false);
+
+        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Front"), viewportContainerIds[1]);
+        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineFront = new PowerPlaySuperPipeline(false, true,
+                        false, false, 160.0, true, false);
+                webcamFront.setPipeline(pipelineFront);
+                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
+        webcamFront.showFpsMeterOnViewport(false);
+
+        webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Back"), viewportContainerIds[2]);
+        webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineBack = new PowerPlaySuperPipeline(false, true,
+                        false, false, 160.0, true, false);
+                webcamBack.setPipeline(pipelineBack);
+                webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
+        webcamBack.showFpsMeterOnViewport(false);
 
         // Tell telemetry to update faster than the default 250ms period :)
         telemetry.setMsTransmissionInterval(20);

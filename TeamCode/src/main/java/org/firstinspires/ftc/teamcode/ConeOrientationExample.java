@@ -90,25 +90,25 @@ public class ConeOrientationExample extends LinearOpMode
             }
         });
 
-//        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-//                "Webcam Front"), viewportContainerIds[1]);
-//        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-//        {
-//            @Override
-//            public void onOpened()
-//            {
-//                pipelineFront = new PowerPlaySuperPipeline(false, true,
-//                        false, false, 160.0, true, false);
-//                webcamFront.setPipeline(pipelineFront);
-//                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
-//            }
+        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Front"), viewportContainerIds[1]);
+        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineFront = new PowerPlaySuperPipeline(false, true,
+                        false, false, 160.0, true, false);
+                webcamFront.setPipeline(pipelineFront);
+                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+            }
 
-//            @Override
-//            public void onError(int errorCode)
-//            {
-//                // This will be called if the camera could not be opened
-//            }
-//        });
+           @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
 
         webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
                 "Webcam Back"), viewportContainerIds[2]);
