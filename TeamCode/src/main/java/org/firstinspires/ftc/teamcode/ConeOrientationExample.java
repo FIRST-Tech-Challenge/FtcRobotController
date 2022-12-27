@@ -40,7 +40,13 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @TeleOp(name="Cone-Test", group="Skunkworks")
 public class ConeOrientationExample extends LinearOpMode
 {
-    OpenCvCamera webcam;
+    // Vision stuff
+    PowerPlaySuperPipeline pipelineLow;
+    PowerPlaySuperPipeline pipelineFront;
+    PowerPlaySuperPipeline pipelineBack;
+    OpenCvCamera webcamLow;
+    OpenCvCamera webcamFront;
+    OpenCvCamera webcamBack;
     PowerPlaySuperPipeline pipeline;
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
@@ -59,28 +65,68 @@ public class ConeOrientationExample extends LinearOpMode
 
         // Create camera instance
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
-        // Open async and start streaming inside opened callback
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
+                .splitLayoutForMultipleViewports(
+                        cameraMonitorViewId, //The container we're splitting
+                        2, //The number of sub-containers to create
+                        OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY); //Whether to split the container vertically or horizontally
+        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Low"), viewportContainerIds[0]);
+        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-
-                pipeline = new PowerPlaySuperPipeline(false, false,
-                        true, false, 160.0, false,
-                        false);
-                webcam.setPipeline(pipeline);
+                pipelineLow = new PowerPlaySuperPipeline(true, false,
+                        false, false, 160.0, true, false);
+                webcamLow.setPipeline(pipelineLow);
+                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
             public void onError(int errorCode)
             {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
+                // This will be called if the camera could not be opened
+            }
+        });
+
+//        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+//                "Webcam Front"), viewportContainerIds[1]);
+//        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                pipelineFront = new PowerPlaySuperPipeline(false, true,
+//                        false, false, 160.0, true, false);
+//                webcamFront.setPipeline(pipelineFront);
+//                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+//            }
+
+//            @Override
+//            public void onError(int errorCode)
+//            {
+//                // This will be called if the camera could not be opened
+//            }
+//        });
+
+        webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Back"), viewportContainerIds[2]);
+        webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineBack = new PowerPlaySuperPipeline(false, true,
+                        false, false, 160.0, true, false);
+                webcamBack.setPipeline(pipelineBack);
+                webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
             }
         });
 

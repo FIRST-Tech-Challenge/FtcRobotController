@@ -43,9 +43,15 @@ public class PoleOrientationExample extends LinearOpMode
     double[]  angleOffset = new double[LOGSIZE];  // pixel offset error (left/right)
     double[]  distOffset  = new double[LOGSIZE];  // pixel offset error (too narrow/wide)
 
-    OpenCvCamera webcam;
+    // Vision stuff
+    PowerPlaySuperPipeline pipelineLow;
+    PowerPlaySuperPipeline pipelineFront;
+    PowerPlaySuperPipeline pipelineBack;
+    OpenCvCamera webcamLow = null;
+    OpenCvCamera webcamFront = null;
+    OpenCvCamera webcamBack = null;
     /* Declare OpMode members. */
-    HardwareSlimbot robot = new HardwareSlimbot();
+//    HardwareSlimbot robot = new HardwareSlimbot();
     boolean aligning = false;
     boolean ranging = false;
     PowerPlaySuperPipeline.AnalyzedPole thePole;
@@ -56,48 +62,67 @@ public class PoleOrientationExample extends LinearOpMode
          * you should take a look at or its
          * webcam counterpart,first.
          */
-        PowerPlaySuperPipeline pipeline;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry.addLine("Robot initializing, wait for completion.");
+        telemetry.update();
 
-        // Create camera instance
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam front"), cameraMonitorViewId);
-
-        // Open async and start streaming inside opened callback
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN );
-
-                pipeline = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0, false,
-                        false);
-                webcam.setPipeline(pipeline);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
+        int cameraCount = 2;
+        // Create camera instances
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId",
+                "id", hardwareMap.appContext.getPackageName());
+        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
+                .splitLayoutForMultipleViewports(
+                        cameraMonitorViewId, //The container we're splitting
+                        cameraCount, //The number of sub-containers to create
+                        OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY); //Whether to split the container vertically or horizontally
+        if(cameraCount >= 1) {
+            webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                    "Webcam Low"), viewportContainerIds[0]);
+            pipelineLow = new PowerPlaySuperPipeline(true, false,
+                    false, true, 160.0, true,
+                    false);
+            webcamLow.openCameraDevice();
+            webcamLow.setPipeline(pipelineLow);
+            webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            webcamLow.showFpsMeterOnViewport(false);
+        }
+        if(cameraCount >= 2) {
+            webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                    "Webcam Front"), viewportContainerIds[1]);
+            pipelineFront = new PowerPlaySuperPipeline(false, true,
+                    false, false, 160.0, true,
+                    false);
+            webcamFront.openCameraDevice();
+            webcamFront.setPipeline(pipelineFront);
+            webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+            webcamFront.showFpsMeterOnViewport(false);
+        }
+        if(cameraCount >= 3) {
+            webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                    "Webcam Back"), viewportContainerIds[2]);
+            pipelineBack = new PowerPlaySuperPipeline(false, true,
+                    false, false, 160.0, true,
+                    false);
+            webcamBack.openCameraDevice();
+            webcamBack.setPipeline(pipelineBack);
+            webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            webcamBack.showFpsMeterOnViewport(false);
+        }
 
         // Tell telemetry to update faster than the default 250ms period :)
         telemetry.setMsTransmissionInterval(20);
         /* Declare OpMode members. */
-        robot.init(hardwareMap,false);
+//        robot.init(hardwareMap,false);
 
+        telemetry.addLine("Robot initialized, ready to start.");
+        telemetry.update();
         waitForStart();
 
         // Perform setup needed to center turret
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+//        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
 
         while (opModeIsActive())
         {
@@ -106,11 +131,11 @@ public class PoleOrientationExample extends LinearOpMode
             sleep(20);
 
             // Execute the automatic turret movement code   
-            robot.readBulkData();
-            robot.turretPosRun();
+//            robot.readBulkData();
+//            robot.turretPosRun();
 
             // Let us see if we can use the camera for distance.
-            alignToPole();
+//            alignToPole();
             telemetry.addLine("Aligned... waiting for kick");
             for( int index=0; index<LOGSIZE; index++ ) {
                 telemetry.addData(" ","%d = %.1f %.1f pix",
@@ -119,15 +144,30 @@ public class PoleOrientationExample extends LinearOpMode
             telemetry.update();
             sleep( 2000 );
         }
+
+        // Close out the vision
+        if(webcamLow != null) {
+            webcamLow.stopStreaming();
+        }
+        if(webcamFront != null) {
+            webcamFront.stopStreaming();
+        }
+        if(webcamBack != null) {
+            webcamBack.stopStreaming();
+        }
+//        webcamLow.closeCameraDevice();
+//        webcamFront.closeCameraDevice();
+//        webcamBack.closeCameraDevice();
     }
 
     /*---------------------------------------------------------------------------------*/
+    /*
     void alignToPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         double turnPower;
         double drivePower;
         double fr, fl, br, bl;
-        theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
+        theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipelineFront.getDetectedPole());
         while (opModeIsActive() && ((theLocalPole.alignedCount <= 3) || theLocalPole.properDistanceHighCount <= 3)) {
 //      while (opModeIsActive() ) {
             if(theLocalPole.poleAligned) {
@@ -168,8 +208,9 @@ public class PoleOrientationExample extends LinearOpMode
             }
             telemetry.update();
             // sleep( 40 );
-            theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipeline.getDetectedPole());
+            theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipelineFront.getDetectedPole());
         }
         robot.stopMotion();
     } // alignToPole
+     */
 }

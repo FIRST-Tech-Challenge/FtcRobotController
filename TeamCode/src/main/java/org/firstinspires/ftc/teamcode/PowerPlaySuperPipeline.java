@@ -224,8 +224,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
      * Threshold values
      */
     static final int CB_CHAN_MASK_YELLOW_THRESHOLD = 80;
-    static final int CB_CHAN_MASK_BLUE_THRESHOLD = 160;
-    static final int CR_CHAN_MASK_RED_THRESHOLD = 160;
+    static final int CB_CHAN_MASK_BLUE_THRESHOLD = 140;
+    static final int CR_CHAN_MASK_RED_THRESHOLD = 140;
 
     /*
      * The elements we use for noise reduction
@@ -472,12 +472,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
             case MASK:
             {
-                return thresholdYellowMat;
+                return thresholdBlueMat;
             }
 
             case MASK_NR:
             {
-                return morphedYellowThreshold;
+                return morphedBlueThreshold;
             }
 
             case CONTOURS:
@@ -590,8 +590,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
         // This might not be the best way to do this, but we split the image in two to detect
         // the cones in the upper half, tape in the lower half.
-        Mat coneHalf = morphedBlueThreshold.submat(0, 120, 0, 320);
-        Mat tapeHalf = morphedBlueThreshold.submat(120, 240, 0, 320);
+//        Mat coneHalf = morphedBlueThreshold.submat(0, 120, 0, 320);
+        Mat tapeHalf = morphedBlueThreshold.submat(0, 240, 0, 320);
 
         // Ok, now actually look for the contours! We only look for external contours.
         Imgproc.findContours(tapeHalf, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
@@ -599,7 +599,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // We do draw the contours we find, but not to the main input buffer.
         Imgproc.drawContours(contoursOnPlainImageMat, contoursList, -1, BLUE, CONTOUR_LINE_THICKNESS, 8);
 
-        coneHalf.release();
+//        coneHalf.release();
         tapeHalf.release();
 
         return contoursList;
