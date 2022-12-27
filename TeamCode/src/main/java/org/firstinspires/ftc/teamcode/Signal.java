@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name="Signal", group="Autonomous")
 //@Disabled
@@ -15,6 +16,7 @@ public class Signal extends LinearOpMode {
     private DcMotor lb = null;  //left back wheel
     private DcMotor rb = null;  //right back wheel
     private DcMotor tower1 = null; //arm motor 1
+    private Servo clamp = null; //servo clamp
 
 
     @Override
@@ -27,6 +29,7 @@ public class Signal extends LinearOpMode {
         lb = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
         tower1 = hardwareMap.get(DcMotor.class, "tower1");
+        clamp = hardwareMap.get(Servo.class, "clamp");
 
         double sidemult = -1.0; //Red side = 1.0 Blue = -1.0
 
@@ -47,17 +50,19 @@ public class Signal extends LinearOpMode {
             rf.setPower(0);
             lb.setPower(0);
             rb.setPower(0);
+            clamp.setPosition(0);
 
-            sleep(20000); // Wait for 20 Seconds
+            sleep(1000); // Wait for 20 Seconds
 
 
             tower1.setPower(0);
-            lf.setPower(-0.5 * sidemult);
-            rf.setPower(-0.5 * sidemult);
-            lb.setPower(-0.5 * sidemult);
-            rb.setPower(-0.5 * sidemult);
+            lf.setPower(-.6 * sidemult);
+            rf.setPower(.6 * sidemult);
+            lb.setPower(.6 * sidemult);
+            rb.setPower(-.6 * sidemult);
+            clamp.setPosition(.53);
 
-            sleep(575); // Forward to low junction
-        }
+            sleep(20000);
     }
+}
 }
