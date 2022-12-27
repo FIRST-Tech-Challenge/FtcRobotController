@@ -38,6 +38,7 @@ public class Hardware2022 {
 
     //Encoder value of VSlide height in Cone mode,
     private final int CONE_SLIDE_LOW = 36  ;
+    //Get accurate reading for auto
     private final int CONE_SLIDE_MID = 1200 ;
     private final int CONE_SLIDE_HIGH = 3800 ;
 
@@ -476,6 +477,10 @@ public class Hardware2022 {
 
     public void setkF(double kF) {
         this.kF = kF;
+    }
+
+    public void scoreMid() {
+        goToHeight(SlideHeight.Mid);
     }
 
 }
