@@ -174,14 +174,23 @@ public class BlueLeft extends LinearOpMode {
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
         if (opModeIsActive()) {
-
             Left.setPower(.3);
+            sleep(500);
+            crane(-1,400);
+            strafeLeft(1,1800);
+            //crane(-1,1900);
+            move(.5,300);
+            sleep(100);
+            Left.setPower(-1);
+            sleep(1300);
+            Left.setPower(0);
+            /*Left.setPower(.3);
             sleep(500);
             crane(-1,400);
             move(.5,100);
             strafeLeft(1,1000);
             stopMotors();
-            gyroTurning(0);
+            //gyroTurning(0);
             sleep(200);
             move(1,1900);
             gyroTurning(-90);
@@ -191,7 +200,7 @@ public class BlueLeft extends LinearOpMode {
             move(.5,400);
             Left.setPower(-1);
             sleep(1300);
-            Left.setPower(0);
+            Left.setPower(0);*/
 
             switch (location){
                 case 0:
@@ -354,7 +363,7 @@ public class BlueLeft extends LinearOpMode {
         backLeft.setPower(power);
 
         while (frontLeft.isBusy() && opModeIsActive()) {
-
+            crane(-1,1900);
         }
 
     }

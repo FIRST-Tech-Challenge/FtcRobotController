@@ -56,6 +56,7 @@ public class Servotesting extends LinearOpMode {
             double crainpower;
             boolean spincenter;
             boolean opspincenter;
+            boolean burst;
 
             throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
@@ -69,16 +70,17 @@ public class Servotesting extends LinearOpMode {
             spinpowerdown =gamepad2.dpad_left;
             pickup = gamepad2.left_trigger;
             dropoff = gamepad2.right_trigger;
+            burst = gamepad2.b;
 
 
-            if (strafeLeft) {
-                frontLeft.setPower(-.9);
+            if (strafeRight) {
+                frontLeft.setPower(-.8);
                 frontRight.setPower(1);
                 backLeft.setPower(1);
                 backRight.setPower(-1);
             }
-            if (strafeRight) {
-                frontLeft.setPower(1);
+            if (strafeLeft) {
+                frontLeft.setPower(.8);
                 frontRight.setPower(-1);
                 backLeft.setPower(-1);
                 backRight.setPower(1);
@@ -110,17 +112,23 @@ public class Servotesting extends LinearOpMode {
 
             if (spincenter){
                 Spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                Spin.setTargetPosition(0);
+                Spin.setTargetPosition(-20);
                 Spin.setPower(1);
                 Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while (Spin.isBusy()&&opModeIsActive()){
+
+                }
                 Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             if (opspincenter){
                 Spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                Spin.setTargetPosition(-30);
+                Spin.setTargetPosition(-589);
                 Spin.setPower(1);
                 Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while (Spin.isBusy()&&opModeIsActive()){
+
+                }
                 Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
@@ -140,6 +148,22 @@ public class Servotesting extends LinearOpMode {
                 Left.setPower(0);
 
             }
+            /*
+            while (burst) {
+                Left.setPower(.8);
+                sleep(500);
+                Left.setPower(0);
+                sleep(1500);
+                if (burst == false) {
+                    break;
+                }
+            }
+            */
+
+
+
+            telemetry.addData("spin position",Spin.getCurrentPosition());
+            telemetry.update();
         }
 
 
