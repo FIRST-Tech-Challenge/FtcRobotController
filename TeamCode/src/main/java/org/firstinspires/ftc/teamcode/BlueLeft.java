@@ -177,9 +177,9 @@ public class BlueLeft extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeft(1,1800);
+            strafeLeft(1,1750);
             //crane(-1,1900);
-            move(.5,300);
+            move(.5,330);
             sleep(100);
             Left.setPower(-1);
             sleep(1300);
@@ -342,6 +342,7 @@ public class BlueLeft extends LinearOpMode {
     }
 
     public void strafeLeft(double power, int position)  {
+
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -361,9 +362,8 @@ public class BlueLeft extends LinearOpMode {
         frontLeft.setPower(power);
         backRight.setPower(power);
         backLeft.setPower(power);
-
+        crane(-1,2100);
         while (frontLeft.isBusy() && opModeIsActive()) {
-            crane(-1,1900);
         }
 
     }
