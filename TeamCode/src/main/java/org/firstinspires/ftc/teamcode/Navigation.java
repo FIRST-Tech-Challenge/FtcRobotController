@@ -48,7 +48,7 @@ public class Navigation {
 
     // TELEOP CONSTANTS
     // ================
-    static final double MOVEMENT_MAX_POWER = 1.0;
+    static final double MOVEMENT_MAX_POWER = 0.5;
     static final double ROTATION_POWER = 0.8;
     static final double FINE_MOVEMENT_SCALE_FACTOR = 0.5;
     static final double ULTRA_FINE_MOVEMENT_SCALE_FACTOR = 0.25;
@@ -154,13 +154,13 @@ public class Navigation {
     public boolean moveStraight(boolean forward, boolean backward, boolean left, boolean right, Robot robot) {
         double direction;
         if (forward || backward) {
-            if (left) {
+            if (left) {//move NW
                 direction = Math.PI * 0.75;
             }
-            else if (right) {
+            else if (right) {//move NE
                 direction = Math.PI * 0.25;
             }
-            else {
+            else {//move just forward
                 direction = Math.PI * 0.5;
             }
             if (backward) {

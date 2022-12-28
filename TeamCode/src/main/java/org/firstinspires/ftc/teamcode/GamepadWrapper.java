@@ -54,11 +54,12 @@ public class GamepadWrapper {
             case ULTRA_FINE_MOVEMENT_TOGGLE:
                 return gamepad1.right_bumper;
             case MOVE_STRAIGHT_FORWARD:
-                return gamepad1.dpad_down;
-            case MOVE_STRAIGHT_BACKWARD:
                 return gamepad1.dpad_up;
+            case MOVE_STRAIGHT_BACKWARD:
+                return gamepad1.dpad_down;
             case MOVE_STRAIGHT_LEFT:
-                return gamepad1.x;
+                return gamepad1.x
+                        ;
             case MOVE_STRAIGHT_RIGHT:
                 return gamepad1.b;
             case TOGGLE_WHEEL_SPEED_ADJUSTMENT:
