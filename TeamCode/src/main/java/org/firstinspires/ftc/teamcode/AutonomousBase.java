@@ -153,7 +153,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipelineLow.getDetectedRedCone());
         while (opModeIsActive() && (theLocalCone.alignedCount < 2)) {
             performEveryLoop();
-            if(theLocalCone.coneAligned) {
+            if(theLocalCone.aligned) {
                 robot.stopMotion();
             } else {
                 robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.085 : -0.085);
@@ -171,7 +171,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         theLocalCone = pipelineLow.getDetectedBlueCone();
         while (opModeIsActive() && (theLocalCone.alignedCount < 2)) {
             performEveryLoop();
-            if(theLocalCone.coneAligned) {
+            if(theLocalCone.aligned) {
                 robot.stopMotion();
             } else {
                 robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.085 : -0.085);
@@ -189,7 +189,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipelineLow.getDetectedPole());
         while (opModeIsActive() && (theLocalPole.alignedCount < 2)) {
             performEveryLoop();
-            if(theLocalPole.poleAligned) {
+            if(theLocalPole.aligned) {
                 robot.stopMotion();
             } else {
                 robot.driveTrainTurn((theLocalPole.centralOffset > 0) ? +0.085 : -0.085);
