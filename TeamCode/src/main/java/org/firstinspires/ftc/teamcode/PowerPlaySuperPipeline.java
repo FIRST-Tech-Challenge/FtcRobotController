@@ -475,10 +475,17 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 if (theBlueCone.aligned) {
                     theBlueCone.alignedCount++;
                     drawRotatedRect(theBlueCone.corners, input, GREEN);
-                    drawRotatedRect(theBlueTape.corners, input, GREEN);
                 } else {
                     theBlueCone.alignedCount = 0;
                     drawRotatedRect(theBlueCone.corners, input, RED);
+                }
+            }
+            synchronized(lockBlueTape) {
+                if (theBlueTape.aligned) {
+                    theBlueTape.alignedCount++;
+                    drawRotatedRect(theBlueTape.corners, input, GREEN);
+                } else {
+                    theBlueTape.alignedCount = 0;
                     drawRotatedRect(theBlueTape.corners, input, RED);
                 }
             }
@@ -488,10 +495,17 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 if (theRedCone.aligned) {
                     theRedCone.alignedCount++;
                     drawRotatedRect(theRedCone.corners, input, GREEN);
-                    drawRotatedRect(theRedTape.corners, input, GREEN);
                 } else {
                     theRedCone.alignedCount = 0;
                     drawRotatedRect(theRedCone.corners, input, RED);
+               }
+            }
+            synchronized(lockRedTape) {
+                if (theRedTape.aligned) {
+                    theRedTape.alignedCount++;
+                    drawRotatedRect(theRedTape.corners, input, GREEN);
+                } else {
+                    theRedTape.alignedCount = 0;
                     drawRotatedRect(theRedTape.corners, input, RED);
                 }
             }
@@ -761,21 +775,32 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     }
 
     int findConeTapeVortex(Mat tapeConeImage) {
-        int startingRow = 160;
+        boolean startedTape = false;
+        int startingRow = 239;
         int triggerDelta = 255 * 4;
+        int tapeDelta = 255 * 10;
         int vortexRow = 0;
         Scalar lastRowAmplitude;
         Scalar thisRowAmplitude;
 
         lastRowAmplitude = Core.sumElems(tapeConeImage.row(startingRow));
-        for(int row = startingRow;row >= 1;row--) {
+        for(int row = startingRow;row >= 0;row--) {
             thisRowAmplitude = Core.sumElems(tapeConeImage.row(row));
-            // 10 pixel change in magnitude should be 255 * 10
-            if((thisRowAmplitude.val[0] - lastRowAmplitude.val[0]) >= triggerDelta) {
-                vortexRow = row;
-                break;
+            if(startedTape == false) {
+                if(thisRowAmplitude.val[0] > tapeDelta) {
+                    startedTape = true;
+                    row -= 20;
+                    thisRowAmplitude = Core.sumElems(tapeConeImage.row(row));
+                    lastRowAmplitude = thisRowAmplitude;
+                }
             } else {
-                lastRowAmplitude = thisRowAmplitude;
+                // 10 pixel change in magnitude should be 255 * 10
+                if ((thisRowAmplitude.val[0] - lastRowAmplitude.val[0]) >= triggerDelta) {
+                    vortexRow = row;
+                    break;
+                } else {
+                    lastRowAmplitude = thisRowAmplitude;
+                }
             }
         }
         return vortexRow;
