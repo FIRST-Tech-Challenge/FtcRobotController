@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware2022;
 public class HWTestTele  extends LinearOpMode {
     Hardware2022 hdw;
 
-    double[] pidCoffs = { -0.3,0,0 };
+    double[] pidCoffs = { 0.2,0.2,0.0 };
     int pidCoffIndex = 0;
 
     @Override
@@ -83,19 +83,25 @@ public class HWTestTele  extends LinearOpMode {
             }
 
             if( gamepad1.left_bumper) {
-                pidCoffs[pidCoffIndex] -= 0.0001;
+                pidCoffs[pidCoffIndex] -= 0.01;
                 telemetry.addLine().addData("[Kp :]  ", pidCoffs[0]);
                 telemetry.addLine().addData("[Ki :]  ", pidCoffs[1]);
                 telemetry.addLine().addData("[Kd :]  ", pidCoffs[2]);
                 telemetry.update();
+                sleep(100);
             }
 
             if( gamepad1.right_bumper) {
-                pidCoffs[pidCoffIndex] += 0.0001;
+                if ( pidCoffIndex == 2) {
+                    pidCoffs[pidCoffIndex] += 0.001;
+                } else {
+                    pidCoffs[pidCoffIndex] += 0.01;
+                }
                 telemetry.addLine().addData("[Kp :]  ", pidCoffs[0]);
                 telemetry.addLine().addData("[Ki :]  ", pidCoffs[1]);
                 telemetry.addLine().addData("[Kd :]  ", pidCoffs[2]);
                 telemetry.update();
+                sleep(100);
             }
 
             /*
@@ -108,6 +114,7 @@ public class HWTestTele  extends LinearOpMode {
             /*if (gamepad1.circle) {
                 hdw.coneDropStop();
             */
+
         }
     }
 

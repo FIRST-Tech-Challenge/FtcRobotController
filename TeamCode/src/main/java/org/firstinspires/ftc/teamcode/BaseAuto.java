@@ -54,8 +54,8 @@ public abstract class BaseAuto extends LinearOpMode {
         //This is here so it starts recog after start
         waitForStart();
 
-        hdw.moveYAxis(6, 0.3);
-        sleep(100);
+        //hdw.moveYAxis(6, 0.3);
+        //sleep(100);
 
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -74,9 +74,6 @@ public abstract class BaseAuto extends LinearOpMode {
             }
         });
 
-        //waitForStart();
-        coneImgPipeline.setDecoded(false);
-
         long startMills  = System.currentTimeMillis();
 
         //Max try 10 seconds.
@@ -94,6 +91,9 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Sleeve: ", currentSide);
         telemetry.update();
         sleep(1000);
+
+        //TODO
+        scoreMidPole();
 
         switch ( currentSide) {
             case Sleev1: {
@@ -151,5 +151,6 @@ public abstract class BaseAuto extends LinearOpMode {
 
 
     abstract void parkTerminal();
+    abstract void scoreMidPole();
 
 }

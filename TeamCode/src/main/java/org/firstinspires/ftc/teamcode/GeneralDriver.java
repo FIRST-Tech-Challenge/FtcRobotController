@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -63,6 +65,7 @@ public class GeneralDriver extends BaseTele {
             hdw.wheelFrontRight.setVelocity(frontRightVelocity);
             hdw.wheelBackRight.setVelocity(backRightVelocity);
 
+            /*
             telemetry.addData("Front left set ",frontLeftVelocity );
             telemetry.addData("back left set",backLeftVelocity );
             telemetry.addData("Front right set",frontRightVelocity);
@@ -78,7 +81,8 @@ public class GeneralDriver extends BaseTele {
                     + " port: " +  hdw.wheelBackRight.getPortNumber());
 
             telemetry.update();
-            
+            */
+
         }
 
     }

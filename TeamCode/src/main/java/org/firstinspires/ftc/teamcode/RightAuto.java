@@ -10,5 +10,12 @@ public class RightAuto extends BaseAuto {
         void parkTerminal() {
             hdw.moveXAxis(30, 0.5);
         }
+
+    @Override
+    void scoreMidPole () {
+
+
     }
+
+}
 

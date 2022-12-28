@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -37,10 +39,10 @@ public class Hardware2022 {
     private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
-    private final int CONE_SLIDE_LOW = 36  ;
+    private final int CONE_SLIDE_LOW = 2460  ;
     //Get accurate reading for auto
-    private final int CONE_SLIDE_MID = 1200 ;
-    private final int CONE_SLIDE_HIGH = 3800 ;
+    private final int CONE_SLIDE_MID = 3800 ;
+    private final int CONE_SLIDE_HIGH = 5000 ;
 
     private boolean debug = true;
     private Telemetry telemetry;
@@ -311,32 +313,40 @@ public class Hardware2022 {
 
         double currentHeading = startHeading;
 
-        telemetry.addLine().addData("[Start Heading: >]  ", startHeading);
-        telemetry.addLine().addData("[End Heading: >]  ", endHeading);
-        telemetry.update();
+        Log.d("9010", "Start Heading: " + startHeading );
+        Log.d("9010", "End Heading: " + endHeading );
 
-        double difference = regulateDegree( endHeading  - currentHeading );
-        PIDFController pidfCrtler  = new PIDFController(kP/180, kI/180, kD/180, kF);
-        pidfCrtler.setSetPoint(difference);
+
+        double difference = regulateDegree( currentHeading - endHeading   );
+        Log.d("9010", "Difference: " + difference );
+
+
+        PIDFController pidfCrtler  = new PIDFController(kP, kI, kD, kF);
+        Log.d("9010", "Kp: " + kP + "  kI: " + kI + " kD: " + kD );
+
+        pidfCrtler.setSetPoint(0);
         //Set tolerance as 2 degrees
-        pidfCrtler.setTolerance(2);
+        pidfCrtler.setTolerance(0.5);
         //set Integration between -0.5 to 0.5 to avoid saturating PID output.
         pidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
 
+        Log.d("9010", "Before entering Loop ");
+
         while ( !pidfCrtler.atSetPoint()  ) {
             currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            //Calculate new distance
+            difference = regulateDegree(  currentHeading - endHeading );
+            double velocityCaculated = pidfCrtler.calculate(difference)/5;
 
-            double velocityCaculated = pidfCrtler.calculate(currentHeading);
+            Log.d("9010", "=====================");
+            Log.d("9010", "Difference: " + difference);
+            Log.d("9010", "Current Heading: " + currentHeading );
+            Log.d("9010", "Calculated Volocity:  " + velocityCaculated );
 
-            telemetry.addLine().addData("[Heading: Inside While >]  ", currentHeading);
-            telemetry.addLine().addData("[Difference:  >]  ", difference);
-            telemetry.addLine().addData("[Caled Velocity:  >]  ", velocityCaculated);
-            telemetry.update();
-
-            wheelFrontLeft.setVelocity(-velocityCaculated * Hardware2022.ANGULAR_RATE);
-            wheelBackLeft.setVelocity(-velocityCaculated * Hardware2022.ANGULAR_RATE);
-            wheelFrontRight.setVelocity(velocityCaculated * Hardware2022.ANGULAR_RATE);
-            wheelBackRight.setVelocity(velocityCaculated * Hardware2022.ANGULAR_RATE);
+            wheelFrontLeft.setVelocity(velocityCaculated * Hardware2022.ANGULAR_RATE);
+            wheelBackLeft.setVelocity(velocityCaculated * Hardware2022.ANGULAR_RATE);
+            wheelFrontRight.setVelocity(-velocityCaculated * Hardware2022.ANGULAR_RATE);
+            wheelBackRight.setVelocity(-velocityCaculated * Hardware2022.ANGULAR_RATE);
         }
 
         wheelFrontRight.setVelocity(0);
@@ -478,9 +488,20 @@ public class Hardware2022 {
     public void setkF(double kF) {
         this.kF = kF;
     }
+    /*This method will lower slide until touch sensor gets activated
+     */
+    public void dropCone() {
 
-    public void scoreMid() {
-        goToHeight(SlideHeight.Mid);
+        double power = -0.5;
+
+        while (clawTouch.getState()==true) {
+            vSlide.setVelocity(power * ANGULAR_RATE);
+        }
+
+        vSlide.setVelocity(0);
+
+            //Thread.sleep(100);
+
     }
 
 }
