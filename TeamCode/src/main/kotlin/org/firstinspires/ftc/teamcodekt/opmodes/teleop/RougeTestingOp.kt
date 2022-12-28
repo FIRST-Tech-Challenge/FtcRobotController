@@ -22,7 +22,7 @@ class RougeTestingOp : RougeBaseTele() {
         reverseDepositChain.cancelOn(driver.x)
 
         driver.right_trigger(.1).whileHigh {
-            powerMulti *= 1 - (driver.right_trigger() pow 3)
+            powerMulti *= 1 - driver.right_trigger()
         }
 
         driver.left_trigger.whileHigh {

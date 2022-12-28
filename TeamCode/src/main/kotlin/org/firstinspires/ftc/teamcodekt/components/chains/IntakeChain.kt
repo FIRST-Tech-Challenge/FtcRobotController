@@ -6,11 +6,14 @@ import ftc.rouge.blacksmith.chains.Chain
 import ftc.rouge.blacksmith.listeners.Listener
 import ftc.rouge.blacksmith.listeners.Timer
 import ftc.rouge.blacksmith.listeners.after
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcodekt.components.TeleOpBotComponents
 
 class IntakeChain(val bot: TeleOpBotComponents) : Chain {
-    override fun invokeOn(button: Listener) = button
-        .onRise {
+    private var isRunning = false
+
+    override fun invokeOn(button: Listener) {
+        button.onRise {
             bot.claw.openForIntakeNarrow()
             bot.intake.enable()
 
@@ -18,13 +21,37 @@ class IntakeChain(val bot: TeleOpBotComponents) : Chain {
             bot.wrist.setToBackwardsPos()
 
             bot.lift.goToZero()
+            isRunning = true
         }
-        .onFall {
-            bot.claw.close()
-            bot.intake.disable()
 
-            bot.arm.setToRestingPos()
-            bot.wrist.setToRestingPos()
+        button.onFall {
+            if (!isRunning) {
+                return@onFall
+            }
+
+            bot.intake.disable()
+            bot.claw.close()
+
+            isRunning = false
+            kill()
         }
-        .hook()
+
+        Listener { isRunning && bot.rcs.getDistance(DistanceUnit.CM) < .8 }.onRise {
+            bot.intake.disable()
+            isRunning = false
+
+            after(75).milliseconds {
+                bot.claw.close()
+            }
+
+            after(250).milliseconds {
+                kill()
+            }
+        }
+    }
+
+    private fun kill() {
+        bot.arm.setToRestingPos()
+        bot.wrist.setToRestingPos()
+    }
 }

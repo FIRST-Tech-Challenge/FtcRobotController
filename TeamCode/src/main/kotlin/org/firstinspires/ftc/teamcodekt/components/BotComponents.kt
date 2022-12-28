@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcodekt.components
 
+import com.qualcomm.hardware.rev.RevColorSensorV3
+import com.qualcomm.robotcore.hardware.ColorSensor
+import com.qualcomm.robotcore.hardware.DistanceSensor
 import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rouge.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 
@@ -21,6 +25,7 @@ abstract class BaseBotComponents {
 
 fun createTeleOpBotComponents(hwMap: HardwareMap, voltageScaler: VoltageScaler) =
     TeleOpBotComponents(
+        hwMap(DeviceNames.COLOR_SENSOR),
         Drivetrain(hwMap),
         Claw(hwMap),
         Intake(hwMap),
@@ -30,6 +35,7 @@ fun createTeleOpBotComponents(hwMap: HardwareMap, voltageScaler: VoltageScaler) 
     )
 
 data class TeleOpBotComponents(
+    val rcs: RevColorSensorV3,
     val drivetrain: Drivetrain,
     override val claw: Claw,
     override val intake: Intake,
@@ -45,7 +51,7 @@ fun createAutoBotComponents(hwMap: HardwareMap, voltageScaler: VoltageScaler) =
         Intake(hwMap),
         Arm(hwMap),
         Wrist(hwMap),
-        Lift(hwMap, voltageScaler)
+        Lift(hwMap, voltageScaler),
     )
 
 data class AutoBotComponents(

@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo
 @Config
 object ArmConfig {
     @JvmField var FORWARDS = 135.0
-    @JvmField var BACKWARDS = 39.9
+    @JvmField var BACKWARDS = 37.5
     @JvmField var RESTING = 96.0
 }
 
@@ -39,6 +39,10 @@ class Arm(hwMap: HardwareMap) {
      */
     fun setToBackwardsPos() {
         targetAngle = ArmConfig.BACKWARDS
+    }
+
+    fun setToBackwardsPosButLikeSliiiightlyHigher() {
+        targetAngle = ArmConfig.BACKWARDS + 3.5
     }
 
     /**

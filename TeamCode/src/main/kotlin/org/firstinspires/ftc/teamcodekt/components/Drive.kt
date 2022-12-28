@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rouge.blacksmith.util.kt.invoke
+import ftc.rouge.blacksmith.util.kt.maxMagnitudeAbs
+import ftc.rouge.blacksmith.util.kt.pow
+import ftc.rouge.blacksmith.util.kt.withDeadzone
+import ftc.rouge.blacksmith.util.withDeadzone
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
-import ftc.rouge.blacksmith.util.kt.invoke
-import ftc.rouge.blacksmith.util.kt.maxMagnitude
-import ftc.rouge.blacksmith.util.kt.maxMagnitudeAbs
-import ftc.rouge.blacksmith.util.kt.withDeadzone
-import ftc.rouge.blacksmith.util.zeroIfNaN
 import kotlin.math.*
 
 class Drivetrain(hwMap: HardwareMap) {
@@ -30,7 +30,10 @@ class Drivetrain(hwMap: HardwareMap) {
     }
 
     fun drive(gamepad: Gamepad, powerMulti: Double = 0.0) {
-        val (x, y, r) = gamepad.getDriveSticks()
+        val (_x, _y, r) = gamepad.getDriveSticks()
+
+        val x = _x.withDeadzone(.03, 1).withDeadzone<Float>(.03, -1)
+        val y = _y.withDeadzone(.03, 1).withDeadzone<Float>(.03, -1)
 
         val theta = atan2(y, x)
         val power = hypot(x, y)
@@ -54,7 +57,7 @@ class Drivetrain(hwMap: HardwareMap) {
         val _powerMulti = if (!gamepad.isAnyJoystickTriggered()) 0.0 else powerMulti
 
         powers.onEach {
-            (it * it * it * _powerMulti).withDeadzone<Double>(0.025)
+            ((it pow 3) * _powerMulti).withDeadzone<Double>(0.025)
         }
 
         withEachMotor {

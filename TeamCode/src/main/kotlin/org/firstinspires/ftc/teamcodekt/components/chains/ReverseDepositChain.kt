@@ -16,7 +16,7 @@ class ReverseDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
             isCancelled = false
             isRunning = true
 
-            bot.arm.setToBackwardsPos()
+            bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
             bot.wrist.setToBackwardsPos()
         }
         .onFall {

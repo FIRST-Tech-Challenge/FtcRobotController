@@ -17,7 +17,7 @@ class RougeCompOp : RougeBaseTele() {
             .whileHigh { powerMulti /= 2 }
 
         driver.right_trigger(.1).whileHigh {
-            powerMulti *= 1 - (driver.right_trigger() pow 3)
+            powerMulti *= 1 - driver.right_trigger()
         }
 
         Listener.always {
@@ -33,9 +33,9 @@ class RougeCompOp : RougeBaseTele() {
 
         // -- TASK CHAINS --
 
-        intakeChain.invokeOn(codriver.left_bumper)
+        intakeChain.invokeOn(codriver.left_trigger)
 
-        regularDepositChain.invokeOn(codriver.right_bumper)
+        regularDepositChain.invokeOn(codriver.right_trigger)
         regularDepositChain.cancelOn(codriver.x)
 
         reverseDepositChain.invokeOn(codriver.y)
@@ -57,12 +57,12 @@ class RougeCompOp : RougeBaseTele() {
 
         // -- MANUAL LIFT CONTROLS --
 
-        codriver.right_trigger.whileHigh {
-            lift.height += (8 * codriver.right_trigger()).toInt()
+        codriver.right_bumper.whileHigh {
+            lift.height += 8
         }
 
-        codriver.left_trigger.whileHigh {
-            lift.height -= (8 * codriver.left_trigger()).toInt()
+        codriver.left_bumper.whileHigh {
+            lift.height -= 8
         }
     }
 }
