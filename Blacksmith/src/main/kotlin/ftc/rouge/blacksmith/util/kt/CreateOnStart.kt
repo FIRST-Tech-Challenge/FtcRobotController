@@ -3,14 +3,14 @@
 package ftc.rouge.blacksmith.util.kt
 
 import ftc.rouge.blacksmith.BlackOp
-import ftc.rouge.blacksmith.messenger.Messenger
+import ftc.rouge.blacksmith.Scheduler
 import kotlin.reflect.KProperty
 
-inline fun <reified T> createOnStart(vararg args: () -> Any) =
+inline fun <reified T> createOnGo(vararg args: () -> Any) =
     CreateOnStartR(T::class.java, *args)
 
 @JvmSynthetic
-fun <T> createOnStart(constructor: () -> T) =
+fun <T> createOnGo(constructor: () -> T) =
     CreateOnStartL(constructor)
 
 class CreateOnStartR<T> @PublishedApi internal constructor(
@@ -20,7 +20,7 @@ class CreateOnStartR<T> @PublishedApi internal constructor(
     private var value: Any? = Uninitialized
 
     init {
-        Messenger.on(BlackOp.STARTING_MSG) {
+        Scheduler.on(BlackOp.STARTING_MSG) {
             val invokedArgs = args.map { it() }.toTypedArray()
             value = clazz.constructors.first().newInstance(*invokedArgs)
         }
@@ -44,7 +44,7 @@ class CreateOnStartL<T> internal constructor(
     private var value: Any? = Uninitialized
 
     init {
-        Messenger.on(BlackOp.STARTING_MSG) {
+        Scheduler.on(BlackOp.STARTING_MSG) {
             value = constructor()
         }
     }

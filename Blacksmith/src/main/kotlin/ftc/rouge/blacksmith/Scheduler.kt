@@ -86,9 +86,6 @@ object Scheduler {
      */
     private val listeners = mutableSetOf<Listener>()
 
-    private val listenersToAdd = mutableSetOf<Listener>()
-    private val listenersToRemove = mutableSetOf<Listener>()
-
     /**
      * A block of code to run before each tick.
      */
@@ -207,12 +204,26 @@ object Scheduler {
         beforeEach = Runnable {}
     }
 
+    private val messages = mutableMapOf<Any, MutableList<Runnable>>()
+
+    @JvmStatic
+    fun emit(message: Any) {
+        messages[message]?.forEach { it.run() }
+    }
+
+    @JvmStatic
+    fun on(message: Any, callback: Runnable) {
+        messages.getOrPut(message, ::ArrayList) += callback
+    }
+
+    private val listenersToAdd = mutableSetOf<Listener>()
+    private val listenersToRemove = mutableSetOf<Listener>()
+
     /**
      * Registers the given [Listener] to this Scheduler. By doing so, the [Listener] will be
      * updated on every tick unless it is unregistered or the Scheduler is reset.
      * @param listener The [Listener] to subscribe.
      */
-    @JvmStatic
     internal fun hookListener(listener: Listener) {
         listenersToAdd += listener
     }
@@ -221,7 +232,6 @@ object Scheduler {
      * Unregisters the given [Listener] from this Scheduler.
      * @param listener The [Listener] to unsubscribe.
      */
-    @JvmStatic
     internal fun unhookListener(listener: Listener) {
         listenersToRemove += listener
     }

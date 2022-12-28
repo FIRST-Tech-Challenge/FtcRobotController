@@ -16,7 +16,7 @@ object LiftConfig {
     @JvmField var P = 0.0115
     @JvmField var I = 0.0002
     @JvmField var D = 0.0002
-    @JvmField var F = 0.00001
+    @JvmField var F = 0.00002
 
     @JvmField var ZERO = 0
     @JvmField var LOW  = 737
@@ -27,7 +27,7 @@ object LiftConfig {
 }
 
 class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
-//    private val liftMotor: DcMotorSimple
+    private val liftMotor: DcMotorSimple
 
     private val liftEncoder: Motor
     private val liftPID: PIDFController
@@ -41,7 +41,7 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
         }
 
     init {
-//        liftMotor = hwMap(DeviceNames.LIFT_MOTOR)
+        liftMotor = hwMap(DeviceNames.LIFT_MOTOR)
 
         liftEncoder = Motor(hwMap, DeviceNames.LIFT_ENCODER)
         liftEncoder.resetEncoder()
@@ -71,7 +71,7 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
         val correction =
             liftPID.calculate(-liftEncoder.currentPosition.toDouble(), targetHeight + voltageCorrection)
 
-//        liftMotor.power = correction
+        liftMotor.power = correction
     }
 
     fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<Lift>) {
