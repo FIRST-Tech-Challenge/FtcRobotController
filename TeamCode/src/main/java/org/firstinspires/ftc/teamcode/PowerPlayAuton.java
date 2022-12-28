@@ -109,6 +109,13 @@ public class PowerPlayAuton extends LinearOpMode {
         telemetry.addData("Starting side", startingSide);
         telemetry.addData("Alliance color", allianceColor);
 
+        System.out.println("Movement mode "+ movementMode);
+        System.out.println("Wait time "+ waitTime);
+        System.out.println("Auton mode "+ autonMode);
+        System.out.println("Starting side "+ startingSide);
+        System.out.println("Alliance color "+ allianceColor);
+
+
         switch (movementMode) {
             case "STRAFE":
                 PowerPlayAuton.movementMode = Navigation.MovementMode.STRAFE;
