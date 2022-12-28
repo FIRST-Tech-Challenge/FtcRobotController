@@ -24,6 +24,7 @@ public class PowerPlayTeleOp extends OpMode {
     @Override
     public void init() {
         initSharedPreferences();
+        PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.BLUE;
         robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, new ArrayList<>(Collections.emptyList()),
                 allianceColor, RobotManager.StartingSide.OUR_COLOR,
                 Navigation.MovementMode.STRAFE, telemetry, elapsedTime);

@@ -9,15 +9,16 @@ import java.util.Map;
 public class MechanismDriving {
 
     private static int desiredSlidePosition;
+    public boolean testing=false;
 
     // TODO: empirically measure values of slides positions
     // TODO: empirically measure number of encoder counts for lowering horseshoe
     public static final int LOWERING_AMOUNT = 100;
     public static final Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
        put(Robot.SlidesState.RETRACTED, 0);
-       put(Robot.SlidesState.LOW, 700);
-       put(Robot.SlidesState.MEDIUM, 1850);
-       put(Robot.SlidesState.HIGH, 3500);
+       put(Robot.SlidesState.LOW, 5000);
+       put(Robot.SlidesState.MEDIUM, 8400);
+       put(Robot.SlidesState.HIGH, 10000);//needs to be higher
     }};
     //public static final int RETRACTED_POS = 0, LOW_POS = 700, MEDIUM_POS = 1850, HIGH_POS = 3500;
     //SPEED INFO: Scale from 0-1 in speed
@@ -95,6 +96,7 @@ public class MechanismDriving {
     public boolean updateSlides(Robot robot) {
 
        if (Robot.desiredSlidesState != Robot.SlidesState.UNREADY) {
+           if(!testing)
            setSlidePosition(robot, slidePositions.get(Robot.desiredSlidesState));
 
            // Speed is proportional to the fraction of the ramp distance that we have left.
