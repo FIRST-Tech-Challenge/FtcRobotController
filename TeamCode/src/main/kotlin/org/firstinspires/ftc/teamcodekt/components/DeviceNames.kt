@@ -17,4 +17,5 @@ object DeviceNames {
 
     const val SHORT_RANGE_SENSOR = "LC"
     const val WEBCAM1 = "Webcam 1"
+    const val COLOR_SENSOR = "CS"
 }

@@ -33,7 +33,7 @@ dependencies {
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
 
-    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v2.0.1'
+    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v2.0.2'
 
     implementation 'org.ftclib.ftclib:core:2.0.1'
     implementation 'org.ftclib.ftclib:vision:2.0.1'

@@ -5,28 +5,36 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.ColorSensor
+import com.qualcomm.robotcore.hardware.Servo
 import ftc.rouge.blacksmith.Scheduler
+import ftc.rouge.blacksmith.util.kt.invoke
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.teamcodekt.components.ClawColorSensor
 
 @TeleOp
 class TeastOp : LinearOpMode() {
     override fun runOpMode() {
-        val fr = Motor(hardwareMap, "FR") // Lift (max 1620) (high 1600) (mid 1170) (low 737)
-        val fl = Motor(hardwareMap, "FL") // Left Deadwheel
-        val br = Motor(hardwareMap, "BR") // Right Deadhweel
-        val bl = Motor(hardwareMap, "BL") // Horizontal deadwheel
-
-        fr.resetEncoder()
-        fl.resetEncoder()
-        br.resetEncoder()
-        bl.resetEncoder()
+//        val sensor = ClawColorSensor(hardwareMap)
+        val port3 = hardwareMap<Servo>("3")
+        val port4 = hardwareMap<Servo>("4")
+        val port5 = hardwareMap<Servo>("5")
 
         val mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         Scheduler.launchWhenReady(this) {
-            mTelemetry.addData("FR", fr.currentPosition)
-            mTelemetry.addData("FL", fl.currentPosition)
-            mTelemetry.addData("BR", br.currentPosition)
-            mTelemetry.addData("BL", bl.currentPosition)
+//            mTelemetry.addData("teast", sensor.distanceSensor.getDistance(DistanceUnit.CM))
+            if (gamepad1.a) {
+                port3.position += 0.04
+            }
+
+            if (gamepad1.b) {
+                port4.position += 0.04
+            }
+
+            if (gamepad1.x) {
+                port5.position += 0.04
+            }
             mTelemetry.update()
         }
     }

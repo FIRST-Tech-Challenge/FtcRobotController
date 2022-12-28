@@ -2,11 +2,10 @@
 
 package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
-import com.arcrobotics.ftclib.hardware.motors.Motor
+import com.outoftheboxrobotics.photoncore.PhotonCore
 import ftc.rouge.blacksmith.BlackOp
 import ftc.rouge.blacksmith.Scheduler
 import ftc.rouge.blacksmith.listeners.ReforgedGamepad
-import ftc.rouge.blacksmith.util.kt.CreateOnStartR
 import ftc.rouge.blacksmith.util.kt.createOnStart
 import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
@@ -28,27 +27,16 @@ abstract class RougeBaseTele : BlackOp() {
     protected val reverseDepositChain by createOnStart<ReverseDepositChain>({ bot })
 
     final override fun run() {
+        PhotonCore.enable()
+
         describeControls()
-
-        val fl = Motor(hardwareMap, "FL") // Left Deadwheel
-        val br = Motor(hardwareMap, "BR") // Right Deadhweel
-        val bl = Motor(hardwareMap, "BL") // Horizontal deadwheel
-
-        fl.resetEncoder()
-        br.resetEncoder()
-        bl.resetEncoder()
-
-        waitForStart()
 
         Scheduler.beforeEach {
             powerMulti = 1.0
         }
 
-        Scheduler.launch(this@RougeBaseTele) {
+        Scheduler.launchWhenReady(this@RougeBaseTele) {
             bot.updateComponents(mTelemetry)
-            mTelemetry.addData("Left Deadwheel", fl.currentPosition)
-            mTelemetry.addData("Right Deadwheel", br.currentPosition)
-            mTelemetry.addData("Horizontal Deadwheel", bl.currentPosition)
             mTelemetry.update()
         }
     }
