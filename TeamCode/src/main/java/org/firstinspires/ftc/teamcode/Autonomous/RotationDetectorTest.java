@@ -46,7 +46,7 @@ public class RotationDetectorTest extends LinearOpMode {
         rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
         waitForStart();
 
-        double angle = 180.0;
+        double angle = 30.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
             //try {
@@ -62,7 +62,7 @@ public class RotationDetectorTest extends LinearOpMode {
 
         rotate.MoveStop();
         sleep(2000);
-        angle = 0.0;
+        angle = -45.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
             rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
@@ -72,7 +72,7 @@ public class RotationDetectorTest extends LinearOpMode {
         rotate.MoveStop();
         sleep(2000);
 
-        angle = 160.0;
+        angle = 90.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
             rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
