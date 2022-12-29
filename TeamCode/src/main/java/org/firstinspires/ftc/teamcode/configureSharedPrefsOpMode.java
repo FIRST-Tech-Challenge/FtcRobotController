@@ -87,6 +87,13 @@ public class configureSharedPrefsOpMode extends OpMode {
             }
             currentValues[currSel]=VALUES[currSel][currentIndexes[currSel]];
         }
+        if(gamepad1.dpad_right&&!prevRIGHT){
+            currentIndexes[currSel]++;
+            if(currentIndexes[currSel]>=VALUES[currSel].length){
+                currentIndexes[currSel]=0;
+            }
+            currentValues[currSel]=VALUES[currSel][currentIndexes[currSel]];
+        }
         //previous button states. ensures that the selection is only moved once per button press
         prevUP=gamepad1.dpad_up;
         prevDOWN=gamepad1.dpad_down;
