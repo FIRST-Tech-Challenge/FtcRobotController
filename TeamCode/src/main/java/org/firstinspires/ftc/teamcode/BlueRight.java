@@ -178,34 +178,37 @@ public class BlueRight extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            move(.5,100);
-            strafeRight(1,1000);
-            stopMotors();
-            gyroTurning(0);
-            sleep(200);
-            move(1,1900);
-            gyroTurning(90);
-            move(1,750);
-            crane(-1,3600);
-            gyroTurning(145);
-            move(.5,400);
-            Left.setPower(-1);
-            sleep(1300);
-            Left.setPower(0);
+            strafeRightwithcrane(1,1750,-1,2100);
+            move(.5,330);
+            sleep(100);
+            intake(-1,1300);
+            move(-.5,330);
+            strafeRightwithcrane(1,500,1,1500);
+            moveandspin(-.8,800,1,589);
+            craneinput(600);
+            Left.setPower(.3);
+            moveandspin(.8,800,-1,0);
+            strafeLeftwithcrane(1,500,-1,2000);
+            move(.5,330);
+            intake(-1,1300);
 
             switch (location){
                 case 0:
-                    //
+                    strafeLeft(.8,500);
                     break;
                 case 1:
-                    //
+                    strafeLeft(.8,500);
+                    move(.6,500);
+                    strafeLeft(.5,300);
                     break;
                 case 2:
-                    //
+                    strafeLeft(.8,500);
                     break;
 
                 case 3:
-                    //
+                    strafeLeft(1,700);
+                    move(-.6,500);
+                    strafeLeft(.5,300);
                     break;
             }
         }
@@ -322,16 +325,89 @@ public class BlueRight extends LinearOpMode {
             }
 
         }
-        public void craneinput () {
-            crane(1, -550);
-            move(0.2, 350);
-            //Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Crane.setTargetPosition(0);
-            Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Crane.setPower(1);
-            while (Crane.isBusy() && opModeIsActive()) {
-            }
+    public void moveandspin(double power, int position,double powers, int positions) {
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontRight.setTargetPosition(-position);
+        frontLeft.setTargetPosition(-position);
+        backRight.setTargetPosition(-position);
+        backLeft.setTargetPosition(-position);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontRight.setPower(power);
+        frontLeft.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
+        spin(powers,positions);
+        while (frontLeft.isBusy() && opModeIsActive()) {
+
         }
+
+    }
+    public void craneinput(int time) {
+        crane(1,time);
+        intake(1,1000);
+    }
+
+    public void strafeLeftwithcrane(double power, int position,double powerc, int timec)  {
+
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontRight.setTargetPosition(-position);
+        frontLeft.setTargetPosition(position);
+        backRight.setTargetPosition(position);
+        backLeft.setTargetPosition(-position);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontRight.setPower(power);
+        frontLeft.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
+        crane(powerc,timec);
+        while (frontLeft.isBusy() && opModeIsActive()) {
+        }
+
+    }
+    public void strafeRightwithcrane(double power, int position,double powerc, int timec)  {
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontRight.setTargetPosition(position);
+        frontLeft.setTargetPosition(-position);
+        backRight.setTargetPosition(-position);
+        backLeft.setTargetPosition(position);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontRight.setPower(power);
+        frontLeft.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
+        crane(powerc,timec);
+        while (frontLeft.isBusy() && opModeIsActive()) {
+
+        }
+    }
+
 
         public void strafeLeft ( double power, int position) {
             frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -386,34 +462,22 @@ public class BlueRight extends LinearOpMode {
             }
         }
 
-        public void intake ( int direction, long time) throws InterruptedException {
+        public void intake ( int direction, long time) {
             Left.setPower(direction * 1);
             sleep(time);
             Left.setPower(0);
 
         }
 
-    /*public void moveandspin(double power, int moveposition, int spinposition) {
-        move(power, moveposition);
-        spin(spinposition);
-        while (Spin.isBusy()) {
+    public void spin(double power, int position) {
+        Spin.setTargetPosition(position);
+        Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Spin.setPower(power);
+        while (Spin.isBusy()&&opModeIsActive()) {
 
         }
-    }*/
+    }
 
-        public void spin ( int SpinPosition, int CranePosition){
-            Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //Crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Spin.setTargetPosition(SpinPosition);
-            Crane.setTargetPosition(CranePosition);
-            Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Spin.setPower(1);
-            Crane.setPower(1);
-            while (Spin.isBusy() && opModeIsActive()) {
-
-            }
-        }
 
         public void crane( double power, int time){
             Crane.setPower(power);
