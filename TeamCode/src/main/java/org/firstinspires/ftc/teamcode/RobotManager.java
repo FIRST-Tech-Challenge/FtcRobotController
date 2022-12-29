@@ -67,7 +67,8 @@ public class RobotManager {
     public void readControllerInputs() {
         // Linear slides
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
-            Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
+            if(robot.desiredHorseshoeState==Robot.HorseshoeState.FRONT)
+                Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
         }
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
             Robot.desiredSlidesState = Robot.SlidesState.LOW;
@@ -95,9 +96,9 @@ public class RobotManager {
             }
         }
 
-        if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {
-            robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
-        }
+        //if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {
+        //    robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
+        //}
 
         //Horseshoe movement FRONT
         if(getButtonRelease(GamepadWrapper.DriverAction.HORSESHOE_TO_FRONT)){
@@ -105,7 +106,8 @@ public class RobotManager {
         }
         //Horseshoe movement BACK
         if(getButtonRelease(GamepadWrapper.DriverAction.HORSESHOE_TO_BACK)){
-            robot.desiredHorseshoeState = Robot.HorseshoeState.REAR; //Rear is back.
+            if(Robot.desiredSlidesState!=Robot.SlidesState.RETRACTED)
+                robot.desiredHorseshoeState = Robot.HorseshoeState.REAR; //Rear is back.
         }
 
         // Adjust relative wheel speeds.

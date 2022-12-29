@@ -18,10 +18,9 @@ public class MechanismDriving {
        put(Robot.SlidesState.RETRACTED, 0);
        put(Robot.SlidesState.LOW, 5000);
        put(Robot.SlidesState.MEDIUM, 8400);
-       put(Robot.SlidesState.HIGH, 10000);//needs to be higher
+       put(Robot.SlidesState.HIGH, 11600);//may need to be higher
     }};
-    //public static final int RETRACTED_POS = 0, LOW_POS = 700, MEDIUM_POS = 1850, HIGH_POS = 3500;
-    //SPEED INFO: Scale from 0-1 in speed
+    //SPEED INFO: Scale from 0-1 in speed.
     public static final double HORSESHOE_FRONT_POS = 0, HORSESHOE_REAR_POS = 1.0; //These are not final values
     public static final double COMPLIANT_WHEELS_SPEED = 1.0; //speed of compliant wheels
     // How long it takes for the horseshoe wheels to be guaranteed to have pushed the cone into the horseshoe.
