@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.Functions;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+//import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+//import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -22,10 +27,11 @@ public class RotationDetector {
     double startingRotation = 0;
     BNO055IMU Gyro;
     MVPIDController MotorPID;
+    private Telemetry telemetry;
 
     public RotationDetector(BNO055IMU gyro){
-        if (gyro == null){
-            throw new NullPointerException("Error: object gryo is null");
+        if (gyro == null) {
+            throw new NullPointerException("Error: Gyro object is null");
         }
         try {
             Gyro =gyro;
@@ -37,17 +43,14 @@ public class RotationDetector {
                 // Wait for the Gyro sensor to be calibrated
             }
             startingRotation =ReturnPositiveRotation();
-            MotorPID.pidController(0.5, 0.1, 0.25,0.0001);
+
+            MotorPID.pidController(0.5, 0.1, 0.25, 0.0, 0.0001);
             MotorPID.setContinuous(true);
-            MotorPID.setInputRange(-180,180);
-            MotorPID.setOutputRange(-1,1);
-        }
-        catch(Exception e){
+            MotorPID.setInputRange(-180.0,180.0);
+            MotorPID.setOutputRange(-1.0,1.0);
+        } catch (Exception e) {
             System.out.println("Exception caught in setting RotationDetector: " + e.getMessage());
         }
-
-
-
 
     }
 
@@ -57,6 +60,7 @@ public class RotationDetector {
     public BNO055IMU ReturnGyro(){
         return Gyro;
     }
+
 
     /**
      * @return : (double) This returns starting rotation.
@@ -108,7 +112,8 @@ public class RotationDetector {
 
 
     /**
-     * This method calculates the direction simulating the robot rotation both directions and seeing which one is faster.
+     * This method calculates the direction simulating the robot rotation both directions and seeing
+     * which one is faster.
      * @param targetRotation
      * @return (int) [-1, 1], the faster direction
      */
@@ -161,20 +166,37 @@ public class RotationDetector {
 
 
 
-     /**
+    /**
      * This method makes sure that the robot slowly stops when it reaches its desire angle
      * @param targetRotation
-      * * @return (double) [-1, 1] dcmotor power
+     * * @return (double) [-1, 1] dcmotor power
      */
-     public double MotorPower(double targetRotation){
-         double outputPower = MotorPID.calculate(targetRotation);
+    public double MotorPower(double targetRotation){
+            double newRotationAngle = 0;
+            try {
+                newRotationAngle = targetRotation;
+            }
+            catch (Exception e) {
+                    telemetry.addData("Exception caught in MotorPower(RotationDetector): ", e.getMessage());
+                    telemetry.update();
+                    //return 180;
+            }
+        //try{
+            telemetry.addData("targetRotatio value is: ", targetRotation);
+            telemetry.update();
+            return MotorPID.calculate(targetRotation);
+        //}
+       //atch (NullPointerException e) {
+       //   //telemetry.addData("NullPointerException caught in MotorPower: " + e.getMessage());
+       //   System.out.println("NullPointerException caught in MotorPower: " + e.getMessage());
+      //    return 90;
+       //
+       // catch (Exception e) {
+        //    System.out.println("Exception caught in MotorPower: " + e.getMessage());
+        //    return 180;
+        //}
 
-         return outputPower;
-
-     }
-
-
-
+    }
 
     /**
      * This method corrects an angle that's above 360 degrees.

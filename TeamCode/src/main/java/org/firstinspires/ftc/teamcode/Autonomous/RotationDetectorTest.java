@@ -17,9 +17,8 @@ import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
 import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 @Autonomous(name = "RotationDetectorTest", group = "Concept")
-
 public class RotationDetectorTest extends LinearOpMode {
-    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack; // armMotorLeft, armMotorRight
+    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack; //armMotorLeft, armMotorRight;
     private Servo collectorServo;
     private CRServo collectorCr;
     private Move move;
@@ -48,9 +47,17 @@ public class RotationDetectorTest extends LinearOpMode {
         double angle = 180.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
-            rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
-            DebugData(angle);
+            //try {
+                rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
+                DebugData(angle);
+            //}
+            //catch (Exception e) {
+            //    telemetry.addData("Exception caught in MotorPower(RotationDetectorTest): ", e.getMessage());
+            //    telemetry.addData("MotorPower angle is: ", angle);
+            //    telemetry.update();
+            //}
         }
+
         rotate.MoveStop();
         sleep(2000);
         angle = 0.0;
