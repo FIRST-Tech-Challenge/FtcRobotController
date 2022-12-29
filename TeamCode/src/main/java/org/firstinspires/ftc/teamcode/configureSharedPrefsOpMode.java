@@ -116,9 +116,9 @@ public class configureSharedPrefsOpMode extends OpMode {
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putString("movement_mode", currentValues[0]);
         editor.putString("wait_time", currentValues[1]);
-        editor.putString("auton_type", currentValues[2]);
-        editor.putString("starting_side", currentValues[3]);
-        editor.putString("alliance_color", currentValues[4]);
+        editor.putString("starting_side", currentValues[2]);
+        editor.putString("alliance_color", currentValues[3]);
+        editor.putString("auton_type", currentValues[4]);
         editor.apply();
         //display saved for 1 second
         dispUntil =(int)(System.nanoTime()/1000000)+1000;
