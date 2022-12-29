@@ -1,0 +1,77 @@
+---
+sidebar_position: 2
+---
+
+import ParamsList from '../../../src/components/ParamsList';
+
+# AngleUnit
+
+An enum representing a range of angle units, including:
+- `DEGREES`
+- `RADIANS`
+- `GRADIANS`
+- `REVOLUTIONS`
+- `ARCSECONDS`
+- `ARCMINUTES`
+- `MILIRADIANS`
+
+## Utility Methods
+
+### angleUnit.toDeg
+
+Converts the given angle to degrees using the given angle unit.
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'The angle to convert to degrees'
+  },
+]}/>
+
+```java
+AngleUnit.RADIANS.toDeg(PI/2) // 90
+
+AngleUnit.ARCSECONDS.toDeg(90) // 0.025
+```
+
+### angleUnit.toRad
+
+Converts the given angle to radians using the given angle unit.
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'The angle to convert to radians'
+  },
+]}/>
+
+```java
+AngleUnit.DEGREES.toRad(90) // 1.5707963267948966
+
+AngleUnit.ARCSECONDS.toRad(90) // 0.0004363323129985824
+```
+
+### angleUnit.to
+
+Converts the given angle to the given angle unit.
+
+<ParamsList params={[
+  {
+    name: 'to',
+    type: 'AngleUnit',
+    desc: 'The angle unit to convert to'
+  },
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'The angle to convert'
+  }
+]}/>
+
+```java
+AngleUnit.DEGREES.to(AngleUnit.RADIANS, 90) // 1.5707963267948966
+
+AngleUnit.ARCSECONDS.to(AngleUnit.DEGREES, 90) // 0.025
+```

@@ -3,10 +3,10 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.outoftheboxrobotics.photoncore.PhotonCore
-import ftc.rouge.blacksmith.BlackOp
-import ftc.rouge.blacksmith.Scheduler
-import ftc.rouge.blacksmith.listeners.ReforgedGamepad
-import ftc.rouge.blacksmith.util.kt.createOnGo
+import ftc.rogue.blacksmith.BlackOp
+import ftc.rogue.blacksmith.Scheduler
+import ftc.rogue.blacksmith.listeners.ReforgedGamepad
+import ftc.rogue.blacksmith.util.kt.createOnGo
 import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
 import org.firstinspires.ftc.teamcodekt.components.chains.RegularDepositChain

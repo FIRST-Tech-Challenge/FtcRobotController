@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
-import com.arcrobotics.ftclib.controller.PIDController
 import com.arcrobotics.ftclib.controller.PIDFController
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
-import ftc.rouge.blacksmith.util.kt.clamp
-import ftc.rouge.blacksmith.util.kt.invoke
+import ftc.rogue.blacksmith.util.kt.clamp
+import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
 
 @Config
 object LiftConfig {
+@JvmStatic var TEST = 3
     @JvmField var P = 0.0115
     @JvmField var I = 0.0002
     @JvmField var D = 0.0002

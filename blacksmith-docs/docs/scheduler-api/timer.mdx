@@ -1,0 +1,496 @@
+---
+sidebar_position: 5
+---
+
+import { TypeLinks } from '../../src/util/type-links';
+import ParamsList from '../../src/components/ParamsList';
+import Returns from '../../src/components/Returns';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Timers
+
+:::warning
+A timer's resolution is tied to the performance of the Scheduler loop. If there's a heavy computation involved,
+the timer may not fire at the exact time it was scheduled for.
+
+For example, if you have a timer set to go off in 50ms, but the loop is busy for an extra 50ms, the timer fire up to
+100ms after it was scheduled.
+
+This is not meant for very precise timing, with its current implementation.
+:::
+
+## Overview
+
+Timers are simply an abstraction over the Listener API. They are a convenient way to schedule a function to be called
+after a certain amount of time, or to do a function until it reaches said time.
+
+:::tip
+For disposable timer use cases, look at the [`Timer.after()`](#after) method for Java, or the [`after`](#after)
+class for Kotlin.
+
+These are very useful and cleaner than the raw Timer API in many cases!
+:::
+
+## Timer methods
+
+### Construction
+
+Constructs a new Timer with the given delay. Timer is automatically started upon creation, but you can set it to pending
+by passing `false` as the second argument, or using `startPending = true` in Kotlin.
+
+<ParamsList params={[
+  {
+    name: 'length',
+    type: 'long',
+    desc: 'The length of the timer. See the \'unit\' parameter to set the time unit',
+  },
+  {
+    name: 'startPending',
+    type: 'boolean',
+    desc: 'Whether the timer should start in a pending state. If true, the timer will not start until you call `start()`',
+    defaultsTo: 'false',
+  },
+  {
+    name: 'unit',
+    type: 'TimeUnit',
+    desc: 'The time unit of the timer. Defaults to milliseconds',
+    typeLink: TypeLinks.TIME_UNIT,
+    defaultsTo: 'TimeUnit.MILLISECONDS',
+  }
+]}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Timer timer1 = new Timer(1000); // Ends after ~1000ms
+
+  Timer timer2 = new Timer(1000, true); // Stays pending until you call start()
+
+  Timer timer3 = new Timer(1, false, TimeUnit.SECONDS); // Ends after ~1 second
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val timer1 = Timer(1000) // Ends after ~1000ms
+
+  val timer2 = Timer(1000, startPending = true) // Stays pending until you call start()
+
+  val timer3 = Timer(1, unit = TimeUnit.SECONDS) // Ends after ~1 second
+  ```
+
+</TabItem>
+</Tabs>
+
+### timer.whileWaiting()
+
+Calls the given callback every Scheduler cycle while the timer is either running *or* pending.
+
+<ParamsList params={[
+  {
+    name: 'callback',
+    type: 'Runnable',
+    desc: 'The function to perform while waiting',
+    typeLink: TypeLinks.LAMBDA,
+  }
+]}/>
+
+<ReturnsItself/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Timer timer = new Timer(1000, true); // Timer is created in a pending state
+
+  timer.whileWaiting(() -> {
+      System.out.println("Hi!");
+  });
+
+  // "Hi!" is being printed every loop
+
+  timer.start();
+
+  // "Hi!" is still being printed every loop
+
+  // 1000ms later...
+
+  // "Hi!" is no longer being printed since the timer has ended
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val timer = Timer(1000, startPending = true) // Timer is created in a pending state
+
+  timer.whileWaiting {
+      println("Hi!")
+  }
+
+  // "Hi!" is being printed every loop
+
+  timer.start()
+
+  // "Hi!" is still being printed every loop
+
+  // 1000ms later...
+
+  // "Hi!" is no longer being printed since the timer has ended
+  ```
+
+</TabItem>
+</Tabs>
+
+### timer.whileRunning()
+
+Calls the given callback every Scheduler cycle while the timer is started and running, *and not pending*.
+
+<ParamsList params={[
+  {
+    name: 'callback',
+    type: 'Runnable',
+    desc: 'The function to perform while running',
+    typeLink: TypeLinks.LAMBDA,
+  }
+]}/>
+
+<ReturnsItself/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Timer timer = new Timer(1000, true); // Timer is created in a pending state
+
+  timer.whileRunning(() -> {
+      System.out.println("Hi!");
+  });
+
+  // "Hi!" is not being printed since the timer is pending
+
+  timer.start();
+
+  // "Hi!" is being printed every loop now
+
+  // 1000ms later...
+
+  // "Hi!" is no longer being printed since the timer has ended
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val timer = Timer(1000, startPending = true) // Timer is created in a pending state
+
+  timer.whileRunning {
+      println("Hi!")
+  }
+
+  // "Hi!" is not being printed since the timer is pending
+
+  timer.start()
+
+  // "Hi!" is being printed every loop now
+
+  // 1000ms later...
+
+  // "Hi!" is no longer being printed since the timer has ended
+  ```
+
+</TabItem>
+</Tabs>
+
+### timer.onDone()
+
+Calls the given callback when the timer ends.
+
+<ParamsList params={[
+  {
+    name: 'callback',
+    type: 'Runnable',
+    desc: 'The function to perform when the timer ends',
+    typeLink: TypeLinks.LAMBDA,
+  }
+]}/>
+
+<ReturnsItself/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Timer timer = new Timer(1000); // Timer is created started
+
+  timer.onDone(() -> {
+      System.out.println("Hi!");
+  });
+
+  // "Hi!" is not being printed since the timer is still running
+
+  // 1000ms later...
+
+  // "Hi!" is printed *once* when the timer ends
+  ```
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val timer = Timer(1000) // Timer is created started
+
+  timer.onDone {
+      println("Hi!")
+  }
+
+  // "Hi!" is not being printed since the timer is still running
+
+  // 1000ms later...
+
+  // "Hi!" is printed *once* when the timer ends
+  ```
+
+</TabItem>
+</Tabs>
+
+### timer.start()
+
+Resets the start time and takes the timer out of a pending state, effectively (re)starting the timer.
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Timer timer = new Timer(1000, true); // Timer is created in a pending state
+
+  timer.start();
+
+  // Timer is now running
+  ```
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val timer = Timer(1000, startPending = true) // Timer is created in a pending state
+
+  timer.start()
+
+  // Timer is now running
+  ```
+
+</TabItem>
+</Tabs>
+
+### timer.setPending()
+
+Sets the timer to a pending state if nothing or `true` is passed, or takes it out of pending if `false` is passed.
+
+<ParamsList params={[
+  {
+    name: 'pending',
+    type: 'boolean',
+    desc: 'Whether the timer should be pending or not',
+    defaultsTo: 'true',
+  }
+]}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Timer timer = new Timer(1000); // Timer is created started
+
+  timer.setPending();
+
+  // Timer is now pending
+
+  timer.setPending(false);
+
+  // Timer is no longer pending
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val timer = Timer(1000) // Timer is created started
+
+  timer.setPending()
+
+  // Timer is now pending
+
+  timer.setPending(false)
+
+  // Timer is no longer pending
+  ```
+
+</TabItem>
+</Tabs>
+
+### timer.finishPrematurely()
+
+Stops the timer, still fires the `onDone` callback. Does not set the timer to a pending state.
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Timer timer = new Timer(1000); // Timer is created started
+
+  timer.onDone(() -> {
+      System.out.println("Hi!");
+  });
+
+  timer.stop(); // "Hi!" is still printed once
+
+  // Timer is now stopped
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val timer = Timer(1000) // Timer is created started
+
+  timer.onDone {
+      println("Hi!")
+  }
+
+  timer.stop() // "Hi!" is still printed once
+
+  // Timer is now stopped
+  ```
+
+</TabItem>
+</Tabs>
+
+### timer.isDone()
+
+<Returns returns={{
+  type: 'boolean',
+  desc: 'Whether or not the timer has ended',
+}}/>
+
+literally what else do you need to know about this method
+
+### timer.destroy()
+
+Clears the internal state of the timer, pending it and removing all callbacks. The timer is still usable after this,
+but everything needs to be resubscribed and the timer needs to be restarted.
+
+Not entirely sure why you'd want to do this, but it's there if you need it lol.
+
+## after
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  The `Timer.after()` method is a static method that creates a new timer and starts it immediately.
+  After completion, the timer is automatically destroyed.
+
+  It's great for one-off timers that don't need to be reused, especially for adding delay in callbacks!
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  The `after` class provides a nice DSL syntax for creating timers that are only used once.
+  After completion, the timer is automatically destroyed.
+
+  It's great for one-off timers that don't need to be reused, especially for adding delay in callbacks!
+
+</TabItem>
+</Tabs>
+
+### Construction
+
+<ParamsList params={[
+  {
+    name: 'time',
+    type: 'long',
+    desc: 'The duration of the timer in **ANY** unit (see below about Unit specification)',
+  },
+]}/>
+
+### Unit specification
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  The unit of the time parameter is specified by the method you call on the `after` instance.
+
+  For example, if you want to create a timer that lasts for 5 seconds, you would do:
+
+  ```java
+  Timer.after(5).seconds(() -> {
+      // Do whatever
+  });
+  ```
+
+  Here's a practical example:
+
+  ```java
+  button.onFall(() -> {
+    claw.openForDepositing();
+
+    after(400).milliseconds(() -> { // You can do a static import for a more DSL-like syntax
+      claw.close();
+    });
+
+    after(1).second(() -> {
+      lift.goToZero();
+    });
+
+    after(2).unit(TimeUnit.MONTHS, () -> {
+      System.out.print("I'm still here!");
+    });
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  The unit of the time parameter is specified by the method you call on the `after` instance.
+
+  For example, if you want to create a timer that lasts for 5 seconds, you would do:
+
+  ```kotlin
+  after(5).seconds {
+      // Do whatever
+  }
+  ```
+
+  Here's a practical example:
+
+  ```kotlin
+  button.onFall {
+    claw.openForDepositing()
+
+    after(400).milliseconds {
+      claw.close()
+    }
+
+    after(1).second {
+      lift.goToZero()
+    }
+
+    after(2).unit(TimeUnit.MONTHS) {
+      println("I'm still here!")
+    }
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+export function ReturnsItself() {
+  return (
+    <Returns returns={{
+      type: 'Timer',
+      desc: 'The Timer itself to allow for method chaining',
+      typeLink: TypeLinks.TIMER,
+    }}/>
+  );
+}

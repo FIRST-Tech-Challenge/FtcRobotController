@@ -27,8 +27,14 @@
     font-size: .975em;
 }
 
-.link:hover {
+.link {
     text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: all .15s ease-in-out;
+}
+
+.link:hover {
+    text-decoration-color: inherit;
     cursor: pointer;
 }
 

@@ -5,8 +5,8 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DistanceSensor
-import ftc.rouge.blacksmith.Scheduler
-import ftc.rouge.blacksmith.util.kt.invoke
+import ftc.rogue.blacksmith.Scheduler
+import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
 @TeleOp

@@ -32,3 +32,11 @@
 
   --blacksmith-white: #c6d2c6;
 }
+
+.code-block-error-line {
+  background-color: #ff000020;
+  display: block;
+  margin: 0 calc(-1 * 16px);
+  padding: 0 16px;
+  border-left: 3px solid #ff000080;
+}

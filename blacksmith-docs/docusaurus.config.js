@@ -115,6 +115,17 @@ const config = {
         additionalLanguages: ['java', 'kotlin', 'brainfuck'],
         theme: require('prism-react-renderer/themes/github'),
         darkTheme: require('prism-react-renderer/themes/vsDark'),
+        magicComments: [
+          {
+            className: 'theme-code-block-highlighted-line',
+            line: 'highlight-next-line',
+            block: {start: 'highlight-start', end: 'highlight-end'},
+          },
+          {
+            className: 'code-block-error-line',
+            line: 'this-will-error',
+          },
+        ],
       },
     }),
 };

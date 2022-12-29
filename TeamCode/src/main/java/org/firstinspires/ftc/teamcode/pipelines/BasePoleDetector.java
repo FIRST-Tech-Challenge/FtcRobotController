@@ -7,7 +7,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import ftc.rouge.blacksmith.util.MU;
+import ftc.rogue.blacksmith.util.MU;
 
 /**
  * Class to apply a canny edge detector in an EasyOpenCV pipeline.

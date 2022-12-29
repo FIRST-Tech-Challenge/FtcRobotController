@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
-import ftc.rouge.blacksmith.util.kt.invoke
-import ftc.rouge.blacksmith.util.kt.maxMagnitudeAbs
-import ftc.rouge.blacksmith.util.kt.pow
-import ftc.rouge.blacksmith.util.kt.withDeadzone
-import ftc.rouge.blacksmith.util.withDeadzone
+import ftc.rogue.blacksmith.util.kt.invoke
+import ftc.rogue.blacksmith.util.kt.maxMagnitudeAbs
+import ftc.rogue.blacksmith.util.kt.pow
+import ftc.rogue.blacksmith.util.kt.withDeadzone
+import ftc.rogue.blacksmith.util.withDeadzone
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
 import kotlin.math.*

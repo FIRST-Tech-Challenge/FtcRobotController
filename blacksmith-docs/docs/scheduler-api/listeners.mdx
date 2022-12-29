@@ -127,7 +127,7 @@ Similarly, the Listener class has four subscription methods:
 You're a smart cookie; you can probably figure out what they do. If not, it's fine! Just look at the method
 documentation for more detailed examples!
 
-## The concept of hooking🪝
+### The concept of hooking🪝
 
 *This isn't super important to know, so you could skip it if you really wanted—I just wanted to explain it real
 quick as it comes up a bit.*
@@ -174,7 +174,9 @@ before some other to run the former listener first.
 I mean, that *is* a very niche situation, so do with it what you will Ig lol.
 :::
 
-# Construction
+## Listener methods
+
+### Construction
 
 Constructs a new Listener without hooking it (see: [hooking](#the-concept-of-hooking)).
 
@@ -216,7 +218,7 @@ Constructs a new Listener without hooking it (see: [hooking](#the-concept-of-hoo
 </TabItem>
 </Tabs>
 
-## listener.onRise()
+### listener.onRise()
 
 Runs the given callback whenever the condition goes from false to true (i.e. it's on the rising edge)
 
@@ -271,7 +273,7 @@ while (true) {
 </TabItem>
 </Tabs>
 
-## listener.onFall()
+### listener.onFall()
 
 Runs the given callback whenever the condition goes from true to false (i.e. it's on the falling edge)
 
@@ -326,7 +328,7 @@ while (true) {
 </TabItem>
 </Tabs>
 
-## listener.whileHigh()
+### listener.whileHigh()
 
 Runs the given callback while the condition is true.
 
@@ -373,7 +375,7 @@ while (true) {
 </TabItem>
 </Tabs>
 
-## listener.whileLow()
+### listener.whileLow()
 
 Runs the given callback while the condition is false.
 
@@ -420,7 +422,7 @@ while (true) {
 </TabItem>
 </Tabs>
 
-## listener.hook()
+### listener.hook()
 
 [Hooks](#the-concept-of-hooking) the Listener to the Scheduler, does nothing if it's already hooked.
 
@@ -464,14 +466,16 @@ Anyway, here's an example:
 </TabItem>
 </Tabs>
 
-## listener.destroy()
+### listener.destroy()
 
 Destroys the Listener, removing it from the Scheduler, and clearing its actions. Leaves the condition alone, though.
 
 Again, not entirely sure why you'd do this, but if you have a good enough reason to do it, you can probably figure out
 how to use it yourself. Knock yourself out!!!
 
-## Listener.always()
+## Static Listener methods
+
+### Listener.always()
 
 A static instance of a Listener that's always true, useful for when you want to run something every loop, but don't
 want to (or can't) use the [beforeEach](./scheduler-model#beforeeach) or [afterEach](./scheduler-model#aftereach)
@@ -507,6 +511,100 @@ Keep in mind that this is only hooked the first time it's used (unless you expli
 
 </TabItem>
 </Tabs>
+
+## Listener builders
+
+For convenience, you can combine multiple listeners/conditions into one using a variety of logical operators.
+
+The syntax is as follows:
+`listener1.whateveroperator(listener2)` or `listener.whateveroperator(() -> someBoolean)`
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Listener gamepadA = new Listener(() -> gamepad1.a);
+  Listener gamepadB = new Listener(() -> gamepad1.b);
+
+  // True if both A and B are pressed
+  Listener gamepadA_and_B = gamepadA.and(gamepadB);
+
+  // True if either A or X are pressed
+  Listener gamepadA_or_X = gamepadA.or(() -> gamepad1.x);
+
+  // True if A is pressed and B is not pressed
+  Listener gamepadA_and_notB = gamepadA.and(gamepadB.not());
+
+  // True if A is pressed and either B or X are pressed
+  Listener gamepadA_or_B_or_X = gamepadA.or(gamepadB).or(() -> gamepad1.x);
+
+  // True if A is pressed and B is not pressed, or if B is pressed and A is not pressed
+  Listener gamepadA_xor_B = gamepadA.xor(gamepadB);
+  ```
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  /* operator funs plus, div, and not are overridden for and, or, and not! */
+  /* The rest are infix functions */
+
+  val gamepadA = Listener { gamepad1.a }
+  val gamepadB = Listener { gamepad1.b }
+
+  // True if both A and B are pressed
+  val `gamepadA & B` = gamepadA + gamepadB
+
+  // True if either A or X are pressed
+  val `gamepadA | X` = gamepadA / { gamepad1.x }
+
+  // True if A is pressed and B is not pressed
+  val `gamepadA & not B = gamepadA + !gamepadB
+
+  // True if A is pressed and either B or X are pressed
+  val `gamepadA | B & X` = gamepadA / gamepadB / { gamepad1.x }
+
+  // True if A is pressed and B is not pressed, or if B is pressed and A is not pressed
+  val `gamepadA ^ B` = gamepadA xor gamepadB
+  ```
+
+</TabItem>
+</Tabs>
+
+:::caution Important
+If you're using **Kotlin**, *please* read the note in the code above about using parentheses to make sure stuff works as expected.
+
+```kt
+// works as expected
+(gamepadA + gamepadB).onRise { ... }
+
+// also fine
+(gamepadA / { !gamepad1.x }).onRise { ... }
+
+// performs the `onRise` on `gamepadB` only, THEN performs the `and` on the gamepadA with gamepadB
+// aka it won't work right lol
+// this-will-error
+gamepadA + gamepadB.onRise { ... }
+```
+:::
+
+Currently supported functions/operators are:
+ - `listener.and( otherListener )`
+ - `listener.or( otherListener )`
+ - `listener.xor( otherListener )`
+ - `listener.nand( otherListener )`
+ - `listener.nor( otherListener )`
+ - `listener.xnor( otherListener )`
+ - `listener.not( otherListener )`
+
+and
+
+ - `listener.and( () -> someBoolean )`
+ - `listener.or( () -> someBoolean )`
+ - `listener.xor( () -> someBoolean )`
+ - `listener.nand( () -> someBoolean )`
+ - `listener.nor( () -> someBoolean )`
+ - `listener.xnor( () -> someBoolean )`
+ - `listener.not( () -> someBoolean )`
 
 export function ReturnsItself() {
   return (

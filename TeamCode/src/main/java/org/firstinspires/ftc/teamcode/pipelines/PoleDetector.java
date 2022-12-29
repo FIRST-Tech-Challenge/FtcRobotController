@@ -9,7 +9,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import ftc.rouge.blacksmith.util.MU;
+import ftc.rogue.blacksmith.util.MU;
 
 /**
  * Class to detect the pole in an EasyOpenCV pipeline.

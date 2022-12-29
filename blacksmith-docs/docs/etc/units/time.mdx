@@ -1,0 +1,82 @@
+---
+sidebar_position: 1
+---
+
+import ParamsList from '../../../src/components/ParamsList';
+
+# TimeUnit
+
+An enum representing a range of time units, including:
+ - `NANOSECONDS`
+ - `MICROSECONDS`
+ - `MILLISECONDS`
+ - `SECONDS`
+ - `MINUTES`
+ - `HOURS`
+ - `DAYS`
+ - `WEEKS`
+ - `MONTHS`
+ - `YEARS`
+ - `CENTURIES`
+ - `MILLENNIA`
+
+## Utility methods
+
+### timeUnit.toSec
+
+Converts the given number to seconds using the given time unit.
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    description: 'The number to convert to seconds'
+  }
+]}/>
+
+```java
+TimeUnit.DAYS.toSec(1); // returns 86400
+
+TimeUnit.MILLENNIA.toSec(1); // returns 3155695200000
+```
+
+### timeUnit.toMs
+
+Converts the given number to milliseconds using the given time unit.
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    description: 'The number to convert to milliseconds'
+  }
+]}/>
+
+```java
+TimeUnit.DAYS.toMs(1); // returns 86400000
+
+TimeUnit.CENTURIES.toMs(1); // returns 3155695200000
+```
+
+### timeUnit.to
+
+Converts the given number to the given time unit.
+
+<ParamsList params={[
+  {
+    name: 'to',
+    type: 'TimeUnit',
+    description: 'The time unit to convert to'
+  },
+  {
+    name: 'x',
+    type: 'Number',
+    description: 'The number to convert to the given time unit'
+  }
+]}/>
+
+```java
+TimeUnit.DAYS.to(TimeUnit.HOURS, 1); // returns 24
+
+TimeUnit.CENTURIES.to(TimeUnit.MILLENNIA, 1); // returns 10
+```

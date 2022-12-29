@@ -3,10 +3,11 @@
 
 # Code for FTC Team 9527's V2 Robot
 ## Written for the 2022-2023 Season
-#### Authors: Tiernan, Kavin, Ben, and Ankur
+#### Authors: toptobes, T_Lind (TLindauer), tomnookisgay (Ben), and nebula231
 
 
 
-Uses the `Roadrunner`, `OpenCV`, `Blacksmith`, and `PhotonFTC` libraries
+Primarily uses the `Blacksmith`, `Roadrunner`, and `OpenCV` libraries.
+Also uses `PhotonFTC` and `FTCLib`.
 
-`Blacksmith` framework created by Kavin
+`Blacksmith` library created by toptobes (Sin#8551)

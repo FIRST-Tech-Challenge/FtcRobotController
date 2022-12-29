@@ -4,7 +4,6 @@ sidebar_position: 4
 
 import { TypeLinks } from '../../src/util/type-links';
 import ParamsList from '../../src/components/ParamsList';
-import Returns from '../../src/components/Returns';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -80,8 +79,8 @@ into this!:
       ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
       ReforgedGamepad codriver = new ReforgedGamepad(gamepad2);
 
-      driver.onRise(() -> ...); // Self describing
-      codriver.onFall(() -> ...); // And no unnecessary logic or mutable state
+      driver.a.onRise(() -> ...); // Self describing
+      codriver.a.onFall(() -> ...); // And no unnecessary logic or mutable state
 
       Scheduler.launchWhenReady(this)
   }
@@ -95,8 +94,8 @@ into this!:
       val driver = ReforgedGamepad(gamepad1)
       val codriver = ReforgedGamepad(gamepad2)
 
-      driver.onRise { ... } // Self describing
-      codriver.onFall { ... } // And no unnecessary logic or unidiomatic mutable state
+      driver.a.onRise { ... } // Self describing
+      codriver.b.onFall { ... } // And no unnecessary logic or unidiomatic mutable state
 
       Scheduler.launchWhenReady(this)
   }
@@ -115,7 +114,6 @@ handy feature: You can get the value of any button without having to use the raw
   driver.a.get(); // Returns the current state of the A button (i.e. if it's pressed or not)
 
   driver.right_stick_x.get(); // Returns the current state of the right stick's X axis
-  driver.right_stick_x(/*deadzone=*/ .2).get(); // (as a float)
   ```
 
 </TabItem>
@@ -127,7 +125,6 @@ handy feature: You can get the value of any button without having to use the raw
   driver.a() // Returns the current state of the A button (i.e. if it's pressed or not)
 
   driver.right_stick_x() // Returns the current state of the right stick's X axis
-  driver.right_stick_x(deadzone = .2)() // (as a float) (also notice the double ()s)
 
   driver.b.get() // You can also use .get() if you prefer
   ```
@@ -177,4 +174,109 @@ driver, and one for the co-driver.
 
 Boolean triggers refer to buttons that are either pressed or not pressed (i.e. either `true` or `false`).
 
-The ReforgedGamepad *should* support all the buttons on the gamepad, but there's a chance that I missed one.
+The ReforgedGamepad *should* support all the buttons on the gamepad.
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  driver.a.onRise(() -> ...); // Do something when the A button is pressed
+  driver.a.onFall(() -> ...); // Do something when the A button is released
+
+  // Method chaining works too
+  driver.b.whileHigh(() -> ...) // Do something while the B button is pressed
+          .whileLow(() -> ...); // Do something while the B button is not pressed
+
+  // All the normal Listener methods work with it
+  driver.a.and(() -> lift.height() > 500)
+      .onRise(() -> ...); // Do something when the A button is pressed and the lift is above 500
+
+  driver.dpad_up.and(driver.right_bumper)
+      .onRise(() -> ...); // Do something when the D-Pad up and the right bumper are pressed
+
+  // You can also access the raw gamepad
+  driver.gamepad
+
+  // And you can get the value of any button without having to use the raw gamepad
+  driver.a.get(); // Returns the current state of the A button (i.e. if it's pressed or not)
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  driver.a.onRise { ... } // Do something when the A button is pressed
+  driver.a.onFall { ... } // Do something when the A button is released
+
+  // Method chaining works too
+  driver.b.whileHigh { ... } // Do something while the B button is pressed
+          .whileLow { ... }  // Do something while the B button is not pressed
+
+  // All the normal Listener methods work with it
+  driver.a.and { lift.height() > 500 }
+      .onRise { ... } // Do something when the A button is pressed and the lift is above 500
+
+  (driver.dpad_up + driver.right_bumper)
+      .onRise { ... } // Do something when the D-Pad up and the right bumper are pressed
+
+  // You can also access the raw gamepad
+  driver.gamepad
+
+  // And you can get the value of any button without having to use the raw gamepad
+  driver.a() // Returns the current state of the A button (i.e. if it's pressed or not)
+  ```
+
+</TabItem>
+</Tabs>
+
+## Analog triggers
+
+Analog triggers are gamepad components which return a float value (e.g. the joysticks or triggers).
+
+These can be accessed through functions, passing in a `deadzone` parameter, which is a float between 0 and 1
+
+The ReforgedGamepad compares the ***absolute value*** of the analog trigger to the deadzone, and becomes true
+if the abs value is greater than the deadzone.
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  driver.left_stick_x(.1).onRise(() -> ...); // Do something when it becomes either >.1 or <-.1
+
+  driver.left_sick_x.onRise(() -> ...); // Shorthand for driver.left_stick_x(.1).onRise(() -> ...);
+                                        // It always returns the same object, it's mainly for convenience
+
+  driver.right_trigger(.5).whileHigh(() -> ...); // Do something while the right trigger is pressed > halfway
+
+  driver.left_stick_x.get(); // Returns the current value of the left stick's X axis (as a float)
+                             // No reason to pass in a deadzone here, that creates an unnecessary object
+
+  // Normal listener methods still work with it
+  driver.touchpad_finger_2_x(.1).or(driver.a)
+      .onRise(() -> ...); // Do something when touchpad_finger_2_x >.1 or the A button is pressed
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  driver.left_stick_x(.1).onRise { ... } // Do something when it becomes either >.1 or <-.1
+
+  driver.left_sick_x.onRise { ... } // Shorthand for driver.left_stick_x(.1).onRise { ... }
+                                    // It always returns the same object, it's mainly for convenience
+
+  driver.right_trigger(.5).whileHigh { ... } // Do something while the right trigger is pressed > halfway
+
+  driver.left_stick_x() // Returns the current value of the left stick's X axis (as a float)
+                        // No reason to pass in a deadzone here, that creates an unnecessary object
+
+  // Normal listener methods still work with it
+  (driver.touchpad_finger_2_x(.1) / driver.a)
+      .onRise { ... } // Do something when touchpad_finger_2_x >.1 or the A button is pressed
+  ```
+
+</TabItem>
+</Tabs>
+
+It's a relatively simple class, but it's powerful nevertheless.

@@ -1,0 +1,98 @@
+---
+sidebar_position: 3
+---
+
+import ParamsList from '../../../src/components/ParamsList';
+
+# DistanceUnit
+
+An enum representing a range of distance units, including:
+ - `CM`
+ - `INCHES`
+ - `METER`
+ - `FEET`
+ - `YARD`
+ - `MILE`
+ - `KILOMETER`
+ - `NAUTICAL_MILE`
+ - `LIGHT_YEAR`
+ - `PARSEC`
+ - `ANGSTROM`
+ - `FURLONG`
+ - `FERMAT`
+ - `SMOOT`
+ - `AU`
+ - `FATHOM`
+ - `HAND`
+ - `LINK`
+ - `PACE`
+ - `ROD`
+ - `SPAN`
+ - `LEAGUE`
+
+## Utility Methods
+
+### distanceUnit.toIn
+
+Converts the given distance to inches using the given distance unit.
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'The distance to convert to inches'
+  },
+]}/>
+
+```java
+DistanceUnit.CM.toIn(1.0); // 0.3937007874015748
+
+DistanceUnit.SMOOT.toIn(1.0); // 5.02921005842012
+
+DistanceUnit.PARSEC.toIn(1.0); // 1.215094e+19
+```
+
+### distanceUnit.toCm
+
+Converts the given distance to centimeters using the given distance unit.
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'The distance to convert to centimeters'
+  },
+]}/>
+
+```java
+DistanceUnit.INCHES.toCm(1.0); // 2.54
+
+DistanceUnit.SMOOT.toCm(1.0); // 152.4
+
+DistanceUnit.PARSEC.toCm(1.0); // 3.08567758e+18
+```
+
+### distanceUnit.to
+
+Converts the given distance to the given distance unit.
+
+<ParamsList params={[
+  {
+    name: 'to',
+    type: 'DistanceUnit',
+    desc: 'The distance unit to convert to'
+  },
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'The distance to convert'
+  }
+]}/>
+
+```java
+DistanceUnit.INCHES.to(DistanceUnit.CM, 1.0); // 2.54
+
+DistanceUnit.SMOOT.to(DistanceUnit.CM, 1.0); // 152.4
+
+DistanceUnit.PARSEC.to(DistanceUnit.CM, 1.0); // 3.08567758e+18
+```

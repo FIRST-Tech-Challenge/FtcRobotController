@@ -3,14 +3,14 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import ftc.rouge.blacksmith.util.kt.toCm
+import ftc.rogue.blacksmith.util.kt.toCm
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcode.pipelines.AprilTagDetectionPipeline
 import org.firstinspires.ftc.teamcode.pipelines.BasePoleDetector
 import org.firstinspires.ftc.teamcodekt.components.*
-import ftc.rouge.blacksmith.util.kt.LateInitVal
-import ftc.rouge.blacksmith.util.kt.invoke
+import ftc.rogue.blacksmith.util.kt.LateInitVal
+import ftc.rogue.blacksmith.util.kt.invoke
 import org.openftc.apriltag.AprilTagDetection
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener

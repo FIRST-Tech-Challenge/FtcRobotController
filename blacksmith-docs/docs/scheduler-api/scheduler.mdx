@@ -14,7 +14,9 @@ import TabItem from '@theme/TabItem';
 
 We saw some basic usage in the [Overview](./overview), but now let's really get into it.
 
-## Scheduler.launch 🚀🚀🚀
+## Scheduler opmode methods
+
+### Scheduler.launch 🚀🚀🚀
 
 `Scheduler.launch` is what starts the entire Scheduler system, and internally hosts the loop that drives our OpModes.
 
@@ -64,7 +66,7 @@ We saw some basic usage in the [Overview](./overview), but now let's really get 
 </TabItem>
 </Tabs>
 
-## Scheduler.launchWhenReady
+### Scheduler.launchWhenReady
 
 Equivalent to `waitForStart; Scheduler.launch(...);`
 
@@ -112,11 +114,18 @@ Useful for when you aren't doing anything on a loop during initialization until 
 </TabItem>
 </Tabs>
 
-## Scheduler.beforeEach
+### Scheduler.beforeEach
 
 Runs a block of code *before* all the Listeners and the `afterEach` block (the one passed directly into `Scheduler.launch` runs).
 
-<SchedulerBeforeEachParamList/>
+<ParamsList params={[
+  {
+    name: 'block',
+    type: 'Runnable',
+    desc: 'The block of code to run at the start of each Scheduler loop',
+    typeLink: TypeLinks.LAMBDA,
+  }
+]}/>
 
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">
@@ -157,14 +166,34 @@ Runs a block of code *before* all the Listeners and the `afterEach` block (the o
 </TabItem>
 </Tabs>
 
-## Scheduler.time ⏰
+### Scheduler.time ⏰
 
 Utility method **for development purposes only,** which prints its loop times to the given Telemetry to roughly
 benchmark performance. Does not average, only prints the raw time each cycle.
 
 Prints in the format `Loop time (ms): <loop time>`
 
-<SchedulerTimeParamList/>
+<ParamsList params={[
+  {
+    name: 'opmode',
+    type: 'LinearOpMode',
+    desc: 'The LinearOpMode to run the Scheduler in',
+    typeLink: TypeLinks.LINEAR_OP_MODE,
+  },
+  {
+    name: 'telemetry',
+    type: 'Telemetry',
+    desc: 'The Telemetry object to log the times to - NOTE: will be updated at end of loop',
+    typeLink: TypeLinks.TELEMETRY,
+  },
+  {
+    name: 'afterEach',
+    type: 'Runnable',
+    desc: 'An optional block of code to run every tick, after the listeners have ran',
+    typeLink: TypeLinks.LAMBDA,
+    defaultsTo: '() -> {}'
+  }
+]}/>
 
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">
@@ -202,7 +231,7 @@ Prints in the format `Loop time (ms): <loop time>`
 </TabItem>
 </Tabs>
 
-## Scheduler.reset
+### Scheduler.reset
 
 Removes all the subscribed [Listeners](./listeners) and resets the `beforeEach` lambda. Not entirely sure why you'd want to do this,
 but hey, I'm not one to judge ¯\\\_(ツ)_/¯
@@ -246,6 +275,90 @@ or if `listener.rehook` is called on them.
 </TabItem>
 </Tabs>
 
+## Scheduler messaging methods
+
+A more niche functionality of the Scheduler is to directly send "messages" to invoke actions from the message receivers.
+
+It can be triggered among classes and doesn't have to be used in an OpMode; it's versatile and can be used anywhere, even
+without a running OpMode.
+
+Just be careful that your messages don't get mixed up and accidentally intercepted/interfere with each other.
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  // The message can be anything you want
+  // Just make sure it's comparable in some way, as it uses .equals() internally
+  Scheduler.on("message", () -> {
+      System.out.print("Hello,");
+  });
+
+  Scheduler.on("message", () -> {
+      System.out.print(" world!");
+  });
+
+  Scheduler.emit("message"); // "Hello, world!" is printed
+  Scheduler.emit("message"); // "Hello, world!" is printed again
+
+  Object msg = new Object()
+  Scheduler.emit(msg); // Nothing happens, no one is listening for it
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  // The message can be anything you want
+  // Just make sure it's comparable in some way, as it uses .equals() internally
+  Scheduler.on("message") {
+      print("Hello,")
+  }
+
+  Scheduler.on("message") {
+      print(" world!")
+  }
+
+  Scheduler.emit("message") // "Hello, world!" is printed
+  Scheduler.emit("message") // "Hello, world!" is printed again
+
+  val msg = Any()
+  Scheduler.emit(msg) // Nothing happens, no one is listening for it
+  ```
+
+</TabItem>
+</Tabs>
+
+### Scheduler.emit
+
+Broadcasts a message for anyone to receive with [Scheduler.emit](#scheduleremit).
+
+<ParamsList params={[
+  {
+    name: 'message',
+    type: 'Any',
+    desc: 'The "message" to send, can be literally anything (doesn\'t have to be of any significant, just that both the sender and the receiver have to know it). NOTE: this uses .equals() to compare messages, so make sure the message is comparable in some way.',
+  }
+]}/>
+
+### Scheduler.on
+
+Registers a message receiver, which will be called whenever a message is sent with [Scheduler.emit](#scheduleremit).
+
+<ParamsList params={[
+  {
+    name: 'message',
+    type: 'Any',
+    desc: 'The "message" to listen for, can be literally anything (doesn\'t have to be of any significant, just that both the sender and the receiver have to know it). NOTE: this uses .equals() to compare messages, so make sure the message is comparable in some way.',
+  },
+  {
+    name: 'block',
+    type: 'Runnable',
+    desc: 'The block of code to run when the message is received',
+    typeLink: TypeLinks.LAMBDA,
+  }
+]}/>
+
 export function SchedulerLaunchParamList() {
   return (
     <ParamsList params={[
@@ -261,45 +374,6 @@ export function SchedulerLaunchParamList() {
         desc: 'An optional block of code to run after every cycle, after the listeners have ran',
         typeLink: TypeLinks.LAMBDA,
         defaultsTo: '() -> {}',
-      }
-    ]}/>
-  )
-}
-
-export function SchedulerBeforeEachParamList() {
-  return (
-    <ParamsList params={[
-      {
-        name: 'block',
-        type: 'Runnable',
-        desc: 'The block of code to run at the start of each Scheduler loop',
-        typeLink: TypeLinks.LAMBDA,
-      }
-    ]}/>
-  )
-}
-
-export function SchedulerTimeParamList() {
-  return (
-    <ParamsList params={[
-      {
-        name: 'opmode',
-        type: 'LinearOpMode',
-        desc: 'The LinearOpMode to run the Scheduler in',
-        typeLink: TypeLinks.LINEAR_OP_MODE,
-      },
-      {
-        name: 'telemetry',
-        type: 'Telemetry',
-        desc: 'The Telemetry object to log the times to - NOTE: will be updated at end of loop',
-        typeLink: TypeLinks.TELEMETRY,
-      },
-      {
-        name: 'afterEach',
-        type: 'Runnable',
-        desc: 'An optional block of code to run every tick, after the listeners have ran',
-        typeLink: TypeLinks.LAMBDA,
-        defaultsTo: '() -> {}'
       }
     ]}/>
   )
