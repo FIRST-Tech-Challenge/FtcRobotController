@@ -106,7 +106,7 @@ public class Servotesting extends LinearOpMode {
                 Spin.setPower(-1);
             }
 
-            if (!spinpowerdown && !spinpowerup ||Spin.getCurrentPosition()<=-31){
+            if (!spinpowerdown && !spinpowerup ){
                 Spin.setPower(0);
             }
 
@@ -115,9 +115,7 @@ public class Servotesting extends LinearOpMode {
                 Spin.setTargetPosition(-20);
                 Spin.setPower(1);
                 Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                while (Spin.isBusy()&&opModeIsActive()){
-
-                }
+                sleep(1500);
                 Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
@@ -126,9 +124,7 @@ public class Servotesting extends LinearOpMode {
                 Spin.setTargetPosition(-589);
                 Spin.setPower(1);
                 Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                while (Spin.isBusy()&&opModeIsActive()){
-
-                }
+                sleep(1500);
                 Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
