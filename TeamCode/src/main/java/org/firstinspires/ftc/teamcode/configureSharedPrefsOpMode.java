@@ -25,8 +25,9 @@ public class configureSharedPrefsOpMode extends OpMode {
     SharedPreferences sharedPrefs;
     boolean prevUP,prevDOWN,prevLEFT,prevRIGHT;
     @Override
+    @SuppressWarnings("deprecation")
     public void init() {
-        Arrays.fill(currentIndexes, -1);//initialize all values in currentIndexes to -1
+        Arrays.fill(currentIndexes, -1);//initialize all values in currentIndexes to -13
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.hardwareMap.appContext);
 
         //display the starting info
@@ -124,12 +125,12 @@ public class configureSharedPrefsOpMode extends OpMode {
     }
 
     String padding(int a){
-        String p="";
+        StringBuilder p= new StringBuilder();
         if(a>0)
             for(int i=0;i<a;i++){
-                p+=" ";
+                p.append(" ");
             }
-        return p;
+        return p.toString();
     }
 
 }
