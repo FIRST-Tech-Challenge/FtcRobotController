@@ -22,8 +22,8 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     override fun mInit() {
         Logger.config = LoggerConfig.DASHBOARD_CONFIG
         scheduleDrive()
-        scheduleCycling()
-//        scheduleTest()
+//        scheduleCycling()
+        scheduleTest()
     }
 
     private fun scheduleDrive() {
