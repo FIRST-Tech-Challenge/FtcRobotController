@@ -25,7 +25,7 @@ public class RotationDetector {
 
     public RotationDetector(BNO055IMU gyro){
         if (gyro == null){
-            throw new NullPointerException("Error: object gryo is null")
+            throw new NullPointerException("Error: object gryo is null");
         }
         try {
             Gyro =gyro;
