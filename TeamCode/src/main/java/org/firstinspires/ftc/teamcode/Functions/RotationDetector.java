@@ -27,7 +27,7 @@ public class RotationDetector {
     double startingRotation = 0;
     BNO055IMU Gyro;
     MVPIDController MotorPID;
-    private Telemetry telemetry;
+    //public Telemetry telemetry;
 
     public RotationDetector(BNO055IMU gyro){
         if (gyro == null) {
@@ -44,6 +44,7 @@ public class RotationDetector {
             }
             startingRotation =ReturnPositiveRotation();
 
+            MotorPID = new MVPIDController();
             MotorPID.pidController(0.5, 0.1, 0.25, 0.0, 0.0001);
             MotorPID.setContinuous(true);
             MotorPID.setInputRange(-180.0,180.0);
@@ -172,19 +173,23 @@ public class RotationDetector {
      * * @return (double) [-1, 1] dcmotor power
      */
     public double MotorPower(double targetRotation){
-            double newRotationAngle = 0;
-            try {
-                newRotationAngle = targetRotation;
-            }
-            catch (Exception e) {
-                    telemetry.addData("Exception caught in MotorPower(RotationDetector): ", e.getMessage());
-                    telemetry.update();
-                    //return 180;
-            }
-        //try{
-            telemetry.addData("targetRotatio value is: ", targetRotation);
-            telemetry.update();
-            return MotorPID.calculate(targetRotation);
+        double power = MotorPID.calculate(targetRotation);
+        //    double newRotationAngle = 0;
+        //    try {
+        //        newRotationAngle = targetRotation;
+        //    }
+        //   catch (Exception e) {
+        //           telemetry.addData("Exception caught in MotorPower(RotationDetector): ", e.getMessage());
+        //    }
+        //            telemetry.update();
+        //            //return 180;
+        //    }
+        ////try{
+            //telemetry.addData("  - targetRotation value is: ", targetRotation);
+            //telemetry.addData("  - power is:", power);
+            //telemetry.update();
+            return power;
+
         //}
        //atch (NullPointerException e) {
        //   //telemetry.addData("NullPointerException caught in MotorPower: " + e.getMessage());

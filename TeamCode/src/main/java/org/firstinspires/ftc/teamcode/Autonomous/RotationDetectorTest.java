@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Functions.Arm;
 import org.firstinspires.ftc.teamcode.Functions.Collector;
 import org.firstinspires.ftc.teamcode.Functions.Move;
@@ -27,6 +28,7 @@ public class RotationDetectorTest extends LinearOpMode {
     private Collector collector;
     public VoltageReader voltageReader;
     public RotationDetector rotationDetector;
+    //public Telemetry telemetry;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -69,6 +71,7 @@ public class RotationDetectorTest extends LinearOpMode {
         }
         rotate.MoveStop();
         sleep(2000);
+
         angle = 160.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
@@ -78,6 +81,7 @@ public class RotationDetectorTest extends LinearOpMode {
         }
         rotate.MoveStop();
         sleep(1000);
+
         angle = 45.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
