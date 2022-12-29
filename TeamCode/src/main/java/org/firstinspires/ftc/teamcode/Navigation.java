@@ -123,7 +123,7 @@ public class Navigation {
         double throttle = analogValues.gamepad1RightTrigger;
         if (throttle < RobotManager.TRIGGER_DEAD_ZONE_SIZE) {  // Throttle dead zone.
             // Determine power scale factor using constant from distance of joystick from center.
-            double distance = Range.clip(Math.sqrt(Math.pow(analogValues.gamepad1RightStickX, 2)
+            double distance = Range.clip(Math.sqrt(Math.pow(analogValues.gamepad1LeftStickX, 2)
                     + Math.pow(analogValues.gamepad1LeftStickY, 2)), 0, 1);
             if (distance <= RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {  // joystick dead zone
                 // Joystick is not used, but hasMovementDirection is true, so one of the straight movement buttons must
@@ -187,7 +187,7 @@ public class Navigation {
         // NOTE: right-side drivetrain motor inputs don't have to be negated because their directions will be reversed
         //       upon initialization.
 
-        double turn = -analogValues.gamepad1LeftStickX;
+        double turn = -analogValues.gamepad1RightStickX;
         if (turnCC) {
             turn = -ROTATION_POWER;
         }

@@ -97,7 +97,7 @@ public class MechanismDriving {
 
        if (Robot.desiredSlidesState != Robot.SlidesState.UNREADY) {
            if(!testing)
-           setSlidePosition(robot, slidePositions.get(Robot.desiredSlidesState));
+               setSlidePosition(robot, slidePositions.get(Robot.desiredSlidesState));
 
            // Speed is proportional to the fraction of the ramp distance that we have left.
            double slidesSpeed = SLIDES_MAX_SPEED * Range.clip(Math.abs(desiredSlidePosition - robot.slidesMotor.getCurrentPosition())/ SLIDE_RAMP_DIST, 0.1, 1);

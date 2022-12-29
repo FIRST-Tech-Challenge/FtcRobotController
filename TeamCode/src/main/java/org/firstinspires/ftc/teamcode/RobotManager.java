@@ -99,6 +99,15 @@ public class RobotManager {
             robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
         }
 
+        //Horseshoe movement FRONT
+        if(getButtonRelease(GamepadWrapper.DriverAction.HORSESHOE_TO_FRONT)){
+            robot.desiredHorseshoeState = Robot.HorseshoeState.FRONT;
+        }
+        //Horseshoe movement BACK
+        if(getButtonRelease(GamepadWrapper.DriverAction.HORSESHOE_TO_BACK)){
+            robot.desiredHorseshoeState = Robot.HorseshoeState.REAR; //Rear is back.
+        }
+
         // Adjust relative wheel speeds.
 
         if (robot.wheelSpeedAdjustment) {
@@ -320,7 +329,7 @@ public class RobotManager {
                             || gamepads.getButtonState(GamepadWrapper.DriverAction.MOVE_STRAIGHT_RIGHT));
         double stickDist = Math.sqrt(
                 Math.pow(gamepads.getAnalogValues().gamepad1LeftStickY,2)
-              + Math.pow(gamepads.getAnalogValues().gamepad1RightStickX,2));
+              + Math.pow(gamepads.getAnalogValues().gamepad1LeftStickX,2));
         boolean joystickMoved = stickDist >= RobotManager.JOYSTICK_DEAD_ZONE_SIZE;
         return dpadPressed || joystickMoved;
     }

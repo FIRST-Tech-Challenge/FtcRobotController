@@ -12,7 +12,8 @@ public class GamepadWrapper {
     public enum DriverAction {SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,
                               ULTRA_FINE_MOVEMENT_TOGGLE, FINE_MOVEMENT_TOGGLE, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
                               MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT, MOVE_STRAIGHT_RIGHT,
-                              COMPLIANT_WHEELS_TOGGLE, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE
+                              COMPLIANT_WHEELS_TOGGLE, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE,
+                              HORSESHOE_TO_FRONT,HORSESHOE_TO_BACK
     }
 
     Gamepad gamepad1, gamepad2;
@@ -58,16 +59,19 @@ public class GamepadWrapper {
             case MOVE_STRAIGHT_BACKWARD:
                 return gamepad1.dpad_down;
             case MOVE_STRAIGHT_LEFT:
-                return gamepad1.x
+                return gamepad1.dpad_left
                         ;
             case MOVE_STRAIGHT_RIGHT:
-                return gamepad1.b;
-            case TOGGLE_WHEEL_SPEED_ADJUSTMENT:
-                return gamepad2.left_bumper;
-            case TURN_COUNTER_CLOCKWISE:
-                return gamepad1.dpad_left;
-            case TURN_CLOCKWISE:
                 return gamepad1.dpad_right;
+            case TURN_COUNTER_CLOCKWISE:
+                return gamepad1.x;
+            case TURN_CLOCKWISE:
+                return gamepad1.b;
+            case HORSESHOE_TO_BACK:
+                return gamepad2.right_bumper;
+            case HORSESHOE_TO_FRONT:
+                return gamepad2.left_bumper;
+
         }
         assert false;
         return false;
