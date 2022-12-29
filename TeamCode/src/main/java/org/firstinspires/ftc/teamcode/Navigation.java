@@ -206,7 +206,7 @@ public class Navigation {
                 break;
         }
 
-        double moveDirection = Math.atan2(analogValues.gamepad1LeftStickY, analogValues.gamepad1RightStickX);
+        double moveDirection = Math.atan2(analogValues.gamepad1LeftStickY, analogValues.gamepad1LeftStickX);
         setDriveMotorPowers(moveDirection, strafePower, turn, robot, false);
     }
 
