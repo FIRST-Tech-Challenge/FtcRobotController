@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @TeleOp(name = "Servo",group = "Servo")
-public class AutoServo extends LinearOpMode {
+public class Servo extends LinearOpMode {
  ElapsedTime runtime = new ElapsedTime();
 // i got rid of public
 
