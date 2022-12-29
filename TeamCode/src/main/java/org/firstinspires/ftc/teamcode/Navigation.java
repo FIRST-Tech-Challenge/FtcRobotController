@@ -486,10 +486,10 @@ public class Navigation {
             return;
         }
 
-        robot.driveMotors.get(RobotConfig.DriveMotors.REAR_LEFT).setPower((rawPowers[1] * power - turn) * wheel_speeds[0]);
-        robot.driveMotors.get(RobotConfig.DriveMotors.REAR_RIGHT).setPower((rawPowers[0] * power + turn) * wheel_speeds[1]);
-        robot.driveMotors.get(RobotConfig.DriveMotors.FRONT_LEFT).setPower((rawPowers[0] * power - turn) * wheel_speeds[2]);
-        robot.driveMotors.get(RobotConfig.DriveMotors.FRONT_RIGHT).setPower((rawPowers[1] * power + turn) * wheel_speeds[3]);
+        robot.driveMotors.get(RobotConfig.DriveMotors.REAR_LEFT).setPower((rawPowers[0] * power - turn) * wheel_speeds[0]);
+        robot.driveMotors.get(RobotConfig.DriveMotors.REAR_RIGHT).setPower((rawPowers[1] * power + turn) * wheel_speeds[1]);
+        robot.driveMotors.get(RobotConfig.DriveMotors.FRONT_LEFT).setPower((rawPowers[1] * power - turn) * wheel_speeds[2]);
+        robot.driveMotors.get(RobotConfig.DriveMotors.FRONT_RIGHT).setPower((rawPowers[0] * power + turn) * wheel_speeds[3]);
     }
 
     /** Sets all drivetrain motor powers to zero.
