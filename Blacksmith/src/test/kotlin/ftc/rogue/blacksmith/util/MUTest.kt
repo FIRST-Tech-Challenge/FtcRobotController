@@ -121,13 +121,13 @@ internal class MUTest {
     inner class MaxMagnitudeTest {
         @Test
         fun `maxMagnitude returns the max magnitude of the given numbers`() {
-            assertEquals(-10, maxMagnitude(-10, -5, 5, 10))
-            assertEquals(-15, maxMagnitude(-10, -5, -15))
+            assertEquals(-10, maxByMagnitude(-10, -5, 5, 10))
+            assertEquals(-15, maxByMagnitude(-10, -5, -15))
         }
 
         @Test
         fun `maxMagnitude returns 0 if no numbers are given`() {
-            assertEquals(0.0, maxMagnitude())
+            assertEquals(0.0, maxByMagnitude())
         }
     }
 

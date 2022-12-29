@@ -47,7 +47,6 @@ inline fun <reified T : Number> Number.withDeadzone(deadzone: Number, origin: Nu
 @JvmSynthetic
 infix fun Number.pow(exponent: Number) = this.toDouble().pow(exponent.toDouble())
 
-
 @PublishedApi
 internal inline fun <reified T : Number> asNumberType(producer: () -> Number) = when (T::class) {
     Double::class -> producer().toDouble() as T

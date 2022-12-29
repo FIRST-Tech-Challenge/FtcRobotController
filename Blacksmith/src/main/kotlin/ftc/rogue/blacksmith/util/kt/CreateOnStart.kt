@@ -22,7 +22,11 @@ class CreateOnStartR<T> @PublishedApi internal constructor(
     init {
         Scheduler.on(BlackOp.STARTING_MSG) {
             val invokedArgs = args.map { it() }.toTypedArray()
-            value = clazz.constructors.first().newInstance(*invokedArgs)
+            val argTypes = invokedArgs.map { it::class.java }.toTypedArray()
+
+            value = clazz.constructors.find { constructor ->
+                constructor.parameterTypes contentEquals argTypes
+            }?.newInstance(*invokedArgs)
         }
     }
 

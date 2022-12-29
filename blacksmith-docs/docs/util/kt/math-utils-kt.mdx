@@ -1,0 +1,44 @@
+# MathUtilsKt
+
+Contains some math utilities with built-in casting.
+
+Because I'm lazy, in the regular [MathUtils](../math-utils) class, I declared functions as `Number.function(...): Double`
+instead of writing explicit overloads for each type.
+
+This can get annoying because Kotlin doesn't support implicit casting, so you have to do something like this:
+
+```kotlin
+val c: Int = 1.clamp(min = 0, max = 10).toDouble()
+```
+
+This class contains most of the same functions, but uses reified types to cast the result to the type you want, often
+implicitly. For example:
+
+```kotlin
+val c: Int = 1.clamp(min = 0, max = 10)
+// or
+val c = 1.clamp<Int>(min = 0, max = 10)
+```
+
+It's also really nice when reassigning a variable:
+
+```kotlin
+var c: Int = 1
+
+// Some lines later...
+
+c = c.clamp(min = 0, max = 10)
+```
+
+Currently, supported functions include:
+ - `Number.toIn(from: DistanceUnit = DistanceUnit.CM)`
+ - `Number.toCm(from: DistanceUnit = DistanceUnit.INCHES)`
+ - `Number.toRad(from: AngleUnit = AngleUnit.DEGREES)`
+ - `Number.clamp(min: Number, max: Number)`
+ - `avg(vararg xs: Number)`
+ - `maxMagnitude(vararg xs: Number)`
+ - `maxMagnitudeAbs(vararg xs: Number)`
+ - `Number.withDeadzone(deadzone: Number, origin: Number = 0.0)`
+
+There's also an infix `pow` function, `Number.pow(exponent: Number)`, which doesn't support implicit casting, but
+it's still nicer than `double1.pow(double2)` since you can just do `double1 pow double2`.

@@ -6,4 +6,6 @@ export const TypeLinks = {
   TIMER: './timer',
   GAMEPAD: 'https://gm0.org/en/latest/docs/software/tutorials/gamepad.html',
   TIME_UNIT: '../etc/units/time',
+  ANGLE_UNIT: '../etc/units/angle',
+  DISTANCE_UNIT: '../etc/units/distance',
 }

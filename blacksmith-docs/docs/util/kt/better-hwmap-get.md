@@ -1,6 +1,4 @@
-import ParamsList from '../../../src/components/ParamsList';
-
-# Better hardwareMap.get()
+# BetterHwMapGet
 
 Syntactic sugar for the typical [hardwareMap.get()](https://gm0.org/en/latest/docs/software/getting-started/common-hardware-components.html#examples-of-using-common-hardware-components)
 
@@ -31,16 +29,3 @@ Then you can just delete `.invoke` and you're good to go.
 
 This is because this trick is done by overriding the `invoke` operator, which is a special operator in Kotlin.
 :::
-
-<ParamsList params={[
-  {
-    name: 'T',
-    type: 'Generic Type',
-    desc: 'The type of the component you want to get',
-  },
-  {
-    name: 'name',
-    type: 'String',
-    desc: 'The name of the component you want to get',
-  },
-]}/>

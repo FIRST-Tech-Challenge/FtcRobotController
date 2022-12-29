@@ -1,0 +1,456 @@
+import ParamsList from '../../src/components/ParamsList';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Returns from '../../src/components/Returns';
+import { TypeLinks } from '../../src/util/type-links';
+
+# MathUtils
+
+A collection of math utilities.
+
+:::note
+For Kotlin users, all the following except for the vararg functions are extension functions
+:::
+
+## MU.toIn
+
+Converts a value to inches
+
+<ParamsList params={[
+  {
+    name: 'value',
+    type: 'Number',
+    desc: 'The value to convert',
+  },
+  {
+    name: 'from',
+    type: 'DistanceUnit',
+    desc: 'The unit of the value',
+    typeLink: TypeLinks.DISTANCE_UNIT
+  },
+]}/>
+
+<Returns returns={{
+  type: 'Number',
+  desc: 'The value in inches',
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  MU.toIn(1, DistanceUnit.METER); // 39.37007874015748
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  1.0.toIn(from = DistanceUnit.METER) // 39.37007874015748
+  ```
+
+</TabItem>
+</Tabs>
+
+## MU.toCm
+
+Converts a value to centimeters
+
+<ParamsList params={[
+  {
+    name: 'value',
+    type: 'Number',
+    desc: 'The value to convert',
+  },
+  {
+    name: 'from',
+    type: 'DistanceUnit',
+    desc: 'The unit of the value',
+    typeLink: TypeLinks.DISTANCE_UNIT
+  },
+]}/>
+
+<Returns returns={{
+  type: 'Number',
+  desc: 'The value in centimeters',
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  MU.toCm(1, DistanceUnit.METER); // 100.0
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  1.0.toCm(from = DistanceUnit.METER) // 100.0
+  ```
+
+</TabItem>
+</Tabs>
+
+## MU.toRad
+
+Converts a value to radians
+
+<ParamsList params={[
+  {
+    name: 'value',
+    type: 'Number',
+    desc: 'The value to convert',
+  },
+  {
+    name: 'from',
+    type: 'AngleUnit',
+    desc: 'The unit of the value',
+    typeLink: TypeLinks.ANGLE_UNIT
+  },
+]}/>
+
+<Returns returns={{
+  type: 'Number',
+  desc: 'The value in radians',
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  MU.toRad(1, AngleUnit.DEGREES); // 0.017453292519943295
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  1.0.toRad(from = AngleUnit.DEGREES) // 0.017453292519943295
+  ```
+
+</TabItem>
+</Tabs>
+
+## MU.zeroIfNaN
+
+Returns 0 if the value is NaN
+
+<ParamsList params={[
+  {
+    name: 'value',
+    type: 'Double',
+    desc: 'The value to check',
+  },
+]}/>
+
+<Returns returns={{
+  type: 'Double',
+  desc: '0 if the value is NaN, otherwise the value',
+}}/>
+
+:::note
+An overload exists for Floats
+:::
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  MU.zeroIfNaN(Double.NaN); // 0.0
+
+  MU.zeroIfNaN(1.0); // 1.0
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Double.NaN.zeroIfNaN() // 0.0
+
+  1.0.zeroIfNaN() // 1.0
+  ```
+
+</TabItem>
+</Tabs>
+
+## MU.isInRange
+
+Checks if a value is within a range
+
+<ParamsList params={[
+  {
+    name: 'value',
+    type: 'Number',
+    desc: 'The value to check',
+  },
+  {
+    name: 'min',
+    type: 'Number',
+    desc: 'The minimum value',
+  },
+  {
+    name: 'max',
+    type: 'Number',
+    desc: 'The maximum value',
+  },
+]}/>
+
+<Returns returns={{
+  type: 'Boolean',
+  desc: 'True if the value is within the range, false otherwise',
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  MU.isInRange(1, 0, 2); // true
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  1.isInRange(0, 2) // true
+  ```
+
+</TabItem>
+</Tabs>
+
+## MU.clamp
+
+Clamps a value to a range. Returns it as a Double.
+
+<ParamsList params={[
+  {
+    name: 'value',
+    type: 'Number',
+    desc: 'The value to clamp',
+  },
+  {
+    name: 'min',
+    type: 'Number',
+    desc: 'The minimum value',
+  },
+  {
+    name: 'max',
+    type: 'Number',
+    desc: 'The maximum value',
+  },
+]}/>
+
+<Returns returns={{
+  type: 'Double',
+  desc: 'The clamped value',
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  MU.clamp(1, 0, 2); // 1.0
+
+  MU.clamp(3, 0, 2); // 2.0
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  1.clamp(0, 2) // 1.0
+
+  3.clamp(0, 2) // 2.0
+  ```
+
+</TabItem>
+</Tabs>
+
+## MU.avg
+
+Calculates the average of a list of numbers
+
+:::caution Important for Java users
+This (and the other vararg) method(s) can not take in array of primitives. You must use an array of boxed types
+(Double, Float, Integer, etc.) if not directly using varargs.
+:::
+
+<ParamsList params={[
+  {
+    name: 'xs',
+    type: 'Number...',
+    desc: 'The values to average',
+  },
+]}/>
+
+<Returns returns={{
+  type: 'Double',
+  desc: 'The average of the values',
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  double average = MU.avg(1, 2, 3); // 2.0 (can be used as normal varargs)
+
+  Double[] values = new Double[] { 1.0, 2.0, 3.0 };
+  double average = MU.avg(values); // 2.0 (boxed array is fine)
+
+  double[] error = new double[] { 1.0, 2.0, 3.0 };
+  // this-will-error
+  double average = MU.avg(error); // Error because of primitive array
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val average = avg(1.0, 2.0, 3.0) // 2.0 (can be used as normal varargs)
+
+  val values = arrayOf(1.0, 2.0, 3.0)
+  val average = avg(*values) // 2.0 (use spread operator to pass array)
+  ```
+
+</TabItem>
+</Tabs>
+
+## MU.maxByMagnitude
+
+Returns the value with the largest magnitude (not absolute value), or 0.0 if the list is empty
+
+<ParamsList params={[
+  {
+    name: 'xs',
+    type: 'Number...',
+    desc: 'The values to check',
+  },
+]}/>
+
+<Returns returns={{
+  type: 'Double',
+  desc: 'The value with the largest magnitude (or 0.0 if the list is empty)',
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  double max = MU.maxByMagnitude(-1, 2, -3); // 3.0
+
+  Double[] values = new Double[] { 1.0, 2.0, 3.0 };
+  double max = MU.maxByMagnitude(values); // 3.0 (boxed array is fine)
+
+  double[] error = new double[] { 1.0, 2.0, 3.0 };
+  // this-will-error
+  double max = MU.maxByMagnitude(error); // Error because of primitive array
+  ```
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val max = maxByMagnitude(-1.0, 2.0, -3.0) // 3.0
+
+  val values = arrayOf(1.0, 2.0, 3.0)
+  val max = maxByMagnitude(*values) // 3.0 (use spread operator to pass array)
+  ```
+
+</TabItem>
+</Tabs>
+
+## MU.maxMagnitude
+
+Returns the largest magnitude (as absolute value) of a list of numbers, or 0.0 if the list is empty
+
+<ParamsList params={[
+  {
+    name: 'xs',
+    type: 'Number...',
+    desc: 'The values to check',
+  },
+]}/>
+
+<Returns returns={{
+  type: 'Double',
+  desc: 'The largest magnitude (or 0.0 if the list is empty)',
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  double max = MU.maxMagnitude(-1, 2, -3); // 3.0
+
+  Double[] values = new Double[] { 1.0, 2.0, 3.0 };
+  double max = MU.maxMagnitude(values); // 3.0 (boxed array is fine)
+
+  double[] error = new double[] { 1.0, 2.0, 3.0 };
+  // this-will-error
+  double max = MU.maxMagnitude(error); // Error because of primitive array
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val max = maxMagnitude(-1.0, 2.0, -3.0) // 3.0
+
+  val values = arrayOf(1.0, 2.0, 3.0)
+  val max = maxMagnitude(*values) // 3.0 (use spread operator to pass array)
+  ```
+
+</TabItem>
+</Tabs>
+
+## MU.withDeadzone
+
+Returns a value with a deadzone applied. If the value is within the deadzone, it will be set to given origin (defaults to 0.0).
+
+<ParamsList params={[
+  {
+    name: 'value',
+    type: 'Number',
+    desc: 'The value to apply the deadzone to',
+  },
+  {
+    name: 'deadzone',
+    type: 'Number',
+    desc: 'The deadzone to apply',
+  },
+  {
+    name: 'origin',
+    type: 'Number',
+    desc: 'The origin to set the value to if it is within the deadzone',
+    defaultsTo: '0.0',
+  },
+]}/>
+
+<Returns returns={{
+  type: 'Double',
+  desc: 'The value with the deadzone applied',
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  MU.withDeadzone(0.5, 0.1); // 0.5
+
+  MU.withDeadzone(0.05, 0.1); // 0.0
+
+  MU.withDeadzone(10.5, 1, 10); // 10
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  0.5.withDeadzone(0.1) // 0.5
+
+  0.05.withDeadzone(0.1) // 0.0
+
+  10.5.withDeadzone(1.0, origin = 10.0) // 10
+  ```
+
+</TabItem>
+</Tabs>

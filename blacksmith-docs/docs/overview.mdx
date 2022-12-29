@@ -2,12 +2,161 @@
 sidebar_position: 0
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Overview
+
+## Overview
+
+The Blacksmith Library is a collection of tools and such for FTC, which focuses on both readability, *and* brevity,
+aiming to be as intuitive as possible. It allows you to program more declaratively and worry less about common logic
+that only serves to distract you and add bugs to your code.
+
+It is made *with* Kotlin, *for* Kotlin, but it still works *very* well with Java.
+
+:::info
+All code documentation provide both Java and Kotlin examples
+:::
+
+## Enough with the buzzwords, what does it do?
+
+The Blacksmith Library provides a few different things:
+ - [The Scheduler API](/scheduler-api/overview) - An API to drastically simplify the creation and maintainability of your OpModes, and make them much cleaner and terser.
+
+ - [Anvil](/anvi/overview) - A wrapper around [Roadrunner's](https://learnroadrunner.com/) [TrajectorySequenceBuilder](https://learnroadrunner.com/trajectory-sequence.html) which provides a much nicer API for creating trajectories, as well as utilities for creating trajectories on the fly without slowing down your auto.
+
+ - And quite a decent amount of [utilities...](/util/math-utils) Especially for [Kotlin!](/util/kt/better-hwmap-get)
+
+I recommend checking those out for examples of each, but here's a basic example of a TeleOp before and after using Blacksmith:
+
+<Tabs groupId="programming-language">
+  <TabItem value="java" label="Java">
+
+  ```java
+  public class NotCoolTeleOp extends OpMode {
+      @Override
+      public void init() {
+          // Initialize hardware
+      }
+
+      @Override
+      public void loop() {
+          // Loop code
+      }
+
+      // ...300 billion lines later...
+
+      private boolean gamepad1aPreviousState = //...;
+
+      private void checkIfShouldDoSomething() {
+         if (gamepad2.a && !gamepad1aPreviousState) { // Messy and ugly and ew 🤮
+             claw.intake();
+         } else if (!gamepad2.a && gamepad1aPreviousState) { // Disgusting unreadable signal edge detectors
+             claw.close();
+         } // Can't tell if the driver does this or the codriver at the quick glance
+         gamepad1aPreviousState = //...;
+      } // ugh imperative hell
+  }
+  ```
+
+  </TabItem>
+  <TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  class `NotCoolTeleOp😔` : OpMode() {
+      override fun init() {
+          // Initialize hardware
+      }
+
+      override fun loop() {
+          // Loop code
+      }
+
+      // ...300 billion lines later...
+
+      private var gamepad1aPreviousState = //... (mutable state!!!1!1!1)
+
+      private fun checkIfShouldDoSomething() {
+         if (gamepad2.a && !gamepad1aPreviousState) { // Messy and ugly and ew 🤮
+             claw.intake()
+         } else if (!gamepad2.a && gamepad1aPreviousState) { // Disgusting unreadable signal edge detectors
+             claw.close()
+         } // Can't tell if the driver does this or the codriver at the quick glance
+         gamepad1aPreviousState = //...
+      } // ugh imperative hell
+  }
+  ```
+
+  </TabItem>
+</Tabs>
+
+<Tabs groupId="programming-language">
+  <TabItem value="java" label="Java">
+
+  ```java
+  public class CoolTeleOp extends LinearOpMode {
+      private ReforgedGamepad codriver;
+
+      @Override
+      public void runOpMode() throws InterruptedException {
+          codriver = new ReforgedGamepad(gamepad2); // Initialize hardware
+
+          describeControls(); // Good idea to move it to a method for readability
+
+          Scheduler.launchWhenReady(this, () -> {
+              // Any extra loop code (runs after every Listener)
+          });
+      }
+
+      private void describeControls() {
+          codriver.a.onRise(() -> claw.intake()); // Simple and easy to read
+          codriver.a.onFall(() -> claw.close()); // Complexity is abstracted away
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  class `CoolTeleOp😎` : LinearOpMode() {
+      private val codriver by createOnGo<ReforgedGamepad>({ gamepad2 })
+
+      // Initialize other hardware w/ createOnGo
+
+      override fun runOpMode() {
+
+          describeControls() // Good idea to move it to a method for readability
+
+          Scheduler.launchWhenReady(this) {
+              // Any extra loop code (runs after every Listener)
+          }
+      }
+
+      private fun describeControls() {
+          codriver.a.onRise(claw::intake) // Simple and easy to read
+          codriver.a.onFall(claw::close) // Complexity is abstracted away
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
+
+As you can see, the Blacksmith version is much different, but it's much more readable and easier to make changes to.
+It's easy to learn and only requires medium-level knowledge of Java.
+
+## I don't understand these symbols
+
+The guide does require some knowledge of Java, but it's not very hard to learn. If you're not familiar with Java, I recommend
+checking out the FAQ page for some resources to learn what you need to know for this framework.
+
+If you're using Kotlin, this guide does somewhat presume you know what you're doing and won't explain the Kotlin as much.
 
 ## Okay... but what about performance?
 
-The performance impact is negligible; CPUs are fast, and you have other things to worry about in terms of performance,
-especially hardware calls.
+The performance impact is negligible; CPUs are fast, and you have other things to worry about in terms of performance.
 
-This API is simply a layer or two of abstraction on top of the existing FTC SDK, and it's in no way computationally
+This API is simply a couple layers of abstraction on top of the existing FTC SDK, and is in no way computationally
 expensive.

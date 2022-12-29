@@ -87,11 +87,11 @@ Now the same TelpOp after receiving the Scheduler treatment:
 
 ```java
 public class CoolTeleOp extends LinearOpMode {
-    private ReforgedGamepad codriver = new ReforgedGamepad(gamepad2);
+    private ReforgedGamepad codriver;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize hardware
+        codriver = new ReforgedGamepad(gamepad2);
 
         describeControls(); // Good idea to move it to a method for readability
 
@@ -112,10 +112,10 @@ public class CoolTeleOp extends LinearOpMode {
 
 ```kotlin
 class `CoolTeleOp😎` : LinearOpMode() {
-    private val codriver = ReforgedGamepad(gamepad2)
+    private lateinit var codriver: ReforgedGamepad
 
     override fun runOpMode() {
-        // Initialize hardware
+        codriver = ReforgedGamepad(gamepad2)
 
         describeControls() // Good idea to move it to a method for readability
 

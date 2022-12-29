@@ -1,0 +1,75 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# BlackOp
+
+An extension of the `LinearOpMode` class that adds a few extra utility features, namely:
+
+ - `mTelemetry`, a `Telemetry` object which logs to both the driver station and FTCDashboard
+
+ - `hwMap`, `hardwareMap`, but shorter name
+
+ - Broadcasts a message (`BlackOp.STARTING_MSG`) when the runOpMode method is called with [Scheduler.emit](../scheduler-api/scheduler#scheduleremit)
+   - This in turn opens up support for [`createOnGo`](../util/kt/create-on-go), a *very* nice Kotlin utility function
+
+ - More will come soon as I think of new, helpful utilities
+
+## Usage
+
+It's just like using `LinearOpMode`, just a couple minor differences.
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  private DcMotorEx motor;
+
+  @TeleOp
+  public class MyOpMode extends BlackOp { // BlackOp instead of LinearOpMode
+      @Override
+      public void go() { // go() instead of runOpMode()
+          motor = hwMap.get(DcMotorEx.class, "motor"); // Can use hwMap instead of hardwareMap
+
+          Scheduler.launchWhenReady(this) {
+              mTelemetry.addData("Hello", "World!"); // Logs to both driver station and FTCDashboard
+          }
+      }
+  }
+
+  class Teast {
+      static {
+          Scheduler.on(BlackOp.STARTING_MSG, () -> {
+              // This will fire once when the op mode is started
+          });
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  private val motor by createOnGo { hwMap<DcMotorEx>("motor") }  // Can use createOnGo()
+      // or (either works)
+  private val motor by createOnGo<DcMotorEx> { hwMap("motor") }  // Can use hwMap instead of hardwareMap
+
+  class MyOpMode : BlackOp() { // BlackOp instead of LinearOpMode
+
+      override fun go() { // go() instead of runOpMode()
+          Scheduler.launchWhenReady(this) {
+              mTelemetry.addData("Hello", "World!") // Logs to both driver station and FTCDashboard
+          }
+      }
+  }
+
+  object Teast {
+      init {
+          Scheduler.on(BlackOp.STARTING_MSG) {
+              // This will fire once when the op mode is started
+          }
+      }
+  }
+  ```
+
+</TabItem>
+</Tabs>
