@@ -88,9 +88,8 @@ public class PositionManager {
  *  position to add onto.
  */
 class EncoderPositioning {
-    // TODO: can we replace all of this with just an empirically measured magical ratio?
     static int ENCODER_COUNTS_PER_ROTATION = 560;
-    static double MAGICAL_FACTOR = 1;
+    static double MAGICAL_FACTOR = 8.64;
     static double MAGICAL_RATIO = MAGICAL_FACTOR / ENCODER_COUNTS_PER_ROTATION;
 
     static HashMap<RobotConfig.DriveMotors, Double> RollerAngles = new HashMap<RobotConfig.DriveMotors, Double>() {{
