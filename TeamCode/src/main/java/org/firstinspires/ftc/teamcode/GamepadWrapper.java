@@ -1,6 +1,3 @@
-/* Author: Arin Khare
- */
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.exception.RobotCoreException;
@@ -9,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 /** Wraps a gamepad so that button mappings are stored in one place.
  */
 public class GamepadWrapper {
-    public enum DriverAction {SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,
-                              ULTRA_FINE_MOVEMENT_TOGGLE, FINE_MOVEMENT_TOGGLE, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
+    public enum DriverAction {SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,SET_SLIDES_VERY_LOW,
+        TURN_ON_ULTRA_FINE_MOVEMENT, TURN_ON_FINE_MOVEMENT, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
                               MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT, MOVE_STRAIGHT_RIGHT,
                               COMPLIANT_WHEELS_TOGGLE, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE,
                               HORSESHOE_TO_FRONT,HORSESHOE_TO_BACK
@@ -50,17 +47,18 @@ public class GamepadWrapper {
                 return gamepad2.dpad_right;
             case SET_SLIDES_HIGH:
                 return gamepad2.dpad_up;
-            case FINE_MOVEMENT_TOGGLE:
+            case SET_SLIDES_VERY_LOW:
+                return gamepad2.a;
+            case TURN_ON_FINE_MOVEMENT:
                 return gamepad1.left_bumper;
-            case ULTRA_FINE_MOVEMENT_TOGGLE:
+            case TURN_ON_ULTRA_FINE_MOVEMENT:
                 return gamepad1.right_bumper;
             case MOVE_STRAIGHT_FORWARD:
                 return gamepad1.dpad_up;
             case MOVE_STRAIGHT_BACKWARD:
                 return gamepad1.dpad_down;
             case MOVE_STRAIGHT_LEFT:
-                return gamepad1.dpad_left
-                        ;
+                return gamepad1.dpad_left;
             case MOVE_STRAIGHT_RIGHT:
                 return gamepad1.dpad_right;
             case TURN_COUNTER_CLOCKWISE:

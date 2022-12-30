@@ -79,21 +79,20 @@ public class RobotManager {
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
             Robot.desiredSlidesState = Robot.SlidesState.HIGH;
         }
+        if(getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_VERY_LOW)){
+            Robot.desiredSlidesState = Robot.SlidesState.VERY_LOW;
+        }
 
         // Fine movement/rotation.
-        if (getButtonRelease(GamepadWrapper.DriverAction.FINE_MOVEMENT_TOGGLE)) {
-            if (robot.movementMode == Robot.MovementMode.FINE) {
-                robot.movementMode = Robot.MovementMode.NORMAL;
-            } else {
-                robot.movementMode = Robot.MovementMode.FINE;
-            }
+        if (getButtonRelease(GamepadWrapper.DriverAction.TURN_ON_FINE_MOVEMENT)) {
+            robot.movementMode = Robot.MovementMode.FINE;
         }
-        if (getButtonRelease(GamepadWrapper.DriverAction.ULTRA_FINE_MOVEMENT_TOGGLE)) {
-            if (robot.movementMode == Robot.MovementMode.ULTRA_FINE) {
-                robot.movementMode = Robot.MovementMode.NORMAL;
-            } else {
-                robot.movementMode = Robot.MovementMode.ULTRA_FINE;
-            }
+        if (getButtonRelease(GamepadWrapper.DriverAction.TURN_ON_ULTRA_FINE_MOVEMENT)) {
+            robot.movementMode = Robot.MovementMode.ULTRA_FINE;
+
+        }
+        if(gamepads.getAnalogValues().gamepad1LeftTrigger > RobotManager.TRIGGER_DEAD_ZONE_SIZE){
+            robot.movementMode = Robot.MovementMode.NORMAL;
         }
 
         //if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {

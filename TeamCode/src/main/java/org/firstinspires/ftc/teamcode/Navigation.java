@@ -1,6 +1,3 @@
-/* Authors: Ningning Ying, Elicia Esmeris, Smyan Sengupta, Cristian Santibanez, Arin Khare, Kristal Lin, Jesse Angrist
- */
-
 package org.firstinspires.ftc.teamcode;
 
 
@@ -383,8 +380,6 @@ public class Navigation {
             robot.telemetry.addData("Y", startY);
             robot.telemetry.addData("X", currentX);
             robot.telemetry.addData("Y", currentY);
-
-
 
             robot.telemetry.addData("tX", target.x);
             robot.telemetry.addData("tY", target.y);

@@ -19,6 +19,7 @@ public class MechanismDriving {
        put(Robot.SlidesState.LOW, 1670);
        put(Robot.SlidesState.MEDIUM, 2800);
        put(Robot.SlidesState.HIGH, 3870);//may need to be higher
+       put(Robot.SlidesState.VERY_LOW,670);
     }};
     //SPEED INFO: Scale from 0-1 in speed.
     public static final double HORSESHOE_FRONT_POS = 0, HORSESHOE_REAR_POS = 1.0; //These are not final values
@@ -28,8 +29,9 @@ public class MechanismDriving {
     public static final long COMPLIANT_WHEELS_TIME = 2000;
     public static final int EPSILON = 50;  // slide encoder position tolerance;
 
-    public static final double SLIDE_RAMP_DIST = 333;
+    public static final double SLIDE_RAMP_DIST = 400;
     public static final double SLIDES_MAX_SPEED = 1;
+    public static final double SLIDE_MIN_SPEED =0.15;
 
 
     public static final int slidesAdjustmentSpeed = 2;
@@ -99,7 +101,7 @@ public class MechanismDriving {
                setSlidePosition(robot, slidePositions.get(Robot.desiredSlidesState));
 
            // Speed is proportional to the fraction of the ramp distance that we have left.
-           double slidesSpeed = SLIDES_MAX_SPEED * Range.clip(Math.abs(desiredSlidePosition - robot.slidesMotor.getCurrentPosition())/ SLIDE_RAMP_DIST, 0.1, 1);
+           double slidesSpeed = SLIDES_MAX_SPEED * Range.clip(Math.abs(desiredSlidePosition - robot.slidesMotor.getCurrentPosition())/ SLIDE_RAMP_DIST, SLIDE_MIN_SPEED, 1);
            slidesSpeed = Range.clip(slidesSpeed, 0.4, 1);
 
            // If the current position is less than desired position then move it up

@@ -90,7 +90,7 @@ public class PositionManager {
 class EncoderPositioning {
     // TODO: can we replace all of this with just an empirically measured magical ratio?
     static int ENCODER_COUNTS_PER_ROTATION = 560;
-    static double MAGICAL_FACTOR = 3;
+    static double MAGICAL_FACTOR = 1;
     static double MAGICAL_RATIO = MAGICAL_FACTOR / ENCODER_COUNTS_PER_ROTATION;
 
     static HashMap<RobotConfig.DriveMotors, Double> RollerAngles = new HashMap<RobotConfig.DriveMotors, Double>() {{
@@ -101,12 +101,20 @@ class EncoderPositioning {
     }};
 
 
-    static HashMap<RobotConfig.DriveMotors, String> WheelNames = new HashMap<RobotConfig.DriveMotors, String>() {{
-        put(RobotConfig.DriveMotors.FRONT_RIGHT, "FrontRight");
-        put(RobotConfig.DriveMotors.FRONT_LEFT, "FrontLeft");
-        put(RobotConfig.DriveMotors.REAR_LEFT, "RearLeft");
-        put(RobotConfig.DriveMotors.REAR_RIGHT, "RearRight");
+    HashMap<RobotConfig.DriveMotors, Integer> wheelEncoderCounts = new HashMap<RobotConfig.DriveMotors, Integer>() {{
+        put(RobotConfig.DriveMotors.FRONT_RIGHT, 0);
+        put(RobotConfig.DriveMotors.FRONT_LEFT, 0);
+        put(RobotConfig.DriveMotors.REAR_LEFT, 0);
+        put(RobotConfig.DriveMotors.REAR_RIGHT, 0);
     }};
+
+    HashMap<RobotConfig.DriveMotors, Integer> wheelEncoderCountsAtReset = new HashMap<RobotConfig.DriveMotors, Integer>() {{
+            put(RobotConfig.DriveMotors.FRONT_RIGHT, 0);
+            put(RobotConfig.DriveMotors.FRONT_LEFT, 0);
+            put(RobotConfig.DriveMotors.REAR_LEFT, 0);
+            put(RobotConfig.DriveMotors.REAR_RIGHT, 0);
+        }};
+
 
     /** Checks the robot's encoders to get an estimate of the distance and direction traveled.
      *  Read encoder values and use them to create a Position that represents the robot's movement relative to the last time the encoders were read.
@@ -115,35 +123,23 @@ class EncoderPositioning {
      *  @return a position in the form of a vector from the origin that can be added to an existing measurement
      */
     public Position getDeltaEstimate(Robot robot) {
+
+        updateEncoderCounts(robot);
+
         double theta = robot.positionManager.position.getRotation();
         double deltaPSumX = 0.0d, deltaPSumY = 0.0d;
 
         for (HashMap.Entry<RobotConfig.DriveMotors, Double> rollerAngle : RollerAngles.entrySet()) {
-            int encoderCounts = Objects.requireNonNull(robot.driveMotors.get(rollerAngle.getKey())).getCurrentPosition();
+            int encoderCounts = Objects.requireNonNull(wheelEncoderCounts.get(rollerAngle.getKey()));
             double force = rollerAngle.getValue();
 
+
             deltaPSumX += -encoderCounts * ((Math.cos(theta) * Math.cos(force)) - (Math.sin(theta) * Math.sin(force))) / 2.0;
-            deltaPSumY += -encoderCounts * ((Math.sin(theta) * Math.cos(force)) + (Math.cos(theta) * Math.sin(force))) / 2.0;
+            deltaPSumY += encoderCounts * ((Math.sin(theta) * Math.cos(force)) + (Math.cos(theta) * Math.sin(force))) / 2.0;
         }
 
         resetEncoders(robot);
         return new Position(MAGICAL_RATIO * deltaPSumX, MAGICAL_RATIO * deltaPSumY, 0.0);
-
-
-//        double ADEncCount = robot.frontLeftDrive.getCurrentPosition() + robot.rearRightDrive.getCurrentPosition();
-//        double BCEncCount = robot.rearLeftDrive.getCurrentPosition() + robot.frontRightDrive.getCurrentPosition();
-//
-//        double ADangle = Math.acos((2 * ADEncCount + Math.sqrt(8 - 4 * (ADEncCount * ADEncCount))) / 4);
-//        double BCangle = Math.acos((2 * BCEncCount + Math.sqrt(8 - 4 * (BCEncCount * BCEncCount))) / 4);
-//
-//        double secondXcor = BCEncCount * Math.cos(BCangle);
-//        double secondYcor = BCEncCount * Math.sin(BCangle);
-//
-//        double thirdXcor = secondXcor - ADEncCount * Math.cos(ADangle);
-//        double thirdYcor = secondYcor + ADEncCount * Math.sin(ADangle);
-//        double orientation = Math.atan(thirdXcor / thirdYcor);
-
-//        submitEstimate(robot, new Position(thirdXcor, thirdYcor, 0.0));
     }
 
 
@@ -151,10 +147,14 @@ class EncoderPositioning {
      */
     private void resetEncoders(Robot robot) {
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
-            // We need to figure out which one of these is actually resetting (if both; we want only RESET)
-            // Objects.requireNonNull(robot.driveMotors.get(motor)).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Objects.requireNonNull(robot.driveMotors.get(motor)).setMode(DcMotor.RunMode.RESET_ENCODERS);
-            Objects.requireNonNull(robot.driveMotors.get(motor)).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            wheelEncoderCounts.put(motor, 0);
+            wheelEncoderCountsAtReset.put(motor, Objects.requireNonNull(robot.driveMotors.get(motor)).getCurrentPosition());
+        }
+    }
+
+    private void updateEncoderCounts(Robot robot) {
+        for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
+            wheelEncoderCounts.put(motor, Objects.requireNonNull(robot.driveMotors.get(motor)).getCurrentPosition() - Objects.requireNonNull(wheelEncoderCountsAtReset.get(motor)));
         }
     }
 }
