@@ -28,16 +28,24 @@ public class RobotMeet1 {
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
     public DcMotor vSlider;
-    public DcMotor vSlider2;
-    public DcMotor hSlider;
+    public DcMotor swingArm;
     public Servo claw;
 
     private double holdingPower = -0.01;
+    public double swingArmHoldingPower = 0.1;
 
     public int robotX = 0;
     public int robotY = 0;
 
     public int[] Location = {robotX,robotY};
+
+    //IMU
+    public static BNO055IMU imu;
+    public Orientation angles;
+    public Acceleration gravity;
+    static final double MAX_POS     =  1.0;
+    static final double MIN_POS     =  0.0;
+
 
     //Drivetrain Motor
     public DcMotor FLMotor = null;
@@ -84,8 +92,7 @@ public class RobotMeet1 {
         //Init motors and servos
         claw = hwMap.get(Servo.class, "claw");
         vSlider = hwMap.get(DcMotor.class, "vSlider");
-        vSlider2 = hwMap.get(DcMotor.class, "vSlider2");
-        hSlider = hwMap.get(DcMotor.class, "hSlider");
+        swingArm = hwMap.get(DcMotor.class, "swingArm");
 
         //Init motors and servos
         FLMotor = hwMap.get(DcMotor.class, "FLMotor");
@@ -99,12 +106,11 @@ public class RobotMeet1 {
         FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        vSlider2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         claw.setDirection(Servo.Direction.FORWARD);
         vSlider.setDirection(DcMotorSimple.Direction.FORWARD);
-        vSlider2.setDirection(DcMotorSimple.Direction.FORWARD);
-        hSlider.setDirection(DcMotorSimple.Direction.FORWARD);
+        swingArm.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Setting the direction
         FLMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -117,24 +123,56 @@ public class RobotMeet1 {
         FRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vSlider2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        swingArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         FLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        vSlider2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         FLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         FRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         vSlider.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        vSlider2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        swingArm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit            = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled       = true;
+        parameters.useExternalCrystal   = true;
+        parameters.mode                 = BNO055IMU.SensorMode.IMU;
+        parameters.loggingTag           = "IMU";
+        imu                             = hwMap.get(BNO055IMU.class, "imu");
 
+         //Since our Rev Expansion is in Vertical Position, so we need to Z & X
+
+        //Need to be in CONFIG mode to write to registers
+        imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);
+//        byte AXIS_MAP_CONFIG_BYTE = 0x6; //This is what to write to the AXIS_MAP_CONFIG register to swap y and z axes
+//        byte AXIS_MAP_SIGN_BYTE = 0x1; //This is what to write to the AXIS_MAP_SIGN register to negate the z axis
+        //Need to be in CONFIG mode to write to registers
+        imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);
+        TimeUnit.MILLISECONDS.sleep(100); //Changing modes requires a delay before doing anything else
+
+        //Write to the AXIS_MAP_CONFIG register
+//        imu.write8(BNO055IMU.Register.AXIS_MAP_CONFIG,AXIS_MAP_CONFIG_BYTE & 0x0F);
+
+        //Write to the AXIS_MAP_SIGN register
+//        imu.write8(BNO055IMU.Register.AXIS_MAP_SIGN,AXIS_MAP_SIGN_BYTE & 0x0F);
+
+        //Need to change back into the IMU mode to use the gyro
+        imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.IMU.bVal & 0x0F);
+
+        TimeUnit.MILLISECONDS.sleep(100); //Changing modes again requires a delay
+
+        imu.initialize(parameters);
     }
+
 
     public void Drive(double speed, int distance) {
 
@@ -252,6 +290,46 @@ public class RobotMeet1 {
         System.out.println(Arrays.toString(Location));
     }
 
+    public float modAngle(float angle) {
+        angle = angle % 360;
+        if (angle < 0) {
+            angle += 360;
+        }
+        return angle;
+    }
+
+    //Turns the robot
+    public void turnRobotToAngle(float endAngle) {
+        org.firstinspires.ftc.robotcore.external.navigation.Orientation angle;
+        angle = this.imu.getAngularOrientation();
+
+        float angleStart = modAngle(angle.firstAngle);
+        float angleEnd = modAngle(endAngle);
+        float angleCurrent = angleStart;
+        float direction = 0;
+
+        if(modAngle((angleEnd - angleCurrent)) >= 180) {
+            //Go CW
+            direction = -1;
+        } else if (modAngle((angleEnd - angleCurrent)) <= 180) {
+            //Go CCW
+            direction = 1;
+        }
+
+        double pwr = -0.75;
+
+
+        while (Math.abs(angleCurrent - angleEnd) > 10) {
+            FLMotor.setPower(-pwr * direction);
+            FRMotor.setPower(pwr * direction);
+            BLMotor.setPower(-pwr * direction);
+            BRMotor.setPower(pwr * direction);
+            angle = this.imu.getAngularOrientation();
+            angleCurrent = modAngle(angle.firstAngle);
+
+        }
+    }
+
     public void MoveSliderToPosition(double speed, int Position) {
         timeout_ms = 3000;
 
@@ -268,23 +346,25 @@ public class RobotMeet1 {
         }
     }
 
-    public void ExtendSlider(double speed, int position) {
+    public void SwingArmToPosition(double speed, int Position) {
         timeout_ms = 3000;
 
-        this.hSlider.setTargetPosition(position);
+        this.swingArm.setTargetPosition(Position);
 
         //set the mode to go to the target position
-        this.hSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.swingArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        runtime.reset();
 
         //Set the power of the motor.
-        hSlider.setPower(speed);
+        swingArm.setPower(speed);
 
-        while ((runtime.milliseconds() < timeout_ms) && (this.hSlider.isBusy())) {
+        while ((runtime.milliseconds() < timeout_ms) && (this.swingArm.isBusy())) {
 
         }
     }
+
     public void DriveSlider(double speed) {
-        this.vSlider.setPower( speed);
-        this.vSlider2.setPower(-speed);
+        this.vSlider.setPower(speed);
     }
 }

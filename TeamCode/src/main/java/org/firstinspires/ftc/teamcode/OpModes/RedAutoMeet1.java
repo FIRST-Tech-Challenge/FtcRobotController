@@ -128,7 +128,6 @@ public class RedAutoMeet1 extends LinearOpMode {
                         int sliderPos = 500;
                         int hSliderPos = 100;
                         robot.MoveSliderToPosition(0.3, sliderPos);
-                        robot.ExtendSlider(0.3, hSliderPos);
                         robot.claw.setPosition(1);
                         Step = AutoSteps.park;
 

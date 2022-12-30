@@ -16,6 +16,8 @@ public class TeleopMeet1 extends LinearOpMode {
 
     RobotMeet1 robot = new RobotMeet1();
 
+    IMUTest imuTest = new IMUTest();
+
     //How fast your robot will accelerate.
     public double acceleration = 0.5;
 
@@ -94,22 +96,46 @@ public class TeleopMeet1 extends LinearOpMode {
                 telemetry.addData("Claw Position", robot.claw.getPosition());
                 telemetry.update();
             }
+            if(gamepad2.a) {
+                robot.SwingArmToPosition(1, 65);
+            }
+            if(gamepad2.b) {
+                robot.SwingArmToPosition(1, 0);
+            }
+
+            if(gamepad1.a) {
+                robot.turnRobotToAngle(0);
+            }
+
+            if(gamepad1.b) {
+                robot.turnRobotToAngle(90);
+            }
+
+            if(gamepad1.y) {
+                robot.turnRobotToAngle(180);
+            }
+
+            if(gamepad1.x) {
+                robot.turnRobotToAngle(270);
+            }
+
+
 
             /** Slider **/
             double vSliderPower =  gamepad2.left_stick_y;
-            double hSliderPower = -gamepad2.right_stick_x * 0.75;
             double vsliderPos = robot.vSlider.getCurrentPosition();
 
 //            if((vSliderPower > 0 && vsliderPos < 15000) || (vSliderPower < 0 && vsliderPos > -100 ))
 //            {
 //                //Moving up.                                Moving down.
                 robot.DriveSlider(-vSliderPower);
+                robot.swingArm.setPower(robot.swingArmHoldingPower);
 //            }
 //            else {
 //                robot.DriveSlider(0);
 //            }
 
-            robot.hSlider.setPower(hSliderPower);
+
 
 
             telemetry.addData("FL Motor Encoder", robot.FLMotor.getCurrentPosition());
@@ -118,8 +144,15 @@ public class TeleopMeet1 extends LinearOpMode {
             telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
             telemetry.addData("vSliderPower", vSliderPower);
             telemetry.addData("vSlider Encoder", vsliderPos);
-            telemetry.addData("vSlider2 Encoder", robot.vSlider2.getCurrentPosition());
+            telemetry.addData("swingArm Encoder", robot.swingArm.getCurrentPosition());
             telemetry.addData("Claw Position", robot.claw.getPosition());
+            org.firstinspires.ftc.robotcore.external.navigation.Orientation angle;
+            angle = robot.imu.getAngularOrientation();
+            telemetry.addData("Angular Orientation", angle);
+            int angleFloat = (int) (robot.modAngle(angle.firstAngle));
+            telemetry.addData("Orientation in 0-360", angleFloat);
+
+
 
             telemetry.update();
 
