@@ -16,9 +16,9 @@ public class MechanismDriving {
     public static final int LOWERING_AMOUNT = 100;
     public static final Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
        put(Robot.SlidesState.RETRACTED, 0);
-       put(Robot.SlidesState.LOW, 5000);
-       put(Robot.SlidesState.MEDIUM, 8400);
-       put(Robot.SlidesState.HIGH, 11600);//may need to be higher
+       put(Robot.SlidesState.LOW, 1670);
+       put(Robot.SlidesState.MEDIUM, 2800);
+       put(Robot.SlidesState.HIGH, 3870);//may need to be higher
     }};
     //SPEED INFO: Scale from 0-1 in speed.
     public static final double HORSESHOE_FRONT_POS = 0, HORSESHOE_REAR_POS = 1.0; //These are not final values
@@ -28,8 +28,8 @@ public class MechanismDriving {
     public static final long COMPLIANT_WHEELS_TIME = 2000;
     public static final int EPSILON = 50;  // slide encoder position tolerance;
 
-    public static final double SLIDE_RAMP_DIST = 1000;
-    public static final double SLIDES_MAX_SPEED = 0.8;
+    public static final double SLIDE_RAMP_DIST = 333;
+    public static final double SLIDES_MAX_SPEED = 1;
 
 
     public static final int slidesAdjustmentSpeed = 2;

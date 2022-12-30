@@ -48,8 +48,8 @@ public class Navigation {
 
     // TELEOP CONSTANTS
     // ================
-    static final double MOVEMENT_MAX_POWER = 0.5;
-    static final double ROTATION_POWER = 0.8;
+    static final double MOVEMENT_MAX_POWER = 1;
+    static final double ROTATION_POWER = 0.6;
     static final double FINE_MOVEMENT_SCALE_FACTOR = 0.5;
     static final double ULTRA_FINE_MOVEMENT_SCALE_FACTOR = 0.25;
 
@@ -379,17 +379,17 @@ public class Navigation {
 
             setDriveMotorPowers(strafeAngle, power, 0.0, robot, false);
 
-//            robot.telemetry.addData("X", startLoc.x);
-//            robot.telemetry.addData("Y", startLoc.y);
-//            robot.telemetry.addData("X", currentLoc.x);
-//            robot.telemetry.addData("Y", currentLoc.y);
+            robot.telemetry.addData("X", startX);
+            robot.telemetry.addData("Y", startY);
+            robot.telemetry.addData("X", currentX);
+            robot.telemetry.addData("Y", currentY);
 
 
-//
-//            robot.telemetry.addData("tX", target.x);
-//            robot.telemetry.addData("tY", target.y);
-//            robot.telemetry.addData("Strafe angle", getAngleBetween(currentLoc, target));
-//            robot.telemetry.update();
+
+            robot.telemetry.addData("tX", target.x);
+            robot.telemetry.addData("tY", target.y);
+            robot.telemetry.addData("Strafe angle", getAngleBetween(currentX,currentY, target.x,target.y));
+            robot.telemetry.update();
 
             if (distanceToTarget > EPSILON_LOC) {
                 numFramesSinceLastFailure = 0;
@@ -467,6 +467,9 @@ public class Navigation {
         robot.telemetry.addData("turn %.2f", turn);
         if (Math.abs(power - 0) < FLOAT_EPSILON && Math.abs(turn - 0) < FLOAT_EPSILON) {
             stopMovement(robot);
+            robot.telemetry.addData("stopping","YES");
+        }else{
+            robot.telemetry.addData("stopping","NO");
         }
         double sinMoveDirection = Math.sin(strafeDirection);
         double cosMoveDirection = Math.cos(strafeDirection);
@@ -486,10 +489,10 @@ public class Navigation {
             return;
         }
 
-        robot.driveMotors.get(RobotConfig.DriveMotors.REAR_LEFT).setPower((rawPowers[0] * power - turn) * wheel_speeds[0]);
-        robot.driveMotors.get(RobotConfig.DriveMotors.REAR_RIGHT).setPower((rawPowers[1] * power + turn) * wheel_speeds[1]);
-        robot.driveMotors.get(RobotConfig.DriveMotors.FRONT_LEFT).setPower((rawPowers[1] * power - turn) * wheel_speeds[2]);
-        robot.driveMotors.get(RobotConfig.DriveMotors.FRONT_RIGHT).setPower((rawPowers[0] * power + turn) * wheel_speeds[3]);
+        robot.driveMotors.get(RobotConfig.DriveMotors.REAR_LEFT).setPower((rawPowers[1] * power - turn) * wheel_speeds[0]);
+        robot.driveMotors.get(RobotConfig.DriveMotors.REAR_RIGHT).setPower((rawPowers[0] * power + turn) * wheel_speeds[1]);
+        robot.driveMotors.get(RobotConfig.DriveMotors.FRONT_LEFT).setPower((rawPowers[0] * power - turn) * wheel_speeds[2]);
+        robot.driveMotors.get(RobotConfig.DriveMotors.FRONT_RIGHT).setPower((rawPowers[1] * power + turn) * wheel_speeds[3]);
     }
 
     /** Sets all drivetrain motor powers to zero.

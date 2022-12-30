@@ -89,7 +89,7 @@ public class PositionManager {
  */
 class EncoderPositioning {
     // TODO: can we replace all of this with just an empirically measured magical ratio?
-    static int ENCODER_COUNTS_PER_ROTATION = 280;
+    static int ENCODER_COUNTS_PER_ROTATION = 560;
     static double MAGICAL_FACTOR = 3;
     static double MAGICAL_RATIO = MAGICAL_FACTOR / ENCODER_COUNTS_PER_ROTATION;
 
