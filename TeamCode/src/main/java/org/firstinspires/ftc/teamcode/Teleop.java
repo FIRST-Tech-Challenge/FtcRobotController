@@ -241,6 +241,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("World Y",     "%.2f in", (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2) );
             telemetry.addData("Orientation", "%.2f deg (IMU %.2f)", Math.toDegrees(robotOrientationRadians),  robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
+            telemetry.addData("Cone Sensors", "Top: %b Bottom: %b", robot.topConeSensor.getState(), robot.bottomConeSensor.getState());
             telemetry.update();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
@@ -718,22 +719,22 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 LEFT BUMPER
         else if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last )
         {   // intake cone
-            grabberRunTimer.reset();
             robot.grabberSpinCollect();
             grabberRunning  = true;
             grabberIntake   = true;
             grabberLifting  = false;
             // start slowly lowering onto cone
+            grabberRunTimer.reset();
             robot.liftMotorsSetPower( -0.20 );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last )
         {   // eject cone
-            grabberRunTimer.reset();
             robot.grabberSpinEject();
             grabberRunning  = true;
             grabberIntake   = false;
             grabberLifting  = false;
+            grabberRunTimer.reset();
         }
         //===================================================================
         // Check for input on the LEFT TRIGGER
@@ -847,15 +848,17 @@ public abstract class Teleop extends LinearOpMode {
             // Current on an INTAKE cycle?
             if( grabberIntake ) {
                 // Is first phase complete?
-                if( (elapsedTime >= 600) && !grabberLifting ) {
+                if( (!robot.topConeSensor.getState() || elapsedTime >= 1000) && !grabberLifting) {
                     // stop collecting
                     robot.grabberSpinStop();
                     // reverse lift motors
                     robot.liftMotorsSetPower( 0.40 );
+                    grabberRunTimer.reset();
+
                     grabberLifting = true;
                 }
                 // Is second phase complete?
-                else if( (elapsedTime >= 900) && grabberLifting ) {
+                else if( (elapsedTime >= 300) && grabberLifting ) {
                     // halt lift motors
                     robot.liftMotorsSetPower( 0.0 );
                     grabberRunning = false;
@@ -864,7 +867,7 @@ public abstract class Teleop extends LinearOpMode {
             // Currently on an EJECTION cycle?
             else {
                 // Is cycle complete?
-                if( elapsedTime >= 350 ) {
+                if( robot.bottomConeSensor.getState() || elapsedTime >= 350) {
                     // stop ejecting cone
                     robot.grabberSpinStop();
                     grabberRunning = false;

@@ -47,7 +47,7 @@ public class AutonomousRight extends AutonomousBase {
     OpenCvCamera webcamBack;
     public int signalZone = 0;   // dynamic (gets updated every cycle during INIT)
 
-    ElapsedTime releaseTimer = new ElapsedTime();
+    ElapsedTime intakeTimer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -372,10 +372,10 @@ public class AutonomousRight extends AutonomousBase {
             performEveryLoop();
         }
         // Eject the cone
-        releaseTimer.reset();
+        intakeTimer.reset();
         robot.grabberSpinEject();
         // Wait 300 msec
-        while( opModeIsActive() && (releaseTimer.milliseconds() < 300) ) {
+        while( opModeIsActive() && (intakeTimer.milliseconds() < 300 || robot.bottomConeSensor.getState()) ) {
             performEveryLoop();
         }
         // Stop the ejector
@@ -439,14 +439,21 @@ public class AutonomousRight extends AutonomousBase {
 
         // Start the collector spinning
         robot.grabberSpinCollect();
+        intakeTimer.reset();
         // start to slowly lower onto cone
         robot.liftMotorsSetPower( -0.20 );
-        sleep( 600 );  // 0.6 sec
+        while(robot.topConeSensor.getState() && intakeTimer.milliseconds() <= 600) {
+            performEveryLoop();
+        }
         // stop the collector
         robot.grabberSpinStop();
         // reverse the lift to raise off the cone stack
-        robot.liftMotorsSetPower( 0.40 );
-        sleep( 1500 );  // 1.5 sec
+        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
+        while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
+            performEveryLoop();
+        }
+//        robot.liftMotorsSetPower( 0.40 );
+//        sleep( 1500 );  // 1.5 sec
         // halt lift motors
         robot.liftMotorsSetPower( 0.0 );
 

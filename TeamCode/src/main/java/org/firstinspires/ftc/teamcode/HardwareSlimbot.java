@@ -10,6 +10,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -199,6 +200,11 @@ public class HardwareSlimbot
     public double       GRABBER_PULL_POWER  = +0.50;
     public double       GRABBER_PUSH_POWER  = -0.50;
 
+    public DigitalChannel topConeSensor;
+
+    public DigitalChannel bottomConeSensor;
+
+
     //====== NAVIGATION DISTANCE SENSORS ================================================================
     private MaxSonarI2CXL sonarRangeL = null;   // Must include MaxSonarI2CXL.java in teamcode folder
     private MaxSonarI2CXL sonarRangeR = null;
@@ -343,6 +349,8 @@ public class HardwareSlimbot
         sonarRangeB = hwMap.get( MaxSonarI2CXL.class, "backUltrasonic" );   // I2C Bus 1
         sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "frontUltrasonic" );  // I2C Bus 2
 //      sonarRangeR = hwMap.get( MaxSonarI2CXL.class, "rightUltrasonic" );  // I2C Bus 3
+        topConeSensor = hwMap.get( DigitalChannel.class, "ProxTop" );
+        bottomConeSensor = hwMap.get( DigitalChannel.class, "ProxBottom" );
 
         // Make a note that we just finished autonomous setup
         transitionFromAutonomous = (isAutonomous)? true:false;
