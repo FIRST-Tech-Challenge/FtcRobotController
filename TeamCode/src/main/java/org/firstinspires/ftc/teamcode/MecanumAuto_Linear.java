@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name="MecanumAutonomous", group="Linear Opmode")
+@Autonomous(name="MecanumAutoTest", group="Linear Opmode")
 //@Disabled
 public class MecanumAuto_Linear extends LinearOpMode {
 
@@ -26,7 +26,7 @@ public class MecanumAuto_Linear extends LinearOpMode {
     private double fast = 0.5; // Fast speed
     private double medium = 0.3; // Medium speed
     private double slow = 0.1; // Slow speed
-    private double clicksPerInch = 10.0; // empirically measured
+    private double clicksPerInch = 200; // empirically measured
     private double clicksPerDeg = 21.94; // empirically measured
 
     @Override
@@ -81,16 +81,16 @@ public class MecanumAuto_Linear extends LinearOpMode {
         rrPos = rightBackMotor.getCurrentPosition();
 
         // Calculate new targets based on input:
-        lfPos = -100; //howMuch * clicksPerInch;
-        rfPos = -100; //howMuch * clicksPerInch;
-        lrPos = -100; //howMuch * clicksPerInch;
-        rrPos = -100; //howMuch * clicksPerInch;
+        lfPos = (int) (howMuch * clicksPerInch);
+        rfPos = (int) (howMuch * clicksPerInch);
+        lrPos = (int) (howMuch * clicksPerInch);
+        rrPos = (int) (howMuch * clicksPerInch);
 
         // Move robot to new position:
-        leftFrontMotor.setTargetPosition(-100);
-        rightFrontMotor.setTargetPosition(-100);
-        leftBackMotor.setTargetPosition(-100);
-        rightBackMotor.setTargetPosition(-100);
+        leftFrontMotor.setTargetPosition(lfPos);
+        rightFrontMotor.setTargetPosition(rfPos);
+        leftBackMotor.setTargetPosition(lrPos);
+        rightBackMotor.setTargetPosition(rrPos);
 
         // Set the drive motor run modes to prepare for move to encoder:
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -98,14 +98,13 @@ public class MecanumAuto_Linear extends LinearOpMode {
         leftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftFrontMotor.setPower(-speed);
-        rightFrontMotor.setPower(-speed);
-        leftBackMotor.setPower(-speed);
-        rightBackMotor.setPower(-speed);
+        leftFrontMotor.setPower(speed);
+        rightFrontMotor.setPower(speed);
+        leftBackMotor.setPower(speed);
+        rightBackMotor.setPower(speed);
 
         // Wait for move to complete:
-        while (leftFrontMotor.isBusy() && rightFrontMotor.isBusy() &&
-                leftBackMotor.isBusy() && rightBackMotor.isBusy()) {
+        while (leftFrontMotor.isBusy() && rightFrontMotor.isBusy()) {
 
             // Display info for the driver:
             telemetry.addLine("Move Forward");
