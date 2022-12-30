@@ -39,7 +39,7 @@ public class PowerPlayTeleOp extends OpMode {
         robotManager.readControllerInputs();
         robotManager.driveMechanisms();
         robotManager.maneuver();
-        robotManager.robot.positionManager.updatePosition(robotManager.robot);
+        //robotManager.robot.positionManager.updatePosition(robotManager.robot);
 
 //        telemetry.addData("LED Power", robotManager.robot.clawLEDs.getPower());
         telemetry.addData("Pos X", robotManager.robot.positionManager.position.getX());
