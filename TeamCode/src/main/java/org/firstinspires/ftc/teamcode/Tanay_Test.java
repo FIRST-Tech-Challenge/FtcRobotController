@@ -106,7 +106,15 @@ public class Tanay_Test extends OpMode {
         }
 
         if (gamepad2.right_bumper) {
-            ClawY.setPosition(0.60);
+            ClawY.setPosition(0.62);
+        }
+
+        else if (gamepad2.y) {
+            ClawY.setPosition(1);
+        }
+
+        else if (gamepad2.x) {
+            ClawY.setPosition(.85);
         }
 
         else {
@@ -121,9 +129,9 @@ public class Tanay_Test extends OpMode {
         }
 
         if (gamepad2.left_bumper) { //down
-            Slide.setPower(0.1); //(-0.2)
+            Slide.setPower(-0.08); //(-0.2)
         } else if (gamepad2.right_bumper) { //up
-            Slide.setPower(0.7);
+            Slide.setPower(0.9);
         } else {
             Slide.setPower(0.3);
         }
