@@ -19,7 +19,7 @@ public class BlueAutoPark extends PowerPlay_AprilTagDetection {
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
         bot.setPoseEstimate(startPose);
 
-        if (tagUse == 3) {
+        if (aprilTag_ID == 3) {
             TrajectorySequence sussyBaka = bot.trajectorySequenceBuilder(startPose)
                     .lineToLinearHeading(new Pose2d(-35,30,Math.toRadians(180)))
                     .forward(32)
@@ -27,7 +27,7 @@ public class BlueAutoPark extends PowerPlay_AprilTagDetection {
 
             bot.followTrajectorySequence(sussyBaka);
             telemetry.addData("Chris Pratt", "Is Currently In The Mushroom Kingdom");
-        } else if (tagUse == 2) {
+        } else if (aprilTag_ID == 2) {
             TrajectorySequence JuicyJay = bot.trajectorySequenceBuilder(startPose)
                     .lineToLinearHeading(new Pose2d(-35,30,Math.toRadians(180)))
                     .build();

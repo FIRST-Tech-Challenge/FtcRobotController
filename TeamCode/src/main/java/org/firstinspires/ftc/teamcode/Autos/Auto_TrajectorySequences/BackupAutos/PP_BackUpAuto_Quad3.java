@@ -15,13 +15,13 @@ public class PP_BackUpAuto_Quad3 extends PowerPlay_AprilTagDetection {
         Pose2d startPose = new Pose2d(-35, 61.8, Math.toRadians(270));
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
 
-        if(tagUse == 1) {
+        if(aprilTag_ID == 1) {
             TrajectorySequence sussyBaka = bot.trajectorySequenceBuilder(startPose)
                     .lineToLinearHeading(new Pose2d(-12.2, 15.5, Math.toRadians(-109)))
                     .build();
             bot.followTrajectorySequenceAsync(sussyBaka);
             telemetry.addData("Chris Pratt","Is Currently In The Mushroom Kingdom");
-        }else if(tagUse ==2) {
+        }else if(aprilTag_ID ==2) {
             telemetry.addData("Walter White","Curently Has No Pants");
             // bot doesn't need to move if it is in the 2nd tag zone since that is where we deposit anyway
         }else{

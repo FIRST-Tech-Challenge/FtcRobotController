@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @TeleOp // normally is in @Auto but is being used as a teleOp so we can play with it
 public class PowerPlay_AprilTagDetection extends LinearOpMode
 {
-    protected int tagUse;
+    protected int aprilTag_ID;
     protected OpenCvCamera camera; // Calls the camera
     protected PowerPlay_AprilTagDetectionPipeline aprilTagDetectionPipeline; // Calls the pipeline
 
@@ -80,7 +80,7 @@ public class PowerPlay_AprilTagDetection extends LinearOpMode
                 {
                     if(tag.id == LEFT || tag.id == RIGHT || tag.id == MIDDLE)
                     {
-                        tagUse=tag.id;
+                        aprilTag_ID =tag.id;
                         tagOfInterest = tag;
                         tagFound = true;
                         break;

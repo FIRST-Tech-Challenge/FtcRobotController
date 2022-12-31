@@ -63,13 +63,13 @@ public class PP_Auto_Quad2 extends PowerPlay_AprilTagDetection
 		Pose2d endPose = cycle(bot, startPose);
 
 
-		if(tagUse == 1) {
+		if(aprilTag_ID == 1) {
 			TrajectorySequence tag1 = bot.trajectorySequenceBuilder(endPose)
 					.lineTo(new Vector2d(59, 35))
 					.build();
 			bot.followTrajectorySequenceAsync(tag1);
 		}
-		else if(tagUse == 2) {
+		else if(aprilTag_ID == 2) {
 			telemetry.addData("Playboy Parti","Currently Performing at the local retirement center");
 
 		}

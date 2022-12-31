@@ -13,23 +13,23 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous
-public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
+public class ProgressiveAuto extends PowerPlay_AprilTagDetection
 {
     private boolean isAuto = true;
-    //Declaring lift motor powers
+    SignalEdgeDetector isIntakePosition;
+
+    // Declaring motor objects
     private Arm armControl;
     private Slide slideControl;
     private Claw clawMovement;
 
-    SignalEdgeDetector isIntakePosition;
-
-    // Declaring our motor PID for the lift; passing through our PID values
-    public PP_Auto_Quad3()
+    public ProgressiveAuto()
     {
-        super.runOpMode(); // runs the opMode of the apriltags pipeline
+        super.runOpMode(); // runs the opMode of the April Tags pipeline
 
-        waitForStart();
+        waitForStart(); // waits until the start button is pressed on the DS
 
+        // Initializing our arm, slide, and claw motorPID objects
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
         clawMovement = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
@@ -38,14 +38,14 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
     @Override
     public void runOpMode()
     {
-        // bot object created
+        // BOT OBJECT CREATED
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
 
-        // calling our method to run trajectories and passing through our newly created bot object
+       // BUILD TRAJECTORIES
         bot = buildTrajectories(bot);
 
-        // LOOPS TO RUN ASYNC \\
-       while (opModeIsActive()){
+       // PID AND BOT ASYNC UPDATES
+        while (opModeIsActive()){
             bot.update();
             slideControl.update(telemetry);
             armControl.update(telemetry);
@@ -57,10 +57,10 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         Pose2d startPose = new Pose2d(-35, 61.8, Math.toRadians(270)); // x, y, heading (angle in radians)
         bot.setPoseEstimate(startPose);
 
-        // TRAJECTORY SEQUENCES \\
-        Pose2d endPose = cycle(bot, startPose); // cycle method -> should return a Pose2d
+        //========== TRAJECTORY SEQUENCES ==========\\
+        Pose2d endPose = cycle(bot, startPose); // cycle method -> should return a Pose2d after building and running trajectories
 
-        // the tagUse variable is inherited from the AprilTagDetection class
+        // the aprilTag_ID variable is inherited from the AprilTagDetection class and represents the tagID
         if(aprilTag_ID == 1) {
             TrajectorySequence sussyBaka = bot.trajectorySequenceBuilder(endPose)
                     .lineToLinearHeading(new Pose2d(-12.2, 15.5, Math.toRadians(-109)))
@@ -84,59 +84,36 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 
     public Pose2d cycle(SampleMecanumDrive bot, Pose2d currentPosition){
         TrajectorySequence openingMove =  bot.trajectorySequenceBuilder(currentPosition)
-            .addTemporalMarker(2,() -> {
-                slideControl.setHighJunction();
-                //slideControl.Update();
-                armControl.setIntake();
-                //armControl.update();
-                clawMovement.toggleOpenClose();
-                armControl.setExtake();
+                .addTemporalMarker(2,() -> {
+                    //
+                    // CODE HERE
+                    //
+                })
+                .lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75))) // Drive to cone stack, 2 seconds in the previous temporal marker will activate
+                .build();
 
-                })//temporal marker for the extake
-            .lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75))) // Drive to cone stack
-
-            .addTemporalMarker(1,()->{
-                slideControl.setIntakeOrGround();
-                //slideControl.Update();
-                clawMovement.toggleOpenClose();
-                armControl.setIntake();
-                //armControl.update();
-                })//marker for the intake, the timing will be tested so where the markers are located and times are subject to change
-
-            .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0)))
-
-            //.addTemporalMarker()
-            .lineToLinearHeading(new Pose2d(-33, 8, Math.toRadians(-39.75)))
-            .waitSeconds(1)//Deposit at junction; Under the impression that using the async PID, the slides will be already be moved up
-            .build();
-
-        Pose2d endPose = new Pose2d(-33,8,Math.toRadians(-39.75)); // Deposit at junction
-
+        /*
         TrajectorySequence cycles =  bot.trajectorySequenceBuilder(currentPosition)
                 .addTemporalMarker(3,() -> {
-                slideControl.setIntakeOrGround();
-                //slideControl.Update();
-                clawMovement.toggleOpenClose();
+                    slideControl.setIntakeOrGround();
+                    //slideControl.Update();
+                    clawMovement.toggleOpenClose();
                 })
                 .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0))) // back to the cone stack
                 .lineToLinearHeading(new Pose2d(-33, 8, Math.toRadians(-39.75))) // go to junction
                 .waitSeconds(1)//Under the impression that using the async PID, the slides will be already be moved up
                 .build();
+        */
+
+        Pose2d endPose = new Pose2d(-33,8,Math.toRadians(-39.75)); // Cycles end junction deposit
 
         bot.followTrajectorySequenceAsync(openingMove);
-        for(int i = 1; i <= 3; i++){
-          bot.followTrajectorySequenceAsync(cycles);
-         }
-        return endPose; // returning our end position so our april tags conditionals know where to start from
         /*
-        if (gamepad2.dpad_left) {
-            clawControl.toggleWristRotate();
-        } else if (gamepad2.dpad_right) {
-            clawControl.toggleWristRotate();
+        for(int i = 1; i <= 3; i++){
+            bot.followTrajectorySequenceAsync(cycles);
         }
+         */
 
-*/
+        return endPose; // returning our end position so our april tags conditionals know where to start from
     }
-
 }
-
