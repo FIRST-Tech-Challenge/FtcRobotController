@@ -42,7 +42,11 @@ public class Constants {
 
     public static double DIFF_TICKS_PER_REV = 768; //dummy - update to estimate and then validated
 
-
+// UnderArm IK
+    public static final double SHOULDER_TO_ELBOW = 14.031496;
+    public static final double ELBOW_TO_WRIST = 11.0236;
+    public static final double SHOULDER_AXLE_TO_GROUND_HEIGHT = 13.75; //todo measure - this is from reach
+    public static final double HIGH_TIER_SHIPPING_HUB_HEIGHT = 20.25;
 
     //----------------------------------------------------------------------------------------------
     // Control Constants

@@ -73,13 +73,13 @@ public class Crane implements Subsystem {
     public static double SHOULDER_ADJUST = 13;
     public static double EXTEND_ADJUST = .05;
     public static double TURRET_ADJUST = 20;
-    public static double HEIGHT_ADJUST = 30;
+    public static double HEIGHT_ADJUST = 5;
     public static double DISTANCE_ADJUST = 30;
 
     public static double kE = 0.0;
-    public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(25, 0, 0.005);
-    public static double EXTEND_MAX_PID_OUTPUT = 0.8;
-    public static double EXTEND_MIN_PID_OUTPUT = -0.8;
+    public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(10, 0, 0.005);
+    public static double EXTEND_MAX_PID_OUTPUT = 1;
+    public static double EXTEND_MIN_PID_OUTPUT = -1;
     public static double EXTENDER_TOLERANCE = 1;
     public static double EXTENDER_POWER = 1.0;
     public static double EXTENDER_TICS_MIN = 0;
@@ -104,8 +104,7 @@ public class Crane implements Subsystem {
     private boolean craneCalibrationEnabled = false;
 
     public Servo bulbServo;
-    public DcMotorEx extenderMotor;
-    public DcMotorEx shoulderMotor;
+    public DcMotorEx extenderMotor;public DcMotorEx shoulderMotor;
     public DcMotorEx turretMotor;
     public DcMotor shoulderAngleEncoder;
 
@@ -175,7 +174,6 @@ public class Crane implements Subsystem {
 
             shoulderImu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
             turretImu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
 
         }
         extendPID = new PIDController(0,0,0);
@@ -288,7 +286,7 @@ public class Crane implements Subsystem {
     FieldObject source;
 
     public void goHome(){
-        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX(),robot.driveTrain.getPoseEstimate().getY(),22);
+        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX(),robot.driveTrain.getPoseEstimate().getY(),26);
     }
 
     public void updateScoringPattern(){
