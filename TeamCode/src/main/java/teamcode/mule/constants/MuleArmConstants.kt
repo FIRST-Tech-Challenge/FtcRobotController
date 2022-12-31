@@ -5,20 +5,16 @@ import com.acmerobotics.dashboard.config.Config
 @Config
 object MuleArmConstants {
     @JvmField var ticksPerUnit = 700.0/90.0
-    @JvmField var homePos = -70.0
-    @JvmField var autoHomePos = 219.0
-    @JvmField var groundPos = -65.0
-    @JvmField var lowPos = 170.0
-    @JvmField var midPos = 150.0
-    @JvmField var highPos = 153.0
-    @JvmField var kP = 0.025
+    @JvmField var homePos = 0.0
+    @JvmField var highPos = 0.0
+    @JvmField var kP = 0.0
     @JvmField var kI = 0.0
-    @JvmField var kD = 0.005
+    @JvmField var kD = 0.0
     @JvmField var kS = 0.0
     @JvmField var kV = 0.0
     @JvmField var kA = 0.0
-    @JvmField var kCos = 0.1
+    @JvmField var kCos = 0.0
     @JvmField var maxVel = 0.0
     @JvmField var maxAccel = 0.0
-    @JvmField var allowedPositionError = 2.0
+    @JvmField var allowedPositionError = 1.0
 }

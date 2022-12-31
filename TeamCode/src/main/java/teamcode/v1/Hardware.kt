@@ -1,22 +1,17 @@
-package org.firstinspires.ftc.teamcode.koawalib
+package teamcode.v1
 
 import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.control.controller.PIDGains
 import com.asiankoala.koawalib.control.motor.FFGains
-import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.EncoderFactory
-import com.asiankoala.koawalib.hardware.motor.KEncoder
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
-import com.asiankoala.koawalib.hardware.sensor.KDistanceSensor
 import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
-import com.asiankoala.koawalib.subsystem.vision.KWebcam
 import org.firstinspires.ftc.teamcode.koawalib.constants.ArmConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
-import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 
 class Hardware(startPose: Pose) {
     val fl = MotorFactory("fl")

@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.koawalib
+package teamcode.v1
 
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.drive.KMecanumOdoDrive
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lights
-import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
+import teamcode.v1.Hardware
 
 class Robot(startPose: Pose) {
     val hardware = Hardware(startPose)

@@ -1,4 +1,4 @@
-package teamcode.opmodes
+package teamcode.v1.opmodes
 
 import com.asiankoala.koawalib.command.commands.*
 import com.asiankoala.koawalib.command.group.SequentialGroup

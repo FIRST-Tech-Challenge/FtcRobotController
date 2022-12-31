@@ -1,27 +1,5 @@
 package org.firstinspires.ftc.teamcode.koawalib.opmodes
 
-import com.asiankoala.koawalib.command.KOpMode
-import com.asiankoala.koawalib.command.commands.Cmd
-import com.asiankoala.koawalib.command.commands.GVFCmd
-import com.asiankoala.koawalib.command.commands.WaitUntilCmd
-import com.asiankoala.koawalib.command.group.SequentialGroup
-import com.asiankoala.koawalib.math.Pose
-import com.asiankoala.koawalib.math.Vector
-import com.asiankoala.koawalib.math.angleWrap
-import com.asiankoala.koawalib.math.radians
-import com.asiankoala.koawalib.path.DEFAULT_HEADING_CONTROLLER
-import com.asiankoala.koawalib.path.FLIPPED_HEADING_CONTROLLER
-import com.asiankoala.koawalib.path.HermitePath
-import com.asiankoala.koawalib.path.Path
-import com.asiankoala.koawalib.path.gvf.SimpleGVFController
-import com.asiankoala.koawalib.util.Alliance
-import com.asiankoala.koawalib.util.OpModeState
-import org.firstinspires.ftc.teamcode.koawalib.Robot
-import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequence
-import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ArmCmds
-import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
-import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.LiftCmds
-
 //open class KAuto(
 //    alliance: Alliance,
 //    close: Boolean,

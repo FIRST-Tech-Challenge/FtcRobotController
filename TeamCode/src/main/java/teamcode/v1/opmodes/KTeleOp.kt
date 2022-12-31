@@ -7,12 +7,11 @@ import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.subsystem.odometry.Odometry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.koawalib.Robot
+import teamcode.v1.Robot
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.HomeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import org.firstinspires.ftc.teamcode.koawalib.constants.ArmConstants
-import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
 
 @TeleOp

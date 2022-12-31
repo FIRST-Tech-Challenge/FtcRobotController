@@ -20,9 +20,7 @@ open class MuleOp() : KOpMode(photonEnabled = true) {
 
     private fun scheduleTest() {
         driver.leftBumper.onPress(InstantCmd({robot.arm.setPos(135.0)}, robot.arm))
-//        driver.leftBumper.onPress(InstantCmd({robot.claw.setPos(ClawConstants.openPos)}))
-//        driver.rightBumper.onPress(InstantCmd({robot.claw.setPos(ClawConstants.closePos)}))
-        driver.a.onPress(InstantCmd({robot.arm.setPos(-50.0)}, robot.arm))
+        driver.a.onPress(InstantCmd({robot.arm.setPos(0.0)}, robot.arm))
     }
 
     override fun mLoop() {
