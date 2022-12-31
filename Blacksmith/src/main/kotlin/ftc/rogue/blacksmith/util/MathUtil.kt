@@ -14,27 +14,19 @@ fun Number.toCm(from: DistanceUnit): Double = from.toIn(this.toDouble()) * 2.54
 
 fun Number.toRad(from: AngleUnit): Double = from.toDeg(this.toDouble()) * PI / 180
 
-
 fun Double.zeroIfNaN() = if (isNaN()) 0.0 else this
 
 fun Float.zeroIfNaN() = if (isNaN()) 0.0f else this
 
+fun Number.isInRange(min: Number, max: Number) = this.toDouble() in min.toDouble()..max.toDouble()
 
-fun Number.isInRange(min: Number, max: Number) =
-    this.toDouble() in min.toDouble()..max.toDouble()
-
-
-fun Number.clamp(min: Number, max: Number) =
-    this.toDouble().coerceIn(min.toDouble(), max.toDouble())
-
+fun Number.clamp(min: Number, max: Number) = this.toDouble().coerceIn(min.toDouble(), max.toDouble())
 
 fun avg(vararg xs: Number) = xs.sumOf { it.toDouble() } / xs.size
-
 
 fun maxByMagnitude(vararg xs: Number) = xs.maxByOrNull { it.toDouble().absoluteValue } ?: 0.0
 
 fun maxMagnitude(vararg xs: Number) = xs.maxOfOrNull { it.toDouble().absoluteValue } ?: 0.0
-
 
 @JvmOverloads
 fun Number.withDeadzone(deadzone: Number, origin: Number = 0.0) =
