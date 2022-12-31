@@ -67,24 +67,6 @@ public class AutonomousLeft extends AutonomousBase {
                         cameraMonitorViewId, //The container we're splitting
                         3, //The number of sub-containers to create
                         OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
-        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam Low"), viewportContainerIds[0]);
-        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineLow = new PowerPlaySuperPipeline(true, false,
-                        false, false, 160.0, blueAlliance, false);
-                webcamLow.setPipeline(pipelineLow);
-                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-               // This will be called if the camera could not be opened
-            }
-        });
 
         webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam Front"), viewportContainerIds[1]);
         webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -123,6 +105,32 @@ public class AutonomousLeft extends AutonomousBase {
                 // This will be called if the camera could not be opened
             }
         });
+        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Low"), viewportContainerIds[0]);
+        webcamLow.openCameraDevice();
+        pipelineLow = new PowerPlaySuperPipeline(true, false,
+                !blueAlliance, blueAlliance, 160.0, blueAlliance, true);
+        webcamLow.setPipeline(pipelineLow);
+        webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+//        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                pipelineLow = new PowerPlaySuperPipeline(true, false,
+//                        !blueAlliance, blueAlliance, 160.0, blueAlliance, true);
+//                webcamLow.setPipeline(pipelineLow);
+//                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+//            }
+
+//            @Override
+//            public void onError(int errorCode)
+//            {
+//                // This will be called if the camera could not be opened
+//            }
+//        });
+        telemetry.addData("State", "Webcam Initialized");
+        telemetry.update();
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
             telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
@@ -227,6 +235,8 @@ public class AutonomousLeft extends AutonomousBase {
             moveToTallJunction();
         }
 
+        sleep(30000);
+
         // Center on pole
         if( opModeIsActive()) {
             telemetry.addData("Skill", "rotateToCenterPole");
@@ -325,31 +335,42 @@ public class AutonomousLeft extends AutonomousBase {
             telemetry.update();
             signalZoneParking( signalZone );
         }
+
+
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
     private void moveToTallJunction() {
-        // Drive away from wall at slow speed to avoid mecanum roller slippage
-        // Turn so we don't entrap the beacon cone
-        autoYpos=18.0;  autoXpos=0.0;  autoAngle=+80.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30 );
 
         // Tilt grabber down from autonomous starting position (vertical)
-        // (must wait or we'll hit the low pole)
+        // so we're clear to raise the lift and not hit the front lift motor
+        // (since we're turned toward the ground junction, it's okay to stick out
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
-        // Perform setup to center turret and raise lift to scoring position
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_AUTO_H );
+        // Initial movement accomplishes two goals:
+        // 1. Avoid the ground junction in front of the robot (5.5" rightward shift)
+        // 2. Turn 90deg  so we don't entrap the beacon cone
+        autoYpos=18.0;  autoXpos=5.5;  autoAngle=-90.0;    // (inches, inches, degrees)
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_40, TURN_SPEED_40 );
 
-        // Strafe nearly sideways into beacon cone (still avoiding beacon entrapment)
-        autoYpos=36.0;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
+        // The grabber finished the tilt down during the 90deg turn movement, so
+        // it's safe now to command the lift to raise to scoring position
+        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_B );
 
-        // Drive the main distance quickly (while lift moves)
-        autoYpos=51.0;
-        autoAngle=53.5;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
+        // We're past the medium junction pole, so okay to rotate the turret
+        robot.turretPosInit( -45.0 );
+
+        // Drive partway there (while lift raises past the front motor)
+        autoYpos=34.5;  autoXpos=4.0;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80 );
+
+        // Tilt grabber backward to final scoring position and rotate cone over
+        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
+        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
+
+        // Drive the final distance to the high junction pole
+        autoYpos=52.5;  autoXpos=8.0;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80 );
         robot.driveTrainMotorsZero();
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)
@@ -357,8 +378,6 @@ public class AutonomousLeft extends AutonomousBase {
             performEveryLoop();
         }
 
-        // Tilt grabber down to final scoring position
-        robot.grabberSetTilt( robot.GRABBER_TILT_AUTO_F );
     } // moveToTallJunction
 
     /*--------------------------------------------------------------------------------------------*/

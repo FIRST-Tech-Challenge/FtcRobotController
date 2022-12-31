@@ -58,12 +58,12 @@ public class AutonomousReset extends LinearOpMode {
     /*--------------------------------------------------------------------------------------------*/
     // Automatically move the robot mechanisms to the starting Autonomous configuration
     private void resetMechanismsForAutonomous() {
+        // Center turret
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         // Extend collector while we're resetting the turret/lift
         robot.grabberSetTilt( robot.GRABBER_TILT_GRAB );
         // Ensure collector rotated to the upward position
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
-        // Center turret
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         // Lower lift to starting position
         robot.liftPosInit( robot.LIFT_ANGLE_ASTART );
         // Wait until both motions are complete
