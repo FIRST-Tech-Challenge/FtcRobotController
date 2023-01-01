@@ -34,9 +34,9 @@ public class Elevator {
     private Telemetry telemetry;
 
 
-    public final int firstFloor = -1300;
+    public final int firstFloor = -1850;
     public final int secondFloor = -3137;
-    public final int thirdFloor = -4400;
+    public final int thirdFloor = -4225;
     public final int groundFloor = 0;
 
     public int currentFloor = groundFloor;
