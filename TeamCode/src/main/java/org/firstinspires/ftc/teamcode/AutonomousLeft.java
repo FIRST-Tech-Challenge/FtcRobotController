@@ -39,6 +39,7 @@ public class AutonomousLeft extends AutonomousBase {
     // The can/should be tweaked to suite the specific robot drivetrain.
     static final boolean DRIVE_Y = true;    // Drive forward/backward
     static final boolean DRIVE_X = false;   // Drive right/left (not DRIVE_Y)
+    boolean cameraInitialized = false;
 
 //  double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
@@ -86,6 +87,7 @@ public class AutonomousLeft extends AutonomousBase {
                 // This will be called if the camera could not be opened
             }
         });
+        webcamFront.showFpsMeterOnViewport(false);
 
         webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam Back"), viewportContainerIds[2]);
         webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -105,30 +107,38 @@ public class AutonomousLeft extends AutonomousBase {
                 // This will be called if the camera could not be opened
             }
         });
+        webcamBack.showFpsMeterOnViewport(false);
+
         webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
                 "Webcam Low"), viewportContainerIds[0]);
-        webcamLow.openCameraDevice();
-        pipelineLow = new PowerPlaySuperPipeline(true, false,
-                !blueAlliance, blueAlliance, 160.0, blueAlliance, true);
-        webcamLow.setPipeline(pipelineLow);
-        webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-//        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-//        {
-//            @Override
-//            public void onOpened()
-//            {
-//                pipelineLow = new PowerPlaySuperPipeline(true, false,
-//                        !blueAlliance, blueAlliance, 160.0, blueAlliance, true);
-//                webcamLow.setPipeline(pipelineLow);
-//                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-//            }
+//        webcamLow.openCameraDevice();
+//        pipelineLow = new PowerPlaySuperPipeline(true, false,
+//                !blueAlliance, blueAlliance, 160.0, blueAlliance, true);
+//        webcamLow.setPipeline(pipelineLow);
+//        webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineLow = new PowerPlaySuperPipeline(true, false,
+                        !blueAlliance, blueAlliance, 160.0, blueAlliance, true);
+                webcamLow.setPipeline(pipelineLow);
+                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                cameraInitialized = true;
+            }
 
-//            @Override
-//            public void onError(int errorCode)
-//            {
-//                // This will be called if the camera could not be opened
-//            }
-//        });
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
+        webcamLow.showFpsMeterOnViewport(false);
+
+        while(!cameraInitialized) {
+            sleep(100);
+        }
         telemetry.addData("State", "Webcam Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options

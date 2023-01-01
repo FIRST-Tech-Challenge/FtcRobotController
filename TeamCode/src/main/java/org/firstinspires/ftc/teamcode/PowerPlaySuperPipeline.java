@@ -602,8 +602,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // This might not be the best way to do this, but we split the image in two to detect
         // the cones in the upper half, tape in the lower half.
         int greatDivide = findConeTapeVortex(morphedRedThreshold);
-        Mat coneHalf = morphedRedThreshold.submat(0, greatDivide, 0, 320);
-        Mat tapeHalf = morphedRedThreshold.submat(greatDivide, 240, 0, 320);
+        Mat coneHalf = morphedRedThreshold.submat(0, greatDivide, 0, 319);
+        Mat tapeHalf = morphedRedThreshold.submat(greatDivide, 239, 0, 319);
 
         // Ok, now actually look for the contours! We only look for external contours.
         Imgproc.findContours(tapeHalf, tapeContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
@@ -616,7 +616,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         Imgproc.drawContours(contoursOnPlainImageMat, contoursList, -1, BLUE, CONTOUR_LINE_THICKNESS, 8);
 
         Point leftSide = new Point(0, greatDivide);
-        Point rightSide = new Point(320, greatDivide);
+        Point rightSide = new Point(319, greatDivide);
         Imgproc.line(contoursOnPlainImageMat, leftSide, rightSide, PURPLE, 2);
 
         // Lets do our analyzed objects lists here while we have the two lists.
@@ -743,8 +743,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // This might not be the best way to do this, but we split the image in two to detect
         // the cones in the upper half, tape in the lower half.
         int greatDivide = findConeTapeVortex(morphedBlueThreshold);
-        Mat coneHalf = morphedBlueThreshold.submat(0, greatDivide, 0, 320);
-        Mat tapeHalf = morphedBlueThreshold.submat(greatDivide, 240, 0, 320);
+        Mat coneHalf = morphedBlueThreshold.submat(0, greatDivide, 0, 319);
+        Mat tapeHalf = morphedBlueThreshold.submat(greatDivide, 239, 0, 319);
 
         // Ok, now actually look for the contours! We only look for external contours.
         Imgproc.findContours(tapeHalf, tapeContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
@@ -757,7 +757,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         Imgproc.drawContours(contoursOnPlainImageMat, contoursList, -1, BLUE, CONTOUR_LINE_THICKNESS, 8);
 
         Point leftSide = new Point(0, greatDivide);
-        Point rightSide = new Point(320, greatDivide);
+        Point rightSide = new Point(319, greatDivide);
         Imgproc.line(contoursOnPlainImageMat, leftSide, rightSide, PURPLE, 2);
 
         // Lets do our analyzed objects lists here while we have the two lists.
@@ -790,6 +790,9 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 if(thisRowAmplitude.val[0] > tapeDelta) {
                     startedTape = true;
                     row -= 20;
+                    if(row < 0) {
+                        row = 0;
+                    }
                     thisRowAmplitude = Core.sumElems(tapeConeImage.row(row));
                     lastRowAmplitude = thisRowAmplitude;
                 }

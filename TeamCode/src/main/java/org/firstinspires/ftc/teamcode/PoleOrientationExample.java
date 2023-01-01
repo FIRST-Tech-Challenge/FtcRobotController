@@ -51,7 +51,7 @@ public class PoleOrientationExample extends LinearOpMode
     OpenCvCamera webcamFront = null;
     OpenCvCamera webcamBack = null;
     /* Declare OpMode members. */
-//    HardwareSlimbot robot = new HardwareSlimbot();
+    HardwareSlimbot robot = new HardwareSlimbot();
     boolean aligning = false;
     boolean ranging = false;
     PowerPlaySuperPipeline.AnalyzedPole thePole;
@@ -180,14 +180,14 @@ public class PoleOrientationExample extends LinearOpMode
         // Tell telemetry to update faster than the default 250ms period :)
         telemetry.setMsTransmissionInterval(20);
         /* Declare OpMode members. */
-//        robot.init(hardwareMap,false);
+        robot.init(hardwareMap,false);
 
         telemetry.addLine("Robot initialized, ready to start.");
         telemetry.update();
         waitForStart();
 
         // Perform setup needed to center turret
-//        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
 
         while (opModeIsActive())
         {
@@ -200,7 +200,7 @@ public class PoleOrientationExample extends LinearOpMode
 //            robot.turretPosRun();
 
             // Let us see if we can use the camera for distance.
-//            alignToPole();
+            alignToPole();
             telemetry.addLine("Aligned... waiting for kick");
             for( int index=0; index<LOGSIZE; index++ ) {
                 telemetry.addData(" ","%d = %.1f %.1f pix",
@@ -226,7 +226,7 @@ public class PoleOrientationExample extends LinearOpMode
     }
 
     /*---------------------------------------------------------------------------------*/
-    /*
+
     void alignToPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         double turnPower;
@@ -235,7 +235,7 @@ public class PoleOrientationExample extends LinearOpMode
         theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipelineFront.getDetectedPole());
         while (opModeIsActive() && ((theLocalPole.alignedCount <= 3) || theLocalPole.properDistanceHighCount <= 3)) {
 //      while (opModeIsActive() ) {
-            if(theLocalPole.poleAligned) {
+            if(theLocalPole.aligned) {
                 turnPower = 0.0;
             } else {
                 // Rotate right or left
@@ -265,7 +265,7 @@ public class PoleOrientationExample extends LinearOpMode
             angleOffset[LOGSIZE-1] = theLocalPole.centralOffset;
             distOffset[LOGSIZE-1]  = theLocalPole.highDistanceOffset;
             telemetry.addData("POLE","angle=%c distance=%c",
-                    ((theLocalPole.poleAligned)? 'Y':'n'),
+                    ((theLocalPole.aligned)? 'Y':'n'),
                     ((theLocalPole.properDistanceHigh)? 'Y':'n') );
             for( int index=0; index<LOGSIZE; index++ ) {
                 telemetry.addData(" ","%d = %.1f  %.1f pix",
@@ -277,5 +277,50 @@ public class PoleOrientationExample extends LinearOpMode
         }
         robot.stopMotion();
     } // alignToPole
+
+    /*---------------------------------------------------------------------------------*/
+    /*  TELE-OP: Standard Mecanum-wheel drive control (no dependence on gyro!)         */
+    /*---------------------------------------------------------------------------------*/
+    /*
+    void processStandardDriveMode() {
+        // Retrieve X/Y and ROTATION joystick input
+        if( controlMultSegLinear ) {
+            yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
+            xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
+            rotation     = multSegLinearRot( -gamepad1.right_stick_x );
+        }
+        else {
+            yTranslation = -gamepad1.left_stick_y * 1.00;
+            xTranslation =  gamepad1.left_stick_x * 1.25;
+            rotation     = -gamepad1.right_stick_x * 0.50;
+        }
+        // If BACKWARD drive control, reverse the operator inputs
+        if( backwardDriveControl ) {
+            yTranslation = -yTranslation;
+            xTranslation = -xTranslation;
+            //rotation     = -rotation;  // clockwise/counterclockwise doesn't change
+        } // backwardDriveControl
+        // Normal teleop drive control:
+        // - left joystick is TRANSLATE fwd/back/left/right
+        // - right joystick is ROTATE clockwise/counterclockwise
+        // NOTE: assumes the right motors are defined FORWARD and the
+        // left motors are defined REVERSE so positive power is FORWARD.
+        frontRight = yTranslation - xTranslation + rotation;
+        frontLeft  = yTranslation + xTranslation - rotation;
+        rearRight  = yTranslation + xTranslation + rotation;
+        rearLeft   = yTranslation - xTranslation - rotation;
+        // Normalize the values so none exceed +/- 1.0
+        maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
+                Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
+        if (maxPower > 1.0)
+        {
+            rearLeft   /= maxPower;
+            rearRight  /= maxPower;
+            frontLeft  /= maxPower;
+            frontRight /= maxPower;
+        }
+        // Update motor power settings:
+        robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
+    } // processStandardDriveMode
      */
 }
