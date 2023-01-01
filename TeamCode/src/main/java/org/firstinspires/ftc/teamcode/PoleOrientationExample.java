@@ -268,8 +268,9 @@ public class PoleOrientationExample extends LinearOpMode
             // Correct the angle for the turret being in the back.
             turretAngle += 180.0;
         }
-        // This corrects from our 0 being straight forward and left being negative
+        // This corrects for our 0 being straight forward and left being negative
         yTranslation = drivePower * Math.sin(toRadians(turretAngle + 90.0));
+        // Is this negative already accounted for in the below math?
         xTranslation = -drivePower * Math.cos(toRadians(turretAngle + 90.0));
 
         frontRight = yTranslation - xTranslation + turnPower;
