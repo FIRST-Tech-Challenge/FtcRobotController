@@ -136,19 +136,19 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         telemetry.addData("Detected:",signal);
         double timeAdjustment = getDistance(radius,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
         if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
-            moveTwoFeet(true);
+            setVelo(true,.75,2);
             turnNinety(false);
-            moveTwoFeet(true);
+            setVelo(true,.75,2);
         }
 
         if(signal.equals("2 Bulb")){ // go to location 2 (return to start and forward)
-            moveTwoFeet(true);
+            setVelo(true,.75,2);
         }
 
         if(signal.equals("3 Panel")){ // go to location 3 (right and forward)
-            moveTwoFeet(true);
+            setVelo(true,.75,2);
             turnNinety(true);
-            moveTwoFeet(true);
+            setVelo(true,.75,2);
         }
     }
 
@@ -245,7 +245,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         double time = .8;
         runtime.reset();
 
-        /*if(CW){
+        if(CW){
             while(opModeIsActive() && runtime.seconds() < time){
                 leftVelo(.75);
                 rightVelo(-.75);
@@ -258,9 +258,9 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         }
         if(time >= runtime.seconds()){
             motorsOff();
-        }*/
+        }
 
-        if(CW){
+        /*if(CW){
             //left = +; right = -
             while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + 1.80 > originalAngle - .9) {
                 leftVelo(.75);
@@ -273,7 +273,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
                 rightVelo(.75);
             }
         }
-        motorsOff();
+        motorsOff();*/
     }
 
     public void turnOneEighty(){
@@ -284,33 +284,27 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
     public void moveOneFoot(boolean forward){
         //using motor encoders
         double oneRotationDistance = 10 * Math.PI; // In cm
-        int ticksPerRotation = 538;
+        double ticksPerRotation = 537.6;
 
         double rotationAmount = oneFootCm / oneRotationDistance;
-        int totalTicks = (int) rotationAmount * ticksPerRotation;
+        int totalTicks = (int) (rotationAmount * ticksPerRotation);
 
         resetEncoders();
 
         if(forward){
             encoderTarget(totalTicks);
-            leftVelo(.75);
-            rightVelo(.75);
-            while(opModeIsActive() && leftDrive.isBusy()){
-                telemetry.addData("Left encoder", leftDrive.getCurrentPosition() + "  busy=" + leftDrive.isBusy());
-                telemetry.addData("Right encoder", rightDrive.getCurrentPosition() + "  busy=" + rightDrive.isBusy());
-                telemetry.update();
-                idle();
-            }
         }else{
             encoderTarget(-totalTicks);
-            leftVelo(.75);
-            rightVelo(.75);
-            while(opModeIsActive() && leftDrive.isBusy()){
-                telemetry.addData("Left encoder", leftDrive.getCurrentPosition() + "  busy=" + leftDrive.isBusy());
-                telemetry.addData("Right encoder", rightDrive.getCurrentPosition() + "  busy=" + rightDrive.isBusy());
-                telemetry.update();
-                idle();
-            }
+        }
+        leftDrive.setPower(.5);
+        leftBackDrive.setPower(.5);
+        rightDrive.setPower(.5);
+        rightBackDrive.setPower(.5);
+        while(opModeIsActive() && leftDrive.getCurrentPosition() > leftDrive.getTargetPosition()){
+            telemetry.addData("Left encoder", leftDrive.getCurrentPosition() + "  busy=" + leftDrive.isBusy());
+            telemetry.addData("Right encoder", rightDrive.getCurrentPosition() + "  busy=" + rightDrive.isBusy());
+            telemetry.update();
+            idle();
         }
         motorsOff();
         resetEncoders();
@@ -382,16 +376,6 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         leftBackDrive.setTargetPosition(target);
         rightDrive.setTargetPosition(target);
         rightBackDrive.setTargetPosition(target);
-
-        leftDrive.setTargetPositionTolerance(4);
-        leftBackDrive.setTargetPositionTolerance(4);
-        rightDrive.setTargetPositionTolerance(4);
-        rightBackDrive.setTargetPositionTolerance(4);
-
-        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     // Some physics equations put into functions
