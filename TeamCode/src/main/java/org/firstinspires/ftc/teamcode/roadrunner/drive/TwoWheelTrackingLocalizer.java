@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -33,6 +34,8 @@ import java.util.List;
  *    \--------------/
  *
  */
+
+@Config
 public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = .689; // in 35/2 radius
@@ -42,13 +45,13 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double PARALLEL_Y = 5.39791/2; // Y is the strafe direction
 
     public static double PERPENDICULAR_X = 5.2;
-    public static double PERPENDICULAR_Y = -1.5;
+    public static double PERPENDICULAR_Y = 1.5;
 
 //    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
 //    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
 
-    public static double X_MULTIPLIER = ((90 / 89.081) + (90 / 89.014) + (90 / 88.893)) / 3;
-    public static double Y_MULTIPLIER = ((90 / 89.767) + (90 / 89.981) + (90 / 89.683)) / 3;
+    public static double X_MULTIPLIER = 1;
+    public static double Y_MULTIPLIER = 1;
 
     // Parallel/Perpendicular to the forward axis
     // Parallel wheel is parallel to the forward axis

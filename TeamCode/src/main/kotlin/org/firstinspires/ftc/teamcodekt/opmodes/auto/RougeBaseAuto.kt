@@ -136,6 +136,7 @@ abstract class RougeBaseAuto : BlackOp() {
 
         const val MAX_CYCLES = 4
 
+        @JvmStatic
         protected val liftOffsets = intArrayOf(
             AutoData.AUTO_INTAKE_LIFT_HEIGHT_1,
             AutoData.AUTO_INTAKE_LIFT_HEIGHT_2,

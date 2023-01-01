@@ -132,8 +132,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
 //        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
-//        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
+//        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");

@@ -16,8 +16,11 @@ class RougeRightAuto : RougeBaseAuto() {
 
     private lateinit var armPosFunction: () -> Unit
     private lateinit var wristPosFunction: () -> Unit
+    override fun go() {
+        run();
+    }
 
-    override fun runOpMode(): Unit = with(bot) {
+    fun run(): Unit = with(bot) {
         initHardware()
 
         Scheduler.beforeEach {
