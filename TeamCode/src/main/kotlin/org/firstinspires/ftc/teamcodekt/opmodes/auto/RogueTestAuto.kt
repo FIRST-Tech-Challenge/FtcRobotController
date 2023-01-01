@@ -10,7 +10,7 @@ class RogueTestAuto : RogueBaseAuto() {
         Anvil.setUnits(distanceUnit = DistanceUnit.CM)
 
         val startPose = Pose2d()
-        val startTraj = traj2(startPose)
+        val startTraj = traj1(startPose)
 
         Anvil.startAutoWith(startTraj)
 
@@ -38,6 +38,7 @@ class RogueTestAuto : RogueBaseAuto() {
             .preform(key = 0, ::traj3)
 
             .forward(10.0)
+
             .waitTime(3)
 
             .inReverse {
@@ -48,11 +49,7 @@ class RogueTestAuto : RogueBaseAuto() {
 
     private fun traj3(startPose: Pose2d): Anvil =
         Anvil.formTrajectory(bot.drive, startPose)
-            .preform(key = 0, ::traj3)
-
             .doTimes(4) {
                 turn(90.0)
             }
-
-            .thenRunPreformed(key = 0)
 }

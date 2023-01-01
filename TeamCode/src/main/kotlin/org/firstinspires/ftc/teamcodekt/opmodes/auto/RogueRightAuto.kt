@@ -10,40 +10,30 @@ import org.firstinspires.ftc.teamcode.AutoData.*
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 
 @Suppress("RemoveRedundantQualifierName")
-class RougeRightAuto : RougeBaseAuto() {
+class RogueRightAuto : RogueBaseAuto() {
     private var cycleNumber = 0
     private var signalZone = 0
 
-    private lateinit var armPosFunction: () -> Unit
-    private lateinit var wristPosFunction: () -> Unit
-    override fun go() {
-        run();
-    }
-
-    fun run(): Unit = with(bot) {
-        initHardware()
-
-        Scheduler.beforeEach {
-            armPosFunction()
-            wristPosFunction()
-        }
-
-        signalZone = waitForStartWithVision()
-        telemetry.addData("Final signal zone", signalZone)
-        telemetry.update()
+    override fun goo() = with(bot) {
+//        Anvil.warmup()
 
         Anvil.setUnits(distanceUnit = DistanceUnit.CM)
 
         val startPose = Pose2d(91.toIn(), (-159).toIn(), 90.toRad())
         val startTraj = preload(startPose)
 
-        Anvil.startAsyncAutoWith(startTraj)
+        Anvil.startAutoWith(startTraj)
 
-        Scheduler.launch(this@RougeRightAuto) {
-            lift.update(telemetry)
-            wrist.update()
+        signalZone = waitForStartWithVision()
+        mTelemetry.addData("Final signal zone", signalZone)
+        mTelemetry.update()
+
+        Anvil.start()
+
+        Scheduler.launch(this@RogueRightAuto) {
+            bot.updateComponents(mTelemetry)
             drive.update()
-            telemetry.update()
+            mTelemetry.update()
         }
     }
 
@@ -54,8 +44,8 @@ class RougeRightAuto : RougeBaseAuto() {
             .addTemporalMarker {
                 bot.lift.height = LiftConfig.HIGH
 
-                wristPosFunction = bot.wrist::setToForwardsPos
-                armPosFunction = bot.arm::setToForwardsPos
+                bot.wrist.setToForwardsPos()
+                bot.arm.setToForwardsPos()
             }
 
             .splineTo(91.0, 50.0, 90.0)
@@ -77,7 +67,7 @@ class RougeRightAuto : RougeBaseAuto() {
                 bot.claw.openForDeposit()
             }
 
-            .waitTime(DEPOSIT_DELAY + .05)
+            .waitTime(DEPOSIT_DELAY)
 
             .thenRunPreformed(key = 0)
 
@@ -91,8 +81,8 @@ class RougeRightAuto : RougeBaseAuto() {
 
                 bot.lift.height = liftOffsets[cycleNumber]
 
-                armPosFunction = bot.arm::setToBackwardsPos
-                wristPosFunction = bot.wrist::setToBackwardsPos
+                bot.arm.setToBackwardsPos()
+                bot.wrist.setToBackwardsPos()
             }
 
             .inReverse {
@@ -115,11 +105,11 @@ class RougeRightAuto : RougeBaseAuto() {
             }
 
             .addTemporalMarker(INTAKE_LIFT_OFFSET - 0.125) {
-                armPosFunction = bot.arm::setToForwardsPos
-                wristPosFunction = bot.wrist::setToForwardsPos
+                bot.arm.setToForwardsPos()
+                bot.wrist.setToForwardsPos()
             }
 
-            .waitTime(INTAKE_DELAY + 0.25)
+            .waitTime(INTAKE_DELAY)
 
             .thenRunPreformed(key = 0)
 
@@ -148,8 +138,8 @@ class RougeRightAuto : RougeBaseAuto() {
 
                 bot.lift.height = liftOffsets[5]
 
-                armPosFunction = bot.arm::setToBackwardsPos
-                wristPosFunction = bot.wrist::setToBackwardsPos
+                bot.arm.setToBackwardsPos()
+                bot.wrist.setToBackwardsPos()
             }
 
             .inReverse {
@@ -170,8 +160,8 @@ class RougeRightAuto : RougeBaseAuto() {
 
             addTemporalMarker(0.05) {
                 bot.lift.goToZero()
-                armPosFunction = bot.arm::setToRestingPos
-                wristPosFunction = bot.wrist::setToRestingPos
+                bot.arm.setToRestingPos()
+                bot.wrist.setToRestingPos()
             }
 
             when (signalZone) {

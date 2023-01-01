@@ -2,17 +2,16 @@
 
 package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.outoftheboxrobotics.photoncore.PhotonCore
 import ftc.rogue.blacksmith.BlackOp
+import ftc.rogue.blacksmith.util.kt.LateInitVal
+import ftc.rogue.blacksmith.util.kt.invoke
 import ftc.rogue.blacksmith.util.kt.toCm
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcode.pipelines.AprilTagDetectionPipeline
 import org.firstinspires.ftc.teamcode.pipelines.BasePoleDetector
 import org.firstinspires.ftc.teamcodekt.components.*
-import ftc.rogue.blacksmith.util.kt.LateInitVal
-import ftc.rogue.blacksmith.util.kt.createOnGo
-import ftc.rogue.blacksmith.util.kt.invoke
 import org.openftc.apriltag.AprilTagDetection
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener
@@ -20,7 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 import kotlin.math.max
 
-abstract class RougeBaseAuto : BlackOp() {
+abstract class RogueBaseAuto : BlackOp() {
     protected var bot         by LateInitVal< AutoBotComponents >()
     protected var camera      by LateInitVal< OpenCvCamera      >()
     protected var frontSensor by LateInitVal< ShortRangeSensor  >()
@@ -30,7 +29,15 @@ abstract class RougeBaseAuto : BlackOp() {
 
     private var numFramesWithoutDetection = 0
 
-    protected fun initHardware() {
+    abstract fun goo()
+
+    final override fun go() {
+        PhotonCore.enable()
+        initHardware()
+        goo()
+    }
+
+    private fun initHardware() {
         bot = createAutoBotComponents(hardwareMap, VoltageScaler(hardwareMap))
 
         frontSensor = ShortRangeSensor(hardwareMap, telemetry)
