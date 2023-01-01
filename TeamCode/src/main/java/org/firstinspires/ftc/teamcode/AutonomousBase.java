@@ -16,8 +16,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
 
-    static final int     DRIVE_TO             = 1;       // STOP  after the specified movement
-    static final int     DRIVE_THRU           = 2;       // COAST after the specified movement
+    static final int     DRIVE_TO             = 1;       // ACCURACY: tighter tolerances, and slows then stops at final position
+    static final int     DRIVE_THRU           = 2;       // SPEED: looser tolerances, and leave motors running (ready for next command)
     static final double  P_DRIVE_COEFF        = 0.005;   // Larger is more responsive, but also less stable
     static final double  HEADING_THRESHOLD    = 2.0;     // Minimum of 1 degree for an integer gyro
     static final double  P_TURN_COEFF         = 0.050;   // Larger is more responsive, but also less stable
@@ -37,8 +37,11 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  TURN_SPEED_30        = 0.30;    //
     static final double  TURN_SPEED_40        = 0.40;    //
     static final double  TURN_SPEED_55        = 0.55;    //
+    static final double  TURN_SPEED_60        = 0.60;    //
+    static final double  TURN_SPEED_70        = 0.70;    //
     static final double  TURN_SPEED_80        = 0.80;    //
-
+    static final double  TURN_SPEED_90        = 0.90;    //
+    static final double  TURN_SPEED_100       = 1.00;    //
 
     //Files to access the algorithm constants
     File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
@@ -83,10 +86,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         gamepad1_r_bumper_last = gamepad1_r_bumper_now;    gamepad1_r_bumper_now = gamepad1.right_bumper;
     } // captureGamepad1Buttons
 
-    /*---------------------------------------------------------------------------------------------
-     * getAngle queries the current gyro angle
-     * @return  current gyro angle (-179.9 to +180.0)
-     */
+    /*---------------------------------------------------------------------------------*/
     public void performEveryLoop() {
         robot.readBulkData();
         globalCoordinatePositionUpdate();
@@ -95,6 +95,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // performEveryLoop
 
     /*---------------------------------------------------------------------------------*/
+    // DEPRICATED!  The ultrasonic range sensors return values in whole numbers of centimeters
+    // so there's no need to use double-precision variables.
     void distanceFromFront(double desiredDistance, double distanceTolerance) {
         // Value in inches?
         int atRange = 0;
@@ -126,7 +128,8 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.fastSonarRange( HardwareSlimbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwareSlimbot.UltrasonicsModes.SONIC_FIRST_PING );
         // Wait 50 msec (DEFAULT_SONAR_PROPAGATION_DELAY_MS)
         sleep( 50 );
-        // Begin the control loop
+        // Begin the control loop.  We use a for() loop to avoid looping forever.  Be
+        // sure the desired distances can be achieved in 100 loops, or increase this counter.
         for( int loops=0; loops<100; loops++ ) {
             // Has autonomous ended or been aborted?
             if( opModeIsActive() == false ) break;
@@ -230,7 +233,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // getError()
 
     /*---------------------------------------------------------------------------------------------
-     * getError determines the error between the target angle and the robot's current heading
+     * getAngleError determines the error between the target angle and the robot's current heading
      * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
      * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
      *          Positive error means the robot should turn LEFT (CCW) to reduce error.
@@ -307,8 +310,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         }
 
         // Stop all motion;
-        robot.frontLeftMotor.setPower(0);
-        robot.frontRightMotor.setPower(0);
+        robot.driveTrainMotorsZero();
     } // gyroHold
 
     /*---------------------------------------------------------------------------------------------
@@ -509,10 +511,12 @@ public abstract class AutonomousBase extends LinearOpMode {
         return reachedDestination;
     } // driveToWall
 
+    //============================ TIME-BASED NAVIGATION FUNCTIONS ============================
+
     /*---------------------------------------------------------------------------------------------
      * Method will drive straight for a specified time.
      * @param speed  Speed to set all motors, positive forward, negative backward
-     * @param time   How long to drive
+     * @param time   How long to drive (milliseconds)
      */
     public void timeDriveStraight( double speed, int time ) {
         if(opModeIsActive()) {
@@ -523,9 +527,9 @@ public abstract class AutonomousBase extends LinearOpMode {
     }
 
     /*---------------------------------------------------------------------------------------------
-     * Method will drive straight for a specified time.
+     * Method will strafe straight for a specified time.
      * @param speed  Speed to set all motors, postive strafe left, negative strafe right
-     * @param time   How long to drive
+     * @param time   How long to strafe (milliseconds)
      */
     public void timeDriveStrafe( double speed, int time ) {
         if(opModeIsActive()) {
@@ -534,6 +538,8 @@ public abstract class AutonomousBase extends LinearOpMode {
             robot.stopMotion();
         }
     }
+
+    //============================ IMU/GYRO-BASED NAVIGATION FUNCTIONS ============================
 
     /*---------------------------------------------------------------------------------------------
      *  Method to drive on a fixed compass bearing (angle), based on encoder counts.
@@ -592,7 +598,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
                 // 19.2:1 is 537 counts/rotation (18.85" distance).  1/2" tolerance = 14.24 counts
                 reachedTarget = ((frontLeftError < posTol) && (frontRightError < posTol) &&
-                        (rearLeftError  < posTol) && (rearRightError  < posTol) );
+                                 (rearLeftError  < posTol) && (rearRightError  < posTol) );
 //              reachedTarget = !robot.frontLeftMotor.isBusy() && !robot.frontRightMotor.isBusy() &&
 //                              !robot.rearLeftMotor.isBusy() && !robot.rearRightMotor.isBusy();
                 if (reachedTarget) break;
@@ -651,11 +657,8 @@ public abstract class AutonomousBase extends LinearOpMode {
             } // opModeIsActive
 
             if( driveType == DRIVE_TO ) {
-                // Stop all motion;
-                robot.frontLeftMotor.setPower(0);
-                robot.frontRightMotor.setPower(0);
-                robot.rearLeftMotor.setPower(0);
-                robot.rearRightMotor.setPower(0);
+                // Stop all motion
+                robot.driveTrainMotorsZero();
             }
 
             // Turn off RUN_TO_POSITION
@@ -667,6 +670,8 @@ public abstract class AutonomousBase extends LinearOpMode {
         } // opModeIsActive()
     } // gyroDrive()
 
+    //============================ ODOMETRY-BASED NAVIGATION FUNCTIONS ============================
+    
     /*--------------------------------------------------------------------------------------------*/
     /**
      * Move robot to specified target position/orientation
@@ -675,16 +680,22 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param drive_angle (degrees; 0deg is straight ahead)
      * @param move_power
      * @param turn_power
+     * @param driveType - DRIVE_TO goes for accuracy and stops all motors; DRIVE_THRU does not
      */
     public void driveToPosition( double x_target, double y_target, double drive_angle,
-                                  double move_power, double turn_power ) {
+                                  double move_power, double turn_power, int driveType ) {
         // Loop until we reach the target (or autonomous program aborts)
         while( opModeIsActive() ) {
             // Tend to any automatic mechanism movement updates
             performEveryLoop();
             // Power drivetrain motors to move to where we WANT to be
-            if( moveToPosition( x_target, y_target, drive_angle, move_power, turn_power ) )
+            if( moveToPosition( x_target, y_target, drive_angle, move_power, turn_power, driveType ) ) {
+                // If this is the final destination, then stop all motors
+                if( driveType == DRIVE_TO )
+                    robot.driveTrainMotorsZero();
+                // Break out of the loop
                 break;
+            }
         } // opModeIsActive()
     } // driveToPosition
 
@@ -697,10 +708,11 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param drive_angle (degrees; 90deg is straight ahead)
      * @param move_power
      * @param turn_power
+     * @param driveType (DRIVE_TO or DRIVE_THRU)
      * @return boolean true/false for DONE?
      */
     public boolean moveToPosition( double x_target, double y_target, double drive_angle,
-                                    double move_power, double turn_power ) {
+                                    double move_power, double turn_power, int driveType ) {
         // Convert current robot X,Y position from encoder-counts to inches
         double x_world = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (backward! see notes)
         double y_world = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches
@@ -719,22 +731,26 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Compute full movement power that preserves the shape/ratios of the intended movement direction
         double movement_x_power = (relative_x_to_point / (relative_y_abs + relative_x_abs)) * move_power;
         double movement_y_power = (relative_y_to_point / (relative_y_abs + relative_x_abs)) * move_power;
-        // If x-delta (forward error) within 3" (8.0cm) of target, then reduce from specified move_power
-        double x_slowdown_distance = (move_power >= 0.60)? 6.0 : 4.0;  // inches
-        double y_slowdown_distance = (move_power >= 0.60)? 5.0 : 3.0;  // inches
-        if( relative_x_abs <= x_slowdown_distance )
-           movement_x_power = Range.clip(((relative_x_to_point/x_slowdown_distance) * 0.10),-0.10,0.10);
-        // If y-delta (lateral error) within 1" (2.5cm) of target, then reduce from specified move_power
-        if( relative_y_abs <= y_slowdown_distance )
-           movement_y_power = Range.clip(((relative_y_to_point/y_slowdown_distance) * 0.12),-0.12,0.12);
+        // Are we looking for SPEED (DRIVE_THRU) or do we need ACCURATE final stopping position (DRIVE_TO)?
+        if( driveType == DRIVE_TO ) {
+           // If x-delta (forward error) is approaching zero, then reduce from specified move_power
+           double x_slowdown_distance = (move_power >= 0.60)? 6.0 : 4.0;  // inches
+           double y_slowdown_distance = (move_power >= 0.60)? 5.0 : 3.0;  // inches
+           if( relative_x_abs <= x_slowdown_distance )
+              movement_x_power = Range.clip(((relative_x_to_point/x_slowdown_distance) * 0.10),-0.10,0.10);
+           // If y-delta (lateral error) is approaching zero, then reduce from specified move_power
+           if( relative_y_abs <= y_slowdown_distance )
+              movement_y_power = Range.clip(((relative_y_to_point/y_slowdown_distance) * 0.12),-0.12,0.12);
+        } // DRIVE_TO
         // Compute robot orientation-angle error
         double robot_radian_err = AngleWrapRadians( Math.toRadians(drive_angle) - angle_world );  // radians
-        double angle_tolerance = 0.25;  // degrees (within this tolerance rotation_power drops to 0%)
-        double smallAngleSpeed = 0.10;  // (0.18 .. 0.08) due to min_turn_power
-        // If within 20deg of target angle, scale-down power based on angular error, but don't drop below 8% (0.08)
-        // unless within the angle tolerance when rotation_power should drop to 0% (0.00).
-        double small_rad_error = Math.abs( robot_radian_err / Math.toRadians(30.0) );
-        double min_turn_power = (robot_radian_err <= Math.toRadians(angle_tolerance))? 0.00 : 0.08;
+        // Determine the proper angle-error tolerance (within this tolerance rotation_power drops to 0%)
+        double angle_tolerance = (driveType == DRIVE_TO)? 0.25 : 1.0;  // degrees 
+        double smallAngleSpeed = 0.09;  // (0.19 .. 0.10) due to min_turn_power
+        // Once angle-error is below 20deg, scale-down rotational power based on remaining error, but don't
+        // drop below 10% (0.10) until we're inside the angle tolerance (when rotation_power goes to zero).
+        double small_rad_error = Math.abs( robot_radian_err / Math.toRadians(20.0) );
+        double min_turn_power = (robot_radian_err <= Math.toRadians(angle_tolerance))? 0.00 : 0.10;
         double adjusted_turn_power = (small_rad_error <= 1.0)? (small_rad_error * smallAngleSpeed + min_turn_power) : turn_power; 
         double rotation_power = (robot_radian_err > 0.0)? adjusted_turn_power : -adjusted_turn_power;
         // Translate X,Y,rotation power levels into mecanum wheel power values
@@ -757,7 +773,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             frontRight /= maxWheelPower;
         }
         // If the computed wheel powers drop below 5% (minimum needed to produce robot movement)
-        // go ahead and abort as we'll be stuck here forever if we don't (RVS)
+        // go ahead and abort as we'll be stuck here forever if we don't
         if( maxWheelPower < 0.05 ) {
             return true;
         }

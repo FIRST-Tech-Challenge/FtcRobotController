@@ -141,6 +141,7 @@ public class AutonomousLeft extends AutonomousBase {
         }
         telemetry.addData("State", "Webcam Initialized");
         telemetry.update();
+
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
             telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
@@ -226,13 +227,11 @@ public class AutonomousLeft extends AutonomousBase {
     // TEST CODE: Verify odometry-based motion functions against a tape measure
     private void unitTestOdometryDrive() {
         // Drive forward 12"
-        driveToPosition( 12.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40 );
+        driveToPosition( 12.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
         // Strafe right 12"
-        driveToPosition( 12.0, 12.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40 );
+        driveToPosition( 12.0, 12.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
         // Turn 180 deg
-        driveToPosition( 12.0, 12.0, 179.9, DRIVE_SPEED_50, TURN_SPEED_40 );
-        // Stop
-        robot.driveTrainMotorsZero();
+        driveToPosition( 12.0, 12.0, 179.9, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
     } // unitTestOdometryDrive
 
     /*--------------------------------------------------------------------------------------------*/
@@ -345,8 +344,7 @@ public class AutonomousLeft extends AutonomousBase {
             telemetry.update();
             signalZoneParking( signalZone );
         }
-
-
+//        while(opModeIsActive()) { sleep(100); }
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
@@ -354,14 +352,14 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Tilt grabber down from autonomous starting position (vertical)
         // so we're clear to raise the lift and not hit the front lift motor
-        // (since we're turned toward the ground junction, it's okay to stick out
+        // (since we're turning outward toward GROUND junction it's okay to exceed 24" tile width
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
         // Initial movement accomplishes two goals:
         // 1. Avoid the ground junction in front of the robot (5.5" rightward shift)
         // 2. Turn 90deg  so we don't entrap the beacon cone
         autoYpos=18.0;  autoXpos=5.5;  autoAngle=-90.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_40, TURN_SPEED_40 );
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
 
         // The grabber finished the tilt down during the 90deg turn movement, so
         // it's safe now to command the lift to raise to scoring position
@@ -372,7 +370,7 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Drive partway there (while lift raises past the front motor)
         autoYpos=34.5;  autoXpos=4.0;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80 );
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_THRU );
 
         // Tilt grabber backward to final scoring position and rotate cone over
         robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
@@ -380,8 +378,7 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Drive the final distance to the high junction pole
         autoYpos=52.5;  autoXpos=8.0;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80 );
-        robot.driveTrainMotorsZero();
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_TO );
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
@@ -409,8 +406,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.grabberSpinStop();
 
         // Back away from the pole (to our previous location/orientation)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
-        robot.driveTrainMotorsZero();
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
     } // scoreCone
 
@@ -419,7 +415,7 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
         autoYpos=51.0;  autoXpos=0.0;  autoAngle=-85.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
 
         // Move the lift to a position where the ultrasonic works
         robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
@@ -427,8 +423,7 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
         autoXpos=-16.0;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
-        robot.driveTrainMotorsZero();
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
             performEveryLoop();
         }
@@ -498,8 +493,7 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Drive back to tall junction (adjusting lift along the way)
         autoYpos=51.0;  autoXpos=0.0;  autoAngle=35.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
-        robot.driveTrainMotorsZero();
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
         // Re-center turret again (if it shifted while driving)
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
@@ -528,8 +522,7 @@ public class AutonomousLeft extends AutonomousBase {
            case 3  : autoAngle=+90.0; break; // Turn fully to +90deg (BLUE)
            default : autoAngle=  0.0; break; // Realign back to 0deg (RED/GREEN)
         }
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
-        robot.driveTrainMotorsZero();
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
         // Now that we've turned away from the pole, lower lift to driving position
         robot.grabberSetTilt( robot.GRABBER_TILT_SAFE );
@@ -538,29 +531,26 @@ public class AutonomousLeft extends AutonomousBase {
         if( signalZoneLocation == 1 ) {  // RED
            // Strafe left one tile
            autoXpos -= 21.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
+           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
            // Back away from center line, but stay within Signal Zone 1
            autoYpos -= 11.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
-           robot.driveTrainMotorsZero();
+           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         } // // signalZoneLocation 1
         else if( signalZoneLocation == 3 ) {  // BLUE
            // Drive forward one tile pointing 90deg
            autoXpos += 24.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
+           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
            // Turn back toward substation
            autoAngle = 180.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
+           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
            // Drive closer to the substation to center in Signal Zone 3
            autoYpos -= 9.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
-           robot.driveTrainMotorsZero();
+           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         } // signalZoneLocation 3
         else { // signalZoneLocation 2  // GREEN
            // Drive back one tile closer to the substation in Signal Zone 2
            autoYpos -= 19.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80 );
-           robot.driveTrainMotorsZero();
+           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         } // signalZoneLocation 2
 
         // Ensure we complete all lift movement before ending autonomous

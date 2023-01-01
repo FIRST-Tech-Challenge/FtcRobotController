@@ -109,7 +109,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     directory += "/red_not_terminal";
                 }
             }
-            sub1PointA = new Point(212, 89);  // 20x20 pixels on signal sleeve
+            sub1PointA = new Point(212, 89);  // 20x39 pixel box for signal sleeve
             sub1PointB = new Point(231, 127);
 
             // Create the directory structure to store the autonomous image used to start auto.
