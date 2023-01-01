@@ -27,17 +27,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import java.util.List;
+
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.util.List;
 
 /**
  * This 2022-2023 OpMode illustrates the basics of using the TensorFlow Object Detection API to
@@ -49,9 +51,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
-@Disabled
-public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
+@TeleOp(name = "og", group = "Concept")
+public class PowerPlaySleeveWithWebcam extends LinearOpMode {
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -65,9 +66,9 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
 
     private static final String[] LABELS = {
-            "1 Bolt",
-            "2 Bulb",
-            "3 Panel"
+            "Bolt",
+            "Bulbs",
+            "Panels"
     };
 
     /*
@@ -76,6 +77,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
      * web site at https://developer.vuforia.com/license-manager.
      *
+     * test
      * Vuforia license keys are always 380 characters long, and look as if they contain mostly
      * random data. As an example, here is a example of a fragment of a valid key:
      *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
@@ -83,7 +85,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "AVXWcGz/////AAABmZfYj2wlVElmo2nUkerrNGhEBBg+g8Gq1KY3/lN0SEBYx7HyMslyrHttOZoGtwRt7db9nfvCiG0TBEp7V/+hojHXCorf1CEvmJWWka9nFfAbOuyl1tU/IwdgHIvSuW6rbJY2UmMWXfjryO3t9nNtRqX004LcE8O2zkKdBTw0xdqq4dr9zeA9gX0uayps7t0TRmiToWRjGUs9tQB3BDmSinXxEnElq+z3SMJGcn5Aj44iEB7uy/wuB8cGCR6GfOpDRYqn/R8wwD757NucR5LXA48rulTdthGIuHoEjud1QzyQOv4BpaODj9Oi0TMuBmBzhFJMwWzyZ4lKVyOCbf3uCRia7Q+HO+LbFbghNIGIIzZC";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -117,7 +119,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(1.8, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
@@ -175,7 +177,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      */
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.75f;
         tfodParameters.isModelTensorFlow2 = true;
