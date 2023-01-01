@@ -45,6 +45,8 @@ public class RightPowerPlaySleeveCone extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
 
+    PIDController pidRotate;
+
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     private static final String[] LABELS = {
             "Bolt",
@@ -97,9 +99,12 @@ public class RightPowerPlaySleeveCone extends LinearOpMode {
         // Set up our telemetry dashboard
         composeTelemetry();  // need to add this method at end of code
 
+        pidRotate = new PIDController(.003, .00003, 0);
+
+
         desiredHeading = getHeading();
 
-        moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading);
+        moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading, pidRotate);
         moveUtils.resetEncoders();
 
         actuatorUtils.initializeActuator(arm, gripper);

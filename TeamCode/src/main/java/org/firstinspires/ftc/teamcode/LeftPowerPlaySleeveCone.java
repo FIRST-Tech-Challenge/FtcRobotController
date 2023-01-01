@@ -41,6 +41,8 @@ public class LeftPowerPlaySleeveCone extends LinearOpMode {
     static final int ACCEL = 75;  // Scaling factor used in accel / decel code.  Was 100!
     public float desiredHeading;
 
+    private PIDController pidRotate;
+
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
@@ -90,6 +92,8 @@ public class LeftPowerPlaySleeveCone extends LinearOpMode {
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        pidRotate = new PIDController(.003, .00003, 0);
+
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
@@ -99,7 +103,7 @@ public class LeftPowerPlaySleeveCone extends LinearOpMode {
 
         desiredHeading = getHeading();
 
-        moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading);
+        moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading, pidRotate);
         moveUtils.resetEncoders();
 
         actuatorUtils.initializeActuator(arm, gripper);

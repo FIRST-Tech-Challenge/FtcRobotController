@@ -2,11 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -21,15 +24,16 @@ public class moveUtils {
     private static CRServo spinner = null;
     private static BNO055IMU imu;
     private static float desiredHeading;
-    private static CRServo spinspinducky = null;
-    private static Servo dumper = null;
-    private static DcMotor armboom = null;
+    private static PIDController pidRotate;
+    private static Orientation lastAngles = new Orientation();
 
     // Things specific to this class
     private static final float TURN_SPEED_HIGH = 1f;
     private static final float TURN_SPEED_LOW = 0.1f; //original = 0.15f
     private static final float TURN_HIGH_ANGLE = 45.0f;
-    private static final float TURN_LOW_ANGLE = 3.0f; //original = 5.0f
+    private static final float TURN_LOW_ANGLE = 5.0f; //changed = 3.0f
+    private static float globalAngle = 0f;
+    private static double rotation;
 
     static final float EncoderTicks = 537.6f;
     static final float WHEEL_DIAMETER_INCHES = 4.0f;
@@ -40,14 +44,14 @@ public class moveUtils {
     static final float STRAFE_MOD = 18f;
     static final float MAX_STRAFE_SPEED = 1.0f;
 
-    public static void initialize(DcMotor LF, DcMotor RF, DcMotor LB, DcMotor RB, BNO055IMU imu, float currHeading) {
+    public static void initialize(DcMotor LF, DcMotor RF, DcMotor LB, DcMotor RB, BNO055IMU imu, float currHeading, PIDController pidRotate) {
         moveUtils.LF = LF;
         moveUtils.RF = RF;
         moveUtils.LB = LB;
         moveUtils.RB = RB;
-        moveUtils.spinner = spinner;
         moveUtils.imu = imu;
         moveUtils.desiredHeading = currHeading;
+
     }
 
     public static void turnCW(float turnDegrees) {
@@ -55,8 +59,8 @@ public class moveUtils {
         if (desiredHeading < -180) {
             desiredHeading += 360;
         }
-        //turnToHeading();
-        errorCorrect();
+        turnToHeading();
+        //errorCorrect();
     }
 
     public static void turnCCW(float turnDegrees) {
@@ -64,11 +68,11 @@ public class moveUtils {
         if (desiredHeading > 180) {
             desiredHeading -= 360;
         }
-        //turnToHeading();
-        errorCorrect();
+        turnToHeading();
+        //errorCorrect();
     }
 
-    public static void errorCorrect() {
+  /*  public static void errorCorrect() {
         boolean isCW = deltaHeading() > 0;
         //float desiredTurnSpeed = TURN_SPEED_LOW;
         if (isCW) {
@@ -77,7 +81,7 @@ public class moveUtils {
                 setAllMotorsTurnPower(TURN_SPEED_LOW);
                 while (deltaHeading() > TURN_LOW_ANGLE) {
 
-                  /*  if(deltaHeading() > 30){
+                  *//*  if(deltaHeading() > 30){
                  //       desiredTurnSpeed += 0.01f;
                         if (desiredTurnSpeed>TURN_SPEED_HIGH){desiredTurnSpeed=TURN_SPEED_HIGH;}
                         setAllMotorsTurnPower(desiredTurnSpeed);
@@ -86,7 +90,7 @@ public class moveUtils {
                         desiredTurnSpeed = TURN_SPEED_LOW;
                         if (desiredTurnSpeed<TURN_SPEED_LOW){desiredTurnSpeed=TURN_SPEED_LOW;}
                         setAllMotorsTurnPower(desiredTurnSpeed);
-                    }*/
+                    }*//*
 
                 }
 
@@ -101,7 +105,7 @@ public class moveUtils {
             }
         }
         resetEncoders();
-    }
+    }*/
 
     public static void turnToHeading() {
         boolean isCW = deltaHeading() > 0;
@@ -190,6 +194,113 @@ public class moveUtils {
         LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
+    private static void resetAngle()
+    {
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        globalAngle = 0;
+    }
+
+    private static double getAngle()
+    {
+        // We experimentally determined the Z axis is the axis we want to use for heading angle.
+        // We have to process the angle because the imu works in euler angles so the Z axis is
+        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles;
+
+        return globalAngle;
+    }
+
+    static void rotate(int degrees, double power) throws InterruptedException {
+        // restart imu angle tracking.
+        resetAngle();
+
+        // if degrees > 359 we cap at 359 with same sign as original degrees.
+        if (Math.abs(degrees) > 359) degrees = (int) Math.copySign(359, degrees);
+
+        // start pid controller. PID controller will monitor the turn angle with respect to the
+        // target angle and reduce power as we approach the target angle. This is to prevent the
+        // robots momentum from overshooting the turn after we turn off the power. The PID controller
+        // reports onTarget() = true when the difference between turn angle and target angle is within
+        // 1% of target (tolerance) which is about 1 degree. This helps prevent overshoot. Overshoot is
+        // dependant on the motor and gearing configuration, starting power, weight of the robot and the
+        // on target tolerance. If the controller overshoots, it will reverse the sign of the output
+        // turning the robot back toward the setpoint value.
+
+        pidRotate.reset();
+        pidRotate.setSetpoint(degrees);
+        pidRotate.setInputRange(0, degrees);
+        pidRotate.setOutputRange(0, power);
+        pidRotate.setTolerance(1);
+        pidRotate.enable();
+
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+
+        // rotate until turn is completed.
+
+        if (degrees < 0)
+        {
+            // On right turn we have to get off zero first.
+            while (getAngle() == 0)
+            {
+                LF.setPower(power);
+                LB.setPower(power);
+                RF.setPower(-power);
+                RB.setPower(-power);
+                sleep(100);
+            }
+
+            do
+            {
+                power = pidRotate.performPID(getAngle()); // power will be - on right turn.
+                LF.setPower(-power);
+                LB.setPower(-power);
+                RF.setPower(power);
+                RB.setPower(power);
+            } while (!pidRotate.onTarget());
+        }
+        else    // left turn.
+            do
+            {
+                power = pidRotate.performPID(getAngle()); // power will be + on left turn.
+                LF.setPower(-power);
+                LB.setPower(-power);
+                RF.setPower(power);
+                RB.setPower(power);
+            } while (!pidRotate.onTarget());
+
+        // turn the motors off.
+        LF.setPower(0);
+        LB.setPower(0);
+        RF.setPower(0);
+        RB.setPower(0);
+
+        rotation = getAngle();
+
+        // wait for rotation to stop.
+        sleep(500);
+
+        // reset angle tracking on new heading.
+        resetAngle();
+    }
+
+
+
 
     public static void goStraight(float totalDistIn, float maxPower, float minPower, int accel) {
         int distance;
