@@ -57,7 +57,7 @@ class Drivetrain(hwMap: HardwareMap) {
         val _powerMulti = if (!gamepad.isAnyJoystickTriggered()) 0.0 else powerMulti
 
         powers.onEach {
-            ((it pow 3) * _powerMulti).withDeadzone<Double>(0.025)
+            ((it pow 14) * _powerMulti).withDeadzone<Double>(0.025)
         }
 
         withEachMotor {
