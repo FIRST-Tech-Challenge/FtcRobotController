@@ -5,7 +5,7 @@ import ftc.rogue.blacksmith.listeners.Listener
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 
 @TeleOp
-class RougeTestingOp : RougeBaseTele() {
+class RogueTestingOp : RogueBaseTele() {
     override fun describeControls(): Unit = with(bot) {
         driver.dpad_up   .onRise(lift::goToHigh)
         driver.dpad_down .onRise(lift::goToZero)

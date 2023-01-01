@@ -9,10 +9,10 @@ public class AutoData {
     // Timing variables
     public static double CLAW_CLOSE_OFFSET = 0.05;
     public static double INTAKE_LIFT_OFFSET = 0.565;
-    public static double INTAKE_DELAY = .58;
+    public static double INTAKE_DELAY = .83;
 
     public static double LOWER_OFFSET = 0.08;
-    public static double DEPOSIT_DELAY = 0.4;
+    public static double DEPOSIT_DELAY = 0.45;
     public static double DEPOSIT_OFFSET = 0.2;
     public static double RETRACT_OFFSET = 0.1;
 
@@ -24,7 +24,6 @@ public class AutoData {
     public static double DEPOSIT_X = 87.97;
     public static double DEPOSIT_Y = -17.29;
     public static double DEPOSIT_ANGLE = 139.94;
-    public static double DEPOSIT_ANGLE_ADJUSTMENT = .0012;
 
     public static int DEPOSIT_DROP_AMOUNT = 800;
 

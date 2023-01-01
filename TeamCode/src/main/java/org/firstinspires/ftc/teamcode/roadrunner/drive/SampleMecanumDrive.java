@@ -42,8 +42,8 @@ import java.util.List;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.25, 0.25, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8.25, 0.25, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1.75;
 
@@ -133,6 +133,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 //        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
+//        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");

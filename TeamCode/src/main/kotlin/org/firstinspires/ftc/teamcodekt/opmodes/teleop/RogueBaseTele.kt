@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
 import org.firstinspires.ftc.teamcodekt.components.chains.RegularDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.ReverseDepositChain
 
-abstract class RougeBaseTele : BlackOp() {
+abstract class RogueBaseTele : BlackOp() {
     protected val driver   by createOnGo<ReforgedGamepad>({ gamepad1 })
     protected val codriver by createOnGo<ReforgedGamepad>({ gamepad2 })
 
@@ -35,7 +35,7 @@ abstract class RougeBaseTele : BlackOp() {
             powerMulti = 1.0
         }
 
-        Scheduler.launchWhenReady(this@RougeBaseTele) {
+        Scheduler.launchWhenReady(this@RogueBaseTele) {
             bot.updateComponents(mTelemetry)
             mTelemetry.update()
         }

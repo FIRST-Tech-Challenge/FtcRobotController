@@ -5,7 +5,7 @@ import ftc.rogue.blacksmith.listeners.Listener
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 
 @TeleOp
-class RougeCompOp : RougeBaseTele() {
+class RogueCompOp : RogueBaseTele() {
     override fun describeControls() {
         describeCodriverControls()
         describeDriverControls()

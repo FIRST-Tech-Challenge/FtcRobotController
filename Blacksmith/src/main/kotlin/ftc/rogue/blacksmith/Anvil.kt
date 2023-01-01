@@ -14,6 +14,7 @@ import ftc.rogue.blacksmith.units.DistanceUnit
 import ftc.rogue.blacksmith.units.TimeUnit
 import ftc.rogue.blacksmith.util.*
 import kotlinx.coroutines.*
+import kotlin.math.PI
 
 /**
  * A WIP component that wraps around the [TrajectorySequenceBuilder] to provide a much cleaner API
@@ -134,6 +135,9 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
             return builder( Anvil(drive, startPose) )
         }
 
+        private lateinit var initialTrajectory: Any
+        private lateinit var initialInstance: Anvil
+
         /**
          * Starts the given Anvil instance asynchronously. This is the entry point for the auto.
          * In doing so, it also sets the [SampleMecanumDrive.poseEstimate] to the [startPose]
@@ -155,8 +159,14 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          * @param builder The [Anvil] instance to run asynchronously
          */
         @JvmStatic
-        fun startAsyncAutoWith(anvil: Anvil) {
-            anvil.setPoseEstimate().run()
+        fun startAutoWith(instance: Anvil) {
+            initialTrajectory = instance.setPoseEstimate().build()
+        }
+
+        @JvmStatic
+        @JvmOverloads
+        fun start(async: Boolean = true) {
+            initialInstance.run(initialTrajectory, async)
         }
 
         /**
@@ -193,6 +203,9 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
             this.angleUnit = angleUnit
             this.timeUnit = timeUnit
         }
+
+        @JvmStatic
+        fun warmup() = WarmupHelper.start(100) // TODO: Test to see if this helps auto times
 
         // Private coroutine scope used for async trajectory creation, dw about it
         @PublishedApi
@@ -267,7 +280,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     // -- Advanced mappings --
 
-    fun waitTime(time: Double) = this.apply {
+    fun waitTime(time: Number) = this.apply {
         builderProxy.waitSeconds(time.toSec)
     }
 
@@ -545,7 +558,8 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     ): Anvil {
         addTemporalMarker {
             if (predicate()) {
-                action().run(async)
+                action().build<Any>()
+                run(builtTrajectory, async)
             }
         }
         return this
@@ -569,22 +583,17 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> build(): T = (builderProxy.build() as T).also { builtTrajectory = it }
 
-    /**
-     * Builds the [Anvil] instance into a [TrajectorySequence], and then runs it asynchronously
-     * with the given [SampleMecanumDrive]
-     */
-    @JvmOverloads
-    fun run(async: Boolean = true) = if (async) {
-        driveProxy.followTrajectorySequenceAsync(builtTrajectory)
-    } else {
-        driveProxy.followTrajectorySequence(builtTrajectory)
-    }
-
     // -- Internal --
 
-    // Just used for the "static" 'startAsyncAutoWith' function
     private fun setPoseEstimate() = this.apply {
         driveProxy.setPoseEstimate(startPose)
+    }
+
+    @PublishedApi
+    internal fun run(trajectory: Any, async: Boolean = true) = if (async) {
+        driveProxy.followTrajectorySequenceAsync(trajectory)
+    } else {
+        driveProxy.followTrajectorySequence(trajectory)
     }
 
     private val Number.toIn get() = distanceUnit.toIn(this.toDouble())
@@ -595,4 +604,35 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     @PublishedApi
     internal fun getEndPose() = builtTrajectory.invokeMethodRethrowing<Pose2d>("end")
+
+    private object WarmupHelper {
+        fun start(numTimes: Int) = repeat(numTimes) {
+            createAndBuildSequence()
+        }
+
+        private val dummyDrive = Any()
+
+        private fun createAndBuildSequence() =
+            formTrajectory(dummyDrive, Pose2d()) {
+                forward(rand())
+                turn(rand())
+                addTemporalMarker(rand()) {
+                }
+                waitTime(rand())
+                inReverse {
+                    splineTo(rand(), rand(), rand())
+                }
+                doTimes(randInt()) {
+                    forward(rand())
+                }
+                lineToLinearHeading(rand(), rand(), rand())
+                splineTo(rand(), rand(), rand())
+                back(rand())
+                setReversed(true)
+            }.build<Any>()
+
+        private fun rand() = Math.random() * 100
+
+        private fun randInt() = (Math.random() * 5).toInt()
+    }
 }
