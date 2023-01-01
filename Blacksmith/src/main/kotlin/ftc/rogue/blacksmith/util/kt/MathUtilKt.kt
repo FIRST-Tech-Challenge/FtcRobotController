@@ -29,7 +29,6 @@ inline fun <reified T : Number> avg(vararg xs: Number) = asNumberType<T> {
     xs.sumOf { it.toDouble() } / xs.size
 }
 
-
 inline fun <reified T : Number> maxMagnitude(vararg xs: Number) = asNumberType<T> {
     xs.maxByOrNull { it.toDouble().absoluteValue } ?: 0.0
 }
@@ -42,7 +41,6 @@ inline fun <reified T : Number> maxMagnitudeAbs(vararg xs: Number) = asNumberTyp
 inline fun <reified T : Number> Number.withDeadzone(deadzone: Number, origin: Number = 0.0) = asNumberType<T> {
     if (abs(this.toDouble() - origin.toDouble()) < abs(deadzone.toDouble())) origin.toDouble() else this.toDouble()
 }
-
 
 @JvmSynthetic
 infix fun Number.pow(exponent: Number) = this.toDouble().pow(exponent.toDouble())
