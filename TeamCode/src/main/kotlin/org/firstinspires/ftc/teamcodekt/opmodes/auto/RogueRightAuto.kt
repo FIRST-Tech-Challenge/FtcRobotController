@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.units.DistanceUnit
@@ -9,7 +10,8 @@ import ftc.rogue.blacksmith.util.kt.toRad
 import org.firstinspires.ftc.teamcode.AutoData.*
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
 
-@Suppress("RemoveRedundantQualifierName")
+@Autonomous
+//@Suppress("RemoveRedundantQualifierName")
 class RogueRightAuto : RogueBaseAuto() {
     private var cycleNumber = 0
     private var signalZone = 0
