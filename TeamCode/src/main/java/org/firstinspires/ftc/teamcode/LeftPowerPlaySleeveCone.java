@@ -212,13 +212,14 @@ public class LeftPowerPlaySleeveCone extends LinearOpMode {
         moveUtils.turnCW(82);
         moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
         moveUtils.turnCCW(82);
-        moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCW(46.5f);
+        moveUtils.goStraight(13,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCW(46f);
         actuatorUtils.armPole(3);
-        moveUtils.goStraight(4.1f,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.goStraight(2.5f,MIN_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
         moveUtils.goStraight(-5,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCW(40);
+        moveUtils.turnCW(46);
+        moveUtils.strafeBuddy(6);
 
     }
 
