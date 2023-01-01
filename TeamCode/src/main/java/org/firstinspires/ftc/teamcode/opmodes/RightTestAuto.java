@@ -25,13 +25,18 @@ public class RightTestAuto extends LinearOpMode {
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end(), true)
-                .splineTo(cmVector(158.7, -30.75), rad(180))
+                .splineTo(cmVector(87.25, -50), rad(270))
+                .build();
+
+        Trajectory traj3 = drive.trajectoryBuilder(traj2.end(), false)
+                .splineTo(cmVector(87.25, -22), rad(45))
                 .build();
 
         waitForStart();
 
         drive.followTrajectory(traj1);
         drive.followTrajectory(traj2);
+        drive.followTrajectory(traj3);
     }
 
 
