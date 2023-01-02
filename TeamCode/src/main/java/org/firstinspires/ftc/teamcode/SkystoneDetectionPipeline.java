@@ -54,7 +54,7 @@ class SkystoneDetectionPipeline extends OpenCvPipeline
          * tapped, please see {@link PipelineStageSwitchingExample}
          */
         //TODO: change the threshold values for your purposes
-        Mat mask = threshold(input, new Scalar(0, 130, 200), new Scalar(179, 160, 255));
+        Mat mask = threshold(input, new Scalar(20, 70, 80), new Scalar(32, 255, 255));
         Mat kernel = new Mat(new Size(7, 7), CvType.CV_8UC1);
         Imgproc.morphologyEx(mask, mask, Imgproc.MORPH_OPEN, kernel);
         List<MatOfPoint> contours = getContours(mask);

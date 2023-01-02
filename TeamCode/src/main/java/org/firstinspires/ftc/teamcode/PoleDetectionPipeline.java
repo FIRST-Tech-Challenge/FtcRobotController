@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -73,8 +77,58 @@ public class PoleDetectionPipeline extends OpenCvPipeline {
         //contours, apply post processing to information
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
+
         //find contours, input scaledThresh because it has hard edges
         Imgproc.findContours(scaledThresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
+        Rect[] boundRect = new Rect[contours.size()];
+
+        Point[] centers = new Point[contours.size()];
+        float[][] radius = new float[contours.size()][1];
+
+        for (int i = 0; i < contours.size(); i++) {
+            contoursPoly[i] = new MatOfPoint2f();
+            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
+            boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
+            Imgproc.minEnclosingCircle(contoursPoly[i], centers[i], radius[i]);
+        }
+
+        Mat drawing = Mat.zeros(edges.size(), CvType.CV_8UC3);
+
+        List<MatOfPoint> contoursPolyList = new ArrayList<>(contoursPoly.length);
+        for (MatOfPoint2f poly : contoursPoly) {
+            contoursPolyList.add(new MatOfPoint(poly.toArray()));
+        }
+        Rect biggestRect = new Rect();
+        //Point center = new Point();
+
+        for (int i = 0; i < boundRect.length; i++) {
+            if (boundRect[i].area() > biggestRect.area()) {
+                biggestRect = boundRect[i];
+                //center = centers[i];
+            }
+
+        }
+
+        for (int i = 0; i < contours.size(); i++)  {
+            Scalar color = new Scalar(25, 255, 255);
+            //Imgproc.drawContours(drawing, contoursPolyList, i, color);
+            Imgproc.rectangle(drawing, biggestRect.tl(), biggestRect.br(), color, 5);
+            //Imgproc.circle(drawing, center, 2, color, 2);
+        }
+
+        Point center = new Point((biggestRect.tl().x + biggestRect.br().x) / 2, (biggestRect.tl().y + biggestRect.br().y) / 2);
+
+        Scalar color = new Scalar(25, 255, 255);
+        Imgproc.circle(drawing, center, 2, color, 2);
+
+        /*MatOfPoint selected = contours.get(0);
+        for (MatOfPoint contour : contours){
+            if (Imgproc.contourArea(contour) > Imgproc.contourArea(selected)){
+                selected = contour;
+            }
+        }*/
 
         //list of frames to reduce inconsistency, not too many so that it is still real-time, change the number from 5 if you want
         if (frameList.size() > 5) {
@@ -83,15 +137,18 @@ public class PoleDetectionPipeline extends OpenCvPipeline {
 
 
         //release all the data
-        input.release();
-        scaledThresh.copyTo(input);
+        //input.release();
+        drawing.copyTo(input);
         scaledThresh.release();
         scaledMask.release();
         mat.release();
         masked.release();
         edges.release();
         thresh.release();
+        thresh.release();
         finalMask.release();
+        hierarchy.release();
+        drawing.release();
         //change the return to whatever mat you want
         //for example, if I want to look at the lenient thresh:
         // return thresh;
