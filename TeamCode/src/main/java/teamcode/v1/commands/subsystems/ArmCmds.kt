@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.koawalib.commands.subsystems
 
 import com.asiankoala.koawalib.command.commands.InstantCmd
-import org.firstinspires.ftc.teamcode.koawalib.constants.ArmConstants
+import teamcode.v1.constants.ArmConstants
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
 
 class ArmCmds {
     open class ArmCmd(arm: Arm, pos: Double) : InstantCmd({ arm.setPos(pos) }, arm)

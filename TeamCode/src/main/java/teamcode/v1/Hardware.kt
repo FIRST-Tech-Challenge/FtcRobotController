@@ -8,7 +8,7 @@ import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
-import org.firstinspires.ftc.teamcode.koawalib.constants.ArmConstants
+import teamcode.v1.constants.ArmConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants

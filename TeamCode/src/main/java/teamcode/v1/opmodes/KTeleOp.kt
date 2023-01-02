@@ -11,7 +11,7 @@ import teamcode.v1.Robot
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.HomeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
-import org.firstinspires.ftc.teamcode.koawalib.constants.ArmConstants
+import teamcode.v1.constants.ArmConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
 
 @TeleOp

@@ -7,22 +7,25 @@ import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.EncoderFactory
 import com.asiankoala.koawalib.hardware.motor.KEncoder
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
+import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.math.Pose
+import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
 import teamcode.mule.constants.MuleArmConstants
 
 class MuleHardware {
     val armMotor = MotorFactory("Arm")
-            .reverse
             .float
             .createEncoder(EncoderFactory(MuleArmConstants.ticksPerUnit)
-                    .reverse
                     .zero(MuleArmConstants.homePos)
             )
-            .withPositionControl(
+            .withMotionProfileControl(
                     PIDGains(MuleArmConstants.kP, MuleArmConstants.kI, MuleArmConstants.kD),
                     FFGains(kS = MuleArmConstants.kS, kV = MuleArmConstants.kV, kA = MuleArmConstants.kA, kCos = MuleArmConstants.kCos),
+                    MotionConstraints(MuleArmConstants.maxVel, MuleArmConstants.maxAccel),
                     allowedPositionError = MuleArmConstants.allowedPositionError
             )
             .build()
 
+        val clawServo = KServo("Claw")
+                .startAt(ClawConstants.openPos)
 }

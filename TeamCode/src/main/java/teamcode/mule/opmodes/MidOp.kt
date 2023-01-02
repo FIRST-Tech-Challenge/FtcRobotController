@@ -11,13 +11,10 @@ open class MidOp : OpMode() {
 
     private fun armControl() {
         if(gamepad1.left_bumper) {
-            arm.power = 0.9
+            arm.power = 1.0
         }
-        else {
-            arm.power = 0.0
-        }
-        if(gamepad1.right_bumper) {
-            arm.power = -0.9
+        else if (gamepad1.right_bumper) {
+            arm.power = -1.0
         }
         else {
             arm.power = 0.0
@@ -28,8 +25,8 @@ open class MidOp : OpMode() {
         arm = hardwareMap.get(DcMotor::class.java, "Arm")
     }
 
-
     override fun loop() {
         armControl()
+        telemetry.addData("arm power", arm.power)
     }
 }
