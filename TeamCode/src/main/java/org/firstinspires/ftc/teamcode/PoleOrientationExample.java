@@ -257,6 +257,22 @@ public class PoleOrientationExample extends LinearOpMode
         robot.stopMotion();
     } // alignToPole
 
+    /**
+     * Ensure angle is in the range of -180 to +180 deg (-PI to +PI)
+     * This function won't have to be copied, it is part of auto base.
+     * @param angleDegrees
+     * @return
+     */
+    public double AngleWrapDegrees( double angleDegrees ){
+        while( angleDegrees < -180 ) {
+            angleDegrees += 360.0;
+        }
+        while( angleDegrees > 180 ){
+            angleDegrees -= 360.0;
+        }
+        return angleDegrees;
+    } // AngleWrapDegrees
+
     /*---------------------------------------------------------------------------------*/
     /*  AUTO: Drive at specified angle and power while turning at specified power.     */
     /*---------------------------------------------------------------------------------*/
@@ -269,9 +285,9 @@ public class PoleOrientationExample extends LinearOpMode
             turretAngle = AngleWrapDegrees( turretAngle + 180.0 );
         }
         // This corrects for our 0 being straight forward and left being negative
-        yTranslation = drivePower * Math.sin(toRadians(turretAngle + 90.0));
+        yTranslation = drivePower * Math.cos(toRadians(turretAngle));
         // Is this negative already accounted for in the below math?
-        xTranslation = -drivePower * Math.cos(toRadians(turretAngle + 90.0));
+        xTranslation = drivePower * Math.sin(toRadians(turretAngle));
 
         frontRight = yTranslation - xTranslation + turnPower;
         frontLeft  = yTranslation + xTranslation - turnPower;
