@@ -46,6 +46,8 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
     public DcMotorEx leftBackDrive;
     public DcMotorEx rightBackDrive;
 
+    BNO055IMU imu;
+
     public ElapsedTime runtime = new ElapsedTime();
 
     public double off = 0.0;
@@ -55,10 +57,10 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
     public boolean hasMoved = false;
 
     //Wheel constants
-    public double maxVelocity = 340 * 537.6; //for AndyMark NeveRest 20 motor when using .setVelocity()
+    public double ticksPerRotation = 537.6; //for AndyMark NeveRest 20
+    public double maxVelocity = 340 * ticksPerRotation;
     public double rpm = 340;
     public double radius = 10; //cm
-    public double oneFootTime = oneFootCm/(getVelo(radius,rpm)*.75); //using a velo of maxVelocity * .75; change the distance unit depending on radius units
 
     private static final String VUFORIA_KEY =
             "AclDUAH/////AAABmYzSWAdyDktyn7LeKaYpXPkeHMDuWfVt+ZWKtbsATYUHu+lKEe6ywQGLZLm5MRmxfQ4UQRSZ8hR7Hx7cwiYcj7DBcqr2CcI/KXvXFnaoaSHonQcH5UjgGwygyR0DRMvRI9Mm+MnWqdwgQuS4eNYgz/vAuNpeGRJmwimGZkb9kb9Uai+RaH2V33PvH4TZepOg//RReZrL33oLxaLEchTHATEKR1xj6NLzHuZVuOTnIaMwPHRrkkK/cyMqaog/be+k2uxxQ2Lxtb2Yb4nHt4n8Rs7ajT/dUSsP/6pZdWmVs7BmIafbHlLFlS/6+1rDbSfOHqEyHFoLDq/hselgdVG2pzEzPcr3ntMwoIAPjiA799i5";
@@ -136,19 +138,19 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         telemetry.addData("Detected:",signal);
         double timeAdjustment = getDistance(radius,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
         if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
-            setVelo(true,.75,2);
+            movePercentOfFoot(true,1.5);
             turnNinety(false);
-            setVelo(true,.75,2);
+            movePercentOfFoot(true,1.5);
         }
 
         if(signal.equals("2 Bulb")){ // go to location 2 (return to start and forward)
-            setVelo(true,.75,2);
+            movePercentOfFoot(true,1.5);
         }
 
         if(signal.equals("3 Panel")){ // go to location 3 (right and forward)
-            setVelo(true,.75,2);
+            movePercentOfFoot(true,1.5);
             turnNinety(true);
-            setVelo(true,.75,2);
+            movePercentOfFoot(true,1.5);
         }
     }
 
@@ -158,11 +160,19 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         leftBackDrive  = hardwareMap.get(DcMotorEx.class, "left_back_drive");
         rightDrive = hardwareMap.get(DcMotorEx.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotorEx.class, "right_back_drive");
-        // Makes all motors go forward, if they don't, switch this stuff
+
+        // Makes all motors go forward, if they don't, switch the direction
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        // Technically this is the default, however specifying it is clearer
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        // Without this, data retrieving from the IMU throws an exception
+        imu.initialize(parameters);
     }
 
 
@@ -233,19 +243,12 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
 
     public void turnNinety(boolean CW){
         // Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
-        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        // Technically this is the default, however specifying it is clearer
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        // Without this, data retrieving from the IMU throws an exception
-        imu.initialize(parameters);
-
-        double originalAngle = -imu.getAngularOrientation().firstAngle + 1.80;
+        double originalAngle = -imu.getAngularOrientation().firstAngle;
 
         double time = .8;
         runtime.reset();
 
-        if(CW){
+        /*if(CW){
             while(opModeIsActive() && runtime.seconds() < time){
                 leftVelo(.75);
                 rightVelo(-.75);
@@ -258,66 +261,63 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         }
         if(time >= runtime.seconds()){
             motorsOff();
-        }
+        }*/
 
-        /*if(CW){
+        if(CW) {
             //left = +; right = -
-            while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + 1.80 > originalAngle - .9) {
-                leftVelo(.75);
-                rightVelo(-.75);
+            if(originalAngle - .9 < 0) {
+                while (opModeIsActive() && (-imu.getAngularOrientation().firstAngle < originalAngle + .05 || -imu.getAngularOrientation().firstAngle > originalAngle - .9 + 3.6)) {
+                    leftVelo(.75);
+                    rightVelo(-.75);
+                }
+            }else{
+                while (opModeIsActive() && -imu.getAngularOrientation().firstAngle > originalAngle - .9 && -imu.getAngularOrientation().firstAngle < originalAngle + .05) {
+                    leftVelo(.75);
+                    rightVelo(-.75);
+                }
             }
         }else{
             //left = -; right = +
-            while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + 1.80 < originalAngle + .9) {
-                leftVelo(-.75);
-                rightVelo(.75);
+            if(originalAngle + .9 > 3.6) {
+                while (opModeIsActive() && (-imu.getAngularOrientation().firstAngle > originalAngle - .05 || -imu.getAngularOrientation().firstAngle < originalAngle + .9 - 3.6)) {
+                    leftVelo(-.75);
+                    rightVelo(.75);
+                }
+            }else{
+                while (opModeIsActive() && -imu.getAngularOrientation().firstAngle < originalAngle + .9 && -imu.getAngularOrientation().firstAngle > originalAngle - .05) {
+                    leftVelo(-.75);
+                    rightVelo(.75);
+                }
             }
         }
-        motorsOff();*/
+        motorsOff();
     }
 
-    public void turnOneEighty(){
-        turnNinety(true);
-        turnNinety(true);
-    }
-
-    public void moveOneFoot(boolean forward){
+    public void movePercentOfFoot(boolean forward, double percentOfFoot){
         //using motor encoders
-        double oneRotationDistance = 10 * Math.PI; // In cm
-        double ticksPerRotation = 537.6;
+        double oneRotationDistance = radius * Math.PI; // In cm
 
         double rotationAmount = oneFootCm / oneRotationDistance;
-        int totalTicks = (int) (rotationAmount * ticksPerRotation);
+        double totalTicks = rotationAmount * ticksPerRotation * percentOfFoot * 2; // *2 is to account for gear ratio
 
         resetEncoders();
 
         if(forward){
-            encoderTarget(totalTicks);
+            motorsOn(.75);
+            while(opModeIsActive() && leftDrive.getCurrentPosition() < totalTicks){
+                telemetry.addData("Encoder Value:", leftDrive.getCurrentPosition());
+                telemetry.update();
+            }
         }else{
-            encoderTarget(-totalTicks);
-        }
-        leftDrive.setPower(.5);
-        leftBackDrive.setPower(.5);
-        rightDrive.setPower(.5);
-        rightBackDrive.setPower(.5);
-        while(opModeIsActive() && leftDrive.getCurrentPosition() > leftDrive.getTargetPosition()){
-            telemetry.addData("Left encoder", leftDrive.getCurrentPosition() + "  busy=" + leftDrive.isBusy());
-            telemetry.addData("Right encoder", rightDrive.getCurrentPosition() + "  busy=" + rightDrive.isBusy());
-            telemetry.update();
-            idle();
+            totalTicks = -totalTicks;
+            motorsOn(-.75);
+            while(opModeIsActive() && leftDrive.getCurrentPosition() > totalTicks){
+                telemetry.addData("Encoder Value:", leftDrive.getCurrentPosition());
+                telemetry.update();
+            }
         }
         motorsOff();
         resetEncoders();
-    }
-
-    public void moveTwoFeet(boolean forward){
-        if(forward){
-            moveOneFoot(true);
-            moveOneFoot(true);
-        }else{
-            moveOneFoot(false);
-            moveOneFoot(false);
-        }
     }
 
     public void leftVelo(double maxPercent){ //sets power for left wheels
@@ -357,6 +357,13 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         leftBackDrive.setPower(0);
         rightDrive.setPower(0);
         rightBackDrive.setPower(0);
+    }
+
+    public void motorsOn(double powerPercent){
+        leftDrive.setPower(powerPercent);
+        leftBackDrive.setPower(powerPercent);
+        rightDrive.setPower(powerPercent);
+        rightBackDrive.setPower(powerPercent);
     }
 
     public void resetEncoders() { // Reset all encoder positions
