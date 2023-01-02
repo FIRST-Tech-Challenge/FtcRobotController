@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraint;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.DualNum;
@@ -12,17 +16,13 @@ import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
-import com.acmerobotics.roadrunner.Profiles;
 import com.acmerobotics.roadrunner.RamseteController;
-import com.acmerobotics.roadrunner.Rotation2d;
-import com.acmerobotics.roadrunner.Rotation2dDual;
-import com.acmerobotics.roadrunner.SafeTrajectoryBuilder;
 import com.acmerobotics.roadrunner.TankKinematics;
 import com.acmerobotics.roadrunner.Time;
-import com.acmerobotics.roadrunner.TimeProfile;
 import com.acmerobotics.roadrunner.TimeTrajectory;
-import com.acmerobotics.roadrunner.Trajectory;
-import com.acmerobotics.roadrunner.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.TimeTurn;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Twist2d;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Twist2dIncrDual;
@@ -81,6 +81,8 @@ public final class TankDrive {
 
     public final MotorFeedforward feedforward = new MotorFeedforward(kS, kV, kA);
 
+    public final TurnConstraints defaultTurnConstraints = new TurnConstraints(
+            MAX_ANG_VEL, -MAX_ANG_ACCEL, MAX_ANG_ACCEL);
     public final VelConstraint defaultVelConstraint =
             new MinVelConstraint(Arrays.asList(
                     kinematics.new WheelVelConstraint(MAX_WHEEL_VEL),
@@ -171,7 +173,7 @@ public final class TankDrive {
 
     public TankDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
-        
+
         LynxFirmwareVersion.throwIfAnyModulesBelowVersion(hardwareMap,
                 new LynxFirmwareVersion(1, 8, 2));
 
@@ -211,16 +213,13 @@ public final class TankDrive {
     }
 
     public final class FollowTrajectoryAction implements Action {
-        public final Trajectory trajectory;
-        private TimeTrajectory timeTrajectory;
-        private double beginTs;
+        public final TimeTrajectory timeTrajectory;
+        private double beginTs = -1;
 
-        private boolean active;
         private final double[] xPoints, yPoints;
 
-        public FollowTrajectoryAction(Trajectory t) {
-            this.trajectory = t;
-            timeTrajectory = new TimeTrajectory(t);
+        public FollowTrajectoryAction(TimeTrajectory t) {
+            timeTrajectory = t;
 
             List<Double> disps = com.acmerobotics.roadrunner.Math.range(
                     0, t.path.length(),
@@ -235,15 +234,15 @@ public final class TankDrive {
         }
 
         @Override
-        public void init() {
-            beginTs = clock();
+        public boolean run(@NonNull TelemetryPacket p) {
+            double t;
+            if (beginTs < 0) {
+                beginTs = Actions.now();
+                t = 0;
+            } else {
+                t = Actions.now() - beginTs;
+            }
 
-            active = true;
-        }
-
-        @Override
-        public boolean loop(TelemetryPacket p) {
-            double t = clock() - beginTs;
             if (t >= timeTrajectory.duration) {
                 for (DcMotorEx m : leftMotors) {
                     m.setPower(0);
@@ -251,8 +250,6 @@ public final class TankDrive {
                 for (DcMotorEx m : rightMotors) {
                     m.setPower(0);
                 }
-
-                active = false;
 
                 return false;
             }
@@ -294,50 +291,41 @@ public final class TankDrive {
             c.setStroke("#3F51B5");
             drawRobot(c, pose);
 
+            c.setStroke("#4CAF50FF");
+            c.setStrokeWidth(1);
+            c.strokePolyline(xPoints, yPoints);
+
             return true;
         }
 
-        public void cancel() {
-            double t = clock() - beginTs;
-            double s = timeTrajectory.profile.get(t).value();
-            beginTs += t;
-            timeTrajectory = new TimeTrajectory(trajectory.cancel(s));
-        }
-
         @Override
-        public void draw(Canvas c) {
+        public void preview(Canvas c) {
+            c.setStroke("#4CAF507A");
             c.setStrokeWidth(1);
-            c.setStroke(active ? "#4CAF50FF" : "#4CAF507A");
             c.strokePolyline(xPoints, yPoints);
         }
     }
 
     public final class TurnAction implements Action {
-        private final Pose2d beginPose;
+        private final TimeTurn turn;
 
-        private final TimeProfile profile;
-        private double beginTs;
-        private final boolean reversed;
+        private double beginTs = -1;
 
-        private boolean active;
-
-        public TurnAction(Pose2d beginPose, double angle) {
-            this.beginPose = beginPose;
-            profile = new TimeProfile(Profiles.constantProfile(Math.abs(angle), 0, MAX_ANG_VEL, -MAX_ANG_ACCEL, MAX_ANG_ACCEL).baseProfile);
-            reversed = angle < 0;
+        public TurnAction(TimeTurn turn) {
+            this.turn = turn;
         }
 
         @Override
-        public void init() {
-            beginTs = clock();
+        public boolean run(@NonNull TelemetryPacket p) {
+            double t;
+            if (beginTs < 0) {
+                beginTs = Actions.now();
+                t = 0;
+            } else {
+                t = Actions.now() - beginTs;
+            }
 
-            active = true;
-        }
-
-        @Override
-        public boolean loop(TelemetryPacket p) {
-            double t = clock() - beginTs;
-            if (t >= profile.duration) {
+            if (t >= turn.duration) {
                 for (DcMotorEx m : leftMotors) {
                     m.setPower(0);
                 }
@@ -345,24 +333,18 @@ public final class TankDrive {
                     m.setPower(0);
                 }
 
-                active = false;
-
                 return false;
             }
 
-            DualNum<Time> x = profile.get(t);
-            if (reversed) {
-                x = x.unaryMinus();
-            }
+            Pose2dDual<Time> txWorldTarget = turn.get(t);
 
             Twist2d robotVelRobot = updatePoseEstimateAndGetActualVel();
 
-            Rotation2dDual<Time> target = Rotation2dDual.<Time>constant(beginPose.rot, 3).plus(x);
             Twist2dDual<Time> command = new Twist2dDual<>(
                     Vector2dDual.constant(new Vector2d(0, 0), 3),
-                    target.velocity().plus(
-                            TURN_GAIN * pose.rot.minus(target.value()) +
-                            TURN_VEL_GAIN * (robotVelRobot.rotVel - target.velocity().value())
+                    txWorldTarget.rot.velocity().plus(
+                            TURN_GAIN * pose.rot.minus(txWorldTarget.rot.value()) +
+                            TURN_VEL_GAIN * (robotVelRobot.rotVel - txWorldTarget.rot.velocity().value())
                     )
             );
 
@@ -379,18 +361,21 @@ public final class TankDrive {
             drawPoseHistory(c);
 
             c.setStroke("#4CAF50");
-            drawRobot(c, new Pose2d(beginPose.trans, beginPose.rot.plus(x.value())));
+            drawRobot(c, txWorldTarget.value());
 
             c.setStroke("#3F51B5");
             drawRobot(c, pose);
+
+            c.setStroke("#7C4DFFFF");
+            c.fillCircle(turn.beginPose.trans.x, turn.beginPose.trans.y, 2);
 
             return true;
         }
 
         @Override
-        public void draw(Canvas c) {
-            c.setFill(active ? "#7C4DFFFF" : "#7C4DFF7A");
-            c.fillCircle(beginPose.trans.x, beginPose.trans.y, 2);
+        public void preview(Canvas c) {
+            c.setStroke("#7C4DFF7A");
+            c.fillCircle(turn.beginPose.trans.x, turn.beginPose.trans.y, 2);
         }
     }
 
@@ -435,73 +420,14 @@ public final class TankDrive {
         c.strokeLine(p1.x, p1.y, p2.x, p2.y);
     }
 
-    public TurnAction turn(Pose2d beginPose, double angle) {
-        return new TurnAction(beginPose, angle);
-    }
-    public TurnAction turnTo(Pose2d beginPose, Rotation2d rot) {
-        return new TurnAction(beginPose, rot.minus(beginPose.rot));
-    }
-    public TurnAction turnTo(Pose2d beginPose, double rot) {
-        return turnTo(beginPose, Rotation2d.exp(rot));
-    }
-
-    public SafeTrajectoryBuilder trajectoryBuilder(Pose2d beginPose, Rotation2d beginTangent, TrajectoryBuilder.PoseMap poseMap) {
-        return new SafeTrajectoryBuilder(
-                beginPose, beginTangent, 1e-6,
-                0.0, defaultVelConstraint, defaultAccelConstraint, 0.25, poseMap);
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Pose2d beginPose, double beginTangent, TrajectoryBuilder.PoseMap poseMap) {
-        return trajectoryBuilder(beginPose, Rotation2d.exp(beginTangent), poseMap);
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Pose2d beginPose, boolean reversed, TrajectoryBuilder.PoseMap poseMap) {
-        return trajectoryBuilder(beginPose, beginPose.rot.plus(reversed ? Math.PI : 0), poseMap);
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Pose2d beginPose, TrajectoryBuilder.PoseMap poseMap) {
-        return trajectoryBuilder(beginPose, false, poseMap);
-    }
-
-    public SafeTrajectoryBuilder trajectoryBuilder(Pose2d beginPose, Rotation2d beginTangent) {
-        return new SafeTrajectoryBuilder(
-                beginPose, beginTangent, 1e-6,
-                0.0, defaultVelConstraint, defaultAccelConstraint, 0.25);
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Pose2d beginPose, double beginTangent) {
-        return trajectoryBuilder(beginPose, Rotation2d.exp(beginTangent));
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Pose2d beginPose, boolean reversed) {
-        return trajectoryBuilder(beginPose, beginPose.rot.plus(reversed ? Math.PI : 0));
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Pose2d beginPose) {
-        return trajectoryBuilder(beginPose, false);
-    }
-
-    public SafeTrajectoryBuilder trajectoryBuilder(Trajectory traj, Rotation2d beginTangent, TrajectoryBuilder.PoseMap poseMap) {
-        return trajectoryBuilder(traj.path.end(1).value(), beginTangent, poseMap);
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Trajectory traj, double beginTangent, TrajectoryBuilder.PoseMap poseMap) {
-        return trajectoryBuilder(traj.path.end(1).value(), beginTangent, poseMap);
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Trajectory traj, boolean reversed, TrajectoryBuilder.PoseMap poseMap) {
-        return trajectoryBuilder(traj.path.end(1).value(), reversed, poseMap);
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Trajectory traj, TrajectoryBuilder.PoseMap poseMap) {
-        return trajectoryBuilder(traj.path.end(1).value(), poseMap);
-    }
-
-    public SafeTrajectoryBuilder trajectoryBuilder(Trajectory traj, Rotation2d beginTangent) {
-        return trajectoryBuilder(traj.path.end(1).value(), beginTangent);
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Trajectory traj, double beginTangent) {
-        return trajectoryBuilder(traj.path.end(1).value(), beginTangent);
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Trajectory traj, boolean reversed) {
-        return trajectoryBuilder(traj.path.end(1).value(), reversed);
-    }
-    public SafeTrajectoryBuilder trajectoryBuilder(Trajectory traj) {
-        return trajectoryBuilder(traj.path.end(1).value());
-    }
-
-    public TankDrive.FollowTrajectoryAction followTrajectory(Trajectory trajectory) {
-        return new TankDrive.FollowTrajectoryAction(trajectory);
+    public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
+        return new TrajectoryActionBuilder(
+                TurnAction::new,
+                FollowTrajectoryAction::new,
+                beginPose, 1e-6,
+                defaultTurnConstraints,
+                defaultVelConstraint, defaultAccelConstraint,
+                0.25
+        );
     }
 }
