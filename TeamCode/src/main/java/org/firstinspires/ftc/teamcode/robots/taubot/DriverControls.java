@@ -13,6 +13,8 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.vision
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.notJoystickDeadZone;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProviders;
@@ -48,7 +50,7 @@ public class DriverControls {
     void joystickDrive() {
 
         if(gamepad1.dpad_up){
-            robot.crane.goHome();
+            robot.crane.articulate(Crane.Articulation.home);
         }
 
         if(stickyGamepad1.left_bumper){
@@ -66,6 +68,8 @@ public class DriverControls {
 
         if(stickyGamepad1.b){
             robot.crane.dropSequence();
+            robot.field.incTarget();
+            robot.crane.updateScoringPattern();
         }
 
         if(stickyGamepad1.x){

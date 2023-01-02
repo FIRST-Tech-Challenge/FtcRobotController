@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.withinError;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.withinErrorPercent;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
@@ -192,32 +194,32 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 1:
-                if(startingPosition.equals( Constants.Position.START_LEFT)){
-                    if(driveTrain.turnUntilDegrees( 90)){
+                if (startingPosition.equals(Constants.Position.START_LEFT)) {
+                    if (driveTrain.turnUntilDegrees(90)) {
                         autonIndex++;
                         turnUntilDegreesDone = true;
-                        autonTime = futureTime(0.3);
+                        autonTime = futureTime(3);
                     }
-                }else{
-                    if(driveTrain.turnUntilDegrees(-90)){
+                } else {
+                    if (driveTrain.turnUntilDegrees(-90)) {
                         autonIndex++;
                         turnUntilDegreesDone = true;
-                        autonTime = futureTime(2);
+                        autonTime = futureTime(3);
                     }
                 }
                 break;
             case 2:
                 crane.driverNotDriving();
                 if(startingPosition.equals( Constants.Position.START_LEFT)) {
-                    crane.setCraneTarget(3*Field.INCHES_PER_GRID,Field.INCHES_PER_GRID,36);
-                    if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
+                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID,Field.INCHES_PER_GRID,36);
+                    if (System.nanoTime() >= autonTime && withinErrorPercent(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
                         crane.setGripper(false);
                         autonTime = futureTime(0.3);
                         autonIndex++;
                     }
                 }else{
-                    crane.setCraneTarget(3*Field.INCHES_PER_GRID,-Field.INCHES_PER_GRID,36);
-                    if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
+                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID,-Field.INCHES_PER_GRID,36);
+                    if (System.nanoTime() >= autonTime && withinErrorPercent(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinErrorPercent(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
                         crane.setGripper(false);
                         autonTime = futureTime(0.3);
                         autonIndex++;
@@ -226,8 +228,8 @@ public class Robot implements Subsystem {
                 break;
             case 3:
                 if(System.nanoTime() >= autonTime) {
-                    crane.setCraneTarget(turret.getTurretPosition().getX()+1,turret.getTurretPosition().getY(),22);
-                    if(withinError(crane.getExtendMeters(),crane.getExtenderTargetPos(),0.02) && withinError(crane.getShoulderAngle(),crane.getShoulderTargetAngle(),0.07)){
+                    crane.goToFieldCoordinate(turret.getTurretPosition().getX()+1,turret.getTurretPosition().getY(),26);
+                    if(withinErrorPercent(crane.getExtendMeters(),crane.getExtenderTargetPos(),0.02) && withinErrorPercent(crane.getShoulderAngle(),crane.getShoulderTargetAngle(),0.07)){
                         autonIndex++;
                     }
                 }
@@ -258,10 +260,6 @@ public class Robot implements Subsystem {
                 return false;
         }
         return false;
-    }
-
-    boolean withinError(double value, double target, double percent){
-        return (value >= target*(1-percent) && value <= target*(1+percent));
     }
 
     //----------------------------------------------------------------------------------------------
