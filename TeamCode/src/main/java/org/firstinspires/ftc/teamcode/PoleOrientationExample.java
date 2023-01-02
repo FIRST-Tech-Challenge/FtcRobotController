@@ -214,9 +214,9 @@ public class PoleOrientationExample extends LinearOpMode
                 // Maximum number of pixels off would be half of 320, so 160.
                 // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
                 // go 1.0 to 0.08 from 24 degrees to 0.
-                turnPower = theLocalPole.centralOffset > 0 ?
-                        theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET :
-                        theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET;
+                turnPower = (theLocalPole.centralOffset > 0)?
+                        (theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET) :
+                        (theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET);
             }
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
@@ -225,9 +225,9 @@ public class PoleOrientationExample extends LinearOpMode
                 // Maximum number of pixels off would be in the order of 30ish.
                 // This is a first guess that will have to be expiremented on.
                 // Go 1.0 to 0.08 from 30 pixels to 2.
-                drivePower = theLocalPole.highDistanceOffset > 0 ?
-                        theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET :
-                        theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET;
+                drivePower = (theLocalPole.highDistanceOffset > 0 )?
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
             }
             if(abs(drivePower) < 0.01 && abs(turnPower) < 0.01) {
                 robot.stopMotion();
@@ -266,7 +266,7 @@ public class PoleOrientationExample extends LinearOpMode
 
         if(!turretFacingFront) {
             // Correct the angle for the turret being in the back.
-            turretAngle += 180.0;
+            turretAngle = AngleWrapDegrees( turretAngle + 180.0 );
         }
         // This corrects for our 0 being straight forward and left being negative
         yTranslation = drivePower * Math.sin(toRadians(turretAngle + 90.0));
@@ -280,7 +280,7 @@ public class PoleOrientationExample extends LinearOpMode
 
         // Normalize the values so none exceed +/- 1.0
         maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
-                Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
+                   Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
         if (maxPower > 1.0)
         {
             rearLeft   /= maxPower;

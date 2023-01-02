@@ -821,6 +821,21 @@ public abstract class AutonomousBase extends LinearOpMode {
     }
 
     /**
+     * Ensure angle is in the range of -180 to +180 deg (-PI to +PI)
+     * @param angleDegrees
+     * @return
+     */
+    public double AngleWrapDegrees( double angleDegrees ){
+        while( angleDegrees < -180 ) {
+            angleDegrees += 360.0;
+        }
+        while( angleDegrees > 180 ){
+            angleDegrees -= 360.0;
+        }
+        return angleDegrees;
+    } // AngleWrapDegrees
+    
+    /**
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
      */
     private void globalCoordinatePositionUpdate(){
