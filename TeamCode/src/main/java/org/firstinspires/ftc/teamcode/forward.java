@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import java.security.PrivateKey;
 //import com.qualcomm.robotcore.hardware.;
 
 
@@ -68,28 +66,35 @@ public class forward extends LinearOpMode {
 
             //clamp (NOTE: 0-right limit, left limit will break it)
             if (gamepad2.a) {
-                clamp.setPosition(0.5);
+                clamp.setPosition(0.4);
             } else {
                 clamp.setPosition(1);
             }
-            double lPower;
+                boolean rsPower;
+                boolean lsPower;
+                double lPower;
                 double towerPower;
 
                 //powerMult = 0.8;
                 double deadzone;
                 deadzone = 0.2f;
 
+                rsPower = gamepad1.dpad_right;
+                lsPower = gamepad1.dpad_left;
                 lPower = gamepad1.left_stick_y;
                 double rPower = gamepad1.right_stick_y;
                towerPower = gamepad2.right_trigger;
-              
+
+                lf.setPower(lsPower * 0.9);
+                rf.setPower(rsPower * -0.9);
+                lb.setPower(lsPower * -0.9);
+                rb.setPower(lsPower * 0.9);
 
 
-
-                lf.setPower(lPower * 0.5);
-                rf.setPower(rPower * 0.5);
-                lb.setPower(lPower * 0.5);
-                rb.setPower(rPower * 0.5);
+                lf.setPower(lPower * 0.9);
+                rf.setPower(rPower * 0.9);
+                lb.setPower(lPower * 0.9);
+                rb.setPower(rPower * 0.9);
                 tower1.setPower(towerPower * 1.0);
 
 

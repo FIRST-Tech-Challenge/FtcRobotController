@@ -52,7 +52,7 @@ public class Signal extends LinearOpMode {
             rb.setPower(0);
             clamp.setPosition(0);
 
-            sleep(1000); // Wait for 20 Seconds
+            sleep(20000); // Wait for 20 Seconds
 
 
             tower1.setPower(0);
@@ -62,7 +62,7 @@ public class Signal extends LinearOpMode {
             rb.setPower(-.6 * sidemult);
             clamp.setPosition(.53);
 
-            sleep(20000);
+            sleep(1000);
     }
 }
 }
