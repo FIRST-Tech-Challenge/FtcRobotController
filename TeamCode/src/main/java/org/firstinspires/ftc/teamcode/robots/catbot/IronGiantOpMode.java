@@ -41,7 +41,7 @@ public class IronGiantOpMode extends OpMode {
 //    private boolean forwardDone = false;
 //    private boolean strafeDone = false;
 //    private boolean shouldStrafe = true;
-    private boolean red = true; // team boolean variable
+    private boolean red = false; // team boolean variable
 //    private boolean swivelDone = false;
 //    private boolean shouldSwivel = true;
 //    private boolean motorsReset = false;
@@ -98,8 +98,7 @@ public class IronGiantOpMode extends OpMode {
 //        telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
         robot.motorInit();
-//        motorInit();
-//        visionInit();
+        visionInit();
     }
 
     @Override
