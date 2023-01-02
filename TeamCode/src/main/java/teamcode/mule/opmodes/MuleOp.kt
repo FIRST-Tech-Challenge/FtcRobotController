@@ -7,6 +7,7 @@ import com.asiankoala.koawalib.logger.LoggerConfig
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import teamcode.mule.MuleRobot
+import teamcode.mule.commands.MuleArmCommands
 import teamcode.mule.constants.MuleArmConstants
 
 @TeleOp
@@ -22,7 +23,7 @@ open class MuleOp() : KOpMode(photonEnabled = false) {
 
     private fun scheduleTest() {
         driver.leftBumper.onPress(InstantCmd({robot.arm.setPos(MuleArmConstants.highPos)}, robot.arm))
-        driver.rightBumper.onPress(InstantCmd({robot.arm.setPos(-50.0)}, robot.arm))
+        driver.rightBumper.onPress(MuleArmCommands(robot.arm, MuleArmConstants.homeWaitPos, -50.0))
         driver.a.onPress(ClawCmds.ClawOpenCmd(robot.claw))
         driver.b.onPress(ClawCmds.ClawCloseCmd(robot.claw))
     }

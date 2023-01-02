@@ -7,6 +7,7 @@ object MuleArmConstants {
     @JvmField var ticksPerUnit = 184.0/90.0
     @JvmField var homePos = -69.0
     @JvmField var highPos = 130.0
+    @JvmField var homeWaitPos = -20.0
     @JvmField var kP = 0.02
     @JvmField var kI = 0.0
     @JvmField var kD = 0.002
