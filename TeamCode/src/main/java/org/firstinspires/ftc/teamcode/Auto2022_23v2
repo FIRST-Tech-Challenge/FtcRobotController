@@ -1,20 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import java.util.List;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import java.lang.Math.*;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.util.List;
 
 @Autonomous(name = "Auto 2022", group = "Linear Opmode")
 //@Disabled
@@ -37,15 +37,16 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
             "3 Panel"
     };
 
-    //general constants
-    double oneFootCm = 30.48;
-
-    //drivetrain
     public DcMotorEx leftDrive;
     public DcMotorEx rightDrive;
     public DcMotorEx leftBackDrive;
     public DcMotorEx rightBackDrive;
 
+    public DcMotorEx liftMotor;
+    public Servo servoGrabber1;
+    public Servo servoGrabber2;
+
+    // Sensor built into control hub
     BNO055IMU imu;
 
     public ElapsedTime runtime = new ElapsedTime();
@@ -56,11 +57,24 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
 
     public boolean hasMoved = false;
 
-    //Wheel constants
+    // Servo information
+    static final double MAX_POS     =    .5;
+    static final double MAX_POS2    =    .50;
+    static final double MIN_POS     =     1;
+    static final double MIN_POS2    =     0;
+
+    public double servoDirection = 0;
+    public double position = 1;
+    public double position2 = 0;
+
+    // Wheel constants
     public double ticksPerRotation = 537.6; //for AndyMark NeveRest 20
     public double maxVelocity = 340 * ticksPerRotation;
     public double rpm = 340;
     public double radius = 10; //cm
+
+    // General constants
+    double oneFootCm = 30.48;
 
     private static final String VUFORIA_KEY =
             "AclDUAH/////AAABmYzSWAdyDktyn7LeKaYpXPkeHMDuWfVt+ZWKtbsATYUHu+lKEe6ywQGLZLm5MRmxfQ4UQRSZ8hR7Hx7cwiYcj7DBcqr2CcI/KXvXFnaoaSHonQcH5UjgGwygyR0DRMvRI9Mm+MnWqdwgQuS4eNYgz/vAuNpeGRJmwimGZkb9kb9Uai+RaH2V33PvH4TZepOg//RReZrL33oLxaLEchTHATEKR1xj6NLzHuZVuOTnIaMwPHRrkkK/cyMqaog/be+k2uxxQ2Lxtb2Yb4nHt4n8Rs7ajT/dUSsP/6pZdWmVs7BmIafbHlLFlS/6+1rDbSfOHqEyHFoLDq/hselgdVG2pzEzPcr3ntMwoIAPjiA799i5";
@@ -161,11 +175,20 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         rightDrive = hardwareMap.get(DcMotorEx.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotorEx.class, "right_back_drive");
 
+        liftMotor  = hardwareMap.get(DcMotorEx.class, "lift_motor");
+        servoGrabber1 = hardwareMap.get(Servo.class, "servo_grabber_one");
+        servoGrabber2 = hardwareMap.get(Servo.class, "servo_grabber_two");
+
         // Makes all motors go forward, if they don't, switch the direction
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        liftMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        servoGrabber1.setPosition(position);
+        servoGrabber2.setPosition(position2);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -173,8 +196,9 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         // Without this, data retrieving from the IMU throws an exception
         imu.initialize(parameters);
-    }
 
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Set to 0 just in case
+    }
 
     private void initVuforia() {
         /*
