@@ -1,7 +1,8 @@
-package com.example.meepmeeppathvisualizer;
+package com.example.meepmeeppathvisualizer.PowerPlay;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.example.meepmeeppathvisualizer.MeepMeepPersistence;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
@@ -25,21 +26,24 @@ public class MeepMeepQuadThree {
                 .setStartPose(startPose)
 
                 .setConstraints(
-                        54,
-                        54,
-                        Math.toRadians(63.0254), //MAX_ANG_VEL
-                        Math.toRadians(63.0254), //MAX_ANG_ACCEL
+                        40,
+                        26,
+                        Math.toRadians(388.23830548721475), //MAX_ANG_VEL
+                        Math.toRadians(88.19389954947438), //MAX_ANG_ACCEL
                         14.5
                 )
-
                 .setColorScheme(new ColorSchemeBlueDark())
 
-                .setDimensions(14.6, 15.4)
+                .setDimensions(12.802, 16)
 
                 .followTrajectorySequence(drive -> {
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
 
-                    builder.lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75)));
+                    builder.lineToLinearHeading(new Pose2d(-35, 53, Math.toRadians(90)));
+                    builder.waitSeconds(2);
+                    builder.lineTo(new Vector2d(-35,15));
+                    // Change splineToLinearHeading pose to control distance between bot and junction
+                    builder.splineToLinearHeading(new Pose2d(-32,10.5, Math.toRadians(-47)), (Math.toRadians(-40)));
                     builder.waitSeconds(1);//cone deposit
                     for(int i=1; i <= 4;i++ )
                         cycle(builder);
@@ -65,7 +69,7 @@ public class MeepMeepQuadThree {
     public static void cycle(TrajectorySequenceBuilder builder){
         builder.lineToLinearHeading(new Pose2d(-57,12.3,Math.toRadians(0)));
         builder.waitSeconds(2.5); //This would be replaced with an actual intake function
-        builder.lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75)));
+        builder.lineToLinearHeading(new Pose2d(-32,10.5, Math.toRadians(-47)));
         builder.waitSeconds(1);//Under the impression that using the async PID, the slides will be already be moved up
     }
 
