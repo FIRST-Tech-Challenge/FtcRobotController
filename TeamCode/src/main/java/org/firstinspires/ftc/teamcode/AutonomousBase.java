@@ -745,7 +745,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Compute robot orientation-angle error
         double robot_radian_err = AngleWrapRadians( Math.toRadians(drive_angle) - angle_world );  // radians
         // Determine the proper angle-error tolerance (within this tolerance rotation_power drops to 0%)
-        double angle_tolerance = (driveType == DRIVE_TO)? 0.25 : 1.0;  // degrees 
+        double angle_tolerance = (driveType == DRIVE_TO)? 0.25 : 2.0;  // degrees
         double smallAngleSpeed = 0.09;  // (0.19 .. 0.10) due to min_turn_power
         // Once angle-error is below 20deg, scale-down rotational power based on remaining error, but don't
         // drop below 10% (0.10) until we're inside the angle tolerance (when rotation_power goes to zero).
@@ -797,7 +797,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             sleep(3500);  // so we can read the output above
         } // ODOMETRY_DEBUG
         // Are we within tolerance of our target position/orientation?
-        double xy_tolerance = (driveType == DRIVE_TO)? 0.25 : 0.50; // inches
+        double xy_tolerance = (driveType == DRIVE_TO)? 0.25 : 2.0; // inches
         if( (distanceToPoint <= xy_tolerance) && (Math.abs(robot_radian_err) <= Math.toRadians(angle_tolerance))  )
             return true;
         // NO, WE'RE NOT DONE! Update motor power settings

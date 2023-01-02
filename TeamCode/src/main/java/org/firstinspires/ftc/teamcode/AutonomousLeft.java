@@ -359,7 +359,7 @@ public class AutonomousLeft extends AutonomousBase {
         // 1. Avoid the ground junction in front of the robot (5.5" rightward shift)
         // 2. Turn 90deg  so we don't entrap the beacon cone
         autoYpos=18.0;  autoXpos=5.5;  autoAngle=-90.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_50, TURN_SPEED_60, DRIVE_THRU );
 
         // The grabber finished the tilt down during the 90deg turn movement, so
         // it's safe now to command the lift to raise to scoring position

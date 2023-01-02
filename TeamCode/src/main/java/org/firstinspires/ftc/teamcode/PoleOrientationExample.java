@@ -55,7 +55,7 @@ public class PoleOrientationExample extends LinearOpMode
     HardwareSlimbot robot = new HardwareSlimbot();
     boolean aligning = false;
     boolean ranging = false;
-    boolean turretFacingFront = true;
+    boolean turretFacingFront = false;
     boolean cameraInitialized = false;
     PowerPlaySuperPipeline.AnalyzedPole thePole;
 
@@ -109,7 +109,7 @@ public class PoleOrientationExample extends LinearOpMode
                 pipelineFront = new PowerPlaySuperPipeline(false, true,
                         false, false, 160.0, true, false);
                 webcamFront.setPipeline(pipelineFront);
-                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -207,6 +207,8 @@ public class PoleOrientationExample extends LinearOpMode
         double drivePower;
         theLocalPole = pipelineBack.getDetectedPole();
         while (opModeIsActive() && ((theLocalPole.alignedCount <= 3) || theLocalPole.properDistanceHighCount <= 3)) {
+            robot.readBulkData();
+            robot.turretPosRun();
             if(theLocalPole.aligned) {
                 turnPower = 0.0;
             } else {
@@ -214,9 +216,10 @@ public class PoleOrientationExample extends LinearOpMode
                 // Maximum number of pixels off would be half of 320, so 160.
                 // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
                 // go 1.0 to 0.08 from 24 degrees to 0.
-                turnPower = (theLocalPole.centralOffset > 0)?
-                        (theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET) :
-                        (theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET);
+//                turnPower = (theLocalPole.centralOffset > 0)?
+//                        (theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET) :
+//                        (theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET);
+                turnPower = theLocalPole.centralOffset > 0 ? 0.1 : -0.1;
             }
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
@@ -225,9 +228,11 @@ public class PoleOrientationExample extends LinearOpMode
                 // Maximum number of pixels off would be in the order of 30ish.
                 // This is a first guess that will have to be expiremented on.
                 // Go 1.0 to 0.08 from 30 pixels to 2.
-                drivePower = (theLocalPole.highDistanceOffset > 0 )?
-                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
-                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
+//                drivePower = (theLocalPole.highDistanceOffset > 0 )?
+//                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
+//                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
+//                drivePower = theLocalPole.highDistanceOffset > 0 ? 0.1 : -0.1;
+                drivePower = 0.0;
             }
             if(abs(drivePower) < 0.01 && abs(turnPower) < 0.01) {
                 robot.stopMotion();
@@ -278,7 +283,8 @@ public class PoleOrientationExample extends LinearOpMode
     /*---------------------------------------------------------------------------------*/
     void driveAtTurretAngle(double drivePower, double turnPower) {
         double frontRight, frontLeft, rearRight, rearLeft, maxPower, xTranslation, yTranslation;
-        double turretAngle = robot.turretAngle;
+//        double turretAngle = robot.turretAngle;
+        double turretAngle = 0.0;
 
         if(!turretFacingFront) {
             // Correct the angle for the turret being in the back.
@@ -289,10 +295,10 @@ public class PoleOrientationExample extends LinearOpMode
         // Is this negative already accounted for in the below math?
         xTranslation = drivePower * Math.sin(toRadians(turretAngle));
 
-        frontRight = yTranslation - xTranslation + turnPower;
         frontLeft  = yTranslation + xTranslation - turnPower;
-        rearRight  = yTranslation + xTranslation + turnPower;
+        frontRight = yTranslation - xTranslation + turnPower;
         rearLeft   = yTranslation - xTranslation - turnPower;
+        rearRight  = yTranslation + xTranslation + turnPower;
 
         // Normalize the values so none exceed +/- 1.0
         maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
