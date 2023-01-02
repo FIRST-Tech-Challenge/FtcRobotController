@@ -39,8 +39,6 @@ public class RightTestAuto extends LinearOpMode {
         drive.followTrajectory(traj3);
     }
 
-
-
     private Vector2d cmVector(double x, double y) {
         return new Vector2d(in(x), in(y));
     }

@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.units.DistanceUnit
+import ftc.rogue.blacksmith.util.kt.toIn
+import ftc.rogue.blacksmith.util.kt.toRad
 
-@Autonomous
-class RogueTestAuto : RogueBaseAuto() {
+class AnvilRightTestAuto : RogueBaseAuto() {
     override fun goo() = with(bot) {
         Anvil.setUnits(distanceUnit = DistanceUnit.CM)
 
-        val startPose = Pose2d()
-        val startTraj = traj1(startPose)
+        val startPose = Pose2d(91.toIn(), (-159).toIn(), 90.toRad())
+        val startTraj = preload(startPose)
 
         Anvil.startAutoWith(startTraj)
 
@@ -20,38 +20,32 @@ class RogueTestAuto : RogueBaseAuto() {
 
         Anvil.start()
 
-        Scheduler.launch(this@RogueTestAuto) {
+        Scheduler.launch(this@AnvilRightTestAuto) {
             bot.updateComponents(mTelemetry)
             drive.update()
             mTelemetry.update()
         }
     }
 
-    private fun traj1(startPose: Pose2d): Anvil =
+    private fun preload(startPose: Pose2d): Anvil =
         Anvil.formTrajectory(bot.drive, startPose)
-            .preform(key = 0, ::traj2)
+            .preform(key = 0, ::intakeCycle)
 
-            .forward(10.0)
+            .splineToLinearHeading(87.25, -22.0, 45.0, 10.0)
 
             .thenRunPreformed(key = 0)
 
-    private fun traj2(startPose: Pose2d): Anvil =
+    private fun intakeCycle(startPose: Pose2d): Anvil =
         Anvil.formTrajectory(bot.drive, startPose)
-            .preform(key = 0, ::traj3)
-
-            .forward(10.0)
-
-            .waitTime(3)
+            .preform(key = 0, ::depositCycle)
 
             .inReverse {
-                forward(10.0)
+                splineTo(87.25, -50.0, 270.0)
             }
 
             .thenRunPreformed(key = 0)
 
-    private fun traj3(startPose: Pose2d): Anvil =
+    private fun depositCycle(startPose: Pose2d): Anvil =
         Anvil.formTrajectory(bot.drive, startPose)
-            .doTimes(4) {
-                turn(90.0)
-            }
+            .splineTo(87.25, -22.0, 45.0)
 }

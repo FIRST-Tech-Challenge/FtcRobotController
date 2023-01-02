@@ -8,11 +8,17 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 
-fun Number.toIn(from: DistanceUnit): Double = from.toIn(this.toDouble())
+lateinit var globalDistanceUnit: DistanceUnit
+lateinit var globalAngleUnit: AngleUnit
 
-fun Number.toCm(from: DistanceUnit): Double = from.toIn(this.toDouble()) * 2.54
+@JvmOverloads
+fun Number.toIn(from: DistanceUnit = globalDistanceUnit): Double = from.toIn(this.toDouble())
 
-fun Number.toRad(from: AngleUnit): Double = from.toDeg(this.toDouble()) * PI / 180
+@JvmOverloads
+fun Number.toCm(from: DistanceUnit = globalDistanceUnit): Double = from.toIn(this.toDouble()) * 2.54
+
+@JvmOverloads
+fun Number.toRad(from: AngleUnit = globalAngleUnit): Double = from.toDeg(this.toDouble()) * PI / 180
 
 fun Double.zeroIfNaN() = if (isNaN()) 0.0 else this
 

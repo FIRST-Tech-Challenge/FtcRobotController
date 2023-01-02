@@ -194,6 +194,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          * Changes all of the units in the builder API to the given units.
          */
         @JvmStatic
+        @JvmOverloads
         fun setUnits(
             distanceUnit: DistanceUnit = DistanceUnit.CM,
             angleUnit: AngleUnit = AngleUnit.RADIANS,
