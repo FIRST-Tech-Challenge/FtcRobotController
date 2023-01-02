@@ -8,7 +8,7 @@ class Autonomous {
     Robot robot;
     public Autonomous(Robot robot)
     {
-        this.behaviors = new LinkedList<Task>();
+        behaviors = new LinkedList<Task>();
         this.robot = robot;
     }
     public boolean runBehaviors()
