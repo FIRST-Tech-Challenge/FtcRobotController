@@ -140,14 +140,8 @@ public class ConeOrientationExample extends LinearOpMode
         // Perform setup needed to center turret
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
 
-        PowerPlaySuperPipeline.AnalyzedCone cone = new PowerPlaySuperPipeline.AnalyzedCone();
-        cone.corners = new RotatedRect(new double[]{0.0, 0.0, 0.0, 0.0});
-        cone.centralOffset = 0;
-        cone.aligned = false;
-        PowerPlaySuperPipeline.AnalyzedCone lastCone = new PowerPlaySuperPipeline.AnalyzedCone();
-        lastCone.corners = new RotatedRect(new double[]{0.0, 0.0, 0.0, 0.0});
-        lastCone.centralOffset = 0;
-        lastCone.aligned = false;
+        PowerPlaySuperPipeline.AnalyzedCone cone;
+
         while (opModeIsActive())
         {
             // Don't burn an insane amount of CPU cycles in this sample because
@@ -161,8 +155,10 @@ public class ConeOrientationExample extends LinearOpMode
             // Figure out which poles the pipeline detected, and print them to telemetry
             cone = pipeline.getDetectedRedCone();
             if(cone != null) {
-                telemetry.addLine(String.format("Cone: Center=%s, Central Offset=%f, Centered:%s", cone.corners.center.toString(), cone.centralOffset, cone.aligned));
-                telemetry.addLine(String.format("Cone Width=%f Cone Height=%f", cone.corners.size.width, cone.corners.size.height));
+                telemetry.addLine(String.format("Cone: Center=%s, Central Offset=%f, Centered:%s",
+                        cone.corners.center.toString(), cone.centralOffset, cone.aligned));
+                telemetry.addLine(String.format("Cone Width=%f Cone Height=%f", cone.corners.width,
+                        cone.corners.height));
                 // Ensure we're ALIGNED to pole before we attempt to use Ultrasonic RANGING
                 if (!cone.aligned) {
                     aligning = true;
