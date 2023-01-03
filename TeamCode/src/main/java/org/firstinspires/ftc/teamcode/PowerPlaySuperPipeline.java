@@ -21,7 +21,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.ConeBlue;
 import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.Pole;
 import static java.lang.Math.abs;
 
@@ -86,6 +85,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         detectPole = poleDetection;
         detectRedCone = redConeDetection;
         detectBlueCone = blueConeDetection;
+        CENTERED_OBJECT.center.y = center;
         this.blueAlliance = blueAlliance;
         this.terminalSide = terminalSide;
         /*
@@ -246,8 +246,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     /*
      * The box constraint that considers a pole "centered"
      */
-    Rect CENTERED_OBJECT = new Rect(new double[]{136, 2, 48, 316.0});
-    RotatedRect CENTERED_RR_OBJECT = new RotatedRect(new double[]{160.0, 120.0, 48.0, 320.0});
+    RotatedRect CENTERED_OBJECT = new RotatedRect(new double[]{160.0, 120.0, 48.0, 320.0, 0.0});
 
     /*
      * Colors
@@ -266,7 +265,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     // of the image.  Pole is ~32 pixels wide, so our tolerance is 1/4 of that.
     static final int MAX_POLE_OFFSET = 4;
     // This  is how wide a pole is at the proper scoring distance on a high pole
-    static final int POLE_HIGH_DISTANCE = 36;
+    static final int POLE_HIGH_DISTANCE = 32;
     // This is how many pixels wide the pole can vary at the proper scoring distance
     // on a high pole.
     static final int MAX_HIGH_DISTANCE_OFFSET = 3;
@@ -282,7 +281,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             aligned = copyObject.aligned;
             properDistanceHigh = copyObject.properDistanceHigh;
         }
-        Rect corners;
+        RotatedRect corners;
         int alignedCount = 0;
         int properDistanceHighCount = 0;
         double centralOffset;
@@ -435,6 +434,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             findTheRedTape();
         }
 
+        // Above here, do not draw on input. All the drawing is done below here so it is not part
+        // of the processing.
         if(detectSignal) {
             // Draw rectangles around the sample zone
             Imgproc.rectangle(input, sub1PointA, sub1PointB, new Scalar(0, 0, 255), 1);
@@ -457,10 +458,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             synchronized(lockPole) {
                 if (thePole.aligned) {
                     thePole.alignedCount++;
-                    drawRect(thePole.corners, input, GREEN);
+                    drawRotatedRect(thePole.corners, input, GREEN);
                 } else {
                     thePole.alignedCount = 0;
-                    drawRect(thePole.corners, input, RED);
+                    drawRotatedRect(thePole.corners, input, RED);
                 }
                 if(thePole.properDistanceHigh) {
                     thePole.properDistanceHighCount++;
@@ -509,7 +510,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 }
             }
         }
-        drawRect(CENTERED_OBJECT, input, BLUE);
+        drawRotatedRect(CENTERED_OBJECT, input, BLUE);
         /*
          * Decide which buffer to send to the viewport
          */
@@ -645,7 +646,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         {
             AnalyzedCone analyzedCone = new AnalyzedCone();
             analyzedCone.corners = rotatedRectFitToContour;
-            analyzedCone.centralOffset = CENTERED_RR_OBJECT.center.x - rotatedRectFitToContour.center.x;
+            analyzedCone.centralOffset = CENTERED_OBJECT.center.x - rotatedRectFitToContour.center.x;
             analyzedCone.aligned = abs(analyzedCone.centralOffset) <= MAX_CONE_OFFSET;
             internalRedConeList.add(analyzedCone);
         }
@@ -683,7 +684,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         {
             AnalyzedTape analyzedTape = new AnalyzedTape();
             analyzedTape.corners = rotatedRectFitToContour;
-            analyzedTape.centralOffset = CENTERED_RR_OBJECT.center.x - rotatedRectFitToContour.center.x;
+            analyzedTape.centralOffset = CENTERED_OBJECT.center.x - rotatedRectFitToContour.center.x;
             analyzedTape.aligned = abs(analyzedTape.centralOffset) <= MAX_TAPE_OFFSET;
             // TODO add angle detection
             internalRedTapeList.add(analyzedTape);
@@ -821,7 +822,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         {
             AnalyzedCone analyzedCone = new AnalyzedCone();
             analyzedCone.corners = rotatedRectFitToContour;
-            analyzedCone.centralOffset = CENTERED_RR_OBJECT.center.x - rotatedRectFitToContour.center.x;
+            analyzedCone.centralOffset = CENTERED_OBJECT.center.x - rotatedRectFitToContour.center.x;
             analyzedCone.aligned = abs(analyzedCone.centralOffset) <= MAX_CONE_OFFSET;
             internalBlueConeList.add(analyzedCone);
         }
@@ -866,7 +867,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         {
             AnalyzedTape analyzedTape = new AnalyzedTape();
             analyzedTape.corners = rotatedRectFitToContour;
-            analyzedTape.centralOffset = CENTERED_RR_OBJECT.center.x - rotatedRectFitToContour.center.x;
+            analyzedTape.centralOffset = CENTERED_OBJECT.center.x - rotatedRectFitToContour.center.x;
             analyzedTape.aligned = abs(analyzedTape.centralOffset) <= MAX_TAPE_OFFSET;
             // TODO add angle detection
             internalBlueTapeList.add(analyzedTape);
@@ -929,11 +930,11 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         return contoursList;
     }
 
-    boolean isPole(Rect rect)
+    boolean isPole(RotatedRect rect)
     {
         // We can put whatever logic in here we want to determine the poleness
         // This seems backwards on the camera mounted low.
-        return ((rect.height > 120) && (rect.width > 10) && (rect.height > rect.width));
+        return ((rect.size.height > 120) && (rect.size.width > 10) && (rect.size.height > rect.size.width));
 //        return true;
     }
 
@@ -943,11 +944,11 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         synchronized (lockPole) {
             thePole.centralOffset = 0;
             thePole.highDistanceOffset = 0;
-            thePole.corners = new Rect(new double[]{0, 0, 0, 0});
+            thePole.corners = new RotatedRect(new double[]{0, 0, 0, 0, 0});
             thePole.aligned = false;
             thePole.properDistanceHigh = false;
             for (AnalyzedPole aPole : internalPoleList) {
-                if (aPole.corners.width > thePole.corners.width) {
+                if (aPole.corners.size.width > thePole.corners.size.width) {
                     thePole.centralOffset = aPole.centralOffset;
                     thePole.highDistanceOffset = aPole.highDistanceOffset;
                     thePole.corners = aPole.corners.clone();
@@ -960,46 +961,38 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         return foundPole;
     }
 
+    RotatedRect corRectAngle(RotatedRect rectAngle) {
+        RotatedRect corRectAngle = rectAngle.clone();
+
+        while(abs(corRectAngle.angle) > 45.0) {
+            if(corRectAngle.angle > 0.0) {
+                // Since we shift the angle 90 degrees, height and width flip flop.
+                corRectAngle.set(new double[]{corRectAngle.center.x, corRectAngle.center.y,
+                    corRectAngle.size.height, corRectAngle.size.width, (corRectAngle.angle - 90.0)});
+            } else {
+                // Since we shift the angle 90 degrees, height and width flip flop.
+                corRectAngle.set(new double[]{corRectAngle.center.x, corRectAngle.center.y,
+                        corRectAngle.size.height, corRectAngle.size.width, (corRectAngle.angle + 90.0)});
+            }
+        }
+        return corRectAngle;
+    }
+
     void AnalyzePoleContour(MatOfPoint contour, Mat input)
     {
         // Transform the contour to a different format
         MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
 
         // Do a rect fit to the contour, and draw it on the screen
-        RotatedRect rotatedRectFitToContour = Imgproc.minAreaRect(contour2f);
-        Rect correctedRect = rotatedRectFitToContour.boundingRect();
-        Point tl = correctedRect.tl();
-        Point br = correctedRect.br();
-        if(tl.x < 0) {
-            tl.x = 0;
-        } else if (tl.x > 319) {
-            tl.x = 319;
-        }
-        if(tl.y < 0) {
-            tl.y = 0;
-        } else if(tl.y > 239) {
-            tl.y = 239;
-        }
-        if(br.x < 0) {
-            br.x = 0;
-        } else if (br.x > 319) {
-            br.x = 319;
-        }
-        if(br.y < 0) {
-            br.y = 0;
-        } else if(br.y > 239) {
-            br.y = 239;
-        }
-        correctedRect = new Rect(tl, br);
+        RotatedRect rotatedRectFitToContour = corRectAngle(Imgproc.minAreaRect(contour2f));
 
         // Make sure it is a pole contour, no need to draw around false pick ups.
-        if (isPole(correctedRect))
+        if (isPole(rotatedRectFitToContour))
         {
             AnalyzedPole analyzedPole = new AnalyzedPole();
-            analyzedPole.corners = correctedRect;
-            analyzedPole.centralOffset = (CENTERED_OBJECT.x + (CENTERED_OBJECT.width / 2)) -
-                    (correctedRect.x + (correctedRect.width / 2));
-            analyzedPole.highDistanceOffset = POLE_HIGH_DISTANCE - correctedRect.width;
+            analyzedPole.corners = rotatedRectFitToContour;
+            analyzedPole.centralOffset = CENTERED_OBJECT.center.x - rotatedRectFitToContour.center.x;
+            analyzedPole.highDistanceOffset = POLE_HIGH_DISTANCE - rotatedRectFitToContour.size.width;
             analyzedPole.aligned = abs(analyzedPole.centralOffset) <= MAX_POLE_OFFSET;
             analyzedPole.properDistanceHigh = abs(analyzedPole.highDistanceOffset) <= MAX_HIGH_DISTANCE_OFFSET;
             internalPoleList.add(analyzedPole);
@@ -1021,7 +1014,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     static void drawPoleRects(List<AnalyzedPole> rects, Mat drawOn, Scalar color)
     {
         for(AnalyzedPole aPole : rects) {
-            drawRect(aPole.corners, drawOn, color);
+            drawRotatedRect(aPole.corners, drawOn, color);
         }
     }
 
@@ -1039,19 +1032,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         }
     }
 
-    static void drawRect(Rect rect, Mat drawOn, Scalar color) {
-        /*
-         * Draws a rotated rect by drawing each of the 4 lines individually
-         */
-        Point tl = rect.tl();
-        Point br = rect.br();
-        Point tr = new Point(br.x, tl.y);
-        Point bl = new Point(tl.x, br.y);
-        Imgproc.line(drawOn, tl, tr, color, 2);
-        Imgproc.line(drawOn, tr, br, color, 2);
-        Imgproc.line(drawOn, bl, br, color, 2);
-        Imgproc.line(drawOn, bl, tl, color, 2);
-    }
     static void drawRotatedRect(RotatedRect rect, Mat drawOn, Scalar color)
    {
        /*

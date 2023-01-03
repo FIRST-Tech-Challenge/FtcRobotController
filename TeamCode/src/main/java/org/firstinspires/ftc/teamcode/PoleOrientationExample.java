@@ -21,6 +21,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.ConeBlue;
+import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.Pole;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
@@ -89,6 +91,7 @@ public class PoleOrientationExample extends LinearOpMode
                         false, true, 160.0, true, false);
                 webcamLow.setPipeline(pipelineLow);
                 webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                pipelineLow.debugType = ConeBlue;
             }
 
             @Override
@@ -110,6 +113,7 @@ public class PoleOrientationExample extends LinearOpMode
                         false, false, 160.0, true, false);
                 webcamFront.setPipeline(pipelineFront);
                 webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                pipelineLow.debugType = Pole;
             }
 
             @Override
@@ -131,6 +135,7 @@ public class PoleOrientationExample extends LinearOpMode
                         false, false, 160.0, true, false);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                pipelineLow.debugType = Pole;
                 cameraInitialized = true;
             }
 
@@ -197,15 +202,22 @@ public class PoleOrientationExample extends LinearOpMode
     /*---------------------------------------------------------------------------------*/
 
     void alignToPole() {
+        PowerPlaySuperPipeline thePipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         final double TURN_SLOPE = 0.001187;
         final double TURN_OFFSET = 0.04522;
         final double DRIVE_SLOPE = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
-
         double turnPower;
         double drivePower;
-        theLocalPole = pipelineBack.getDetectedPole();
+
+        if(turretFacingFront) {
+            thePipeline = pipelineFront;
+        } else {
+            thePipeline = pipelineBack;
+        }
+
+            theLocalPole = thePipeline.getDetectedPole();
         while (opModeIsActive() && ((theLocalPole.alignedCount <= 3) || theLocalPole.properDistanceHighCount <= 3)) {
             robot.readBulkData();
             robot.turretPosRun();
@@ -219,7 +231,6 @@ public class PoleOrientationExample extends LinearOpMode
                 turnPower = (theLocalPole.centralOffset > 0)?
                         (theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET) :
                         (theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET);
-//                turnPower = theLocalPole.centralOffset > 0 ? 0.1 : -0.1;
             }
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
@@ -231,8 +242,6 @@ public class PoleOrientationExample extends LinearOpMode
                 drivePower = (theLocalPole.highDistanceOffset > 0 )?
                         (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
                         (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
-//                drivePower = theLocalPole.highDistanceOffset > 0 ? 0.1 : -0.1;
-//                drivePower = 0.0;
             }
             if(abs(drivePower) < 0.01 && abs(turnPower) < 0.01) {
                 robot.stopMotion();
@@ -257,7 +266,7 @@ public class PoleOrientationExample extends LinearOpMode
             }
             telemetry.update();
             // sleep( 40 );
-            theLocalPole = pipelineBack.getDetectedPole();
+            theLocalPole = thePipeline.getDetectedPole();
         }
         robot.stopMotion();
     } // alignToPole
@@ -290,9 +299,7 @@ public class PoleOrientationExample extends LinearOpMode
             // Correct the angle for the turret being in the back.
             turretAngle = AngleWrapDegrees( turretAngle + 180.0 );
         }
-        // This corrects for our 0 being straight forward and left being negative
         yTranslation = drivePower * Math.cos(toRadians(turretAngle));
-        // Is this negative already accounted for in the below math?
         xTranslation = drivePower * Math.sin(toRadians(turretAngle));
 
         frontLeft  = yTranslation + xTranslation - turnPower;
