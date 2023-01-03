@@ -8,31 +8,78 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.myroadrunner.drive.SampleMecanumDrive;
+
 
 public class RobotEx {
-    protected final Telemetry telemetry;
-    protected final FtcDashboard dashboard;
-    protected final Telemetry dashboardTelemetry;
+    // enum to specify opmode type
+    public enum OpModeType {
+        TELEOP, AUTO
+    }
 
-    protected final GamepadEx driverOp;
-    protected final GamepadEx toolOp;
+    protected OpModeType opModeType;
+    protected Telemetry telemetry;
+    protected FtcDashboard dashboard;
+    protected Telemetry dashboardTelemetry;
 
-    protected final MecanumDriveSubsystem drive;
-    protected final MecanumDriveCommand driveCommand;
+    protected GamepadEx driverOp;
+    protected GamepadEx toolOp;
 
-    protected final IMUSubsystem gyro;
-    protected final Camera camera;
+    protected MecanumDriveSubsystem drive = null;
+    protected MecanumDriveCommand driveCommand = null;
 
-    protected final HeadingControllerSubsystem gyroFollow;
-    protected final HeadingControllerSubsystem cameraFollow;
+    protected SampleMecanumDrive rrDrive = null;
+
+    protected IMUSubsystem gyro;
+    public Camera camera;
+
+    protected HeadingControllerSubsystem gyroFollow;
+    protected HeadingControllerSubsystem cameraFollow;
 
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
                    GamepadEx toolOp) {
-        this(hardwareMap, telemetry, driverOp, toolOp, true);
+        this(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, true);
     }
 
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                   GamepadEx toolOp, Boolean useCameraFollower) {
+                   GamepadEx toolOp, OpModeType type) {
+        this(hardwareMap, telemetry, driverOp, toolOp, type, true);
+    }
+
+    public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
+                   GamepadEx toolOp, OpModeType type, Boolean useCameraFollower) {
+        if (type == OpModeType.TELEOP) {
+            initTele(hardwareMap, telemetry, driverOp, toolOp, useCameraFollower);
+            opModeType = OpModeType.TELEOP;
+        } else {
+            initAuto(hardwareMap, telemetry);
+            opModeType = OpModeType.AUTO;
+        }
+    }
+
+    public void initAuto(HardwareMap hardwareMap, Telemetry telemetry) {
+        /////////////////////////////////////// FTC Dashboard //////////////////////////////////////
+        dashboard = FtcDashboard.getInstance();
+        dashboardTelemetry = dashboard.getTelemetry();
+        this.telemetry = telemetry;
+
+        //////////////////////////////////////////// IMU ///////////////////////////////////////////
+        gyro = new IMUSubsystem(hardwareMap, this.telemetry, dashboardTelemetry);
+        CommandScheduler.getInstance().registerSubsystem(gyro);
+
+        ////////////////////////////////////////// Camera //////////////////////////////////////////
+        camera = new Camera(hardwareMap, dashboard, telemetry,
+                () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
+
+        //////////////////////////////////////// Drivetrain ////////////////////////////////////////
+        SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
+
+        ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
+        initMechanismsAutonomous(hardwareMap);
+    }
+
+    public void initTele(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
+                         GamepadEx toolOp, Boolean useCameraFollower) {
         ///////////////////////////////////////// Gamepads /////////////////////////////////////////
         this.driverOp = driverOp;
         this.toolOp = toolOp;
@@ -82,16 +129,20 @@ public class RobotEx {
                 .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
         ////////////////////////////////////// Camera Follower /////////////////////////////////////
-        cameraFollow = new HeadingControllerSubsystem(camera::getObject_x);
+//        cameraFollow = new HeadingControllerSubsystem(camera::getObject_x);
         if (useCameraFollower)
             driverOp.getGamepadButton(GamepadKeys.Button.START)
                     .whenPressed(new InstantCommand(cameraFollow::toggleState, cameraFollow));
 
         ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
-        initMechanisms(hardwareMap);
+        initMechanismsTeleOp(hardwareMap);
     }
 
-    public void initMechanisms(HardwareMap hardwareMap) {
+    public void initMechanismsTeleOp(HardwareMap hardwareMap) {
+        // should be overridden by child class
+    }
+
+    public void initMechanismsAutonomous(HardwareMap hardwareMap) {
         // should be overridden by child class
     }
 

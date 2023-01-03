@@ -17,7 +17,7 @@ public class PowerPlayRobot extends RobotEx {
     }
 
     @Override
-    public void initMechanisms(HardwareMap hardwareMap) {
+    public void initMechanismsTeleOp(HardwareMap hardwareMap) {
         ////////////////////////////////////////// Claw //////////////////////////////////////////
         claw = new ClawSubsystem(hardwareMap);
         toolOp.getGamepadButton(GamepadKeys.Button.A)
