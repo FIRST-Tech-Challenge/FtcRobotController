@@ -182,13 +182,16 @@ public class BlueLeft extends LinearOpMode {
             sleep(100);
             intake(-1,1300);
             //new
-            move(-.5,330);
-            strafeLeftwithcrane(1,500,1,1500);
-            moveandspin(-.8,800,1,-589);
-            craneinput(600);
+            move(.5,-370);
+            move(0.5, 70);
+            strafeLeftwithcrane(1,650,1,1000);//500
+            sleep(1000);
+            moveandspin(.8,-900,1,-530);
+            sleep(2000);
+            craneinput(400);
             Left.setPower(.3);
             moveandspin(.8,800,1,0);
-            strafeRightwithcrane(1,500,-1,2000);
+            strafeRightwithcrane(1,500,-1,2500);
             move(.5,330);
             intake(-1,1300);
 
@@ -352,6 +355,7 @@ public class BlueLeft extends LinearOpMode {
     public void craneinput(int time) {
         crane(1,time);
         intake(1,1000);
+        sleep(1500);
     }
 
     public void strafeLeftwithcrane(double power, int position,double powerc, int timec)  {
