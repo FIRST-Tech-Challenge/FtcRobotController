@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DistanceSensor
 import ftc.rogue.blacksmith.Scheduler
-import ftc.rogue.blacksmith.util.kt.avg
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
@@ -17,7 +16,7 @@ class TeastOp : LinearOpMode() {
 
         val mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        Scheduler.launchWhenReady(this) {
+        Scheduler.launchOnStart(this) {
             mTelemetry.addData("teast", ds.getDistance(DistanceUnit.CM))
             mTelemetry.update()
         }

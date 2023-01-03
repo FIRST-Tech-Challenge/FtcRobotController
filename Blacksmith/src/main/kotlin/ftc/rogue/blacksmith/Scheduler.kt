@@ -137,12 +137,12 @@ object Scheduler {
 
     @JvmStatic
     @JvmOverloads
-    fun launchWhenReady(opmode: LinearOpMode, afterEach: Runnable = Runnable {}) {
+    fun launchOnStart(opmode: LinearOpMode, afterEach: Runnable = Runnable {}) {
         opmode.waitForStart()
         launch(opmode, afterEach)
     }
 
-    /**
+        /**
      * Starts the [Scheduler], and runs the program in the given [afterEach] until the [LinearOpMode]
      * is no longer active. The loop time is then calculated, and send to the [Telemetry] object.
      *
@@ -208,7 +208,7 @@ object Scheduler {
 
     @JvmStatic
     fun emit(message: Any) {
-        messages[message]?.forEach { it.run() }
+        messages[message]?.forEach(Runnable::run)
     }
 
     @JvmStatic
@@ -219,19 +219,10 @@ object Scheduler {
     private val listenersToAdd = mutableSetOf<Listener>()
     private val listenersToRemove = mutableSetOf<Listener>()
 
-    /**
-     * Registers the given [Listener] to this Scheduler. By doing so, the [Listener] will be
-     * updated on every tick unless it is unregistered or the Scheduler is reset.
-     * @param listener The [Listener] to subscribe.
-     */
     internal fun hookListener(listener: Listener) {
         listenersToAdd += listener
     }
 
-    /**
-     * Unregisters the given [Listener] from this Scheduler.
-     * @param listener The [Listener] to unsubscribe.
-     */
     internal fun unhookListener(listener: Listener) {
         listenersToRemove += listener
     }
@@ -239,13 +230,9 @@ object Scheduler {
     private fun updateListenersSet() {
         listeners += listenersToAdd
         listenersToAdd.clear()
-
         listeners -= listenersToRemove
         listenersToRemove.clear()
     }
 
-    /**
-     * Runs each hooked Listener's `tick` method.
-     */
     private fun tick() = listeners.forEach(Listener::tick)
 }

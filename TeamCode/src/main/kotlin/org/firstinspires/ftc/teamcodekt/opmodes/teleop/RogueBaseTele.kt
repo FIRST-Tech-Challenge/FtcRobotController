@@ -19,7 +19,7 @@ abstract class RogueBaseTele : BlackOp() {
     protected var powerMulti = 0.0
 
     protected val bot by createOnGo {
-        createTeleOpBotComponents(hwMap, VoltageScaler( hwMap ))
+        createTeleOpBotComponents(hwMap, VoltageScaler(hwMap))
     }
 
     protected val intakeChain by createOnGo<IntakeChain>({ bot })
@@ -35,7 +35,7 @@ abstract class RogueBaseTele : BlackOp() {
             powerMulti = 1.0
         }
 
-        Scheduler.launchWhenReady(this@RogueBaseTele) {
+        Scheduler.launchOnStart(this@RogueBaseTele) {
             bot.updateComponents(mTelemetry)
             mTelemetry.update()
         }
