@@ -51,7 +51,7 @@ class ReflectionUtilsTest {
             val p1 = TestParam1("hello")
             val p2 = TestParam1("world")
 
-            val result = obj.invokeMethodInfer<String>("testMethod", p1, p2)
+            val result = obj.invokeMethodI<String>("testMethod", p1, p2)
             assertEquals("hello world", result)
         }
     }
@@ -76,7 +76,7 @@ class ReflectionUtilsTest {
             val p1 = TestParam1("hello")
             val p2 = TestParam1("world")
 
-            val result = obj.invokeMethodInfer<String>("testMethod", p1, p2)
+            val result = obj.invokeMethodI<String>("testMethod", p1, p2)
             assertEquals("hello world", result)
         }
     }
@@ -97,7 +97,7 @@ class ReflectionUtilsTest {
             val obj = TestClass()
 
             assertThrows(TestException::class.java) {
-                obj.invokeMethodRethrowingInfer<String>("throwingMethod")
+                obj.invokeMethodRethrowingI<String>("throwingMethod")
             }
         }
     }

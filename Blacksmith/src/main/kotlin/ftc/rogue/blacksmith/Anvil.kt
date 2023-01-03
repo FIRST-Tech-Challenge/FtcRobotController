@@ -8,13 +8,10 @@ import com.acmerobotics.roadrunner.trajectory.MarkerCallback
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint
-import ftc.rogue.blacksmith.proxies._SampleMecanumDrive
-import ftc.rogue.blacksmith.units.AngleUnit
-import ftc.rogue.blacksmith.units.DistanceUnit
-import ftc.rogue.blacksmith.units.TimeUnit
+import ftc.rogue.blacksmith.internal.proxies._SampleMecanumDrive
+import ftc.rogue.blacksmith.units.GlobalUnits
 import ftc.rogue.blacksmith.util.*
 import kotlinx.coroutines.*
-import kotlin.math.PI
 
 /**
  * A WIP component that wraps around the [TrajectorySequenceBuilder] to provide a much cleaner API
@@ -161,48 +158,13 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         @JvmStatic
         fun startAutoWith(instance: Anvil) {
             initialTrajectory = instance.setPoseEstimate().build()
+            initialInstance = instance
         }
 
         @JvmStatic
         @JvmOverloads
         fun start(async: Boolean = true) {
             initialInstance.run(initialTrajectory, async)
-        }
-
-        /**
-         * Allows you to change the units of distance measurements in the builder API.
-         *
-         * Defaults to [DistanceUnit.INCHES]
-         */
-        var distanceUnit = DistanceUnit.CM
-
-        /**
-         * Allows you to change the units of angle measurements in the builder API.
-         *
-         * Defaults to [AngleUnit.RADIANS]
-         */
-        var angleUnit = AngleUnit.RADIANS
-
-        /**
-         * Allows you to change the units of time measurements in the builder API.
-         *
-         * Defaults to [TimeUnit.SECONDS]
-         */
-        var timeUnit = TimeUnit.SECONDS
-
-        /**
-         * Changes all of the units in the builder API to the given units.
-         */
-        @JvmStatic
-        @JvmOverloads
-        fun setUnits(
-            distanceUnit: DistanceUnit = DistanceUnit.CM,
-            angleUnit: AngleUnit = AngleUnit.RADIANS,
-            timeUnit: TimeUnit = TimeUnit.SECONDS,
-        ) {
-            this.distanceUnit = distanceUnit
-            this.angleUnit = angleUnit
-            this.timeUnit = timeUnit
         }
 
         @JvmStatic
@@ -341,7 +303,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      */
     inline fun inReverse(pathsToDoInReverse: Anvil.() -> Unit) = this.apply {
         setReversed(true)
-        pathsToDoInReverse(this)
+        pathsToDoInReverse()
         setReversed(false)
     }
 
@@ -597,11 +559,11 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         driveProxy.followTrajectorySequence(trajectory)
     }
 
-    private val Number.toIn get() = distanceUnit.toIn(this.toDouble())
+    private val Number.toIn get() = GlobalUnits.distance.toIn(this.toDouble())
 
-    private val Number.toRad get() = angleUnit.toRad(this.toDouble())
+    private val Number.toRad get() = GlobalUnits.angle.toRad(this.toDouble())
 
-    private val Number.toSec get() = timeUnit.toSec(this.toDouble())
+    private val Number.toSec get() = GlobalUnits.time.toSec(this.toDouble())
 
     @PublishedApi
     internal fun getEndPose() = builtTrajectory.invokeMethodRethrowing<Pose2d>("end")

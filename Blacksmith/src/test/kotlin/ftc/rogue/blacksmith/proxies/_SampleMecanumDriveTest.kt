@@ -3,6 +3,7 @@
 package ftc.rogue.blacksmith.proxies
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
+import ftc.rogue.blacksmith.internal.proxies._SampleMecanumDrive
 import io.mockk.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

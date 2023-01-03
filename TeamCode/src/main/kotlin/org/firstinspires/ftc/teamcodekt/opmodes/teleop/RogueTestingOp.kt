@@ -29,7 +29,7 @@ class RogueTestingOp : RogueBaseTele() {
                 lift.height += (50 * -driver.right_stick_y()).toInt()
             }
 
-            if (driver.left_stick_x() < -.5) {
+            if (driver.left_stick_x() < .5) {
                 claw.openForIntakeWide()
             }
 

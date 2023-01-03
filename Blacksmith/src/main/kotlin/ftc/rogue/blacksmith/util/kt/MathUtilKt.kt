@@ -2,20 +2,21 @@ package ftc.rogue.blacksmith.util.kt
 
 import ftc.rogue.blacksmith.units.AngleUnit
 import ftc.rogue.blacksmith.units.DistanceUnit
+import ftc.rogue.blacksmith.units.GlobalUnits
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.pow
 
-inline fun <reified T : Number> Number.toIn(from: DistanceUnit = DistanceUnit.CM) = asNumberType<T> {
+inline fun <reified T : Number> Number.toIn(from: DistanceUnit = GlobalUnits.distance) = asNumberType<T> {
     from.toIn(this.toDouble())
 }
 
-inline fun <reified T : Number> Number.toCm(from: DistanceUnit = DistanceUnit.INCHES) = asNumberType<T> {
+inline fun <reified T : Number> Number.toCm(from: DistanceUnit = GlobalUnits.distance) = asNumberType<T> {
     from.toIn(this.toDouble()) * 2.54
 }
 
-inline fun <reified T : Number> Number.toRad(from: AngleUnit = AngleUnit.DEGREES) = asNumberType<T> {
+inline fun <reified T : Number> Number.toRad(from: AngleUnit = GlobalUnits.angle) = asNumberType<T> {
     from.toDeg(this.toDouble()) * PI / 180
 }
 

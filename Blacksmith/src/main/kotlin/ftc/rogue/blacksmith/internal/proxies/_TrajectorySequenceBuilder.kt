@@ -1,6 +1,6 @@
 @file:Suppress("ClassName", "unused")
 
-package ftc.rogue.blacksmith.proxies
+package ftc.rogue.blacksmith.internal.proxies
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
