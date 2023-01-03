@@ -198,10 +198,10 @@ public class PoleOrientationExample extends LinearOpMode
 
     void alignToPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        final double TURN_SLOPE = 0.005787;
-        final double TURN_OFFSET = 0.07422;
-        final double DRIVE_SLOPE = 0.03173;
-        final double DRIVE_OFFSET = 0.04828;
+        final double TURN_SLOPE = 0.001187;
+        final double TURN_OFFSET = 0.04522;
+        final double DRIVE_SLOPE = 0.004187;
+        final double DRIVE_OFFSET = 0.04522;
 
         double turnPower;
         double drivePower;
@@ -216,10 +216,10 @@ public class PoleOrientationExample extends LinearOpMode
                 // Maximum number of pixels off would be half of 320, so 160.
                 // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
                 // go 1.0 to 0.08 from 24 degrees to 0.
-//                turnPower = (theLocalPole.centralOffset > 0)?
-//                        (theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET) :
-//                        (theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET);
-                turnPower = theLocalPole.centralOffset > 0 ? 0.1 : -0.1;
+                turnPower = (theLocalPole.centralOffset > 0)?
+                        (theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET) :
+                        (theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET);
+//                turnPower = theLocalPole.centralOffset > 0 ? 0.1 : -0.1;
             }
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
@@ -228,11 +228,11 @@ public class PoleOrientationExample extends LinearOpMode
                 // Maximum number of pixels off would be in the order of 30ish.
                 // This is a first guess that will have to be expiremented on.
                 // Go 1.0 to 0.08 from 30 pixels to 2.
-//                drivePower = (theLocalPole.highDistanceOffset > 0 )?
-//                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
-//                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
+                drivePower = (theLocalPole.highDistanceOffset > 0 )?
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
 //                drivePower = theLocalPole.highDistanceOffset > 0 ? 0.1 : -0.1;
-                drivePower = 0.0;
+//                drivePower = 0.0;
             }
             if(abs(drivePower) < 0.01 && abs(turnPower) < 0.01) {
                 robot.stopMotion();
@@ -257,7 +257,7 @@ public class PoleOrientationExample extends LinearOpMode
             }
             telemetry.update();
             // sleep( 40 );
-            theLocalPole = pipelineFront.getDetectedPole();
+            theLocalPole = pipelineBack.getDetectedPole();
         }
         robot.stopMotion();
     } // alignToPole

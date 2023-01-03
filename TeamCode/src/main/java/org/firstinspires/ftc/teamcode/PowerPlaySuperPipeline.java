@@ -266,7 +266,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     // of the image.  Pole is ~32 pixels wide, so our tolerance is 1/4 of that.
     static final int MAX_POLE_OFFSET = 4;
     // This  is how wide a pole is at the proper scoring distance on a high pole
-    static final int POLE_HIGH_DISTANCE = 32;
+    static final int POLE_HIGH_DISTANCE = 36;
     // This is how many pixels wide the pole can vary at the proper scoring distance
     // on a high pole.
     static final int MAX_HIGH_DISTANCE_OFFSET = 3;
