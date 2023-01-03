@@ -20,7 +20,7 @@ class ElevatorNClaw {
     private static final int ELEVTICKSPOS3 = 3983;
     private static final int ELEVTICKSPOS4 = MAXELEVTICS;
     private int currElevTics = 0;
-    private double MOTORSTALLVALUE = .7;
+    private double MOTORSTALLVALUE = 1.5;
     private static boolean calibrate;
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
@@ -33,14 +33,14 @@ class ElevatorNClaw {
     {
         elevator.setPower(1);
         if (ticks > 0) {
-            if (currElevTics < MAXELEVTICS - (int)(ticks*elevatorSpeed))
-                elevator.setTargetPosition(currElevTics + (int)(ticks*elevatorSpeed));
+            if (currElevTics < MAXELEVTICS - (int)(Math.abs(ticks)*elevatorSpeed))
+                elevator.setTargetPosition(currElevTics + (int)(Math.abs(ticks)*elevatorSpeed));
             else
                 elevator.setTargetPosition(MAXELEVTICS);
         }
         if (ticks < 0) {
-            if (currElevTics > MINELEVTICS + (int)(ticks*elevatorSpeed))
-                elevator.setTargetPosition(currElevTics - (int)(ticks*elevatorSpeed));
+            if (currElevTics > MINELEVTICS + (int)(Math.abs(ticks)*elevatorSpeed))
+                elevator.setTargetPosition(currElevTics - (int)(Math.abs(ticks)*elevatorSpeed));
             else
                 elevator.setTargetPosition(MINELEVTICS);
         }
@@ -91,12 +91,7 @@ class ElevatorNClaw {
         elevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         elevator.setTargetPosition(0);
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        this.elevator.setDirection(DcMotorEx.Direction.REVERSE);
-    }
-    public void runToTestEncoders()
-    {
-        elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.elevator.setDirection(DcMotorEx.Direction.REVERSE);
     }
     public int getElevatorPosition(){return elevator.getCurrentPosition();}
 }

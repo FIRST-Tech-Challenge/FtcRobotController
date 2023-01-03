@@ -21,37 +21,19 @@ import java.util.ArrayList;
 @TeleOp(name="Iron Giant OpMode", group="Challenge")
 public class IronGiantOpMode extends OpMode {
     //autonomous variables
-    private boolean auton = false; // controls if auton will run set to true to run with auton
+    private boolean auton = true; // controls if auton will run set to true to run with auton
     private boolean autonInitialized = false;
-    private boolean autonTesting = false;
-//    private boolean goto1 = false;
-//    private boolean needsReset = true;
-//    private boolean turning = false;
-//    private boolean turningDone = false;
-//    private boolean turningDone1 = false;
-//    private boolean moving = false;
-//    private boolean movingDone = false;
-//    private boolean movingDone1 = false;
-//    private boolean movingDone2 = false;
-//    private boolean strafing = false;
-//    private boolean strafingDone = false;
-//    private boolean swivel = false;
-//    private boolean coneDown = false;
-//    public boolean shouldCone = true;
-//    private boolean forwardDone = false;
-//    private boolean strafeDone = false;
-//    private boolean shouldStrafe = true;
-    private boolean red = false; // team boolean variable
-//    private boolean swivelDone = false;
-//    private boolean shouldSwivel = true;
-//    private boolean motorsReset = false;
-//    private boolean shouldTurn = true;
-//    private boolean turnFinished = false;
-    int tagDetected = 0;
+    private boolean testing = false;
+    private boolean red = true; // team boolean variable
+    //miscellaneous variables
+    private boolean calibrateOn = true;
+    private boolean calibrate = false;
+    private static final float DEADZONE = .1f;
     //vision variables
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     static final double FEET_PER_METER = 3.28084;
+    int tagDetected = 0;
     // UNITS ARE PIXELS
     double fx = 578.272;
     double fy = 578.272;
@@ -63,29 +45,6 @@ public class IronGiantOpMode extends OpMode {
     int tagCount = 0;
     boolean tagFound = false;
     AprilTagDetection tagOfInterest = null;
-    //motors
-//    private DcMotorEx motorFrontRight = null;
-//    private DcMotorEx motorBackLeft = null;
-//    private DcMotorEx motorFrontLeft = null;
-//    private DcMotorEx motorBackRight = null;
-//    private DcMotorEx elevator = null;
-//    private Servo claw = null;
-//    // regular drive
-//    private double powerLeft = 0;
-//    private double powerRight = 0;
-//    // mecanum types
-//    private double powerFrontLeft = 0;
-//    private double powerFrontRight = 0;
-//    private double powerBackLeft = 0;
-//    private double powerBackRight = 0;
-    //number variables
-    private static final float DEADZONE = .1f;
-//    private static final int MAXELEVTICS = 4320;
-//    private static final int MINELEVTICS = 0;
-//    private int currElevTics = 0;
-//    private final double MOTORSTALLVALUE = .7;
-    //boolean variables
-    private boolean calibrate = false;
     //Robot variable storage system
     Robot robot;
     //autonomous program
@@ -103,7 +62,7 @@ public class IronGiantOpMode extends OpMode {
 
     @Override
     public void init_loop() {
-        if (!calibrate)
+        if (!calibrate && calibrateOn)
             calibrate = robot.elevatorNClaw.calib();
         else
             aprilTagInitLoop();
@@ -114,19 +73,21 @@ public class IronGiantOpMode extends OpMode {
     @Override
     public void loop() {
         telemetryOutput();
-        if (auton && !autonTesting) {
+        if (!autonInitialized && !testing && auton) {
             autonDrive();
-        } else if(!autonTesting){
-            if(autonomous.hasBehaviors())
+        } else if(!testing){
+            telemetry.addData("auton running? \t", autonomous.hasBehaviors());
+            if(autonomous.hasBehaviors()) {
                 autonomous.runBehaviors();
+            }
             else {
                 robot.driveTrain.mechanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 //                robot.driveTrain.tankDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
                 robot.elevatorNClaw.clawMove(gamepad1.left_bumper ? 1 : gamepad1.right_bumper ? -1 : 0);
-                if (calibrate)
-                    robot.elevatorNClaw.elevatorMove(gamepad1.left_trigger > DEADZONE ? -gamepad1.left_trigger : gamepad1.right_trigger > DEADZONE ? gamepad1.right_trigger : 0);
-                else
+                if (!calibrate && calibrateOn)
                     calibrate = robot.elevatorNClaw.calib();
+                else
+                    robot.elevatorNClaw.elevatorMove(gamepad1.left_trigger > DEADZONE ? -gamepad1.left_trigger : gamepad1.right_trigger > DEADZONE ? gamepad1.right_trigger : 0);
                 if (gamepad1.dpad_down) {
                     calibrate = false;
                 }
@@ -152,461 +113,85 @@ public class IronGiantOpMode extends OpMode {
                 }
             }
         }
-        else
-        {
-            robot.elevatorNClaw.runToTestEncoders();
-            robot.driveTrain.resetMotors();
-        }
     }
-
     public void telemetryOutput() {
         telemetry.addData("is auton", auton);
         robot.elevatorNClaw.telemetryOutput();
         robot.driveTrain.telemetryOutput();
     }
-    // new untested auton code
-//    public boolean turn(int angle) {
-//        if (turning) {
-//            if (motorFrontLeft.getCurrentPosition() < 1000*(angle/90))
-//            {
-//                mechanumDrive(0, 0, 1);
-//                return false;
-//            }
-//            else {
-//                turning = false;
-//                resetMotors();
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//    public boolean move(double tiles)
-//    {
-//        if(moving){
-//            if (motorFrontLeft.getCurrentPosition() < (int)(2500*tiles)) {
-//                mechanumDrive(0, 0, 1);
-//                return false;
-//            }
-//            else {
-//                moving = false;
-//                resetMotors();
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//    public boolean strafe(double tiles)
-//    {
-//        if(strafing){
-//            if (motorFrontLeft.getCurrentPosition() < (int)(3500*tiles)) {
-//                mechanumDrive(0, 1*(tiles/Math.abs(tiles)), 0);
-//                return false;
-//            }
-//            else {
-//                strafing = false;
-//                resetMotors();
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//    public void resetMotors() {
-//        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        mechanumDrive(0, 0, 0);
-//    }
     // auton
     public void autonDrive() {
         autonVisionTelemetry();
-        if(!autonInitialized)
+        if (!autonInitialized)
             autonInit(tagDetected, red);
-        else
-            auton = autonomous.runBehaviors();
-//        todo test below
-//        if (red) {
-//            if (tagDetected == 1) {
-//                if (!movingDone) {
-//                    moving = true;
-//                    movingDone = move(1.25);
-//                } else if (!turningDone) {
-//                    turning = true;
-//                    turningDone = turn(90);
-//                } else if (!movingDone1) {
-//                    moving = true;
-//                    movingDone1 = move(1);
-//                } else
-//                    auton = false;
-//            }
-//            else if (tagDetected == 2) {
-//                if (!movingDone) {
-//                    moving = true;
-//                    movingDone = move(1.25);
-//                } else if (!turningDone) {
-//                    turning = true;
-//                    turningDone = turn(90);
-//                } else if (!movingDone1) {
-//                    moving = true;
-//                    movingDone1 = move(1);
-//                } else if (!turningDone1) {
-//                    turning = true;
-//                    turningDone1 = turn(90);
-//                } else if (!movingDone2) {
-//                    moving = true;
-//                    movingDone2 = move(1);
-//                } else
-//                    auton = false;
-//            }
-//            else if (tagDetected == 3) {
-//                if (!movingDone) {
-//                    moving = true;
-//                    movingDone = move(1.25);
-//                } else if (!turningDone) {
-//                    turning = true;
-//                    turningDone = turn(90);
-//                } else if (!movingDone1) {
-//                    moving = true;
-//                    movingDone1 = move(1);
-//                } else if (!turningDone1) {
-//                    turning = true;
-//                    turningDone1 = turn(90);
-//                } else if (!movingDone2) {
-//                    moving = true;
-//                    movingDone2 = move(1);
-//                } else
-//                    auton = false;
-//            }
-//        }
-//        else {
-//            if(!swivelDone)
-//            {
-//                swivel = true;
-//                swivelDone = turn(180);
-//            }
-//            else if (tagDetected == 1) {
-//                if (!movingDone) {
-//                    moving = true;
-//                    movingDone = move(1.25);
-//                } else if (!turningDone) {
-//                    turning = true;
-//                    turningDone = turn(90);
-//                } else if (!movingDone1) {
-//                    moving = true;
-//                    movingDone1 = move(1);
-//                } else
-//                    auton = false;
-//            }
-//            else if (tagDetected == 2) {
-//                if (!movingDone) {
-//                    moving = true;
-//                    movingDone = move(1.25);
-//                } else if (!turningDone) {
-//                    turning = true;
-//                    turningDone = turn(90);
-//                } else if (!movingDone1) {
-//                    moving = true;
-//                    movingDone1 = move(1);
-//                } else if (!turningDone1) {
-//                    turning = true;
-//                    turningDone1 = turn(90);
-//                } else if (!movingDone2) {
-//                    moving = true;
-//                    movingDone2 = move(1);
-//                } else
-//                    auton = false;
-//            }
-//            else if (tagDetected == 3) {
-//                if (!movingDone) {
-//                    moving = true;
-//                    movingDone = move(1.25);
-//                } else if (!turningDone) {
-//                    turning = true;
-//                    turningDone = turn(90);
-//                } else if (!movingDone1) {
-//                    moving = true;
-//                    movingDone1 = move(1);
-//                } else if (!turningDone1) {
-//                    turning = true;
-//                    turningDone1 = turn(90);
-//                } else if (!movingDone2) {
-//                    moving = true;
-//                    movingDone2 = move(1);
-//                } else
-//                    auton = false;
-//            }
-//        }
-//        todo end of code to test
-        /*if (!swivelDone && shouldSwivel) {
-                swivel();
-        }
-        else if (swivelDone && shouldSwivel) {
-                mechanumDrive(0, 0, 0);
-                resetMotors();
-                shouldSwivel = false;
-        }
-        else if (!coneDown && shouldCone)
-            forwardDropCone();
-        else if (coneDown && shouldCone) {
-            resetMotors();
-            shouldCone = false;
-        }
-        else if (/*!strafeDone !turnFinished /*shouldStrafe) {
-            /*strafe();turnNoStrafe();
-        }
-        else if (/*strafeDoneturnFinished && shouldTurn/*shouldStrafe) {
-            resetMotors();
-            shouldTurn/*Strafe = false;
-        }
-//        else if(!goto1 && needs90)
-//            turn90();
-        */
-        /*if (/*strafeDone turnFinished&& !shouldTurn/*!shouldStrafe) {
-            if (tagDetected == 1) {
-//                if (motorFrontLeft.getCurrentPosition() > -1000)
-//                    mechanumDrive(-1, 0, 0);
-//                else
-                    auton = false;
-            }
-            if (tagDetected == 2) {
-                    turning = true;
-                    turn90();
-                    if (motorFrontLeft.getCurrentPosition() > -2000)
-                        mechanumDrive(-1, 0, 0);
-                    else
-                        auton = false;
-            }
-
-            if (tagDetected == 3) {
-                    turning = true;
-                    turn90();
-                    if (motorFrontLeft.getCurrentPosition() > -4500)
-                        mechanumDrive(-1, 0, 0);
-                    else
-                        auton = false;
-            }
-
-//             Actually do something useful
-            if (tagOfInterest == null) {
-                mechanumDrive(0, 0, 0);
-                auton = false;
-            }
-        }*/
+        autonInitialized = true;
     }
-    // outdated auton for backup
-//    public void strafe() {
-//        if (red) {
-//            if (motorFrontLeft.getCurrentPosition() < 2600)
-//                mechanumDrive(0, 1, 0);
-//            else
-//                strafeDone = true;
-//        }
-//        if (!red) {
-//            if (motorFrontLeft.getCurrentPosition() > -3000)
-//                mechanumDrive(0, -1, 0);
-//            else
-//                strafeDone = true;
-//        }
-//    }
-//
-//    public void swivel() {
-//        if (red) {
-//            swivelDone = true;
-//            shouldSwivel = false;
-//        }
-//        if (!swivelDone) {
-//            if (motorFrontLeft.getCurrentPosition() < 1000)
-//                mechanumDrive(0, 0, 0.5);
-//            else {
-//                swivelDone = true;
-//            }
-//        }
-//    }
-//    public void turnNoStrafe()
-//    {
-//        if(!goto1){
-//            if (red) {
-//                if (motorFrontLeft.getCurrentPosition() < 1000 && shouldTurn)
-//                    mechanumDrive(0, 0, 0.5);
-//                else {
-//                    if (motorFrontLeft.getCurrentPosition() < 3500)
-//                        mechanumDrive(1, 0, 0);
-//                    else
-//                        mechanumDrive(0, 0, 0);
-//                }
-//            } else {
-//                if (motorFrontLeft.getCurrentPosition() < -1000 && shouldTurn)
-//                    mechanumDrive(0, 0, -0.5);
-//                else {
-//                    mechanumDrive(0, 0, 0);
-//                    goto1 = false;
-//                }
-//            }
-//        }
-//    }
-//    public void forwardDropCone() {
-//        if (motorFrontLeft.getCurrentPosition() < 3200)
-//            mechanumDrive(1, 0, 0);
-//        else {
-//            claw.setPosition(0.5);
-//            mechanumDrive(0, 0, 0);
-//
-//            coneDown = true;
-//        }
-//    }
-//    // subsystem movement code
-//    public void tankDrive() {
-//        powerRight = 0;
-//        powerLeft = 0;
-//        if (Math.abs(gamepad1.left_stick_y) > DEADZONE) {
-//            powerLeft = -gamepad1.left_stick_y;
-//        }
-//        if (Math.abs(gamepad1.right_stick_y) > DEADZONE) {
-//            powerRight = -gamepad1.right_stick_y;
-//        }
-//        motorFrontRight.setPower(powerRight);
-//        motorFrontLeft.setPower(powerLeft);
-//        motorBackRight.setPower(powerRight);
-//        motorBackLeft.setPower(powerLeft);
-//    }
-
-//    public void mechanumDrive(double forward, double strafe, double turn) {
-//        double r = Math.hypot(strafe, forward);
-//        double robotAngle = Math.atan2(forward, strafe) - Math.PI / 4;
-//        double rightX = turn;
-//        powerFrontLeft = r * Math.cos(robotAngle) + rightX;
-//        powerBackRight = r * Math.sin(robotAngle) - rightX;
-//        powerBackLeft = r * Math.sin(robotAngle) + rightX;
-//        powerFrontRight = r * Math.cos(robotAngle) - rightX;
-//        motorFrontLeft.setPower(powerFrontLeft);
-//        motorFrontRight.setPower(powerFrontRight);
-//        motorBackLeft.setPower(powerBackLeft);
-//        motorBackRight.setPower(powerBackRight);
-//    }
-//
-//    public void elevatorMove()
-//    {
-//        elevator.setPower(1);
-////        if(gamepad1.dpad_down) {
-////            calibrate = false;
-////            calib();
-////        }
-////        else if (calibrate) {
-//            if (gamepad1.right_trigger > DEADZONE) {
-//                if (currElevTics < MAXELEVTICS - 150)
-//                    elevator.setTargetPosition(currElevTics + 150);
-//                else
-//                    elevator.setTargetPosition(MAXELEVTICS);
-//            }
-//            if (gamepad1.left_trigger > DEADZONE) {
-//                if (currElevTics > MINELEVTICS + 150)
-//                    elevator.setTargetPosition(currElevTics - 150);
-//                else
-//                    elevator.setTargetPosition(MINELEVTICS);
-//            }
-//            if (gamepad1.y)
-//                elevator.setTargetPosition(3983);
-//            if (gamepad1.b)
-//                elevator.setTargetPosition(2300);
-//            if (gamepad1.a)
-//                elevator.setTargetPosition(0);
-//            currElevTics = elevator.getCurrentPosition();
-////        }
-//    }
-//    public void clawMove() {
-//        if (gamepad1.left_bumper)
-//            claw.setPosition(.5);
-//        if (gamepad1.right_bumper)
-//            claw.setPosition(0.2);
-//    }
-//
-//    public void calib(){
-//        elevator.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        telemetry.addData("elevator calibrating...", elevator.getCurrent(CurrentUnit.AMPS));
-//        telemetry.addData("elevator position", elevator.getCurrentPosition());
-//        if(elevator.getCurrent(CurrentUnit.AMPS) < MOTORSTALLVALUE)
-//        {
-//            elevator.setPower(-.2);
-//        }
-//        else {
-//            calibrate = true;
-//            elevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//            elevator.setTargetPosition(0);
-//            elevator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//        }
-//    }
-//    // motor setup
-//    public void motorInit(){
-//        motorFrontLeft = this.hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
-//        motorBackLeft = this.hardwareMap.get(DcMotorEx.class, "motorBackLeft");
-//        motorFrontRight = this.hardwareMap.get(DcMotorEx.class, "motorFrontRight");
-//        motorBackRight = this.hardwareMap.get(DcMotorEx.class, "motorBackRight");
-//        elevator = this.hardwareMap.get(DcMotorEx.class, "elevator");
-//        claw = this.hardwareMap.get(Servo.class, "claw");
-//        elevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        elevator.setTargetPosition(0);
-//        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        this.motorBackLeft.setDirection(DcMotorEx.Direction.REVERSE);
-//        this.motorFrontLeft.setDirection(DcMotorEx.Direction.REVERSE);
-//        this.elevator.setDirection(DcMotorEx.Direction.REVERSE);
-//    }
     public void autonInit(int tagValue, boolean isRed)
     {
         if(isRed)
         {
+            autonomous.add(new Drive(robot, 1.5));
+            autonomous.add(new Drive(robot, -1));
             switch(tagValue)
             {
-                default : {
-                    autonomous.add(new Drive(robot, 1.5));
-                    autonomous.add(new Drive(robot, -.25));
-                }
                 case 1: {
                     autonomous.add(new Turn(robot, 90));
                     autonomous.add(new Drive(robot, 1));
+                    break;
                 }
                 case 2: {
                     autonomous.add(new Turn(robot, 90));
                     autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
                 }
                 case 3: {
+                    autonomous.add(new Turn(robot, 90));
                     autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
+                }
+                default : {
+
                 }
             }
         }
         else
         {
+            autonomous.add(new Turn(robot, -180));
+            autonomous.add(new Drive(robot, 1.5));
+            autonomous.add(new Drive(robot, -1));
             switch(tagValue)
             {
-                default : {
-                    autonomous.add(new Turn(robot, 180));
-                    autonomous.add(new Drive(robot, 1.5));
-                    autonomous.add(new Drive(robot, -.25));
-                }
                 case 1: {
                     autonomous.add(new Turn(robot, -90));
                     autonomous.add(new Drive(robot, 1));
+                    break;
                 }
                 case 2: {
                     autonomous.add(new Turn(robot, -90));
                     autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new Turn(robot, -90));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
                 }
                 case 3: {
+                    autonomous.add(new Turn(robot, -90));
                     autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new Turn(robot, -90));
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
+                }
+                default : {
+
                 }
             }
         }
+        autonInitialized = true;
     }
     // vision setup
     public void visionInit(){

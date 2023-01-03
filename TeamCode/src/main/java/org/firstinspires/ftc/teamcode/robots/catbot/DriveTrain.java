@@ -29,6 +29,10 @@ class DriveTrain {
         this.hardwareMap = hardwareMap;
     }
     public void resetMotors() {
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
+        motorBackRight.setPower(0);
+        motorFrontRight.setPower(0);
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -37,6 +41,10 @@ class DriveTrain {
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setPower(1);
+        motorBackLeft.setPower(1);
+        motorBackRight.setPower(1);
+        motorFrontRight.setPower(1);
         mechanumDrive(0, 0, 0);
     }
     public void tankDrive(double left, double right) {
@@ -58,10 +66,10 @@ class DriveTrain {
         double r = Math.hypot(strafe, forward);
         double robotAngle = Math.atan2(forward, strafe) - Math.PI / 4;
         double rightX = turn;
-        powerFrontLeft = r * Math.cos(robotAngle) + rightX;
-        powerBackRight = r * Math.sin(robotAngle) - rightX;
-        powerBackLeft = r * Math.sin(robotAngle) + rightX;
-        powerFrontRight = r * Math.cos(robotAngle) - rightX;
+        powerBackLeft = r * Math.cos(robotAngle) + rightX;
+        powerFrontRight = r * Math.sin(robotAngle) - rightX;
+        powerFrontLeft = r * Math.sin(robotAngle) + rightX;
+        powerBackRight = r * Math.cos(robotAngle) - rightX;
         motorFrontLeft.setPower(powerFrontLeft);
         motorFrontRight.setPower(powerFrontRight);
         motorBackLeft.setPower(powerBackLeft);
@@ -88,8 +96,8 @@ class DriveTrain {
         motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        this.motorBackLeft.setDirection(DcMotorEx.Direction.REVERSE);
-//        this.motorFrontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        this.motorBackLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        this.motorFrontLeft.setDirection(DcMotorEx.Direction.REVERSE);
     }
     public int getMotorFrontLeftPosition(){return motorFrontLeft.getCurrentPosition();}
 }
