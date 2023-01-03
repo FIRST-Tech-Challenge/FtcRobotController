@@ -29,7 +29,7 @@ public class moveUtils {
 
     // Things specific to this class
     private static final float TURN_SPEED_HIGH = 1f;
-    private static final float TURN_SPEED_LOW = 0.1f; //original = 0.15f
+    private static final float TURN_SPEED_LOW = 0.2f; //original = 0.15f
     private static final float TURN_HIGH_ANGLE = 45.0f;
     private static final float TURN_LOW_ANGLE = 5.0f; //changed = 3.0f
     private static float globalAngle = 0f;
@@ -41,8 +41,9 @@ public class moveUtils {
     static final float COUNTS_PER_INCH = (EncoderTicks * REVS_PER_INCH_MOD) / (3.1416f * WHEEL_DIAMETER_INCHES);
     static final float SCALE_ADJUST_FWD = 5.0f;
 
-    static final float STRAFE_MOD = 18f;
+    static final float STRAFE_MOD = 36f;
     static final float MAX_STRAFE_SPEED = 1.0f;
+
 
     public static void initialize(DcMotor LF, DcMotor RF, DcMotor LB, DcMotor RB, BNO055IMU imu, float currHeading, PIDController pidRotate) {
         moveUtils.LF = LF;
@@ -51,25 +52,34 @@ public class moveUtils {
         moveUtils.RB = RB;
         moveUtils.imu = imu;
         moveUtils.desiredHeading = currHeading;
+        moveUtils.pidRotate = pidRotate;
 
     }
 
-    public static void turnCW(float turnDegrees) {
+    public static void turnCW(int turnDegrees) throws InterruptedException {
+        rotate(-turnDegrees,TURN_SPEED_LOW);
+        resetEncoders();
+
+      /*
         desiredHeading -= turnDegrees;
         if (desiredHeading < -180) {
             desiredHeading += 360;
-        }
-        turnToHeading();
+        }*/
+       // turnToHeading();
         //errorCorrect();
     }
 
-    public static void turnCCW(float turnDegrees) {
-        desiredHeading += turnDegrees;
+    public static void turnCCW(int turnDegrees) throws InterruptedException {
+
+        rotate(turnDegrees,TURN_SPEED_LOW);
+        resetEncoders();
+
+        /*desiredHeading += turnDegrees;
         if (desiredHeading > 180) {
             desiredHeading -= 360;
         }
         turnToHeading();
-        //errorCorrect();
+        //errorCorrect();*/
     }
 
   /*  public static void errorCorrect() {
@@ -384,6 +394,7 @@ public class moveUtils {
     }
 
     public static void strafeBuddy(float distanceMoveInches) {
+        resetEncoders();
 
         distanceMoveInches*=STRAFE_MOD;
 
