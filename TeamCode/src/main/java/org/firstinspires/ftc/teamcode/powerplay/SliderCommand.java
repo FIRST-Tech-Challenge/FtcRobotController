@@ -14,8 +14,8 @@ public class SliderCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        slider.setLevel(targetLevel);
         slider.setAuto();
+        slider.setLevel(targetLevel);
     }
 
     @Override

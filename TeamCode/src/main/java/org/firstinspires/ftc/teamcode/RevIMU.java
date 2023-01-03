@@ -39,6 +39,8 @@ public class RevIMU implements HardwareDevice {
     double offset;
 
     private int multiplier;
+    private double pitchOffset = 0,
+            rollOffset = 0;
 
     /**
      * Create a new object for the built-in gyro/imu in the Rev Expansion Hub
@@ -86,7 +88,9 @@ public class RevIMU implements HardwareDevice {
      */
     public void init(IMU.Parameters parameters) {
         revIMU.initialize(parameters);
-
+        revIMU.resetYaw();
+        resetPitch();
+        resetRoll();
         globalHeading = 0;
         relativeHeading = 0;
         offset = 0;
@@ -117,6 +121,14 @@ public class RevIMU implements HardwareDevice {
 //        return revIMU.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES) * multiplier;
 //    }
 
+    public void resetPitch() {
+        pitchOffset = revIMU.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES);
+    }
+
+    public void resetRoll() {
+        rollOffset = revIMU.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES);
+    }
+
     /**
      * @return X, Y, Z angles of gyro
      */
@@ -124,7 +136,7 @@ public class RevIMU implements HardwareDevice {
         // make a singular hardware call
         YawPitchRollAngles ypr_angles = revIMU.getRobotYawPitchRollAngles();
         return new double[]{ypr_angles.getYaw(AngleUnit.DEGREES),
-                ypr_angles.getPitch(AngleUnit.DEGREES), ypr_angles.getRoll(AngleUnit.DEGREES)};
+                ypr_angles.getPitch(AngleUnit.DEGREES) - pitchOffset, ypr_angles.getRoll(AngleUnit.DEGREES) - rollOffset};
     }
 
     public void disable() {

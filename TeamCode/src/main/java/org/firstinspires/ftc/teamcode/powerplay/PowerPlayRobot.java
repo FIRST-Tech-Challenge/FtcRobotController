@@ -21,7 +21,7 @@ public class PowerPlayRobot extends RobotEx {
     public PowerPlayRobot(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
                           GamepadEx toolOp) {
         super(hardwareMap, telemetry, driverOp, toolOp, false, true,
-                false, false, false, false,
+                true, true, true, true,
                 true);
     }
 
@@ -33,25 +33,36 @@ public class PowerPlayRobot extends RobotEx {
                 .whenPressed(new ClawCommand(claw));
 
         ////////////////////////////////////////// Slider //////////////////////////////////////////
-//        slider = new SliderSubsystem(hardwareMap);
-//
-//        //Levels
-//        toolOp.getGamepadButton(GamepadKeys.Button.X)
-//                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.ONE));
-//        toolOp.getGamepadButton(GamepadKeys.Button.Y)
-//                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.TWO));
-//        toolOp.getGamepadButton(GamepadKeys.Button.B)
-//                .whileHeld(new SliderCommand(slider, SliderSubsystem.Level.THREE));
+        slider = new SliderSubsystem(hardwareMap);
 
-        //Manual Height Adjustment
-//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-//                .whileHeld(new SliderManualCommand(slider, -1));
-//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-//                .whileHeld(new SliderManualCommand(slider, 1));
+        //Levels
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
 
-        ////////////////////////////////////////// Auto Actions //////////////////////////////////////////
+                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.LOW));
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.MID));
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.HIGH));
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.PARK));
+        toolOp.getGamepadButton(GamepadKeys.Button. LEFT_STICK_BUTTON)
+                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.GRAB));
+
+//        Manual Height Adjustment
+        new Trigger(() -> toolOp.getLeftY() >= 0.8).whileActiveContinuous(
+                new SliderManualCommand(slider, 1));
+        new Trigger(() -> toolOp.getLeftY() <= -0.8).whileActiveContinuous(
+                new SliderManualCommand(slider, -1));
+
+        /////////////////////////////////////////// Arm ////////////////////////////////////////////
         arm = new ArmSubsystem(hardwareMap);
 
+        new Trigger(() -> toolOp.getRightY() >= 0.8).whenActive(
+                new InstantCommand(arm::setForward, arm));
+        new Trigger(() -> toolOp.getRightY() <= -0.8).whenActive(
+                new InstantCommand(arm::setBackward, arm));
+
+        /////////////////////////////////////// Auto Actions ///////////////////////////////////////
         toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
                         new SequentialCommandGroup(
@@ -77,11 +88,16 @@ public class PowerPlayRobot extends RobotEx {
         ////////////////////////////////////////// Cone Detector //////////////////////////////////////////
         cone_detector = new ConeDetectorSubsystem(hardwareMap, 30);
 
-        new Trigger(cone_detector::isConeDetected)
-                .whenActive(new SequentialCommandGroup(
-                        new ClawCommand(claw),
-                        new SliderCommand(slider, SliderSubsystem.Level.PARK),
-                        new InstantCommand(arm::toggleState, arm)
-                ));
+        toolOp.getGamepadButton(GamepadKeys.Button.START)
+                .whenPressed(new InstantCommand(cone_detector::toogleState, cone_detector));
+
+        if (cone_detector.isEnabled()) {
+            new Trigger(cone_detector::isConeDetected)
+                    .whenActive(new SequentialCommandGroup(
+                            new InstantCommand(claw::grab, claw),
+                            new SliderCommand(slider, SliderSubsystem.Level.PARK),
+                            new InstantCommand(arm::toggleState, arm)
+                    ));
+        }
     }
 }

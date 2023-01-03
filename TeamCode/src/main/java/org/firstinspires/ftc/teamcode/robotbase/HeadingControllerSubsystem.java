@@ -86,6 +86,10 @@ public class HeadingControllerSubsystem extends SubsystemBase {
         controller.setSetPoint(target);
     }
 
+    public double getTarget() {
+        return target;
+    }
+
     public void toggleState() {
         enabled = !enabled;
         findClosestTarget = enabled || findClosestTarget;

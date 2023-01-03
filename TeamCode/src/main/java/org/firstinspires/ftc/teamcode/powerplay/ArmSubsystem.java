@@ -31,7 +31,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void toggleState() {
-        if(state == State.FORWARD)
+        if (state == State.FORWARD)
             setBackward();
         else
             setForward();

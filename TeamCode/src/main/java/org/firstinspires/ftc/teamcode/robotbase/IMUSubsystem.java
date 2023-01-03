@@ -25,7 +25,6 @@ public class IMUSubsystem extends SubsystemBase {
                         Telemetry dashboardTelemetry) {
         imu = new RevIMU(hardwareMap);
         imu.init();
-//        That is inside init!!
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 //        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 //        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -37,6 +36,7 @@ public class IMUSubsystem extends SubsystemBase {
         this.telemetry = telemetry;
         this.dashboardTelemetry = dashboardTelemetry;
     }
+//        That is inside init!!
 
     public void periodic() {
         angles = imu.getYawPitchRoll();

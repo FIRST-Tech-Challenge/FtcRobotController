@@ -13,15 +13,26 @@ public class ConeDetectorSubsystem extends SubsystemBase {
     private final SensorRevTOFDistance distSensor;
     private final double target;
 
+    private boolean isEnabled = true;
+
     public ConeDetectorSubsystem(HardwareMap hardwareMap, double target) {
         DistanceSensor sensor = (DistanceSensor) hardwareMap.get(NormalizedColorSensor.class,
                 "cone_detector");
         distSensor = new SensorRevTOFDistance(sensor);
+
         this.target = target;
     }
 
     public double getDistance() {
         return distSensor.getDistance(DistanceUnit.MM);
+    }
+
+    public void toogleState() {
+        isEnabled = !isEnabled;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
     public Boolean isConeDetected() {
