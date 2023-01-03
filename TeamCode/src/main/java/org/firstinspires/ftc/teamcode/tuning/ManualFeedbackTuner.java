@@ -19,8 +19,8 @@ public final class ManualFeedbackTuner extends ActionOpMode {
             while (opModeIsActive()) {
                 runBlocking(
                     drive.actionBuilder(drive.pose)
-                            .forward(DISTANCE)
-                            .forward(-DISTANCE)
+                            .lineToX(DISTANCE)
+                            .lineToX(0)
                             .build());
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
@@ -31,8 +31,8 @@ public final class ManualFeedbackTuner extends ActionOpMode {
             while (opModeIsActive()) {
                 runBlocking(
                     drive.actionBuilder(drive.pose)
-                            .forward(DISTANCE)
-                            .forward(-DISTANCE)
+                            .lineToX(DISTANCE)
+                            .lineToX(0)
                             .build());
             }
         } else {
