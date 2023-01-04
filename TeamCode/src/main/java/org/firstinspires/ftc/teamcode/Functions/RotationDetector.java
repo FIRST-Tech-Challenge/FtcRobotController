@@ -45,7 +45,7 @@ public class RotationDetector {
             startingRotation =ReturnPositiveRotation();
 
             MotorPID = new MVPIDController();
-            MotorPID.pidController(0.5, 0.1, 0.25, 0.0, 0.0001);
+            MotorPID.pidController(0.025, 0.01, 0.25, 0.01, 0.01);
             MotorPID.setContinuous(true);
             MotorPID.setInputRange(-180.0,180.0);
             MotorPID.setOutputRange(-1.0,1.0);
@@ -82,8 +82,10 @@ public class RotationDetector {
      */
     public double ReturnPositiveRotation(){
         double currentRotation=ReturnRotation();
-        if(currentRotation>=0)
-        {
+        if(currentRotation >= 0.0){
+            if (currentRotation > 180.0){
+                currentRotation -= 180.0;
+            }
             return currentRotation;
         }
         else

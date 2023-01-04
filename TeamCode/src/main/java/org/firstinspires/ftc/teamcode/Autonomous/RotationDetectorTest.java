@@ -62,7 +62,7 @@ public class RotationDetectorTest extends LinearOpMode {
 
         rotate.MoveStop();
         sleep(2000);
-        angle = -45.0;
+        angle = 45.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
             rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
@@ -82,7 +82,7 @@ public class RotationDetectorTest extends LinearOpMode {
         rotate.MoveStop();
         sleep(1000);
 
-        angle = 45.0;
+        angle = 270.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
             rotate.RotateRaw(2,rotationDetector.MotorPower(angle));
