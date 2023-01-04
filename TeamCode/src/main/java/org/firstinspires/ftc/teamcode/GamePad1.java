@@ -7,6 +7,42 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.concurrent.TimeUnit;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @TeleOp(name = "Gamepad263", group = "Linear Opmode")
 public class GamePad1 extends OpMode {
     HardwarePushbot robot = new HardwarePushbot();
@@ -66,7 +102,7 @@ public class GamePad1 extends OpMode {
         }
 
         if (gamepad1.left_bumper) {//low
-            setLevelDown(slideDown - 1060);
+            setLevelDown(slideDown - 1100);
         }
         if (gamepad1.left_trigger > .5) {//down all way
             setLevelDown(slideDown + 23);
@@ -74,11 +110,11 @@ public class GamePad1 extends OpMode {
         }
 
         if (gamepad1.right_bumper) {/////////medium
-            setLevelUp(slideDown - 1600);
+            setLevelUp(slideDown - 1700);
         }
 
         if (gamepad1.right_trigger > .5) {//all the way up
-            setLevelDown(slideDown - 2550);
+            setLevelDown(slideDown - 2600);
 
         }
 
