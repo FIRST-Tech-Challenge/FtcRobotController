@@ -60,7 +60,7 @@ abstract class RogueBaseAuto : BlackOp() {
 
         camera.openCameraDeviceAsync(object : AsyncCameraOpenListener {
             override fun onOpened() {
-                camera.startStreaming(1280, 960, OpenCvCameraRotation.UPSIDE_DOWN)
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT)
             }
 
             override fun onError(errorCode: Int) {
@@ -68,7 +68,6 @@ abstract class RogueBaseAuto : BlackOp() {
             }
         })
     }
-
     fun waitForStartWithVision(): Int {
         var lastIntID = -1
 

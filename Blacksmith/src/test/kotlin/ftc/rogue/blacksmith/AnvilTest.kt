@@ -38,8 +38,6 @@ internal class AnvilTest {
             .turn(PI)
             .build()
 
-        Anvil.setUnits(DistanceUnit.INCHES, AngleUnit.RADIANS, TimeUnit.SECONDS)
-
         val actual = Anvil.formTrajectory(drive, Pose2d()) {
             forward(5.0)
             turn(PI)

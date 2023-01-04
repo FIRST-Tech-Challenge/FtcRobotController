@@ -1,6 +1,6 @@
 @file:Suppress("ClassName")
 
-package ftc.rogue.blacksmith.proxies
+package ftc.rogue.blacksmith.internal.proxies
 
 import org.junit.jupiter.api.Assertions.*
 

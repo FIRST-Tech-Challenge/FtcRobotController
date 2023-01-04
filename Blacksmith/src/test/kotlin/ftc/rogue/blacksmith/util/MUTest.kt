@@ -16,7 +16,7 @@ internal class MUTest {
     inner class ToInTest {
         @Test
         fun `toIn converts from cm to inches`() {
-            assertEquals(10.0, 25.4.toIn(DistanceUnit.CM), 1e-6)
+            assertEquals(10.0, 25.4.toIn(DistanceUnit.CENTIMETERS), 1e-6)
         }
 
         @Test
@@ -29,7 +29,7 @@ internal class MUTest {
     inner class ToCmTest {
         @Test
         fun `toCm converts from cm to cm`() {
-            assertEquals(10.0, 10.toCm(DistanceUnit.CM), 1e-6)
+            assertEquals(10.0, 10.toCm(DistanceUnit.CENTIMETERS), 1e-6)
         }
 
         @Test

@@ -1,27 +1,27 @@
 @file:Suppress("ClassName")
 
-package ftc.rogue.blacksmith.proxies
+package ftc.rogue.blacksmith.internal.proxies
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import ftc.rogue.blacksmith.util.invokeMethodInfer
+import ftc.rogue.blacksmith.util.invokeMethodI
 import java.util.*
 
 @PublishedApi
 internal class _SampleMecanumDrive(private val drive: Any) {
     fun getBuilderProxy(startPose: Pose2d) =
         _TrajectorySequenceBuilder(
-            drive.invokeMethodInfer("trajectorySequenceBuilder", startPose)
+            drive.invokeMethodI("trajectorySequenceBuilder", startPose)
         )
 
     fun followTrajectorySequence(builder: Any) {
-        drive.invokeMethodInfer<Any?>("followTrajectorySequence", builder)
+        drive.invokeMethodI<Any?>("followTrajectorySequence", builder)
     }
 
     fun followTrajectorySequenceAsync(builder: Any) {
-        drive.invokeMethodInfer<Any?>("followTrajectorySequenceAsync", builder)
+        drive.invokeMethodI<Any?>("followTrajectorySequenceAsync", builder)
     }
 
     fun setPoseEstimate(pose: Pose2d) {
-        drive.invokeMethodInfer<Any?>("setPoseEstimate", pose)
+        drive.invokeMethodI<Any?>("setPoseEstimate", pose)
     }
 }
