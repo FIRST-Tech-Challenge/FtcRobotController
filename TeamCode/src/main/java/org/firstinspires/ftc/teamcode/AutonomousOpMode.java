@@ -33,7 +33,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @TeleOp
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
+public class AutonomousOpMode extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -52,7 +52,11 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.045;
 
-    int ID_TAG_OF_INTEREST = 1; // Tag ID 18 from the 36h11 family
+    int location = 0;
+
+    int ID_TAG_1 = 1; // Tag ID 18 from the 36h11 family
+    int ID_TAG_2 = 2; // Tag ID 18 from the 36h11 family
+    int ID_TAG_3 = 3; // Tag ID 18 from the 36h11 family
 
     AprilTagDetection tagOfInterest = null;
 
@@ -88,18 +92,20 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
          */
         while (!isStarted() && !isStopRequested())
         {
+
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-            telemetry.addData("current ditaction size", currentDetections);
+
             if(currentDetections.size() != 0)
             {
                 boolean tagFound = false;
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == ID_TAG_OF_INTEREST)
+                    if(tag.id == ID_TAG_1 | tag.id == ID_TAG_2 | tag.id == ID_TAG_3)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
+                        location = tag.id;
                         break;
                     }
                 }
@@ -194,8 +200,14 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
-    }
+        while (opModeIsActive()) {
+
+            telemetry .addData("location", location);
+            telemetry.update();
+            }
+
+        }
+
 
     void tagToTelemetry(AprilTagDetection detection)
     {
