@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ColorDetectPipeline extends OpenCvPipeline {
-    private Size blurSize = new Size(49, 49);
+    private Size blurSize = new Size(25, 25);
     private double erodeSize = 220;
 
     public boolean isRunning = false;
@@ -44,15 +44,8 @@ public class ColorDetectPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) throws IllegalArgumentException {
-
-        if (input == null) {
-            throw new IllegalArgumentException("Input cannot be null");
-        }
-
-        isRunning = true;
         int[] ca = {43, 200, 127};
         int[] co = {100, 50, 127};
-        counter++;
         return processFrameWithRange(input, ca, co);
     }
 
@@ -61,6 +54,7 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         if (input == null) {
             throw new IllegalArgumentException("Input cannot be null");
         }
+        counter++;
 
         // Convert color to HSV
         Imgproc.cvtColor(input, frame, Imgproc.COLOR_BGR2HSV);
