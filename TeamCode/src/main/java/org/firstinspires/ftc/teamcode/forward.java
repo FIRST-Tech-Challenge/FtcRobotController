@@ -25,7 +25,12 @@ public class forward extends LinearOpMode {
         double SpinLeft = 0.1;
         double STOP = 0.5;
         double SpinRight = 0.9;
-
+    private float lfPower;
+    private float rfPower;
+    private float lbPower;
+    private float rbPower;
+    private float tPower;
+    private float tdPower;
     @Override
     public void runOpMode() {
 
@@ -83,19 +88,30 @@ public class forward extends LinearOpMode {
                 lsPower = gamepad1.dpad_left;
                 lPower = gamepad1.left_stick_y;
                 double rPower = gamepad1.right_stick_y;
-               towerPower = gamepad2.right_trigger;
+               tPower = gamepad2.right_trigger;
+               tdPower = gamepad2.left_trigger;
 
-                lf.setPower(lsPower * 0.9);
-                rf.setPower(rsPower * -0.9);
-                lb.setPower(lsPower * -0.9);
-                rb.setPower(lsPower * 0.9);
+            if(gamepad1.dpad_right){
+                lfPower = -1.0f;
+                rfPower = 1.0f;
+                lbPower = 1.0f;
+                rbPower = -1.0f;
+            }
+            if(gamepad1.dpad_left){
+                lfPower = 1.0f;
+                rfPower = -1.0f;
+                lbPower = -1.0f;
+                rbPower = 1.0f;
+            }
 
 
                 lf.setPower(lPower * 0.9);
                 rf.setPower(rPower * 0.9);
                 lb.setPower(lPower * 0.9);
                 rb.setPower(rPower * 0.9);
-                tower1.setPower(towerPower * 1.0);
+                tower1.setPower(tPower * .75);
+                tower1.setPower(tdPower * -.5);
+
 
 
             }
