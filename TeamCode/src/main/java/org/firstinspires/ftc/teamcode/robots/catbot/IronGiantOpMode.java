@@ -23,10 +23,10 @@ public class IronGiantOpMode extends OpMode {
     //autonomous variables
     private boolean auton = true; // controls if auton will run set to true to run with auton
     private boolean autonInitialized = false;
-    private boolean testing = false;
-    private boolean red = true; // team boolean variable
+    private boolean testing = false;// turns off normal robot motion
+    private boolean red = true; // team boolean variable red true is red team
     //miscellaneous variables
-    private boolean calibrateOn = true;
+    private boolean calibrateOn = true;// turns off automatic elevator calibration
     private boolean calibrate = false;
     private static final float DEADZONE = .1f;
     //vision variables
@@ -76,7 +76,7 @@ public class IronGiantOpMode extends OpMode {
         if (!autonInitialized && !testing && auton) {
             autonDrive();
         } else if(!testing){
-            telemetry.addData("auton running? \t", autonomous.hasBehaviors());
+            telemetry.addData("should auton be running? \t", autonomous.hasBehaviors());
             if(autonomous.hasBehaviors()) {
                 autonomous.runBehaviors();
             }
@@ -115,7 +115,7 @@ public class IronGiantOpMode extends OpMode {
         }
     }
     public void telemetryOutput() {
-        telemetry.addData("is auton", auton);
+        telemetry.addData("is in auton \t", auton);
         robot.elevatorNClaw.telemetryOutput();
         robot.driveTrain.telemetryOutput();
     }
@@ -131,6 +131,7 @@ public class IronGiantOpMode extends OpMode {
         if(isRed)
         {
             autonomous.add(new Drive(robot, 1.5));
+            autonomous.add(new ClawMove(robot, true));
             autonomous.add(new Drive(robot, -1));
             switch(tagValue)
             {
@@ -163,6 +164,7 @@ public class IronGiantOpMode extends OpMode {
         {
             autonomous.add(new Turn(robot, -180));
             autonomous.add(new Drive(robot, 1.5));
+            autonomous.add(new ClawMove(robot, true));
             autonomous.add(new Drive(robot, -1));
             switch(tagValue)
             {

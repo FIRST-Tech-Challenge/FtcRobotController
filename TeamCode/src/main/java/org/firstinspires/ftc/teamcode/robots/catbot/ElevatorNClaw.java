@@ -15,10 +15,10 @@ class ElevatorNClaw {
     private static final float DEADZONE = .1f;
     private static final int MAXELEVTICS = 4320;
     private static final int MINELEVTICS = 0;
-    private static final int ELEVTICKSPOS1 = MINELEVTICS;
-    private static final int ELEVTICKSPOS2 = 2300;
-    private static final int ELEVTICKSPOS3 = 3983;
-    private static final int ELEVTICKSPOS4 = MAXELEVTICS;
+    static final int ELEVTICKSPOS1 = MINELEVTICS;
+    static final int ELEVTICKSPOS2 = 2300;
+    static final int ELEVTICKSPOS3 = 3983;
+    static final int ELEVTICKSPOS4 = MAXELEVTICS;
     private int currElevTics = 0;
     private double MOTORSTALLVALUE = 1.5;
     private static boolean calibrate;
@@ -94,4 +94,5 @@ class ElevatorNClaw {
         this.elevator.setDirection(DcMotorEx.Direction.REVERSE);
     }
     public int getElevatorPosition(){return elevator.getCurrentPosition();}
+    public double getClawPosition(){return claw.getPosition();}
 }
