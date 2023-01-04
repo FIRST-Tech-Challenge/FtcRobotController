@@ -52,12 +52,11 @@ public class MeepMeepQuadThree {
                         cycle(builder);
 
                     if(aprilTagsId == 1)
-
-                        builder.lineToLinearHeading(new Pose2d(-12.2,15.5,Math.toRadians(-109)));
+                        builder.lineToLinearHeading(new Pose2d(-12.2,14,Math.toRadians(-109)));
                     else if(aprilTagsId ==2)
                         builder.waitSeconds(1.74);
                     else
-                        builder.lineTo(new Vector2d(-58.2,24.6));
+                        builder.lineTo(new Vector2d(-58.2,14));
                     return builder.build();
                 });
 
