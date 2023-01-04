@@ -39,11 +39,10 @@ public class MeepMeepQuadThree {
                 .followTrajectorySequence(drive -> {
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
 
-                    builder.lineToLinearHeading(new Pose2d(-35, 53, Math.toRadians(90)));
+                    //builder.lineToLinearHeading(new Pose2d(-35, 53, Math.toRadians(90)));
                     builder.waitSeconds(2);
-                    builder.lineTo(new Vector2d(-35,15));
+                    builder.strafeTo(new Vector2d(-60,61.8));
                     // Change splineToLinearHeading pose to control distance between bot and junction
-                    builder.splineToLinearHeading(new Pose2d(-32,10.5, Math.toRadians(-47)), (Math.toRadians(-40)));
                     builder.waitSeconds(1);//cone deposit
                     for(int i=1; i <= 4;i++ )
                         cycle(builder);
