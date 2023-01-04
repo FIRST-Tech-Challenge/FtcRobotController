@@ -2,11 +2,11 @@ package org.firstinspires.ftc.team6220_PowerPlay.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetect;
+import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
 @Autonomous(name = "Blue Left Preload", group = "Competition")
-public class BlueLeftPreload extends AprilTagDetect {
+public class BlueLeftPreload extends BaseAutonomous {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,7 +21,7 @@ public class BlueLeftPreload extends AprilTagDetect {
         driveSlidesAutonomous(Constants.SLIDE_LOW);
         sleep(500);
 
-        int signal = detectAprilTag();
+        int signal = detectSignal();
 
         // drive to furthest tile in our quadrant
         driveInches(0, 54);

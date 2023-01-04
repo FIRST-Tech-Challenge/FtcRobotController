@@ -3,11 +3,6 @@ package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-import org.checkerframework.checker.units.qual.C;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetect;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
 @Autonomous(name = "StackGrabbingAuto_Blue", group = "Test")
@@ -21,7 +16,7 @@ public class StackGrabbingAuto_Blueside extends ConeDetection {
         initialize();
         ConeDetectionPipeline coneDetectionPipeline = new ConeDetectionPipeline();
         coneDetectionPipeline.setRanges(lowerBlue, upperBlue);
-        int signal = detectAprilTag();
+        int signal = detectSignal();
         //Grab cone
         servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
         sleep(1500);
