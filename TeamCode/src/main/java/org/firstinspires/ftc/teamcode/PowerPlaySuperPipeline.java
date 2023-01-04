@@ -63,23 +63,34 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         };
 
         FourPointRect(RotatedRect fromRect) {
+            // NOTE: Y values increase as you go down the screen, so a LOW value of Y
+            // means it’s near the top of the screen, and a LARGE value of Y means it’s
+            // near the bottom.  The 4 points of the rotated rectangle are numbered
+            // counter-clockwise, with point 0 being the largest value of Y (LOWEST
+            // point on the screen).
+            //     2                        2
+            //       3                    1
+            //    1           or              3
+            //      0                       0
             Point[] points = new Point[4];
             fromRect.points(points);
-            if(points[1].y < points[3].y) {
-                tl = points[1];
-                tr = points[2];
-                bl = points[0];
-                br = points[3];
+            if( points[1].y < points[3].y ) {
+               // Right-hand example above: top=1&2; bottom=0&3
+               tl = (points[1].x < points[2].x)?  points[1] : points[2];
+               tr = (points[1].x < points[2].x)?  points[2] : points[1];
+               bl = (points[0].x < points[3].x)?  points[0] : points[3];
+               br = (points[0].x < points[3].x)?  points[3] : points[0];
             } else {
-                tl = points[2];
-                tr = points[3];
-                bl = points[1];
-                br = points[0];
+               // Left-hand example above: top=2&3; bottom=0&1
+               tl = (points[2].x < points[3].x)?  points[2] : points[3];
+               tr = (points[2].x < points[3].x)?  points[3] : points[2];
+               bl = (points[0].x < points[1].x)?  points[0] : points[1];
+               br = (points[0].x < points[1].x)?  points[1] : points[0];
             }
-            width = sqrt(pow((tl.x-tr.x), 2) + pow((tl.y-tr.y), 2));
-            height = sqrt(pow((tl.x-br.x), 2) + pow((tl.y-br.y), 2));
-            center = fromRect.center.clone();
-            topCenter = new Point(new double[] {(tl.x - tr.x) / 2.0, (tl.y - tr.y) / 2.0});
+            width  = sqrt(pow((tr.x-tl.x), 2) + pow((tr.y-tl.y), 2));
+            height = sqrt(pow((bl.x-tl.x), 2) + pow((bl.y-tl.y), 2));
+            center    = fromRect.center.clone();
+            topCenter = new Point(new double[] {(tl.x + tr.x)/2.0, (tl.y + tr.y)/2.0});
         }
 
         FourPointRect(Point tl, Point tr, Point bl, Point br) {
@@ -87,10 +98,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             this.tr = tr.clone();
             this.bl = bl.clone();
             this.br = br.clone();
-            width = sqrt(pow((tl.x-tr.x), 2) + pow((tl.y-tr.y), 2));
-            height = sqrt(pow((tl.x-br.x), 2) + pow((tl.y-br.y), 2));
-            center = new Point(new double[]{(tl.x + br.x) / 2, (tl.y + br.y) / 2});
-            topCenter = new Point(new double[] {(tl.x - tr.x) / 2.0, (tl.y - tr.y) / 2.0});
+            width  = sqrt(pow((tr.x-tl.x), 2) + pow((tr.y-tl.y), 2));
+            height = sqrt(pow((bl.x-tl.x), 2) + pow((bl.y-tl.y), 2));
+            center    = new Point(new double[]{(tl.x + br.x)/2.0, (tl.y + br.y)/2.0});
+            topCenter = new Point(new double[]{(tl.x + tr.x)/2.0, (tl.y + tr.y)/2.0});
         }
 
         public FourPointRect clone() {
