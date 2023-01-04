@@ -1,15 +1,21 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public abstract class BaseOpMode extends LinearOpMode {
 
@@ -19,29 +25,50 @@ public abstract class BaseOpMode extends LinearOpMode {
     public static DcMotorEx motorBL;
     public static DcMotorEx motorBR;
 
-    public static DcMotorEx motorTurntable;
     public static DcMotorEx motorLeftSlides;
     public static DcMotorEx motorRightSlides;
 
     // servos
-    public static Servo servoGrabber;
+    public static ServoImplEx servoGrabber;
 
     // IMU
     public BNO055IMU imu;
-    public Orientation IMUOriginalAngles;
     public double startAngle;
 
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
 
+    // bulk reading
+    public List<LynxModule> hubs;
+
     // initializes the motors, servos, and IMUs
     public void initialize() {
+        hubs = hardwareMap.getAll(LynxModule.class);
+
+        ArrayList<Blinker.Step> steps = new ArrayList<>();
+        steps.add(new Blinker.Step(0xFFFF0000, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFFFF8800, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFFFFFF00, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFF88FF00, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFF00FF00, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFF00FF88, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFF00FFFF, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFF0088FF, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFF0000FF, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFF8800FF, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFFFF00FF, 125, TimeUnit.MILLISECONDS));
+        steps.add(new Blinker.Step(0xFFFF0088, 125, TimeUnit.MILLISECONDS));
+
+        for (LynxModule hub : hubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            hub.setPattern(steps);
+        }
+
         // motors
         motorFL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFL");
         motorFR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFR");
         motorBL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
-        motorTurntable = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorTurntable");
         motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLVSlides");
         motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRVSlides");
 
@@ -65,34 +92,32 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        motorTurntable.setDirection(DcMotorEx.Direction.FORWARD);
         motorLeftSlides.setDirection(DcMotorEx.Direction.FORWARD);
         motorRightSlides.setDirection(DcMotorEx.Direction.REVERSE);
 
-        motorTurntable.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorLeftSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorRightSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorTurntable.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         motorRightSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        motorTurntable.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorLeftSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorRightSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // servos
-        servoGrabber = hardwareMap.servo.get("servoGrabber");
+        PwmControl.PwmRange maxRange = new PwmControl.PwmRange(500, 2500, 20000);
+        servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
+        servoGrabber.setPwmRange(maxRange);
 
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
         sleep(3000);
 
-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
@@ -102,15 +127,14 @@ public abstract class BaseOpMode extends LinearOpMode {
         boolean isTurning = (tPower != 0);
 
         if (isTurning || turnFlag) {
-            IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // set original angle
-
+            startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // set original angle
             turnFlag = true;
 
         // otherwise read imu for correction
         } else {
             // obtain the current angle's error from the original angle
-            Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            double angleError = IMUOriginalAngles.firstAngle - currentAngle.firstAngle;
+            double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            double angleError = startAngle - currentAngle;
 
             // flip to inverse of angles above 180 / below -180 (to prevent infinity-rotate bug)
             // to make sure to use the shorter angle
@@ -130,10 +154,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
 
         // calculate speed and direction of each individual motor and set power of motors to speed
-        motorFL.setPower(-yPower + xPower + tPower);
-        motorFR.setPower(-yPower - xPower - tPower);
-        motorBL.setPower(-yPower - xPower + tPower);
-        motorBR.setPower(-yPower + xPower - tPower);
+        motorFL.setPower(yPower + xPower + tPower);
+        motorFR.setPower(yPower - xPower - tPower);
+        motorBL.setPower(yPower - xPower + tPower);
+        motorBR.setPower(yPower + xPower - tPower);
     }
 
     /**
@@ -172,13 +196,5 @@ public abstract class BaseOpMode extends LinearOpMode {
             motorLeftSlides.setPower(0.05);
             motorRightSlides.setPower(0.05);
         }
-    }
-
-    /**
-     * this method will allow the turntable to turn given a target position
-     * @param targetPosition target position for turntable motor in ticks
-     */
-    public void driveTurntable(double targetPosition) {
-
     }
 }

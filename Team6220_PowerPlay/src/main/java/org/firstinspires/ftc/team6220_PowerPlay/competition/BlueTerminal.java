@@ -5,17 +5,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetect;
+import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 
 @Autonomous(name = "Blue Terminal", group = "Competition")
-public class BlueTerminal extends AprilTagDetect {
+public class BlueTerminal extends BaseAutonomous {
 
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
 
         driveTurntable(0);
-        int signal = detectAprilTag();
+        int signal = detectSignal();
 
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         driveWithIMU(0.25, 0.0, 0.0);
