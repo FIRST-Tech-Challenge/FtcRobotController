@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.util.Vector2;
 
-public class FieldObject {
+public class FieldThing {
     private Vector2 pos; //current position
 
     private String name = "";
@@ -13,12 +13,12 @@ public class FieldObject {
     public boolean redOwn;
     public boolean blueOwn;
 
-    public FieldObject(String n, double y, double x, int h){
+    public FieldThing(String n, double y, double x, int h){
         neutral = true;
         redOwn = false;
         blueOwn = false;
         name = n;
-        pos = new Vector2(x,y);
+        pos = new Vector2(x,-y);
         height = h;
     }
 
@@ -33,7 +33,7 @@ public class FieldObject {
     }
 
     public double y(){
-        return -pos.y;
+        return pos.y;
     }
 
     public double z() {
@@ -41,15 +41,15 @@ public class FieldObject {
             case 0:
                 return 7;
             case 1:
-                return 5;
+                return 7;
             case 2:
-                return 17;
+                return 19;
             case 3:
-                return 27;
+                return 29;
             case 4:
-                return 36;
+                return 38;
             default:
-                return 36;
+                return 38;
         }
     }
 

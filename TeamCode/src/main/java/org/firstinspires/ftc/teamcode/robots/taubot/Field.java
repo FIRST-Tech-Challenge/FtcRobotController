@@ -16,13 +16,13 @@ import java.util.HashMap;
 
 public class Field {
 
-    public FieldObject[] objects = new FieldObject[37];
+    public FieldThing[] objects = new FieldThing[37];
 
-    public FieldObject[] substationRightPattern = new FieldObject[9];
-    public FieldObject[] substationLeftPattern = new FieldObject[9];
+    public FieldThing[] substationRightPattern = new FieldThing[9];
+    public FieldThing[] substationLeftPattern = new FieldThing[9];
 
-    public FieldObject[] coneStackRightPattern = new FieldObject[9];
-    public FieldObject[] coneStackLeftPattern = new FieldObject[9];
+    public FieldThing[] coneStackRightPattern = new FieldThing[9];
+    public FieldThing[] coneStackLeftPattern = new FieldThing[9];
     public boolean isBlue;
 
     //todo decide on start position
@@ -33,77 +33,80 @@ public class Field {
     public static double INCHES_PER_GRID = 23.5;
     public int fieldWidth = 12;
 
-    HashMap<String, FieldObject[]> mapObjects = new HashMap<String, FieldObject[]>();
+    HashMap<String, FieldThing[]> mapObjects = new HashMap<String, FieldThing[]>();
+
+    ConeStack coneStackRight = new ConeStack("AllianceRightStack",2.93,2.45,0);
+    ConeStack coneStackLeft = new ConeStack("AllianceLeftStack",-2.93,2.5,0);
 
 
     public Field(boolean isBlue){
         targetCoordinate = poseToCoordinates(startPose);
         this.isBlue = isBlue;
         if(isBlue){
-            objects[0] = new FieldObject("AllianceTerminalClose",2.5,0.5,0);
-            objects[1] = new FieldObject("AllianceTerminalFar",-2.5,5.5,0);
-            objects[2] = new FieldObject("EnemyTerminalClose",-2.5,0.5,0);
-            objects[3] = new FieldObject("EnemyTerminalFar",2.5,5.5,0);
+            objects[0] = new FieldThing("AllianceTerminalClose",2.5,0.5,0);
+            objects[1] = new FieldThing("AllianceTerminalFar",-2.5,5.5,0);
+            objects[2] = new FieldThing("EnemyTerminalClose",-2.5,0.5,0);
+            objects[3] = new FieldThing("EnemyTerminalFar",2.5,5.5,0);
 
         }else{
-            objects[0] = new FieldObject("AllianceTerminalClose",-2.5,0.5,0);
-            objects[1] = new FieldObject("AllianceTerminalFar",2.5,5.5,0);
-            objects[2] = new FieldObject("EnemyTerminalClose",2.5,0.5,0);
-            objects[3] = new FieldObject("EnemyTerminalFar",-2.5,5.5,0);
+            objects[0] = new FieldThing("AllianceTerminalClose",-2.5,0.5,0);
+            objects[1] = new FieldThing("AllianceTerminalFar",2.5,5.5,0);
+            objects[2] = new FieldThing("EnemyTerminalClose",2.5,0.5,0);
+            objects[3] = new FieldThing("EnemyTerminalFar",-2.5,5.5,0);
         }
-        mapObjects.put("AllianceTerminal", new FieldObject[]{objects[0], objects[1]});
-        mapObjects.put("EnemyTerminal", new FieldObject[]{objects[2], objects[3]} );
+        mapObjects.put("AllianceTerminal", new FieldThing[]{objects[0], objects[1]});
+        mapObjects.put("EnemyTerminal", new FieldThing[]{objects[2], objects[3]} );
 
-        objects[4] = new FieldObject("AllianceLeftStack",-2.5,2.5,0);
-        objects[5] = new FieldObject("AllianceRightStack",2.5,2.5,0);
-        objects[6] = new FieldObject("EnemyLeftStack",-2.5,3.5,0);
-        objects[7] = new FieldObject("EnemyRightStack",2.5,3.5,0);
+        objects[4] = coneStackLeft;
+        objects[5] = coneStackRight;
+        objects[6] = new FieldThing("EnemyLeftStack",-2.5,3.5,0);
+        objects[7] = new FieldThing("EnemyRightStack",2.5,3.5,0);
 
-        mapObjects.put("AllianceStack", new FieldObject[]{objects[4], objects[5]});
-        mapObjects.put("EnemyStack", new FieldObject[]{objects[6], objects[7]} );
+        mapObjects.put("AllianceStack", new FieldThing[]{objects[4], objects[5]});
+        mapObjects.put("EnemyStack", new FieldThing[]{objects[6], objects[7]} );
 
-        objects[8] = new FieldObject("AllianceSubstationLeft",-0.2,0.5,0);
-        objects[9] = new FieldObject("AllianceSubstationRight",0.2,0.5,0);
+        objects[8] = new FieldThing("AllianceSubstationLeft",-0.2,0.5,0);
+        objects[9] = new FieldThing("AllianceSubstationRight",0.2,0.5,0);
 
-        mapObjects.put("AllianceSubstation", new FieldObject[]{objects[8]});
-        mapObjects.put("EnemySubstation", new FieldObject[]{objects[9]} );
+        mapObjects.put("AllianceSubstation", new FieldThing[]{objects[8]});
+        mapObjects.put("EnemySubstation", new FieldThing[]{objects[9]} );
 
 
         for(int i = 0; i < 3 ; i++){
             for(int j = 0; j < 3; j++){
-                objects[i*3+j+10] = new FieldObject("GroundStation"+(i*3+j+1),-2 + j*2,5-i*2,1);
+                objects[i*3+j+10] = new FieldThing("GroundStation"+(i*3+j+1),-2 + j*2,5-i*2,1);
 
             }
         }
         mapObjects.put("GroundStation", Arrays.copyOfRange(objects,10,18));
 
-        objects[19] = new FieldObject("LowPole1",-1,5,2);
-        objects[20] = new FieldObject("LowPole2",1,5,2);
-        objects[21] = new FieldObject("LowPole3",-2,4,2);
-        objects[22] = new FieldObject("LowPole4",2,4,2);
-        objects[23] = new FieldObject("LowPole5",-2,2,2);
-        objects[24] = new FieldObject("LowPole6",2,2,2);
-        objects[25] = new FieldObject("LowPole7",-1,1,2);
-        objects[26] = new FieldObject("LowPole8",1,1,2);
+        objects[19] = new FieldThing("LowPole1",-1,5,2);
+        objects[20] = new FieldThing("LowPole2",1,5,2);
+        objects[21] = new FieldThing("LowPole3",-2,4,2);
+        objects[22] = new FieldThing("LowPole4",2,4,2);
+        objects[23] = new FieldThing("LowPole5",-2,2,2);
+        objects[24] = new FieldThing("LowPole6",2,2,2);
+        objects[25] = new FieldThing("LowPole7",-1,1,2);
+        objects[26] = new FieldThing("LowPole8",1,1,2);
 
         mapObjects.put("LowPole", Arrays.copyOfRange(objects,19,26));
 
-        objects[27] = new FieldObject("MidPole1",-1,4,3);
-        objects[28] = new FieldObject("MidPole2",1,4,3);
-        objects[29] = new FieldObject("MidPole3",-1,2,3);
-        objects[30] = new FieldObject("MidPole4",1,2,3);
+        objects[27] = new FieldThing("MidPole1",-1,4,3);
+        objects[28] = new FieldThing("MidPole2",1,4,3);
+        objects[29] = new FieldThing("MidPole3",-1,2,3);
+        objects[30] = new FieldThing("MidPole4",1,2,3);
 
         mapObjects.put("MidPole", Arrays.copyOfRange(objects,27,30));
 
-        objects[31] = new FieldObject("HighPole1",0,4,4);
-        objects[32] = new FieldObject("HighPole2",-1,3,4);
-        objects[33] = new FieldObject("HighPole3",1,3,4);
-        objects[34] = new FieldObject("HighPole4",0,2,4);
+        objects[31] = new FieldThing("HighPole1",0,4,4);
+        objects[32] = new FieldThing("HighPole2",-1,3,4);
+        objects[33] = new FieldThing("HighPole3",1,3,4);
+        objects[34] = new FieldThing("HighPole4",0,2,4);
 
         mapObjects.put("HighPole", Arrays.copyOfRange(objects,31,34));
 
-        objects[35] = new FieldObject("AllianceSignal1",-1.5,1.5,-1);
-        objects[36] = new FieldObject("AllianceSignal2",1.5,1.5,-1);
+        objects[35] = new FieldThing("AllianceSignal1",-1.5,1.5,-1);
+        objects[36] = new FieldThing("AllianceSignal2",1.5,1.5,-1);
 
         mapObjects.put("AllianceSignal", Arrays.copyOfRange(objects,35,36));
 
@@ -137,12 +140,12 @@ public class Field {
         if(patternIndex > 0) patternIndex--;
     }
 
-    public FieldObject getConeSource(){
+    public FieldThing getConeSource(){
         switch (patternIndex){
             case 0:
-                return substationLeftPattern[0];
-            case 1:
                 return substationRightPattern[0];
+            case 1:
+                return substationLeftPattern[0];
             case 2:
                 return coneStackLeftPattern[0];
             case 3:
@@ -152,7 +155,7 @@ public class Field {
         }
     }
 
-    public FieldObject getPatternObject(){
+    public FieldThing getPatternObject(){
         switch (patternIndex){
             case 0:
                 return substationLeftPattern[scoringTargetIndex];
@@ -204,6 +207,22 @@ public class Field {
 
     }
 
+    public ConeStack getRightConeStack(){
+        return coneStackRight;
+    }
+
+    public ConeStack getLeftConeStack(){
+        return coneStackLeft;
+    }
+
+    public ConeStack getConeStack(boolean rightConeStack){
+        if(rightConeStack){
+            return getRightConeStack();
+        }else{
+            return  getLeftConeStack();
+        }
+    }
+
     public static Pose2d coordinatesToPose(Pose2d coordinate){
         return new Pose2d(
                 coordinate.getX()* INCHES_PER_GRID + INCHES_PER_GRID /2,
@@ -215,11 +234,11 @@ public class Field {
         objects[ID].setOwnership(isBlue,isRed);
     }
 
-    public double distanceToFieldObject(Pose2d currentCoordinate, FieldObject object){
+    public double distanceToFieldObject(Pose2d currentCoordinate, FieldThing object){
         return Math.sqrt( Math.pow(object.x() - currentCoordinate.getX(), 2) + Math.pow(object.y() - currentCoordinate.getY(), 2));
     }
-    public FieldObject getNearestObject(String name, Pose2d currentCoordinate){
-        FieldObject[] objectsOfType = mapObjects.get(name);
+    public FieldThing getNearestObject(String name, Pose2d currentCoordinate){
+        FieldThing[] objectsOfType = mapObjects.get(name);
         double minDistance  = distanceToFieldObject(currentCoordinate, objectsOfType[0]);
         int minIndex = 0;
         for(int i = 1; i < objectsOfType.length ; i++){
@@ -233,7 +252,6 @@ public class Field {
         return objectsOfType[minIndex];
     }
 
-    //todo: gets closest pole of a certain height
     public int GetNearest(int h,Vector2 pos) {
         int minIndex = 0;
         double min = 999;
@@ -425,7 +443,7 @@ public class Field {
 
     public void goToStack(Robot robot){
         Pose2d currentPose = robot.driveTrain.getPoseEstimate();
-        FieldObject nearestStack = getNearestObject("AllianceStack", poseToCoordinates(currentPose));
+        FieldThing nearestStack = getNearestObject("AllianceStack", poseToCoordinates(currentPose));
 
         StateMachine path = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.crane.calculateFieldTargeting( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
@@ -436,7 +454,7 @@ public class Field {
     }
     public void goToHighPole(Robot robot){
         Pose2d currentPose = robot.driveTrain.getPoseEstimate();
-        FieldObject nearestStack = getNearestObject("HighPole", poseToCoordinates(currentPose));
+        FieldThing nearestStack = getNearestObject("HighPole", poseToCoordinates(currentPose));
 
         StateMachine path = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.crane.calculateFieldTargeting( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
@@ -448,7 +466,7 @@ public class Field {
     }
     public void goToMediumPole(Robot robot){
         Pose2d currentPose = robot.driveTrain.getPoseEstimate();
-        FieldObject nearestStack = getNearestObject("MidPole", poseToCoordinates(currentPose));
+        FieldThing nearestStack = getNearestObject("MidPole", poseToCoordinates(currentPose));
 
         StateMachine path = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.crane.calculateFieldTargeting( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
@@ -459,7 +477,7 @@ public class Field {
     }
     public void goToLowPole(Robot robot){
         Pose2d currentPose = robot.driveTrain.getPoseEstimate();
-        FieldObject nearestStack = getNearestObject("LowPole", poseToCoordinates(currentPose));
+        FieldThing nearestStack = getNearestObject("LowPole", poseToCoordinates(currentPose));
 
         StateMachine path = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.crane.calculateFieldTargeting( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
@@ -471,7 +489,7 @@ public class Field {
 
     public void goToGroundStation(Robot robot){
         Pose2d currentPose = robot.driveTrain.getPoseEstimate();
-        FieldObject nearestStack = getNearestObject("GroundStation", poseToCoordinates(currentPose));
+        FieldThing nearestStack = getNearestObject("GroundStation", poseToCoordinates(currentPose));
 
         StateMachine path = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.crane.calculateFieldTargeting( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))

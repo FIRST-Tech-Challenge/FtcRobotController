@@ -93,13 +93,13 @@ public class DriverControls {
         }
 
 
-        if(gamepad1.dpad_down) {
+        if(!gamepad1.dpad_down) {
             if (notJoystickDeadZone(gamepad1.right_stick_x)){
-                robot.crane.adjustY(-0.7*gamepad1.right_stick_x);
+                robot.crane.adjustY(-0.4*gamepad1.right_stick_x);
             }
 
             if (notJoystickDeadZone(gamepad1.right_stick_y)) {
-                robot.crane.adjustX(-0.7*gamepad1.right_stick_y);
+                robot.crane.adjustX(-0.4*gamepad1.right_stick_y);
             }
 
             if (gamepad1.right_trigger>.05) robot.crane.adjustZ(0.7*gamepad1.right_trigger);
@@ -149,10 +149,12 @@ public class DriverControls {
 
         if(stickyGamepad1.left_bumper){
             robot.crane.decNudgeIndex();
+            robot.crane.articulate(Crane.Articulation.coneStackLeft);
         }
 
         if(stickyGamepad1.right_bumper){
             robot.crane.incNudgeIndex();
+            robot.crane.articulate(Crane.Articulation.coneStackRight);
         }
 
         if(stickyGamepad1.a) {
@@ -165,13 +167,13 @@ public class DriverControls {
         }
 
 
-        if(gamepad1.dpad_down) {
+        if(!gamepad1.dpad_down) {
             if (notJoystickDeadZone(gamepad1.right_stick_x)){
-                robot.crane.adjustY(-0.7*gamepad1.right_stick_x);
+                robot.crane.adjustY(-0.4*gamepad1.right_stick_x);
             }
 
             if (notJoystickDeadZone(gamepad1.right_stick_y)) {
-                robot.crane.adjustX(-0.7*gamepad1.right_stick_y);
+                robot.crane.adjustX(-0.4*gamepad1.right_stick_y);
             }
 
             if (gamepad1.right_trigger>.05) robot.crane.adjustZ(0.7*gamepad1.right_trigger);

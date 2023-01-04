@@ -89,6 +89,15 @@ public class PIDController {
         m_prevTime=System.nanoTime();
     }
 
+    public PIDController(double Kp, double Ki, double Kd, Function<Double, Double> kF) {
+
+        m_P = Kp;
+        m_I = Ki;
+        m_D = Kd;
+        m_F = kF;
+        m_prevTime=System.nanoTime();
+    }
+
     public PIDController(PIDCoefficients coefficients) {
         m_P = coefficients.p;
         m_I = coefficients.i;
@@ -210,6 +219,13 @@ public class PIDController {
         m_P = p;
         m_I = i;
         m_D = d;
+    }
+
+    public void setPID(double p, double i, double d, Function<Double, Double> f) {
+        m_P = p;
+        m_I = i;
+        m_D = d;
+        m_F = f;
     }
 
     public void setPID(PIDCoefficients pidCoefficients) {

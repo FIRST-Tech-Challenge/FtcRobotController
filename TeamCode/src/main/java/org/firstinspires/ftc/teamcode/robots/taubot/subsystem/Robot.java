@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Mahesh Natamai
@@ -192,6 +193,7 @@ public class Robot implements Subsystem {
                 if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20)){
                     autonIndex++;
                 }
+                crane.articulate(Crane.Articulation.defaultPosition);
                 break;
             case 1:
                 if (startingPosition.equals(Constants.Position.START_LEFT)) {
@@ -228,14 +230,18 @@ public class Robot implements Subsystem {
                 break;
             case 3:
                 if(System.nanoTime() >= autonTime) {
-                    crane.goToFieldCoordinate(turret.getTurretPosition().getX()+1,turret.getTurretPosition().getY(),26);
-                    if(withinErrorPercent(crane.getExtendMeters(),crane.getExtenderTargetPos(),0.02) && withinErrorPercent(crane.getShoulderAngle(),crane.getShoulderTargetAngle(),0.07)){
+                    if(startingPosition.equals( Constants.Position.START_LEFT)){
+                        crane.articulate(Crane.Articulation.coneStackLeft);
+                    }else{
+                        crane.articulate(Crane.Articulation.coneStackRight);
+                    }
+                    if(crane.getArticulation() == Crane.Articulation.manual){
                         autonIndex++;
                     }
                 }
                 break;
             case 4:
-                if(autonTarget  ==  1){
+                if(autonTarget  ==  1 || Objects.isNull(autonTarget)){
                     autonIndex++;
                 }
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
@@ -254,6 +260,8 @@ public class Robot implements Subsystem {
                 break;
             case 5:
                 crane.nudgeLeft();
+                crane.fieldPositionTarget = new Vector3(driveTrain.getPoseEstimate().getX(),driveTrain.getPoseEstimate().getY(),26);
+                crane.articulate(Crane.Articulation.manual);
                 autonIndex=0;
                 return true;
             default:
