@@ -17,8 +17,6 @@ public class AutonomousJunctionDetection extends BaseAutonomous {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        initialize();
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), cameraMonitorViewId);
 
@@ -37,17 +35,7 @@ public class AutonomousJunctionDetection extends BaseAutonomous {
 
         waitForStart();
 
-        servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
-        sleep(1000);
-
         while (opModeIsActive()) {
-            servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
-            driveSlides(Constants.SLIDE_HIGH);
-
-            if (pipeline.rectDetected) {
-                driveWithIMU(pipeline.detectedRect.x / 800.0, pipeline.detectedRect.y / 600.0, 0);
-            }
-
             telemetry.addData("x", pipeline.detectedRect.x);
             telemetry.addData("y", pipeline.detectedRect.y);
             telemetry.addData("🏃‍💨", pipeline.isRunning);
