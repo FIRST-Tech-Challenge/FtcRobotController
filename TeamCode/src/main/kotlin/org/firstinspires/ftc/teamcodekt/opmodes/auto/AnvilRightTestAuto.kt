@@ -9,19 +9,15 @@ import ftc.rogue.blacksmith.util.kt.toRad
 
 @Autonomous
 class AnvilRightTestAuto : RogueBaseAuto() {
-    override fun goo() = with(bot) {
+    override fun goo() {
         val startPose = Pose2d(91.toIn(), (-159).toIn(), 90.toRad())
         val startTraj = mainTraj(startPose)
 
-        Anvil.startAutoWith(startTraj)
+        Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
-        waitForStart()
-
-        Anvil.start()
-
-        Scheduler.launch(this@AnvilRightTestAuto) {
+        Scheduler.launchOnStart(opmode = this) {
             bot.updateComponents(mTelemetry)
-            drive.update()
+            bot.drive.update()
             mTelemetry.update()
         }
     }

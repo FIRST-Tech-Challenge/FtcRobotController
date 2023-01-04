@@ -6,7 +6,6 @@ import com.outoftheboxrobotics.photoncore.PhotonCore
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.listeners.ReforgedGamepad
-import ftc.rogue.blacksmith.util.kt.createOnGo
 import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
 import org.firstinspires.ftc.teamcodekt.components.chains.RegularDepositChain

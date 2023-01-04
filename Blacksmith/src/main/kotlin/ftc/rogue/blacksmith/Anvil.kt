@@ -156,9 +156,11 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          * @param builder The [Anvil] instance to run asynchronously
          */
         @JvmStatic
-        fun startAutoWith(instance: Anvil) {
+        fun startAutoWith(instance: Anvil): AnvilLaunchConfig {
             initialTrajectory = instance.setPoseEstimate().build()
             initialInstance = instance
+
+            return AnvilLaunchConfig()
         }
 
         @JvmStatic
@@ -567,6 +569,10 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     @PublishedApi
     internal fun getEndPose() = builtTrajectory.invokeMethodRethrowing<Pose2d>("end")
+
+    class AnvilLaunchConfig internal constructor() {
+        fun onSchedulerLaunch() = Scheduler.on(Scheduler.STARTING_MSG, ::start)
+    }
 
     private object WarmupHelper {
         fun start(numTimes: Int) = repeat(numTimes) {

@@ -81,6 +81,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
  * @see Timer
  */
 object Scheduler {
+    const val STARTING_MSG = 2350948905823L
+
     /**
      * The [Listeners][Listener] subscribed to this [Scheduler]. Updated on every tick.
      */
@@ -126,6 +128,8 @@ object Scheduler {
     @JvmStatic
     @JvmOverloads
     fun launch(opmode: LinearOpMode, afterEach: Runnable = Runnable {}) {
+        emit(STARTING_MSG)
+
         while (opmode.opModeIsActive() && !opmode.isStopRequested) {
             updateListenersSet()
 
@@ -183,6 +187,8 @@ object Scheduler {
     @JvmStatic
     @JvmOverloads
     fun time(opmode: LinearOpMode, telemetry: Telemetry, afterEach: Runnable = Runnable {}) {
+        emit(STARTING_MSG)
+
         while (opmode.opModeIsActive() && !opmode.isStopRequested) {
             val startTime = System.currentTimeMillis()
 

@@ -1,6 +1,6 @@
 @file:Suppress("ClassName")
 
-package ftc.rogue.blacksmith.proxies
+package ftc.rogue.blacksmith.internal.proxies
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import ftc.rogue.blacksmith.internal.proxies._SampleMecanumDrive

@@ -68,7 +68,6 @@ abstract class RogueBaseAuto : BlackOp() {
             }
         })
     }
-
     fun waitForStartWithVision(): Int {
         var lastIntID = -1
 
