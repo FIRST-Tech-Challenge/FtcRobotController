@@ -41,7 +41,11 @@ public class MeepMeepQuadThree {
 
                     //builder.lineToLinearHeading(new Pose2d(-35, 53, Math.toRadians(90)));
                     builder.waitSeconds(2);
-                    builder.strafeTo(new Vector2d(-60,61.8));
+                    builder.strafeTo(new Vector2d(-57,61.8));
+                    builder.forward(30);
+                    builder.splineToSplineHeading(new Pose2d(-53, 12, Math.toRadians(0)), Math.toRadians(-45));
+                    builder.back(4.5);
+
                     // Change splineToLinearHeading pose to control distance between bot and junction
                     builder.waitSeconds(1);//cone deposit
                     for(int i=1; i <= 4;i++ )
@@ -66,10 +70,10 @@ public class MeepMeepQuadThree {
     }
 
     public static void cycle(TrajectorySequenceBuilder builder){
-        builder.lineToLinearHeading(new Pose2d(-57,12.3,Math.toRadians(0)));
         builder.waitSeconds(2.5); //This would be replaced with an actual intake function
         builder.lineToLinearHeading(new Pose2d(-32,10.5, Math.toRadians(-47)));
         builder.waitSeconds(1);//Under the impression that using the async PID, the slides will be already be moved up
+        builder.lineToLinearHeading(new Pose2d(-57.5, 12, Math.toRadians(0)));
     }
 
 }
