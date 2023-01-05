@@ -103,4 +103,8 @@ public class Slide {
 
     }
 
+    public void setCustom(int custom){
+        targetPos = custom;
+    }
+
 }
