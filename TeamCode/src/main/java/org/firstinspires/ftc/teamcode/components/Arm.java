@@ -8,10 +8,14 @@ public class Arm {
     public static DcMotor rightLift;
     public static CRServo gripper;
 
-    public static final int lowJunction = 200;
-    public static final int middleJunction = 430;
-    public static final int highJunction = 610;
+    public static final int lowJunction = 150;
+    public static final int middleJunction = 300;
+    public static final int highJunction = 450;
     public static int armTarget = 0;
+
+    private static boolean targetChanged;
+    public static boolean dropArm = false;
+    public static boolean raiseArm = false;
 
     public Arm(){}
 
@@ -20,7 +24,8 @@ public class Arm {
         Arm.rightLift = rLift;
         Arm.gripper = g;
 
-        leftLift.setDirection(DcMotor.Direction.REVERSE);
+        //TODO: REVERSE rightLift FOR 11166-RC!!!
+        rightLift.setDirection(DcMotor.Direction.REVERSE);
 
         //resetting encoders at home level
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -42,29 +47,6 @@ public class Arm {
         gripper.setPower(-1);
     }
 
-    public static void raiseArm(double power) {
-        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        leftLift.setPower(power);
-        rightLift.setPower(power);
-
-        armTarget = getCurrentPosition();
-    }
-
-    public static void dropArm() {
-        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        leftLift.setPower(0);
-        rightLift.setPower(0);
-
-        armTarget = getCurrentPosition();
-    }
-
     public static void runToPosition(int position) {
         armTarget = position;
 
@@ -73,10 +55,32 @@ public class Arm {
 
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public static void setArmPower(double power) {
+        if (dropArm || raiseArm) {
+            leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            leftLift.setPower((dropArm) ? 0.0 : power/2);
+            rightLift.setPower((dropArm) ? 0.0 : power/2);
+
+            armTarget = getCurrentPosition() + ((dropArm) ? -70 : 70);
+            targetChanged = true;
+        } else {
+            leftLift.setTargetPosition(armTarget);
+            rightLift.setTargetPosition(armTarget);
+
+            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
 
         if (rightLift.isBusy() && leftLift.isBusy()){
-            if (getCurrentPosition() < armTarget) {
-                if (getCurrentPosition() < middleJunction) {
+            if (getCurrentPosition() > armTarget) {
+                if (getCurrentPosition() > middleJunction) {
                     leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                     rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 } else {
@@ -88,8 +92,8 @@ public class Arm {
             } else {
                 leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                leftLift.setPower(1.0);
-                rightLift.setPower(1.0);
+                leftLift.setPower(power);
+                rightLift.setPower(power);
             }
         }
     }

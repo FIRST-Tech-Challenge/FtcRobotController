@@ -32,20 +32,26 @@ public class Linear_root extends LinearOpMode {
         rightLift = hardwareMap.get(DcMotor.class, "rightArm");
         gripper = hardwareMap.get(CRServo.class, "gripper");
         Arm.init(leftLift, rightLift, gripper);
+        Arm.armTarget = 0;
 
         waitForStart();
 
         while (opModeIsActive()) {
             Chassis.joyStick(gamepad1);
 
+            if (gamepad2.left_trigger > 0.2) Arm.dropArm = true;
+            else Arm.dropArm = false;
+            if (gamepad2.right_trigger > 0.2) Arm.raiseArm = true;
+            else Arm.raiseArm = false;
             if (gamepad2.x) Arm.runToPosition(Arm.lowJunction);
             if (gamepad2.b) Arm.runToPosition(Arm.middleJunction);
             if (gamepad2.y) Arm.runToPosition(Arm.highJunction);
             if (gamepad2.a) Arm.runToPosition(0);
             if (gamepad2.left_bumper) Arm.openGripper();
             if (gamepad2.right_bumper) Arm.closeGripper();
-            if (gamepad2.left_trigger > 0) Arm.dropArm();
-            if (gamepad2.right_trigger > 0) Arm.raiseArm(0.5);
+
+            //TODO: SET 1.0 FOR 11166-RC!!
+            Arm.setArmPower(1.0);
 
             telemetry.addData("arm position", Arm.getCurrentPosition());
             telemetry.addData("arm target", Arm.armTarget);
