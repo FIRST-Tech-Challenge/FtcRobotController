@@ -120,17 +120,34 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double left_y = gamepad1.left_stick_y;
             double left_x = gamepad1.left_stick_x;
             double strafe_side = gamepad1.right_stick_x;
+            int position = -900;
 
-            if (gamepad2.x) armTarget = lowJunction;
-            if (gamepad2.b) armTarget = middleJunction;
-            if (gamepad2.y) armTarget = highJunction;
-            if (gamepad2.a) armTarget = 0;
+            if (gamepad2.x) {
+                position = armTarget;
+                armTarget = lowJunction;
+            }
+            if (gamepad2.b) {
+                position = armTarget;
+                armTarget = middleJunction;
+            }
+            if (gamepad2.y) {
+                position = armTarget;
+                armTarget = highJunction;
+            }
+            if (gamepad2.a) {
+                position = armTarget;
+                armTarget = 0;
+            }
 
             if (gamepad2.left_bumper) {
                 gripper.setPower(1);
+                position = armTarget;
                 armTarget = 0;
             }
             if (gamepad2.right_bumper) gripper.setPower(-1);
+
+            if (gamepad2.dpad_up) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 - 70;
+            if (gamepad2.dpad_down) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 + 70;
 
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -165,43 +182,64 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 rightBackPower /= max;
             }
 
+            if (gamepad1.right_bumper) {
+                leftFrontPower *= 0.5;
+                rightBackPower *= 0.5;
+                rightFrontPower *= 0.5;
+                leftBackPower *= 0.5;
+            }
+            else {
+                leftFrontPower *= 0.75;
+                rightBackPower *= 0.75;
+                rightFrontPower *= 0.75;
+                leftBackPower *= 0.75;
+            }
+
             // Send calculated power to wheels
-            motorFL.setPower(leftFrontPower * 0.6);
-            motorFR.setPower(rightFrontPower * 0.6);
-            motorBL.setPower(leftBackPower * 0.6);
-            motorBR.setPower(rightBackPower * 0.6);
+            motorFL.setPower(leftFrontPower);
+            motorFR.setPower(rightFrontPower);
+            motorBL.setPower(leftBackPower);
+            motorBR.setPower(rightBackPower);
 
             boolean targetChanged = false;
 
-            while(gamepad2.dpad_up || gamepad2.dpad_down) {
-                leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//                if (gamepad2.left_stick_y > 0 || gamepad2.right_stick_y > 0) SetArmPower(0);
-//                if (gamepad2.left_stick_y < 0) SetArmPower(gamepad2.left_stick_y * 1.0);
-//                if (gamepad2.right_stick_y < 0) SetArmPower(gamepad2.right_stick_y * 0.5);
-
-                if (gamepad2.dpad_up) SetArmPower(-1.0);
-                if (gamepad2.dpad_down) SetArmPower(0);
-
-                telemetry.addData("Arm Power", (leftLift.getPower() + rightLift.getPower()) / 2.0);
-                telemetry.update();
-
+            if (gamepad2.left_trigger > 0) {
+                SetArmPower(0);
+                targetChanged = true;
+            }
+            if (gamepad2.right_trigger > 0) {
+                SetArmPower(-0.7);
                 targetChanged = true;
             }
 
             if(targetChanged) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2;
 
-            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
+                leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            } else {
+                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
             leftLift.setTargetPosition(armTarget);
             rightLift.setTargetPosition(armTarget);
             if (rightLift.isBusy() && leftLift.isBusy()) {
-                if (leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()) SetArmPower(0.0);
-                else SetArmPower(1.0);
-                telemetry.addData("Arm Position", (leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2.0);
-                telemetry.addData("Target Position", (leftLift.getTargetPosition() + rightLift.getTargetPosition()) / 2.0);
-                telemetry.addData("Arm Power", (leftLift.getPower() + rightLift.getPower()) / 2.0);
-                telemetry.update();
+                if (leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()) {
+                    if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < -630 && armTarget != -630 && (!gamepad2.dpad_down && !gamepad2.dpad_up)) {
+                        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        SetArmPower(0.0);
+                    }
+                    else {
+                        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        SetArmPower(0.0);
+                    }
+                } else {
+                    leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    SetArmPower(1.0);
+                }
             }
         }
     }
