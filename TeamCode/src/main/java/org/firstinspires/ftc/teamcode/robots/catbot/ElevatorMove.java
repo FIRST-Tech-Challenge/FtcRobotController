@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.catbot;
 
-public class ElevatorMove implements Task{
+public class ElevatorMove extends Task{
     private Robot robot;
     private char position;
     // position should be top, middle, low, or bottom

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.catbot;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,17 +19,18 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
+@Config("IronGiantGameVariables")
 @TeleOp(name="Iron Giant OpMode", group="Challenge")
 public class IronGiantOpMode extends OpMode {
     //autonomous variables
-    private boolean auton = true; // controls if auton will run set to true to run with auton
+    public static boolean auton = true; // controls if auton will run set to true to run with auton
     private boolean autonInitialized = false;
-    private boolean testing = false;// turns off normal robot motion
-    private boolean red = true; // team boolean variable red true is red team
+    public static  boolean testing = false;// turns off normal robot motion
+    public static boolean red = true; // team boolean variable red true is red team
     //miscellaneous variables
-    private boolean calibrateOn = true;// turns off automatic elevator calibration
+    public static boolean calibrateOn = true;// turns off automatic elevator calibration
     private boolean calibrate = false;
-    private static final float DEADZONE = .1f;
+    public static float DEADZONE = .1f;
     //vision variables
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;

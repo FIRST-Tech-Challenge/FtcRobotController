@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.catbot;
 
-public class Strafe implements Task{
+public class Strafe extends Task{
     private Robot robot;
     private double tiles;
     // negative tiles is left

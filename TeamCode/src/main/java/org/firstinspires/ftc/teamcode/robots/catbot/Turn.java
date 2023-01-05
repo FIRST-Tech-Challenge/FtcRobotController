@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.catbot;
 
-public class Turn implements Task{
+public class Turn extends Task{
     private Robot robot;
     private double degrees;
     //negative degrees is left

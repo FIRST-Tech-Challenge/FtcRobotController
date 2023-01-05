@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.catbot;
 
-public class ClawMove implements Task{
+public class ClawMove extends Task{
     private Robot robot;
     private boolean shouldOpen;
     // negative tiles is backwards

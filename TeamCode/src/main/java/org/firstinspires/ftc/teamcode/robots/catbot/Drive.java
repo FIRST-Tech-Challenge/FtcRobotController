@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.catbot;
 
-class Drive implements Task{
+class Drive extends Task{
     private Robot robot;
     private double tiles;
     // negative tiles is backwards
