@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 public class PipePoleTracker extends OpenCvPipeline {
 
+    //TODO substitute the focusRect for the below testRect (focusRect should be the problem)
     Rect testRect = new Rect(new Point(0,0), new Point(200,200));
 
     static double percentColor;
@@ -135,7 +136,7 @@ public class PipePoleTracker extends OpenCvPipeline {
 
 
 
-//TODO The below color filtered is being done twice here
+            //TODO The below color filtered is being done twice here
             Imgproc.cvtColor(input,inputHSV,Imgproc.COLOR_BGR2HSV);
             Core.inRange(inputHSV,  new Scalar(81, 115, 164), new Scalar(107, 255, 255), inputMask);
 
@@ -193,6 +194,8 @@ public class PipePoleTracker extends OpenCvPipeline {
                 // However each time the capture.read is run, it resizes "input" into the original resolution, SOOOOO
                 //this little thing is so the submat is retained without rerunning all the below stuff
                 if (levelString.equals("two") && level2Assignment == true) {
+
+                    //TODO - Another test of the system is to remove the submat assignment and see if it still works (leave input as is)
                     input = input.submat(focusRect);
                     inputMask = inputMask.submat(focusRect);
 
