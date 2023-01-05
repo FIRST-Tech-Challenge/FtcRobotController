@@ -497,6 +497,26 @@ public class MVPIDController {
     }
 
     /**
+     * This method returns the average error of the PID controller.
+     * @param currentPosition : (double) current position
+     * @return avgError : (double) average error
+     */
+    public double getAvgError(double currentPosition) {
+        try {
+            totalError += getCurrentError();
+            return totalError / elapsedTime.seconds();
+        } catch (NullPointerException e) {
+            telemetry.addData("Error:", "NullPointerException caught in getAvgError: " + e.getMessage());
+            telemetry.update();
+            return 0;
+        } catch (Exception e) {
+            telemetry.addData("Error:", "Exception caught in getAvgError: " + e.getMessage());
+            telemetry.update();
+            return 0;
+        }
+    }
+
+    /**
      * This method calculates the PID output applying the PID equation to the given set point target
      * and current input value.
      *
