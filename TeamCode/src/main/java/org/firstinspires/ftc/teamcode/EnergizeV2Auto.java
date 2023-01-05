@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Energize V1 Auto", group="Linear Opmode")
+@Autonomous(name="Energize V2 Auto", group="Linear Opmode")
 public class EnergizeV2Auto extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -189,17 +189,83 @@ public class EnergizeV2Auto extends LinearOpMode {
         else
         {
             if (tagOfInterest.id == 1) {
-                strafe(-24, medium);
+                // Drive to place preloaded cone.
+                moveForward(24, fast);
                 sleep(500);
-                moveForward(24, medium);
+                strafe(12, fast);
+                //score cone
+                sleep(1000);
+                strafe(-12, fast);
+                sleep(1000);
+                moveForward(24, fast);
+                sleep(500);
+                //turn 90 degrees
+                strafe(-24, fast);
+                sleep(500);
+                strafe(12, fast);
+                sleep(1000);
+                //drop cone
+
+                // Park based on tag.
+                strafe(12,fast);
+                sleep(1000);
+                moveForward(-24, fast);
+                sleep(500);
+                strafe(-24,fast);
+                sleep(500);
             }
             else if (tagOfInterest.id == 3) {
-                moveForward(24, medium);
+                // Drive to place preloaded cone.
+                moveForward(24, fast);
+                sleep(500);
+                strafe(12, fast);
+                //score cone
+                sleep(1000);
+                strafe(-12, fast);
+                sleep(1000);
+                moveForward(24, fast);
+                sleep(500);
+                //turn 90 degrees
+                strafe(-24, fast);
+                sleep(500);
+                strafe(12, fast);
+                sleep(1000);
+                //drop cone
+
+                // Park based on tag.
+                strafe(12, medium);
+                sleep(500);
+                moveForward(-24, fast);
+                sleep(500);
+
+
             }
             else if (tagOfInterest.id == 9) {
-                strafe(24, medium);
+                // Drive to place preloaded cone.
+                moveForward(24, fast);
                 sleep(500);
-                moveForward(24, medium);
+                strafe(12, fast);
+                //score cone
+                sleep(1000);
+                strafe(-12, fast);
+                sleep(1000);
+                moveForward(24, fast);
+                sleep(500);
+                //turn 90 degrees
+                strafe(-24, fast);
+                sleep(500);
+                strafe(12, fast);
+                sleep(1000);
+                //drop cone
+
+                // Park based on tag.
+                strafe(12, fast);
+                sleep(500);
+                moveForward(-24, fast);
+                sleep(1000);
+                strafe(24, fast);
+                sleep(500);
+
             }
 
         }
