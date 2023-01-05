@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class Chassis {
     public static DcMotor motorFL;
@@ -32,31 +33,17 @@ public class Chassis {
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    /*
-        double left_y = gamepad1.left_stick_y;
-        double left_x = gamepad1.left_stick_x;
-        double strafe_side = gamepad1.right_stick_x;
+    public static void joyStick(Gamepad gamepad) {
+        double left_y = (Math.abs(gamepad.left_stick_y) < 0.2) ? 0 : gamepad.left_stick_y;
+        double left_x = gamepad.left_stick_x;
+        double strafe_side = gamepad.right_stick_x;
 
-        double leftFrontPower;
-        double leftBackPower;
-        double rightFrontPower;
-        double rightBackPower;
+        double leftFrontPower = left_y - left_x - strafe_side;
+        double rightFrontPower = left_y + left_x + strafe_side;
+        double leftBackPower = left_y + left_x - strafe_side;
+        double rightBackPower = left_y - left_x + strafe_side;
 
-        if (Math.abs(left_y) < 0.2) {
-            leftFrontPower = -left_x - strafe_side;
-            rightFrontPower = left_x + strafe_side;
-            leftBackPower = left_x - strafe_side;
-            rightBackPower = -left_x + strafe_side;
-        } else {
-            leftFrontPower = left_y - left_x - strafe_side;
-            rightFrontPower = left_y + left_x + strafe_side;
-            leftBackPower = left_y + left_x - strafe_side;
-            rightBackPower = left_y - left_x + strafe_side;
-        }
-
-        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
+        double max = Math.max(Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower)), Math.max(Math.abs(leftBackPower), Math.abs(rightBackPower)));
 
         if (max > 1.0) {
             leftFrontPower /= max;
@@ -65,33 +52,31 @@ public class Chassis {
             rightBackPower /= max;
         }
 
-        motorFL.setPower(leftFrontPower);
-        motorFR.setPower(rightFrontPower);
-        motorBL.setPower(leftBackPower);
-        motorBR.setPower(rightBackPower);
-     */
-
-//    public static void
+        motorFL.setPower(leftFrontPower * speed);
+        motorFR.setPower(rightFrontPower * speed);
+        motorBL.setPower(leftBackPower * speed);
+        motorBR.setPower(rightBackPower * speed);
+    }
 
     public static void forward(double power) {
-        motorFL.setPower(power);
-        motorFR.setPower(power);
-        motorBL.setPower(power);
-        motorBR.setPower(power);
+        motorFL.setPower(power * speed);
+        motorFR.setPower(power * speed);
+        motorBL.setPower(power * speed);
+        motorBR.setPower(power * speed);
     }
 
     public static void strafe(double power) {
-        motorFL.setPower(power);
-        motorFR.setPower(-power);
-        motorBL.setPower(-power);
-        motorBR.setPower(power);
+        motorFL.setPower(power * speed);
+        motorFR.setPower(-power * speed);
+        motorBL.setPower(-power * speed);
+        motorBR.setPower(power * speed);
     }
 
     public static void turn(double power) {
-        motorFL.setPower(power);
-        motorFR.setPower(-power);
-        motorBL.setPower(power);
-        motorBR.setPower(-power);
+        motorFL.setPower(power * speed);
+        motorFR.setPower(-power * speed);
+        motorBL.setPower(power * speed);
+        motorBR.setPower(-power * speed);
     }
 
     public static void stop() {
@@ -113,10 +98,10 @@ public class Chassis {
         motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while(motorFL.isBusy() || motorFR.isBusy() || motorBL.isBusy() || motorBR.isBusy()){
-            if (motorFL.isBusy()) motorFL.setPower(0.5);
-            if (motorFR.isBusy()) motorFR.setPower(0.5);
-            if (motorBL.isBusy()) motorBL.setPower(0.5);
-            if (motorBR.isBusy()) motorBR.setPower(0.5);
+            if (motorFL.isBusy()) motorFL.setPower(0.5 * speed);
+            if (motorFR.isBusy()) motorFR.setPower(0.5 * speed);
+            if (motorBL.isBusy()) motorBL.setPower(0.5 * speed);
+            if (motorBR.isBusy()) motorBR.setPower(0.5 * speed);
         }
     }
 }
