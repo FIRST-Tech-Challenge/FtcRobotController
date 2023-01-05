@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 @Autonomous(name = "RotationDetectorTest", group = "Concept")
 public class RotationDetectorTest extends LinearOpMode {
-    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack; //armMotorLeft, armMotorRight;
+    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack;
     private Servo collectorServo;
     private CRServo collectorCr;
     private Move move;
@@ -36,8 +36,6 @@ public class RotationDetectorTest extends LinearOpMode {
         rightMotor = hardwareMap.dcMotor.get("FR");
         leftMotorBack = hardwareMap.dcMotor.get("BL");
         rightMotorBack = hardwareMap.dcMotor.get("BR");
-        //armMotorLeft = hardwareMap.dcMotor.get("AML");
-        //armMotorRight = hardwareMap.dcMotor.get("AMR");
         collector = new Collector(collectorCr);
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
@@ -62,6 +60,9 @@ public class RotationDetectorTest extends LinearOpMode {
 
         rotate.MoveStop();
         sleep(2000);
+
+
+
         angle = -45.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
@@ -71,6 +72,8 @@ public class RotationDetectorTest extends LinearOpMode {
         }
         rotate.MoveStop();
         sleep(2000);
+
+
 
         angle = 90.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
@@ -82,6 +85,8 @@ public class RotationDetectorTest extends LinearOpMode {
         rotate.MoveStop();
         sleep(1000);
 
+
+
         angle = 45.0;
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
@@ -92,7 +97,16 @@ public class RotationDetectorTest extends LinearOpMode {
     }
 
     void DebugData(double angle){
+        double[] orientation = rotationDetector.getOrientation();
+
+        StringBuilder orientationString = new StringBuilder();
+        orientationString.append("Orientation (Z: ").append(orientation[0]);
+        orientationString.append(", Y: ").append(orientation[1]);
+        orientationString.append(", X: ").append(orientation[2]).append(")");
+
+        telemetry.addData("PID Parameters: ", rotationDetector.getPIDParameters());
         telemetry.addData("Current rotation", rotationDetector.ReturnPositiveRotation());
+        telemetry.addData(" - ", orientationString.toString());
         telemetry.addData("Target rotation", angle);
         telemetry.update();
     }
