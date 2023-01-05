@@ -16,15 +16,15 @@ public class LeftAuto extends BaseAuto {
 
     @Override
     void scoreMidPole () {
-        hdw.moveYAxis(30, 0.3);
+        hdw.moveYAxis(33, 0.3);
         hdw.goToHeight(Hardware2022.SlideHeight.Mid);
         hdw.turn (-45);
-        hdw.moveYAxis(1, 0.1);
+        hdw.moveYAxis(10, 0.3);
         hdw.dropCone();
         hdw.goToHeight(Hardware2022.SlideHeight.Mid);
-        hdw.moveYAxis(-1, -0.1);
+        hdw.moveYAxis(-7, -0.3);
+        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
         hdw.turn(45);
-        hdw.moveYAxis(-31, -0.3);
 
 
     }

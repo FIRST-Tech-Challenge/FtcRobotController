@@ -57,7 +57,8 @@ public class Hardware2022 {
     public enum SlideHeight {
         Low,
         Mid,
-        High
+        High,
+        Ground
     }
 
     private SlideHeight currentVSHeight = SlideHeight.Low;
@@ -321,6 +322,10 @@ public class Hardware2022 {
         double difference = regulateDegree( currentHeading - endHeading   );
         Log.d("9010", "Difference: " + difference );
 
+        kP = 0.2;
+        kI = 0.2 ;
+        kD = 0;
+        kF = 0;
 
         PIDFController pidfCrtler  = new PIDFController(kP, kI, kD, kF);
         Log.d("9010", "Kp: " + kP + "  kI: " + kI + " kD: " + kD );
@@ -419,16 +424,21 @@ public class Hardware2022 {
             targetPosition = CONE_SLIDE_LOW;
         }
         if (height.equals(SlideHeight.Mid)) {
-            targetPosition = CONE_SLIDE_MID;
+            targetPosition = CONE_SLIDE_MID + 1000;
         }
         if (height.equals(SlideHeight.High)) {
             targetPosition = CONE_SLIDE_HIGH;
         }
+        if (height.equals(SlideHeight.Ground)) {
+            targetPosition = vsldieInitPosition;
+        }
 
         //Move the slide
         int currentPosition = vSlide.getCurrentPosition();
+        Log.d("9010", "vSlide position before Move: " + vSlide.getCurrentPosition());
 
         vSlide.setTargetPosition(targetPosition);
+        Log.d("9010", "Target position : " + targetPosition);
         vSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         int sign = 1;
 
@@ -441,14 +451,16 @@ public class Hardware2022 {
 
         while (vSlide.isBusy()) {
             vSlide.setVelocity( sign * ANGULAR_RATE* 0.5 );
+            Log.d("9010", "Inside Moving Loop : " + vSlide.getCurrentPosition() + " Sign: " + sign);
         }
         vSlide.setVelocity(0);
+        Log.d("9010", "after Moving Loop : " + vSlide.getCurrentPosition());
         currentVSHeight = height;
-
         //Set mode back to Run using encoder.
         vSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    /*
     public void moveSlide(double power) {
         telemetry.addLine("moveSLide");
         telemetry.update();
@@ -461,7 +473,7 @@ public class Hardware2022 {
         touchSensor.getValue();
         telemetry.addLine("touch works");
         telemetry.update();
-    }
+    }*/
 
     public double getkP() {
         return kP;
@@ -499,9 +511,17 @@ public class Hardware2022 {
     public void dropCone() {
 
         double power = -0.5;
+        double slideStartPostion = vSlide.getCurrentPosition();
+        double travel = slideStartPostion - vSlide.getCurrentPosition();
+        Log.d("9010", "slideStartPostion:  " + slideStartPostion);
+        Log.d("9010", "Travel:  " + travel);
 
-        while (clawTouch.getState()==true) {
+        while (clawTouch.getState()==true && ( vSlide.getCurrentPosition() - vsldieInitPosition  >= 0)
+         && ( travel < 2000 )) {
             vSlide.setVelocity(power * ANGULAR_RATE);
+            travel = slideStartPostion - vSlide.getCurrentPosition();
+            Log.d("9010", "postion:  " + vSlide.getCurrentPosition());
+            Log.d("9010", "Travel:  " + travel);
         }
 
         vSlide.setVelocity(0);
@@ -510,4 +530,11 @@ public class Hardware2022 {
 
     }
 
+    /*
+    public void stayPosition() {
+        vSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        vSlide.getCurrentPosition();
+        vSlide.setTargetPosition(currentVSHeight);
+
+    }*/
 }
