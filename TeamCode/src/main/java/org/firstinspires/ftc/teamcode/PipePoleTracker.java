@@ -15,6 +15,8 @@ import java.util.Arrays;
 
 public class PipePoleTracker extends OpenCvPipeline {
 
+    Rect testRect = new Rect(new Point(0,0), new Point(200,200));
+
     static double percentColor;
     static String levelString = "one";
     static boolean level2Capable = false;
@@ -36,6 +38,7 @@ public class PipePoleTracker extends OpenCvPipeline {
     Mat inputOriginal = new Mat();
     Mat inputMaskOriginal = new Mat();
     Mat mat = new Mat();
+    Mat focusSubMat = new Mat();
 
     int gridX = 20;
     int gridY = 20;
@@ -78,6 +81,9 @@ public class PipePoleTracker extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+
+        focusSubMat = input.submat(testRect);
+
 
 
         Imgproc.cvtColor(input,inputHSV,Imgproc.COLOR_BGR2HSV);
@@ -129,7 +135,7 @@ public class PipePoleTracker extends OpenCvPipeline {
 
 
 
-
+//TODO The below color filtered is being done twice here
             Imgproc.cvtColor(input,inputHSV,Imgproc.COLOR_BGR2HSV);
             Core.inRange(inputHSV,  new Scalar(81, 115, 164), new Scalar(107, 255, 255), inputMask);
 
@@ -138,7 +144,7 @@ public class PipePoleTracker extends OpenCvPipeline {
             inputOriginal = input;
             inputMaskOriginal = inputMask;
 
-            percentColor = Core.countNonZero(inputMask);
+            percentColor = Core.countNonZero(inputMask); //TODO <-- This is wrong, this counts whole sum, not percent
 
 
 
@@ -151,8 +157,8 @@ public class PipePoleTracker extends OpenCvPipeline {
                  */
                 if (levelString.equals("one") && level1Assigment == false) {
 
-                    x_resolution = inputMask.cols();
-                    y_resolution = inputMask.rows();
+                    x_resolution = input.cols();
+                    y_resolution = input.rows();
 
                     lowestX = (int)x_resolution;
                     highestX = 0;
@@ -190,8 +196,8 @@ public class PipePoleTracker extends OpenCvPipeline {
                     input = input.submat(focusRect);
                     inputMask = inputMask.submat(focusRect);
 
-                    x_resolution = inputMask.cols();
-                    y_resolution = inputMask.rows();
+                    x_resolution = input.cols();
+                    y_resolution = input.rows();
                 }
 
                 if (levelString.equals("two") && level2Assignment == false && focusRect != null) {
@@ -199,8 +205,8 @@ public class PipePoleTracker extends OpenCvPipeline {
                     inputMask = inputMask.submat(focusRect);
                     input = input.submat(focusRect);
 
-                    x_resolution = inputMask.cols();
-                    y_resolution = inputMask.rows();
+                    x_resolution = input.cols(); //TODO Maybe swap this so it reads out the height and width of focus rect instead
+                    y_resolution = input.rows();
 
                     box_width = (int) (x_resolution / gridX);
                     box_height = (int) (y_resolution / gridY);
@@ -220,13 +226,12 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                     level2Assignment = true;
                     level1Assigment = false;
-                    System.out.println("_______________Level2Assigment!_______________");
                 }
 
                 boxBL_x = rectanglesGridDraw[gridY-1][gridX-1].x;
                 boxBL_y = rectanglesGridDraw[gridY-1][gridX-1].y;
 
-
+//TODO Potentially this is the crash spot because it is creating submats of 0 size
                 // Creating grid's subMats
                 for (int i = 0; i < gridY; i++) {
                     for (int j = 0; j < gridX; j++) {
@@ -248,6 +253,7 @@ public class PipePoleTracker extends OpenCvPipeline {
                         }
                     }
                 }
+                //TODO could be cleaned up so that center arrays use the rectangles grid
 
                 // Find all the X & Y Centers
                 for (int i = 0; i < gridY; i++) {
@@ -573,7 +579,7 @@ public class PipePoleTracker extends OpenCvPipeline {
                     //If we are in level one, we continue drawing a rectangle around the largest object (prep for level 2 & 3)
                     if (levelString.equals("one")) {
 
-//                        focusRect = null;
+//                        focusRect = null; //TODO may be source of rectangle carry over despite no yellow in image (shadow rect)
 
                         lowestX = (int) x_resolution;
                         highestX = 0;
@@ -630,7 +636,6 @@ public class PipePoleTracker extends OpenCvPipeline {
 
 
 //                        focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
-                        Mat focusSubMat = inputMask.submat(focusRect);
 //                        Imgproc.rectangle(inputOriginal, focusRect, red, 2);
 
                     }
@@ -652,8 +657,8 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                 percentColor = 0;
 
-                y_resolution = inputOriginal.rows();
-                x_resolution = input.cols();
+
+//                x_resolution = input.cols();
 
 
                 input = input.submat(focusRect);
@@ -661,7 +666,7 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                 percentColor = (Core.countNonZero(inputMask))/focusRect.area();
 
-                Imgproc.rectangle(inputOriginal, new Point(lowestX,0), new Point(highestX, y_resolution), red, 2);
+                Imgproc.rectangle(inputOriginal, new Point(lowestX,0), new Point(highestX, inputOriginal.rows()), red, 2);
 
                 if(percentColor < 0.1){
                     System.out.println("STOP! You've reached the top of the pole!!!");
@@ -700,8 +705,11 @@ public class PipePoleTracker extends OpenCvPipeline {
         inputHSV.release();
 //        inputOriginal.release();
 
+        x_resolution = matsGrid[0][0].cols();
+        y_resolution = matsGrid[0][0].rows();
 
-        return inputOriginal;
+
+        return matsGrid[0][0];
     }
 
 

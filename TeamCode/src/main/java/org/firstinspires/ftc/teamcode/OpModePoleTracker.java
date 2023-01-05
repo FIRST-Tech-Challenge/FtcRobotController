@@ -82,7 +82,7 @@ public class OpModePoleTracker extends LinearOpMode {
 
             telemetry.addLine("Current Level: " + getLevelString());
             telemetry.addLine("Level1 Assigment: " + getLevel1Assigment());
-            telemetry.addLine("Level2 Assignment: " + getLevel2Assigment());
+            telemetry.addLine("Level2 Assignment : " + getLevel2Assigment());
             telemetry.addLine("X_resolution: " + getXResolution());
             telemetry.addLine("Y_resolution: " + getYResolution());
             telemetry.addLine("Level 2 Capable?: " + getLevel2Capable());
