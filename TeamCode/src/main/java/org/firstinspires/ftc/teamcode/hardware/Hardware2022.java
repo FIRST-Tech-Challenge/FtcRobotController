@@ -39,10 +39,10 @@ public class Hardware2022 {
     private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
-    private final int CONE_SLIDE_LOW = 2460  ;
+    private final int CONE_SLIDE_LOW = 3000  ;
     //Get accurate reading for auto
-    private final int CONE_SLIDE_MID = 3800 ;
-    private final int CONE_SLIDE_HIGH = 5000 ;
+    private final int CONE_SLIDE_MID = 4700 ;
+    private final int CONE_SLIDE_HIGH = 7000 ;
 
     private boolean debug = true;
     private Telemetry telemetry;
@@ -106,14 +106,15 @@ public class Hardware2022 {
         wheelBackLeft = hwMap.get(DcMotorEx.class, "lrWheel");
         vSlide = hwMap.get(DcMotorEx.class, "Vertical");
 
-        //wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        vSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        vSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wheelFrontLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -385,7 +386,11 @@ public class Hardware2022 {
         telemetry.addLine().addData("Encoder Reading", vSlide.getCurrentPosition() );
         telemetry.addLine().addData("pwer input", power );
         telemetry.update();
-        
+
+        if ( power != 0 ) {
+            Log.d("9010", "vSlide position" + vSlide.getCurrentPosition());
+        }
+
         if ( ( (vSlide.getCurrentPosition() - vsldieInitPosition)  <= CONE_SLIDE_HIGH
                 && power > 0 )
                ||  ( (vSlide.getCurrentPosition() - vsldieInitPosition)  >= 0 )
@@ -422,8 +427,9 @@ public class Hardware2022 {
 
         //Move the slide
         int currentPosition = vSlide.getCurrentPosition();
-        vSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         vSlide.setTargetPosition(targetPosition);
+        vSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         int sign = 1;
 
         if ((currentPosition - targetPosition) > 0 ) {

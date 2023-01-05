@@ -104,11 +104,10 @@ public class HWTestTele  extends LinearOpMode {
                 sleep(100);
             }
 
-            /*
-            if (gamepad1.start) {
-                hdw.moveSlide(1);
 
-             */
+            if (gamepad1.left_stick_button) {
+                hdw.goToHeight(Hardware2022.SlideHeight.Mid);
+            }
 
 
             /*if (gamepad1.circle) {
