@@ -39,16 +39,22 @@ public class Linear_root extends LinearOpMode {
         while (opModeIsActive()) {
             Chassis.joyStick(gamepad1);
 
-            if (gamepad2.left_trigger > 0.2) Arm.dropArm = true;
-            else Arm.dropArm = false;
-            if (gamepad2.right_trigger > 0.2) Arm.raiseArm = true;
-            else Arm.raiseArm = false;
-            if (gamepad2.x) Arm.runToPosition(Arm.lowJunction);
-            if (gamepad2.b) Arm.runToPosition(Arm.middleJunction);
-            if (gamepad2.y) Arm.runToPosition(Arm.highJunction);
-            if (gamepad2.a) Arm.runToPosition(0);
+
+//            if (gamepad2.left_trigger > 0.2) Arm.manualArm = Arm.ManualArm.drop;
+//            else if (gamepad2.right_trigger > 0.2) Arm.manualArm = Arm.ManualArm.raise;
+//            else Arm.manualArm = Arm.ManualArm.none;
+
+            if (gamepad2.left_trigger > 0.2) Arm.armTarget = Arm.getCurrentPosition() - 30;
+            else if (gamepad2.right_trigger > 0.2) Arm.armTarget = Arm.getCurrentPosition() + 30;
+
+            if (gamepad2.x) Arm.armTarget = Arm.lowJunction;
+            if (gamepad2.b) Arm.armTarget = Arm.middleJunction;
+            if (gamepad2.y) Arm.armTarget = Arm.highJunction;
+            if (gamepad2.a) Arm.armTarget = 0;
+
             if (gamepad2.left_bumper) Arm.openGripper();
             if (gamepad2.right_bumper) Arm.closeGripper();
+
 
             //TODO: SET 1.0 FOR 11166-RC!!
             Arm.setArmPower(1.0);
