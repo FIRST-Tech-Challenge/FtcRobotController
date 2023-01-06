@@ -177,7 +177,7 @@ public class BlueLeft extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithcrane(1,1950,-1,2100);
+            strafeLeftwithcrane(1,1950,-1,2400);
             move(.5,330);
             sleep(100);
             intake(-1,1300);
@@ -187,11 +187,12 @@ public class BlueLeft extends LinearOpMode {
             gyroTurning(0);
             sleep(1000);
             moveandspin(.5,-980,1,-530);
-            sleep(2000);
+            stopMotors();
+            move(.2,-150);
             craneinput(600);
             Left.setPower(.3);
             moveandspin(.8,1000,1,0);
-            strafeRightwithcrane(1,0,-1,2200);
+            strafeRightwithcrane(1,680,-1,2200);
             move(.5,330);
             intake(-1,1300);
             move(.5,-330);
