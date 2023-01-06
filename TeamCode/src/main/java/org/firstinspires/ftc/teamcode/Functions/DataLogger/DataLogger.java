@@ -66,18 +66,27 @@ public class DataLogger {
         }
     }
 
+    public String createDateDirectoryName() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1; // Calendar months are zero-indexed
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        return year + "_" + month + "_" + day;
+    }
+
     public DataLogger(RotationDetector _rotationDetector,
                                 VoltageSensor _voltageSensor,
                                 Move _move,
                                 AccelerationDetector _accelerationDetector,
                                 String _className){
         Date today = new Date();
-        Calendar cal= Calendar.getInstance();
-        cal.setTime(today);
-        int year =cal.get(Calendar.YEAR);
-        int month =cal.get(Calendar.MONTH);
-        int day =cal.get(Calendar.DAY_OF_MONTH);
-        String YMD = year + "_" + month + "_" + day;
+        //Calendar cal= Calendar.getInstance();
+        //cal.setTime(today);
+        //int year =cal.get(Calendar.YEAR);
+        //int month =cal.get(Calendar.MONTH);
+        //int day =cal.get(Calendar.DAY_OF_MONTH);
+        String YMD = createDateDirectoryName();
+        //String YMD = year + "_" + month + "_" + day;
         dataLogFileName = new String(today.toString() + "_data" + ".csv");
         File directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File subDirectoryName = new File(directoryPath.getAbsolutePath() + "/" + YMD);
