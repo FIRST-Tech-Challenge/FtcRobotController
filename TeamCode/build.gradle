@@ -25,4 +25,8 @@ dependencies {
 
     // For FTCLib
     implementation 'org.ftclib.ftclib:core:2.0.1'
+
+    // for computer vision
+    implementation 'org.openftc:easyopencv:1.5.3'
+    implementation 'org.openftc:apriltag:1.1.1'
 }
