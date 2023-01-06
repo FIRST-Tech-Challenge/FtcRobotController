@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
  * Controls:
  *  [Button] Function
  */
+public class ExampleOpMode extends TeleOpModeBase {
     @Override
     public void setup() {
         // Initialise drivetrain
