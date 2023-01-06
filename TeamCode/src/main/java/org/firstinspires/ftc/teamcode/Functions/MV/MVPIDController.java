@@ -530,7 +530,9 @@ public class MVPIDController {
         //this.start = current;
 
         // Send telemetry message
-        telemetry.addData("PIDController - ", "calculate()");
+        //setTelemetry(telemetry);
+        //telemetry.addData("PIDController - ", 0);
+        //telemetry.update();
 
         // Calculating the error
         double currentError = target - start;

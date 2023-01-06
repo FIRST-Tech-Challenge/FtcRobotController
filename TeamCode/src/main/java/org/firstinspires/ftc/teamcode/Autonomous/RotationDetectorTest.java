@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import android.os.Debug;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -66,11 +68,18 @@ public class RotationDetectorTest extends LinearOpMode {
 
         // Test rotation to 30 degrees
         double angle = 30.0;
+        DebugData(angle);
+        //telemetry.addData("-- Rotation", angle);
+        //telemetry.addData("-- WaitForRotation", rotationDetector.WaitForRotation(angle));
+        //telemetry.update();
+
         while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
         {
             //try {
                 // Rotate the robot using the RotateRaw method and the MotorPower method from the
                 // RotationDetector class
+                telemetry.addData("- Rotation", angle);
+                telemetry.update();
                 rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
 
             // Display debugging data on the telemetry
@@ -143,7 +152,7 @@ public class RotationDetectorTest extends LinearOpMode {
 
         // Add data to the telemetry
         telemetry.addData("PID Parameters: ", rotationDetector.getPIDParameters());
-        telemetry.addData("Current rotation", rotationDetector.ReturnPositiveRotation());
+        telemetry.addData("Current rotation", rotationDetector.ReturnRotation());
         telemetry.addData(" - ", orientationString.toString());
         telemetry.addData("Target rotation", angle);
         telemetry.update();

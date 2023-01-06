@@ -56,7 +56,7 @@ public class RotationDetector {
             startingRotation = ReturnRotation();
 
             MotorPID = new MVPIDController();
-            MotorPID.pidController(0.025, 0.01, 0.025, 0.1, 0.001);
+            MotorPID.pidController(0.01, 0.005, 0.025, 0.1, 0.001);
             MotorPID.setContinuous(true);
             MotorPID.setInputRange(-180.0,180.0);
             MotorPID.setOutputRange(-1.0,1.0);
@@ -167,18 +167,19 @@ public class RotationDetector {
         double targetAngle = targetRotation;
 
         targetAngle = MotorPID.wrapToRange(targetAngle);
-        if (MotorPID.onTarget()) {
-            return false;
-        }
+        //if (MotorPID.onTarget()) {
+        //    return false;
+        //}
         MotorPID.setTarget(targetAngle);
         MotorPID.setStart(ReturnRotation());
 
         double output = MotorPID.calculate();  // Calculate the output of the PID controller
 
-        if (Math.abs(output) < MotorPID.getTolerance()) {  // If the error is within the tolerance
-            return true;  // Return true, indicating that the target angle has been reached
+        //if (Math.abs(output) < MotorPID.getTolerance()) {  // If the error is within the tolerance
+        if (Math.abs(output) < 0.1){ // If the error is within the tolerance
+                return false;  // Return true, indicating that the target angle has been reached
         } else {
-            return false;  // Return false, indicating that the target angle has not been reached
+            return true;  // Return false, indicating that the target angle has not been reached
         }
 
         //if(AngleCorrection(targetRotation) == AngleCorrection((int)ReturnPositiveRotation()))
