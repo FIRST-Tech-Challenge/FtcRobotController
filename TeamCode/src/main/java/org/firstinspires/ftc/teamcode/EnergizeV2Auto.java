@@ -28,6 +28,9 @@ public class EnergizeV2Auto extends LinearOpMode {
     double fy = 578.272;
     double cx = 402.145;
     double cy = 221.506;
+    
+     private DigitalChannel redLED;
+     private DigitalChannel greenLED;
 
     // UNITS ARE METERS
     double tagsize = 0.166;
@@ -71,6 +74,9 @@ public class EnergizeV2Auto extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBack");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
+        
+          redLED = hardwareMap.get(DigitalChannel.class, "redLED");
+            greenLED = hardwareMap.get(DigitalChannel.class, "greenLED");
 
         // Initializes Drive directions.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -121,11 +127,15 @@ public class EnergizeV2Auto extends LinearOpMode {
 
                 if(tagFound)
                 {
+                     redLED.setState(false);
+                        greenLED.setState(true);
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 }
                 else
                 {
+                     redLED.setState(true);
+                    greenLED.setState(false);
                     telemetry.addLine("Don't see tag of interest :(");
 
                     if(tagOfInterest == null)
