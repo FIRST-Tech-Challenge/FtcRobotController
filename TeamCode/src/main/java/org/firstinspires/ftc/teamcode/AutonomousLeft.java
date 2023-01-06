@@ -366,7 +366,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.liftPosInit( robot.LIFT_ANGLE_HIGH_B );
 
         // We're past the medium junction pole, so okay to rotate the turret
-        robot.turretPosInit( -45.0 );
+        robot.turretPosInit( -32.5 );
 
         // Drive partway there (while lift raises past the front motor)
         autoYpos=34.5;  autoXpos=4.0;
@@ -377,7 +377,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
         // Drive the final distance to the high junction pole
-        autoYpos=52.5;  autoXpos=8.0;
+        autoYpos=54.0;  autoXpos=8.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_TO );
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)

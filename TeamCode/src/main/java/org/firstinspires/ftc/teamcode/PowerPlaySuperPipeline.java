@@ -44,9 +44,13 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 class PowerPlaySuperPipeline extends OpenCvPipeline
 {
@@ -76,16 +80,28 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             fromRect.points(points);
             if( points[1].y < points[3].y ) {
                // Right-hand example above: top=1&2; bottom=0&3
-               tl = (points[1].x < points[2].x)?  points[1] : points[2];
-               tr = (points[1].x < points[2].x)?  points[2] : points[1];
-               bl = (points[0].x < points[3].x)?  points[0] : points[3];
-               br = (points[0].x < points[3].x)?  points[3] : points[0];
+               tl = (points[1].x <= points[2].x)?  points[1] : points[2];
+               tr = (points[1].x <= points[2].x)?  points[2] : points[1];
+               bl = (points[0].x <= points[3].x)?  points[0] : points[3];
+               br = (points[0].x <= points[3].x)?  points[3] : points[0];
             } else {
                // Left-hand example above: top=2&3; bottom=0&1
-               tl = (points[2].x < points[3].x)?  points[2] : points[3];
-               tr = (points[2].x < points[3].x)?  points[3] : points[2];
-               bl = (points[0].x < points[1].x)?  points[0] : points[1];
-               br = (points[0].x < points[1].x)?  points[1] : points[0];
+               tl = (points[2].x <= points[3].x)?  points[2] : points[3];
+               tr = (points[2].x <= points[3].x)?  points[3] : points[2];
+               bl = (points[0].x <= points[1].x)?  points[0] : points[1];
+               br = (points[0].x <= points[1].x)?  points[1] : points[0];
+            }
+            // Check for the wonky state
+            Point wonkySwap;
+            if(tl.y > br.y) {
+                wonkySwap = br.clone();
+                br = tl.clone();
+                tl = wonkySwap.clone();
+            }
+            if(tr.y > bl.y) {
+                wonkySwap = bl.clone();
+                bl = tr.clone();
+                tr = wonkySwap.clone();
             }
             width  = sqrt(pow((tr.x-tl.x), 2) + pow((tr.y-tl.y), 2));
             height = sqrt(pow((bl.x-tl.x), 2) + pow((bl.y-tl.y), 2));
@@ -331,7 +347,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     // of the image.  Pole is ~32 pixels wide, so our tolerance is 1/4 of that.
     static final int MAX_POLE_OFFSET = 4;
     // This  is how wide a pole is at the proper scoring distance on a high pole
-    static final int POLE_HIGH_DISTANCE = 32;
+    static final int POLE_HIGH_DISTANCE = 38;
     // This is how many pixels wide the pole can vary at the proper scoring distance
     // on a high pole.
     static final int MAX_HIGH_DISTANCE_OFFSET = 3;
@@ -1033,7 +1049,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             thePole.aligned = false;
             thePole.properDistanceHigh = false;
             for (AnalyzedPole aPole : internalPoleList) {
-                if (aPole.corners.width > thePole.corners.width) {
+                if (aPole.corners.height > thePole.corners.height) {
                     thePole.centralOffset = aPole.centralOffset;
                     thePole.highDistanceOffset = aPole.highDistanceOffset;
                     thePole.corners = aPole.corners.clone();

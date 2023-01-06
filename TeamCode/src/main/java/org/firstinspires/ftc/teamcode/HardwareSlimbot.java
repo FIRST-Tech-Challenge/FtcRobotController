@@ -308,7 +308,7 @@ public class HardwareSlimbot
         turretMotor.setDirection(DcMotor.Direction.FORWARD);
         turretMotor.setPower( 0.0 );
         turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turretEncoder = hwMap.get(AnalogInput.class, "turretMA3");
 

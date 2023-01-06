@@ -164,7 +164,8 @@ public class PoleOrientationExample extends LinearOpMode
         waitForStart();
 
         // Perform setup needed to center turret
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+//        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.turretPosInit(-32.5 );
 
         while (opModeIsActive())
         {
@@ -204,9 +205,9 @@ public class PoleOrientationExample extends LinearOpMode
     void alignToPole() {
         PowerPlaySuperPipeline thePipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        final double TURN_SLOPE = 0.001187;
-        final double TURN_OFFSET = 0.04522;
-        final double DRIVE_SLOPE = 0.004187;
+        final double TURN_SLOPE   = 0.0008;
+        final double TURN_OFFSET  = 0.0650;
+        final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
         double turnPower;
         double drivePower;
@@ -229,8 +230,10 @@ public class PoleOrientationExample extends LinearOpMode
                 // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
                 // go 1.0 to 0.08 from 24 degrees to 0.
                 turnPower = (theLocalPole.centralOffset > 0)?
-                        (theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET) :
-                        (theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET);
+                        (-theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET) :
+                        (-theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET);
+//              turnPower = (theLocalPole.centralOffset > 0)? -0.06 : 0.06;
+
             }
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
@@ -245,6 +248,7 @@ public class PoleOrientationExample extends LinearOpMode
             }
             if(abs(drivePower) < 0.01 && abs(turnPower) < 0.01) {
                 robot.stopMotion();
+                robot.turretMotor.setPower(0);
             } else {
                 driveAtTurretAngle(drivePower, turnPower);
             }
@@ -269,6 +273,7 @@ public class PoleOrientationExample extends LinearOpMode
             theLocalPole = thePipeline.getDetectedPole();
         }
         robot.stopMotion();
+        robot.turretMotor.setPower(0.0);
     } // alignToPole
 
     /**
@@ -292,8 +297,8 @@ public class PoleOrientationExample extends LinearOpMode
     /*---------------------------------------------------------------------------------*/
     void driveAtTurretAngle(double drivePower, double turnPower) {
         double frontRight, frontLeft, rearRight, rearLeft, maxPower, xTranslation, yTranslation;
-//        double turretAngle = robot.turretAngle;
-        double turretAngle = 0.0;
+        double turretAngle = robot.turretAngle;
+//        double turretAngle = 0.0;
 
         if(!turretFacingFront) {
             // Correct the angle for the turret being in the back.
@@ -302,10 +307,14 @@ public class PoleOrientationExample extends LinearOpMode
         yTranslation = drivePower * Math.cos(toRadians(turretAngle));
         xTranslation = drivePower * Math.sin(toRadians(turretAngle));
 
-        frontLeft  = yTranslation + xTranslation - turnPower;
-        frontRight = yTranslation - xTranslation + turnPower;
-        rearLeft   = yTranslation - xTranslation - turnPower;
-        rearRight  = yTranslation + xTranslation + turnPower;
+//        frontLeft  = yTranslation + xTranslation - turnPower;
+//        frontRight = yTranslation - xTranslation + turnPower;
+//        rearLeft   = yTranslation - xTranslation - turnPower;
+//        rearRight  = yTranslation + xTranslation + turnPower;
+        frontLeft  = yTranslation + xTranslation;
+        frontRight = yTranslation - xTranslation;
+        rearLeft   = yTranslation - xTranslation;
+        rearRight  = yTranslation + xTranslation;
 
         // Normalize the values so none exceed +/- 1.0
         maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
@@ -319,5 +328,6 @@ public class PoleOrientationExample extends LinearOpMode
         }
         // Update motor power settings:
         robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
+        robot.turretMotor.setPower(turnPower);
     } // driveAtTurretAngle
 }
