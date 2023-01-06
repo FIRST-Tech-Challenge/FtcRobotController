@@ -109,7 +109,7 @@ public class forward extends LinearOpMode {
                 rf.setPower(rPower * 0.9);
                 lb.setPower(lPower * 0.9);
                 rb.setPower(rPower * 0.9);
-                tower1.setPower(tPower * .75);
+                tower1.setPower(tPower * 1.0);
                 tower1.setPower(tdPower * -.5);
 
 
