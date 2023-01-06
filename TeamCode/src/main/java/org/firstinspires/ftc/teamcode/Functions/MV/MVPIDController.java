@@ -86,6 +86,7 @@ public class MVPIDController {
             this.kF = kF;
 
             if (tolerance < 0) {
+                this.tolerance = Math.abs(tolerance);
                 throw new IllegalArgumentException("Tolerance must be positive");
             }
             this.tolerance = tolerance;
@@ -246,7 +247,8 @@ public class MVPIDController {
     }
 
     /**
-     * This method sets the minimum and maximum input values for the PID controller.
+     * This method sets the range of valid input values (minimum and maximum input) for the PID
+     * controller.
      * @param minInput : (double) value for minInput
      * @param maxInput : (double) value for maxInput
      */
@@ -298,7 +300,8 @@ public class MVPIDController {
     }
 
     /**
-     * This method sets the minimum and maximum output values for the PID controller.
+     * This method sets the range of valid output values (minimum and maximum output) for the PID
+     * controller.
      * @param minOutput : (double) value for minOutput
      * @param maxOutput : (double) value for maxOutput
      */
