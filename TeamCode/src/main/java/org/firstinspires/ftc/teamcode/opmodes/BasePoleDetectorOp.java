@@ -28,10 +28,10 @@ public class BasePoleDetectorOp extends RogueBaseAuto {
      */
     @SuppressLint("DefaultLocale")
     @Override
-    public void gooo() {
+    public void executeOrder66() {
         setPoleDetectorAsPipeline();
 
-        while(!opModeIsActive()){
+        while (!opModeIsActive()){
             telemetry.addData("Angle", Math.toDegrees(getPoleDetector().getPoleAngle()));
             telemetry.update();
         }

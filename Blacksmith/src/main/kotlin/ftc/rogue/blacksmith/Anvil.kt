@@ -156,7 +156,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          * @param builder The [Anvil] instance to run asynchronously
          */
         @JvmStatic
-        fun startAutoWith(instance: Anvil) = AnvilLaunchConfig().also {
+        fun startAutoWith(instance: Anvil) = AnvilLaunchConfig1().also {
             initialTrajectory = instance.setPoseEstimate(instance.startPose).build()
             initialInstance = instance
         }
@@ -164,6 +164,9 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         @JvmStatic
         @JvmOverloads
         fun start(async: Boolean = true) {
+            if (!::initialTrajectory.isInitialized) {
+                throw IllegalStateException("Anvil.startAutoWith() should be called before Anvil.start()")
+            }
             initialInstance.run(initialTrajectory, async)
         }
 
@@ -566,8 +569,16 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     @PublishedApi
     internal fun getEndPose() = builtTrajectory.invokeMethodRethrowing<Pose2d>("end")
 
-    class AnvilLaunchConfig internal constructor() {
-        fun onSchedulerLaunch() = Scheduler.on(Scheduler.STARTING_MSG, ::start)
+    class AnvilLaunchConfig1 internal constructor() {
+        private var async = true
+
+        fun onSchedulerLaunch() = AnvilLaunchConfig2().also {
+            Scheduler.on(Scheduler.STARTING_MSG) { start(async) }
+        }
+
+        inner class AnvilLaunchConfig2 internal constructor() {
+            fun synchronously() { async = false }
+        }
     }
 
     private object WarmupHelper {

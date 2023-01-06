@@ -19,11 +19,11 @@ class RogueCompOp : RogueBaseTele() {
 //            .whileHigh { powerMulti /= 1.5 }
 
         driver.left_trigger.whileHigh {
-            powerMulti = 0.8
+            powerMulti *= 0.8
         }
 
         driver.right_trigger.whileHigh {
-            powerMulti = 0.45
+            powerMulti *= 0.425
         }
     }
 

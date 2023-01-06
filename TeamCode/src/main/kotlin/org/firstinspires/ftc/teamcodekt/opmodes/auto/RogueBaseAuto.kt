@@ -19,28 +19,27 @@ import org.openftc.easyopencv.OpenCvCameraRotation
 import kotlin.math.max
 
 abstract class RogueBaseAuto : BlackOp() {
-    protected var bot         by LateInitVal< AutoBotComponents >()
-    protected var camera      by LateInitVal< OpenCvCamera      >()
-    protected var frontSensor by LateInitVal< ShortRangeSensor  >()
+    protected val frontSensor by createOnGo<ShortRangeSensor> { hwMap }
 
-    private var aprilTagDetectionPipeline = AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+    protected val bot by evalOnGo {
+        createAutoBotComponents(hwMap, VoltageScaler(hwMap))
+    }
+
+    protected var camera by LateInitVal<OpenCvCamera>()
+
+    protected var aprilTagDetectionPipeline = AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
     protected var poleDetector = BasePoleDetector(telemetry)
+    protected var numFramesWithoutDetection = 0
 
-    private var numFramesWithoutDetection = 0
-
-    abstract fun gooo()
+    abstract fun executeOrder66()
 
     final override fun go() {
         PhotonCore.enable()
         initHardware()
-        gooo()
+        executeOrder66()
     }
 
     private fun initHardware() {
-        bot = createAutoBotComponents(hardwareMap, VoltageScaler(hardwareMap))
-
-        frontSensor = ShortRangeSensor(hardwareMap, telemetry)
-
         //***************************
         // Set up camera and pipeline
         //***************************

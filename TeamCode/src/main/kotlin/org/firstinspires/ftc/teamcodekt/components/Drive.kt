@@ -57,11 +57,9 @@ class Drivetrain(hwMap: HardwareMap) {
             powers.mapInPlace { it / (power + abs(r)) }
         }
 
-        powers.mapInPlace { it pow 3 }
-
         val _powerMulti = if (!gamepad.isAnyJoystickTriggered()) 0.0 else powerMulti
 
-        powers.mapInPlace { (it * _powerMulti).withDeadzone(0.025) }
+        powers.mapInPlace { ((it pow 3) * _powerMulti).withDeadzone(0.0125) }
 
         withEachMotor {
             if (abs(powers[it] - lastPowers[it]) > 0.05) { // Caching motor powers may increase loop times?
@@ -80,10 +78,8 @@ class Drivetrain(hwMap: HardwareMap) {
         }
     }
 
-    private fun DoubleArray.mapInPlace(transform: (Double) -> Double) {
-        for (i in this.indices) {
-            this[i] = transform(this[i])
-        }
+    private fun DoubleArray.mapInPlace(transform: (Double) -> Double) = repeat(size) {
+        this[it] = transform(this[it])
     }
 
     private fun withEachMotor(transformation: DcMotorEx.(Int) -> Unit) {

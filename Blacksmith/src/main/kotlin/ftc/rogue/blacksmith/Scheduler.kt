@@ -189,9 +189,9 @@ object Scheduler {
     fun time(opmode: LinearOpMode, telemetry: Telemetry, afterEach: Runnable = Runnable {}) {
         emit(STARTING_MSG)
 
-        while (opmode.opModeIsActive() && !opmode.isStopRequested) {
-            val startTime = System.currentTimeMillis()
+        var startTime = System.currentTimeMillis()
 
+        while (opmode.opModeIsActive() && !opmode.isStopRequested) {
             updateListenersSet()
 
             beforeEach.run()
@@ -199,8 +199,11 @@ object Scheduler {
             afterEach.run()
 
             val endTime = System.currentTimeMillis()
+
             telemetry.addData("Loop time (ms)", endTime - startTime)
             telemetry.update()
+
+            startTime = System.currentTimeMillis()
         }
     }
 

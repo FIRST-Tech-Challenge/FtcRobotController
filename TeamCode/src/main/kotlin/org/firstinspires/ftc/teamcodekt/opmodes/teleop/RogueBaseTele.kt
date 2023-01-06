@@ -13,18 +13,18 @@ import org.firstinspires.ftc.teamcodekt.components.chains.ReverseDepositChain
 import kotlin.math.abs
 
 abstract class RogueBaseTele : BlackOp() {
-    protected val driver   by createOnGo<ReforgedGamepad>({ gamepad1 })
-    protected val codriver by createOnGo<ReforgedGamepad>({ gamepad2 })
+    protected val driver   by createOnGo<ReforgedGamepad> { gamepad1 }
+    protected val codriver by createOnGo<ReforgedGamepad> { gamepad2 }
 
     protected var powerMulti = 0.0
 
-    protected val bot by createOnGo {
+    protected val bot by evalOnGo {
         createTeleOpBotComponents(hwMap, VoltageScaler(hwMap))
     }
 
-    protected val intakeChain by createOnGo<IntakeChain>({ bot })
-    protected val regularDepositChain by createOnGo<RegularDepositChain>({ bot })
-    protected val reverseDepositChain by createOnGo<ReverseDepositChain>({ bot })
+    protected val intakeChain by createOnGo<IntakeChain> { bot }
+    protected val regularDepositChain by createOnGo<RegularDepositChain> { bot }
+    protected val reverseDepositChain by createOnGo<ReverseDepositChain> { bot }
 
     final override fun go() {
         PhotonCore.enable()
@@ -36,13 +36,7 @@ abstract class RogueBaseTele : BlackOp() {
         }
 
         Scheduler.launchOnStart(this@RogueBaseTele) {
-            val (x, y, r) = driver.gamepad.getDriveSticks()
-
-            if (bot.lift.height < LiftConfig.MID * 1.1 && abs(x) < .075 && abs(y) < .075 && abs(r) < .015)
-                powerMulti = .1
-
             bot.drivetrain.drive(driver.gamepad, powerMulti)
-
             bot.updateComponents(mTelemetry)
             mTelemetry.update()
         }

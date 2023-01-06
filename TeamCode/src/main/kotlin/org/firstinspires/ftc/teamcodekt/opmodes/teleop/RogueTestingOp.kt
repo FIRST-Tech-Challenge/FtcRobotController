@@ -12,33 +12,12 @@ class RogueTestingOp : RogueBaseTele() {
         driver.dpad_right.onRise(lift::goToMid)
         driver.dpad_left .onRise(lift::goToLow)
 
-        intakeChain.invokeOn(driver.left_bumper)
+        intakeChain.invokeOn(driver.left_trigger)
 
-        regularDepositChain.invokeOn(driver.right_bumper)
+        regularDepositChain.invokeOn(driver.right_trigger)
         regularDepositChain.cancelOn(driver.x)
 
         reverseDepositChain.invokeOn(driver.y)
         reverseDepositChain.cancelOn(driver.x)
-
-        driver.right_trigger(.1).whileHigh {
-            powerMulti *= 1 - driver.right_trigger()
-        }
-
-        driver.left_trigger.whileHigh {
-            if (driver.right_stick_y() > .1) {
-                lift.height += (50 * -driver.right_stick_y()).toInt()
-            }
-
-            if (driver.left_stick_x() < .5) {
-                claw.openForIntakeWide()
-            }
-
-            if (driver.left_stick_x() > .5) {
-                claw.close()
-            }
-        }
-
-//        Listener { lift.height > LiftConfig.MID * 1.01 }
-//            .whileHigh { powerMulti /= 1.5 }
     }
 }
