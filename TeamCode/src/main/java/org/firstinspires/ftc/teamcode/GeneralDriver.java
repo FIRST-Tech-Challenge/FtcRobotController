@@ -35,18 +35,24 @@ public class GeneralDriver extends BaseTele {
         while (opModeIsActive()) {
             //hdw.checkAndGrabCone();
 
-            if (gamepad1.dpad_left) {
-
+            if (gamepad1.dpad_right && gamepad1.x) {
+                if ( hdw.iseMode()) {
+                    hdw.seteMode(false);
+                } else {
+                    hdw.seteMode(true);
+                }
             }
             if (gamepad1.left_bumper) {
                 hdw.goToHeight(Hardware2022.SlideHeight.Mid);
             }
             if (gamepad1.right_bumper) {
                 hdw.goToHeight(Hardware2022.SlideHeight.High);
+                Log.d("9010", "After go to vSLide HIGH");
             }
             if (gamepad1.dpad_down) {
                 hdw.goToHeight(Hardware2022.SlideHeight.Low);
             }
+
 
             //hdw.freeLowerVerticalSlide(gamepad1.left_trigger);
             hdw.freeMoveVerticalSlide(gamepad1.right_trigger - gamepad1.left_trigger);

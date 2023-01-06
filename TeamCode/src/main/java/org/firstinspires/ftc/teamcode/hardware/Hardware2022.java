@@ -46,6 +46,8 @@ public class Hardware2022 {
 
     private boolean debug = true;
     private Telemetry telemetry;
+    private boolean eMode = false;
+
 
     //PID control parameter for turning.
     private double kP =0.0;
@@ -86,7 +88,7 @@ public class Hardware2022 {
     DigitalChannel clawTouch ;
 
     //IMU
-    IMU imu =null ;
+    public IMU imu =null ;
 
     public DcMotorEx vSlide = null;
 
@@ -331,7 +333,7 @@ public class Hardware2022 {
         Log.d("9010", "Kp: " + kP + "  kI: " + kI + " kD: " + kD );
 
         pidfCrtler.setSetPoint(0);
-        //Set tolerance as 2 degrees
+        //Set tolerance as 0.5 degrees
         pidfCrtler.setTolerance(0.5);
         //set Integration between -0.5 to 0.5 to avoid saturating PID output.
         pidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
@@ -398,13 +400,12 @@ public class Hardware2022 {
 
         if ( ( (vSlide.getCurrentPosition() - vsldieInitPosition)  <= CONE_SLIDE_HIGH
                 && power > 0 )
-               ||  ( (vSlide.getCurrentPosition() - vsldieInitPosition)  >= 0 )
-                && power < 0 )
-        {
+               ||  ( (vSlide.getCurrentPosition() - vsldieInitPosition)  >= 0  && power < 0 )
+               ||  eMode ) {
             //telemetry.addLine().addData("We have power!", power );
             //telemetry.update();
             //Only give power when moving up, or moving down,but touch is not pushed.
-            if ( power > 0 || (power < 0 && clawTouch.getState()==true) ) {
+            if (power > 0 || (power < 0 && clawTouch.getState() == true)) {
                 vSlide.setVelocity(power * ANGULAR_RATE);
             } else {
                 vSlide.setVelocity(0);
@@ -451,7 +452,7 @@ public class Hardware2022 {
 
         while (vSlide.isBusy()) {
             vSlide.setVelocity( sign * ANGULAR_RATE* 0.5 );
-            Log.d("9010", "Inside Moving Loop : " + vSlide.getCurrentPosition() + " Sign: " + sign);
+            //Log.d("9010", "Inside Moving Loop : " + vSlide.getCurrentPosition() + " Sign: " + sign);
         }
         vSlide.setVelocity(0);
         Log.d("9010", "after Moving Loop : " + vSlide.getCurrentPosition());
@@ -460,20 +461,6 @@ public class Hardware2022 {
         vSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    /*
-    public void moveSlide(double power) {
-        telemetry.addLine("moveSLide");
-        telemetry.update();
-        vSlide.setPower(-0.5);
-        vSlide.setPower(0);
-
-    }
-
-    public void coneDropStop() {
-        touchSensor.getValue();
-        telemetry.addLine("touch works");
-        telemetry.update();
-    }*/
 
     public double getkP() {
         return kP;
@@ -526,15 +513,22 @@ public class Hardware2022 {
 
         vSlide.setVelocity(0);
 
-            //Thread.sleep(100);
+        //Thread.sleep(100);
 
     }
 
-    /*
-    public void stayPosition() {
-        vSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        vSlide.getCurrentPosition();
-        vSlide.setTargetPosition(currentVSHeight);
+    public void seteMode ( boolean input ) {
+        Log.d("9010", "eMode is set to: " + input );
+        if (input) {
+            this.eMode = input;
+        } else {
+            this.eMode = input;
+            this.vsldieInitPosition = vSlide.getCurrentPosition();
+            Log.d("9010", "Now new vslide init position: " + vsldieInitPosition);
+        }
+    }
 
-    }*/
+    public boolean iseMode() {
+        return eMode;
+    }
 }
