@@ -28,6 +28,7 @@ public class Hraezlyr {
     public DcMotor bottomRight;
     public DcMotor cascadeMotor1;
     public DcMotor cascadeMotor2;
+    public DcMotor horizontalMotor;
     public OpenCvCamera camera;
     public Servo servoClawMove;
     public Servo servoClawClose;
@@ -50,39 +51,31 @@ public class Hraezlyr {
 
         cascadeMotor1 = hwmap.get(DcMotor.class, "cascadeMotor1");
         cascadeMotor2 = hwmap.get(DcMotor.class, "cascadeMotor2");
-        servoClawMove = hwmap.get(Servo.class, "servoClawMove");
         servoClawClose =  hwmap.get(Servo.class, "servoClawClose");
+        horizontalMotor = hwmap.get(DcMotor.class, "horizontalMotor");
 
 
         topRight.setDirection(DcMotorSimple.Direction.REVERSE);
         bottomRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        cascadeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 
         IMU = hwmap.get(BNO055IMU.class, "imu");
 
-        WebcamName webcamName = hwmap.get(WebcamName.class,"Webcam 1");
-        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
+        //WebcamName webcamName = hwmap.get(WebcamName.class,"Webcam 1");
+        //camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
 
         topLeft.setZeroPowerBehavior(BRAKE);
         topRight.setZeroPowerBehavior(BRAKE);
         bottomLeft.setZeroPowerBehavior(BRAKE);
         bottomRight.setZeroPowerBehavior(BRAKE);
 
-
-
-
         cascadeMotor1.setZeroPowerBehavior(BRAKE);
         cascadeMotor2.setZeroPowerBehavior(BRAKE);
 
 
-        cascadeMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        cascadeMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        cascadeMotor1.setTargetPosition(0);
-        cascadeMotor2.setTargetPosition(0);
-        cascadeMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        cascadeMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+        cascadeMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        cascadeMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         IMU.initialize(parameters);
     }
 

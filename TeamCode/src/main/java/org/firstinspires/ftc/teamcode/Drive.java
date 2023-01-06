@@ -69,6 +69,8 @@ public class Drive extends Control {
         hraezlyr.bottomLeft.setPower(powerGroup2 - rightX);
         hraezlyr.bottomRight.setPower(powerGroup1 + rightX);
 
+        telemetry.addData("DpadUp", DpadUp);
+        telemetry.addData("DpadDown", DpadDown);
         telemetry.addData("Angle", angle);
         telemetry.addData("Distance", power);
         telemetry.addData("rightX", rightX);
@@ -96,7 +98,7 @@ public class Drive extends Control {
             }
             cascadeLift(zHeight);
         }
-            if(dpadLeft){
+        if(dpadLeft){
             switch(zHeight) {//it go down if already up
                 case HIGH:
                     zHeight = Level.MEDIUM;
@@ -111,15 +113,21 @@ public class Drive extends Control {
         }
 
             if(DpadUp && !DpadDown) {
-                cascadeLiftManual(1);
+                hraezlyr.cascadeMotor1.setPower(0.3);
+                hraezlyr.cascadeMotor2.setPower(0.3);
             }
             if(DpadDown && !DpadUp) {
-                cascadeLiftManual(-1);
+                hraezlyr.cascadeMotor1.setPower(-0.3);
+                hraezlyr.cascadeMotor2.setPower(-0.3);
             }
             if(!DpadDown && !DpadUp){
-                cascadeLiftManual(0);
+                hraezlyr.cascadeMotor1.setPower(0);
+                hraezlyr.cascadeMotor2.setPower(0);
             }
-        hraezlyr.servoClawClose.setDirection(Servo.Direction.FORWARD);
+
+
+
+
 
         if(buttonA){
 
