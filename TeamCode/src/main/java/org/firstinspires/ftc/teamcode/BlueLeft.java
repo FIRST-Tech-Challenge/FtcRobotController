@@ -177,7 +177,8 @@ public class BlueLeft extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithcrane(1,1950,-1,2400);
+            strafeLeftwithcrane(1,1950,-1,2300);
+            //crane2(1,-7600);
             move(.5,330);
             sleep(100);
             intake(-1,1300);
@@ -186,14 +187,16 @@ public class BlueLeft extends LinearOpMode {
             strafeLeftwithcrane(1,600,1,1000);//500
             gyroTurning(0);
             sleep(1000);
-            moveandspin(.5,-980,1,-530);
+            moveandspin(.5,-980,.5,-400);
             stopMotors();
+            spin2(-1,1000);
             move(.2,-150);
-            craneinput(600);
+            craneinput(550);
             Left.setPower(.3);
+            crane(-1, 650);
             moveandspin(.8,1000,1,0);
-            strafeRightwithcrane(1,680,-1,2200);
-            move(.5,330);
+            strafeRightwithcrane(1,680,-1,2000);
+            move(.5,360);
             intake(-1,1300);
             move(.5,-330);
 
@@ -353,7 +356,6 @@ public class BlueLeft extends LinearOpMode {
         while (frontLeft.isBusy() && opModeIsActive()) {
 
         }
-
     }
     public void craneinput(int time) {
         crane(1,time);
@@ -473,6 +475,8 @@ public class BlueLeft extends LinearOpMode {
 
 
     public void spin(double power, int position) {
+        telemetry.addData("spin", Spin.getCurrentPosition());
+        telemetry.update();
         Spin.setTargetPosition(position);
         Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Spin.setPower(power);
@@ -485,6 +489,22 @@ public class BlueLeft extends LinearOpMode {
         Crane.setPower(power);
         sleep(time);
         Crane.setPower(0);
+
+    }
+    public void crane2(double power, int position) {
+        Crane.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Crane.setTargetPosition(position);
+        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Crane.setPower(power);
+        while (Crane.isBusy()&&opModeIsActive()) {
+
+        }
+        Crane.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public void spin2(double power, int time) {
+        Spin.setPower(power);
+        sleep(time);
+        Spin.setPower(0);
 
     }
 
