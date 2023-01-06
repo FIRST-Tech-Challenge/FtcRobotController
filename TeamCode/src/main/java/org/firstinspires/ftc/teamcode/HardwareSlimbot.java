@@ -135,16 +135,16 @@ public class HardwareSlimbot
     // 119.2
     //
     // +11.8
-    public double       LIFT_ANGLE_COLLECT = 119.0;   // lift position for collecting cones
+    public double       LIFT_ANGLE_COLLECT = 117.0;   // lift position for collecting cones
     public double       LIFT_ANGLE_GROUND  = 116.8;   // lift position for GROUND junction
     public double       LIFT_ANGLE_LOW     = 108.3;   // lift position for LOW junction
-    public double       LIFT_ANGLE_MOTORS  =  92.8;   // lift position for cleaning front turret motor
+    public double       LIFT_ANGLE_MOTORS  =  97.5;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_5STACK  =  83.8;   // lift position for 5-stack ultrasonic reading
     public double       LIFT_ANGLE_MED     =  80.4;   // lift position for MEDIUM junction (FRONT Teleop)
     public double       LIFT_ANGLE_MED_B   = -67.8;   // lift position for MEDIUM junction (BACK Teleop)
     public double       LIFT_ANGLE_HIGH    =  52.8;   // lift position for HIGH junction (FRONT Teleop)
     public double       LIFT_ANGLE_AUTO_H  =  41.8;   // lift position for AUTONOMOUS (HIGH junction)
-    public double       LIFT_ANGLE_HIGH_B  = -36.0;   // lift position for HIGH junction (BACK Teleop)
+    public double       LIFT_ANGLE_HIGH_B  = -35.5;   // lift position for HIGH junction (BACK Teleop)
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.

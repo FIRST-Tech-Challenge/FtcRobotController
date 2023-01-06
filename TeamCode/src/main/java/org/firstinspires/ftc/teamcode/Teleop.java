@@ -3,6 +3,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -71,13 +72,15 @@ public abstract class Teleop extends LinearOpMode {
     double      grabberTarget1  = 0.0;      // grabber tilt for start of motion
     double      grabberTarget2  = 0.0;      // grabber tilt for end of motion
 
-    final int LIFT_CYCLECOUNT_START  = 3;  // Lift just started moving (1st cycle)
-    final int LIFT_CYCLECOUNT_MOTORS = 2;  // Lift passing turret motors level (safe to orient the collector)
-    final int LIFT_CYCLECOUNT_CHECK  = 1;  // Verify the grabber positions
+    final int LIFT_CYCLECOUNT_START  = 4;  // Lift just started moving (1st cycle)
+    final int LIFT_CYCLECOUNT_MOTORS = 3;  // Lift passing turret motors level (safe to orient the collector)
+    final int LIFT_CYCLECOUNT_CHECK  = 2;  // Verify the grabber positions
+    final int LIFT_CYCLECOUNT_RUMBLE = 1;  // Motion is complete; do we give the operator a rumble?
     final int LIFT_CYCLECOUNT_DONE   = 0;  // Movement is complete (cycle count is reset)
     int       liftCycleCount         = LIFT_CYCLECOUNT_DONE;
     double    liftTarget             = 0.0;
     boolean   liftTargetUpward       = false;
+    boolean   liftFrontToBack        = false;  // safer to assume this, since smaller rotation involved if we're wrong
 
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
@@ -92,7 +95,10 @@ public abstract class Teleop extends LinearOpMode {
     double robotGlobalYCoordinatePosition       = 0.0;
     double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
 
-    boolean leftAlliance = true;  // overriden in setAllianceSpecificBehavior() 
+    boolean leftAlliance = true;  // overriden in setAllianceSpecificBehavior()
+
+    Gamepad.RumbleEffect coneRumbleEffect1;    // Use to build a custom rumble sequence.
+    Gamepad.RumbleEffect coneRumbleEffect2;    // Use to build a custom rumble sequence.
 
     // sets unique behavior based on alliance
     public abstract void setAllianceSpecificBehavior();
@@ -102,18 +108,16 @@ public abstract class Teleop extends LinearOpMode {
 
         telemetry.addData("State", "Initializing (please wait)");
         telemetry.update();
-/*
+
         coneRumbleEffect1 = new Gamepad.RumbleEffect.Builder()
-                .addStep(0.0, 1.0, 250)  //  Rumble right motor 100% for 500 mSec
-                .addStep(0.0, 0.0, 250)  //  Pause for 300 mSec
-                .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 500 mSec
+                .addStep(1.0, 1.0, 500)  //  Rumble left/right motors 100% for 500 mSec
                 .build();
         coneRumbleEffect2 = new Gamepad.RumbleEffect.Builder()
                 .addStep(0.0, 1.0, 250)  //  Rumble right motor 100% for 500 mSec
                 .addStep(0.0, 0.0, 250)  //  Pause for 300 mSec
                 .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 500 mSec
                 .build();
-*/
+
         // Initialize robot hardware
         robot.init(hardwareMap,false);
 
@@ -621,11 +625,11 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
         {
            // Is the driver assisting with COLLECTION? (rotate turret toward substation)
-           if( robot.liftAngle > robot.LIFT_ANGLE_MOTORS ) {
+           if( liftFrontToBack == false ) {
               robot.turretPosInit( +21.9 );
            }
            // Driver must be assisting with SCORING? (rotate turret toward junction pole)
-           else {
+           else {  // liftFrontToBack == true
               robot.turretPosInit( -50.5 );
            }
         }
@@ -633,11 +637,11 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last )
         {
            // Is the driver assisting with COLLECTION? (rotate turret toward substation)
-           if( robot.liftAngle > robot.LIFT_ANGLE_MOTORS ) {
+            if( liftFrontToBack == false ) {
               robot.turretPosInit( -21.9 );
            }
            // Driver must be assisting with SCORING? (rotate turret toward junction pole)
-           else {
+           else {   // liftFrontToBack == true
               robot.turretPosInit( +50.5 );
            }
         }
@@ -696,12 +700,14 @@ public abstract class Teleop extends LinearOpMode {
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {   // Lower lift to COLLECT position and adjust collector tilt horizontal
             robot.grabberSpinStop();
+            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
             needFlip       = false;  // collector upright for grabbing
             grabberTarget1 = robot.GRABBER_TILT_GRAB;
             grabberTarget2 = robot.GRABBER_TILT_GRAB;
             liftTarget     = robot.LIFT_ANGLE_COLLECT;
             liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
             liftCycleCount = LIFT_CYCLECOUNT_START;
+            liftFrontToBack = false;  // lowering (BackToFront)
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         else if( gamepad2_circle_now && !gamepad2_circle_last )
@@ -760,6 +766,7 @@ public abstract class Teleop extends LinearOpMode {
             liftTarget     = (rearScoring)? robot.LIFT_ANGLE_HIGH_B   : robot.LIFT_ANGLE_HIGH;
             liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
             liftCycleCount = LIFT_CYCLECOUNT_START;
+            liftFrontToBack = true;  // lifting
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
@@ -771,8 +778,7 @@ public abstract class Teleop extends LinearOpMode {
             liftTarget     = (rearScoring)? robot.LIFT_ANGLE_MED_B   : robot.LIFT_ANGLE_MED;
             liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
             liftCycleCount = LIFT_CYCLECOUNT_START;
-//            robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
-//            robot.liftPosInit( robot.LIFT_ANGLE_MED );
+            liftFrontToBack = true;  // lifting
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
@@ -780,6 +786,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.grabberSpinStop();
             robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
             robot.liftPosInit( robot.LIFT_ANGLE_LOW );
+            liftFrontToBack = true;  // lifting
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
@@ -834,8 +841,17 @@ public abstract class Teleop extends LinearOpMode {
             // if we started close to the target position, we don't do MOTORS step correctly
             // (fix that here at the end)
             robot.grabberSetTilt( grabberTarget2 );
-            liftCycleCount--;  // LIFT_CYCLECOUNT_DONE
+            liftCycleCount--;  // LIFT_CYCLECOUNT_RUMBLE
         } // LIFT_CYCLECOUNT_CHECK
+        else if( liftCycleCount == LIFT_CYCLECOUNT_RUMBLE ) {
+            // Has the automatic movement fully completed?
+            if( robot.liftMotorAuto == false ) {
+                liftCycleCount--;  // LIFT_CYCLECOUNT_DONE
+                if( liftTarget == robot.LIFT_ANGLE_COLLECT ) {
+                    gamepad2.runRumbleEffect(coneRumbleEffect1);
+                }
+            } // liftMotorAuto
+        } // LIFT_CYCLECOUNT_RUMBLE
 
     } // processLiftControls
 

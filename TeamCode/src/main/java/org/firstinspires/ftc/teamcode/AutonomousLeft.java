@@ -244,21 +244,19 @@ public class AutonomousLeft extends AutonomousBase {
             moveToTallJunction();
         }
 
-        sleep(30000);
-
         // Center on pole
-        if( opModeIsActive()) {
-            telemetry.addData("Skill", "rotateToCenterPole");
-            telemetry.update();
-            rotateToCenterPole();
-        }
+//        if( opModeIsActive()) {
+//            telemetry.addData("Skill", "rotateToCenterPole");
+//            telemetry.update();
+//            rotateToCenterPole();
+//        }
 
         // Adjust distance to pole
-        if( opModeIsActive()) {
-            telemetry.addData("Skill", "distanceFromFront");
-            telemetry.update();
-            distanceFromFront(28.0, 1.0);
-        }
+//        if( opModeIsActive()) {
+//            telemetry.addData("Skill", "distanceFromFront");
+//            telemetry.update();
+//            distanceFromFront(28.0, 1.0);
+//        }
 
         // Deposit cone on junction
         if( opModeIsActive() ) {
@@ -390,11 +388,6 @@ public class AutonomousLeft extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void scoreCone() {
 
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER);
-        // Make sure the turret movement has finished
-        while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
-            performEveryLoop();
-        }
         // Eject the cone
         intakeTimer.reset();
         robot.grabberSpinEject();
@@ -404,22 +397,25 @@ public class AutonomousLeft extends AutonomousBase {
         }
         // Stop the ejector
         robot.grabberSpinStop();
-
-        // Back away from the pole (to our previous location/orientation)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
+        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
     } // scoreCone
 
     /*--------------------------------------------------------------------------------------------*/
     private void moveToConeStack() {
 
-        // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
-        autoYpos=51.0;  autoXpos=0.0;  autoAngle=-85.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
-
-        // Move the lift to a position where the ultrasonic works
-        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
+        // Establish targets for turret angle (centered) and lift height (5-stack)
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
+
+        // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
+        autoYpos=50.0;  autoXpos=-7.0;  autoAngle=-90.0;    // (inches, inches, degrees)
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
+
+        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+            performEveryLoop();
+        }
+        sleep(30000);
 
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
         autoXpos=-16.0;

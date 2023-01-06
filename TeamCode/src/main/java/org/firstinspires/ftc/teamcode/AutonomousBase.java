@@ -36,6 +36,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  TURN_SPEED_20        = 0.20;    //
     static final double  TURN_SPEED_30        = 0.30;    //
     static final double  TURN_SPEED_40        = 0.40;    //
+    static final double  TURN_SPEED_50        = 0.50;    //
     static final double  TURN_SPEED_55        = 0.55;    //
     static final double  TURN_SPEED_60        = 0.60;    //
     static final double  TURN_SPEED_70        = 0.70;    //
