@@ -204,7 +204,8 @@ public class PipePoleTracker extends OpenCvPipeline {
                 }
 
                 if (levelString.equals("two") && level2Assignment == false && focusRect != null) {
-
+                    //TODO (potential fix) if it's some how focusRect, try re-declaring focusRect here with lowest/highestX/Y
+                    //TODO Another another test is run the submat code, and get ride of all the calculations to see if the assigment is right
                     inputMask = inputMask.submat(focusRect);
                     input = input.submat(focusRect);
 
@@ -234,7 +235,7 @@ public class PipePoleTracker extends OpenCvPipeline {
                 boxBL_x = rectanglesGridDraw[gridY-1][gridX-1].x;
                 boxBL_y = rectanglesGridDraw[gridY-1][gridX-1].y;
 
-//TODO Potentially this is the crash spot because it is creating submats of 0 size
+                //TODO Potentially this is the crash spot because it is creating submats of 0 size
                 // Creating grid's subMats
                 for (int i = 0; i < gridY; i++) {
                     for (int j = 0; j < gridX; j++) {
