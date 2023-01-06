@@ -83,6 +83,9 @@ public class EnergizeV2Auto extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        
+          redLED.setMode(DigitalChannel.Mode.OUTPUT);
+            greenLED.setMode(DigitalChannel.Mode.OUTPUT);
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
