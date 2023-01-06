@@ -2,14 +2,19 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static java.lang.Double.max;
+import static java.lang.Double.min;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -20,14 +25,14 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, minVelocity = -5000, VEL_TO_ANALOG = .0014, kA = 0;
+    public static double D = 0.00000, D2 = 0, kP = 3.94E-4, kA = 0.0002, R = 0,
+            MAX_VELOCITY = 2200, MAX_ACCELERATION = 2120 / 0.2, DECEL_DIST = 60;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
-    private double GRAVITY_CONSTANT = 0.1;
     private double lastError = 0, lastTime = 0;
-    private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 10;
-    private double power = 0;
+    private double TICK_BOUNDARY_PADDING = 15, TICK_STOP_PADDING = 15;
+    private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance, time = op.getRuntime();
     private String rfMotorName;
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
@@ -55,6 +60,7 @@ public class RFMotor extends Motor {
 
         logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
                 "Function               Action");
+        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     //same as above but assuming motor direction is foward
@@ -72,6 +78,8 @@ public class RFMotor extends Motor {
 
         logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
                 "Function               Action");
+        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     //same as above but using default coefficients
@@ -91,6 +99,8 @@ public class RFMotor extends Motor {
 
         logger.createFile("/MotorLogs/RFMotor" + rfMotorName, "Runtime    Component               " +
                 "Function               Action");
+        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     //for chassis wheels where you only need it to spin continuously
@@ -104,94 +114,119 @@ public class RFMotor extends Motor {
 
         logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
                 "Function               Action");
+        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    public void setVelToAnalog(double velToAnalog){
-        VEL_TO_ANALOG = velToAnalog;
+
+    public void setDirection(DcMotorSimple.Direction direction) {
+        rfMotor.setDirection(direction);
+    }
+
+    public void setVelToAnalog(double velToAnalog) {
+        kP = velToAnalog;
     }
 
     public void setPosition(double targetpos) {
-        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         power = 0;
-//        if (targetpos >= -1 && targetpos <= 1) {
-//            targetpos *= maxtickcount;
-//        }
-//        else {
-//            logger.log("RFMotorLog", "ERROR: RFMotor:: setPosition targetpos expected between -1 -- 1, targetpos = " + targetpos);
-//            return;
-//        }
-
-//        op.telemetry.addData("newPosition", targetpos);
         if (targetpos > maxtickcount) {
-            targetpos = maxtickcount - TICK_BOUNDARY_PADDING;
+            targetpos = maxtickcount;
         }
         if (targetpos < mintickcount) {
-            targetpos = mintickcount + TICK_BOUNDARY_PADDING;
+            targetpos = mintickcount;
         }
-        double distance = targetpos - getCurrentPosition();
-
-        double targetVelocity = 0, targetAccelVelocity = 0;
-        if (distance > 0) {
-            for (int i = 0; i < coefs.size(); i++) {
-                if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
-                    if (coefs.size() - i - 1 == 2) {
-                        targetVelocity += pow(distance, 0.6) * coefs.get(i);
-                    } else {
-                        targetVelocity += pow(distance, coefs.size() - i - 1) * coefs.get(i);
-                    }
-                }
-            }
-            for (int i = 0; i < coefs.size(); i++) {
-                if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
-                    targetAccelVelocity += pow(distance - targetVelocity / 10, coefs.size() - i - 1) * coefs.get(i);
-                }
-            }
-        } else if (distance < 0) {
-            for (int i = 0; i < coefs.size(); i++) {
-                if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
-                    if (coefs.size() - i - 1 == 2) {
-                        targetVelocity -= pow(abs(distance), 0.6) * coefs.get(i);
-                    } else {
-                        targetVelocity -= abs(pow(distance, coefs.size() - i - 1)) * coefs.get(i);
-                    }
-                }
-            }
-            for (int i = 0; i < coefs.size(); i++) {
-                if (i != coefs.size() - 1 || abs(distance) > TICK_STOP_PADDING) {
-                    targetAccelVelocity -= pow(distance - targetVelocity / 10, coefs.size() - i - 1) * coefs.get(i);
-                }
-            }
-        }
-
-        if (targetVelocity < minVelocity) {
-            targetVelocity = minVelocity;
-        }
-        double currentVelocity = rfMotor.getVelocity();
-        double error = targetVelocity - currentVelocity;
-        double dStuff = 0;
-        if (abs(error) < abs(lastError)) {
-            dStuff = (error - lastError) / (op.getRuntime() - lastTime) * D2;
-        } else {
-            dStuff = (error - lastError) / (op.getRuntime() - lastTime) * D2 / 2;
-        }
-        double accelPow = (targetAccelVelocity - targetVelocity) * kA;
-//        if(targetVelocity<0){
-//            VEL_TO_ANALOG=0.001;
-//            D=0;
-//        }else{
-//            VEL_TO_ANALOG=0.0022;
-//            D=0.00000507;
-//        }
-        power = dStuff + error * VEL_TO_ANALOG;
-        rfMotor.setPower(dStuff + error * D + targetVelocity * VEL_TO_ANALOG + GRAVITY_CONSTANT + accelPow);
-        lastError = error;
+        position = rfMotor.getCurrentPosition();
+        targetPos = targetpos;
+        acceleration = getVelocity() - velocity;
+        velocity += acceleration;
+        acceleration /= op.getRuntime() - time;
+        time = op.getRuntime();
+        getAvgResistance();
+        double[] targetMotion = getTargetMotion();
+        rfMotor.setPower(kP * (targetMotion[0] - resistance) - kA * targetMotion[1]);
+        TelemetryPacket data = new TelemetryPacket();
+        data.put("decelDist", getDecelDist());
+        data.put("dist", targetPos - position);
+        data.put("targetVelocity", targetMotion[0]);
+        data.put("velocity", velocity);
+        data.put("targetAcceleration", targetMotion[1]);
+        data.put("trueAcceleration", acceleration);
+        data.put("resistance", resistance);
+        BasicRobot.dashboard.sendTelemetryPacket(data);
         lastTime = op.getRuntime();
+    }
+
+    public double getResistance() {
+        double resistance = 0;
+        resistance -= 220 + 0.4 * position - 0.00012 * position * position;
+        resistance -= velocity * 0.940 * pow(abs(position) + 1, -.12);
+        return resistance;
+    }
+
+    public void getAvgResistance() {
+        double resistances = 0;
+        resistances -= 200 + 0.42 * position - 0.0001 * position * position;
+        resistances -= velocity * 0.950 * pow(abs(position) + 1, -.13);
+        resistance = resistances;
+        resistances -= 200 + 0.42 * targetPos - 0.0001 * targetPos * targetPos;
+        avgResistance = resistances / 2;
+    }
+
+    public double getDecelDist() {
+        double decelDist = 0;
+        if (velocity > 0) {
+            decelDist = 0.8 * pow(abs(velocity), 2) / (MAX_ACCELERATION - avgResistance);
+        } else {
+            decelDist = 0.8 * pow(abs(velocity), 2) / (MAX_ACCELERATION + avgResistance);
+        }
+        return decelDist;
+    }
+
+    public double[] getTargetMotion() {
+        double[] targets = {0, 0};
+        double DECEL_DIST = getDecelDist(), distance = targetPos - position;
+        if (abs(distance) > DECEL_DIST && abs(velocity) < MAX_VELOCITY - 0.1 * MAX_ACCELERATION) {
+            if (distance > 0) {
+                targets[0] = velocity + .1 * MAX_ACCELERATION * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
+                targets[1] = velocity - targets[0];
+            } else {
+                targets[0] = velocity - 0.1 * MAX_ACCELERATION * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
+                targets[1] = velocity - targets[0];
+            }
+        } else if (abs(distance) > DECEL_DIST && abs(distance) > 20) {
+            if (distance > 0) {
+                targets[0] = MAX_VELOCITY;
+                targets[1] = velocity - targets[0];
+            } else {
+                targets[0] = -MAX_VELOCITY;
+                targets[1] = velocity - targets[0];
+
+            }
+        } else {
+            if (distance < 0) {
+                targets[0] = min(-pow(abs(distance) * (MAX_ACCELERATION + avgResistance) * (1 - 1 / (abs(distance) / 300 + 1)), 0.5), 0);
+                targets[1] = velocity - targets[0];
+            } else {
+                targets[0] = max(pow(abs(distance) * (MAX_ACCELERATION - avgResistance) * (1 - 1 / (abs(distance) / 400 + 1)), 0.5), 0);
+                targets[1] = velocity - targets[0];
+
+            }
+        }
+        return targets;
+    }
+
+    public boolean atTargetPosition() {
+        if (abs(position - targetPos) < TICK_STOP_PADDING) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void setPower(double power) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + power, false, false);
 //        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
-        rfMotor.setPower(power);
+        rfMotor.setPower(power - kP * getResistance());
+        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + (power - kP * getResistance()), false, false);
+
     }
 
     public double getPower() {
@@ -199,7 +234,7 @@ public class RFMotor extends Motor {
     }
 
     public double getGRAVITY_CONSTANT() {
-        return GRAVITY_CONSTANT;
+        return 0;
     }
 
     public void setVelocity(double velocity) {

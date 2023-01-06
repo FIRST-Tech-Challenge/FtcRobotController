@@ -26,10 +26,10 @@ public class Claw {
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 0.45;
+    private final double CLAW_CLOSED_POS = 0.44;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.54;
+    private final double CLAW_OPEN_POS = 0.62;
 
     private final double CLAW_WIDE_POS = 0.64;
 
@@ -96,7 +96,7 @@ public class Claw {
         }
         else{
             claw.setPosition(CLAW_OPEN_POS);
-            CLAW_OPEN.setStatus(true);
+            CLAW_CLOSED.setStatus(true);
             CLAW_SERVO_SWITCH_TIME = 0.3;
         }
         shouldUseClawSensor = true;

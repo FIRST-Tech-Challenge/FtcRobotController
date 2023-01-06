@@ -154,6 +154,17 @@ public class Logger {
             log(fileName, input);
         }
     }
+    @SuppressLint("DefaultLocale")
+    public void logNoTime(String fileName, String input){
+        try {
+            File file = new File("/sdcard/tmp/"+fileName+data+"Log.csv");
+            FileWriter filewriter = new FileWriter(file, true);
+            filewriter.write(input + "\n");
+            filewriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @SuppressLint("DefaultLocale")
     public void log(String fileName, String input, boolean p_isFormatted, boolean p_isRegulated){
