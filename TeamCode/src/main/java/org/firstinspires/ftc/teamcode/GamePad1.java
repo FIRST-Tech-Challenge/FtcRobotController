@@ -8,42 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.concurrent.TimeUnit;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@TeleOp(name = "Gamepad263", group = "Linear Opmode")
+@TeleOp(name = "Gamepad0234", group = "Linear Opmode")
 public class GamePad1 extends OpMode {
     HardwarePushbot robot = new HardwarePushbot();
     ElapsedTime timer = new ElapsedTime();
@@ -94,14 +59,17 @@ public class GamePad1 extends OpMode {
           //  robot.viperSlide.setPower(-.5);
         //}
 
-        if(gamepad1.dpad_left){
+        if(gamepad1.right_bumper){
         robot.claw1.setPosition(.3);
         }
-        if(gamepad1.dpad_right){
+        if(gamepad1.right_trigger >.5){
             robot.claw1.setPosition(1);
         }
 
-        if (gamepad1.left_bumper) {//low
+        if (gamepad1.dpad_down){//floor
+            setLevelDown(slideDown);
+        }
+        if (gamepad1.dpad_left) {//low
             setLevelDown(slideDown - 1100);
         }
         if (gamepad1.left_trigger > .5) {//down all way
@@ -109,16 +77,16 @@ public class GamePad1 extends OpMode {
 
         }
 
-        if (gamepad1.right_bumper) {/////////medium
+        if (gamepad1.dpad_up) {/////////medium
             setLevelUp(slideDown - 1700);
         }
 
         if (gamepad1.right_trigger > .5) {//all the way up
-            setLevelDown(slideDown - 2600);
+            setLevelDown(slideDown - 3400);
 
         }
 
-        if(gamepad1.dpad_down){
+        if(gamepad1.dpad_right){
         robot.viperSlide.setPower(.5);
         }
 

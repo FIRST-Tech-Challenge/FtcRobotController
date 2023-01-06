@@ -325,10 +325,35 @@ public class automethods extends LinearOpMode {
 
     }
 
+
+
     public void setLevel(double level){
+        if(level == 0){
+            viperTarget = viperDown;
+            viperDataSTR = "BOTTOM";
+            robot.viperSlide.setTargetPosition(viperTarget);
+            //move the viperSlide
+            robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.viperSlide.setPower(.9);
+
+            while (robot.viperSlide.isBusy()){
+                telemetry.addData("viperSlide", "running to %7d : %7d",
+                        viperTarget,
+                        robot.viperSlide.getCurrentPosition());
+                //telemetry.addData(viperSlideDataSTR);
+                telemetry.update();
+            }
+            robot.viperSlide.setPower(0);
+
+
+            timer.reset();
+            while(timer.time(TimeUnit.MILLISECONDS) < 300){
+
+            }
+        }
         if (level == 1){
             viperTarget = viperDown-1000;
-            viperDataSTR = "BOTTOM";
+            viperDataSTR = "LOW";
             robot.viperSlide.setTargetPosition(viperTarget);
             //move the viperSlide
             robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -436,6 +461,12 @@ public class automethods extends LinearOpMode {
         robot.viperSlide.setPower(0);
         //robot.door.setPosition(doorOpen);
 
+    }
+    public void openClaw(){
+        robot.claw1.setPosition(.3);
+    }
+    public void closeclaw(){
+        robot.claw1.setPosition(1);
     }
 
 }
