@@ -5,12 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import ftc.rogue.blacksmith.util.kt.invoke
 
-object ShortRangeSensorConfig {
-    // TODO: Empirically determine model values. Requires a tuning process.
-}
 
-class ShortRangeSensor(hwMap: HardwareMap) {
-    private val sensor = hwMap<AnalogInput>(DeviceNames.SHORT_RANGE_SENSOR)
+class ShortRangeSensor(hwMap: HardwareMap, device: String) {
+    private val sensor = hwMap<AnalogInput>(device)
 
     val distance: Double get() = model(sensor.voltage)
 
