@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 //import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 //import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 //import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -35,7 +36,8 @@ import org.firstinspires.ftc.teamcode.Functions.MV.MVPIDController;
  */
 public class RotationDetector {
 
-    double startingRotation = 0;
+    double startingRotation = 0.0;
+    double PIDOutput = 0.0;
     BNO055IMU Gyro;
     MVPIDController MotorPID;
     //public Telemetry telemetry;
@@ -45,7 +47,7 @@ public class RotationDetector {
             throw new NullPointerException("Error: Gyro object is null");
         }
         try {
-            Gyro =gyro;
+            Gyro = gyro;
             BNO055IMU.Parameters par = new BNO055IMU.Parameters();
             par.angleUnit = BNO055IMU.AngleUnit.DEGREES;
             par.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -58,7 +60,7 @@ public class RotationDetector {
             MotorPID = new MVPIDController();
             MotorPID.pidController(0.01, 0.005, 0.025, 0.1, 0.001);
             MotorPID.setContinuous(true);
-            MotorPID.setInputRange(-180.0,180.0);
+            MotorPID.setInputRange(Math.toRadians(-180.0),Math.toRadians(180.0));
             MotorPID.setOutputRange(-1.0,1.0);
         } catch (Exception e) {
             System.out.println("Exception caught in setting RotationDetector: " + e.getMessage());
@@ -73,11 +75,24 @@ public class RotationDetector {
         return Gyro;
     }
 
+    /** This method simply returns the PID Controller object.
+     * @return : This returns the PID.
+     */
+    public MVPIDController ReturnPIDController(){
+        return MotorPID;
+    }
 
     /**
      * @return : (double) This returns starting rotation.
      */
-    public double getStartingRotation(){
+    public double getStartingRotationDeg(){
+        return Math.toDegrees(startingRotation);
+    }
+
+    /**
+     * @return : (double) This returns starting rotation.
+     */
+    public double getStartingRotationRad(){
         return startingRotation;
     }
 
@@ -86,9 +101,22 @@ public class RotationDetector {
      * can be useful if you want to rotate the robot relative to its current position rather
      * than its starting position (0 degrees).
      */
-    public void setStartingRotation() {
+    public void setStartingRotationToCurrent() {
         // Set the starting rotation to the current rotation
         startingRotation = ReturnRotation();
+    }
+
+    /**
+     * This method sets the starting rotation angle of the robot to the given angle.
+     *
+     * @param angle The angle in degrees (-180 to 180).
+     */
+    public void setStartingRotationToAngle(double angle) {
+        // Normalize the angle to be between -180 and 180 degrees
+        angle = AngleUnit.DEGREES.normalize(angle);
+
+        // Set the starting rotation to the given angle
+        startingRotation = angle;
     }
 
     /**
@@ -139,6 +167,18 @@ public class RotationDetector {
     }
 
     /**
+     * This method returns the current rotation of the robot as reported by the gyro sensor.
+     * <p></p>
+     * It does this by using the getAngularOrientation method of the BNO055IMU class to get the
+     * orientation of the robot in degrees and returning the first angle, which corresponds to
+     * the rotation around the Z axis.
+     * @return : (double) This returns the current rotation.
+     */
+    public double ReturnRotationRad(){
+        return Gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+    }
+
+    /**
      * @return : (double) This returns the POSITIVE current rotation.
      */
     public double ReturnPositiveRotation(){
@@ -160,26 +200,29 @@ public class RotationDetector {
      * rotation until they are within a certain tolerance of each other.
      * <p></p>
      * It returns true if the robot has not yet reached the target angle and false if it has.
-     * @param targetRotation : (double) given angle
+     * @param targetRotationRad : (double) given angle in Radians
      * @return : true if the targetRotation has been reached, otherwise false
      */
-    public boolean WaitForRotation(double targetRotation){
-        double targetAngle = targetRotation;
+    public boolean WaitForRotation(double targetRotationRad){
+        double targetAngle = AngleUnit.RADIANS.normalize(targetRotationRad); // Normalize the targeted angle
+        double currentAngle = ReturnRotationRad();  // Get the current angle of the robot in radians
 
-        targetAngle = MotorPID.wrapToRange(targetAngle);
+        //targetAngle = MotorPID.wrapToRange(targetAngle);
         //if (MotorPID.onTarget()) {
         //    return false;
         //}
-        MotorPID.setTarget(targetAngle);
-        MotorPID.setStart(ReturnRotation());
+        MotorPID.setStart(currentAngle); // Set the starting angle for the PID controller
+        MotorPID.setTarget(targetAngle); // Set the target angle for the PID controller
 
-        double output = MotorPID.calculate();  // Calculate the output of the PID controller
+        // Calculate the output of the PID controller
+        double output = MotorPID.calculate();
+        PIDOutput = output;
 
-        //if (Math.abs(output) < MotorPID.getTolerance()) {  // If the error is within the tolerance
-        if (Math.abs(output) < 0.1){ // If the error is within the tolerance
-                return false;  // Return true, indicating that the target angle has been reached
+        // If the error is within the tolerance
+        if (Math.abs(output) > MotorPID.getTolerance()) {
+                return true;  // Return true, indicating that the target angle has not been reached
         } else {
-            return true;  // Return false, indicating that the target angle has not been reached
+            return false;  // Return false, indicating that the target angle has been reached
         }
 
         //if(AngleCorrection(targetRotation) == AngleCorrection((int)ReturnPositiveRotation()))
@@ -193,6 +236,19 @@ public class RotationDetector {
         //}
     }
 
+    /** Method to reset the PIDOutput property.
+     * @return : (double) This returns the POSITIVE current rotation.
+     */
+    public void resetPIDOutput(){
+        PIDOutput = 0.0;
+    }
+
+    /** Method to get the PIDOutput property.
+     * @return : (double) This returns the POSITIVE current rotation.
+     */
+    public double getPIDOutput(){
+        return PIDOutput;
+    }
 
     /**
      * This method calculates the direction simulating the robot rotation both directions and seeing
@@ -233,7 +289,7 @@ public class RotationDetector {
      * * @return (double) [-1, 1] dcmotor power
      */
     public double MotorPower(double targetRotation){
-        MotorPID.setTarget((targetRotation));
+        MotorPID.setTarget(targetRotation);
         double power = MotorPID.calculate();
         //    double newRotationAngle = 0;
         //    try {

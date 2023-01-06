@@ -383,11 +383,11 @@ public class MVPIDController {
 
     /**
      * This method sets the starting position for the PID controller.
-     * @param startAngle: (double) the starting position
+     * @param startValue: (double) the starting position
      */
-    public void setStart(double startAngle) {
+    public void setStart(double startValue) {
         try {
-            this.start = startAngle;
+            this.start = startValue;
         } catch (NullPointerException e) {
             System.out.println("NullPointerException caught in setStart: " + e.getMessage());
         } catch (Exception e) {

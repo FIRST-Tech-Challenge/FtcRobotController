@@ -68,22 +68,24 @@ public class RotationDetectorTest extends LinearOpMode {
 
         // Test rotation to 30 degrees
         double angle = 30.0;
-        DebugData(angle);
+        double angleRad = Math.toRadians(angle);
+        double startingAngle = rotationDetector.getStartingRotationDeg();
+        DebugData(startingAngle, angle);
         //telemetry.addData("-- Rotation", angle);
         //telemetry.addData("-- WaitForRotation", rotationDetector.WaitForRotation(angle));
         //telemetry.update();
 
-        while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
+        while(opModeIsActive() && rotationDetector.WaitForRotation(angleRad))
         {
             //try {
                 // Rotate the robot using the RotateRaw method and the MotorPower method from the
                 // RotationDetector class
                 telemetry.addData("- Rotation", angle);
                 telemetry.update();
-                rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
+                rotate.RotateRaw(2, rotationDetector.MotorPower(angleRad));
 
             // Display debugging data on the telemetry
-                DebugData(angle);
+                DebugData(rotationDetector.getPIDOutput(), angle); ///?????
             //}
             //catch (Exception e) {
             //    telemetry.addData("Exception caught in MotorPower(RotationDetectorTest): ", e.getMessage());
@@ -91,6 +93,7 @@ public class RotationDetectorTest extends LinearOpMode {
             //    telemetry.update();
             //}
         }
+        rotationDetector.resetPIDOutput();
 
         // Stop the robot
         rotate.MoveStop();
@@ -101,10 +104,12 @@ public class RotationDetectorTest extends LinearOpMode {
 
 
         angle = -45.0;
-        while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
+        angleRad = Math.toRadians(angle);
+        startingAngle = rotationDetector.getStartingRotationDeg();
+        while(opModeIsActive() && rotationDetector.WaitForRotation(angleRad))
         {
-            rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
-            DebugData(angle);
+            rotate.RotateRaw(2, rotationDetector.MotorPower(angleRad));
+            DebugData(startingAngle, angle);
 
         }
         rotate.MoveStop();
@@ -113,10 +118,12 @@ public class RotationDetectorTest extends LinearOpMode {
 
 
         angle = 90.0;
-        while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
+        angleRad = Math.toRadians(angle);
+        startingAngle = rotationDetector.getStartingRotationDeg();
+        while(opModeIsActive() && rotationDetector.WaitForRotation(angleRad))
         {
-            rotate.RotateRaw(2, rotationDetector.MotorPower(angle));
-            DebugData(angle);
+            rotate.RotateRaw(2, rotationDetector.MotorPower(angleRad));
+            DebugData(startingAngle, angle);
 
         }
         rotate.MoveStop();
@@ -125,10 +132,12 @@ public class RotationDetectorTest extends LinearOpMode {
 
 
         angle = 45.0;
-        while(opModeIsActive() && rotationDetector.WaitForRotation(angle))
+        angleRad = Math.toRadians(angle);
+        startingAngle = rotationDetector.getStartingRotationDeg();
+        while(opModeIsActive() && rotationDetector.WaitForRotation(angleRad))
         {
-            rotate.RotateRaw(2,rotationDetector.MotorPower(angle));
-            DebugData(angle);
+            rotate.RotateRaw(2,rotationDetector.MotorPower(angleRad));
+            DebugData(startingAngle, angle);
         }
         rotate.MoveStop();
     }
@@ -139,7 +148,7 @@ public class RotationDetectorTest extends LinearOpMode {
      * @param angle The target angle for the robot to rotate to.
      * //@param telemetryOn Whether to display the data on the telemetry.
      */
-    void DebugData(double angle){
+    void DebugData(double initAngle, double angle){
 
         // Get the current orientation of the robot
         double[] orientation = rotationDetector.getOrientation();
@@ -152,9 +161,10 @@ public class RotationDetectorTest extends LinearOpMode {
 
         // Add data to the telemetry
         telemetry.addData("PID Parameters: ", rotationDetector.getPIDParameters());
-        telemetry.addData("Current rotation", rotationDetector.ReturnRotation());
+        telemetry.addData("Initial angle", initAngle);
+        telemetry.addData("Current angle", rotationDetector.ReturnRotation());
         telemetry.addData(" - ", orientationString.toString());
-        telemetry.addData("Target rotation", angle);
+        telemetry.addData("Target angle", angle);
         telemetry.update();
     }
 
