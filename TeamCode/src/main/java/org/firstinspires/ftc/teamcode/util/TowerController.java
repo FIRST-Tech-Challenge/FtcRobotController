@@ -130,6 +130,7 @@ public class TowerController
 
     public void handleScrewLevelSet(Gamepad gamepad, Telemetry telemetry)
     {
+        // Multiply all values by .71
         //4 button screw position set
         if (gamepad.dpad_up)
         {
