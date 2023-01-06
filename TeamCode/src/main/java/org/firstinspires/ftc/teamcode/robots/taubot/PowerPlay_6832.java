@@ -84,10 +84,11 @@ public class PowerPlay_6832 extends OpMode {
     static boolean active;
     public static boolean debugTelemetryEnabled;
     static boolean gridDriveActive = false;
-    private boolean initializing,  numericalDashboardEnabled, smoothingEnabled;
+    private boolean initializing, smoothingEnabled;
+    public static boolean numericalDashboardEnabled = false;
     static Constants.Alliance alliance;
     static Constants.Position startingPosition;
-    static GameState gameState;
+    public static GameState gameState;
     static int gameStateIndex;
 
     private long startTime;
@@ -215,7 +216,6 @@ public class PowerPlay_6832 extends OpMode {
         //auton setup
         alliance = Constants.Alliance.RED;
         startingPosition = Constants.Position.START_RIGHT;
-        robot.driveTrain.setPoseEstimate(startingPosition.getPose());
         auto = new Autonomous(robot);
         auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
         auto.visionProvider.initializeVision(hardwareMap);
@@ -261,16 +261,22 @@ public class PowerPlay_6832 extends OpMode {
         // THIS SECTION EXECUTES ONCE RIGHT AFTER START IS PRESSED
         //
 
-
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
 
-        robot.driveTrain.resetGridDrive(startingPosition);
+        if(gameState.equals(GameState.AUTONOMOUS)) {
+            resetGame();
+        }
         robot.crane.updateScoringPattern();
 
         rumble();
 
 
+
+    }
+
+    public void resetGame(){
+        robot.driveTrain.resetGridDrive(startingPosition);
 
     }
 

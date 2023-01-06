@@ -43,13 +43,13 @@ public class FieldThing {
             case 1:
                 return 7;
             case 2:
-                return 19;
+                return 17;
             case 3:
-                return 29;
+                return 27;
             case 4:
-                return 38;
+                return 36;
             default:
-                return 38;
+                return 36;
         }
     }
 

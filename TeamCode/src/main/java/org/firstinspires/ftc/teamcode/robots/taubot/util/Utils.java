@@ -27,11 +27,11 @@ public class Utils {
     }
 
     public static boolean withinErrorPercent(double value, double target, double percent){
-        return (value >= target*(1-percent) && value <= target*(1+percent));
+        return (Math.abs(target-value)/target <= percent);
     }
 
-    public static boolean withinError(double value, double target, double percent){
-        return (value >= target-percent && value <= target+percent);
+    public static boolean withinError(double value, double target, double error){
+        return (Math.abs(target-value) <= error);
     }
 
 

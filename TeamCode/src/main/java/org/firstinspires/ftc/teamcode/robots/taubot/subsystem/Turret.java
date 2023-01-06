@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
+import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import java.util.LinkedHashMap;
@@ -59,30 +60,15 @@ public class Turret implements Subsystem {
         turretPID.enableIntegralZeroCrossingReset(false);
         turretPID.setIntegralCutIn(5); //suppress integral until within 5 degrees of target
         turretPID.enable();
-        initIMU(turretIMU);
-    }
 
-    public void initIMU(BNO055IMU turretIMU){
-
-        //setup Turret IMU
         BNO055IMU.Parameters parametersIMUTurret = new BNO055IMU.Parameters();
         parametersIMUTurret.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parametersIMUTurret.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parametersIMUTurret.loggingEnabled = true;
         parametersIMUTurret.loggingTag = "turretIMU";
-
-        /*
-        *  imu = hardwareMap.get(BNO055IMU.class, "baseIMU");
-                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-                imu.initialize(parameters);
-                //because the Expansion hub is upsidedown:
-                BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);*/
-
         turretIMU.initialize(parametersIMUTurret);
-        this.turretIMU=turretIMU;
-
     }
+
 
     boolean initialized = false;
     double offsetHeading;
@@ -104,11 +90,15 @@ public class Turret implements Subsystem {
     }
 
     double correction = 0;
+    double error = 0;
 
     public double getCorrection(){
         return  correction;
     }
 
+    public double getError(){
+        return -distanceBetweenAngles(heading,targetHeading);
+    }
     public void update(Canvas fieldOverlay) {
 
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
@@ -123,12 +113,12 @@ public class Turret implements Subsystem {
         //update current IMU heading before doing any other calculations
         heading = wrapAngle(offsetHeading + imuAngles.firstAngle);
 
-
         turretPID.setPID(TURRET_PID);
         turretPID.setTolerance(TURRET_TOLERANCE);
         turretPID.setSetpoint(0);
         turretPID.setInput(-distanceBetweenAngles(heading,targetHeading));
         correction = turretPID.performPID();
+        error = turretPID.getError();
         //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
         motor.setPower(correction);
     }
@@ -189,6 +179,7 @@ public class Turret implements Subsystem {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         if(debug) {
             telemetryMap.put("turret heading", heading);
+            telemetryMap.put("turret error", turretPID.getError());
             telemetryMap.put("target turret heading", targetHeading);
             telemetryMap.put("turret motor amps", motor.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("turret near target", isTurretNearTarget());

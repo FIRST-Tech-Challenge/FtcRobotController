@@ -35,8 +35,8 @@ public class Field {
 
     HashMap<String, FieldThing[]> mapObjects = new HashMap<String, FieldThing[]>();
 
-    ConeStack coneStackRight = new ConeStack("AllianceRightStack",2.93,2.45,0);
-    ConeStack coneStackLeft = new ConeStack("AllianceLeftStack",-2.93,2.5,0);
+    ConeStack coneStackRight = new ConeStack("AllianceRightStack",2.82,2.45,0);
+    ConeStack coneStackLeft = new ConeStack("AllianceLeftStack",-2.82,2.5,0);
 
 
     public Field(boolean isBlue){

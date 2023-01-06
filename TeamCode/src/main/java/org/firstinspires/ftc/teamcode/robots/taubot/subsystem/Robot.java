@@ -193,9 +193,27 @@ public class Robot implements Subsystem {
                 if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20)){
                     autonIndex++;
                 }
-                crane.articulate(Crane.Articulation.defaultPosition);
+                crane.articulate(Crane.Articulation.noIK);
                 break;
             case 1:
+                crane.driverNotDriving();
+                if(startingPosition.equals( Constants.Position.START_LEFT)) {
+                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,Field.INCHES_PER_GRID,36);
+                    if (System.nanoTime() >= autonTime && withinErrorPercent(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
+                        crane.setGripper(false);
+                        autonTime = futureTime(0.3);
+                        autonIndex++;
+                    }
+                }else{
+                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,-Field.INCHES_PER_GRID-1,36);
+                    if (System.nanoTime() >= autonTime && withinErrorPercent(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinErrorPercent(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
+                        crane.setGripper(false);
+                        autonTime = futureTime(0.3);
+                        autonIndex++;
+                    }
+                }
+                break;
+            case 2:
                 if (startingPosition.equals(Constants.Position.START_LEFT)) {
                     if (driveTrain.turnUntilDegrees(90)) {
                         autonIndex++;
@@ -207,24 +225,6 @@ public class Robot implements Subsystem {
                         autonIndex++;
                         turnUntilDegreesDone = true;
                         autonTime = futureTime(3);
-                    }
-                }
-                break;
-            case 2:
-                crane.driverNotDriving();
-                if(startingPosition.equals( Constants.Position.START_LEFT)) {
-                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID,Field.INCHES_PER_GRID,36);
-                    if (System.nanoTime() >= autonTime && withinErrorPercent(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
-                        crane.setGripper(false);
-                        autonTime = futureTime(0.3);
-                        autonIndex++;
-                    }
-                }else{
-                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID,-Field.INCHES_PER_GRID,36);
-                    if (System.nanoTime() >= autonTime && withinErrorPercent(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinErrorPercent(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
-                        crane.setGripper(false);
-                        autonTime = futureTime(0.3);
-                        autonIndex++;
                     }
                 }
                 break;

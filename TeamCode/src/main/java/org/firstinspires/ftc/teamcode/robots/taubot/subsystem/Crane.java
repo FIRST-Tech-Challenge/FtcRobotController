@@ -30,6 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.robots.taubot.ConeStack;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.FieldThing;
+import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DistanceSensorSim;
@@ -59,7 +60,7 @@ public class Crane implements Subsystem {
     // This initial measurement is the range of motion from fully up (7.25 degrees from vertical) to horizontal, divided by that angle range
     // note the arm was moved by hand, not under motor power, and the angle encoder was not properly secured
     public static double SHOULDER_DEG_MIN = -10; // degrees down from horizontal - negative angles are counter clockwise while looking at the left side of the bot
-    public static double SHOULDER_DEG_MAX = 90-7.25; //max elevation of shoulder when stalled up - measured by inclinometer
+    public static double SHOULDER_DEG_MAX = 78; //max elevation of shoulder when stalled up - measured by inclinometer
     public static double SHOULDER_DIRECT_TICKS_PER_DEGREE = (1937-88)/(SHOULDER_DEG_MAX); //todo verify/update when sensor secured and robot is more burned in - before tuning precision articulation
 
     public static double SHOULDER_TICK_MAX = 1849;
@@ -77,6 +78,10 @@ public class Crane implements Subsystem {
     public static double TURRET_ADJUST = 20;
     public static double HEIGHT_ADJUST = 5;
     public static double DISTANCE_ADJUST = 30;
+
+    public static double SHOULDER_ERROR_MAX = 4;
+    public static double EXTENSION_ERROR_MAX = 0.05;
+    public static double TURRET_ERROR_MAX = 4;
 
     public static double kE = 0.0;
     public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(10, 0, 0.005);
@@ -157,7 +162,9 @@ public class Crane implements Subsystem {
             turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
             shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             extenderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-            extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
+                extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
             extenderMotor.setTargetPosition(0);
             shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -380,8 +387,18 @@ public class Crane implements Subsystem {
         shoulderCorrection = shoulderPID.performPID();
 
         //moves elbow with the correction applied
-        shoulderMotor.setPower(shoulderCorrection);
+        if(System.nanoTime() > stallTimer) {
+            if (shoulderAmps < 4) {
+                shoulderMotor.setPower(shoulderCorrection);
+            } else {
+                stallTimer = futureTime((double) five);
+            }
+        }else {
+            shoulderMotor.setPower(0);
+        }
     }
+
+    long stallTimer = 0;
 
     public void movePIDExtend(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
 
@@ -406,7 +423,7 @@ public class Crane implements Subsystem {
 
     public enum Articulation {
         manual,
-        defaultPosition,
+        noIK,
         dropCone,
         pickupCone,
         home,
@@ -422,7 +439,7 @@ public class Crane implements Subsystem {
         articulation = target;
 
         switch(articulation){
-            case defaultPosition:
+            case noIK:
 
                 break;
             case manual:
@@ -489,15 +506,15 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 1:
-                if (goToFieldCoordinate(pos.getX(), pos.getY(), obj.z())) {
+                if (goToFieldCoordinate(pos.getX(), pos.getY(), obj.z()+4)) {
                     coneCycleStage++;
-                    cycleTimer = futureTime(2);
+                    cycleTimer = futureTime(1);
                 }
                 break;
             case 2:
                 if(System.nanoTime() >= cycleTimer && goToFieldCoordinate(pos.getX(), pos.getY(), obj.z() - 6.5)){
                     coneCycleStage++;
-                    cycleTimer = futureTime(1.5);
+                    cycleTimer = futureTime(1);
                 }
                 break;
             case 3:
@@ -515,23 +532,21 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 5:
-                if(withinError(getShoulderAngle(),getShoulderTargetAngle(),2) && goHome()){
+                if(shoulderOnTarget() && goHome()){
                     coneCycleStage++;
                 }
                 break;
             case 6:
+                FieldThing temp;
                 if (rightConeStack) {
-                    FieldThing temp = robot.field.objects[33];
-                    Pose2d tempPos = Field.convertToInches(temp.getPosition());
-                    if (goToFieldCoordinate(tempPos.getX()+2, tempPos.getY(), temp.z())) {
-                        coneCycleStage++;
-                        cycleTimer = futureTime(0.5);
-                    }
+                    temp = robot.field.objects[33];
                 } else {
-                    if (goToFieldthing(robot.field.objects[32])) {
-                        coneCycleStage++;
-                        cycleTimer = futureTime(0.5);
-                    }
+                    temp = robot.field.objects[32];
+                }
+                Pose2d tempPos = Field.convertToInches(temp.getPosition());
+                if (goToFieldCoordinate(tempPos.getX()+2, tempPos.getY()+2, temp.z())) {
+                    coneCycleStage++;
+                    cycleTimer = futureTime(1);
                 }
                 break;
             case 7:
@@ -548,7 +563,7 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 9:
-                if(withinError(getShoulderAngle(),getShoulderTargetAngle(),2) && goHome()){
+                if(shoulderOnTarget() && goHome()){
                     coneCycleStage++;
                 }
                 break;
@@ -569,7 +584,22 @@ public class Crane implements Subsystem {
         return goToFieldCoordinate(pos.getX(),pos.getY(),obj.z());
     }
 
+
+    public boolean shoulderOnTarget(){
+        return Math.abs(shoulderTargetAngle-shoulderAngle) < SHOULDER_ERROR_MAX;
+    }
+
+    public boolean extensionOnTarget(){
+        return Math.abs(getExtenderTargetPos()-getExtendMeters()) < EXTENSION_ERROR_MAX;
+    }
+
+    public boolean turretOnTarget(){
+        return Math.abs(robot.turret.getError()) < TURRET_ERROR_MAX;
+    }
+
+
     int goTargetInd = 0;
+    long goToTimer = 0;
 
     public boolean goToFieldCoordinate(double x, double y, double z){
         fieldPositionTarget = new Vector3(x,y,z);
@@ -582,7 +612,7 @@ public class Crane implements Subsystem {
                 goTargetInd++;
                 break;
             case 1:
-                if(withinError(getExtendMeters(), getExtenderTargetPos(), 0.05) && withinError(getShoulderAngle(), getShoulderTargetAngle(), 7) && withinError(robot.turret.getHeading(), robot.turret.getTargetHeading(), 2)){
+                if(shoulderOnTarget() && extensionOnTarget() && turretOnTarget()){
                     setExtendTargetPos(calculatedLength);
                     setShoulderTargetAngle(calculatedAngle);
                     setTargetTurretAngle(calculatedTurretAngle);
@@ -590,20 +620,27 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 2:
-                if(withinError(getExtendMeters(), getExtenderTargetPos(), 0.05) && withinError(getShoulderAngle(), getShoulderTargetAngle(), 7) && withinError(robot.turret.getHeading(), robot.turret.getTargetHeading(), 2)){
+                if(shoulderOnTarget() && extensionOnTarget() && turretOnTarget()){
+                    goToTimer = futureTime(0.4);
+                    goTargetInd++;
+                }
+            case 3:
+                if(System.nanoTime() > goToTimer){
                     goTargetInd = 0;
                     return true;
                 }
+                break;
         }
 
         return false;
     }
 
+    public static Vector3 home = new Vector3(2, 0 ,26);
 
     int homeInd;
 
     public boolean goHome(){
-        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX(), robot.driveTrain.getPoseEstimate().getY(), 26);
+        fieldPositionTarget = new Vector3(home.x+robot.turret.getTurretPosition().getX(),home.y+robot.turret.getTurretPosition().getY(),home.z);
         switch (homeInd){
             case 0:
                 holdFieldPosition = false;
@@ -611,14 +648,14 @@ public class Crane implements Subsystem {
                 homeInd++;
                 break;
             case 1:
-                if(withinError(getExtendMeters(),getExtenderTargetPos(),0.05)) {
+                if(extensionOnTarget()) {
                     calculateFieldTargeting(fieldPositionTarget);
                     goToCalculatedTarget();
                     homeInd++;
                 }
                 break;
             case 2:
-                if(withinError(getExtendMeters(), getExtenderTargetPos(), 0.05) && withinError(getShoulderAngle(), getShoulderTargetAngle(), 7) && withinError(robot.turret.getHeading(), robot.turret.getTargetHeading(), 10)) {
+                if(shoulderOnTarget() && extensionOnTarget() && turretOnTarget()){
                     homeInd = 0;
                     return true;
                 }
@@ -644,7 +681,7 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 2:
-                if(withinError(getShoulderAngle(),getShoulderTargetAngle(),2) && goHome()){
+                if(shoulderOnTarget() && goHome()){
                     pickupConeStage++;
                 }
                 break;
@@ -678,7 +715,7 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 2:
-                if(withinError(getShoulderAngle(),getShoulderTargetAngle(),2) && goHome()){
+                if(shoulderOnTarget() && goHome()){
                     dropConeStage++;
                 }
                 break;
@@ -1032,7 +1069,7 @@ public class Crane implements Subsystem {
 
 
     public void setShoulderPwr(double pwrMin, double pwrMax){ shoulderPID.setOutputRange(pwrMin,pwrMax); }
-    public  void setShoulderTargetAngle(double t){ shoulderTargetAngle = (Math.max(Math.min(t,SHOULDER_TICK_MAX/SHOULDER_DIRECT_TICKS_PER_DEGREE),-10)); }
+    public  void setShoulderTargetAngle(double t){ shoulderTargetAngle = (Math.max(Math.min(t,SHOULDER_DEG_MAX),SHOULDER_DEG_MIN)); }
     public  double getShoulderTargetAngle(){ return shoulderTargetAngle; }
     public double getExtenderTargetPos(){ return extenderTargetPos+craneLengthOffset; }
     public  void setExtendTargetPos(double t){ extenderTargetPos = Math.min(3075/EXTEND_TICKS_PER_METER,Math.max(t-craneLengthOffset, 0)); }
@@ -1058,6 +1095,9 @@ public class Crane implements Subsystem {
         telemetryMap.put("Extend Error", extendPID.getError());
 
         if (debug) {
+            telemetryMap.put("Shoulder On Target", shoulderOnTarget());
+            telemetryMap.put("Extension On Target", extensionOnTarget());
+            telemetryMap.put("Turret On Target", turretOnTarget());
             telemetryMap.put("Delta Time", deltaTime);
             telemetryMap.put("Shoulder Power", shoulderMotor.getPower());
             telemetryMap.put("Shoulder Current", shoulderMotor.getCurrent(CurrentUnit.AMPS));
