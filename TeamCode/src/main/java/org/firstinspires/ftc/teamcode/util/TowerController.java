@@ -4,12 +4,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.TeleOp;
-
 
 public class TowerController
 {
@@ -18,6 +15,12 @@ public class TowerController
     private TouchSensor highSensor;
     private TouchSensor lowSensor;
     private int screwLevel = 0;
+
+    private boolean uBarY;
+    private boolean uBarX;
+    private boolean uBarB;
+    private boolean screwA;
+
 
     // Ubar field
     private DcMotor uBar;
@@ -131,28 +134,28 @@ public class TowerController
         if (gamepad.dpad_up)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(4270);
+            screw.setTargetPosition(3790);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(1);
         }
         else if (gamepad.dpad_left)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(851);
+            screw.setTargetPosition(-5);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(1);
         }
         else if (gamepad.dpad_right)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(4557);
+            screw.setTargetPosition(4675);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(1);
         }
         else if (gamepad.dpad_down)
         {
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(759);
+            screw.setTargetPosition(1600);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(1);
         }
@@ -162,46 +165,41 @@ public class TowerController
     public void handleUBarLevelSet(Gamepad gamepad, Telemetry telemetry)
     {
         uBar.setDirection(DcMotorSimple.Direction.REVERSE);
-
-//        telemetry.addData("uBar ticks = ", "%d", uBar.getCurrentPosition());
-//        telemetry.update();
-
         //4 button Ubar position set
-
         // High Junction
         if (gamepad.y)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(-2966);
+            uBar.setTargetPosition(-3109);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            uBar.setPower(0.5);
+            uBar.setPower(1);
         }
 
         // Middle Junction
         else if (!gamepad.start && gamepad.b)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(-1454);
+            uBar.setTargetPosition(-1680);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            uBar.setPower(0.5);
+            uBar.setPower(1);
         }
 
         // Low Junction
         else if (gamepad.x)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(-2854);
+            uBar.setTargetPosition(-3214);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            uBar.setPower(-0.5);
+            uBar.setPower(-1);
         }
 
         // Pickup Junction
         else if (gamepad.a)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(985);
+            uBar.setTargetPosition(532);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            uBar.setPower(0.5);
+            uBar.setPower(1);
         }
 
 
@@ -276,6 +274,83 @@ public class TowerController
         else if (screw.getMode() == DcMotor.RunMode.RUN_TO_POSITION)
         {
             //Do nothing
+        }
+    }
+
+    private void driveAll(Gamepad gamepad, Telemetry telemetry)
+    {
+        //3885
+        //4 button screw position set
+        if (gamepad.y)
+        {
+            uBarY = true;
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(3790);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(1);
+        }
+
+        if (uBarY && screw.getCurrentPosition() > 3750)
+        {
+            uBarY = false;
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(-3109);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(0.5);
+        }
+
+        if (gamepad.x)
+        {
+            uBarX = true;
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(-5);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(1);
+        }
+
+        if (screw.getCurrentPosition() > 3750 && uBarX)
+        {
+            uBarX = false;
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(-1680);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(0.5);
+        }
+
+        if (gamepad.b && !gamepad.start)
+        {
+            uBarB = true;
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(4675);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(1);
+
+        }
+
+        if (screw.getCurrentPosition() > 3750 && uBarB)
+        {
+            uBarB = false;
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(-1680);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(0.5);
+        }
+
+        if (gamepad.a)
+        {
+            screwA = true;
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(532);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(0.5);
+        }
+        if (screwA && uBar.getCurrentPosition() < 500)
+        {
+            screwA = false;
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(1600);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(1);
         }
     }
 
