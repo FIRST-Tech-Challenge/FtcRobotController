@@ -10,6 +10,9 @@ public class Rotate {
 
     /**
      * This method initialises the motors so that it's braking when you give the value 0.
+     * <p></p>
+     * This method sets the ZeroPowerBehavior of all the motors to BRAKE, which means that the
+     * motors will hold their position when they receive a power value of 0.
      */
     void Init(){
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -24,6 +27,9 @@ public class Rotate {
      * @param _RMF : right motor front
      * @param _LMB : left motor back
      * @param _RMB : right motor back
+     * <p></p>
+     * This first constructor takes four DcMotor objects as arguments and initializes the private
+     * fields with these objects.
      */
     public Rotate(DcMotor _LMF, DcMotor _RMF, DcMotor _LMB, DcMotor _RMB){
         leftMotor = _LMF;
@@ -35,6 +41,8 @@ public class Rotate {
 
     /**
      * This methoda also initialises the motors but in another way.
+     * The second constructor takes an object of the MotorHolder class as an argument and
+     * initializes the private fields with the motors stored in the MotorHolder object.
      * @param motorHolder
      */
     public Rotate(MVVariables.MotorHolder motorHolder){
@@ -73,7 +81,7 @@ public class Rotate {
     }
 
     /**
-     * This method stops the motors.
+     * This method sets the power of all the motors to 0, causing the robot to stop moving.
      */
     public void MoveStop(){
         leftMotor.setPower(0);
@@ -81,6 +89,8 @@ public class Rotate {
         rightMotorBack.setPower(0);
         rightMotor.setPower(0);
     }
+
+
     public void RotateStop(){
         MoveStop();
     }
