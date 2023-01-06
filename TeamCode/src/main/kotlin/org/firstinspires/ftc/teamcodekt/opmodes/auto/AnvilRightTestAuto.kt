@@ -9,7 +9,7 @@ import ftc.rogue.blacksmith.util.kt.toRad
 
 @Autonomous
 class AnvilRightTestAuto : RogueBaseAuto() {
-    override fun goo() {
+    override fun gooo() {
         val startPose = Pose2d(91.toIn(), (-159).toIn(), 90.toRad())
         val startTraj = mainTraj(startPose)
 
@@ -28,9 +28,10 @@ class AnvilRightTestAuto : RogueBaseAuto() {
 
             .doTimes(5) {
                 inReverse {
-                    splineTo(153.5, -29.0, 0.0)
+                    // Go to intaking position
+                    splineTo(153.5, -29.5, 0.0)
                 }
-
-                splineToSplineHeading(75.25, -17.0, 135.0, 145.0)
+                // Go to deposit position
+                splineToSplineHeading(77.25, -17.0, 135.0, 135.0)
             }
 }

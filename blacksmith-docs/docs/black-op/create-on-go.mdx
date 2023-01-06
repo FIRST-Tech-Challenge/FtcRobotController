@@ -41,7 +41,8 @@ private val myThing by createOnGo {
 :::warning
 Method 1 uses reflection, so it can occasionally be a bit finicky. If you're having issues, try method 2.
 
-Take care that the argument's return types are the same as the desired constructor, and that the order is the same.
+Take care that the argument's return types are the same as the desired constructor, and that the order is the same, as
+the method parameters are NOT type safe.
 :::
 
 ## `createOnGo` Method 1

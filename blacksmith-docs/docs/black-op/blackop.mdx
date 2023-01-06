@@ -10,7 +10,7 @@ An extension of the `LinearOpMode` class that adds a few extra utility features,
  - `hwMap`, `hardwareMap`, but shorter name
 
  - Broadcasts a message (`BlackOp.STARTING_MSG`) when the runOpMode method is called with [Scheduler.emit](../scheduler-api/scheduler#scheduleremit)
-   - This in turn opens up support for [`createOnGo`](../util/kt/create-on-go), a *very* nice Kotlin utility function
+   - This in turn opens up support for [`createOnGo`](./create-on-go), a *very* nice Kotlin utility function
 
  - More will come soon as I think of new, helpful utilities
 
@@ -30,7 +30,7 @@ It's just like using `LinearOpMode`, just a couple minor differences.
       public void go() { // go() instead of runOpMode()
           motor = hwMap.get(DcMotorEx.class, "motor"); // Can use hwMap instead of hardwareMap
 
-          Scheduler.launchWhenReady(this) {
+          Scheduler.launchOnStart(this) {
               mTelemetry.addData("Hello", "World!"); // Logs to both driver station and FTCDashboard
           }
       }
@@ -56,7 +56,7 @@ It's just like using `LinearOpMode`, just a couple minor differences.
   class MyOpMode : BlackOp() { // BlackOp instead of LinearOpMode
 
       override fun go() { // go() instead of runOpMode()
-          Scheduler.launchWhenReady(this) {
+          Scheduler.launchOnStart(this) {
               mTelemetry.addData("Hello", "World!") // Logs to both driver station and FTCDashboard
           }
       }

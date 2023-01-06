@@ -41,7 +41,7 @@ public class NotCoolTeleOp extends OpMode {
     private void checkIfShouldDoSomething() {
        if (gamepad2.a && !gamepad1aPreviousState) { // Messy and ugly and ew 🤮
            claw.intake();
-       } else if (!gamepad2.a && gamepad1aPreviousState) { // Disgusting unreadable signal edge detectors
+       } else if (!gamepad2.a && gamepad1aPreviousState) { // Ugly unreadable signal edge detectors
            claw.close();
        } // Can't tell if the driver does this or the codriver at the quick glance
        gamepad1aPreviousState = //...;
@@ -69,7 +69,7 @@ class `NotCoolTeleOp😔` : OpMode() {
     private fun checkIfShouldDoSomething() {
        if (gamepad2.a && !gamepad1aPreviousState) { // Messy and ugly and ew 🤮
            claw.intake()
-       } else if (!gamepad2.a && gamepad1aPreviousState) { // Disgusting unreadable signal edge detectors
+       } else if (!gamepad2.a && gamepad1aPreviousState) { // Ugly unreadable signal edge detectors
            claw.close()
        } // Can't tell if the driver does this or the codriver at the quick glance
        gamepad1aPreviousState = //...
@@ -95,7 +95,7 @@ public class CoolTeleOp extends LinearOpMode {
 
         describeControls(); // Good idea to move it to a method for readability
 
-        Scheduler.launchWhenReady(this, () -> {
+        Scheduler.launchOnStart(this, () -> {
             // Any extra loop code (runs after every Listener)
         });
     }
@@ -119,7 +119,7 @@ class `CoolTeleOp😎` : LinearOpMode() {
 
         describeControls() // Good idea to move it to a method for readability
 
-        Scheduler.launchWhenReady(this) {
+        Scheduler.launchOnStart(this) {
             // Any extra loop code (runs after every Listener)
         }
     }

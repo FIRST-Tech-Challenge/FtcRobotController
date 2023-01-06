@@ -86,4 +86,4 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-.blacksmith/meepmeep.properties
+meepmeep.properties

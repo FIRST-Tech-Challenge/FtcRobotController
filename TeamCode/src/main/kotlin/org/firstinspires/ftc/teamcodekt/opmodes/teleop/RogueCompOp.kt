@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import ftc.rogue.blacksmith.listeners.Listener
 import org.firstinspires.ftc.teamcodekt.components.LiftConfig
+import org.firstinspires.ftc.teamcodekt.components.getDriveSticks
+import kotlin.math.abs
+import kotlin.math.sign
 
 @TeleOp
 class RogueCompOp : RogueBaseTele() {
@@ -12,15 +15,15 @@ class RogueCompOp : RogueBaseTele() {
     }
 
     private fun describeDriverControls() = with(bot) {
-        Listener { lift.height > LiftConfig.MID * 1.01 }
-            .whileHigh { powerMulti /= 2 }
+//        Listener { lift.height > LiftConfig.MID * 1.01 }
+//            .whileHigh { powerMulti /= 1.5 }
 
-        driver.right_trigger(.1).whileHigh {
-            powerMulti *= 1 - driver.right_trigger()
+        driver.left_trigger.whileHigh {
+            powerMulti = 0.8
         }
 
-        Listener.always {
-            drivetrain.drive(driver.gamepad, powerMulti)
+        driver.right_trigger.whileHigh {
+            powerMulti = 0.45
         }
     }
 
@@ -43,12 +46,12 @@ class RogueCompOp : RogueBaseTele() {
         // -- MANUAL CLAW CONTROLS --
 
         codriver.left_stick_x.whileHigh {
-            if (codriver.left_stick_x() > .5) {
+            if (codriver.left_stick_x().sign < 0) {
                 claw.openForIntakeWide()
                 intake.enable()
             }
 
-            if (codriver.left_stick_x() < -.5) {
+            if (codriver.left_stick_x().sign > 0) {
                 intake.disable()
                 claw.close()
             }
@@ -56,12 +59,16 @@ class RogueCompOp : RogueBaseTele() {
 
         // -- MANUAL LIFT CONTROLS --
 
-        codriver.right_bumper.whileHigh {
-            lift.height += 8
-        }
+//        codriver.right_bumper.whileHigh {
+//            lift.height += 8
+//        }
+//
+//        codriver.left_bumper.whileHigh {
+//            lift.height -= 8
+//        }
 
-        codriver.left_bumper.whileHigh {
-            lift.height -= 8
+        codriver.right_stick_y(deadzone = .1).whileHigh {
+            lift.height += (codriver.right_stick_y() * 10).toInt()
         }
     }
 }

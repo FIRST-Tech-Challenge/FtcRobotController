@@ -82,7 +82,7 @@ into this!:
       driver.a.onRise(() -> ...); // Self describing
       codriver.a.onFall(() -> ...); // And no unnecessary logic or mutable state
 
-      Scheduler.launchWhenReady(this)
+      Scheduler.launchOnStart(this)
   }
   ```
 
@@ -97,7 +97,7 @@ into this!:
       driver.a.onRise { ... } // Self describing
       codriver.b.onFall { ... } // And no unnecessary logic or unidiomatic mutable state
 
-      Scheduler.launchWhenReady(this)
+      Scheduler.launchOnStart(this)
   }
   ```
 

@@ -156,11 +156,9 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          * @param builder The [Anvil] instance to run asynchronously
          */
         @JvmStatic
-        fun startAutoWith(instance: Anvil): AnvilLaunchConfig {
-            initialTrajectory = instance.setPoseEstimate().build()
+        fun startAutoWith(instance: Anvil) = AnvilLaunchConfig().also {
+            initialTrajectory = instance.setPoseEstimate(instance.startPose).build()
             initialInstance = instance
-
-            return AnvilLaunchConfig()
         }
 
         @JvmStatic
@@ -292,6 +290,10 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     // -- Utilities --
 
+    fun setPoseEstimate(pose: Pose2d) = this.apply {
+        driveProxy.setPoseEstimate(pose)
+    }
+
     /**
      * Provides a new scope in which the trajectories are reversed.
      *
@@ -346,9 +348,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      *     });                          |       }
      */
     inline fun doTimes(times: Int, pathsToDo: Anvil.(Int) -> Unit) = this.apply {
-        repeat(times) {
-            pathsToDo(this, it)
-        }
+        repeat(times) { pathsToDo(this, it) }
     }
 
     // -- Constraints --
@@ -549,10 +549,6 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     fun <T : Any> build(): T = (builderProxy.build() as T).also { builtTrajectory = it }
 
     // -- Internal --
-
-    private fun setPoseEstimate() = this.apply {
-        driveProxy.setPoseEstimate(startPose)
-    }
 
     @PublishedApi
     internal fun run(trajectory: Any, async: Boolean = true) = if (async) {

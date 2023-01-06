@@ -7,7 +7,6 @@ import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.util.kt.LateInitVal
 import ftc.rogue.blacksmith.util.kt.invoke
 import ftc.rogue.blacksmith.util.kt.toCm
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcode.pipelines.AprilTagDetectionPipeline
 import org.firstinspires.ftc.teamcode.pipelines.BasePoleDetector
@@ -25,16 +24,16 @@ abstract class RogueBaseAuto : BlackOp() {
     protected var frontSensor by LateInitVal< ShortRangeSensor  >()
 
     private var aprilTagDetectionPipeline = AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-    private var poleDetector = BasePoleDetector(telemetry)
+    protected var poleDetector = BasePoleDetector(telemetry)
 
     private var numFramesWithoutDetection = 0
 
-    abstract fun goo()
+    abstract fun gooo()
 
     final override fun go() {
         PhotonCore.enable()
         initHardware()
-        goo()
+        gooo()
     }
 
     private fun initHardware() {
@@ -52,7 +51,7 @@ abstract class RogueBaseAuto : BlackOp() {
         )
 
         camera = OpenCvCameraFactory.getInstance().createWebcam(
-            hardwareMap<WebcamName>(DeviceNames.WEBCAM1),
+            hardwareMap(DeviceNames.WEBCAM1),
             cameraMonitorViewId,
         )
 
@@ -103,12 +102,12 @@ abstract class RogueBaseAuto : BlackOp() {
         return lastIntID
     }
 
-    fun setPoleDetectorAsPipeline() {
+    open fun setPoleDetectorAsPipeline() {
         camera.setPipeline(poleDetector)
     }
 
     // Do not move more than 15 cm in any one direction!
-    val polePosition: DoubleArray
+    open val polePosition: DoubleArray
         get() {
             val (x, y, heading) = bot.drive.localizer.poseEstimate
 

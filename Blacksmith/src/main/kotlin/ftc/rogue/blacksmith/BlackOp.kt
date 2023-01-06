@@ -17,13 +17,14 @@ abstract class BlackOp : LinearOpMode() {
     abstract fun go()
 
     final override fun runOpMode() {
+        Scheduler.reset()
         hwMap = hardwareMap
         Scheduler.emit(STARTING_MSG)
         go()
     }
 
     companion object {
-        var STARTING_MSG = 3248023743480398723L
+        const val STARTING_MSG = 3248023743480398723L
     }
 
     // -- KOTLIN ONLY BELOW --

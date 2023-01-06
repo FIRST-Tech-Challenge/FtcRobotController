@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit
 class MeepMeepPersistence @JvmOverloads constructor(
     private val meepMeep: MeepMeep,
     val savePeriod: Long = 1000L,
-    val defaultFilePath: String = ".blacksmith/meepmeep.properties",
+    val defaultFilePath: String = "./meepmeep.properties",
 ) {
     /**
      * The [Properties] object used to save and interpret the settings.

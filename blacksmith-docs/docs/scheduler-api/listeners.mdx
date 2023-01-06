@@ -2,7 +2,6 @@
 sidebar_position: 3
 ---
 
-
 import Returns from '../../src/components/Returns';
 import { TypeLinks } from '../../src/util/type-links';
 import ParamsList from '../../src/components/ParamsList';
@@ -472,6 +471,14 @@ Destroys the Listener, removing it from the Scheduler, and clearing its actions.
 
 Again, not entirely sure why you'd do this, but if you have a good enough reason to do it, you can probably figure out
 how to use it yourself. Knock yourself out!!!
+
+## Listener method aliases
+
+Supported aliases for the subscription methods are:
+ - `onJustTrue(callback: Runnable) = onRise(callback)`
+ - `onJustFalse(callback: Runnable) = onFall(callback)`
+ - `whileTrue(callback: Runnable) = whileHigh(callback)`
+ - `whileFalse(callback: Runnable) = whileLow(callback)`
 
 ## Static Listener methods
 

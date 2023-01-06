@@ -6,20 +6,20 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.util.*
+import kotlin.reflect.KProperty
 
 object GlobalUnits {
-    var distance: DistanceUnit
+    var distance by SetUnitFirst<DistanceUnit>()
         private set
-    var angle: AngleUnit
+    var angle by SetUnitFirst<AngleUnit>()
         private set
-    var time: TimeUnit
+    var time by SetUnitFirst<TimeUnit>()
         private set
 
     init {
-        distance = DistanceUnit.INCHES
-        angle = AngleUnit.RADIANS
+        distance = DistanceUnit.CENTIMETERS
+        angle = AngleUnit.DEGREES
         time = TimeUnit.SECONDS
-
         loadSavedUnits()
     }
 
@@ -56,12 +56,15 @@ object GlobalUnits {
         try {
             val ctx = AppUtil.getDefContext().applicationContext
 
+            AppUtil.getInstance().isDriverStation
+
             val id = ctx.resources.getIdentifier(RES_SAVE_PATH, "raw", ctx.packageName)
 
             if (id != 0) {
                 loadUnitsFromRes(ctx, id)
             }
-        } catch (_: ExceptionInInitializerError) {}
+        } catch (_: ExceptionInInitializerError) {
+        }
     }
 
     private fun loadUnitsFromRes(ctx: Context, id: Int) = Properties().run {
@@ -73,9 +76,9 @@ object GlobalUnits {
     }
 
     private fun loadUnitsFromFullPath() = Properties().run {
-        val stream = FileReader(FULL_SAVE_PATH)
+        val reader = FileReader(FULL_SAVE_PATH)
 
-        BufferedReader(stream).use(::load)
+        BufferedReader(reader).use(::load)
 
         setUnitsFromProperty(this)
     }
@@ -86,7 +89,22 @@ object GlobalUnits {
         val t = getProperty("time") ?: "seconds".also { setProperty("time", it) }
 
         distance = enumValueOf(d.uppercase())
-        angle = enumValueOf(a.uppercase())
-        time = enumValueOf(t.uppercase())
+           angle = enumValueOf(a.uppercase())
+            time = enumValueOf(t.uppercase())
+    }
+
+    private class SetUnitFirst<T : Any> {
+        lateinit var value: T
+
+        operator fun getValue(thisRef: Any, property: KProperty<*>): T {
+            if (!::value.isInitialized) {
+                throw IllegalStateException("Set GlobalUnits first (pls check blacksmith docs for more info)")
+            }
+            return value
+        }
+
+        operator fun setValue(thisRef: Any, property: KProperty<*>, _value: T) {
+            value = _value
+        }
     }
 }

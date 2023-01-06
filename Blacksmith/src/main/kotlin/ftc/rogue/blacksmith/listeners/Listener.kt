@@ -102,6 +102,11 @@ open class Listener(val condition: () -> Boolean) {
         actions[callback] = conditionSED::isLow
     }
 
+    fun onJustTrue(callback: Runnable) = onRise(callback)
+    fun onJustFalse(callback: Runnable) = onFall(callback)
+    fun whileTrue(callback: Runnable) = whileHigh(callback)
+    fun whileFalse(callback: Runnable) = whileLow(callback)
+
     fun hook() = hookIfNotHooked()
 
     /**

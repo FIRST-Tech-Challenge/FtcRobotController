@@ -38,11 +38,7 @@ class RogueTestingOp : RogueBaseTele() {
             }
         }
 
-        Listener.always {
-            bot.drivetrain.drive(driver.gamepad, powerMulti)
-        }
-
-        Listener { lift.height > LiftConfig.MID * 1.01 }
-            .whileHigh { powerMulti /= 2 }
+//        Listener { lift.height > LiftConfig.MID * 1.01 }
+//            .whileHigh { powerMulti /= 1.5 }
     }
 }

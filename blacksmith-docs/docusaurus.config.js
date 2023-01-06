@@ -47,6 +47,9 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      colorMode: {
+        defaultMode: 'dark',
+      },
       navbar: {
         title: 'Blacksmith',
         logo: {

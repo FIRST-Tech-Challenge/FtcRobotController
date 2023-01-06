@@ -47,12 +47,12 @@ I recommend checking those out for examples of each, but here's a basic example 
 
       // ...300 billion lines later...
 
-      private boolean gamepad1aPreviousState = //...;
+      private boolean gamepad2aPreviousState = //...;
 
       private void checkIfShouldDoSomething() {
-         if (gamepad2.a && !gamepad1aPreviousState) { // Messy and ugly and ew 🤮
+         if (gamepad2.a && !gamepad2aPreviousState) { // Messy and ugly and ew 🤮
              claw.intake();
-         } else if (!gamepad2.a && gamepad1aPreviousState) { // Disgusting unreadable signal edge detectors
+         } else if (!gamepad2.a && gamepad2aPreviousState) { // Ugly unreadable signal edge detectors
              claw.close();
          } // Can't tell if the driver does this or the codriver at the quick glance
          gamepad1aPreviousState = //...;
@@ -75,12 +75,12 @@ I recommend checking those out for examples of each, but here's a basic example 
 
       // ...300 billion lines later...
 
-      private var gamepad1aPreviousState = //... (mutable state!!!1!1!1)
+      private var gamepad2aPreviousState = //... (mutable state!!!1!1!1)
 
       private fun checkIfShouldDoSomething() {
-         if (gamepad2.a && !gamepad1aPreviousState) { // Messy and ugly and ew 🤮
+         if (gamepad2.a && !gamepad2aPreviousState) { // Messy and ugly and ew 🤮
              claw.intake()
-         } else if (!gamepad2.a && gamepad1aPreviousState) { // Disgusting unreadable signal edge detectors
+         } else if (!gamepad2.a && gamepad2aPreviousState) { // Ugly unreadable signal edge detectors
              claw.close()
          } // Can't tell if the driver does this or the codriver at the quick glance
          gamepad1aPreviousState = //...
@@ -104,7 +104,7 @@ I recommend checking those out for examples of each, but here's a basic example 
 
           describeControls(); // Good idea to move it to a method for readability
 
-          Scheduler.launchWhenReady(this, () -> {
+          Scheduler.launchOnStart(this, () -> {
               // Any extra loop code (runs after every Listener)
           });
       }
@@ -129,7 +129,7 @@ I recommend checking those out for examples of each, but here's a basic example 
 
           describeControls() // Good idea to move it to a method for readability
 
-          Scheduler.launchWhenReady(this) {
+          Scheduler.launchOnStart(this) {
               // Any extra loop code (runs after every Listener)
           }
       }

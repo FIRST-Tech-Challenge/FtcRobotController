@@ -14,6 +14,7 @@ import ftc.rogue.blacksmith.util.kt.withDeadzone
 import ftc.rogue.blacksmith.util.withDeadzone
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
+import java.util.*
 import kotlin.math.*
 
 class Drivetrain(hwMap: HardwareMap) {
@@ -29,11 +30,13 @@ class Drivetrain(hwMap: HardwareMap) {
         }
     }
 
-    fun drive(gamepad: Gamepad, powerMulti: Double = 0.0) {
-        val (_x, _y, r) = gamepad.getDriveSticks()
+    private var lastPowers = DoubleArray(4)
 
-        val x = _x.withDeadzone(.03, 1).withDeadzone<Float>(.03, -1)
-        val y = _y.withDeadzone(.03, 1).withDeadzone<Float>(.03, -1)
+    fun drive(gamepad: Gamepad, powerMulti: Double) {
+        val (x, y, r) = gamepad.getDriveSticks()
+
+//        val x = _x.withDeadzone(.03, 1).withDeadzone<Float>(.03, -1)
+//        val y = _y.withDeadzone(.03, 1).withDeadzone<Float>(.03, -1)
 
         val theta = atan2(y, x)
         val power = hypot(x, y)
@@ -51,18 +54,22 @@ class Drivetrain(hwMap: HardwareMap) {
         )
 
         if (power + abs(r) > 1) {
-            powers.onEach { it / (power + abs(r)) }
+            powers.mapInPlace { it / (power + abs(r)) }
         }
+
+        powers.mapInPlace { it pow 3 }
 
         val _powerMulti = if (!gamepad.isAnyJoystickTriggered()) 0.0 else powerMulti
 
-        powers.onEach {
-            ((it pow 14) * _powerMulti).withDeadzone<Double>(0.025)
-        }
+        powers.mapInPlace { (it * _powerMulti).withDeadzone(0.025) }
 
         withEachMotor {
-            this.power = powers[it]
+            if (abs(powers[it] - lastPowers[it]) > 0.05) { // Caching motor powers may increase loop times?
+                this.power = powers[it]
+            }
         }
+
+        lastPowers = powers
     }
 
     fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<DcMotorEx>) {
@@ -70,6 +77,12 @@ class Drivetrain(hwMap: HardwareMap) {
 
         withEachMotor {
             telemetry.addData("${motorCaptions[it]} motor", dataSupplier(this))
+        }
+    }
+
+    private fun DoubleArray.mapInPlace(transform: (Double) -> Double) {
+        for (i in this.indices) {
+            this[i] = transform(this[i])
         }
     }
 

@@ -1,0 +1,121 @@
+# GlobalUnits
+
+## Overview
+
+The `GlobalUnits` are the base distange, angle, and time units used by the framework when not explicitly specified.
+
+These default to:
+- `distance -> DistanceUnit.INCHES`
+- `angle -> AngleUnit.RADIANS`
+- `time -> TimeUnit.SECONDS`
+
+You can however set them manually in two ways:
+
+:::tip
+I **highly** recommend using the second method, even though it takes a couple extra steps
+:::
+
+:::note
+Also you *can* reset the variables multiple times and even combine both methods if you'd lile
+:::
+
+## Setting up
+
+### Method 1
+
+Calling the `GlobalUnits.setUnits()` method in your code:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  pubic class MyTeleOp extends BlackOp {
+      @Override
+      public void runOpMode() throws InterruptedException {
+          // Set just the distanceUnit
+          GlobalUnits.setUnits(DistanceUnit.SMOOTS);
+
+          // Set distanceUnit and angleUnit
+          GlobalUnits.setUnits(DistanceUnit.SMOOTS, AngleUnit.ARCSECONDS)
+
+          // Set all three units
+          GlobalUnits.setUnits(DistanceUnit.SMOOTS, AngleUnit.ARCSECONDS, TimeUnit.CENTURIES)
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  class MyTeleOp : BlackOp() {
+      override fun runOpMode() {
+          // Set just the distanceUnit
+          GlobalUnits.setUnits(DistanceUnit.SMOOTS)
+
+          // Set distanceUnit and angleUnit
+          GlobalUnits.setUnits(DistanceUnit.SMOOTS, AngleUnit.ARCSECONDS)
+
+          // Set all three units
+          GlobalUnits.setUnits(DistanceUnit.SMOOTS, AngleUnit.ARCSECONDS, TimeUnit.CENTURIES)
+      }
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+:::danger
+There is a downside/risk to this method. Look at this code:
+```java
+pubic class MyTeleOp extends BlackOp {
+    // This is created BEFORE the right units are set
+    // So this startPose was created using inches and radians
+    // Not centimetes and degrees, as was desired
+    Pose2d startPose = new Pose2d(toIn(50), toIn(50), toRad(180));
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        // This is called too late
+        GlobalUnits.setUnits(DistanceUnit.CENTIMETERS, AngleUnit.DEGREES);
+    }
+}
+```
+Basically, calling any method that uses the units before the units are properly set
+will lead to some undesired behaviour.
+:::
+
+### Method 2
+
+In the second method, we're doing to use a **config file** to set the units, which solves the aforementioned problem.
+
+First, find the `Teamcode -> src -> main -> res -> raw` folder
+
+![](/img/randomassets/global_units1.png)
+
+In the `raw` folder, create a new folder called `blacksmith` and in there, put in a `units.properties` file
+
+:::caution Important
+Make sure **all**    spelling is correct
+:::
+
+![](/img/randomassets/global_units2.png)
+
+Finally, in the `units.properties` file, put in the following:
+
+```sass
+distance=insert_unit_here
+angle=insert_unit_here
+time=insert_unit_here
+```
+
+:::danger Very important
+Unit spelling must also be ON POINT.
+
+To get the spellings for each supported unit, find the doc for the designed unit (e.g. [`DistanceUnit`](./units/distance)),
+and copy paste over whichever unit you want (e.g. `centimeters` or `LIGHT_YEARS`)
+
+*Unit names are not case sensitive
+:::
+
+![](/img/randomassets/global_units3.png)

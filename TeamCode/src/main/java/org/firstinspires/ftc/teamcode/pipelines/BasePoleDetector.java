@@ -212,4 +212,8 @@ public class BasePoleDetector extends OpenCvPipeline {
     private double calculatePsi(double r, double h, double theta) {
         return Math.asin(r / h * Math.sin(theta));
     }
+
+    public double getPoleAngle(){
+        return angle;
+    }
 }

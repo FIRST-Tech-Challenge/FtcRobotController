@@ -65,11 +65,11 @@ We saw some basic usage in the [Overview](./overview), but now let's really get 
 </TabItem>
 </Tabs>
 
-### Scheduler.launchWhenReady
+### Scheduler.launchOnStart
 
-Equivalent to `waitForStart; Scheduler.launch(...);`
+Equivalent to `waitForStart(); Scheduler.launch(...);`
 
-Useful for when you aren't doing anything on a loop during initialization until the game starts.
+Convenient for when you aren't doing anything on a loop during initialization until the game starts.
 
 <SchedulerLaunchParamList/>
 
@@ -81,11 +81,11 @@ Useful for when you aren't doing anything on a loop during initialization until 
   public void runOpMode() throws InterruptedException {
       instantiateListeners();
 
-      Scheduler.launchWhenReady(this); // Waits until the opMode starts to launch
+      Scheduler.launchOnStart(this); // Waits until the opMode starts to launch
 
       // or
 
-      Scheduler.launchWhenReady(this, () -> {
+      Scheduler.launchOnStart(this, () -> {
           // Loop code, such as PIDs
           // Run at the end of every loop
       });
@@ -99,11 +99,11 @@ Useful for when you aren't doing anything on a loop during initialization until 
   override fun runOpMode() {
       instantiateListeners()
 
-      Scheduler.launchWhenReady(this) // Waits until the opMode starts to launch
+      Scheduler.launchOnStart(this) // Waits until the opMode starts to launch
 
       // or
 
-      Scheduler.launchWhenReady(this) {
+      Scheduler.launchOnStart(this) {
           // Loop code, such as PIDs
           // Run at the end of every loop
       }

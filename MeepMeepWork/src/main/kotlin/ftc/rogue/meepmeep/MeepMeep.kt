@@ -38,7 +38,7 @@ private fun traj(drive: DriveShim) =
 
         .doTimes(5) {
             inReverse {
-                splineTo(153.5, -29.0, 0.0)
+                splineTo(153.5, -29.5, 0.0)
             }
 
             splineToSplineHeading(75.25, -17.0, 135.0, 135.0)

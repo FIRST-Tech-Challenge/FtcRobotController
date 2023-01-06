@@ -16,7 +16,7 @@ enum class DistanceUnit(private val inchConversionFactor: Double) {
     ANGSTROMS     (inchConversionFactor = 1.0 / 2.54e-8),
     FURLONGS      (inchConversionFactor = 7920.0),
     FERMATS       (inchConversionFactor = 1.0 / 2.54e-15),
-    SMOOTS        (inchConversionFactor = 5.0 * 12.0),
+    SMOOTS        (inchConversionFactor = 1 / 67.0),
     AUS           (inchConversionFactor = 1.0 / 0.00000484813681109536),
     FATHOMS       (inchConversionFactor = 6.0 * 12.0),
     HANDS         (inchConversionFactor = 4.0 * 12.0),
