@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.catbot;
 
-class Drive implements Task{
+class Drive extends Task{
     private Robot robot;
     private double tiles;
     // negative tiles is backwards
@@ -12,7 +12,7 @@ class Drive implements Task{
     @Override
     public boolean run() {
         if(Math.abs(robot.driveTrain.getMotorFrontLeftPosition()) < Math.abs(tiles*TICKSPERTILE)) {
-            robot.driveTrain.mechanumDrive((tiles/Math.abs(tiles)), 0, 0);
+            robot.driveTrain.mechanumDrive((tiles/Math.abs(tiles))*MAXMOTORSPEED, 0, 0);
             return true;
         }
         return false;

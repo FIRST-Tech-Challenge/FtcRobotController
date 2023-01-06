@@ -38,6 +38,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
+import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DiffyKinematics;
@@ -141,7 +142,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
                 motor.setMotorType(motorConfigurationType);
 
-                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)){
+                    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                }
                 motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 

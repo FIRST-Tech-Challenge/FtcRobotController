@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.withinError;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.withinErrorPercent;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
@@ -18,6 +20,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+import org.firstinspires.ftc.teamcode.util.Vector3;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -29,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Mahesh Natamai
@@ -70,7 +74,7 @@ public class Robot implements Subsystem {
 
         // initializing subsystems
         driveTrain = new DriveTrain(hardwareMap, simulated);
-        turret = new Turret(hardwareMap, simulated);
+        turret = new Turret(hardwareMap, this, simulated);
         crane = new Crane(hardwareMap, this, simulated);
 
         subsystems = new Subsystem[] {driveTrain, turret, crane}; //{driveTrain, turret, crane};
@@ -108,6 +112,8 @@ public class Robot implements Subsystem {
         telemetryMap.put(" Y", current_dy);
         telemetryMap.put("imu heading",driveTrain.getRawHeading());
         telemetryMap.put("turn until degrees done", turnUntilDegreesDone);
+        telemetryMap.put("Scoring Pattern", field.getPatternIndex());
+        telemetryMap.put("Pole Index", field.getScoringTargetIndex());
 
 
         return telemetryMap;
@@ -183,80 +189,59 @@ public class Robot implements Subsystem {
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
         switch (autonIndex){
             case 0:
-                if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID+2,0,20)){
+                crane.driverIsDriving();
+                if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20)){
                     autonIndex++;
                 }
+                crane.articulate(Crane.Articulation.noIK);
                 break;
             case 1:
-                crane.setShoulderTargetAngle(75);
-                if(startingPosition.equals( Constants.Position.START_LEFT)){
-                    if(driveTrain.turnUntilDegrees( 90)){
+                crane.driverNotDriving();
+                if(startingPosition.equals( Constants.Position.START_LEFT)) {
+                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,Field.INCHES_PER_GRID,36);
+                    if (System.nanoTime() >= autonTime && withinErrorPercent(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
+                        crane.setGripper(false);
+                        autonTime = futureTime(0.3);
                         autonIndex++;
-                        turnUntilDegreesDone = true;
                     }
                 }else{
-                    if(driveTrain.turnUntilDegrees(-90)){
+                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,-Field.INCHES_PER_GRID-1,36);
+                    if (System.nanoTime() >= autonTime && withinErrorPercent(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinErrorPercent(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
+                        crane.setGripper(false);
+                        autonTime = futureTime(0.3);
                         autonIndex++;
-                        turnUntilDegreesDone = true;
                     }
                 }
                 break;
             case 2:
-                crane.nudgeLeft();
-                if(startingPosition.equals( Constants.Position.START_LEFT)){
-                    crane.setTargetTurretAngle(312);
-                    if(turret.isTurretNearTarget()){
+                if (startingPosition.equals(Constants.Position.START_LEFT)) {
+                    if (driveTrain.turnUntilDegrees(90)) {
                         autonIndex++;
+                        turnUntilDegreesDone = true;
                         autonTime = futureTime(3);
                     }
-                }else{
-                    crane.setTargetTurretAngle(25);
-                    if(turret.isTurretNearTarget()){
+                } else {
+                    if (driveTrain.turnUntilDegrees(-90)) {
                         autonIndex++;
+                        turnUntilDegreesDone = true;
                         autonTime = futureTime(3);
                     }
                 }
                 break;
             case 3:
-                if(startingPosition.equals( Constants.Position.START_LEFT)) {
-                    crane.setTargets(3*Field.INCHES_PER_GRID,Field.INCHES_PER_GRID,36);
-                    if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
-                        crane.setGripper(false);
-                        autonTime = futureTime(0.3);
-                    }
-                }else{
-                    crane.setTargets(3*Field.INCHES_PER_GRID,-Field.INCHES_PER_GRID,36);
-                    if (System.nanoTime() >= autonTime && withinError(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
-                        crane.setGripper(false);
-                        autonTime = futureTime(0.3);
-                    }
-                }
-                break;
-            case 4:
                 if(System.nanoTime() >= autonTime) {
-                    crane.setExtendTargetPos(0.54+crane.craneLengthOffset);
-                    crane.setShoulderTargetAngle(76.6);
-                    if(withinError(crane.getExtendMeters(),crane.getExtenderTargetPos(),0.02) && withinError(crane.getShoulderAngle(),crane.getShoulderTargetAngle(),0.07)){
+                    if(startingPosition.equals( Constants.Position.START_LEFT)){
+                        crane.articulate(Crane.Articulation.coneStackLeft);
+                    }else{
+                        crane.articulate(Crane.Articulation.coneStackRight);
+                    }
+                    if(crane.getArticulation() == Crane.Articulation.manual){
                         autonIndex++;
                     }
                 }
                 break;
-            case 5:
-                crane.setExtendTargetPos(0.05+crane.craneLengthOffset);
-                crane.setShoulderTargetAngle(45);
-                if(withinError(crane.getExtendMeters(),crane.getExtenderTargetPos(),0.08) && withinError(crane.getShoulderAngle(),crane.getShoulderTargetAngle(),0.07)){
-                    autonIndex++;
-                }
-                break;
-            case 6:
-                crane.setExtendTargetPos(crane.craneLengthOffset);
-                crane.setTargetTurretAngle(180);
-                if(withinError(turret.getHeading(),turret.getTargetHeading(),0.05)){
-                    autonIndex++;
-                }
-                break;
-            case 7:
-                if(autonTarget  ==  1){
+            case 4:
+                if(autonTarget  ==  1 || Objects.isNull(autonTarget)){
                     autonIndex++;
                 }
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
@@ -273,18 +258,16 @@ public class Robot implements Subsystem {
                     }
                 }
                 break;
-            case 8:
+            case 5:
                 crane.nudgeLeft();
+                crane.fieldPositionTarget = new Vector3(driveTrain.getPoseEstimate().getX(),driveTrain.getPoseEstimate().getY(),26);
+                crane.articulate(Crane.Articulation.manual);
                 autonIndex=0;
                 return true;
             default:
                 return false;
         }
         return false;
-    }
-
-    boolean withinError(double value, double target, double percent){
-        return (value >= target*(1-percent) && value <= target*(1+percent));
     }
 
     //----------------------------------------------------------------------------------------------
