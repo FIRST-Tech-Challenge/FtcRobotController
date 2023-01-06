@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.components;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class Arm {
     public static DcMotor leftLift;
     public static DcMotor rightLift;
-    public static CRServo gripper;
+    public static Servo gripper;
 
     //TODO: CHANGE VALUE TO 420, 630, 910 FOR 11166-RC!!!!
     //150, 300, 450 for test robot
@@ -21,10 +21,12 @@ public class Arm {
 
     public Arm(){}
 
-    public static void init(DcMotor lLift, DcMotor rLift, CRServo g){
+    public static void init(DcMotor lLift, DcMotor rLift, Servo g){
         Arm.leftLift = lLift;
         Arm.rightLift = rLift;
         Arm.gripper = g;
+
+        gripper.setPosition(0.75);
 
         //TODO: REVERSE rightLift FOR 11166-RC!!!
         rightLift.setDirection(DcMotor.Direction.REVERSE);
@@ -42,10 +44,10 @@ public class Arm {
     }
 
     public static void openGripper() {
-        gripper.setPower(1);
+        gripper.setPosition(0.73);
     }
 
-    public static void closeGripper() { gripper.setPower(-1); }
+    public static void closeGripper() { gripper.setPosition(0.48); }
 
     /*
     public static void runToPosition(int position) {

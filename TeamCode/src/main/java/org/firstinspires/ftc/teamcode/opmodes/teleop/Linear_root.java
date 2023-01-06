@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Chassis;
@@ -16,7 +16,7 @@ public class Linear_root extends LinearOpMode {
     private DcMotor motorBR = null;
     private DcMotor leftLift = null;
     private DcMotor rightLift = null;
-    private CRServo gripper = null;
+    private Servo gripper = null;
 
     @Override
     public void runOpMode() {
@@ -30,7 +30,7 @@ public class Linear_root extends LinearOpMode {
         // init arms
         leftLift = hardwareMap.get(DcMotor.class, "leftArm");
         rightLift = hardwareMap.get(DcMotor.class, "rightArm");
-        gripper = hardwareMap.get(CRServo.class, "gripper");
+        gripper = hardwareMap.get(Servo.class, "gripper");
         Arm.init(leftLift, rightLift, gripper);
         Arm.armTarget = 0;
 
@@ -61,7 +61,7 @@ public class Linear_root extends LinearOpMode {
 
             telemetry.addData("arm position", Arm.getCurrentPosition());
             telemetry.addData("arm target", Arm.armTarget);
-            telemetry.addData("arm power", Arm.getPower());
+            telemetry.addData("Servo position", Arm.gripper.getPosition());
             telemetry.update();
         }
     }
