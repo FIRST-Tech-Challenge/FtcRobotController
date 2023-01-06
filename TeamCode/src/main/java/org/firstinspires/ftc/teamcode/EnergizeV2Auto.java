@@ -134,8 +134,7 @@ public class EnergizeV2Auto extends LinearOpMode {
                 }
                 else
                 {
-                     redLED.setState(true);
-                    greenLED.setState(false);
+                   
                     telemetry.addLine("Don't see tag of interest :(");
 
                     if(tagOfInterest == null)
@@ -152,6 +151,8 @@ public class EnergizeV2Auto extends LinearOpMode {
             }
             else
             {
+                  redLED.setState(true);
+                        greenLED.setState(false);
                 telemetry.addLine("Don't see tag of interest :(");
 
                 if(tagOfInterest == null)
