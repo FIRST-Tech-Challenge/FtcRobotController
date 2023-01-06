@@ -10,7 +10,7 @@ import ftc.rogue.blacksmith.util.kt.toRad
 
 @Autonomous
 class AnvilRightTestAuto : RogueBaseAuto() {
-    override fun executeOrder66() {
+    override fun execute() {
         val startPose = bsmPose2d(91, -159, 90)
         val startTraj = mainTraj(startPose)
 

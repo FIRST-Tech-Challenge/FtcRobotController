@@ -31,15 +31,23 @@ abstract class RogueBaseAuto : BlackOp() {
     protected var poleDetector = BasePoleDetector(telemetry)
     protected var numFramesWithoutDetection = 0
 
-    abstract fun executeOrder66()
+    // Left and right is from orientation of the front of the bot
+    protected val shortLeftSensor by createOnGo<ShortRangeSensor>({ hwMap }, { DeviceNames.SHORT_RANGE_SENSOR_LEFT })
+    protected val shortRightSensor by createOnGo<ShortRangeSensor>({ hwMap }, { DeviceNames.SHORT_RANGE_SENSOR_RIGHT })
+//    protected val longLeftSensor by createOnGo<LongRangeSensor>({ hwMap }, { DeviceNames.LONG_RANGE_SENSOR_LEFT })
+//    protected val longRightSensor by createOnGo<LongRangeSensor>({ hwMap }, { DeviceNames.LONG_RANGE_SENSOR_RIGHT })
+
+    abstract fun execute()
 
     final override fun go() {
         PhotonCore.enable()
         initHardware()
-        executeOrder66()
+        execute()
     }
 
     private fun initHardware() {
+
+
         //***************************
         // Set up camera and pipeline
         //***************************

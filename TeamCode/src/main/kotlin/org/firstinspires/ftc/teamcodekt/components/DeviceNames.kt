@@ -15,7 +15,10 @@ object DeviceNames {
     const val LIFT_MOTOR = "LI"
     const val LIFT_ENCODER = "FR"
 
-    const val SHORT_RANGE_SENSOR = "LC"
+    const val SHORT_RANGE_SENSOR_LEFT = "LS"
+    const val SHORT_RANGE_SENSOR_RIGHT = "RS"
+    const val LONG_RANGE_SENSOR_LEFT = "LL"
+    const val LONG_RANGE_SENSOR_RIGHT = "RL"
     const val WEBCAM1 = "Webcam 1"
     const val COLOR_SENSOR = "CS"
 }
