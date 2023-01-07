@@ -73,6 +73,15 @@ public class Claw {
         wristInExtakePosition = !wristInExtakePosition;
     }
 
+    public void toggleAutoOpenClose(){
+        if(clawToggled){
+            clawJoint.setPosition(CLOSE);
+        }else {
+            clawJoint.setPosition((OPEN));
+        }
+        clawToggled = !clawToggled;
+    }
+
     public void update() {
         isOpen.update();
         isIntakePosition.update();
