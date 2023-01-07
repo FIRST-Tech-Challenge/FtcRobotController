@@ -7,7 +7,6 @@ import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.Vector
 import com.asiankoala.koawalib.math.radians
-import com.asiankoala.koawalib.path.DEFAULT_HEADING_CONTROLLER
 import com.asiankoala.koawalib.path.FLIPPED_HEADING_CONTROLLER
 import com.asiankoala.koawalib.path.HermitePath
 import com.asiankoala.koawalib.path.ProjQuery
@@ -19,7 +18,7 @@ import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequenc
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.HomeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
-import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
+import teamcode.v1.constants.LiftConstants
 import org.firstinspires.ftc.teamcode.koawalib.vision.AutoOpMode
 
 @Autonomous(preselectTeleOp = "KTeleOp")

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.koawalib.opmodes
+package teamcode.v1.opmodes
 
 import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.command.commands.InstantCmd
@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequenc
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.HomeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import teamcode.v1.constants.ArmConstants
-import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
+import teamcode.v1.constants.LiftConstants
 
 @TeleOp
 open class KTeleOp() : KOpMode(photonEnabled = true) {
@@ -54,7 +54,7 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
 //        driver.leftBumper.onPress(InstantCmd({robot.claw.setPos(ClawConstants.openPos)}))
 //        driver.rightBumper.onPress(InstantCmd({robot.claw.setPos(ClawConstants.closePos)}))
         driver.a.onPress(InstantCmd({robot.arm.setPos(-50.0)}, robot.arm))
-        driver.b.onPress(InstantCmd({robot.lift.setPos(-1.0)}, robot.lift))
+        driver.b.onPress(InstantCmd({robot.lift.setPos(0.0)}, robot.lift))
     }
 
     override fun mLoop() {

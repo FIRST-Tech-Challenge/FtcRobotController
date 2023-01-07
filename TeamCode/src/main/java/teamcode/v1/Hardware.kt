@@ -10,7 +10,7 @@ import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
 import teamcode.v1.constants.ArmConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
-import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
+import teamcode.v1.constants.LiftConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
 
 class Hardware(startPose: Pose) {

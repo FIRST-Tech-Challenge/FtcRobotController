@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequenc
 import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.HomeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
-import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
+import teamcode.v1.constants.LiftConstants
 import org.firstinspires.ftc.teamcode.koawalib.vision.AutoOpMode
 
 @Autonomous

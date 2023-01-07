@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.koawalib.auto
+package teamcode.v1.auto
 
 import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.control.controller.PIDGains
@@ -10,7 +10,7 @@ import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
 import teamcode.v1.constants.ArmConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
-import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
+import teamcode.v1.constants.LiftConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
 
 class AutoHardware(startPose: Pose) {

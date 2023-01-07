@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.koawalib.commands.subsystems
 
 import com.asiankoala.koawalib.command.commands.InstantCmd
-import org.firstinspires.ftc.teamcode.koawalib.constants.LiftConstants
+import teamcode.v1.constants.LiftConstants
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
 
 class LiftCmds {
