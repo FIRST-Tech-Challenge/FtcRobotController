@@ -23,7 +23,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -44,7 +44,7 @@ public class Autonomous_test extends LinearOpMode
     private DcMotor motorBR = null;
     private DcMotor leftLift = null;
     private DcMotor rightLift = null;
-    private CRServo gripper = null;
+    private Servo gripper = null;
 
     double fx = 578.272;
     double fy = 578.272;
@@ -70,17 +70,22 @@ public class Autonomous_test extends LinearOpMode
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
         leftLift = hardwareMap.get(DcMotor.class, "leftArm");
         rightLift = hardwareMap.get(DcMotor.class, "rightArm");
-        gripper = hardwareMap.get(CRServo.class, "gripper");
+        gripper = hardwareMap.get(Servo.class, "gripper");
 
         motorBR.setDirection(DcMotor.Direction.REVERSE);
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         leftLift.setDirection(DcMotor.Direction.REVERSE);
 
         //resetting encoders at home level
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -130,6 +135,13 @@ public class Autonomous_test extends LinearOpMode
         boolean parked = false;
 
         while(opModeIsActive() && !parked) {
+            gripper.setPosition(0.6);
+
+            while ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 > -200) {
+                leftLift.setPower(1.0);
+                rightLift.setPower(1.0);
+            }
+
             runToPosition(-100, -100, -100, -100);
 
             motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -146,6 +158,11 @@ public class Autonomous_test extends LinearOpMode
             motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             runToPosition(-1500, -1500, -1500, -1500);
+
+            while ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < 0) {
+                leftLift.setPower(1.0);
+                rightLift.setPower(1.0);
+            }
 
             telemetry.addLine("parked!");
 
