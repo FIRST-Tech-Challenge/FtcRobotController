@@ -32,7 +32,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -56,7 +56,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor motorBR = null;
     private DcMotor leftLift = null;
     private DcMotor rightLift = null;
-    private CRServo gripper = null;
+    private Servo gripper = null;
 
     //Convert from the counts per revolution of the encoder to counts per inch
     static final double HD_COUNTS_PER_REV = 28;
@@ -76,7 +76,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
         leftLift = hardwareMap.get(DcMotor.class, "leftArm");
         rightLift = hardwareMap.get(DcMotor.class, "rightArm");
-        gripper = hardwareMap.get(CRServo.class, "gripper");
+        gripper = hardwareMap.get(Servo.class, "gripper");
 
         motorBR.setDirection(DcMotor.Direction.REVERSE);
         motorFR.setDirection(DcMotor.Direction.REVERSE);
@@ -127,10 +127,10 @@ public class BasicOpMode_Linear extends LinearOpMode {
             if (gamepad2.a) armTarget = 0;
 
             if (gamepad2.left_bumper) {
-                gripper.setPower(1);
+                gripper.setPosition(0.75);
                 armTarget = 0;
             }
-            if (gamepad2.right_bumper) gripper.setPower(-1);
+            if (gamepad2.right_bumper) gripper.setPosition(0.5);
 
             if (gamepad2.dpad_up) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 - 70;
             if (gamepad2.dpad_down) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 + 70;
