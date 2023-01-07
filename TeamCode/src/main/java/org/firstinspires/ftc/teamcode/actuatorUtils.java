@@ -16,7 +16,7 @@ public class actuatorUtils {
     //test
     private static int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private static int minEncode = 300; //Minimum so string on arm lift doesn't break and position 0
-    private static int pos1 = 1850; //Low pole height
+    private static int pos1 = 1750; //Low pole height
     private static int pos2 = 3000; //Med pole height
     private static int cone1 = 800; //Height for top cone in stack
     private static int cone2 = 700; //Height for second cone in stack
