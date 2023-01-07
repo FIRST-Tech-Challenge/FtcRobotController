@@ -27,6 +27,8 @@ public class PowerPlayTeleopBase extends LinearOpMode {
     //DcMotor intakeMotor = null;
     DcMotor linearSlideMotor = null;
     DcMotor frontSlide = null;
+    DcMotor slideOtherer = null;
+
 
     Servo clawServo = null;
     DcMotor armMotor = null;
@@ -86,6 +88,7 @@ public class PowerPlayTeleopBase extends LinearOpMode {
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
         frontSlide = hardwareMap.dcMotor.get("frontSlide");
+        slideOtherer = hardwareMap.dcMotor.get("slideOtherer");
 
         clawServo = hardwareMap.servo.get("clawServo");
         armMotor = hardwareMap.dcMotor.get("armServo");
@@ -111,6 +114,11 @@ public class PowerPlayTeleopBase extends LinearOpMode {
 
         frontSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        slideOtherer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        slideOtherer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideOtherer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start (driver presses PLAY)
 //        armMotor.setPosition(.15);
@@ -198,9 +206,11 @@ public class PowerPlayTeleopBase extends LinearOpMode {
                 linearSlideMotor.setTargetPosition(SLIDE_HIGH);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 frontSlide.setTargetPosition(SLIDE_HIGH);
-                frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);frontSlide.setTargetPosition(SLIDE_HIGH);
+                slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.6);
                 frontSlide.setPower(.6);
+                slideOtherer.setPower(.6);
             }
 
             if (gamepad2.dpad_right) {
@@ -211,10 +221,13 @@ public class PowerPlayTeleopBase extends LinearOpMode {
                 armMotor.setPower(0.3);
                 linearSlideMotor.setTargetPosition(SLIDE_MIDDLE);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideOtherer.setTargetPosition(SLIDE_MIDDLE);
+                slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 frontSlide.setTargetPosition(SLIDE_MIDDLE);
                 frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 frontSlide.setPower(0.6);
                 linearSlideMotor.setPower(.6);
+                slideOtherer.setPower(.6);
             }
 
             if (gamepad2.dpad_down) {
@@ -226,9 +239,12 @@ public class PowerPlayTeleopBase extends LinearOpMode {
                 linearSlideMotor.setTargetPosition(SLIDE_BOTTOM);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 frontSlide.setTargetPosition(SLIDE_BOTTOM);
-                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideOtherer.setTargetPosition(SLIDE_BOTTOM);
+                slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.6);
                 frontSlide.setPower(0.6);
+                slideOtherer.setPower(0.6);
             }
 
             if (gamepad2.dpad_left) {
@@ -238,8 +254,11 @@ public class PowerPlayTeleopBase extends LinearOpMode {
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 frontSlide.setTargetPosition(SLIDE_BOTTOM);
                 frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideOtherer.setTargetPosition(SLIDE_BOTTOM);
+                slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(-.4);
                 linearSlideMotor.setPower(-0.4);
+                slideOtherer.setPower(-0.4);
                 armMotor.setTargetPosition(armMotorBottom);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
