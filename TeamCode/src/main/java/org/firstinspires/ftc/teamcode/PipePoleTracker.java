@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Variables.*;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -18,21 +20,6 @@ public class PipePoleTracker extends OpenCvPipeline {
     //TODO substitute the focusRect for the below testRect (focusRect should be the problem)
     Rect testRect = new Rect(new Point(0,0), new Point(300,300));
 
-    static double percentColor;
-    static String levelString = "one";
-    static boolean level2Capable = false;
-    static int x_resolution;
-    static int y_resolution;
-    static int focusRectWidth;
-    static int focusRectHeight;
-    static int minimumWidth;
-    static int minimumHeight;
-    static int box_width = 0;
-    static int box_height = 0;
-
-    static int boxBL_x;
-    static int boxBL_y;
-
 
     Mat inputHSV = new Mat();
     Mat inputMask = new Mat();
@@ -41,27 +28,6 @@ public class PipePoleTracker extends OpenCvPipeline {
     Mat mat = new Mat();
     Mat focusSubMat = new Mat();
 
-    int gridX = 20;
-    int gridY = 20;
-    int gridTotal = gridX * gridY;
-
-    static boolean level1Assigment = true;
-    static boolean level2 = false;
-    static boolean level2Assignment = false;
-//    level2Capable = false;
-    static boolean level3 = false;
-
-    Rect focusRect = new Rect();
-    Rect focusRect2 = new Rect();
-
-    Rect[][] rectanglesGrid = new Rect[gridY][gridX];
-    Rect[][] rectanglesGridDraw = new Rect[gridY][gridX];
-    Mat[][] matsGrid = new Mat[gridY][gridX];
-    boolean[][] identifiedBoxesBoolean = new boolean[gridY][gridX];
-    int[][] centersX = new int[gridY][gridX];
-    int[][] centersXDraw = new int[gridY][gridX];
-    int[][] centersY = new int[gridY][gridX];
-    int[][] centersYDraw = new int[gridY][gridX];
 
 
     Scalar white = new Scalar(0, 0, 0); // In grey scale
@@ -71,11 +37,11 @@ public class PipePoleTracker extends OpenCvPipeline {
     Scalar green = new Scalar(0, 255, 0); // in BGR
     Scalar yellow = new Scalar(0,255,255); // in BGR
 
+    double threshold = 0.4;
 
-    static int lowestX = 0;
-    static int highestX = 0;
-    static int lowestY = 0;
-    static int highestY = 0;
+
+
+
 
     PipePoleTracker(String level){
         levelString = level;
@@ -84,7 +50,6 @@ public class PipePoleTracker extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-//        focusSubMat = input.submat(testRect);
 
 
 
@@ -92,32 +57,28 @@ public class PipePoleTracker extends OpenCvPipeline {
         Core.inRange(inputHSV, new Scalar(81, 115, 164), new Scalar(107, 255, 255), inputMask);
 
 
-//        focusRectWidth = 0;
-//        focusRectHeight = 0;
 
 
 
 
-        double threshold = 0.4;
-
-        // Creating grid's rectangles
-        for(int i =0; i < gridY; i++){
-            for(int j = 0; j < gridX; j++){
-                Point rectTL = new Point(j*box_width,i*box_height);
-                Point rectBR = new Point((j+1)*box_width,(i+1)*box_height);
-                rectanglesGrid[i][j] = new Rect(rectTL,rectBR);
-                rectTL = new Point(j*box_width,i*box_height);
-                rectBR = new Point((j+1)*box_width,(i+1)*box_height);
-                rectanglesGridDraw[i][j] = new Rect(rectTL, rectBR);
-            }
-        }
-
-        // Creating grid's subMats
-        for(int i = 0; i < gridY; i++){
-            for(int j = 0; j < gridX; j++){
-                matsGrid[i][j] = inputMask.submat(rectanglesGrid[i][j]);
-            }
-        }
+//        // Creating grid's rectangles
+//        for(int i =0; i < gridY; i++){
+//            for(int j = 0; j < gridX; j++){
+//                Point rectTL = new Point(j*box_width,i*box_height);
+//                Point rectBR = new Point((j+1)*box_width,(i+1)*box_height);
+//                rectanglesGrid[i][j] = new Rect(rectTL,rectBR);
+//                rectTL = new Point(j*box_width,i*box_height);
+//                rectBR = new Point((j+1)*box_width,(i+1)*box_height);
+//                rectanglesGridDraw[i][j] = new Rect(rectTL, rectBR);
+//            }
+//        }
+//
+//        // Creating grid's subMats
+//        for(int i = 0; i < gridY; i++){
+//            for(int j = 0; j < gridX; j++){
+//                matsGrid[i][j] = inputMask.submat(rectanglesGrid[i][j]);
+//            }
+//        }
 
 
 
@@ -202,7 +163,6 @@ public class PipePoleTracker extends OpenCvPipeline {
                 // However each time the capture.read is run, it resizes "input" into the original resolution, SOOOOO
                 //this little thing is so the submat is retained without rerunning all the below stuff
                 if (levelString.equals("two") && level2Assignment == true) {
-                    focusRect2 = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 
                     //TODO - Another test of the system is to remove the submat assignment and see if it still works (leave input as is)
                     input = input.submat(focusRect2);
@@ -213,7 +173,6 @@ public class PipePoleTracker extends OpenCvPipeline {
                 }
 
                 if (levelString.equals("two") && level2Assignment == false && focusRect != null) {
-                    focusRect2 = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 
                     //TODO (potential fix) if it's some how focusRect, try re-declaring focusRect here with lowest/highestX/Y
                     //TODO Another another test is run the submat code, and get ride of all the calculations to see if the assigment is right
@@ -232,8 +191,8 @@ public class PipePoleTracker extends OpenCvPipeline {
                             Point rectTL = new Point(j * box_width, i * box_height);
                             Point rectBR = new Point((j + 1) * box_width, (i + 1) * box_height);
                             rectanglesGrid[i][j] = new Rect(rectTL, rectBR);
-                            rectTL = new Point(lowestX + j * box_width, lowestY + i * box_height);
-                            rectBR = new Point(lowestX + (j + 1) * box_width, lowestY + (i + 1) * box_height);
+                            rectTL = new Point(lowestX + (j * box_width), lowestY + (i * box_height));
+                            rectBR = new Point(lowestX + ((j + 1) * box_width), lowestY + ((i + 1) * box_height));
                             rectanglesGridDraw[i][j] = new Rect(rectTL, rectBR);
                         }
                     }
@@ -243,8 +202,8 @@ public class PipePoleTracker extends OpenCvPipeline {
                     level1Assigment = false;
                 }
 
-                boxBL_x = rectanglesGridDraw[gridY-1][gridX-1].x;
-                boxBL_y = rectanglesGridDraw[gridY-1][gridX-1].y;
+//                boxBL_x = rectanglesGridDraw[gridY-1][gridX-1].x;
+//                boxBL_y = rectanglesGridDraw[gridY-1][gridX-1].y;
 
                 //TODO Potentially this is the crash spot because it is creating submats of 0 size
                 // Creating grid's subMats
@@ -701,6 +660,7 @@ public class PipePoleTracker extends OpenCvPipeline {
 
 
         focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
+        focusRect2 = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 
 
         Imgproc.rectangle(inputOriginal, focusRect, red, 2);
@@ -723,14 +683,12 @@ public class PipePoleTracker extends OpenCvPipeline {
         inputMask.release();
         inputMaskOriginal.release();
         inputHSV.release();
-
-//        inputOriginal.release();
-
-//        x_resolution = matsGrid[0][0].cols();
-//        y_resolution = matsGrid[0][0].rows();
+//        input.release(); <-- Causes app exit/crash
+//        inputOriginal.release(); <-- Causes app exit/crash
 
 
-        return input;
+
+        return inputOriginal;
     }
 
 

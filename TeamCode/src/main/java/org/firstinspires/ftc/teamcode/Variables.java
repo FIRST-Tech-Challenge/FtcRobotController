@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+
 public class Variables {
     //declare motors
     public static DcMotor motorFL;          //motor01
@@ -24,6 +28,9 @@ public class Variables {
         ROTATE,
         ;
     }
+
+    public static Rect focusRect = new Rect();
+    public static Rect focusRect2 = new Rect(new Point(0,0), new Point(20,20));
 
     public static Servo servoGrabberThing;
 
@@ -53,6 +60,51 @@ public class Variables {
     public static final int lowHeight = 1850;
     public static final int midHeight = 3100;
     public static final int highHeight = 4200;
+
+
+    /**OpenCV Variables please don't touch
+     */
+
+    public static int lowestX;
+    public static int highestX;
+    public static int lowestY;
+    public static int highestY;
+
+    public static double percentColor;
+    public static String levelString = "one";
+    public static boolean level2Capable = false;
+    public static int x_resolution;
+    public static int y_resolution;
+    public static int focusRectWidth;
+    public static int focusRectHeight;
+    public static int minimumWidth;
+    public static int minimumHeight;
+    public static int box_width = 0;
+    public static int box_height = 0;
+
+    public static int boxBL_x;
+    public static int boxBL_y;
+
+
+
+    public static int gridX = 20;
+    public static int gridY = 20;
+    public static int gridTotal = gridX * gridY;
+
+    public static boolean level1Assigment = false;
+    public static boolean level2 = false;
+    public static boolean level2Assignment = false;
+    public static boolean level3 = false;
+
+
+    public static Rect[][] rectanglesGrid = new Rect[gridY][gridX];
+    public static Rect[][] rectanglesGridDraw = new Rect[gridY][gridX];
+    public static Mat[][] matsGrid = new Mat[gridY][gridX];
+    public static boolean[][] identifiedBoxesBoolean = new boolean[gridY][gridX];
+    public static int[][] centersX = new int[gridY][gridX];
+    public static int[][] centersXDraw = new int[gridY][gridX];
+    public static int[][] centersY = new int[gridY][gridX];
+    public static int[][] centersYDraw = new int[gridY][gridX];
 
 
     // Grbber #1 Clamp: 0.5, Release: 0.75

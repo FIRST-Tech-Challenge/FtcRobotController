@@ -19,7 +19,6 @@ import static org.firstinspires.ftc.teamcode.PipePoleTracker.getRectHeight;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getRectWidth;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getXResolution;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getYResolution;
-import static org.firstinspires.ftc.teamcode.PipePoleTracker.percentColor;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -70,6 +69,10 @@ public class OpModePoleTracker extends LinearOpMode {
 
             if(gamepad2.a && getLevel2Capable()){
                 levelCounter = 2;
+            }
+
+            if(gamepad2.x){
+                levelCounter = 1;
             }
 
             if(levelCounter == 2){
