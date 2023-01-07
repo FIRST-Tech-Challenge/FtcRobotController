@@ -11,6 +11,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -40,6 +41,7 @@ public class PwPRobot extends BasicRobot {
     public SampleMecanumDrive roadrun = null;
     private IMU imu = null;
     private ArrayList<Integer> seq;
+    private boolean regularDrive = true;
 //    private LEDStrip leds = null;
 
 
@@ -294,9 +296,10 @@ public class PwPRobot extends BasicRobot {
 //            logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
 //            progNameLogged = true;
 //        }
-        gp.readGamepad(op.gamepad2.y, "gamepad1_y", "Status");
+        gp.readGamepad(op.gamepad2.y, "gamepad2_y", "Status");
         gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
-        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
+        boolean isY = gp.readGamepad(op.gamepad1.y, "gamepad1_y", "Status");
+                gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
         gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
         gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
         gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Value");
@@ -304,6 +307,9 @@ public class PwPRobot extends BasicRobot {
         gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Value");
         gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Value");
         gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
+        if (isY) {
+            regularDrive = !regularDrive;
+        }
 
         //omnidirectional movement + turning
 
@@ -357,8 +363,7 @@ public class PwPRobot extends BasicRobot {
         boolean boosted = false;
         if (abs(op.gamepad1.left_stick_x) < 0.15) {
             minBoost[0] = 0;
-        }
-        else{
+        } else {
             boosted = true;
         }
         if (op.gamepad1.left_stick_x == 0) {
@@ -366,8 +371,7 @@ public class PwPRobot extends BasicRobot {
         }
         if (abs(op.gamepad1.left_stick_y) < 0.04) {
             minBoost[1] = 0;
-        }
-        else{
+        } else {
             boosted = true;
         }
         if (op.gamepad1.left_stick_y == 0) {
@@ -378,25 +382,35 @@ public class PwPRobot extends BasicRobot {
             minBoost[2] = 0;
 
             //48.8,36.6,
-        }
-        else{
+        } else {
             boosted = true;
         }
         if (op.gamepad1.right_stick_x == 0) {
             vals[2] = 0.0001;
 
         }
-        if(!roadrun.isBusy()||boosted) {
+        if (!roadrun.isBusy() || boosted) {
             if (roadrun.isBusy()) {
                 field.breakAutoTele();
             }
-            roadrun.setWeightedDrivePower(
-                    new Pose2d(
-                            abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 3)),
-                            abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 3)),
-                            abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.5 * abs(vals[2]) + 0.15 * pow(abs(vals[2]), 3))
-                    )
-            );
+            if (regularDrive) {
+                roadrun.setWeightedDrivePower(
+                        new Pose2d(
+                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 3)),
+                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 3)),
+                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.5 * abs(vals[2]) + 0.15 * pow(abs(vals[2]), 3))
+                        )
+                );
+            } else {
+                Vector2d input = new Vector2d(abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 3)),
+                        abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 3)));
+                input = input.rotated(-roadrun.getPoseEstimate().getHeading()-Math.toRadians(90));
+                roadrun.setWeightedDrivePower(
+                        new Pose2d(input.getX(),
+                                input.getY(),
+                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.5 * abs(vals[2]) + 0.15 * pow(abs(vals[2]), 3)))
+                );
+            }
         }
         if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
             logger.log("/RobotLogs/GeneralRobot", "Mecanum,setWeightedDriverPower(Pose2d),Mec = 0 | 0 | 0", true);

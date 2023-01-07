@@ -49,15 +49,17 @@ public class RFGamepad {
     public void readGamepad(float value, String name, String action) {
         if (value != floatMap.get(name)) {
             logger.log("/RobotLogs/GeneralRobot", "Gamepad," + name + "," + action + ": " + value, true);
-            floatMap.put(name, value);
+            floatMap.replace(name, value);
         }
     }
 
-    public void readGamepad(boolean value, String name, String action) {
+    public boolean readGamepad(boolean value, String name, String action) {
         if (value != booleanMap.get(name)) {
             logger.log("/RobotLogs/GeneralRobot", "Gamepad," + name + "," + action + ": " + value, true);
-            booleanMap.put(name, value);
+            booleanMap.replace(name, value);
+            return value;
         }
+        return false;
     }
 
     //    public boolean isReleased(String name){
@@ -87,8 +89,6 @@ public class RFGamepad {
                 seq.add(3);
                 booleanMap.replace("gamepad1_dpad_down", true);
                 updated = true;
-                //TODO: pretty sure if u keep putting more things in the booleanMap ull build up duplicates, looks like
-                // there is a replace function
             }
             //timeOfPress = op.getRuntime();
         } else if (!op.gamepad1.dpad_down) {

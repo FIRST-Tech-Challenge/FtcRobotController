@@ -31,7 +31,7 @@ public class Claw {
     //temporary
     private final double CLAW_OPEN_POS = 0.62;
 
-    private final double CLAW_WIDE_POS = 0.64;
+    private final double CLAW_WIDE_POS = 0.66;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;

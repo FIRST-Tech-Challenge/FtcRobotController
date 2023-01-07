@@ -171,12 +171,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
-        if(ultrasonics) {
-            ultras = new Ultrasonics();
-        }
-        if(touches) {
-            touch = new LimitSwitches();
-        }
+//        if(ultrasonics) {
+//            ultras = new Ultrasonics();
+//        }
+//        if(touches) {
+//            touch = new LimitSwitches();
+//        }
 //        imu = hardwareMap.get(BNO055IMU.class, "imu");
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 //        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;

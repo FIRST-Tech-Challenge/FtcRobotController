@@ -70,6 +70,7 @@ public class TrajectorySequenceRunner {
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
+        remainingMarkers.clear();
         currentTrajectorySequence = trajectorySequence;
         currentSegmentStartTime = clock.seconds();
         currentSegmentIndex = 0;

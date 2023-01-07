@@ -97,7 +97,6 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
             robot.cycleLiftArmToCycle(true);
             robot.delay(1.5);
             robot.wideClaw();
-            robot.delay(0.2);
             robot.liftToPosition((int) stackPos[0]);
             robot.followTrajectorySequenceAsync(pickupTrajectory);
             robot.waitForFinish();

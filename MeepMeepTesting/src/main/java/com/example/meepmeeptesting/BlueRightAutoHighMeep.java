@@ -49,6 +49,7 @@ public class BlueRightAutoHighMeep {
                                         .splineTo(new Vector2d(-35.25, 47.5), toRadians(270))
                                         .UNSTABLE_addDisplacementMarkerOffset(10,()->{})
                                         .splineTo(new Vector2d(-23.5, 35), toRadians(0))
+                                        .addTemporalMarker(()->{})
 //                                        .splineToSplineHeading(new Pose2d(-11.75+5, 35.25+6, toRadians(225)), toRadians(45))
                                         .build()
                 );
