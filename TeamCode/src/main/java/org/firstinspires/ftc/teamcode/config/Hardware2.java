@@ -65,9 +65,6 @@ public class Hardware2 {
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
         verticalLiftMotor.setDirection(DcMotor.Direction.FORWARD);
 
-
-
-
         // May use RUN_USING_ENCODER if encoders are installed
 
         if (runThisWithEncoder)
@@ -131,7 +128,7 @@ public class Hardware2 {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        verticalLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        verticalLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 

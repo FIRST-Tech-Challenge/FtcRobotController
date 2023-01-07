@@ -33,6 +33,14 @@ public class TensorFlowAuto extends BaseOpMode {
             "2 Bulb",
             "3 Panel"
     };
+    public void autoScoring() {
+        DriveUtils.encoderDrive(this, 0.4, -27,-27,5);
+        DriveUtils.encoderStrafe(this,0.4,-13.5,5);
+        DriveUtils.encoderClaw(this,-0.6,1825,5);
+        DriveUtils.encoderClaw(this,0.5,-1825,10);
+
+
+    }
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -118,21 +126,12 @@ public class TensorFlowAuto extends BaseOpMode {
                 }
 
             if (objectDetected.equalsIgnoreCase("2 Bulb")) {
-                DriveUtils.encoderDrive(this, 0.5, -36, -36, 7);
+                DriveUtils.encoderStrafe(this,0.4,13.5,5);
                 // Drives forward to go into the middle parking area
-                DriveUtils.encoderDrive(this, 0.5, 10, 10, 7);
             } else if (objectDetected.equalsIgnoreCase("3 Panel")) {
-                // Move Left
-                DriveUtils.encoderStrafe(this,0.4,27,5);
-                // Strafes left
-                DriveUtils.encoderDrive(this, 0.4, -30, -30, 5);
-                // Drives forward to go into the left parking area
+                DriveUtils.encoderStrafe(this,0.4,40.5,5);
             } else if (objectDetected.equalsIgnoreCase("1 Bolt")) {
-                // Move Right
-                DriveUtils.encoderStrafe(this, 0.4, -27, 5);
-                //Strafes Right
-                DriveUtils.encoderDrive(this, 0.4, -30, -30, 5 );
-                // Drives forward to go into the left parking area
+                DriveUtils.encoderStrafe(this,0.4,-13.5,5);
             }
         }
     }

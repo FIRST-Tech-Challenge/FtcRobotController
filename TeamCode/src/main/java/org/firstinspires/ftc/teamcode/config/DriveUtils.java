@@ -40,6 +40,7 @@ public class DriveUtils {
         telemetry.addLine(line);
         telemetry.update();
     }
+
     /*
      *  Method to perfmorm a relative move, based on encoder counts.
      *  Encoders are not reset as the move is based on the current position.
@@ -48,6 +49,16 @@ public class DriveUtils {
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
      */
+    public static void moveClaw(BaseOpMode BaseOpMode, char direction){
+        Hardware2 robot = BaseOpMode.getRobot();
+        if (direction == 'O') {
+            robot.getLeftClaw().setPosition(-1);
+            robot.getRightClaw().setPosition(1);
+        } else if (direction == 'C') {
+            robot.getLeftClaw().setPosition(0.3);
+            robot.getRightClaw().setPosition(-0.3);
+        }
+    }
 
     public static void encoderDrive(BaseOpMode BaseOpMode, double speed,
                                     double leftInches, double rightInches,
@@ -178,6 +189,36 @@ public class DriveUtils {
             sleep(100);   // optional pause after each move
         }
 
+    }
+    public static void encoderClaw(BaseOpMode baseOpMode, double speed, int encoderTicks, int timeoutS) {
+
+        int target;
+
+        final ElapsedTime runtime = new ElapsedTime();
+
+        if(baseOpMode.opModeIsActive()) {
+            Hardware2 robot = baseOpMode.getRobot();
+
+            robot.getArm().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            target = robot.getArm().getCurrentPosition() + (encoderTicks);
+
+            robot.getArm().setTargetPosition(target);
+
+            robot.getArm().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            runtime.reset();
+
+            robot.getArm().setPower(speed);
+
+            while (baseOpMode.opModeIsActive() && (runtime.seconds() < timeoutS) && (robot.getArm().isBusy())) {
+
+            }
+            robot.getArm().setPower(0);
+
+            robot.getArm().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            sleep(250);
+        }
     }
 
 
