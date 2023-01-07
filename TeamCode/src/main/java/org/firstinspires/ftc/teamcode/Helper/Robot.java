@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
-public class RobotMeet1 {
+public class Robot {
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
     public DcMotor vSlider;
@@ -32,7 +32,7 @@ public class RobotMeet1 {
     public Servo claw;
 
     private double holdingPower = -0.01;
-    public double swingArmHoldingPower = 0.1;
+    public double swingArmHoldingPower = 0.08;
 
     public int robotX = 0;
     public int robotY = 0;
@@ -109,7 +109,7 @@ public class RobotMeet1 {
         swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         claw.setDirection(Servo.Direction.FORWARD);
-        vSlider.setDirection(DcMotorSimple.Direction.FORWARD);
+        vSlider.setDirection(DcMotorSimple.Direction.REVERSE);
         swingArm.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //Setting the direction
@@ -285,7 +285,7 @@ public class RobotMeet1 {
     }
 
     public void DriveToPosition(double Speed, int posX, int posY) {
-        this.Drive(Speed, posY);
+        this.Drive(Speed, -posY);
         this.Strafe(Speed, posX);
         System.out.println(Arrays.toString(Location));
     }

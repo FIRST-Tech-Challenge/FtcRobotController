@@ -11,13 +11,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.Helper.RobotMeet1;
+import org.firstinspires.ftc.teamcode.Helper.Robot;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Auto Meet 1", group = "Concept")
-public class RedAutoMeet1 extends LinearOpMode {
+public class AutoLeft extends LinearOpMode {
 
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
@@ -36,10 +35,10 @@ public class RedAutoMeet1 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
     public int parkingTarget = 2;
-    RobotMeet1 robot = new RobotMeet1();
+    Robot robot = new Robot();
 
     public enum AutoSteps {
-        detectSignal, goToPole, deliver, park, endAuto
+        detectSignal, deliverPreLoad, CycleThreeCones, park, endAuto
     }
 
     public AutoSteps Step = AutoSteps.detectSignal;
@@ -58,9 +57,9 @@ public class RedAutoMeet1 extends LinearOpMode {
             tfod.setZoom(1.25, 16.0 / 9.0);
         }
 
-        robot.vSlider.setTargetPosition(-165);
-        robot.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.vSlider.setPower(0.6);
+//        robot.vSlider.setTargetPosition(-165);
+//        robot.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        robot.vSlider.setPower(0.6);
 
         robot.claw.setPosition(0.6);
 
@@ -113,23 +112,20 @@ public class RedAutoMeet1 extends LinearOpMode {
                     case detectSignal:
                         telemetry.addData("Parking Target ", parkingTarget);
                         telemetry.update();
+                        Step = AutoSteps.deliverPreLoad;
+                        break;
+
+                    case deliverPreLoad:
+                        DeliverPreLoad();
                         Step = AutoSteps.park;
                         break;
 
-                        //Not using this
-                    case goToPole:
-                        robot.claw.setPosition(1);
-                        robot.DriveToPosition(0.3, 15, 45);
-                        robot.MoveSliderToPosition(0.6, 500);
-                        Step = AutoSteps.deliver;
-
-                        //Not using this
-                    case deliver:
-                        int sliderPos = 500;
-                        int hSliderPos = 100;
-                        robot.MoveSliderToPosition(0.3, sliderPos);
-                        robot.claw.setPosition(1);
+                    case CycleThreeCones:
+                        for(int i = 0; i < 4; i++) {
+                            CycleCone();
+                        }
                         Step = AutoSteps.park;
+                        break;
 
                     case park:
                         Park(parkingTarget);
@@ -177,16 +173,68 @@ public class RedAutoMeet1 extends LinearOpMode {
 
     private void Park(int location) {
         if (location == 1) {
-            robot.DriveToPosition(0.3, 75, -70);
+            robot.DriveToPosition(0.3, 75, 70);
         }
 
         if (location == 2) {
-            robot.DriveToPosition(0.3, 0, -70);
+            robot.DriveToPosition(0.3, 0, 70);
         }
 
         if (location == 3) {
-            robot.DriveToPosition(0.3, -75, -70);
+            robot.DriveToPosition(0.3, -75, 70);
 
         }
+    }
+
+    public void DeliverPreLoad() {
+        //First swing the arm up and go to the pole.
+        robot.claw.setPosition(1);
+        robot.SwingArmToPosition(1, 65);
+        robot.swingArm.setPower(robot.swingArmHoldingPower);
+        robot.DriveToPosition(0.8, 15, 45);
+        //Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider.
+        robot.MoveSliderToPosition(0.6, 500);
+        robot.claw.setPosition(0);
+        robot.SwingArmToPosition(1, 20);
+        robot.claw.setPosition(1);
+        sleep(500);
+        robot.claw.setPosition(0);
+        robot.SwingArmToPosition(1, 65);
+        robot.swingArm.setPower(robot.swingArmHoldingPower);
+        robot.MoveSliderToPosition(0.6, 0);
+    }
+
+    public void CycleCone(){
+        /** First go to the stack of cones and grab a cone **/
+        //Drive to the stack
+        robot.DriveToPosition(0.8, -15, 0);
+        robot.DriveToPosition(0.8, 0, 60);
+        robot.turnRobotToAngle(90);
+        //Open the claw and swing the arm down
+        robot.claw.setPosition(1);
+        robot.SwingArmToPosition(1,20);
+        //Drive forward slightly
+        robot.DriveToPosition(0.6, 0, 25);
+        //close the claw and grab onto the cone
+        robot.claw.setPosition(0);
+        /** Now drive to the medium pole **/
+        //Drive to the pole and face it
+        robot.DriveToPosition(0.7,0,-60);
+        robot.turnRobotToAngle(210);
+        robot.stopDriveMotors();
+        /** Now deliver the cone **/
+        //Move the slider to the right height and swing down
+        robot.MoveSliderToPosition(0.6, 500);
+        robot.SwingArmToPosition(1, 20);
+        //Open and close claw
+        robot.claw.setPosition(1);
+        sleep(500);
+        robot.claw.setPosition(0);
+        //swing arm back up
+        robot.SwingArmToPosition(1, 65);
+        robot.swingArm.setPower(robot.swingArmHoldingPower);
+        //lower slider
+        robot.MoveSliderToPosition(0.6, 0);
+
     }
 }

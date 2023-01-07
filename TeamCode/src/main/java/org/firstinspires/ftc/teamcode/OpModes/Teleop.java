@@ -4,19 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Helper.RobotMeet1;
+import org.firstinspires.ftc.teamcode.Helper.Robot;
 
 @TeleOp(name = "22-23 TeleOp", group = "LinearOpMode")
 
-public class TeleopMeet1 extends LinearOpMode {
+public class Teleop extends LinearOpMode {
 
     //tells you how long the robot has run for
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
 
-    RobotMeet1 robot = new RobotMeet1();
-
-    IMUTest imuTest = new IMUTest();
+    Robot robot = new Robot();
 
     //How fast your robot will accelerate.
     public double acceleration = 0.5;
@@ -80,43 +78,27 @@ public class TeleopMeet1 extends LinearOpMode {
              Drivetrain
              */
 
-            robot.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power * 0.50);
-            robot.BLMotor.setPower(DRIVETRAIN_SPEED * bl_power * 0.50);
-            robot.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power * 0.36);
-            robot.BRMotor.setPower(DRIVETRAIN_SPEED * br_power * 0.50);
+            robot.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power);
+            robot.BLMotor.setPower(DRIVETRAIN_SPEED * bl_power);
+            robot.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power);
+            robot.BRMotor.setPower(DRIVETRAIN_SPEED * br_power);
 
             /** Claw **/
             if(gamepad2.x) {
                 robot.claw.setPosition(1);
-                sleep(500);
-                robot.claw.setPosition(0);
             }
             if(gamepad2.y) {
-                robot.claw.setPosition(1);
-                telemetry.addData("Claw Position", robot.claw.getPosition());
-                telemetry.update();
+                robot.claw.setPosition(0);
             }
             if(gamepad2.a) {
+                robot.claw.setPosition(0);
                 robot.SwingArmToPosition(1, 65);
+                robot.swingArm.setPower(robot.swingArmHoldingPower);
             }
             if(gamepad2.b) {
-                robot.SwingArmToPosition(1, 0);
-            }
-
-            if(gamepad1.a) {
-                robot.turnRobotToAngle(0);
-            }
-
-            if(gamepad1.b) {
-                robot.turnRobotToAngle(90);
-            }
-
-            if(gamepad1.y) {
-                robot.turnRobotToAngle(180);
-            }
-
-            if(gamepad1.x) {
-                robot.turnRobotToAngle(270);
+                robot.claw.setPosition(0);
+                robot.SwingArmToPosition(-1, 20);
+                robot.swingArm.setPower(0);
             }
 
 
@@ -125,15 +107,7 @@ public class TeleopMeet1 extends LinearOpMode {
             double vSliderPower =  gamepad2.left_stick_y;
             double vsliderPos = robot.vSlider.getCurrentPosition();
 
-//            if((vSliderPower > 0 && vsliderPos < 15000) || (vSliderPower < 0 && vsliderPos > -100 ))
-//            {
-//                //Moving up.                                Moving down.
-                robot.DriveSlider(-vSliderPower);
-                robot.swingArm.setPower(robot.swingArmHoldingPower);
-//            }
-//            else {
-//                robot.DriveSlider(0);
-//            }
+            robot.DriveSlider(-vSliderPower);
 
 
 
