@@ -34,14 +34,12 @@ public class Find_Colors extends LinearOpMode {
     private boolean isCameraStreaming = false;
     private int resultROI;
 
+    private PIDController pidRotate;
+
     private DcMotor LF = null;
     private DcMotor RF = null;
     private DcMotor LB = null;
     private DcMotor RB = null;
-    //private CRServo spinspinducky = null;
-    //private CRServo intake = null;
-    //private DcMotor armboom = null;
-    //private Servo platform = null;
 
     static final double EncoderTicks = 537.7;
     static final double WHEEL_DIAMETER_INCHES = 4.0;
@@ -70,7 +68,7 @@ public class Find_Colors extends LinearOpMode {
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webCam.startStreaming(320, 240);
+                webCam.startStreaming(320,240);
                 telemetry.addData("Pipeline: ", "Initialized");
                 telemetry.update();
                 isCameraStreaming = true;
@@ -87,11 +85,7 @@ public class Find_Colors extends LinearOpMode {
         RF = hardwareMap.get(DcMotor.class, "RF");
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
-        /*armboom = hardwareMap.get(DcMotor.class, "armboom");
-        intake = hardwareMap.get(CRServo.class, "intake");
-        spinspinducky = hardwareMap.get(CRServo.class, "spinspinducky");
-        platform = hardwareMap.get(Servo.class, "platform");
-*/
+
         LF.setDirection(DcMotor.Direction.REVERSE);  // motor direction set for mecanum wheels with mitre gears
         RF.setDirection(DcMotor.Direction.FORWARD);
         LB.setDirection(DcMotor.Direction.REVERSE);
@@ -105,6 +99,7 @@ public class Find_Colors extends LinearOpMode {
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        pidRotate = new PIDController(.003,.00003,0);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
@@ -114,8 +109,8 @@ public class Find_Colors extends LinearOpMode {
 
         desiredHeading = getHeading();
 
-        moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading);
-        //acuatorUtils.initialize(armboom, spinspinducky, intake);
+        moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading, pidRotate);
+
         moveUtils.resetEncoders();
 
         Long startTime = System.currentTimeMillis();
@@ -141,7 +136,6 @@ public class Find_Colors extends LinearOpMode {
             telemetry.update();
             currTime = System.currentTimeMillis();
         }
-        //platform.setPosition(90);
         waitForStart();
 
         if (isCameraStreaming) {
