@@ -122,6 +122,9 @@ public class LiftHeightByDistanceSensor extends LinearOpMode {
             else if(gamepad2.dpad_up){
                 MoveLift(Increment(10));
             }
+            else if(gamepad2.dpad_down){
+                MoveLift(Increment(-10));
+            }
 
 
 
