@@ -14,6 +14,7 @@ public class CompetitionTeleop2023 extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     //Declare the wheels
+    //test
     private DcMotor LF = null; //Located on Control Hub- Motor port 0
     private DcMotor RF = null; //Located on Control Hub- Motor port 2
     private DcMotor LB = null; //Located on Control Hub- Motor port 1
@@ -22,9 +23,9 @@ public class CompetitionTeleop2023 extends OpMode {
     private DcMotor arm = null; //Located on Expansion Hub- Motor port 0
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
 
-    private double PowerFactor = 1.0f; //Max power available for wheels
+    private double PowerFactor = 8.0f; //Max power available for wheels
     private int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
-    private int minEncode = 125; //Minimum so string on arm lift doesn't break and position 0
+    private int minEncode = 110;//Minimum so string on arm lift doesn't break and position 0
     private int pos1 = 1850; //Position 1
     private int pos2 = 3000; //Position 2
     private int desiredpos = 0; //Used as base for increasing arm position
@@ -94,7 +95,7 @@ public class CompetitionTeleop2023 extends OpMode {
         //Allows the driver to alter speed and make the robot move faster or slower
         if (gamepad1.y && !changed2) {
             if (PowerFactor == 0.8f) {
-                PowerFactor = 0.5f;
+                PowerFactor = 0.3f;
             } else {
                 PowerFactor = (0.8f);
             }
@@ -118,6 +119,12 @@ public class CompetitionTeleop2023 extends OpMode {
         RB.setPower(RBPower);
         LF.setPower(LFPower);
         RF.setPower(RFPower);
+
+        //Send telemetry data of the motor power for wheels
+        telemetry.addData("Left Front Motor","Speed: "+ LFPower);
+        telemetry.addData("Left Back Motor","Speed: "+ LBPower);
+        telemetry.addData("Right Front Motor","Speed: "+RFPower);
+        telemetry.addData("Right Back Motor","Speed: "+ RBPower);
 
         //Code for gamepad2
         //Toggle auto and manual mode
@@ -170,11 +177,14 @@ public class CompetitionTeleop2023 extends OpMode {
                 arm.setPower(armPower);
             }
         }
-        if (gamepad2.b) {
+        if (gamepad2.b)
+        {
             gamebpush = true;
-        } else
-            gamebpush = false;
+        }
+        else{
 
+            gamebpush = false;
+        }
         //Code to increase height position
 
         //Allows the drivers to use a single button to open and close gripper
