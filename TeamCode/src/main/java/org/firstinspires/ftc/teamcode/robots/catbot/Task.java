@@ -8,5 +8,6 @@ abstract class Task {
     public static int TICKSPER90DEGREES = 525;
     public static int STRAFETICKSPERTILE = 1000;
     public static float MAXMOTORSPEED = .7f;
+    public static final int NANOTOSECOND = 1000000000;
     abstract boolean run();
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.catbot;
 public class Turn extends Task{
     private Robot robot;
     private double degrees;
+    private long oldTime;
     //negative degrees is left
     public Turn(Robot robot, double degrees)
     {
@@ -15,6 +16,12 @@ public class Turn extends Task{
             robot.driveTrain.mechanumDrive(0, 0, (degrees/Math.abs(degrees))*MAXMOTORSPEED);
             return true;
         }
-        return false;
+        else {
+            if(oldTime == 0)
+                oldTime = System.nanoTime();
+            if(System.nanoTime() > oldTime+(.25*NANOTOSECOND))
+                return false;
+            return true;
+        }
     }
 }

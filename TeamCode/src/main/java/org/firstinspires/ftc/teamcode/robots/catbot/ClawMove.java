@@ -16,13 +16,14 @@ public class ClawMove extends Task{
                 robot.elevatorNClaw.clawMove(1);
                 return true;
             }
+            return false;
         }
         else {
             if (robot.elevatorNClaw.getClawPosition() != .2) {
                 robot.elevatorNClaw.clawMove(-1);
                 return true;
             }
+            return false;
         }
-        return false;
     }
 }
