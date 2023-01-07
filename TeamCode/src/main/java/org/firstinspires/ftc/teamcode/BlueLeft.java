@@ -1,23 +1,23 @@
 package org.firstinspires.ftc.teamcode;
-        import static java.lang.Thread.sleep;
-        import com.qualcomm.hardware.bosch.BNO055IMU;
-        import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-        import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.hardware.DcMotorSimple;
-        import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-        import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-        import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-        import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-        import com.qualcomm.robotcore.hardware.CRServo;
-        import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-        import org.openftc.easyopencv.OpenCvCamera;
-        import org.openftc.easyopencv.OpenCvCameraFactory;
-        import org.openftc.easyopencv.OpenCvCameraRotation;
-        import org.openftc.apriltag.AprilTagDetection;
-        import java.util.ArrayList;
-//testing 
+import static java.lang.Thread.sleep;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import com.qualcomm.robotcore.hardware.CRServo;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.apriltag.AprilTagDetection;
+import java.util.ArrayList;
+//testing
 @Autonomous
 public class BlueLeft extends LinearOpMode {
     OpenCvCamera webcam;
@@ -195,7 +195,7 @@ public class BlueLeft extends LinearOpMode {
             Left.setPower(.3);
             crane(-1, 650);
             moveandspin(.8,1000,1,1000);
-            strafeRightwithcrane(1,680,-1,1950);
+            strafeRightwithcrane(1,680,-1,2000);
             move(.5,360);
             intake(-1,1300);
             move(.5,-330);
@@ -208,7 +208,7 @@ public class BlueLeft extends LinearOpMode {
                     break;
                 case 1:
                     strafeRight(1,900);
-                    move(.6,1000);
+                    move(.6,900);
                     strafeRight(.5,300);
                     break;
                 case 2:
@@ -335,7 +335,7 @@ public class BlueLeft extends LinearOpMode {
         }
 
     }
-    public void moveandspin(double power, int position,double powers, int times) {
+    public void moveandspin(double power, int position,double powers, int positions) {
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -355,7 +355,7 @@ public class BlueLeft extends LinearOpMode {
         frontLeft.setPower(power);
         backRight.setPower(power);
         backLeft.setPower(power);
-        spin2(powers,times);
+        spin2(powers,positions);
         while (frontLeft.isBusy() && opModeIsActive()) {
 
         }
@@ -513,6 +513,5 @@ public class BlueLeft extends LinearOpMode {
 
 
 }
-
 
 
