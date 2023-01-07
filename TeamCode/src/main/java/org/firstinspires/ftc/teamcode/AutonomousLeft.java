@@ -152,9 +152,9 @@ public class AutonomousLeft extends AutonomousBase {
         while (!isStarted()) {
             telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
             telemetry.addData("STARTING", "%s", "LEFT");
-            telemetry.addData("Signal Detect", "R: " + pipelineLow.avgR + " G: " +
-                    pipelineLow.avgG + " B: " + pipelineLow.avgB + " Zone: " +
-                    pipelineLow.signalZone);
+            telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRL + " G: " +
+                    pipelineLow.avgGL + " B: " + pipelineLow.avgBL + " Zone: " +
+                    pipelineLow.signalZoneL);
             telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
             telemetry.addData("(use %s bumpers to modify", "LEFT/RIGHT");
             telemetry.update();
@@ -185,7 +185,7 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
-            signalZone = pipelineLow.signalZone;
+            signalZone = pipelineLow.signalZoneL;
             pipelineLow.saveLastAutoImage();
         }
         // Turn off detecting the signal.

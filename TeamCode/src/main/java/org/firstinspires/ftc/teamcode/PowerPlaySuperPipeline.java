@@ -44,13 +44,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
 
 class PowerPlaySuperPipeline extends OpenCvPipeline
 {
@@ -130,19 +126,56 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     };
     // Variables for the signal detection
     ArrayList<Mat> channels = new ArrayList<>(3);
-    private Mat r    = new Mat();
-    private Mat g    = new Mat();
-    private Mat b    = new Mat();
-    private int max;
-    public int avgR;
-    public int avgG;
-    public int avgB;
-    private Point marker = new Point();        // Team Element (populated once we find it!)
-    private Point sub1PointA;
-    private Point sub1PointB;
+    private Mat rL = new Mat();
+    private Mat gL = new Mat();
+    private Mat bL = new Mat();
+
+    private Mat rR = new Mat();
+    private Mat gR = new Mat();
+    private Mat bR = new Mat();
+
+    private Mat allianceRR = new Mat();
+    private Mat allianceBR = new Mat();
+    private Mat allianceRL = new Mat();
+    private Mat allianceBL = new Mat();
+
+    private int maxL;
+    public int avgRL;
+    public int avgGL;
+    public int avgBL;
+
+    private int maxR;
+    public int avgRR;
+    public int avgGR;
+    public int avgBR;
+
+    private int allianceMax;
+    public int allianceAvgRL;
+    public int allianceAvgBL;
+
+    public int allianceAvgRR;
+    public int allianceAvgBR;
+
+    private Point markerL = new Point();        // Team Element (populated once we find it!)
+    private Point markerR = new Point();        // Team Element (populated once we find it!)
+
+    private Point allianceMarkerL = new Point();        // Team Element (populated once we find it!)
+    private Point allianceMarkerR = new Point();
+
+    private Point beaconDetectLeftTl;
+    private Point beaconDetectLeftBr;
+    private Point beaconDetectRightTl;
+    private Point beaconDetectRightBr;
+    private Point allianceDetectLeftTl;
+    private Point allianceDetectLeftBr;
+    private Point allianceDetectRightTl;
+    private Point allianceDetectRightBr;
+
+
 
     // Public statics to be used by opMode
-    public int signalZone;
+    public int signalZoneL;
+    public int signalZoneR;
 
     public Mat finalAutoImage = new Mat();
 
@@ -155,7 +188,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public Object lockBlueCone = new Object();
     public Object lockRedCone = new Object();
     public Object lockPole = new Object();
-    boolean detectPole, detectRedCone, detectBlueCone, detectSignal;
+    boolean detectPole, detectRedCone, detectBlueCone, detectSignal, isBlueAlliance, isLeft;
 
     public PowerPlaySuperPipeline(boolean signalDetection, boolean poleDetection,
                                   boolean redConeDetection, boolean blueConeDetection,
@@ -189,8 +222,17 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     directory += "/red_not_terminal";
                 }
             }
-            sub1PointA = new Point(212, 89);  // 20x39 pixel box for signal sleeve
-            sub1PointB = new Point(231, 127);
+            beaconDetectLeftTl = new Point(212, 89);  // 20x39 pixel box for signal sleeve
+            beaconDetectLeftBr = new Point(231, 127);
+
+            beaconDetectRightTl = new Point(89, 89);  // 20x39 pixel box for signal sleeve
+            beaconDetectRightBr = new Point(108, 127);
+
+            allianceDetectLeftTl = new Point(32, 29);
+            allianceDetectLeftBr = new Point(51, 67);
+
+            allianceDetectRightTl = new Point(269, 29);
+            allianceDetectRightBr = new Point(288, 67);
 
             // Create the directory structure to store the autonomous image used to start auto.
             File autonomousDir = new File(directory);
@@ -463,28 +505,82 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             Core.split(input, channels);
 
             // Pull RGB data for the sample zone from the RBG channels
-            r = channels.get(0).submat(new Rect(sub1PointA,sub1PointB) );
-            g = channels.get(1).submat(new Rect(sub1PointA,sub1PointB) );
-            b = channels.get(2).submat(new Rect(sub1PointA,sub1PointB) );
+            rL = channels.get(0).submat(new Rect(beaconDetectLeftTl, beaconDetectLeftBr) );
+            gL = channels.get(1).submat(new Rect(beaconDetectLeftTl, beaconDetectLeftBr) );
+            bL = channels.get(2).submat(new Rect(beaconDetectLeftTl, beaconDetectLeftBr) );
+
+            rR = channels.get(0).submat(new Rect(beaconDetectRightTl, beaconDetectRightBr) );
+            gR = channels.get(1).submat(new Rect(beaconDetectRightTl, beaconDetectRightBr) );
+            bR = channels.get(2).submat(new Rect(beaconDetectRightTl, beaconDetectRightBr) );
+
+            allianceRL = channels.get(0).submat(new Rect(allianceDetectLeftTl, allianceDetectLeftBr) );
+            allianceRR = channels.get(0).submat(new Rect(allianceDetectRightTl, allianceDetectRightBr) );
+            allianceBL = channels.get(2).submat(new Rect(allianceDetectLeftTl, allianceDetectLeftBr) );
+            allianceBR = channels.get(2).submat(new Rect(allianceDetectRightTl, allianceDetectRightBr) );
+
+
 
             // Average the three sample zones
-            avgR = (int)Core.mean(r).val[0];
-            avgB = (int)Core.mean(b).val[0];
-            avgG = (int)Core.mean(g).val[0];
+            avgRL = (int)Core.mean(rL).val[0];
+            avgBL = (int)Core.mean(bL).val[0];
+            avgGL = (int)Core.mean(gL).val[0];
+
+            avgRR = (int)Core.mean(rR).val[0];
+            avgBR = (int)Core.mean(bR).val[0];
+            avgGR = (int)Core.mean(gR).val[0];
+
+            allianceAvgRL = (int)Core.mean(allianceRL).val[0];
+            allianceAvgRR = (int)Core.mean(allianceRR).val[0];
+
+            allianceAvgBL = (int)Core.mean(allianceBL).val[0];
+            allianceAvgBR = (int)Core.mean(allianceBR).val[0];
+
+
 
             // Determine which RBG channel had the highest value
-            max = Math.max(avgR, Math.max(avgB, avgG));
+            maxL = Math.max(avgRL, Math.max(avgBL, avgGL));
+            maxR = Math.max(avgRR, Math.max(avgBR, avgGR));
+
+            allianceMax = Math.max(allianceAvgRR, allianceAvgBR);
+
             // Draw a circle on the detected team shipping element
-            marker.x = (sub1PointA.x + sub1PointB.x) / 2;
-            marker.y = (sub1PointA.y + sub1PointB.y) / 2;
+            markerL.x = (beaconDetectLeftTl.x + beaconDetectLeftBr.x) / 2;
+            markerL.y = (beaconDetectLeftTl.y + beaconDetectLeftBr.y) / 2;
+
+            markerR.x = (beaconDetectRightTl.x + beaconDetectRightBr.x) / 2;
+            markerR.y = (beaconDetectRightTl.y + beaconDetectRightBr.y) / 2;
+
+            allianceMarkerL.x = (allianceDetectLeftTl.x + allianceDetectLeftBr.x) / 2;
+            allianceMarkerL.y = (allianceDetectLeftTl.y + allianceDetectLeftBr.y) / 2;
+
+            allianceMarkerR.x = (allianceDetectRightTl.x + allianceDetectRightBr.x) / 2;
+            allianceMarkerR.y = (allianceDetectRightTl.y + allianceDetectRightBr.y) / 2;
 
             // Free the allocated submat memory
-            r.release();
-            r = null;
-            g.release();
-            g = null;
-            b.release();
-            b = null;
+            rL.release();
+            rL = null;
+            gL.release();
+            gL = null;
+            bL.release();
+            bL = null;
+
+            rR.release();
+            rR = null;
+            gR.release();
+            gR = null;
+            bR.release();
+            bR = null;
+
+            allianceRL.release();
+            allianceRL = null;
+            allianceBL.release();
+            allianceBL = null;
+
+            allianceRR.release();
+            allianceRR = null;
+            allianceBR.release();
+            allianceBR = null;
+
             channels.get(0).release();
             channels.get(1).release();
             channels.get(2).release();
@@ -539,20 +635,64 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // of the processing.
         if(detectSignal) {
             // Draw rectangles around the sample zone
-            Imgproc.rectangle(input, sub1PointA, sub1PointB, new Scalar(0, 0, 255), 1);
-            if(max == avgR) {
-                Imgproc.circle(input, marker, 5, new Scalar(255, 0, 0), -1);
-                signalZone = 1;
-            } else if(max == avgG) {
-                Imgproc.circle(input, marker, 5, new Scalar(0, 255, 0), -1);
-                signalZone = 2;
-            } else if(max == avgB) {
-                Imgproc.circle(input, marker, 5, new Scalar(0, 0, 255), -1);
-                signalZone = 3;
+            Imgproc.rectangle(input, beaconDetectLeftTl, beaconDetectLeftBr, new Scalar(0, 0, 255), 1);
+            if(maxL == avgRL) {
+                Imgproc.circle(input, markerL, 5, new Scalar(255, 0, 0), -1);
+                signalZoneL = 1;
+            } else if(maxL == avgGL) {
+                Imgproc.circle(input, markerL, 5, new Scalar(0, 255, 0), -1);
+                signalZoneL = 2;
+            } else if(maxL == avgBL) {
+                Imgproc.circle(input, markerL, 5, new Scalar(0, 0, 255), -1);
+                signalZoneL = 3;
             } else {
-                signalZone = 3;
+                signalZoneL = 3;
             }
+
+            Imgproc.rectangle(input, beaconDetectRightTl, beaconDetectRightBr, new Scalar(0, 0, 255), 1);
+            if(maxR == avgRR) {
+                Imgproc.circle(input, markerR, 5, new Scalar(255, 0, 0), -1);
+                signalZoneR = 1;
+            } else if(maxR == avgGR) {
+                Imgproc.circle(input, markerR, 5, new Scalar(0, 255, 0), -1);
+                signalZoneR = 2;
+            } else if(maxR == avgBR) {
+                Imgproc.circle(input, markerR, 5, new Scalar(0, 0, 255), -1);
+                signalZoneR = 3;
+            } else {
+                signalZoneR = 3;
+            }
+
+            Imgproc.rectangle(input, allianceDetectLeftTl, allianceDetectLeftBr, new Scalar(0, 0, 255), 1);
+            if(allianceMax == allianceAvgRR) {
+                Imgproc.circle(input, allianceMarkerR, 5, new Scalar(255, 0, 0), -1);
+                isBlueAlliance = true;
+            } else if(allianceMax == allianceAvgBR) {
+                Imgproc.circle(input, allianceMarkerR, 5, new Scalar(0, 255, 0), -1);
+                signalZoneR = 2;
+            } else if(maxR == avgBR) {
+                Imgproc.circle(input, markerR, 5, new Scalar(0, 0, 255), -1);
+                signalZoneR = 3;
+            } else {
+                signalZoneR = 3;
+            }
+            Imgproc.rectangle(input, allianceDetectRightTl, allianceDetectRightBr, new Scalar(0, 0, 255), 1);
+            if(maxR == avgRR) {
+                Imgproc.circle(input, markerR, 5, new Scalar(255, 0, 0), -1);
+                signalZoneR = 1;
+            } else if(maxR == avgGR) {
+                Imgproc.circle(input, markerR, 5, new Scalar(0, 255, 0), -1);
+                signalZoneR = 2;
+            } else if(maxR == avgBR) {
+                Imgproc.circle(input, markerR, 5, new Scalar(0, 0, 255), -1);
+                signalZoneR = 3;
+            } else {
+                signalZoneR = 3;
+            }
+
+
             input.copyTo(finalAutoImage);
+
         }
 
         if(detectPole) {
