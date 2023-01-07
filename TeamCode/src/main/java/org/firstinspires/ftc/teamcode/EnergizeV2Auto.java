@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -28,9 +31,6 @@ public class EnergizeV2Auto extends LinearOpMode {
     double fy = 578.272;
     double cx = 402.145;
     double cy = 221.506;
-    
-     private DigitalChannel redLED;
-     private DigitalChannel greenLED;
 
     // UNITS ARE METERS
     double tagsize = 0.166;
@@ -47,6 +47,16 @@ public class EnergizeV2Auto extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
+    private DistanceSensor sensorRange;
+    private DigitalChannel sensorTouch;
+
+
+    private DcMotor liftMotor1 = null;
+    private DcMotor liftMotor2 = null;
+
+    private Servo rightServo;
+    private Servo leftServo;
+
     // Drive motor position variables:
     private int lfPos;
     private int rfPos;
@@ -58,10 +68,25 @@ public class EnergizeV2Auto extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 3.78 ;     // For figuring circumference
     static final double     clicksPerInch         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    private double fast = 0.5; // Fast speed
+    private double fast = 0.6; // Fast speed
     private double medium = 0.3; // Medium speed
     private double slow = 0.1; // Slow speed
-    private double clicksPerDeg = 250.0; // empirically measured
+    private double clicksPerDeg = clicksPerInch / 3.99; // empirically measured
+
+    private final double MAX_POWER = 0.75;
+    private final double MAX_HEIGHT = 90;
+    private final double LIFT_POWER_INCREMENT = 0.05;
+    // when moving to a target height with the lift, this is how much flexibility the lift has
+    // in reaching the target height [cm]
+    private final double WIGGLE_ROOM = 1.5;
+
+    // target heights [cm]
+    private final double LOW_HEIGHT = 36.0;
+    private final double MED_HEIGHT = 60.0;
+    private final double HIGH_HEIGHT = 86.4;
+
+    private boolean open = true;
+    private boolean close = false;
 
     @Override
     public void runOpMode() {
@@ -74,18 +99,22 @@ public class EnergizeV2Auto extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBack");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
-        
-          redLED = hardwareMap.get(DigitalChannel.class, "redLED");
-            greenLED = hardwareMap.get(DigitalChannel.class, "greenLED");
+
+        rightServo = hardwareMap.get(Servo.class,"rightservo");
+        rightServo.setPosition(0.1);
+        leftServo = hardwareMap.get(Servo.class,"leftservo");
+        leftServo.setPosition(0.9);
+
+        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
+
+        sensorTouch = hardwareMap.get(DigitalChannel.class, "sensor_touch");
+        sensorTouch.setMode(DigitalChannel.Mode.INPUT);
 
         // Initializes Drive directions.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        
-          redLED.setMode(DigitalChannel.Mode.OUTPUT);
-            greenLED.setMode(DigitalChannel.Mode.OUTPUT);
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -130,14 +159,11 @@ public class EnergizeV2Auto extends LinearOpMode {
 
                 if(tagFound)
                 {
-                     redLED.setState(false);
-                        greenLED.setState(true);
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 }
                 else
                 {
-                   
                     telemetry.addLine("Don't see tag of interest :(");
 
                     if(tagOfInterest == null)
@@ -154,8 +180,6 @@ public class EnergizeV2Auto extends LinearOpMode {
             }
             else
             {
-                  redLED.setState(true);
-                        greenLED.setState(false);
                 telemetry.addLine("Don't see tag of interest :(");
 
                 if(tagOfInterest == null)
@@ -204,78 +228,111 @@ public class EnergizeV2Auto extends LinearOpMode {
         {
             if (tagOfInterest.id == 1) {
                 // Drive to place preloaded cone.
-                moveForward(24, fast);
+                gripper(close);
+                sleep(500);
+                moveWholeBlock("forward", medium);
                 sleep(500);
                 strafe(12, fast);
                 //score cone
-                sleep(1000);
-                strafe(-12, fast);
-                sleep(1000);
-                moveForward(24, fast);
+                // lift function to small junction
+                // lift function to 0
+                gripper(open);
                 sleep(500);
-                //turn 90 degrees
-                strafe(-24, fast);
+                strafe(-12, fast);
+                sleep(500);
+                moveWholeBlock("forward", medium);
+                sleep(500);
+                // turn 90 degrees counterclockwise
+                // sleep(500);
+                gripper(close);
+                sleep(500); // remove once lift function has been added.
+                // lift small junction
+                // sleep(250)
+                // moveHalfBlock("backward", medium)
+                // sleep(500)
+                // turn 90 degrees counterclockwise
+                gripper(open);
+                strafe(-24, fast); // in place of turn.
                 sleep(500);
                 strafe(12, fast);
                 sleep(1000);
-                //drop cone
 
                 // Park based on tag.
-                strafe(12,fast);
+                strafe(12, fast);
                 sleep(1000);
-                moveForward(-24, fast);
+                moveWholeBlock("backward", medium);
                 sleep(500);
-                strafe(-24,fast);
+                strafe(-24, fast);
                 sleep(500);
             }
             else if (tagOfInterest.id == 3) {
                 // Drive to place preloaded cone.
-                moveForward(24, fast);
+                moveWholeBlock("forward", medium);
                 sleep(500);
                 strafe(12, fast);
                 //score cone
-                sleep(1000);
-                strafe(-12, fast);
-                sleep(1000);
-                moveForward(24, fast);
+                // lift function to small junction
+                // lift function to 0
+                gripper(open);
                 sleep(500);
-                //turn 90 degrees
-                strafe(-24, fast);
+                strafe(-12, fast);
+                sleep(500);
+                moveWholeBlock("forward", medium);
+                sleep(500);
+                // turn 90 degrees counterclockwise
+                // sleep(500);
+                gripper(close);
+                sleep(500); // remove once lift function has been added.
+                // lift small junction
+                // sleep(250)
+                // moveHalfBlock("backward", medium)
+                // sleep(500)
+                // turn 90 degrees counterclockwise
+                gripper(open);
+                strafe(-24, fast); // in place of turn.
                 sleep(500);
                 strafe(12, fast);
                 sleep(1000);
-                //drop cone
 
                 // Park based on tag.
-                strafe(12, medium);
+                strafe(12, fast);
                 sleep(500);
-                moveForward(-24, fast);
+                moveWholeBlock("backward", fast);
                 sleep(500);
-
-
             }
             else if (tagOfInterest.id == 9) {
                 // Drive to place preloaded cone.
-                moveForward(24, fast);
+                moveWholeBlock("forward", medium);
                 sleep(500);
                 strafe(12, fast);
                 //score cone
-                sleep(1000);
-                strafe(-12, fast);
-                sleep(1000);
-                moveForward(24, fast);
+                // lift function to small junction
+                // lift function to 0
+                gripper(open);
                 sleep(500);
-                //turn 90 degrees
-                strafe(-24, fast);
+                strafe(-12, fast);
+                sleep(500);
+                moveWholeBlock("forward", medium);
+                sleep(500);
+                // turn 90 degrees counterclockwise
+                // sleep(500);
+                gripper(close);
+                sleep(500); // remove once lift function has been added.
+                // lift small junction
+                // sleep(250)
+                // moveHalfBlock("backward", medium)
+                // sleep(500)
+                // turn 90 degrees counterclockwise
+                gripper(open);
+                strafe(-24, fast); // in place of turn.
                 sleep(500);
                 strafe(12, fast);
                 sleep(1000);
-                //drop cone
 
                 // Park based on tag.
                 strafe(12, fast);
                 sleep(500);
-                moveForward(-24, fast);
+                moveWholeBlock("backward", medium);
                 sleep(1000);
                 strafe(24, fast);
                 sleep(500);
@@ -345,6 +402,7 @@ public class EnergizeV2Auto extends LinearOpMode {
             telemetry.update();
         }
 
+
         // Stop all motion:
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
@@ -403,4 +461,320 @@ public class EnergizeV2Auto extends LinearOpMode {
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
     }
+
+    private void moveWholeBlock(String direction, double speed) {
+        // "howMuch" is in inches. A negative howMuch moves backward.
+
+        // Fetch Drive positions:
+        lfPos = leftFrontDrive.getCurrentPosition();
+        rfPos = rightFrontDrive.getCurrentPosition();
+        lrPos = leftBackDrive.getCurrentPosition();
+        rrPos = rightBackDrive.getCurrentPosition();
+
+        // Calculate new targets based on input:
+        if (direction == "forward") {
+            lfPos += (int) (24 * clicksPerInch);
+            rfPos += (int) (24 * clicksPerInch);
+            lrPos += (int) (24 * clicksPerInch);
+            rrPos += (int) (24 * clicksPerInch);
+        }
+        else if (direction == "backward") {
+            lfPos += (int) (-24 * clicksPerInch);
+            rfPos += (int) (-24 * clicksPerInch);
+            lrPos += (int) (-24 * clicksPerInch);
+            rrPos += (int) (-24 * clicksPerInch);
+        }
+
+        // Move robot to new position:
+        leftFrontDrive.setTargetPosition(lfPos);
+        rightFrontDrive.setTargetPosition(rfPos);
+        leftBackDrive.setTargetPosition(lrPos);
+        rightBackDrive.setTargetPosition(rrPos);
+
+        // Set the drive Drive run modes to prepare for move to encoder:
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+
+        // Wait for move to complete:
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
+                leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+
+            // Display info for the driver:
+            telemetry.addLine("Move Forward");
+            telemetry.addData("Target", "%7d :%7d :%7d :%7d", lfPos, rfPos, lrPos, rrPos);
+            telemetry.addData("Actual", "%7d :%7d :%7d :%7d", leftFrontDrive.getCurrentPosition(),
+                    rightFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+
+
+        // Stop all motion:
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
+
+    private void moveHalfBlock(String direction, double speed) {
+        // "howMuch" is in inches. A negative howMuch moves backward.
+
+        // Fetch Drive positions:
+        lfPos = leftFrontDrive.getCurrentPosition();
+        rfPos = rightFrontDrive.getCurrentPosition();
+        lrPos = leftBackDrive.getCurrentPosition();
+        rrPos = rightBackDrive.getCurrentPosition();
+
+        // Calculate new targets based on input:
+        if (direction == "forward") {
+            lfPos += (int) (12 * clicksPerInch);
+            rfPos += (int) (12 * clicksPerInch);
+            lrPos += (int) (12 * clicksPerInch);
+            rrPos += (int) (12 * clicksPerInch);
+        }
+        else if (direction == "backward") {
+            lfPos += (int) (-12 * clicksPerInch);
+            rfPos += (int) (-12 * clicksPerInch);
+            lrPos += (int) (-12 * clicksPerInch);
+            rrPos += (int) (-12 * clicksPerInch);
+        }
+
+        // Move robot to new position:
+        leftFrontDrive.setTargetPosition(lfPos);
+        rightFrontDrive.setTargetPosition(rfPos);
+        leftBackDrive.setTargetPosition(lrPos);
+        rightBackDrive.setTargetPosition(rrPos);
+
+        // Set the drive Drive run modes to prepare for move to encoder:
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+
+        // Wait for move to complete:
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
+                leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+
+            // Display info for the driver:
+            telemetry.addLine("Move Forward");
+            telemetry.addData("Target", "%7d :%7d :%7d :%7d", lfPos, rfPos, lrPos, rrPos);
+            telemetry.addData("Actual", "%7d :%7d :%7d :%7d", leftFrontDrive.getCurrentPosition(),
+                    rightFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+
+        // Stop all motion:
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
+
+    private void strafeWholeBlock(String direction, double speed) {
+        // "howMuch" is in inches. A negative howMuch moves backward.
+
+        // Fetch Drive positions:
+        lfPos = leftFrontDrive.getCurrentPosition();
+        rfPos = rightFrontDrive.getCurrentPosition();
+        lrPos = leftBackDrive.getCurrentPosition();
+        rrPos = rightBackDrive.getCurrentPosition();
+
+        // Calculate new targets based on input:
+        if (direction == "forward") {
+            lfPos += (int) (24 * clicksPerInch);
+            rfPos -= (int) (24 * clicksPerInch);
+            lrPos -= (int) (24 * clicksPerInch);
+            rrPos += (int) (24 * clicksPerInch);
+        }
+        else if (direction == "backward") {
+            lfPos += (int) (-24 * clicksPerInch);
+            rfPos -= (int) (-24 * clicksPerInch);
+            lrPos -= (int) (-24 * clicksPerInch);
+            rrPos += (int) (-24 * clicksPerInch);
+        }
+
+        // Move robot to new position:
+        leftFrontDrive.setTargetPosition(lfPos);
+        rightFrontDrive.setTargetPosition(rfPos);
+        leftBackDrive.setTargetPosition(lrPos);
+        rightBackDrive.setTargetPosition(rrPos);
+
+        // Set the drive Drive run modes to prepare for move to encoder:
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+
+        // Wait for move to complete:
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
+                leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+
+            // Display info for the driver:
+            telemetry.addLine("Move Forward");
+            telemetry.addData("Target", "%7d :%7d :%7d :%7d", lfPos, rfPos, lrPos, rrPos);
+            telemetry.addData("Actual", "%7d :%7d :%7d :%7d", leftFrontDrive.getCurrentPosition(),
+                    rightFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+
+
+        // Stop all motion:
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
+
+    private void strafeHalfBlock(String direction, double speed) {
+        // "howMuch" is in inches. A negative howMuch moves backward.
+
+        // Fetch Drive positions:
+        lfPos = leftFrontDrive.getCurrentPosition();
+        rfPos = rightFrontDrive.getCurrentPosition();
+        lrPos = leftBackDrive.getCurrentPosition();
+        rrPos = rightBackDrive.getCurrentPosition();
+
+        // Calculate new targets based on input:
+        if (direction == "forward") {
+            lfPos += (int) (12 * clicksPerInch);
+            rfPos -= (int) (12 * clicksPerInch);
+            lrPos -= (int) (12 * clicksPerInch);
+            rrPos += (int) (12 * clicksPerInch);
+        }
+        else if (direction == "backward") {
+            lfPos += (int) (-12 * clicksPerInch);
+            rfPos -= (int) (-12 * clicksPerInch);
+            lrPos -= (int) (-12 * clicksPerInch);
+            rrPos += (int) (-12 * clicksPerInch);
+        }
+
+        // Move robot to new position:
+        leftFrontDrive.setTargetPosition(lfPos);
+        rightFrontDrive.setTargetPosition(rfPos);
+        leftBackDrive.setTargetPosition(lrPos);
+        rightBackDrive.setTargetPosition(rrPos);
+
+        // Set the drive Drive run modes to prepare for move to encoder:
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+
+        // Wait for move to complete:
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
+                leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+
+            // Display info for the driver:
+            telemetry.addLine("Move Forward");
+            telemetry.addData("Target", "%7d :%7d :%7d :%7d", lfPos, rfPos, lrPos, rrPos);
+            telemetry.addData("Actual", "%7d :%7d :%7d :%7d", leftFrontDrive.getCurrentPosition(),
+                    rightFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+
+
+        // Stop all motion:
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
+
+    private void gripper(boolean toggle){
+        if (toggle) {
+            rightServo.setPosition(0.1);
+            leftServo.setPosition(0.9);
+        }
+        else {
+            rightServo.setPosition(0.97);
+            leftServo.setPosition(0.03);
+        }
+    }
+
+    private void turnClockwise(int whatAngle, double speed) {
+        // "whatAngle" is in degrees. A negative whatAngle turns counterclockwise.
+
+        // Fetch motor positions:
+        lfPos = leftFrontDrive.getCurrentPosition();
+        rfPos = rightFrontDrive.getCurrentPosition();
+        lrPos = leftBackDrive.getCurrentPosition();
+        rrPos = rightBackDrive.getCurrentPosition();
+
+        // Calculate new targets based on input:
+        lfPos += whatAngle * clicksPerDeg;
+        rfPos -= whatAngle * clicksPerDeg;
+        lrPos += whatAngle * clicksPerDeg;
+        rrPos -= whatAngle * clicksPerDeg;
+
+        // Move robot to new position:
+        leftFrontDrive.setTargetPosition(lfPos);
+        rightFrontDrive.setTargetPosition(rfPos);
+        leftBackDrive.setTargetPosition(lrPos);
+        rightBackDrive.setTargetPosition(rrPos);
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+
+        // Wait for move to complete:
+        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() &&
+                leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
+
+            // Display it for the driver.
+            telemetry.addLine("Turn Clockwise");
+            telemetry.addData("Target", "%7d :%7d", lfPos, rfPos, lrPos, rrPos);
+            telemetry.addData("Actual", "%7d :%7d", leftFrontDrive.getCurrentPosition(),
+                    rightFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
+                    rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
+
+        // Stop all motion:
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
+
+    private void moveLift(int position) {
+        if (position == 0) {
+
+        }
+        else if (position == 1) {
+
+        }
+        else if (position == 2) {
+
+        }
+        else if (position == 3) {
+
+        }
+    }
+
+
 }
