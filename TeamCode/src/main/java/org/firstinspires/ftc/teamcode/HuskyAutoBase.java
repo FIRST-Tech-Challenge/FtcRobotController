@@ -128,7 +128,7 @@ public class HuskyAutoBase extends LinearOpMode {
         driveToTarget(speed, target, target, target, target, timeoutSecs);
 
         // Wait after move is complete
-        sleep(250);
+        sleep(500);
     }
 
     public void encoderTurn(double speed, double angleDegrees, double timeoutSecs) {
@@ -155,7 +155,7 @@ public class HuskyAutoBase extends LinearOpMode {
         driveToTarget(speed, (int) (target * 1.2), (int) (-target * 1.1), -target, target, timeoutSecs);
 
         // Wait after move is complete
-        sleep(250);
+        sleep(500);
     }
 
     private void resetDriveEncoders() {
