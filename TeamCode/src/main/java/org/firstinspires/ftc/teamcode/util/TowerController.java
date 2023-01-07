@@ -20,6 +20,7 @@ public class TowerController
     private boolean uBarX;
     private boolean uBarB;
     private boolean screwA;
+    private boolean uBarA;
 
 
     // Ubar field
@@ -198,7 +199,7 @@ public class TowerController
         else if (gamepad.a)
         {
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(247);
+            uBar.setTargetPosition(48);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             uBar.setPower(1);
         }
@@ -282,6 +283,8 @@ public class TowerController
     {
         //3885
         //4 button screw position set
+
+        //High Poll
         if (gamepad.y)
         {
             uBarY = true;
@@ -290,66 +293,100 @@ public class TowerController
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(1);
         }
-
-        if (screw.getCurrentPosition() > 3750 && uBarX)
-        {
-            uBarX = false;
-            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(-3000);
-            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            uBar.setPower(0.5);
-        }
-
-        if (gamepad.b && !gamepad.start)
-        {
-            uBarB = true;
-            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(3319);
-            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            screw.setPower(1);
-
-        }
-        if (screw.getCurrentPosition() > 3750 && uBarB)
-        {
-            uBarB = false;
-            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            uBar.setTargetPosition(-1136);
-            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            uBar.setPower(0.5);
-        }
-
-        if (uBarY && screw.getCurrentPosition() > 3750)
+        if (uBarY && screw.getCurrentPosition() > 2700)
         {
             uBarY = false;
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             uBar.setTargetPosition(-3109);
             uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            uBar.setPower(0.5);
+            uBar.setPower(1);
         }
-        if (gamepad.x)
+
+        //Low Poll
+        if (gamepad.b && !gamepad.start)
+        {
+            uBarB = true;
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(2760);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(1);
+
+        }
+        if (screw.getCurrentPosition() > 2700 && uBarB)
+        {
+            uBarB = false;
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(-1680);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(1);
+        }
+
+        // Middle Poll
+        if (gamepad.x && screw.getCurrentPosition() >= 2700 && uBar.getCurrentPosition() > 0)
         {
             uBarX = true;
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(-3000);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(1);
+        }
+        else if (gamepad.x && !(screw.getCurrentPosition() >= 2700))
+        {
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(2900);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(1);
+            if (screw.getCurrentPosition() >= 2662)
+            {
+                uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                uBar.setTargetPosition(-3000);
+                uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                uBar.setPower(1);
+            }
+        }
+        if (uBarX && uBar.getCurrentPosition() < -2900)
+        {
+            uBarX = false;
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             screw.setTargetPosition(-4);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(1);
         }
-//        if (gamepad.a)
-//        {
-//            screwA = true;
-//            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            uBar.setTargetPosition(532);
-//            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            uBar.setPower(0.5);
-//        }
-//        if (screwA && uBar.getCurrentPosition() < 500)
-//        {
-//            screwA = false;
-//            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            screw.setTargetPosition(1600);
-//            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            screw.setPower(1);
-//        }
+
+        // Pick up
+        if (gamepad.a && screw.getCurrentPosition() > 2700)
+        {
+            screwA = true;
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(48);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(1);
+        }
+        else if (gamepad.a)
+        {
+            uBarA = true;
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(2900);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(1);
+        }
+        if (uBarA && screw.getCurrentPosition() > 2700)
+        {
+            uBarA = false;
+            screwA = true;
+            uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            uBar.setTargetPosition(48);
+            uBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            uBar.setPower(1);
+        }
+        if (screwA && uBar.getCurrentPosition() > -300)
+        {
+            screwA = false;
+            screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            screw.setTargetPosition(1600);
+            screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            screw.setPower(1);
+        }
     }
 
     public void uBarAnlogControler(Gamepad gamepad, Telemetry telemetry)
@@ -392,14 +429,15 @@ public class TowerController
     public void handleGamepad(Gamepad gamepad, Telemetry telemetry)
     {
         //Screw methods
-        handleScrewLevelSet(gamepad, telemetry);
+//        handleScrewLevelSet(gamepad, telemetry);
         screwAnlogControler(gamepad, telemetry);
 
 //        Ubar Methods
-        handleUBarLevelSet(gamepad, telemetry);
+//        handleUBarLevelSet(gamepad, telemetry);
         uBarAnlogControler(gamepad, telemetry);
 
-//        driveAll(gamepad, telemetry);
+        driveAll(gamepad, telemetry);
+
         // Intake Method
         handleIntake(gamepad);
 
