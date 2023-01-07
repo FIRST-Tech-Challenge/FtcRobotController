@@ -284,16 +284,16 @@ public class TowerController
         //3885
         //4 button screw position set
 
-        //High Poll
+        /** High Poll */
         if (gamepad.y)
         {
             uBarY = true;
             screw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            screw.setTargetPosition(2690);
+            screw.setTargetPosition(2720);
             screw.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             screw.setPower(1);
         }
-        if (uBarY && screw.getCurrentPosition() > 2700)
+        if (uBarY && screw.getCurrentPosition() > 2670)
         {
             uBarY = false;
             uBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -302,7 +302,7 @@ public class TowerController
             uBar.setPower(1);
         }
 
-        //Low Poll
+        /** Low Poll */
         if (gamepad.b && !gamepad.start)
         {
             uBarB = true;
@@ -321,7 +321,7 @@ public class TowerController
             uBar.setPower(1);
         }
 
-        // Middle Poll
+        /** Middle Poll */
         if (gamepad.x && screw.getCurrentPosition() >= 2700 && uBar.getCurrentPosition() > 0)
         {
             uBarX = true;
@@ -353,7 +353,7 @@ public class TowerController
             screw.setPower(1);
         }
 
-        // Pick up
+        /** Pick up */
         if (gamepad.a && screw.getCurrentPosition() > 2700)
         {
             screwA = true;
