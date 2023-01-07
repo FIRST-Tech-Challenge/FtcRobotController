@@ -8,18 +8,14 @@ import org.firstinspires.MecanumDrive;
 
 import java.sql.Driver;
 
-@TeleOp(name="Andrew Mecanum Drive", group="Linear Opmode")
+@TeleOp(name="AndrewOpMode", group="Linear Opmode")
 public class AndrewOpMode extends LinearOpMode {
 
     DcMotor motorBL;
     DcMotor motorFR;
     DcMotor motorFL;
     DcMotor motorBR;
-
-
-    boolean storage;
-    boolean slowMode;
-    double movement_mul;
+    InputHandler inputHandler;
 
     @Override
     public void runOpMode() {
@@ -31,34 +27,21 @@ public class AndrewOpMode extends LinearOpMode {
                 hardwareMap.get(DcMotor.class, "motorFR")
         );
 
-
-        movement_mul = 1.0;
-        storage = false;
-        slowMode = false;
+        inputHandler = new InputHandler(gamepad1);
 
         waitForStart();
         while (opModeIsActive()) {
+            inputHandler.update();
 
-            if (!storage && gamepad1.a) {
-                slowMode = !slowMode;
-            }
-
-            if (slowMode) {
-                movement_mul = 0.3;
-            } else {
-                movement_mul = 1.0;
-            }
-
-            storage = gamepad1.a;
             driver.move(
-                movement_mul * gamepad1.left_stick_x,
-                movement_mul * gamepad1.left_stick_y,
-                movement_mul * gamepad1.right_stick_x
+                inputHandler.getAnalogueInput(InputHandler.Analogue.LEFT_STICK_X),
+                inputHandler.getAnalogueInput(InputHandler.Analogue.LEFT_STICK_Y),
+                inputHandler.getAnalogueInput(InputHandler.Analogue.RIGHT_STICK_X)
             );
 
-            if (gamepad1.start) {break;}
-
-            telemetry.addData("Slow Mode", slowMode);
+            if (inputHandler.justPressed(InputHandler.Digital.START)) {
+                requestOpModeStop();
+            }
 
         }
     }
