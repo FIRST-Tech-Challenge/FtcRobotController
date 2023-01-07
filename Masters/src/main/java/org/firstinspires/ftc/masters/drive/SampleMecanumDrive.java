@@ -11,8 +11,6 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.encoderTicksToI
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
-import static org.firstinspires.ftc.masters.drive.StandardTrackingWheelLocalizer.X_MULTIPLIER;
-import static org.firstinspires.ftc.masters.drive.StandardTrackingWheelLocalizer.Y_MULTIPLIER;
 
 import androidx.annotation.NonNull;
 
@@ -45,7 +43,6 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.masters.util.Encoder;
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -92,6 +89,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<DcMotorEx> motors;
     public DcMotorEx linearSlide;
     public DcMotorEx frontSlide;
+    public DcMotorEx slideOtherer;
     public DcMotorEx armMotor;
 
     private Servo THE_CLAW;
@@ -155,6 +153,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
         linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide");
+        slideOtherer = hardwareMap.get(DcMotorEx.class, "slideOtherer");
         armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
 
         THE_CLAW = hardwareMap.servo.get("clawServo");
@@ -185,6 +184,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideOtherer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
@@ -201,8 +201,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontSlide.setTargetPosition(SLIDE_HIGH);
         frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideOtherer.setTargetPosition(SLIDE_HIGH);
+        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlide.setPower(.6);
         frontSlide.setPower(.6);
+        slideOtherer.setPower(.6);
         //set arm to middle
     }
 
@@ -212,8 +215,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontSlide.setTargetPosition(SLIDE_MIDDLE);
         frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideOtherer.setTargetPosition(SLIDE_MIDDLE);
+        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlide.setPower(.2);
         frontSlide.setPower(.2);
+        slideOtherer.setPower(.2);
     }
 
     public void liftDown() {
@@ -222,9 +228,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontSlide.setTargetPosition(SLIDE_BOTTOM);
         frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideOtherer.setTargetPosition(SLIDE_BOTTOM);
+        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlide.setPower(.4);
         frontSlide.setPower(.4);
-
+        slideOtherer.setPower(.4);
     }
 
     public void setArmServoTop() {
