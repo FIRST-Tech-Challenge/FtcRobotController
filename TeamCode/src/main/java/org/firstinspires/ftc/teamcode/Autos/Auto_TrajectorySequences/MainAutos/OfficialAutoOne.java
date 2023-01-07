@@ -20,17 +20,16 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	private Slide slideControl;
 	private Claw clawControl;
 
-	public static double x = 56;
-	public static double y = -6;
-	public static double angle = 25;
-	public static double angle2 = 87;
+	public static double x = 32;
+	public static double y = 24;
+	public static double angle = 91.45;
+	public static double strafe = 14;
+
 
 	public void initialize(){
-		/*
 		armControl = new Arm(hardwareMap);
 		slideControl = new Slide(hardwareMap);
-		clawControl = new Claw(hardwareMap);
-		 */
+		//clawControl = new Claw(hardwareMap);
 	}
 
 	@Override
@@ -45,16 +44,15 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 
 
 		TrajectorySequence terminalAndGoToConeStack = bot.trajectorySequenceBuilder(startPose)
-				.lineToLinearHeading(new Pose2d(60, -5, Math.toRadians(90)))
-				.lineToLinearHeading(new Pose2d(45.5, -5, Math.toRadians(90)))
-				.lineToLinearHeading(new Pose2d(47.75, 22, Math.toRadians(87)))
-				.splineToConstantHeading(new Vector2d(56, -6), Math.toRadians(25))
+				.lineToLinearHeading(new Pose2d(45, -4.5, Math.toRadians(90))) //If 13.53 V, y = -3.5
+				.waitSeconds(2)
+				.strafeLeft(13)
+				.lineToLinearHeading(new Pose2d(x, y, Math.toRadians(angle)))
+				.waitSeconds(1)
+				//.splineToConstantHeading(new Vector2d(x,y),Math.toRadians(angle))
 				.build();
 
-		/*TrajectorySequence splineTest = bot.trajectorySequenceBuilder(terminalAndGoToConeStack.end())
-				.splineToLinearHeading(new Pose2d(x, y,Math.toRadians(angle2)), Math.toRadians(angle))
-				.build();
-		*/
+
 
 		while(!opModeIsActive()){
 			telemetry.addData("In init loop", "");
