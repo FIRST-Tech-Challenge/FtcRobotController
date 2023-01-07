@@ -49,12 +49,12 @@ public class DriveUtils {
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
      */
-    public static void moveClaw(BaseOpMode BaseOpMode, char direction){
+    public static void moveClaw(BaseOpMode BaseOpMode, String direction){
         Hardware2 robot = BaseOpMode.getRobot();
-        if (direction == 'O') {
+        if (direction.equalsIgnoreCase("Open")) {
             robot.getLeftClaw().setPosition(-1);
             robot.getRightClaw().setPosition(1);
-        } else if (direction == 'C') {
+        } else if (direction.equalsIgnoreCase("Close")) {
             robot.getLeftClaw().setPosition(0.3);
             robot.getRightClaw().setPosition(-0.3);
         }
