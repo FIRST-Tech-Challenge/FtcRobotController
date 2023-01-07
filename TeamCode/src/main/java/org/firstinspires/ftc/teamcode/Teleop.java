@@ -731,7 +731,7 @@ public abstract class Teleop extends LinearOpMode {
             grabberLifting  = false;
             // start slowly lowering onto cone
             grabberRunTimer.reset();
-            robot.liftMotorsSetPower( -0.20 );
+            robot.liftMotorsSetPower( -0.30 );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last )
@@ -882,8 +882,12 @@ public abstract class Teleop extends LinearOpMode {
             } // intake
             // Currently on an EJECTION cycle?
             else {
+                // Ensure we eject for at least 100 msec before using sensor (in case sensor fails)
+                boolean bottomSensorClear = robot.bottomConeSensor.getState() && (elapsedTime > 100);
+                // Also have a max timeout in case sensor fails
+                boolean maxEjectTimeReached = (elapsedTime >= 350);
                 // Is cycle complete?
-                if( robot.bottomConeSensor.getState() || elapsedTime >= 350) {
+                if( bottomSensorClear || maxEjectTimeReached) {
                     // stop ejecting cone
                     robot.grabberSpinStop();
                     grabberRunning = false;

@@ -72,7 +72,8 @@ public class AutonomousReset extends LinearOpMode {
         }
         // With arm in starting position, it's safe to store the collector
         robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
-
+        // Wait 1.5 seconds for grabber to actually tilt up before ending program
+        sleep(1500);
     } // resetMechanismsForAutonomous
 
 } /* AutonomousReset */

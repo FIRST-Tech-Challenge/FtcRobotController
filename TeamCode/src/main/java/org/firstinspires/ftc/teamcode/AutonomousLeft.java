@@ -65,13 +65,13 @@ public class AutonomousLeft extends AutonomousBase {
         telemetry.addData("State", "Initializing webcam (please wait)");
         telemetry.update();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
-        // To add front camera back, need to update containers to 3.
         int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
                 .splitLayoutForMultipleViewports(
                         cameraMonitorViewId, //The container we're splitting
                         2, //The number of sub-containers to create
                         OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
+
+                // This will be called if the camera could not be opened
 
         webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
                 "Webcam Back"), viewportContainerIds[0]);
@@ -117,31 +117,6 @@ public class AutonomousLeft extends AutonomousBase {
         });
         webcamLow.showFpsMeterOnViewport(false);
 
-        /*
-        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Front"), viewportContainerIds[2]);
-        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineFront = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0, blueAlliance, false);
-                webcamFront.setPipeline(pipelineFront);
-                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                frontCameraInitialized = true;
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-        webcamFront.showFpsMeterOnViewport(false);
-         */
-
-        // To add front camera, need to add checking for frontCameraInitialized.
         while(!(lowCameraInitialized && backCameraInitialized)) {
             sleep(100);
         }
@@ -151,12 +126,14 @@ public class AutonomousLeft extends AutonomousBase {
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
             telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
+            telemetry.addData("ALLIANCEp", "%s", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
             telemetry.addData("STARTING", "%s", "LEFT");
+            telemetry.addData("STARTINGp", "%s", (pipelineLow.isLeft)? "LEFT":"RIGHT");
             telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRL + " G: " +
                     pipelineLow.avgGL + " B: " + pipelineLow.avgBL + " Zone: " +
                     pipelineLow.signalZoneL);
             telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
-            telemetry.addData("(use %s bumpers to modify", "LEFT/RIGHT");
+            telemetry.addData("","(use %s bumpers to modify", "LEFT/RIGHT");
             telemetry.update();
             // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
@@ -354,26 +331,29 @@ public class AutonomousLeft extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void moveToTallJunction() {
 
-        // Tilt grabber down from autonomous starting position (vertical)
-        // so we're clear to raise the lift and not hit the front lift motor
-        // (since we're turning outward toward GROUND junction it's okay to exceed 24" tile width
+        // Tilt grabber down from autonomous starting position (vertical) so we're clear
+        // to raise the lift and not hit the front lift motor (since we're turning outward
+        // toward GROUND junction, it's okay for robot length to exceed the 24" tile width
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
-        // Initial movement accomplishes two goals:
-        // 1. Avoid the ground junction in front of the robot (5.5" rightward shift)
-        // 2. Turn 90deg  so we don't entrap the beacon cone
+        // Initial movement is just to steer clear of the ground junction in front of the robot
+        // (once we start to rotate the robot becomes much wider)
+        autoYpos=6.0;  autoXpos=4.0;  autoAngle=0;    // (inches, inches, degrees)
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
+
+        // The 2nd movement is to rotate 90deg so we don't entrap the beacon cone
         autoYpos=18.0;  autoXpos=5.5;  autoAngle=-90.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_50, TURN_SPEED_60, DRIVE_THRU );
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
 
         // The grabber finished the tilt down during the 90deg turn movement, so
         // it's safe now to command the lift to raise to scoring position
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_B );
+        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
 
         // We're past the medium junction pole, so okay to rotate the turret
-        robot.turretPosInit( -32.5 );
+        robot.turretPosInit( -34.5 );
 
         // Drive partway there (while lift raises past the front motor)
-        autoYpos=34.5;  autoXpos=4.0;
+        autoYpos=34.5;  autoXpos=4.5; autoAngle=-91.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_THRU );
 
         // Tilt grabber backward to final scoring position and rotate cone over
@@ -381,7 +361,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
         // Drive the final distance to the high junction pole
-        autoYpos=54.0;  autoXpos=8.0;
+        autoYpos=54.0;  autoXpos=7.5;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_TO );
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)
@@ -424,7 +404,7 @@ public class AutonomousLeft extends AutonomousBase {
         sleep(30000);
 
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
-        autoXpos=-16.0;
+        autoXpos=-12.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
             performEveryLoop();

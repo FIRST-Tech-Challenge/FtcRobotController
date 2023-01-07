@@ -159,7 +159,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     private Point markerL = new Point();        // Team Element (populated once we find it!)
     private Point markerR = new Point();        // Team Element (populated once we find it!)
 
-    private Point allianceMarkerL = new Point();        // Team Element (populated once we find it!)
+    private Point allianceMarkerL = new Point();
     private Point allianceMarkerR = new Point();
 
     private Point beaconDetectLeftTl;
@@ -170,8 +170,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     private Point allianceDetectLeftBr;
     private Point allianceDetectRightTl;
     private Point allianceDetectRightBr;
-
-
 
     // Public statics to be used by opMode
     public int signalZoneL;
@@ -225,14 +223,14 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             beaconDetectLeftTl = new Point(212, 89);  // 20x39 pixel box for signal sleeve
             beaconDetectLeftBr = new Point(231, 127);
 
-            beaconDetectRightTl = new Point(89, 89);  // 20x39 pixel box for signal sleeve
-            beaconDetectRightBr = new Point(108, 127);
+            beaconDetectRightTl = new Point(95, 89);  // 20x39 pixel box for signal sleeve
+            beaconDetectRightBr = new Point(114, 127);
 
-            allianceDetectLeftTl = new Point(32, 29);
-            allianceDetectLeftBr = new Point(51, 67);
+            allianceDetectLeftTl = new Point(49, 89); // 17x39 pixel box for 5-stack
+            allianceDetectLeftBr = new Point(65, 125);
 
-            allianceDetectRightTl = new Point(269, 29);
-            allianceDetectRightBr = new Point(288, 67);
+            allianceDetectRightTl = new Point(263, 89); // 17x39 pixel box for 5-stack
+            allianceDetectRightBr = new Point(279, 125);
 
             // Create the directory structure to store the autonomous image used to start auto.
             File autonomousDir = new File(directory);
@@ -518,8 +516,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             allianceBL = channels.get(2).submat(new Rect(allianceDetectLeftTl, allianceDetectLeftBr) );
             allianceBR = channels.get(2).submat(new Rect(allianceDetectRightTl, allianceDetectRightBr) );
 
-
-
             // Average the three sample zones
             avgRL = (int)Core.mean(rL).val[0];
             avgBL = (int)Core.mean(bL).val[0];
@@ -534,8 +530,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
             allianceAvgBL = (int)Core.mean(allianceBL).val[0];
             allianceAvgBR = (int)Core.mean(allianceBR).val[0];
-
-
 
             // Determine which RBG channel had the highest value
             maxL = Math.max(avgRL, Math.max(avgBL, avgGL));
@@ -663,6 +657,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 signalZoneR = 3;
             }
 
+            Imgproc.rectangle(input, allianceDetectRightTl, allianceDetectRightBr, new Scalar(0, 0, 255), 1);
             Imgproc.rectangle(input, allianceDetectLeftTl, allianceDetectLeftBr, new Scalar(0, 0, 255), 1);
             if(allianceMax == allianceAvgRR) {
                 Imgproc.circle(input, allianceMarkerR, 5, new Scalar(0, 0, 255), -1);
@@ -673,11 +668,11 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 isBlueAlliance = false;
                 isLeft = false;
             } else if(allianceMax == allianceAvgRL) {
-                Imgproc.circle(input, markerR, 5, new Scalar(0, 0, 255), -1);
+                Imgproc.circle(input, allianceMarkerL, 5, new Scalar(0, 0, 255), -1);
                 isBlueAlliance = true;
                 isLeft = true;
             } else if(allianceMax == allianceAvgBL) {
-                Imgproc.circle(input, markerR, 5, new Scalar(255, 0, 0), -1);
+                Imgproc.circle(input, allianceMarkerL, 5, new Scalar(255, 0, 0), -1);
                 isBlueAlliance = false;
                 isLeft = true;
             } else {
@@ -685,7 +680,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 isLeft = true;
             }
             input.copyTo(finalAutoImage);
-
         }
 
         if(detectPole) {

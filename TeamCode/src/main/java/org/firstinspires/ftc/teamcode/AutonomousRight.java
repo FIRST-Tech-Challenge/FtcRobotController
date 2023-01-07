@@ -65,13 +65,13 @@ public class AutonomousRight extends AutonomousBase {
         telemetry.addData("State", "Initializing webcam (please wait)");
         telemetry.update();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
-        // To add front camera back, need to update containers to 3.
         int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
                 .splitLayoutForMultipleViewports(
                         cameraMonitorViewId, //The container we're splitting
                         2, //The number of sub-containers to create
                         OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
+
+                // This will be called if the camera could not be opened
 
         webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
                 "Webcam Back"), viewportContainerIds[0]);
@@ -117,32 +117,7 @@ public class AutonomousRight extends AutonomousBase {
         });
         webcamLow.showFpsMeterOnViewport(false);
 
-        /*
-        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Front"), viewportContainerIds[2]);
-        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineFront = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0, blueAlliance, false);
-                webcamFront.setPipeline(pipelineFront);
-                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                frontCameraInitialized = true;
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-        webcamFront.showFpsMeterOnViewport(false);
-         */
-
-        // To add front camera, need to add checking for frontCameraInitialized.
-        while(! (lowCameraInitialized && backCameraInitialized)) {
+        while(!(lowCameraInitialized && backCameraInitialized)) {
             sleep(100);
         }
         telemetry.addData("State", "Webcam Initialized");
@@ -151,12 +126,14 @@ public class AutonomousRight extends AutonomousBase {
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
             telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
+            telemetry.addData("ALLIANCEp", "%s", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
             telemetry.addData("STARTING", "%s", "RIGHT");
-            telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRL + " G: " +
-                    pipelineLow.avgGL + " B: " + pipelineLow.avgBL + " Zone: " +
-                    pipelineLow.signalZoneL);
+            telemetry.addData("STARTINGp", "%s", (pipelineLow.isLeft)? "LEFT":"RIGHT");
+            telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRR + " G: " +
+                    pipelineLow.avgGR + " B: " + pipelineLow.avgBR + " Zone: " +
+                    pipelineLow.signalZoneR);
             telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
-            telemetry.addData("(use %s bumpers to modify", "LEFT/RIGHT");
+            telemetry.addData("","(use %s bumpers to modify", "LEFT/RIGHT");
             telemetry.update();
             // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
@@ -185,7 +162,7 @@ public class AutonomousRight extends AutonomousBase {
 
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
-            signalZone = pipelineLow.signalZoneL;
+            signalZone = pipelineLow.signalZoneR;
             pipelineLow.saveLastAutoImage();
         }
         // Turn off detecting the signal.
@@ -251,18 +228,18 @@ public class AutonomousRight extends AutonomousBase {
         }
 
         // Center on pole
-        if( opModeIsActive()) {
-            telemetry.addData("Skill", "rotateToCenterPole");
-            telemetry.update();
-            rotateToCenterPole();
-        }
+//        if( opModeIsActive()) {
+//            telemetry.addData("Skill", "rotateToCenterPole");
+//            telemetry.update();
+//            rotateToCenterPole();
+//        }
 
         // Adjust distance to pole
-        if( opModeIsActive()) {
-            telemetry.addData("Skill", "distanceFromFront");
-            telemetry.update();
-            distanceFromFront(28.0, 1.0);
-        }
+//        if( opModeIsActive()) {
+//            telemetry.addData("Skill", "distanceFromFront");
+//            telemetry.update();
+//            distanceFromFront(28.0, 1.0);
+//        }
 
         // Deposit cone on junction
         if( opModeIsActive() ) {

@@ -121,7 +121,9 @@ public class HardwareSlimbot
     public double       liftMotorPwr       = 0.0;     // lift motors power setpoint (-1.0 to +1.0)
     public double       liftMotorAmps      = 0.0;     // lift motors current power draw (Amps)
     public boolean      liftMotorRamp      = false;   // motor power setting is ramping down
-    
+
+    public final double LIFT_MOTOR_MAX     =  1.00;   // maximum motor power we allow for the lift (gear slippage!)
+
     protected AnalogInput liftEncoder      = null;    // US Digital absolute magnetic encoder (MA3)
     public double       liftAngle          = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
     public double       liftAngleOffset    = 130.2;   // allows us to adjust the 0-360 deg range
@@ -129,22 +131,20 @@ public class HardwareSlimbot
 
     public double       LIFT_ANGLE_MAX     = 120.2;   // absolute encoder angle at maximum rotation FRONT
     public double       LIFT_ANGLE_MIN     = -69.9;   // absolute encoder angle at maximum rotation REAR
-    public final double LIFT_MOTOR_MAX     =  1.0;   // The Maximum power to power the lift with
-    // NOTE: the motor doesn't stop immediately, so a limit of 115 deg halts motion around 110 degrees
+    // NOTE: the motor doesn't stop immediately, so set the limits short of the absolute maximum
     public double       LIFT_ANGLE_ASTART  = 123.1;   // lift position for starting autonomous
-    // 119.2
-    //
-    // +11.8
     public double       LIFT_ANGLE_COLLECT = 117.0;   // lift position for collecting cones
     public double       LIFT_ANGLE_GROUND  = 116.8;   // lift position for GROUND junction
     public double       LIFT_ANGLE_LOW     = 108.3;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  97.5;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_5STACK  =  83.8;   // lift position for 5-stack ultrasonic reading
     public double       LIFT_ANGLE_MED     =  80.4;   // lift position for MEDIUM junction (FRONT Teleop)
-    public double       LIFT_ANGLE_MED_B   = -67.8;   // lift position for MEDIUM junction (BACK Teleop)
+    public double       LIFT_ANGLE_MED_B   = -60.2;   // lift position for MEDIUM junction (BACK Teleop)
     public double       LIFT_ANGLE_HIGH    =  52.8;   // lift position for HIGH junction (FRONT Teleop)
     public double       LIFT_ANGLE_AUTO_H  =  41.8;   // lift position for AUTONOMOUS (HIGH junction)
     public double       LIFT_ANGLE_HIGH_B  = -35.5;   // lift position for HIGH junction (BACK Teleop)
+    public double       LIFT_ANGLE_HIGH_BA = -30.0;   // lift position for HIGH junction (BACK Auto)
+                                                      // (cone is loaded lower for auto, so higher lift point)
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -674,7 +674,7 @@ public class HardwareSlimbot
                 double liftMotorPower = minPower + (degreesToGo * -0.02); // our PID is just "P"
                 // adjust base power according to lowering/lifting (lowering cuts it; raising boosts it)
                 liftMotorPower *= (lowering)? 0.50 : 1.50;
-                // Never exceed 85% motor power, even if a long distance from target (gear slippage!)
+                // Ensure we don't request more than 100% motor power, even if long distance from target
                 if( liftMotorPower >  LIFT_MOTOR_MAX ) liftMotorPower =  LIFT_MOTOR_MAX;
                 if( liftMotorPower < -LIFT_MOTOR_MAX ) liftMotorPower = -LIFT_MOTOR_MAX;
                 liftMotorsSetPower( liftMotorPower );

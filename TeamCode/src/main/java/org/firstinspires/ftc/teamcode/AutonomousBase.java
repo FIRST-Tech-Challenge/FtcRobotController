@@ -798,7 +798,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             sleep(3500);  // so we can read the output above
         } // ODOMETRY_DEBUG
         // Are we within tolerance of our target position/orientation?
-        double xy_tolerance = (driveType == DRIVE_TO)? 0.25 : 2.0; // inches
+        double xy_tolerance = (driveType == DRIVE_TO)? 0.25 : 2.5; // inches
         if( (distanceToPoint <= xy_tolerance) && (Math.abs(robot_radian_err) <= Math.toRadians(angle_tolerance))  )
             return true;
         // NO, WE'RE NOT DONE! Update motor power settings
