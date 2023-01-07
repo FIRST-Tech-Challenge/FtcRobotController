@@ -204,14 +204,16 @@ public class BlueLeft extends LinearOpMode {
             switch (location){
                 case 0:
                     strafeRight(1,800);
+                    move(.4,300);
                     break;
                 case 1:
-                    strafeRight(1,1000);
+                    strafeRight(1,900);
                     move(.6,900);
                     strafeRight(.5,300);
                     break;
                 case 2:
                     strafeRight(1,800);
+                    move(.4,300);
                     break;
                 case 3:
                     strafeRight(1,900);
