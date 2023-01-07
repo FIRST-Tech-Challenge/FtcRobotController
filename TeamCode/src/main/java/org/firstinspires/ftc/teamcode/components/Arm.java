@@ -76,23 +76,25 @@ public class Arm {
             leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            leftLift.setPower((drop) ? 0.0 : power/2);
-            rightLift.setPower((drop) ? 0.0 : power/2);
+            leftLift.setPower((drop) ? 0.0 : power * 0.7);
+            rightLift.setPower((drop) ? 0.0 : power * 0.7);
 
             armTarget = getCurrentPosition() + ((drop) ? -70 : 70);
         }
 
         if (rightLift.isBusy() && leftLift.isBusy()){
             if (getCurrentPosition() > armTarget) {
-                if (getCurrentPosition() > middleJunction && (getCurrentPosition() - armTarget) > 50) {
+                if (getCurrentPosition() > 630) {
                     leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                     rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    leftLift.setPower(0.0);
+                    rightLift.setPower(0.0);
                 } else {
                     leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    leftLift.setPower(0.0);
+                    rightLift.setPower(0.0);
                 }
-                leftLift.setPower(0.0);
-                rightLift.setPower(0.0);
             } else {
                 leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
