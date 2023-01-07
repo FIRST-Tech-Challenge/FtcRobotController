@@ -16,15 +16,15 @@ import java.util.Arrays;
 public class PipePoleTracker extends OpenCvPipeline {
 
     //TODO substitute the focusRect for the below testRect (focusRect should be the problem)
-    Rect testRect = new Rect(new Point(0,0), new Point(200,200));
+    Rect testRect = new Rect(new Point(0,0), new Point(300,300));
 
     static double percentColor;
     static String levelString = "one";
     static boolean level2Capable = false;
     static int x_resolution;
     static int y_resolution;
-    static int focusRectWidth = 0;
-    static int focusRectHeight = 0;
+    static int focusRectWidth;
+    static int focusRectHeight;
     static int minimumWidth;
     static int minimumHeight;
     static int box_width = 0;
@@ -52,6 +52,7 @@ public class PipePoleTracker extends OpenCvPipeline {
     static boolean level3 = false;
 
     Rect focusRect = new Rect();
+    Rect focusRect2 = new Rect();
 
     Rect[][] rectanglesGrid = new Rect[gridY][gridX];
     Rect[][] rectanglesGridDraw = new Rect[gridY][gridX];
@@ -83,23 +84,12 @@ public class PipePoleTracker extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-        focusSubMat = input.submat(testRect);
+//        focusSubMat = input.submat(testRect);
 
 
 
         Imgproc.cvtColor(input,inputHSV,Imgproc.COLOR_BGR2HSV);
         Core.inRange(inputHSV, new Scalar(81, 115, 164), new Scalar(107, 255, 255), inputMask);
-
-
-
-        x_resolution = input.cols();
-        y_resolution = input.rows();
-
-        box_width = (int)(x_resolution/gridX);
-        box_height = (int)(y_resolution/gridY);
-
-        minimumWidth = box_width*5; //Pole SHOULD be 2 boxes wide, but focus rect adds 1.5 on each side
-        minimumHeight = box_height*11; //Pole SHOULD be 10 boxes high, but focus rect adds 0.5 on each side
 
 
 //        focusRectWidth = 0;
@@ -156,10 +146,28 @@ public class PipePoleTracker extends OpenCvPipeline {
                 /**
                  * Level1 image assignment
                  */
+                if(levelString.equals("one") && level1Assigment == true){
+
+                    x_resolution = input.cols();
+                    y_resolution = input.rows();
+
+                    box_width = (int)(x_resolution/gridX);
+                    box_height = (int)(y_resolution/gridY);
+
+                    minimumWidth = box_width*5; //Pole SHOULD be 2 boxes wide, but focus rect adds 1.5 on each side
+                    minimumHeight = box_height*11; //Pole SHOULD be 10 boxes high, but focus rect adds 0.5 on each side
+                }
+
                 if (levelString.equals("one") && level1Assigment == false) {
 
                     x_resolution = input.cols();
                     y_resolution = input.rows();
+
+                    box_width = (int)(x_resolution/gridX);
+                    box_height = (int)(y_resolution/gridY);
+
+                    minimumWidth = box_width*5; //Pole SHOULD be 2 boxes wide, but focus rect adds 1.5 on each side
+                    minimumHeight = box_height*11; //Pole SHOULD be 10 boxes high, but focus rect adds 0.5 on each side
 
                     lowestX = (int)x_resolution;
                     highestX = 0;
@@ -194,23 +202,26 @@ public class PipePoleTracker extends OpenCvPipeline {
                 // However each time the capture.read is run, it resizes "input" into the original resolution, SOOOOO
                 //this little thing is so the submat is retained without rerunning all the below stuff
                 if (levelString.equals("two") && level2Assignment == true) {
+                    focusRect2 = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 
                     //TODO - Another test of the system is to remove the submat assignment and see if it still works (leave input as is)
-                    input = input.submat(focusRect);
-                    inputMask = inputMask.submat(focusRect);
+                    input = input.submat(focusRect2);
+                    inputMask = inputMask.submat(focusRect2);
 
-                    x_resolution = input.cols();
-                    y_resolution = input.rows();
+                    x_resolution = focusRect2.width;
+                    y_resolution = focusRect2.height;
                 }
 
                 if (levelString.equals("two") && level2Assignment == false && focusRect != null) {
+                    focusRect2 = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
+
                     //TODO (potential fix) if it's some how focusRect, try re-declaring focusRect here with lowest/highestX/Y
                     //TODO Another another test is run the submat code, and get ride of all the calculations to see if the assigment is right
-                    inputMask = inputMask.submat(focusRect);
-                    input = input.submat(focusRect);
+                    input = input.submat(focusRect2);
+                    inputMask = inputMask.submat(focusRect2);
 
-                    x_resolution = input.cols(); //TODO Maybe swap this so it reads out the height and width of focus rect instead
-                    y_resolution = input.rows();
+                    x_resolution = focusRect2.width;
+                    y_resolution = focusRect2.height;
 
                     box_width = (int) (x_resolution / gridX);
                     box_height = (int) (y_resolution / gridY);
@@ -642,6 +653,9 @@ public class PipePoleTracker extends OpenCvPipeline {
 //                        focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 //                        Imgproc.rectangle(inputOriginal, focusRect, red, 2);
 
+
+
+
                     }
 
 
@@ -665,8 +679,8 @@ public class PipePoleTracker extends OpenCvPipeline {
 //                x_resolution = input.cols();
 
 
-                input = input.submat(focusRect);
-                inputMask = inputMask.submat(focusRect);
+//                input = input.submat(focusRect);
+//                inputMask = inputMask.submat(focusRect);
 
                 percentColor = (Core.countNonZero(inputMask))/focusRect.area();
 
@@ -687,6 +701,8 @@ public class PipePoleTracker extends OpenCvPipeline {
 
 
         focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
+
+
         Imgproc.rectangle(inputOriginal, focusRect, red, 2);
 
         focusRectWidth = focusRect.width;
@@ -707,13 +723,14 @@ public class PipePoleTracker extends OpenCvPipeline {
         inputMask.release();
         inputMaskOriginal.release();
         inputHSV.release();
+
 //        inputOriginal.release();
 
-        x_resolution = matsGrid[0][0].cols();
-        y_resolution = matsGrid[0][0].rows();
+//        x_resolution = matsGrid[0][0].cols();
+//        y_resolution = matsGrid[0][0].rows();
 
 
-        return matsGrid[0][0];
+        return input;
     }
 
 
