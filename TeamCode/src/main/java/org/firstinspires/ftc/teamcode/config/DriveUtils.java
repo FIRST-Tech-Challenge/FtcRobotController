@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class DriveUtils {
 
-
+    private static String position = "";
     /**
      * Logs data.
      *
@@ -20,6 +20,15 @@ public class DriveUtils {
     public static void logData(String caption, String text) {
         telemetry.addData(caption, text);
         telemetry.update();
+    }
+
+    public static void setPosition(String positionChange) {
+        position = positionChange;
+    }
+
+    public static String getPosition()
+    {
+        return position;
     }
 
     /**

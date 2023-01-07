@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import static org.firstinspires.ftc.teamcode.config.DriveUtils.getPosition;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.auto.SkystoneDetector;
 import org.firstinspires.ftc.teamcode.config.BaseOpMode;
+import org.firstinspires.ftc.teamcode.config.DriveUtils;
 import org.firstinspires.ftc.teamcode.config.Hardware2;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -19,12 +22,13 @@ public class AutoMode extends BaseOpMode {
     int width = 320;
     int height = 240;
     // store as variable here so we can access the location
-    SkystoneDetector detector = new SkystoneDetector(width);
+    SleeveDetection detector = new SleeveDetection();
     OpenCvCamera phoneCam;
 
     @Override
     public void runOpMode() {
-        waitForStart();
+        robot.initTeleOpIMU(hardwareMap);
+
         // robot logic...
 
         // https://github.com/OpenFTC/EasyOpenCV/blob/master/examples/src/main/java/org/openftc/easyopencv/examples/InternalCameraExample.java
@@ -38,16 +42,28 @@ public class AutoMode extends BaseOpMode {
         phoneCam.setPipeline(detector);
         // Remember to change the camera rotation
         phoneCam.startStreaming(width, height, OpenCvCameraRotation.SIDEWAYS_LEFT);
-
+        waitForStart();
         //...
-        while (opModeIsActive()) {
-            SkystoneDetector.SkystoneLocation location = detector.getLocation();
-            if (location != SkystoneDetector.SkystoneLocation.NONE) {
 
-            } else {
-                // Grab the skystone
+            String position = getPosition();
+            if (position == "center") {
+                DriveUtils.encoderDrive(this, 1, -36, -36, 7);
+                // Drives forward to go into the middle parking area
+                //DriveUtils.encoderDrive(this, 0.5, 10, 10, 7);
+            } else if (position == "right") {
+                // Move Left
+                DriveUtils.encoderStrafe(this,0.4,27,5);
+                // Strafes left
+                DriveUtils.encoderDrive(this, 0.4, -30, -30, 5);
+                // Drives forward to go into the left parking area
+            } else if (position == "left") {
+                // Move Right
+                DriveUtils.encoderStrafe(this, 0.4, -27, 5);
+                //Strafes Right
+                DriveUtils.encoderDrive(this, 0.4, -30, -30, 5 );
+                // Drives forward to go into the left parking area
             }
-        }
+
 
         // more robot logic...
     }
