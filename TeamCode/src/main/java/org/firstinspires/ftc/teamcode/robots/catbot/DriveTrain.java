@@ -66,10 +66,10 @@ class DriveTrain {
         double r = Math.hypot(strafe, forward);
         double robotAngle = Math.atan2(forward, strafe) - Math.PI / 4;
         double rightX = turn;
-        powerBackLeft = r * Math.cos(robotAngle) + rightX;
-        powerFrontRight = r * Math.sin(robotAngle) - rightX;
-        powerFrontLeft = r * Math.sin(robotAngle) + rightX;
-        powerBackRight = r * Math.cos(robotAngle) - rightX;
+        powerFrontLeft = r * Math.cos(robotAngle) - rightX;
+        powerFrontRight = r * Math.sin(robotAngle) + rightX;
+        powerBackLeft = r * Math.sin(robotAngle) - rightX;
+        powerBackRight = r * Math.cos(robotAngle) + rightX;
         motorFrontLeft.setPower(powerFrontLeft);
         motorFrontRight.setPower(powerFrontRight);
         motorBackLeft.setPower(powerBackLeft);
