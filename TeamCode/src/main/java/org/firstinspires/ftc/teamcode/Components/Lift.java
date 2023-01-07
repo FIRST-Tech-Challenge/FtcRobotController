@@ -40,7 +40,7 @@ public class Lift {
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    private double[] coneStack = {400, 290, 200, 80, 0};
+    private double[] coneStack = {340,240,145,25,0};
     private int stackLevel = 0;
     private double lastStackTime =0;
 
@@ -323,6 +323,7 @@ public class Lift {
             }
             op.telemetry.addData("stackLevel", stackLevel);
             setLiftTarget(coneStack[stackLevel]);
+//            setLiftTarget(coneStack[stackLevel]);
             lastStackTime=op.getRuntime();
         }
     }
