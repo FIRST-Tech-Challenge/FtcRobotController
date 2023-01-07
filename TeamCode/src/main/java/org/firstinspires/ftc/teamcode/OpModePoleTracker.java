@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.PipePoleTracker.getBoxBL_X;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getBoxBL_Y;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getBoxHeight;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getBoxWidth;
+import static org.firstinspires.ftc.teamcode.PipePoleTracker.getCenterX;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getHighestX;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getHighestY;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getLevel1Assigment;
@@ -20,6 +21,8 @@ import static org.firstinspires.ftc.teamcode.PipePoleTracker.getRectWidth;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getXResolution;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getYResolution;
 
+import static org.firstinspires.ftc.teamcode.Variables.*;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -29,12 +32,22 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name="PoleTracker", group="A")
-public class OpModePoleTracker extends LinearOpMode {
+public class OpModePoleTracker extends DriveMethods {
     String level = "one";
     int levelCounter = 1;
 
+    //The unit here is pixels
+    int targetX;
+    int errorX;
+    int multiplierX = 1/75;
+    double alignPowerAdded;
+
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode(){
+
+        initMotorsBlue();
+        calibrateNavXIMU();
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
@@ -66,6 +79,14 @@ public class OpModePoleTracker extends LinearOpMode {
 
         while(opModeIsActive()){
 
+            errorX = targetX - getCenterX();
+
+            alignPowerAdded = errorX*multiplierX;
+
+            motorFL.setPower(alignPowerAdded);
+            motorBL.setPower(alignPowerAdded);
+            motorFR.setPower(-alignPowerAdded);
+            motorBR.setPower(-alignPowerAdded);
 
             if(gamepad2.a && getLevel2Capable()){
                 levelCounter = 2;
@@ -83,6 +104,11 @@ public class OpModePoleTracker extends LinearOpMode {
                 level = "one";
             }
 
+
+
+
+
+
             telemetry.addLine("Current Level: " + getLevelString());
             telemetry.addLine("Level1 Assigment: " + getLevel1Assigment());
             telemetry.addLine("Level2 Assignment : " + getLevel2Assigment());
@@ -96,6 +122,7 @@ public class OpModePoleTracker extends LinearOpMode {
             telemetry.addLine("Rectangle Min Height: " + getMinRectHeight());
             telemetry.addLine("Box Width: " + getBoxWidth());
             telemetry.addLine("Box Height: " + getBoxHeight());
+            telemetry.addLine("Center X: " + getCenterX());
             telemetry.addLine("LowestX: " + getLowestX());
             telemetry.addLine("HighestX: " + getHighestX());
             telemetry.addLine("LowestY: " + getLowestY());

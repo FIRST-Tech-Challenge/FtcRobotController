@@ -533,6 +533,7 @@ public class PipePoleTracker extends OpenCvPipeline {
                         Imgproc.ellipse(inputOriginal, new RotatedRect(objectCenters[i], new Size(8, 8), 180), yellow, Imgproc.FILLED);
                     }
 
+
                     System.out.println("Objects' Centers: " + Arrays.toString(objectCenters));
                     System.out.println("Objects' Size: " + Arrays.toString(objectSizes));
                     System.out.println(objects);
@@ -540,13 +541,14 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                     //Find the biggest object and add a blue dot just to track it
                     int indexOfBiggest = 0;
-                    int largestSize = 0;
                     for (int i = 0; i < objects.size(); i++) {
                         if (objectSizes[i] > largestSize) {
                             largestSize = objectSizes[i];
                             indexOfBiggest = i;
                         }
                     }
+
+                    centerX = (int)objectCenters[indexOfBiggest].x;
 
                     Imgproc.ellipse(inputOriginal, new RotatedRect(objectCenters[indexOfBiggest], new Size(8, 8), 180), blue, Imgproc.FILLED);
 
@@ -626,10 +628,13 @@ public class PipePoleTracker extends OpenCvPipeline {
                 System.out.println("--------------------highestY " + highestY);
                 System.out.println("focusRect.x: " + focusRect.x);
 
-
 //
 
-            } //This is level 3 below. It expands the focusRect vertically, then reads the percent of color in the total box.
+            }
+            //There are 4 requirements for level3: level2 is true, robot is aligned, robot is close enough, and the imu has recorded a value
+
+
+            //This is level 3 below. It expands the focusRect vertically, then reads the percent of color in the total box.
             else if (levelString.equals("three")){
 
                 percentColor = 0;
@@ -762,6 +767,10 @@ public class PipePoleTracker extends OpenCvPipeline {
 
     public static boolean getLevel2Assigment(){
         return level2Assignment;
+    }
+
+    public static int getCenterX(){
+        return centerX;
     }
 
 

@@ -62,7 +62,7 @@ public class Variables {
     public static final int highHeight = 4200;
 
 
-    /**OpenCV Variables please don't touch
+    /**OpenCV Variables please don't touch!!
      */
 
     public static int lowestX;
@@ -81,6 +81,8 @@ public class Variables {
     public static int minimumHeight;
     public static int box_width = 0;
     public static int box_height = 0;
+    public static int centerX;
+    public static int largestSize = 0;
 
     public static int boxBL_x;
     public static int boxBL_y;
@@ -95,6 +97,7 @@ public class Variables {
     public static boolean level2 = false;
     public static boolean level2Assignment = false;
     public static boolean level3 = false;
+    public static boolean imuRecorded = false;
 
 
     public static Rect[][] rectanglesGrid = new Rect[gridY][gridX];
@@ -105,6 +108,8 @@ public class Variables {
     public static int[][] centersXDraw = new int[gridY][gridX];
     public static int[][] centersY = new int[gridY][gridX];
     public static int[][] centersYDraw = new int[gridY][gridX];
+
+
 
 
     // Grbber #1 Clamp: 0.5, Release: 0.75
