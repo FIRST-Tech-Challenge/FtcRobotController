@@ -39,7 +39,9 @@ public class AutonomousRight extends AutonomousBase {
     // The can/should be tweaked to suite the specific robot drivetrain.
     static final boolean DRIVE_Y = true;    // Drive forward/backward
     static final boolean DRIVE_X = false;   // Drive right/left (not DRIVE_Y)
-    boolean cameraInitialized = false;
+    boolean lowCameraInitialized = false;
+    boolean backCameraInitialized = false;
+    boolean frontCameraInitialized = false;
 
 //  double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
@@ -63,33 +65,16 @@ public class AutonomousRight extends AutonomousBase {
         telemetry.addData("State", "Initializing webcam (please wait)");
         telemetry.update();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+        // To add front camera back, need to update containers to 3.
         int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
                 .splitLayoutForMultipleViewports(
                         cameraMonitorViewId, //The container we're splitting
-                        3, //The number of sub-containers to create
+                        2, //The number of sub-containers to create
                         OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
 
-        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam Front"), viewportContainerIds[1]);
-        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineFront = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0, blueAlliance, false);
-                webcamFront.setPipeline(pipelineFront);
-                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-        webcamFront.showFpsMeterOnViewport(false);
-
-        webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam Back"), viewportContainerIds[2]);
+        webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Back"), viewportContainerIds[0]);
         webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -99,6 +84,7 @@ public class AutonomousRight extends AutonomousBase {
                         false, false, 160.0, blueAlliance, false);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                backCameraInitialized = true;
             }
 
             @Override
@@ -110,12 +96,7 @@ public class AutonomousRight extends AutonomousBase {
         webcamBack.showFpsMeterOnViewport(false);
 
         webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Low"), viewportContainerIds[0]);
-//        webcamLow.openCameraDevice();
-//        pipelineLow = new PowerPlaySuperPipeline(true, false,
-//                !blueAlliance, blueAlliance, 160.0, blueAlliance, true);
-//        webcamLow.setPipeline(pipelineLow);
-//        webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                "Webcam Low"), viewportContainerIds[1]);
         webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -125,7 +106,7 @@ public class AutonomousRight extends AutonomousBase {
                         !blueAlliance, blueAlliance, 160.0, blueAlliance, true);
                 webcamLow.setPipeline(pipelineLow);
                 webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                cameraInitialized = true;
+                lowCameraInitialized = true;
             }
 
             @Override
@@ -136,7 +117,32 @@ public class AutonomousRight extends AutonomousBase {
         });
         webcamLow.showFpsMeterOnViewport(false);
 
-        while(!cameraInitialized) {
+        /*
+        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Front"), viewportContainerIds[2]);
+        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineFront = new PowerPlaySuperPipeline(false, true,
+                        false, false, 160.0, blueAlliance, false);
+                webcamFront.setPipeline(pipelineFront);
+                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                frontCameraInitialized = true;
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
+        webcamFront.showFpsMeterOnViewport(false);
+         */
+
+        // To add front camera, need to add checking for frontCameraInitialized.
+        while(! (lowCameraInitialized && backCameraInitialized)) {
             sleep(100);
         }
         telemetry.addData("State", "Webcam Initialized");
