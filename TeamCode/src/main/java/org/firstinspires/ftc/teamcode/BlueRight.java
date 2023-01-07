@@ -178,37 +178,49 @@ public class BlueRight extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeRightwithcrane(1,1750,-1,2100);
-            move(.5,630);
+            strafeLeftwithcrane(1,1950,-1,2300);
+            //crane2(1,-7600);
+            move(.5,-330);
             sleep(100);
             intake(-1,1300);
-            move(-.5,330);
-            strafeRightwithcrane(1,500,1,1500);
-            moveandspin(-.8,800,1,589);
-            craneinput(600);
+            //new
+            move(.5,300);
+            strafeLeftwithcrane(1,600,1,1000);//500
+            gyroTurning(0);
+            sleep(1000);
+            moveandspin(.5,980,1,1000);///410
+            stopMotors();
+            //spin2(-1,1000);
+            move(.2,150);
+            craneinput(500);
             Left.setPower(.3);
-            moveandspin(.8,800,-1,0);
-            strafeLeftwithcrane(1,500,-1,2000);
-            move(.5,330);
+            crane(-1, 650);
+            moveandspin(.8,-1000,-1,1000);
+            strafeRightwithcrane(1,680,-1,1950);
+            move(.5,-360);
             intake(-1,1300);
+            move(.5,330);
+
 
             switch (location){
                 case 0:
-                    strafeLeft(.8,500);
+                    strafeRight(1,800);
+                    move(.4,300);
                     break;
                 case 1:
-                    strafeLeft(.8,500);
-                    move(.6,500);
-                    strafeLeft(.5,300);
+                    strafeRight(1,900);
+                    move(.6,1000);
+                    strafeRight(.5,300);
                     break;
                 case 2:
-                    strafeLeft(.8,500);
+                    strafeRight(1,800);
+                    move(.4,300);
                     break;
-
                 case 3:
-                    strafeLeft(1,700);
-                    move(-.6,500);
-                    strafeLeft(.5,300);
+                    strafeRight(1,900);
+                    gyroTurning(0);
+                    move(.6,-1000);
+                    strafeRight(.5,300);
                     break;
             }
         }
@@ -237,95 +249,69 @@ public class BlueRight extends LinearOpMode {
             telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
         }
 
-        public boolean gyroTurning ( double targetAngle){
-            frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            boolean foundAngle;
-            foundAngle = false;
-            while (!foundAngle) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                double currentAngle = angles.firstAngle;
-                telemetry.addData("Angle", currentAngle);
-                telemetry.addData("targetangle", targetAngle);
-                telemetry.update();
-                if (angles.firstAngle >= targetAngle - 0.1 && angles.firstAngle <= targetAngle + 0.1) {
-                    frontLeft.setPower(0);
-                    frontRight.setPower(0);
-                    backLeft.setPower(0);
-                    backRight.setPower(0);
-                    foundAngle = true;
-                    sleep(1000);
-                    break;
+    public boolean gyroTurning(double targetAngle) {
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        boolean foundAngle;
+        foundAngle = false;
+        while (!foundAngle) {
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            double currentAngle = angles.firstAngle;
+            telemetry.addData("Angle", currentAngle);
+            telemetry.addData("targetangle", targetAngle);
+            telemetry.update();
+            if (angles.firstAngle >= targetAngle - 0.1 && angles.firstAngle <= targetAngle + 0.1) {
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
+                foundAngle = true;
+                sleep(1000);
+                break;
 
-                } else if (angles.firstAngle >= targetAngle + 0.5) {
-                    if (angles.firstAngle <= targetAngle - 5) {
-                        frontLeft.setPower(0.2);
-                        frontRight.setPower(-0.2);
-                        backLeft.setPower(0.2);
-                        backRight.setPower(-0.2);
-                        foundAngle = false;
-                    } else {
-                        frontLeft.setPower(-0.2);
-                        frontRight.setPower(0.2);
-                        backLeft.setPower(-0.2);
-                        backRight.setPower(0.2);
-                        foundAngle = false;
-                    }
-                } else if (angles.firstAngle <= targetAngle - 0.5) {
-                    if (angles.firstAngle >= targetAngle + 5) {
-                        frontLeft.setPower(-0.2);
-                        frontRight.setPower(0.2);
-                        backLeft.setPower(-0.2);
-                        backRight.setPower(0.2);
-                        foundAngle = false;
-                    } else {
-                        frontLeft.setPower(.2);
-                        frontRight.setPower(-.2);
-                        backLeft.setPower(.2);
-                        backRight.setPower(-.2);
-                        foundAngle = false;
-                    }
+            } else if (angles.firstAngle >= targetAngle + 0.5) {
+                if (angles.firstAngle <= targetAngle - 5) {
+                    frontLeft.setPower(0.25);
+                    frontRight.setPower(-0.25);
+                    backLeft.setPower(0.25);
+                    backRight.setPower(-0.25);
+                    foundAngle = false;
+                } else {
+                    frontLeft.setPower(-0.25);
+                    frontRight.setPower(0.25);
+                    backLeft.setPower(-0.25);
+                    backRight.setPower(0.25);
+                    foundAngle = false;
+                }
+            } else if (angles.firstAngle <= targetAngle - 0.5) {
+                if (angles.firstAngle >= targetAngle + 5) {
+                    frontLeft.setPower(-0.25);
+                    frontRight.setPower(0.25);
+                    backLeft.setPower(-0.25);
+                    backRight.setPower(0.25);
+                    foundAngle = false;
+                } else {
+                    frontLeft.setPower(.25);
+                    frontRight.setPower(-.25);
+                    backLeft.setPower(.25);
+                    backRight.setPower(-.25);
+                    foundAngle = false;
                 }
             }
-            return foundAngle;
         }
+        return foundAngle;
+    }
 
-        public void stopMotors () {
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-        }
+    public void stopMotors() {
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+    }
 
-        public void move ( double power, int position){
-            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            frontRight.setTargetPosition(-position);
-            frontLeft.setTargetPosition(-position);
-            backRight.setTargetPosition(-position);
-            backLeft.setTargetPosition(-position);
-
-            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            frontRight.setPower(power);
-            frontLeft.setPower(power);
-            backRight.setPower(power);
-            backLeft.setPower(power);
-
-            while (frontLeft.isBusy() && opModeIsActive()) {
-
-            }
-
-        }
-    public void moveandspin(double power, int position,double powers, int positions) {
+    public void move(double power, int position) {
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -345,15 +331,41 @@ public class BlueRight extends LinearOpMode {
         frontLeft.setPower(power);
         backRight.setPower(power);
         backLeft.setPower(power);
-        spin(powers,positions);
+
         while (frontLeft.isBusy() && opModeIsActive()) {
 
         }
 
     }
+    public void moveandspin(double power, int position,double powers, int times) {
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontRight.setTargetPosition(-position);
+        frontLeft.setTargetPosition(-position);
+        backRight.setTargetPosition(-position);
+        backLeft.setTargetPosition(-position);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontRight.setPower(power);
+        frontLeft.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
+        spin2(powers,times);
+        while (frontLeft.isBusy() && opModeIsActive()) {
+
+        }
+    }
     public void craneinput(int time) {
         crane(1,time);
         intake(1,1000);
+        sleep(1500);
     }
 
     public void strafeLeftwithcrane(double power, int position,double powerc, int timec)  {
@@ -407,69 +419,69 @@ public class BlueRight extends LinearOpMode {
 
         }
     }
+    public void strafeLeft(double power, int position)  {
 
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        public void strafeLeft ( double power, int position) {
-            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setTargetPosition(-position);
+        frontLeft.setTargetPosition(position);
+        backRight.setTargetPosition(position);
+        backLeft.setTargetPosition(-position);
 
-            frontRight.setTargetPosition(-position);
-            frontLeft.setTargetPosition(position);
-            backRight.setTargetPosition(position);
-            backLeft.setTargetPosition(-position);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            frontRight.setPower(power);
-            frontLeft.setPower(power);
-            backRight.setPower(power);
-            backLeft.setPower(power);
-
-            while (frontLeft.isBusy() && opModeIsActive()) {
-
-            }
-
+        frontRight.setPower(power);
+        frontLeft.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
+        crane(-1,2100);
+        while (frontLeft.isBusy() && opModeIsActive()) {
         }
 
-        public void strafeRight ( double power, int position)  {
-            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    public void strafeRight(double power, int position)  {
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            frontRight.setTargetPosition(position);
-            frontLeft.setTargetPosition(-position);
-            backRight.setTargetPosition(-position);
-            backLeft.setTargetPosition(position);
+        frontRight.setTargetPosition(position);
+        frontLeft.setTargetPosition(-position);
+        backRight.setTargetPosition(-position);
+        backLeft.setTargetPosition(position);
 
-            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            frontRight.setPower(power);
-            frontLeft.setPower(power);
-            backRight.setPower(power);
-            backLeft.setPower(power);
+        frontRight.setPower(power);
+        frontLeft.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
 
-            while (frontLeft.isBusy() && opModeIsActive()) {
-
-            }
-        }
-
-        public void intake ( int direction, long time) {
-            Left.setPower(direction * 1);
-            sleep(time);
-            Left.setPower(0);
+        while (frontLeft.isBusy() && opModeIsActive()) {
 
         }
+    }
+
+    public void intake(int direction, long time)  {
+        Left.setPower(direction );
+        sleep(time);
+        Left.setPower(0);
+
+    }
+
 
     public void spin(double power, int position) {
+        telemetry.addData("spin", Spin.getCurrentPosition());
+        telemetry.update();
         Spin.setTargetPosition(position);
         Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Spin.setPower(power);
@@ -478,13 +490,28 @@ public class BlueRight extends LinearOpMode {
         }
     }
 
+    public void crane(double power, int time) {
+        Crane.setPower(power);
+        sleep(time);
+        Crane.setPower(0);
 
-        public void crane( double power, int time){
-            Crane.setPower(power);
-            sleep(time);
-            Crane.setPower(0);
+    }
+    public void crane2(double power, int position) {
+        Crane.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Crane.setTargetPosition(position);
+        Crane.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Crane.setPower(power);
+        while (Crane.isBusy()&&opModeIsActive()) {
 
         }
+        Crane.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public void spin2(double power, int time) {
+        Spin.setPower(power);
+        sleep(time);
+        Spin.setPower(0);
+
+    }
     }
 
 
