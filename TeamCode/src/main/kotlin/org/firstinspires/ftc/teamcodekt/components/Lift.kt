@@ -3,9 +3,8 @@ package org.firstinspires.ftc.teamcodekt.components
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.controller.PIDFController
 import com.arcrobotics.ftclib.hardware.motors.Motor
-import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.clamp
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.Telemetry
@@ -14,7 +13,6 @@ import kotlin.math.abs
 
 @Config
 object LiftConfig {
-@JvmStatic var TEST = 3
     @JvmField var P = 0.0115
     @JvmField var I = 0.0002
     @JvmField var D = 0.0002
@@ -24,15 +22,19 @@ object LiftConfig {
     @JvmField var LOW  = 737
     @JvmField var MID  = 1170
     @JvmField var HIGH = 1550
-    
+
     @JvmField var MANUAL_ADJUSTMENT_MULTI = 50.0
 }
 
-class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
-    private val liftMotor: DcMotorSimple
+class Lift {
+    private val liftMotor = hwMap<DcMotorSimple>(DeviceNames.LIFT_MOTOR)
+    
+    private val voltageScaler = VoltageScaler(hwMap)
+    
+    private val liftPID = PIDFController(LiftConfig.P, LiftConfig.I, LiftConfig.D, LiftConfig.F)
 
-    private val liftEncoder: Motor
-    private val liftPID: PIDFController
+    private val liftEncoder = Motor(hwMap, DeviceNames.LIFT_ENCODER)
+        .apply(Motor::resetEncoder)
 
     private var targetHeight = 0
 
@@ -41,16 +43,6 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
         set(height) {
             targetHeight = height.clamp(LiftConfig.ZERO, LiftConfig.HIGH)
         }
-
-    init {
-        liftMotor = hwMap(DeviceNames.LIFT_MOTOR)
-
-
-        liftEncoder = Motor(hwMap, DeviceNames.LIFT_ENCODER)
-        liftEncoder.resetEncoder()
-
-        liftPID = PIDFController(LiftConfig.P, LiftConfig.I, LiftConfig.D, LiftConfig.F)
-    }
 
     fun goToZero() {
         targetHeight = LiftConfig.ZERO
@@ -68,7 +60,7 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
         targetHeight = LiftConfig.HIGH
     }
 
-    fun update(telemetry: Telemetry) {
+    fun update() {
         val voltageCorrection = voltageScaler.voltageCorrection
 
         var correction =
@@ -83,5 +75,4 @@ class Lift(hwMap: HardwareMap, private val voltageScaler: VoltageScaler) {
     fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<Lift>) {
         telemetry.addData("Lift motor", dataSupplier(this))
     }
-
 }

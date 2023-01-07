@@ -6,18 +6,16 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction
 import com.qualcomm.robotcore.hardware.Gamepad
-import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.invoke
 import ftc.rogue.blacksmith.util.kt.maxMagnitudeAbs
 import ftc.rogue.blacksmith.util.kt.pow
-import ftc.rogue.blacksmith.util.kt.withDeadzone
-import ftc.rogue.blacksmith.util.withDeadzone
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.util.DataSupplier
 import java.util.*
 import kotlin.math.*
 
-class Drivetrain(hwMap: HardwareMap) {
+class Drivetrain {
     private val frontLeft  = hwMap<DcMotorEx>(DeviceNames.DRIVE_FL).apply { direction = Direction.REVERSE }
     private val frontRight = hwMap<DcMotorEx>(DeviceNames.DRIVE_FR)
     private val backLeft   = hwMap<DcMotorEx>(DeviceNames.DRIVE_BL).apply { direction = Direction.REVERSE }
@@ -34,9 +32,6 @@ class Drivetrain(hwMap: HardwareMap) {
 
     fun drive(gamepad: Gamepad, powerMulti: Double) {
         val (x, y, r) = gamepad.getDriveSticks()
-
-//        val x = _x.withDeadzone(.03, 1).withDeadzone<Float>(.03, -1)
-//        val y = _y.withDeadzone(.03, 1).withDeadzone<Float>(.03, -1)
 
         val theta = atan2(y, x)
         val power = hypot(x, y)
@@ -59,10 +54,10 @@ class Drivetrain(hwMap: HardwareMap) {
 
         val _powerMulti = if (!gamepad.isAnyJoystickTriggered()) 0.0 else powerMulti
 
-        powers.mapInPlace { ((it pow 3) * _powerMulti).withDeadzone(0.0125) }
+        powers.mapInPlace { (it pow 3) * _powerMulti }
 
         withEachMotor {
-            if (abs(powers[it] - lastPowers[it]) > 0.05) { // Caching motor powers may increase loop times?
+            if (abs(powers[it] - lastPowers[it]) > 0.005) { // Caching motor powers may increase loop times?
                 this.power = powers[it]
             }
         }

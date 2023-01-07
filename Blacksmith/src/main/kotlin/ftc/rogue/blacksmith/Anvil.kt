@@ -270,10 +270,10 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     @JvmOverloads
     fun addTemporalMarker(
-        offset: Double = 0.0,
+        offset: Number = 0.0,
         action: MarkerCallback
     ) = this.apply {
-        builderProxy.UNSTABLE_addTemporalMarkerOffset(offset, action)
+        builderProxy.UNSTABLE_addTemporalMarkerOffset(offset.toSec, action)
     }
 
     @JvmOverloads
@@ -281,7 +281,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         offset: Double = 0.0,
         action: MarkerCallback
     ) = this.apply {
-        builderProxy.UNSTABLE_addDisplacementMarkerOffset(offset, action)
+        builderProxy.UNSTABLE_addDisplacementMarkerOffset(offset.toSec, action)
     }
 
     fun addSpatialMarker(

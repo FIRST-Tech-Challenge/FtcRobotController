@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcodekt.components
 
 import com.qualcomm.hardware.rev.RevColorSensorV3
 import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rogue.blacksmith.BlackOp
+import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
@@ -13,24 +15,25 @@ abstract class BaseBotComponents {
     abstract val wrist: Wrist
     abstract val lift: Lift
 
-    fun updateComponents(telemetry: Telemetry) {
+    fun updateComponents() {
         claw.update()
         arm.update()
         wrist.update()
-        lift.update(telemetry)
+        lift.update()
     }
 }
 
-fun createTeleOpBotComponents(hwMap: HardwareMap, voltageScaler: VoltageScaler) =
-    TeleOpBotComponents(
+fun createTeleOpBotComponents(): TeleOpBotComponents {
+    return TeleOpBotComponents(
         hwMap(DeviceNames.COLOR_SENSOR),
-        Drivetrain(hwMap),
-        Claw(hwMap),
-        Intake(hwMap),
-        Arm(hwMap),
-        Wrist(hwMap),
-        Lift(hwMap, voltageScaler)
+        Drivetrain(),
+        Claw(),
+        Intake(),
+        Arm(),
+        Wrist(),
+        Lift()
     )
+}
 
 data class TeleOpBotComponents(
     val rcs: RevColorSensorV3,
@@ -42,15 +45,14 @@ data class TeleOpBotComponents(
     override val lift: Lift,
 ) : BaseBotComponents()
 
-fun createAutoBotComponents(hwMap: HardwareMap, voltageScaler: VoltageScaler) =
-    AutoBotComponents(
-        SampleMecanumDrive(hwMap),
-        Claw(hwMap),
-        Intake(hwMap),
-        Arm(hwMap),
-        Wrist(hwMap),
-        Lift(hwMap, voltageScaler),
-    )
+fun createAutoBotComponents() = AutoBotComponents(
+    SampleMecanumDrive(hwMap),
+    Claw(),
+    Intake(),
+    Arm(),
+    Wrist(),
+    Lift(),
+)
 
 data class AutoBotComponents(
     val drive: SampleMecanumDrive,

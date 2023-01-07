@@ -4,20 +4,24 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.Scheduler
+import ftc.rogue.blacksmith.units.GlobalUnits
 import ftc.rogue.blacksmith.util.bsmPose2d
 import ftc.rogue.blacksmith.util.kt.toIn
 import ftc.rogue.blacksmith.util.kt.toRad
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil
 
 @Autonomous
 class AnvilRightTestAuto : RogueBaseAuto() {
-    override fun execute() {
+    override fun executeOrder66() {
         val startPose = bsmPose2d(91, -159, 90)
         val startTraj = mainTraj(startPose)
+
+        waitForStart()
 
         Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
         Scheduler.launchOnStart(opmode = this) {
-            bot.updateComponents(mTelemetry)
+            bot.updateComponents()
             bot.drive.update()
             mTelemetry.update()
         }

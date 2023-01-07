@@ -14,16 +14,22 @@ class RogueCompOp : RogueBaseTele() {
         describeDriverControls()
     }
 
-    private fun describeDriverControls() = with(bot) {
-//        Listener { lift.height > LiftConfig.MID * 1.01 }
-//            .whileHigh { powerMulti /= 1.5 }
+    private fun describeDriverControls() = with(driver) {
+        dpad_up   .onRise(bot.lift::goToHigh)
+        dpad_down .onRise(bot.lift::goToZero)
+        dpad_right.onRise(bot.lift::goToMid)
+        dpad_left .onRise(bot.lift::goToLow)
 
-        driver.left_trigger.whileHigh {
-            powerMulti *= 0.8
+        left_trigger.whileHigh {
+            powerMulti = 0.8
         }
 
-        driver.right_trigger.whileHigh {
-            powerMulti *= 0.425
+        right_trigger.whileHigh {
+            powerMulti = 0.275
+        }
+
+        (right_trigger + left_trigger).whileHigh {
+            powerMulti = -0.1
         }
     }
 
@@ -59,16 +65,8 @@ class RogueCompOp : RogueBaseTele() {
 
         // -- MANUAL LIFT CONTROLS --
 
-//        codriver.right_bumper.whileHigh {
-//            lift.height += 8
-//        }
-//
-//        codriver.left_bumper.whileHigh {
-//            lift.height -= 8
-//        }
-
         codriver.right_stick_y(deadzone = .1).whileHigh {
-            lift.height += (codriver.right_stick_y() * 10).toInt()
+            lift.height += (-codriver.right_stick_y() * 10).toInt()
         }
     }
 }

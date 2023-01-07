@@ -2,9 +2,8 @@ package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.SimpleServo
-import com.arcrobotics.ftclib.kotlin.extensions.hardware.range
 import com.qualcomm.robotcore.hardware.HardwareMap
-import com.qualcomm.robotcore.hardware.Servo
+import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 
 @Config
 object ArmConfig {
@@ -19,7 +18,7 @@ object ArmConfig {
  * @param hwMap a [HardwareMap] object that contains information about the robot's hardware
  * @author KG
  */
-class Arm(hwMap: HardwareMap) {
+class Arm {
     /**
      * The servo that controls the arm. This is actually two servos acting like they are one.
      */

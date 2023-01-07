@@ -17,9 +17,6 @@ object GlobalUnits {
         private set
 
     init {
-        distance = DistanceUnit.CENTIMETERS
-        angle = AngleUnit.DEGREES
-        time = TimeUnit.SECONDS
         loadSavedUnits()
     }
 
@@ -44,7 +41,7 @@ object GlobalUnits {
         time = timeUnit
     }
 
-    private const val RES_SAVE_PATH = "blacksmith/units.properties"
+    private const val RES_SAVE_PATH = "bsm_units"
     private const val FULL_SAVE_PATH = "./TeamCode/src/main/res/raw/blacksmith/units.properties"
 
     private fun loadSavedUnits() {
@@ -54,9 +51,7 @@ object GlobalUnits {
         }
 
         try {
-            val ctx = AppUtil.getDefContext().applicationContext
-
-            AppUtil.getInstance().isDriverStation
+            val ctx = AppUtil.getDefContext().baseContext
 
             val id = ctx.resources.getIdentifier(RES_SAVE_PATH, "raw", ctx.packageName)
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcodekt.components
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.SimpleServo
 import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 
 @Config
 object ClawConfig {
@@ -18,7 +19,7 @@ object ClawConfig {
  * @param hwMap a [HardwareMap] object that contains information about the robot's hardware
  * @author KG
  */
-class Claw(hwMap: HardwareMap) {
+class Claw {
     private val clawServo = SimpleServo(hwMap, DeviceNames.CLAW_SERVO, 0.0, 180.0)
 
     private var targetPos = ClawConfig.CLOSE

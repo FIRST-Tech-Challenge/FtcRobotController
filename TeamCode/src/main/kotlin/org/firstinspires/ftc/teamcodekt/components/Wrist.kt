@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.SimpleServo
-import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 
 @Config
 object WristConfig {
@@ -11,7 +11,7 @@ object WristConfig {
     @JvmField var REST      = 0.5
 }
 
-class Wrist(hwMap: HardwareMap) {
+class Wrist {
     private val wristServo = SimpleServo(hwMap, DeviceNames.WRIST_SERVO, 0.0, 180.0)
 
     var wristPosition = 0.0

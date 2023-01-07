@@ -5,7 +5,11 @@ package ftc.rogue.blacksmith
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import kotlin.reflect.KClass
+import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rogue.blacksmith.util.kt.LateInitVal
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry
+import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
 /**
@@ -24,22 +28,15 @@ import kotlin.reflect.KProperty
  *  i like cars
  */
 abstract class BlackOp : LinearOpMode() {
-    /**
-     * A Telemetry object which logs to both the driver station and the dashboard.
-     */
     @JvmField
     protected val mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-    init {
-        _mTelemetry = mTelemetry
-    }
-
-    /**
-     * A shorthand for hardwareMap, because I'm lazy and also just looks a bit cleaner for
-     * longer declarations.
-     */
     @JvmField
     protected var hwMap = hardwareMap
+
+    init {
+        Companion.mTelemetry = this.mTelemetry
+    }
 
     /**
      * The method to override in place of runOpMode.
@@ -53,18 +50,44 @@ abstract class BlackOp : LinearOpMode() {
      */
     final override fun runOpMode() {
         Scheduler.reset()
+
         hwMap = hardwareMap
+        Companion.hwMap = hardwareMap
+
         Scheduler.emit(STARTING_MSG)
         go()
     }
 
     companion object {
-        private lateinit var _mTelemetry: MultipleTelemetry
+        /**
+         * A global telemetry holder, which logs to both the driver station and the dashboard.
+         *
+         * Is only assigned to a driver station telemetry when a BlackOp instance is initialized.
+         *
+         * **DO NOT CALL/USE DIRECTLY BEFORE A [BlackOp] INSTANCE IS INITIALIZED OR IT WON'T
+         * BE THE RIGHT TELEMETRY**
+         */
+        @JvmStatic
+        fun mTelemetry() = mTelemetry
+
+        @get:JvmSynthetic
+        var mTelemetry = telemetry
+            private set
 
         /**
-         * Allows for a global telemetry object, akin to a global logger.
+         * A global hardware map holder, and is also short for `hardwareMap`.
+         *
+         * Is only assigned to a hardware map when a BlackOp instance is initialized.
+         *
+         * **DO NOT CALL/USE DIRECTLY BEFORE A [BlackOp] INSTANCE IS INITIALIZED OR IT WON'T
+         * BE THE RIGHT HARDWARE MAP**
          */
-        fun mTelemetry() = _mTelemetry
+        @JvmStatic
+        fun hwMap() = hwMap
+
+        @get:JvmSynthetic
+        var hwMap by Delegates.notNull<HardwareMap>()
+            private set
 
         /**
          * The starting message emitted when runOpMode() is called on a BlackOp.

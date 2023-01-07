@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcodekt.components
 
+import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.motors.CRServo
 import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 
-//@Config
+@Config
 object IntakeConfig {
     @JvmField var INTAKING = -1.0
     @JvmField var REVERSED =  1.0
@@ -16,7 +18,7 @@ object IntakeConfig {
  * @param hwMap a [HardwareMap] object that contains information about the robot's hardware
  * @author KG
  */
-class Intake(hwMap: HardwareMap?) {
+class Intake {
     private val intakeServo = CRServo(hwMap, DeviceNames.INTAKE_SERVO)
 
     /**

@@ -19,11 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation
 import kotlin.math.max
 
 abstract class RogueBaseAuto : BlackOp() {
-    protected val frontSensor by createOnGo<ShortRangeSensor> { hwMap }
-
-    protected val bot by evalOnGo {
-        createAutoBotComponents(hwMap, VoltageScaler(hwMap))
-    }
+    protected val bot by evalOnGo(::createAutoBotComponents)
 
     protected var camera by LateInitVal<OpenCvCamera>()
 
@@ -32,25 +28,20 @@ abstract class RogueBaseAuto : BlackOp() {
     protected var numFramesWithoutDetection = 0
 
     // Left and right is from orientation of the front of the bot
-    protected val shortLeftSensor by createOnGo<ShortRangeSensor>({ hwMap }, { DeviceNames.SHORT_RANGE_SENSOR_LEFT })
-    protected val shortRightSensor by createOnGo<ShortRangeSensor>({ hwMap }, { DeviceNames.SHORT_RANGE_SENSOR_RIGHT })
-//    protected val longLeftSensor by createOnGo<LongRangeSensor>({ hwMap }, { DeviceNames.LONG_RANGE_SENSOR_LEFT })
-//    protected val longRightSensor by createOnGo<LongRangeSensor>({ hwMap }, { DeviceNames.LONG_RANGE_SENSOR_RIGHT })
+    protected val shortLeftSensor by createOnGo<ShortRangeSensor> { DeviceNames.SHORT_RANGE_SENSOR_LEFT }
+    protected val shortRightSensor by createOnGo<ShortRangeSensor> { DeviceNames.SHORT_RANGE_SENSOR_RIGHT }
+    protected val longLeftSensor by createOnGo<LongRangeSensor> { DeviceNames.LONG_RANGE_SENSOR_LEFT }
+    protected val longRightSensor by createOnGo<LongRangeSensor> { DeviceNames.LONG_RANGE_SENSOR_RIGHT }
 
-    abstract fun execute()
+    abstract fun executeOrder66()
 
     final override fun go() {
         PhotonCore.enable()
-        initHardware()
-        execute()
+        initCamera()
+        executeOrder66()
     }
 
-    private fun initHardware() {
-
-
-        //***************************
-        // Set up camera and pipeline
-        //***************************
+    private fun initCamera() {
         val cameraMonitorViewId = hardwareMap.appContext.resources.getIdentifier(
             "cameraMonitorViewId",
             "id",
@@ -74,6 +65,7 @@ abstract class RogueBaseAuto : BlackOp() {
             }
         })
     }
+
     fun waitForStartWithVision(): Int {
         var lastIntID = -1
 
@@ -119,7 +111,7 @@ abstract class RogueBaseAuto : BlackOp() {
             val (x, y, heading) = bot.drive.localizer.poseEstimate
 
             val pos: DoubleArray = poleDetector.getRepositionCoord(
-                x.toCm(), y.toCm(), heading, frontSensor.distance,
+                x.toCm(), y.toCm(), heading, shortLeftSensor.distance,
             )
 
             // Do not move more than 15 cm in any one direction!
