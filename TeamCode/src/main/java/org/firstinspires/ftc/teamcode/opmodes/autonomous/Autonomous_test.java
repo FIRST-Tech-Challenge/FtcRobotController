@@ -84,8 +84,12 @@ public class Autonomous_test extends LinearOpMode
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        //setting the motors into the necessary mode for using the encoders
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -160,8 +164,8 @@ public class Autonomous_test extends LinearOpMode
             runToPosition(-1500, -1500, -1500, -1500);
 
             while ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < 0) {
-                leftLift.setPower(1.0);
-                rightLift.setPower(1.0);
+                leftLift.setPower(0.0);
+                rightLift.setPower(0.0);
             }
 
             telemetry.addLine("parked!");
