@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="Auto: SkyStone Detector")
+@Autonomous(name="DO THIS AUTO")
 public class AutoMode extends BaseOpMode {
     Hardware2 robot = new Hardware2(true);
     // Handle hardware stuff...
@@ -24,6 +24,14 @@ public class AutoMode extends BaseOpMode {
     // store as variable here so we can access the location
     SleeveDetection detector = new SleeveDetection();
     OpenCvCamera phoneCam;
+    public void autoScoring() {
+        DriveUtils.encoderDrive(this, 0.4, -27,-27,5);
+        DriveUtils.encoderStrafe(this,0.4,-13.5,5);
+        DriveUtils.encoderClaw(this,-0.6,1825,5);
+        DriveUtils.encoderClaw(this,0.5,-1825,10);
+
+
+    }
 
     @Override
     public void runOpMode() {
@@ -42,26 +50,22 @@ public class AutoMode extends BaseOpMode {
         phoneCam.setPipeline(detector);
         // Remember to change the camera rotation
         phoneCam.startStreaming(width, height, OpenCvCameraRotation.SIDEWAYS_LEFT);
+        DriveUtils.moveClaw(this,"Close");
         waitForStart();
         //...
 
             String position = getPosition();
             if (position == "center") {
-                DriveUtils.encoderDrive(this, 1, -36, -36, 7);
+                autoScoring();
+                DriveUtils.encoderStrafe(this,0.4,13.5,5);
                 // Drives forward to go into the middle parking area
                 //DriveUtils.encoderDrive(this, 0.5, 10, 10, 7);
             } else if (position == "right") {
-                // Move Left
-                DriveUtils.encoderStrafe(this,0.4,27,5);
-                // Strafes left
-                DriveUtils.encoderDrive(this, 0.4, -30, -30, 5);
-                // Drives forward to go into the left parking area
+                autoScoring();
+                DriveUtils.encoderStrafe(this,0.4,40.5,5);
             } else if (position == "left") {
-                // Move Right
-                DriveUtils.encoderStrafe(this, 0.4, -27, 5);
-                //Strafes Right
-                DriveUtils.encoderDrive(this, 0.4, -30, -30, 5 );
-                // Drives forward to go into the left parking area
+                autoScoring();
+                DriveUtils.encoderStrafe(this,0.4,-13.5,5);
             }
 
 

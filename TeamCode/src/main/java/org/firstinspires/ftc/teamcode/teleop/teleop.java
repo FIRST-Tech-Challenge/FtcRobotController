@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import static java.lang.Thread.sleep;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -63,13 +64,15 @@ public class teleop extends BaseOpMode {
                 robot.getRightClaw().setPosition(-0.3);
             }
 
-            if (gamepad2.left_trigger > 0) {
-                robot.getArm().setPower(1.0);
-            } else if (gamepad2.right_trigger > 0) {
-                robot.getArm().setPower(-0.05);
+            if (gamepad2.left_trigger > 0.2) {
+                robot.getArm().setPower(-0.7);
+            } else if (gamepad2.right_trigger > 0.3) {
+                robot.getArm().setPower(0.5);
             } else {
                 robot.getArm().setPower(0);
             }
+
+
             if (gamepad1.x) {
                 robot.frontRightMotor.setPower(1);
                 robot.backRightMotor.setPower(-1);
