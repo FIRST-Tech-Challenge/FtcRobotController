@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires;
 
 import androidx.annotation.NonNull;
 
@@ -33,7 +33,6 @@ public class MecanumDrive {
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
         motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -41,22 +40,20 @@ public class MecanumDrive {
 
     };
 
-    public void xInput(double input) {
-
-    }
-    public void yInput(double input) {
-        blPower += -input;
-        flPower += -input;
-        brPower += -input;
-        frPower += -input;
-    }
-
+    /**
+     *
+     * Moves the robot
+     *
+     * @param x Magnitude to strafe
+     * @param y Magnitude to move
+     * @param theta Magnitude to turn
+     */
     public void move(double x, double y, double theta) {
 
-        blPower = -x -y + theta;
-        flPower = x -y + theta;
-        brPower = x -y - theta;
-        frPower = -x -y - theta;
+        blPower = -x -y + theta * 1.5;
+        flPower = x -y + theta * 1.5;
+        brPower = x -y - theta * 1.5;
+        frPower = -x -y - theta * 1.5;
 
         double coefficient = Math.max(Math.max(blPower, flPower), Math.max(brPower, frPower));
         coefficient = Math.max(1.0, Math.abs(coefficient));
@@ -66,6 +63,13 @@ public class MecanumDrive {
         motorBR.setPower(brPower / coefficient);
         motorFR.setPower(frPower / coefficient);
 
+    }
+
+    public void setPower(double num) {
+        motorBL.setPower(num);
+        motorFL.setPower(num);
+        motorBR.setPower(num);
+        motorFR.setPower(num);
     }
 
 
