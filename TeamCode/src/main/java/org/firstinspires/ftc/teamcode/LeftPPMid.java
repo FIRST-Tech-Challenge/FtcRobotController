@@ -19,15 +19,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 //test
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name = "LeftPowerPlaySleeveCone", group = "")
-public class LeftPowerPlaySleeveCone extends LinearOpMode {
+@Autonomous(name = "LeftPPMid", group = "")
+public class LeftPPMid extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -186,7 +185,6 @@ public class LeftPowerPlaySleeveCone extends LinearOpMode {
                 case 1:
                     // Far left
                     beginAuto();
-                    moveUtils.goStraight(-40,MAX_SPEED,MIN_SPEED,ACCEL);
                     telemetry.addData("Strafing", "case 1");
                     telemetry.update();
                     done=true;
@@ -196,9 +194,6 @@ public class LeftPowerPlaySleeveCone extends LinearOpMode {
                     telemetry.addData("Executing", "case 2");
                     telemetry.update();
                     beginAuto();
-                    moveUtils.strafeBuddy(8);
-                    moveUtils.goStraight(-16,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(-4);
                     done=true;
                     break;
                 case 3:
@@ -217,16 +212,23 @@ public class LeftPowerPlaySleeveCone extends LinearOpMode {
     }
     private void beginAuto() throws InterruptedException {
         moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCW(90);
-        moveUtils.goStraight(24,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCCW(90);
-        moveUtils.goStraight(22,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCW(45);
-        actuatorUtils.armPole(3);
-        moveUtils.goStraight(9,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.strafeBuddy(-20);
+        moveUtils.strafeBuddy(-2);
+        moveUtils.goStraight(-2,MIN_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.goStraight(26,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.strafeBuddy(6);
+        moveUtils.turnCW(43);
+        actuatorUtils.armPole(1);
+        moveUtils.goStraight(6.3f,MIN_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
-        moveUtils.goStraight(-5,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCW(45);
+        moveUtils.goStraight(-6,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCCW(40);
+        moveUtils.strafeBuddy(-8f);
+        moveUtils.strafeBuddy(4);
+        moveUtils.goStraight(16,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.rotate(45,.3);
+        moveUtils.goStraight(5,MAX_SPEED,MIN_SPEED,ACCEL);
+
 
     }
 
