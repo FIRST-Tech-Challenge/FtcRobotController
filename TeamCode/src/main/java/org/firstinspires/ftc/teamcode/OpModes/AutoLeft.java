@@ -63,6 +63,8 @@ public class AutoLeft extends LinearOpMode {
 //        robot.vSlider.setPower(0.6);
 
         robot.claw.setPosition(0.6);
+        robot.SwingArmToPosition(0.6,65);
+        robot.swingArm.setPower(robot.swingArmHoldingPower);
 
 
         /** Wait for the game to begin */
@@ -71,6 +73,7 @@ public class AutoLeft extends LinearOpMode {
         telemetry.addData("BL Motor Encoder", robot.BLMotor.getCurrentPosition());
         telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
         telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
+        telemetry.addData("VSlider Encoder ", robot.vSlider.getCurrentPosition());
         telemetry.update();
         waitForStart();
 
@@ -121,6 +124,10 @@ public class AutoLeft extends LinearOpMode {
                         break;
 
                     case CycleThreeCones:
+                        //Drive to the stack
+                        robot.DriveToPosition(0.8, -15, 0);
+                        robot.DriveToPosition(0.8, 0, 60);
+                        robot.turnRobotToAngle(90);
                         for(int i = 0; i < 4; i++) {
                             CycleCone();
                         }
@@ -186,36 +193,38 @@ public class AutoLeft extends LinearOpMode {
     }
 
     public void DeliverPreLoad() {
-        //First swing the arm up and go to the pole.
+        /** First swing the arm up and go to the pole. **/
+        //Close claw and swing the arm
         robot.claw.setPosition(1);
         robot.SwingArmToPosition(1, 65);
         robot.swingArm.setPower(robot.swingArmHoldingPower);
-        robot.DriveToPosition(0.8, 15, 45);
-        //Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider.
-        robot.MoveSliderToPosition(0.6, 500);
-        robot.claw.setPosition(0);
+        //Drive to the pole
+        robot.DriveToPosition(0.8, -35, 65);
+        /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
+        //Moves the slider to the right height
+        robot.MoveSliderToPosition(0.5, 1000);
+        //Swings the arm down
         robot.SwingArmToPosition(1, 20);
-        robot.claw.setPosition(1);
-        sleep(500);
+        //Opens and closes the claw to drop the cone
         robot.claw.setPosition(0);
+        sleep(500);
+        robot.claw.setPosition(1);
+        //Swings the arm back up
         robot.SwingArmToPosition(1, 65);
         robot.swingArm.setPower(robot.swingArmHoldingPower);
+        //lowers the slider
         robot.MoveSliderToPosition(0.6, 0);
     }
 
     public void CycleCone(){
         /** First go to the stack of cones and grab a cone **/
-        //Drive to the stack
-        robot.DriveToPosition(0.8, -15, 0);
-        robot.DriveToPosition(0.8, 0, 60);
-        robot.turnRobotToAngle(90);
         //Open the claw and swing the arm down
-        robot.claw.setPosition(1);
+        robot.claw.setPosition(0);
         robot.SwingArmToPosition(1,20);
         //Drive forward slightly
         robot.DriveToPosition(0.6, 0, 25);
         //close the claw and grab onto the cone
-        robot.claw.setPosition(0);
+        robot.claw.setPosition(1);
         /** Now drive to the medium pole **/
         //Drive to the pole and face it
         robot.DriveToPosition(0.7,0,-60);
@@ -223,7 +232,7 @@ public class AutoLeft extends LinearOpMode {
         robot.stopDriveMotors();
         /** Now deliver the cone **/
         //Move the slider to the right height and swing down
-        robot.MoveSliderToPosition(0.6, 500);
+        robot.MoveSliderToPosition(0.6, -5500);
         robot.SwingArmToPosition(1, 20);
         //Open and close claw
         robot.claw.setPosition(1);
@@ -234,6 +243,9 @@ public class AutoLeft extends LinearOpMode {
         robot.swingArm.setPower(robot.swingArmHoldingPower);
         //lower slider
         robot.MoveSliderToPosition(0.6, 0);
-
+        //Moves back to the stack
+        robot.turnRobotToAngle(90);
+        robot.stopDriveMotors();
+        robot.DriveToPosition(0.7,0,60);
     }
 }
