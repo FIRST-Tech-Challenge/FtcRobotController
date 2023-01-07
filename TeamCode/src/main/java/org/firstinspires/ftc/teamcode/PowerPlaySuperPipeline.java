@@ -541,7 +541,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             maxL = Math.max(avgRL, Math.max(avgBL, avgGL));
             maxR = Math.max(avgRR, Math.max(avgBR, avgGR));
 
-            allianceMax = Math.max(allianceAvgRR, allianceAvgBR);
+            allianceMax = Math.max(allianceAvgRR, Math.max(allianceAvgBR, Math.max(allianceAvgRL, allianceAvgBL)));
 
             // Draw a circle on the detected team shipping element
             markerL.x = (beaconDetectLeftTl.x + beaconDetectLeftBr.x) / 2;
@@ -665,32 +665,25 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
             Imgproc.rectangle(input, allianceDetectLeftTl, allianceDetectLeftBr, new Scalar(0, 0, 255), 1);
             if(allianceMax == allianceAvgRR) {
-                Imgproc.circle(input, allianceMarkerR, 5, new Scalar(255, 0, 0), -1);
+                Imgproc.circle(input, allianceMarkerR, 5, new Scalar(0, 0, 255), -1);
                 isBlueAlliance = true;
+                isLeft = false;
             } else if(allianceMax == allianceAvgBR) {
-                Imgproc.circle(input, allianceMarkerR, 5, new Scalar(0, 255, 0), -1);
-                signalZoneR = 2;
-            } else if(maxR == avgBR) {
+                Imgproc.circle(input, allianceMarkerR, 5, new Scalar(255, 0, 0), -1);
+                isBlueAlliance = false;
+                isLeft = false;
+            } else if(allianceMax == allianceAvgRL) {
                 Imgproc.circle(input, markerR, 5, new Scalar(0, 0, 255), -1);
-                signalZoneR = 3;
-            } else {
-                signalZoneR = 3;
-            }
-            Imgproc.rectangle(input, allianceDetectRightTl, allianceDetectRightBr, new Scalar(0, 0, 255), 1);
-            if(maxR == avgRR) {
+                isBlueAlliance = true;
+                isLeft = true;
+            } else if(allianceMax == allianceAvgBL) {
                 Imgproc.circle(input, markerR, 5, new Scalar(255, 0, 0), -1);
-                signalZoneR = 1;
-            } else if(maxR == avgGR) {
-                Imgproc.circle(input, markerR, 5, new Scalar(0, 255, 0), -1);
-                signalZoneR = 2;
-            } else if(maxR == avgBR) {
-                Imgproc.circle(input, markerR, 5, new Scalar(0, 0, 255), -1);
-                signalZoneR = 3;
+                isBlueAlliance = false;
+                isLeft = true;
             } else {
-                signalZoneR = 3;
+                isBlueAlliance = true;
+                isLeft = true;
             }
-
-
             input.copyTo(finalAutoImage);
 
         }
