@@ -209,16 +209,17 @@ public class RightPowerPlaySleeveCone extends LinearOpMode {
     }
     private void beginAuto() throws InterruptedException {
         moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCCW(82);
+        moveUtils.turnCCW(85);
         moveUtils.goStraight(10,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCW(78);
+        moveUtils.turnCW(85);
         moveUtils.goStraight(12,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCCW(50);
+        moveUtils.turnCCW(44);
         actuatorUtils.armPole(3);
-        moveUtils.goStraight(4.1f,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.goStraight(3f,MAX_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
         moveUtils.goStraight(-5,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCCW(40);
+        moveUtils.turnCCW(44);
+        moveUtils.strafeBuddy(6);
     }
 
     void composeTelemetry() {
