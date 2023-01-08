@@ -16,7 +16,7 @@ import teamcode.v1.constants.LiftConstants
 
 @TeleOp
 open class KTeleOp() : KOpMode(photonEnabled = true) {
-    private val robot by lazy { Robot(Odometry.lastPose) }
+    private val robot by lazy { Robot() }
 
     override fun mInit() {
         Logger.config = LoggerConfig.DASHBOARD_CONFIG
@@ -49,7 +49,7 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     }
 
     private fun scheduleTest() {
-        driver.leftBumper.onPress(InstantCmd({robot.arm.setPos(135.0)}, robot.arm))
+        driver.leftBumper.onPress(InstantCmd({robot.arm.setPos(ArmConstants.lowPos)}, robot.arm))
         driver.rightBumper.onPress(InstantCmd({robot.lift.setPos(14.5)}, robot.lift))
 //        driver.leftBumper.onPress(InstantCmd({robot.claw.setPos(ClawConstants.openPos)}))
 //        driver.rightBumper.onPress(InstantCmd({robot.claw.setPos(ClawConstants.closePos)}))

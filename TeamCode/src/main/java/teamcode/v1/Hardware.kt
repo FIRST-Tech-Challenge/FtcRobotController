@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
 
-class Hardware(startPose: Pose) {
+class Hardware() {
     val fl = MotorFactory("fl")
         .reverse
         .brake
@@ -65,37 +65,13 @@ class Hardware(startPose: Pose) {
         .withPositionControl(
             PIDGains(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD),
             FFGains(kS = ArmConstants.kS, kV = ArmConstants.kV, kA = ArmConstants.kA, kCos = ArmConstants.kCos),
-            allowedPositionError = ArmConstants.allowedPositionError
+            allowedPositionError = ArmConstants.allowedPositionError,
+            disabledPosition = ArmConstants.disabledPosition
         )
         .build()
 
     val clawServo = KServo("Claw")
         .startAt(ClawConstants.closePos)
-
-//    val distanceSensor = KDistanceSensor("distanceSensor")
-
-//    val lights = KServo("Lights")
-
-    private val leftEncoder = EncoderFactory(ticksPerUnit)
-        .revEncoder
-        .build(fl)
-    private val rightEncoder = EncoderFactory(ticksPerUnit)
-        .reverse
-        .revEncoder
-        .build(bl)
-    private val auxEncoder = EncoderFactory(ticksPerUnit)
-        .reverse
-        .revEncoder
-        .build(fr)
-
-    val odometry = KThreeWheelOdometry(
-        leftEncoder,
-        rightEncoder,
-        auxEncoder,
-        OdoConstants.TRACK_WIDTH,
-        OdoConstants.PERP_TRACKER,
-        startPose
-    )
 
     @Config
     companion object {
