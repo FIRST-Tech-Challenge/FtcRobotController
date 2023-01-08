@@ -15,8 +15,8 @@ public class actuatorUtils {
     private static Servo gripper = null; //declare gripper
     //test
     private static int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
-    private static int minEncode = 125; //Minimum so string on arm lift doesn't break and position 0
-    private static int pos1 = 1850; //Low pole height
+    private static int minEncode = 300; //Minimum so string on arm lift doesn't break and position 0
+    private static int pos1 = 1750; //Low pole height
     private static int pos2 = 3000; //Med pole height
     private static int cone1 = 800; //Height for top cone in stack
     private static int cone2 = 700; //Height for second cone in stack
@@ -83,13 +83,14 @@ public class actuatorUtils {
 
     //Method to open gripper
     public static void gripperOpen(boolean liftDown) throws InterruptedException {
+        sleep(500);
+        gripper.setPosition(.2); //Position to open gripper
         if (liftDown == true) {
             sleep(1000);
             arm.setTargetPosition(minEncode); //Lowers arm to min pos.
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
         }
-        gripper.setPosition(.2); //Position to open gripper
     }
 
     //Method to move arm to pole heights
@@ -117,6 +118,14 @@ public class actuatorUtils {
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
             sleep(2500);
+        }
+        else if(desiredHeight==4)
+        {
+            arm.setTargetPosition(minEncode);
+            //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(armPower);
+            sleep(3000);
         }
     }
 
