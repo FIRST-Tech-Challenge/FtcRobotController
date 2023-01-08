@@ -64,7 +64,6 @@ public abstract class AutonomousBase extends LinearOpMode {
     double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
 
-    boolean     turretFacingFront = false; // Set when the turret goes from front or back
     boolean     blueAlliance    = true;  // Can be toggled during the init phase of autonomous
     int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
     int         fiveStackCycles = 1;     // How many we want to attempt to collect/score? (adjustable during init)
@@ -158,12 +157,14 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     /*  AUTO: Drive at specified angle and power while turning at specified power.     */
     /*---------------------------------------------------------------------------------*/
-    void driveAndRotateTurretAngle(double drivePower, double turretPower) {
+    void driveAndRotateTurretAngle(double drivePower, double turretPower, boolean turretFacingFront) {
         double frontRight, frontLeft, rearRight, rearLeft, maxPower, xTranslation, yTranslation;
         double turretAngle = robot.turretAngle;
 
         // Correct the angle for the turret being in the back.
-        turretAngle = AngleWrapDegrees( turretAngle + 180.0 );
+        if(!turretFacingFront) {
+            turretAngle = AngleWrapDegrees(turretAngle + 180.0);
+        }
 
         yTranslation = drivePower * Math.cos(toRadians(turretAngle));
         xTranslation = drivePower * Math.sin(toRadians(turretAngle));
@@ -228,7 +229,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 robot.stopMotion();
                 robot.setTurretPower(0);
             } else {
-                driveAndRotateTurretAngle(drivePower, turretPower);
+                driveAndRotateTurretAngle(drivePower, turretPower, false);
             }
 
             theLocalPole = pipelineBack.getDetectedPole();

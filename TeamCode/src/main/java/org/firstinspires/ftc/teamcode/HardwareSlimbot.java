@@ -545,7 +545,6 @@ public class HardwareSlimbot
 
     /*--------------------------------------------------------------------------------------------*/
     public void setTurretPower(double power) {
-        // TODO: Find the power to turret angle relationship, AKA positive power rotates to positive angle?
         // Positive turret power
         if(power >= 0) {
             if(turretAngle < TURRET_ANGLE_MAX) {
