@@ -1156,7 +1156,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         // We can put whatever logic in here we want to determine the poleness
         // This seems backwards on the camera mounted low.
-        return ((rect.height > 120) && (rect.width > 10) && (rect.height > rect.width));
+        return ((rect.height > 80) && (rect.width > 10) && (rect.height > rect.width));
 //        return true;
     }
 
