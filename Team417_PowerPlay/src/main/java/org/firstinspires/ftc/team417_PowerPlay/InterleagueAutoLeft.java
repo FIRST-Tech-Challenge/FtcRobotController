@@ -37,21 +37,6 @@ public class InterleagueAutoLeft extends BaseAutonomous {
         Trajectory right = drive.trajectoryBuilder(traject5.end(), false)
                 .strafeRight(12)
                 .build();
-        Trajectory traject6 = drive.trajectoryBuilder(traject5.end(), false)
-                .strafeRight(19)
-                .build();
-        Trajectory traject7 = drive.trajectoryBuilder(traject6.end(), false)
-                .forward(32)
-                .build();
-        Trajectory traject8 = drive.trajectoryBuilder(traject7.end().plus(new Pose2d(0,0, Math.toRadians(-90))), false)
-                .forward(22)
-                .build();
-        Trajectory traject9 = drive.trajectoryBuilder(traject8.end(), false)
-                .forward(4)
-                .build();
-        Trajectory traject10 = drive.trajectoryBuilder(traject9.end(), false)
-                .back(20)
-                .build();
 
         while (!isStarted() && !isStopRequested()) {
             detectAprilTag();
@@ -60,25 +45,17 @@ public class InterleagueAutoLeft extends BaseAutonomous {
 
         grabberServo.setPosition(0.4);
         drive.followTrajectory(traject1);
-        while (Math.abs(motorArm.getCurrentPosition() - GRD_JUNCT_ARM_POSITION) > 10 && opModeIsActive()) {
-            motorArm.setPower((GRD_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) / 400.0);
-        }
-        motorArm.setPower(0.01);
+        raiseAndHoldArmGroundJunctionPosition();
 
         drive.followTrajectory(traject2);
         drive.followTrajectory(traject3);
 
-        motorArm.setPower(0);
-        while ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION - 50)) > 20) && opModeIsActive()) {
-            motorArm.setPower((MID_JUNCT_ARM_POSITION - 50 - motorArm.getCurrentPosition()) / 600.0);
-
-        }
-        motorArm.setPower(0.005);
+        raiseAndHoldArmMiddleJunctionPosition();
         drive.followTrajectory(traject4);
         motorArm.setPower(0);
         sleep(1300);
         // open servo
-        grabberServo.setPosition(0.8);
+        grabberServo.setPosition(GRABBER_OPEN);
         drive.followTrajectory(traject5);
 
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
@@ -88,29 +65,5 @@ public class InterleagueAutoLeft extends BaseAutonomous {
         } else {
             drive.followTrajectory(right);
         }
-
-        //drive.followTrajectory(traject5);
-
-        /*
-        drive.followTrajectory(traject6);
-        drive.followTrajectory(traject7);
-        drive.turn(Math.toRadians(-90));
-        drive.followTrajectory(traject8);
-        while ((Math.abs(motorArm.getCurrentPosition() - 400) > 20) && opModeIsActive()) {
-            motorArm.setPower((400 - motorArm.getCurrentPosition()) / 500.0);
-        }
-        motorArm.setPower(0.005);
-        drive.followTrajectory(traject9);
-        grabberServo.setPosition(GRABBER_CLOSED);
-        sleep(500);
-        while ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION)) > 20) && opModeIsActive()) {
-            motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) / 600.0);
-
-        }
-        motorArm.setPower(0.005);
-        drive.followTrajectory(traject10);
-        motorArm.setPower(0);*/
-
-
     }
 }

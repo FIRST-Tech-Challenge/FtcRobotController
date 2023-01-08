@@ -26,9 +26,11 @@ package org.firstinspires.ftc.team417_PowerPlay;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 @Autonomous (name="RIGHT SIDE")
-public class AutoBlueRightSide extends BaseAutonomous {
+public class League2RightSideAuto extends BaseAutonomous {
 
     @Override
     public void runOpMode() {
@@ -78,25 +80,18 @@ public class AutoBlueRightSide extends BaseAutonomous {
         /* Update the telemetry */
         updateTelemetryAfterStart();
 
-        grabberServo.setPosition(0.4);
-        while (Math.abs(motorArm.getCurrentPosition() - -200) > 10) {
-            motorArm.setPower((-200 - motorArm.getCurrentPosition()) / 1000.0);
-        }
-        motorArm.setPower(-0.01);
+        grabberServo.setPosition(GRABBER_CLOSED);
+        raiseAndHoldArmGroundJunctionPosition();
 
         drive.followTrajectory(traject2);
         drive.followTrajectory(traject3);
 
-        motorArm.setPower(0);
-        while (Math.abs(motorArm.getCurrentPosition() - -900) > 10) {
-            motorArm.setPower((-900 - motorArm.getCurrentPosition()) / 1000.0);
-        }
-        motorArm.setPower(-0.005);
+        raiseAndHoldArmLowJunctionPosition();
         drive.followTrajectory(traject4);
         motorArm.setPower(0);
         sleep(800);
         // open servo
-        grabberServo.setPosition(0.8);
+        grabberServo.setPosition(GRABBER_OPEN);
         drive.followTrajectory(traject5);
 
 
@@ -110,10 +105,5 @@ public class AutoBlueRightSide extends BaseAutonomous {
             drive.followTrajectory(correctRight);
         }
 
-        // You wouldn't have this in your autonomous, this is just to prevent the sample from ending
-        while (opModeIsActive()) {
-            sleep(20);
-        }
-        // When we implement the rest of autonomous we can delete line the while loop
     }
 }

@@ -36,6 +36,10 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int RIGHT = 3;
     AprilTagDetection tagOfInterest = null;
 
+    static final double HOLD_ARM_AT_MID_POS_POWER = 0.005;
+    static final double HOLD_ARM_AT_GRD_POS_POWER = 0.01;
+    static final double ARM_RAISE_POWER = 1.0 / 400.0;
+
     public void initializeAuto() {
         initializeHardware();
         grabberServo.setPosition(GRABBER_HALF_CLOSED);
@@ -114,5 +118,30 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+
+    public void raiseAndHoldArmGroundJunctionPosition() {
+        motorArm.setPower(0);
+        while (Math.abs(motorArm.getCurrentPosition() - GRD_JUNCT_ARM_POSITION) > 10 && opModeIsActive()) {
+            motorArm.setPower((GRD_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
+        }
+        motorArm.setPower(HOLD_ARM_AT_GRD_POS_POWER);
+    }
+
+    public void raiseAndHoldArmMiddleJunctionPosition() {
+        motorArm.setPower(0);
+        while ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION)) > 10) && opModeIsActive()) {
+            motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
+
+        }
+        motorArm.setPower(HOLD_ARM_AT_MID_POS_POWER);
+    }
+
+    public void raiseAndHoldArmLowJunctionPosition() {
+        motorArm.setPower(0);
+        while (Math.abs(motorArm.getCurrentPosition() - LOW_JUNCT_ARM_POSITION) > 10) {
+            motorArm.setPower((LOW_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
+        }
+        motorArm.setPower(HOLD_ARM_AT_MID_POS_POWER);
     }
 }
