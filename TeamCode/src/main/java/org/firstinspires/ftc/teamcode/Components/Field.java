@@ -496,19 +496,7 @@ public class Field {
                                                 , () -> {compiledTrajectory(false); System.gc();})
                                         .setReversed(reversals.get(0))
                                         .splineTo(target, endTangent)
-                                        .addTemporalMarker(() -> {
-                                            if (locker.tryLock()) {
-                                                try {
-                                                    locker.lock();
-                                                    logger.log("/RobotLogs/GeneralRobot", "cleared");
-                                                    fullMovement.clear();
-                                                    reversals.clear();
-                                                    autoTele = false;
-                                                } finally {
-                                                    locker.unlock();
-                                                }
-                                            }
-                                        });
+                                        .addTemporalMarker(() -> compiledTrajectory(false));
                                 roadrun.followTrajectorySequenceAsync(traj.build());
                                 traj = null;
                             } else {
@@ -533,19 +521,7 @@ public class Field {
                                     .addDisplacementMarker(target.distTo(startPos.vec()) * 0.8
                                             , () -> compiledTrajectory(false))
                                     .splineTo(target, endTangent)
-                                    .addTemporalMarker(() -> {
-                                        if (locker.tryLock()) {
-                                            try {
-                                                locker.lock();
-                                                logger.log("/RobotLogs/GeneralRobot", "cleared");
-                                                fullMovement.clear();
-                                                reversals.clear();
-                                                autoTele = false;
-                                            } finally {
-                                                locker.unlock();
-                                            }
-                                        }
-                                    });
+                                    .addTemporalMarker(() -> compiledTrajectory(false));
                             roadrun.followTrajectorySequenceAsync(traj.build());
                             traj = null;
                         }

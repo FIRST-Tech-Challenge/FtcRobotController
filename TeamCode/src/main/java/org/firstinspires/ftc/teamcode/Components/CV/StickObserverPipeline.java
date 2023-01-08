@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.CV;
 
-import static java.lang.Math.PI;
+import static java.lang.Math.atan;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class StickObserverPipeline extends OpenCvPipeline {
-    double centerOfPole = 0, poleSize = 0, degPerPix = 22.5/320, widTimesDist = 16.007*58;
+    double centerOfPole = 0, poleSize = 0, degPerPix = 22.5/320, widTimesDist = 16.007*58, focalLength = 715;
     ArrayList<double[]> frameList;
     public static double strictLowS = 140;
     public static double strictHighS = 255;
@@ -66,11 +66,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
         Mat finalMask = new Mat();
         //color in scaledThresh with HSV(for showing result)
         Core.bitwise_and(mat, mat, finalMask, scaledThresh);
-
-        Mat edges = new Mat();
-        //detect edges of finalMask
-        Imgproc.Canny(scaledThresh, edges, 100, 200);
-
 
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
@@ -132,7 +127,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
         scaledMask.release();
         mat.release();
         masked.release();
-        edges.release();
         thresh.release();
         hierarchy.release();
         finalMask.release();
@@ -166,6 +160,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
     }
 
     public double[] poleRotatedPolarCoord() {
-        return new double[]{degPerPix * centerOfPole() * PI / 180, widTimesDist / poleSize()};
+        return new double[]{atan(centerOfPole()/focalLength), widTimesDist / poleSize()};
     }
 }

@@ -86,10 +86,11 @@ public class RFMotorkPTuner extends LinearOpMode {
         for(int i=0;i<v2.size();i++){
             logger.logNoTime("/RobotLogs/GeneralRobot", "" + v2.get(i)[0] + "," + v2.get(i)[1]);
         }
-//        g(x) + v(0.5)*f(x)
-//        g(x)/v(0.5) + f(x)
-//        g(x)*(1/v(0.5)(x) - 1/v(1.0)(x))
-//        g(x)
+//        g(x) + v(0.5)(x)*f(x) og data
+//        g(x)/v(0.5)(x) + f(x) data divide by velocity
+//        repeat process for v(1.0)
+//        g(x)*(1/v(0.5)(x) - 1/v(1.0)(x)) subtract the two
+//        g(x) divide by that thing
         while (rfMotor.getCurrentPosition() > minTick) {
             rfMotor.setPower(-0.3);
         }

@@ -7,6 +7,7 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -54,20 +55,20 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
                 .build();
         TrajectorySequence pickupTrajectory2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
-                .splineToSplineHeading(new Pose2d(-45.5, 10, toRadians(180)), toRadians(180))
+//                .splineToSplineHeading(new Pose2d(-45.5, 10, toRadians(180)), toRadians(180))
                 .splineToSplineHeading(new Pose2d(-62.8, 10.5, toRadians(180)), toRadians(180))
                 .build();
         TrajectorySequence parkTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
                 .splineToSplineHeading(new Pose2d(-36, 33, toRadians(90)), toRadians(90))
                 .build();
         TrajectorySequence park1trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
-                .splineToSplineHeading(new Pose2d(-45, 13, toRadians(180)), toRadians(180))
-                .setReversed(true)
-                .splineToSplineHeading(new Pose2d(-13, 13, toRadians(180)), toRadians(0))
+                .setReversed(false)
+                .splineToConstantHeading(new Vector2d(-35,7), toRadians(50))
+                .splineTo(new Vector2d(-10,12), toRadians(0))
                 .build();
 
         TrajectorySequence park2trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
-                .splineToSplineHeading(new Pose2d(-35, 13, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-35.5,11,toRadians(180)), toRadians(90))
                 .build();
 
         Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dropX, dropY, dropA))
@@ -82,6 +83,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
         }
         resetRuntime();
         dummyP = robot.cv.getPosition();
+        robot.cv.stopCamera();
 
         if (isStopRequested()) return;
 
@@ -90,12 +92,12 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
             logger.loopcounter++;
             robot.followTrajectorySequenceAsync(initialtrajectory);
             robot.raiseLiftArmToOuttake(true);
-            robot.delay(0.9);
+            robot.delay(0.7);
             robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.waitForFinish();
             robot.openClaw(false);
             robot.cycleLiftArmToCycle(true);
-            robot.delay(1.5);
+            robot.delay(1.0);
             robot.wideClaw();
             robot.liftToPosition((int) stackPos[0]);
             robot.followTrajectorySequenceAsync(pickupTrajectory);
@@ -103,13 +105,14 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
             robot.closeClaw(false);
             robot.waitForFinish();
             robot.raiseLiftArmToOuttake(true);
-            robot.delay(0.8);
-            robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.followTrajectorySequenceAsync(dropTrajectory);
+            robot.delay(0.5);
+            robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.waitForFinish();
-            robot.openClaw();
-            robot.waitForFinish();
+            robot.liftToPosition((int) (LIFT_HIGH_JUNCTION.getValue()-100),false);
+            robot.openClaw(false);
             for (int i = 0; i < 4; i++) {
+                robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue(),false);
                 robot.cycleLiftArmToCycle(true);
                 robot.delay(1);
                 robot.wideClaw();
@@ -124,24 +127,22 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
                 robot.liftToPosition(LIFT_HIGH_JUNCTION);
                 robot.followTrajectorySequenceAsync(dropTrajectory);
                 robot.waitForFinish();
+                robot.liftToPosition((int) (LIFT_HIGH_JUNCTION.getValue()-100),false);
                 robot.openClaw();
                 robot.waitForFinish();
             }
-//            robot.followTrajectorySequenceAsync(parkTrajectory);
-//            robot.delay(1);
-            robot.delay(0.7);
-            robot.liftToPosition(0);
-            robot.delay(0.7);
+            robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue(),false);
             robot.lowerLiftArmToIntake(true);
+            robot.delay(1);
+            robot.wideClaw();
+            robot.delay(0.5);
+            robot.liftToPosition(0);
 
             if (dummyP == 1) {
-                robot.delay(0.7);
                 robot.followTrajectorySequenceAsync(park1trajectory);
             } else if (dummyP == 3) {
-                robot.delay(0.7);
                 robot.followTrajectoryAsync(park3trajectory);
             } else {
-                robot.delay(0.7);
                 robot.followTrajectorySequenceAsync(park2trajectory);
             }
 
