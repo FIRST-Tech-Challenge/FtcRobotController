@@ -71,10 +71,7 @@ public class IronGiantOpMode extends OpMode {
 
     @Override
     public void init_loop() {
-        if (!calibrate && calibrateOn)
-            calibrate = robot.elevatorNClaw.calib();
-        else
-            aprilTagInitLoop();
+        aprilTagInitLoop();
         telemetry.update();
 
     }
@@ -83,17 +80,16 @@ public class IronGiantOpMode extends OpMode {
         telemetryOutput();
         if(!testing){
             telemetry.addData("should auton be running? \t", autonomous.hasBehaviors());
-            if(autonomous.hasBehaviors()) {
+            if (!calibrate && calibrateOn)
+                calibrate = robot.elevatorNClaw.calib();
+            else if(autonomous.hasBehaviors()) {
                 autonomous.runBehaviors();
             }
             else {
                 robot.driveTrain.mechanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 //                robot.driveTrain.tankDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
                 robot.elevatorNClaw.clawMove(gamepad1.left_bumper ? 1 : gamepad1.right_bumper ? -1 : 0);
-                if (!calibrate && calibrateOn)
-                    calibrate = robot.elevatorNClaw.calib();
-                else
-                    robot.elevatorNClaw.elevatorMove(gamepad1.left_trigger > DEADZONE ? -gamepad1.left_trigger : gamepad1.right_trigger > DEADZONE ? gamepad1.right_trigger : 0);
+                robot.elevatorNClaw.elevatorMove(gamepad1.left_trigger > DEADZONE ? -gamepad1.left_trigger : gamepad1.right_trigger > DEADZONE ? gamepad1.right_trigger : 0);
                 if (gamepad1.dpad_down) {
                     calibrate = false;
                 }
