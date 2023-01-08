@@ -1132,9 +1132,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         // A list we'll be using to store the contours we find
         List<MatOfPoint> contoursList = new ArrayList<>();
+        Mat heightRestricted = input.submat(0, 120, 0, 319);
 
         // Convert the input image to YCrCb color space, then extract the Cb channel
-        Imgproc.cvtColor(input, cyMat, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(heightRestricted, cyMat, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(cyMat, cyMat, CB_CHAN_IDX);
 
         // Threshold the Cb channel to form a mask, then run some noise reduction
@@ -1147,6 +1148,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // We do draw the contours we find, but not to the main input buffer.
         Imgproc.drawContours(contoursOnPlainImageMat, contoursList, -1, BLUE, CONTOUR_LINE_THICKNESS, 8);
 
+        heightRestricted.release();
         return contoursList;
     }
 
