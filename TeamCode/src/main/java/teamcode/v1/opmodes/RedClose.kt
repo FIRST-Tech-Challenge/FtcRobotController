@@ -92,7 +92,7 @@ class RedClose : AutoOpMode() {
             ),
             ClawCmds.ClawOpenCmd(robot.claw),
             WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -30.0),
+            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0, -30.0),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
@@ -110,7 +110,7 @@ class RedClose : AutoOpMode() {
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
             WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -35.0),
+            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0, -35.0),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
@@ -128,7 +128,7 @@ class RedClose : AutoOpMode() {
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
             WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -40.0),
+            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0, -40.0),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
@@ -146,7 +146,7 @@ class RedClose : AutoOpMode() {
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
             WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -100.0),
+            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0,-100.0),
             WaitCmd(0.5),
             ChooseCmd(
                 GVFCmd(robot.drive,

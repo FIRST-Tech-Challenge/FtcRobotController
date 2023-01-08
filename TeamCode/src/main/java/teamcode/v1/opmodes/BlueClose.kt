@@ -103,7 +103,7 @@ class BlueClose : AutoOpMode() {
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -36.5),
+            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0, -36.5),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath, 0.6, 15.0, 4.0, 0.3, 5.0, 10.0)
@@ -121,7 +121,7 @@ class BlueClose : AutoOpMode() {
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -41.5),
+            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0, -41.5),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath2, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
@@ -139,7 +139,7 @@ class BlueClose : AutoOpMode() {
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -46.5),
+            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0, -46.5),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath2, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
@@ -157,7 +157,7 @@ class BlueClose : AutoOpMode() {
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -51.5),
+            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0, -51.5),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath3, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
@@ -175,7 +175,7 @@ class BlueClose : AutoOpMode() {
             WaitCmd(0.5),
             ClawCmds.ClawOpenCmd(robot.claw),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -56.5),
+            HomeSequence(robot.lift, robot.claw, robot.arm,0.0,  -56.5),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(intakePath3, 0.6, 20.0, 4.0, 0.3, 5.0, 10.0)
@@ -202,7 +202,7 @@ class BlueClose : AutoOpMode() {
 //                    GVFCmd(robot.drive, SimpleGVFController(leftPath, 0.5, 20.0, 6.0, 0.5, 5.0, 10.0)),
 //                ) { tagOfInterest!!.id == MIDDLE },
 //            ) { tagOfInterest!!.id == RIGHT },
-            HomeSequence(robot.lift, robot.claw, robot.arm, -100.0)
+            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0, -100.0)
         )
         mainCommand.schedule()
     }

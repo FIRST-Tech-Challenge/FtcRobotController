@@ -21,8 +21,8 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     override fun mInit() {
         Logger.config = LoggerConfig.DASHBOARD_CONFIG
         scheduleDrive()
-//        scheduleCycling()
-        scheduleTest()
+        scheduleCycling()
+//        scheduleTest()
     }
 
     private fun scheduleDrive() {
@@ -31,21 +31,21 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
             driver.leftStick,
             driver.rightStick,
             0.9,
-            0.7,
+            0.9,
             0.5,
         )
     }
 
     private fun scheduleCycling() {
-        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, ArmConstants.homePos))
+        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, ArmConstants.intervalPos, ArmConstants.groundPos))
         driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.highPos, LiftConstants.highPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
         driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos))
         driver.x.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.groundPos, LiftConstants.groundPos))
         driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
         driver.b.onPress(ClawCmds.ClawOpenCmd(robot.claw))
-        gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(-17.0)}))
-        gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(250.0)}))
+        gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(2.0)}))
+        gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(10.0)}))
     }
 
     private fun scheduleTest() {
@@ -53,7 +53,7 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
         driver.rightBumper.onPress(InstantCmd({robot.lift.setPos(14.5)}, robot.lift))
 //        driver.leftBumper.onPress(InstantCmd({robot.claw.setPos(ClawConstants.openPos)}))
 //        driver.rightBumper.onPress(InstantCmd({robot.claw.setPos(ClawConstants.closePos)}))
-        driver.a.onPress(InstantCmd({robot.arm.setPos(-50.0)}, robot.arm))
+        driver.a.onPress(InstantCmd({robot.arm.setPos(-60.0)}, robot.arm))
         driver.b.onPress(InstantCmd({robot.lift.setPos(0.0)}, robot.lift))
     }
 

@@ -90,7 +90,7 @@ class ParkRedFar : AutoOpMode() {
             WaitCmd(1.0),
             ClawCmds.ClawOpenCmd(robot.claw),
             WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, -100.0),
+            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0, -100.0),
             WaitCmd(0.5),
             ChooseCmd(
                 GVFCmd(

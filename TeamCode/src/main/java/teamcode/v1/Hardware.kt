@@ -70,7 +70,7 @@ class Hardware(startPose: Pose) {
         .build()
 
     val clawServo = KServo("Claw")
-        .startAt(ClawConstants.openPos)
+        .startAt(ClawConstants.closePos)
 
 //    val distanceSensor = KDistanceSensor("distanceSensor")
 

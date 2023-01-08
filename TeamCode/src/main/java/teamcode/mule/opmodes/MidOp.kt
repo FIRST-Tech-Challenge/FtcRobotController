@@ -25,12 +25,12 @@ open class MidOp : OpMode() {
 
     private fun liftControl() {
         if(gamepad1.a) {
-            liftLead.power = 1.0
-            lift2.power = -1.0
+            liftLead.power = 0.5
+            lift2.power = -0.5
         }
         else if (gamepad1.b) {
-            liftLead.power = -0.5
-            lift2.power = 0.5
+            liftLead.power = -1.0
+            lift2.power = 1.0
         }
         else {
             liftLead.power = 0.0
