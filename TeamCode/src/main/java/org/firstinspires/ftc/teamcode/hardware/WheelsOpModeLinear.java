@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -51,7 +51,7 @@ import org.firstinspires.ftc.teamcode.hardware.Wheels;
  */
 
 @TeleOp(name="Wheels Basic: Linear OpMode", group="Linear Opmode")
-@Disabled
+//@Disabled
 public class WheelsOpModeLinear extends LinearOpMode {
 
     // Declare OpMode members.
@@ -71,7 +71,7 @@ public class WheelsOpModeLinear extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
+            w.driveForword(1000);
             xAxis = gamepad1.left_stick_x;
             yAxis = -gamepad1.left_stick_y;
             rot = gamepad1.right_stick_x;

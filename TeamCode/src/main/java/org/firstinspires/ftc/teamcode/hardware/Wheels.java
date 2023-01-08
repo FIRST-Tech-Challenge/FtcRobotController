@@ -15,6 +15,8 @@ public class Wheels {
     private final DcMotor backRight;
     private final LinearOpMode opMode;
 
+
+
     public Wheels(LinearOpMode opMode) {
         this.opMode = opMode;
         frontLeft = opMode.hardwareMap.get(DcMotor.class, "FrontLeft");
@@ -23,7 +25,33 @@ public class Wheels {
         backRight = opMode.hardwareMap.get(DcMotor.class, "BackRight");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
     }
+    public void driveForword(int weelsPosition){
+//        driveWeelForward(frontRight, weelsPosition, "frontRight");
+//        driveWeelForward(frontLeft, weelsPosition, "frontLeft");
+        driveWeelForward(backRight, weelsPosition, "backRight"); //לא תקין
+//        driveWeelForward(backLeft, weelsPosition, "backLeft");
+        opMode.telemetry.update();
+    }
+
+    private void driveWeelForward(DcMotor weel, int weelPosition, String weelName){
+        weel.setTargetPosition(weelPosition);
+        weel.setPower(0.5);
+        weel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        opMode.telemetry.addData(weelName + " position: ", weel.getCurrentPosition());
+     }
 
     public void driveByJoystick(double x, double y, double rot) {
         double fr = y - x - rot;
@@ -61,5 +89,9 @@ public class Wheels {
         backRight.setPower(br);
         frontLeft.setPower(fl);
         backLeft.setPower(bl);
+        opMode.telemetry.addData("frontRight position: ", frontRight.getCurrentPosition());
+//        opMode.telemetry.addData("frontLeft position: ", weel.getCurrentPosition());
+//        opMode.telemetry.addData(weelName + " position: ", weel.getCurrentPosition());
+//        opMode.telemetry.addData(weelName + " position: ", weel.getCurrentPosition());
     }
 }
