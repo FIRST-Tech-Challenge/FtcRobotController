@@ -184,9 +184,10 @@ public class LeftPPTerminal extends LinearOpMode {
                 case 1:
                     // Far left
                     beginAuto();
-                    moveUtils.goStraight(3,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.goStraight(-3,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.strafeBuddy(24);
+                    moveUtils.strafeBuddy(-2);
+                    moveUtils.goStraight(2,MIN_SPEED,MIN_SPEED,ACCEL);
                     done=true;
                     break;
                 case 2:
@@ -212,8 +213,8 @@ public class LeftPPTerminal extends LinearOpMode {
     }
     private void beginAuto() throws InterruptedException {
         moveUtils.goStraight(1.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCCW(90);
-        moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCCW(92);
+        moveUtils.goStraight(18,MAX_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
 
     }

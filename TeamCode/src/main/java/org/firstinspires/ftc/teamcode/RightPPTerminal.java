@@ -184,23 +184,27 @@ public class RightPPTerminal extends LinearOpMode {
                 case 1:
                     // Far left
                     beginAuto();
-                    moveUtils.goStraight(-63,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(-24);
+                    moveUtils.goStraight(-45,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCCW(90);
+                    moveUtils.goStraight(20,MIN_SPEED,MIN_SPEED,ACCEL);
                     done=true;
                     break;
                 case 2:
                     // Middle
                     beginAuto();
-                    moveUtils.goStraight(-24,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(-24);
-                    moveUtils.strafeBuddy(2);
+                    moveUtils.goStraight(-18,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.strafeBuddy(-20);
+                    moveUtils.strafeBuddy(3);
                     done=true;
                     break;
                 case 3:
                     // Far right
                     beginAuto();
-                    moveUtils.goStraight(-3,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(-24);
+                    moveUtils.goStraight(-10,MIN_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.turnCCW(90);
+                    moveUtils.goStraight(22,MAX_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.strafeBuddy(15);
+                    moveUtils.goStraight(4,MIN_SPEED,MIN_SPEED,ACCEL);
                     done=true;
                     break;
             }
