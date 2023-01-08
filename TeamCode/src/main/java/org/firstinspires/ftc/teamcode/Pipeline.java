@@ -6,8 +6,10 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.core.Scalar;
+//import org.opencv.core.vec3b;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.opencv.core.Rect;
 
 public class Pipeline extends OpenCvPipeline {
     Mat mat = new Mat();
@@ -17,20 +19,22 @@ public class Pipeline extends OpenCvPipeline {
     Mat greenmask = new Mat();
     Mat bluemask = new Mat();
 
+    public static String colorString;
+
     private static double colorScale = 0.75;
 
     // Color Evaluation
     //pink = 240, 91, 146 RGB
     Scalar red1lowColorValue = new Scalar(0,70,50);
-    Scalar red1highColorValue = new Scalar(10,255,255);
-    Scalar red2lowColorValue = new Scalar(170,70,50);
+    Scalar red1highColorValue = new Scalar(20,255,255);
+    Scalar red2lowColorValue = new Scalar(160,70,50);
     Scalar red2highColorValue = new Scalar(180,255,255);
     //Scalar pinklowColorValue = pinkValue.mul(pinkValue,1-colorScale);
     //Scalar pinkhighColorValue = pinkValue.mul(pinkValue,1+colorScale);
 
     //green = 183, 203, 176 RGB
-    Scalar greenlowColorValue = new Scalar(55,100,100);
-    Scalar greenhighColorValue = new Scalar(65,255,255);
+    Scalar greenlowColorValue = new Scalar(45,100,100);
+    Scalar greenhighColorValue = new Scalar(75,255,255);
     //Scalar greenValue = new Scalar(189,8,61);
     //Scalar greenlowColorValue = greenValue.mul(greenValue,1-colorScale);
     //Scalar greenhighColorValue = greenValue.mul(greenValue,1+colorScale);
@@ -54,21 +58,27 @@ public class Pipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input)
     {
-        //Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2RGBA);
+        Rect rectCrop = new Rect(160,60,80,120);
+        //Mat cropped_image = input(rectCrop);
+        Mat image_cropped = new Mat(input,rectCrop);
+        //Imgproc.cvtColor(cropped_image, mat, Imgproc.COLOR_BGR2RGBA);
         //Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGBA2BGR);
-        Imgproc.cvtColor(input,mat, Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(image_cropped,mat, Imgproc.COLOR_RGB2HSV);
         Size sizeInput = input.size();
         int height = (int)sizeInput.height;
         int width = (int)sizeInput.width;
-        for (int i = width/2-5; i < width/2+5; i = i+1)
+        for (int y = 0; y < height; y++)
         {
-            for (int j = height/2-5; j < height/2+5; j = j+1)
+            for (int x = 0; x < width; x++)
             {
-                double [] pix = input.get(i, j);
-                telemetry.addData(String.format("(%d,%d) = (%f,%f,%f)\n", i, j, pix[0], pix[1], pix[2]),"");
+                double [] pix = input.get(y, x);
+                //colorString.format("(%d,%d) = (%f,%f,%f)\n", x, y, pix[0], pix[1], pix[2]);
+                //telemetry.addData("Hue",pix[0]);
+                //telemetry.addData("Sat", pix[1]);
+                //telemetry.addData("Value", pix[2]);
             }
         }
-        telemetry.update();
+        //telemetry.update();
         // Creates mask to identify specific color
 
         // Applies mask.  Most colors become black, some become white.
@@ -103,18 +113,12 @@ public class Pipeline extends OpenCvPipeline {
         int greenResult = findWhiteCount(greenmask);
         int blueResult = findWhiteCount(bluemask);
 
-        if (blueResult<50 && redResult<50)
-        {
-            return 2;
-
-        }
-        else if (blueResult>redResult)
-        {
-            return 3;
-
-        }
-        else if (redResult>blueResult)
+        if (redResult>blueResult && redResult>greenResult)
             return 1;
+        else if (greenResult>redResult && greenResult > blueResult)
+            return 2;
+        else if (blueResult>redResult && blueResult > greenResult)
+            return 3;
         else
             return 0;
     }

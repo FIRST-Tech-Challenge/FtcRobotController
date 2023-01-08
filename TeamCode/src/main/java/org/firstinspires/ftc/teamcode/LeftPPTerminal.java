@@ -20,6 +20,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 //test
 import java.util.List;
 import java.util.Locale;
@@ -40,12 +43,15 @@ public class LeftPPTerminal extends LinearOpMode {
     public float desiredHeading;
 
     private PIDController pidRotate;
+    private  OpenCvCamera webCam;
+    private boolean isCameraStreaming = false;
+    Pipeline modifyPipeline = new Pipeline();
 
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
 
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    /*private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     private static final String[] LABELS = {
             "Bolt",
             "Bulbs",
@@ -55,7 +61,7 @@ public class LeftPPTerminal extends LinearOpMode {
             "AVXWcGz/////AAABmZfYj2wlVElmo2nUkerrNGhEBBg+g8Gq1KY3/lN0SEBYx7HyMslyrHttOZoGtwRt7db9nfvCiG0TBEp7V/+hojHXCorf1CEvmJWWka9nFfAbOuyl1tU/IwdgHIvSuW6rbJY2UmMWXfjryO3t9nNtRqX004LcE8O2zkKdBTw0xdqq4dr9zeA9gX0uayps7t0TRmiToWRjGUs9tQB3BDmSinXxEnElq+z3SMJGcn5Aj44iEB7uy/wuB8cGCR6GfOpDRYqn/R8wwD757NucR5LXA48rulTdthGIuHoEjud1QzyQOv4BpaODj9Oi0TMuBmBzhFJMwWzyZ4lKVyOCbf3uCRia7Q+HO+LbFbghNIGIIzZC";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
-
+*/
     private int resultROI=2;
 
     private  boolean done = false;
@@ -110,67 +116,47 @@ public class LeftPPTerminal extends LinearOpMode {
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
 
-        initVuforia();
-        initTfod();
+        initOpenCV();
+  /*      initTfod();
 
         if (tfod != null) {
             tfod.activate();
 
             tfod.setZoom(1.5, 16.0 / 9.0);
-        }
+        }*/
         actuatorUtils.gripperClose(false);
 
 
         waitForStart();
         currTime=System.currentTimeMillis();
         startTime=currTime;
-        if (tfod != null && resultROI == 2) {
+        if (resultROI == 2) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
+            done = false;
             while (!done && opModeIsActive()) {
-                if((currTime - startTime) < 3000){
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
-                        if (updatedRecognitions.size() != 0) {
-                            done = true;
-                        }
-                        // step through the list of recognitions and display image position/size information for each one
-                        // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
-
-                            telemetry.addData("", " ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-
-                            String imageCheck = recognition.getLabel();
-                            if (imageCheck.equals("Bolt")) {
-                                resultROI = 1;
-                            } else if (imageCheck.equals("Bulbs")) {
-                                resultROI = 2;
-                            } else if (imageCheck.equals("Panels")) {
-                                resultROI = 3;
-                            } else {
-                                resultROI = 2;
-                            }
-                            telemetry.addData("ResultROI", resultROI);
-
-                        }
-                        telemetry.update();
+                if (currTime - startTime < 500) {
+                    telemetry.addData("Camera: ", "Waiting to make sure valid data is incoming");
+                } else {
+                    telemetry.addData("Time Delta: ", (currTime - startTime));
+                    resultROI = modifyPipeline.getResultROI();
+                    if (resultROI == 1) {
+                        telemetry.addData("Resulting ROI: ", "Red");
+                        done = true;
+                    } else if (resultROI == 2) {
+                        telemetry.addData("Resulting ROI: ", "Green");
+                        done = true;
+                    } else if (resultROI == 3) {
+                        telemetry.addData("Resulting ROI: ", "Blue");
+                        done = true;
+                    } else {
+                        telemetry.addData("Resulting ROI: ", "Something went wrong.");
                     }
-                    currTime = System.currentTimeMillis();}
-
-                else {
-                    vuforia.close();
-                    done=true;
-                    resultROI=2;
                 }
+                telemetry.update();
+                currTime = System.currentTimeMillis();
+
             }
 
         }
@@ -285,19 +271,33 @@ public class LeftPPTerminal extends LinearOpMode {
         return angles.firstAngle;
     }
 
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+    private void initOpenCV() {
+        int cameraMonitorViewId2 = hardwareMap.appContext.getResources().getIdentifier(
+                "cameraMonitorViewId",
+                "id",
+                hardwareMap.appContext.getPackageName());
+        // For a webcam (uncomment below)
+        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId2);
+        // For a phone camera (uncomment below)
+        // webCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId2);
+        webCam.setPipeline(modifyPipeline);
+        webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+                telemetry.addData("Pipeline: ", "Initialized");
+                telemetry.update();
+                isCameraStreaming = true;
+            }
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Error: ", "Something went wrong :(");
+                telemetry.update();
+            }
+        });
     }
-    private void initTfod() {
+    /*private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -311,5 +311,5 @@ public class LeftPPTerminal extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
-
+*/
 }

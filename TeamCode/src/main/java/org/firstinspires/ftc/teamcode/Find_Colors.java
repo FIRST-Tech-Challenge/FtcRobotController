@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.Locale;
@@ -61,14 +62,13 @@ public class Find_Colors extends LinearOpMode {
                 hardwareMap.appContext.getPackageName());
         // For a webcam (uncomment below)
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId2);
-
         // For a phone camera (uncomment below)
         // webCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId2);
         webCam.setPipeline(modifyPipeline);
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webCam.startStreaming(320,240);
+                webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("Pipeline: ", "Initialized");
                 telemetry.update();
                 isCameraStreaming = true;
@@ -124,11 +124,11 @@ public class Find_Colors extends LinearOpMode {
                 telemetry.addData("Time Delta: ", (currTime - startTime));
                 resultROI = modifyPipeline.getResultROI();
                 if (resultROI == 1) {
-                    telemetry.addData("Resulting ROI: ", "Pink");
+                    telemetry.addData("Resulting ROI: ", "Red");
                 } else if (resultROI == 2) {
                     telemetry.addData("Resulting ROI: ", "Green");
                 } else if (resultROI == 3) {
-                    telemetry.addData("Resulting ROI: ", "Purple");
+                    telemetry.addData("Resulting ROI: ", "Blue");
                 } else {
                     telemetry.addData("Resulting ROI: ", "Something went wrong.");
                 }
