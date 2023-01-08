@@ -38,6 +38,9 @@ public class teleop extends BaseOpMode {
         robot.initTeleOpIMU(hardwareMap);
 
 
+
+
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -55,13 +58,13 @@ public class teleop extends BaseOpMode {
             robot.frontLeftMotor.setPower(leftPower);
             robot.backLeftMotor.setPower(leftPower);
 
-            if (gamepad2.left_bumper) {
-                robot.getLeftClaw().setPosition(-1);
-                robot.getRightClaw().setPosition(1);
-            }
-            else if (gamepad2.right_bumper) {
-                robot.getLeftClaw().setPosition(0.3);
-                robot.getRightClaw().setPosition(-0.3);
+//            i
+            if (gamepad2.left_bumper ) {
+                robot.getLeftClaw().setPosition(0.7); //Opening
+                robot.getRightClaw().setPosition(0.3);
+            } else if (gamepad2.right_bumper) {
+                robot.getLeftClaw().setPosition(0.1); //Closing
+                robot.getRightClaw().setPosition(0.9);
             }
 
             if (gamepad2.left_trigger > 0.2) {
@@ -74,16 +77,18 @@ public class teleop extends BaseOpMode {
 
 
             if (gamepad1.x) {
-                robot.frontRightMotor.setPower(1);
-                robot.backRightMotor.setPower(-1);
-                robot.frontLeftMotor.setPower(-1);
-                robot.backLeftMotor.setPower(1);
+                robot.frontRightMotor.setPower(0.8);
+                robot.backRightMotor.setPower(-0.8);
+                robot.frontLeftMotor.setPower(-0.8);
+                robot.backLeftMotor.setPower(0.8);
             } else if (gamepad1.b) {
-                robot.frontRightMotor.setPower(-1);
-                robot.backRightMotor.setPower(1);
-                robot.frontLeftMotor.setPower(1);
-                robot.backLeftMotor.setPower(-1);
+                robot.frontRightMotor.setPower(-0.8);
+                robot.backRightMotor.setPower(0.8);
+                robot.frontLeftMotor.setPower(0.8);
+                robot.backLeftMotor.setPower(-0.8);
             }
+            telemetry.addLine(String.valueOf(robot.getLeftClaw().getPosition()));
+            telemetry.update();
         }
     }
 

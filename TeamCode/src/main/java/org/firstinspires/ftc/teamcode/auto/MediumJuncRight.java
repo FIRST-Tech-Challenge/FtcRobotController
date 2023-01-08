@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import static org.firstinspires.ftc.teamcode.config.DriveUtils.getPosition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.auto.SkystoneDetector;
 import org.firstinspires.ftc.teamcode.config.BaseOpMode;
 import org.firstinspires.ftc.teamcode.config.DriveUtils;
 import org.firstinspires.ftc.teamcode.config.Hardware2;
@@ -14,8 +12,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="DO THIS AUTO")
-public class AutoMode extends BaseOpMode {
+@Autonomous(name="Medium Junction is on the Right")
+public class MediumJuncRight extends BaseOpMode {
     Hardware2 robot = new Hardware2(true);
     // Handle hardware stuff...
 
@@ -24,14 +22,18 @@ public class AutoMode extends BaseOpMode {
     // store as variable here so we can access the location
     SleeveDetection detector = new SleeveDetection();
     OpenCvCamera phoneCam;
-    public void autoScoring() {
-        DriveUtils.encoderDrive(this, 0.4, -27,-27,5);
-        DriveUtils.encoderStrafe(this,0.4,-13.5,5);
-        DriveUtils.encoderClaw(this,-0.6,1825,5);
-        DriveUtils.encoderClaw(this,0.5,-1825,10);
-
-
+    public void autoScoringRight() {
+        DriveUtils.encoderClaw(this,0.6,300,5); //Raises the claw up so the cone won't hit the ground
+        DriveUtils.encoderDrive(this, 0.8, -26,-26,5); //Drives forward
+        DriveUtils.encoderStrafe(this,0.4,12.5,5); //Strafes to be inline with the medium junction
+        DriveUtils.encoderClaw(this,0.6,1850,5); // Raises the claw up to match the height of the junction
+        DriveUtils.encoderDrive(this,0.3,-6,-6,5); // Drives forward so the cone will drop on the junction
+        DriveUtils.encoderClaw(this,-0.5,-600,5); //Lowers the claw onto the junction
+        DriveUtils.moveClaw(this,"Open"); // Opens the claw
+        DriveUtils.encoderDrive(this,0.3,8,8,5); //Drives Back
+        DriveUtils.encoderClaw(this,-0.5,-1550,10); //Returns claw to original position
     }
+
 
     @Override
     public void runOpMode() {
@@ -56,16 +58,16 @@ public class AutoMode extends BaseOpMode {
 
             String position = getPosition();
             if (position == "center") {
-                autoScoring();
-                DriveUtils.encoderStrafe(this,0.4,13.5,5);
+                autoScoringRight();
+                DriveUtils.encoderStrafe(this,0.4,-13.5,5);
                 // Drives forward to go into the middle parking area
                 //DriveUtils.encoderDrive(this, 0.5, 10, 10, 7);
             } else if (position == "right") {
-                autoScoring();
-                DriveUtils.encoderStrafe(this,0.4,40.5,5);
+                autoScoringRight();
+                DriveUtils.encoderStrafe(this,0.4,13.5,5);
             } else if (position == "left") {
-                autoScoring();
-                DriveUtils.encoderStrafe(this,0.4,-13.5,5);
+                autoScoringRight();
+                DriveUtils.encoderStrafe(this,0.4,-40.5,5);
             }
 
 

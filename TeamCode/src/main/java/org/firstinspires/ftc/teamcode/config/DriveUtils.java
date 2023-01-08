@@ -52,11 +52,11 @@ public class DriveUtils {
     public static void moveClaw(BaseOpMode BaseOpMode, String direction){
         Hardware2 robot = BaseOpMode.getRobot();
         if (direction.equalsIgnoreCase("Open")) {
-            robot.getLeftClaw().setPosition(-1);
-            robot.getRightClaw().setPosition(1);
+            robot.getLeftClaw().setPosition(0.7);
+            robot.getRightClaw().setPosition(0.3);
         } else if (direction.equalsIgnoreCase("Close")) {
-            robot.getLeftClaw().setPosition(0.3);
-            robot.getRightClaw().setPosition(-0.3);
+            robot.getLeftClaw().setPosition(0.1);
+            robot.getRightClaw().setPosition(0.9);
         }
     }
 
@@ -200,7 +200,7 @@ public class DriveUtils {
             Hardware2 robot = baseOpMode.getRobot();
 
             robot.getArm().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            target = robot.getArm().getCurrentPosition() + (encoderTicks);
+            target = robot.getArm().getCurrentPosition() - (encoderTicks);
 
             robot.getArm().setTargetPosition(target);
 
