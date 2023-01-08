@@ -4,10 +4,10 @@ public class ClawMove extends Task{
     private Robot robot;
     private boolean shouldOpen;
     // negative tiles is backwards
-    public ClawMove(Robot robot, boolean shouldOpen)
+    public ClawMove(Robot robot, boolean open)
     {
         this.robot = robot;
-        this.shouldOpen = shouldOpen;
+        this.shouldOpen = open;
     }
     @Override
     public boolean run() {

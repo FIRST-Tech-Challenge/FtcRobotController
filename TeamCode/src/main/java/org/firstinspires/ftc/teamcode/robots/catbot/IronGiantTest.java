@@ -33,18 +33,14 @@ public class IronGiantTest extends OpMode {
 
     @Override
     public void loop() {
-        if (gamepad1.right_trigger > DEADZONE)
-            motorBackRight.setPower(gamepad1.right_trigger);
-        else if (gamepad1.left_trigger > DEADZONE)
-            motorBackLeft.setPower(gamepad1.left_trigger);
-        else if (gamepad1.a)
-            motorFrontRight.setPower(-0.5);
+        if (gamepad1.a)
+            motorBackRight.setPower(0.5);
         else if (gamepad1.y)
             motorFrontRight.setPower(0.5);
         else if (gamepad1.dpad_up)
             motorFrontLeft.setPower(0.5);
         else if(gamepad1.dpad_down)
-            motorFrontLeft.setPower(-0.5);
+            motorBackLeft.setPower(0.5);
         else {
             motorFrontLeft.setPower(0);
             motorFrontLeft.setPower(0);
