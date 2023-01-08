@@ -25,8 +25,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
     public void initialize() {
         super.initialize();
-        initializeVuforia();
-        initializeTensorFlow();
+        //initializeVuforia();
+        //initializeTensorFlow();
     }
 
     /**
