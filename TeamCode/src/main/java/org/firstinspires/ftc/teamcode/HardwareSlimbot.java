@@ -87,6 +87,8 @@ public class HardwareSlimbot
     public int          turretMotorPos     = 0;       // current encoder count
     public double       turretMotorVel     = 0.0;     // encoder counts per second
     public boolean      turretMotorAuto    = false;   // Automatic movement in progress
+    public boolean      turretMotorRunning = false;   // We did a turret set power, check the angle
+    public double       turretMotorPwrSet  = 0.0;     // What we commanded the turret power to
     public int          turretMotorCycles  = 0;       // Automatic movement cycle count
     public int          turretMotorWait    = 0;       // Automatic movement wait count (truly there! not just passing thru)
     public double       turretMotorPwr     = 0.0;     // turret motor power setpoint (-1.0 to +1.0)
@@ -542,6 +544,37 @@ public class HardwareSlimbot
     }
 
     /*--------------------------------------------------------------------------------------------*/
+    public void setTurretPower(double power) {
+        // TODO: Find the power to turret angle relationship, AKA positive power rotates to positive angle?
+        // Positive turret power
+        if(power >= 0) {
+            if(turretAngle < TURRET_ANGLE_MAX) {
+                // We still have room to move, so set power.
+                turretMotorRunning = true;
+                turretMotorPwrSet = power;
+                turretMotor.setPower(power);
+            } else {
+                // If we are at max angle, set the power to 0.
+                turretMotorRunning = false;
+                turretMotorPwrSet = 0;
+                turretMotor.setPower(0);
+            }
+        } else {
+            if(turretAngle > TURRET_ANGLE_MIN) {
+                // We still have room to move, so set power.
+                turretMotorRunning = true;
+                turretMotorPwrSet = power;
+                turretMotor.setPower(power);
+            } else {
+                // If we are at max angle, set the power to 0.
+                turretMotorRunning = false;
+                turretMotorPwrSet = 0;
+                turretMotor.setPower(0);
+            }
+        }
+    }
+
+    /*--------------------------------------------------------------------------------------------*/
     /* setRunToPosition()                                                                         */
     /* - driveY -   true = Drive forward/back; false = Strafe right/left                          */
     /* - distance - how far to move (inches).  Positive is FWD/RIGHT                              */
@@ -751,6 +784,24 @@ public class HardwareSlimbot
         }
 
     } // turretPosInit
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* turretPowerRun()                                                                             */
+    public void turretPowerRun() {
+        if(turretMotorRunning) {
+            if((turretMotorPwrSet > 0) && (turretAngle >= TURRET_ANGLE_MAX)) {
+                    // If we are at max angle, set the power to 0.
+                    turretMotorRunning = false;
+                    turretMotorPwrSet = 0;
+                    turretMotor.setPower(0);
+            } else if((turretMotorPwrSet < 0) && (turretAngle <= TURRET_ANGLE_MIN)) {
+                    // If we are at max angle, set the power to 0.
+                    turretMotorRunning = false;
+                    turretMotorPwrSet = 0;
+                    turretMotor.setPower(0);
+            }
+        }
+    }
 
     /*--------------------------------------------------------------------------------------------*/
     /* turretPosRun()                                                                             */

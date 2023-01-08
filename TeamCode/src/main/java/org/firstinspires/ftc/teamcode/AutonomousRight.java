@@ -81,7 +81,7 @@ public class AutonomousRight extends AutonomousBase {
             public void onOpened()
             {
                 pipelineBack = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0, blueAlliance, false);
+                        false, false, 160.0);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 backCameraInitialized = true;
@@ -103,7 +103,7 @@ public class AutonomousRight extends AutonomousBase {
             public void onOpened()
             {
                 pipelineLow = new PowerPlaySuperPipeline(true, false,
-                        !blueAlliance, blueAlliance, 160.0, blueAlliance, true);
+                        !blueAlliance, blueAlliance, 160.0);
                 webcamLow.setPipeline(pipelineLow);
                 webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 lowCameraInitialized = true;
@@ -163,7 +163,7 @@ public class AutonomousRight extends AutonomousBase {
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
             signalZone = pipelineLow.signalZoneR;
-            pipelineLow.saveLastAutoImage();
+            pipelineLow.saveLastAutoImage(blueAlliance, false);
         }
         // Turn off detecting the signal.
         pipelineLow.signalDetection(false);

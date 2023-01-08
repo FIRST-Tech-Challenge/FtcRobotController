@@ -48,18 +48,16 @@ public class PoleOrientationExample extends LinearOpMode
 
     // Vision stuff
     PowerPlaySuperPipeline pipelineLow;
-    PowerPlaySuperPipeline pipelineFront;
     PowerPlaySuperPipeline pipelineBack;
     OpenCvCamera webcamLow = null;
-    OpenCvCamera webcamFront = null;
     OpenCvCamera webcamBack = null;
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
     boolean aligning = false;
     boolean ranging = false;
     boolean turretFacingFront = false;
-    boolean cameraInitialized = false;
-    PowerPlaySuperPipeline.AnalyzedPole thePole;
+    boolean lowCameraInitialized = false;
+    boolean backCameraInitialized = false;
 
         /**
          * NOTE: Many comments have been omitted from this sample for the
@@ -78,65 +76,21 @@ public class PoleOrientationExample extends LinearOpMode
         int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
                 .splitLayoutForMultipleViewports(
                         cameraMonitorViewId, //The container we're splitting
-                        3, //The number of sub-containers to create
+                        2, //The number of sub-containers to create
                         OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY); //Whether to split the container vertically or horizontally
-        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Low"), viewportContainerIds[0]);
-        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineLow = new PowerPlaySuperPipeline(true, false,
-                        false, true, 160.0, true, false);
-                webcamLow.setPipeline(pipelineLow);
-                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                pipelineLow.debugType = ConeBlue;
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-        webcamLow.showFpsMeterOnViewport(false);
-
-        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Front"), viewportContainerIds[1]);
-        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineFront = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0, true, false);
-                webcamFront.setPipeline(pipelineFront);
-                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                pipelineLow.debugType = Pole;
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-        webcamFront.showFpsMeterOnViewport(false);
-
         webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Back"), viewportContainerIds[2]);
+                "Webcam Back"), viewportContainerIds[0]);
         webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
                 pipelineBack = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0, true, false);
+                        false, false, 160.0);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 pipelineLow.debugType = Pole;
-                cameraInitialized = true;
+                backCameraInitialized = true;
             }
 
             @Override
@@ -147,15 +101,38 @@ public class PoleOrientationExample extends LinearOpMode
         });
         webcamBack.showFpsMeterOnViewport(false);
 
+        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Low"), viewportContainerIds[1]);
+        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineLow = new PowerPlaySuperPipeline(true, false,
+                        false, true, 160.0);
+                webcamLow.setPipeline(pipelineLow);
+                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                pipelineLow.debugType = ConeBlue;
+                lowCameraInitialized = true;
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
+        webcamLow.showFpsMeterOnViewport(false);
+
         // Tell telemetry to update faster than the default 250ms period :)
         telemetry.setMsTransmissionInterval(20);
-        while(!cameraInitialized) {
+        while(!(lowCameraInitialized && backCameraInitialized)) {
             sleep(100);
         }
         /* Declare OpMode members. */
         robot.init(hardwareMap,false);
 
-        while(!cameraInitialized) {
+        while(!(lowCameraInitialized && backCameraInitialized)) {
             sleep(100);
         }
 
@@ -192,9 +169,6 @@ public class PoleOrientationExample extends LinearOpMode
         if(webcamLow != null) {
             webcamLow.stopStreaming();
         }
-        if(webcamFront != null) {
-            webcamFront.stopStreaming();
-        }
         if(webcamBack != null) {
             webcamBack.stopStreaming();
         }
@@ -203,36 +177,28 @@ public class PoleOrientationExample extends LinearOpMode
     /*---------------------------------------------------------------------------------*/
 
     void alignToPole() {
-        PowerPlaySuperPipeline thePipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         final double TURN_SLOPE   = 0.0008;
         final double TURN_OFFSET  = 0.0650;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
-        double turnPower;
+        double turretPower;
         double drivePower;
 
-        if(turretFacingFront) {
-            thePipeline = pipelineFront;
-        } else {
-            thePipeline = pipelineBack;
-        }
-
-            theLocalPole = thePipeline.getDetectedPole();
+        theLocalPole = pipelineBack.getDetectedPole();
         while (opModeIsActive() && ((theLocalPole.alignedCount <= 3) || theLocalPole.properDistanceHighCount <= 3)) {
             robot.readBulkData();
             robot.turretPosRun();
             if(theLocalPole.aligned) {
-                turnPower = 0.0;
+                turretPower = 0.0;
             } else {
                 // Need to calculate the turn power based on pixel offset
                 // Maximum number of pixels off would be half of 320, so 160.
                 // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
                 // go 1.0 to 0.08 from 24 degrees to 0.
-                turnPower = (theLocalPole.centralOffset > 0)?
+                turretPower = (theLocalPole.centralOffset > 0)?
                         (-theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET) :
                         (-theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET);
-//              turnPower = (theLocalPole.centralOffset > 0)? -0.06 : 0.06;
 
             }
             if(theLocalPole.properDistanceHigh) {
@@ -246,11 +212,11 @@ public class PoleOrientationExample extends LinearOpMode
                         (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
                         (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
             }
-            if(abs(drivePower) < 0.01 && abs(turnPower) < 0.01) {
+            if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
                 robot.stopMotion();
-                robot.turretMotor.setPower(0);
+                robot.setTurretPower(0);
             } else {
-                driveAtTurretAngle(drivePower, turnPower);
+                driveAndRotateTurretAngle(drivePower, turretPower);
             }
 
             // Shift all previous instrumentation readings down one entry
@@ -270,10 +236,10 @@ public class PoleOrientationExample extends LinearOpMode
             }
             telemetry.update();
             // sleep( 40 );
-            theLocalPole = thePipeline.getDetectedPole();
+            theLocalPole = pipelineBack.getDetectedPole();
         }
         robot.stopMotion();
-        robot.turretMotor.setPower(0.0);
+        robot.setTurretPower(0);
     } // alignToPole
 
     /**
@@ -295,22 +261,16 @@ public class PoleOrientationExample extends LinearOpMode
     /*---------------------------------------------------------------------------------*/
     /*  AUTO: Drive at specified angle and power while turning at specified power.     */
     /*---------------------------------------------------------------------------------*/
-    void driveAtTurretAngle(double drivePower, double turnPower) {
+    void driveAndRotateTurretAngle(double drivePower, double turretPower) {
         double frontRight, frontLeft, rearRight, rearLeft, maxPower, xTranslation, yTranslation;
         double turretAngle = robot.turretAngle;
-//        double turretAngle = 0.0;
 
-        if(!turretFacingFront) {
-            // Correct the angle for the turret being in the back.
-            turretAngle = AngleWrapDegrees( turretAngle + 180.0 );
-        }
+        // Correct the angle for the turret being in the back.
+        turretAngle = AngleWrapDegrees( turretAngle + 180.0 );
+
         yTranslation = drivePower * Math.cos(toRadians(turretAngle));
         xTranslation = drivePower * Math.sin(toRadians(turretAngle));
 
-//        frontLeft  = yTranslation + xTranslation - turnPower;
-//        frontRight = yTranslation - xTranslation + turnPower;
-//        rearLeft   = yTranslation - xTranslation - turnPower;
-//        rearRight  = yTranslation + xTranslation + turnPower;
         frontLeft  = yTranslation + xTranslation;
         frontRight = yTranslation - xTranslation;
         rearLeft   = yTranslation - xTranslation;
@@ -328,6 +288,6 @@ public class PoleOrientationExample extends LinearOpMode
         }
         // Update motor power settings:
         robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
-        robot.turretMotor.setPower(turnPower);
+        robot.setTurretPower(turretPower);
     } // driveAtTurretAngle
 }

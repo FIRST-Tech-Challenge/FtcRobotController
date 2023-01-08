@@ -177,8 +177,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     public Mat finalAutoImage = new Mat();
 
-    private final boolean blueAlliance;
-    private final boolean terminalSide;
     private static String directory;
 
     public Object lockBlueTape = new Object();
@@ -190,52 +188,27 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     public PowerPlaySuperPipeline(boolean signalDetection, boolean poleDetection,
                                   boolean redConeDetection, boolean blueConeDetection,
-                                  double center, boolean blueAlliance, boolean terminalSide)
+                                  double center)
     {
         detectSignal = signalDetection;
         detectPole = poleDetection;
         detectRedCone = redConeDetection;
         detectBlueCone = blueConeDetection;
         CENTERED_OBJECT.center.y = center;
-        this.blueAlliance = blueAlliance;
-        this.terminalSide = terminalSide;
         /*
-         * We won't turn on signal detection after we start the pipeline, so shouldn't be a problem
-         * to only create the directories in the constructor.
+         * We won't turn on signal detection after we start the pipeline.
          */
-        if(detectSignal) {
-            // Create a subdirectory based on DATE
-            String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-            directory = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//" + dateString;
-            if (this.blueAlliance) {
-                if (this.terminalSide) {
-                    directory += "/blue_terminal";
-                } else {
-                    directory += "/blue_not_terminal";
-                }
-            } else {
-                if (this.terminalSide) {
-                    directory += "/red_terminal";
-                } else {
-                    directory += "/red_not_terminal";
-                }
-            }
-            beaconDetectLeftTl = new Point(212, 89);  // 20x39 pixel box for signal sleeve
-            beaconDetectLeftBr = new Point(231, 127);
+        beaconDetectLeftTl = new Point(212, 89);  // 20x39 pixel box for signal sleeve
+        beaconDetectLeftBr = new Point(231, 127);
 
-            beaconDetectRightTl = new Point(95, 89);  // 20x39 pixel box for signal sleeve
-            beaconDetectRightBr = new Point(114, 127);
+        beaconDetectRightTl = new Point(95, 89);  // 20x39 pixel box for signal sleeve
+        beaconDetectRightBr = new Point(114, 127);
 
-            allianceDetectLeftTl = new Point(49, 89); // 17x39 pixel box for 5-stack
-            allianceDetectLeftBr = new Point(65, 125);
+        allianceDetectLeftTl = new Point(49, 89); // 17x39 pixel box for 5-stack
+        allianceDetectLeftBr = new Point(65, 125);
 
-            allianceDetectRightTl = new Point(263, 89); // 17x39 pixel box for 5-stack
-            allianceDetectRightBr = new Point(279, 125);
-
-            // Create the directory structure to store the autonomous image used to start auto.
-            File autonomousDir = new File(directory);
-            autonomousDir.mkdirs();
-        }
+        allianceDetectRightTl = new Point(263, 89); // 17x39 pixel box for 5-stack
+        allianceDetectRightBr = new Point(279, 125);
     }
 
     /*
@@ -266,9 +239,28 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         detectPole = enabled;
     }
 
-    public void saveLastAutoImage() {
+    public void saveLastAutoImage(boolean blueAlliance, boolean leftSide) {
+        // Create a subdirectory based on DATE
+        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
         String directoryPath = directory + "/" + "AutoImage_" + timeString + ".png";
+        directory = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//" + dateString;
+        if (blueAlliance) {
+            if (leftSide) {
+                directory += "/blue_left";
+            } else {
+                directory += "/blue_right";
+            }
+        } else {
+            if (leftSide) {
+                directory += "/red_left";
+            } else {
+                directory += "/red_right";
+            }
+        }
+        // Create the directory structure to store the autonomous image used to start auto.
+        File autonomousDir = new File(directory);
+        autonomousDir.mkdirs();
 
         new Thread(new Runnable()
         {

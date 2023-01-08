@@ -81,7 +81,7 @@ public class AutonomousLeft extends AutonomousBase {
             public void onOpened()
             {
                 pipelineBack = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0, blueAlliance, false);
+                        false, false, 160.0);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 backCameraInitialized = true;
@@ -103,7 +103,7 @@ public class AutonomousLeft extends AutonomousBase {
             public void onOpened()
             {
                 pipelineLow = new PowerPlaySuperPipeline(true, false,
-                        !blueAlliance, blueAlliance, 160.0, blueAlliance, true);
+                        false, false, 160.0);
                 webcamLow.setPipeline(pipelineLow);
                 webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 lowCameraInitialized = true;
@@ -163,11 +163,11 @@ public class AutonomousLeft extends AutonomousBase {
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
             signalZone = pipelineLow.signalZoneL;
-            pipelineLow.saveLastAutoImage();
+            pipelineLow.saveLastAutoImage(blueAlliance, true);
         }
         // Turn off detecting the signal.
         pipelineLow.signalDetection(false);
-        // Enable objectdetection of objects we are interested in
+        // Enable object detection of objects we are interested in
         if(blueAlliance) {
             pipelineLow.blueConeDetection(true);
         } else {

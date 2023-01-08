@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.toRadians;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -63,6 +64,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
 
+    boolean     turretFacingFront = false; // Set when the turret goes from front or back
     boolean     blueAlliance    = true;  // Can be toggled during the init phase of autonomous
     int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
     int         fiveStackCycles = 1;     // How many we want to attempt to collect/score? (adjustable during init)
@@ -76,7 +78,6 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     // Vision stuff
     PowerPlaySuperPipeline pipelineLow;
-    PowerPlaySuperPipeline pipelineFront;
     PowerPlaySuperPipeline pipelineBack;
 
     /*---------------------------------------------------------------------------------*/
@@ -93,6 +94,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         globalCoordinatePositionUpdate();
         robot.liftPosRun();
         robot.turretPosRun();
+        robot.turretPowerRun();
     } // performEveryLoop
 
     /*---------------------------------------------------------------------------------*/
@@ -152,6 +154,88 @@ public abstract class AutonomousBase extends LinearOpMode {
         } // for()
         robot.stopMotion();
     } // distanceFromFront
+
+    /*---------------------------------------------------------------------------------*/
+    /*  AUTO: Drive at specified angle and power while turning at specified power.     */
+    /*---------------------------------------------------------------------------------*/
+    void driveAndRotateTurretAngle(double drivePower, double turretPower) {
+        double frontRight, frontLeft, rearRight, rearLeft, maxPower, xTranslation, yTranslation;
+        double turretAngle = robot.turretAngle;
+
+        // Correct the angle for the turret being in the back.
+        turretAngle = AngleWrapDegrees( turretAngle + 180.0 );
+
+        yTranslation = drivePower * Math.cos(toRadians(turretAngle));
+        xTranslation = drivePower * Math.sin(toRadians(turretAngle));
+
+        frontLeft  = yTranslation + xTranslation;
+        frontRight = yTranslation - xTranslation;
+        rearLeft   = yTranslation - xTranslation;
+        rearRight  = yTranslation + xTranslation;
+
+        // Normalize the values so none exceed +/- 1.0
+        maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
+                Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
+        if (maxPower > 1.0)
+        {
+            rearLeft   /= maxPower;
+            rearRight  /= maxPower;
+            frontLeft  /= maxPower;
+            frontRight /= maxPower;
+        }
+        // Update motor power settings:
+        robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
+        robot.setTurretPower(turretPower);
+    } // driveAndRotateTurretAngle
+
+    /*---------------------------------------------------------------------------------*/
+    void alignToPole() {
+        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
+        final double TURN_SLOPE   = 0.0008;
+        final double TURN_OFFSET  = 0.0650;
+        final double DRIVE_SLOPE  = 0.004187;
+        final double DRIVE_OFFSET = 0.04522;
+        double turretPower;
+        double drivePower;
+
+        theLocalPole = pipelineBack.getDetectedPole();
+        while (opModeIsActive() && ((theLocalPole.alignedCount <= 3) || theLocalPole.properDistanceHighCount <= 3)) {
+            performEveryLoop();
+            if(theLocalPole.aligned) {
+                turretPower = 0.0;
+            } else {
+                // Need to calculate the turn power based on pixel offset
+                // Maximum number of pixels off would be half of 320, so 160.
+                // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
+                // go 1.0 to 0.08 from 24 degrees to 0.
+                turretPower = (theLocalPole.centralOffset > 0)?
+                        (-theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET) :
+                        (-theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET);
+
+            }
+            if(theLocalPole.properDistanceHigh) {
+                drivePower = 0.0;
+            } else {
+                // Need to calculate the drive power based on pixel offset
+                // Maximum number of pixels off would be in the order of 30ish.
+                // This is a first guess that will have to be expiremented on.
+                // Go 1.0 to 0.08 from 30 pixels to 2.
+                drivePower = (theLocalPole.highDistanceOffset > 0 )?
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
+            }
+            if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
+                robot.stopMotion();
+                robot.setTurretPower(0);
+            } else {
+                driveAndRotateTurretAngle(drivePower, turretPower);
+            }
+
+            theLocalPole = pipelineBack.getDetectedPole();
+        }
+        robot.stopMotion();
+        robot.setTurretPower(0.0);
+    } // alignToPole
 
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterRedCone() {
