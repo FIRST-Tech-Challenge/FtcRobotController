@@ -15,12 +15,12 @@ public class Claw {
     private boolean isAuto;
 
     // claw positions
-    public static double OPEN = 0.73;
+    public static double OPEN = 0.86;
     public static double CLOSE = 0.35;
 
     // wrist positions
     public static double WRIST_INTAKE_POSITION = 0.255; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
-    public static double WRIST_EXTAKE_POSITION = 0.91; // wrist rotates to extake on junction
+    public static double WRIST_EXTAKE_POSITION = 0.915; // wrist rotates to extake on junction
 
     SignalEdgeDetector isOpen;
     SignalEdgeDetector isIntakePosition;

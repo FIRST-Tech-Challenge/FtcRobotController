@@ -56,16 +56,14 @@ public class Slide {
         correctionLeft = slidePIDF.calculate(slideLeft.getCurrentPosition(), targetPos);
         correctionRight = slidePIDF.calculate(slideRight.getCurrentPosition(), targetPos);
 
-
-       /* telemetry.addData("targetPosition: ", targetPos);
+        /*
+       telemetry.addData("targetPosition: ", targetPos);
         telemetry.addData("Right motor position: ", slideRight.getCurrentPosition());
         telemetry.addData("Left motor position: ", slideLeft.getCurrentPosition());
         telemetry.addData("Left correction: ", correctionLeft);
         telemetry.addData("Right correction: ", correctionRight);
         telemetry.update();
-
-
-        */
+         */
 
 
 
