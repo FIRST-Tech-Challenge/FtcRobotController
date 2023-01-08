@@ -37,6 +37,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     AprilTagDetection tagOfInterest = null;
 
     public void initializeAuto() {
+        initializeHardware();
         grabberServo.setPosition(GRABBER_HALF_CLOSED);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());

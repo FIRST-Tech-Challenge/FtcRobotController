@@ -16,14 +16,15 @@ abstract public class BaseOpMode extends LinearOpMode {
     Toggler grabberToggle;
 
     SampleMecanumDrive drive;
-    public static final double GRABBER_OPEN = 0.9;
+    public static final double GRABBER_OPEN = 0.85;
     public static final double GRABBER_CLOSED = 0.4;
     public static final double GRABBER_HALF_CLOSED = 0.8;
 
-    public static final int MAX_ARM_POSITION = -1500;
-    public static final int GRD_JUNCT_ARM_POSITION = -400;
-    public static final int LOW_JUNCT_ARM_POSITION = -1000;
-    public static final int MID_JUNCT_ARM_POSITION = -1500;
+    public static final int MAX_ARM_POSITION = 1600;
+    public static final int GRD_JUNCT_ARM_POSITION = 300;
+    public static final int LOW_JUNCT_ARM_POSITION = 800;
+    public static final int MID_JUNCT_ARM_POSITION = 1200;
+    public static final int HIGH_JUNCT_ARM_POSITION = 1600;
     public static final int MIN_ARM_POSITION = 0;
 
     public void initializeHardware() {

@@ -14,7 +14,7 @@ public class TeleOpCompetition extends BaseTeleOp {
 
         while (opModeIsActive()) {
             driveUsingControllers();
-            buttonDriveArm();
+            newButtonDrive();
             driveGrabber();
             doTelemetry();
             idle();
