@@ -63,7 +63,7 @@ public class League2LeftSideAuto extends BaseAutonomous {
         motorArm.setPower(0);
         sleep(800);
         grabberServo.setPosition(GRABBER_OPEN);
-        
+
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
             drive.followTrajectory(left);
