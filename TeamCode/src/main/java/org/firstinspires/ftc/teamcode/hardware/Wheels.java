@@ -39,10 +39,10 @@ public class Wheels {
 
     }
     public void driveForword(int weelsPosition){
-//        driveWeelForward(frontRight, weelsPosition, "frontRight");
-//        driveWeelForward(frontLeft, weelsPosition, "frontLeft");
+        driveWeelForward(frontRight, weelsPosition, "frontRight");
+        driveWeelForward(frontLeft, weelsPosition, "frontLeft");
         driveWeelForward(backRight, weelsPosition, "backRight"); //לא תקין
-//        driveWeelForward(backLeft, weelsPosition, "backLeft");
+        driveWeelForward(backLeft, weelsPosition, "backLeft");
         opMode.telemetry.update();
     }
 
