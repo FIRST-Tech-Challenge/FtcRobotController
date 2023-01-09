@@ -146,8 +146,8 @@ public class Autonomous_test extends LinearOpMode
             leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            while (leftLift.isBusy() || rightLift.isBusy()) {
-                if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 > (leftLift.getTargetPosition() + rightLift.getTargetPosition())/2) {
+            if (leftLift.isBusy() || rightLift.isBusy()) {
+                if (leftLift.getCurrentPosition() > leftLift.getTargetPosition() && rightLift.getCurrentPosition() > rightLift.getTargetPosition()) {
                     leftLift.setPower(1.0);
                     rightLift.setPower(1.0);
                 } else {
@@ -172,7 +172,7 @@ public class Autonomous_test extends LinearOpMode
 
             leftLift.setTargetPosition(-200);
             rightLift.setTargetPosition(-200);
-            while (leftLift.isBusy() || rightLift.isBusy()) {
+            if (leftLift.isBusy() || rightLift.isBusy()) {
                 if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 > (leftLift.getTargetPosition() + rightLift.getTargetPosition())/2) {
                     leftLift.setPower(1.0);
                     rightLift.setPower(1.0);
