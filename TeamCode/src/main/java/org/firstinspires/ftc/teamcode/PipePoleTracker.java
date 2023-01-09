@@ -96,7 +96,7 @@ public class PipePoleTracker extends OpenCvPipeline {
             inputOriginal = input;
             inputMaskOriginal = inputMask;
 
-            percentColor = Core.countNonZero(inputMask); //TODO <-- This is wrong, this counts whole sum, not percent
+//            percentColor = Core.countNonZero(inputMask); //TODO <-- This is wrong, this counts whole sum, not percent
 
 
 
@@ -628,7 +628,8 @@ public class PipePoleTracker extends OpenCvPipeline {
                 System.out.println("--------------------highestY " + highestY);
                 System.out.println("focusRect.x: " + focusRect.x);
 
-//
+                focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
+                focusRect2 = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 
             }
             //There are 4 requirements for level3: level2 is true, robot is aligned, robot is close enough, and the imu has recorded a value
@@ -637,7 +638,7 @@ public class PipePoleTracker extends OpenCvPipeline {
             //This is level 3 below. It expands the focusRect vertically, then reads the percent of color in the total box.
             else if (levelString.equals("three")){
 
-                percentColor = 0;
+//                percentColor = 0;
 
 
 //                x_resolution = input.cols();
@@ -646,16 +647,16 @@ public class PipePoleTracker extends OpenCvPipeline {
 //                input = input.submat(focusRect);
 //                inputMask = inputMask.submat(focusRect);
 
-                percentColor = (Core.countNonZero(inputMask))/focusRect.area();
+                percentColor = ((Core.countNonZero(inputMask))/focusRect.area())*100;
 
                 Imgproc.rectangle(inputOriginal, new Point(lowestX,0), new Point(highestX, inputOriginal.rows()), red, 2);
 
-                if(percentColor < 0.1){
-                    System.out.println("STOP! You've reached the top of the pole!!!");
-                }
-                else {
-                    System.out.println("Percent Color: " + percentColor);
-                }
+//                if(percentColor < 0.1){
+//                    System.out.println("STOP! You've reached the top of the pole!!!");
+//                }
+//                else {
+//                    System.out.println("Percent Color: " + percentColor);
+//                }
             }
 
 
@@ -664,8 +665,7 @@ public class PipePoleTracker extends OpenCvPipeline {
              */
 
 
-        focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
-        focusRect2 = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
+
 
 
         Imgproc.rectangle(inputOriginal, focusRect, red, 2);

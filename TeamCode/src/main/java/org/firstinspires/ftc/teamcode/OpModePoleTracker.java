@@ -38,9 +38,14 @@ public class OpModePoleTracker extends DriveMethods {
 
     //The unit here is pixels
     int targetX;
-    int errorX;
-    int multiplierX = 1/75;
+    double errorX;
+    double divderX = 100;
     double alignPowerAdded;
+
+
+
+    //The unit here is boxes
+    int targetDistance;
 
     @Override
     public void runOpMode(){
@@ -76,35 +81,103 @@ public class OpModePoleTracker extends DriveMethods {
         });
         waitForStart();
 
+        targetX = getXResolution()/2; //<-- this SHOULD be the resolution at level1 (check-able)
+        level1Aligned = false;
+        level2Aligned = false;
+        level3Aligned = false;
+//        isIMURecorded = false;
+        visionAutoActivated = false;
 
         while(opModeIsActive()){
 
-            errorX = targetX - getCenterX();
 
-            alignPowerAdded = errorX*multiplierX;
-
-            motorFL.setPower(alignPowerAdded);
-            motorBL.setPower(alignPowerAdded);
-            motorFR.setPower(-alignPowerAdded);
-            motorBR.setPower(-alignPowerAdded);
-
+            //Button triggers
             if(gamepad2.a && getLevel2Capable()){
-                levelCounter = 2;
+//                levelCounter = 2;
+                visionAutoActivated = true;
+
+
             }
 
             if(gamepad2.x){
                 levelCounter = 1;
             }
 
-            if(levelCounter == 2){
-                level = "two";
+
+            errorX = targetX - getCenterX();
+
+            alignPowerAdded = errorX/divderX;
+
+            if(visionAutoActivated){
+                if(levelCounter == 1 && Math.abs(errorX) < 32){//TODO will need to add distance condition
+                    level1Aligned = true;
+                    levelCounter = 2;
+                    //Robot is in front of pole well enough, entering level2...
+                }
+
+                if(levelCounter == 1 && level1Aligned == false){
+//            motorFL.setPower(alignPowerAdded);
+//            motorBL.setPower(alignPowerAdded);
+//            motorFR.setPower(-alignPowerAdded);
+//            motorBR.setPower(-alignPowerAdded);
+                }
+
+                if(levelCounter == 2 && Math.abs(errorX) < 8){ //TODO will need to add distance condition
+                    level2Aligned = true;
+                    //get IMU heading
+                    isIMURecorded = true; // honestly wholly redundant
+                    levelCounter = 3;
+                }
+
+
+                if(levelCounter == 2 && level2Aligned == false){ //TODO feed different inputs into this to make more aggresive
+//            motorFL.setPower(alignPowerAdded);
+//            motorBL.setPower(alignPowerAdded);
+//            motorFR.setPower(-alignPowerAdded);
+//            motorBR.setPower(-alignPowerAdded);
+                }
+
+                if (levelCounter == 3 && getPercentColor() < 10){
+                    level3Aligned = true;
+                }
+
+                if(levelCounter == 3 && getPercentColor() >= 10){
+                    //Slide go up <-- Honestly just use a consistent power for ease
+                }
+
+
             }
+
+
+
+            if(level.equals("two") && Math.abs(errorX) < 8){
+                level2Aligned = true;
+            }
+
+
+
+            if(level2Aligned == false){
+//                motorFL.setPower(alignPowerAdded);
+//            motorBL.setPower(alignPowerAdded);
+//            motorFR.setPower(-alignPowerAdded);
+//            motorBR.setPower(-alignPowerAdded);
+
+            }
+
+
+
 
             if(levelCounter == 1){
                 level = "one";
             }
 
+            if(levelCounter == 2){
+                level = "two";
+            }
 
+            if(levelCounter == 3){
+                level = "three";
+            }
 
 
 
@@ -127,8 +200,18 @@ public class OpModePoleTracker extends DriveMethods {
             telemetry.addLine("HighestX: " + getHighestX());
             telemetry.addLine("LowestY: " + getLowestY());
             telemetry.addLine("HighestY: " + getHighestY());
-            telemetry.addLine("Box_BL_x: " + getBoxBL_X());
-            telemetry.addLine("Box_BL_y: " + getBoxBL_Y());
+//            telemetry.addLine("Box_BL_x: " + getBoxBL_X());
+//            telemetry.addLine("Box_BL_y: " + getBoxBL_Y());
+            telemetry.addLine("targetX: " + targetX);
+            telemetry.addLine("centerX: " + getCenterX());
+            telemetry.addLine("errorX: " + errorX);
+            telemetry.addLine("Power Applied: " + alignPowerAdded);
+            telemetry.addLine("level1Aligned?: " + level1Aligned);
+            telemetry.addLine("level2Aligned?: " + level2Aligned);
+            telemetry.addLine("Activated?: " + visionAutoActivated);
+
+
+
 
 
 
