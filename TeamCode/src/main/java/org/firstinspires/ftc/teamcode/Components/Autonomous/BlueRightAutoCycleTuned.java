@@ -92,12 +92,11 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
             logger.loopcounter++;
             robot.followTrajectorySequenceAsync(initialtrajectory);
             robot.raiseLiftArmToOuttake(true);
-            robot.delay(0.7);
             robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.waitForFinish();
             robot.openClaw(false);
             robot.cycleLiftArmToCycle(true);
-            robot.delay(1.0);
+            robot.delay(0.5);
             robot.wideClaw();
             robot.liftToPosition((int) stackPos[0]);
             robot.followTrajectorySequenceAsync(pickupTrajectory);
@@ -106,7 +105,6 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
             robot.waitForFinish();
             robot.raiseLiftArmToOuttake(true);
             robot.followTrajectorySequenceAsync(dropTrajectory);
-            robot.delay(0.5);
             robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.waitForFinish();
             robot.liftToPosition((int) (LIFT_HIGH_JUNCTION.getValue()-100),false);
@@ -114,7 +112,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
             for (int i = 0; i < 4; i++) {
                 robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue(),false);
                 robot.cycleLiftArmToCycle(true);
-                robot.delay(1);
+                robot.delay(0.5);
                 robot.wideClaw();
                 robot.delay(0.5);
                 robot.liftToPosition((int) stackPos[i + 1]);
@@ -133,7 +131,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
             }
             robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue(),false);
             robot.lowerLiftArmToIntake(true);
-            robot.delay(1);
+            robot.delay(0.5);
             robot.wideClaw();
             robot.delay(0.5);
             robot.liftToPosition(0);
