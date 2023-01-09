@@ -89,6 +89,8 @@ public class Autonomous_test extends LinearOpMode
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        waitForStart();
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new SleeveDetector(tagsize, fx, fy, cx, cy);
@@ -137,6 +139,7 @@ public class Autonomous_test extends LinearOpMode
         boolean parked = false;
 
         while(opModeIsActive() && !parked) {
+            timeElapsed.reset();
             runToPosition(-100, -100, -100, -100);
 
             gripper.setPosition(0.53);
@@ -160,14 +163,21 @@ public class Autonomous_test extends LinearOpMode
             motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            if (tagOfInterest.id == LEFT) runToPosition(1050, -1350, -1350, 1050);
-            else if (tagOfInterest.id == RIGHT) runToPosition(-1350, 1050, 1050, -1350);
+            if (tagOfInterest.id == LEFT) {
+                timeElapsed.reset();
+                runToPosition(1050, -1350, -1350, 1050);
+            }
+            else if (tagOfInterest.id == RIGHT) {
+                timeElapsed.reset();
+                runToPosition(-1350, 1050, 1050, -1350);
+            }
 
             motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+            timeElapsed.reset();
             runToPosition(-1500, -1500, -1500, -1500);
 
             leftLift.setTargetPosition(-200);
@@ -188,8 +198,6 @@ public class Autonomous_test extends LinearOpMode
     }
 
     void runToPosition(int FL, int FR, int BL, int BR) {
-        timeElapsed.reset();
-
         motorFL.setTargetPosition(FL);
         motorFR.setTargetPosition(FR);
         motorBL.setTargetPosition(BL);
@@ -207,10 +215,10 @@ public class Autonomous_test extends LinearOpMode
                 motorBL.setPower(Math.abs(motorFL.getCurrentPosition() - FL)/1000);
                 motorBR.setPower(Math.abs(motorFL.getCurrentPosition() - FL)/1000);
             } else {
-                motorFL.setPower(0.35/(1+3*Math.pow(3,-3*timeElapsed.seconds())));
-                motorFR.setPower(0.35/(1+3*Math.pow(3,-3*timeElapsed.seconds())));
-                motorBL.setPower(0.35/(1+3*Math.pow(3,-3*timeElapsed.seconds())));
-                motorBR.setPower(0.35/(1+3*Math.pow(3,-3*timeElapsed.seconds())));
+                motorFL.setPower(0.5/(1+Math.pow(3,-3*timeElapsed.seconds())));
+                motorFR.setPower(0.5/(1+Math.pow(3,-3*timeElapsed.seconds())));
+                motorBL.setPower(0.5/(1+Math.pow(3,-3*timeElapsed.seconds())));
+                motorBR.setPower(0.5/(1+Math.pow(3,-3*timeElapsed.seconds())));
             }
 
             telemetry.addData("motorFL", motorFL.getCurrentPosition());
