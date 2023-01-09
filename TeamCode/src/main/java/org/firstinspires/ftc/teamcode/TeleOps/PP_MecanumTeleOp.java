@@ -171,7 +171,7 @@ public class PP_MecanumTeleOp extends OpMode
         // BUTTONS \\
         if (gamepad2_Y.isRisingEdge()) {
             armControl.setExtake();
-            slideControl.setHighJunction();
+            slideControl.setHighJunction(telemetry);
             clawControl.toggleWristRotate();
         }
         else if (gamepad2_B.isRisingEdge()) {
