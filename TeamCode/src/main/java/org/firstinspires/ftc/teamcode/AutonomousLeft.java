@@ -228,11 +228,11 @@ public class AutonomousLeft extends AutonomousBase {
         }
 
         // Center on pole
-//        if( opModeIsActive()) {
-//            telemetry.addData("Skill", "rotateToCenterPole");
-//            telemetry.update();
-//            rotateToCenterPole();
-//        }
+        if( opModeIsActive()) {
+            telemetry.addData("Skill", "alignToPole");
+            telemetry.update();
+            alignToPole();
+        }
 
         // Adjust distance to pole
 //        if( opModeIsActive()) {

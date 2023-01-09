@@ -635,7 +635,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 signalZoneL = 3;
             }
 
-            Imgproc.rectangle(input, beaconDetectRightTl, beaconDetectRightBr, new Scalar(0, 0, 255), 1);
+            Imgproc.rectangle(input, beaconDetectRightTl, beaconDetectRightBr, TEAL, 1);
             if(maxR == avgRR) {
                 Imgproc.circle(input, markerR, 5, new Scalar(255, 0, 0), -1);
                 signalZoneR = 1;
@@ -649,7 +649,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 signalZoneR = 3;
             }
 
-            Imgproc.rectangle(input, allianceDetectRightTl, allianceDetectRightBr, new Scalar(0, 0, 255), 1);
+            Imgproc.rectangle(input, allianceDetectRightTl, allianceDetectRightBr, TEAL, 1);
             Imgproc.rectangle(input, allianceDetectLeftTl, allianceDetectLeftBr, new Scalar(0, 0, 255), 1);
             if(allianceMax == allianceAvgRR) {
                 Imgproc.circle(input, allianceMarkerR, 5, new Scalar(0, 0, 255), -1);
