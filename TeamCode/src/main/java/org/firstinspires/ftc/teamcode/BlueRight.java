@@ -213,7 +213,7 @@ public class BlueRight extends LinearOpMode {
                     break;
                 case 2:
                     strafeRight(1,800);
-                    move(.4,300);
+                    move(.4,200);
                     break;
                 case 3:
                     strafeRight(1,900);
