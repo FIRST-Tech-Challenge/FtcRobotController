@@ -130,7 +130,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 gripper.setPosition(0.75);
                 armTarget = 0;
             }
-            if (gamepad2.right_bumper) gripper.setPosition(0.6);
+            if (gamepad2.right_bumper) gripper.setPosition(0.53);
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.

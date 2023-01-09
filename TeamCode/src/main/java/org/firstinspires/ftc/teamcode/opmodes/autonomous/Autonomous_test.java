@@ -137,7 +137,9 @@ public class Autonomous_test extends LinearOpMode
         boolean parked = false;
 
         while(opModeIsActive() && !parked) {
-            gripper.setPosition(0.6);
+            runToPosition(-100, -100, -100, -100);
+
+            gripper.setPosition(0.53);
 
             leftLift.setTargetPosition(-200);
             rightLift.setTargetPosition(-200);
@@ -145,15 +147,13 @@ public class Autonomous_test extends LinearOpMode
             rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             while (leftLift.isBusy() || rightLift.isBusy()) {
-                 if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 > (leftLift.getTargetPosition() + rightLift.getTargetPosition())/2) {
-                     leftLift.setPower(1.0);
-                     rightLift.setPower(1.0);
-                 } else {
-                     leftLift.setPower(0.0);
-                 }
+                if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 > (leftLift.getTargetPosition() + rightLift.getTargetPosition())/2) {
+                    leftLift.setPower(1.0);
+                    rightLift.setPower(1.0);
+                } else {
+                    leftLift.setPower(0.0);
+                }
             }
-
-            runToPosition(-100, -100, -100, -100);
 
             motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
