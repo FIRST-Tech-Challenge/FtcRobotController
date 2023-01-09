@@ -9,7 +9,7 @@ public class LEDStrip{
 
     public LEDStrip(){
         blinkin = op.hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+//        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 
 

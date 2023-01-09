@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.Components.CV.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.ClawExtension;
 import org.firstinspires.ftc.teamcode.Components.Field;
+import org.firstinspires.ftc.teamcode.Components.LEDStrip;
 import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
@@ -43,7 +44,7 @@ public class PwPRobot extends BasicRobot {
     private IMU imu = null;
     private ArrayList<Integer> seq;
     private boolean regularDrive = true;
-//    private LEDStrip leds = null;
+    private LEDStrip leds = null;
 
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
@@ -58,7 +59,7 @@ public class PwPRobot extends BasicRobot {
         liftArm = new LiftArm();
 //        clawExtension = new ClawExtension();
         lift = new Lift();
-//        leds = new LEDStrip();
+        leds = new LEDStrip();
     }
 //    com.qualcomm.ftcrobotcontroller I/art: Waiting for a blocking GC Alloc
 //2023-01-05 14:19:08.807 9944-10985/com.qualcomm.ftcrobotcontroller I/art: Alloc sticky concurrent mark sweep GC freed 340391(7MB) AllocSpace objects, 0(0B) LOS objects, 20% free, 43MB/54MB, paused 2.675ms total 197.819ms
@@ -292,6 +293,30 @@ public class PwPRobot extends BasicRobot {
         imu.setAngle(newPose.getHeading());
     }
 
+    public void heartbeatRed() {
+        leds.heartbeatred();
+    }
+
+    public void bpmForest() {
+        leds.bpmforest();
+    }
+
+    public void violet() {
+        leds.violet();
+    }
+
+    public void rainbowWithGlitter() {
+        leds.rainbowwithglitter();
+    }
+
+    public void cp12ColorWaves() {
+        leds.cp12colorwaves();
+    }
+
+    public void larsonScannerBlue() {
+        leds.cp1larsonscanner();
+    }
+
     public void teleOp() {
 //        if (progNameLogged == false) {
 //            logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
@@ -310,6 +335,13 @@ public class PwPRobot extends BasicRobot {
         gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
         if (isY) {
             regularDrive = !regularDrive;
+        }
+
+        if (CLAW_CLOSED.getStatus()) {
+            heartbeatRed();
+        }
+        if (CLAW_OPEN.getStatus()) {
+            bpmForest();
         }
 
         //omnidirectional movement + turning

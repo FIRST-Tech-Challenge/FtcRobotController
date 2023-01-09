@@ -4,11 +4,11 @@ package org.firstinspires.ftc.teamcode.Tests;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Components.LEDStrip;
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
-@Disabled
-@Autonomous (name = "LEDTest")
+@TeleOp(name = "LEDTest")
 
 public class LEDTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
@@ -22,59 +22,59 @@ public class LEDTest extends LinearOpMode {
 
             led.red();
 
-            sleep(5000);
+            sleep(2500);
 
             led.blue();
 
-            sleep(5000);
+            sleep(2500);
 
             led.orange();
 
-            sleep(5000);
+            sleep(2500);
 
             led.yellow();
 
-            sleep(5000);
+            sleep(2500);
 
             led.gold();
 
-            sleep(5000);
+            sleep(2500);
 
             led.white();
 
-            sleep(5000);
+            sleep(2500);
 
             led.gray();
 
-            sleep(5000);
+            sleep(2500);
 
             led.pink();
 
-            sleep(5000);
+            sleep(2500);
 
             led.aqua();
 
-            sleep(5000);
+            sleep(2500);
 
             led.green();
 
-            sleep(5000);
+            sleep(2500);
 
             led.black();
 
-            sleep(5000);
+            sleep(2500);
 
             led.confetti();
 
-            sleep(5000);
+            sleep(2500);
 
             led.lime();
 
-            sleep(5000);
+            sleep(2500);
 
             led.violet();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -84,23 +84,23 @@ public class LEDTest extends LinearOpMode {
 
             led.bluegreen();
 
-            sleep(5000);
+            sleep(2500);
 
             led.blueviolet();
 
-            sleep(5000);
+            sleep(2500);
 
             led.lawngreen();
 
-            sleep(5000);
+            sleep(2500);
 
             led.redorange();
 
-            sleep(5000);
+            sleep(2500);
 
             led.skyblue();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -108,19 +108,19 @@ public class LEDTest extends LinearOpMode {
 
             led.darkblue();
 
-            sleep(5000);
+            sleep(2500);
 
             led.darkgray();
 
-            sleep(5000);
+            sleep(2500);
 
             led.darkgreen();
 
-            sleep(5000);
+            sleep(2500);
 
             led.darkred();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -130,15 +130,15 @@ public class LEDTest extends LinearOpMode {
 
             led.breathblue();
 
-            sleep(5000);
+            sleep(2500);
 
             led.breathgray();
 
-            sleep(5000);
+            sleep(2500);
 
             led.breathred();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -148,23 +148,23 @@ public class LEDTest extends LinearOpMode {
 
             led.bpmforest();
 
-            sleep(5000);
+            sleep(2500);
 
             led.bpmlava();
 
-            sleep(5000);
+            sleep(2500);
 
             led.bpmocean();
 
-            sleep(5000);
+            sleep(2500);
 
             led.bpmparty();
 
-            sleep(5000);
+            sleep(2500);
 
             led.bpmrainbow();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -174,23 +174,23 @@ public class LEDTest extends LinearOpMode {
 
             led.wavesforest();
 
-            sleep(5000);
+            sleep(2500);
 
             led.waveslava();
 
-            sleep(5000);
+            sleep(2500);
 
             led.wavesocean();
 
-            sleep(5000);
+            sleep(2500);
 
             led.wavesparty();
 
-            sleep(5000);
+            sleep(2500);
 
             led.wavesrainbow();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -200,7 +200,7 @@ public class LEDTest extends LinearOpMode {
 
             led.cpbpm();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -210,43 +210,43 @@ public class LEDTest extends LinearOpMode {
 
             led.cp1breathfast();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp1breathslow();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp1endtoendblacktoblack();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp1heartbeatfast();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp1heartbeatmedium();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp1hearbeatslow();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp1larsonscanner();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp1lightchase();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp1shot();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp1strobe();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -256,39 +256,39 @@ public class LEDTest extends LinearOpMode {
 
             led.cp12colorgradient();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp12colorwaves();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp12endtoendblend();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp12sinelon();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp12endtoendblend1to2();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp12noblending();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp12sparkle1on2();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp12sparkle2on1();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp12twinkles();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -298,43 +298,43 @@ public class LEDTest extends LinearOpMode {
 
             led.cp2breathfast();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp2breathslow();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp2endtoendblendtoblack();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp2heartbeatfast();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp2hearbeatmedium();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp2heartbeatslow();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp2larsonscanner();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp2lightchase();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp2();
 
-            sleep(5000);
+            sleep(2500);
 
             led.cp2strobe();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -344,15 +344,15 @@ public class LEDTest extends LinearOpMode {
 
             led.fire();
 
-            sleep(5000);
+            sleep(2500);
 
             led.firelarge();
 
-            sleep(5000);
+            sleep(2500);
 
             led.firemedium();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -362,19 +362,19 @@ public class LEDTest extends LinearOpMode {
 
             led.heartbeatblue();
 
-            sleep(5000);
+            sleep(2500);
 
             led.heartbeatgray();
 
-            sleep(5000);
+            sleep(2500);
 
             led.heartbeatred();
 
-            sleep(5000);
+            sleep(2500);
 
             led.heartbeatwhite();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -384,11 +384,11 @@ public class LEDTest extends LinearOpMode {
 
             led.larsonscannergray();
 
-            sleep(5000);
+            sleep(2500);
 
             led.larsonscannerred();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -398,15 +398,15 @@ public class LEDTest extends LinearOpMode {
 
             led.lightchaseblue();
 
-            sleep(5000);
+            sleep(2500);
 
             led.lightchasegray();
 
-            sleep(5000);
+            sleep(2500);
 
             led.lightchasered();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -416,31 +416,31 @@ public class LEDTest extends LinearOpMode {
 
             led.rainbow();
 
-            sleep(5000);
+            sleep(2500);
 
             led.rainbowforest();
 
-            sleep(5000);
+            sleep(2500);
 
             led.rainbowrainbow();
 
-            sleep(5000);
+            sleep(2500);
 
             led.rainbowlava();
 
-            sleep(5000);
+            sleep(2500);
 
             led.rainbowocean();
 
-            sleep(5000);
+            sleep(2500);
 
             led.rainbowparty();
 
-            sleep(5000);
+            sleep(2500);
 
             led.rainbowwithglitter();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -450,15 +450,15 @@ public class LEDTest extends LinearOpMode {
 
             led.shotblue();
 
-            sleep(5000);
+            sleep(2500);
 
             led.shotred();
 
-            sleep(5000);
+            sleep(2500);
 
             led.shotwhite();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -468,23 +468,23 @@ public class LEDTest extends LinearOpMode {
 
             led.sinelonforest();
 
-            sleep(5000);
+            sleep(2500);
 
             led.sinelonlava();
 
-            sleep(5000);
+            sleep(2500);
 
             led.sinelonocean();
 
-            sleep(5000);
+            sleep(2500);
 
             led.sinelonparty();
 
-            sleep(5000);
+            sleep(2500);
 
             led.sinelonrainbow();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -494,19 +494,19 @@ public class LEDTest extends LinearOpMode {
 
             led.strobeblue();
 
-            sleep(5000);
+            sleep(2500);
 
             led.strobegold();
 
-            sleep(5000);
+            sleep(2500);
 
             led.strobered();
 
-            sleep(5000);
+            sleep(2500);
 
             led.strobewhite();
 
-            sleep(5000);
+            sleep(2500);
 
 
 
@@ -516,23 +516,24 @@ public class LEDTest extends LinearOpMode {
 
             led.twinklesforest();
 
-            sleep(5000);
+            sleep(2500);
 
             led.twinkleslava();
 
-            sleep(5000);
+            sleep(2500);
 
             led.twinklesocean();
 
-            sleep(5000);
+            sleep(2500);
 
             led.twinklesparty();
 
-            sleep(5000);
+            sleep(2500);
 
             led.twinklesrainbow();
 
-            sleep(5000);
+            sleep(2500);
         }
+        stop();
     }
 }
