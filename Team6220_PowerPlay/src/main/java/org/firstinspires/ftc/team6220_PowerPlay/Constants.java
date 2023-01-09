@@ -30,7 +30,7 @@ public class Constants {
             "8Kaaqnu3DABLRXRjSJ1QRSHmE8mIur5Dk3OcqMv3fwTNt5CnhC2J/D5biVGixUQ+dveylNEVNmp0k";
 
     public static final String[] TENSORFLOW_LABELS = {"BlueCone", "RedCone", "JunctionBottom", "JunctionTop"};
-    public static final String TENSORFLOW_MODEL_ASSET = ";
+    public static final String TENSORFLOW_MODEL_ASSET = "";
 
     // TensorFlow Object Detection
     public static final int ROBOT_CAMERA_CENTER_Y = 540;
