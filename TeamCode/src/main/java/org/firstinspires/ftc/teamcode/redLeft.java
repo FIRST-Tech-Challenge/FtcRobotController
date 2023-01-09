@@ -19,7 +19,7 @@ import org.openftc.apriltag.AprilTagDetection;
 import java.util.ArrayList;
 
 @Autonomous
-public class BlueRight extends LinearOpMode {
+public class redLeft extends LinearOpMode {
     OpenCvCamera webcam;
     Pipeline aprilTagDetectionPipeline;
 

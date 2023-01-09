@@ -17,9 +17,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.apriltag.AprilTagDetection;
 import java.util.ArrayList;
-
+//testing
 @Autonomous
-public class BlueRight extends LinearOpMode {
+public class redRight extends LinearOpMode {
     OpenCvCamera webcam;
     Pipeline aprilTagDetectionPipeline;
 
@@ -179,43 +179,43 @@ public class BlueRight extends LinearOpMode {
             crane(-1,400);
             strafeLeftwithcrane(1,1950,-1,2300);
             //crane2(1,-7600);
-            move(.5,-330);
+            move(.5,330);
             sleep(100);
             intake(-1,1300);
             //new
-            move(.5,300);
+            move(.5,-300);
             strafeLeftwithcrane(1,600,1,1000);//500
             gyroTurning(0);
             sleep(1000);
-            moveandspin(.5,980,1,1000);///410
+            moveandspin(.5,-980,-1,1000);///410
             stopMotors();
             //spin2(-1,1000);
-            move(.2,250);
+            move(.2,-150);
             craneinput(500);
             Left.setPower(.3);
             crane(-1, 650);
-            moveandspin(.8,-1000,-1,1000);
+            moveandspin(.8,1000,1,1000);
             strafeRightwithcrane(1,680,-1,1950);
-            move(.5,-360);
+            move(.5,360);
             intake(-1,1300);
-            move(.5,330);
+            move(.5,-330);
 
 
             switch (location){
                 case 0:
                     strafeRight(1,800);
-                    move(.4,200);
+                    move(.4,300);
                     break;
-                case 3:
+                case 1:
                     strafeRight(1,800);
                     move(.6,1200);
                     strafeRight(.5,300);
                     break;
                 case 2:
                     strafeRight(1,800);
-                    move(.4,200);
+                    move(.4,300);
                     break;
-                case 1:
+                case 3:
                     strafeRight(1,800);
                     gyroTurning(0);
                     move(.6,-1200);
@@ -511,5 +511,7 @@ public class BlueRight extends LinearOpMode {
 
     }
 
+
 }
+
 
