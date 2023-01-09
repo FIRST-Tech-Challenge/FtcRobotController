@@ -297,20 +297,16 @@ public class PwPRobot extends BasicRobot {
         leds.heartbeatred();
     }
 
-    public void bpmForest() {
-        leds.bpmforest();
+    public void darkGreen() {
+        leds.darkgreen();
     }
 
     public void violet() {
         leds.violet();
     }
 
-    public void rainbowWithGlitter() {
-        leds.rainbowwithglitter();
-    }
-
-    public void cp12ColorWaves() {
-        leds.cp12colorwaves();
+    public void rainbowRainbow() {
+        leds.rainbowrainbow();
     }
 
     public void larsonScannerBlue() {
@@ -341,7 +337,10 @@ public class PwPRobot extends BasicRobot {
             heartbeatRed();
         }
         if (CLAW_OPEN.getStatus()) {
-            bpmForest();
+            darkGreen();
+        }
+        if (op.getRuntime() > 90) {
+            rainbowRainbow();
         }
 
         //omnidirectional movement + turning

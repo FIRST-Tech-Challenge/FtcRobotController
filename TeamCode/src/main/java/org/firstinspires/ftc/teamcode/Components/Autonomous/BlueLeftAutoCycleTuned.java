@@ -131,7 +131,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
                     robot.heartbeatRed();
                 }
                 else if (color == 2) {
-                    robot.bpmForest();
+                    robot.darkGreen();
                 }
                 else {
                     robot.violet();
