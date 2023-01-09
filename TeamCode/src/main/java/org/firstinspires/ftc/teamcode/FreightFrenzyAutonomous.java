@@ -24,9 +24,6 @@ public class FreightFrenzyAutonomous extends CommandOpMode {
     protected ElapsedTime runtime;
     protected SampleMecanumDrive drive;
     protected RoadRunnerSubsystem RR;
-    protected Trajectory t1;
-    protected Trajectory t2;
-    protected Trajectory t3;
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -132,19 +129,21 @@ public class FreightFrenzyAutonomous extends CommandOpMode {
         /* Actually do something useful */
         //check for tag of interest == null command maybe wrongss
 
-        RR.runT1();
-        RR.runT2();
+        RR.runHM();
+        RR.runMR();
 
         while (runtime.seconds() < 20){
 
-            RR.runT3();
-            RR.runT4();
+            RR.runRG();
+            RR.runGR();
 
         }
 
-        if (tagOfInterest.id == LEFT) RR.runT1();
-        else if (tagOfInterest.id == MIDDLE) RR.runT2();
-        else RR.runT3();
+        //Will add an get position command
+
+        if (tagOfInterest.id == LEFT) RR.runP1();
+        else if (tagOfInterest.id == MIDDLE) RR.runP2();
+        else RR.runP3();
 
 
         // run the scheduler

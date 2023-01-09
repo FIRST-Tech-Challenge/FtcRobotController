@@ -2,63 +2,124 @@ package org.firstinspires.ftc.teamcode.freightfrenzy;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import org.firstinspires.ftc.teamcode.myroadrunner.drive.SampleMecanumDrive;
 
 public class RoadRunnerSubsystem extends SubsystemBase {
 
     protected SampleMecanumDrive driveR;
-    protected Trajectory t1;
-    protected Trajectory t2;
-    protected Trajectory t3;
-    protected Trajectory t4;
+    protected Trajectory gm;
+    protected Trajectory rm;
+    protected Trajectory gr;
+    protected Trajectory rg;
+    protected Trajectory mr;
+    protected Trajectory home;
+    protected Trajectory hm;
+    protected Trajectory p1;
+    protected Trajectory p2;
+    protected Trajectory p3;
 
     public RoadRunnerSubsystem(SampleMecanumDrive drive) {
 
         driveR = drive;
 
-        Pose2d homePose = new Pose2d(70.25, -70.625, Math.toRadians(0));
-        drive.setPoseEstimate(homePose);
+        int robotFB = 13;
+        double dposition = 9.19;
 
-        Pose2d midPose = new Pose2d(70.25, 0, Math.toRadians(0));
-        drive.setPoseEstimate(homePose);
+        Pose2d homePose = new Pose2d(35, -70.625, Math.toRadians(90));
 
-        Pose2d grabbingPose = new Pose2d(141.25, 0, Math.toRadians(90));
-        drive.setPoseEstimate(homePose);
+        Pose2d midPose = new Pose2d(35, -12, Math.toRadians(90));
 
-        Pose2d releasingPose = new Pose2d(46.75, 0, Math.toRadians(-90));
-        drive.setPoseEstimate(homePose);
+        Pose2d grabbingPose = new Pose2d(71.25 - robotFB, -12, Math.toRadians(180));
 
+        Pose2d releasingPose = new Pose2d(24 + dposition, 0 - dposition, Math.toRadians(135));
 
-        t1 = drive.trajectoryBuilder(homePose)
+        Pose2d parking1 = new Pose2d(12, -24, Math.toRadians(90));
+
+        Pose2d parking2 = new Pose2d(36, -24, Math.toRadians(90));
+
+        Pose2d parking3 = new Pose2d(60, -24, Math.toRadians(90));
+
+        hm = drive.trajectoryBuilder(homePose)
                 .lineToLinearHeading(midPose)
                 .build();
-        t2 = drive.trajectoryBuilder(midPose)
+
+        home = drive.trajectoryBuilder(midPose)
+                .lineToLinearHeading(homePose)
+                .build();
+
+        mr = drive.trajectoryBuilder(midPose)
                 .lineToLinearHeading(releasingPose)
                 .build();
-        t3 = drive.trajectoryBuilder(releasingPose)
+
+        rg = drive.trajectoryBuilder(releasingPose)
                 .lineToLinearHeading(grabbingPose)
                 .build();
-        t4 = drive.trajectoryBuilder(grabbingPose)
+
+        gr = drive.trajectoryBuilder(grabbingPose)
                 .lineToLinearHeading(releasingPose)
                 .build();
 
+        rm = drive.trajectoryBuilder(releasingPose)
+                .lineToLinearHeading(midPose)
+                .build();
+
+        gm = drive.trajectoryBuilder(grabbingPose)
+                .lineToLinearHeading(midPose)
+                .build();
+
+        p1 = drive.trajectoryBuilder(midPose)
+                .lineToLinearHeading(parking1)
+                .build();
+
+        p2 = drive.trajectoryBuilder(midPose)
+                .lineToLinearHeading(parking2)
+                .build();
+
+        p3 = drive.trajectoryBuilder(midPose)
+                .lineToLinearHeading(parking3)
+                .build();
     }
 
-    public void runT1(){
-        driveR.followTrajectory(t1);
+    public void runHM(){
+        driveR.followTrajectory(hm);
     }
 
-    public void runT2(){
-        driveR.followTrajectory(t2);
+    public void runHOME(){
+        driveR.followTrajectory(home);
     }
 
-    public void runT3(){
-        driveR.followTrajectory(t3);
+    public void runMR(){
+        driveR.followTrajectory(mr);
     }
 
-    public void runT4(){
-        driveR.followTrajectory(t4);
+    public void runRG(){
+        driveR.followTrajectory(rg);
+    }
+
+    public void runGR(){
+        driveR.followTrajectory(gr);
+    }
+
+    public void runRM(){
+        driveR.followTrajectory(rm);
+    }
+
+    public void runGM(){
+        driveR.followTrajectory(gm);
+    }
+
+    public void runP1(){
+        driveR.followTrajectory(p1);
+    }
+
+    public void runP2(){
+        driveR.followTrajectory(p2);
+    }
+
+    public void runP3(){
+        driveR.followTrajectory(p3);
     }
 
 }
