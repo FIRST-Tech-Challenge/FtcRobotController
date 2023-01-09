@@ -42,6 +42,15 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         return dst;
     }
 
+    void grayTo3(Mat gray) {
+        Mat out;
+        Mat in[] = {gray, gray, gray};
+        Core.merge(in, out);
+        for(Mat m : in) {
+            m.release();
+        }
+    }
+
     @Override
     public Mat processFrame(Mat input) throws IllegalArgumentException {
         int[] ca = {43, 200, 127};
@@ -63,40 +72,41 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         matte = targetToleranceMatte(frame, colorTarget, colorTolerance);
 
         // Blur and then threshold to remove small details and sort of "erode" the matte
+        grayTo3(matte);
         Imgproc.GaussianBlur(matte, blurMatte, blurSize, 0);
         Imgproc.threshold(blurMatte, thresholdMatte, erodeSize, 255, Imgproc.THRESH_BINARY);
 
         // Get the contours of the image
-        Imgproc.findContours(frame, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(matte, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Find largest contour and then draw a rectangle around it for display
-        double maxArea;
-        int maxAreaContour;
-        if (contours.size() > 0) {
-            maxArea = 0.0;
-            maxAreaContour = -1;
-
-            for (int i = 0; i < contours.size(); i++) {
-                if (Imgproc.contourArea(contours.get(i)) > maxArea) {
-                    maxArea = Imgproc.contourArea(contours.get(i));
-                    maxAreaContour = i;
-                }
-            }
-
-            detectedRect = Imgproc.boundingRect(contours.get(maxAreaContour));
-            Imgproc.rectangle(input, detectedRect, new Scalar(40, 200, 0), 10);
-
-            // Transform the detected rectangle's coordinates so that (0, 0) is at the center of the image,
-            // and instead of detectedRect.x and detectedRect.y corresponding to the top-left corner they correspond to the center of the rectangle
-            detectedRect.x -= input.width() * 0.5 - detectedRect.width * 0.5;
-            detectedRect.y -= input.height() * 0.5 - detectedRect.height * 0.5;
-        }
+//        double maxArea;
+//        int maxAreaContour;
+//        if (contours.size() > 0) {
+//            maxArea = 0.0;
+//            maxAreaContour = -1;
+//
+//            for (int i = 0; i < contours.size(); i++) {
+//                if (Imgproc.contourArea(contours.get(i)) > maxArea) {
+//                    maxArea = Imgproc.contourArea(contours.get(i));
+//                    maxAreaContour = i;
+//                }
+//            }
+//
+//            detectedRect = Imgproc.boundingRect(contours.get(maxAreaContour));
+//            Imgproc.rectangle(input, detectedRect, new Scalar(40, 200, 0), 10);
+//
+//            // Transform the detected rectangle's coordinates so that (0, 0) is at the center of the image,
+//            // and instead of detectedRect.x and detectedRect.y corresponding to the top-left corner they correspond to the center of the rectangle
+//            detectedRect.x -= input.width() * 0.5 - detectedRect.width * 0.5;
+//            detectedRect.y -= input.height() * 0.5 - detectedRect.height * 0.5;
+//        }
 
         rectDetected = contours.size() > 0;
         counter = contours.size();
 
-        Imgproc.cvtColor(input, finalOutput, Imgproc.COLOR_HSV2BGR);
+        //Imgproc.cvtColor(input, finalOutput, Imgproc.COLOR_HSV2BGR);
 
-        return finalOutput;
+        return input;
     }
 }
