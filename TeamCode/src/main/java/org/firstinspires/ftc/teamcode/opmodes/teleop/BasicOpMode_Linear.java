@@ -130,11 +130,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 gripper.setPosition(0.75);
                 armTarget = 0;
             }
-            if (gamepad2.right_bumper) gripper.setPosition(0.5);
-
-            if (gamepad2.dpad_up) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 - 70;
-            if (gamepad2.dpad_down) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 + 70;
-
+            if (gamepad2.right_bumper) gripper.setPosition(0.6);
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -169,10 +165,10 @@ public class BasicOpMode_Linear extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                leftFrontPower *= 0.75;
-                rightBackPower *= 0.75;
-                rightFrontPower *= 0.75;
-                leftBackPower *= 0.75;
+                leftFrontPower *= 0.5;
+                rightBackPower *= 0.5;
+                rightFrontPower *= 0.5;
+                leftBackPower *= 0.5;
             }
             else {
                 leftFrontPower *= 1;
@@ -194,7 +190,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 targetChanged = true;
             }
             if (gamepad2.right_trigger > 0) {
-                SetArmPower(-1);
+                SetArmPower(-gamepad2.right_trigger);
                 targetChanged = true;
             }
 
@@ -211,7 +207,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             rightLift.setTargetPosition(armTarget);
             if (rightLift.isBusy() && leftLift.isBusy()) {
                 if (leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()) {
-                    if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < -700 && armTarget != -630 && (!gamepad2.dpad_down && !gamepad2.dpad_up)) {
+                    if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < -700 && armTarget != middleJunction) {
                         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         SetArmPower(0.0);
