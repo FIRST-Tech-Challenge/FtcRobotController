@@ -32,7 +32,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -56,7 +56,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor motorBR = null;
     private DcMotor leftLift = null;
     private DcMotor rightLift = null;
-    private Servo gripper = null;
+    private CRServo gripper = null;
 
     //Convert from the counts per revolution of the encoder to counts per inch
     static final double HD_COUNTS_PER_REV = 28;
@@ -76,7 +76,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
         leftLift = hardwareMap.get(DcMotor.class, "leftArm");
         rightLift = hardwareMap.get(DcMotor.class, "rightArm");
-        gripper = hardwareMap.get(Servo.class, "gripper");
+        gripper = hardwareMap.get(CRServo.class, "gripper");
 
         motorBR.setDirection(DcMotor.Direction.REVERSE);
         motorFR.setDirection(DcMotor.Direction.REVERSE);
@@ -120,17 +120,31 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double left_y = gamepad1.left_stick_y;
             double left_x = gamepad1.left_stick_x;
             double strafe_side = gamepad1.right_stick_x;
+            int position = -900;
 
-            if (gamepad2.x) armTarget = lowJunction;
-            if (gamepad2.b) armTarget = middleJunction;
-            if (gamepad2.y) armTarget = highJunction;
-            if (gamepad2.a) armTarget = 0;
-
-            if (gamepad2.left_bumper) {
-                gripper.setPosition(0.75);
+            if (gamepad2.x) {
+                position = armTarget;
+                armTarget = lowJunction;
+            }
+            if (gamepad2.b) {
+                position = armTarget;
+                armTarget = middleJunction;
+            }
+            if (gamepad2.y) {
+                position = armTarget;
+                armTarget = highJunction;
+            }
+            if (gamepad2.a) {
+                position = armTarget;
                 armTarget = 0;
             }
-            if (gamepad2.right_bumper) gripper.setPosition(0.5);
+
+            if (gamepad2.left_bumper) {
+                gripper.setPower(1);
+                position = armTarget;
+                armTarget = 0;
+            }
+            if (gamepad2.right_bumper) gripper.setPower(-1);
 
             if (gamepad2.dpad_up) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 - 70;
             if (gamepad2.dpad_down) armTarget = (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 + 70;
@@ -144,15 +158,15 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double rightBackPower;
 
             if (Math.abs(left_y) < 0.2) {
-                leftFrontPower = -left_x * 0.8 - strafe_side * 0.6;
-                rightFrontPower = left_x * 0.8 + strafe_side * 0.6;
-                leftBackPower = left_x * 0.8 - strafe_side * 0.6;
-                rightBackPower = -left_x * 0.8 + strafe_side * 0.6;
+                leftFrontPower = -left_x - strafe_side;
+                rightFrontPower = left_x + strafe_side;
+                leftBackPower = left_x - strafe_side;
+                rightBackPower = -left_x + strafe_side;
             } else {
-                leftFrontPower = (left_y - left_x) * 0.8 - strafe_side * 0.6;
-                rightFrontPower = (left_y + left_x) * 0.8 + strafe_side * 0.6;
-                leftBackPower = (left_y + left_x) * 0.8 - strafe_side * 0.6;
-                rightBackPower = (left_y - left_x) * 0.8 + strafe_side * 0.6;
+                leftFrontPower = left_y - left_x - strafe_side;
+                rightFrontPower = left_y + left_x + strafe_side;
+                leftBackPower = left_y + left_x - strafe_side;
+                rightBackPower = left_y - left_x + strafe_side;
             }
 
             // Normalize the values so no wheel power exceeds 100%
@@ -169,16 +183,16 @@ public class BasicOpMode_Linear extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
+                leftFrontPower *= 0.5;
+                rightBackPower *= 0.5;
+                rightFrontPower *= 0.5;
+                leftBackPower *= 0.5;
+            }
+            else {
                 leftFrontPower *= 0.75;
                 rightBackPower *= 0.75;
                 rightFrontPower *= 0.75;
                 leftBackPower *= 0.75;
-            }
-            else {
-                leftFrontPower *= 1;
-                rightBackPower *= 1;
-                rightFrontPower *= 1;
-                leftBackPower *= 1;
             }
 
             // Send calculated power to wheels
@@ -194,7 +208,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 targetChanged = true;
             }
             if (gamepad2.right_trigger > 0) {
-                SetArmPower(-1);
+                SetArmPower(-0.7);
                 targetChanged = true;
             }
 
@@ -211,7 +225,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             rightLift.setTargetPosition(armTarget);
             if (rightLift.isBusy() && leftLift.isBusy()) {
                 if (leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()) {
-                    if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < -700 && armTarget != -630 && (!gamepad2.dpad_down && !gamepad2.dpad_up)) {
+                    if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 < -630 && armTarget != -630 && (!gamepad2.dpad_down && !gamepad2.dpad_up)) {
                         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         SetArmPower(0.0);
@@ -226,10 +240,6 @@ public class BasicOpMode_Linear extends LinearOpMode {
                     rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     SetArmPower(1.0);
                 }
-                telemetry.addData("Arm Position", (leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2.0);
-                telemetry.addData("Target Position", (leftLift.getTargetPosition() + rightLift.getTargetPosition()) / 2.0);
-                telemetry.addData("Arm Power", (leftLift.getPower() + rightLift.getPower()) / 2.0);
-                telemetry.update();
             }
         }
     }
