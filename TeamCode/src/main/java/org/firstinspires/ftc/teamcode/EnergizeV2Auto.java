@@ -53,6 +53,11 @@ public class EnergizeV2Auto extends LinearOpMode {
 
     private DcMotor liftMotor1 = null;
     private DcMotor liftMotor2 = null;
+    
+    private DigitalChannel redLED;
+    private DigitalChannel greenLED;
+
+        boolean toggle = false;
 
     private Servo rightServo;
     private Servo leftServo;
@@ -159,6 +164,18 @@ public class EnergizeV2Auto extends LinearOpMode {
 
                 if(tagFound)
                 {
+                     if (tagOfInterest.id == 1) {
+                            redLED.setState(true);
+                            greenLED.setState(false);
+                        }
+                        else if (tagOfInterest.id == 3){
+                            redLED.setState(false);
+                            greenLED.setState(true);
+                        }
+                        else if (tagOfInterest.id == 9){
+                            redLED.setState(false);
+                            greenLED.setState(false);
+                        }
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 }
@@ -180,6 +197,8 @@ public class EnergizeV2Auto extends LinearOpMode {
             }
             else
             {
+                redLED.setState(true);
+                greenLED.setState(true);
                 telemetry.addLine("Don't see tag of interest :(");
 
                 if(tagOfInterest == null)
