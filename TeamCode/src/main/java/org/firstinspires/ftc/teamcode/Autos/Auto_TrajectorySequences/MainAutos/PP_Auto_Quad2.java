@@ -85,7 +85,7 @@ public class PP_Auto_Quad2 extends PowerPlay_AprilTagDetection
 	public Pose2d cycle(SampleMecanumDrive bot, Pose2d currentPosition){
 		TrajectorySequence openingMove =  bot.trajectorySequenceBuilder(currentPosition)
 				.addTemporalMarker(2,() -> {
-					slideControl.setHighJunction();
+					slideControl.setHighJunction(telemetry);
 					//slideControl.Update();
 					armControl.setIntake();
 					//armControl.update();

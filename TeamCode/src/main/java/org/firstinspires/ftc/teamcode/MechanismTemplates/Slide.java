@@ -90,8 +90,10 @@ public class Slide {
         targetPos = MID_JUNCTION;
     }
 
-    public void setHighJunction(){
+    public void setHighJunction(Telemetry telemetry){
         targetPos = HIGH_JUNCTION;
+        telemetry.addLine("high");
+        telemetry.update();
     }
 
     public void setManualSlide(int increment){
