@@ -79,22 +79,20 @@ public class Arm {
             leftLift.setPower((drop) ? 0.0 : power * 0.7);
             rightLift.setPower((drop) ? 0.0 : power * 0.7);
 
-            armTarget = getCurrentPosition() + ((drop) ? -70 : 70);
+            armTarget = getCurrentPosition();
         }
 
         if (rightLift.isBusy() && leftLift.isBusy()){
             if (getCurrentPosition() > armTarget) {
-                if (getCurrentPosition() > 630) {
+                if (getCurrentPosition() > middleJunction) {
                     leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                     rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                    leftLift.setPower(0.0);
-                    rightLift.setPower(0.0);
                 } else {
                     leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    leftLift.setPower(0.0);
-                    rightLift.setPower(0.0);
                 }
+                leftLift.setPower(0.0);
+                rightLift.setPower(0.0);
             } else {
                 leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -104,9 +102,7 @@ public class Arm {
         }
     }
 
-    public static int getCurrentPosition(){ return (leftLift.getCurrentPosition() + rightLift.getTargetPosition()) / 2; }
+    public static int getCurrentPosition(){ return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2; }
 
-    public static double getPower(){
-        return (leftLift.getPower() + rightLift.getPower()) / 2;
-    }
+    public static double getPower(){ return (leftLift.getPower() + rightLift.getPower()) / 2; }
 }
