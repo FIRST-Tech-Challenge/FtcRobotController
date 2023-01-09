@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Robots;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_WIDE;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
@@ -435,6 +436,9 @@ public class PwPRobot extends BasicRobot {
                 liftArm.lowerLiftArmToIntake();
 
             } else {
+                if(CLAW_WIDE.getStatus()){
+                    claw.openClaw();
+                }
                 liftArm.raiseLiftArmToOuttake();
             }
         }
@@ -450,6 +454,9 @@ public class PwPRobot extends BasicRobot {
         claw.closeClaw();
         if (op.getRuntime() - claw.getLastTime() > .4 && op.getRuntime() - claw.getLastTime() < .7 && CLAW_CLOSED.getStatus()) {
             liftArm.raiseLiftArmToOuttake();
+        }
+        if(CLAW_OPEN.getStatus()&& ARM_INTAKE.getStatus()&&!CLAW_WIDE.getStatus()){
+            claw.wideClaw();
         }
 
 

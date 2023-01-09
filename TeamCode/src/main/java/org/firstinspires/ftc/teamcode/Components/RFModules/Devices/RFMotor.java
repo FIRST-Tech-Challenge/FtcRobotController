@@ -166,7 +166,7 @@ public class RFMotor extends Motor {
         resistances -= 200 + 0.42 * position - 0.0001 * position * position;
         resistances -= velocity * 0.950 * pow(abs(position) + 1, -.13);
         resistance = resistances;
-        resistances -= 200 + 0.42 * targetPos - 0.0001 * targetPos * targetPos;
+        resistances -= 200 + 0.4 * targetPos - 0.0001 * targetPos * targetPos;
         avgResistance = resistances / 2;
     }
 

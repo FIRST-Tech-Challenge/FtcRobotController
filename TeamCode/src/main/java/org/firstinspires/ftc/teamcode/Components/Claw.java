@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLO
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPENING;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_WIDE;
+import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
@@ -29,9 +31,9 @@ public class Claw {
     private final double CLAW_CLOSED_POS = 0.44;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.62;
+    private final double CLAW_OPEN_POS = 0.66;
 
-    private final double CLAW_WIDE_POS = 0.66;
+    private final double CLAW_WIDE_POS = 0.72;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
@@ -55,7 +57,8 @@ public class Claw {
         CLAW_CLOSED(false, "CLAW_CLOSED"),
         CLAW_CLOSING(false, "CLAW_CLOSING"),
         CLAW_OPEN(true, "CLAW_OPEN"),
-        CLAW_OPENING(false, "CLAW_OPENING");
+        CLAW_OPENING(false, "CLAW_OPENING"),
+        CLAW_WIDE(true, "CLAW_OPEN");
 
         boolean status;
         String name;
@@ -141,14 +144,14 @@ public class Claw {
                 CLAW_SERVO_SWITCH_TIME + " " + op.getRuntime());
     }
     public void wideClaw(){
-        if(!CLAW_OPENING.getStatus()&&clawPos!=CLAW_WIDE_POS){
+        if(ARM_INTAKE.getStatus()&&!CLAW_WIDE.status){
             claw.setPosition(CLAW_WIDE_POS);
-            CLAW_OPENING.setStatus(true);
+            ClawStates.CLAW_WIDE.setStatus(true);
             clawPos = CLAW_WIDE_POS;
         }
     }
     public boolean isClawWide(){
-        if(CLAW_OPEN.getStatus()&&clawPos==CLAW_WIDE_POS){
+        if(CLAW_WIDE.getStatus()){
             return true;
         }
         else {
@@ -163,7 +166,7 @@ public class Claw {
         //the state of claw opened has to be true
         if (op.getRuntime()-lastCheckTime>0.2 && op.getRuntime()-lastOpenTime>3) {
             lastCheckTime = op.getRuntime();
-            if(CLAW_OPEN.status && isConeReady()&& LiftArm.liftArmStates.ARM_INTAKE.getStatus()) {
+            if((CLAW_OPEN.status|| CLAW_WIDE.status) && isConeReady()&& ARM_INTAKE.getStatus()) {
                 //set servo position
                 claw.setPosition(CLAW_CLOSED_POS);
 
@@ -182,7 +185,7 @@ public class Claw {
 
 
         //the state of claw opened has to be true
-        if (CLAW_OPEN.status) {
+        if (CLAW_OPEN.status|| CLAW_WIDE.status) {
             //set servo position
             claw.setPosition(CLAW_CLOSED_POS);
             clawPos=CLAW_CLOSED_POS;
@@ -202,7 +205,7 @@ public class Claw {
 
 
         //the state of claw closed has to be true TODO: refer to line 16
-        if (CLAW_CLOSED.status) {
+        if (CLAW_CLOSED.status|| CLAW_WIDE.status) {
             //set servo position
             claw.setPosition(CLAW_OPEN_POS);
             //TODO: need separate CLAW_OPEN_POS constant?
