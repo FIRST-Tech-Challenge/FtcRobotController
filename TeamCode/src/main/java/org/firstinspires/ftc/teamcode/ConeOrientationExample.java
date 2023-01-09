@@ -78,7 +78,7 @@ public class ConeOrientationExample extends LinearOpMode
             public void onOpened()
             {
                 pipelineLow = new PowerPlaySuperPipeline(true, false,
-                        false, false, 160.0, true, false);
+                        false, false, 160.0);
                 webcamLow.setPipeline(pipelineLow);
                 webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
@@ -98,7 +98,7 @@ public class ConeOrientationExample extends LinearOpMode
             public void onOpened()
             {
                 pipelineFront = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0, true, false);
+                        false, false, 160.0);
                 webcamFront.setPipeline(pipelineFront);
                 webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
             }
@@ -118,7 +118,7 @@ public class ConeOrientationExample extends LinearOpMode
             public void onOpened()
             {
                 pipelineBack = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0, true, false);
+                        false, false, 160.0);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
