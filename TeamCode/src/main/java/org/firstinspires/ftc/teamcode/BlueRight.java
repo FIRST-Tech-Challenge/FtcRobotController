@@ -187,14 +187,14 @@ public class BlueRight extends LinearOpMode {
             strafeLeftwithcrane(1,600,1,1000);//500
             gyroTurning(0);
             sleep(1000);
-            moveandspin(.5,-980,1,1000);///410
+            moveandspin(.5,980,1,1000);///410
             stopMotors();
             //spin2(-1,1000);
-            move(.2,150);
+            move(.2,250);
             craneinput(500);
             Left.setPower(.3);
             crane(-1, 650);
-            moveandspin(.8,1000,-1,1000);
+            moveandspin(.8,-1000,-1,1000);
             strafeRightwithcrane(1,680,-1,1950);
             move(.5,-360);
             intake(-1,1300);
@@ -206,19 +206,19 @@ public class BlueRight extends LinearOpMode {
                     strafeRight(1,800);
                     move(.4,300);
                     break;
-                case 1:
-                    strafeRight(1,900);
-                    move(.6,900);
+                case 3:
+                    strafeRight(1,800);
+                    move(.6,1200);
                     strafeRight(.5,300);
                     break;
                 case 2:
                     strafeRight(1,800);
                     move(.4,200);
                     break;
-                case 3:
-                    strafeRight(1,900);
+                case 1:
+                    strafeRight(1,800);
                     gyroTurning(0);
-                    move(.6,-1000);
+                    move(.6,-1200);
                     strafeRight(.5,300);
                     break;
             }

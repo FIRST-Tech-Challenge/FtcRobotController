@@ -208,7 +208,7 @@ public class BlueLeft extends LinearOpMode {
                     break;
                 case 1:
                     strafeRight(1,800);
-                    move(.6,900);
+                    move(.6,1200);
                     strafeRight(.5,300);
                     break;
                 case 2:
@@ -216,9 +216,9 @@ public class BlueLeft extends LinearOpMode {
                     move(.4,300);
                     break;
                 case 3:
-                    strafeRight(1,900);
+                    strafeRight(1,800);
                     gyroTurning(0);
-                    move(.6,-1000);
+                    move(.6,-1200);
                     strafeRight(.5,300);
                     break;
             }
