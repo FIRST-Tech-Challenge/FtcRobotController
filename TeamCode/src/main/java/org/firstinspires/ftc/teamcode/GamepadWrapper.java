@@ -39,16 +39,7 @@ public class GamepadWrapper {
      */
     public boolean getButtonState(DriverAction driverAction) {
         switch (driverAction) {
-            case SET_SLIDES_RETRACTED:
-                return gamepad2.dpad_down;
-            case SET_SLIDES_LOW:
-                return gamepad2.dpad_left;
-            case SET_SLIDES_MEDIUM:
-                return gamepad2.dpad_right;
-            case SET_SLIDES_HIGH:
-                return gamepad2.dpad_up;
-            case SET_SLIDES_VERY_LOW:
-                return gamepad2.a;
+            //Gamepad 1 Controls
             case TURN_ON_FINE_MOVEMENT:
                 return gamepad1.left_bumper;
             case TURN_ON_ULTRA_FINE_MOVEMENT:
@@ -65,11 +56,22 @@ public class GamepadWrapper {
                 return gamepad1.x;
             case TURN_CLOCKWISE:
                 return gamepad1.b;
+
+            //Gamepad 2 Controls
+            case SET_SLIDES_RETRACTED:
+                return gamepad2.dpad_down;
+            case SET_SLIDES_LOW:
+                return gamepad2.dpad_left;
+            case SET_SLIDES_MEDIUM:
+                return gamepad2.dpad_right;
+            case SET_SLIDES_HIGH:
+                return gamepad2.dpad_up;
+            case SET_SLIDES_VERY_LOW:
+                return gamepad2.a;
             case HORSESHOE_TO_BACK:
                 return gamepad2.right_bumper;
             case HORSESHOE_TO_FRONT:
                 return gamepad2.left_bumper;
-
         }
         assert false;
         return false;
