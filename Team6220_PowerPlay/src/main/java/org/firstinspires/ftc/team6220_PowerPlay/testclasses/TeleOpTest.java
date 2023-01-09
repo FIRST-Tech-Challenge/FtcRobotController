@@ -4,69 +4,66 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 
-@Disabled
+//@Disabled
 @TeleOp(name = "TeleOpTest", group = "Test")
 public class TeleOpTest extends BaseTeleOp {
 
-    public static Servo servoGrabber;
+    double currentAngle;
+    double headingDegrees;
+    double negativeHeadingRadians;
+
+    double x;
+    double y;
+    double t;
+
+    double xRotatedVector;
+    double yRotatedVector;;
+    double ratio;
+
+    double xPower;
+    double yPower;
+    double tPower;
 
     @Override
     public void runOpMode() {
-        servoGrabber = hardwareMap.servo.get("servoGrabber");
+        initialize();
         waitForStart();
 
         while (opModeIsActive()) {
-            servoGrabber.setPosition(-0.5 * gamepad1.left_stick_y + 0.5);
+            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            headingDegrees = currentAngle - startAngle;
+            negativeHeadingRadians = Math.toRadians(-headingDegrees);
 
-            telemetry.addData("servo", servoGrabber.getPosition());
+            if (gamepad1.left_trigger > 0.25) {
+                x = gamepad1.left_stick_x * 0.3;
+                y = -gamepad1.left_stick_y * 0.3;
+                t = gamepad1.right_stick_x * 0.2;
+            } else {
+                x = gamepad1.left_stick_x * 0.75;
+                y = -gamepad1.left_stick_y * 0.75;
+                t = gamepad1.right_stick_x * 0.5;
+            }
+
+            xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
+            yRotatedVector = x * Math.sin(negativeHeadingRadians) + y * Math.cos(negativeHeadingRadians);
+
+            ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(yRotatedVector) + Math.abs(t), 1);
+
+            xPower = xRotatedVector * ratio;
+            yPower = yRotatedVector * ratio;
+            tPower = t * ratio;
+
+            driveWithIMU(xPower, yPower, tPower);
+
+            telemetry.addData("start", startAngle);
+            telemetry.addData("current", currentAngle);
+            telemetry.addData("heading", headingDegrees);
             telemetry.update();
         }
     }
-
-    /*boolean dLeft = false;
-    boolean dRight = false;
-    boolean dDown = false;
-
-    public void driveChassisWithController() {
-        xPower = gamepad1.left_stick_x * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
-        yPower = gamepad1.left_stick_y * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
-        tPower = gamepad1.right_stick_x * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
-
-        // case for driving the robot left and right
-        if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) < Constants.DRIVE_DEADZONE_DEGREES) {
-            driveWithIMU(xPower, 0.0, tPower);
-
-            // case for driving the robot forwards and backwards
-        } else if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) > Constants.DRIVE_DEADZONE_DEGREES) {
-            driveWithIMU(0.0, yPower, tPower);
-
-            // case for if the deadzone limits are passed, the robot drives normally
-        } else {
-            driveWithIMU(xPower, yPower, tPower);
-        }
-
-        if (gamepad1.dpad_left && !dLeft) {
-            IMUOriginalAngles.firstAngle = addAngle(*//* ඞ *//*IMUOriginalAngles.firstAngle, 90);
-        } else if (gamepad1.dpad_right && !dRight) {
-            IMUOriginalAngles.firstAngle = addAngle(*//* ඞ *//*IMUOriginalAngles.firstAngle, -90);
-        } else if (gamepad1.dpad_down && !dDown) {
-            IMUOriginalAngles.firstAngle = addAngle(*//* ඞ *//*IMUOriginalAngles.firstAngle, 180);
-        }
-
-        dLeft = gamepad1.dpad_left;
-        dRight = gamepad1.dpad_right;
-        dDown = gamepad1.dpad_down;
-    }
-
-    private float addAngle(float start, float add) {
-        float newAngle = start + add;
-        if (newAngle > 180.0) {
-            newAngle -= 360.0;
-        } else if (newAngle < -180.0) {
-            newAngle += 360.0;
-        }
-        return newAngle;
-    }*/
 }

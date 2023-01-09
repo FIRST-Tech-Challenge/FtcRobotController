@@ -39,11 +39,11 @@ public abstract class BaseTeleOp extends BaseOpMode {
         if (gamepad1.left_trigger > 0.25) {
             x = gamepad1.left_stick_x * 0.3;
             y = -gamepad1.left_stick_y * 0.3;
-            t = gamepad1.right_stick_x * 0.1;
+            t = gamepad1.right_stick_x * 0.2;
         } else {
             x = gamepad1.left_stick_x * 0.75;
             y = -gamepad1.left_stick_y * 0.75;
-            t = gamepad1.right_stick_x * 0.25;
+            t = gamepad1.right_stick_x * 0.5;
         }
 
         xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
@@ -52,27 +52,37 @@ public abstract class BaseTeleOp extends BaseOpMode {
         angleToCardinal = headingDegrees % 90;
 
         if (angleToCardinal <= 10) {
-            t += angleToCardinal / 100.0;
+            t += angleToCardinal / 50.0;
         } else if (angleToCardinal >= 80) {
-            t -= (90 - angleToCardinal) / 100.0;
+            t -= (90 - angleToCardinal) / 50.0;
         }
 
-        ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(yRotatedVector) + Math.abs(t), 1);
-
-        xPower = xRotatedVector * ratio;
-        yPower = yRotatedVector * ratio;
-        tPower = t * ratio;
-
         // drive only left and right
-        if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) <= 10) {
+        if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) <= 45) {
+            ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(t), 1);
+
+            xPower = xRotatedVector * ratio;
+            tPower = t * ratio;
+
             driveWithIMU(xPower, 0.0, tPower);
 
         // drive only forwards and backwards
-        } else if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) >= 80) {
+        } else if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) >= 45) {
+            ratio = 1 / Math.max(Math.abs(yRotatedVector) + Math.abs(t), 1);
+
+            yPower = yRotatedVector * ratio;
+            tPower = t * ratio;
+
             driveWithIMU(0.0, yPower, tPower);
 
         // drive normally
         } else {
+            ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(yRotatedVector) + Math.abs(t), 1);
+
+            xPower = xRotatedVector * ratio;
+            yPower = yRotatedVector * ratio;
+            tPower = t * ratio;
+
             driveWithIMU(xPower, yPower, tPower);
         }
     }

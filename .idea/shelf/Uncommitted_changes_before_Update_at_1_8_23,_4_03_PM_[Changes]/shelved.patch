@@ -1,0 +1,571 @@
+Index: Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseAutonomous.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.team6220_PowerPlay;\n\nimport com.qualcomm.hardware.lynx.LynxModule;\nimport com.qualcomm.robotcore.hardware.DcMotor;\n\nimport org.firstinspires.ftc.robotcore.external.ClassFactory;\nimport org.firstinspires.ftc.robotcore.external.hardware.camera.SwitchableCamera;\nimport org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;\nimport org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;\nimport org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;\nimport org.firstinspires.ftc.robotcore.external.navigation.AxesReference;\nimport org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;\nimport org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;\nimport org.openftc.apriltag.AprilTagDetection;\nimport org.openftc.easyopencv.OpenCvCamera;\nimport org.openftc.easyopencv.OpenCvCameraFactory;\nimport org.openftc.easyopencv.OpenCvCameraRotation;\n\nimport java.util.ArrayList;\nimport java.util.Locale;\n\npublic abstract class BaseAutonomous extends BaseOpMode {\n    public TFObjectDetector tfod;\n    public VuforiaLocalizer vuforia;\n\n    public void initialize() {\n        super.initialize();\n        initializeVuforia();\n        initializeTensorFlow();\n    }\n\n    /**\n     * this method will allow the robot to drive straight in a specified direction given a specified heading and distance\n     * @param heading 360-degree direction robot should move (front is 0)\n     * @param targetDistance distance robot should move in inches\n     */\n    public void driveInches(double heading, double targetDistance) {\n        // encoder values of the drive motors\n        int eFL, eFR, eBL, eBR;\n\n        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;\n        double turningPower;\n\n        // looking at robot from the back, x is left/right and y is forwards/backwards\n        double xPosition, yPosition;\n\n        // power for any heading\n        double xPower = Math.cos(Math.toRadians(heading + 95)) * 0.6;\n        double yPower = Math.sin(Math.toRadians(heading + 95)) * 0.6;\n\n        double traveledDistance;\n        double remainingDistance = targetDistance;\n\n        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\n\n        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\n        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\n        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\n        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\n\n        while (remainingDistance > 0 && opModeIsActive()) {\n            eFL = motorFL.getCurrentPosition();\n            eFR = motorFR.getCurrentPosition();\n            eBL = motorBL.getCurrentPosition();\n            eBR = motorBR.getCurrentPosition();\n\n            motorBR.setVelocity(100, AngleUnit.RADIANS);\n\n            turningPower = (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle) * 0.02;\n\n            motorFL.setPower(yPower + xPower + turningPower);\n            motorFR.setPower(yPower - xPower - turningPower);\n            motorBL.setPower(yPower - xPower + turningPower);\n            motorBR.setPower(yPower + xPower - turningPower);\n\n            xPosition = (eFL - eFR - eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;\n            yPosition = (eFL + eFR + eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;\n\n            traveledDistance = Math.sqrt(Math.pow(xPosition, 2) + Math.pow(yPosition, 2));\n            remainingDistance = targetDistance - traveledDistance;\n        }\n\n        motorFL.setPower(0.0);\n        motorFR.setPower(0.0);\n        motorBL.setPower(0.0);\n        motorBR.setPower(0.0);\n    }\n\n    /**\n     * this method will allow the robot to turn to a specified absolute angle using the IMU\n     * @param targetAngle absolute angle robot should turn to\n     */\n    public void turnToAngle(double targetAngle) {\n        double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;\n        double angleError = targetAngle - currentAngle + startAngle;\n        double motorPower;\n\n        while (Math.abs(angleError) >= 1 && opModeIsActive()) {\n            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;\n            angleError = targetAngle - currentAngle + startAngle;\n\n            if (angleError > 180.0) {\n                angleError -= 360.0;\n            } else if (angleError < -180.0) {\n                angleError += 360.0;\n            }\n\n            // robot is turning counter-clockwise\n            if (angleError > 0) {\n                motorPower = Math.min(angleError / -250.0, -0.05);\n\n            // robot is turning clockwise\n            } else {\n                motorPower = Math.max(angleError / -250.0, 0.05);\n            }\n\n            motorFL.setPower(motorPower);\n            motorFR.setPower(-motorPower);\n            motorBL.setPower(motorPower);\n            motorBR.setPower(-motorPower);\n\n            telemetry.addData(\"current\", currentAngle);\n            telemetry.addData(\"error\", angleError);\n            telemetry.addData(\"power\", motorPower);\n            telemetry.update();\n        }\n\n        motorFL.setPower(0.0);\n        motorFR.setPower(0.0);\n        motorBL.setPower(0.0);\n        motorBR.setPower(0.0);\n    }\n\n    /**\n     * this method will allow the slides to move to a specified target position\n     * @param targetPosition target position for slides motors in ticks\n     */\n    public void driveSlidesAutonomous(int targetPosition) {\n        int error = targetPosition - motorLeftSlides.getCurrentPosition();\n        double motorPower;\n\n        // while slides aren't at target position\n        while (Math.abs(error) > 50 && opModeIsActive()) {\n            error = targetPosition - motorLeftSlides.getCurrentPosition();\n            motorPower = error * 0.01;\n\n            // slides going down - full speed\n            if (error < 0) {\n                motorLeftSlides.setPower(-0.75);\n                motorRightSlides.setPower(-0.75);\n            // slides going up - proportional control\n            } else {\n                motorLeftSlides.setPower(motorPower);\n                motorRightSlides.setPower(motorPower);\n            }\n        }\n\n        motorLeftSlides.setPower(0.05);\n        motorRightSlides.setPower(0.05);\n    }\n\n    // detect signal on signal sleeve\n    public int detectSignal() {\n        OpenCvCamera robotCamera;\n        AprilTagDetectionPipeline aprilTagDetectionPipeline;\n\n        // units are pixels\n        // calibration is for Logitech C920 webcam at 1920 x 1080\n        final double fx = 1385.92; // focal length x\n        final double fy = 1385.92; // focal length y\n        final double cx = 951.982; // camera principal point x\n        final double cy = 534.084; // camera principal point y\n\n        // units are meters\n        final double tagSize = 0.03429;\n\n        final int ID_TAG_OF_INTEREST_0 = 0; // tag 0 from the 36h11 family\n        final int ID_TAG_OF_INTEREST_1 = 1; // tag 1 from the 36h11 family\n        final int ID_TAG_OF_INTEREST_2 = 2; // tag 2 from the 36h11 family\n\n        ArrayList<AprilTagDetection> currentDetections;\n        AprilTagDetection tagOfInterest = null;\n        boolean tagFound = false;\n\n        // initializes camera\n        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(\"cameraMonitorViewId\", \"id\", hardwareMap.appContext.getPackageName());\n        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, \"RobotCamera\"), cameraMonitorViewId);\n        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagSize, fx, fy, cx, cy);\n\n        robotCamera.setPipeline(aprilTagDetectionPipeline);\n        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {\n            @Override\n            public void onOpened() {\n                robotCamera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);\n            }\n\n            @Override\n            public void onError(int errorCode) {\n\n            }\n        });\n\n        // replaces waitForStart()\n        // detects AprilTags during initialization\n        while (!isStarted() && !isStopRequested()) {\n            currentDetections = aprilTagDetectionPipeline.getLatestDetections();\n\n            // tag has been detected at one point\n            if (currentDetections.size() != 0) {\n\n                // finds out which tag is detected\n                for (AprilTagDetection tag : currentDetections) {\n                    if (tag.id == ID_TAG_OF_INTEREST_0 || tag.id == ID_TAG_OF_INTEREST_1 || tag.id == ID_TAG_OF_INTEREST_2) {\n                        tagOfInterest = tag;\n                        tagFound = true;\n                        break;\n                    }\n                }\n\n                // tag has been detected and is still being detected\n                // displays tag details\n                if (tagFound) {\n                    telemetry.addLine(\"tag found!\\n\\nlocation data:\\n\");\n                    telemetry.addLine(String.format(Locale.US, \"Detected tag ID: %d\", tagOfInterest.id));\n                    telemetry.addLine(String.format(Locale.US, \"X distance: %d inches\", (int) (tagOfInterest.pose.x * Constants.INCHES_PER_METER)));\n                    telemetry.addLine(String.format(Locale.US, \"Y Distance: %d inches\", (int) (tagOfInterest.pose.y * Constants.INCHES_PER_METER)));\n                    telemetry.addLine(String.format(Locale.US, \"Z Distance: %d inches\", (int) (tagOfInterest.pose.z * Constants.INCHES_PER_METER)));\n                    telemetry.addLine(String.format(Locale.US, \"Yaw Rotation: %d degrees\", (int) (Math.toDegrees(tagOfInterest.pose.yaw))));\n                    telemetry.addLine(String.format(Locale.US, \"Pitch Rotation: %d degrees\", (int) (Math.toDegrees(tagOfInterest.pose.pitch))));\n                    telemetry.addLine(String.format(Locale.US, \"Roll Rotation: %d degrees\", (int) (Math.toDegrees(tagOfInterest.pose.roll))));\n                }\n\n            // tag has never been detected\n            } else {\n                telemetry.addLine(\"can't see tag of interest :(\\n\");\n                telemetry.addLine(\"the tag has never been seen\");\n            }\n\n            telemetry.update();\n        }\n\n        robotCamera.stopStreaming();\n\n        // return default\n        if (tagOfInterest == null) {\n            return 1;\n\n        // return detected tag\n        } else {\n            return tagOfInterest.id;\n        }\n    }\n\n    // initialize the Vuforia localization engine\n    private void initializeVuforia() {\n        // configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine\n        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();\n\n        parameters.vuforiaLicenseKey = Constants.VUFORIA_KEY;\n\n        WebcamName robotCamera = hardwareMap.get(WebcamName.class, \"RobotCamera\");\n        WebcamName grabberCamera = hardwareMap.get(WebcamName.class, \"GrabberCamera\");\n        parameters.cameraName = ClassFactory.getInstance().getCameraManager().nameForSwitchableCamera(robotCamera, grabberCamera);\n\n        // instantiate the Vuforia engine\n        vuforia = ClassFactory.getInstance().createVuforia(parameters);\n\n        // set the active camera to the robot camera\n        SwitchableCamera camera = (SwitchableCamera) vuforia.getCamera();\n        camera.setActiveCamera(robotCamera);\n    }\n\n    // initialize the TensorFlow object detection engine\n    private void initializeTensorFlow() {\n        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(\"tfodMonitorViewId\", \"id\", hardwareMap.appContext.getPackageName());\n        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);\n        tfodParameters.minResultConfidence = 0.8f;\n        tfodParameters.isModelTensorFlow2 = true;\n        tfodParameters.inputSize = 300;\n        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);\n        tfod.loadModelFromAsset(Constants.TENSORFLOW_MODEL_ASSET, Constants.TENSORFLOW_LABELS);\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseAutonomous.java b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseAutonomous.java
+--- a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseAutonomous.java	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
++++ b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseAutonomous.java	(date 1673221049485)
+@@ -25,8 +25,8 @@
+ 
+     public void initialize() {
+         super.initialize();
+-        initializeVuforia();
+-        initializeTensorFlow();
++        //initializeVuforia();
++        //initializeTensorFlow();
+     }
+ 
+     /**
+@@ -281,6 +281,6 @@
+         tfodParameters.isModelTensorFlow2 = true;
+         tfodParameters.inputSize = 300;
+         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+-        tfod.loadModelFromAsset(Constants.TENSORFLOW_MODEL_ASSET, Constants.TENSORFLOW_LABELS);
++        //tfod.loadModelFromAsset(Constants.TENSORFLOW_MODEL_ASSET, Constants.TENSORFLOW_LABELS);
+     }
+ }
+Index: Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/testclasses/TeleOpTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.team6220_PowerPlay.testclasses;\n\nimport com.qualcomm.robotcore.eventloop.opmode.Disabled;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.Servo;\n\nimport org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;\n\n@Disabled\n@TeleOp(name = \"TeleOpTest\", group = \"Test\")\npublic class TeleOpTest extends BaseTeleOp {\n\n    public static Servo servoGrabber;\n\n    @Override\n    public void runOpMode() {\n        servoGrabber = hardwareMap.servo.get(\"servoGrabber\");\n        waitForStart();\n\n        while (opModeIsActive()) {\n            servoGrabber.setPosition(-0.5 * gamepad1.left_stick_y + 0.5);\n\n            telemetry.addData(\"servo\", servoGrabber.getPosition());\n            telemetry.update();\n        }\n    }\n\n    /*boolean dLeft = false;\n    boolean dRight = false;\n    boolean dDown = false;\n\n    public void driveChassisWithController() {\n        xPower = gamepad1.left_stick_x * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);\n        yPower = gamepad1.left_stick_y * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);\n        tPower = gamepad1.right_stick_x * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);\n\n        // case for driving the robot left and right\n        if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) < Constants.DRIVE_DEADZONE_DEGREES) {\n            driveWithIMU(xPower, 0.0, tPower);\n\n            // case for driving the robot forwards and backwards\n        } else if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) > Constants.DRIVE_DEADZONE_DEGREES) {\n            driveWithIMU(0.0, yPower, tPower);\n\n            // case for if the deadzone limits are passed, the robot drives normally\n        } else {\n            driveWithIMU(xPower, yPower, tPower);\n        }\n\n        if (gamepad1.dpad_left && !dLeft) {\n            IMUOriginalAngles.firstAngle = addAngle(*//* ඞ *//*IMUOriginalAngles.firstAngle, 90);\n        } else if (gamepad1.dpad_right && !dRight) {\n            IMUOriginalAngles.firstAngle = addAngle(*//* ඞ *//*IMUOriginalAngles.firstAngle, -90);\n        } else if (gamepad1.dpad_down && !dDown) {\n            IMUOriginalAngles.firstAngle = addAngle(*//* ඞ *//*IMUOriginalAngles.firstAngle, 180);\n        }\n\n        dLeft = gamepad1.dpad_left;\n        dRight = gamepad1.dpad_right;\n        dDown = gamepad1.dpad_down;\n    }\n\n    private float addAngle(float start, float add) {\n        float newAngle = start + add;\n        if (newAngle > 180.0) {\n            newAngle -= 360.0;\n        } else if (newAngle < -180.0) {\n            newAngle += 360.0;\n        }\n        return newAngle;\n    }*/\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/testclasses/TeleOpTest.java b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/testclasses/TeleOpTest.java
+--- a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/testclasses/TeleOpTest.java	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
++++ b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/testclasses/TeleOpTest.java	(date 1673220435529)
+@@ -4,69 +4,66 @@
+ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+ import com.qualcomm.robotcore.hardware.Servo;
+ 
++import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
++import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
++import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+ import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
+ 
+-@Disabled
++//@Disabled
+ @TeleOp(name = "TeleOpTest", group = "Test")
+ public class TeleOpTest extends BaseTeleOp {
+ 
+-    public static Servo servoGrabber;
++    double currentAngle;
++    double headingDegrees;
++    double negativeHeadingRadians;
++
++    double x;
++    double y;
++    double t;
++
++    double xRotatedVector;
++    double yRotatedVector;;
++    double ratio;
++
++    double xPower;
++    double yPower;
++    double tPower;
+ 
+     @Override
+     public void runOpMode() {
+-        servoGrabber = hardwareMap.servo.get("servoGrabber");
++        initialize();
+         waitForStart();
+ 
+         while (opModeIsActive()) {
+-            servoGrabber.setPosition(-0.5 * gamepad1.left_stick_y + 0.5);
+-
+-            telemetry.addData("servo", servoGrabber.getPosition());
+-            telemetry.update();
+-        }
+-    }
++            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
++            headingDegrees = currentAngle - startAngle;
++            negativeHeadingRadians = Math.toRadians(-headingDegrees);
+ 
+-    /*boolean dLeft = false;
+-    boolean dRight = false;
+-    boolean dDown = false;
+-
+-    public void driveChassisWithController() {
+-        xPower = gamepad1.left_stick_x * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
+-        yPower = gamepad1.left_stick_y * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
+-        tPower = gamepad1.right_stick_x * Constants.DRIVE_SPEED_MULTIPLIER * (1 - gamepad1.left_trigger * 0.5);
+-
+-        // case for driving the robot left and right
+-        if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) < Constants.DRIVE_DEADZONE_DEGREES) {
+-            driveWithIMU(xPower, 0.0, tPower);
+-
+-            // case for driving the robot forwards and backwards
+-        } else if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) > Constants.DRIVE_DEADZONE_DEGREES) {
+-            driveWithIMU(0.0, yPower, tPower);
+-
+-            // case for if the deadzone limits are passed, the robot drives normally
+-        } else {
++            if (gamepad1.left_trigger > 0.25) {
++                x = gamepad1.left_stick_x * 0.3;
++                y = -gamepad1.left_stick_y * 0.3;
++                t = gamepad1.right_stick_x * 0.2;
++            } else {
++                x = gamepad1.left_stick_x * 0.75;
++                y = -gamepad1.left_stick_y * 0.75;
++                t = gamepad1.right_stick_x * 0.5;
++            }
++
++            xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
++            yRotatedVector = x * Math.sin(negativeHeadingRadians) + y * Math.cos(negativeHeadingRadians);
++
++            ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(yRotatedVector) + Math.abs(t), 1);
++
++            xPower = xRotatedVector * ratio;
++            yPower = yRotatedVector * ratio;
++            tPower = t * ratio;
++
+             driveWithIMU(xPower, yPower, tPower);
+-        }
+-
+-        if (gamepad1.dpad_left && !dLeft) {
+-            IMUOriginalAngles.firstAngle = addAngle(*//* ඞ *//*IMUOriginalAngles.firstAngle, 90);
+-        } else if (gamepad1.dpad_right && !dRight) {
+-            IMUOriginalAngles.firstAngle = addAngle(*//* ඞ *//*IMUOriginalAngles.firstAngle, -90);
+-        } else if (gamepad1.dpad_down && !dDown) {
+-            IMUOriginalAngles.firstAngle = addAngle(*//* ඞ *//*IMUOriginalAngles.firstAngle, 180);
+-        }
+ 
+-        dLeft = gamepad1.dpad_left;
+-        dRight = gamepad1.dpad_right;
+-        dDown = gamepad1.dpad_down;
+-    }
+-
+-    private float addAngle(float start, float add) {
+-        float newAngle = start + add;
+-        if (newAngle > 180.0) {
+-            newAngle -= 360.0;
+-        } else if (newAngle < -180.0) {
+-            newAngle += 360.0;
+-        }
+-        return newAngle;
+-    }*/
++            telemetry.addData("start", startAngle);
++            telemetry.addData("current", currentAngle);
++            telemetry.addData("heading", headingDegrees);
++            telemetry.update();
++        }
++    }
+ }
+Index: Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseOpMode.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.team6220_PowerPlay;\n\nimport com.qualcomm.hardware.bosch.BNO055IMU;\nimport com.qualcomm.hardware.lynx.LynxModule;\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.hardware.Blinker;\nimport com.qualcomm.robotcore.hardware.DcMotor;\nimport com.qualcomm.robotcore.hardware.DcMotorEx;\nimport com.qualcomm.robotcore.hardware.PwmControl;\nimport com.qualcomm.robotcore.hardware.ServoImplEx;\n\nimport org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;\nimport org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;\nimport org.firstinspires.ftc.robotcore.external.navigation.AxesReference;\n\nimport java.util.ArrayList;\nimport java.util.List;\nimport java.util.concurrent.TimeUnit;\n\npublic abstract class BaseOpMode extends LinearOpMode {\n\n    // motors\n    public static DcMotorEx motorFL;\n    public static DcMotorEx motorFR;\n    public static DcMotorEx motorBL;\n    public static DcMotorEx motorBR;\n\n    public static DcMotorEx motorLeftSlides;\n    public static DcMotorEx motorRightSlides;\n\n    // servos\n    public static ServoImplEx servoGrabber;\n\n    // IMU\n    public BNO055IMU imu;\n    public double startAngle;\n\n    // flag to say whether we should disable the correction system\n    private boolean turnFlag = false;\n\n    // bulk reading\n    public List<LynxModule> hubs;\n\n    // initializes the motors, servos, and IMUs\n    public void initialize() {\n        hubs = hardwareMap.getAll(LynxModule.class);\n\n        ArrayList<Blinker.Step> steps = new ArrayList<>();\n        steps.add(new Blinker.Step(0xFFFF0000, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFFFF8800, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFFFFFF00, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFF88FF00, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFF00FF00, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFF00FF88, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFF00FFFF, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFF0088FF, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFF0000FF, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFF8800FF, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFFFF00FF, 125, TimeUnit.MILLISECONDS));\n        steps.add(new Blinker.Step(0xFFFF0088, 125, TimeUnit.MILLISECONDS));\n\n        for (LynxModule hub : hubs) {\n            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);\n            hub.setPattern(steps);\n        }\n\n        // motors\n        motorFL = (DcMotorEx) hardwareMap.get(DcMotor.class, \"motorFL\");\n        motorFR = (DcMotorEx) hardwareMap.get(DcMotor.class, \"motorFR\");\n        motorBL = (DcMotorEx) hardwareMap.get(DcMotor.class, \"motorBL\");\n        motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, \"motorBR\");\n        motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, \"motorLVSlides\");\n        motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, \"motorRVSlides\");\n\n        motorFL.setDirection(DcMotorEx.Direction.FORWARD);\n        motorFR.setDirection(DcMotorEx.Direction.REVERSE);\n        motorBL.setDirection(DcMotorEx.Direction.FORWARD);\n        motorBR.setDirection(DcMotorEx.Direction.REVERSE);\n\n        motorFL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);\n        motorFR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);\n        motorBL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);\n        motorBR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);\n\n        motorFL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);\n        motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);\n        motorBL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);\n        motorBR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);\n\n        motorFL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);\n        motorFR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);\n        motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);\n        motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);\n\n        motorLeftSlides.setDirection(DcMotorEx.Direction.FORWARD);\n        motorRightSlides.setDirection(DcMotorEx.Direction.REVERSE);\n\n        motorLeftSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);\n        motorRightSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);\n\n        motorLeftSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);\n        motorRightSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);\n\n        motorLeftSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);\n        motorRightSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);\n\n        // servos\n        PwmControl.PwmRange maxRange = new PwmControl.PwmRange(500, 2500, 20000);\n        servoGrabber = (ServoImplEx) hardwareMap.servo.get(\"servoGrabber\");\n        servoGrabber.setPwmRange(maxRange);\n\n        // initialize IMU\n        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();\n        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;\n        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;\n        imu = hardwareMap.get(BNO055IMU.class, \"imu\");\n        imu.initialize(parameters);\n\n        sleep(3000);\n\n        startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;\n        servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);\n    }\n\n    public void driveWithIMU(double xPower, double yPower, double tPower) {\n        // read imu when turning (when t != 0)\n        boolean isTurning = (tPower != 0);\n\n        if (isTurning || turnFlag) {\n            startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // set original angle\n            turnFlag = true;\n\n        // otherwise read imu for correction\n        } else {\n            // obtain the current angle's error from the original angle\n            double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;\n            double angleError = startAngle - currentAngle;\n\n            // flip to inverse of angles above 180 / below -180 (to prevent infinity-rotate bug)\n            // to make sure to use the shorter angle\n            if (angleError > 180.0) {\n                angleError -= 360.0;\n            } else if (angleError < -180.0) {\n                angleError += 360.0;\n            }\n\n            // apply a constant to turn the angle into a turn speed\n            tPower = -Constants.CORRECTION_CONSTANT * angleError;\n        }\n\n        // if the rotation rate is low, then that means all the momentum has left the robot's turning and can therefore turn the correction back on\n        if (Math.abs(imu.getAngularVelocity().zRotationRate) < 5) {\n            turnFlag = false;\n        }\n\n        // calculate speed and direction of each individual motor and set power of motors to speed\n        motorFL.setPower(yPower + xPower + tPower);\n        motorFR.setPower(yPower - xPower - tPower);\n        motorBL.setPower(yPower - xPower + tPower);\n        motorBR.setPower(yPower + xPower - tPower);\n    }\n\n    /**\n     * this method will allow the grabber to open or close given a boolean input\n     * @param position the position of the grabber\n     */\n    public void driveGrabber(double position) {\n        servoGrabber.setPosition(position);\n    }\n\n    /**\n     * this method will allow the slides to move to a specified target position\n     * @param targetPosition target position for slides motors in ticks\n     */\n    public void driveSlides(int targetPosition) {\n        int error = targetPosition - motorLeftSlides.getCurrentPosition();\n        double motorPower = error * 0.01;\n\n        // slides not yet at target position\n        if (Math.abs(error) > 20) {\n            // slides going down - joystick\n            if (error < 0 && error > -200) {\n                motorLeftSlides.setPower(-0.3);\n                motorRightSlides.setPower(-0.3);\n            // slides going down - bumpers\n            } else if (error < -200) {\n                motorLeftSlides.setPower(-1.0);\n                motorRightSlides.setPower(-1.0);\n            // slides going up - proportional control\n            } else {\n                motorLeftSlides.setPower(motorPower);\n                motorRightSlides.setPower(motorPower);\n            }\n        // slides at target position\n        } else {\n            motorLeftSlides.setPower(0.05);\n            motorRightSlides.setPower(0.05);\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseOpMode.java b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseOpMode.java
+--- a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseOpMode.java	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
++++ b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseOpMode.java	(date 1673222072719)
+@@ -3,7 +3,6 @@
+ import com.qualcomm.hardware.bosch.BNO055IMU;
+ import com.qualcomm.hardware.lynx.LynxModule;
+ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+-import com.qualcomm.robotcore.hardware.Blinker;
+ import com.qualcomm.robotcore.hardware.DcMotor;
+ import com.qualcomm.robotcore.hardware.DcMotorEx;
+ import com.qualcomm.robotcore.hardware.PwmControl;
+@@ -13,12 +12,9 @@
+ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+ 
+-import java.util.ArrayList;
+ import java.util.List;
+-import java.util.concurrent.TimeUnit;
+ 
+ public abstract class BaseOpMode extends LinearOpMode {
+-
+     // motors
+     public static DcMotorEx motorFL;
+     public static DcMotorEx motorFR;
+@@ -33,6 +29,7 @@
+ 
+     // IMU
+     public BNO055IMU imu;
++    public double originalAngle;
+     public double startAngle;
+ 
+     // flag to say whether we should disable the correction system
+@@ -45,23 +42,8 @@
+     public void initialize() {
+         hubs = hardwareMap.getAll(LynxModule.class);
+ 
+-        ArrayList<Blinker.Step> steps = new ArrayList<>();
+-        steps.add(new Blinker.Step(0xFFFF0000, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFFFF8800, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFFFFFF00, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFF88FF00, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFF00FF00, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFF00FF88, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFF00FFFF, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFF0088FF, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFF0000FF, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFF8800FF, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFFFF00FF, 125, TimeUnit.MILLISECONDS));
+-        steps.add(new Blinker.Step(0xFFFF0088, 125, TimeUnit.MILLISECONDS));
+-
+         for (LynxModule hub : hubs) {
+             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+-            hub.setPattern(steps);
+         }
+ 
+         // motors
+@@ -69,8 +51,8 @@
+         motorFR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFR");
+         motorBL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBL");
+         motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
+-        motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLVSlides");
+-        motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRVSlides");
++        motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLeftSlides");
++        motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRightSlides");
+ 
+         motorFL.setDirection(DcMotorEx.Direction.FORWARD);
+         motorFR.setDirection(DcMotorEx.Direction.REVERSE);
+@@ -119,22 +101,23 @@
+         sleep(3000);
+ 
+         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
++        originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
+     }
+ 
+     public void driveWithIMU(double xPower, double yPower, double tPower) {
+         // read imu when turning (when t != 0)
+-        boolean isTurning = (tPower != 0);
++        boolean isTurning = tPower != 0;
+ 
+         if (isTurning || turnFlag) {
+-            startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // set original angle
++            originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // set original angle
+             turnFlag = true;
+ 
+         // otherwise read imu for correction
+         } else {
+             // obtain the current angle's error from the original angle
+             double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+-            double angleError = startAngle - currentAngle;
++            double angleError = originalAngle  - currentAngle;
+ 
+             // flip to inverse of angles above 180 / below -180 (to prevent infinity-rotate bug)
+             // to make sure to use the shorter angle
+Index: Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseTeleOp.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.team6220_PowerPlay;\n\nimport org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;\nimport org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;\nimport org.firstinspires.ftc.robotcore.external.navigation.AxesReference;\n\npublic abstract class BaseTeleOp extends BaseOpMode {\n    double currentAngle;\n    double headingDegrees;\n    double negativeHeadingRadians;\n\n    double x;\n    double y;\n    double t;\n\n    double xRotatedVector;\n    double yRotatedVector;\n\n    double angleToCardinal;\n    double ratio;\n\n    double xPower;\n    double yPower;\n    double tPower;\n\n    int slideTargetPosition = 0;\n\n    int stack = 0;\n    int[] stacks = {0, 0};\n\n    int junction = 0;\n    int[] junctions = {0, 0};\n\n    public void driveFieldCentric() {\n        currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;\n        headingDegrees = currentAngle - startAngle;\n        negativeHeadingRadians = Math.toRadians(-headingDegrees);\n\n        if (gamepad1.left_trigger > 0.25) {\n            x = gamepad1.left_stick_x * 0.3;\n            y = -gamepad1.left_stick_y * 0.3;\n            t = gamepad1.right_stick_x * 0.1;\n        } else {\n            x = gamepad1.left_stick_x * 0.75;\n            y = -gamepad1.left_stick_y * 0.75;\n            t = gamepad1.right_stick_x * 0.25;\n        }\n\n        xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);\n        yRotatedVector = x * Math.sin(negativeHeadingRadians) + y * Math.cos(negativeHeadingRadians);\n\n        angleToCardinal = headingDegrees % 90;\n\n        if (angleToCardinal <= 10) {\n            t += angleToCardinal / 100.0;\n        } else if (angleToCardinal >= 80) {\n            t -= (90 - angleToCardinal) / 100.0;\n        }\n\n        ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(yRotatedVector) + Math.abs(t), 1);\n\n        xPower = xRotatedVector * ratio;\n        yPower = yRotatedVector * ratio;\n        tPower = t * ratio;\n\n        // drive only left and right\n        if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) <= 10) {\n            driveWithIMU(xPower, 0.0, tPower);\n\n        // drive only forwards and backwards\n        } else if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) >= 80) {\n            driveWithIMU(0.0, yPower, tPower);\n\n        // drive normally\n        } else {\n            driveWithIMU(xPower, yPower, tPower);\n        }\n    }\n\n    public void driveGrabberWithController() {\n        if (gamepad2.x) {\n            driveGrabber(Constants.GRABBER_CLOSE_POSITION);\n        } else if (gamepad2.a) {\n            driveGrabber(Constants.GRABBER_OPEN_POSITION);\n        } else if (gamepad2.b) {\n            driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);\n        }\n    }\n\n    public void driveSlidesWithController() {\n        slideTargetPosition += (int) (-gamepad2.left_stick_y * 25);\n\n        if (gamepad2.dpad_up && stacks[0] == stacks[1]) {\n            stack++;\n\n            if (stack >= 4) {\n                stack = 4;\n            }\n\n            switch (stack) {\n                case 1:\n                    slideTargetPosition = Constants.SLIDE_STACK_ONE;\n                    break;\n                case 2:\n                    slideTargetPosition = Constants.SLIDE_STACK_TWO;\n                    break;\n                case 3:\n                    slideTargetPosition = Constants.SLIDE_STACK_THREE;\n                    break;\n                case 4:\n                    slideTargetPosition = Constants.SLIDE_STACK_FOUR;\n                    break;\n            }\n        } else if (gamepad2.dpad_down && stacks[0] == stacks[1]) {\n            stack--;\n\n            if (stack <= 0) {\n                stack = 0;\n            }\n\n            switch (stack) {\n                case 0:\n                    slideTargetPosition = Constants.SLIDE_BOTTOM;\n                    break;\n                case 1:\n                    slideTargetPosition = Constants.SLIDE_STACK_ONE;\n                    break;\n                case 2:\n                    slideTargetPosition = Constants.SLIDE_STACK_TWO;\n                    break;\n                case 3:\n                    slideTargetPosition = Constants.SLIDE_STACK_THREE;\n                    break;\n            }\n        }\n\n        if (gamepad2.right_bumper && junctions[0] == junctions[1]) {\n            junction++;\n\n            if (junction >= 3) {\n                junction = 3;\n            }\n\n            switch (junction) {\n                case 1:\n                    slideTargetPosition = Constants.SLIDE_LOW;\n                    break;\n                case 2:\n                    slideTargetPosition = Constants.SLIDE_MEDIUM;\n                    break;\n                case 3:\n                    slideTargetPosition = Constants.SLIDE_HIGH;\n                    break;\n            }\n        } else if (gamepad2.left_bumper && junctions[0] == junctions[1]) {\n            junction--;\n\n            if (junction <= 0) {\n                junction = 0;\n            }\n\n            switch (junction) {\n                case 0:\n                    slideTargetPosition = Constants.SLIDE_BOTTOM;\n                    break;\n                case 1:\n                    slideTargetPosition = Constants.SLIDE_LOW;\n                    break;\n                case 2:\n                    slideTargetPosition = Constants.SLIDE_MEDIUM;\n                    break;\n            }\n        }\n\n        // don't let target position go below slide bottom position\n        if (slideTargetPosition <= Constants.SLIDE_BOTTOM) {\n            slideTargetPosition = Constants.SLIDE_BOTTOM;\n        // don't let target position go above slide top position\n        } else if (slideTargetPosition >= Constants.SLIDE_TOP) {\n            slideTargetPosition = Constants.SLIDE_TOP;\n        }\n\n        driveSlides(slideTargetPosition);\n\n        if (!gamepad2.dpad_down && !gamepad2.dpad_up) {\n            stacks[0] = stacks[1];\n        }\n\n        if (!gamepad2.left_bumper && !gamepad2.right_bumper) {\n            junctions[0] = junctions[1];\n        }\n\n        stacks[1] = stack;\n        junctions[1] = junction;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseTeleOp.java b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseTeleOp.java
+--- a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseTeleOp.java	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
++++ b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/BaseTeleOp.java	(date 1673218407538)
+@@ -39,11 +39,11 @@
+         if (gamepad1.left_trigger > 0.25) {
+             x = gamepad1.left_stick_x * 0.3;
+             y = -gamepad1.left_stick_y * 0.3;
+-            t = gamepad1.right_stick_x * 0.1;
++            t = gamepad1.right_stick_x * 0.2;
+         } else {
+             x = gamepad1.left_stick_x * 0.75;
+             y = -gamepad1.left_stick_y * 0.75;
+-            t = gamepad1.right_stick_x * 0.25;
++            t = gamepad1.right_stick_x * 0.5;
+         }
+ 
+         xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
+@@ -52,27 +52,37 @@
+         angleToCardinal = headingDegrees % 90;
+ 
+         if (angleToCardinal <= 10) {
+-            t += angleToCardinal / 100.0;
++            t += angleToCardinal / 50.0;
+         } else if (angleToCardinal >= 80) {
+-            t -= (90 - angleToCardinal) / 100.0;
++            t -= (90 - angleToCardinal) / 50.0;
+         }
+ 
+-        ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(yRotatedVector) + Math.abs(t), 1);
++        // drive only left and right
++        if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) <= 45) {
++            ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(t), 1);
+ 
+-        xPower = xRotatedVector * ratio;
+-        yPower = yRotatedVector * ratio;
+-        tPower = t * ratio;
++            xPower = xRotatedVector * ratio;
++            tPower = t * ratio;
+ 
+-        // drive only left and right
+-        if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) <= 10) {
+             driveWithIMU(xPower, 0.0, tPower);
+ 
+         // drive only forwards and backwards
+-        } else if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) >= 80) {
++        } else if (Math.abs(Math.toDegrees(Math.atan(gamepad1.left_stick_y / gamepad1.left_stick_x))) >= 45) {
++            ratio = 1 / Math.max(Math.abs(yRotatedVector) + Math.abs(t), 1);
++
++            yPower = yRotatedVector * ratio;
++            tPower = t * ratio;
++
+             driveWithIMU(0.0, yPower, tPower);
+ 
+         // drive normally
+         } else {
++            ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(yRotatedVector) + Math.abs(t), 1);
++
++            xPower = xRotatedVector * ratio;
++            yPower = yRotatedVector * ratio;
++            tPower = t * ratio;
++
+             driveWithIMU(xPower, yPower, tPower);
+         }
+     }
+Index: Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/BlueTerminal.java
+===================================================================
+diff --git a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/BlueTerminal.java b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/BlueTerminal.java
+deleted file mode 100644
+--- a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/BlueTerminal.java	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
++++ /dev/null	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
+@@ -1,67 +0,0 @@
+-package org.firstinspires.ftc.team6220_PowerPlay.competition;
+-
+-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+-
+-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+-import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
+-
+-@Autonomous(name = "Blue Terminal", group = "Competition")
+-public class BlueTerminal extends BaseAutonomous {
+-
+-    @Override
+-    public void runOpMode() throws InterruptedException {
+-        initialize();
+-
+-        driveTurntable(0);
+-        int signal = detectSignal();
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.25, 0.0, 0.0);
+-        sleep(1400);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.0, 0.0, 0.0);
+-        sleep(500);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(-0.25, 0.0, 0.0);
+-        sleep(1400);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.0, 0.0, 0.0);
+-        sleep(500);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.0, -0.25, 0.0);
+-        sleep(1700);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.0, 0.0, 0.0);
+-        sleep(500);
+-
+-        switch (signal) {
+-            case 0:
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(-0.25, 0.0, 0.0);
+-                sleep(1500);
+-
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(0.0, 0.0, 0.0);
+-                break;
+-
+-            case 1:
+-                break;
+-
+-            case 2:
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(0.25, 0.0, 0.0);
+-                sleep(1500);
+-
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(0.0, 0.0, 0.0);
+-                break;
+-        }
+-    }
+-}
+Index: Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/ParkNoPreload.java
+===================================================================
+diff --git a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/ParkNoPreload.java b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/ParkNoPreload.java
+deleted file mode 100644
+--- a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/ParkNoPreload.java	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
++++ /dev/null	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
+@@ -1,49 +0,0 @@
+-package org.firstinspires.ftc.team6220_PowerPlay.competition;
+-
+-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+-
+-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+-import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
+-
+-@Autonomous(name = "Park No Preload", group = "Competition")
+-public class ParkNoPreload extends BaseAutonomous {
+-
+-    @Override
+-    public void runOpMode() throws InterruptedException {
+-        initialize();
+-        int signal = detectSignal();
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.0, -0.25, 0.0);
+-        sleep(1700);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.0, 0.0, 0.0);
+-        sleep(500);
+-
+-        switch (signal) {
+-            case 0:
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(-0.25, 0.0, 0.0);
+-                sleep(1500);
+-
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(0.0, 0.0, 0.0);
+-                break;
+-
+-            case 1:
+-                break;
+-
+-            case 2:
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(0.25, 0.0, 0.0);
+-                sleep(1500);
+-
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(0.0, 0.0, 0.0);
+-                break;
+-        }
+-    }
+-}
+Index: Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/RedTerminal.java
+===================================================================
+diff --git a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/RedTerminal.java b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/RedTerminal.java
+deleted file mode 100644
+--- a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/competition/RedTerminal.java	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
++++ /dev/null	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
+@@ -1,67 +0,0 @@
+-package org.firstinspires.ftc.team6220_PowerPlay.competition;
+-
+-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+-
+-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+-import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
+-
+-@Autonomous(name = "Red Terminal", group = "Competition")
+-public class RedTerminal extends BaseAutonomous {
+-
+-    @Override
+-    public void runOpMode() throws InterruptedException {
+-        initialize();
+-
+-        driveTurntable(0);
+-        int signal = detectSignal();
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(-0.25, 0.0, 0.0);
+-        sleep(1400);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.0, 0.0, 0.0);
+-        sleep(500);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.25, 0.0, 0.0);
+-        sleep(1400);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.0, 0.0, 0.0);
+-        sleep(500);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.0, -0.25, 0.0);
+-        sleep(1700);
+-
+-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-        driveWithIMU(0.0, 0.0, 0.0);
+-        sleep(500);
+-
+-        switch (signal) {
+-            case 0:
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(-0.25, 0.0, 0.0);
+-                sleep(1500);
+-
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(0.0, 0.0, 0.0);
+-                break;
+-
+-            case 1:
+-                break;
+-
+-            case 2:
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(0.25, 0.0, 0.0);
+-                sleep(1500);
+-
+-                IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+-                driveWithIMU(0.0, 0.0, 0.0);
+-                break;
+-        }
+-    }
+-}
+Index: Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/Constants.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.team6220_PowerPlay;\n\npublic class Constants {\n    public static final double INCHES_PER_METER = 100 / 2.54;\n\n    public static final double CORRECTION_CONSTANT = 1 / 45.0; // constant for converting angle error to motor speed\n\n    public static final int SLIDE_TOP = 3900;\n    public static final int SLIDE_HIGH = 3800;\n    public static final int SLIDE_MEDIUM = 2750;\n    public static final int SLIDE_LOW = 1650;\n    public static final int SLIDE_STOW = 600;\n    public static final int SLIDE_STACK_FOUR = 320;\n    public static final int SLIDE_STACK_THREE = 240;\n    public static final int SLIDE_STACK_TWO = 160;\n    public static final int SLIDE_STACK_ONE = 80;\n    public static final int SLIDE_BOTTOM = 0;\n\n    public static final double GRABBER_INITIALIZE_POSITION = 1.0;\n    public static final double GRABBER_OPEN_POSITION = 0.57;\n    public static final double GRABBER_CLOSE_POSITION = 0.0;\n\n    public static final double WHEEL_CIRCUMFERENCE = 96 / 25.4 * Math.PI;\n    public static final double DRIVE_MOTOR_TICKS_TO_INCHES = WHEEL_CIRCUMFERENCE * Math.sqrt(2) / 537.6;\n\n    public static final String VUFORIA_KEY = \"AXDNhID/////AAABmTzx9+zSP0cgsSvEBLeS2Y9I1y9lY1nEbJ0\" +\n            \"/cUmIw6GzDXvrllKLQizl4X4T6iAxXFMJXR5zS8fcXuy6uS6lzlZJOBRnDXn3FusCpuunkIRPgIVyq+peMid\" +\n            \"0PN1gwSloq8A+nrV6W1LU10WzZ/Pez2F0to+5aV0bOBB+VhZIdN5ABnoSMPa6JxtR6QaCI3dg++wpGw+/X3R\" +\n            \"wDJhllOoGVmsLE9DTEuBBAI+MtRIpFNrSR7mcv3TEHMf8YIc+qxED8YE7Az3PGK1xy/NzLqNtFdnNVFhp023\" +\n            \"8Kaaqnu3DABLRXRjSJ1QRSHmE8mIur5Dk3OcqMv3fwTNt5CnhC2J/D5biVGixUQ+dveylNEVNmp0k\";\n\n    public static final String[] TENSORFLOW_LABELS = {\"BlueCone\", \"RedCone\", \"JunctionBottom\", \"JunctionTop\"};\n    public static final String TENSORFLOW_MODEL_ASSET = \";\n\n    // TensorFlow Object Detection\n    public static final int ROBOT_CAMERA_CENTER_Y = 540;\n    public static final int ROBOT_CAMERA_CENTER_X = 960;\n    public static final int GRABBER_CAMERA_CENTER_Y = 240;\n    public static final int GRABBER_CAMERA_CENTER_X = 320;\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/Constants.java b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/Constants.java
+--- a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/Constants.java	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
++++ b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/Constants.java	(date 1672981008004)
+@@ -30,7 +30,7 @@
+             "8Kaaqnu3DABLRXRjSJ1QRSHmE8mIur5Dk3OcqMv3fwTNt5CnhC2J/D5biVGixUQ+dveylNEVNmp0k";
+ 
+     public static final String[] TENSORFLOW_LABELS = {"BlueCone", "RedCone", "JunctionBottom", "JunctionTop"};
+-    public static final String TENSORFLOW_MODEL_ASSET = ";
++    //public static final String TENSORFLOW_MODEL_ASSET = ";
+ 
+     // TensorFlow Object Detection
+     public static final int ROBOT_CAMERA_CENTER_Y = 540;
+Index: Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/testclasses/AutonomousTest2.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.team6220_PowerPlay.testclasses;\n\nimport com.qualcomm.robotcore.eventloop.opmode.Disabled;\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\n\nimport org.firstinspires.ftc.robotcore.external.ClassFactory;\nimport org.firstinspires.ftc.robotcore.external.hardware.camera.SwitchableCamera;\nimport org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;\nimport org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;\nimport org.firstinspires.ftc.robotcore.external.tfod.Recognition;\nimport org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;\nimport org.firstinspires.ftc.team6220_PowerPlay.Constants;\n\nimport java.util.List;\n\n//@Disabled\n@TeleOp(name = \"AutonomousTest2\", group = \"Test\")\npublic class AutonomousTest2 extends LinearOpMode {\n    private VuforiaLocalizer vuforia;\n    private WebcamName robotCamera, grabberCamera;\n    private SwitchableCamera camera;\n    private boolean oldLeftBumper;\n    private boolean oldRightBumper;\n    private TFObjectDetector tfod;\n\n    @Override\n    public void runOpMode() {\n        initializeVuforia();\n        initializeTensorFlow();\n\n        tfod.activate();\n        tfod.setZoom(1.0, 16.0 / 9.0);\n\n        waitForStart();\n\n        while (opModeIsActive()) {\n            doCameraSwitching();\n\n            List<Recognition> recognitions = tfod.getRecognitions();\n            telemetry.addData(\"number of objects detected\", recognitions.size());\n\n            for (Recognition recognition : recognitions) {\n                double col = (recognition.getLeft() + recognition.getRight()) * 0.5;\n                double row = (recognition.getTop() + recognition.getBottom()) * 0.5;\n                double width = recognition.getWidth();\n                double height = recognition.getHeight();\n\n                telemetry.addData(\"\",\" \");\n                telemetry.addData(\"Image\", \"%s (%.0f %% Conf.)\", recognition.getLabel(), recognition.getConfidence() * 100);\n                telemetry.addData(\"- Position (Row/Col)\",\"%.0f / %.0f\", row, col);\n                telemetry.addData(\"- Size (Width/Height)\",\"%.0f / %.0f\", width, height);\n            }\n\n            telemetry.update();\n        }\n    }\n\n    // initialize the Vuforia localization engine\n    private void initializeVuforia() {\n        // configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine\n        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();\n\n        parameters.vuforiaLicenseKey = Constants.VUFORIA_KEY;\n\n        robotCamera = hardwareMap.get(WebcamName.class, \"RobotCamera\");\n        grabberCamera = hardwareMap.get(WebcamName.class, \"GrabberCamera\");\n        parameters.cameraName = ClassFactory.getInstance().getCameraManager().nameForSwitchableCamera(robotCamera, grabberCamera);\n\n        // instantiate the Vuforia engine\n        vuforia = ClassFactory.getInstance().createVuforia(parameters);\n\n        // set the active camera to the robot camera\n        camera = (SwitchableCamera) vuforia.getCamera();\n        camera.setActiveCamera(robotCamera);\n    }\n\n    // initialize the TensorFlow object detection engine\n    private void initializeTensorFlow() {\n        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(\"tfodMonitorViewId\", \"id\", hardwareMap.appContext.getPackageName());\n        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);\n        tfodParameters.minResultConfidence = 0.8f;\n        tfodParameters.isModelTensorFlow2 = true;\n        tfodParameters.inputSize = 300;\n        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);\n        tfod.loadModelFromAsset(Constants.TENSORFLOW_MODEL_ASSET, Constants.TENSORFLOW_LABELS);\n    }\n\n    private void doCameraSwitching() {\n        boolean newLeftBumper = gamepad1.left_bumper;\n        boolean newRightBumper = gamepad1.right_bumper;\n\n        if (newLeftBumper && !oldLeftBumper) {\n            camera.setActiveCamera(robotCamera);\n        } else if (newRightBumper && !oldRightBumper) {\n            camera.setActiveCamera(grabberCamera);\n        }\n\n        oldLeftBumper = newLeftBumper;\n        oldRightBumper = newRightBumper;\n\n        if (camera.getActiveCamera().equals(robotCamera)) {\n            telemetry.addData(\"activeCamera\", \"Webcam 1\");\n            telemetry.addData(\"Press RightBumper\", \"to switch to Webcam 2\");\n        } else {\n            telemetry.addData(\"activeCamera\", \"Webcam 2\");\n            telemetry.addData(\"Press LeftBumper\", \"to switch to Webcam 1\");\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/testclasses/AutonomousTest2.java b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/testclasses/AutonomousTest2.java
+--- a/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/testclasses/AutonomousTest2.java	(revision 9ff8d839ab42c619a66d4e9701bb6aea31b5a9e8)
++++ b/Team6220_PowerPlay/src/main/java/org/firstinspires/ftc/team6220_PowerPlay/testclasses/AutonomousTest2.java	(date 1672981025318)
+@@ -83,7 +83,7 @@
+         tfodParameters.isModelTensorFlow2 = true;
+         tfodParameters.inputSize = 300;
+         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+-        tfod.loadModelFromAsset(Constants.TENSORFLOW_MODEL_ASSET, Constants.TENSORFLOW_LABELS);
++        //tfod.loadModelFromAsset(Constants.TENSORFLOW_MODEL_ASSET, Constants.TENSORFLOW_LABELS);
+     }
+ 
+     private void doCameraSwitching() {

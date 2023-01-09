@@ -3,7 +3,6 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -13,12 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public abstract class BaseOpMode extends LinearOpMode {
-
     // motors
     public static DcMotorEx motorFL;
     public static DcMotorEx motorFR;
@@ -33,6 +29,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // IMU
     public BNO055IMU imu;
+    public double originalAngle;
     public double startAngle;
 
     // flag to say whether we should disable the correction system
@@ -45,23 +42,8 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void initialize() {
         hubs = hardwareMap.getAll(LynxModule.class);
 
-        ArrayList<Blinker.Step> steps = new ArrayList<>();
-        steps.add(new Blinker.Step(0xFFFF0000, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFFFF8800, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFFFFFF00, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFF88FF00, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFF00FF00, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFF00FF88, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFF00FFFF, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFF0088FF, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFF0000FF, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFF8800FF, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFFFF00FF, 125, TimeUnit.MILLISECONDS));
-        steps.add(new Blinker.Step(0xFFFF0088, 125, TimeUnit.MILLISECONDS));
-
         for (LynxModule hub : hubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-            hub.setPattern(steps);
         }
 
         // motors
@@ -69,8 +51,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorFR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFR");
         motorBL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
-        motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLVSlides");
-        motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRVSlides");
+        motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLeftSlides");
+        motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRightSlides");
 
         motorFL.setDirection(DcMotorEx.Direction.FORWARD);
         motorFR.setDirection(DcMotorEx.Direction.REVERSE);
@@ -119,22 +101,23 @@ public abstract class BaseOpMode extends LinearOpMode {
         sleep(3000);
 
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
 
     public void driveWithIMU(double xPower, double yPower, double tPower) {
         // read imu when turning (when t != 0)
-        boolean isTurning = (tPower != 0);
+        boolean isTurning = tPower != 0;
 
         if (isTurning || turnFlag) {
-            startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // set original angle
+            originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // set original angle
             turnFlag = true;
 
         // otherwise read imu for correction
         } else {
             // obtain the current angle's error from the original angle
             double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            double angleError = startAngle - currentAngle;
+            double angleError = originalAngle  - currentAngle;
 
             // flip to inverse of angles above 180 / below -180 (to prevent infinity-rotate bug)
             // to make sure to use the shorter angle
