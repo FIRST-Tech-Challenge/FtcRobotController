@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.blackswan;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -24,6 +25,7 @@ public class Robot {
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
     DcMotor linearSlide;
     Servo clawservo;
+    RevColorSensorV3 colorSensorL, colorSensorR;
     BNO055IMU imu;
     LinearOpMode opMode;
 
@@ -47,6 +49,9 @@ public class Robot {
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        colorSensorL = hardwareMap.get(RevColorSensorV3.class, "colorSensorL");
+        colorSensorR = hardwareMap.get(RevColorSensorV3.class, "colorSensorR");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 

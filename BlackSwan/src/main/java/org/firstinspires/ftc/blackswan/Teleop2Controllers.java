@@ -17,6 +17,7 @@ public class Teleop2Controllers extends LinearOpMode {
         DcMotor linearslide = hardwareMap.dcMotor.get("linearSlide");
 
         Servo clawservo = hardwareMap.servo.get("daclaw");
+        Servo daSpinster = hardwareMap.servo.get("daSpinster");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -46,21 +47,21 @@ public class Teleop2Controllers extends LinearOpMode {
             double backRightPower = (y + x - rx) / denominator;
 //3250
             if (gamepad2.dpad_up) {
-                //if (linearslide.getCurrentPosition() < 3250) {
+                if (linearslide.getCurrentPosition() < 3250) {
                     move = true;
                     linearslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     linearslide.setPower(0.5);
-//                } else {
-                    //linearslide.setPower(0);
-               // }
+                } else {
+                    linearslide.setPower(0);
+                }
             } else if (gamepad2.dpad_down) {
-               // if (linearslide.getCurrentPosition() > 0) {
+                if (linearslide.getCurrentPosition() > 0) {
                     move = true;
                     linearslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     linearslide.setPower(-0.5);
-//                } else {
-//                    linearslide.setPower(0);
-//                }
+                } else {
+                    linearslide.setPower(0);
+                }
             } else {
                 if (move) {
                     move = false;
@@ -76,6 +77,10 @@ public class Teleop2Controllers extends LinearOpMode {
 
             if (gamepad2.b) {
                 clawservo.setPosition(0);
+            }
+
+            if (gamepad2.right_stick_button && linearslide.getCurrentPosition() > 1000){
+                daSpinster.setPosition(.65);
             }
 
                 telemetry.addData("GamepadX", x);
