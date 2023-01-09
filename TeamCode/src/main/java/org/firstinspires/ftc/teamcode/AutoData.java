@@ -25,7 +25,7 @@ public class AutoData {
     public static double DEPOSIT_Y = -17.29;
     public static double DEPOSIT_ANGLE = 139.94;
 
-    public static int DEPOSIT_DROP_AMOUNT = 800;
+    public static int DEPOSIT_DROP_AMOUNT = 500;
 
     public static int AUTO_INTAKE_LIFT_HEIGHT_1 = 373;
     public static int AUTO_INTAKE_LIFT_HEIGHT_2 = 297;

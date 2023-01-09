@@ -66,8 +66,7 @@ public class DriveConstants {
      * Runner is designed to enable faster autonomous motion, it is a good idea for testing to start
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
-     */
-    /*
+     *
      * Note from LearnRoadRunner.com:
      * The velocity and acceleration constraints were calculated based on the following equation:
      * ((MAX_RPM / 60) * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI) * 0.85
@@ -86,10 +85,9 @@ public class DriveConstants {
      *
      * Maximum Angular Velocity is calculated as: maximum velocity / trackWidth * (180 / Math.PI) but capped at 360Â°/s.
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
-
      */
-    public static double MAX_VEL = 49;
-    public static double MAX_ACCEL = 49;
+    public static double MAX_VEL = 52;
+    public static double MAX_ACCEL = 48.75;
     public static double MAX_ANG_VEL = Math.toRadians(320.8331314285714);
     public static double MAX_ANG_ACCEL = Math.toRadians(320.8331314285714);
 

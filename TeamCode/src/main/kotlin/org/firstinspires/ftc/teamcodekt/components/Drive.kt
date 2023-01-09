@@ -57,9 +57,9 @@ class Drivetrain {
         powers.mapInPlace { (it pow 3) * _powerMulti }
 
         withEachMotor {
-            if (abs(powers[it] - lastPowers[it]) > 0.005) { // Caching motor powers may increase loop times?
+//            if (abs(powers[it] - lastPowers[it]) > 0.005) { // Caching motor powers may increase loop times?
                 this.power = powers[it]
-            }
+//            }
         }
 
         lastPowers = powers

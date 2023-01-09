@@ -1,42 +1,24 @@
 package org.firstinspires.ftc.teamcodekt.components
 
-import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.AnalogInput
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.invoke
-import org.firstinspires.ftc.teamcodekt.components.ShortRangeSensorConfig.OFFSET
-import org.firstinspires.ftc.teamcodekt.components.ShortRangeSensorConfig.SCALE
-
-@Config
-object ShortRangeSensorConfig {
-//    @JvmField var OFFSET = 37.1037
-//    @JvmField var SCALE = 239.664
-
-    @JvmField var OFFSET = 35.7037
-    @JvmField var SCALE = 240.264
-}
+import kotlin.math.sqrt
 
 class ShortRangeSensor(name: String) {
     private val sensor = hwMap<AnalogInput>(name)
 
     val distance: Double
-        get() = model(sensor.voltage).also {
-            readings[index] = it
-            index = (index + 1) % readings.size
-        }
+        get() = sqrtModel(sensor.voltage)
 
-    private fun model(input: Double): Double {
-        return SCALE * input - OFFSET
+    val rawVoltage: Double
+        get() = sensor.voltage
+
+    private fun sqrtModel(voltage: Double): Double {
+        return -219.67 * sqrt(-0.999991 * (voltage - 0.425162)) + 116.096
     }
 
-    private val readings = DoubleArray(40)
-    private var index = 0
-
-    val average: Double
-        get() = readings.average()
-
-    fun restartAvg() {
-        index = 0
-        readings.fill(distance)
+    fun avgOf(num: Int): Double {
+        return DoubleArray(num) { distance }.average()
     }
 }
