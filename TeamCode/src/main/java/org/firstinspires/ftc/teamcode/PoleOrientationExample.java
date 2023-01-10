@@ -132,10 +132,6 @@ public class PoleOrientationExample extends LinearOpMode
         /* Declare OpMode members. */
         robot.init(hardwareMap,false);
 
-        while(!(lowCameraInitialized && backCameraInitialized)) {
-            sleep(100);
-        }
-
         telemetry.addLine("Robot initialized, ready to start.");
         telemetry.update();
         waitForStart();
@@ -150,7 +146,7 @@ public class PoleOrientationExample extends LinearOpMode
             // we're not doing anything else
             sleep(20);
 
-            // Execute the automatic turret movement code   
+            // Execute the automatic turret movement code
             robot.readBulkData();
             robot.turretPosRun();
 

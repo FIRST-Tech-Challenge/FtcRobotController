@@ -192,8 +192,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void alignToPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        final double TURN_SLOPE   = 0.0008;
-        final double TURN_OFFSET  = 0.0650;
+        final double TURN_SLOPE   = 0.0009;
+        final double TURN_OFFSET  = 0.0800;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
         double turretPower;
@@ -820,22 +820,22 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Are we looking for SPEED (DRIVE_THRU) or do we need ACCURATE final stopping position (DRIVE_TO)?
         if( driveType == DRIVE_TO ) {
            // If x-delta (forward error) is approaching zero, then reduce from specified move_power
-           double x_slowdown_distance = (move_power >= 0.60)? 6.0 : 4.0;  // inches
-           double y_slowdown_distance = (move_power >= 0.60)? 5.0 : 3.0;  // inches
+           double x_slowdown_distance = (move_power >= 0.60)? 8.0 : 4.0;  // inches
+           double y_slowdown_distance = (move_power >= 0.60)? 7.0 : 3.0;  // inches
            if( relative_x_abs <= x_slowdown_distance )
-              movement_x_power = Range.clip(((relative_x_to_point/x_slowdown_distance) * 0.10),-0.10,0.10);
+              movement_x_power = Range.clip(((relative_x_to_point/x_slowdown_distance) * 0.24),-0.24,0.24);
            // If y-delta (lateral error) is approaching zero, then reduce from specified move_power
            if( relative_y_abs <= y_slowdown_distance )
-              movement_y_power = Range.clip(((relative_y_to_point/y_slowdown_distance) * 0.12),-0.12,0.12);
+              movement_y_power = Range.clip(((relative_y_to_point/y_slowdown_distance) * 0.24),-0.24,0.24);
         } // DRIVE_TO
         // Compute robot orientation-angle error
         double robot_radian_err = AngleWrapRadians( Math.toRadians(drive_angle) - angle_world );  // radians
         // Determine the proper angle-error tolerance (within this tolerance rotation_power drops to 0%)
-        double angle_tolerance = (driveType == DRIVE_TO)? 0.25 : 2.0;  // degrees
+        double angle_tolerance = (driveType == DRIVE_TO)? 0.25 : 5.0;  // degrees
         double smallAngleSpeed = 0.09;  // (0.19 .. 0.10) due to min_turn_power
-        // Once angle-error is below 20deg, scale-down rotational power based on remaining error, but don't
+        // Once angle-error is below 15deg, scale-down rotational power based on remaining error, but don't
         // drop below 10% (0.10) until we're inside the angle tolerance (when rotation_power goes to zero).
-        double small_rad_error = Math.abs( robot_radian_err / Math.toRadians(20.0) );
+        double small_rad_error = Math.abs( robot_radian_err / Math.toRadians(15.0) );
         double min_turn_power = (robot_radian_err <= Math.toRadians(angle_tolerance))? 0.00 : 0.10;
         double adjusted_turn_power = (small_rad_error <= 1.0)? (small_rad_error * smallAngleSpeed + min_turn_power) : turn_power; 
         double rotation_power = (robot_radian_err > 0.0)? adjusted_turn_power : -adjusted_turn_power;
@@ -858,9 +858,9 @@ public abstract class AutonomousBase extends LinearOpMode {
             frontLeft  /= maxWheelPower;
             frontRight /= maxWheelPower;
         }
-        // If the computed wheel powers drop below 5% (minimum needed to produce robot movement)
+        // If the computed wheel powers drop below 7% (minimum needed to produce robot movement)
         // go ahead and abort as we'll be stuck here forever if we don't
-        if( maxWheelPower < 0.05 ) {
+        if( maxWheelPower <= 0.07 ) {
             return true;
         }
         boolean ODOMETRY_DEBUG = false;
@@ -883,10 +883,16 @@ public abstract class AutonomousBase extends LinearOpMode {
             sleep(3500);  // so we can read the output above
         } // ODOMETRY_DEBUG
         // Are we within tolerance of our target position/orientation?
-        double xy_tolerance = (driveType == DRIVE_TO)? 0.25 : 2.5; // inches
+        double drive_thru_tolerance = (Math.abs(move_power) >= 0.70)? 3.5 : 2.5;     // inches
+        double xy_tolerance = (driveType == DRIVE_TO)? 0.25 : drive_thru_tolerance; // inches
         if( (distanceToPoint <= xy_tolerance) && (Math.abs(robot_radian_err) <= Math.toRadians(angle_tolerance))  )
             return true;
         // NO, WE'RE NOT DONE! Update motor power settings
+        telemetry.addData("distanceToPoint", "%.2f in (x=%.2f y=%.2f)",
+                distanceToPoint, relative_x_to_point, relative_y_to_point );
+        telemetry.addData("maxWheelPower", "%.2f (%.2f %.2f %.2f %.2f)",
+                maxWheelPower, frontLeft, frontRight, backLeft, backRight );
+        telemetry.update();
         robot.driveTrainMotors( frontLeft, frontRight, backLeft, backRight );
         return false;
     } // moveToPosition

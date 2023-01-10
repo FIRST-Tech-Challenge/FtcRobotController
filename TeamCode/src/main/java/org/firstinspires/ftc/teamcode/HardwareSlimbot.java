@@ -145,7 +145,7 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_HIGH    =  52.8;   // lift position for HIGH junction (FRONT Teleop)
     public double       LIFT_ANGLE_AUTO_H  =  41.8;   // lift position for AUTONOMOUS (HIGH junction)
     public double       LIFT_ANGLE_HIGH_B  = -35.5;   // lift position for HIGH junction (BACK Teleop)
-    public double       LIFT_ANGLE_HIGH_BA = -30.0;   // lift position for HIGH junction (BACK Auto)
+    public double       LIFT_ANGLE_HIGH_BA = -23.0;   // lift position for HIGH junction (BACK Auto)
                                                       // (cone is loaded lower for auto, so higher lift point)
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
@@ -571,7 +571,37 @@ public class HardwareSlimbot
                 turretMotor.setPower(0);
             }
         }
-    }
+    } // setTurretPower
+
+    /*--------------------------------------------------------------------------------------------*/
+    public void setTurretVelocity(double velocity) {
+        // Positive turret velocity
+        if(velocity >= 0) {
+            if(turretAngle < TURRET_ANGLE_MAX) {
+                // We still have room to move, so set velocity.
+                turretMotorRunning = true;
+                turretMotorPwrSet = velocity;
+                turretMotor.setVelocity(velocity);
+            } else {
+                // If we are at max angle, set the velocity to 0.
+                turretMotorRunning = false;
+                turretMotorPwrSet = 0;
+                turretMotor.setVelocity(0);
+            }
+        } else {
+            if(turretAngle > TURRET_ANGLE_MIN) {
+                // We still have room to move, so set velocity.
+                turretMotorRunning = true;
+                turretMotorPwrSet = velocity;
+                turretMotor.setVelocity(velocity);
+            } else {
+                // If we are at max angle, set the velocity to 0.
+                turretMotorRunning = false;
+                turretMotorPwrSet = 0;
+                turretMotor.setVelocity(0);
+            }
+        }
+    } // setTurretVelocity
 
     /*--------------------------------------------------------------------------------------------*/
     /* setRunToPosition()                                                                         */
@@ -828,11 +858,11 @@ public class HardwareSlimbot
                 turretMotorWait = 0;
                 double turretMotorPower;
                 if( Math.abs(degreesToGo) > 15.0 )
-                    turretMotorPower = 0.05 * degreesToGo;  // 1 deg = 0.05
+                    turretMotorPower = 0.010 * degreesToGo;  // 1 deg = 0.010
                 else
-                    turretMotorPower = 0.01 * degreesToGo;  // 1 deg = 0.01
-                if( turretMotorPower < -0.40 ) turretMotorPower = -0.40;
-                if( turretMotorPower > +0.40 ) turretMotorPower = +0.40;
+                    turretMotorPower = 0.002 * degreesToGo;  // 1 deg = 0.002
+                if( turretMotorPower < -0.25 ) turretMotorPower = -0.25;
+                if( turretMotorPower > +0.25 ) turretMotorPower = +0.25;
                 turretMotor.setPower( turretMotorPower );
             }
         } // turretMotorAuto
