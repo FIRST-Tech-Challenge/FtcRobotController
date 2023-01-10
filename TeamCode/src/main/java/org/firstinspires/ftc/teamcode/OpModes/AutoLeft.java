@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Auto Meet 3", group = "Concept")
 public class AutoLeft extends LinearOpMode {
 
-    private static final String tfodModel = "jan2022polesAndSignals";
+    private static final String tfodModel = "jan2023mk2";
      private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel + ".tflite";
 
     private static final String[] LABELS = {
