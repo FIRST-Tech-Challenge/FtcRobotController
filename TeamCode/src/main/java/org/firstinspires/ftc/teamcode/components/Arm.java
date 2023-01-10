@@ -19,13 +19,13 @@ public class Arm {
 
     public static ManualArm manualArm = ManualArm.none;
 
-    public Arm(){}
+    public Arm(DcMotor lLift, DcMotor rLift, Servo g){
+        this.leftLift = lLift;
+        this.rightLift = rLift;
+        this.gripper = g;
+    }
 
-    public static void init(DcMotor lLift, DcMotor rLift, Servo g){
-        Arm.leftLift = lLift;
-        Arm.rightLift = rLift;
-        Arm.gripper = g;
-
+    public static void init(){
         gripper.setPosition(0.75);
 
         //TODO: REVERSE rightLift FOR 11166-RC!!!
