@@ -42,8 +42,6 @@ class Ppbot{
         FRight.setPower(0.0);
         Slider.setPower(0.0);
         Slider.setPower(0.0);
-        Take1.setPosition(0.42);
-        Take2.setPosition(0.39);
 
         BLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -143,11 +141,11 @@ public class Pp extends LinearOpMode{
                 closed = false;
             }
             if (closed) {
-                robot.Take1.setPosition(0.42);// take 1 closed pos
-                robot.Take2.setPosition(0.39);// take 2 closed pos
+                robot.Take1.setPosition(0.17);// take 1 closed pos
+                robot.Take2.setPosition(0.47);// take 2 closed pos
             } else {
-                robot.Take1.setPosition(0.54);// take 1 open pos
-                robot.Take2.setPosition(0.3);// take 2 open pos
+                robot.Take1.setPosition(0.08);// take 1 open pos
+                robot.Take2.setPosition(0.61);// take 2 open pos
             }
             //set power and position for grabby and shit
             robot.Slider.setPower(Slidepos);
