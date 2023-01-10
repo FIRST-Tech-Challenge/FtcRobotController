@@ -203,23 +203,21 @@ public class BlueRight extends LinearOpMode {
 
             switch (location){
                 case 0:
-                    strafeRight(1,800);
-                    move(.4,200);
-                    break;
-                case 3:
-                    strafeRight(1,800);
-                    move(.6,1200);
-                    strafeRight(.5,300);
-                    break;
-                case 2:
-                    strafeRight(1,800);
-                    move(.4,200);
+                    move(.2,200);
                     break;
                 case 1:
-                    strafeRight(1,800);
+                    strafeRight(1,700);
                     gyroTurning(0);
                     move(.6,-1200);
-                    strafeRight(.5,300);
+                    strafeLeft(.5,300);
+                    break;
+                case 2:
+                    move(.2,200);
+                    break;
+                case 3:
+                    strafeRight(1,700);
+                    move(.6,1200);
+                    strafeLeft(.5,300);
                     break;
             }
         }
