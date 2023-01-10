@@ -66,28 +66,28 @@ public class GamePad1 extends OpMode {
             robot.claw1.setPosition(1);
         }
 
-        if (gamepad1.dpad_down){//floor
-            setLevelDown(slideDown);
-        }
         if (gamepad1.dpad_left) {//low
             setLevelDown(slideDown - 1100);
         }
-        if (gamepad1.left_trigger > .5) {//down all way
+        if (gamepad1.dpad_down) {//down all way
             setLevelDown(slideDown + 23);
 
         }
 
         if (gamepad1.dpad_up) {/////////medium
-            setLevelUp(slideDown - 1700);
+            setLevelUp(slideDown - 2100);
         }
 
-        if (gamepad1.right_trigger > .5) {//all the way up
-            setLevelDown(slideDown - 3400);
+        if (gamepad1.dpad_right) {//all the way up
+            setLevelDown(slideDown - 2947);
 
         }
 
-        if(gamepad1.dpad_right){
-        robot.viperSlide.setPower(.5);
+        if(gamepad1.right_bumper){
+        robot.viperSlide.setPower(-.5);
+        }
+        else{
+            robot.viperSlide.setPower(0);
         }
 
         //////////////////////////////////////Levels

@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.openftc.easyopencv.OpenCvCamera;
+
 //////////Motors
 public class HardwarePushbot {
     public static DcMotor frontLeft = null;
@@ -23,6 +25,8 @@ public class HardwarePushbot {
     public static DcMotor backRight = null;
     public static DcMotor viperSlide = null;
     public static BNO055IMU imu;// Additional Gyro device
+
+
 
     public static HardwareMap hwMap = null;
 
@@ -41,6 +45,7 @@ public class HardwarePushbot {
         frontRight = hwMap.get(DcMotor.class, "frontRight");
         backRight = hwMap.get(DcMotor.class, "backRight");
         viperSlide = hwMap.get(DcMotor.class, "viperSlide");
+
 //////////directions
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.FORWARD);

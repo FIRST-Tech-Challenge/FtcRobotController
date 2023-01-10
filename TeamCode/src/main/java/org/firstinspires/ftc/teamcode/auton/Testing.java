@@ -155,13 +155,12 @@ public class Testing extends automethods {
         while (!isStarted() && !isStopRequested()) {
             telemetry.update();
             if(tagOfInterest == null || tagOfInterest.id == left){
-
+            encoderDrive(.5,10,5);
             }
             else if (tagOfInterest.id == middle){
-                //trajectory
-            }
-            else{
-                //trajectory
+            encoderDrive(.5,-10,5);            }
+            else if(tagOfInterest.id == right){
+                imuTurn(.5,180);
             }
         }
 
