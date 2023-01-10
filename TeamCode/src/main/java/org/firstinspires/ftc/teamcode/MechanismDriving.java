@@ -21,6 +21,9 @@ public class MechanismDriving {
        put(Robot.SlidesState.HIGH, 3870);//may need to be higher
        put(Robot.SlidesState.VERY_LOW,670);
     }};
+    public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 1.0; //These are not final values
+    // How long it takes for the claw servo to be guaranteed to have moved to its new position.
+    public static final long CLAW_SERVO_TIME = 500;
     //SPEED INFO: Scale from 0-1 in speed.
     public static final double HORSESHOE_FRONT_POS = 0, HORSESHOE_REAR_POS = 1.0; //These are not final values
     public static final double COMPLIANT_WHEELS_SPEED = 1.0; //speed of compliant wheels
@@ -40,6 +43,19 @@ public class MechanismDriving {
         slidePositions.put(Robot.SlidesState.LOW_LOWERED, slidePositions.get(Robot.SlidesState.LOW) - LOWERING_AMOUNT);
         slidePositions.put(Robot.SlidesState.MEDIUM_LOWERED, slidePositions.get(Robot.SlidesState.MEDIUM) - LOWERING_AMOUNT);
         slidePositions.put(Robot.SlidesState.HIGH_LOWERED, slidePositions.get(Robot.SlidesState.HIGH) - LOWERING_AMOUNT);
+    }
+
+    /** Sets the claw position to the robot's desired state.
+     */
+    public void updateClaw(Robot robot) {
+        switch (robot.desiredClawState) {
+            case CLOSED:
+                robot.claw.setPosition(CLAW_CLOSED_POS);//closed
+                break;
+            case OPEN:
+                robot.claw.setPosition(CLAW_OPEN_POS);//open
+                break;
+        }
     }
 
     /** Sets the horseshoe position to the robot's desired state.
