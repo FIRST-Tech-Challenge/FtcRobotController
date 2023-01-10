@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 //imports
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Helper.Robot;
@@ -20,7 +21,7 @@ public class Teleop extends LinearOpMode {
     public double acceleration = 0.5;
 
     // holding power for vertical slider.
-    private double holdingPower = -0.01;
+    private double holdingPower = 0.001;
 
     //Motor powers
     public double fl_power = 0;
@@ -28,7 +29,7 @@ public class Teleop extends LinearOpMode {
     public double fr_power = 0;
     public double br_power = 0;
 
-    public double DRIVETRAIN_SPEED = 0.6;
+    public double DRIVETRAIN_SPEED = 0.7;
 
 
 
@@ -75,7 +76,7 @@ public class Teleop extends LinearOpMode {
             br_power += acceleration * (target_br_power - br_power);
 
             /**
-             Drivetrain
+             Joystick controls for Drivetrain
              */
 
             robot.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power);
@@ -83,31 +84,55 @@ public class Teleop extends LinearOpMode {
             robot.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power);
             robot.BRMotor.setPower(DRIVETRAIN_SPEED * br_power);
 
-            /** Claw **/
+            /**
+             * Joystick controls for slider, arm, and claw.
+             */
+
+            double vSliderPower =  gamepad2.left_stick_y * 0.6;
+            robot.vSlider.setPower(vSliderPower);
+
+
+            // Claw
             if(gamepad2.x) {
                 robot.claw.setPosition(1);
             }
             if(gamepad2.y) {
                 robot.claw.setPosition(0);
             }
-            if(gamepad2.a) {
+
+            // Arm
+            if(gamepad2.right_bumper) {
                 robot.claw.setPosition(0);
                 robot.SwingArmToPosition(1, 65);
                 robot.swingArm.setPower(robot.swingArmHoldingPower);
             }
-            if(gamepad2.b) {
+            if(gamepad2.left_bumper) {
                 robot.claw.setPosition(0);
                 robot.SwingArmToPosition(-1, 20);
                 robot.swingArm.setPower(0);
             }
 
 
+            // Testing slider, claw, and arm on gamepad2.
 
-            /** Slider **/
-            double vSliderPower =  gamepad2.left_stick_y;
-            double vsliderPos = robot.vSlider.getCurrentPosition();
+            if(gamepad2.a) {
+                robot.MoveSlider(1, 1000);
+                robot.vSlider.setPower(0);
+            }
+            if(gamepad2.b) {
+                robot.MoveSlider(1, 3000);
+            }
 
-            robot.DriveSlider(-vSliderPower);
+            //  movement testing on gamepad1.
+            if(gamepad1.a) {
+                robot.Strafe(1, 30);
+            }
+            if(gamepad1.b) {
+                robot.Strafe(1, -30);
+            }
+
+
+
 
 
 
@@ -117,7 +142,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
             telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
             telemetry.addData("vSliderPower", vSliderPower);
-            telemetry.addData("vSlider Encoder", vsliderPos);
+            telemetry.addData("vSlider Encoder", robot.vSlider.getCurrentPosition());
             telemetry.addData("swingArm Encoder", robot.swingArm.getCurrentPosition());
             telemetry.addData("Claw Position", robot.claw.getPosition());
             org.firstinspires.ftc.robotcore.external.navigation.Orientation angle;

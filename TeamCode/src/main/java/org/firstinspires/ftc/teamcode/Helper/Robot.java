@@ -100,6 +100,27 @@ public class Robot {
         FRMotor = hwMap.get(DcMotor.class, "FRMotor");
         BRMotor = hwMap.get(DcMotor.class, "BRMotor");
 
+
+
+        //Setting the direction
+        FLMotor.setDirection(DcMotor.Direction.FORWARD);
+        BLMotor.setDirection(DcMotor.Direction.FORWARD);
+        FRMotor.setDirection(DcMotor.Direction.REVERSE);
+        BRMotor.setDirection(DcMotor.Direction.REVERSE);
+
+
+        claw.setDirection(Servo.Direction.FORWARD);
+        vSlider.setDirection(DcMotorSimple.Direction.REVERSE);
+        swingArm.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        // Set behavior when zero power is applied.
+        FLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        BLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        FRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        BRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        vSlider.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        swingArm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
         //Setting the run mode
         FLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -107,16 +128,6 @@ public class Robot {
         BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        claw.setDirection(Servo.Direction.FORWARD);
-        vSlider.setDirection(DcMotorSimple.Direction.REVERSE);
-        swingArm.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        //Setting the direction
-        FLMotor.setDirection(DcMotor.Direction.FORWARD);
-        BLMotor.setDirection(DcMotor.Direction.FORWARD);
-        FRMotor.setDirection(DcMotor.Direction.REVERSE);
-        BRMotor.setDirection(DcMotor.Direction.REVERSE);
 
         FLMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BLMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -133,12 +144,7 @@ public class Robot {
         vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        FLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        BLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        FRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        BRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        vSlider.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        swingArm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
@@ -284,9 +290,15 @@ public class Robot {
         this.BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void DriveToPosition(double Speed, int posX, int posY) {
-        this.Drive(Speed, -posY);
-        this.Strafe(Speed, posX);
+    public void DriveToPosition(double Speed, int posX, int posY, boolean forwardFirst) {
+        if(forwardFirst) {
+            this.Drive(Speed, -posY);
+            this.Strafe(Speed, -posX);
+        }
+        else{
+            this.Strafe(Speed, -posX);
+            this.Drive(Speed, -posY);
+        };
         System.out.println(Arrays.toString(Location));
     }
 
@@ -330,13 +342,19 @@ public class Robot {
         }
     }
 
-    public void MoveSliderToPosition(double speed, int Position) {
-        timeout_ms = 3000;
+    public void MoveSlider(double speed, int Position) {
+        timeout_ms = 1000;
 
-        this.vSlider.setTargetPosition(Position);
+        runtime.reset();
+
+        this.vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        this.vSlider.setTargetPosition(1000);
 
         //set the mode to go to the target position
         this.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.vSlider.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         //Set the power of the motor.
         vSlider.setPower(speed);
@@ -344,17 +362,20 @@ public class Robot {
         while ((runtime.milliseconds() < timeout_ms) && (this.vSlider.isBusy())) {
 
         }
+        this.vSlider.setPower(0);
+        this.vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void SwingArmToPosition(double speed, int Position) {
         timeout_ms = 3000;
 
+        runtime.reset();
+
+
         this.swingArm.setTargetPosition(Position);
 
         //set the mode to go to the target position
         this.swingArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        runtime.reset();
 
         //Set the power of the motor.
         swingArm.setPower(speed);
@@ -364,7 +385,4 @@ public class Robot {
         }
     }
 
-    public void DriveSlider(double speed) {
-        this.vSlider.setPower(speed);
-    }
 }

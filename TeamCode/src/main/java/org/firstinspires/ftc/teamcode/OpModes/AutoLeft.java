@@ -39,7 +39,7 @@ public class AutoLeft extends LinearOpMode {
     Robot robot = new Robot();
 
     public enum AutoSteps {
-        detectSignal, deliverPreLoad, CycleThreeCones, park, endAuto
+        detectSignal, vSlider, deliverPreLoad, CycleThreeCones, park, endAuto
     }
 
     public AutoSteps Step = AutoSteps.detectSignal;
@@ -62,7 +62,7 @@ public class AutoLeft extends LinearOpMode {
 //        robot.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //        robot.vSlider.setPower(0.6);
 
-        robot.claw.setPosition(0.6);
+        robot.claw.setPosition(1);
         robot.SwingArmToPosition(0.6,65);
         robot.swingArm.setPower(robot.swingArmHoldingPower);
 
@@ -106,6 +106,7 @@ public class AutoLeft extends LinearOpMode {
                             telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
                             telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
                             telemetry.addData("Robot Location", robot.Location);
+                            telemetry.addData("Vslider Encoder", robot.vSlider.getCurrentPosition());
                         }
                         telemetry.update();
                     }
@@ -115,7 +116,12 @@ public class AutoLeft extends LinearOpMode {
                     case detectSignal:
                         telemetry.addData("Parking Target ", parkingTarget);
                         telemetry.update();
-                        Step = AutoSteps.deliverPreLoad;
+                        Step = AutoSteps.vSlider;
+                        break;
+
+                    case vSlider:
+                        robot.MoveSlider(0.8,1000);
+                        Step = AutoSteps.endAuto;
                         break;
 
                     case deliverPreLoad:
@@ -125,8 +131,7 @@ public class AutoLeft extends LinearOpMode {
 
                     case CycleThreeCones:
                         //Drive to the stack
-                        robot.DriveToPosition(0.8, -15, 0);
-                        robot.DriveToPosition(0.8, 0, 60);
+                        robot.DriveToPosition(0.8, -35, 60, false);
                         robot.turnRobotToAngle(90);
                         for(int i = 0; i < 4; i++) {
                             CycleCone();
@@ -179,15 +184,15 @@ public class AutoLeft extends LinearOpMode {
 
     private void Park(int location) {
         if (location == 1) {
-            robot.DriveToPosition(0.3, 75, 70);
+            robot.DriveToPosition(0.3, 75, 70, true);
         }
 
         if (location == 2) {
-            robot.DriveToPosition(0.3, 0, 70);
+            robot.DriveToPosition(0.3, 0, 70, true);
         }
 
         if (location == 3) {
-            robot.DriveToPosition(0.3, -75, 70);
+            robot.DriveToPosition(0.3, -75, 70, true);
 
         }
     }
@@ -199,10 +204,10 @@ public class AutoLeft extends LinearOpMode {
         robot.SwingArmToPosition(1, 65);
         robot.swingArm.setPower(robot.swingArmHoldingPower);
         //Drive to the pole
-        robot.DriveToPosition(0.8, -35, 65);
+        robot.DriveToPosition(0.8, 35, 65, true);
         /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
         //Moves the slider to the right height
-        robot.MoveSliderToPosition(0.5, 1000);
+//        robot.MoveSliderToPosition(0.5, 1000);
         //Swings the arm down
         robot.SwingArmToPosition(1, 20);
         //Opens and closes the claw to drop the cone
@@ -213,7 +218,7 @@ public class AutoLeft extends LinearOpMode {
         robot.SwingArmToPosition(1, 65);
         robot.swingArm.setPower(robot.swingArmHoldingPower);
         //lowers the slider
-        robot.MoveSliderToPosition(0.6, 0);
+        robot.MoveSlider(0.6, 0);
     }
 
     public void CycleCone(){
@@ -222,17 +227,17 @@ public class AutoLeft extends LinearOpMode {
         robot.claw.setPosition(0);
         robot.SwingArmToPosition(1,20);
         //Drive forward slightly
-        robot.DriveToPosition(0.6, 0, 25);
+        robot.DriveToPosition(0.6, 0, 25, true);
         //close the claw and grab onto the cone
         robot.claw.setPosition(1);
         /** Now drive to the medium pole **/
         //Drive to the pole and face it
-        robot.DriveToPosition(0.7,0,-60);
+        robot.DriveToPosition(0.7,0,-60, true);
         robot.turnRobotToAngle(210);
         robot.stopDriveMotors();
         /** Now deliver the cone **/
         //Move the slider to the right height and swing down
-        robot.MoveSliderToPosition(0.6, -5500);
+        robot.MoveSlider(0.6, -5500);
         robot.SwingArmToPosition(1, 20);
         //Open and close claw
         robot.claw.setPosition(1);
@@ -242,10 +247,10 @@ public class AutoLeft extends LinearOpMode {
         robot.SwingArmToPosition(1, 65);
         robot.swingArm.setPower(robot.swingArmHoldingPower);
         //lower slider
-        robot.MoveSliderToPosition(0.6, 0);
+        robot.MoveSlider(0.6, 0);
         //Moves back to the stack
         robot.turnRobotToAngle(90);
         robot.stopDriveMotors();
-        robot.DriveToPosition(0.7,0,60);
+        robot.DriveToPosition(0.7,0,60, true);
     }
 }
