@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -57,6 +60,14 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     public boolean hasMoved = false;
 
+    // Linear slide information
+    public double liftCorrection = 1;
+
+    public double tickPerInchForLift = 173 * liftCorrection;
+
+    final double MIN_LIFT_POS = 0;
+    final double MAX_LIFT_POS = tickPerInchForLift * 35;
+
     // Servo information
     static final double MAX_POS     =    .5;
     static final double MAX_POS2    =    .50;
@@ -71,7 +82,7 @@ public class Auto2022_23v2 extends LinearOpMode {
     public double ticksPerRotation = 537.6; //for AndyMark NeveRest 20
     public double maxVelocity = 340 * ticksPerRotation;
     public double rpm = 340;
-    public double radius = 10; //cm
+    public double diameter = 10; //cm
 
     // General constants
     double oneFootCm = 30.48;
@@ -100,7 +111,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                if (tfod != null) {
+                /*if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -126,31 +137,37 @@ public class Auto2022_23v2 extends LinearOpMode {
                             hasMoved = true;
                         }
                     }
+                }*/
+                if(!hasMoved){
+                    moveLift(10);
+                    telemetry.addData("Lift Encoder Value:", liftMotor.getCurrentPosition());
+                    telemetry.update();
+                    waitTime(4);
+                    moveLift(5);
+                    telemetry.addData("Lift Encoder Value:", liftMotor.getCurrentPosition());
+                    telemetry.update();
+                    waitTime(4);
+                    moveLift(30);
+                    telemetry.addData("Lift Encoder Value:", liftMotor.getCurrentPosition());
+                    telemetry.update();
+                    waitTime(4);
+                    moveLift(0);
+                    telemetry.addData("Lift Encoder Value:", liftMotor.getCurrentPosition());
+                    telemetry.update();
+                    waitTime(4);
+                    /*liftMotor.setMode(STOP_AND_RESET_ENCODER);
+                    liftMotor.setTargetPosition(173); // replace 1000 with applicable number
+                    liftMotor.setMode(RUN_TO_POSITION);
+                    liftMotor.setPower(1.0);*/
+                    hasMoved = true;
                 }
             }
         }
     }
 
-    /**
-     * Initialize the Vuforia localization engine.
-     */
-
-    /* Change this function completely:
-     *
-     * Using DcMotorEx function, convert tps from strafeVelo into rpm, then use physics stuff to
-     * get distance travelled (make sure to measure radius of current wheels that are being used),
-     * then multiply by the count variable to get total distance. Convert that distance into time
-     * by converting the tps being used in the moveToZone function into rpm, then using more physics
-     * equations to get time. Input that time variable into the F() function, and either subtract
-     * or add to the time it would need to be on for to move to the correction position.
-     *
-     * The functions that set the power for the motors also need to be changed to the .setVelocity()
-     * functions that were recently added to make this work correctly.
-     */
-
     public void moveToZone(String signal, int count){
         telemetry.addData("Detected:",signal);
-        double timeAdjustment = getDistance(radius,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
+        double timeAdjustment = getDistance(diameter,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
         if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
             movePercentOfFoot(true,1.5);
             turnNinety(false);
@@ -197,9 +214,12 @@ public class Auto2022_23v2 extends LinearOpMode {
         // Without this, data retrieving from the IMU throws an exception
         imu.initialize(parameters);
 
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Set to 0 just in case
+        liftMotor.setMode(STOP_AND_RESET_ENCODER); // Set to 0 just in case
     }
 
+    /**
+     * Initialize the Vuforia localization engine.
+     */
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -319,29 +339,46 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     public void movePercentOfFoot(boolean forward, double feetAmount){
         //using motor encoders
-        double oneRotationDistance = radius * Math.PI; // In cm
+        double driveTrainCorrection = 1;
 
+        double oneRotationDistance = diameter * Math.PI; // In cm
         double rotationAmount = oneFootCm / oneRotationDistance;
-        double totalTicks = rotationAmount * ticksPerRotation * feetAmount * 2; // *2 is to account for gear ratio
+        double totalTicks = rotationAmount * ticksPerRotation * feetAmount * 2 * driveTrainCorrection; // *2 is to account for gear ratio
 
         resetEncoders();
 
         if(forward){
             motorsOn(.75);
-            while(opModeIsActive() && leftDrive.getCurrentPosition() < totalTicks){
-                telemetry.addData("Encoder Value:", leftDrive.getCurrentPosition());
+            while(opModeIsActive() && rightDrive.getCurrentPosition() < totalTicks){
+                telemetry.addData("Encoder Value:", rightDrive.getCurrentPosition());
                 telemetry.update();
             }
         }else{
             totalTicks = -totalTicks;
             motorsOn(-.75);
-            while(opModeIsActive() && leftDrive.getCurrentPosition() > totalTicks){
-                telemetry.addData("Encoder Value:", leftDrive.getCurrentPosition());
+            while(opModeIsActive() && rightDrive.getCurrentPosition() > totalTicks){
+                telemetry.addData("Encoder Value:", rightDrive.getCurrentPosition());
                 telemetry.update();
             }
         }
-        motorsOff();
+        brakeMotors();
         resetEncoders();
+    }
+
+    public void moveLift(double toHeight){
+        if(opModeIsActive()){
+            int targetTick = (int) (tickPerInchForLift * toHeight);
+
+            liftMotor.setTargetPosition(targetTick); // replace 1000 with applicable number
+            liftMotor.setMode(RUN_TO_POSITION);
+            liftMotor.setPower(1.0);
+
+            while(opModeIsActive() && liftMotor.isBusy()){
+                telemetry.addData("Lift Encoder Value:",liftMotor.getCurrentPosition());
+                telemetry.update();
+            }
+            liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
     }
 
     public void leftVelo(double maxPercent){ //sets power for left wheels
@@ -390,11 +427,18 @@ public class Auto2022_23v2 extends LinearOpMode {
         rightBackDrive.setPower(powerPercent);
     }
 
+    public void brakeMotors(){
+        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
     public void resetEncoders() { // Reset all encoder positions
-        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDrive.setMode(STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(STOP_AND_RESET_ENCODER);
 
         leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
