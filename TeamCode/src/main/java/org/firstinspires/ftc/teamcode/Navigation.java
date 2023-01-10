@@ -932,8 +932,9 @@ class AutonomousPaths {
     //origin is the staring position of the robot
     //public Position startingPosition = new Position(0,0,0,"startingPosition");
 
-    //Angle of zero for robot has intake facing away from our alliance's side
+    //Angle of zero for robot has intake facing towards from our alliance's side
     //Intake on robot is pointed forward
+    //Camera is pointing to the back of the robot
     //Current assumption is that negative angle turns robot clockwise
 
     //Terminal & Substation
@@ -974,7 +975,12 @@ class AutonomousPaths {
     public static Position intermediateCenterLeft = new Position(-1 * TILE_SIZE, 1 * TILE_SIZE, -Math.PI / 2, "intermediateCenterLeft"); //Rotation is there so that signal cone can be picked up on next position in path
 
 
+    //Testing positions
+    public static Position testPos1 = new Position(1 * TILE_SIZE, 0, "testPos1", Navigation.Action.NONE, 1, 1, 0);
+    public static Position testPos2 = new Position(1 * TILE_SIZE, -2, "testPos2", Navigation.Action.NONE, 1, 1, Math.PI / 2);
+
     //Paths (signal part of paths will be added on later during run time)
+    public static final ArrayList<Position> TEST_PATH = new ArrayList<>(Arrays.asList(testPos1, testPos2));
     public static final ArrayList<Position> MEDIUM_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, mediumJunction, intermediateCenterLeft, signalCone, rightLargeJunction));
 
     public static final ArrayList<Position> SMALL_LARGE = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, rightLargeJunction)); //PROBLEM: robot will need to rotate to the correct position BEFORE it goes to the signal cone
