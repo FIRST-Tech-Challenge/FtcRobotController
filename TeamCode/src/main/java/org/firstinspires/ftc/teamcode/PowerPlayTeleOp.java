@@ -15,7 +15,7 @@ import java.util.Collections;
 
 /** Autonomous OpMode for Freight Frenzy.
  */
-@TeleOp(name="Freight Frenzy Tele-Op", group="TeleOp OpMode")
+@TeleOp(name="Power Play Tele-Op", group="TeleOp OpMode")
 public class PowerPlayTeleOp extends OpMode {
 
     private RobotManager robotManager;
@@ -24,9 +24,10 @@ public class PowerPlayTeleOp extends OpMode {
     @Override
     public void init() {
         initSharedPreferences();
+        PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.BLUE;
         robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, new ArrayList<>(Collections.emptyList()),
-                                        allianceColor, RobotManager.StartingSide.CAROUSEL,
-                                        Navigation.MovementMode.STRAFE, telemetry, elapsedTime);
+                allianceColor, RobotManager.StartingSide.OUR_COLOR,
+                Navigation.MovementMode.STRAFE, telemetry, elapsedTime);
         IMUPositioning.Initialize(this);
     }
 
@@ -53,22 +54,35 @@ public class PowerPlayTeleOp extends OpMode {
     // ANDROID SHARED PREFERENCES
     // ==========================
 
+    // NOTE: not sure if we need this for Tele-Op, since we can just pass in random values for the Navigation constructor
+
     // Adapted from https://github.com/ver09934/twentytwenty/blob/ian-dev/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/SkystoneAuton.java
 
     private static SharedPreferences sharedPrefs;
 
     private static RobotManager.AllianceColor allianceColor;
+    private static RobotManager.StartingSide startingSide;
 
     public void initSharedPreferences() {
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.hardwareMap.appContext);
+        //
+       sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.hardwareMap.appContext);
 
-        String allianceColor = sharedPrefs.getString("alliance_color", "ERROR");
+       String allianceColor = sharedPrefs.getString("alliance_color", "ERROR");
+//        String startingSide = sharedPrefs.getString("starting_side", "ERROR");
 
-        if (allianceColor.equals("BLUE")) {
-            PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.BLUE;
-        }
-        else if (allianceColor.equals("RED")) {
-            PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.RED;
-        }
+       if (allianceColor.equals("BLUE")) {
+           PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.BLUE;
+       }
+       else if (allianceColor.equals("RED")) {
+           PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.RED;
+       }
+//        if (startingSide.equals("OUR_COLOR")) {
+//            PowerPlayTeleOp.startingSide = RobotManager.StartingSide.OUR_COLOR;
+//        }
+//        else if (startingSide.equals("THEIR_COLOR")) {
+//            PowerPlayTeleOp.startingSide = RobotManager.StartingSide.THEIR_COLOR;
+//        }
+
+       //PowerPlayTeleOp.allianceColor = RobotManager.AllianceColor.BLUE;
     }
 }

@@ -67,36 +67,46 @@ public class RobotManager {
     public void readControllerInputs() {
         // Linear slides
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
-            robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
+            if(robot.desiredHorseshoeState==Robot.HorseshoeState.FRONT)
+                Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
         }
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
-            robot.desiredSlidesState = Robot.SlidesState.LOW;
+            Robot.desiredSlidesState = Robot.SlidesState.LOW;
         }
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_MEDIUM)) {
-            robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
+            Robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
         }
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
-            robot.desiredSlidesState = Robot.SlidesState.HIGH;
+            Robot.desiredSlidesState = Robot.SlidesState.HIGH;
+        }
+        if(getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_VERY_LOW)){
+            Robot.desiredSlidesState = Robot.SlidesState.VERY_LOW;
         }
 
         // Fine movement/rotation.
-        if (getButtonRelease(GamepadWrapper.DriverAction.FINE_MOVEMENT_TOGGLE)) {
-            if (robot.movementMode == Robot.MovementMode.FINE) {
-                robot.movementMode = Robot.MovementMode.NORMAL;
-            } else {
-                robot.movementMode = Robot.MovementMode.FINE;
-            }
+        if (getButtonRelease(GamepadWrapper.DriverAction.TURN_ON_FINE_MOVEMENT)) {
+            robot.movementMode = Robot.MovementMode.FINE;
         }
-        if (getButtonRelease(GamepadWrapper.DriverAction.ULTRA_FINE_MOVEMENT_TOGGLE)) {
-            if (robot.movementMode == Robot.MovementMode.ULTRA_FINE) {
-                robot.movementMode = Robot.MovementMode.NORMAL;
-            } else {
-                robot.movementMode = Robot.MovementMode.ULTRA_FINE;
-            }
+        if (getButtonRelease(GamepadWrapper.DriverAction.TURN_ON_ULTRA_FINE_MOVEMENT)) {
+            robot.movementMode = Robot.MovementMode.ULTRA_FINE;
+
+        }
+        if(gamepads.getAnalogValues().gamepad1LeftTrigger > RobotManager.TRIGGER_DEAD_ZONE_SIZE){
+            robot.movementMode = Robot.MovementMode.NORMAL;
         }
 
-        if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {
-            robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
+        //if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {
+        //    robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
+        //}
+
+        //Horseshoe movement FRONT
+        if(getButtonRelease(GamepadWrapper.DriverAction.HORSESHOE_TO_FRONT)){
+            robot.desiredHorseshoeState = Robot.HorseshoeState.FRONT;
+        }
+        //Horseshoe movement BACK
+        if(getButtonRelease(GamepadWrapper.DriverAction.HORSESHOE_TO_BACK)){
+            if(Robot.desiredSlidesState!=Robot.SlidesState.RETRACTED)
+                robot.desiredHorseshoeState = Robot.HorseshoeState.REAR; //Rear is back.
         }
 
         // Adjust relative wheel speeds.
@@ -132,6 +142,7 @@ public class RobotManager {
             }
 
             // TODO: Add button for compliant wheels (on and off switch)
+            
         }
 
         mechanismDriving.adjustDesiredSlideHeight(gamepads.getAnalogValues(), robot);
@@ -148,9 +159,9 @@ public class RobotManager {
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
      */
     public void driveMechanisms() {
-//        mechanismDriving.updateCarousel(robot);
-//        mechanismDriving.updateClaw(robot);
-//        mechanismDriving.updateSlides(robot);
+       mechanismDriving.updateHorseshoe(robot);
+       mechanismDriving.updateCompliantWheels(robot);
+       mechanismDriving.updateSlides(robot);
     }
 
     /** Changes drivetrain motor inputs based off the controller inputs.
@@ -300,13 +311,13 @@ public class RobotManager {
      */
     public void pickUpCone() {
         // Suck the cone into the horseshoe
-        robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.ON;
+        // robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.ON;
         double startTime = elapsedTime.milliseconds();
-        while (elapsedTime.milliseconds() - startTime < mechanismDriving.COMPLIANT_WHEELS_TIME)
-            mechanismDriving.updateCompliantWheels(robot);
+//        while (elapsedTime.milliseconds() - startTime < MechanismDriving.COMPLIANT_WHEELS_TIME)
+//            mechanismDriving.updateCompliantWheels(robot);
         // Turns off compliant wheels
-        robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.OFF;
-        mechanismDriving.updateCompliantWheels(robot);
+//        robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.OFF;
+//        mechanismDriving.updateCompliantWheels(robot);
     }
 
     /** Returns whether the driver is attempting to move the robot linearly
@@ -320,7 +331,7 @@ public class RobotManager {
                             || gamepads.getButtonState(GamepadWrapper.DriverAction.MOVE_STRAIGHT_RIGHT));
         double stickDist = Math.sqrt(
                 Math.pow(gamepads.getAnalogValues().gamepad1LeftStickY,2)
-              + Math.pow(gamepads.getAnalogValues().gamepad1RightStickX,2));
+              + Math.pow(gamepads.getAnalogValues().gamepad1LeftStickX,2));
         boolean joystickMoved = stickDist >= RobotManager.JOYSTICK_DEAD_ZONE_SIZE;
         return dpadPressed || joystickMoved;
     }

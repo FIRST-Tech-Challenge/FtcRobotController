@@ -1,6 +1,3 @@
-/* Authors: Ningning Ying, Elicia Esmeris, Smyan Sengupta, Cristian Santibanez, Arin Khare, Kristal Lin, Jesse Angrist
- */
-
 package org.firstinspires.ftc.teamcode;
 
 
@@ -8,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -15,7 +13,7 @@ import java.util.Objects;
  */
 public class Navigation {
     public enum RotationDirection {CLOCKWISE, COUNTERCLOCKWISE}
-    public static enum Action {NONE}
+    public static enum Action {NONE, DELIVER_CONE_LOW, DELIVER_CONE_MEDIUM, DELIVER_CONE_HIGH, PICK_UP_CONE}
     // AUTON CONSTANTS
     // ===============
     public enum MovementMode {FORWARD_ONLY, STRAFE}
@@ -47,8 +45,8 @@ public class Navigation {
 
     // TELEOP CONSTANTS
     // ================
-    static final double MOVEMENT_MAX_POWER = 1.0;
-    static final double ROTATION_POWER = 0.8;
+    static final double MOVEMENT_MAX_POWER = 1;
+    static final double ROTATION_POWER = 0.6;
     static final double FINE_MOVEMENT_SCALE_FACTOR = 0.5;
     static final double ULTRA_FINE_MOVEMENT_SCALE_FACTOR = 0.25;
 
@@ -110,8 +108,6 @@ public class Navigation {
     }
 
     /** Updates the strafe power according to movement mode and gamepad 1 left trigger.
-     *
-     *  @return Whether the strafe power is greater than zero.
      */
     public void updateStrafePower(boolean hasMovementDirection, GamepadWrapper gamepads, Robot robot) {
         if (!hasMovementDirection) {
@@ -124,7 +120,7 @@ public class Navigation {
         double throttle = analogValues.gamepad1RightTrigger;
         if (throttle < RobotManager.TRIGGER_DEAD_ZONE_SIZE) {  // Throttle dead zone.
             // Determine power scale factor using constant from distance of joystick from center.
-            double distance = Range.clip(Math.sqrt(Math.pow(analogValues.gamepad1RightStickX, 2)
+            double distance = Range.clip(Math.sqrt(Math.pow(analogValues.gamepad1LeftStickX, 2)
                     + Math.pow(analogValues.gamepad1LeftStickY, 2)), 0, 1);
             if (distance <= RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {  // joystick dead zone
                 // Joystick is not used, but hasMovementDirection is true, so one of the straight movement buttons must
@@ -154,26 +150,18 @@ public class Navigation {
      */
     public boolean moveStraight(boolean forward, boolean backward, boolean left, boolean right, Robot robot) {
         double direction;
-        if (forward) {
-            if (left) {
+        if (forward || backward) {
+            if (left) {//move NW
                 direction = Math.PI * 0.75;
             }
-            else if (right) {
+            else if (right) {//move NE
                 direction = Math.PI * 0.25;
             }
-            else {
+            else {//move just forward
                 direction = Math.PI * 0.5;
             }
-        }
-        else if (backward) {
-            if (left) {
-                direction = -Math.PI * 0.75;
-            }
-            else if (right) {
-                direction = -Math.PI * 0.25;
-            }
-            else {
-                direction = -Math.PI * 0.5;
+            if (backward) {
+                direction *= -1;
             }
         }
         else if (left) {
@@ -196,14 +184,14 @@ public class Navigation {
         // NOTE: right-side drivetrain motor inputs don't have to be negated because their directions will be reversed
         //       upon initialization.
 
-        double turn = -analogValues.gamepad1LeftStickX;
+        double turn = -analogValues.gamepad1RightStickX;
         if (turnCC) {
             turn = -ROTATION_POWER;
         }
         if (turnC) {
             turn = ROTATION_POWER;
         }
-        if (-RobotManager.JOYSTICK_DEAD_ZONE_SIZE < turn && turn < RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
+        if (Math.abs(turn) < RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
             turn = 0;
         }
         switch (robot.movementMode) {
@@ -215,7 +203,7 @@ public class Navigation {
                 break;
         }
 
-        double moveDirection = Math.atan2(analogValues.gamepad1LeftStickY, analogValues.gamepad1RightStickX);
+        double moveDirection = Math.atan2(analogValues.gamepad1LeftStickY, analogValues.gamepad1LeftStickX);
         setDriveMotorPowers(moveDirection, strafePower, turn, robot, false);
     }
 
@@ -388,17 +376,15 @@ public class Navigation {
 
             setDriveMotorPowers(strafeAngle, power, 0.0, robot, false);
 
-//            robot.telemetry.addData("X", startLoc.x);
-//            robot.telemetry.addData("Y", startLoc.y);
-//            robot.telemetry.addData("X", currentLoc.x);
-//            robot.telemetry.addData("Y", currentLoc.y);
+            robot.telemetry.addData("X", startX);
+            robot.telemetry.addData("Y", startY);
+            robot.telemetry.addData("X", currentX);
+            robot.telemetry.addData("Y", currentY);
 
-
-//
-//            robot.telemetry.addData("tX", target.x);
-//            robot.telemetry.addData("tY", target.y);
-//            robot.telemetry.addData("Strafe angle", getAngleBetween(currentLoc, target));
-//            robot.telemetry.update();
+            robot.telemetry.addData("tX", target.x);
+            robot.telemetry.addData("tY", target.y);
+            robot.telemetry.addData("Strafe angle", getAngleBetween(currentX,currentY, target.x,target.y));
+            robot.telemetry.update();
 
             if (distanceToTarget > EPSILON_LOC) {
                 numFramesSinceLastFailure = 0;
@@ -476,6 +462,9 @@ public class Navigation {
         robot.telemetry.addData("turn %.2f", turn);
         if (Math.abs(power - 0) < FLOAT_EPSILON && Math.abs(turn - 0) < FLOAT_EPSILON) {
             stopMovement(robot);
+            robot.telemetry.addData("stopping","YES");
+        }else{
+            robot.telemetry.addData("stopping","NO");
         }
         double sinMoveDirection = Math.sin(strafeDirection);
         double cosMoveDirection = Math.cos(strafeDirection);
@@ -493,7 +482,7 @@ public class Navigation {
             double start = robot.elapsedTime.milliseconds();
             while (robot.elapsedTime.milliseconds() - start > 100) {}
             return;
-        };
+        }
 
         robot.driveMotors.get(RobotConfig.DriveMotors.REAR_LEFT).setPower((rawPowers[1] * power - turn) * wheel_speeds[0]);
         robot.driveMotors.get(RobotConfig.DriveMotors.REAR_RIGHT).setPower((rawPowers[0] * power + turn) * wheel_speeds[1]);
@@ -517,7 +506,7 @@ public class Navigation {
      * @return an array containing the scaled versions of a and b
      */
     double[] scaleRange(double a, double b) {
-        double max = Math.abs(a) > Math.abs(b) ? Math.abs(a) : Math.abs(b);
+        double max = Math.max(Math.abs(a), Math.abs(b));
         return new double[] {a / max, b / max};
     }
 
@@ -930,3 +919,125 @@ class AutonomousPaths {
 //    ));
 }
 */
+
+class AutonomousPaths {
+    public static final double TILE_SIZE = 23.5625;//placeholder - field is 6 x 6 square
+
+    public static final double FIELD_WIDTH = 6;//placeholder - field is 6 x 6 square
+
+    //Units are in field tiles.
+
+    //origin is the staring position of the robot, a zero angle is pointing towards the terminal
+    //public Position startingPosition = new Position(0,0,0,"startingPosition");
+    //Positions are written with the starting position of the robot being
+
+    //Angle of zero for robot has intake to the left relative to our team's side
+
+    //Terminal & Substation
+    public Position terminalPosition = new Position(1 * TILE_SIZE,0, 0,"terminalPosition");
+    public Position substationPosition = new Position(-1 * TILE_SIZE,0,Math.PI / 2,"substationPosition");
+
+
+    //Junctions
+    //Ground
+    //public static Position closeLeftGroundJunction = new Position(-1, 0, "closeLeftGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
+    //public static Position closeRightGroundJunction = new Position(0, 0, "closeRightGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -3 / 4 * Math.PI);
+
+    //Small
+    public static Position leftSmallJunction = new Position(0, 0, "POI leftSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, 3 / 4 * Math.PI);
+    public static Position rightSmallJunction = new Position(0, 1 * TILE_SIZE, "POI rightSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, Math.PI / 4);
+
+    //Medium
+    public static Position mediumJunction = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, "POI mediumJunction", Navigation.Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
+
+    //Large
+    public static Position leftLargeJunction = new Position(-1 * TILE_SIZE,1 * TILE_SIZE, "POI leftLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4);
+    //public static Position rightLargeJunction = new Position(0,2, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4); //maybe the deliver to pole method should allow for delivering cone from different positions
+    public static Position rightLargeJunction = new Position(-1 * TILE_SIZE,2.5 * TILE_SIZE, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, 0);
+
+    //Signal locations
+    //Cone
+    public static Position signalCone = new Position(0, 1 * TILE_SIZE, "POI signalCone", Navigation.Action.PICK_UP_CONE, 1, 1, Math.PI); //This might be wrong because the robot might rotate after you get to the desired position
+
+    //IMPORTANT NOTE: locations on the right side are not symmetrical with their counterparts on left side
+    public static Position leftSideSignalLocation1 = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "leftSideSignalLocation1");
+    public static Position leftSideSignalLocation2 = new Position(0, 1.5 * TILE_SIZE, 0, "leftSideSignalLocation2");
+    public static Position leftSideSignalLocation3 = new Position(1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "leftSideSignalLocation3");
+
+    public static Position rightSideSignalLocation1 = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "rightSideSignalLocation1");
+    public static Position rightSideSignalLocation2 = new Position(0, 1.5 * TILE_SIZE, 0, "rightSideSignalLocation2");
+    public static Position rightSideSignalLocation3 = new Position(1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "rightSideSignalLocation3");
+
+
+    //Intermediate positions (positions that you need to go to on the way to your destination)
+    public static Position intermediateBottomLeft = new Position(-1 * TILE_SIZE, 0, 0, "intermediateBottomLeft");
+    public static Position intermediateCenterLeft = new Position(-1 * TILE_SIZE, 1 * TILE_SIZE, 0, "intermediateCenterLeft");
+
+
+    //Paths/Strategies
+    public static final ArrayList<Position> MEDIUM_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, mediumJunction, intermediateCenterLeft, signalCone, intermediateCenterLeft, rightLargeJunction));
+
+    public static final ArrayList<Position> SMALL_LARGE = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, rightLargeJunction));
+
+    public static final ArrayList<Position> SMALL_MEDIUM = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, mediumJunction));
+
+    public static final ArrayList<Position> SMALL_SMALL = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, rightSmallJunction));
+
+    public static final ArrayList<Position> LARGE_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, leftLargeJunction, signalCone, rightLargeJunction));
+
+
+    //Location is for parking location retrieved from signal and starting location is for whether the robot started on the left or the right
+    /*
+    public static void setSignalParkingSpot(SignalParking location, RobotManager.StartingSide startingLocation) {
+        switch(location) {
+            case LOCATION1:
+                switch(startingLocation) {
+                    case LEFT:
+                        path.add(leftSideSignalLocation1);
+
+                        break;
+
+                    case RIGHT:
+                        path.add(rightSideSignalLocation1);
+
+                        break;
+                }
+
+                break;
+
+            case LOCATION2:
+                switch(startingLocation) {
+                    case LEFT:
+                        path.add(leftSideSignalLocation2);
+
+                        break;
+
+                    case RIGHT:
+                        path.add(rightSideSignalLocation2);
+
+                        break;
+                }
+
+                break;
+
+            case LOCATION3:
+                switch(startingLocation) {
+                    case LEFT:
+                        path.add(leftSideSignalLocation3);
+
+                        break;
+
+                    case RIGHT:
+                        path.add(rightSideSignalLocation3);
+
+                        break;
+                }
+
+                break;
+
+
+
+        }
+    }
+     */
+}
