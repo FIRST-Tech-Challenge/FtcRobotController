@@ -16,6 +16,7 @@ public class GamePad1 extends OpMode {
     double robotAngle;
     double rightX;
     double h;
+    double pmodify = .25;
 
     double frontLeftPower;
     double backLeftPower;
@@ -50,6 +51,15 @@ public class GamePad1 extends OpMode {
         robot.frontRight.setPower(frontRightPower);
         robot.backLeft.setPower(backLeftPower);
         robot.backRight.setPower(backRightPower);
+
+
+
+        if(gamepad1.left_bumper){
+            robot.frontRight.setPower(frontRightPower * pmodify);
+            robot.frontLeft.setPower(frontLeftPower * pmodify);
+            robot.backRight.setPower(backRightPower * pmodify);
+            robot.backLeft.setPower(backLeftPower * pmodify);
+        }
 /////////////////////////////////////slide
        // if (gamepad1.left_bumper) {//down halfway
          //   robot.viperSlide.setPower(.5);
@@ -66,19 +76,21 @@ public class GamePad1 extends OpMode {
             robot.claw1.setPosition(1);
         }
 
-        if (gamepad1.dpad_left) {//low
-            setLevelDown(slideDown - 1100);
-        }
-        if (gamepad1.dpad_down) {//down all way
+        if (gamepad1.dpad_down) {//floor
             setLevelDown(slideDown + 23);
 
         }
+
+        if (gamepad1.dpad_left) {//low
+            setLevelDown(slideDown - 1100);
+        }
+
 
         if (gamepad1.dpad_up) {/////////medium
             setLevelUp(slideDown - 2100);
         }
 
-        if (gamepad1.dpad_right) {//all the way up
+        if (gamepad1.dpad_right) {//high
             setLevelDown(slideDown - 2947);
 
         }

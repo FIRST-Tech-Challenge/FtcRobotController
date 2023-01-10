@@ -1,0 +1,12 @@
+left_bumper         slow mode on wheels
+left_trigger
+right_bumper        Open claw
+right_trigger       close claw
+dpad_down           slide floor
+dpad_left           slide low
+dpad_up             slide medium
+dpad_right          slide high
+cross
+circle
+square
+triangle

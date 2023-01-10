@@ -27,14 +27,18 @@ public class HardwarePushbot {
     public static BNO055IMU imu;// Additional Gyro device
 
 
+    public static TouchSensor touchSensor = null;
 
     public static HardwareMap hwMap = null;
 
-    public static Servo claw1 = null;
+
+
 
 
     //////////Servos
-//////////No Servos Yet
+
+    public static Servo claw1 = null;
+
     public static void init(HardwareMap ahwMap) {
 
         hwMap = ahwMap;
@@ -72,6 +76,9 @@ public class HardwarePushbot {
         viperSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         claw1 = hwMap.get(Servo.class, "claw1");
+
+
+        touchSensor = hwMap.get(TouchSensor.class, "touchSensor");
 
 
     }
