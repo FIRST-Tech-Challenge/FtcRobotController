@@ -10,7 +10,7 @@ public class Position {
     protected String name;
     protected double x;
     protected double y;
-    protected Navigation.Action action;
+    protected Navigation.Action action = Navigation.Action.NONE;
     //Add constructors if needed
     protected double strafePower = 0.0;
     protected double rotatePower = 0.0;
@@ -26,6 +26,7 @@ public class Position {
         this.x = x;
         this.y = y;
         setRotation(theta);
+        name = "";
     }
 
     Position(double x, double y, double theta, String name) {

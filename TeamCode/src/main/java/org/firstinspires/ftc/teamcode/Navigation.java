@@ -923,21 +923,22 @@ class AutonomousPaths {
 */
 
 class AutonomousPaths {
-    public static final double TILE_SIZE = 23.5625;//placeholder - field is 6 x 6 square
+    public static final double TILE_SIZE = 23.5625;
 
     public static final double FIELD_WIDTH = 6;//placeholder - field is 6 x 6 square
 
     //Units are in field tiles.
 
-    //origin is the staring position of the robot, a zero angle is pointing towards the terminal
+    //origin is the staring position of the robot
     //public Position startingPosition = new Position(0,0,0,"startingPosition");
-    //Positions are written with the starting position of the robot being
 
-    //Angle of zero for robot has intake to the left relative to our team's side
+    //Angle of zero for robot has intake facing away from our alliance's side
+    //Intake on robot is pointed forward
+    //Current assumption is that negative angle turns robot clockwise
 
     //Terminal & Substation
-    public Position terminalPosition = new Position(1 * TILE_SIZE,0, 0,"terminalPosition");
-    public Position substationPosition = new Position(-1 * TILE_SIZE,0,Math.PI / 2,"substationPosition");
+    public Position terminalPosition = new Position(-1 * TILE_SIZE,0, 0,"terminalPosition");
+    public Position substationPosition = new Position(1 * TILE_SIZE,0,0,"substationPosition");
 
 
     //Junctions
@@ -946,46 +947,43 @@ class AutonomousPaths {
     //public static Position closeRightGroundJunction = new Position(0, 0, "closeRightGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -3 / 4 * Math.PI);
 
     //Small
-    public static Position leftSmallJunction = new Position(0, 0, "POI leftSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, 3 / 4 * Math.PI);
-    public static Position rightSmallJunction = new Position(0, 1 * TILE_SIZE, "POI rightSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, Math.PI / 4);
+    public static Position leftSmallJunction = new Position(0, 0.5 * TILE_SIZE, "POI leftSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, -Math.PI / 2); //may be problem because of cone
+    public static Position rightSmallJunction = new Position(1 * TILE_SIZE, 1.5 * TILE_SIZE, "POI rightSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, -Math.PI); //might be problem because of cone stack
 
     //Medium
-    public static Position mediumJunction = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, "POI mediumJunction", Navigation.Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
+    public static Position mediumJunction = new Position(0, 1.5 * TILE_SIZE, "POI mediumJunction", Navigation.Action.DELIVER_CONE_MEDIUM, 1, 1, -Math.PI / 2);
 
     //Large
-    public static Position leftLargeJunction = new Position(-1 * TILE_SIZE,1 * TILE_SIZE, "POI leftLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4);
+    public static Position leftLargeJunction = new Position(-1 * TILE_SIZE,1.5 * TILE_SIZE, "POI leftLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 2);
     //public static Position rightLargeJunction = new Position(0,2, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4); //maybe the deliver to pole method should allow for delivering cone from different positions
-    public static Position rightLargeJunction = new Position(-1 * TILE_SIZE,2.5 * TILE_SIZE, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, 0);
+    public static Position rightLargeJunction = new Position(0,2.5 * TILE_SIZE, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 2); //might be problematic because of intrusion onto opposite alliance's side
 
     //Signal locations
     //Cone
-    public static Position signalCone = new Position(0, 1 * TILE_SIZE, "POI signalCone", Navigation.Action.PICK_UP_CONE, 1, 1, Math.PI); //This might be wrong because the robot might rotate after you get to the desired position
+    public static Position signalCone = new Position(0, 1 * TILE_SIZE, "POI signalCone", Navigation.Action.PICK_UP_CONE, 1, 1, -Math.PI / 2); //This might be wrong because the robot might rotate after you get to the desired position
 
-    //IMPORTANT NOTE: locations on the right side are not symmetrical with their counterparts on left side
-    public static Position leftSideSignalLocation1 = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "leftSideSignalLocation1");
-    public static Position leftSideSignalLocation2 = new Position(0, 1.5 * TILE_SIZE, 0, "leftSideSignalLocation2");
-    public static Position leftSideSignalLocation3 = new Position(1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "leftSideSignalLocation3");
-
-    public static Position rightSideSignalLocation1 = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "rightSideSignalLocation1");
-    public static Position rightSideSignalLocation2 = new Position(0, 1.5 * TILE_SIZE, 0, "rightSideSignalLocation2");
-    public static Position rightSideSignalLocation3 = new Position(1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "rightSideSignalLocation3");
+    //IMPORTANT NOTE: signal locations on the right side are not symmetrical with their counterparts on left side
+    //TODO: intermediate positions will need to be created to safely move the robot from its last position to the signal location
+    public static Position signalLocation1 = new Position(1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "signalLocation1");
+    public static Position signalLocation2 = new Position(0, 1.5 * TILE_SIZE, 0, "signalLocation2");
+    public static Position signalLocation3 = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "signalLocation3");
 
 
     //Intermediate positions (positions that you need to go to on the way to your destination)
     public static Position intermediateBottomLeft = new Position(-1 * TILE_SIZE, 0, 0, "intermediateBottomLeft");
-    public static Position intermediateCenterLeft = new Position(-1 * TILE_SIZE, 1 * TILE_SIZE, 0, "intermediateCenterLeft");
+    public static Position intermediateCenterLeft = new Position(-1 * TILE_SIZE, 1 * TILE_SIZE, -Math.PI / 2, "intermediateCenterLeft"); //Rotation is there so that signal cone can be picked up on next position in path
 
 
-    //Paths/Strategies
-    public static final ArrayList<Position> MEDIUM_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, mediumJunction, intermediateCenterLeft, signalCone, intermediateCenterLeft, rightLargeJunction));
+    //Paths (signal part of paths will be added on later during run time)
+    public static final ArrayList<Position> MEDIUM_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, mediumJunction, intermediateCenterLeft, signalCone, rightLargeJunction));
 
-    public static final ArrayList<Position> SMALL_LARGE = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, rightLargeJunction));
+    public static final ArrayList<Position> SMALL_LARGE = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, rightLargeJunction)); //PROBLEM: robot will need to rotate to the correct position BEFORE it goes to the signal cone
 
-    public static final ArrayList<Position> SMALL_MEDIUM = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, mediumJunction));
+    public static final ArrayList<Position> SMALL_MEDIUM = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, mediumJunction)); //PROBLEM: robot will need to rotate to the correct position BEFORE it goes to the signal cone
 
-    public static final ArrayList<Position> SMALL_SMALL = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, rightSmallJunction));
+    public static final ArrayList<Position> SMALL_SMALL = new ArrayList<>(Arrays.asList(leftSmallJunction, signalCone, rightSmallJunction)); //PROBLEM: robot will need to rotate to the correct position BEFORE it goes to the signal cone
 
-    public static final ArrayList<Position> LARGE_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, leftLargeJunction, signalCone, rightLargeJunction));
+    public static final ArrayList<Position> LARGE_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, leftLargeJunction, intermediateCenterLeft, signalCone, rightLargeJunction));
 
 
     //Location is for parking location retrieved from signal and starting location is for whether the robot started on the left or the right
