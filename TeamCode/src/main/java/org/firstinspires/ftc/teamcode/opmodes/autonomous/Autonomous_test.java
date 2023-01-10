@@ -140,22 +140,7 @@ public class Autonomous_test extends LinearOpMode
             runtime.reset();
             runToPosition(-100, -100, -100, -100);
 
-            gripper.setPosition(0.53);
-
-            leftLift.setTargetPosition(-200);
-            rightLift.setTargetPosition(-200);
-            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            if (leftLift.isBusy() || rightLift.isBusy()) {
-                if (leftLift.getCurrentPosition() > leftLift.getTargetPosition() && rightLift.getCurrentPosition() > rightLift.getTargetPosition()) {
-                    leftLift.setPower(1.0);
-                    rightLift.setPower(1.0);
-                } else {
-                    leftLift.setPower(0.0);
-                    rightLift.setPower(0.0);
-                }
-            }
+            gripper.setPosition(0.47);
 
             motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -179,18 +164,6 @@ public class Autonomous_test extends LinearOpMode
             runtime.reset();
             runToPosition(-1500, -1500, -1500, -1500);
 
-            leftLift.setTargetPosition(-200);
-            rightLift.setTargetPosition(-200);
-            if (leftLift.isBusy() || rightLift.isBusy()) {
-                if ((leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2 > (leftLift.getTargetPosition() + rightLift.getTargetPosition())/2) {
-                    leftLift.setPower(1.0);
-                    rightLift.setPower(1.0);
-                } else {
-                    leftLift.setPower(0.0);
-                    rightLift.setPower(0.0);
-                }
-            }
-
             telemetry.addLine("parked!");
 
             parked = true;
@@ -210,10 +183,10 @@ public class Autonomous_test extends LinearOpMode
 
         while(motorFL.isBusy() || motorFR.isBusy() || motorBL.isBusy() || motorBR.isBusy()){
             if (Math.abs(motorFL.getCurrentPosition() - FL) < 350 || Math.abs(motorFR.getCurrentPosition() - FR) < 350 || Math.abs(motorBL.getCurrentPosition() - BL) < 350 || Math.abs(motorBR.getCurrentPosition() - BR) < 350) {
-                motorFL.setPower(Math.abs(motorFL.getCurrentPosition() - FL)/1000.0);
-                motorFR.setPower(Math.abs(motorFL.getCurrentPosition() - FL)/1000.0);
-                motorBL.setPower(Math.abs(motorFL.getCurrentPosition() - FL)/1000.0);
-                motorBR.setPower(Math.abs(motorFL.getCurrentPosition() - FL)/1000.0);
+                motorFL.setPower(0.2);
+                motorFR.setPower(0.2);
+                motorBL.setPower(0.2);
+                motorBR.setPower(0.2);
             } else {
                 motorFL.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
                 motorFR.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
