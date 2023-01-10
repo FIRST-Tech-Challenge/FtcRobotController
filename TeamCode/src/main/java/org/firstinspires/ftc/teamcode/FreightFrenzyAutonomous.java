@@ -139,7 +139,7 @@ public class FreightFrenzyAutonomous extends CommandOpMode {
 
         }
 
-        //Will add an get position command
+        RR.runTOMID();
 
         if (tagOfInterest.id == LEFT) RR.runP1();
         else if (tagOfInterest.id == MIDDLE) RR.runP2();

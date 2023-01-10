@@ -9,12 +9,10 @@ import org.firstinspires.ftc.teamcode.myroadrunner.drive.SampleMecanumDrive;
 public class RoadRunnerSubsystem extends SubsystemBase {
 
     protected SampleMecanumDrive driveR;
-    protected Trajectory gm;
-    protected Trajectory rm;
+    protected Trajectory ToMid;
     protected Trajectory gr;
     protected Trajectory rg;
     protected Trajectory mr;
-    protected Trajectory home;
     protected Trajectory hm;
     protected Trajectory p1;
     protected Trajectory p2;
@@ -41,12 +39,10 @@ public class RoadRunnerSubsystem extends SubsystemBase {
 
         Pose2d parking3 = new Pose2d(60, -24, Math.toRadians(90));
 
+        Pose2d currentPose = drive.getPoseEstimate();
+
         hm = drive.trajectoryBuilder(homePose)
                 .lineToLinearHeading(midPose)
-                .build();
-
-        home = drive.trajectoryBuilder(midPose)
-                .lineToLinearHeading(homePose)
                 .build();
 
         mr = drive.trajectoryBuilder(midPose)
@@ -61,11 +57,7 @@ public class RoadRunnerSubsystem extends SubsystemBase {
                 .lineToLinearHeading(releasingPose)
                 .build();
 
-        rm = drive.trajectoryBuilder(releasingPose)
-                .lineToLinearHeading(midPose)
-                .build();
-
-        gm = drive.trajectoryBuilder(grabbingPose)
+        ToMid = drive.trajectoryBuilder(currentPose)
                 .lineToLinearHeading(midPose)
                 .build();
 
@@ -86,8 +78,8 @@ public class RoadRunnerSubsystem extends SubsystemBase {
         driveR.followTrajectory(hm);
     }
 
-    public void runHOME(){
-        driveR.followTrajectory(home);
+    public void runTOMID(){
+        driveR.followTrajectory(ToMid);
     }
 
     public void runMR(){
@@ -100,14 +92,6 @@ public class RoadRunnerSubsystem extends SubsystemBase {
 
     public void runGR(){
         driveR.followTrajectory(gr);
-    }
-
-    public void runRM(){
-        driveR.followTrajectory(rm);
-    }
-
-    public void runGM(){
-        driveR.followTrajectory(gm);
     }
 
     public void runP1(){
