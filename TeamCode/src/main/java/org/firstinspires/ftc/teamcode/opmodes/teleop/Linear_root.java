@@ -10,28 +10,20 @@ import org.firstinspires.ftc.teamcode.components.Chassis;
 
 @TeleOp
 public class Linear_root extends LinearOpMode {
-    private DcMotor motorFL = null;
-    private DcMotor motorFR = null;
-    private DcMotor motorBL = null;
-    private DcMotor motorBR = null;
-    private DcMotor leftLift = null;
-    private DcMotor rightLift = null;
-    private Servo gripper = null;
-
     @Override
     public void runOpMode() {
         // init chassis
-        motorFL = hardwareMap.get(DcMotor.class, "motorFL");
-        motorFR = hardwareMap.get(DcMotor.class, "motorFR");
-        motorBL = hardwareMap.get(DcMotor.class, "motorBL");
-        motorBR = hardwareMap.get(DcMotor.class, "motorBR");
+        DcMotor motorFL = hardwareMap.get(DcMotor.class, "motorFL");
+        DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFR");
+        DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBL");
+        DcMotor motorBR = hardwareMap.get(DcMotor.class, "motorBR");
         Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR);
         chassis.init();
 
         // init arms
-        leftLift = hardwareMap.get(DcMotor.class, "leftArm");
-        rightLift = hardwareMap.get(DcMotor.class, "rightArm");
-        gripper = hardwareMap.get(Servo.class, "gripper");
+        DcMotor leftLift = hardwareMap.get(DcMotor.class, "leftArm");
+        DcMotor rightLift = hardwareMap.get(DcMotor.class, "rightArm");
+        Servo gripper = hardwareMap.get(Servo.class, "gripper");
         Arm arm = new Arm(leftLift, rightLift, gripper);
         arm.init();
         arm.armTarget = 0;
