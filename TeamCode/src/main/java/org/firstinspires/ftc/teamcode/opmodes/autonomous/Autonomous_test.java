@@ -46,6 +46,7 @@ public class Autonomous_test extends LinearOpMode
     private DcMotor leftLift = null;
     private DcMotor rightLift = null;
     private Servo gripper = null;
+    private ElapsedTime runtime = new ElapsedTime();
 
     double fx = 578.272;
     double fy = 578.272;
@@ -136,6 +137,7 @@ public class Autonomous_test extends LinearOpMode
         boolean parked = false;
 
         while(opModeIsActive() && !parked) {
+            runtime.reset();
             runToPosition(-100, -100, -100, -100);
 
             gripper.setPosition(0.53);
@@ -161,9 +163,11 @@ public class Autonomous_test extends LinearOpMode
             motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             if (tagOfInterest.id == LEFT) {
+                runtime.reset();
                 runToPosition(1050, -1350, -1350, 1050);
             }
             else if (tagOfInterest.id == RIGHT) {
+                runtime.reset();
                 runToPosition(-1350, 1050, 1050, -1350);
             }
 
@@ -172,6 +176,7 @@ public class Autonomous_test extends LinearOpMode
             motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+            runtime.reset();
             runToPosition(-1500, -1500, -1500, -1500);
 
             leftLift.setTargetPosition(-200);
@@ -210,10 +215,10 @@ public class Autonomous_test extends LinearOpMode
                 motorBL.setPower(Math.abs(motorFL.getCurrentPosition() - FL)/1000.0);
                 motorBR.setPower(Math.abs(motorFL.getCurrentPosition() - FL)/1000.0);
             } else {
-                motorFL.setPower(0.5);
-                motorFR.setPower(0.5);
-                motorBL.setPower(0.5);
-                motorBR.setPower(0.5);
+                motorFL.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
+                motorFR.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
+                motorBL.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
+                motorBR.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
             }
 
             telemetry.addData("motorFL", motorFL.getCurrentPosition());
