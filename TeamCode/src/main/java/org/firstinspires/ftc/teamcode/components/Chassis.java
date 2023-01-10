@@ -58,34 +58,6 @@ public class Chassis {
         motorBR.setPower(rightBackPower * speed);
     }
 
-    public static void forward(double power) {
-        motorFL.setPower(power * speed);
-        motorFR.setPower(power * speed);
-        motorBL.setPower(power * speed);
-        motorBR.setPower(power * speed);
-    }
-
-    public static void strafe(double power) {
-        motorFL.setPower(power * speed);
-        motorFR.setPower(-power * speed);
-        motorBL.setPower(-power * speed);
-        motorBR.setPower(power * speed);
-    }
-
-    public static void turn(double power) {
-        motorFL.setPower(power * speed);
-        motorFR.setPower(-power * speed);
-        motorBL.setPower(power * speed);
-        motorBR.setPower(-power * speed);
-    }
-
-    public static void stop() {
-        motorFL.setPower(0);
-        motorFR.setPower(0);
-        motorBL.setPower(0);
-        motorBR.setPower(0);
-    }
-
     public static void runToPosition(int FL, int FR, int BL, int BR) {
         motorFL.setTargetPosition(FL);
         motorFR.setTargetPosition(FR);
@@ -103,5 +75,12 @@ public class Chassis {
             if (motorBL.isBusy()) motorBL.setPower(0.5 * speed);
             if (motorBR.isBusy()) motorBR.setPower(0.5 * speed);
         }
+    }
+
+    public static void resetEncoder() {
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 }

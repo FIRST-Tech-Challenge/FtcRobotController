@@ -49,7 +49,6 @@ public class Arm {
 
     public static void closeGripper() { gripper.setPosition(0.48); }
 
-    /*
     public static void runToPosition(int position) {
         armTarget = position;
 
@@ -58,8 +57,17 @@ public class Arm {
 
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while(rightLift.isBusy() && leftLift.isBusy()) {
+            if (leftLift.getCurrentPosition() > leftLift.getTargetPosition() && rightLift.getCurrentPosition() > rightLift.getTargetPosition()) {
+                leftLift.setPower(1.0);
+                rightLift.setPower(1.0);
+            } else {
+                leftLift.setPower(0.0);
+                rightLift.setPower(0.0);
+            }
+        }
     }
-    */
 
     public static void setArmPower(double power) {
         boolean drop = manualArm == ManualArm.drop;
