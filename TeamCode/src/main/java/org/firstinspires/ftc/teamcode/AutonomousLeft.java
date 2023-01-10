@@ -128,7 +128,7 @@ public class AutonomousLeft extends AutonomousBase {
             telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
             telemetry.addData("ALLIANCEp", "%s", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
             telemetry.addData("STARTING", "%s", "LEFT");
-            telemetry.addData("STARTINGp", "%s", (pipelineLow.isLeft)? "LEFT":"RIGHT");
+//          telemetry.addData("STARTINGp", "%s", (pipelineLow.isLeft)? "LEFT":"RIGHT");
             telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRL + " G: " +
                     pipelineLow.avgGL + " B: " + pipelineLow.avgBL + " Zone: " +
                     pipelineLow.signalZoneL);
@@ -361,7 +361,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
         // Drive the final distance to the high junction pole
-        autoYpos=54.0;  autoXpos=7.5;
+        autoYpos=54.0;  autoXpos=5.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_TO );
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)

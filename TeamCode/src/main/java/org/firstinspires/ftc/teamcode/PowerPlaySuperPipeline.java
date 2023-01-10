@@ -194,7 +194,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         detectPole = poleDetection;
         detectRedCone = redConeDetection;
         detectBlueCone = blueConeDetection;
-        CENTERED_OBJECT.center.y = center;
+//        CENTERED_OBJECT.center.x = center;
         /*
          * We won't turn on signal detection after we start the pipeline.
          */
@@ -359,8 +359,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
      * The box constraint that considers a pole "centered"
      */
 //    RotatedRect CENTERED_OBJECT = new RotatedRect(new double[]{160.0, 120.0, 48.0, 320.0, 0.0});
-    FourPointRect CENTERED_OBJECT = new FourPointRect(new Point(96.0, 0.0), new Point(144.0, 0.0),
-            new Point(96.0, 239.0), new Point(144.0, 239.0));
+    FourPointRect CENTERED_OBJECT = new FourPointRect(new Point(136.0, 0.0), new Point(184.0, 0.0),
+            new Point(136.0, 239.0), new Point(184.0, 239.0));
 
     /*
      * Colors
@@ -376,8 +376,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     static final int CR_CHAN_IDX = 1;
 
     // This is the allowable distance from the center of the pole to the "center"
-    // of the image.  Pole is ~32 pixels wide, so our tolerance is 1/4 of that.
-    static final int MAX_POLE_OFFSET = 4;
+    // of the image.  Pole is ~38 pixels wide, so our tolerance is 16% of that.
+    static final int MAX_POLE_OFFSET = 6;   // +/- 6 pixels
     // This  is how wide a pole is at the proper scoring distance on a high pole
     static final int POLE_HIGH_DISTANCE = 38;
     // This is how many pixels wide the pole can vary at the proper scoring distance
@@ -919,7 +919,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             theRedTape.corners = new FourPointRect();
             theRedTape.aligned = false;
             for (AnalyzedTape aTape : internalRedTapeList) {
-                if (aTape.corners.height > theRedCone.corners.height) {
+                if (aTape.corners.height > theRedTape.corners.height) {
                     theRedTape.corners = aTape.corners.clone();
                     theRedTape.centralOffset = aTape.centralOffset;
                     theRedTape.aligned = aTape.aligned;
@@ -1102,7 +1102,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             theBlueTape.corners = new FourPointRect();
             theBlueTape.aligned = false;
             for (AnalyzedTape aTape : internalBlueTapeList) {
-                if (aTape.corners.height > theBlueCone.corners.height) {
+                if (aTape.corners.height > theBlueTape.corners.height) {
                     theBlueTape.corners = aTape.corners.clone();
                     theBlueTape.centralOffset = aTape.centralOffset;
                     theBlueTape.aligned = aTape.aligned;
@@ -1170,7 +1170,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             thePole.aligned = false;
             thePole.properDistanceHigh = false;
             for (AnalyzedPole aPole : internalPoleList) {
-                if (aPole.corners.height > thePole.corners.height) {
+                // Find the WIDEST pole
+                if (aPole.corners.width > thePole.corners.width) {
                     thePole.centralOffset = aPole.centralOffset;
                     thePole.highDistanceOffset = aPole.highDistanceOffset;
                     thePole.corners = aPole.corners.clone();

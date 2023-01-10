@@ -649,14 +649,14 @@ public abstract class Teleop extends LinearOpMode {
         else if( manual_turret_control || turretTweaked ) {
             // Does user want to rotate turret LEFT (negative joystick input)
             if( safeToManuallyLeft && (gamepad2_left_stick < -0.05) ) {
-                double motorPower = multSegLinearRot( gamepad2_left_stick ); // NEGATIVE
-                robot.turretMotor.setPower( motorPower );   // 0% to -100%
+                double motorPower = gamepad2_left_stick/4.0; // NEGATIVE
+                robot.turretMotor.setPower( motorPower );   // 0% to -25%
                 turretTweaked = true;
             }
             // Does user want to rotate turret RIGHT (positive joystick input)
             else if( safeToManuallyRight && (gamepad2_left_stick > 0.05) ) {
-                double motorPower = multSegLinearRot( gamepad2_left_stick ); // POSITIVE
-                robot.turretMotor.setPower( motorPower );   // 0% to +100%
+                double motorPower = gamepad2_left_stick/4.0; // POSITIVE
+                robot.turretMotor.setPower( motorPower );   // 0% to +25%
                 turretTweaked = true;
             }
             // No more input?  Time to stop turret movement!

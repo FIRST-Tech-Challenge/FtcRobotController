@@ -128,7 +128,7 @@ public class AutonomousRight extends AutonomousBase {
             telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
             telemetry.addData("ALLIANCEp", "%s", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
             telemetry.addData("STARTING", "%s", "RIGHT");
-            telemetry.addData("STARTINGp", "%s", (pipelineLow.isLeft)? "LEFT":"RIGHT");
+//          telemetry.addData("STARTINGp", "%s", (pipelineLow.isLeft)? "LEFT":"RIGHT");
             telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRR + " G: " +
                     pipelineLow.avgGR + " B: " + pipelineLow.avgBR + " Zone: " +
                     pipelineLow.signalZoneR);

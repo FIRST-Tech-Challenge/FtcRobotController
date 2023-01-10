@@ -21,6 +21,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.ConeBlue;
+import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.ConeRed;
 import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -42,76 +44,38 @@ public class ConeOrientationExample extends LinearOpMode
 {
     // Vision stuff
     PowerPlaySuperPipeline pipelineLow;
-    PowerPlaySuperPipeline pipelineFront;
     PowerPlaySuperPipeline pipelineBack;
-    OpenCvCamera webcamLow;
-    OpenCvCamera webcamFront;
-    OpenCvCamera webcamBack;
-    PowerPlaySuperPipeline pipeline;
+    OpenCvCamera webcamLow = null;
+    OpenCvCamera webcamBack = null;
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
     boolean aligning = false;
     boolean ranging = false;
+    boolean turretFacingFront = false;
+    boolean lowCameraInitialized = false;
+    boolean backCameraInitialized = false;
 
-    @Override
-    public void runOpMode()
-    {
         /**
          * NOTE: Many comments have been omitted from this sample for the
          * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera2Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
+         * you should take a look at or its
+         * webcam counterpart,first.
          */
 
-        // Create camera instance
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        telemetry.addLine("Robot initializing, wait for completion.");
+        telemetry.update();
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
                 .splitLayoutForMultipleViewports(
                         cameraMonitorViewId, //The container we're splitting
-                        3, //The number of sub-containers to create
+                        2, //The number of sub-containers to create
                         OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY); //Whether to split the container vertically or horizontally
-        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Low"), viewportContainerIds[0]);
-        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineLow = new PowerPlaySuperPipeline(true, false,
-                        false, false, 160.0);
-                webcamLow.setPipeline(pipelineLow);
-                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-
-        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Front"), viewportContainerIds[1]);
-        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineFront = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0);
-                webcamFront.setPipeline(pipelineFront);
-                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
-            }
-
-           @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-
         webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Back"), viewportContainerIds[2]);
+                "Webcam Back"), viewportContainerIds[0]);
         webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -121,6 +85,8 @@ public class ConeOrientationExample extends LinearOpMode
                         false, false, 160.0);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                pipelineLow.debugType = ConeRed;
+                backCameraInitialized = true;
             }
 
             @Override
@@ -129,12 +95,41 @@ public class ConeOrientationExample extends LinearOpMode
                 // This will be called if the camera could not be opened
             }
         });
+        webcamBack.showFpsMeterOnViewport(false);
+
+        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Low"), viewportContainerIds[1]);
+        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineLow = new PowerPlaySuperPipeline(false, false,
+                        true, false, 160.0);
+                webcamLow.setPipeline(pipelineLow);
+                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                pipelineLow.debugType = ConeBlue;
+                lowCameraInitialized = true;
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
+        webcamLow.showFpsMeterOnViewport(false);
 
         // Tell telemetry to update faster than the default 250ms period :)
         telemetry.setMsTransmissionInterval(20);
+        while(!(lowCameraInitialized && backCameraInitialized)) {
+            sleep(100);
+        }
         /* Declare OpMode members. */
         robot.init(hardwareMap,false);
 
+        telemetry.addLine("Robot initialized, ready to start.");
+        telemetry.update();
         waitForStart();
 
         // Perform setup needed to center turret
@@ -153,7 +148,7 @@ public class ConeOrientationExample extends LinearOpMode
             robot.turretPosRun();
 
             // Figure out which poles the pipeline detected, and print them to telemetry
-            cone = pipeline.getDetectedRedCone();
+            cone = pipelineLow.getDetectedRedCone();
             if(cone != null) {
                 telemetry.addLine(String.format("Cone: Center=%s, Central Offset=%f, Centered:%s",
                         cone.corners.center.toString(), cone.centralOffset, cone.aligned));
@@ -177,6 +172,13 @@ public class ConeOrientationExample extends LinearOpMode
             }
             telemetry.addData("Sonar Range (Front)", "%.1f", robot.updateSonarRangeF() );
             telemetry.update();
+        }
+        // Close out the vision
+        if(webcamLow != null) {
+            webcamLow.stopStreaming();
+        }
+        if(webcamBack != null) {
+            webcamBack.stopStreaming();
         }
     }
 
