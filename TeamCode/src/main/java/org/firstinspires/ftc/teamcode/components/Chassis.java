@@ -11,14 +11,14 @@ public class Chassis {
 
     public static final double speed = 0.6;
 
-    public Chassis(){}
+    public Chassis(DcMotor mFL, DcMotor mFR, DcMotor mBL, DcMotor mBR){
+        this.motorFL = mFL;
+        this.motorFR = mFR;
+        this.motorBL = mBL;
+        this.motorBR = mBR;
+    }
 
-    public static void init(DcMotor mFL, DcMotor mFR, DcMotor mBL, DcMotor mBR) {
-        Chassis.motorFL = mFL;
-        Chassis.motorFR = mFR;
-        Chassis.motorBL = mBL;
-        Chassis.motorBR = mBR;
-
+    public static void init() {
         motorBR.setDirection(DcMotor.Direction.REVERSE);
         motorFR.setDirection(DcMotor.Direction.REVERSE);
 

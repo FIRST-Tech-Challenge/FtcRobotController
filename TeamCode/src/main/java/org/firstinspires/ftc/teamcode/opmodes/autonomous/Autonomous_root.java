@@ -61,14 +61,16 @@ public class Autonomous_root extends LinearOpMode {
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-        Chassis.init(motorFL, motorFR, motorBL, motorBR);
+        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR);
+        chassis.init();
 
         // init arms
         leftLift = hardwareMap.get(DcMotor.class, "leftArm");
         rightLift = hardwareMap.get(DcMotor.class, "rightArm");
         gripper = hardwareMap.get(Servo.class, "gripper");
-        Arm.init(leftLift, rightLift, gripper);
-        Arm.armTarget = 0;
+        Arm arm = new Arm(leftLift, rightLift, gripper);
+        arm.init();
+        arm.armTarget = 0;
 
         //OpenCV
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());

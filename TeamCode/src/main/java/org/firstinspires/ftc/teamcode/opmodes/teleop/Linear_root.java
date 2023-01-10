@@ -25,45 +25,43 @@ public class Linear_root extends LinearOpMode {
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-        Chassis.init(motorFL, motorFR, motorBL, motorBR);
+        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR);
+        chassis.init();
 
         // init arms
         leftLift = hardwareMap.get(DcMotor.class, "leftArm");
         rightLift = hardwareMap.get(DcMotor.class, "rightArm");
         gripper = hardwareMap.get(Servo.class, "gripper");
-        Arm.init(leftLift, rightLift, gripper);
-        Arm.armTarget = 0;
+        Arm arm = new Arm(leftLift, rightLift, gripper);
+        arm.init();
+        arm.armTarget = 0;
 
         waitForStart();
 
         while (opModeIsActive()) {
-            Chassis.joyStick(gamepad1);
+            chassis.joyStick(gamepad1);
 
-//            if (gamepad2.left_trigger > 0.2) Arm.manualArm = Arm.ManualArm.drop;
-//            else if (gamepad2.right_trigger > 0.2) Arm.manualArm = Arm.ManualArm.raise;
-//            else Arm.manualArm = Arm.ManualArm.none;
+            if (gamepad2.left_trigger > 0.2) arm.armTarget = arm.getCurrentPosition() - 30;
+            else if (gamepad2.right_trigger > 0.2) arm.armTarget = arm.getCurrentPosition() + 30;
 
-            if (gamepad2.left_trigger > 0.2) Arm.armTarget = Arm.getCurrentPosition() - 30;
-            else if (gamepad2.right_trigger > 0.2) Arm.armTarget = Arm.getCurrentPosition() + 30;
-
-            if (gamepad2.x) Arm.armTarget = Arm.lowJunction;
-            if (gamepad2.b) Arm.armTarget = Arm.middleJunction;
-            if (gamepad2.y) Arm.armTarget = Arm.highJunction;
-            if (gamepad2.a) Arm.armTarget = 0;
+            if (gamepad2.x) arm.armTarget = arm.lowJunction;
+            if (gamepad2.b) arm.armTarget = arm.middleJunction;
+            if (gamepad2.y) arm.armTarget = arm.highJunction;
+            if (gamepad2.a) arm.armTarget = 0;
 
             if (gamepad2.left_bumper){
-                Arm.openGripper();
-                Arm.armTarget = 0;
+                arm.openGripper();
+                arm.armTarget = 0;
             }
-            if (gamepad2.right_bumper) Arm.closeGripper();
+            if (gamepad2.right_bumper) arm.closeGripper();
 
 
             //TODO: SET 1.0 FOR 11166-RC!!
-            Arm.setArmPower(1.0);
+            arm.setArmPower(1.0);
 
-            telemetry.addData("arm position", Arm.getCurrentPosition());
-            telemetry.addData("arm target", Arm.armTarget);
-            telemetry.addData("Servo position", Arm.gripper.getPosition());
+            telemetry.addData("arm position", arm.getCurrentPosition());
+            telemetry.addData("arm target", arm.armTarget);
+            telemetry.addData("Servo position", arm.gripper.getPosition());
             telemetry.update();
         }
     }
