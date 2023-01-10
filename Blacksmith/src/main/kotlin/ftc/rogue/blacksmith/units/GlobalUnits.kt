@@ -1,6 +1,11 @@
 package ftc.rogue.blacksmith.units
 
 import android.content.Context
+import ftc.rogue.blacksmith.util.toIn
+import ftc.rogue.blacksmith.util.toRad
+import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.acmerobotics.roadrunner.geometry.Vector2d
+import org.firstinspires.ftc.ftccommon.external.OnCreate
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil
 import java.io.BufferedReader
 import java.io.File
@@ -15,10 +20,6 @@ object GlobalUnits {
         private set
     var time by SetUnitFirst<TimeUnit>()
         private set
-
-    init {
-        loadSavedUnits()
-    }
 
     @JvmStatic
     fun distance() = distance
@@ -41,25 +42,33 @@ object GlobalUnits {
         time = timeUnit
     }
 
-    private const val RES_SAVE_PATH = "bsm_units"
-    private const val FULL_SAVE_PATH = "./TeamCode/src/main/res/raw/blacksmith/units.properties"
+    @JvmStatic
+    fun pos(x: Number, y: Number, heading: Number) = Pose2d(x.toIn(), y.toIn(), heading.toRad())
 
-    private fun loadSavedUnits() {
+    @JvmStatic
+    fun vec(x: Number, y: Number) = Vector2d(x.toIn(), y.toIn())
+
+    @JvmStatic
+    fun pos(pose2d: Pose2d) = Pose2d(pose2d.x.toIn(), pose2d.y.toIn(), pose2d.heading.toRad())
+
+    @JvmStatic
+    fun vec(vector2d: Vector2d) = Vector2d(vector2d.x.toIn(), vector2d.y.toIn())
+
+    private const val UNITS_FILE_NAME = "bsm_units"
+    private const val FULL_SAVE_PATH = "./TeamCode/src/main/res/raw/$UNITS_FILE_NAME.properties"
+
+    init {
         if (File(FULL_SAVE_PATH).exists()) {
             loadUnitsFromFullPath()
-            return
-        }
-
-        try {
+        } else try {
             val ctx = AppUtil.getDefContext().baseContext
 
-            val id = ctx.resources.getIdentifier(RES_SAVE_PATH, "raw", ctx.packageName)
+            val id = ctx.resources.getIdentifier(UNITS_FILE_NAME, "raw", ctx.packageName)
 
             if (id != 0) {
                 loadUnitsFromRes(ctx, id)
             }
-        } catch (_: ExceptionInInitializerError) {
-        }
+        } catch (_: ExceptionInInitializerError) {}
     }
 
     private fun loadUnitsFromRes(ctx: Context, id: Int) = Properties().run {

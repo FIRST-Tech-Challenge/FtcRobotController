@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
 import org.firstinspires.ftc.teamcodekt.components.chains.RegularDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.ReverseDepositChain
-import kotlin.math.abs
 
 abstract class RogueBaseTele : BlackOp() {
     protected val driver   by createOnGo<ReforgedGamepad> { gamepad1 }
@@ -35,7 +34,7 @@ abstract class RogueBaseTele : BlackOp() {
 
         Scheduler.launchOnStart(this) {
             bot.drivetrain.drive(driver.gamepad, powerMulti)
-            bot.updateComponents()
+            bot.updateBaseComponents()
             mTelemetry.update()
         }
     }

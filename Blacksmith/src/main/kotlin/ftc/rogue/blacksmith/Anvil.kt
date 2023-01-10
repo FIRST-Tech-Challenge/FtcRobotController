@@ -193,61 +193,61 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     // -- Direct path mappings (Basic) --
 
     fun forward(distance: Double) = this.apply {
-        builderProxy.forward(distance.toIn)
+        builderProxy.forward(distance.toIn())
     }
 
     fun back(distance: Double) = this.apply {
-        builderProxy.back(distance.toIn)
+        builderProxy.back(distance.toIn())
     }
 
     fun turn(angle: Double) = this.apply {
-        builderProxy.turn(angle.toRad)
+        builderProxy.turn(angle.toRad())
     }
 
     fun strafeLeft(distance: Double) = this.apply {
-        builderProxy.strafeLeft(distance.toIn)
+        builderProxy.strafeLeft(distance.toIn())
     }
 
     fun strafeRight(distance: Double) = this.apply {
-        builderProxy.strafeRight(distance.toIn)
+        builderProxy.strafeRight(distance.toIn())
     }
 
     // -- Direct path mappings (Lines) --
 
     fun lineToConstantHeading(x: Double, y: Double) = this.apply {
-        builderProxy.strafeTo( Vector2d(x.toIn, y.toIn) )
+        builderProxy.strafeTo( GlobalUnits.vec(x, y) )
     }
 
     fun lineToLinearHeading(x: Double, y: Double, heading: Double) = this.apply {
-        builderProxy.lineToLinearHeading( Pose2d(x.toIn, y.toIn, heading.toRad) )
+        builderProxy.lineToLinearHeading( GlobalUnits.pos(x, y, heading) )
     }
 
     fun lineToSplineHeading(x: Double, y: Double, heading: Double) = this.apply {
-        builderProxy.lineToSplineHeading( Pose2d(x.toIn, y.toIn, heading.toRad) )
+        builderProxy.lineToSplineHeading( GlobalUnits.pos(x, y, heading) )
     }
 
     // -- Direct path mappings (Splines) --
 
     fun splineTo(x: Double, y: Double, endTangent: Double) = this.apply {
-        builderProxy.splineTo(Vector2d(x.toIn, y.toIn), endTangent.toRad)
+        builderProxy.splineTo( GlobalUnits.vec(x, y), endTangent.toRad() )
     }
 
     fun splineToConstantHeading(x: Double, y: Double, endTangent: Double) = this.apply {
-        builderProxy.splineToConstantHeading( Vector2d(x.toIn, y.toIn), endTangent.toRad)
+        builderProxy.splineToConstantHeading(  GlobalUnits.vec(x, y), endTangent.toRad() )
     }
 
     fun splineToLinearHeading(x: Double, y: Double, heading: Double, endTangent: Double) = this.apply {
-        builderProxy.splineToLinearHeading( Pose2d(x.toIn, y.toIn, heading.toRad), endTangent.toRad)
+        builderProxy.splineToLinearHeading( GlobalUnits.pos(x, y, heading), endTangent.toRad() )
     }
 
     fun splineToSplineHeading(x: Double, y: Double, heading: Double, endTangent: Double) = this.apply {
-        builderProxy.splineToSplineHeading( Pose2d(x.toIn, y.toIn, heading.toRad), endTangent.toRad)
+        builderProxy.splineToSplineHeading( GlobalUnits.pos(x, y, heading), endTangent.toRad() )
     }
 
     // -- Advanced mappings --
 
     fun waitTime(time: Number) = this.apply {
-        builderProxy.waitSeconds(time.toSec)
+        builderProxy.waitSeconds(time.toSec())
     }
 
     fun setReversed(reversed: Boolean) = this.apply {
@@ -273,22 +273,23 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         offset: Number = 0.0,
         action: MarkerCallback
     ) = this.apply {
-        builderProxy.UNSTABLE_addTemporalMarkerOffset(offset.toSec, action)
+        builderProxy.UNSTABLE_addTemporalMarkerOffset(offset.toSec(), action)
     }
 
     @JvmOverloads
     fun addDisplacementMarker(
-        offset: Double = 0.0,
+        offset: Number = 0.0,
         action: MarkerCallback
     ) = this.apply {
-        builderProxy.UNSTABLE_addDisplacementMarkerOffset(offset.toSec, action)
+        builderProxy.UNSTABLE_addDisplacementMarkerOffset(offset.toSec(), action)
     }
 
     fun addSpatialMarker(
-        offset: Vector2d,
+        offsetX: Number,
+        offsetY: Number,
         action: MarkerCallback
     ) = this.apply {
-        builderProxy.addSpatialMarker(offset, action)
+        builderProxy.addSpatialMarker( GlobalUnits.vec(offsetX, offsetY), action )
     }
 
     // -- Utilities --
@@ -559,12 +560,6 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     } else {
         driveProxy.followTrajectorySequence(trajectory)
     }
-
-    private val Number.toIn get() = GlobalUnits.distance.toIn(this.toDouble())
-
-    private val Number.toRad get() = GlobalUnits.angle.toRad(this.toDouble())
-
-    private val Number.toSec get() = GlobalUnits.time.toSec(this.toDouble())
 
     @PublishedApi
     internal fun getEndPose() = builtTrajectory.invokeMethodRethrowing<Pose2d>("end")

@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcodekt.components
 
 import com.qualcomm.hardware.rev.RevColorSensorV3
-import com.qualcomm.robotcore.hardware.HardwareMap
-import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.invoke
-import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 
 abstract class BaseBotComponents {
@@ -15,7 +12,7 @@ abstract class BaseBotComponents {
     abstract val wrist: Wrist
     abstract val lift: Lift
 
-    fun updateComponents() {
+    fun updateBaseComponents() {
         claw.update()
         arm.update()
         wrist.update()

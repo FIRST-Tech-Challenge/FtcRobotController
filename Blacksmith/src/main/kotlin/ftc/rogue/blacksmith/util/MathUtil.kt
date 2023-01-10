@@ -13,13 +13,16 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 @JvmOverloads
-fun Number.toIn(from: DistanceUnit = GlobalUnits.distance): Double = from.toIn(this.toDouble())
+fun Number.toIn(from: DistanceUnit = GlobalUnits.distance): Double = from.toIn(this)
 
 @JvmOverloads
-fun Number.toCm(from: DistanceUnit = GlobalUnits.distance): Double = from.toIn(this.toDouble()) * 2.54
+fun Number.toCm(from: DistanceUnit = GlobalUnits.distance): Double = from.toIn(this) * 2.54
 
 @JvmOverloads
-fun Number.toRad(from: AngleUnit = GlobalUnits.angle): Double = from.toDeg(this.toDouble()) * PI / 180
+fun Number.toRad(from: AngleUnit = GlobalUnits.angle): Double = from.toDeg(this) * PI / 180
+
+@JvmOverloads
+fun Number.toSec(from: TimeUnit = GlobalUnits.time): Double = from.toSec(this)
 
 fun Double.zeroIfNaN() = if (isNaN()) 0.0 else this
 

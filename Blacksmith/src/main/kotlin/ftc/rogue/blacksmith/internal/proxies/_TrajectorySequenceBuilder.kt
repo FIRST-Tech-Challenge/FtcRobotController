@@ -17,19 +17,6 @@ import java.lang.reflect.Method
 
 @PublishedApi
 internal class _TrajectorySequenceBuilder(val internalBuilder: Any) {
-
-    private fun getMethod(name: String, vararg args: Class<*>): Method {
-        return internalBuilder.getMethod(name, *args)
-    }
-    
-    private inline fun returnThisAndRethrow(toDo: () -> Unit) = this.apply {
-        try {
-            toDo()
-        } catch (e: InvocationTargetException) {
-            throw e.targetException
-        }
-    }
-
     // -- START MACHINE GENERATED CODE --
 
     fun lineTo(endPosition: Vector2d) = returnThisAndRethrow {
@@ -184,5 +171,17 @@ internal class _TrajectorySequenceBuilder(val internalBuilder: Any) {
 
     fun build(): Any {
         return internalBuilder.invokeMethodRethrowing("build")
+    }
+
+    private fun getMethod(name: String, vararg args: Class<*>): Method {
+        return internalBuilder.getMethod(name, *args)
+    }
+
+    private inline fun returnThisAndRethrow(toDo: () -> Unit) = this.apply {
+        try {
+            toDo()
+        } catch (e: InvocationTargetException) {
+            throw e.targetException
+        }
     }
 }

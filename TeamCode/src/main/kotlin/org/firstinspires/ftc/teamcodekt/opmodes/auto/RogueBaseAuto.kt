@@ -27,12 +27,6 @@ abstract class RogueBaseAuto : BlackOp() {
     protected var poleDetector = BasePoleDetector(telemetry)
     protected var numFramesWithoutDetection = 0
 
-    // Left and right is from orientation of the front of the bot
-    protected val shortLeftSensor by createOnGo<ShortRangeSensor> { DeviceNames.SHORT_RANGE_SENSOR_LEFT }
-    protected val shortRightSensor by createOnGo<ShortRangeSensor> { DeviceNames.SHORT_RANGE_SENSOR_RIGHT }
-    protected val longLeftSensor by createOnGo<LongRangeSensor> { DeviceNames.LONG_RANGE_SENSOR_LEFT }
-    protected val longRightSensor by createOnGo<LongRangeSensor> { DeviceNames.LONG_RANGE_SENSOR_RIGHT }
-
     abstract fun executeOrder66()
 
     final override fun go() {
@@ -100,28 +94,6 @@ abstract class RogueBaseAuto : BlackOp() {
 
         return lastIntID
     }
-
-    open fun setPoleDetectorAsPipeline() {
-        camera.setPipeline(poleDetector)
-    }
-
-    // Do not move more than 15 cm in any one direction!
-    open val polePosition: DoubleArray
-        get() {
-            val (x, y, heading) = bot.drive.localizer.poseEstimate
-
-            val pos: DoubleArray = poleDetector.getRepositionCoord(
-                x.toCm(), y.toCm(), heading, shortLeftSensor.distance,
-            )
-
-            // Do not move more than 15 cm in any one direction!
-            if (pos[0] > 15 || pos[1] > 15) {
-                telemetry.addData("Uh oh! Tried to return a pole position greater than 15 cm away!", max(pos[0], pos[1]))
-                return doubleArrayOf(0.0, 0.0)
-            }
-
-            return pos
-        }
 
     companion object {
         // Lens intrinsics

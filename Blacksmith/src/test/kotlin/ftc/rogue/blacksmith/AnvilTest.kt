@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import ftc.rogue.blacksmith.units.AngleUnit
 import ftc.rogue.blacksmith.units.DistanceUnit
+import ftc.rogue.blacksmith.units.GlobalUnits
 import ftc.rogue.blacksmith.units.TimeUnit
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -14,6 +15,10 @@ import kotlin.math.PI
 // TODO: More thorough testing
 internal class AnvilTest {
     private val drive = SampleMecanumDrive(null)
+
+    init {
+        GlobalUnits.setUnits(DistanceUnit.INCHES, AngleUnit.RADIANS, TimeUnit.SECONDS)
+    }
 
     @Test
     fun `roughly make sure Anvil's generated sequence is same as the actual builder`() {
