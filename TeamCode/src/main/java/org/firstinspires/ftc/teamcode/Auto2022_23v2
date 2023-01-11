@@ -56,7 +56,6 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     public double off = 0.0;
     public double corrections = 1.0;
-    public int count = 0;
 
     public boolean hasMoved = false;
 
@@ -69,8 +68,8 @@ public class Auto2022_23v2 extends LinearOpMode {
     final double MAX_LIFT_POS = tickPerInchForLift * 35;
 
     // Servo information
-    static final double MAX_POS     =    .5;
-    static final double MAX_POS2    =    .50;
+    static final double MAX_POS     =    .52;
+    static final double MAX_POS2    =    .48;
     static final double MIN_POS     =     1;
     static final double MIN_POS2    =     0;
 
@@ -79,10 +78,16 @@ public class Auto2022_23v2 extends LinearOpMode {
     public double position2 = 0;
 
     // Wheel constants
-    public double ticksPerRotation = 537.6; //for AndyMark NeveRest 20
-    public double maxVelocity = 340 * ticksPerRotation;
+    public double ticksPerRotation = 537.6; // For AndyMark NeveRest 20
     public double rpm = 340;
+    public double maxVelocity = rpm * ticksPerRotation;
     public double diameter = 10; //cm
+
+    // Cone information
+
+    public int coneCount = 1;
+    public double firstConePos = 4.62;
+    public double coneSeparationDistance = firstConePos/4;
 
     // General constants
     double oneFootCm = 30.48;
@@ -133,28 +138,35 @@ public class Auto2022_23v2 extends LinearOpMode {
                         }
                         telemetry.update();
                         if (updatedRecognitions.size() > 0 && !hasMoved) {
-                            moveToZone(updatedRecognitions.get(0).getLabel(), count);
+                            moveToZone(updatedRecognitions.get(0).getLabel());
                             hasMoved = true;
                         }
                     }
                 }*/
+
                 if(!hasMoved){
-                    moveLift(10);
-                    telemetry.addData("Lift Encoder Value:", liftMotor.getCurrentPosition());
-                    telemetry.update();
-                    waitTime(4);
-                    moveLift(5);
-                    telemetry.addData("Lift Encoder Value:", liftMotor.getCurrentPosition());
-                    telemetry.update();
-                    waitTime(4);
-                    moveLift(30);
-                    telemetry.addData("Lift Encoder Value:", liftMotor.getCurrentPosition());
-                    telemetry.update();
-                    waitTime(4);
-                    moveLift(0);
-                    telemetry.addData("Lift Encoder Value:", liftMotor.getCurrentPosition());
-                    telemetry.update();
-                    waitTime(4);
+                    moveLift(6);
+                    waitTime(5);
+                    pickupCone();
+                    moveLift(15);
+                    waitTime(5);
+                    moveGrabber(false);
+                    waitTime(2);
+                    pickupCone();
+                    moveLift(15);
+                    waitTime(5);
+                    moveGrabber(false);
+                    waitTime(2);
+                    pickupCone();
+                    moveLift(15);
+                    waitTime(5);
+                    moveGrabber(false);
+                    waitTime(2);
+                    pickupCone();
+                    moveLift(15);
+                    waitTime(5);
+                    moveGrabber(false);
+                    waitTime(2);
                     /*liftMotor.setMode(STOP_AND_RESET_ENCODER);
                     liftMotor.setTargetPosition(173); // replace 1000 with applicable number
                     liftMotor.setMode(RUN_TO_POSITION);
@@ -165,9 +177,8 @@ public class Auto2022_23v2 extends LinearOpMode {
         }
     }
 
-    public void moveToZone(String signal, int count){
+    public void moveToZone(String signal){
         telemetry.addData("Detected:",signal);
-        double timeAdjustment = getDistance(diameter,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
         if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
             movePercentOfFoot(true,1.5);
             turnNinety(false);
@@ -372,11 +383,21 @@ public class Auto2022_23v2 extends LinearOpMode {
         resetEncoders();
     }
 
+    public void pickupCone(){
+        double conePosMod = coneCount * coneSeparationDistance;
+        moveLift(firstConePos - conePosMod);
+        moveGrabber(true);
+        waitTime(1);
+        moveLift(firstConePos - conePosMod + 5);
+        coneCount++;
+    }
+
     public void moveLift(double toHeight){
         if(opModeIsActive()){
             int targetTick = (int) (tickPerInchForLift * toHeight);
 
-            liftMotor.setTargetPosition(targetTick); // replace 1000 with applicable number
+            // Initial movement to get as close as possible
+            liftMotor.setTargetPosition(targetTick);
             liftMotor.setMode(RUN_TO_POSITION);
             liftMotor.setPower(1.0);
 
@@ -385,6 +406,27 @@ public class Auto2022_23v2 extends LinearOpMode {
                 telemetry.update();
             }
             liftMotor.setPower(0);
+
+            // Secondary movement to get to correct value using lower power
+            liftMotor.setTargetPosition(targetTick);
+            liftMotor.setMode(RUN_TO_POSITION);
+            liftMotor.setPower(.25);
+
+            while(opModeIsActive() && liftMotor.isBusy()){
+                telemetry.addData("Lift Encoder Value:",liftMotor.getCurrentPosition());
+                telemetry.update();
+            }
+            liftMotor.setPower(0);
+        }
+    }
+
+    public void moveGrabber(boolean closed){
+        if(closed){
+            servoGrabber1.setPosition(MAX_POS);
+            servoGrabber2.setPosition(MAX_POS2);
+        }else{
+            servoGrabber1.setPosition(MIN_POS);
+            servoGrabber2.setPosition(MIN_POS2);
         }
     }
 
