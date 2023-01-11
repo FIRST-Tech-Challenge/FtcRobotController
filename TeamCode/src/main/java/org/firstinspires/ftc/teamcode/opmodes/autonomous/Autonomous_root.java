@@ -45,6 +45,11 @@ public class Autonomous_root extends LinearOpMode {
     double tagsize = 0.166;
 
     ////////
+    private enum TeamColor {red, blue}
+    private enum InitialSide {right, left}
+
+    TeamColor teamColor;
+    InitialSide initialSide;
 
     @Override
     public void runOpMode() {
@@ -98,7 +103,13 @@ public class Autonomous_root extends LinearOpMode {
             if(tagOfInterest != null) telemetry.addLine(String.format("\nDetected tag ID=%d", tagOfInterest.id));
             else telemetry.addLine("Don't see tag of interest :(");
 
+            if(gamepad1.b || gamepad2.b) teamColor = TeamColor.red;
+            if(gamepad1.x || gamepad2.x) teamColor = TeamColor.blue;
+            if(gamepad1.dpad_right || gamepad2.dpad_right) initialSide = InitialSide.right;
+            if(gamepad1.dpad_left || gamepad2.dpad_left) initialSide = InitialSide.left;
+
             telemetry.update();
+
             sleep(20);
         }
 
@@ -108,6 +119,8 @@ public class Autonomous_root extends LinearOpMode {
             chassis.runToPosition(-100, -100, -100, -100);
 
             arm.closeGripper();
+
+            sleep(400);
 
             arm.runToPosition(200);
 
