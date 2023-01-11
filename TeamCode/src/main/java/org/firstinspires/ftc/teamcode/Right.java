@@ -17,9 +17,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.apriltag.AprilTagDetection;
 import java.util.ArrayList;
-//testing
+
 @Autonomous
-public class BlueLeft extends LinearOpMode {
+public class Right extends LinearOpMode {
     OpenCvCamera webcam;
     Pipeline aprilTagDetectionPipeline;
 
@@ -172,53 +172,56 @@ public class BlueLeft extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        // You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
+        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
         if (opModeIsActive()) {
-
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
             strafeLeftwithcrane(1,1950,-1,2300);
             //crane2(1,-7600);
-            move(.5,330);
+            move(.5,-330);
             sleep(100);
             intake(-1,1300);
             //new
-            move(.5,-300);
+            move(.5,300);
             strafeLeftwithcrane(1,600,1,1000);//500
             gyroTurning(0);
             sleep(1000);
-            moveandspin(.5,-980,-1,1000);///410
+            moveandspin(.5,980,1,1000);///410
             stopMotors();
             //spin2(-1,1000);
-            move(.2,-150);
+            move(.2,250);
             craneinput(500);
             Left.setPower(.3);
             crane(-1, 650);
-            moveandspin(.8,1000,1,1000);
-            strafeRightwithcrane(1,680,-1,1950);
-            move(.5,360);
+            moveandspin(.8,-1000,-1,1000);
+            strafeRightwithcrane(1,680,-1,1900);
+            move(.5,-360);
             intake(-1,1300);
-            move(.5,-330);
+            move(.5,330);
 
 
             switch (location){
                 case 0:
                     move(.2,200);
+                    sleep(3000);
                     break;
                 case 1:
                     strafeRight(1,700);
                     gyroTurning(0);
                     move(.6,-1200);
-                    strafeLeft(.5,300);
+                    strafeLeft(.5,500);
+                    sleep(3000);
                     break;
                 case 2:
                     move(.2,200);
+                    sleep(3000);
                     break;
                 case 3:
                     strafeRight(1,700);
                     move(.6,1200);
-                    strafeLeft(.5,300);
+                    strafeLeft(.5,500);
+                    sleep(3000);
                     break;
             }
         }
@@ -510,7 +513,5 @@ public class BlueLeft extends LinearOpMode {
 
     }
 
-
 }
-
 
