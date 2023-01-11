@@ -36,14 +36,18 @@ public abstract class BaseTeleOp extends BaseOpMode {
         headingDegrees = currentAngle - startAngle;
         negativeHeadingRadians = Math.toRadians(-headingDegrees);
 
+        x = stickCurve(gamepad1.left_stick_x , Constants.DRIVE_CURVE_FAC, Constants.DRIVE_CURVE_DEADZONE);
+        y = stickCurve(-gamepad1.left_stick_y, Constants.DRIVE_CURVE_FAC, Constants.DRIVE_CURVE_DEADZONE);
+        t = stickCurve(gamepad1.right_stick_x, Constants.DRIVE_CURVE_FAC, Constants.DRIVE_CURVE_DEADZONE);
+
         if (gamepad1.left_trigger > 0.25) {
-            x = gamepad1.left_stick_x * 0.3;
-            y = -gamepad1.left_stick_y * 0.3;
-            t = gamepad1.right_stick_x * 0.2;
+            x = x * 0.3;
+            y = y * 0.3;
+            t = t * 0.2;
         } else {
-            x = gamepad1.left_stick_x * 0.75;
-            y = -gamepad1.left_stick_y * 0.75;
-            t = gamepad1.right_stick_x * 0.5;
+            x = x * 0.75;
+            y = y * 0.75;
+            t = t * 0.5;
         }
 
         xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
@@ -202,5 +206,17 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
         stacks[1] = stack;
         junctions[1] = junction;
+    }
+
+    /**
+     * This method is a stick curve. If you do not know what that is, become smarter.
+     * @param x The input power
+     * @param a The blending factor between linear and cubed powers
+     * @param d Deadzone size
+     * @return The remapped power
+     */
+    public double stickCurve(double x, double a, double d) {
+        x = Math.signum(x)*Math.max(0, Math.min(1, (Math.abs(x)-d)/(1-d))); // Remap x with deadzone
+        return a*x+(1-a)*x*x*x;
     }
 }

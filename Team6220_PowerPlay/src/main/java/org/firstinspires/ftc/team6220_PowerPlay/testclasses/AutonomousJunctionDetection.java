@@ -40,6 +40,7 @@ public class AutonomousJunctionDetection extends BaseAutonomous {
             telemetry.addData("y", pipeline.detectedRect.y);
             telemetry.addData("🏃‍💨", pipeline.isRunning);
             telemetry.addData("counter", pipeline.counter);
+            telemetry.addData("🟨", pipeline.rectDetected);
             telemetry.update();
         }
     }

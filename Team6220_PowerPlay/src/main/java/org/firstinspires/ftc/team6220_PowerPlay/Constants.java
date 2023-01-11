@@ -16,6 +16,9 @@ public class Constants {
     public static final int SLIDE_STACK_ONE = 80;
     public static final int SLIDE_BOTTOM = 0;
 
+    public static final double DRIVE_CURVE_FAC = 0.4;
+    public static final double DRIVE_CURVE_DEADZONE = 0.025;
+
     public static final double GRABBER_INITIALIZE_POSITION = 1.0;
     public static final double GRABBER_OPEN_POSITION = 0.57;
     public static final double GRABBER_CLOSE_POSITION = 0.0;
