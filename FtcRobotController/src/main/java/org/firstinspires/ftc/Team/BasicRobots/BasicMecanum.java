@@ -1,4 +1,6 @@
-package Team.BasicRobots;
+package org.firstinspires.ftc.Team.BasicRobots;
+
+//This file is the basic framework for a robot that drives on mecanum wheels
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.*;
@@ -10,156 +12,142 @@ public class BasicMecanum {
     public DcMotor LFMotor;
     public DcMotor LBMotor;
 
-    public double motorOffset = 0;
+    DcMotor[] motors = {RFMotor, RBMotor, LFMotor, LBMotor};
+    String[] names = {"RFMotor", "RBMotor", "LFMotor", "LBMotor"};
 
     public double mult = 0.29;
 
     public void init(HardwareMap Map) {
 
-        LFMotor = Map.dcMotor.get("LFMotor");
-        LBMotor = Map.dcMotor.get("LBMotor");
-        RFMotor = Map.dcMotor.get("RFMotor");
-        RBMotor = Map.dcMotor.get("RBMotor");
+        for (int i = 0; i < 5; i++) {
+            motors[i] = Map.dcMotor.get(names[i]);
+        }
 
-        LFMotor.setPower(0.0);
-        LBMotor.setPower(0.0);
-        RFMotor.setPower(0.0);
-        RBMotor.setPower(0.0);
-
-        //TODO: Figure out which motors need to be reversed, etc. so that the robot actually goes forward lmao
-
-        LFMotor.setDirection(DcMotor.Direction.FORWARD);
-        RFMotor.setDirection(DcMotor.Direction.FORWARD);
-        LBMotor.setDirection(DcMotor.Direction.FORWARD);
-        RBMotor.setDirection(DcMotor.Direction.FORWARD);
-
-        //for now, we do this (maybe change later-
-//        LFMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        RFMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        LBMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        RBMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-//
-        LFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LBMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RBMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        LFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LBMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RBMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        LFMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RFMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        LBMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RBMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //:crab: william is gone :crab:
+        for (int i = 0; i < 5; i++) {
+            motors[i].setPower(0.0);
+            motors[i].setDirection(DcMotor.Direction.FORWARD);
+            motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
     }
+
+    //Move straight function
 
     public void moveStraight(double power) {
-        LFMotor.setPower(power * mult);
-        RFMotor.setPower(power);
-        LBMotor.setPower(power * mult);
-        RBMotor.setPower(power);
+        motors[2].setPower(power * mult);
+        motors[0].setPower(power);
+        motors[3].setPower(power * mult);
+        motors[1].setPower(power);
     }
+
+    //Move left function
 
     public void moveLeft(double power) {
-        LFMotor.setPower(-power * mult);
-        RFMotor.setPower(power);
-        LBMotor.setPower(power * mult);
-        RBMotor.setPower(-power);
+        motors[2].setPower(-power * mult);
+        motors[0].setPower(power);
+        motors[3].setPower(power * mult);
+        motors[1].setPower(-power);
     }
+
+    //Move right function
 
     public void moveRight(double power) {
-        LFMotor.setPower(power * mult);
-        RFMotor.setPower(-power);
-        LBMotor.setPower(-power * mult);
-        RBMotor.setPower(power);
+        motors[2].setPower(power * mult);
+        motors[0].setPower(-power);
+        motors[3].setPower(-power * mult);
+        motors[1].setPower(power);
     }
+
+    //Move back function
 
     public void moveBackwards(double power) {
-        LFMotor.setPower(-power * mult);
-        RFMotor.setPower(-power);
-        LBMotor.setPower(-power * mult);
-        RBMotor.setPower(-power);
+        motors[2].setPower(-power * mult);
+        motors[0].setPower(-power);
+        motors[3].setPower(-power * mult);
+        motors[1].setPower(-power);
     }
 
+    //Stop moving function
+
     public void stop() {
-        LFMotor.setPower(0);
-        RFMotor.setPower(0);
-        LBMotor.setPower(0);
-        RBMotor.setPower(0);
+        motors[2].setPower(0);
+        motors[0].setPower(0);
+        motors[3].setPower(0);
+        motors[1].setPower(0);
     }
+
+    //Pivot in place based on input from two buttons (left/right (booleans)) and a power setting (0-1 (double-precision float))
 
     public void pivotTurn(double power, boolean rightBumper, boolean leftBumper) {
         power = power*0.5;
         if(rightBumper && leftBumper) {
-            RFMotor.setPower(0);
-            LFMotor.setPower(0);
-            RBMotor.setPower(0);
-            LBMotor.setPower(0);
+            motors[0].setPower(0);
+            motors[2].setPower(0);
+            motors[1].setPower(0);
+            motors[3].setPower(0);
         } else if(leftBumper) {
-            RFMotor.setPower(power);
-            LFMotor.setPower(-power * mult);
-            RBMotor.setPower(power);
-            LBMotor.setPower(-power * mult);
+            motors[0].setPower(power);
+            motors[2].setPower(-power * mult);
+            motors[1].setPower(power);
+            motors[3].setPower(-power * mult);
         } else if(rightBumper) {
-            RFMotor.setPower(-power);
-            LFMotor.setPower(power * mult);
-            RBMotor.setPower(-power);
-            LBMotor.setPower(power * mult);
+            motors[0].setPower(-power);
+            motors[2].setPower(power * mult);
+            motors[1].setPower(-power);
+            motors[3].setPower(power * mult);
         }
     }
+
+    //Strafe in all 8 directions based on button inputs (up/down/left/right (boolean)) and a power setting (0-1 (double-precision float))
 
     public void octoStrafe(double power, boolean up, boolean down, boolean left, boolean right) {
         if (up) {
             if (right) {
-                RFMotor.setPower(power);
-                LFMotor.setPower(0);
-                RBMotor.setPower(0);
-                LBMotor.setPower(power * mult);
+                motors[0].setPower(power);
+                motors[2].setPower(0);
+                motors[1].setPower(0);
+                motors[3].setPower(power * mult);
             } else if (left) {
-                RFMotor.setPower(0);
-                LFMotor.setPower(power * mult);
-                RBMotor.setPower(power);
-                LBMotor.setPower(0);
+                motors[0].setPower(0);
+                motors[2].setPower(power * mult);
+                motors[1].setPower(power);
+                motors[3].setPower(0);
             } else {
-                RFMotor.setPower(power);
-                LFMotor.setPower(power * mult);
-                RBMotor.setPower(power);
-                LBMotor.setPower(power * mult);
+                motors[0].setPower(power);
+                motors[2].setPower(power * mult);
+                motors[1].setPower(power);
+                motors[3].setPower(power * mult);
             }
         } else if (down) {
             if (right) {
-                RFMotor.setPower(0);
-                LFMotor.setPower(-power * mult);
-                RBMotor.setPower(-power);
-                LBMotor.setPower(0);
+                motors[0].setPower(0);
+                motors[2].setPower(-power * mult);
+                motors[1].setPower(-power);
+                motors[3].setPower(0);
             } else if (left) {
-                RFMotor.setPower(-power);
-                LFMotor.setPower(0);
-                RBMotor.setPower(0);
-                LBMotor.setPower(-power * mult);
+                motors[0].setPower(-power);
+                motors[2].setPower(0);
+                motors[1].setPower(0);
+                motors[3].setPower(-power * mult);
             } else {
-                RFMotor.setPower(-1);
-                LFMotor.setPower(-power * mult);
-                RBMotor.setPower(-1);
-                LBMotor.setPower(-power * mult);
+                motors[0].setPower(-1);
+                motors[2].setPower(-power * mult);
+                motors[1].setPower(-1);
+                motors[3].setPower(-power * mult);
             }
         }
         else {
             if (right) {
-                RFMotor.setPower(-power);
-                LFMotor.setPower(power * mult);
-                RBMotor.setPower(power);
-                LBMotor.setPower(-power * mult);
+                motors[0].setPower(-power);
+                motors[2].setPower(power * mult);
+                motors[1].setPower(power);
+                motors[3].setPower(-power * mult);
             } else if (left) {
-                RFMotor.setPower(power);
-                LFMotor.setPower(-power * mult);
-                RBMotor.setPower(-power);
-                LBMotor.setPower(power * mult);
+                motors[0].setPower(power);
+                motors[2].setPower(-power * mult);
+                motors[1].setPower(-power);
+                motors[3].setPower(power * mult);
             }
         }
     }
