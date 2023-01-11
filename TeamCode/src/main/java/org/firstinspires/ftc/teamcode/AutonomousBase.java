@@ -195,6 +195,81 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // driveAndRotateTurretAngle
 
     /*---------------------------------------------------------------------------------*/
+    void alignToPoleTurretPID() {
+        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
+        final double TURN_SLOPE   = 0.0000;   // power-per-pixel (not power-per-degree!) .15 deg/pixel
+        final double TURN_OFFSET  = 0.1;
+        final double DRIVE_SLOPE  = 0.004187;
+        final double DRIVE_OFFSET = 0.04522;
+        double turretPower;
+        double drivePower;
+        // PID stuff
+        // Possible values 0.002, 0.005, 0.00005
+        double kp = 0.01;
+        double ki = 0.0;
+        double kd = 0.0;
+        double error;
+        double integralSum = 0.0;
+        double derivative;
+        double lastError = 0.0;
+        boolean aligning = true;
+        ElapsedTime timer = new ElapsedTime();
+
+        theLocalPole = pipelineBack.getDetectedPole();
+        while (opModeIsActive() && ((theLocalPole.alignedCount <= 2) || theLocalPole.properDistanceHighCount <= 3)) {
+            performEveryLoop();
+            if(theLocalPole.aligned) {
+                aligning = false;
+                turretPower = 0.0;
+            } else {
+                if(!aligning) {
+                    aligning = true;
+                    lastError = 0.0;
+                    integralSum = 0.0;
+                }
+                // The sign is backwards because centralOffset is negative of the power we need.
+                error = 0.0 + theLocalPole.centralOffset;
+                derivative = (error - lastError) / timer.seconds();
+                integralSum = integralSum + (error * timer.seconds());
+                turretPower = (kp * error) + (ki * integralSum) + (kd * derivative);
+                lastError = error;
+                timer.reset();
+/*
+                // Need to calculate the turn power based on pixel offset
+                // Maximum number of pixels off would be half of 320, so 160.
+                // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
+                // go 1.0 to 0.08 from 24 degrees to 0.
+                double minPower = (theLocalPole.centralOffset > 0)? -TURN_OFFSET : TURN_OFFSET;
+                turretPower = (-theLocalPole.centralOffset * TURN_SLOPE) + minPower;
+                if( turretPower < -0.25 ) turretPower = -0.25;
+                if( turretPower > +0.25 ) turretPower = +0.25;
+ */
+            }
+            if(theLocalPole.properDistanceHigh) {
+                drivePower = 0.0;
+            } else {
+                // Need to calculate the drive power based on pixel offset
+                // Maximum number of pixels off would be in the order of 30ish.
+                // This is a first guess that will have to be expiremented on.
+                // Go 1.0 to 0.08 from 30 pixels to 2.
+                drivePower = (theLocalPole.highDistanceOffset > 0 )?
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
+            }
+            if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
+                robot.stopMotion();
+                robot.setTurretPower(0);
+            } else {
+                driveAndRotateTurretAngle(drivePower, turretPower, false);
+            }
+
+            theLocalPole = pipelineBack.getDetectedPole();
+        }
+        robot.stopMotion();
+        robot.setTurretPower(0.0);
+    } // alignToPole
+
+    /*---------------------------------------------------------------------------------*/
     void alignToPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         final double TURN_SLOPE   = 0.0000;   // power-per-pixel (not power-per-degree!) .15 deg/pixel
