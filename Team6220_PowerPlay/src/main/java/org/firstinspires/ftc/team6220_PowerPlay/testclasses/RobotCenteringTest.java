@@ -13,11 +13,12 @@ public class RobotCenteringTest extends ConeDetection
     public void runOpMode() throws InterruptedException
     {
         initialize();
-        waitForStart();
         ConeDetectionPipeline coneDetectionPipeline = new ConeDetectionPipeline();
         coneDetectionPipeline.setRanges(lowerBlue, upperBlue);
+        telemetry.addData("distance", coneDetectionPipeline.distance);
         telemetry.addLine("waiting for start");
         telemetry.update();
+        waitForStart();
         driveSlides(400);
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
         while(opModeIsActive()){

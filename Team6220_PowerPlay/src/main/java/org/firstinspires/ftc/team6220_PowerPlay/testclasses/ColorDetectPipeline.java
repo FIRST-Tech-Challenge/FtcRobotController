@@ -45,7 +45,7 @@ public class ColorDetectPipeline extends OpenCvPipeline {
     void grayTo3(Mat gray) {
         Mat out;
         Mat in[] = {gray, gray, gray};
-        Core.merge(in, out);
+        //Core.merge(in, out);
         for(Mat m : in) {
             m.release();
         }
