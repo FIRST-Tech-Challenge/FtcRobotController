@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.Functions.Move;
 import org.firstinspires.ftc.teamcode.Functions.RotateMove;
 
 @TeleOp(name="RotateMoveTest", group="TEST")
-@Disabled
 
 
 public class RotateMoveTest extends OpMode {
