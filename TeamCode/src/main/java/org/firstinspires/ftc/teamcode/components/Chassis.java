@@ -9,7 +9,7 @@ public class Chassis {
     public static DcMotor motorBL;
     public static DcMotor motorBR;
 
-    public static final double speed = 0.6;
+    public static final double speed = 0.65;
 
     public Chassis(DcMotor mFL, DcMotor mFR, DcMotor mBL, DcMotor mBR){
         this.motorFL = mFL;

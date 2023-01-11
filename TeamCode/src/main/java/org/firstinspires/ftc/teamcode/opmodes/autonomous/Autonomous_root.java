@@ -116,9 +116,9 @@ public class Autonomous_root extends LinearOpMode {
         boolean parked = false;
 
         while(opModeIsActive() && !parked) {
-            chassis.runToPosition(-100, -100, -100, -100);
-
             arm.closeGripper();
+
+            chassis.runToPosition(-50, -50, -50, -50);
 
             sleep(400);
 

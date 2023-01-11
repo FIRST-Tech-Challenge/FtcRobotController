@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 
 @TeleOp
-public class Linear_root extends LinearOpMode {
+public class Main_TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         // init chassis
@@ -42,8 +42,8 @@ public class Linear_root extends LinearOpMode {
             if (gamepad2.a) arm.armTarget = 0;
 
             if (gamepad2.left_bumper){
-                arm.openGripper();
                 arm.armTarget = 0;
+                arm.openGripper();
             }
             if (gamepad2.right_bumper) arm.closeGripper();
 
