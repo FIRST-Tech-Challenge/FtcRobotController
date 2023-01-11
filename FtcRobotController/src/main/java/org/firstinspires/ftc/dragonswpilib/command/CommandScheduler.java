@@ -572,4 +572,16 @@ public final class CommandScheduler /*implements NTSendable, AutoCloseable*/ {
           idsPub.set(ids2);
         });
   }*/
+
+  /**
+   * Dragons : Fonction pour recommencer à zéro.
+   * À appeler si on veut re-créer un RobotContainer.
+   */
+  public void reset() {
+    m_scheduledCommands.clear();
+    m_requirements.clear();
+    m_subsystems.clear();
+    m_toSchedule.clear();
+    m_toCancel.clear();
+  }
 }
