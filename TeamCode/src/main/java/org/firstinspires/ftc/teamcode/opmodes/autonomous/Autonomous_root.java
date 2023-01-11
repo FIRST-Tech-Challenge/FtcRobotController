@@ -120,7 +120,7 @@ public class Autonomous_root extends LinearOpMode {
 
             chassis.runToPosition(-50, -50, -50, -50);
 
-            sleep(400);
+            sleep(500);
 
             arm.runToPosition(200);
 
