@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcodekt.components
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.SimpleServo
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
+import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 
 @Config
 object WristConfig {

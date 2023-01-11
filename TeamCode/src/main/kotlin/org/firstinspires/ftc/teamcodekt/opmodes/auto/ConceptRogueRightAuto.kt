@@ -22,7 +22,7 @@ class ConceptRogueRightAuto : RogueBaseAuto() {
 
         Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
-        signalZone = waitForStartWithVision()
+        signalZone = camera.waitForStartWithVision(this@ConceptRogueRightAuto)
         mTelemetry.addData("Final signal zone", signalZone)
         mTelemetry.update()
 

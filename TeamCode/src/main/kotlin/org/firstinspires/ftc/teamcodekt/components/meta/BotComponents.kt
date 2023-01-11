@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcodekt.components
+package org.firstinspires.ftc.teamcodekt.components.meta
 
 import com.qualcomm.hardware.rev.RevColorSensorV3
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
+import org.firstinspires.ftc.teamcodekt.components.*
 
 abstract class BaseBotComponents {
     abstract val claw: Claw
@@ -44,6 +45,7 @@ data class TeleOpBotComponents(
 
 fun createAutoBotComponents() = AutoBotComponents(
     SampleMecanumDrive(hwMap),
+    Camera(),
     Claw(),
     Intake(),
     Arm(),
@@ -53,6 +55,7 @@ fun createAutoBotComponents() = AutoBotComponents(
 
 data class AutoBotComponents(
     val drive: SampleMecanumDrive,
+    val camera: Camera,
     override val claw: Claw,
     override val intake: Intake,
     override val arm: Arm,

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.motors.CRServo
 import com.qualcomm.robotcore.hardware.HardwareMap
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
+import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 
 @Config
 object IntakeConfig {

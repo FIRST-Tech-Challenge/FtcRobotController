@@ -30,9 +30,9 @@ public class AutoData {
 
     public static int DEPOSIT_DROP_AMOUNT = 500;
 
-    public static int AUTO_INTAKE_LIFT_HEIGHT_1 = 373;
-    public static int AUTO_INTAKE_LIFT_HEIGHT_2 = 297;
-    public static int AUTO_INTAKE_LIFT_HEIGHT_3 = 182;
-    public static int AUTO_INTAKE_LIFT_HEIGHT_4 = 112;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_1 = 320 - 20;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_2 = 240 - 20;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_3 = 180 - 20;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_4 = 120 - 20;
     public static int AUTO_INTAKE_LIFT_HEIGHT_5 = 0;
 }

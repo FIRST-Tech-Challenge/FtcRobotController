@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcodekt.components.chains
 import ftc.rogue.blacksmith.chains.CancellableChain
 import ftc.rogue.blacksmith.listeners.Listener
 import ftc.rogue.blacksmith.listeners.after
-import org.firstinspires.ftc.teamcodekt.components.TeleOpBotComponents
+import org.firstinspires.ftc.teamcodekt.components.meta.TeleOpBotComponents
 
 class ReverseDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
     private var isCancelled = false

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcodekt.components
+package org.firstinspires.ftc.teamcodekt.components.meta
 
 object DeviceNames {
     const val ARM_SERVO = "AR"

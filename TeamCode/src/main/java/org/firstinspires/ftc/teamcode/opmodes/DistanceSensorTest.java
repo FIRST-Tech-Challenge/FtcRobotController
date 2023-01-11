@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.outoftheboxrobotics.photoncore.PhotonCore;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcodekt.components.DeviceNames;
+import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames;
 import org.firstinspires.ftc.teamcodekt.components.LongRangeSensor;
-import org.firstinspires.ftc.teamcodekt.components.ShortRangeSensor;
 
 import ftc.rogue.blacksmith.BlackOp;
 import ftc.rogue.blacksmith.Scheduler;

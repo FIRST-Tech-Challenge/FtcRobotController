@@ -16,31 +16,27 @@ class RogueRightAuto : RogueBaseAuto() {
 
         Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
-        Scheduler.launchOnStart(opmode = this) {
-            bot.updateBaseComponents()
-            bot.drive.update()
-            mTelemetry.update()
-        }
+        Scheduler.launchOnStart(opmode = this, ::updateComponents)
     }
 
     private fun mainTrajRefactor(startPose: Pose2d) =
         Anvil.formTrajectory(bot.drive, startPose)
             .initialDepositPrep()
 
-            .waitInitialGoToDeposit()
+            .awaitInitialGoToDeposit()
 
             .awaitDeposit()
 
-            .doTimes(5) {
+            .doTimes(NUM_CYCLES) {
                 when (it) {
-                    4 -> fastIntakePrep()
-                    else -> regularIntakePrep()
+                    LAST_CYCLE -> fastIntakePrep(it)
+                    else -> regularIntakePrep(it)
                 }
 
                 awaitGoToIntake(it)
 
                 when (it) {
-                    4 -> awaitFastIntake()
+                    LAST_CYCLE -> awaitFastIntake()
                     else -> awaitRegularIntake()
                 }
 
@@ -48,32 +44,26 @@ class RogueRightAuto : RogueBaseAuto() {
 
                 awaitDeposit()
             }
-
             .resetBot()
-
 
     private fun Anvil.initialDepositPrep() = this
         .addTemporalMarker {
-            bot.lift.goToHigh()
+            bot.lift.goToHigh()git
             bot.claw.close()
             bot.arm.setToForwardsPos()
             bot.wrist.setToForwardsPos()
         }
 
-
-    private fun Anvil.waitInitialGoToDeposit() = this
+    private fun Anvil.awaitInitialGoToDeposit() = this
         .splineToSplineHeading(82.35, -11.35, 129.5, 117.5)
 
-
     private fun Anvil.awaitGoToDeposit(it: Int) = this
-        .splineToSplineHeading(82.35 + (it * .35), -11.35 - (it * 3.7), 131.5 + (it * 1.9), 155.0)
-
+        .splineToSplineHeading(82.35 + (it * .475), -11.35 - (it * 3.825), 131.5 + (it * 1.9), 155.0)
 
     private fun Anvil.awaitGoToIntake(it: Int) =
         inReverse {
-            splineTo(159.5 - ((it * .6) pow 1.25), -28.75 - (it * .85), 0.0)
+            splineTo(160.75 - ((it * .6) pow 1.25), -27.75 - (it * .85), 0.0)
         }
-
 
     private fun Anvil.awaitDeposit() = this
         .addTemporalMarker(-65) {
@@ -86,10 +76,9 @@ class RogueRightAuto : RogueBaseAuto() {
 
         .waitTime(100)
 
-
-    private fun Anvil.regularIntakePrep() = this
+    private fun Anvil.regularIntakePrep(iterations: Int) = this
         .addTemporalMarker {
-            bot.lift.height = 250
+            bot.lift.height = liftOffsets[iterations]
 
             bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
             bot.wrist.setToBackwardsPos()
@@ -97,10 +86,9 @@ class RogueRightAuto : RogueBaseAuto() {
             bot.claw.openForIntakeWide()
         }
 
-
-    private fun Anvil.fastIntakePrep() = this
+    private fun Anvil.fastIntakePrep(iterations: Int) = this
         .addTemporalMarker {
-            bot.lift.height = 250
+            bot.lift.height  = liftOffsets[iterations]
 
             bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
             bot.wrist.setToBackwardsPos()
@@ -116,14 +104,16 @@ class RogueRightAuto : RogueBaseAuto() {
             bot.claw.close()
         }
 
-        .addTemporalMarker(200) {
+        .addTemporalMarker(300) {
             bot.arm.setToForwardsPos()
-            bot.wrist.setToForwardsPos()
             bot.lift.goToHigh()
         }
 
-        .waitTime(225)
+        .addTemporalMarker(450) {
+            bot.wrist.setToForwardsPos()
+        }
 
+        .waitTime(325)
 
     private fun Anvil.awaitFastIntake() = this
         .addTemporalMarker(-75) {
@@ -131,14 +121,16 @@ class RogueRightAuto : RogueBaseAuto() {
             bot.claw.close()
         }
 
-        .addTemporalMarker(35) {
+        .addTemporalMarker(135) {
             bot.arm.setToForwardsPos()
-            bot.wrist.setToForwardsPos()
             bot.lift.goToHigh()
         }
 
-        .waitTime(20)
+        .addTemporalMarker(250) {
+            bot.wrist.setToForwardsPos()
+        }
 
+        .waitTime(120)
 
     private fun Anvil.resetBot() = this
         .addTemporalMarker {
@@ -147,68 +139,4 @@ class RogueRightAuto : RogueBaseAuto() {
             bot.lift.goToZero()
         }
         .waitTime(1000)
-
-
-    private fun mainTraj(startPose: Pose2d): Anvil =
-        Anvil.formTrajectory(bot.drive, startPose)
-            .addTemporalMarker {
-                bot.lift.goToHigh()
-                bot.claw.close()
-                bot.arm.setToForwardsPos()
-                bot.wrist.setToForwardsPos()
-            }
-
-            .splineToSplineHeading(82.35, -11.35, 129.5, 117.5) // Preload
-
-            .doTimes(5) {
-                addTemporalMarker(-65) {
-                    bot.lift.height -= AutoData.DEPOSIT_DROP_AMOUNT
-                }
-
-                addTemporalMarker {
-                    bot.claw.openForDeposit()
-                }
-
-                waitTime(110)
-
-                addTemporalMarker {
-                    bot.lift.height = 250
-
-                    bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-                    bot.wrist.setToBackwardsPos()
-
-                    if (it < 4) {
-                        bot.claw.openForIntakeWide()
-                    } else {
-                        bot.claw.openForIntakeNarrow()
-                        bot.intake.enable()
-                    }
-                }
-
-                inReverse {
-                    splineTo(159.5 - ((it * .6) pow 1.25), -28.75 - (it * .85), 0.0) // Intake
-                }
-
-                addTemporalMarker(-75) {
-                    bot.intake.disable()
-                    bot.claw.openForIntakeNarrow()
-                }
-
-                addTemporalMarker(if (it < 4) 200 else 35) {
-                    bot.arm.setToForwardsPos()
-                    bot.wrist.setToForwardsPos()
-                    bot.lift.goToHigh()
-                }
-
-                waitTime(if (it < 4) 225 else 20)
-
-                splineToSplineHeading(82.35 + (it * .35), -11.35 - (it * 3.7), 131.5 + (it * 1.9), 155.0) // Deposit
-            }
-
-            .addTemporalMarker {
-                bot.arm.setToRestingPos()
-                bot.wrist.setToRestingPos()
-                bot.lift.goToZero()
-            }
-            .waitTime(1000)
 }

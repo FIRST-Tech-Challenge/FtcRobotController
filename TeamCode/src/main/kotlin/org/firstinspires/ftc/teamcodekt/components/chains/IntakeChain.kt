@@ -6,7 +6,7 @@ import ftc.rogue.blacksmith.chains.Chain
 import ftc.rogue.blacksmith.listeners.Listener
 import ftc.rogue.blacksmith.listeners.after
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
-import org.firstinspires.ftc.teamcodekt.components.TeleOpBotComponents
+import org.firstinspires.ftc.teamcodekt.components.meta.TeleOpBotComponents
 
 class IntakeChain(val bot: TeleOpBotComponents) : Chain {
     private var isRunning = false

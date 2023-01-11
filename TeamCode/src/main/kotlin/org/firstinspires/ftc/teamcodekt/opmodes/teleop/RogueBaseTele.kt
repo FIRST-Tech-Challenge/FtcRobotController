@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
 import org.firstinspires.ftc.teamcodekt.components.chains.RegularDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.ReverseDepositChain
+import org.firstinspires.ftc.teamcodekt.components.meta.createTeleOpBotComponents
 
 abstract class RogueBaseTele : BlackOp() {
     protected val driver   by createOnGo<ReforgedGamepad> { gamepad1 }

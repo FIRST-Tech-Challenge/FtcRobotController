@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcodekt.components.Camera;
 import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto;
 
 @Autonomous
@@ -23,12 +24,13 @@ public class BasePoleDetectorOp extends RogueBaseAuto {
         setPoleDetectorAsPipeline();
 
         while (!opModeIsActive()){
-            telemetry.addData("Angle", Math.toDegrees(getPoleDetector().getPoleAngle()));
+            telemetry.addData("Angle", Math.toDegrees(getBot().getCamera().getPoleDetector().getPoleAngle()));
             telemetry.update();
         }
     }
 
     public void setPoleDetectorAsPipeline(){
-        getCamera().setPipeline(getPoleDetector());
+        Camera cam = getBot().getCamera();
+        cam.setPipeline(cam.getPoleDetector());
     }
 }
