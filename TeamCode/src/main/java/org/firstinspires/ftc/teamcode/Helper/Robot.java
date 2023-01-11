@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+//Related to IMU
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -18,15 +19,25 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+// Related to vision
+import java.util.List;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 public class Robot {
+    /*
+    Properties that describe hardware.
+     */
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
+
+    // mechanisms.
     public DcMotor vSlider;
     public DcMotor swingArm;
     public Servo claw;
@@ -34,6 +45,7 @@ public class Robot {
     private double holdingPower = -0.01;
     public double swingArmHoldingPower = 0.08;
 
+    // global location.
     public int robotX = 0;
     public int robotY = 0;
 
@@ -66,16 +78,27 @@ public class Robot {
     static final double COUNTS_PER_CM_Hex = (COUNTS_PER_MOTOR_REV_Hex * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_CM * 3.1415);
 
 
+    // TFOD and Vuforia properties related to vision.
+    private static final String tfodModel = "jan2023mk2";
+    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel + ".tflite";
+    public static final String[] LABELS = {
+            "arrow",
+            "balloon",
+            "bar",
+            "pole",
+    };
+    private static final String VUFORIA_KEY =
+            "AWtcstb/////AAABmfYaB2Q4dURcmKS8qV2asrhnGIuQxM/ioq6TnYqZseP/c52ZaYTjs4/2xhW/91XEaX7c3aw74P3kGZybIaXued3nGShb7oNQyRkVePnFYbabnU/G8em37JQrH309U1zOYtM3bEhRej91Sq6cf6yLjiSXJ+DxxLtSgWvO5f+wM3Wny8MbGUpVSiogYnI7UxEz8OY88d+hgal9u3GhhISdnNucsL+fRAE8mKwT1jGDgUVE1uAJoZFvo95AJWS2Yhdq/N/HpxEH3sBXEm99ci+mdQsl0m96PMCDfV5RgWBjhLbBEIJyQ/xKAbw5Yfr/AKCeB86WDPhR3+Mr8BUvsrycZA6FDJnN5sZZwTg0ZE22+gFL";
+    public VuforiaLocalizer vuforia; //vuforia object stored in vision class.
+    public TFObjectDetector tfod; //tfod object stored in vision class.
+
     /* local OpMode members. */
     //Init hardware map
     HardwareMap hwMap = null;
-    HardwareMap imuHwMap = null;
 
 
     public ElapsedTime period = new ElapsedTime();
     //tells you how long the robot has run for
-    public ElapsedTime test_run_time = new ElapsedTime();
-    //this is how you create an instance in a java class ^
 
 
     //
@@ -177,6 +200,39 @@ public class Robot {
         TimeUnit.MILLISECONDS.sleep(100); //Changing modes again requires a delay
 
         imu.initialize(parameters);
+    }
+
+    public void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraDirection = CameraDirection.BACK;
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+    }
+
+    public  void initTfod() {
+        int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.75f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 300;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+
+        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
+        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
+        this.tfod.loadModelFromFile(tfodPath, LABELS);
+
+        if (tfod != null) {
+            tfod.activate();
+
+            tfod.setZoom(1.1, 16.0 / 9.0);
+        }
     }
 
 

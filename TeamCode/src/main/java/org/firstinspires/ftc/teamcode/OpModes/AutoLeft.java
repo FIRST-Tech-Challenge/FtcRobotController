@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Helper.Robot;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Auto Meet 3", group = "Concept")
+@Autonomous(name = "Left", group = "Concept")
 public class AutoLeft extends LinearOpMode {
 
     private static final String tfodModel = "jan2023mk2";

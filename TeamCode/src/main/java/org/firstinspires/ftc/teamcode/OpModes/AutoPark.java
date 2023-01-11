@@ -1,37 +1,15 @@
 
-
 package org.firstinspires.ftc.teamcode.OpModes;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-
 import java.util.List;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.Helper.Robot;
-
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Right", group = "Concept")
-public class AutoRight extends LinearOpMode {
 
-    private static final String tfodModel = "jan2023mk2";
-    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel + ".tflite";
-
-    private static final String[] LABELS = {
-            "arrow",
-            "balloon",
-            "bar",
-            "pole",
-    };
-    private static final String VUFORIA_KEY =
-            "AWtcstb/////AAABmfYaB2Q4dURcmKS8qV2asrhnGIuQxM/ioq6TnYqZseP/c52ZaYTjs4/2xhW/91XEaX7c3aw74P3kGZybIaXued3nGShb7oNQyRkVePnFYbabnU/G8em37JQrH309U1zOYtM3bEhRej91Sq6cf6yLjiSXJ+DxxLtSgWvO5f+wM3Wny8MbGUpVSiogYnI7UxEz8OY88d+hgal9u3GhhISdnNucsL+fRAE8mKwT1jGDgUVE1uAJoZFvo95AJWS2Yhdq/N/HpxEH3sBXEm99ci+mdQsl0m96PMCDfV5RgWBjhLbBEIJyQ/xKAbw5Yfr/AKCeB86WDPhR3+Mr8BUvsrycZA6FDJnN5sZZwTg0ZE22+gFL";
-    private VuforiaLocalizer vuforia;
-    private TFObjectDetector tfod;
+@Autonomous(name = "Park", group = "Concept")
+public class AutoPark extends LinearOpMode {
 
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -47,17 +25,15 @@ public class AutoRight extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
-        // first.
-        initVuforia();
-        initTfod();
+
+        // Tensorflow object detector requires initialization of hardware map and vuforia.
+        // Following order is important.
+
         robot.init(hardwareMap);
+        robot.initVuforia();
+        robot.initTfod();
 
-        if (tfod != null) {
-            tfod.activate();
 
-            tfod.setZoom(1.1, 16.0 / 9.0);
-        }
 
 //        robot.vSlider.setTargetPosition(-165);
 //        robot.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -80,10 +56,10 @@ public class AutoRight extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                if (tfod != null) {
+                if (robot.tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                    List<Recognition> updatedRecognitions = robot.tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
                         telemetry.addData("# Objects Detected", updatedRecognitions.size());
 
@@ -95,11 +71,11 @@ public class AutoRight extends LinearOpMode {
                             double width = Math.abs(recognition.getRight() - recognition.getLeft());
                             double height = Math.abs(recognition.getTop() - recognition.getBottom());
                             String objectLabel = recognition.getLabel();
-                            if (objectLabel == LABELS[0]) {
+                            if (objectLabel == robot.LABELS[0]) {
                                 parkingTarget = 1;
-                            } else if (objectLabel == LABELS[1]) {
+                            } else if (objectLabel == robot.LABELS[1]) {
                                 parkingTarget = 2;
-                            } else if (objectLabel == LABELS[2]) {
+                            } else if (objectLabel == robot.LABELS[2]) {
                                 parkingTarget = 3;
                             }
                             telemetry.addData("", " ");
@@ -155,35 +131,8 @@ public class AutoRight extends LinearOpMode {
     }
 
 
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CameraDirection.BACK;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-    }
-
-
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 300;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-
-        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
-        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromFile(tfodPath, LABELS);
-    }
-
-    private void Park(int location) {
+    public void Park(int location) {
         if (location == 1) {
             robot.claw.setPosition(0);
             robot.DriveToPosition(0.3, 75, 70, true);
