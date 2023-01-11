@@ -103,7 +103,7 @@ public class AutonomousRight extends AutonomousBase {
             public void onOpened()
             {
                 pipelineLow = new PowerPlaySuperPipeline(true, false,
-                        !blueAlliance, blueAlliance, 160.0);
+                        false, false, 160.0);
                 webcamLow.setPipeline(pipelineLow);
                 webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 lowCameraInitialized = true;
@@ -167,7 +167,7 @@ public class AutonomousRight extends AutonomousBase {
         }
         // Turn off detecting the signal.
         pipelineLow.signalDetection(false);
-        // Enable objectdetection of objects we are interested in
+        // Enable object detection of objects we are interested in
         if(blueAlliance) {
             pipelineLow.blueConeDetection(true);
         } else {
@@ -228,11 +228,11 @@ public class AutonomousRight extends AutonomousBase {
         }
 
         // Center on pole
-//        if( opModeIsActive()) {
-//            telemetry.addData("Skill", "rotateToCenterPole");
-//            telemetry.update();
-//            rotateToCenterPole();
-//        }
+        if( opModeIsActive()) {
+            telemetry.addData("Skill", "alignToPole");
+            telemetry.update();
+            alignToPole();
+        }
 
         // Adjust distance to pole
 //        if( opModeIsActive()) {
@@ -344,13 +344,13 @@ public class AutonomousRight extends AutonomousBase {
 
         // The grabber finished the tilt down during the 90deg turn movement, so
         // it's safe now to command the lift to raise to scoring position
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_B );
+        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
 
         // We're past the medium junction pole, so okay to rotate the turret
-        robot.turretPosInit( +45.0 );
+        robot.turretPosInit( +34.5 );
 
         // Drive partway there (while lift raises past the front motor)
-        autoYpos=34.5;  autoXpos=-4.0;
+        autoYpos=34.5;  autoXpos=-4.5;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_THRU );
 
         // Tilt grabber backward to final scoring position and rotate cone over
@@ -358,7 +358,7 @@ public class AutonomousRight extends AutonomousBase {
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
         // Drive the final distance to the high junction pole
-        autoYpos=52.5;  autoXpos=-8.0;
+        autoYpos=54.0;  autoXpos=-8.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_TO );
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)
@@ -371,11 +371,6 @@ public class AutonomousRight extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void scoreCone() {
 
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER);
-        // Make sure the turret movement has finished
-        while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
-            performEveryLoop();
-        }
         // Eject the cone
         intakeTimer.reset();
         robot.grabberSpinEject();
@@ -385,25 +380,28 @@ public class AutonomousRight extends AutonomousBase {
         }
         // Stop the ejector
         robot.grabberSpinStop();
-
-        // Back away from the pole (to our previous location/orientation)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
+        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
     } // scoreCone
 
     /*--------------------------------------------------------------------------------------------*/
     private void moveToConeStack() {
 
-        // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
-        autoYpos=51.0;  autoXpos=0.0;  autoAngle=+85.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
-
-        // Move the lift to a position where the ultrasonic works
-        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
+        // Establish targets for turret angle (centered) and lift height (5-stack)
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
+
+        // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
+        autoYpos=50.0;  autoXpos=7.0;  autoAngle=+90.0;    // (inches, inches, degrees)
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
+
+        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+            performEveryLoop();
+        }
+        sleep(30000);
 
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
-        autoXpos=+16.0;
+        autoXpos=+12.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
             performEveryLoop();

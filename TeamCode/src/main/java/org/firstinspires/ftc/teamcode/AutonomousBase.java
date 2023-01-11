@@ -763,41 +763,50 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // gyroDrive()
 
     //============================ ODOMETRY-BASED NAVIGATION FUNCTIONS ============================
-    protected void driveToWayPoint(double y_target, double x_target, double drive_angle,
-                                   double move_power, double turn_power, boolean drive_thru) {
+    public void driveToPosition(double yTarget, double xTarget, double angleTarget,
+                                   double speedMax, double turnMax, int driveType) {
         // Loop until we get to destination.
         performEveryLoop();
-        while(!driveToXY(y_target, x_target, drive_angle,
-                move_power, drive_thru)
+        while(!driveToXY(yTarget, xTarget, angleTarget,
+                speedMax, driveType)
                 && opModeIsActive()) {
             performEveryLoop();
         }
+
+        // Fix the angle if we didn't reach angle in the drive
+        if(driveType == DRIVE_TO) {
+            rotateToAngle(angleTarget, turnMax);
+        }
     }
 
-    protected void rotateToWayPointAngle(double drive_angle,
-                                         double move_power, double turn_power) {
+    /**
+     * @param angleTarget  - The angle the robot should try to face when reaching destination.
+     * @param turnMax - Highest value to use for turn speed.
+     */
+    public void rotateToAngle(double angleTarget,
+                                 double turnMax) {
         // Move the robot away from the wall.
         performEveryLoop();
-        rotateToAngle(drive_angle, true);
+        rotateToAngle(angleTarget, true);
         // Loop until we get to destination.
         performEveryLoop();
-        while(!rotateToAngle(drive_angle, false) && opModeIsActive()) {
+        while(!rotateToAngle(angleTarget, false) && opModeIsActive()) {
             performEveryLoop();
         }
     }
 
     /**
-     * @param targetAngle  - The angle the robot should try to face when reaching destination.
+     * @param angleTarget  - The angle the robot should try to face when reaching destination.
      * @param resetDriveAngle - When we start a new drive, need to reset the starting drive angle.
      * @return - Boolean true we have reached destination, false we have not
      */
-    public double lastDriveAngle;
-    public boolean rotateToAngle(double targetAngle, boolean resetDriveAngle) {
+    protected double lastDriveAngle;
+    protected boolean rotateToAngle(double angleTarget, boolean resetDriveAngle) {
         boolean reachedDestination = false;
-        double movement_x, movement_y, movement_turn;
+        double xMovement, yMovement, turnMovement;
         double errorMultiplier = 0.016;
-        double minSpinRate = MIN_SPIN_RATE;
-        double deltaAngle = AngleWrapRadians(toRadians(targetAngle) - robotOrientationRadians);
+        double turnMin = MIN_SPIN_RATE;
+        double deltaAngle = AngleWrapRadians(toRadians(angleTarget) - robotOrientationRadians);
         double turnSpeed = Math.toDegrees(deltaAngle) * errorMultiplier;
 
         // This should be set on the first call to start us on a new path.
@@ -818,13 +827,13 @@ public abstract class AutonomousBase extends LinearOpMode {
                 reachedDestination = true;
             } else {
                 // We still have some turning to do.
-                movement_x = 0;
-                movement_y = 0;
-                if(turnSpeed > -minSpinRate) {
-                    turnSpeed = -minSpinRate;
+                xMovement = 0;
+                yMovement = 0;
+                if(turnSpeed > -turnMin) {
+                    turnSpeed = -turnMin;
                 }
-                movement_turn = turnSpeed;
-                ApplyMovement(movement_x, movement_y, movement_turn);
+                turnMovement = turnSpeed;
+                ApplyMovement(yMovement, xMovement, turnMovement);
             }
         } else {
             // We have reached our destination if the delta angle sign flips
@@ -833,13 +842,13 @@ public abstract class AutonomousBase extends LinearOpMode {
                 reachedDestination = true;
             } else {
                 // We still have some turning to do.
-                movement_x = 0;
-                movement_y = 0;
-                if(turnSpeed < minSpinRate) {
-                    turnSpeed = minSpinRate;
+                xMovement = 0;
+                yMovement = 0;
+                if(turnSpeed < turnMin) {
+                    turnSpeed = turnMin;
                 }
-                movement_turn = turnSpeed;
-                ApplyMovement(movement_x, movement_y, movement_turn);
+                turnMovement = turnSpeed;
+                ApplyMovement(yMovement, xMovement, turnMovement);
             }
         }
         lastDriveAngle = deltaAngle;
@@ -848,27 +857,29 @@ public abstract class AutonomousBase extends LinearOpMode {
     }
 
     /**
-     * @param x           - The X field coordinate to go to.
-     * @param y           - The Y field coordinate to go to.
-     * @param targetAngle - The angle the robot should try to face when reaching destination in degrees.
-     * @param minSpeed    - The minimum speed that allows movement.
-     * @param maxSpeed    - Sets the maximum speed to drive.
+     * @param xTarget           - The X field coordinate to go to.
+     * @param yTarget           - The Y field coordinate to go to.
+     * @param angleTarget - The angle the robot should try to face when reaching destination in degrees.
+     * @param speedMin    - The minimum speed that allows movement.
+     * @param speedMax    - Sets the maximum speed to drive.
      * @param errorMultiplier - Sets the proportional speed to slow down.
-     * @param allowedError - Sets the allowable error to claim target reached.
-     * @param passThrough - Allows waypoint to be a drive through where the robot won't slow down.
+     * @param errorAllowed - Sets the allowable error to claim target reached.
+     * @param driveType - Allows waypoint to be a drive through where the robot won't slow down.
      * @return - Boolean true we have reached destination, false we have not
      */
-    public boolean driveToXY(double y, double x, double targetAngle, double minSpeed,
-                             double maxSpeed, double errorMultiplier, double allowedError,
-                             boolean passThrough) {
+    protected boolean driveToXY(double yTarget, double xTarget, double angleTarget, double speedMin,
+                             double speedMax, double errorMultiplier, double errorAllowed,
+                             int driveType) {
         boolean reachedDestination = false;
-        double x_world = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (backward! see notes)
-        double y_world = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches
-        double movement_x, movement_y, movement_turn;
-        double deltaX = y - x_world;
-        double deltaY = x - y_world;
+        // Not sure why, but the x and y are backwards
+        double xWorld = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (backward! see notes)
+        double yWorld = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches
+        double xMovement, yMovement, turnMovement;
+        // Not sure why, but the x and y are backwards
+        double deltaX = yTarget - xWorld;
+        double deltaY = xTarget - yWorld;
         double driveAngle = Math.atan2(deltaY, deltaX);
-        double deltaAngle = AngleWrapRadians(toRadians(targetAngle) - robotOrientationRadians);
+        double deltaAngle = AngleWrapRadians(toRadians(angleTarget) - robotOrientationRadians);
         double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         double driveSpeed;
         double turnSpeed = Math.toDegrees(deltaAngle) * errorMultiplier;
@@ -878,66 +889,66 @@ public abstract class AutonomousBase extends LinearOpMode {
         // This will allow us to do multi-point routes without huge slowdowns.
         // Such use cases will be changing angles, or triggering activities at
         // certain points.
-        if(!passThrough) {
+        if(!(driveType == DRIVE_THRU)) {
             driveSpeed = magnitude * errorMultiplier;
         } else {
-            driveSpeed = maxSpeed;
+            driveSpeed = speedMax;
         }
 
-        if(driveSpeed < minSpeed) {
-            driveSpeed = minSpeed;
-        } else if (driveSpeed > maxSpeed) {
-            driveSpeed = maxSpeed;
+        if(driveSpeed < speedMin) {
+            driveSpeed = speedMin;
+        } else if (driveSpeed > speedMax) {
+            driveSpeed = speedMax;
         }
 
         // Check if we passed through our point
-        if(magnitude <= allowedError) {
+        if(magnitude <= errorAllowed) {
             reachedDestination = true;
-            if(!passThrough) {
+            if(!(driveType == DRIVE_THRU)) {
                 robot.stopMotion();
             } else {
                 // This can happen if the robot is already at error distance for drive through
-                movement_x = driveSpeed * Math.cos(robotDriveAngle);
-                movement_y = driveSpeed * Math.sin(robotDriveAngle);
-                movement_turn = turnSpeed;
-                ApplyMovement(movement_x, movement_y, movement_turn);
+                xMovement = driveSpeed * Math.cos(robotDriveAngle);
+                yMovement = driveSpeed * Math.sin(robotDriveAngle);
+                turnMovement = turnSpeed;
+                ApplyMovement(yMovement, xMovement, turnMovement);
             }
         } else {
-            movement_x = driveSpeed * Math.cos(robotDriveAngle);
-            movement_y = driveSpeed * Math.sin(robotDriveAngle);
-            movement_turn = turnSpeed;
-            ApplyMovement(movement_x, movement_y, movement_turn);
+            xMovement = driveSpeed * Math.cos(robotDriveAngle);
+            yMovement = driveSpeed * Math.sin(robotDriveAngle);
+            turnMovement = turnSpeed;
+            ApplyMovement(yMovement, xMovement, turnMovement);
         }
 
         return reachedDestination;
     }
     /**
-     * @param y           - The Y field coordinate to go to.
-     * @param x           - The X field coordinate to go to.
-     * @param targetAngle  - The angle the robot should try to face when reaching destination in degrees.
-     * @param maxSpeed    - Sets the speed when we are driving through the point.
-     * @param passThrough - Slows the robot down to stop at destination coordinate.
+     * @param yTarget           - The Y field coordinate to go to.
+     * @param xTarget           - The X field coordinate to go to.
+     * @param angleTarget   - The angle the robot should try to face when reaching destination in degrees.
+     * @param speedMax    - Sets the speed when we are driving through the point.
+     * @param driveType     - Slows the robot down to stop at destination coordinate.
      * @return - Boolean true we have reached destination, false we have not
      */
-    public boolean driveToXY(double y, double x, double targetAngle, double maxSpeed,
-                             boolean passThrough) {
+    protected boolean driveToXY(double yTarget, double xTarget, double angleTarget,
+                             double speedMax, int driveType) {
 
         // Convert from cm to inches
 //        double errorMultiplier = 0.014;
         double errorMultiplier = 0.036;
-        double minDriveMagnitude = MIN_DRIVE_MAGNITUDE;
+        double speedMin = MIN_DRIVE_MAGNITUDE;
 //        double allowedError = 2;
-        double allowedError = passThrough ? 2.75 : 0.75;
+        double allowedError = (driveType == DRIVE_THRU) ? 2.75 : 0.75;
 
-        return (driveToXY(y, x, targetAngle, minDriveMagnitude, maxSpeed, errorMultiplier,
-                allowedError, passThrough));
+        return (driveToXY(yTarget, xTarget, angleTarget, speedMin, speedMax, errorMultiplier,
+                allowedError, driveType));
     }
 
     // Odometry updates
     private long lastUpdateTime = 0;
 
-    /**converts movement_y, movement_x, movement_turn into motor powers */
-    public void ApplyMovement(double movement_x, double movement_y, double movement_turn) {
+    /**converts xMovement, movement_x, movement_turn into motor powers */
+    public void ApplyMovement(double yMovement, double xMovement, double turnMovement) {
         long currTime = SystemClock.uptimeMillis();
         if(currTime - lastUpdateTime < 16){
             return;
@@ -949,10 +960,10 @@ public abstract class AutonomousBase extends LinearOpMode {
 //        double backLeft = movement_y-movement_turn-movement_x*1.5;
 //        double backRight = movement_y+movement_turn+movement_x*1.5;
 //        double frontRight = movement_y+movement_turn-movement_x*1.5;
-        double frontRight = movement_x - movement_y - movement_turn;
-        double frontLeft  = movement_x + movement_y + movement_turn;
-        double backRight  = movement_x + movement_y - movement_turn;
-        double backLeft   = movement_x - movement_y + movement_turn;
+        double frontRight = xMovement - yMovement - turnMovement;
+        double frontLeft  = xMovement + yMovement + turnMovement;
+        double backRight  = xMovement + yMovement - turnMovement;
+        double backLeft   = xMovement - yMovement + turnMovement;
 
         //find the maximum of the powers
         double maxRawPower = Math.abs(frontLeft);
@@ -978,21 +989,22 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*--------------------------------------------------------------------------------------------*/
     /**
      * Move robot to specified target position/orientation
-     * @param x_target (inches)
-     * @param y_target (inches)
-     * @param drive_angle (degrees; 0deg is straight ahead)
-     * @param move_power
-     * @param turn_power
+     * @param yTarget (inches)
+     * @param xTarget (inches)
+     * @param angleTarget (degrees; 0deg is straight ahead)
+     * @param speedMax
+     * @param turnMax
      * @param driveType - DRIVE_TO goes for accuracy and stops all motors; DRIVE_THRU does not
      */
-    public void driveToPosition( double x_target, double y_target, double drive_angle,
-                                  double move_power, double turn_power, int driveType ) {
+    /*
+    public void driveToPosition( double yTarget, double xTarget, double angleTarget,
+                                  double speedMax, double turnMax, int driveType ) {
         // Loop until we reach the target (or autonomous program aborts)
         while( opModeIsActive() ) {
             // Tend to any automatic mechanism movement updates
             performEveryLoop();
             // Power drivetrain motors to move to where we WANT to be
-            if( moveToPosition( x_target, y_target, drive_angle, move_power, turn_power, driveType ) ) {
+            if( moveToPosition( yTarget, xTarget, angleTarget, speedMax, turnMax, driveType ) ) {
                 // If this is the final destination, then stop all motors
                 if( driveType == DRIVE_TO ) {
                     robot.driveTrainMotorsZero();
@@ -1003,32 +1015,33 @@ public abstract class AutonomousBase extends LinearOpMode {
             }
         } // opModeIsActive()
     } // driveToPosition
+     */
 
     /*--------------------------------------------------------------------------------------------*/
     /**
      * Compute instantaneous motor powers needed to move toward the specified target position/orientation
      * NOTE that this system uses X and Y directions OPPOSITE of globalCoordinatePositionUpdate.
-     * @param x_target (inches)
-     * @param y_target (inches)
-     * @param drive_angle (degrees)
-     * @param move_power
-     * @param turn_power
+     * @param yTarget (inches)
+     * @param xTarget (inches)
+     * @param angleTarget (degrees)
+     * @param speedMax
+     * @param turnMax
      * @param driveType (DRIVE_TO or DRIVE_THRU)
      * @return boolean true/false for DONE?
      */
-    public boolean moveToPosition( double x_target, double y_target, double drive_angle,
-                                    double move_power, double turn_power, int driveType ) {
+    public boolean moveToPosition( double yTarget, double xTarget, double angleTarget,
+                                    double speedMax, double turnMax, int driveType ) {
         // Convert current robot X,Y position from encoder-counts to inches
         double x_world = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (X/Y backward! see notes)
         double y_world = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches
         double angle_world = robotOrientationRadians;                              // radians
         // Compute distance and angle-offset to the target point
-        double distanceToPoint   = Math.sqrt( Math.pow((x_target - x_world),2.0) + Math.pow((y_target - y_world),2.0) );
+        double distanceToPoint   = Math.sqrt( Math.pow((xTarget - x_world),2.0) + Math.pow((yTarget - y_world),2.0) );
         double distToPointAbs    = Math.abs( distanceToPoint );
-        double angleToPoint      = (distToPointAbs < 0.001)? angle_world : Math.atan2( (y_target - y_world), (x_target - x_world) ); // radians
+        double angleToPoint      = (distToPointAbs < 0.001)? angle_world : Math.atan2( (yTarget - y_world), (xTarget - x_world) ); // radians
         double deltaAngleToPoint = AngleWrapRadians( angleToPoint - angle_world );       // radians
         // What tolerance do we use to declare that we're at the target? (inches)
-        double xy_tolerance = (driveType == DRIVE_TO)? 0.25 : (3.5 * move_power); // 10%=0.35"; 100%=3.5"
+        double xy_tolerance = (driveType == DRIVE_TO)? 0.25 : (3.5 * speedMax); // 10%=0.35"; 100%=3.5"
         // Compute x & y components required to move toward point (with angle correction)
         double relative_x_to_point = Math.cos(deltaAngleToPoint) * distanceToPoint;
         double relative_y_to_point = Math.sin(deltaAngleToPoint) * distanceToPoint;
@@ -1036,13 +1049,13 @@ public abstract class AutonomousBase extends LinearOpMode {
         double relative_x_abs = Math.abs( relative_x_to_point );
         double relative_y_abs = Math.abs( relative_y_to_point );
         // Compute full movement power that preserves the shape/ratios of the intended movement direction
-        double movement_x_power = (relative_x_to_point / (relative_y_abs + relative_x_abs)) * move_power;
-        double movement_y_power = (relative_y_to_point / (relative_y_abs + relative_x_abs)) * move_power;
+        double movement_x_power = (relative_x_to_point / (relative_y_abs + relative_x_abs)) * speedMax;
+        double movement_y_power = (relative_y_to_point / (relative_y_abs + relative_x_abs)) * speedMax;
         // Are we looking for SPEED (DRIVE_THRU) or do we need ACCURATE final stopping position (DRIVE_TO)?
         if( driveType == DRIVE_TO ) {
            // At what distance should we start to reduce from full-power driving?
-           double x_slowdown_distance = 10.0 * move_power;  // 10% power =  1  inch; 100% power = 10 inches
-           double y_slowdown_distance =  7.5 * move_power;  // 10% power = 3/4 inch; 100% power = 7.5 inches
+           double x_slowdown_distance = 10.0 * speedMax;  // 10% power =  1  inch; 100% power = 10 inches
+           double y_slowdown_distance =  7.5 * speedMax;  // 10% power = 3/4 inch; 100% power = 7.5 inches
            double x_min_power = (relative_x_to_point > 0.0)? 0.10 : -0.10;
            double y_min_power = (relative_y_to_point > 0.0)? 0.10 : -0.10;
            // If we're inside the tolerance then min power can be 0.0
@@ -1050,13 +1063,13 @@ public abstract class AutonomousBase extends LinearOpMode {
            if( relative_y_abs <= xy_tolerance ) y_min_power = 0.0;
            // Is it time to start applying that slow-down to forward movement?
            if( relative_x_abs <= x_slowdown_distance )
-              movement_x_power = (relative_x_to_point/x_slowdown_distance) * move_power + x_min_power;
+              movement_x_power = (relative_x_to_point/x_slowdown_distance) * speedMax + x_min_power;
            // Is it time to start applying that slow-down to lateral movement?
            if( relative_y_abs <= y_slowdown_distance )
-              movement_y_power = (relative_y_to_point/y_slowdown_distance) * move_power + y_min_power;
+              movement_y_power = (relative_y_to_point/y_slowdown_distance) * speedMax + y_min_power;
         } // DRIVE_TO
         // Compute robot orientation-angle error
-        double robot_radian_err = AngleWrapRadians( Math.toRadians(drive_angle) - angle_world );  // radians
+        double robot_radian_err = AngleWrapRadians( Math.toRadians(angleTarget) - angle_world );  // radians
         // Determine the proper angle-error tolerance (within this tolerance rotation_power drops to 0%)
         double angle_tolerance = 0.25;  // degrees (not enforced for DRIVE_THRU, but used to retain angle alignment)
         double smallAngleSpeed = 0.09;  // (0.19 .. 0.10) due to min_turn_power
@@ -1064,7 +1077,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         // drop below 10% (0.10) until we're inside the angle tolerance (when rotation_power goes to zero).
         double small_rad_error = Math.abs( robot_radian_err / Math.toRadians(15.0) );
         double min_turn_power = (robot_radian_err <= Math.toRadians(angle_tolerance))? 0.00 : 0.10;
-        double adjusted_turn_power = (small_rad_error <= 1.0)? (small_rad_error * smallAngleSpeed + min_turn_power) : turn_power; 
+        double adjusted_turn_power = (small_rad_error <= 1.0)? (small_rad_error * smallAngleSpeed + min_turn_power) : turnMax;
         double rotation_power = (robot_radian_err > 0.0)? adjusted_turn_power : -adjusted_turn_power;
         // Translate X,Y,rotation power levels into mecanum wheel power values
         // Note that this is the same math used for tele-op robot-centric driving
