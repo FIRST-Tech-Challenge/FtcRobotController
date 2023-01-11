@@ -65,10 +65,17 @@ public class Chassis {
             rightBackPower /= max;
         }
 
-        motorFL.setPower(leftFrontPower);
-        motorFR.setPower(rightFrontPower);
-        motorBL.setPower(leftBackPower);
-        motorBR.setPower(rightBackPower);
+        if (gamepad.left_bumper) {
+            motorFL.setPower(leftFrontPower * 0.5);
+            motorFR.setPower(rightFrontPower * 0.5);
+            motorBL.setPower(leftBackPower * 0.5);
+            motorBR.setPower(rightBackPower * 0.5);
+        } else {
+            motorFL.setPower(leftFrontPower);
+            motorFR.setPower(rightFrontPower);
+            motorBL.setPower(leftBackPower);
+            motorBR.setPower(rightBackPower);
+        }
     }
 
     public static void runToPosition(int FL, int FR, int BL, int BR) {
