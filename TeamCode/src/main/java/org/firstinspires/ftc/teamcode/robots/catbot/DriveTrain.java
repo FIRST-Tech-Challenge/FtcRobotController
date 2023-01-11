@@ -41,8 +41,8 @@ class DriveTrain {
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setPower(1);
         motorBackLeft.setPower(1);
         motorBackRight.setPower(1);
@@ -65,6 +65,8 @@ class DriveTrain {
     }
 
     public void mechanumDrive(double forward, double strafe, double turn) {
+        forward = -forward;
+        turn = -turn;
         double r = Math.hypot(strafe, forward);
         double robotAngle = Math.atan2(forward, strafe) - Math.PI / 4;
         double rightX = turn;

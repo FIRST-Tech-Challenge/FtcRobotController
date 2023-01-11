@@ -28,7 +28,7 @@ public class IronGiantOpMode extends OpMode {
     public static boolean red = true; // team boolean variable red true is red team
     public static boolean farmCones = false;
     //miscellaneous variables
-    public static boolean calibrateOn = true;// turns off automatic elevator calibration
+    public static boolean calibrateOn = false;// turns off automatic elevator calibration
     private boolean calibrate = false;
     public static float DEADZONE = .1f;
     //vision variables
@@ -117,6 +117,7 @@ public class IronGiantOpMode extends OpMode {
     }
     public void telemetryOutput() {
         telemetry.addData("is in auton \t", auton);
+        telemetry.addData("tag value: \t", tagDetected);
         robot.elevatorNClaw.telemetryOutput();
         robot.driveTrain.telemetryOutput();
     }
@@ -128,21 +129,25 @@ public class IronGiantOpMode extends OpMode {
                 autonomous.add(new Drive(robot, 1.5));
                 autonomous.add(new ClawMove(robot, true));
                 autonomous.add(new Drive(robot, -1));
+                autonomous.add(new Turn(robot, 90));
+                autonomous.add(new Drive(robot, 1));
+                autonomous.add(new Turn(robot, 90));
+                autonomous.add(new Drive(robot, 1));
                 switch (tagValue) {
                     case 1: {
-                        autonomous.add(new Turn(robot, -90));
+                        autonomous.add(new Turn(robot, 90));
                         autonomous.add(new Drive(robot, 1));
                         autonomous.add(new Turn(robot, 90));
                         autonomous.add(new Drive(robot, 1));
                         break;
                     }
                     case 2: {
-                        autonomous.add(new Turn(robot, -90));
+                        autonomous.add(new Turn(robot, 90));
                         autonomous.add(new Drive(robot, 1));
                         break;
                     }
                     case 3: {
-                        autonomous.add(new Turn(robot, -90));
+                        autonomous.add(new Turn(robot, 90));
                         autonomous.add(new Drive(robot, 1));
                         autonomous.add(new Turn(robot, -90));
                         autonomous.add(new Drive(robot, 1));

@@ -15,7 +15,7 @@ class ElevatorNClaw {
     private DcMotorEx elevator = null;
     private Servo claw = null;
     public static float DEADZONE = .1f;
-    public static int MAXELEVTICS = 4320;
+    public static int MAXELEVTICS = 5240;
     public static int MINELEVTICS = 0;
     public static int ELEVTICKSPOS1 = MINELEVTICS;
     public static int ELEVTICKSPOS2 = 2300;
