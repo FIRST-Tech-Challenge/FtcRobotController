@@ -57,7 +57,6 @@ import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
  */
 
 @TeleOp(name = "TestJoystickDirect", group = "Concept")
-@Disabled
 public class MoveJoystickDirectTest extends OpMode {
 
     private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack;
