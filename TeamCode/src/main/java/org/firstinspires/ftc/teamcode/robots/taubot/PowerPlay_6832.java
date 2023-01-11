@@ -49,6 +49,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProviders;
+import org.firstinspires.ftc.teamcode.util.Vector2;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -264,8 +265,14 @@ public class PowerPlay_6832 extends OpMode {
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
 
-        if(gameState.equals(GameState.AUTONOMOUS)) {
-            resetGame();
+        resetGame();
+        if(gameState.equals(GameState.TELE_OP)){
+            robot.crane.resetCrane();
+        }
+
+        if(gameState.equals(GameState.DEMO)){
+            robot.crane.resetCrane();
+            robot.driveTrain.setPoseEstimate(startingPosition.getPose());
         }
         robot.crane.updateScoringPattern();
 
@@ -277,11 +284,14 @@ public class PowerPlay_6832 extends OpMode {
 
     public void resetGame(){
         robot.driveTrain.resetGridDrive(startingPosition);
-
     }
+
+    private static Vector2 position;
+    private static Vector2 craneTarget;
 
         @Override
     public void loop() {
+            robot.driveTrain.updatePositionForNextRun();
             dc.updateStickyGamepads();
             dc.handleStateSwitch();
 

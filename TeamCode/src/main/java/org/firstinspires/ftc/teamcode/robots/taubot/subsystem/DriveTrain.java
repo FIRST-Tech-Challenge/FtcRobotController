@@ -52,6 +52,7 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.AxisDirection;
 import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.PIDController;
+import org.firstinspires.ftc.teamcode.util.Vector2;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -81,7 +82,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private Pose2d poseEstimate, poseError, poseVelocity;
     private long lastLoopTime, loopTime;
 
-
+    private static Vector2 position;
 
     //devices ---------------------------------------------------------
     List<DcMotorEx> motors;
@@ -142,9 +143,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
                 motor.setMotorType(motorConfigurationType);
 
-                if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)){
-                    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                }
                 motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -187,7 +185,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         lastDriveVelocity = new Pose2d(0, 0, 0);
 
         //default pose - gotta have some initial pose
-        setPoseEstimate(Position.START_RIGHT.getPose());
 
         driveToNextTarget = Utils.getStateMachine(gridDrive)
                 .addState(() -> false)
@@ -273,6 +270,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
             rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
         }
+
+    }
+
+    public void updatePositionForNextRun(){
+        position = new Vector2(getPoseEstimate().getX(),getPoseEstimate().getY());
     }
 
     @Override
@@ -336,6 +338,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
             telemetryMap.put("left motor power", leftPower);
             telemetryMap.put("right motor power", rightPower);
+            telemetryMap.put("usePower", useMotorPowers);
+            telemetryMap.put("manualDrive", manualDriveEnabled);
 
             telemetryMap.put("loop time", loopTime / 1e9);
 
@@ -351,7 +355,16 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     }
 
     public void resetGridDrive(Position start){
-        setPoseEstimate(new Pose2d(start.getPose().getX(),start.getPose().getY()));
+        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
+            setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+            for (DcMotorEx motor : motors) {
+                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+        }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
+            setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+        }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
+            setPoseEstimate(new Pose2d(position.x,position.y));
+        }
     }
 
     @Override

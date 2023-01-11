@@ -41,6 +41,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.PIDController;
+import org.firstinspires.ftc.teamcode.util.Vector2;
 import org.firstinspires.ftc.teamcode.util.Vector3;
 
 import java.util.LinkedHashMap;
@@ -76,7 +77,7 @@ public class Crane implements Subsystem {
     public static double SHOULDER_ADJUST = 13;
     public static double EXTEND_ADJUST = .05;
     public static double TURRET_ADJUST = 20;
-    public static double HEIGHT_ADJUST = 5;
+    public static double HEIGHT_ADJUST = 13;
     public static double DISTANCE_ADJUST = 30;
 
     public static double SHOULDER_ERROR_MAX = 4;
@@ -198,6 +199,14 @@ public class Crane implements Subsystem {
 
         fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+ten,robot.driveTrain.getPoseEstimate().getY(),8);
         goToFieldCoordinate(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
+    }
+
+    public void resetCrane(){
+        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
+            fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+ten,robot.driveTrain.getPoseEstimate().getY(),8);
+        }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
+            fieldPositionTarget = new Vector3(home.x+robot.turret.getTurretPosition().getX(),home.y+robot.turret.getTurretPosition().getY(),home.z);
+        }
     }
 
     int five = 5;
