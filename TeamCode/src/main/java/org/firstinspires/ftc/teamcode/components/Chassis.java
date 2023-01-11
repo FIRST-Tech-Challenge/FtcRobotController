@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Chassis {
     public static DcMotor motorFL;
     public static DcMotor motorFR;
     public static DcMotor motorBL;
     public static DcMotor motorBR;
+
+    private static ElapsedTime runtime = new ElapsedTime();
 
     public static final double speed = 0.65;
 
@@ -59,6 +62,8 @@ public class Chassis {
     }
 
     public static void runToPosition(int FL, int FR, int BL, int BR) {
+        runtime.reset();
+
         motorFL.setTargetPosition(FL);
         motorFR.setTargetPosition(FR);
         motorBL.setTargetPosition(BL);
@@ -70,10 +75,17 @@ public class Chassis {
         motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while(motorFL.isBusy() || motorFR.isBusy() || motorBL.isBusy() || motorBR.isBusy()){
-            if (motorFL.isBusy()) motorFL.setPower(0.5 * speed);
-            if (motorFR.isBusy()) motorFR.setPower(0.5 * speed);
-            if (motorBL.isBusy()) motorBL.setPower(0.5 * speed);
-            if (motorBR.isBusy()) motorBR.setPower(0.5 * speed);
+            if (Math.abs(motorFL.getCurrentPosition() - FL) < 350 || Math.abs(motorFR.getCurrentPosition() - FR) < 350 || Math.abs(motorBL.getCurrentPosition() - BL) < 350 || Math.abs(motorBR.getCurrentPosition() - BR) < 350) {
+                motorFL.setPower(0.2);
+                motorFR.setPower(0.2);
+                motorBL.setPower(0.2);
+                motorBR.setPower(0.2);
+            } else {
+                motorFL.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
+                motorFR.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
+                motorBL.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
+                motorBR.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
+            }
         }
     }
 

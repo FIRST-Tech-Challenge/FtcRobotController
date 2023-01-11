@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 
-@TeleOp
+@TeleOp(name="Main TeleOp :)", group="Linear Opmode")
 public class Main_TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {

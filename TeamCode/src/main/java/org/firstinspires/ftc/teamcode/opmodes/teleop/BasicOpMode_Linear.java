@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -44,8 +45,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Each motion axis is controlled by one Joystick axis.
  */
 
-@TeleOp(name="Mecanum Drivetrain TeleOp :)", group="Linear Opmode")
-//@Disabled
+//@TeleOp(name="Mecanum Drivetrain TeleOp :)", group="Linear Opmode")
+@Disabled
 public class BasicOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
