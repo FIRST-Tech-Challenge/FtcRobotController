@@ -12,8 +12,6 @@ public class Chassis {
 
     private static ElapsedTime runtime = new ElapsedTime();
 
-    public static final double speed = 0.65;
-
     public Chassis(DcMotor mFL, DcMotor mFR, DcMotor mBL, DcMotor mBR){
         this.motorFL = mFL;
         this.motorFR = mFR;
@@ -41,10 +39,22 @@ public class Chassis {
         double left_x = gamepad.left_stick_x;
         double strafe_side = gamepad.right_stick_x;
 
-        double leftFrontPower = left_y - left_x - strafe_side;
-        double rightFrontPower = left_y + left_x + strafe_side;
-        double leftBackPower = left_y + left_x - strafe_side;
-        double rightBackPower = left_y - left_x + strafe_side;
+        double leftFrontPower;
+        double rightFrontPower;
+        double leftBackPower;
+        double rightBackPower;
+
+        if (Math.abs(left_y) < 0.2) {
+            leftFrontPower = -left_x * 0.8 - strafe_side * 0.6;
+            rightFrontPower = left_x * 0.8 + strafe_side * 0.6;
+            leftBackPower = left_x * 0.8 - strafe_side * 0.6;
+            rightBackPower = -left_x * 0.8 + strafe_side * 0.6;
+        } else {
+            leftFrontPower = (left_y - left_x) * 0.8 - strafe_side * 0.6;
+            rightFrontPower = (left_y + left_x) * 0.8 + strafe_side * 0.6;
+            leftBackPower = (left_y + left_x) * 0.8 - strafe_side * 0.6;
+            rightBackPower = (left_y - left_x) * 0.8 + strafe_side * 0.6;
+        }
 
         double max = Math.max(Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower)), Math.max(Math.abs(leftBackPower), Math.abs(rightBackPower)));
 
@@ -55,10 +65,10 @@ public class Chassis {
             rightBackPower /= max;
         }
 
-        motorFL.setPower(leftFrontPower * speed);
-        motorFR.setPower(rightFrontPower * speed);
-        motorBL.setPower(leftBackPower * speed);
-        motorBR.setPower(rightBackPower * speed);
+        motorFL.setPower(leftFrontPower);
+        motorFR.setPower(rightFrontPower);
+        motorBL.setPower(leftBackPower);
+        motorBR.setPower(rightBackPower);
     }
 
     public static void runToPosition(int FL, int FR, int BL, int BR) {
