@@ -240,7 +240,7 @@ public class Field {
     }
 
     public String getPattern(){
-
+        return "";
     }
 
     public void initPatterns(){
