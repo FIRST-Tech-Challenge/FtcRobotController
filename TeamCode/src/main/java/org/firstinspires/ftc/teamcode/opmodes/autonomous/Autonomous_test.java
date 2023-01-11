@@ -137,10 +137,12 @@ public class Autonomous_test extends LinearOpMode
         boolean parked = false;
 
         while(opModeIsActive() && !parked) {
-            runtime.reset();
-            runToPosition(-100, -100, -100, -100);
-
             gripper.setPosition(0.47);
+
+            sleep(500);
+
+            runtime.reset();
+            runToPosition(-50, -50, -50, -50);
 
             motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
