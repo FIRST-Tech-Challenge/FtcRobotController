@@ -48,7 +48,7 @@ class RogueRightAuto : RogueBaseAuto() {
 
     private fun Anvil.initialDepositPrep() = this
         .addTemporalMarker {
-            bot.lift.goToHigh()git
+            bot.lift.goToHigh()
             bot.claw.close()
             bot.arm.setToForwardsPos()
             bot.wrist.setToForwardsPos()
