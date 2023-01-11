@@ -128,7 +128,7 @@ public class Autonomous_root extends LinearOpMode {
 
             chassis.resetEncoder();
 
-            if (tagOfInterest.id == LEFT) chassis.runToPosition(1050, -1350, -1350, 1050);
+            if (tagOfInterest.id == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
             else if (tagOfInterest.id == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
 
             chassis.resetEncoder();
