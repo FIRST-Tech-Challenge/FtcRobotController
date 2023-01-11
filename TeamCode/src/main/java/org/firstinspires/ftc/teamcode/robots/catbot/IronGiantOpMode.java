@@ -73,7 +73,6 @@ public class IronGiantOpMode extends OpMode {
     public void init_loop() {
         aprilTagInitLoop();
         telemetry.update();
-
     }
     @Override
     public void loop() {
