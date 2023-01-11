@@ -202,7 +202,14 @@ public class Auto2022_23v2 extends LinearOpMode {
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         liftMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         servoGrabber1.setPosition(position);
         servoGrabber2.setPosition(position2);
@@ -361,7 +368,7 @@ public class Auto2022_23v2 extends LinearOpMode {
                 telemetry.update();
             }
         }
-        brakeMotors();
+        motorsOff();
         resetEncoders();
     }
 
@@ -377,7 +384,7 @@ public class Auto2022_23v2 extends LinearOpMode {
                 telemetry.addData("Lift Encoder Value:",liftMotor.getCurrentPosition());
                 telemetry.update();
             }
-            liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            liftMotor.setPower(0);
         }
     }
 
@@ -425,13 +432,6 @@ public class Auto2022_23v2 extends LinearOpMode {
         leftBackDrive.setPower(powerPercent);
         rightDrive.setPower(powerPercent);
         rightBackDrive.setPower(powerPercent);
-    }
-
-    public void brakeMotors(){
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void resetEncoders() { // Reset all encoder positions
