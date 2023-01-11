@@ -43,18 +43,10 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         return dst;
     }
 
-//    void grayTo3(Mat gray) {
-//        List<Mat> in = Arrays.asList(new Mat[]{gray, gray, gray});
-//        Core.merge(in, gray);
-//        for(Mat m : in) {
-//            m.release();
-//        }
-//    }
-
     @Override
     public Mat processFrame(Mat input) throws IllegalArgumentException {
-        int[] ca = {43, 200, 127};
-        int[] co = {100, 50, 127};
+        int[] ca = {35, 127, 127};
+        int[] co = {100, 255, 255};
         return processFrameWithRange(input, ca, co);
     }
 
@@ -66,7 +58,7 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         counter++;
 
         // Convert color to HSV
-        Imgproc.cvtColor(input, frame, Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(input, frame, Imgproc.COLOR_RGB2HSV);
 
         // Threshold the image
         matte = targetToleranceMatte(frame, colorTarget, colorTolerance);
@@ -78,14 +70,14 @@ public class ColorDetectPipeline extends OpenCvPipeline {
 
 
         // Get the contours of the image
-        Imgproc.findContours(blurMatte, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(thresholdMatte, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Find largest contour and then draw a rectangle around it for display
         double maxArea;
         int maxAreaContour;
         if (contours.size() > 0) {
             maxArea = 0.0;
-            maxAreaContour = -1;
+            maxAreaContour = 0;
 
             for (int i = 0; i < contours.size(); i++) {
                 if (Imgproc.contourArea(contours.get(i)) > maxArea) {

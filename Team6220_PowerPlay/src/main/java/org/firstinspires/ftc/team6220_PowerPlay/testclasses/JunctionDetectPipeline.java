@@ -10,8 +10,8 @@ public class JunctionDetectPipeline extends ColorDetectPipeline {
             throw new IllegalArgumentException("Input cannot be null");
         }
 
-        int[] ca = {43, 255, 255};
-        int[] co = {50, 25, 200};
+        int[] ca = {30, 255, 255};
+        int[] co = {30, 200, 200};
 
         return processFrameWithRange(input, ca, co);
     }

@@ -315,41 +315,41 @@ public abstract class BaseAutonomous extends BaseOpMode
         //tfod.loadModelFromAsset(Constants.TENSORFLOW_MODEL_ASSET, Constants.TENSORFLOW_LABELS);
     }
 
-    public void drivePID(double distance)
-    {
-        //PID constants
-        double Kp = 1.0;
-        double Ki = 0.0;
-        double Kd = 0.0;
-        //PID values
-        double P = 0.0;
-        double I = 0.0;
-        double D = 0.0;
-        //Random stuff
-        double currentError = 0.0;
-        double previousError = 0.0;
-        double previousTime = 0.0;
-        double maxIntegral = 0.0;
-        double currentPos = 0;
-        double currentTime = 0;
-        while(distance-currentPos <= 5 /* this is supposed to be a constant, value is tbd */){
-
-            currentError = distance-currentPos;
-
-            P = Kp * currentError;
-
-            I += Ki * (currentError * (currentTime - previousTime));
-
-            if(I > maxIntegral){
-                I = maxIntegral;
-            }else if(I < -maxIntegral);
-                I = -maxIntegral;
-            }
-
-            do
-
-            previousError = currentError;
-            previousTime = currentTime;
-        }
-    }
+//    public void drivePID(double distance)
+//    {
+//        //PID constants
+//        double Kp = 1.0;
+//        double Ki = 0.0;
+//        double Kd = 0.0;
+//        //PID values
+//        double P = 0.0;
+//        double I = 0.0;
+//        double D = 0.0;
+//        //Random stuff
+//        double currentError = 0.0;
+//        double previousError = 0.0;
+//        double previousTime = 0.0;
+//        double maxIntegral = 0.0;
+//        double currentPos = 0;
+//        double currentTime = 0;
+//        while(distance-currentPos <= 5 /* this is supposed to be a constant, value is tbd */){
+//
+//            currentError = distance-currentPos;
+//
+//            P = Kp * currentError;
+//
+//            I += Ki * (currentError * (currentTime - previousTime));
+//
+//            if(I > maxIntegral){
+//                I = maxIntegral;
+//            }else if(I < -maxIntegral);
+//                I = -maxIntegral;
+//            }
+//
+//            do
+//
+//            previousError = currentError;
+//            previousTime = currentTime;
+//        }
+//    }
 }
