@@ -84,6 +84,7 @@ public class HardwareSlimbot
 
     //====== MOTORS FOR GAMEPLAY MECHANISMS (turret / lift) =====
     protected DcMotorEx turretMotor        = null;    // A pair of motors operated as one with a Y cable
+    public double       turretMotorPowerSet= 0.0;     // Power we set the turret to
     public int          turretMotorPos     = 0;       // current encoder count
     public double       turretMotorVel     = 0.0;     // encoder counts per second
     public boolean      turretMotorAuto    = false;   // Automatic movement in progress
@@ -713,7 +714,7 @@ public class HardwareSlimbot
             // Have we achieved the target?
             // (temporarily limit to 16 cycles when verifying any major math changes!)
 //          if( liftMotorCycles >= 16 ) {
-            if( Math.abs(degreesToGo) < 0.8 ) {
+            if( Math.abs(degreesToGo) <= 0.8 ) {
                 liftMotorsSetPower( 0.0 );
                 if( ++liftMotorWait >= 2 ) {
                     liftMotorAuto = false;
@@ -845,7 +846,7 @@ public class HardwareSlimbot
             // Have we achieved the target?
             // (temporarily limit to 16 cycles when verifying any major math changes!)
 //          if( turretMotorCycles >= 16 ) {
-            if( Math.abs(degreesToGo) < 1.0 ) {
+            if( Math.abs(degreesToGo) <= 1.0 ) {
                 turretMotor.setPower( 0.0 );
                 if( ++turretMotorWait >= 2 ) {
                     turretMotorAuto = false;
@@ -857,12 +858,11 @@ public class HardwareSlimbot
                 // Reset the wait count back to zero
                 turretMotorWait = 0;
                 double turretMotorPower;
-                if( Math.abs(degreesToGo) > 15.0 )
-                    turretMotorPower = 0.010 * degreesToGo;  // 1 deg = 0.010
-                else
-                    turretMotorPower = 0.002 * degreesToGo;  // 1 deg = 0.002
+                turretMotorPower = 0.004 * degreesToGo;
+                turretMotorPower += degreesToGo > 0 ? 0.11 : -0.11;
                 if( turretMotorPower < -0.25 ) turretMotorPower = -0.25;
                 if( turretMotorPower > +0.25 ) turretMotorPower = +0.25;
+                turretMotorPowerSet = turretMotorPower;
                 turretMotor.setPower( turretMotorPower );
             }
         } // turretMotorAuto

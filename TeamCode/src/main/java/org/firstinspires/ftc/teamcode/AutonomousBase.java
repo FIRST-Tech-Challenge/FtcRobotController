@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -44,6 +46,10 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  TURN_SPEED_80        = 0.80;    //
     static final double  TURN_SPEED_90        = 0.90;    //
     static final double  TURN_SPEED_100       = 1.00;    //
+    static final double STRAFE_MULTIPLIER = 1.5;
+    static final double MIN_SPIN_RATE      = 0.05;    // Minimum power to turn the robot
+    static final double MIN_DRIVE_POW      = 0.05;    // Minimum speed to move the robot
+    static final double MIN_DRIVE_MAGNITUDE = Math.sqrt(MIN_DRIVE_POW*MIN_DRIVE_POW+MIN_DRIVE_POW*MIN_DRIVE_POW);
 
     //Files to access the algorithm constants
     File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
@@ -192,15 +198,15 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void alignToPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        final double TURN_SLOPE   = 0.0009;
-        final double TURN_OFFSET  = 0.0800;
+        final double TURN_SLOPE   = 0.0000;   // power-per-pixel (not power-per-degree!) .15 deg/pixel
+        final double TURN_OFFSET  = 0.1;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
         double turretPower;
         double drivePower;
 
         theLocalPole = pipelineBack.getDetectedPole();
-        while (opModeIsActive() && ((theLocalPole.alignedCount <= 3) || theLocalPole.properDistanceHighCount <= 3)) {
+        while (opModeIsActive() && ((theLocalPole.alignedCount <= 2) || theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
             if(theLocalPole.aligned) {
                 turretPower = 0.0;
@@ -209,10 +215,10 @@ public abstract class AutonomousBase extends LinearOpMode {
                 // Maximum number of pixels off would be half of 320, so 160.
                 // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
                 // go 1.0 to 0.08 from 24 degrees to 0.
-                turretPower = (theLocalPole.centralOffset > 0)?
-                        (-theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET) :
-                        (-theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET);
-
+                double minPower = (theLocalPole.centralOffset > 0)? -TURN_OFFSET : TURN_OFFSET;
+                turretPower = (-theLocalPole.centralOffset * TURN_SLOPE) + minPower;
+                if( turretPower < -0.25 ) turretPower = -0.25;
+                if( turretPower > +0.25 ) turretPower = +0.25;
             }
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
@@ -757,7 +763,218 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // gyroDrive()
 
     //============================ ODOMETRY-BASED NAVIGATION FUNCTIONS ============================
-    
+    protected void driveToWayPoint(double y_target, double x_target, double drive_angle,
+                                   double move_power, double turn_power, boolean drive_thru) {
+        // Loop until we get to destination.
+        performEveryLoop();
+        while(!driveToXY(y_target, x_target, drive_angle,
+                move_power, drive_thru)
+                && opModeIsActive()) {
+            performEveryLoop();
+        }
+    }
+
+    protected void rotateToWayPointAngle(double drive_angle,
+                                         double move_power, double turn_power) {
+        // Move the robot away from the wall.
+        performEveryLoop();
+        rotateToAngle(drive_angle, true);
+        // Loop until we get to destination.
+        performEveryLoop();
+        while(!rotateToAngle(drive_angle, false) && opModeIsActive()) {
+            performEveryLoop();
+        }
+    }
+
+    /**
+     * @param targetAngle  - The angle the robot should try to face when reaching destination.
+     * @param resetDriveAngle - When we start a new drive, need to reset the starting drive angle.
+     * @return - Boolean true we have reached destination, false we have not
+     */
+    public double lastDriveAngle;
+    public boolean rotateToAngle(double targetAngle, boolean resetDriveAngle) {
+        boolean reachedDestination = false;
+        double movement_x, movement_y, movement_turn;
+        double errorMultiplier = 0.016;
+        double minSpinRate = MIN_SPIN_RATE;
+        double deltaAngle = AngleWrapRadians(toRadians(targetAngle) - robotOrientationRadians);
+        double turnSpeed = Math.toDegrees(deltaAngle) * errorMultiplier;
+
+        // This should be set on the first call to start us on a new path.
+        if(resetDriveAngle) {
+            lastDriveAngle = deltaAngle;
+        }
+
+        // We are done if we are within 2 degrees
+        if(Math.abs(Math.toDegrees(deltaAngle)) < 2) {
+            // We have reached our destination if the angle is close enough
+            robot.stopMotion();
+            reachedDestination = true;
+            // We are done when we flip signs.
+        } else if(lastDriveAngle < 0) {
+            // We have reached our destination if the delta angle sign flips from last reading
+            if(deltaAngle >= 0) {
+                robot.stopMotion();
+                reachedDestination = true;
+            } else {
+                // We still have some turning to do.
+                movement_x = 0;
+                movement_y = 0;
+                if(turnSpeed > -minSpinRate) {
+                    turnSpeed = -minSpinRate;
+                }
+                movement_turn = turnSpeed;
+                ApplyMovement(movement_x, movement_y, movement_turn);
+            }
+        } else {
+            // We have reached our destination if the delta angle sign flips
+            if(deltaAngle <= 0) {
+                robot.stopMotion();
+                reachedDestination = true;
+            } else {
+                // We still have some turning to do.
+                movement_x = 0;
+                movement_y = 0;
+                if(turnSpeed < minSpinRate) {
+                    turnSpeed = minSpinRate;
+                }
+                movement_turn = turnSpeed;
+                ApplyMovement(movement_x, movement_y, movement_turn);
+            }
+        }
+        lastDriveAngle = deltaAngle;
+
+        return reachedDestination;
+    }
+
+    /**
+     * @param x           - The X field coordinate to go to.
+     * @param y           - The Y field coordinate to go to.
+     * @param targetAngle - The angle the robot should try to face when reaching destination in degrees.
+     * @param minSpeed    - The minimum speed that allows movement.
+     * @param maxSpeed    - Sets the maximum speed to drive.
+     * @param errorMultiplier - Sets the proportional speed to slow down.
+     * @param allowedError - Sets the allowable error to claim target reached.
+     * @param passThrough - Allows waypoint to be a drive through where the robot won't slow down.
+     * @return - Boolean true we have reached destination, false we have not
+     */
+    public boolean driveToXY(double y, double x, double targetAngle, double minSpeed,
+                             double maxSpeed, double errorMultiplier, double allowedError,
+                             boolean passThrough) {
+        boolean reachedDestination = false;
+        double x_world = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (backward! see notes)
+        double y_world = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches
+        double movement_x, movement_y, movement_turn;
+        double deltaX = y - x_world;
+        double deltaY = x - y_world;
+        double driveAngle = Math.atan2(deltaY, deltaX);
+        double deltaAngle = AngleWrapRadians(toRadians(targetAngle) - robotOrientationRadians);
+        double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        double driveSpeed;
+        double turnSpeed = Math.toDegrees(deltaAngle) * errorMultiplier;
+        // Have to convert from world angles to robot centric angles.
+        double robotDriveAngle = driveAngle - robotOrientationRadians;
+
+        // This will allow us to do multi-point routes without huge slowdowns.
+        // Such use cases will be changing angles, or triggering activities at
+        // certain points.
+        if(!passThrough) {
+            driveSpeed = magnitude * errorMultiplier;
+        } else {
+            driveSpeed = maxSpeed;
+        }
+
+        if(driveSpeed < minSpeed) {
+            driveSpeed = minSpeed;
+        } else if (driveSpeed > maxSpeed) {
+            driveSpeed = maxSpeed;
+        }
+
+        // Check if we passed through our point
+        if(magnitude <= allowedError) {
+            reachedDestination = true;
+            if(!passThrough) {
+                robot.stopMotion();
+            } else {
+                // This can happen if the robot is already at error distance for drive through
+                movement_x = driveSpeed * Math.cos(robotDriveAngle);
+                movement_y = driveSpeed * Math.sin(robotDriveAngle);
+                movement_turn = turnSpeed;
+                ApplyMovement(movement_x, movement_y, movement_turn);
+            }
+        } else {
+            movement_x = driveSpeed * Math.cos(robotDriveAngle);
+            movement_y = driveSpeed * Math.sin(robotDriveAngle);
+            movement_turn = turnSpeed;
+            ApplyMovement(movement_x, movement_y, movement_turn);
+        }
+
+        return reachedDestination;
+    }
+    /**
+     * @param y           - The Y field coordinate to go to.
+     * @param x           - The X field coordinate to go to.
+     * @param targetAngle  - The angle the robot should try to face when reaching destination in degrees.
+     * @param maxSpeed    - Sets the speed when we are driving through the point.
+     * @param passThrough - Slows the robot down to stop at destination coordinate.
+     * @return - Boolean true we have reached destination, false we have not
+     */
+    public boolean driveToXY(double y, double x, double targetAngle, double maxSpeed,
+                             boolean passThrough) {
+
+        // Convert from cm to inches
+//        double errorMultiplier = 0.014;
+        double errorMultiplier = 0.036;
+        double minDriveMagnitude = MIN_DRIVE_MAGNITUDE;
+//        double allowedError = 2;
+        double allowedError = passThrough ? 2.75 : 0.75;
+
+        return (driveToXY(y, x, targetAngle, minDriveMagnitude, maxSpeed, errorMultiplier,
+                allowedError, passThrough));
+    }
+
+    // Odometry updates
+    private long lastUpdateTime = 0;
+
+    /**converts movement_y, movement_x, movement_turn into motor powers */
+    public void ApplyMovement(double movement_x, double movement_y, double movement_turn) {
+        long currTime = SystemClock.uptimeMillis();
+        if(currTime - lastUpdateTime < 16){
+            return;
+        }
+        lastUpdateTime = currTime;
+
+        // 2.1 is the ratio between the minimum power to strafe, 0.19, and driving, 0.09.
+//        double frontLeft = movement_y-movement_turn+movement_x*1.5;
+//        double backLeft = movement_y-movement_turn-movement_x*1.5;
+//        double backRight = movement_y+movement_turn+movement_x*1.5;
+//        double frontRight = movement_y+movement_turn-movement_x*1.5;
+        double frontRight = movement_x - movement_y - movement_turn;
+        double frontLeft  = movement_x + movement_y + movement_turn;
+        double backRight  = movement_x + movement_y - movement_turn;
+        double backLeft   = movement_x - movement_y + movement_turn;
+
+        //find the maximum of the powers
+        double maxRawPower = Math.abs(frontLeft);
+        if(Math.abs(backLeft) > maxRawPower){ maxRawPower = Math.abs(backLeft);}
+        if(Math.abs(backRight) > maxRawPower){ maxRawPower = Math.abs(backRight);}
+        if(Math.abs(frontRight) > maxRawPower){ maxRawPower = Math.abs(frontRight);}
+
+        //if the maximum is greater than 1, scale all the powers down to preserve the shape
+        double scaleDownAmount = 1.0;
+        if(maxRawPower > 1.0){
+            //when max power is multiplied by this ratio, it will be 1.0, and others less
+            scaleDownAmount = 1.0/maxRawPower;
+        }
+        frontLeft *= scaleDownAmount;
+        backLeft *= scaleDownAmount;
+        backRight *= scaleDownAmount;
+        frontRight *= scaleDownAmount;
+
+        //now we can set the powers ONLY IF THEY HAVE CHANGED TO AVOID SPAMMING USB COMMUNICATIONS
+        robot.driveTrainMotors(frontLeft, frontRight, backLeft, backRight);
+    }
+
     /*--------------------------------------------------------------------------------------------*/
     /**
      * Move robot to specified target position/orientation

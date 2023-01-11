@@ -45,6 +45,7 @@ public class PoleOrientationExample extends LinearOpMode
     final int LOGSIZE = 10;
     double[]  angleOffset = new double[LOGSIZE];  // pixel offset error (left/right)
     double[]  distOffset  = new double[LOGSIZE];  // pixel offset error (too narrow/wide)
+    double[]  TurretPwr   = new double[LOGSIZE];  // turret motor power
 
     // Vision stuff
     PowerPlaySuperPipeline pipelineLow;
@@ -66,6 +67,10 @@ public class PoleOrientationExample extends LinearOpMode
          * webcam counterpart,first.
          */
 
+    public void performEveryLoop() {
+        robot.readBulkData();
+        robot.turretPosRun();
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -129,16 +134,27 @@ public class PoleOrientationExample extends LinearOpMode
         while(!(lowCameraInitialized && backCameraInitialized)) {
             sleep(100);
         }
+
+        telemetry.addLine("Cameras initialized...");
+        telemetry.update();
+
         /* Declare OpMode members. */
         robot.init(hardwareMap,false);
 
-        telemetry.addLine("Robot initialized, ready to start.");
+        telemetry.addLine("Hardware initialized...");
         telemetry.update();
-        waitForStart();
 
         // Perform setup needed to center turret
 //        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         robot.turretPosInit(-32.5 );
+        while( robot.turretMotorAuto == true ) {
+            performEveryLoop();
+        }
+
+        telemetry.addLine("Turret positioned, ready to start.");
+        telemetry.update();
+
+        waitForStart();
 
         while (opModeIsActive())
         {
@@ -147,15 +163,14 @@ public class PoleOrientationExample extends LinearOpMode
             sleep(20);
 
             // Execute the automatic turret movement code
-            robot.readBulkData();
-            robot.turretPosRun();
+            performEveryLoop();
 
             // Let us see if we can use the camera for distance.
             alignToPole();
             telemetry.addLine("Aligned... waiting for kick");
             for( int index=0; index<LOGSIZE; index++ ) {
-                telemetry.addData(" ","%d = %.1f %.1f pix",
-                        index, angleOffset[index], distOffset[index] );
+                telemetry.addData(" ","%d = %.1f %.1f pix (%.2f)",
+                        index, angleOffset[index], distOffset[index], TurretPwr[index] );
             }
             telemetry.update();
             sleep( 2000 );
@@ -174,17 +189,16 @@ public class PoleOrientationExample extends LinearOpMode
 
     void alignToPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        final double TURN_SLOPE   = 0.0008;
-        final double TURN_OFFSET  = 0.0650;
+        final double TURN_SLOPE   = 0.0000;   // power-per-pixel (not power-per-degree!) .15 deg/pixel
+        final double TURN_OFFSET  = 0.1;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
         double turretPower;
         double drivePower;
 
         theLocalPole = pipelineBack.getDetectedPole();
-        while (opModeIsActive() && ((theLocalPole.alignedCount <= 3) || theLocalPole.properDistanceHighCount <= 3)) {
-            robot.readBulkData();
-            robot.turretPosRun();
+        while (opModeIsActive() && ((theLocalPole.alignedCount <= 2) || theLocalPole.properDistanceHighCount <= 3)) {
+            performEveryLoop();
             if(theLocalPole.aligned) {
                 turretPower = 0.0;
             } else {
@@ -192,11 +206,13 @@ public class PoleOrientationExample extends LinearOpMode
                 // Maximum number of pixels off would be half of 320, so 160.
                 // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
                 // go 1.0 to 0.08 from 24 degrees to 0.
-                turretPower = (theLocalPole.centralOffset > 0)?
-                        (-theLocalPole.centralOffset * TURN_SLOPE - TURN_OFFSET) :
-                        (-theLocalPole.centralOffset * TURN_SLOPE + TURN_OFFSET);
-
+                double minPower = (theLocalPole.centralOffset > 0)? -TURN_OFFSET : TURN_OFFSET;
+                turretPower = (-theLocalPole.centralOffset * TURN_SLOPE) + minPower;
+                if( turretPower < -0.25 ) turretPower = -0.25;
+                if( turretPower > +0.25 ) turretPower = +0.25;
             }
+            robot.setTurretPower(turretPower);
+
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
             } else {
@@ -219,16 +235,18 @@ public class PoleOrientationExample extends LinearOpMode
             for( int index=1; index<LOGSIZE; index++ ) {
                 angleOffset[index-1] = angleOffset[index];
                 distOffset[index-1]  = distOffset[index];
+                TurretPwr[index-1]   = TurretPwr[index];
             }
             // Add the latest numbers to the end
             angleOffset[LOGSIZE-1] = theLocalPole.centralOffset;
             distOffset[LOGSIZE-1]  = theLocalPole.highDistanceOffset;
+            TurretPwr[LOGSIZE-1]   = turretPower;
             telemetry.addData("POLE","angle=%c distance=%c",
                     ((theLocalPole.aligned)? 'Y':'n'),
                     ((theLocalPole.properDistanceHigh)? 'Y':'n') );
             for( int index=0; index<LOGSIZE; index++ ) {
-                telemetry.addData(" ","%d = %.1f  %.1f pix",
-                        index, angleOffset[index], distOffset[index] );
+                telemetry.addData(" ","%d = %.1f  %.1f pix (%.2f)",
+                        index, angleOffset[index], distOffset[index], TurretPwr[index] );
             }
             telemetry.update();
             // sleep( 40 );
