@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware.Wheels;
@@ -66,12 +67,23 @@ public class WheelsOpModeLinear extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        boolean robotPosition = true;
+        boolean roboPosition2 = false;
+
+        w.runWithIncoder();
+        w.weelsCurrentPosition = 0;
+
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
-            w.driveForword(1000);
+//        while (opModeIsActive()) {
+        while (!isStarted() && !isStopRequested()){
+
+            w.driveLeft(1500);
+            telemetry.addData("hey i finish the first step", " ");
+            w.driveForword(-1000);
+
             xAxis = gamepad1.left_stick_x;
             yAxis = -gamepad1.left_stick_y;
             rot = gamepad1.right_stick_x;
@@ -82,5 +94,5 @@ public class WheelsOpModeLinear extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }
-    }
-}
+    }}
+

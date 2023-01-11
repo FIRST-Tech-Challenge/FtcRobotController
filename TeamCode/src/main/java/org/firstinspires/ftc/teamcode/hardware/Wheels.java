@@ -15,7 +15,7 @@ public class Wheels {
     private final DcMotor backRight;
     private final LinearOpMode opMode;
 
-
+    public int weelsCurrentPosition = 0;
 
     public Wheels(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -25,30 +25,47 @@ public class Wheels {
         backRight = opMode.hardwareMap.get(DcMotor.class, "BackRight");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-//        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//
-//        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
     }
-    public void driveForword(int weelsPosition){
-        driveWeelForward(frontRight, weelsPosition, "frontRight");
-        driveWeelForward(frontLeft, weelsPosition, "frontLeft");
-        driveWeelForward(backRight, weelsPosition, "backRight"); //לא תקין
-        driveWeelForward(backLeft, weelsPosition, "backLeft");
+        public void runWithIncoder() {
+//            frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+    public void driveForword(int forword){
+
+        driveWeelForword(frontRight,0.6, forword, "frontRight");
+        driveWeelForword(frontLeft,0.6, forword , "frontLeft");
+        driveWeelForword(backRight, 0.6, forword, "backRight");
+        driveWeelForword(backLeft, 0.6, forword, "backLeft");
         opMode.telemetry.update();
     }
 
-    private void driveWeelForward(DcMotor weel, int weelPosition, String weelName){
-        weel.setTargetPosition(weelPosition);
-        weel.setPower(0.5);
+    public void driveLeft(int left){
+        driveWeelLeft(frontRight,0.8 ,left, "frontRight");
+        driveWeelLeft(frontLeft,0.8 ,-left, "frontLeft");
+        driveWeelLeft(backRight,0.8 ,-left, "backRight");
+        driveWeelLeft(backLeft,0.8 ,left, "backLeft");
+
+    }
+    private void driveWeelLeft(DcMotor weel, double power, int left, String weelName){
+        weel.setTargetPosition(left);
+        weel.setPower(power);
+        weel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        opMode.telemetry.addData(weelName + " position: ", weel.getCurrentPosition());
+    }
+
+    private void driveWeelForword(DcMotor weel, double power, int forword, String weelName){
+
+        weel.setTargetPosition(forword);
+        weelsCurrentPosition = forword;
+        weel.setPower(power);
         weel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         opMode.telemetry.addData(weelName + " position: ", weel.getCurrentPosition());
      }
@@ -89,7 +106,7 @@ public class Wheels {
         backRight.setPower(br);
         frontLeft.setPower(fl);
         backLeft.setPower(bl);
-        opMode.telemetry.addData("frontRight position: ", frontRight.getCurrentPosition());
+//        opMode.telemetry.addData("frontRight position: ", frontRight.getCurrentPosition());
 //        opMode.telemetry.addData("frontLeft position: ", weel.getCurrentPosition());
 //        opMode.telemetry.addData(weelName + " position: ", weel.getCurrentPosition());
 //        opMode.telemetry.addData(weelName + " position: ", weel.getCurrentPosition());
