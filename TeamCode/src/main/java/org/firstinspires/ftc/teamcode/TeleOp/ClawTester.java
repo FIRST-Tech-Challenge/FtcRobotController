@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class ServoTester extends OpMode {
-    //declare all motors
+
+public class ClawTester extends OpMode {
+
     Servo rightClaw;
     Servo leftClaw;
 
@@ -14,23 +16,21 @@ public class ServoTester extends OpMode {
     public void init() {
         telemetry.addData("Status", "Initializing");
 
-        //assign all motors
         rightClaw = hardwareMap.get(Servo.class, "RightClaw");
         leftClaw =  hardwareMap.get(Servo.class, "LeftClaw");
 
-        //tells user that the motors have been initialized
-        telemetry.addData("Status", "Initialized!");
+        telemetry.addData("Status", "Initialized");
     }
 
     @Override
     public void loop() {
-        if(gamepad1.dpad_right) {
-            // rightClaw.setPosition(0.75);
-            leftClaw.setPosition(0.8);
+        if(gamepad1.b) {    // Close claw
+            rightClaw.setPosition(1);
+            leftClaw.setPosition(0);
         }
-        if(gamepad1.dpad_left) {
-            // rightClaw.setPosition(0.25);
-            leftClaw.setPosition(0.3);
+        if(gamepad1.x) {    // Open claw
+            rightClaw.setPosition(0.5);
+            leftClaw.setPosition(0.5);
         }
     }
 }
