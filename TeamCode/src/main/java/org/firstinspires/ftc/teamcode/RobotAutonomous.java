@@ -17,7 +17,7 @@ public class RobotAutonomous extends OpMode{
      */
     @Override
     public void init() {
-        //CommandScheduler.getInstance().reset();
+        CommandScheduler.getInstance().reset();
         mRobotContainer = new RobotContainer(gamepad1, gamepad2, telemetry, hardwareMap);
     }
 
@@ -58,6 +58,6 @@ public class RobotAutonomous extends OpMode{
         if (mAutonomousCommand != null) {
             mAutonomousCommand.cancel();
         }
-        //CommandScheduler.getInstance().reset();
+        CommandScheduler.getInstance().reset();
     }
 }
