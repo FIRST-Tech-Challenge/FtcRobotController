@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.DISTANCE_SENSOR_TO_FRONT_AXLE;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.MAX_CHASSIS_LENGTH;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.MIN_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.*;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
@@ -27,6 +31,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -35,8 +40,10 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequence;
@@ -72,10 +79,12 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     private double leftVelocity, rightVelocity;
     private double targetLeftVelocity, targetRightVelocity;
-    private double leftPower, rightPower;
+    private double leftPower, rightPower, chariotPower;
     private boolean useMotorPowers;
+    private double chassisLength, targetChassisLength, chassisLengthCorrection;
     private boolean maintainHeadingEnabled, imuOffsetsInitialized;
     private double maintainHeading, maintainHeadingCorrection;
+    private boolean chassisLengthOnTarget;
     private double heading, roll, pitch, pitchVelocity, angularVelocity;
     private double headingOffset, rollOffset, pitchOffset;
     public final TrajectorySequenceRunner trajectorySequenceRunner;
@@ -88,9 +97,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     List<DcMotorEx> motors;
     public DcMotorEx leftMotor = null;
     public DcMotorEx rightMotor = null;
+    public DcMotorEx chariotMotor = null;
 
     private BNO055IMU imu = null;
     private VoltageSensor batteryVoltageSensor;
+    private final DistanceSensor chassisLengthDistanceSensor;
 
     private double compensatedBatteryVoltage;
 
@@ -100,11 +111,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public static double HEADING_PID_TOLERANCE = 1;
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
+    //todo the following PID needs initial settings
+    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(0, 0, 0);
+    public static double CHASSIS_LENGTH_TOLERANCE = 1;
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(4, 0, 0);
     public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0.001, 0, 0);
 
     public static PIDController headingPID, distTravelledPID;
-    public static PIDController velocityPID;
+    public static PIDController velocityPID, chassisLengthPID;
 
     private final boolean simulated;
 
@@ -128,21 +142,27 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         if (simulated) {
-
+            chassisLengthDistanceSensor = new DistanceSensorSim(
+                    MIN_CHASSIS_LENGTH - (DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL));
             leftMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             rightMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
-            motors = Arrays.asList(leftMotor, rightMotor);
+            chariotMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+            motors = Arrays.asList(leftMotor, rightMotor, chariotMotor);
         } else {
-
+            chassisLengthDistanceSensor = hardwareMap.get(DistanceSensor.class, "distChariot");
+            batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
             leftMotor = hardwareMap.get(DcMotorEx.class, "motorLeft");
             rightMotor = hardwareMap.get(DcMotorEx.class, "motorRight");
-            motors = Arrays.asList(leftMotor, rightMotor);
+            chariotMotor = hardwareMap.get(DcMotorEx.class, "motorChariot");
+            motors = Arrays.asList(leftMotor, rightMotor, chariotMotor);
+
         }
             for (DcMotorEx motor : motors) {
                 MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
                 motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
                 motor.setMotorType(motorConfigurationType);
 
+                //do not zero the encoders in the constructor
                 motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -169,7 +189,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         //input is in inches, output is drive speed
         distTravelledPID = new PIDController(DIST_TRAVELLED_PID);
         distTravelledPID.setInputRange(-144, 144);
-        distTravelledPID.setOutputRange(-30, 30); //todo - what is the Max speed for tombot?
+        distTravelledPID.setOutputRange(-30, 30); //todo - what is the Max speed for taubot?
         distTravelledPID.setContinuous(false);
         distTravelledPID.setTolerance(1);
         distTravelledPID.enable();
@@ -179,7 +199,13 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         velocityPID.setOutputRange(-100, 100);
         velocityPID.setContinuous(true);
         velocityPID.setTolerance(HEADING_PID_TOLERANCE);
-        velocityPID.enable();                                                                                     
+        velocityPID.enable();
+
+        chassisLengthPID = new PIDController(CHASSIS_LENGTH_PID);
+        chassisLengthPID.setInputRange(MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
+        chassisLengthPID.setOutputRange(-1, 1);
+        chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
+        chassisLengthPID.enable();
 
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
@@ -191,6 +217,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 .build();
 
     }
+    //end Constructor
 
     public void setTargetVelocity(double vel){
         velocityPID.setSetpoint(vel);
@@ -220,10 +247,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             double dt = loopTime / 1e9;
             leftPosition += leftVelocity * dt;
             rightPosition += rightVelocity * dt;
+            chassisLength = targetChassisLength;
 
         } else {
             leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
+            chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE
+                    + DISTANCE_TARGET_TO_BACK_WHEEL;
+
         }
 
         Orientation orientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
@@ -263,13 +294,21 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             driveToNextTarget.execute();
         }
 
+
         if (useMotorPowers) {
             leftMotor.setPower(leftPower);
             rightMotor.setPower(rightPower);
+            chariotMotor.setPower(chariotPower);
         } else {
             leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
             rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
         }
+
+        //set the PID for the chassis length / chariot extension
+        chassisLengthPID.setInput(chassisLength);
+        chassisLengthPID.setSetpoint(targetChassisLength);
+        chassisLengthCorrection = chassisLengthPID.performPID();
+        chariotMotor.setPower(chassisLengthCorrection);
 
     }
 
@@ -752,6 +791,20 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         for (DcMotorEx motor : motors) {
             motor.setMode(runMode);
         }
+    }
+
+    public double getChassisLength() {
+        return chassisLength;
+    }
+
+    public void setChassisLength(double targetChassisLength) {
+        this.targetChassisLength = targetChassisLength;
+        chassisLengthPID.setSetpoint(targetChassisLength);
+    }
+
+    public boolean chassisLengthOnTarget() {
+        chassisLengthOnTarget = chassisLengthPID.onTarget();
+        return chassisLengthOnTarget;
     }
 
     public void driveIMU(double heading, double velocity){

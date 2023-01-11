@@ -44,6 +44,7 @@ public class Robot implements Subsystem {
     public DriveTrain driveTrain;
     public Turret turret;
     public Crane crane;
+    public UnderArm underarm;
     public Subsystem[] subsystems;
     public Field field;
 
@@ -76,8 +77,9 @@ public class Robot implements Subsystem {
         driveTrain = new DriveTrain(hardwareMap, simulated);
         turret = new Turret(hardwareMap, this, simulated);
         crane = new Crane(hardwareMap, this, simulated);
+        underarm = new UnderArm(hardwareMap, this, simulated);
 
-        subsystems = new Subsystem[] {driveTrain, turret, crane}; //{driveTrain, turret, crane};
+        subsystems = new Subsystem[] {driveTrain, turret, crane};//, underarm}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();

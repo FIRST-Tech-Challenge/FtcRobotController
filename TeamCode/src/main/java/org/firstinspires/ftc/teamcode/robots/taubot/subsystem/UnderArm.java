@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
+
+
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.ELBOW_TO_WRIST;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.HIGH_TIER_SHIPPING_HUB_HEIGHT;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.SHOULDER_AXLE_TO_GROUND_HEIGHT;
@@ -14,13 +16,12 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleR
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DistanceSensorSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
@@ -31,6 +32,7 @@ import java.util.Map;
 
 @Config(value = "PPUnderArm")
 public class UnderArm implements Subsystem {
+    private Robot robot;
     public static int SHOULDER_START_ANGLE = 110;
     public static int IK_SHOULDER_OFFSET = 10;
     public static int IK_START_X = 2;
@@ -71,7 +73,6 @@ public class UnderArm implements Subsystem {
 
     public Servo elbowServo, wristServo, lassoServo;
     public Servo shoulderServo, turretServo;
-    private final DistanceSensor chariotDistanceSensor;
 
     private PIDController shoulderPID;
 
@@ -83,21 +84,26 @@ public class UnderArm implements Subsystem {
 
     private Articulation articulation;
 
-    public UnderArm(HardwareMap hardwareMap, boolean simulated) {
+    public UnderArm(HardwareMap hardwareMap, Robot robot, boolean simulated) {
+        this.robot = robot;
+        PwmControl.PwmRange axonRange = new PwmControl.PwmRange(500, 2500);
+
         if (simulated) {
             shoulderServo = new ServoSim();
             elbowServo = new ServoSim();
             wristServo = new ServoSim();
             lassoServo = new ServoSim();
             turretServo = new ServoSim();
-            chariotDistanceSensor = new DistanceSensorSim(100);
         } else {
-            shoulderServo = hardwareMap.get(Servo.class, "firstLinkServo");
-            elbowServo = hardwareMap.get(Servo.class, "secondLinkServo");
-            wristServo = hardwareMap.get(Servo.class, "wristServo");
-            lassoServo = hardwareMap.get(Servo.class, "lassoServo");
-            turretServo = hardwareMap.get(Servo.class, "turretServo");
-            chariotDistanceSensor = hardwareMap.get(DistanceSensor.class, "distChariot");
+            shoulderServo = hardwareMap.get(ServoImplEx.class, "firstLinkServo");
+            ((ServoImplEx) shoulderServo).setPwmRange(axonRange);
+            elbowServo = hardwareMap.get(ServoImplEx.class, "secondLinkServo");
+            ((ServoImplEx) elbowServo).setPwmRange(axonRange);
+            wristServo = hardwareMap.get(ServoImplEx.class, "wristServo");
+            lassoServo = hardwareMap.get(ServoImplEx.class, "lassoServo");
+            ((ServoImplEx) lassoServo).setPwmRange(axonRange);
+            turretServo = hardwareMap.get(ServoImplEx.class, "turretServo");
+            ((ServoImplEx) turretServo).setPwmRange(axonRange);
         }
 
         articulation = Articulation.MANUAL;
@@ -361,7 +367,7 @@ public class UnderArm implements Subsystem {
     @Override
     public void update(Canvas fieldOverlay) {
 
-         chariotDistance = chariotDistanceSensor.getDistance(DistanceUnit.INCH);
+        chariotDistance = robot.driveTrain.getChassisLength();
 
         articulate(articulation);
 
