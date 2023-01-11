@@ -816,24 +816,6 @@ public class HardwareSlimbot
     } // turretPosInit
 
     /*--------------------------------------------------------------------------------------------*/
-    /* turretPowerRun()                                                                             */
-    public void turretPowerRun() {
-        if(turretMotorRunning) {
-            if((turretMotorPwrSet > 0) && (turretAngle >= TURRET_ANGLE_MAX)) {
-                    // If we are at max angle, set the power to 0.
-                    turretMotorRunning = false;
-                    turretMotorPwrSet = 0;
-                    turretMotor.setPower(0);
-            } else if((turretMotorPwrSet < 0) && (turretAngle <= TURRET_ANGLE_MIN)) {
-                    // If we are at max angle, set the power to 0.
-                    turretMotorRunning = false;
-                    turretMotorPwrSet = 0;
-                    turretMotor.setPower(0);
-            }
-        }
-    }
-
-    /*--------------------------------------------------------------------------------------------*/
     /* turretPosRun()                                                                             */
     public void turretPosRun()
     {
@@ -866,6 +848,20 @@ public class HardwareSlimbot
                 turretMotor.setPower( turretMotorPower );
             }
         } // turretMotorAuto
+        // Has a fixed power movement been initiated?
+        else if( turretMotorRunning ) {
+            if((turretMotorPwrSet > 0) && (turretAngle >= TURRET_ANGLE_MAX)) {
+                // If we are at max angle, set the power to 0.
+                turretMotorRunning = false;
+                turretMotorPwrSet = 0;
+                turretMotor.setPower(0);
+            } else if((turretMotorPwrSet < 0) && (turretAngle <= TURRET_ANGLE_MIN)) {
+                // If we are at max angle, set the power to 0.
+                turretMotorRunning = false;
+                turretMotorPwrSet = 0;
+                turretMotor.setPower(0);
+            }
+        }
     } // turretPosRun
 
     /*--------------------------------------------------------------------------------------------*/
