@@ -92,7 +92,7 @@ public class Arm {
 
         if (rightLift.isBusy() && leftLift.isBusy()){
             if (getCurrentPosition() > armTarget) {
-                if (getCurrentPosition() > middleJunction) {
+                if (getCurrentPosition() > middleJunction && getTargetPosition() != middleJunction) {
                     leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                     rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 } else {
@@ -111,6 +111,8 @@ public class Arm {
     }
 
     public static int getCurrentPosition(){ return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2; }
+
+    public static int getTargetPosition(){ return (leftLift.getTargetPosition() + rightLift.getTargetPosition()) / 2; }
 
     public static double getPower(){ return (leftLift.getPower() + rightLift.getPower()) / 2; }
 }
