@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Helper.Robot;
@@ -38,19 +39,29 @@ public class VSliderTest extends LinearOpMode {
              * Joystick controls for slider
              */
 
-            double vSliderPower =  gamepad2.left_stick_y;
-            robot.vSlider.setPower(vSliderPower);
+            // Testing slider, claw, and arm on gamepad2.
+            // Sign of the power doesn't matter. Since the motor is reversed at initialization, the encoder values have to be negated.
 
-//
-//            if(gamepad2.a) {
-//                robot.MoveSlider(1, 1000);
-//            }
-//            if(gamepad2.b) {
-//                robot.MoveSlider(1, -1000);
-//            }
+            if(gamepad2.a) {
+                robot.vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.MoveSlider(-1, -2000);
+            }
+            if(gamepad2.b) {
+                robot.vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.MoveSlider(1, -2000);
+            }
+            if(gamepad2.x) {
+                robot.vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.MoveSlider(0.2, 2000);
+            }
+            if(gamepad2.y) {
+                robot.vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.MoveSlider(-1, 2000);
+            }
 
-            telemetry.addData("vSliderPower", vSliderPower);
+            telemetry.addData("vSlider power", robot.vSlider.getPower());
             telemetry.addData("vSlider Encoder", robot.vSlider.getCurrentPosition());
+
             telemetry.update();
 
         }

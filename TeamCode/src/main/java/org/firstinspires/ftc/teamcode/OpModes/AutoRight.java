@@ -16,10 +16,10 @@ import org.firstinspires.ftc.teamcode.Helper.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Auto Meet 3", group = "Concept")
-public class AutoLeft extends LinearOpMode {
+public class AutoRight extends LinearOpMode {
 
     private static final String tfodModel = "jan2023mk2";
-     private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel + ".tflite";
+    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel + ".tflite";
 
     private static final String[] LABELS = {
             "arrow",
@@ -119,25 +119,25 @@ public class AutoLeft extends LinearOpMode {
                         Step = AutoSteps.park;
                         break;
 
-                    case vSlider:
-                        robot.MoveSlider(0.8,1000);
-                        Step = AutoSteps.endAuto;
-                        break;
-
-                    case deliverPreLoad:
-                        DeliverPreLoad();
-                        Step = AutoSteps.park;
-                        break;
-
-                    case CycleThreeCones:
-                        //Drive to the stack
-                        robot.DriveToPosition(0.8, -35, 60, false);
-                        robot.turnRobotToAngle(90);
-                        for(int i = 0; i < 4; i++) {
-                            CycleCone();
-                        }
-                        Step = AutoSteps.park;
-                        break;
+//                    case vSlider:
+//                        robot.MoveSlider(0.8,1000);
+//                        Step = AutoSteps.endAuto;
+//                        break;
+//
+//                    case deliverPreLoad:
+//                        DeliverPreLoad();
+//                        Step = AutoSteps.park;
+//                        break;
+//
+//                    case CycleThreeCones:
+//                        //Drive to the stack
+//                        robot.DriveToPosition(0.8, -35, 60, false);
+//                        robot.turnRobotToAngle(90);
+//                        for(int i = 0; i < 4; i++) {
+//                            CycleCone();
+//                        }
+//                        Step = AutoSteps.park;
+//                        break;
 
                     case park:
                         Park(parkingTarget);
@@ -198,62 +198,5 @@ public class AutoLeft extends LinearOpMode {
             robot.DriveToPosition(0.3, -75, 70, true);
 
         }
-    }
-
-    public void DeliverPreLoad() {
-        /** First swing the arm up and go to the pole. **/
-        //Close claw and swing the arm
-        robot.claw.setPosition(1);
-        robot.SwingArmToPosition(1, 65);
-        robot.swingArm.setPower(robot.swingArmHoldingPower);
-        //Drive to the pole
-        robot.DriveToPosition(0.8, 35, 65, true);
-        /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
-        //Moves the slider to the right height
-//        robot.MoveSliderToPosition(0.5, 1000);
-        //Swings the arm down
-        robot.SwingArmToPosition(1, 20);
-        //Opens and closes the claw to drop the cone
-        robot.claw.setPosition(0);
-        sleep(500);
-        robot.claw.setPosition(1);
-        //Swings the arm back up
-        robot.SwingArmToPosition(1, 65);
-        robot.swingArm.setPower(robot.swingArmHoldingPower);
-        //lowers the slider
-        robot.MoveSlider(0.6, 0);
-    }
-
-    public void CycleCone(){
-        /** First go to the stack of cones and grab a cone **/
-        //Open the claw and swing the arm down
-        robot.claw.setPosition(0);
-        robot.SwingArmToPosition(1,20);
-        //Drive forward slightly
-        robot.DriveToPosition(0.6, 0, 25, true);
-        //close the claw and grab onto the cone
-        robot.claw.setPosition(1);
-        /** Now drive to the medium pole **/
-        //Drive to the pole and face it
-        robot.DriveToPosition(0.7,0,-60, true);
-        robot.turnRobotToAngle(210);
-        robot.stopDriveMotors();
-        /** Now deliver the cone **/
-        //Move the slider to the right height and swing down
-        robot.MoveSlider(0.6, -5500);
-        robot.SwingArmToPosition(1, 20);
-        //Open and close claw
-        robot.claw.setPosition(1);
-        sleep(500);
-        robot.claw.setPosition(0);
-        //swing arm back up
-        robot.SwingArmToPosition(1, 65);
-        robot.swingArm.setPower(robot.swingArmHoldingPower);
-        //lower slider
-        robot.MoveSlider(0.6, 0);
-        //Moves back to the stack
-        robot.turnRobotToAngle(90);
-        robot.stopDriveMotors();
-        robot.DriveToPosition(0.7,0,60, true);
     }
 }

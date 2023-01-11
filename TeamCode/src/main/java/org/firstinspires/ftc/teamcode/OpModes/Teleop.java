@@ -21,7 +21,7 @@ public class Teleop extends LinearOpMode {
     public double acceleration = 0.5;
 
     // holding power for vertical slider.
-    private double holdingPower = 0.001;
+    private double holdingPower = 0.0001;
 
     //Motor powers
     public double fl_power = 0;
@@ -88,7 +88,7 @@ public class Teleop extends LinearOpMode {
              * Joystick controls for slider, arm, and claw.
              */
 
-            double vSliderPower =  gamepad2.left_stick_y * 0.6;
+            double vSliderPower =  -gamepad2.left_stick_y;
             robot.vSlider.setPower(vSliderPower);
 
 
@@ -102,34 +102,16 @@ public class Teleop extends LinearOpMode {
 
             // Arm
             if(gamepad2.right_bumper) {
-                robot.claw.setPosition(0);
+                robot.claw.setPosition(1);
                 robot.SwingArmToPosition(1, 65);
                 robot.swingArm.setPower(robot.swingArmHoldingPower);
             }
             if(gamepad2.left_bumper) {
-                robot.claw.setPosition(0);
+                robot.claw.setPosition(1);
                 robot.SwingArmToPosition(-1, 20);
                 robot.swingArm.setPower(0);
             }
 
-
-            // Testing slider, claw, and arm on gamepad2.
-
-            if(gamepad2.a) {
-                robot.MoveSlider(1, 1000);
-                robot.vSlider.setPower(0);
-            }
-            if(gamepad2.b) {
-                robot.MoveSlider(1, 3000);
-            }
-
-            //  movement testing on gamepad1.
-            if(gamepad1.a) {
-                robot.Strafe(1, 30);
-            }
-            if(gamepad1.b) {
-                robot.Strafe(1, -30);
-            }
 
 
 

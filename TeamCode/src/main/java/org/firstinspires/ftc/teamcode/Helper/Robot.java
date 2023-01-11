@@ -110,7 +110,7 @@ public class Robot {
 
 
         claw.setDirection(Servo.Direction.FORWARD);
-        vSlider.setDirection(DcMotorSimple.Direction.REVERSE);
+        vSlider.setDirection(DcMotorSimple.Direction.FORWARD);
         swingArm.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set behavior when zero power is applied.
@@ -343,17 +343,16 @@ public class Robot {
     }
 
     public void MoveSlider(double speed, int Position) {
-        timeout_ms = 1000;
+        timeout_ms = 5000;
 
         runtime.reset();
 
         this.vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        this.vSlider.setTargetPosition(1000);
+        this.vSlider.setTargetPosition(Position);
 
         //set the mode to go to the target position
         this.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.vSlider.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         //Set the power of the motor.
@@ -370,7 +369,6 @@ public class Robot {
         timeout_ms = 3000;
 
         runtime.reset();
-
 
         this.swingArm.setTargetPosition(Position);
 
