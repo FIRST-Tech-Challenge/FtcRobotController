@@ -209,10 +209,18 @@ public abstract class AutonomousBase extends LinearOpMode {
         double ki = 0.0;
         double kd = 0.0;
         double error;
+        double errorChange;
         double integralSum = 0.0;
         double derivative;
         double lastError = 0.0;
         boolean aligning = true;
+        double a = 0.707;
+        double currentFilterEstimate = 0.0;
+        double previousFilterEstimate = 0.0;
+        // This value should be related to ki*integralSum where that value does not exceed
+        // something like 25% max power (so if our max power is 0.20 the limit for ki*integralSum
+        // would be 0.05 and 0.05 / ki = maxIntegralSum. Start high and bring it down once ki solved
+        double maxIntegralSum = 12.5;
         ElapsedTime timer = new ElapsedTime();
 
         theLocalPole = pipelineBack.getDetectedPole();
@@ -229,8 +237,13 @@ public abstract class AutonomousBase extends LinearOpMode {
                 }
                 // The sign is backwards because centralOffset is negative of the power we need.
                 error = 0.0 + theLocalPole.centralOffset;
-                derivative = (error - lastError) / timer.seconds();
+                errorChange = error - lastError;
+                currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;
+                previousFilterEstimate = currentFilterEstimate;
+                derivative = currentFilterEstimate / timer.seconds();
                 integralSum = integralSum + (error * timer.seconds());
+                if(integralSum > maxIntegralSum) integralSum = maxIntegralSum;
+                if(integralSum < -maxIntegralSum) integralSum = -maxIntegralSum;
                 turretPower = (kp * error) + (ki * integralSum) + (kd * derivative);
                 lastError = error;
                 timer.reset();
@@ -267,7 +280,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         }
         robot.stopMotion();
         robot.setTurretPower(0.0);
-    } // alignToPole
+    } // alignToPoleTurretPID
 
     /*---------------------------------------------------------------------------------*/
     void alignToPole() {

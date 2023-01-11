@@ -28,6 +28,7 @@ import static java.lang.Math.toRadians;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -228,7 +229,7 @@ public class PoleOrientationExample extends LinearOpMode
                 robot.stopMotion();
                 robot.setTurretPower(0);
             } else {
-                driveAndRotateTurretAngle(drivePower, turretPower);
+                driveAndRotateTurretAngle(drivePower, turretPower, true);
             }
 
             // Shift all previous instrumentation readings down one entry
@@ -256,6 +257,93 @@ public class PoleOrientationExample extends LinearOpMode
         robot.setTurretPower(0);
     } // alignToPole
 
+    void alignToPoleTurretPID() {
+        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
+        final double TURN_SLOPE   = 0.0000;   // power-per-pixel (not power-per-degree!) .15 deg/pixel
+        final double TURN_OFFSET  = 0.1;
+        final double DRIVE_SLOPE  = 0.004187;
+        final double DRIVE_OFFSET = 0.04522;
+        double turretPower;
+        double drivePower;
+        // PID stuff
+        // Possible values 0.002, 0.005, 0.00005
+        double kp = 0.01;
+        double ki = 0.0;
+        double kd = 0.0;
+        double error;
+        double errorChange;
+        double integralSum = 0.0;
+        double derivative;
+        double lastError = 0.0;
+        boolean aligning = true;
+        double a = 0.707;
+        double currentFilterEstimate = 0.0;
+        double previousFilterEstimate = 0.0;
+        // This value should be related to ki*integralSum where that value does not exceed
+        // something like 25% max power (so if our max power is 0.20 the limit for ki*integralSum
+        // would be 0.05 and 0.05 / ki = maxIntegralSum. Start high and bring it down once ki solved
+        double maxIntegralSum = 12.5;
+        ElapsedTime timer = new ElapsedTime();
+
+        theLocalPole = pipelineBack.getDetectedPole();
+        while (opModeIsActive() && ((theLocalPole.alignedCount <= 2) || theLocalPole.properDistanceHighCount <= 3)) {
+            performEveryLoop();
+            if(theLocalPole.aligned) {
+                aligning = false;
+                turretPower = 0.0;
+            } else {
+                if(!aligning) {
+                    aligning = true;
+                    lastError = 0.0;
+                    integralSum = 0.0;
+                }
+                // The sign is backwards because centralOffset is negative of the power we need.
+                error = 0.0 + theLocalPole.centralOffset;
+                errorChange = error - lastError;
+                currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;
+                previousFilterEstimate = currentFilterEstimate;
+                derivative = currentFilterEstimate / timer.seconds();
+                integralSum = integralSum + (error * timer.seconds());
+                if(integralSum > maxIntegralSum) integralSum = maxIntegralSum;
+                if(integralSum < -maxIntegralSum) integralSum = -maxIntegralSum;
+                turretPower = (kp * error) + (ki * integralSum) + (kd * derivative);
+                lastError = error;
+                timer.reset();
+/*
+                // Need to calculate the turn power based on pixel offset
+                // Maximum number of pixels off would be half of 320, so 160.
+                // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
+                // go 1.0 to 0.08 from 24 degrees to 0.
+                double minPower = (theLocalPole.centralOffset > 0)? -TURN_OFFSET : TURN_OFFSET;
+                turretPower = (-theLocalPole.centralOffset * TURN_SLOPE) + minPower;
+                if( turretPower < -0.25 ) turretPower = -0.25;
+                if( turretPower > +0.25 ) turretPower = +0.25;
+ */
+            }
+            if(theLocalPole.properDistanceHigh) {
+                drivePower = 0.0;
+            } else {
+                // Need to calculate the drive power based on pixel offset
+                // Maximum number of pixels off would be in the order of 30ish.
+                // This is a first guess that will have to be expiremented on.
+                // Go 1.0 to 0.08 from 30 pixels to 2.
+                drivePower = (theLocalPole.highDistanceOffset > 0 )?
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
+            }
+            if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
+                robot.stopMotion();
+                robot.setTurretPower(0);
+            } else {
+                driveAndRotateTurretAngle(drivePower, turretPower, false);
+            }
+
+            theLocalPole = pipelineBack.getDetectedPole();
+        }
+        robot.stopMotion();
+        robot.setTurretPower(0.0);
+    } // alignToPoleTurretPID
+
     /**
      * Ensure angle is in the range of -180 to +180 deg (-PI to +PI)
      * This function won't have to be copied, it is part of auto base.
@@ -275,12 +363,14 @@ public class PoleOrientationExample extends LinearOpMode
     /*---------------------------------------------------------------------------------*/
     /*  AUTO: Drive at specified angle and power while turning at specified power.     */
     /*---------------------------------------------------------------------------------*/
-    void driveAndRotateTurretAngle(double drivePower, double turretPower) {
+    void driveAndRotateTurretAngle(double drivePower, double turretPower, boolean turretFacingFront) {
         double frontRight, frontLeft, rearRight, rearLeft, maxPower, xTranslation, yTranslation;
         double turretAngle = robot.turretAngle;
 
         // Correct the angle for the turret being in the back.
-        turretAngle = AngleWrapDegrees( turretAngle + 180.0 );
+        if(!turretFacingFront) {
+            turretAngle = AngleWrapDegrees(turretAngle + 180.0);
+        }
 
         yTranslation = drivePower * Math.cos(toRadians(turretAngle));
         xTranslation = drivePower * Math.sin(toRadians(turretAngle));
@@ -292,7 +382,7 @@ public class PoleOrientationExample extends LinearOpMode
 
         // Normalize the values so none exceed +/- 1.0
         maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
-                   Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
+                Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
         if (maxPower > 1.0)
         {
             rearLeft   /= maxPower;
@@ -303,5 +393,5 @@ public class PoleOrientationExample extends LinearOpMode
         // Update motor power settings:
         robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
         robot.setTurretPower(turretPower);
-    } // driveAtTurretAngle
+    } // driveAndRotateTurretAngle
 }
