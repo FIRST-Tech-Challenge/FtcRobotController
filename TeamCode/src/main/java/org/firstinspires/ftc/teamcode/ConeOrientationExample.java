@@ -21,9 +21,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsInstances.SONIC_RANGE_FRONT;
+import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_FIRST_PING;
+import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_MOST_RECENT;
 import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.ConeBlue;
 import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.ConeRed;
+import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.Pole;
 import static java.lang.Math.abs;
+import static java.lang.Math.toRadians;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -54,7 +59,17 @@ public class ConeOrientationExample extends LinearOpMode
     boolean turretFacingFront = false;
     boolean lowCameraInitialized = false;
     boolean backCameraInitialized = false;
+    boolean testBlue = true;
+    final int LOGSIZE = 10;
+    double[]  angleOffset = new double[LOGSIZE];  // pixel offset error (left/right)
+    double[]  distOffset  = new double[LOGSIZE];  // pixel offset error (too narrow/wide)
+    double[]  TurretPwr   = new double[LOGSIZE];  // turret motor power
 
+    public void performEveryLoop() {
+        robot.readBulkData();
+        robot.turretPosRun();
+        robot.liftPosRun();
+    }
         /**
          * NOTE: Many comments have been omitted from this sample for the
          * sake of conciseness. If you're just starting out with EasyOpenCv,
@@ -82,10 +97,10 @@ public class ConeOrientationExample extends LinearOpMode
             public void onOpened()
             {
                 pipelineBack = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0);
+                        false, false, 144.0);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                pipelineLow.debugType = ConeRed;
+                pipelineLow.debugType = Pole;
                 backCameraInitialized = true;
             }
 
@@ -105,10 +120,10 @@ public class ConeOrientationExample extends LinearOpMode
             public void onOpened()
             {
                 pipelineLow = new PowerPlaySuperPipeline(false, false,
-                        true, false, 160.0);
+                        !testBlue, testBlue, 160.0);
                 webcamLow.setPipeline(pipelineLow);
                 webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                pipelineLow.debugType = ConeBlue;
+                pipelineLow.debugType = testBlue ? ConeBlue : ConeRed;
                 lowCameraInitialized = true;
             }
 
@@ -125,6 +140,9 @@ public class ConeOrientationExample extends LinearOpMode
         while(!(lowCameraInitialized && backCameraInitialized)) {
             sleep(100);
         }
+        telemetry.addLine("Cameras initialized...");
+        telemetry.update();
+
         /* Declare OpMode members. */
         robot.init(hardwareMap,false);
 
@@ -135,43 +153,13 @@ public class ConeOrientationExample extends LinearOpMode
         // Perform setup needed to center turret
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
 
-        PowerPlaySuperPipeline.AnalyzedCone cone;
-
         while (opModeIsActive())
         {
-            // Don't burn an insane amount of CPU cycles in this sample because
-            // we're not doing anything else
-            sleep(20);
-
-            // Execute the automatic turret movement code
-            robot.readBulkData();
-            robot.turretPosRun();
-
-            // Figure out which poles the pipeline detected, and print them to telemetry
-            cone = pipelineLow.getDetectedRedCone();
-            if(cone != null) {
-                telemetry.addLine(String.format("Cone: Center=%s, Central Offset=%f, Centered:%s",
-                        cone.corners.center.toString(), cone.centralOffset, cone.aligned));
-                telemetry.addLine(String.format("Cone Width=%f Cone Height=%f", cone.corners.width,
-                        cone.corners.height));
-                // Ensure we're ALIGNED to pole before we attempt to use Ultrasonic RANGING
-                if (!cone.aligned) {
-                    aligning = true;
-//              rotateToCenterCone(cones.get(0));
-                }
-                // We've achieved ALIGNMENT, so halt the left/right rotation
-                else if (aligning) {
-                    robot.stopMotion();
-                    aligning = false;
-                    ranging = true;
-                }
-                // If aligned, adjust the distance to the pole
-                if (cone.aligned && ranging) {
-//              distanceToCone();
-                }
-            }
-            telemetry.addData("Sonar Range (Front)", "%.1f", robot.updateSonarRangeF() );
+            // Let us see if we can use the camera for distance.
+            alignToConeStack(testBlue, 30);
+            telemetry.addLine("Aligned... waiting for kick");
             telemetry.update();
+            sleep( 2000 );
         }
         // Close out the vision
         if(webcamLow != null) {
@@ -182,23 +170,67 @@ public class ConeOrientationExample extends LinearOpMode
         }
     }
 
-    void distanceToCone() {
-        // Value in inches?
-        double desiredDistance = 28.0;
-        double distanceTolerance = 1.0;
-        double range = robot.updateSonarRangeF();
-        double rangeErr = range - desiredDistance;
-        if( abs(rangeErr) > distanceTolerance ) {
-            // Drive towards/away from the pole
-            robot.driveTrainFwdRev( (rangeErr>0.0)? +0.10 : -0.10 );
-        } else {
-            robot.stopMotion();
-            ranging = false;
+    /*
+     * @param blueCone - true = blue cone stack, false = red cone stack.
+     * @param targetDistance - distance in cm from the cone stack to line up.
+     */
+    void alignToConeStack(boolean blueCone, int targetDistance) {
+        PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
+        final double DRIVE_SLOPE  = 0.004187;
+        final double DRIVE_OFFSET = 0.04522;
+        final double TURN_SLOPE   = 0.004187;
+        final double TURN_OFFSET  = 0.04522;
+        double drivePower;
+        double turnPower;
+        int coneDistance;
+        int distanceError;
+        int properDistanceCount = 0;
+        // This is in CM
+        final int MAX_DISTANCE_ERROR = 2;
+
+        theLocalCone = blueCone ? pipelineLow.getDetectedBlueCone() : pipelineLow.getDetectedRedCone();
+        // This first reading just triggers the ultrasonic to send out its first ping, need to wait
+        // 50 msec for it to get a result.
+        robot.fastSonarRange(SONIC_RANGE_FRONT, SONIC_FIRST_PING);
+        sleep(50);
+        while (opModeIsActive() && ((theLocalCone.alignedCount <= 3) ||
+                properDistanceCount <= 3)) {
+            coneDistance = robot.fastSonarRange(SONIC_RANGE_FRONT, SONIC_MOST_RECENT);
+            distanceError = targetDistance - coneDistance;
+            if(abs(distanceError) <= MAX_DISTANCE_ERROR) {
+                properDistanceCount++;
+            } else {
+                properDistanceCount = 0;
+            }
+            drivePower = (distanceError > 0) ? (distanceError * DRIVE_SLOPE + DRIVE_OFFSET) :
+                    (distanceError * DRIVE_SLOPE - DRIVE_OFFSET);
+            turnPower = (theLocalCone.centralOffset > 0) ?
+                    (theLocalCone.centralOffset * TURN_SLOPE + TURN_OFFSET) :
+                    (theLocalCone.centralOffset * TURN_SLOPE - TURN_OFFSET);
+            driveAndRotate(drivePower, turnPower);
         }
+        robot.stopMotion();
     }
 
-    void rotateToCenterCone(PowerPlaySuperPipeline.AnalyzedCone theCone)
-    {
-        robot.driveTrainTurn( (theCone.centralOffset>0)? +0.10 : -0.10 );
-    }
+    void driveAndRotate(double drivePower, double turnPower) {
+        double frontRight, frontLeft, rearRight, rearLeft, maxPower, xTranslation, yTranslation;
+
+        frontLeft  = drivePower - turnPower;
+        frontRight = drivePower + turnPower;
+        rearLeft   = drivePower - turnPower;
+        rearRight  = drivePower + turnPower;
+
+        // Normalize the values so none exceed +/- 1.0
+        maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
+                Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
+        if (maxPower > 1.0)
+        {
+            rearLeft   /= maxPower;
+            rearRight  /= maxPower;
+            frontLeft  /= maxPower;
+            frontRight /= maxPower;
+        }
+        // Update motor power settings:
+        robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
+    } // driveAndRotate
 }

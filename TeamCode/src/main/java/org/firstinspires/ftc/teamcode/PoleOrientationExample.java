@@ -173,7 +173,7 @@ public class PoleOrientationExample extends LinearOpMode
             performEveryLoop();
 
             // Let us see if we can use the camera for distance.
-            alignToPoleTurretPID();
+            alignToPole(false);
             telemetry.addLine("Aligned... waiting for kick");
             for( int index=0; index<LOGSIZE; index++ ) {
                 telemetry.addData(" ","%d = %.1f %.1f pix (%.2f)",
@@ -194,76 +194,8 @@ public class PoleOrientationExample extends LinearOpMode
 
     /*---------------------------------------------------------------------------------*/
 
-    void alignToPole() {
-        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        final double TURN_SLOPE   = 0.0000;   // power-per-pixel (not power-per-degree!) .15 deg/pixel
-        final double TURN_OFFSET  = 0.1;
-        final double DRIVE_SLOPE  = 0.004187;
-        final double DRIVE_OFFSET = 0.04522;
-        double turretPower;
-        double drivePower;
-
-        theLocalPole = pipelineBack.getDetectedPole();
-        while (opModeIsActive() && ((theLocalPole.alignedCount <= 2) || theLocalPole.properDistanceHighCount <= 3)) {
-            performEveryLoop();
-            if(theLocalPole.aligned) {
-                turretPower = 0.0;
-            } else {
-                // Need to calculate the turn power based on pixel offset
-                // Maximum number of pixels off would be half of 320, so 160.
-                // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
-                // go 1.0 to 0.08 from 24 degrees to 0.
-                double minPower = (theLocalPole.centralOffset > 0)? -TURN_OFFSET : TURN_OFFSET;
-                turretPower = (-theLocalPole.centralOffset * TURN_SLOPE) + minPower;
-                if( turretPower < -0.25 ) turretPower = -0.25;
-                if( turretPower > +0.25 ) turretPower = +0.25;
-            }
-            robot.setTurretPower(turretPower);
-
-            if(theLocalPole.properDistanceHigh) {
-                drivePower = 0.0;
-            } else {
-                // Need to calculate the drive power based on pixel offset
-                // Maximum number of pixels off would be in the order of 30ish.
-                // This is a first guess that will have to be expiremented on.
-                // Go 1.0 to 0.08 from 30 pixels to 2.
-                drivePower = (theLocalPole.highDistanceOffset > 0 )?
-                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
-                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
-            }
-            if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
-                robot.stopMotion();
-                robot.setTurretPower(0);
-            } else {
-                driveAndRotateTurretAngle(drivePower, turretPower, true);
-            }
-
-            // Shift all previous instrumentation readings down one entry
-            for( int index=1; index<LOGSIZE; index++ ) {
-                angleOffset[index-1] = angleOffset[index];
-                distOffset[index-1]  = distOffset[index];
-                TurretPwr[index-1]   = TurretPwr[index];
-            }
-            // Add the latest numbers to the end
-            angleOffset[LOGSIZE-1] = theLocalPole.centralOffset;
-            distOffset[LOGSIZE-1]  = theLocalPole.highDistanceOffset;
-            TurretPwr[LOGSIZE-1]   = turretPower;
-            telemetry.addData("POLE","angle=%c distance=%c",
-                    ((theLocalPole.aligned)? 'Y':'n'),
-                    ((theLocalPole.properDistanceHigh)? 'Y':'n') );
-            for( int index=0; index<LOGSIZE; index++ ) {
-                telemetry.addData(" ","%d = %.1f  %.1f pix (%.2f)",
-                        index, angleOffset[index], distOffset[index], TurretPwr[index] );
-            }
-            telemetry.update();
-            // sleep( 40 );
-            theLocalPole = pipelineBack.getDetectedPole();
-        }
-        robot.stopMotion();
-        robot.setTurretPower(0);
-    } // alignToPole
-
-    void alignToPoleTurretPID() {
+    void alignToPole(boolean turretFacingFront) {
+        PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
@@ -289,9 +221,13 @@ public class PoleOrientationExample extends LinearOpMode
         // something like 25% max power (so if our max power is 0.20 the limit for ki*integralSum
         // would be 0.05 and 0.05 / ki = maxIntegralSum. Start high and bring it down once ki solved
         double maxIntegralSum = 11.0;
+
+        // If we add back front camera, use boolean to determine which pipeline to use.
+//        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
+        alignmentPipeline = pipelineBack;
         ElapsedTime timer = new ElapsedTime();
 
-        theLocalPole = pipelineBack.getDetectedPole();
+        theLocalPole = alignmentPipeline.getDetectedPole();
         while (opModeIsActive() && ((theLocalPole.alignedCount <= TURRET_CYCLES_AT_POS) ||
                 theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
@@ -332,10 +268,10 @@ public class PoleOrientationExample extends LinearOpMode
                 robot.stopMotion();
                 robot.setTurretPower(0);
             } else {
-                driveAndRotateTurretAngle(drivePower, turretPower, false);
+                driveAndRotateTurretAngle(drivePower, turretPower, turretFacingFront);
             }
 
-            theLocalPole = pipelineBack.getDetectedPole();
+            theLocalPole = alignmentPipeline.getDetectedPole();
         }
         robot.stopMotion();
         robot.setTurretPower(0.0);

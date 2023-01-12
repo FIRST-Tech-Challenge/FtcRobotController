@@ -171,7 +171,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     private Point allianceDetectRightTl;
     private Point allianceDetectRightBr;
 
-    // Public statics to be used by opMode
+    // Public to be used by opMode
     public int signalZoneL;
     public int signalZoneR;
 
@@ -361,8 +361,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
      * The box constraint that considers a pole "centered"
      */
 //    RotatedRect CENTERED_OBJECT = new RotatedRect(new double[]{160.0, 120.0, 48.0, 320.0, 0.0});
-    FourPointRect CENTERED_OBJECT = new FourPointRect(new Point(136.0, 0.0), new Point(184.0, 0.0),
-            new Point(136.0, 239.0), new Point(184.0, 239.0));
+    FourPointRect CENTERED_OBJECT;
 
     /*
      * Colors

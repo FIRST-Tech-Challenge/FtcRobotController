@@ -81,7 +81,7 @@ public class AutonomousLeft extends AutonomousBase {
             public void onOpened()
             {
                 pipelineBack = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0);
+                        false, false, 144.0);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 backCameraInitialized = true;
@@ -231,7 +231,7 @@ public class AutonomousLeft extends AutonomousBase {
         if( opModeIsActive()) {
             telemetry.addData("Skill", "alignToPole");
             telemetry.update();
-            alignToPole();
+            alignToPole(false);
         }
 
         // Adjust distance to pole
