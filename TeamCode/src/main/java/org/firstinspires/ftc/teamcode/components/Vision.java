@@ -23,11 +23,6 @@ public class Vision {
     static OpenCvCamera camera;
     static SleeveDetector aprilTagDetectionPipeline;
 
-    //sleeve
-    static final int LEFT = 1;
-    static final int MIDDLE = 2;
-    static final int RIGHT = 3;
-
     static AprilTagDetection tagOfInterest = null;
 
     //c&p :(
@@ -70,7 +65,7 @@ public class Vision {
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
         for(AprilTagDetection tag : currentDetections) {
-            if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
+            if(tag.id == 1 || tag.id == 2 || tag.id == 3) {
                 tagOfInterest = tag;
                 break;
             }
@@ -78,6 +73,7 @@ public class Vision {
     }
 
     public static int tagId() {
-        return 0;
+        if(tagOfInterest != null) return tagOfInterest.id;
+        else return -1;
     }
 }
