@@ -20,7 +20,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	private Slide slideControl;
 	private Claw clawControl;
 
-	public static int x = 64;
+	public static int x = 58;
 	public static double y = -3.75;
 	public static int firstLinetoHeadingX = 60;
 	public static double angle = 91.45;
