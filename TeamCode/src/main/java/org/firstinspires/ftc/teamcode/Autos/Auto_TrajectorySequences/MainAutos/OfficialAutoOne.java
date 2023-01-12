@@ -20,8 +20,9 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	private Slide slideControl;
 	private Claw clawControl;
 
-	public static int x = 1270;
+	public static int x = 64;
 	public static double y = -3.75;
+	public static int firstLinetoHeadingX = 60;
 	public static double angle = 91.45;
 	public static double strafe = 14;
 
@@ -45,6 +46,8 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 
 		TrajectorySequence junction = bot.trajectorySequenceBuilder(startPose)
 				//If 13.53 V, y = -3.5
+
+				//High Junction with Preload
 				.UNSTABLE_addTemporalMarkerOffset(0.75,()->{
 					slideControl.setHighJunction(telemetry);
 					armControl.setExtake();
@@ -52,41 +55,41 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					//slideControl.setIntakeOrGround();
 					//armControl.setIntake();
 				})
-				.lineToLinearHeading(new Pose2d(59.5, y, Math.toRadians(90))) //preload
+				.lineToLinearHeading(new Pose2d(x, y, Math.toRadians(90))) //preload
+				//moves down after flipping
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1450);
 				})
 				.waitSeconds(.5)
+				//opens claw
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
-
-
 				})
 				.waitSeconds(0.15)
+				//moves to
 				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
-
 					clawControl.toggleWristRotate();
 					slideControl.setCustom(790);
 					armControl.setIntake();//ppcocaine
 				})
 				.waitSeconds(0.25)
 				.strafeLeft(14)
-				.lineToLinearHeading(new Pose2d(46 ,24, Math.toRadians(angle)))
+				.lineToLinearHeading(new Pose2d(46 ,25.5, Math.toRadians(angle)))
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(x);
+					slideControl.setCustom(1270);
 				})
 				.waitSeconds(.25)
-				.lineToLinearHeading(new Pose2d(46.5,-3.75,Math.toRadians(90)))
+				.lineToLinearHeading(new Pose2d(50,-3.5,Math.toRadians(30)))
 				.UNSTABLE_addTemporalMarkerOffset(0.45,()->{
 					slideControl.setHighJunction(telemetry);
 					armControl.setExtake();
 					clawControl.toggleWristRotate();
 				})
-				.strafeRight(17)
+				/*.strafeRight(17)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1450);
 				})
@@ -159,6 +162,8 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					clawControl.toggleAutoOpenClose();
 				})
 				//.splineToConstantHeading(new Vector2d(x,y),Math.toRadians(angle))
+
+				 */
 				.build();
 
 		TrajectorySequence goToConeStack = bot.trajectorySequenceBuilder(junction.end())
