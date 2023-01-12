@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -50,7 +52,9 @@ public class Autonomous_root extends LinearOpMode {
         arm.init();
         arm.armTarget = 0;
 
-        Vision vision = new Vision("Webcam 1");
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        Vision vision = new Vision(camera);
         vision.init();
 
         telemetry.addLine("waiting to start!");
@@ -74,22 +78,23 @@ public class Autonomous_root extends LinearOpMode {
         boolean parked = false;
 
         while(opModeIsActive() && !parked) {
+            //RIGHT BLUE
+
             arm.closeGripper();
-
-            chassis.runToPosition(-50, -50, -50, -50);
-
-            sleep(500);
-
-            //arm.runToPosition(200);
+            arm.runToPosition(arm.highJunction);
 
             chassis.resetEncoder();
+            chassis.runToPosition(-2000, -2000, -2000, -2000);
 
-            if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
-            else if (vision.tagId() == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
+            chassis.runToPosition(-1200, 2200, -1200, 2200);
 
-            chassis.resetEncoder();
+            arm.openGripper();
+            arm.runToPosition(0);
 
-            chassis.runToPosition(-1500, -1500, -1500, -1500);
+//            if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
+//            else if (vision.tagId() == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
+//
+//            chassis.resetEncoder();
 
             telemetry.addLine("parked!");
 
