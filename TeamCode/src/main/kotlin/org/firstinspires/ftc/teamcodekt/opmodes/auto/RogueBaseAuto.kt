@@ -21,7 +21,7 @@ abstract class RogueBaseAuto : BlackOp() {
     protected fun updateComponents() {
         bot.updateBaseComponents(.0075)
         bot.drive.update()
-        mTelemetry.update()
+//        mTelemetry.update()
     }
 
     companion object {

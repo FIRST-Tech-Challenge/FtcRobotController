@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcodekt
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.listeners.ReforgedGamepad
+import ftc.rogue.blacksmith.util.kt.invoke
+import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder
 import org.firstinspires.ftc.teamcodekt.components.Camera
-import org.firstinspires.ftc.teamcodekt.components.Lift
 import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
 
 @TeleOp
@@ -38,17 +40,18 @@ class TeastOp1 : BlackOp() {
 @Config
 class TeastOp2 : RogueBaseAuto() {
     companion object {
-        @JvmField var TEST_LIFT_HEIGHT = 100
+        @JvmField
+        var TEST_LIFT_HEIGHT = 100
     }
 
     override fun executeOrder66() {
-        bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-        bot.wrist.setToBackwardsPos()
-        bot.claw.openForIntakeWide()
+        val parallelEncoder = hwMap<DcMotorEx>( "FL")
+        val perpendicularEncoder =  hwMap<DcMotorEx>( "BR")
 
         Scheduler.launchOnStart(this) {
-            bot.lift.height = TEST_LIFT_HEIGHT
-            updateComponents()
+            mTelemetry.addData("Parallel", parallelEncoder.currentPosition)
+            mTelemetry.addData("Perpendicular", perpendicularEncoder.currentPosition)
+            mTelemetry.update()
         }
     }
 }

@@ -7,16 +7,23 @@ import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.units.GlobalUnits
 import ftc.rogue.blacksmith.util.kt.pow
 import org.firstinspires.ftc.teamcode.AutoData
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence
 
 @Autonomous
 class RogueRightAuto : RogueBaseAuto() {
     override fun executeOrder66() {
         val startPose = GlobalUnits.pos(91, -159, 90)
-        val startTraj = mainTrajRefactor(startPose)
+        val startTraj = mainTrajRefactor(startPose).build<TrajectorySequence>()
 
-        Anvil.startAutoWith(startTraj).onSchedulerLaunch()
+        bot.drive.poseEstimate = startPose
 
-        Scheduler.launchOnStart(opmode = this, ::updateComponents)
+        waitForStart()
+
+        bot.drive.followTrajectorySequenceAsync(startTraj)
+
+        while (opModeIsActive() && !isStopRequested) {
+            updateComponents()
+        }
     }
 
     private fun mainTrajRefactor(startPose: Pose2d) =
@@ -55,14 +62,14 @@ class RogueRightAuto : RogueBaseAuto() {
         }
 
     private fun Anvil.awaitInitialGoToDeposit() = this
-        .splineToSplineHeading(82.8, -11.0, 129.5, 117.5)
+        .splineToSplineHeading(82.8, -11.0, 130.5, 117.5)
 
     private fun Anvil.awaitGoToDeposit(it: Int) = this
-        .splineToSplineHeading(82.35 + (it * .475), -11.35 - (it * 3.825), 131.5 + (it * 1.9), 155.0)
+        .splineToSplineHeading(82.95 + (it * .525), -12 - (it * 3.975), 131.5 + (it * 2.5), 155.0)
 
     private fun Anvil.awaitGoToIntake(it: Int) =
         inReverse {
-            splineTo(163.5 - (it * .2), -25.75 - (it * .85), 0.0)
+            splineTo(163.5 - (it * .775), -25.75 - (it * 1.05), 0.0)
         }
 
     private fun Anvil.awaitDeposit() = this
