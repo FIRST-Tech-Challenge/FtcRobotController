@@ -84,8 +84,8 @@ public class Arm {
             leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            leftLift.setPower((drop) ? 0.0 : power * 0.7);
-            rightLift.setPower((drop) ? 0.0 : power * 0.7);
+            leftLift.setPower((drop) ? 0.0 : power * 1.0);
+            rightLift.setPower((drop) ? 0.0 : power * 1.0);
 
             armTarget = getCurrentPosition();
         }
