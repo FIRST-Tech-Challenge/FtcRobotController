@@ -1,6 +1,7 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -33,11 +34,11 @@ public class MyClass {
         Pose2d midPose = new Pose2d(35, -12, Math.toRadians(90));
         Pose2d grabbingPose = new Pose2d(71.25 - robotFB, -12, Math.toRadians(180));
         Pose2d releasingPose = new Pose2d(24 + dposition, 0 - dposition, Math.toRadians(135));
-        Pose2d parking1 = new Pose2d(12, -24, Math.toRadians(90));
+        Pose2d parking1 = new Pose2d(12, -12, Math.toRadians(90));
 
-        Pose2d parking2 = new Pose2d(36, -24, Math.toRadians(90));
+        Pose2d parking2 = new Pose2d(36, -12, Math.toRadians(90));
 
-        Pose2d parking3 = new Pose2d(60, -24, Math.toRadians(90));
+        Pose2d parking3 = new Pose2d(60, -12, Math.toRadians(90));
         TrajectoryVelocityConstraint velConstraint = new MinVelocityConstraint(
                 Arrays.asList(new TranslationalVelocityConstraint(60), new AngularVelocityConstraint(60))
         );
@@ -90,11 +91,14 @@ public class MyClass {
 
         Trajectory p3;
         p3 = new TrajectoryBuilder(midPose, 2.2, velConstraint, accelConstraint)
+//                .lineToLinearHeading(midPose)
+//                .lineToLinearHeading(parking2)
                 .lineToLinearHeading(parking3)
                 .build();
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setDimensions(13.11, 13.23)
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11.81)
                 .setStartPose(homePose)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(homePose)

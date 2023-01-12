@@ -60,7 +60,7 @@ public class FreightFrenzyAutonomous extends CommandOpMode {
 
     @Override
     public void waitForStart() {
-        /////////////////////////////////// Rechgonizing the Tag ///////////////////////////////////
+        /////////////////////////////////// Recognizing the Tag ///////////////////////////////////
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
@@ -127,7 +127,7 @@ public class FreightFrenzyAutonomous extends CommandOpMode {
 //        if (isStopRequested()) return;
 
         /* Actually do something useful */
-        //check for tag of interest == null command maybe wrongss
+        //check for tag of interest == null command maybe wrong
 
         RR.runHM();
         RR.runMR();

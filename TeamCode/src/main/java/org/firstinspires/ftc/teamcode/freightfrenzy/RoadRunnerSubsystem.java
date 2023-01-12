@@ -18,28 +18,23 @@ public class RoadRunnerSubsystem extends SubsystemBase {
     protected Trajectory p2;
     protected Trajectory p3;
 
+    int robotFB = 13;
+    double dposition = 9.19;
+
+    protected Pose2d homePose = new Pose2d(35, -70.625, Math.toRadians(90));
+    protected Pose2d midPose = new Pose2d(35, -12, Math.toRadians(90));
+    protected Pose2d grabbingPose = new Pose2d(71.25 - robotFB, -12, Math.toRadians(180));
+    protected Pose2d releasingPose = new Pose2d(24 + dposition, 0 - dposition, Math.toRadians(135));
+    protected Pose2d parking1 = new Pose2d(12, -12, Math.toRadians(90));
+    protected Pose2d parking2 = new Pose2d(36, -12, Math.toRadians(90));
+    protected Pose2d parking3 = new Pose2d(60, -12, Math.toRadians(90));
+    protected  Pose2d currentPose;
+
     public RoadRunnerSubsystem(SampleMecanumDrive drive) {
 
         driveR = drive;
 
-        int robotFB = 13;
-        double dposition = 9.19;
-
-        Pose2d homePose = new Pose2d(35, -70.625, Math.toRadians(90));
-
-        Pose2d midPose = new Pose2d(35, -12, Math.toRadians(90));
-
-        Pose2d grabbingPose = new Pose2d(71.25 - robotFB, -12, Math.toRadians(180));
-
-        Pose2d releasingPose = new Pose2d(24 + dposition, 0 - dposition, Math.toRadians(135));
-
-        Pose2d parking1 = new Pose2d(12, -24, Math.toRadians(90));
-
-        Pose2d parking2 = new Pose2d(36, -24, Math.toRadians(90));
-
-        Pose2d parking3 = new Pose2d(60, -24, Math.toRadians(90));
-
-        Pose2d currentPose = drive.getPoseEstimate();
+        currentPose = drive.getPoseEstimate();
 
         hm = drive.trajectoryBuilder(homePose)
                 .lineToLinearHeading(midPose)
@@ -62,6 +57,8 @@ public class RoadRunnerSubsystem extends SubsystemBase {
                 .build();
 
         p1 = drive.trajectoryBuilder(midPose)
+                .lineToLinearHeading(midPose)
+                .lineToLinearHeading(parking2)
                 .lineToLinearHeading(parking1)
                 .build();
 
@@ -70,6 +67,8 @@ public class RoadRunnerSubsystem extends SubsystemBase {
                 .build();
 
         p3 = drive.trajectoryBuilder(midPose)
+                .lineToLinearHeading(midPose)
+                .lineToLinearHeading(parking2)
                 .lineToLinearHeading(parking3)
                 .build();
     }
