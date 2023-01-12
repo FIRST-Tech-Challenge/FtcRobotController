@@ -86,15 +86,19 @@ public class Autonomous_root extends LinearOpMode {
             chassis.resetEncoder();
             chassis.runToPosition(-2000, -2000, -2000, -2000);
 
-            chassis.runToPosition(-1200, 2200, -1200, 2200);
+            for(int i=0; i<1; i++){
+                //RIGHT BLUE
+                chassis.runToPosition(-1700, -2300, -1700, -2300);
 
-            arm.openGripper();
-            arm.runToPosition(0);
+                arm.openGripper();
+                arm.runToPosition(0);
 
-//            if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
-//            else if (vision.tagId() == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
-//
-//            chassis.resetEncoder();
+                //RIGHT BLUE
+                chassis.runToPosition(-2300, -1700, -2300, -1700);
+            }
+
+            if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
+            else if (vision.tagId() == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
 
             telemetry.addLine("parked!");
 
