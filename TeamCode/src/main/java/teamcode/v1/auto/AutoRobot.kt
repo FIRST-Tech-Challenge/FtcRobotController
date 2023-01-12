@@ -2,10 +2,9 @@ package teamcode.v1.auto
 
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.drive.KMecanumOdoDrive
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
+import teamcode.v1.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
-import teamcode.v1.auto.AutoHardware
 
 class AutoRobot(startPose: Pose) {
     private val hardware = AutoHardware(startPose)

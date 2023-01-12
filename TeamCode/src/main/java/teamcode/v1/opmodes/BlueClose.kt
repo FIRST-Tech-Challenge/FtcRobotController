@@ -12,8 +12,8 @@ import com.asiankoala.koawalib.path.gvf.SimpleGVFController
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import teamcode.v1.auto.AutoRobot
-import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequence
-import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.HomeSequence
+import teamcode.v1.commands.sequences.DepositSequence
+import teamcode.v1.commands.sequences.HomeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
@@ -95,7 +95,8 @@ class BlueClose : AutoOpMode() {
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(path1, 0.6, 20.0, 6.0, 0.7, 5.0, 10.0),
-                Pair(DepositSequence(robot.lift, robot.arm, robot.claw, 145.0, LiftConstants.highPos), ProjQuery(
+                Pair(
+                    DepositSequence(robot.lift, robot.arm, robot.claw, 145.0, LiftConstants.highPos), ProjQuery(
                     Vector(-60.0, -36.0)
                 )
                 )

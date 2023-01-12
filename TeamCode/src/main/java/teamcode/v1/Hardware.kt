@@ -3,6 +3,7 @@ package teamcode.v1
 import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.control.controller.PIDGains
 import com.asiankoala.koawalib.control.motor.FFGains
+import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.EncoderFactory
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.hardware.servo.KServo
@@ -62,9 +63,10 @@ class Hardware() {
             .reverse
             .zero(ArmConstants.homePos)
         )
-        .withPositionControl(
+        .withMotionProfileControl(
             PIDGains(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD),
             FFGains(kS = ArmConstants.kS, kV = ArmConstants.kV, kA = ArmConstants.kA, kCos = ArmConstants.kCos),
+            MotionConstraints(ArmConstants.maxVel, ArmConstants.maxAccel),
             allowedPositionError = ArmConstants.allowedPositionError,
             disabledPosition = ArmConstants.disabledPosition
         )

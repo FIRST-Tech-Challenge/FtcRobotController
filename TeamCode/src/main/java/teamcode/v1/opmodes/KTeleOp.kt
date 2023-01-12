@@ -5,11 +5,10 @@ import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.command.commands.MecanumCmd
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
-import com.asiankoala.koawalib.subsystem.odometry.Odometry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import teamcode.v1.Robot
-import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequence
-import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.HomeSequence
+import teamcode.v1.commands.sequences.DepositSequence
+import teamcode.v1.commands.sequences.HomeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import teamcode.v1.constants.ArmConstants
 import teamcode.v1.constants.LiftConstants
@@ -49,11 +48,11 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     }
 
     private fun scheduleTest() {
-        driver.leftBumper.onPress(InstantCmd({robot.arm.setPos(ArmConstants.lowPos)}, robot.arm))
-        driver.rightBumper.onPress(InstantCmd({robot.lift.setPos(14.5)}, robot.lift))
+        driver.leftBumper.onPress(InstantCmd({robot.arm.setPos(ArmConstants.highPos)}, robot.arm))
+        driver.rightBumper.onPress(InstantCmd({robot.lift.setPos(LiftConstants.highPos)}, robot.lift))
 //        driver.leftBumper.onPress(InstantCmd({robot.claw.setPos(ClawConstants.openPos)}))
 //        driver.rightBumper.onPress(InstantCmd({robot.claw.setPos(ClawConstants.closePos)}))
-        driver.a.onPress(InstantCmd({robot.arm.setPos(-60.0)}, robot.arm))
+        driver.a.onPress(InstantCmd({robot.arm.setPos(-10.0)}, robot.arm))
         driver.b.onPress(InstantCmd({robot.lift.setPos(0.0)}, robot.lift))
     }
 

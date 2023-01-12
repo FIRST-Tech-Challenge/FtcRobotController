@@ -12,7 +12,7 @@ import com.asiankoala.koawalib.path.gvf.SimpleGVFController
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import teamcode.v1.auto.AutoRobot
-import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.HomeSequence
+import teamcode.v1.commands.sequences.HomeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
 import org.firstinspires.ftc.teamcode.koawalib.vision.AutoOpMode
