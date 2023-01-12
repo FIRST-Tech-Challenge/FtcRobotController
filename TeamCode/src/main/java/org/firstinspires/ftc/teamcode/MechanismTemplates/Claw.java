@@ -15,7 +15,7 @@ public class Claw {
     private boolean isAuto;
 
     // claw positions
-    public static double OPEN = 0.86;
+    public static double OPEN = 0.75;
     public static double CLOSE = 0.35;
 
     // wrist positions

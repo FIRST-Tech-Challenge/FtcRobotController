@@ -43,12 +43,11 @@ public class Arm {
         armPIDF.setPIDF(armKp, armKi, armKd, armKf);
         // Correction represents the error term of the PIDF loop
         double correction = armPIDF.calculate(armMotor.getCurrentPosition(), targetPos);
-        /*
+
         telemetry.addData("Correction: ", correction);
         telemetry.addData("Target Position: ", targetPos);
        telemetry.addData("Motor Position: ", armMotor.getCurrentPosition());
        telemetry.update();
-         */
         armMotor.set(correction);
     }
 
