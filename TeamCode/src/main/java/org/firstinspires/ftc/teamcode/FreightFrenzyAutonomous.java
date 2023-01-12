@@ -48,7 +48,8 @@ public class FreightFrenzyAutonomous extends CommandOpMode {
         GamepadEx toolOp = new GamepadEx(gamepad2);
 
         robot = new FreightFrenzyRobot(hardwareMap, telemetry, driverOp, toolOp,
-                RobotEx.OpModeType.AUTO);
+                RobotEx.OpModeType.AUTO, true, false,
+                false, false, false, false, true);
 
         drive = new SampleMecanumDrive(hardwareMap);
 

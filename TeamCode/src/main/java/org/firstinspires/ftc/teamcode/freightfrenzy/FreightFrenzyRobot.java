@@ -28,9 +28,19 @@ public class FreightFrenzyRobot extends RobotEx {
 
     public FreightFrenzyRobot(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
                               GamepadEx toolOp, OpModeType type) {
-        super(hardwareMap, telemetry, driverOp, toolOp, type);
+        super(hardwareMap, telemetry, driverOp, toolOp, type, false, false,
+                false, false, false, false, true);
     }
 
+    public FreightFrenzyRobot(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
+                              GamepadEx toolOp, OpModeType type, Boolean initCamera,
+                              Boolean useCameraFollower, Boolean frontLeftInvert,
+                              Boolean frontRightInvert, Boolean rearLeftInvert, Boolean rearRightInvert,
+                              Boolean useBalancingController) {
+        super(hardwareMap, telemetry, driverOp, toolOp, type, initCamera,
+                useCameraFollower, frontLeftInvert,
+                frontRightInvert, rearLeftInvert, rearRightInvert, useBalancingController);
+    }
 //    @Override
 //    public void initMechanisms(HardwareMap hardwareMap) {
 //        ////////////////////////////////////////// Bucket //////////////////////////////////////////

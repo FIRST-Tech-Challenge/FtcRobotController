@@ -20,9 +20,8 @@ public class PowerPlayRobot extends RobotEx {
 
     public PowerPlayRobot(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
                           GamepadEx toolOp) {
-        super(hardwareMap, telemetry, driverOp, toolOp, false, true,
-                true, true, true, true,
-                true);
+        super(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, true,
+                true, true, true, true, true);
     }
 
     @Override

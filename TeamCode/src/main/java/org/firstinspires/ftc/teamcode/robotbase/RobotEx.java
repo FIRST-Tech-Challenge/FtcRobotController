@@ -29,7 +29,7 @@ public class RobotEx {
     protected MecanumDriveCommand driveCommand = null;
 
     protected SampleMecanumDrive rrDrive = null;
-    protected Camera camera;
+    public Camera camera;
 
     protected HeadingControllerSubsystem gyroFollow;
     protected HeadingControllerSubsystem cameraFollow;
@@ -117,7 +117,7 @@ public class RobotEx {
         drive.setDefaultCommand(driveCommand);
 
         /////////////////////////////////////// Gyro Follower //////////////////////////////////////
-        gyroFollow = new HeadingControllerSubsystem(gyro::getValue,
+        gyroFollow = new HeadingControllerSubsystem(gyro::getYaw,
                 gyro::findClosestOrientationTarget);
         new Trigger(() -> driverOp.getRightY() >= 0.8).whenActive(
                 new InstantCommand(() -> gyroFollow.setGyroTarget(180), gyroFollow));
@@ -152,11 +152,11 @@ public class RobotEx {
         }
 
         ////////////////////////////////////// Camera Follower /////////////////////////////////////
-        if (initCamera && useCameraFollower) {
-            cameraFollow = new HeadingControllerSubsystem(camera::getObject_x);
-            driverOp.getGamepadButton(GamepadKeys.Button.START)
-                    .whenPressed(new InstantCommand(cameraFollow::toggleState, cameraFollow));
-        }
+//        if (initCamera && useCameraFollower) {
+//            cameraFollow = new HeadingControllerSubsystem(camera::getObject_x);
+//            driverOp.getGamepadButton(GamepadKeys.Button.START)
+//                    .whenPressed(new InstantCommand(cameraFollow::toggleState, cameraFollow));
+//        }
 
         ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
         initMechanismsTeleOp(hardwareMap);
