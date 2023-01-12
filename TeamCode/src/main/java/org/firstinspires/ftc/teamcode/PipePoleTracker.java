@@ -52,7 +52,6 @@ public class PipePoleTracker extends OpenCvPipeline {
 
 
 
-
         Imgproc.cvtColor(input,inputHSV,Imgproc.COLOR_BGR2HSV);
         Core.inRange(inputHSV, new Scalar(81, 115, 164), new Scalar(107, 255, 255), inputMask);
 
@@ -287,6 +286,7 @@ public class PipePoleTracker extends OpenCvPipeline {
                 int randomCounter = 0;
 
                 if (amountIdentifiedBoxes == 0) {
+                    largestSize = 0;
                     amountIdentifiedBoxes = 1;
                     randomCounter = 1;
                 }
@@ -692,9 +692,9 @@ public class PipePoleTracker extends OpenCvPipeline {
 
 
 
-        inputMask.release();
-        inputMaskOriginal.release();
-        inputHSV.release();
+//        inputMask.release();
+//        inputMaskOriginal.release();
+//        inputHSV.release();
 //        input.release(); <-- Causes app exit/crash
 //        inputOriginal.release(); <-- Causes app exit/crash
 
@@ -778,6 +778,10 @@ public class PipePoleTracker extends OpenCvPipeline {
 
     public static int getCenterX(){
         return centerX;
+    }
+
+    public static int getLargestSize(){
+        return largestSize;
     }
 
 
