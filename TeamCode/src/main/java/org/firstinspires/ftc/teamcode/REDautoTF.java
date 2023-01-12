@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -111,41 +112,73 @@ public class REDautoTF extends Driving358 {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         waitForStart();
-        sleep(200);
-        move(.6, 'f', 10);
-        sleep(200);
-        parkLevel = checkLevel();
-        telemetry.addData("Level","%d",parkLevel);
+        //parkLevel = checkLevel();
+        //move(.1, 'f', 10);
+
+       // parkLevel = checkLevel();
+        //telemetry.addData("Level","%d",parkLevel);
         telemetry.update();
+
+        clawrotate("close");
+
+        move(0.3, 'f',20);
+        move(0.3,'l',18);
+        liftlevel(0.2, '1');
+        //liftconeauto(1, 0.3,'5');//takes first cone from stack
+        clawrotate("open");
+        move(0.3,'r',18);
+        move(0.3, 'b',20);
+/Users/elsali2/AndroidStudioProjects/358_FtcRobotController/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/REDautoTF.java
+        //then just park
+
+
+        //liftdown();
+        //lift.setMode(DcMotor.RunMode.RUN_WITH_ENCODER);
+
+//        move(0.3,'l',18);
+//        move(0.3,'f',12);
+//
+//
+//        clawrotate("open");
+//        move(0.3,'b',12);
+//        move(0.3,'r',16);
+//
+//        move(0.3,'f',68);
+//
+//        rotate(0.3, 'l', 100);
+//        clawrotate("open");
+//        liftconeauto(1, 0.3,'5');//takes first cone from stack
+//        liftdown(0.2);
+//        rotate(0.1, 'l', 90);
+//        liftlevel(0.3, '1');// lift go up to height of lowest junction
+//        clawrotate("open");
+//        liftdown(0.2);
 
 
         switch (parkLevel) {//moves to the alliance shipping hub based on what it reads
             case (1)://Warehouse close. Scoring level 1. Bottom
+                move(.1, 'l', 55);
+                move(.1, 'f', 60);
 
-                move(.6, 'l', 65);
-               move(.6, 'f', 65);
 
                 break;
             case (2)://Mid. Scoring level 2. Mid
 
-                move(.6, 'l', 15);
-               move(.6, 'f', 65);
-                move(.6, 'r', 15);
-//                move(.6, 'r', 5);
-                //distanceMove(25, false);
+                move(.1, 'f', 55);
+
                 break;
             case (3)://warehouse far. scoring level 3 top
-                //levelLift('t');
 
-                move(.6, 'r', 75);
-                move(.6, 'f', 65);
-                //distanceMove(45, false);
+
+                move(.1, 'r', 55);
+                move(.1, 'f', 60);
+
                 break;
             default:
-                move(.6, 'l', 75);
+                move(.1, 'l', 5);//orginialy 55
                 break;
         }
-        motorStop();
+        //motorStop();
     }
 private int checkLevel() {
     long programTime = System.currentTimeMillis();

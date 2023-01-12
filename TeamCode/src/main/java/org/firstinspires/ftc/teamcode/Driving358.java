@@ -8,15 +8,15 @@ public abstract class Driving358 extends LinearOpMode {
 
 
     Hardware358 robot = new Hardware358();
-
+int hi=8;
     private ElapsedTime runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 537.6 ;    // eg: REV Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 2;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.25);
-    static final double     DRIVE_SPEED             = 0.6;
+            (WHEEL_DIAMETER_INCHES * 3.14);
+    static final double     DRIVE_SPEED             = 0.5;
     static final double     TURN_SPEED              = 0.5;
     static final double     INCHES_FOR_RIGHT_ANGLE  = 4;
 
@@ -48,6 +48,7 @@ public abstract class Driving358 extends LinearOpMode {
         robot.lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         //.m.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
    //     robot.rotateRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //     robot.rotateRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -57,6 +58,7 @@ public abstract class Driving358 extends LinearOpMode {
        robot.lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
        robot.rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
        robot.rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
    }
    public void runUsingEncoders()
    {
@@ -64,9 +66,149 @@ public abstract class Driving358 extends LinearOpMode {
        robot.lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
        robot.rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
        robot.rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
    }
 
+
 //
+    public void liftconeauto(int direction, double power,char remaining){
+        //remaining is for the number of cones remaining in the stack
+        int tickConversion = (int)(COUNTS_PER_MOTOR_REV/(3.14));//145; //How many ticks per 1cm of string pulled
+        int cmMoveauto = 0;
+        int ticks;
+//        if (position.equals("low")){
+//            cmMove  = 35;
+//        }
+//        else if (position.equals("mid")){
+//            cmMove  = 60;
+//        }
+//        else if (position.equals("high")){
+//            cmMove  = 85;
+//        }
+
+
+
+
+
+        switch (remaining){
+            case '5':
+                cmMoveauto = 11;
+                ticks = tickConversion * cmMoveauto * direction;
+                //robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                robot.lift.setTargetPosition((ticks));
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(power);
+
+                while (robot.lift.isBusy())
+                {
+
+                }
+                robot.lift.setPower(0);
+                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                break;
+
+            case '4':
+                cmMoveauto = 9;
+                ticks = tickConversion * cmMoveauto * direction;
+                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.lift.setTargetPosition((ticks));
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(power);
+
+                while (robot.lift.isBusy())
+                {
+
+                }
+                robot.lift.setPower(0);
+                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                break;
+
+            case '3':
+                cmMoveauto = 7;
+                ticks = tickConversion * cmMoveauto * direction;
+                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.lift.setTargetPosition((ticks));
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(power);
+
+                while (robot.lift.isBusy())
+                {
+
+                }
+                robot.lift.setPower(0);
+                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                break;
+            case '2':
+                cmMoveauto = 5;
+                ticks = tickConversion * cmMoveauto * direction;
+                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.lift.setTargetPosition((ticks));
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(power);
+
+                while (robot.lift.isBusy())
+                {
+
+                }
+                robot.lift.setPower(0);
+                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                break;
+
+            case '1':
+                cmMoveauto = 3;
+                ticks = tickConversion * cmMoveauto * direction;
+                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.lift.setTargetPosition((ticks));
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(power);
+
+                while (robot.lift.isBusy())
+                {
+
+                }
+                robot.lift.setPower(0);
+                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                break;
+        }
+
+
+    }
+
+
+    public void liftdown(){
+
+        robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        long starting= System.currentTimeMillis();
+
+
+        robot.lift.setPower(-0.2);
+        while (starting - System.currentTimeMillis()<100){
+            if(robot.touch.isPressed()){
+                robot.lift.setPower(0);
+                telemetry.addData("touch pressed",1);
+                break;
+            }
+
+        }
+        //robot.lift.setPower(0);
+
+
+//        while (robot.lift.isBusy()) {
+//            if(robot.touch.isPressed()){
+//                robot.lift.setPower(0);
+//                break;
+//            }
+//
+//        }
+//        robot.lift.setPower(-0.2);
+//        while (!robot.touch.isPressed()){
+//            telemetry.addData("button is pressed doen",1);
+//        }
+
+    }
+
 
     public void move(double power, char direction, double distance){
         double ticks = COUNTS_PER_INCH * distance/3;
@@ -179,6 +321,103 @@ public abstract class Driving358 extends LinearOpMode {
                 motorStop();
         }
     }
+
+
+    public void liftlevel(double power, char direction){
+        int tickConversion = (int)(Driving358.COUNTS_PER_MOTOR_REV/(3.14));
+        int cmMovelift;
+        int ticks;
+        switch(direction){
+            case '1' :
+                cmMovelift  = 5;
+                ticks = tickConversion * cmMovelift;
+                if (power<0){
+                    ticks*=-1;
+                }
+                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.lift.setTargetPosition((ticks));
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(power);
+                while (robot.lift.isBusy()) {
+
+                }
+
+                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                break;
+            case '2' ://u for up
+                cmMovelift  = 9;
+
+                ticks = tickConversion * cmMovelift;
+                if (power<0){
+                    ticks*=-1;
+                }
+                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.lift.setTargetPosition((ticks));
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(power);
+                while (robot.lift.isBusy()) {
+
+                }
+                robot.lift.setPower(0);
+                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                //cmMovelift = 0;
+                break;
+            case '3'://u for up
+                cmMovelift = 3;
+                ticks = tickConversion * cmMovelift;
+                if (power<0){
+                    ticks*=-1;
+                }
+                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.lift.setTargetPosition((ticks));
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(power);
+                while (robot.lift.isBusy()) {
+
+                }
+                robot.lift.setPower(0);
+                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                      //cmMovelift = 0;
+                break;
+        }
+
+    }
+
+    public void clawrotate(String position){
+        switch (position){
+            case "close":
+                //robot.leftServo.setPosition(0.95);
+                //robot.rightServo.setPosition(0.95);
+                robot.clawServo.setPosition(0.0);
+                break;
+            case "open":
+                //robot.leftServo.setPosition(0.6);
+                //robot.rightServo.setPosition(0.34);
+                robot.clawServo.setPosition(0.5);
+                break;
+        }
+
+
+    }
+    public void slidemove(String position){
+        switch (position){
+            case "front":
+
+                robot.slideServo.setPower(0.1);
+                break;
+            case "back":
+
+
+                robot.slideServo.setPower(-0.1);
+                break;
+        }
+
+
+    }
+
+
+
 
     public void rotate(double power, char direction, double angle) {
         double ticks = COUNTS_PER_INCH * angle / 90 * INCHES_FOR_RIGHT_ANGLE;

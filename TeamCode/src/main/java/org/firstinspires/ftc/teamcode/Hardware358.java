@@ -5,10 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 //import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
+
 import com.qualcomm.robotcore.util.Range;
 
 
@@ -43,8 +46,13 @@ public class Hardware358 {
     public DcMotor lb = null; // left back
    // public DcMotor m = null; //middle
     public DcMotor lift = null;
-    public Servo rightServo = null;
-    public Servo leftServo = null;
+    //public Servo rightServo = null;
+    //public Servo leftServo = null;
+    public Servo clawServo = null;
+    //CRSERvo
+    public CRServo slideServo = null;//for the slideing mechanism
+    TouchSensor touch;
+
 //    private DcMotor leftDrive   = null;
 //    private DcMotor rightDrive  = null;
 //    private DcMotor armMotor = null;
@@ -74,16 +82,19 @@ public class Hardware358 {
 //        leftDrive  = myOpMode.hardwareMap.get(DcMotor.class, "left_drive");
 //        rightDrive = myOpMode.hardwareMap.get(DcMotor.class, "right_drive");
 //        armMotor   = myOpMode.hardwareMap.get(DcMotor.class, "arm");
-
+        touch= HwMap.get(TouchSensor.class,"Touch");
         lf = HwMap.get(DcMotor.class, "lf");
         rf = HwMap.get(DcMotor.class, "rf");
         rb = HwMap.get(DcMotor.class, "rb");
         lb = HwMap.get(DcMotor.class, "lb");
         //m = HwMap.get(DcMotor.class, "mid");
         lift = HwMap.get(DcMotor.class, "lift");
-        leftServo = HwMap.get(Servo.class,"leftServo");
-        rightServo = HwMap.get(Servo.class,"rightServo");
+        //leftServo = HwMap.get(Servo.class,"leftServo");
+        //rightServo = HwMap.get(Servo.class,"rightServo");
+        clawServo = HwMap.get(Servo.class,"clawServo");
 
+        //CRSERVO
+        slideServo = HwMap.get(CRServo.class, "crservo");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
@@ -98,9 +109,12 @@ public class Hardware358 {
         rb.setPower(0);
         //m.setPower(0);
         lift.setPower(0);
+        slideServo.setPower(0);
 
-        leftServo.setPosition(1);
-        rightServo.setPosition(0);
+
+        //leftServo.setPosition(0.6);
+        //rightServo.setPosition(0.34);
+        clawServo.setPosition(0.0);
 
         lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
