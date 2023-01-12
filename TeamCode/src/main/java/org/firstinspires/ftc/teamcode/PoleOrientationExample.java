@@ -71,6 +71,7 @@ public class PoleOrientationExample extends LinearOpMode
     public void performEveryLoop() {
         robot.readBulkData();
         robot.turretPosRun();
+        robot.liftPosRun();
     }
 
     @Override
@@ -92,7 +93,7 @@ public class PoleOrientationExample extends LinearOpMode
             public void onOpened()
             {
                 pipelineBack = new PowerPlaySuperPipeline(false, true,
-                        false, false, 160.0);
+                        false, false, 154.0);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 pipelineLow.debugType = Pole;
@@ -145,12 +146,17 @@ public class PoleOrientationExample extends LinearOpMode
         telemetry.addLine("Hardware initialized...");
         telemetry.update();
 
+        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+        sleep(300);
+
         // Perform setup needed to center turret
 //        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         robot.turretPosInit(-32.5 );
-        while( robot.turretMotorAuto == true ) {
+        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
+        while( robot.turretMotorAuto == true || robot.liftMotorAuto == true) {
             performEveryLoop();
         }
+        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
 
         telemetry.addLine("Turret positioned, ready to start.");
         telemetry.update();
@@ -167,7 +173,7 @@ public class PoleOrientationExample extends LinearOpMode
             performEveryLoop();
 
             // Let us see if we can use the camera for distance.
-            alignToPole();
+            alignToPoleTurretPID();
             telemetry.addLine("Aligned... waiting for kick");
             for( int index=0; index<LOGSIZE; index++ ) {
                 telemetry.addData(" ","%d = %.1f %.1f pix (%.2f)",
@@ -267,9 +273,9 @@ public class PoleOrientationExample extends LinearOpMode
         double drivePower;
         // PID stuff
         // Possible values 0.002, 0.005, 0.00005
-        double kp = 0.01;
-        double ki = 0.0;
-        double kd = 0.0;
+        double kp = 0.0010;
+        double ki = 0.0025;
+        double kd = 0.00005;
         double error;
         double errorChange;
         double integralSum = 0.0;
@@ -277,16 +283,16 @@ public class PoleOrientationExample extends LinearOpMode
         double lastError = 0.0;
         boolean aligning = true;
         double a = 0.707;
-        double currentFilterEstimate = 0.0;
+        double currentFilterEstimate;
         double previousFilterEstimate = 0.0;
         // This value should be related to ki*integralSum where that value does not exceed
         // something like 25% max power (so if our max power is 0.20 the limit for ki*integralSum
         // would be 0.05 and 0.05 / ki = maxIntegralSum. Start high and bring it down once ki solved
-        double maxIntegralSum = 12.5;
+        double maxIntegralSum = 50.0;
         ElapsedTime timer = new ElapsedTime();
 
         theLocalPole = pipelineBack.getDetectedPole();
-        while (opModeIsActive() && ((theLocalPole.alignedCount <= 2) || theLocalPole.properDistanceHighCount <= 3)) {
+        while (opModeIsActive() && ((theLocalPole.alignedCount <= 5) || theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
             if(theLocalPole.aligned) {
                 aligning = false;
@@ -298,7 +304,7 @@ public class PoleOrientationExample extends LinearOpMode
                     integralSum = 0.0;
                 }
                 // The sign is backwards because centralOffset is negative of the power we need.
-                error = 0.0 + theLocalPole.centralOffset;
+                error = 0.0 - theLocalPole.centralOffset;
                 errorChange = error - lastError;
                 currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;
                 previousFilterEstimate = currentFilterEstimate;
@@ -309,6 +315,11 @@ public class PoleOrientationExample extends LinearOpMode
                 turretPower = (kp * error) + (ki * integralSum) + (kd * derivative);
                 lastError = error;
                 timer.reset();
+                telemetry.addData("turretPower: ", turretPower);
+                telemetry.addData("PID", "error: %.2f, errorPwr: %.2f", error, kp*error);
+                telemetry.addData("PID", "integralSum: %.2f, integralSumPwr: %.2f", integralSum, ki*integralSum);
+                telemetry.addData("PID", "derivative: %.2f, derivativePwr: %.2f", derivative, ki*derivative);
+                telemetry.update();
 /*
                 // Need to calculate the turn power based on pixel offset
                 // Maximum number of pixels off would be half of 320, so 160.
