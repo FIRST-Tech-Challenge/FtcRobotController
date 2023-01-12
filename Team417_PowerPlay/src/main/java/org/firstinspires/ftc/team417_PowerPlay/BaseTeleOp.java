@@ -53,12 +53,10 @@ abstract public class BaseTeleOp extends BaseOpMode {
         if (armManual) {
             if (armEncoderPosition >= motorArm.getCurrentPosition()) {
                 motorArm.setPower((armEncoderPosition - motorArm.getCurrentPosition()) * RAISE_ARM_MANUAL_POWER);
-
             } else {
                 // if need to lower
-                if (motorArm.getCurrentPosition() - armEncoderPosition > 10) {
+                if (motorArm.getCurrentPosition() - armEncoderPosition > ARM_ENCODER_TOLERANCE) {
                     motorArm.setPower(LOWER_ARM_MANUAL_POWER);
-
                 } else {
                     motorArm.setPower(0);
                 }
@@ -69,6 +67,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         if (leftPress || rightPress) {
             armManual = false;
         }
+
         if (time.time() > BUMPER_TIMEOUT) {
             if (leftPress) {
                 armLevel--;
@@ -84,30 +83,30 @@ abstract public class BaseTeleOp extends BaseOpMode {
         } else if (armLevel < 0) {
             armLevel = 0;
         }
+
         if (!armManual) {
-            if (armLevel == 0) { // ground position
-                armEncoderPosition = MIN_ARM_POSITION;
-            } else if (armLevel == 1) { // ground junction
-                armEncoderPosition = GRD_JUNCT_ARM_POSITION;
-            } else if (armLevel == 2) { // low junction
-                armEncoderPosition = LOW_JUNCT_ARM_POSITION;
-            } else if (armLevel == 3) { // middle junction
-                armEncoderPosition = MID_JUNCT_ARM_POSITION;
-            } else if (armLevel == 4) {
-                armEncoderPosition = HIGH_JUNCT_ARM_POSITION;
+            switch (armLevel) {
+                case 0: armEncoderPosition = MIN_ARM_POSITION;
+                    break;
+                case 1: armEncoderPosition = GROUND_JUNCT_ARM_POSITION;
+                    break;
+                case 2: armEncoderPosition = LOW_JUNCT_ARM_POSITION;
+                    break;
+                case 3: armEncoderPosition = MID_JUNCT_ARM_POSITION;
+                    break;
+                case 4: armEncoderPosition = HIGH_JUNCT_ARM_POSITION;
+                    break;
             }
+
             if (armEncoderPosition >= motorArm.getCurrentPosition()) {
                 motorArm.setPower((armEncoderPosition - motorArm.getCurrentPosition()) * RAISE_ARM_AUTO_POWER);
-
             } else {
                 // if need to lower
-                if (motorArm.getCurrentPosition() - armEncoderPosition > 10) {
+                if (motorArm.getCurrentPosition() - armEncoderPosition > ARM_ENCODER_TOLERANCE) {
                     motorArm.setPower(LOWER_ARM_AUTO_POWER);
-
                 } else {
                     motorArm.setPower(0);
                 }
-                //motorArm.setPower((armEncoderPosition - motorArm.getCurrentPosition()) / 1000.0);
             }
         }
     }
@@ -127,7 +126,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         telemetry.addData("Arm target", armEncoderPosition);
         telemetry.addData("Arm current position", motorArm.getCurrentPosition());
         telemetry.addData("Grabber position", grabberServo.getPosition());
-        telemetry.addData("Grabber open", grabberClosed);
+        telemetry.addData("Grabber closed", grabberClosed);
         telemetry.addData("Arm level", armLevel);
         telemetry.update();
     }

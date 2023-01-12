@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="Interleague Right")
-public class InterleagueAutoRight extends BaseAutonomous {
+public class MiddleJunctionParkRightSide extends BaseAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
         initializeAuto();
@@ -13,28 +13,28 @@ public class InterleagueAutoRight extends BaseAutonomous {
         // declare trajectories here
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
 
-        Trajectory traject1 = drive.trajectoryBuilder(startPose, false)
+        Trajectory clearWall = drive.trajectoryBuilder(startPose, false)
                 .forward(5)
                 .build();
-        Trajectory traject2 = drive.trajectoryBuilder(traject1.end(), false)
+        Trajectory pushSignalCone = drive.trajectoryBuilder(clearWall.end(), false)
                 .forward(55)
                 .build();
-        Trajectory traject3 = drive.trajectoryBuilder(traject2.end(), false)
+        Trajectory backToMidJunction = drive.trajectoryBuilder(pushSignalCone.end(), false)
                 .back(31.5)
                 .build();
-        Trajectory traject4 = drive.trajectoryBuilder(traject3.end(), false)
+        Trajectory leftToMidJunction = drive.trajectoryBuilder(backToMidJunction.end(), false)
                 .strafeLeft(19)
                 .build();
-        Trajectory traject5 = drive.trajectoryBuilder(traject4.end(), false)
+        Trajectory clearJunction = drive.trajectoryBuilder(leftToMidJunction.end(), false)
                 .back(3)
                 .build();
-        Trajectory left = drive.trajectoryBuilder(traject5.end(), false)
+        Trajectory parkLeft = drive.trajectoryBuilder(clearJunction.end(), false)
                 .strafeLeft(12)
                 .build();
-        Trajectory middle = drive.trajectoryBuilder(traject5.end(), false)
+        Trajectory parkMiddle = drive.trajectoryBuilder(clearJunction.end(), false)
                 .strafeRight(22)
                 .build();
-        Trajectory right = drive.trajectoryBuilder(traject5.end(), false)
+        Trajectory parkRight = drive.trajectoryBuilder(clearJunction.end(), false)
                 .strafeRight(48)
                 .build();
 
@@ -44,26 +44,26 @@ public class InterleagueAutoRight extends BaseAutonomous {
         updateTelemetryAfterStart();
 
         grabberServo.setPosition(GRABBER_CLOSED);
-        drive.followTrajectory(traject1);
+        drive.followTrajectory(clearWall);
         raiseAndHoldArmGroundJunctionPosition();
 
-        drive.followTrajectory(traject2);
-        drive.followTrajectory(traject3);
+        drive.followTrajectory(pushSignalCone);
+        drive.followTrajectory(backToMidJunction);
 
         raiseAndHoldArmMiddleJunctionPosition();
-        drive.followTrajectory(traject4);
+        drive.followTrajectory(leftToMidJunction);
         motorArm.setPower(0);
         sleep(1300);
         // open servo
         grabberServo.setPosition(GRABBER_OPEN);
-        drive.followTrajectory(traject5);
+        drive.followTrajectory(clearJunction);
 
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-            drive.followTrajectory(left);
+            drive.followTrajectory(parkLeft);
         } else if (tagOfInterest.id == MIDDLE) {
-            drive.followTrajectory(middle);
+            drive.followTrajectory(parkMiddle);
         } else {
-            drive.followTrajectory(right);
+            drive.followTrajectory(parkRight);
         }
     }
 }

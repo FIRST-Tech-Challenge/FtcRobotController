@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.team417_PowerPlay;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.team417_PowerPlay.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -15,8 +14,8 @@ abstract public class BaseAutonomous extends BaseOpMode {
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
-    static final int CAMERA_WIDTH = 800;
-    static final int CAMERA_HEIGHT = 448;
+    static final int CAMERA_WIDTH_PIXELS = 800;
+    static final int CAMERA_HEIGHT_PIXELS = 448;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -36,8 +35,8 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int RIGHT = 3;
     AprilTagDetection tagOfInterest = null;
 
-    static final double HOLD_ARM_AT_MID_POS_POWER = 0.005;
-    static final double HOLD_ARM_AT_GRD_POS_POWER = 0.01;
+    static final double HOLD_ARM_AT_MID_OR_LOW_POS_POWER = 0.005;
+    static final double HOLD_ARM_AT_GROUND_POS_POWER = 0.01;
     static final double ARM_RAISE_POWER = 1.0 / 400.0;
 
     public void initializeAuto() {
@@ -49,11 +48,10 @@ abstract public class BaseAutonomous extends BaseOpMode {
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagSize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(CAMERA_WIDTH_PIXELS, CAMERA_HEIGHT_PIXELS, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -61,7 +59,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
         });
 
         telemetry.setMsTransmissionInterval(50);
-
     }
 
     /**
@@ -122,26 +119,26 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     public void raiseAndHoldArmGroundJunctionPosition() {
         motorArm.setPower(0);
-        while (Math.abs(motorArm.getCurrentPosition() - GRD_JUNCT_ARM_POSITION) > 10 && opModeIsActive()) {
-            motorArm.setPower((GRD_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
+        while (Math.abs(motorArm.getCurrentPosition() - GROUND_JUNCT_ARM_POSITION) > ARM_ENCODER_TOLERANCE && opModeIsActive()) {
+            motorArm.setPower((GROUND_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
         }
-        motorArm.setPower(HOLD_ARM_AT_GRD_POS_POWER);
+        motorArm.setPower(HOLD_ARM_AT_GROUND_POS_POWER);
     }
 
     public void raiseAndHoldArmMiddleJunctionPosition() {
         motorArm.setPower(0);
-        while ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION)) > 10) && opModeIsActive()) {
+        while ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION)) > ARM_ENCODER_TOLERANCE) && opModeIsActive()) {
             motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
 
         }
-        motorArm.setPower(HOLD_ARM_AT_MID_POS_POWER);
+        motorArm.setPower(HOLD_ARM_AT_MID_OR_LOW_POS_POWER);
     }
 
     public void raiseAndHoldArmLowJunctionPosition() {
         motorArm.setPower(0);
-        while (Math.abs(motorArm.getCurrentPosition() - LOW_JUNCT_ARM_POSITION) > 10) {
+        while (Math.abs(motorArm.getCurrentPosition() - LOW_JUNCT_ARM_POSITION) > ARM_ENCODER_TOLERANCE) {
             motorArm.setPower((LOW_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
         }
-        motorArm.setPower(HOLD_ARM_AT_MID_POS_POWER);
+        motorArm.setPower(HOLD_ARM_AT_MID_OR_LOW_POS_POWER);
     }
 }

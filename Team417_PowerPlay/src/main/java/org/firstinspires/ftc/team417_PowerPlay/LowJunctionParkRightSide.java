@@ -30,7 +30,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Disabled
 @Autonomous (name="RIGHT SIDE")
-public class League2RightSideAuto extends BaseAutonomous {
+public class LowJunctionParkRightSide extends BaseAutonomous {
 
     @Override
     public void runOpMode() {
@@ -39,70 +39,58 @@ public class League2RightSideAuto extends BaseAutonomous {
 
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
 
-        Trajectory traject2 = drive.trajectoryBuilder(startPose, false)
+        Trajectory pushSignalCone = drive.trajectoryBuilder(startPose, false)
                 .forward(48)
                 .build();
-        Trajectory traject3 = drive.trajectoryBuilder(traject2.end(), false)
+        Trajectory backToLowJunction = drive.trajectoryBuilder(pushSignalCone.end(), false)
                 .back(19.5)
                 .build();
-        Trajectory traject4 = drive.trajectoryBuilder(traject3.end(), false)
+        Trajectory rightToLowJunction = drive.trajectoryBuilder(backToLowJunction.end(), false)
                 .strafeRight(15)
                 .build();
-        Trajectory traject5 = drive.trajectoryBuilder(traject4.end(), false)
+        Trajectory clearJunction = drive.trajectoryBuilder(rightToLowJunction.end(), false)
                 .back(3)
                 .build();
-        Trajectory right = drive.trajectoryBuilder(traject5.end(), false)
+        Trajectory parkRight = drive.trajectoryBuilder(clearJunction.end(), false)
                 .strafeRight(12)
                 .build();
-        Trajectory correctRight = drive.trajectoryBuilder(right.end(), false)
+        Trajectory forwardToMiddleOfTile = drive.trajectoryBuilder(parkRight.end(), false)
                 .forward(5)
                 .build();
-        Trajectory middle = drive.trajectoryBuilder(traject5.end(), false)
+        Trajectory parkMiddle = drive.trajectoryBuilder(clearJunction.end(), false)
                 .strafeLeft(21)
                 .build();
-        Trajectory left = drive.trajectoryBuilder(traject5.end(), false)
+        Trajectory parkLeft = drive.trajectoryBuilder(clearJunction.end(), false)
                 .strafeLeft(40)
                 .build();
 
-        /*
-         * The INIT-loop:
-         * This REPLACES waitForStart!
-         */
         while (!isStarted() && !isStopRequested()) {
             detectAprilTag();
         }
 
-        /*
-         * The START command just came in: now work off the latest snapshot acquired
-         * during the init loop.
-         */
-
-        /* Update the telemetry */
         updateTelemetryAfterStart();
 
         grabberServo.setPosition(GRABBER_CLOSED);
         raiseAndHoldArmGroundJunctionPosition();
 
-        drive.followTrajectory(traject2);
-        drive.followTrajectory(traject3);
+        drive.followTrajectory(pushSignalCone);
+        drive.followTrajectory(backToLowJunction);
 
         raiseAndHoldArmLowJunctionPosition();
-        drive.followTrajectory(traject4);
+        drive.followTrajectory(rightToLowJunction);
         motorArm.setPower(0);
         sleep(800);
         // open servo
         grabberServo.setPosition(GRABBER_OPEN);
-        drive.followTrajectory(traject5);
+        drive.followTrajectory(clearJunction);
 
-
-        /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-            drive.followTrajectory(left);
+            drive.followTrajectory(parkLeft);
         } else if (tagOfInterest.id == MIDDLE) {
-            drive.followTrajectory(middle);
+            drive.followTrajectory(parkMiddle);
         } else {
-            drive.followTrajectory(right);
-            drive.followTrajectory(correctRight);
+            drive.followTrajectory(parkRight);
+            drive.followTrajectory(forwardToMiddleOfTile);
         }
 
     }
