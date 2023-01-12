@@ -165,25 +165,30 @@ public class PipePoleTracker extends OpenCvPipeline {
                 if (levelString.equals("two") && level2Assignment == true) {
 
                     //TODO - Another test of the system is to remove the submat assignment and see if it still works (leave input as is)
-                    input = input.submat(focusRect2);
-                    inputMask = inputMask.submat(focusRect2);
+                    input = input.submat(focusRect);
+                    inputMask = inputMask.submat(focusRect);
 
-                    x_resolution = focusRect2.width;
-                    y_resolution = focusRect2.height;
+                    x_resolution = focusRect.width;
+                    y_resolution = focusRect.height;
+
+                    percentColor = ((Core.countNonZero(inputMask))/focusRect.area())*100;
                 }
 
                 if (levelString.equals("two") && level2Assignment == false && focusRect != null) {
 
                     //TODO (potential fix) if it's some how focusRect, try re-declaring focusRect here with lowest/highestX/Y
                     //TODO Another another test is run the submat code, and get ride of all the calculations to see if the assigment is right
-                    input = input.submat(focusRect2);
-                    inputMask = inputMask.submat(focusRect2);
+                    input = input.submat(focusRect);
+                    inputMask = inputMask.submat(focusRect);
 
-                    x_resolution = focusRect2.width;
-                    y_resolution = focusRect2.height;
+                    x_resolution = focusRect.width;
+                    y_resolution = focusRect.height;
 
                     box_width = (int) (x_resolution / gridX);
                     box_height = (int) (y_resolution / gridY);
+
+                    percentColor = ((Core.countNonZero(inputMask))/focusRect.area())*100;
+
 
                     // Creating grid's rectangles
                     for (int i = 0; i < gridY; i++) {
@@ -541,6 +546,7 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                     //Find the biggest object and add a blue dot just to track it
                     int indexOfBiggest = 0;
+                    largestSize = 0;
                     for (int i = 0; i < objects.size(); i++) {
                         if (objectSizes[i] > largestSize) {
                             largestSize = objectSizes[i];
@@ -629,7 +635,6 @@ public class PipePoleTracker extends OpenCvPipeline {
                 System.out.println("focusRect.x: " + focusRect.x);
 
                 focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
-                focusRect2 = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 
             }
             //There are 4 requirements for level3: level2 is true, robot is aligned, robot is close enough, and the imu has recorded a value
@@ -647,9 +652,11 @@ public class PipePoleTracker extends OpenCvPipeline {
 //                input = input.submat(focusRect);
 //                inputMask = inputMask.submat(focusRect);
 
-                percentColor = ((Core.countNonZero(inputMask))/focusRect.area())*100;
+                focusRect2 = new Rect(new Point(lowestX,0), new Point(highestX, inputOriginal.rows()));
 
-                Imgproc.rectangle(inputOriginal, new Point(lowestX,0), new Point(highestX, inputOriginal.rows()), red, 2);
+                percentColor = ((Core.countNonZero(inputMask))/focusRect2.area())*100;
+
+                Imgproc.rectangle(inputOriginal, focusRect2, blue, 2);
 
 //                if(percentColor < 0.1){
 //                    System.out.println("STOP! You've reached the top of the pole!!!");
