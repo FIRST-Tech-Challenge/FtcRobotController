@@ -42,27 +42,70 @@ public class VSliderTest extends LinearOpMode {
             // Testing slider, claw, and arm on gamepad2.
             // Sign of the power doesn't matter. Since the motor is reversed at initialization, the encoder values have to be negated.
 
-            if(gamepad2.a) {
-                robot.vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.MoveSlider(-1, -2000);
-            }
-            if(gamepad2.b) {
-                robot.vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.MoveSlider(1, -2000);
-            }
             if(gamepad2.x) {
-                robot.vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.MoveSlider(0.2, 2000);
+                robot.MoveSlider(0.5, 500,  1200);
+                telemetry.addData("vSlider power 1 ", robot.vSlider.getPower());
+                telemetry.addData("vSlider Encoder 1", robot.vSlider.getCurrentPosition());
+                telemetry.addData("vSlider target 1", robot.vSlider.getTargetPosition());
+                telemetry.update();
+
+
+
+
+                robot.MoveSlider(0.5,  0, 1200);
+                telemetry.addData("vSlider power 2", robot.vSlider.getPower());
+                telemetry.addData("vSlider Encoder 2", robot.vSlider.getCurrentPosition());
+                telemetry.addData("vSlider target 2", robot.vSlider.getTargetPosition());
+                telemetry.update();
+
+
             }
+
             if(gamepad2.y) {
+
+                timeout_ms = 600;
+                runtime.reset();
                 robot.vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.MoveSlider(-1, 2000);
+                robot.vSlider.setTargetPosition(500);
+                robot.vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.vSlider.setPower(0.5);
+                robot.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                while ((runtime.milliseconds() < timeout_ms) && (robot.vSlider.isBusy())) {
+                }
+                robot.vSlider.setPower(0);
+
+                telemetry.addData("vSlider power 1 ", robot.vSlider.getPower());
+                telemetry.addData("vSlider Encoder 1", robot.vSlider.getCurrentPosition());
+                telemetry.addData("vSlider target 1", robot.vSlider.getTargetPosition());
+                telemetry.update();
+
+                sleep(5000);
+
+
+
+                runtime.reset();
+                robot.vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.vSlider.setTargetPosition(-500);
+                robot.vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.vSlider.setPower(0.5);
+                robot.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                while ((runtime.milliseconds() < timeout_ms) && (robot.vSlider.isBusy())) {
+                }
+                robot.vSlider.setPower(0);
+
+
+                telemetry.addData("vSlider power 2 ", robot.vSlider.getPower());
+                telemetry.addData("vSlider Encoder 2", robot.vSlider.getCurrentPosition());
+                telemetry.addData("vSlider target 2", robot.vSlider.getTargetPosition());
+                telemetry.update();
+
+
+
             }
 
-            telemetry.addData("vSlider power", robot.vSlider.getPower());
-            telemetry.addData("vSlider Encoder", robot.vSlider.getCurrentPosition());
 
-            telemetry.update();
 
         }
 

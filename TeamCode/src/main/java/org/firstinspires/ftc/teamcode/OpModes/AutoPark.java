@@ -32,16 +32,8 @@ public class AutoPark extends LinearOpMode {
         robot.init(hardwareMap);
         robot.initVuforia();
         robot.initTfod();
+        robot.initArmClaw();
 
-
-
-//        robot.vSlider.setTargetPosition(-165);
-//        robot.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.vSlider.setPower(0.6);
-
-        robot.claw.setPosition(1);
-        robot.SwingArmToPosition(0.6,65);
-        robot.swingArm.setPower(robot.swingArmHoldingPower);
 
 
         /** Wait for the game to begin */
@@ -83,7 +75,7 @@ public class AutoPark extends LinearOpMode {
                             telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
                             telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
                             telemetry.addData("Robot Location", robot.Location);
-                            telemetry.addData("Vslider Encoder", robot.vSlider.getCurrentPosition());
+                            telemetry.addData("parking target", parkingTarget);
                         }
                         telemetry.update();
                     }
@@ -117,7 +109,7 @@ public class AutoPark extends LinearOpMode {
 //                        break;
 
                     case park:
-                        Park(parkingTarget);
+                        robot.Park(parkingTarget);
                         Step = AutoSteps.endAuto;
                         break;
 
@@ -132,21 +124,4 @@ public class AutoPark extends LinearOpMode {
 
 
 
-    public void Park(int location) {
-        if (location == 1) {
-            robot.claw.setPosition(0);
-            robot.DriveToPosition(0.3, 75, 70, true);
-        }
-
-        if (location == 2) {
-            robot.claw.setPosition(0);
-            robot.DriveToPosition(0.3, 0, 70, true);
-        }
-
-        if (location == 3) {
-            robot.claw.setPosition(0);
-            robot.DriveToPosition(0.3, -75, 70, true);
-
-        }
-    }
 }

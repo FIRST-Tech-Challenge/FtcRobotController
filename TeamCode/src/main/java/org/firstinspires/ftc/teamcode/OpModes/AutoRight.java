@@ -49,15 +49,9 @@ public class AutoRight extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
-        initVuforia();
-        initTfod();
         robot.init(hardwareMap);
-
-        if (tfod != null) {
-            tfod.activate();
-
-            tfod.setZoom(1.1, 16.0 / 9.0);
-        }
+        robot.initVuforia();
+        robot.initTfod();
 
 //        robot.vSlider.setTargetPosition(-165);
 //        robot.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -107,7 +101,8 @@ public class AutoRight extends LinearOpMode {
                             telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
                             telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
                             telemetry.addData("Robot Location", robot.Location);
-                            telemetry.addData("Vslider Encoder", robot.vSlider.getCurrentPosition());
+                            telemetry.addData("parking target", parkingTarget);
+
                         }
                         telemetry.update();
                     }
@@ -141,7 +136,7 @@ public class AutoRight extends LinearOpMode {
 //                        break;
 
                     case park:
-                        Park(parkingTarget);
+                        robot.Park(parkingTarget);
                         Step = AutoSteps.endAuto;
                         break;
 
@@ -155,49 +150,4 @@ public class AutoRight extends LinearOpMode {
     }
 
 
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CameraDirection.BACK;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-    }
-
-
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 300;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-
-        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
-        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromFile(tfodPath, LABELS);
-    }
-
-    private void Park(int location) {
-        if (location == 1) {
-            robot.claw.setPosition(0);
-            robot.DriveToPosition(0.3, 75, 70, true);
-        }
-
-        if (location == 2) {
-            robot.claw.setPosition(0);
-            robot.DriveToPosition(0.3, 0, 70, true);
-        }
-
-        if (location == 3) {
-            robot.claw.setPosition(0);
-            robot.DriveToPosition(0.3, -75, 70, true);
-
-        }
-    }
 }

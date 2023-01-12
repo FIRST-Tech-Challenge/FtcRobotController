@@ -43,7 +43,7 @@ public class Robot {
     public Servo claw;
 
     private double holdingPower = -0.01;
-    public double swingArmHoldingPower = 0.08;
+    public double swingArmHoldingPower = 1;
 
     // global location.
     public int robotX = 0;
@@ -79,14 +79,22 @@ public class Robot {
 
 
     // TFOD and Vuforia properties related to vision.
-    private static final String tfodModel = "jan2023mk2";
-    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel + ".tflite";
+//    private static final String tfodModel = "jan2023mk2";
+//    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel + ".tflite";
+//    public static final String[] LABELS = {
+//            "arrow",
+//            "balloon",
+//            "bar",
+//            "pole",
+//    };
+
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     public static final String[] LABELS = {
-            "arrow",
-            "balloon",
-            "bar",
-            "pole",
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
     };
+
     private static final String VUFORIA_KEY =
             "AWtcstb/////AAABmfYaB2Q4dURcmKS8qV2asrhnGIuQxM/ioq6TnYqZseP/c52ZaYTjs4/2xhW/91XEaX7c3aw74P3kGZybIaXued3nGShb7oNQyRkVePnFYbabnU/G8em37JQrH309U1zOYtM3bEhRej91Sq6cf6yLjiSXJ+DxxLtSgWvO5f+wM3Wny8MbGUpVSiogYnI7UxEz8OY88d+hgal9u3GhhISdnNucsL+fRAE8mKwT1jGDgUVE1uAJoZFvo95AJWS2Yhdq/N/HpxEH3sBXEm99ci+mdQsl0m96PMCDfV5RgWBjhLbBEIJyQ/xKAbw5Yfr/AKCeB86WDPhR3+Mr8BUvsrycZA6FDJnN5sZZwTg0ZE22+gFL";
     public VuforiaLocalizer vuforia; //vuforia object stored in vision class.
@@ -219,14 +227,16 @@ public class Robot {
         int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
+        tfodParameters.minResultConfidence = 0.7f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 300;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        this.tfod.loadModelFromFile(tfodPath, LABELS);
+        // this.tfod.loadModelFromFile(tfodPath, LABELS);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+
 
         if (tfod != null) {
             tfod.activate();
@@ -398,28 +408,27 @@ public class Robot {
         }
     }
 
-    public void MoveSlider(double speed, int Position) {
-        timeout_ms = 5000;
+    public void MoveSlider(double speed, int Position, int timeout) {
+        timeout_ms = timeout;
 
         runtime.reset();
 
-        this.vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        this.vSlider.setTargetPosition(Position);
-
-        //set the mode to go to the target position
-        this.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
+        vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vSlider.setTargetPosition(Position);
         //Set the power of the motor.
         vSlider.setPower(speed);
+        //Run to position.
+        vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while ((runtime.milliseconds() < timeout_ms) && (this.vSlider.isBusy())) {
-
+        while ((runtime.milliseconds() < timeout_ms) && (vSlider.isBusy())) {
         }
-        this.vSlider.setPower(0);
-        this.vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlider.setPower(0);
+//        vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        vSlider.setPower(0);
     }
+
 
     public void SwingArmToPosition(double speed, int Position) {
         timeout_ms = 3000;
@@ -437,6 +446,130 @@ public class Robot {
         while ((runtime.milliseconds() < timeout_ms) && (this.swingArm.isBusy())) {
 
         }
+        this.swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void Park(int location) {
+        if (location == 1) {
+            this.claw.setPosition(0);
+            this.DriveToPosition(0.3, -75, 75, true);
+        }
+
+        if (location == 2) {
+            this.claw.setPosition(0);
+            this.DriveToPosition(0.3, 0, 75, true);
+        }
+
+        if (location == 3) {
+            this.claw.setPosition(0);
+            this.DriveToPosition(0.3, 75, 75, true);
+
+        }
+    }
+
+    public void initArmClaw(){
+        claw.setPosition(1);
+        SwingArmToPosition(0.6,65);
+        swingArm.setPower(swingArmHoldingPower);
+        claw.setPosition(0);
+
+    }
+
+    public void deliverPreLoad(boolean LR) {
+        /** First swing the arm up and go to the pole. **/
+        //Close claw and swing the arm
+        claw.setPosition(1);
+        SwingArmToPosition(1, 65);
+        swingArm.setPower(swingArmHoldingPower);
+        //Drive to the pole
+        if(LR) { // True = Left
+            DriveToPosition(0.8, -10, 100, true);
+            turnRobotToAngle(280);
+        }
+        else{
+
+        }
+
+        stopDriveMotors();
+        /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
+////        Moves the slider to the right height
+        MoveSlider(1, 1000, 1850);
+        vSlider.setPower(0);
+//        //Swings the arm
+        swingArm.setPower(0);
+        SwingArmToPosition(-1, 20);
+        swingArm.setPower(0);
+//        //Opens and closes the claw to drop the cone
+        claw.setPosition(0);
+        //Thread.sleep(500);
+        claw.setPosition(1);
+//        //Swings the arm back up
+        SwingArmToPosition(1, 65);
+        swingArm.setPower(swingArmHoldingPower);
+//        //lowers the slider
+        MoveSlider(-1, 0, 1200);
+    }
+
+    public void ParkFromMedium(boolean LR, int location){
+        if(LR){
+            turnRobotToAngle(350);
+            MoveSlider(1, -500, 750);
+
+            if (location == 1) {
+                claw.setPosition(0);
+                DriveToPosition(0.3, 75, -70, true);
+            }
+
+            if (location == 2) {
+                claw.setPosition(0);
+                DriveToPosition(0.3, 0, -70, true);
+            }
+
+            if (location == 3) {
+                claw.setPosition(0);
+                DriveToPosition(0.3, -75, -70, true);
+
+            }
+
+        }
+
+    }
+
+
+    public void CycleCone(boolean LR){
+        if(LR){
+
+        }
+        /** First go to the stack of cones and grab a cone **/
+        //Open the claw and swing the arm down
+        claw.setPosition(0);
+        SwingArmToPosition(1,20);
+        //Drive forward slightly
+        DriveToPosition(0.6, 0, 25, true);
+        //close the claw and grab onto the cone
+        claw.setPosition(1);
+        /** Now drive to the medium pole **/
+        //Drive to the pole and face it
+        DriveToPosition(0.7,0,-60, true);
+        turnRobotToAngle(210);
+        stopDriveMotors();
+        /** Now deliver the cone **/
+        //Move the slider to the right height and swing down
+        MoveSlider(0.6, 1000,2400);
+        SwingArmToPosition(1, 20);
+        //Open and close claw
+        claw.setPosition(1);
+        // sleep(500); // TODO: Replace with while loop timer.
+        claw.setPosition(0);
+        //swing arm back up
+        SwingArmToPosition(1, 65);
+        swingArm.setPower(swingArmHoldingPower);
+        //lower slider
+        MoveSlider(0.6, 0,1200);
+        //Moves back to the stack
+        turnRobotToAngle(90);
+        stopDriveMotors();
+        DriveToPosition(0.7,0,60, true);
     }
 
 }
