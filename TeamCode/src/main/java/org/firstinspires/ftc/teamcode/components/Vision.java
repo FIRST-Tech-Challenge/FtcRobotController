@@ -14,13 +14,11 @@ import java.util.ArrayList;
 public class Vision {
 
     //"Webcam 1"
-    private static String deviceName;
+    private static OpenCvCamera camera;
 
-    public Vision(String dName){
-        this.deviceName = dName;
+    public Vision(OpenCvCamera openCvCamera){
+        this.camera = openCvCamera;
     }
-
-    static OpenCvCamera camera;
     static SleeveDetector aprilTagDetectionPipeline;
 
     static AprilTagDetection tagOfInterest = null;
@@ -43,8 +41,6 @@ public class Vision {
     static double tagsize = 0.166;
 
     public static void init() {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, deviceName), cameraMonitorViewId);
         aprilTagDetectionPipeline = new SleeveDetector(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);

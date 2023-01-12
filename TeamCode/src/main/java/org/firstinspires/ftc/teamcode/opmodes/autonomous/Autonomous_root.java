@@ -50,7 +50,9 @@ public class Autonomous_root extends LinearOpMode {
         arm.init();
         arm.armTarget = 0;
 
-        Vision vision = new Vision("Webcam 1");
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        Vision vision = new Vision(camera);
         vision.init();
 
         telemetry.addLine("waiting to start!");
