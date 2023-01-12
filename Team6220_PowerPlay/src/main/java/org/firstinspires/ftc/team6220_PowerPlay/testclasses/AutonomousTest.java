@@ -24,15 +24,15 @@ public class AutonomousTest extends BaseAutonomous {
         // initialize
         initialize();
 
+        // detects signal and replaces wait for start
+        int signal = detectSignal();
+
         // activate TensorFlow on robot camera
         tfod.activate();
         tfod.setZoom(1.0, 16.0 / 9.0);
 
         // grab cone
         servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
-
-        // wait for start
-        waitForStart();
 
         // raise slides to stow position
         driveSlidesAutonomous(Constants.SLIDE_STOW);

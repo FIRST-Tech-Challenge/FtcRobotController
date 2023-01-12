@@ -2,14 +2,13 @@ package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 
-//@Disabled
+@Disabled
 @TeleOp(name = "TeleOpTest", group = "Test")
 public class TeleOpTest extends BaseTeleOp {
 
