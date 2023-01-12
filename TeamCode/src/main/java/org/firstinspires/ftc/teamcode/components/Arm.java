@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class Arm {
     public static DcMotor leftLift;
@@ -69,45 +70,45 @@ public class Arm {
         }
     }
 
-    public static void setArmPower(double power) {
+    public static void setArmPower(Gamepad gamepad, double power) {
         boolean drop = manualArm == ManualArm.drop;
-        if (manualArm == ManualArm.none) {
-            leftLift.setTargetPosition(armTarget);
-            rightLift.setTargetPosition(armTarget);
+            if (manualArm == ManualArm.none) {
+                leftLift.setTargetPosition(armTarget);
+                rightLift.setTargetPosition(armTarget);
 
-            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        } else {
-            leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            } else {
+                leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            leftLift.setPower((drop) ? 0.0 : power * 0.7);
-            rightLift.setPower((drop) ? 0.0 : power * 0.7);
+                leftLift.setPower((drop) ? 0.0 : power * 0.7);
+                rightLift.setPower((drop) ? 0.0 : power * 0.7);
 
-            armTarget = getCurrentPosition();
-        }
+                armTarget = getCurrentPosition();
+            }
 
-        if (rightLift.isBusy() && leftLift.isBusy()){
-            if (getCurrentPosition() > armTarget) {
-                if (getCurrentPosition() > middleJunction && getTargetPosition() != middleJunction) {
-                    leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                    rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            if (rightLift.isBusy() && leftLift.isBusy()){
+                if (getCurrentPosition() > armTarget) {
+                    if (getCurrentPosition() > middleJunction && getTargetPosition() != middleJunction) {
+                        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    } else {
+                        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    }
+                    leftLift.setPower(0.0);
+                    rightLift.setPower(0.0);
                 } else {
                     leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    leftLift.setPower(power);
+                    rightLift.setPower(power);
                 }
-                leftLift.setPower(0.0);
-                rightLift.setPower(0.0);
-            } else {
-                leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                leftLift.setPower(power);
-                rightLift.setPower(power);
             }
-        }
     }
 
     public static int getCurrentPosition(){ return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2; }

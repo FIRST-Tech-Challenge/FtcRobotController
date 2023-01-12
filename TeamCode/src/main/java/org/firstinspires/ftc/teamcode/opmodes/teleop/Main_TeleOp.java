@@ -33,9 +33,6 @@ public class Main_TeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             chassis.joyStick(gamepad1);
 
-            if (gamepad2.left_trigger > 0.2) arm.armTarget = arm.getCurrentPosition() - 30;
-            else if (gamepad2.right_trigger > 0.2) arm.armTarget = arm.getCurrentPosition() + 30;
-
             if (gamepad2.x) arm.armTarget = arm.lowJunction;
             if (gamepad2.b) arm.armTarget = arm.middleJunction;
             if (gamepad2.y) arm.armTarget = arm.highJunction;
@@ -49,7 +46,28 @@ public class Main_TeleOp extends LinearOpMode {
 
 
             //TODO: SET 1.0 FOR 11166-RC!!
-            arm.setArmPower(1.0);
+            if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
+                leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                if (gamepad2.left_trigger > 0) {
+                    arm.armTarget = arm.getCurrentPosition();
+
+                    leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+                    leftLift.setPower(0.0);
+                    rightLift.setPower(0.0);
+                }
+
+                if (gamepad2.right_trigger > 0) {
+                    arm.armTarget = arm.getCurrentPosition();
+
+                    leftLift.setPower(1.0);
+                    rightLift.setPower(1.0);
+                }
+            } else {
+                arm.setArmPower(gamepad2, 1.0);
+            }
 
             telemetry.addData("arm position", arm.getCurrentPosition());
             telemetry.addData("arm target", arm.armTarget);
