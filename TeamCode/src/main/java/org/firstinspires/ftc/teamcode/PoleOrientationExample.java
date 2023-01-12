@@ -93,7 +93,7 @@ public class PoleOrientationExample extends LinearOpMode
             public void onOpened()
             {
                 pipelineBack = new PowerPlaySuperPipeline(false, true,
-                        false, false, 154.0);
+                        false, false, 144.0);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 pipelineLow.debugType = Pole;
@@ -265,72 +265,58 @@ public class PoleOrientationExample extends LinearOpMode
 
     void alignToPoleTurretPID() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        final double TURN_SLOPE   = 0.0000;   // power-per-pixel (not power-per-degree!) .15 deg/pixel
-        final double TURN_OFFSET  = 0.1;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
+        final int TURRET_CYCLES_AT_POS = 15;
+
         double turretPower;
         double drivePower;
         // PID stuff
         // Possible values 0.002, 0.005, 0.00005
-        double kp = 0.0010;
-        double ki = 0.0025;
-        double kd = 0.00005;
+        double kpMin;  // see below (could be POSITIVE or NEGATIVE)
+        double kp = 0.00035;
+        double ki = 0.002;
+        double kd = 0.00012;
         double error;
         double errorChange;
         double integralSum = 0.0;
         double derivative;
         double lastError = 0.0;
-        boolean aligning = true;
         double a = 0.707;
         double currentFilterEstimate;
         double previousFilterEstimate = 0.0;
         // This value should be related to ki*integralSum where that value does not exceed
         // something like 25% max power (so if our max power is 0.20 the limit for ki*integralSum
         // would be 0.05 and 0.05 / ki = maxIntegralSum. Start high and bring it down once ki solved
-        double maxIntegralSum = 50.0;
+        double maxIntegralSum = 11.0;
         ElapsedTime timer = new ElapsedTime();
 
         theLocalPole = pipelineBack.getDetectedPole();
-        while (opModeIsActive() && ((theLocalPole.alignedCount <= 5) || theLocalPole.properDistanceHighCount <= 3)) {
+        while (opModeIsActive() && ((theLocalPole.alignedCount <= TURRET_CYCLES_AT_POS) ||
+                theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
-            if(theLocalPole.aligned) {
-                aligning = false;
-                turretPower = 0.0;
-            } else {
-                if(!aligning) {
-                    aligning = true;
-                    lastError = 0.0;
-                    integralSum = 0.0;
-                }
-                // The sign is backwards because centralOffset is negative of the power we need.
-                error = 0.0 - theLocalPole.centralOffset;
-                errorChange = error - lastError;
-                currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;
-                previousFilterEstimate = currentFilterEstimate;
-                derivative = currentFilterEstimate / timer.seconds();
-                integralSum = integralSum + (error * timer.seconds());
-                if(integralSum > maxIntegralSum) integralSum = maxIntegralSum;
-                if(integralSum < -maxIntegralSum) integralSum = -maxIntegralSum;
-                turretPower = (kp * error) + (ki * integralSum) + (kd * derivative);
-                lastError = error;
-                timer.reset();
-                telemetry.addData("turretPower: ", turretPower);
-                telemetry.addData("PID", "error: %.2f, errorPwr: %.2f", error, kp*error);
-                telemetry.addData("PID", "integralSum: %.2f, integralSumPwr: %.2f", integralSum, ki*integralSum);
-                telemetry.addData("PID", "derivative: %.2f, derivativePwr: %.2f", derivative, ki*derivative);
-                telemetry.update();
-/*
-                // Need to calculate the turn power based on pixel offset
-                // Maximum number of pixels off would be half of 320, so 160.
-                // The FOV is 48 degrees, so 0.15 degrees per pixel. This should
-                // go 1.0 to 0.08 from 24 degrees to 0.
-                double minPower = (theLocalPole.centralOffset > 0)? -TURN_OFFSET : TURN_OFFSET;
-                turretPower = (-theLocalPole.centralOffset * TURN_SLOPE) + minPower;
-                if( turretPower < -0.25 ) turretPower = -0.25;
-                if( turretPower > +0.25 ) turretPower = +0.25;
- */
-            }
+            // The sign is backwards because centralOffset is negative of the power we need.
+            error = 0.0 - theLocalPole.centralOffset;
+            kpMin = (theLocalPole.centralOffset > 0)? -0.05 : +0.05;
+            if( theLocalPole.aligned ) kpMin = 0.0;
+            errorChange = error - lastError;
+            currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;
+            previousFilterEstimate = currentFilterEstimate;
+            derivative = currentFilterEstimate / timer.seconds();
+            integralSum = integralSum + (error * timer.seconds());
+            if(integralSum > maxIntegralSum) integralSum = maxIntegralSum;
+            if(integralSum < -maxIntegralSum) integralSum = -maxIntegralSum;
+            turretPower = kpMin + (kp * error) + (ki * integralSum) + (kd * derivative);
+            // Clamp it temporarily
+            if( turretPower > +0.20 ) turretPower = +0.20;
+            if( turretPower < -0.20 ) turretPower = -0.20;
+            lastError = error;
+            timer.reset();
+            telemetry.addData("turretPower: ", turretPower);
+            telemetry.addData("PID", "error: %.2f, errorPwr: %.3f + %.3f", error, kpMin, (kp*error) );
+            telemetry.addData("PID", "integralSum: %.3f, integralSumPwr: %.3f", integralSum, ki*integralSum);
+            telemetry.addData("PID", "derivative: %.3f, derivativePwr: %.3f", derivative, kd*derivative);
+            telemetry.update();
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
             } else {
