@@ -8,19 +8,19 @@ public class ClawSubsystem extends SubsystemBase {
     private final Servo servo;
 
     public enum State {
-        REST, INTAKE, RELEASE
+        GRAB, RELEASE
     };
 
     State state;
 
     public ClawSubsystem(HardwareMap hardwareMap) {
-        this.servo = hardwareMap.get(Servo.class, "bucket");
+        this.servo = hardwareMap.get(Servo.class, "claw");
         this.release();
     }
 
     public void grab() {
         servo.setPosition(0.75);
-        state = State.REST;
+        state = State.GRAB;
     }
 
     public void release() {

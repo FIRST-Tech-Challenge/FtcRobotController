@@ -22,7 +22,7 @@ public class SliderManualCommand extends CommandBase {
 
     @Override
     public void execute() {
-        slider.setPower(0.4*direction);
+        slider.setPower(0.2*direction);
     }
 
     @Override

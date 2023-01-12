@@ -29,27 +29,32 @@ public class RobotEx {
     protected MecanumDriveCommand driveCommand = null;
 
     protected SampleMecanumDrive rrDrive = null;
-
-    protected IMUSubsystem gyro;
-    public Camera camera;
+    protected Camera camera;
 
     protected HeadingControllerSubsystem gyroFollow;
     protected HeadingControllerSubsystem cameraFollow;
+    protected final Boolean initCamera;
+
+    protected IMUSubsystem gyro;
+
+    protected BalancingSubsystem balancer;
+
+    protected TelemetrySubsystem telemetryEx;
 
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
                    GamepadEx toolOp) {
-        this(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, true);
+        this(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false,
+                false, false, false, false, true);
     }
 
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                   GamepadEx toolOp, OpModeType type) {
-        this(hardwareMap, telemetry, driverOp, toolOp, type, true);
-    }
-
-    public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                   GamepadEx toolOp, OpModeType type, Boolean useCameraFollower) {
+                   GamepadEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower,
+                   Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
+                   Boolean rearRightInvert, Boolean useBalancingController) {
+        this.initCamera = initCamera;
         if (type == OpModeType.TELEOP) {
-            initTele(hardwareMap, telemetry, driverOp, toolOp, useCameraFollower);
+            initTele(hardwareMap, telemetry, driverOp, toolOp, useCameraFollower, frontLeftInvert,
+                    frontRightInvert, rearLeftInvert, rearRightInvert, useBalancingController);
             opModeType = OpModeType.TELEOP;
         } else {
             initAuto(hardwareMap, telemetry);
@@ -79,28 +84,33 @@ public class RobotEx {
     }
 
     public void initTele(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                         GamepadEx toolOp, Boolean useCameraFollower) {
+                         GamepadEx toolOp, Boolean useCameraFollower, Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
+                         Boolean rearRightInvert, Boolean useBalancingController) {
         ///////////////////////////////////////// Gamepads /////////////////////////////////////////
         this.driverOp = driverOp;
         this.toolOp = toolOp;
 
-        /////////////////////////////////////// FTC Dashboard //////////////////////////////////////
+        /////////////////////////////////////// Telemetries //////////////////////////////////////
         dashboard = FtcDashboard.getInstance();
         dashboardTelemetry = dashboard.getTelemetry();
         this.telemetry = telemetry;
+        this.telemetryEx = new TelemetrySubsystem(this.telemetry, this.dashboardTelemetry);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
         gyro = new IMUSubsystem(hardwareMap, this.telemetry, dashboardTelemetry);
         CommandScheduler.getInstance().registerSubsystem(gyro);
 
         ////////////////////////////////////////// Camera //////////////////////////////////////////
-        camera = new Camera(hardwareMap, dashboard, telemetry,
-                () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
+        if (initCamera) {
+            camera = new Camera(hardwareMap, dashboard, telemetry,
+                    () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
+        }
 
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
-        drive = new MecanumDriveSubsystem(hardwareMap);
-        driveCommand = new MecanumDriveCommand(drive, driverOp::getLeftY, driverOp::getLeftX,
-                this::drivetrainTurn, gyro::getRawValue,
+        drive = new MecanumDriveSubsystem(hardwareMap, frontLeftInvert, frontRightInvert,
+                rearLeftInvert, rearRightInvert);
+        driveCommand = new MecanumDriveCommand(drive, this::drivetrainForward,
+                this::drivetrainStrafe, this::drivetrainTurn, gyro::getRawYaw,
                 () -> driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
 
         CommandScheduler.getInstance().registerSubsystem(drive);
@@ -110,29 +120,43 @@ public class RobotEx {
         gyroFollow = new HeadingControllerSubsystem(gyro::getValue,
                 gyro::findClosestOrientationTarget);
         new Trigger(() -> driverOp.getRightY() >= 0.8).whenActive(
-                new InstantCommand(() -> gyroFollow.setGyroTarget(0), gyroFollow));
-        new Trigger(() -> driverOp.getRightY() <= -0.8).whenActive(
                 new InstantCommand(() -> gyroFollow.setGyroTarget(180), gyroFollow));
+        new Trigger(() -> driverOp.getRightY() <= -0.8).whenActive(
+                new InstantCommand(() -> gyroFollow.setGyroTarget(0), gyroFollow));
         new Trigger(() -> driverOp.getRightX() >= 0.8).whenActive(
-                new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow));
-        new Trigger(() -> driverOp.getRightX() <= -0.8).whenActive(
                 new InstantCommand(() -> gyroFollow.setGyroTarget(-90), gyroFollow));
+        new Trigger(() -> driverOp.getRightX() <= -0.8).whenActive(
+                new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow));
 //        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
 //                .whenPressed(new InstantCommand(() -> gyroFollow.setGyroTarget(0)));
 //        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
 //                .whenPressed(new InstantCommand(() -> gyroFollow.setGyroTarget(180)));
 //        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-//                .whenPressed(new InstantCommand(() -> gyroFollow.setGyroTarget(-90)));
-//        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
 //                .whenPressed(new InstantCommand(() -> gyroFollow.setGyroTarget(90)));
+//        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(new InstantCommand(() -> gyroFollow.setGyroTarget(-90)));
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
+        telemetryEx.addMonitor("Left X: ", () -> toolOp.getLeftX());
+
+        telemetryEx.addMonitor("Left Y: ", () -> toolOp.getLeftY());
+        telemetryEx.addMonitor("Right X: ", () -> toolOp.getRightX());
+        telemetryEx.addMonitor("Right Y: ", () -> toolOp.getRightY());
+
+        /////////////////////////////////// Balancing Controller ///////////////////////////////////
+        if (useBalancingController) {
+            balancer = new BalancingSubsystem(gyro::getPitch, gyro::getRoll);
+            driverOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
+                    .whenPressed(new InstantCommand(balancer::toggleState, balancer));
+        }
+
         ////////////////////////////////////// Camera Follower /////////////////////////////////////
-//        cameraFollow = new HeadingControllerSubsystem(camera::getObject_x);
-        if (useCameraFollower)
+        if (initCamera && useCameraFollower) {
+            cameraFollow = new HeadingControllerSubsystem(camera::getObject_x);
             driverOp.getGamepadButton(GamepadKeys.Button.START)
                     .whenPressed(new InstantCommand(cameraFollow::toggleState, cameraFollow));
+        }
 
         ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
         initMechanismsTeleOp(hardwareMap);
@@ -146,11 +170,26 @@ public class RobotEx {
         // should be overridden by child class
     }
 
+    public double drivetrainStrafe() {
+        if (balancer.isEnabled())
+            return balancer.getRollCorrection() + driverOp.getLeftX();
+
+        return driverOp.getLeftX();
+    }
+
+    public double drivetrainForward() {
+        if (balancer.isEnabled())
+            return -balancer.getPitchCorrection() + driverOp.getLeftY();
+
+        return driverOp.getLeftY();
+    }
+
     public double drivetrainTurn() {
         if (gyroFollow.isEnabled())
-            return gyroFollow.calculateTurn();
-        if (cameraFollow.isEnabled())
+            return -gyroFollow.calculateTurn();
+        if (initCamera && cameraFollow.isEnabled())
             return cameraFollow.calculateTurn();
+
         return driverOp.getRightX();
     }
 
