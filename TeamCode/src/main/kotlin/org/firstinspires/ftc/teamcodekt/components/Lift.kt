@@ -61,13 +61,13 @@ class Lift {
         targetHeight = LiftConfig.HIGH
     }
 
-    fun update() {
+    fun update(liftDeadzone: Double) {
         val voltageCorrection = voltageScaler.voltageCorrection
 
         var correction =
             liftPID.calculate(-liftEncoder.currentPosition.toDouble(), targetHeight + voltageCorrection)
 
-        if(abs(correction) < 0.05)
+        if(abs(correction) < liftDeadzone)
             correction = 0.0
 
         liftMotor.power = correction

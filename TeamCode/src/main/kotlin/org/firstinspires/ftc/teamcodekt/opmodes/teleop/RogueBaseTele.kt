@@ -35,7 +35,7 @@ abstract class RogueBaseTele : BlackOp() {
 
         Scheduler.launchOnStart(this) {
             bot.drivetrain.drive(driver.gamepad, powerMulti)
-            bot.updateBaseComponents()
+            bot.updateBaseComponents(.05)
             mTelemetry.update()
         }
     }

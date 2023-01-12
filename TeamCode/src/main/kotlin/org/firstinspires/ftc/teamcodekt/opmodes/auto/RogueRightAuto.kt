@@ -55,14 +55,14 @@ class RogueRightAuto : RogueBaseAuto() {
         }
 
     private fun Anvil.awaitInitialGoToDeposit() = this
-        .splineToSplineHeading(82.35, -11.35, 129.5, 117.5)
+        .splineToSplineHeading(82.8, -11.0, 129.5, 117.5)
 
     private fun Anvil.awaitGoToDeposit(it: Int) = this
         .splineToSplineHeading(82.35 + (it * .475), -11.35 - (it * 3.825), 131.5 + (it * 1.9), 155.0)
 
     private fun Anvil.awaitGoToIntake(it: Int) =
         inReverse {
-            splineTo(160.75 - ((it * .6) pow 1.25), -27.75 - (it * .85), 0.0)
+            splineTo(163.5 - (it * .2), -25.75 - (it * .85), 0.0)
         }
 
     private fun Anvil.awaitDeposit() = this
@@ -105,11 +105,11 @@ class RogueRightAuto : RogueBaseAuto() {
         }
 
         .addTemporalMarker(300) {
-            bot.arm.setToForwardsPos()
             bot.lift.goToHigh()
         }
 
         .addTemporalMarker(450) {
+            bot.arm.setToForwardsPos()
             bot.wrist.setToForwardsPos()
         }
 

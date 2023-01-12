@@ -27,7 +27,7 @@ class ConceptRogueRightAuto : RogueBaseAuto() {
         mTelemetry.update()
 
         Scheduler.launch(this@ConceptRogueRightAuto) {
-            bot.updateBaseComponents()
+            bot.updateBaseComponents(.01)
             drive.update()
             mTelemetry.update()
         }
