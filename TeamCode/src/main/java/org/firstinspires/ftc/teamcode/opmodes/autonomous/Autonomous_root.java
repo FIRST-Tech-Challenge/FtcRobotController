@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -15,6 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
+@Autonomous(name="Autonomous root :)")
 public class Autonomous_root extends LinearOpMode {
 
     OpenCvCamera camera;
@@ -126,7 +129,7 @@ public class Autonomous_root extends LinearOpMode {
 
             chassis.resetEncoder();
 
-            if (tagOfInterest.id == LEFT) chassis.runToPosition(1050, -1350, -1350, 1050);
+            if (tagOfInterest.id == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
             else if (tagOfInterest.id == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
 
             chassis.resetEncoder();

@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -44,6 +44,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
  * Each motion axis is controlled by one Joystick axis.
  */
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//CAUTION: DEPRECATED SINCE 2023/01/11. MODIFY Autonomous_root.java INSTEAD.//
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 //@TeleOp(name="Mecanum Drivetrain TeleOp :)", group="Linear Opmode")
 @Disabled
