@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.HardwareDrivers.MaxSonarI2CXL;
 
 import java.io.File;
@@ -39,6 +40,8 @@ public class HardwareSlimbot
     //====== REV CONTROL/EXPANSION HUBS =====
     LynxModule controlHub;
     LynxModule expansionHub;
+    public double expansionHubV = 0.0; // Voltage supply of the expansion hub
+    public double controlHubV   = 0.0; // Voltage supply of the control hub
 
     //====== INERTIAL MEASUREMENT UNIT (IMU) =====
     protected BNO055IMU imu    = null;
@@ -430,6 +433,8 @@ public class HardwareSlimbot
         //   getCurrentPosition() / getTargetPosition() / getTargetPositionTolerance()
         //   getPower() / getVelocity() / getCurrent()
         //===== CONTROL HUB VALUES =====
+        // TODO Need to see if this effect loop times
+        controlHubV        = controlHub.getInputVoltage(VoltageUnit.MILLIVOLTS);
         frontLeftMotorPos  = frontLeftMotor.getCurrentPosition();
         frontLeftMotorVel  = frontLeftMotor.getVelocity();
         frontLeftMotorAmps = frontLeftMotor.getCurrent(MILLIAMPS);
@@ -445,6 +450,8 @@ public class HardwareSlimbot
         turretAngle        = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
         liftAngle          = computeAbsoluteAngle( liftEncoder.getVoltage(),   liftAngleOffset );
         //===== EXPANSION HUB VALUES =====
+        // TODO Need to see if this effect loop times
+        expansionHubV      = expansionHub.getInputVoltage(VoltageUnit.MILLIVOLTS);
         turretMotorPos     = turretMotor.getCurrentPosition();
         turretMotorVel     = turretMotor.getVelocity();
         turretMotorPwr     = turretMotor.getPower();
