@@ -81,26 +81,37 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
 
     // Sets Arm Position to Encoder Values for Ease of Lifing Cones
-    void setArmPosition(int armLiftPos, double clawLiftPos, int armExtendPos){
-        huskyBot.armLiftMotor.setTargetPosition(armLiftPos);
-        huskyBot.clawLift.setPosition(clawLiftPos);
-        huskyBot.armExtendMotor.setTargetPosition(armExtendPos);
-
+    void setArmPosition(int armLiftPos, int armExtendPos){
+        // Close the extend motor
+        huskyBot.armExtendMotor.setTargetPosition(0);
+        huskyBot.armExtendMotor.setPower(ARM_EXTENSION_MAX_POWER+0.35);
         huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        huskyBot.armExtendMotor.setPower(ARM_EXTENSION_MAX_POWER);
-
-        runtime.reset();
-
-        while (opModeIsActive() && (huskyBot.armLiftMotor.isBusy())) {
+        while (opModeIsActive() && (huskyBot.armExtendMotor.isBusy())) {
         }
 
         huskyBot.armExtendMotor.setPower(0);
 
-        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        huskyBot.armLiftMotor.setTargetPosition(armLiftPos);
+        huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (opModeIsActive() && (huskyBot.armLiftMotor.isBusy())) {
+        }
         huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        huskyBot.armExtendMotor.setTargetPosition(armExtendPos);
+        huskyBot.armExtendMotor.setPower(ARM_EXTENSION_MAX_POWER);
+        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        runtime.reset();
+
+        while (opModeIsActive() && (huskyBot.armExtendMotor.isBusy())) {
+        }
+
+
+        huskyBot.armExtendMotor.setPower(0);
+
+        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 
@@ -159,15 +170,29 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
             //OTHER CONTROLS --------------------------------------------------------------------------------------------
 
-            // arm encoder preset values
-//            if(gamepad1.y)
-//                setArmPosition(-115, 0.9, -1414);
-//            if(gamepad1.x)
-//                setArmPosition(473, 0.55, 0);
-//            if(gamepad1.a)
-//                setArmPosition(846, 0.10, -1000);
-//            if(gamepad1.b)
-//                setArmPosition(((int) ARM_LIFT_MAX_POSITION), 0.35, -3240);
+
+             // arm encoder preset values
+            // Cone take position
+            if(gamepad1.a) {
+                huskyBot.clawGrab.setPosition(CLAW_GRAB_OPEN_POSITION);
+                huskyBot.clawLift.setPosition(0.85);
+                setArmPosition(-115, -1550);
+            }
+            // Small junction position
+            if(gamepad1.x){
+                setArmPosition(473,  0);
+                huskyBot.clawLift.setPosition(0.55);
+            }
+            // Medium junction position
+            if(gamepad1.b) {
+                setArmPosition(846, -1000);
+                huskyBot.clawLift.setPosition(0.10);
+            }
+            // High junction position
+            if(gamepad1.y) {
+                setArmPosition(((int) ARM_LIFT_MAX_POSITION), -3240);
+                huskyBot.clawLift.setPosition(0.35);
+            }
 
 
 
