@@ -2,14 +2,10 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.SwitchableCamera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -157,16 +153,6 @@ public abstract class BaseAutonomous extends BaseOpMode {
         OpenCvCamera robotCamera;
         AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
-        // units are pixels
-        // calibration is for Logitech C920 webcam at 800 x 600
-        final double fx = 775.790; // focal length x
-        final double fy = 775.790; // focal length y
-        final double cx = 400.898; // camera principal point x
-        final double cy = 300.790; // camera principal point y
-
-        // units are meters
-        final double tagSize = 0.03429;
-
         final int ID_TAG_OF_INTEREST_0 = 0; // tag 0 from the 36h11 family
         final int ID_TAG_OF_INTEREST_1 = 1; // tag 1 from the 36h11 family
         final int ID_TAG_OF_INTEREST_2 = 2; // tag 2 from the 36h11 family
@@ -178,7 +164,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         // initializes camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagSize, fx, fy, cx, cy);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
 
         robotCamera.setPipeline(aprilTagDetectionPipeline);
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

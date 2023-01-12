@@ -29,24 +29,24 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
     private static final Scalar green = new Scalar(0, 255, 0, 255);
     private static final Scalar white = new Scalar(255, 255, 255, 255);
 
-    double fx, fy, cx, cy;
-    double tagSize, tagSizeX, tagSizeY;
+    // units are pixels
+    // calibration is for Logitech C920 webcam at 800 x 600
+    private final double fx = 775.790; // focal length x
+    private final double fy = 775.790; // focal length y
+    private final double cx = 400.898; // camera principal point x
+    private final double cy = 300.790; // camera principal point y
+
+    // units are meters
+    private final double tagSize = 0.03429;
+    private final double tagSizeX = 0.03429;
+    private final double tagSizeY = 0.03429;
 
     private float decimation;
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    public AprilTagDetectionPipeline(double tagSize, double fx, double fy, double cx, double cy) {
-        this.tagSize = tagSize;
-        this.tagSizeX = tagSize;
-        this.tagSizeY = tagSize;
-        this.fx = fx;
-        this.fy = fy;
-        this.cx = cx;
-        this.cy = cy;
-
+    public AprilTagDetectionPipeline() {
         constructMatrix();
-
         aprilTagPointer = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
     }
 

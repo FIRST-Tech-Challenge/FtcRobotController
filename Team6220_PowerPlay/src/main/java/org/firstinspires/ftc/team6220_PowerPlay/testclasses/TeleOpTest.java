@@ -1,32 +1,17 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Disabled
+//@Disabled
 @TeleOp(name = "TeleOpTest", group = "Test")
 public class TeleOpTest extends BaseTeleOp {
 
-    double currentAngle;
-    double headingDegrees;
-    double negativeHeadingRadians;
-
-    double x;
-    double y;
-    double t;
-
-    double xRotatedVector;
-    double yRotatedVector;;
-    double ratio;
-
-    double xPower;
-    double yPower;
-    double tPower;
+    int camera = 0;
+    int[] cameras = {0, 0};
 
     @Override
     public void runOpMode() {
@@ -34,35 +19,37 @@ public class TeleOpTest extends BaseTeleOp {
         waitForStart();
 
         while (opModeIsActive()) {
-            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            headingDegrees = currentAngle - startAngle;
-            negativeHeadingRadians = Math.toRadians(-headingDegrees);
+            if (gamepad2.right_bumper && cameras[0] == cameras[1]) {
+                grabberCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                    @Override
+                    public void onOpened() {
+                        grabberCamera.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
+                    }
 
-            if (gamepad1.left_trigger > 0.25) {
-                x = gamepad1.left_stick_x * 0.3;
-                y = -gamepad1.left_stick_y * 0.3;
-                t = gamepad1.right_stick_x * 0.2;
-            } else {
-                x = gamepad1.left_stick_x * 0.75;
-                y = -gamepad1.left_stick_y * 0.75;
-                t = gamepad1.right_stick_x * 0.5;
+                    @Override
+                    public void onError(int errorCode) {
+
+                    }
+                });
+            } else if (gamepad2.left_bumper && cameras[0] == cameras[1]) {
+                robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                    @Override
+                    public void onOpened() {
+                        robotCamera.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
+                    }
+
+                    @Override
+                    public void onError(int errorCode) {
+
+                    }
+                });
             }
 
-            xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
-            yRotatedVector = x * Math.sin(negativeHeadingRadians) + y * Math.cos(negativeHeadingRadians);
+            if (!gamepad2.left_bumper && !gamepad2.right_bumper) {
+                cameras[0] = cameras[1];
+            }
 
-            ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(yRotatedVector) + Math.abs(t), 1);
-
-            xPower = xRotatedVector * ratio;
-            yPower = yRotatedVector * ratio;
-            tPower = t * ratio;
-
-            driveWithIMU(xPower, yPower, tPower);
-
-            telemetry.addData("start", startAngle);
-            telemetry.addData("current", currentAngle);
-            telemetry.addData("heading", headingDegrees);
-            telemetry.update();
+            cameras[1] = camera;
         }
     }
 }
