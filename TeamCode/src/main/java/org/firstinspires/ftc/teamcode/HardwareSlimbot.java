@@ -40,8 +40,8 @@ public class HardwareSlimbot
     //====== REV CONTROL/EXPANSION HUBS =====
     LynxModule controlHub;
     LynxModule expansionHub;
-    public double expansionHubV = 0.0; // Voltage supply of the expansion hub
     public double controlHubV   = 0.0; // Voltage supply of the control hub
+    public double expansionHubV = 0.0; // Voltage supply of the expansion hub
 
     //====== INERTIAL MEASUREMENT UNIT (IMU) =====
     protected BNO055IMU imu    = null;
@@ -434,9 +434,6 @@ public class HardwareSlimbot
         //   getCurrentPosition() / getTargetPosition() / getTargetPositionTolerance()
         //   getPower() / getVelocity() / getCurrent()
         //===== CONTROL HUB VALUES =====
-        // TODO Need to see if this effect loop times
-        // TODONE It does effect loop times by an i2c read
-//        controlHubV        = controlHub.getInputVoltage(VoltageUnit.MILLIVOLTS);
         frontLeftMotorPos  = frontLeftMotor.getCurrentPosition();
         frontLeftMotorVel  = frontLeftMotor.getVelocity();
         frontLeftMotorAmps = frontLeftMotor.getCurrent(MILLIAMPS);
@@ -452,8 +449,6 @@ public class HardwareSlimbot
         turretAngle        = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
         liftAngle          = computeAbsoluteAngle( liftEncoder.getVoltage(),   liftAngleOffset );
         //===== EXPANSION HUB VALUES =====
-        // TODO Need to see if this effect loop times
-//        expansionHubV      = expansionHub.getInputVoltage(VoltageUnit.MILLIVOLTS);
         turretMotorPos     = turretMotor.getCurrentPosition();
         turretMotorVel     = turretMotor.getVelocity();
         turretMotorPwr     = turretMotor.getPower();
@@ -495,6 +490,22 @@ public class HardwareSlimbot
         } // turretMotorLogEnable
 
     } // readBulkData
+
+    /*--------------------------------------------------------------------------------------------*/
+    // This is a slow operation (involves an I2C reading) so only do it as needed
+    public double readBatteryControlHub() {
+        // Update local variable and then return that value
+        controlHubV = controlHub.getInputVoltage( VoltageUnit.MILLIVOLTS );
+        return controlHubV;
+    } // readBatteryControlHub
+
+    /*--------------------------------------------------------------------------------------------*/
+    // This is a slow operation (involves an I2C reading) so only do it as needed
+    public double readBatteryExpansionHub() {
+        // Update local variable and then return that value
+        expansionHubV = expansionHub.getInputVoltage( VoltageUnit.MILLIVOLTS );
+        return expansionHubV;
+    } // readBatteryExpansionHub
 
     /*--------------------------------------------------------------------------------------------*/
     public void driveTrainMotors( double frontLeft, double frontRight, double rearLeft, double rearRight )

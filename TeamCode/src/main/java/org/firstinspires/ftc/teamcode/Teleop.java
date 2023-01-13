@@ -53,8 +53,9 @@ public abstract class Teleop extends LinearOpMode {
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
     boolean   autoDrive                = false;
 
+    boolean   batteryVoltsEnabled = true;  // enable only during testing (takes time!)
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
-    boolean   rangeSensorsEnabled = true;  // enable only when designing an Autonomous plan (takes time!)
+    boolean   rangeSensorsEnabled = false; // enable only when designing an Autonomous plan (takes time!)
     int       rangeSensorIndex = 1;        // only send a new ping out every other control cycle, and rotate sensors
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
@@ -246,6 +247,10 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Orientation", "%.2f deg (IMU %.2f)", Math.toDegrees(robotOrientationRadians),  robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.addData("Cone Sensors", "Top: %b Bottom: %b", robot.topConeSensor.getState(), robot.bottomConeSensor.getState());
+            if( batteryVoltsEnabled ) {
+               telemetry.addData("Batteries", "%CtlHub=.3f V, ExHub=%.3f V",
+                    robot.readBatteryControlHub()/1000.0, robot.readBatteryExpansionHub()/1000.0 );
+            }
             telemetry.update();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
@@ -711,15 +716,28 @@ public abstract class Teleop extends LinearOpMode {
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         else if( gamepad2_circle_now && !gamepad2_circle_last )
-        {   // Flip intake (toggle)
-            if( collectorFlipped ) {
-                robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
-                collectorFlipped = false;
+        {   // Flip intake (toggle) but only if the collector is in a
+            // safe position for the current lift-angle to do so
+            boolean safeDownLow = (robot.liftAngle >= robot.LIFT_ANGLE_MOTORS ) && (robot.currentTilt <= robot.GRABBER_TILT_SAFE );
+            boolean safeUpHigh  = (robot.liftAngle <  robot.LIFT_ANGLE_MOTORS ) && (robot.currentTilt >= -robot.GRABBER_TILT_SAFE );
+            if( safeDownLow || safeUpHigh ) {
+              if( collectorFlipped ) {
+                  robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
+                  collectorFlipped = false;
+              }
+              else {
+                  robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
+                  collectorFlipped = true;
+              }
             }
-            else {
-                robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
-                collectorFlipped = true;
-            }
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button
+        else if( gamepad2_square_now && !gamepad2_square_last )
+        {  // Raise collector to vertical position for better navigation around
+           // poles on the field (but only if arm in correct location to do so
+           if( robot.liftAngle > robot.LIFT_ANGLE_MOTORS ) {
+              robot.grabberSetTilt( robot.GRABBER_TILT_SAFE );
+           }
         }
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 LEFT BUMPER

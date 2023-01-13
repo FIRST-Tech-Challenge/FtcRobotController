@@ -413,7 +413,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         boolean properDistanceHigh = false;
     }
 
-    static final int MAX_CONE_OFFSET = 4;
+    static final int MAX_CONE_OFFSET = 6;  // +/- pixels
     static class AnalyzedCone
     {
         public AnalyzedCone() {

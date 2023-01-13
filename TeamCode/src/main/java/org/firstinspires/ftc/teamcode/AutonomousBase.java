@@ -73,7 +73,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
 
-    boolean     blueAlliance    = true;  // Can be toggled during the init phase of autonomous
+    boolean     blueAlliance    = true;  // Is alliance BLUE (true) or RED (false)?
+    boolean     forceAlliance   = false; // Override vision pipeline? (toggled during init phase of autonomous)
     int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
     int         fiveStackCycles = 2;     // How many we want to attempt to collect/score? (adjustable during init)
     ElapsedTime autonomousTimer = new ElapsedTime();
@@ -244,8 +245,9 @@ public abstract class AutonomousBase extends LinearOpMode {
             previousFilterEstimate = currentFilterEstimate;
             derivative = currentFilterEstimate / timer.seconds();
             integralSum = integralSum + (error * timer.seconds());
-            if(integralSum > maxIntegralSum) integralSum = maxIntegralSum;
-            if(integralSum < -maxIntegralSum) integralSum = -maxIntegralSum;
+            if( integralSum >  maxIntegralSum) integralSum =  maxIntegralSum;
+            if( integralSum < -maxIntegralSum) integralSum = -maxIntegralSum;
+//          if( theLocalPole.aligned ) integralSum = 0.0;   // TEST THIS??
             turretPower = kpMin + (kp * error) + (ki * integralSum) + (kd * derivative);
             // Clamp it temporarily
             if( turretPower > +0.20 ) turretPower = +0.20;
@@ -1084,16 +1086,17 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*--------------------------------------------------------------------------------------------*/
     /**
      * Compute instantaneous motor powers needed to move toward the specified target position/orientation
-     * NOTE that this system uses X and Y directions OPPOSITE of globalCoordinatePositionUpdate.
-     * @param yTarget (inches)
-     * @param xTarget (inches)
+     * NOTE that this system uses X and Y directions OPPOSITE of globalCoordinatePositionUpdate so
+     * that we can have straight-forward be 0deg (-90deg left to +90deg right) instead of 0deg left.
+     * @param xTarget (inches) <-- pass in desired Y target!
+     * @param yTarget (inches) <-- pass in desired X target
      * @param angleTarget (degrees)
      * @param speedMax
      * @param turnMax
      * @param driveType (DRIVE_TO or DRIVE_THRU)
      * @return boolean true/false for DONE?
      */
-    public boolean moveToPosition( double yTarget, double xTarget, double angleTarget,
+    public boolean moveToPosition( double xTarget, double yTarget, double angleTarget,
                                     double speedMax, double turnMax, int driveType ) {
         // Convert current robot X,Y position from encoder-counts to inches
         double x_world = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (X/Y backward! see notes)
@@ -1260,7 +1263,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*--------------------------------------------------------------------------------------------*/
     // Resets odometry global position to 0/0/0 and ensures zero accumulated encoder counts
-    private void globalCoordinatePositionReset(){
+    public void globalCoordinatePositionReset(){
         // Read starting odomentry counts (so "prev" becomes "this" on next cycle)
         robot.readBulkData();
         // Zero our starting position (x/y & angle) 

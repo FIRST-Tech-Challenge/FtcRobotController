@@ -43,7 +43,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @TeleOp(name="Pole-Test", group="Skunkworks")
 public class PoleOrientationExample extends LinearOpMode
 {
-    final int LOGSIZE = 10;
+    final int LOGSIZE = 12;
     double[]  errorHistory = new double[LOGSIZE];
     double[]  kpMinHistory = new double[LOGSIZE];
     double[]  kpHistory    = new double[LOGSIZE];
@@ -245,8 +245,9 @@ public class PoleOrientationExample extends LinearOpMode
             previousFilterEstimate = currentFilterEstimate;
             derivative = currentFilterEstimate / timer.seconds();
             integralSum = integralSum + (error * timer.seconds());
-            if(integralSum > maxIntegralSum) integralSum = maxIntegralSum;
-            if(integralSum < -maxIntegralSum) integralSum = -maxIntegralSum;
+            if( integralSum >  maxIntegralSum) integralSum =  maxIntegralSum;
+            if( integralSum < -maxIntegralSum) integralSum = -maxIntegralSum;
+//          if( theLocalPole.aligned ) integralSum = 0.0;   // TEST THIS??
             turretPower = kpMin + (kp * error) + (ki * integralSum) + (kd * derivative);
             // Clamp it temporarily
             if( turretPower > +0.20 ) turretPower = +0.20;
@@ -254,23 +255,26 @@ public class PoleOrientationExample extends LinearOpMode
             lastError = error;
             timer.reset();
 
-            // Shift all previous instrumentation readings down one entry
-            for( int index=1; index<LOGSIZE; index++ ) {
-                errorHistory[index-1] = errorHistory[index];
-                kpMinHistory[index-1] = kpMinHistory[index];
-                kpHistory[index-1]    = kpHistory[index];
-                kiHistory[index-1]    = kiHistory[index];
-                kdHistory[index-1]    = kdHistory[index];
-                kTHistory[index-1]    = kTHistory[index];
-            }
-            // Add the latest numbers to the end
-            errorHistory[LOGSIZE-1] = error;
-            kpMinHistory[LOGSIZE-1] = kpMin;
-            kpHistory[LOGSIZE-1]    = (kp * error);
-            kiHistory[LOGSIZE-1]    = (ki * integralSum);
-            kdHistory[LOGSIZE-1]    = (kd * derivative);
-            kTHistory[LOGSIZE-1]    = turretPower;
-
+            // Only save "meaningful" entries (not final 15 aligned results with all zeros!)
+            if( theLocalPole.alignedCount <= 3 ) {
+               // Shift all previous instrumentation readings down one entry
+               for( int index=1; index<LOGSIZE; index++ ) {
+                   errorHistory[index-1] = errorHistory[index];
+                   kpMinHistory[index-1] = kpMinHistory[index];
+                   kpHistory[index-1]    = kpHistory[index];
+                   kiHistory[index-1]    = kiHistory[index];
+                   kdHistory[index-1]    = kdHistory[index];
+                   kTHistory[index-1]    = kTHistory[index];
+               }
+               // Add the latest numbers to the end
+               errorHistory[LOGSIZE-1] = error;
+               kpMinHistory[LOGSIZE-1] = kpMin;
+               kpHistory[LOGSIZE-1]    = (kp * error);
+               kiHistory[LOGSIZE-1]    = (ki * integralSum);
+               kdHistory[LOGSIZE-1]    = (kd * derivative);
+               kTHistory[LOGSIZE-1]    = turretPower;
+               }
+            
             telemetry.addData("turretPower: ", turretPower);
             telemetry.addData("PID", "error: %.2f, errorPwr: %.3f + %.3f", error, kpMin, (kp*error) );
             telemetry.addData("PID", "integralSum: %.3f, integralSumPwr: %.3f", integralSum, ki*integralSum);
@@ -299,7 +303,7 @@ public class PoleOrientationExample extends LinearOpMode
         }
         robot.stopMotion();
         robot.setTurretPower(0.0);
-    } // alignToPoleTurretPID
+    } // alignToPole
 
     /**
      * Ensure angle is in the range of -180 to +180 deg (-PI to +PI)

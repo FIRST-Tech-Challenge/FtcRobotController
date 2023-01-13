@@ -43,8 +43,6 @@ public class AutonomousRight extends AutonomousBase {
     boolean backCameraInitialized = false;
     boolean frontCameraInitialized = false;
 
-//  double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
-
     OpenCvCamera webcamLow;
     OpenCvCamera webcamFront;
     OpenCvCamera webcamBack;
@@ -126,7 +124,9 @@ public class AutonomousRight extends AutonomousBase {
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
             telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
-            telemetry.addData("ALLIANCEp", "%s", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
+            // If vision pipeline diagrees with forced alliance setting, report it
+            if( forceAlliance && (blueAlliance != pipelineLow.isBlueAlliance) )
+               telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
             telemetry.addData("STARTING", "%s", "RIGHT");
 //          telemetry.addData("STARTINGp", "%s", (pipelineLow.isLeft)? "LEFT":"RIGHT");
             telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRR + " G: " +
@@ -137,13 +137,20 @@ public class AutonomousRight extends AutonomousBase {
             telemetry.update();
             // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
-            // Change to RED/BLUE alliance?
+            // Force RED alliance?
             if( gamepad1_circle_now && !gamepad1_circle_last ) {
                 blueAlliance = false;  // gamepad circle is colored RED
+                forceAlliance = true;
             }
+            // Force BLUE alliance?
             else if( gamepad1_cross_now && !gamepad1_cross_last ) {
                 blueAlliance = true;   // gamepad cross is colored BLUE
-            }            
+                forceAlliance = true;
+            }
+            // Accept what the vision pipeline detects? (changes real-time!)
+            if( !forceAlliance ) {
+                blueAlliance = pipelineLow.isBlueAlliance;
+            }
             // Change number of 5-stack to attempt?
             if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last ) {
               fiveStackCycles -= 1;
