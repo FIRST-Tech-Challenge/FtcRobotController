@@ -96,30 +96,51 @@ public class VSliderTest extends LinearOpMode {
                 robot.vSlider.setPower(0);
 
 
-                telemetry.addData("vSlider power 2 ", robot.vSlider.getPower());
-                telemetry.addData("vSlider Encoder 2", robot.vSlider.getCurrentPosition());
-                telemetry.addData("vSlider target 2", robot.vSlider.getTargetPosition());
-                telemetry.update();
+
 
 
 
             }
 
             if(gamepad2.a) {
-                for(int i = 0; i <= 20; i++) {
-                    robot.SwingArmToPosition(1,65);
-                    robot.swingArm.setPower(robot.swingArmHoldingPower);
+             //   for(int i = 0; i <= 20; i++) {
+//                    robot.SwingArmToPosition(1,65, robot.swingArmHoldingPower);
+//                    robot.claw.setPosition(0);
+//                    sleep(500);
+//                    robot.claw.setPosition(1);
+//                    robot.SwingArmToPosition(-1,20, 0);
+             //   }
+//                robot.swingArm.setPower(1);
+//                robot.swingArm.setTargetPosition(65);
+//                robot.swingArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.swingArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.swingArm.setPower(1);
+            }
 
+            if(gamepad2.b) {
+                robot.swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                   for(int i = 0; i <= 20; i++) {
+                    robot.SwingArmToPosition(1,65, robot.swingArmHoldingPower);
                     robot.claw.setPosition(0);
                     sleep(500);
                     robot.claw.setPosition(1);
+                    robot.SwingArmToPosition(-1,20, 0);
+                   }
+                   // Test with encoder
+             //   robot.swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                    robot.SwingArmToPosition(-1,20);
-                    robot.swingArm.setPower(0);
-                }
+//                robot.swingArm.setPower(1);
+//                robot.swingArm.setTargetPosition(65);
+//                robot.swingArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                // Test without encoder
+//                robot.swingArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                robot.swingArm.setPower(0);
             }
 
-
+            telemetry.addData("swingarm power ", robot.swingArm.getPower());
+            telemetry.addData("swingarm Encoder", robot.swingArm.getCurrentPosition());
+            telemetry.addData("swingarm target", robot.swingArm.getTargetPosition());
+            telemetry.update();
 
         }
 

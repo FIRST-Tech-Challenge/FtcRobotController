@@ -44,6 +44,8 @@ public class Robot {
 
     private double holdingPower = -0.01;
     public double swingArmHoldingPower = 1;
+    public double CLAWOPEN = 0;
+    public double CLAWCLOSE = 1;
 
     // global location.
     public int robotX = 0;
@@ -406,6 +408,7 @@ public class Robot {
             angleCurrent = modAngle(angle.firstAngle);
 
         }
+        stopDriveMotors();
     }
 
     public void MoveSlider(double speed, int Position, int timeout) {
@@ -430,23 +433,23 @@ public class Robot {
     }
 
 
-    public void SwingArmToPosition(double speed, int Position) {
-        timeout_ms = 3000;
-
+    public void SwingArmToPosition(double speed, int Position, double holdingPower) {
+        timeout_ms = 5000;
         runtime.reset();
 
         this.swingArm.setTargetPosition(Position);
-
+        //Set the power of the motor.
+        this.swingArm.setPower(speed);
         //set the mode to go to the target position
         this.swingArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //Set the power of the motor.
-        swingArm.setPower(speed);
 
         while ((runtime.milliseconds() < timeout_ms) && (this.swingArm.isBusy())) {
 
         }
-        this.swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+       // swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.swingArm.setPower(holdingPower);
+
     }
 
     public void Park(int location) {
@@ -469,82 +472,74 @@ public class Robot {
 
     public void initArmClaw(){
         claw.setPosition(1);
-        SwingArmToPosition(0.6,65);
-        swingArm.setPower(swingArmHoldingPower);
+        SwingArmToPosition(1,65, swingArmHoldingPower);
         claw.setPosition(0);
 
     }
 
     public void deliverPreLoad(boolean LR) {
         /** First swing the arm up and go to the pole. **/
-        //Close claw and swing the arm
+        //Close claw, the arm is already up.
         claw.setPosition(1);
-        SwingArmToPosition(1, 65);
-        swingArm.setPower(swingArmHoldingPower);
+        SwingArmToPosition(1, 65, swingArmHoldingPower);
+
         //Drive to the pole
         if(LR) { // True = Left
-            claw.setPosition(1);
-            DriveToPosition(0.8, -8, 100, true);
+            DriveToPosition(0.5, -8, 100, true);
             turnRobotToAngle(280);
         }
         else{
-            claw.setPosition(1);
-            DriveToPosition(0.8, 8, 100, true);
+            DriveToPosition(0.5, 8, 100, true);
             turnRobotToAngle(90);
         }
-
         stopDriveMotors();
+
         /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
-        //Moves the slider to the right height
+        //Moves the slider to the correct height
         MoveSlider(1, 1000, 1850);
-        //Swings the arm
-        SwingArmToPosition(-1, 20);
-        swingArm.setPower(0);
-        //Opens and closes the claw to drop the cone
-        claw.setPosition(0);
-        timeout_ms = 500;
-        runtime.reset();
-        while ((runtime.milliseconds() < timeout_ms)) {
 
-        }
-        claw.setPosition(1);
-        MoveSlider(1, 500, 300);
-        //Swings the arm back up
-        SwingArmToPosition(1, 65);
-        swingArm.setPower(swingArmHoldingPower);
-        while(swingArm.isBusy()) {
 
-        }
-        //lowers the slider
-        MoveSlider(-1, 0, 1200);
+//        //Swings the arm down
+//        SwingArmToPosition(-1, 20, 0);
+//
+//
+//        // Lower the slider a little bit to catch the cone in pole.
+//        MoveSlider(1, -100, 100);
+//
+//        //Open and close the claw to drop the cone
+//        claw.setPosition(0);
+//        timeout_ms = 500;
+//        runtime.reset();
+//        while ((runtime.milliseconds() < timeout_ms)) {
+//        }
+//        claw.setPosition(1);
+//        //Swings the arm back up
+//        SwingArmToPosition(1, 65, swingArmHoldingPower);
+//        //lower the slider
+//        MoveSlider(-1, -1000, 1200);
+//        // Open the claw.
+//        claw.setPosition(0);
     }
 
     public void ParkFromMedium(boolean LR, int location){
-        if (LR) {
+        if(LR) {
             turnRobotToAngle(350);
             stopDriveMotors();
-        } else {
+            switch(location){
+                case 1:
+                    DriveToPosition(0.5, 75, -30, true);
+                case 2:
+                    DriveToPosition(0.5, 0, -40, true);
+                case 3:
+                    DriveToPosition(0.5, -75, -40, true);
+            }
+        }
+        else {
             turnRobotToAngle(160);
             stopDriveMotors();
-        }
-
-        MoveSlider(1, -500, 1200);
-
-        if (location == 1) {
-            claw.setPosition(0);
-            DriveToPosition(0.3, 75, -30, true);
-        }
-
-        if (location == 2) {
-            claw.setPosition(0);
-            DriveToPosition(0.3, 0, -40, true);
-        }
-
-        if (location == 3) {
-            claw.setPosition(0);
-            DriveToPosition(0.3, -75, -40, true);
 
         }
+
     }
 
 
@@ -556,7 +551,7 @@ public class Robot {
         /** First go to the stack of cones and grab a cone **/
         //Open the claw and swing the arm down
         claw.setPosition(0);
-        SwingArmToPosition(1,20);
+        SwingArmToPosition(1,20, 0);
         //Drive forward slightly
         DriveToPosition(0.6, 0, 25, true);
         //close the claw and grab onto the cone
@@ -569,14 +564,13 @@ public class Robot {
         /** Now deliver the cone **/
         //Move the slider to the right height and swing down
         MoveSlider(0.6, 1000,2400);
-        SwingArmToPosition(1, 20);
+        SwingArmToPosition(1, 20, 0);
         //Open and close claw
         claw.setPosition(1);
         // sleep(500); // TODO: Replace with while loop timer.
         claw.setPosition(0);
         //swing arm back up
-        SwingArmToPosition(1, 65);
-        swingArm.setPower(swingArmHoldingPower);
+        SwingArmToPosition(1, 65, swingArmHoldingPower);
         //lower slider
         MoveSlider(0.6, 0,1200);
         //Moves back to the stack

@@ -71,15 +71,11 @@ public class AutoLeft extends LinearOpMode {
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = robot.tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
+//                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
 
                         // step through the list of recognitions and display image position/size information for each one
                         // Note: "Image number" refers to the randomized image orientation/number
                         for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
                             String objectLabel = recognition.getLabel();
                             if (objectLabel == robot.LABELS[0]) {
                                 parkingTarget = 1;
@@ -89,14 +85,12 @@ public class AutoLeft extends LinearOpMode {
                                 parkingTarget = 3;
                             }
 
-                            telemetry.addData("", " ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-                            telemetry.addData("Robot Location", robot.Location);
-                            telemetry.addData("parking target", parkingTarget);
+//                            telemetry.addData("", " ");
+//                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+//                            telemetry.addData("Robot Location", robot.Location);
+//                            telemetry.addData("parking target", parkingTarget);
                         }
-                        telemetry.update();
+//                        telemetry.update();
                     }
                 }
 
@@ -109,7 +103,7 @@ public class AutoLeft extends LinearOpMode {
 
                     case deliverPreLoad:
                         robot.deliverPreLoad(true);
-                        Step = AutoSteps.parkFromMedium;
+                        Step = AutoSteps.endAuto;
                         break;
 
                     case CycleThreeCones:

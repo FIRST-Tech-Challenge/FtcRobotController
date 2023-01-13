@@ -58,8 +58,7 @@ public class AutoRight extends LinearOpMode {
 //        robot.vSlider.setPower(0.6);
 
         robot.claw.setPosition(1);
-        robot.SwingArmToPosition(0.6,65);
-        robot.swingArm.setPower(robot.swingArmHoldingPower);
+        robot.SwingArmToPosition(0.6,65, robot.swingArmHoldingPower);
 
 
         /** Wait for the game to begin */

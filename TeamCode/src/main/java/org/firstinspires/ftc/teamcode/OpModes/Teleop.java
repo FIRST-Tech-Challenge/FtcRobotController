@@ -103,13 +103,11 @@ public class Teleop extends LinearOpMode {
             // Arm
             if(gamepad2.right_bumper) {
                 robot.claw.setPosition(1);
-                robot.SwingArmToPosition(1, 65);
-                robot.swingArm.setPower(robot.swingArmHoldingPower);
+                robot.SwingArmToPosition(1, 65, robot.swingArmHoldingPower);
             }
             if(gamepad2.left_bumper) {
                 robot.claw.setPosition(1);
-                robot.SwingArmToPosition(-1, 20);
-                robot.swingArm.setPower(0);
+                robot.SwingArmToPosition(-1, 20, 0);
             }
 
 
