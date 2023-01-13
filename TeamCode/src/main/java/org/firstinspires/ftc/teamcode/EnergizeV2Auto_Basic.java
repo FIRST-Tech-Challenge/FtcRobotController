@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 @Autonomous(name="Energize V2 Auto", group="Linear Opmode")
 //@Disabled
-public class EnergizeV2Auto extends LinearOpMode {
+public class EnergizeV2Auto_Basic extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
