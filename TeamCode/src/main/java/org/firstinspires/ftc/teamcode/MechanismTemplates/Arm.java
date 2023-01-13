@@ -59,6 +59,10 @@ public class Arm {
         targetPos = INTAKE_POS;
     }
 
+    public void setCustom(int custom){
+        targetPos=custom;
+    }
+
     public void manualArm(int increment){
         double targetManual = armMotor.getCurrentPosition()+increment;
         if(targetManual <= MAX && targetManual >= INTAKE_POS)
