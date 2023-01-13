@@ -265,15 +265,6 @@ public class AutonomousRight extends AutonomousBase {
                 moveToConeStack();
             }
 
-            if (opModeIsActive()) {
-                telemetry.addData("Skill", "rotateToConeStack");
-                telemetry.update();
-                if( blueAlliance )
-                  rotateToCenterBlueCone();
-                else
-                  rotateToCenterRedCone();
-            }
-
             if( opModeIsActive()) {
                 switch(fiveStackHeight) {
                     case 5:  cycleDistance = 30.0; break;

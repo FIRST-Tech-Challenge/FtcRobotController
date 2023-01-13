@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsInstances.SONIC_RANGE_FRONT;
+import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_FIRST_PING;
+import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_MOST_RECENT;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
@@ -72,7 +75,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     boolean     blueAlliance    = true;  // Can be toggled during the init phase of autonomous
     int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
-    int         fiveStackCycles = 1;     // How many we want to attempt to collect/score? (adjustable during init)
+    int         fiveStackCycles = 2;     // How many we want to attempt to collect/score? (adjustable during init)
     ElapsedTime autonomousTimer = new ElapsedTime();
 
     // gamepad controls for changing autonomous options
@@ -273,42 +276,74 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.setTurretPower(0.0);
     } // alignToPole
 
-    /*---------------------------------------------------------------------------------*/
-    void rotateToCenterRedCone() {
+    /*
+     * @param blueCone - true = blue cone stack, false = red cone stack.
+     * @param targetDistance - distance in cm from the cone stack to line up.
+     */
+    void alignToConeStack(boolean blueCone, int targetDistance) {
         PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
-        theLocalCone = new PowerPlaySuperPipeline.AnalyzedCone(pipelineLow.getDetectedRedCone());
-        while (opModeIsActive() && (theLocalCone.alignedCount < 2)) {
-            performEveryLoop();
-            if(theLocalCone.aligned) {
-                robot.stopMotion();
+        final double DRIVE_SLOPE  = 0.004187;
+        final double DRIVE_OFFSET = 0.04522;
+        final double TURN_SLOPE   = 0.004187;
+        final double TURN_OFFSET  = 0.04522;
+        double drivePower;
+        double turnPower;
+        int coneDistance;
+        int distanceError;
+        int properDistanceCount = 0;
+        // This is in CM
+        final int MAX_DISTANCE_ERROR = 2;
+
+        theLocalCone = blueCone ? pipelineLow.getDetectedBlueCone() : pipelineLow.getDetectedRedCone();
+        // This first reading just triggers the ultrasonic to send out its first ping, need to wait
+        // 50 msec for it to get a result.
+        robot.fastSonarRange(SONIC_RANGE_FRONT, SONIC_FIRST_PING);
+        sleep(50);
+        while (opModeIsActive() && ((theLocalCone.alignedCount <= 3) ||
+                properDistanceCount <= 3)) {
+            theLocalCone = blueCone ? pipelineLow.getDetectedBlueCone() : pipelineLow.getDetectedRedCone();
+            coneDistance = robot.fastSonarRange(SONIC_RANGE_FRONT, SONIC_MOST_RECENT);
+            distanceError = targetDistance - coneDistance;
+            if(abs(distanceError) <= MAX_DISTANCE_ERROR) {
+                properDistanceCount++;
             } else {
-                robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.085 : -0.085);
+                properDistanceCount = 0;
             }
-            theLocalCone = pipelineLow.getDetectedRedCone();
+            drivePower = (distanceError > 0) ? (-distanceError * DRIVE_SLOPE - DRIVE_OFFSET) :
+                    (-distanceError * DRIVE_SLOPE + DRIVE_OFFSET);
+            turnPower = (theLocalCone.centralOffset > 0) ?
+                    (theLocalCone.centralOffset * TURN_SLOPE + TURN_OFFSET) :
+                    (theLocalCone.centralOffset * TURN_SLOPE - TURN_OFFSET);
+            driveAndRotate(drivePower, turnPower);
+            telemetry.addData("Cone Data", "drvPwr %.2f turnPwr %.2f", drivePower, turnPower);
+            telemetry.addData("Cone Data", "coneDst %d dstErr %d offset %.2f", coneDistance,
+                    distanceError, theLocalCone.centralOffset);
+            telemetry.update();
         }
         robot.stopMotion();
-            // TODO: can we use this aligned position along the tape to update our known
-            // odometry world position? (offsetting any drift-error that has accumulated?
     }
 
-    /*---------------------------------------------------------------------------------*/
-    void rotateToCenterBlueCone() {
-        PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
-        theLocalCone = pipelineLow.getDetectedBlueCone();
-        while (opModeIsActive() && (theLocalCone.alignedCount < 2)) {
-            performEveryLoop();
-            if(theLocalCone.aligned) {
-                robot.stopMotion();
-            } else {
-                robot.driveTrainTurn((theLocalCone.centralOffset > 0) ? +0.085 : -0.085);
-            }
-            theLocalCone = pipelineLow.getDetectedBlueCone();
-        }
-        robot.stopMotion();
-        // TODO: can we use this aligned position along the tape to update our known
-        // odometry world position? (offsetting any drift-error that has accumulated?
-    } // rotateToCenterBlueCone
+    void driveAndRotate(double drivePower, double turnPower) {
+        double frontRight, frontLeft, rearRight, rearLeft, maxPower;
 
+        frontLeft  = drivePower - turnPower;
+        frontRight = drivePower + turnPower;
+        rearLeft   = drivePower - turnPower;
+        rearRight  = drivePower + turnPower;
+
+        // Normalize the values so none exceed +/- 1.0
+        maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
+                Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
+        if (maxPower > 1.0)
+        {
+            rearLeft   /= maxPower;
+            rearRight  /= maxPower;
+            frontLeft  /= maxPower;
+            frontRight /= maxPower;
+        }
+        // Update motor power settings:
+        robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
+    } // driveAndRotate
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;

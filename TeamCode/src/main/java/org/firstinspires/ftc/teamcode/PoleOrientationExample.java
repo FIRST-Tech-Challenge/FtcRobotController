@@ -44,9 +44,12 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class PoleOrientationExample extends LinearOpMode
 {
     final int LOGSIZE = 10;
-    double[]  angleOffset = new double[LOGSIZE];  // pixel offset error (left/right)
-    double[]  distOffset  = new double[LOGSIZE];  // pixel offset error (too narrow/wide)
-    double[]  TurretPwr   = new double[LOGSIZE];  // turret motor power
+    double[]  errorHistory = new double[LOGSIZE];
+    double[]  kpMinHistory = new double[LOGSIZE];
+    double[]  kpHistory    = new double[LOGSIZE];
+    double[]  kiHistory    = new double[LOGSIZE];
+    double[]  kdHistory    = new double[LOGSIZE];
+    double[]  kTHistory    = new double[LOGSIZE];
 
     // Vision stuff
     PowerPlaySuperPipeline pipelineLow;
@@ -61,12 +64,12 @@ public class PoleOrientationExample extends LinearOpMode
     boolean lowCameraInitialized = false;
     boolean backCameraInitialized = false;
 
-        /**
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at or its
-         * webcam counterpart,first.
-         */
+    /**
+     * NOTE: Many comments have been omitted from this sample for the
+     * sake of conciseness. If you're just starting out with EasyOpenCv,
+     * you should take a look at or its
+     * webcam counterpart,first.
+     */
 
     public void performEveryLoop() {
         robot.readBulkData();
@@ -172,12 +175,14 @@ public class PoleOrientationExample extends LinearOpMode
             // Execute the automatic turret movement code
             performEveryLoop();
 
-            // Let us see if we can use the camera for distance.
+            // Use the camera to align to the pole, and set the correct distance away
             alignToPole(false);
             telemetry.addLine("Aligned... waiting for kick");
+            telemetry.addData(" ","## ERR @ Pwr (Pmin + P + I + D)");
             for( int index=0; index<LOGSIZE; index++ ) {
-                telemetry.addData(" ","%d = %.1f %.1f pix (%.2f)",
-                        index, angleOffset[index], distOffset[index], TurretPwr[index] );
+                telemetry.addData(" ","%d %.1f @ %.1f (%.1f + %.1f + %.1f + %.1f)",
+                        index, errorHistory[index], kTHistory[index],
+                        kpMinHistory[index], kpHistory[index], kiHistory[index], kdHistory[index] );
             }
             telemetry.update();
             sleep( 2000 );
@@ -248,11 +253,30 @@ public class PoleOrientationExample extends LinearOpMode
             if( turretPower < -0.20 ) turretPower = -0.20;
             lastError = error;
             timer.reset();
+
+            // Shift all previous instrumentation readings down one entry
+            for( int index=1; index<LOGSIZE; index++ ) {
+                errorHistory[index-1] = errorHistory[index];
+                kpMinHistory[index-1] = kpMinHistory[index];
+                kpHistory[index-1]    = kpHistory[index];
+                kiHistory[index-1]    = kiHistory[index];
+                kdHistory[index-1]    = kdHistory[index];
+                kTHistory[index-1]    = kTHistory[index];
+            }
+            // Add the latest numbers to the end
+            errorHistory[LOGSIZE-1] = error;
+            kpMinHistory[LOGSIZE-1] = kpMin;
+            kpHistory[LOGSIZE-1]    = (kp * error);
+            kiHistory[LOGSIZE-1]    = (ki * integralSum);
+            kdHistory[LOGSIZE-1]    = (kd * derivative);
+            kTHistory[LOGSIZE-1]    = turretPower;
+
             telemetry.addData("turretPower: ", turretPower);
             telemetry.addData("PID", "error: %.2f, errorPwr: %.3f + %.3f", error, kpMin, (kp*error) );
             telemetry.addData("PID", "integralSum: %.3f, integralSumPwr: %.3f", integralSum, ki*integralSum);
             telemetry.addData("PID", "derivative: %.3f, derivativePwr: %.3f", derivative, kd*derivative);
             telemetry.update();
+
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
             } else {

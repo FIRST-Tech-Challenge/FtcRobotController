@@ -195,6 +195,7 @@ public class ConeOrientationExample extends LinearOpMode
         sleep(50);
         while (opModeIsActive() && ((theLocalCone.alignedCount <= 3) ||
                 properDistanceCount <= 3)) {
+            theLocalCone = blueCone ? pipelineLow.getDetectedBlueCone() : pipelineLow.getDetectedRedCone();
             coneDistance = robot.fastSonarRange(SONIC_RANGE_FRONT, SONIC_MOST_RECENT);
             distanceError = targetDistance - coneDistance;
             if(abs(distanceError) <= MAX_DISTANCE_ERROR) {
@@ -202,18 +203,22 @@ public class ConeOrientationExample extends LinearOpMode
             } else {
                 properDistanceCount = 0;
             }
-            drivePower = (distanceError > 0) ? (distanceError * DRIVE_SLOPE + DRIVE_OFFSET) :
-                    (distanceError * DRIVE_SLOPE - DRIVE_OFFSET);
+            drivePower = (distanceError > 0) ? (-distanceError * DRIVE_SLOPE - DRIVE_OFFSET) :
+                    (-distanceError * DRIVE_SLOPE + DRIVE_OFFSET);
             turnPower = (theLocalCone.centralOffset > 0) ?
                     (theLocalCone.centralOffset * TURN_SLOPE + TURN_OFFSET) :
                     (theLocalCone.centralOffset * TURN_SLOPE - TURN_OFFSET);
             driveAndRotate(drivePower, turnPower);
+            telemetry.addData("Cone Data", "drvPwr %.2f turnPwr %.2f", drivePower, turnPower);
+            telemetry.addData("Cone Data", "coneDst %d dstErr %d offset %.2f", coneDistance,
+                    distanceError, theLocalCone.centralOffset);
+            telemetry.update();
         }
         robot.stopMotion();
     }
 
     void driveAndRotate(double drivePower, double turnPower) {
-        double frontRight, frontLeft, rearRight, rearLeft, maxPower, xTranslation, yTranslation;
+        double frontRight, frontLeft, rearRight, rearLeft, maxPower;
 
         frontLeft  = drivePower - turnPower;
         frontRight = drivePower + turnPower;

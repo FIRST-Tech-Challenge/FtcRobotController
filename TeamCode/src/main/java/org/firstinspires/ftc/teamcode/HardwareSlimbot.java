@@ -106,6 +106,7 @@ public class HardwareSlimbot
     public double       TURRET_ANGLE_MAX    = +90.0;   // absolute encoder angles at maximum rotation RIGHT
     public double       TURRET_ANGLE_CENTER = 0.0 ;    // turret centered
     public double       TURRET_ANGLE_MIN    = -90.0;   // absolute encoder angles at maximum rotation LEFT
+    public double       TURRET_ANGLE_AUTO_CYCLE_HIGH = -56.5;
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -148,7 +149,7 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_MED_B   = -60.2;   // lift position for MEDIUM junction (BACK Teleop)
     public double       LIFT_ANGLE_HIGH    =  52.8;   // lift position for HIGH junction (FRONT Teleop)
     public double       LIFT_ANGLE_AUTO_H  =  41.8;   // lift position for AUTONOMOUS (HIGH junction)
-    public double       LIFT_ANGLE_HIGH_B  = -35.5;   // lift position for HIGH junction (BACK Teleop)
+    public double       LIFT_ANGLE_HIGH_B  = -26.0;   // lift position for HIGH junction (BACK Teleop)
     public double       LIFT_ANGLE_HIGH_BA = -23.0;   // lift position for HIGH junction (BACK Auto)
                                                       // (cone is loaded lower for auto, so higher lift point)
 
@@ -434,7 +435,8 @@ public class HardwareSlimbot
         //   getPower() / getVelocity() / getCurrent()
         //===== CONTROL HUB VALUES =====
         // TODO Need to see if this effect loop times
-        controlHubV        = controlHub.getInputVoltage(VoltageUnit.MILLIVOLTS);
+        // TODONE It does effect loop times by an i2c read
+//        controlHubV        = controlHub.getInputVoltage(VoltageUnit.MILLIVOLTS);
         frontLeftMotorPos  = frontLeftMotor.getCurrentPosition();
         frontLeftMotorVel  = frontLeftMotor.getVelocity();
         frontLeftMotorAmps = frontLeftMotor.getCurrent(MILLIAMPS);
@@ -451,7 +453,7 @@ public class HardwareSlimbot
         liftAngle          = computeAbsoluteAngle( liftEncoder.getVoltage(),   liftAngleOffset );
         //===== EXPANSION HUB VALUES =====
         // TODO Need to see if this effect loop times
-        expansionHubV      = expansionHub.getInputVoltage(VoltageUnit.MILLIVOLTS);
+//        expansionHubV      = expansionHub.getInputVoltage(VoltageUnit.MILLIVOLTS);
         turretMotorPos     = turretMotor.getCurrentPosition();
         turretMotorVel     = turretMotor.getVelocity();
         turretMotorPwr     = turretMotor.getPower();
