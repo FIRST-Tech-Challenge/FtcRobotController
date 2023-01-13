@@ -9,7 +9,6 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ConeAndJunctionDetectionPipeline extends OpenCvPipeline {
     // range of colors for blue, red, and yellow objects
@@ -20,16 +19,19 @@ public class ConeAndJunctionDetectionPipeline extends OpenCvPipeline {
     private final Scalar lowerYellow = new Scalar(90, 80, 160);
     private final Scalar upperYellow = new Scalar(160, 120, 190);
 
-    Mat yuv = new Mat();
-    Mat blur = new Mat();
+    private final Scalar blue = new Scalar(0, 0, 255);
+    private final Scalar red = new Scalar(255, 0, 0);
+    private final Scalar yellow = new Scalar(255, 255, 0);
+
+    Mat mat = new Mat();
 
     Mat blueMask = new Mat();
     Mat redMask = new Mat();
     Mat yellowMask = new Mat();
 
-    List<MatOfPoint> blueContours = new ArrayList<>();
-    List<MatOfPoint> redContours = new ArrayList<>();
-    List<MatOfPoint> yellowContours = new ArrayList<>();
+    ArrayList<MatOfPoint> blueContours = new ArrayList<>();
+    ArrayList<MatOfPoint> redContours = new ArrayList<>();
+    ArrayList<MatOfPoint> yellowContours = new ArrayList<>();
 
     Mat blueHierarchy = new Mat();
     Mat redHierarchy = new Mat();
@@ -43,28 +45,26 @@ public class ConeAndJunctionDetectionPipeline extends OpenCvPipeline {
     double redContourArea;
     double yellowContourArea;
 
-    double largestBlueContourArea = 0.0;
-    double largestRedContourArea = 0.0;
-    double largestYellowContourArea = 0.0;
+    double largestBlueContourArea;
+    double largestRedContourArea;
+    double largestYellowContourArea;
 
-    Rect blueRectangle;
-    Rect redRectangle;
-    Rect yellowRectangle;
-
-    private final Scalar displayColor = new Scalar(0, 0, 0);
+    Rect blueRectangle = new Rect();
+    Rect redRectangle = new Rect();
+    Rect yellowRectangle = new Rect();
 
     @Override
     public Mat processFrame(Mat input) {
         // convert the frame to the YCrCb color space
-        Imgproc.cvtColor(input, yuv, Imgproc.COLOR_BGR2YUV);
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2YUV);
 
         // apply median blur on the frame
-        Imgproc.medianBlur(yuv, blur, 9);
+        Imgproc.medianBlur(mat, mat, 9);
 
         // separately mask the frame for each color
-        Core.inRange(blur, lowerBlue, upperBlue, blueMask);
-        Core.inRange(blur, lowerRed, upperRed, redMask);
-        Core.inRange(blur, lowerYellow, upperYellow, yellowMask);
+        Core.inRange(mat, lowerBlue, upperBlue, blueMask);
+        Core.inRange(mat, lowerRed, upperRed, redMask);
+        Core.inRange(mat, lowerYellow, upperYellow, yellowMask);
 
         // find all of the contours for each color
         Imgproc.findContours(blueMask, blueContours, blueHierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -72,6 +72,8 @@ public class ConeAndJunctionDetectionPipeline extends OpenCvPipeline {
         Imgproc.findContours(yellowMask, yellowContours, yellowHierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // find the largest contour for blue
+        largestBlueContourArea = 0.0;
+
         for (int i = 0; i < blueContours.size(); i++) {
             blueContourArea = Imgproc.contourArea(blueContours.get(i));
 
@@ -82,6 +84,8 @@ public class ConeAndJunctionDetectionPipeline extends OpenCvPipeline {
         }
 
         // find the largest contour for red
+        largestRedContourArea = 0.0;
+
         for (int i = 0; i < redContours.size(); i++) {
             redContourArea = Imgproc.contourArea(redContours.get(i));
 
@@ -92,6 +96,8 @@ public class ConeAndJunctionDetectionPipeline extends OpenCvPipeline {
         }
 
         // find the largest contour for yellow
+        largestYellowContourArea = 0.0;
+
         for (int i = 0; i < yellowContours.size(); i++) {
             yellowContourArea = Imgproc.contourArea(yellowContours.get(i));
 
@@ -104,19 +110,19 @@ public class ConeAndJunctionDetectionPipeline extends OpenCvPipeline {
         // find and draw the bounding box for the blue color
         if (blueContours.size() > 0) {
             blueRectangle = Imgproc.boundingRect(blueContours.get(largestBlueContour));
-            Imgproc.rectangle(input, blueRectangle, displayColor, 5);
+            Imgproc.rectangle(input, blueRectangle, blue, 5);
         }
 
         // find and draw the bounding box for the red color
         if (redContours.size() > 0) {
             redRectangle = Imgproc.boundingRect(redContours.get(largestRedContour));
-            Imgproc.rectangle(input, redRectangle, displayColor, 5);
+            Imgproc.rectangle(input, redRectangle, red, 5);
         }
 
         // find and draw the bounding box for the yellow color
         if (yellowContours.size() > 0) {
             yellowRectangle = Imgproc.boundingRect(yellowContours.get(largestYellowContour));
-            Imgproc.rectangle(input, yellowRectangle, displayColor, 5);
+            Imgproc.rectangle(input, yellowRectangle, yellow, 5);
         }
 
         return input;

@@ -27,10 +27,6 @@ public class AutonomousTest extends BaseAutonomous {
         // detects signal and replaces wait for start
         int signal = detectSignal();
 
-        // activate TensorFlow on robot camera
-        tfod.activate();
-        tfod.setZoom(1.0, 16.0 / 9.0);
-
         // grab cone
         servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
 
@@ -46,23 +42,5 @@ public class AutonomousTest extends BaseAutonomous {
 
         // turn to -45 degrees
         turnToAngle(-45);
-
-        // todo - 20 pixels?
-        while (Math.abs(Constants.ROBOT_CAMERA_CENTER_X - x) > 20 && opModeIsActive()) {
-            for (Recognition recognition : tfod.getRecognitions()) {
-                if (recognition.getWidth() > width) {
-                    x = (recognition.getLeft() + recognition.getRight()) * 0.5;
-                    width = recognition.getWidth();
-                }
-            }
-
-            // todo - 0.005?
-            motorPower = (Constants.ROBOT_CAMERA_CENTER_X - x) * 0.005;
-
-            motorFL.setPower(motorPower);
-            motorFR.setPower(-motorPower);
-            motorBL.setPower(motorPower);
-            motorBR.setPower(-motorPower);
-        }
     }
 }
