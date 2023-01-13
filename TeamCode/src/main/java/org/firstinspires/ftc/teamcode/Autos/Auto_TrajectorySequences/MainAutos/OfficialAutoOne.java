@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences.MainAutos;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
@@ -34,6 +35,10 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 		slideControl = new Slide(hardwareMap);
 		clawControl = new Claw(hardwareMap);
 	}
+
+    public void scan(){
+        super.runOpMode();
+    }
 
 	@Override
 	public void runOpMode()
@@ -131,30 +136,56 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
+				.waitSeconds(0.15)
+				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
 
+					clawControl.toggleWristRotate();
+					slideControl.setCustom(640);
+					armControl.setIntake();//ppcocaine
+				})
+				.waitSeconds(0.25)
+				.lineToLinearHeading(new Pose2d(47 ,25.5, Math.toRadians(91.45)))
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(.25)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setCustom(1310);
+				})
+				.waitSeconds(.25)
+				.UNSTABLE_addTemporalMarkerOffset(0.65,()->{
+					slideControl.setHighJunction(telemetry);
+					armControl.setCustom(990);
+					clawControl.toggleWristRotate();
+				})
+				.lineToLinearHeading(new Pose2d(x2,y2,Math.toRadians(angle)))
+
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setCustom(1450);
+				})
+				.waitSeconds(.25)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(0.15)
+				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
+
+					clawControl.toggleWristRotate();
+					slideControl.setIntakeOrGround();
+					armControl.setIntake();
+				})
+				.waitSeconds(0.25)
 				.build();
 
-		TrajectorySequence goToConeStack = bot.trajectorySequenceBuilder(junction.end())
-				.strafeLeft(14)
-				.lineToLinearHeading(new Pose2d(46 ,24, Math.toRadians(angle)))
-				.waitSeconds(1)
-				.build();
+        Trajectory zoneOne = bot.trajectoryBuilder(junction.end())
+                        .lineToLinearHeading(new Pose2d(46,18,91))
+                                .build();
 
+        Trajectory zoneThree = bot.trajectoryBuilder(junction.end())
+                        .lineToLinearHeading(new Pose2d(46,-10,90))
+                                .build();
 
-
-
-
-
-
-
-
-
-
-		TrajectorySequence conesToJunction = bot.trajectorySequenceBuilder(goToConeStack.end())
-				.lineToLinearHeading(new Pose2d(47,-4.5,Math.toRadians(90)))
-				.strafeRight(13)
-				//.lineToLinearHeading(new Pose2d(60,-4.5,Math.toRadians(90)))
-				.build();
+		scan();
 
 		waitForStart();
 
@@ -162,6 +193,12 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 		bot.followTrajectorySequenceAsync(junction);
 		//bot.followTrajectorySequenceAsync(goToConeStack);
 		//bot.followTrajectorySequence(conesToJunction);
+
+        if(tagUse == 1){
+            bot.followTrajectory(zoneOne);
+        }else if(tagUse == 3){
+            bot.followTrajectory(zoneThree);
+        }
 
 		while(opModeIsActive()  && !isStopRequested()){
 			bot.update();
