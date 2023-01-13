@@ -964,6 +964,7 @@ class AutonomousPaths {
     //public static Position closeLeftGroundJunction = new Position(-1, 0, "closeLeftGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -Math.PI / 4);
     //public static Position closeRightGroundJunction = new Position(0, 0, "closeRightGroundJunction", Navigation.Action.DROP_CONE, 1, 1, -3 / 4 * Math.PI);
 
+    /*
     //Small
     public static Position leftSmallJunction = new Position(0.5 * TILE_SIZE, 0, "POI leftSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, -Math.PI / 2); //may be problem because of cone
     public static Position rightSmallJunction = new Position(1.5 * TILE_SIZE, -1 * TILE_SIZE, "POI rightSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, -Math.PI / 2); //might be problem because of cone stack
@@ -975,6 +976,19 @@ class AutonomousPaths {
     public static Position leftLargeJunction = new Position(1.5 * TILE_SIZE,1 * TILE_SIZE, "POI leftLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 2);
     //public static Position rightLargeJunction = new Position(0,2, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4); //maybe the deliver to pole method should allow for delivering cone from different positions
     public static Position rightLargeJunction = new Position(2.5 * TILE_SIZE,0, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 2); //might be problematic because of intrusion onto opposite alliance's side
+     */
+
+    //Small
+    public static Position leftSmallJunction = new Position(0.5 * TILE_SIZE, 0, "POI leftSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, Math.PI / 2); //may be problem because of cone
+    public static Position rightSmallJunction = new Position(1.5 * TILE_SIZE, -1 * TILE_SIZE, "POI rightSmallJunction", Navigation.Action.DELIVER_CONE_LOW, 1, 1, Math.PI / 2); //might be problem because of cone stack
+
+    //Medium
+    public static Position mediumJunction = new Position(1.5 * TILE_SIZE, 0, "POI mediumJunction", Navigation.Action.DELIVER_CONE_MEDIUM, 1, 1, Math.PI / 2);
+
+    //Large
+    public static Position leftLargeJunction = new Position(1.5 * TILE_SIZE,1 * TILE_SIZE, "POI leftLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, Math.PI / 2);
+    //public static Position rightLargeJunction = new Position(0,2, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, -Math.PI / 4); //maybe the deliver to pole method should allow for delivering cone from different positions
+    public static Position rightLargeJunction = new Position(2.5 * TILE_SIZE,0, "POI rightLargeJunction", Navigation.Action.DELIVER_CONE_HIGH, 1, 1, Math.PI / 2); //might be problematic because of intrusion onto opposite alliance's side
 
     //Signal locations
     //Cone
@@ -988,15 +1002,16 @@ class AutonomousPaths {
 
 
     //Intermediate positions (positions that you need to go to on the way to your destination)
-    public static Position intermediateBottomLeft = new Position(0, 1 * TILE_SIZE, -Math.PI / 2, "intermediateBottomLeft");
+    public static Position intermediateBottomLeft = new Position(0, 1 * TILE_SIZE, Math.PI / 2, "intermediateBottomLeft");
     public static Position intermediateCenterLeft = new Position(1 * TILE_SIZE, 1 * TILE_SIZE, -Math.PI / 2, "intermediateCenterLeft"); //Rotation is there so that signal cone can be picked up on next position in path
-    public static Position intermediateBottomRight = new Position(0, -1 * TILE_SIZE, -Math.PI / 2, "intermediateBottomRight");
+    public static Position intermediateBottomRight = new Position(0, -1 * TILE_SIZE, Math.PI / 2, "intermediateBottomRight");
     public static Position intermediateCenterRight = new Position(1 * TILE_SIZE, -1 * TILE_SIZE, Math.PI / 2, "intermediateCenterRight");
-    public static Position intermediateBottomCenter = new Position(0, 0, -Math.PI / 2, "intermediateBottomCenter");
+    public static Position intermediateBottomCenter = new Position(0, 0, Math.PI / 2, "intermediateBottomCenter");
 
 
     //Paths (parking part of paths will be added on later during run time)
     //The last position in a path is always a position where the robot can travel directly to the substation or terminal for parking
+    public static final ArrayList<Position> PARK_ONLY = new ArrayList<>(Arrays.asList());
     public static final ArrayList<Position> LARGE_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, leftLargeJunction, intermediateCenterLeft, signalCone, intermediateCenterLeft, leftLargeJunction, intermediateBottomLeft)); //Puts two cones on the same junction
     public static final ArrayList<Position> MEDIUM_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, leftLargeJunction, intermediateCenterLeft, signalCone, mediumJunction, intermediateBottomCenter));
     public static final ArrayList<Position> SMALL_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomRight, rightSmallJunction, intermediateCenterRight, signalCone, intermediateCenterLeft, leftLargeJunction, intermediateBottomLeft));
