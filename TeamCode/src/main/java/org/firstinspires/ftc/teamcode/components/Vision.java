@@ -12,37 +12,37 @@ import java.util.ArrayList;
 public class Vision {
 
     //"Webcam 1"
-    private static OpenCvCamera camera;
-    private static Telemetry telemetry;
+    private OpenCvCamera camera;
+    private Telemetry telemetry;
 
     public Vision(OpenCvCamera openCvCamera, Telemetry t){
         this.camera = openCvCamera;
         this.telemetry = t;
     }
 
-    static SleeveDetector aprilTagDetectionPipeline;
-    static PoleDetector poleDetector;
+    SleeveDetector aprilTagDetectionPipeline;
+    PoleDetector poleDetector;
 
-    static AprilTagDetection tagOfInterest = null;
+    AprilTagDetection tagOfInterest = null;
 
     //c&p :(
     //Convert from the counts per revolution of the encoder to counts per inch
-    static final double HD_COUNTS_PER_REV = 28;
-    static final double DRIVE_GEAR_REDUCTION = 2-0.15293;
-    static final double WHEEL_CIRCUMFERENCE_MM = 90 * Math.PI;
-    static final double DRIVE_COUNTS_PER_MM = (HD_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE_MM;
+    final double HD_COUNTS_PER_REV = 28;
+    final double DRIVE_GEAR_REDUCTION = 2-0.15293;
+    final double WHEEL_CIRCUMFERENCE_MM = 90 * Math.PI;
+    final double DRIVE_COUNTS_PER_MM = (HD_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE_MM;
 
     // Lens intrinsics
     // NOTE: this calibration is for the C920 webcam at 800x448.
-    static final double fx = 578.272;
-    static final double fy = 578.272;
-    static final double cx = 402.145;
-    static final double cy = 221.506;
+    final double fx = 578.272;
+    final double fy = 578.272;
+    final double cx = 402.145;
+    final double cy = 221.506;
 
     // UNITS ARE METERS
-    static double tagsize = 0.166;
+    double tagsize = 0.166;
 
-    public static void init() {
+    public void init() {
         aprilTagDetectionPipeline = new SleeveDetector(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -59,14 +59,14 @@ public class Vision {
         });
     }
 
-    public static void setPoleDetector() {
+    public void setPoleDetector() {
         poleDetector = new PoleDetector(telemetry);
         camera.setPipeline(poleDetector);
     }
 
     public int differenceX() { return poleDetector.differenceX(); }
 
-    public static void searchTags() {
+    public void searchTags() {
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
         for(AprilTagDetection tag : currentDetections) {
@@ -77,7 +77,7 @@ public class Vision {
         }
     }
 
-    public static int tagId() {
+    public int tagId() {
         if(tagOfInterest != null) return tagOfInterest.id;
         else return -1;
     }

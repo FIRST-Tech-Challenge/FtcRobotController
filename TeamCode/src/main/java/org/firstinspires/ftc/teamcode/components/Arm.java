@@ -5,20 +5,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class Arm {
-    public static DcMotor leftLift;
-    public static DcMotor rightLift;
-    public static Servo gripper;
+    public DcMotor leftLift;
+    public DcMotor rightLift;
+    public Servo gripper;
 
     //TODO: CHANGE VALUE TO 420, 630, 910 FOR 11166-RC!!!!
     //150, 300, 450 for test robot
-    public static final int lowJunction = 420;
-    public static final int middleJunction = 630;
-    public static final int highJunction = 910;
-    public static int armTarget = 0;
+    public final int lowJunction = 420;
+    public final int middleJunction = 630;
+    public final int highJunction = 910;
+    public int armTarget = 0;
 
     public enum ManualArm {drop, raise, none};
 
-    public static ManualArm manualArm = ManualArm.none;
+    public ManualArm manualArm = ManualArm.none;
 
     public Arm(DcMotor lLift, DcMotor rLift, Servo g){
         this.leftLift = lLift;
@@ -26,7 +26,7 @@ public class Arm {
         this.gripper = g;
     }
 
-    public static void init(){
+    public void init(){
         gripper.setPosition(0.75);
 
         //TODO: REVERSE rightLift FOR 11166-RC!!!
@@ -44,13 +44,13 @@ public class Arm {
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public static void openGripper() {
+    public void openGripper() {
         gripper.setPosition(0.73);
     }
 
-    public static void closeGripper() { gripper.setPosition(0.48); }
+    public void closeGripper() { gripper.setPosition(0.48); }
 
-    public static void runToPosition(int position) {
+    public void runToPosition(int position) {
         armTarget = position;
 
         leftLift.setTargetPosition(armTarget);
@@ -70,7 +70,7 @@ public class Arm {
         }
     }
 
-    public static void setArmPower(Gamepad gamepad, double power) {
+    public void setArmPower(Gamepad gamepad, double power) {
         boolean drop = manualArm == ManualArm.drop;
             if (manualArm == ManualArm.none) {
                 leftLift.setTargetPosition(armTarget);
@@ -111,9 +111,9 @@ public class Arm {
             }
     }
 
-    public static int getCurrentPosition(){ return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2; }
+    public int getCurrentPosition(){ return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2; }
 
-    public static int getTargetPosition(){ return (leftLift.getTargetPosition() + rightLift.getTargetPosition()) / 2; }
+    public int getTargetPosition(){ return (leftLift.getTargetPosition() + rightLift.getTargetPosition()) / 2; }
 
-    public static double getPower(){ return (leftLift.getPower() + rightLift.getPower()) / 2; }
+    public double getPower(){ return (leftLift.getPower() + rightLift.getPower()) / 2; }
 }
