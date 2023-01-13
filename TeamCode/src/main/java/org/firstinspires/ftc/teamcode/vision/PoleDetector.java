@@ -46,30 +46,35 @@ public class PoleDetector extends OpenCvPipeline
 //            distortionCoefficients="-0.0449369, 1.17277, 0, 0, -3.63244, 0, 0, 0"
 //        />
 
-        List<MatOfPoint> contours = new ArrayList<>();
+        List<MatOfPoint> initialContours = new ArrayList<>();
+        List<MatOfPoint> finalContours = new ArrayList<>();
         MatOfInt hull = new MatOfInt();
         Mat hierarchy = new Mat();
-        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(edges, initialContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        for (int i = 0; i < contours.size(); i++) {
-            Imgproc.convexHull(contours.get(i), hull);
-            if(hull.total() >= 8){
-                Imgproc.drawContours(mat, contours, i, new Scalar(255, 255, 255), 2);
-
-                /*
-                MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
-                Rect[] boundRect = new Rect[contours.size()];
-                for (int j = 0; j < contours.size(); j++) {
-                    contoursPoly[j] = new MatOfPoint2f();
-                    Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(j).toArray()), contoursPoly[j], 3, true);
-                    boundRect[j] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[j].toArray()));
-                }
-                for (int j = 0; j != boundRect.length; j++) Imgproc.rectangle(mat, boundRect[j], new Scalar(255, 255, 255));
-                */
-
-                Imgproc.putText(mat, String.valueOf(hull.total()), contours.get(i).toArray()[0], 1, 1, new Scalar(0, 255, 0));
+        for (int i = 0; i < initialContours.size(); i++) {
+            Imgproc.convexHull(initialContours.get(i), hull);
+            if(hull.total() >= 10){
+                finalContours.add(initialContours.get(i));
+                Imgproc.drawContours(mat, initialContours, i, new Scalar(255, 255, 255), 2);
             }
         }
+
+        MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[finalContours.size()];
+        Rect[] boundRect = new Rect[finalContours.size()];
+        Rect maxRect = new Rect();
+        for (int j = 0; j < finalContours.size(); j++) {
+            contoursPoly[j] = new MatOfPoint2f();
+            Imgproc.approxPolyDP(new MatOfPoint2f(finalContours.get(j).toArray()), contoursPoly[j], 3, true);
+            boundRect[j] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[j].toArray()));
+            Imgproc.putText(mat, String.valueOf(hull.total()), finalContours.get(j).toArray()[0], 1, 1, new Scalar(0, 255, 0));
+            if(boundRect[j].area() > maxRect.area()) maxRect = boundRect[j];
+            Imgproc.rectangle(mat, boundRect[j], new Scalar(255, 255, 255));
+        }
+        Imgproc.rectangle(mat, maxRect, new Scalar(255, 0, 0), 2);
+
+        telemetry.addLine(String.valueOf(finalContours.size()));
+        telemetry.update();
 
         return mat;
     }
