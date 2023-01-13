@@ -26,7 +26,7 @@ public class MediumJuncLeft extends BaseOpMode {
     public void autoScoringLeft() {
         DriveUtils.encoderClaw(this,0.6,300,5); //Raises the claw up so the cone won't hit the ground
         DriveUtils.encoderDrive(this, 0.8, -26,-26,5); //Drives forward
-        DriveUtils.encoderStrafe(this,0.4,-12.5,5); //Strafes to be inline with the medium junction
+        DriveUtils.encoderStrafe(this,0.4,-12.7,5); //Strafes to be inline with the medium junction
         DriveUtils.encoderClaw(this,0.6,1850,5); // Raises the claw up to match the height of the junction
         DriveUtils.encoderDrive(this,0.3,-6,-6,5); // Drives forward so the cone will drop on the junction
         DriveUtils.encoderClaw(this,-0.5,-600,5); //Lowers the claw onto the junction
