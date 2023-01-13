@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
         private DcMotor leftBackDrive = null;
         private DcMotor rightFrontDrive = null;
         private DcMotor rightBackDrive = null;
+        private ElapsedTime waitTimeToggle = new ElapsedTime();
         private DcMotor liftMotor1 = null;
         private DcMotor liftMotor2 = null;
         double liftPower = 0.0;
@@ -107,8 +108,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
                     rightBackPower /= max;
                 }
 
-                if (gamepad1.x && toggle) {
-                    toggle = false;
+                if (gamepad1.x && waitTimeToggle.time() > .75) {
+                    toggle = !toggle;
                     sleep(500);
                     redLED.setState(false);
                     greenLED.setState(true);
@@ -127,7 +128,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
                     rightFrontDrive.setPower(rightFrontPower / 2);
                     leftBackDrive.setPower(leftBackPower / 2);
                     rightBackDrive.setPower(rightBackPower / 2);
-                } else if (!toggle) {
+                } else {
                     leftFrontDrive.setPower(leftFrontPower);
                     rightFrontDrive.setPower(rightFrontPower);
                     leftBackDrive.setPower(leftBackPower);
