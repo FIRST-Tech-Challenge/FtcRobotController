@@ -13,13 +13,13 @@ public class MechanismDriving {
 
     // TODO: empirically measure values of slides positions
     // TODO: empirically measure number of encoder counts for lowering horseshoe
-    public static final int LOWERING_AMOUNT = 100;
+    public static final int LOWERING_AMOUNT = 2140;
     public static final Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
        put(Robot.SlidesState.RETRACTED, 0);
-       put(Robot.SlidesState.LOW, 1670);
-       put(Robot.SlidesState.MEDIUM, 2800);
-       put(Robot.SlidesState.HIGH, 3870);//may need to be higher
-       put(Robot.SlidesState.VERY_LOW,670);
+       put(Robot.SlidesState.LOW, 4770);
+       put(Robot.SlidesState.MEDIUM, 8020);
+       put(Robot.SlidesState.HIGH, 13270);//may need to be higher
+       put(Robot.SlidesState.VERY_LOW,1000);
     }};
     public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 1.0; //These are not final values
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.

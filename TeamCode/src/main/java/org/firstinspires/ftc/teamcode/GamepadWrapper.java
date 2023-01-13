@@ -53,9 +53,9 @@ public class GamepadWrapper {
             case MOVE_STRAIGHT_RIGHT:
                 return gamepad1.dpad_right;
             case TURN_COUNTER_CLOCKWISE:
-                return gamepad1.x;
-            case TURN_CLOCKWISE:
                 return gamepad1.b;
+            case TURN_CLOCKWISE:
+                return gamepad1.x;
 
             //Gamepad 2 Controls
             case SET_SLIDES_RETRACTED:
