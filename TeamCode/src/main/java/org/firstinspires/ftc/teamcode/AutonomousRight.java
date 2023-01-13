@@ -151,12 +151,15 @@ public class AutonomousRight extends AutonomousBase {
             }
             else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last ) {
               fiveStackCycles += 1;
-              if( fiveStackCycles > 5 ) fiveStackCycles=5;              
+              if( fiveStackCycles > 2 ) fiveStackCycles=2;
             }            
             // Pause briefly before looping
             idle();
         } // !isStarted
 
+        // Ensure any movement during robot setup is reset to zero
+        globalCoordinatePositionReset();
+        
         // Start the autonomous timer so we know how much time is remaining for cone cycling
         autonomousTimer.reset();
 
@@ -234,13 +237,6 @@ public class AutonomousRight extends AutonomousBase {
             alignToPole(false);
         }
 
-        // Adjust distance to pole
-//        if( opModeIsActive()) {
-//            telemetry.addData("Skill", "distanceFromFront");
-//            telemetry.update();
-//            distanceFromFront(28.0, 1.0);
-//        }
-
         // Deposit cone on junction
         if( opModeIsActive() ) {
             telemetry.addData("Skill", "scoreCone");
@@ -256,25 +252,26 @@ public class AutonomousRight extends AutonomousBase {
         // Step 5. Rotate towards pole and get a decent starting position
         // Step 6. Score cone
         // Step 7. Profit
-        double cycleDistance = 28.0;
-        fiveStackCycles = 1;    // FORCE TO 1 FOR TOURNY4 (see default in AutonomousBase)`
-        while (opModeIsActive() && (autonomousTimer.milliseconds() < 16000) && (fiveStackCycles > 0)) {
+        int cycleDistance = 30;
+        while (opModeIsActive() && (autonomousTimer.milliseconds() <= 17000) && (fiveStackCycles > 0)) {
             if (opModeIsActive()) {
                 telemetry.addData("Skill", "moveToConeStack");
                 telemetry.update();
                 moveToConeStack();
             }
 
-            if( opModeIsActive()) {
+            if (opModeIsActive()) {
                 switch(fiveStackHeight) {
-                    case 5:  cycleDistance = 30.0; break;
-                    case 4:  cycleDistance = 30.0; break;
-                    case 3:  cycleDistance = 30.0; break;
-                    default: cycleDistance = 30.0;
+                    case 5:  cycleDistance = 31; break;
+                    case 4:  cycleDistance = 31; break;
+                    case 3:  cycleDistance = 31; break;
+                    case 2:  cycleDistance = 31; break;
+                    case 1:  cycleDistance = 31; break;
+                    default: cycleDistance = 31;
                 }
-                telemetry.addData("Skill", "distanceToConeStack");
+                telemetry.addData("Skill", "alignToConeStack");
                 telemetry.update();
-                distanceFromFront(cycleDistance, 1.0);
+                alignToConeStack(blueAlliance, cycleDistance);
             }
 
             if (opModeIsActive()) {
@@ -292,13 +289,7 @@ public class AutonomousRight extends AutonomousBase {
             if( opModeIsActive()) {
                 telemetry.addData("Skill", "rotateToCenterPole");
                 telemetry.update();
-                rotateToCenterPole();
-            }
-
-            if( opModeIsActive()) {
-                telemetry.addData("Skill", "distanceFromFront");
-                telemetry.update();
-                distanceFromFront(35.0, 1.0);
+                alignToPole(false);
             }
 
             if( opModeIsActive() ) {
@@ -322,14 +313,17 @@ public class AutonomousRight extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void moveToTallJunction() {
 
-        // Tilt grabber down from autonomous starting position (vertical)
-        // so we're clear to raise the lift and not hit the front lift motor
-        // (since we're turning outward toward GROUND junction it's okay to exceed 24" tile width
+        // Tilt grabber down from autonomous starting position (vertical) so we're clear
+        // to raise the lift and not hit the front lift motor (since we're turning outward
+        // toward GROUND junction, it's okay for robot length to exceed the 24" tile width
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
-        // Initial movement accomplishes two goals:
-        // 1. Avoid the ground junction in front of the robot (5.5" rightward shift)
-        // 2. Turn 90deg  so we don't entrap the beacon cone
+        // Initial movement is just to steer clear of the ground junction in front of the robot
+        // (once we start to rotate the robot becomes much wider)
+        autoYpos=6.0;  autoXpos=-4.0;  autoAngle=0;    // (inches, inches, degrees)
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
+
+        // The 2nd movement is to rotate 90deg so we don't entrap the beacon cone
         autoYpos=18.0;  autoXpos=-5.5;  autoAngle=+90.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
 
@@ -366,7 +360,7 @@ public class AutonomousRight extends AutonomousBase {
         intakeTimer.reset();
         robot.grabberSpinEject();
         // Wait 300 msec
-        while( opModeIsActive() && (intakeTimer.milliseconds() < 300 || robot.bottomConeSensor.getState()) ) {
+        while( opModeIsActive() && (intakeTimer.milliseconds() < 300 && !robot.bottomConeSensor.getState()) ) {
             performEveryLoop();
         }
         // Stop the ejector
@@ -383,21 +377,16 @@ public class AutonomousRight extends AutonomousBase {
         robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
 
         // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
-        autoYpos=50.0;  autoXpos=7.0;  autoAngle=+90.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
-
-        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
-            performEveryLoop();
-        }
-        sleep(30000);
+        autoYpos=51.5;  autoXpos=7.0;  autoAngle=+90.0;    // (inches, inches, degrees)
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
+        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
 
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
-        autoXpos=+12.0;
+        autoXpos=+13.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
             performEveryLoop();
         }
-
     } // moveToConeStack
 
     /*--------------------------------------------------------------------------------------------*/
@@ -415,11 +404,11 @@ public class AutonomousRight extends AutonomousBase {
         // + 14.8
         switch( fiveStackHeight ) {
             case 5  : liftAngle5stack = 109.1; break;
-            case 4  : liftAngle5stack =  97.9; break;
-            case 3  : liftAngle5stack = 101.7; break;
-            case 2  : liftAngle5stack = 105.0; break; // TODO: Not measured
-            case 1  : liftAngle5stack = 110.0; break; // TODO: Not measured
-            default : liftAngle5stack = 94.3;
+            case 4  : liftAngle5stack = 111.1; break;
+            case 3  : liftAngle5stack = 113.1; break;
+            case 2  : liftAngle5stack = 115.1; break; // TODO: Not measured
+            case 1  : liftAngle5stack = 117.1; break; // TODO: Not measured
+            default : liftAngle5stack = 119.1;
         } // switch()
 
         // Lower the lift to the desired height (and ensure we're centered)
@@ -457,16 +446,17 @@ public class AutonomousRight extends AutonomousBase {
     private void moveToTallJunctionFromStack() {
 
         // Perform setup to center turret and raise lift to scoring position
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_AUTO_H );
-        robot.grabberSetTilt( robot.GRABBER_TILT_AUTO_F );
+        robot.turretPosInit( -robot.TURRET_ANGLE_AUTO_CYCLE_HIGH );
+        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
+        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
+        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
         // Drive back to tall junction (adjusting lift along the way)
-        autoYpos=51.0;  autoXpos=0.0;  autoAngle=-35.0;    // (inches, inches, degrees)
+        // (stay along Y=51.5 instead of returning to Y=54.0, but rotate turret more (+56.5, not +34.5)
+        autoYpos=51.5;  autoXpos=-8.0;  autoAngle=+90.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
         // Re-center turret again (if it shifted while driving)
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
             performEveryLoop();
         }
@@ -496,7 +486,9 @@ public class AutonomousRight extends AutonomousBase {
 
         // Now that we've turned away from the pole, lower lift to driving position
         robot.grabberSetTilt( robot.GRABBER_TILT_SAFE );
+        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
         robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
 
         if( signalZoneLocation == 3 ) {  // BLUE
            // Strafe right one tile

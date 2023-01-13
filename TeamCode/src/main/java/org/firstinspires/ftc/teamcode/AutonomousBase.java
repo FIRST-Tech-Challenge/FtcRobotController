@@ -1060,7 +1060,7 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param turnMax
      * @param driveType - DRIVE_TO goes for accuracy and stops all motors; DRIVE_THRU does not
      */
-    /*
+/*
     public void driveToPosition( double yTarget, double xTarget, double angleTarget,
                                   double speedMax, double turnMax, int driveType ) {
         // Loop until we reach the target (or autonomous program aborts)
@@ -1079,7 +1079,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             }
         } // opModeIsActive()
     } // driveToPosition
-     */
+*/
 
     /*--------------------------------------------------------------------------------------------*/
     /**
@@ -1257,5 +1257,16 @@ public abstract class AutonomousBase extends LinearOpMode {
         robotGlobalXCoordinatePosition += (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
         robotGlobalYCoordinatePosition += (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
     } // globalCoordinatePositionUpdate
+
+    /*--------------------------------------------------------------------------------------------*/
+    // Resets odometry global position to 0/0/0 and ensures zero accumulated encoder counts
+    private void globalCoordinatePositionReset(){
+        // Read starting odomentry counts (so "prev" becomes "this" on next cycle)
+        robot.readBulkData();
+        // Zero our starting position (x/y & angle) 
+        robotOrientationRadians        = 0.0;   // 0deg (straight forward)
+        robotGlobalXCoordinatePosition = 0.0;   // in odometer counts
+        robotGlobalYCoordinatePosition = 0.0;
+    } // globalCoordinatePositionReset
 
 } // AutonomousBase

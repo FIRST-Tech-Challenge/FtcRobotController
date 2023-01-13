@@ -157,6 +157,9 @@ public class AutonomousLeft extends AutonomousBase {
             idle();
         } // !isStarted
 
+        // Ensure any movement during robot setup is reset to zero
+        globalCoordinatePositionReset();
+        
         // Start the autonomous timer so we know how much time is remaining for cone cycling
         autonomousTimer.reset();
 
@@ -449,6 +452,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
         // Drive back to tall junction (adjusting lift along the way)
+        // (stay along Y=51.5 instead of returning to Y=54.0, but rotate turret more (-56.5, not -34.5)
         autoYpos=51.5;  autoXpos=8.0;  autoAngle=-90.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
