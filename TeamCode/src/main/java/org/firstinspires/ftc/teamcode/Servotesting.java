@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;                //imports from FIRST
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 public class Servotesting extends LinearOpMode {
 
     private DcMotor frontLeft;
-    private DcMotor frontRight;
+    private DcMotor frontRight;                                         //Declaring Motor varibles 
     private DcMotor backLeft;
     private DcMotor backRight;
 
@@ -24,7 +24,7 @@ public class Servotesting extends LinearOpMode {
 
 
 
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");                            //mapping motors from control hub 
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
@@ -36,7 +36,7 @@ public class Servotesting extends LinearOpMode {
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);                 //setting direction of drive train 
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -48,7 +48,7 @@ public class Servotesting extends LinearOpMode {
             boolean strafeLeft;
             boolean strafeRight;
 
-            float pickup;
+            float pickup;                                   //setting varibles from conteroler imputs  
             float dropoff;
             boolean spinpowerup;
             boolean spinpowerdown;
@@ -74,7 +74,7 @@ public class Servotesting extends LinearOpMode {
 
             if (strafeRight) {
                 frontLeft.setPower(-.8);
-                frontRight.setPower(1);
+                frontRight.setPower(1);                         //conecting motor varibles to controler inputs
                 backLeft.setPower(1);
                 backRight.setPower(-1);
             }
