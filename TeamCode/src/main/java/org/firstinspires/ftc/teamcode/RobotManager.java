@@ -247,6 +247,26 @@ public class RobotManager {
         while (robot.elapsedTime.milliseconds() - startTime < MechanismDriving.HORSESHOE_TIME) {}
     }
 
+    /** Opens the claw.
+     */
+    public void openClaw() {
+        robot.desiredClawState = Robot.ClawState.OPEN;
+        double startingTime = robot.elapsedTime.milliseconds();
+        mechanismDriving.updateClaw(robot);
+        // Wait for claw to open.
+        while (robot.elapsedTime.milliseconds() - startingTime < MechanismDriving.CLAW_SERVO_TIME) {}
+    }
+
+    /** Closes the claw.
+     */
+    public void closeClaw() {
+        robot.desiredClawState = Robot.ClawState.CLOSED;
+        double startingTime = robot.elapsedTime.milliseconds();
+        mechanismDriving.updateClaw(robot);
+        // Wait for claw to close.
+        while (robot.elapsedTime.milliseconds() - startingTime < MechanismDriving.CLAW_SERVO_TIME) {}
+    }
+
     /** Finds the lowered SlidesState given a standard SlidesState
      *
      *  @param currentSlidesState the current state of the linear slides

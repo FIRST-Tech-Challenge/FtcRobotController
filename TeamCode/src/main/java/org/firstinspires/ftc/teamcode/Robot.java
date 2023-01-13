@@ -25,10 +25,12 @@ public class Robot {
     public enum SlidesState {RETRACTED, LOW, LOW_LOWERED, MEDIUM, MEDIUM_LOWERED, HIGH, HIGH_LOWERED, UNREADY,VERY_LOW}
     public enum ParkingPosition {INSIDE, MIDDLE, OUTSIDE}
     public enum HorseshoeState {FRONT, REAR}
+    public enum ClawState {OPEN, CLOSED}
     public enum CompliantWheelsState {OFF, ON}
 
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
     public HorseshoeState desiredHorseshoeState;
+    public ClawState desiredClawState;
     public CompliantWheelsState desiredCompliantWheelsState;
 
     enum BarcodeScanState {CHECK_SCAN, SCAN}
@@ -61,6 +63,7 @@ public class Robot {
     public DcMotor compliantWheelsMotorLeft, compliantWheelsMotorRight, slidesMotor;
     public Servo horseshoe;
     public Servo horseshoeIndicator;
+    public Servo claw;
 
     // Other
     public Telemetry telemetry;
@@ -84,6 +87,7 @@ public class Robot {
         slidesMotor = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR));
         horseshoe = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE));
         horseshoeIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE_INDICATOR));
+        claw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW));
 
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
             driveMotors.put(motor, hardwareMap.get(DcMotor.class, RobotConfig.DriveMotorNames.get(motor)));
@@ -121,7 +125,7 @@ public class Robot {
 class RobotConfig {
     enum Motors {COMPLIANT_WHEELS_MOTOR_LEFT, COMPLIANT_WHEELS_MOTOR_RIGHT, SLIDES_MOTOR}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
-    enum Servos {HORSESHOE, HORSESHOE_INDICATOR}
+    enum Servos {HORSESHOE, HORSESHOE_INDICATOR, CLAW}
 
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
         put(Motors.COMPLIANT_WHEELS_MOTOR_LEFT, "cw_motor_left");
@@ -146,5 +150,6 @@ class RobotConfig {
     public static final Map<Servos, String> ServoNames = new HashMap<Servos, String>() {{
         put(Servos.HORSESHOE, "horseshoe");
         put(Servos.HORSESHOE_INDICATOR, "horseshoe_indicator");
+        put(Servos.CLAW, "claw");
     }};
 }

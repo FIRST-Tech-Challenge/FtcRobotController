@@ -433,14 +433,12 @@ public class Navigation {
             Position pos = path.get(i);
             Position copy = new Position(pos.getX(),pos.getY(), pos.getName(),pos.getAction(),pos.getStrafePower(),pos.getRotatePower(),pos.getRotation());
             if (allianceColor == RobotManager.AllianceColor.RED) {
-                copy.setY(-copy.getY() + RED_BARCODE_OFFSET);
-                if (startingSide == RobotManager.StartingSide.OUR_COLOR){
-                    copy.setY(copy.getY() + DISTANCE_BETWEEN_START_POINTS);
-                }
-                copy.setRotation((copy.getRotation() + Math.PI) * -1);
+                copy.setY(-copy.getY());
+                copy.setRotation(-copy.getRotation());
             }
-            else if (startingSide == RobotManager.StartingSide.OUR_COLOR) {
-                copy.setY(copy.getY() - DISTANCE_BETWEEN_START_POINTS);
+            else if (startingSide == RobotManager.StartingSide.THEIR_COLOR) {
+                copy.setY(-copy.getY());
+                copy.setRotation(-copy.getRotation());
             }
             path.set(i, copy);
         }
