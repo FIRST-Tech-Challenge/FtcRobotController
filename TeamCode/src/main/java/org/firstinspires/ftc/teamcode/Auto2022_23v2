@@ -116,7 +116,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                /*if (tfod != null) {
+                if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -142,37 +142,26 @@ public class Auto2022_23v2 extends LinearOpMode {
                             hasMoved = true;
                         }
                     }
-                }*/
+                }
 
+                /* Use the code below to test ticks per inch
+                 * Uncomment and run, then find how high the linear slide moved.
+                 * 173 ticks as of writing this is the amount needed to lift up one inch.
+                 * Change the liftCorrection variable to account for the difference in distance
+                 * For example: After running the code, the linear slide moved 1.3 inches.
+                 * Change liftCorrection to .7. This accounts for it being .3 inches over since
+                 * you're taking .3 inches off of the current one inch
+                 */
+
+                /*
                 if(!hasMoved){
-                    moveLift(6);
-                    waitTime(5);
-                    pickupCone();
-                    moveLift(15);
-                    waitTime(5);
-                    moveGrabber(false);
-                    waitTime(2);
-                    pickupCone();
-                    moveLift(15);
-                    waitTime(5);
-                    moveGrabber(false);
-                    waitTime(2);
-                    pickupCone();
-                    moveLift(15);
-                    waitTime(5);
-                    moveGrabber(false);
-                    waitTime(2);
-                    pickupCone();
-                    moveLift(15);
-                    waitTime(5);
-                    moveGrabber(false);
-                    waitTime(2);
-                    /*liftMotor.setMode(STOP_AND_RESET_ENCODER);
-                    liftMotor.setTargetPosition(173); // replace 1000 with applicable number
+                    liftMotor.setMode(STOP_AND_RESET_ENCODER);
+                    liftMotor.setTargetPosition(173);
                     liftMotor.setMode(RUN_TO_POSITION);
-                    liftMotor.setPower(1.0);*/
+                    liftMotor.setPower(1.0);
                     hasMoved = true;
                 }
+                 */
             }
         }
     }
