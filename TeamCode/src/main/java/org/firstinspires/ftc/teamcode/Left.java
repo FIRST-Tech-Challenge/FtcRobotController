@@ -205,6 +205,7 @@ public class Left extends LinearOpMode {
             switch (location){
                 case 0:
                     move(.2,200);
+                    stopMotors();
                     sleep(3000);
                     break;
                 case 1:
@@ -215,7 +216,8 @@ public class Left extends LinearOpMode {
                     sleep(3000);
                     break;
                 case 2:
-                    move(.2,200);
+                    move(.2,-100);
+                    stopMotors();
                     sleep(3000);
                     break;
                 case 3:
