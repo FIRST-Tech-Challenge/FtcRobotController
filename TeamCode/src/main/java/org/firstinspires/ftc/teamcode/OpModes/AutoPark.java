@@ -38,11 +38,6 @@ public class AutoPark extends LinearOpMode {
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
-        telemetry.addData("FL Motor Encoder", robot.FLMotor.getCurrentPosition());
-        telemetry.addData("BL Motor Encoder", robot.BLMotor.getCurrentPosition());
-        telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
-        telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
-        telemetry.addData("VSlider Encoder ", robot.vSlider.getCurrentPosition());
         telemetry.update();
         waitForStart();
 

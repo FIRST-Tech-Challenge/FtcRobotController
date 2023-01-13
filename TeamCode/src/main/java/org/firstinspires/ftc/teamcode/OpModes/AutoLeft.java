@@ -39,7 +39,7 @@ public class AutoLeft extends LinearOpMode {
     Robot robot = new Robot();
 
     public enum AutoSteps {
-        detectSignal, deliverPreLoad, CycleThreeCones, parkFromMedium, park, endAuto
+        detectSignal, deliverPreLoad, parkFromMedium, endAuto
     }
 
     public AutoSteps Step = AutoSteps.detectSignal;
@@ -56,11 +56,6 @@ public class AutoLeft extends LinearOpMode {
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
-        telemetry.addData("FL Motor Encoder", robot.FLMotor.getCurrentPosition());
-        telemetry.addData("BL Motor Encoder", robot.BLMotor.getCurrentPosition());
-        telemetry.addData("BR Motor Encoder", robot.BRMotor.getCurrentPosition());
-        telemetry.addData("FR Motor Encoder", robot.FRMotor.getCurrentPosition());
-        telemetry.addData("VSlider Encoder ", robot.vSlider.getCurrentPosition());
         telemetry.update();
         waitForStart();
 
@@ -84,11 +79,11 @@ public class AutoLeft extends LinearOpMode {
                             } else if (objectLabel == robot.LABELS[2]) {
                                 parkingTarget = 3;
                             }
-
+//
 //                            telemetry.addData("", " ");
 //                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
 //                            telemetry.addData("Robot Location", robot.Location);
-//                            telemetry.addData("parking target", parkingTarget);
+                            telemetry.addData("parking target", parkingTarget);
                         }
 //                        telemetry.update();
                     }
@@ -103,21 +98,6 @@ public class AutoLeft extends LinearOpMode {
 
                     case deliverPreLoad:
                         robot.deliverPreLoad(true);
-                        Step = AutoSteps.endAuto;
-                        break;
-
-                    case CycleThreeCones:
-                        //Drive to the stack
-                        robot.DriveToPosition(0.8, -35, 60, false);
-                        robot.turnRobotToAngle(90);
-                        for(int i = 0; i < 4; i++) {
-                            robot.CycleCone(true);
-                        }
-                        Step = AutoSteps.park;
-                        break;
-
-                    case park:
-                        robot.Park(parkingTarget);
                         Step = AutoSteps.endAuto;
                         break;
 

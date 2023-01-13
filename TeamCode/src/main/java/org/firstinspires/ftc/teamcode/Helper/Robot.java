@@ -481,7 +481,7 @@ public class Robot {
         /** First swing the arm up and go to the pole. **/
         //Close claw, the arm is already up.
         claw.setPosition(1);
-        SwingArmToPosition(1, 65, swingArmHoldingPower);
+        swingArm.setPower(swingArmHoldingPower);
 
         //Drive to the pole
         if(LR) { // True = Left
@@ -492,7 +492,6 @@ public class Robot {
             DriveToPosition(0.5, 8, 100, true);
             turnRobotToAngle(90);
         }
-        stopDriveMotors();
 
         /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
         //Moves the slider to the correct height
@@ -500,44 +499,59 @@ public class Robot {
 
 
 //        //Swings the arm down
-//        SwingArmToPosition(-1, 20, 0);
-//
-//
-//        // Lower the slider a little bit to catch the cone in pole.
-//        MoveSlider(1, -100, 100);
-//
-//        //Open and close the claw to drop the cone
-//        claw.setPosition(0);
-//        timeout_ms = 500;
-//        runtime.reset();
-//        while ((runtime.milliseconds() < timeout_ms)) {
-//        }
-//        claw.setPosition(1);
-//        //Swings the arm back up
-//        SwingArmToPosition(1, 65, swingArmHoldingPower);
-//        //lower the slider
-//        MoveSlider(-1, -1000, 1200);
-//        // Open the claw.
-//        claw.setPosition(0);
+        SwingArmToPosition(-1, 20, 0);
+
+        // Lower the slider a little bit to catch the cone in pole.
+        MoveSlider(1, -100, 100);
+
+        //Open and close the claw to drop the cone
+        claw.setPosition(0);
+        timeout_ms = 500;
+        runtime.reset();
+        while ((runtime.milliseconds() < timeout_ms)) {
+        }
+        claw.setPosition(1);
+
+        //Raises slider a little bit to not get caught on the pole
+        MoveSlider(1, 100, 150);
+        //Swings the arm back up
+        SwingArmToPosition(1, 65, swingArmHoldingPower);
+        //lower the slider
+        MoveSlider(-1, -1000, 1200);
+
     }
 
     public void ParkFromMedium(boolean LR, int location){
         if(LR) {
             turnRobotToAngle(350);
-            stopDriveMotors();
-            switch(location){
-                case 1:
-                    DriveToPosition(0.5, 75, -30, true);
-                case 2:
-                    DriveToPosition(0.5, 0, -40, true);
-                case 3:
-                    DriveToPosition(0.5, -75, -40, true);
-            }
         }
         else {
-            turnRobotToAngle(160);
-            stopDriveMotors();
+            turnRobotToAngle(20);
+        }
 
+        switch(location){
+            case 1:
+                DriveToPosition(0.5, 75, -40, true);
+                //Turn the robot to either be facing the alliance station, or turn towards it so that it is faster to drive to it.
+                if(LR) {
+                    turnRobotToAngle(270);
+                } else {
+                    turnRobotToAngle(180);
+                }
+            case 2:
+                DriveToPosition(0.5, 0, -40, true);
+                if(LR) {
+                    turnRobotToAngle(270);
+                } else {
+                    turnRobotToAngle(90);
+                }
+            case 3:
+                DriveToPosition(0.5, -75, -40, true);
+                if(LR) {
+                    turnRobotToAngle(180);
+                } else {
+                    turnRobotToAngle(90);
+                }
         }
 
     }
