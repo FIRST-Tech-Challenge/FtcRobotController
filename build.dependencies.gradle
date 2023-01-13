@@ -1,8 +1,13 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
-    flatDir {
-        dirs rootProject.file('libs')
+}
+
+android {
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
     }
 }
 
