@@ -483,57 +483,70 @@ public class Robot {
         swingArm.setPower(swingArmHoldingPower);
         //Drive to the pole
         if(LR) { // True = Left
-            DriveToPosition(0.8, -10, 100, true);
+            claw.setPosition(1);
+            DriveToPosition(0.8, -8, 100, true);
             turnRobotToAngle(280);
         }
         else{
-
+            claw.setPosition(1);
+            DriveToPosition(0.8, 8, 100, true);
+            turnRobotToAngle(90);
         }
 
         stopDriveMotors();
         /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
-////        Moves the slider to the right height
+        //Moves the slider to the right height
         MoveSlider(1, 1000, 1850);
-        vSlider.setPower(0);
-//        //Swings the arm
-        swingArm.setPower(0);
+        //Swings the arm
         SwingArmToPosition(-1, 20);
         swingArm.setPower(0);
-//        //Opens and closes the claw to drop the cone
+        //Opens and closes the claw to drop the cone
         claw.setPosition(0);
-        //Thread.sleep(500);
+        timeout_ms = 500;
+        runtime.reset();
+        while ((runtime.milliseconds() < timeout_ms)) {
+
+        }
         claw.setPosition(1);
-//        //Swings the arm back up
+        MoveSlider(1, 500, 300);
+        //Swings the arm back up
         SwingArmToPosition(1, 65);
         swingArm.setPower(swingArmHoldingPower);
-//        //lowers the slider
+        while(swingArm.isBusy()) {
+
+        }
+        //lowers the slider
         MoveSlider(-1, 0, 1200);
     }
 
     public void ParkFromMedium(boolean LR, int location){
-        if(LR){
+        if (LR) {
             turnRobotToAngle(350);
-            MoveSlider(1, -500, 750);
-
-            if (location == 1) {
-                claw.setPosition(0);
-                DriveToPosition(0.3, 75, -70, true);
-            }
-
-            if (location == 2) {
-                claw.setPosition(0);
-                DriveToPosition(0.3, 0, -70, true);
-            }
-
-            if (location == 3) {
-                claw.setPosition(0);
-                DriveToPosition(0.3, -75, -70, true);
-
-            }
-
+            stopDriveMotors();
+        } else {
+            turnRobotToAngle(160);
+            stopDriveMotors();
         }
 
+        MoveSlider(1, -500, 1200);
+
+        if (location == 1) {
+            claw.setPosition(0);
+            DriveToPosition(0.3, 75, -30, true);
+        }
+
+        if (location == 2) {
+            claw.setPosition(0);
+            DriveToPosition(0.3, 0, -40, true);
+        }
+
+        if (location == 3) {
+            claw.setPosition(0);
+            DriveToPosition(0.3, -75, -40, true);
+
+        }
     }
+
 
 
     public void CycleCone(boolean LR){

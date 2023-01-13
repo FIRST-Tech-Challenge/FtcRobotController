@@ -104,12 +104,12 @@ public class AutoLeft extends LinearOpMode {
                     case detectSignal:
                         telemetry.addData("Parking Target ", parkingTarget);
                         telemetry.update();
-                        Step = AutoSteps.park;
+                        Step = AutoSteps.deliverPreLoad;
                         break;
 
                     case deliverPreLoad:
                         robot.deliverPreLoad(true);
-                        Step = AutoSteps.endAuto;
+                        Step = AutoSteps.parkFromMedium;
                         break;
 
                     case CycleThreeCones:

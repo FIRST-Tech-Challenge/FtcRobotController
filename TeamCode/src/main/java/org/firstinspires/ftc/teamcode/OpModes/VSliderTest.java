@@ -105,6 +105,20 @@ public class VSliderTest extends LinearOpMode {
 
             }
 
+            if(gamepad2.a) {
+                for(int i = 0; i <= 20; i++) {
+                    robot.SwingArmToPosition(1,65);
+                    robot.swingArm.setPower(robot.swingArmHoldingPower);
+
+                    robot.claw.setPosition(0);
+                    sleep(500);
+                    robot.claw.setPosition(1);
+
+                    robot.SwingArmToPosition(-1,20);
+                    robot.swingArm.setPower(0);
+                }
+            }
+
 
 
         }
