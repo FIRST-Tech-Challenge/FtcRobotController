@@ -8,16 +8,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.SwitchableCamera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.team6220_PowerPlay.testclasses.ConeAndJunctionDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
@@ -44,11 +41,6 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // bulk reading
     private List<LynxModule> hubs;
-
-    // OpenCV
-    public OpenCvCamera robotCamera;
-    public OpenCvCamera grabberCamera;
-    public ConeAndJunctionDetectionPipeline coneAndJunctionDetectionPipeline;
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -111,8 +103,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         imu.initialize(parameters);
 
         sleep(3000);
-
-        detectConesAndJunctions();
 
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
@@ -194,15 +184,5 @@ public abstract class BaseOpMode extends LinearOpMode {
             motorLeftSlides.setPower(0.05);
             motorRightSlides.setPower(0.05);
         }
-    }
-
-    public void detectConesAndJunctions() {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
-        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), cameraMonitorViewId);
-
-        coneAndJunctionDetectionPipeline = new ConeAndJunctionDetectionPipeline();
-        robotCamera.setPipeline(coneAndJunctionDetectionPipeline);
-        grabberCamera.setPipeline(coneAndJunctionDetectionPipeline);
     }
 }
