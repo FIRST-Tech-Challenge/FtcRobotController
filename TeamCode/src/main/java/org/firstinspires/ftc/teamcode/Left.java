@@ -1,5 +1,5 @@
-package org.firstinspires.ftc.teamcode;
-import static java.lang.Thread.sleep;
+package org.firstinspires.ftc.teamcode;                                     //imports
+import static java.lang.Thread.sleep;                               
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -44,7 +44,7 @@ public class Left extends LinearOpMode {
 
     int location;
 
-    AprilTagDetection tagOfInterest = null;
+    AprilTagDetection tagOfInterest = null;                             //setting motor varibles 
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
@@ -62,7 +62,7 @@ public class Left extends LinearOpMode {
     @Override
     public void runOpMode() {
         initGyro();
-        int cameraMonitorViewId = hardwareMap.appContext
+        int cameraMonitorViewId = hardwareMap.appContext                            //setting up the camera 
                 .getResources().getIdentifier("cameraMonitorViewId",
                         "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -100,7 +100,7 @@ public class Left extends LinearOpMode {
                         break;
                     }
                 }
-
+                                                                                    //telematry for the signal sleave
                 if (tagFound) {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
@@ -146,8 +146,8 @@ public class Left extends LinearOpMode {
             telemetry.update();
         }
 
-        /* Actually do something useful */
-        if (tagOfInterest == null) {
+       
+        if (tagOfInterest == null) {                                            //takes the camera value and turns it into my own varible 
             location=0;
         } else if (tagOfInterest.id == LEFT) {
             location=1;
@@ -160,7 +160,7 @@ public class Left extends LinearOpMode {
 
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");                      //mapping the motors 
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         Left = hardwareMap.get(CRServo.class, "Lefts");
@@ -172,8 +172,8 @@ public class Left extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        // You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        if (opModeIsActive()) {
+        
+        if (opModeIsActive()) {//start of queue for autonnums movment 
 
             Left.setPower(.3);
             sleep(500);
@@ -202,7 +202,7 @@ public class Left extends LinearOpMode {
             move(.5,-330);
 
 
-            switch (location){
+            switch (location){//determine where to park 
                 case 0:
                     move(.2,200);
                     stopMotors();
@@ -230,7 +230,7 @@ public class Left extends LinearOpMode {
         }
     }
 
-
+//methods 
     public void initGyro () {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
