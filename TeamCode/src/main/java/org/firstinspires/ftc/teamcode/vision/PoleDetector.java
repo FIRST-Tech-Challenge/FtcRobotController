@@ -56,6 +56,7 @@ public class PoleDetector extends OpenCvPipeline
             Imgproc.convexHull(initialContours.get(i), hull);
             if(hull.total() >= 10){
                 finalContours.add(initialContours.get(i));
+                Imgproc.putText(mat, String.valueOf(hull.total()), initialContours.get(i).toArray()[0], 1, 1, new Scalar(0, 255, 0));
                 Imgproc.drawContours(mat, initialContours, i, new Scalar(255, 255, 255), 2);
             }
         }
@@ -67,7 +68,6 @@ public class PoleDetector extends OpenCvPipeline
             contoursPoly[j] = new MatOfPoint2f();
             Imgproc.approxPolyDP(new MatOfPoint2f(finalContours.get(j).toArray()), contoursPoly[j], 3, true);
             boundRect[j] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[j].toArray()));
-            Imgproc.putText(mat, String.valueOf(hull.total()), finalContours.get(j).toArray()[0], 1, 1, new Scalar(0, 255, 0));
             if(boundRect[j].area() > maxRect.area()) maxRect = boundRect[j];
             Imgproc.rectangle(mat, boundRect[j], new Scalar(255, 255, 255));
         }

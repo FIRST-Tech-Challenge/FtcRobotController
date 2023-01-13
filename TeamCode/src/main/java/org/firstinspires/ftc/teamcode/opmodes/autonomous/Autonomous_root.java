@@ -90,6 +90,8 @@ public class Autonomous_root extends LinearOpMode {
                 //RIGHT BLUE
                 chassis.runToPosition(-1700, -2300, -1700, -2300);
 
+                //微調整
+
                 arm.openGripper();
                 arm.runToPosition(0);
 
