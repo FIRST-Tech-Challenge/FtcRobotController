@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode;                                         //imports
 import static java.lang.Thread.sleep;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -44,7 +44,7 @@ public class Right extends LinearOpMode {
 
     int location;
 
-    AprilTagDetection tagOfInterest = null;
+    AprilTagDetection tagOfInterest = null;                         //setting motor varibles 
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
@@ -61,7 +61,7 @@ public class Right extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        initGyro();
+        initGyro();                                                                 //setting up camera 
         int cameraMonitorViewId = hardwareMap.appContext
                 .getResources().getIdentifier("cameraMonitorViewId",
                         "id", hardwareMap.appContext.getPackageName());
@@ -102,7 +102,7 @@ public class Right extends LinearOpMode {
                 }
 
                 if (tagFound) {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");        //telemetry for signal sleave 
                     tagToTelemetry(tagOfInterest);
                 } else {
                     telemetry.addLine("Don't see tag of interest :(");
@@ -146,8 +146,8 @@ public class Right extends LinearOpMode {
             telemetry.update();
         }
 
-        /* Actually do something useful */
-        if (tagOfInterest == null) {
+   
+        if (tagOfInterest == null) {                                    //setting up my own varable from the open cv 
             location=0;
         } else if (tagOfInterest.id == LEFT) {
             location=1;
@@ -158,7 +158,7 @@ public class Right extends LinearOpMode {
         }
 
 
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");                                  //mapping the motors 
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
@@ -172,8 +172,8 @@ public class Right extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        if (opModeIsActive()) {
+       
+        if (opModeIsActive()) {                 //start of the autonmous queue 
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
@@ -201,7 +201,7 @@ public class Right extends LinearOpMode {
             move(.5,330);
 
 
-            switch (location){
+            switch (location){                  //parking
                 case 0:
                     move(.2,200);
                     stopMotors();
@@ -229,7 +229,7 @@ public class Right extends LinearOpMode {
         }
     }
 
-
+                                                            //all my methods 
     public void initGyro () {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
