@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.components;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.vision.PoleDetector;
 import org.firstinspires.ftc.teamcode.vision.SleeveDetector;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
@@ -15,12 +13,15 @@ public class Vision {
 
     //"Webcam 1"
     private static OpenCvCamera camera;
+    private static Telemetry telemetry;
 
-    public Vision(OpenCvCamera openCvCamera){
+    public Vision(OpenCvCamera openCvCamera, Telemetry t){
         this.camera = openCvCamera;
+        this.telemetry = t;
     }
 
     static SleeveDetector aprilTagDetectionPipeline;
+    static PoleDetector poleDetector;
 
     static AprilTagDetection tagOfInterest = null;
 
@@ -57,6 +58,13 @@ public class Vision {
             public void onError(int errorCode) {}
         });
     }
+
+    public static void setPoleDetector() {
+        poleDetector = new PoleDetector(telemetry);
+        camera.setPipeline(poleDetector);
+    }
+
+    public int differenceX() { return poleDetector.differenceX(); }
 
     public static void searchTags() {
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();

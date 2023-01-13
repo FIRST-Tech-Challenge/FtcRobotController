@@ -12,11 +12,13 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Vision;
+import org.firstinspires.ftc.teamcode.vision.PoleDetector;
 import org.firstinspires.ftc.teamcode.vision.SleeveDetector;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
@@ -54,7 +56,7 @@ public class Autonomous_root extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        Vision vision = new Vision(camera);
+        Vision vision = new Vision(camera, telemetry);
         vision.init();
 
         telemetry.addLine("waiting to start!");
@@ -76,9 +78,10 @@ public class Autonomous_root extends LinearOpMode {
         }
 
         boolean parked = false;
+        vision.setPoleDetector();
 
         while(opModeIsActive() && !parked) {
-            //RIGHT BLUE
+            chassis.runToPosition(-100, -100, -100, -100);
 
             arm.closeGripper();
             arm.runToPosition(arm.highJunction);
@@ -91,6 +94,16 @@ public class Autonomous_root extends LinearOpMode {
                 chassis.runToPosition(-1700, -2300, -1700, -2300);
 
                 //微調整
+                while(Math.abs(vision.differenceX()) > 5) {
+                    double power = (vision.differenceX() > 0) ? 0.1 : -0.1;
+                    chassis.turn(power);
+
+                    telemetry.addData("difference", vision.differenceX());
+                    telemetry.update();
+                }
+                chassis.stop();
+
+
 
                 arm.openGripper();
                 arm.runToPosition(0);
