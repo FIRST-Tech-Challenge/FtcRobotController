@@ -20,11 +20,13 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	private Slide slideControl;
 	private Claw clawControl;
 
-	public static int x = 58;
-	public static double y = -3.75;
-	public static int firstLinetoHeadingX = 60;
-	public static double angle = 91.45;
+	public static double x = 57;
+	public static double y = -3;
+	public static double firstLinetoHeadingX = 60;
+	public static double angle = 125;
 	public static double strafe = 14;
+	public static double x2 = 54.5;
+	public static double y2 = -5;
 
 
 	public void initialize(){
@@ -48,7 +50,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				//If 13.53 V, y = -3.5
 
 				//High Junction with Preload
-				.UNSTABLE_addTemporalMarkerOffset(0.75,()->{
+				.UNSTABLE_addTemporalMarkerOffset(1,()->{
 					slideControl.setHighJunction(telemetry);
 					armControl.setExtake();
 					clawControl.toggleWristRotate();
@@ -60,7 +62,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1450);
 				})
-				.waitSeconds(.5)
+				.waitSeconds(.25)
 				//opens claw
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
@@ -69,101 +71,67 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				//moves to
 				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
 					clawControl.toggleWristRotate();
-					slideControl.setCustom(790);
+					slideControl.setCustom(760);
 					armControl.setIntake();//ppcocaine
 				})
 				.waitSeconds(0.25)
 				.strafeLeft(14)
-				.lineToLinearHeading(new Pose2d(46 ,25.5, Math.toRadians(angle)))
+				.lineToLinearHeading(new Pose2d(47 ,25.5, Math.toRadians(91.45)))
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(1270);
+					slideControl.setCustom(1370);
 				})
 				.waitSeconds(.25)
-				.lineToLinearHeading(new Pose2d(50,-3.5,Math.toRadians(30)))
-				.UNSTABLE_addTemporalMarkerOffset(0.45,()->{
+				.UNSTABLE_addTemporalMarkerOffset(0.65,()->{
 					slideControl.setHighJunction(telemetry);
-					armControl.setExtake();
+					armControl.setCustom(990);
 					clawControl.toggleWristRotate();
 				})
-				/*.strafeRight(17)
+				.lineToLinearHeading(new Pose2d(x2,y2,Math.toRadians(angle)))
+
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1450);
 				})
-				.waitSeconds(.5)
+				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
+
 				.waitSeconds(0.15)
 				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
 
 					clawControl.toggleWristRotate();
-					slideControl.setCustom(710);
+					slideControl.setCustom(700);
 					armControl.setIntake();//ppcocaine
 				})
 				.waitSeconds(0.25)
-				.strafeLeft(14)
-				.lineToLinearHeading(new Pose2d(46 ,24, Math.toRadians(angle)))
-				.UNSTABLE_addTemporalMarkerOffset(0,()-> {
-					clawControl.toggleAutoOpenClose();
-				})
-				.waitSeconds(0.25)
-				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(1190);
-				})
-				.waitSeconds(0.25)
-				.lineToLinearHeading(new Pose2d(46.5,-3.75,Math.toRadians(90)))
-				.UNSTABLE_addTemporalMarkerOffset(0.45,()-> {
-					slideControl.setHighJunction(telemetry);
-					armControl.setExtake();
-					clawControl.toggleWristRotate();
-				})
-				.strafeRight(17)
-				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(1450);
-				})
-				.waitSeconds(0.5)
-				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
-				})
-				.waitSeconds(0.15)
-				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
-
-					clawControl.toggleWristRotate();
-					slideControl.setCustom(630);
-					armControl.setIntake();//ppcocaine
-				})
-				.waitSeconds(0.25)
-				.strafeLeft(14)
-				.lineToLinearHeading(new Pose2d(46 ,24, Math.toRadians(angle)))
+				.lineToLinearHeading(new Pose2d(47 ,25.5, Math.toRadians(91.45)))
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(1110);
+					slideControl.setCustom(1310);
 				})
 				.waitSeconds(.25)
-				.lineToLinearHeading(new Pose2d(46.5,-3.75,Math.toRadians(90)))
-				.UNSTABLE_addTemporalMarkerOffset(0.45,()->{
+				.UNSTABLE_addTemporalMarkerOffset(0.65,()->{
 					slideControl.setHighJunction(telemetry);
-					armControl.setExtake();
+					armControl.setCustom(990);
 					clawControl.toggleWristRotate();
 				})
-				.strafeRight(17)
+				.lineToLinearHeading(new Pose2d(x2,y2,Math.toRadians(angle)))
+
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1450);
 				})
-				.waitSeconds(.5)
+				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
-				//.splineToConstantHeading(new Vector2d(x,y),Math.toRadians(angle))
 
-				 */
 				.build();
 
 		TrajectorySequence goToConeStack = bot.trajectorySequenceBuilder(junction.end())
