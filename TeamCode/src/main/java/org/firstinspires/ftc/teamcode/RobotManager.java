@@ -267,9 +267,19 @@ public class RobotManager {
         Position startPos = new Position(robot.getPosition().getX(), robot.getPosition().getY(),
                 robot.getPosition().getRotation(), "POI startPos");
 
-        navigation.path.add(navigation.pathIndex,
-                new Position(startPos.getX() + Navigation.HORSESHOE_SIZE, startPos.getY(),
-                        startPos.getRotation(), "POI dropoff"));
+        //The direction that the robot moves away at will need to depend on which side we are playing on
+        switch(startingSide) {
+            case OUR_COLOR:
+                navigation.path.add(navigation.pathIndex,
+                    new Position(startPos.getX(), startPos.getY() - Navigation.HORSESHOE_SIZE,
+                            startPos.getRotation(), "POI dropoff our color"));
+                break;
+            case THEIR_COLOR:
+                navigation.path.add(navigation.pathIndex,
+                        new Position(startPos.getX(), startPos.getY() + Navigation.HORSESHOE_SIZE,
+                                startPos.getRotation(), "POI dropoff their color"));
+                break;
+        }
 
         travelToNextPOI();
 

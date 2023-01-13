@@ -12,8 +12,8 @@ public class Position {
     protected double y;
     protected Navigation.Action action = Navigation.Action.NONE;
     //Add constructors if needed
-    protected double strafePower = 0.0;
-    protected double rotatePower = 0.0;
+    protected double strafePower = 1.0;
+    protected double rotatePower = 1.0;
 
     Position() {
         x = 0.0;
