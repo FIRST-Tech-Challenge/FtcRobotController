@@ -1,4 +1,4 @@
-# Niskayuna RoboWarriors 2022
+# Niskayuna RoboWarriors 2022-23
 
 Team Members:
 - Arin Khare
@@ -6,9 +6,6 @@ Team Members:
 - Arthur Leung
 - Christian Francisco
 - Sean Sia
-- James Lian
-- Aria Bose-Mullick
-- Tyler Montgomery (SuperTylerMan)
 - James Lian
 - Aria Bose-Mullick
 - Tyler Montgomery (SuperTylerMan)
