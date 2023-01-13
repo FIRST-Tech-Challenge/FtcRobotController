@@ -27,6 +27,6 @@ public class Team1RedTeleOp extends TeleOpModeBase { // Ensure you extend the ba
         GamepadEx gamepad = Inputs.gamepad1;
             Motor m_motor_1 = new Motor(hardwareMap, "motorOne");
             m_motor_1.setRunMode(Motor.RunMode.RawPower);
-            m_motor_1.set(gamepad.getLeftX());
+            m_motor_1.set(gamepad.getLeftY());
     }
 }
