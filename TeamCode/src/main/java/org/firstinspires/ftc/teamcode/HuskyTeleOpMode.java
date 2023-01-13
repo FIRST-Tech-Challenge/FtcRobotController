@@ -189,7 +189,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
             if(gamepad2.left_stick_y < 0)
             {   // on the way up
-                armLiftPowerDivider = 3.5 - (huskyBot.armLiftMotor.getCurrentPosition()/ARM_LIFT_MAX_POSITION);
+                armLiftPowerDivider = 3.0 - (huskyBot.armLiftMotor.getCurrentPosition()/ARM_LIFT_MAX_POSITION);
             }
             else { // on the way down
                 armLiftPowerDivider = 5.5;
