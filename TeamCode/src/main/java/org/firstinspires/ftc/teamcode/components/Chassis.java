@@ -44,16 +44,21 @@ public class Chassis {
         double leftBackPower;
         double rightBackPower;
 
-        if (Math.abs(left_y) < 0.2) {
+        if (Math.atan2(left_y, left_x) < Math.PI/10.0) {
             leftFrontPower = -left_x * 0.8 - strafe_side * 0.6;
             rightFrontPower = left_x * 0.8 + strafe_side * 0.6;
             leftBackPower = left_x * 0.8 - strafe_side * 0.6;
             rightBackPower = -left_x * 0.8 + strafe_side * 0.6;
+        } else if (Math.atan2(left_x, left_y) < Math.PI/10.0) {
+            leftFrontPower = left_y * 0.8 - strafe_side * 0.6;
+            rightFrontPower = left_y * 0.8 + strafe_side * 0.6;
+            leftBackPower = left_y * 0.8 - strafe_side * 0.6;
+            rightBackPower = left_y * 0.8 + strafe_side * 0.6;
         } else {
-            leftFrontPower = (left_y - left_x) * 0.8 - strafe_side * 0.6;
-            rightFrontPower = (left_y + left_x) * 0.8 + strafe_side * 0.6;
-            leftBackPower = (left_y + left_x) * 0.8 - strafe_side * 0.6;
-            rightBackPower = (left_y - left_x) * 0.8 + strafe_side * 0.6;
+            leftFrontPower = (left_y - left_x) * 0.7 - strafe_side * 0.6;
+            rightFrontPower = (left_y + left_x) * 0.7 + strafe_side * 0.6;
+            leftBackPower = (left_y + left_x) * 0.7 - strafe_side * 0.6;
+            rightBackPower = (left_y - left_x) * 0.7 + strafe_side * 0.6;
         }
 
         double max = Math.max(Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower)), Math.max(Math.abs(leftBackPower), Math.abs(rightBackPower)));
