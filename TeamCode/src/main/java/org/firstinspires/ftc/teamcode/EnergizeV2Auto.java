@@ -104,6 +104,8 @@ public class EnergizeV2Auto extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBack");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
+         redLED = hardwareMap.get(DigitalChannel.class, "redLED");
+         greenLED = hardwareMap.get(DigitalChannel.class, "greenLED");
 
         rightServo = hardwareMap.get(Servo.class,"rightservo");
         rightServo.setPosition(0.1);
