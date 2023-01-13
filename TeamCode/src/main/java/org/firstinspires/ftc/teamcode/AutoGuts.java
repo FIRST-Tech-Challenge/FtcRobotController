@@ -30,7 +30,7 @@ public abstract class AutoGuts extends Control {
         int bottomRight = hraezlyr.bottomRight.getCurrentPosition();
 
         // rotates by 45 to line up with mecanum wheels
-        double imuAngle = hraezlyr.getHeading() - (180 / 2);
+        double imuAngle = hraezlyr.getHeading() - 90;
 
         // calculates given x and y into robots perspective of x and y also converts to ticks
         int x_output = (int) (((x * Math.cos(imuAngle)) + (y * Math.sin(imuAngle))) * TICKS_PER_INCH);
@@ -102,8 +102,8 @@ public abstract class AutoGuts extends Control {
     public void closeClaw(boolean clawClose){
 
         double close = 0;
-        if (clawClose) close = 0;
-        if (!clawClose) close = 50;
+        if (clawClose) close = 1;
+        if (!clawClose) close = 0;
 
         hraezlyr.servoClaw.setPosition(close);
 

@@ -56,7 +56,14 @@ public abstract class Control extends OpMode {
         }
     }
     public double constrainAngle (double angle){
+
         return((angle % 360 + 360) % 360);
+    }
+    public double constrainTuring (double angle) {
+        if(angle > .5){
+            angle = .5;
+        }
+        return(angle);
     }
 }
 
