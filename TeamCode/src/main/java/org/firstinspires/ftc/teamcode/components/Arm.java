@@ -60,7 +60,7 @@ public class Arm {
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while(rightLift.isBusy() && leftLift.isBusy()) {
-            if (leftLift.getCurrentPosition() > leftLift.getTargetPosition() && rightLift.getCurrentPosition() > rightLift.getTargetPosition()) {
+            if (leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()) {
                 leftLift.setPower(1.0);
                 rightLift.setPower(1.0);
             } else {
