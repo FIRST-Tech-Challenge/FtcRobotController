@@ -30,18 +30,17 @@ public class Hraezlyr {
     public DcMotor cascadeMotor2;
     public DcMotor horizontalMotor;
     public OpenCvCamera camera;
-    public Servo servoClawMove;
-    public Servo servoClawClose;
+    public Servo servoClaw;
     public BNO055IMU IMU;
 
 
-    public Hraezlyr(HardwareMap hwmap){
+    public Hraezlyr(HardwareMap hwmap) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         topLeft = hwmap.get(DcMotor.class, "topLeft");
@@ -51,13 +50,12 @@ public class Hraezlyr {
 
         cascadeMotor1 = hwmap.get(DcMotor.class, "cascadeMotor1");
         cascadeMotor2 = hwmap.get(DcMotor.class, "cascadeMotor2");
-        servoClawClose =  hwmap.get(Servo.class, "servoClawClose");
+        servoClaw = hwmap.get(Servo.class, "servoClaw");
         horizontalMotor = hwmap.get(DcMotor.class, "horizontalMotor");
 
 
         topRight.setDirection(DcMotorSimple.Direction.REVERSE);
         bottomRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
 
 
         IMU = hwmap.get(BNO055IMU.class, "imu");
@@ -74,29 +72,35 @@ public class Hraezlyr {
         cascadeMotor2.setZeroPowerBehavior(BRAKE);
 
 
+
+
         cascadeMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         cascadeMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         IMU.initialize(parameters);
     }
 
-    public double getHeading(){
+    public double getHeading() {
         Orientation angles = IMU.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-        return(angles.thirdAngle);
+        return (angles.thirdAngle);
     }
 
-    public double resetIMU(){
+    public double resetIMU() {
         Orientation reset = IMU.getAngularOrientation();
 
-        return(reset.thirdAngle);
+        return (reset.thirdAngle);
     }
-    public void setMotorsMode(DcMotor.RunMode runMode){
+
+    public void setMotorsMode(DcMotor.RunMode runMode) {
         topLeft.setMode(runMode);
         topRight.setMode(runMode);
         bottomLeft.setMode(runMode);
         bottomRight.setMode(runMode);
     }
-    public void setCascadeMotorsMode(DcMotor.RunMode runMode){
+
+    public void setCascadeMotorsMode(DcMotor.RunMode runMode) {
         cascadeMotor1.setMode(runMode);
         cascadeMotor2.setMode(runMode);
+
+
     }
 }

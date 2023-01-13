@@ -97,19 +97,15 @@ public abstract class AutoGuts extends Control {
         while (!isStopRequested && angularDistance > 0.08);
     }
 
-    public void cascadeMoveClaw(int height, double power, double angle) {
-        hraezlyr.setCascadeMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hraezlyr.servoClawMove.setPosition(angle / 90);
-        hraezlyr.cascadeMotor1.setTargetPosition(height);
-        hraezlyr.cascadeMotor2.setTargetPosition(height);
-    }
+
+
     public void closeClaw(boolean clawClose){
 
         double close = 0;
         if (clawClose) close = 0;
         if (!clawClose) close = 50;
 
-        hraezlyr.servoClawClose.setPosition(close);
+        hraezlyr.servoClaw.setPosition(close);
 
     }
 

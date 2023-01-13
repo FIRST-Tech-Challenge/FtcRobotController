@@ -45,6 +45,7 @@ public abstract class Control extends OpMode {
     public void cascadeLiftManual(double power){
         hraezlyr.cascadeMotor1.setPower(power);
         hraezlyr.cascadeMotor2.setPower(power);
+
     }
     public void sleep (long mill){
         try {

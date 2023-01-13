@@ -29,6 +29,8 @@ public class Drive extends Control {
         double leftX = gamepad1.left_stick_x;
         double leftY = gamepad1.left_stick_y;
         double rightX = gamepad1.right_stick_x;
+        double verticalPower = gamepad2.right_stick_y;
+        double horizontalPower = gamepad2.left_stick_y;
         Level zHeight = Level.GROUND;
         boolean start = gamepad1.start;
         boolean DpadUp = gamepad2.dpad_up;
@@ -37,6 +39,7 @@ public class Drive extends Control {
         boolean dpadRight = gamepad2.dpad_right;
         boolean buttonA = gamepad2.a;
         boolean buttonB = gamepad2.b;
+        double IMUangle = hraezlyr.getHeading();
 
         double rightTurn = 0;
         double leftTurn = 0;
@@ -49,7 +52,7 @@ public class Drive extends Control {
         // angle of controller stick
 
         double angle = Math.toDegrees(Math.atan2(leftY, leftX));
-        angle = angle - hraezlyr.getHeading() + resetIMU;
+        angle = angle - IMUangle + resetIMU;
         //angle = constrainAngle(angle);
         // scope orientation
 
@@ -69,8 +72,6 @@ public class Drive extends Control {
         hraezlyr.bottomLeft.setPower(powerGroup2 - rightX);
         hraezlyr.bottomRight.setPower(powerGroup1 + rightX);
 
-        telemetry.addData("DpadUp", DpadUp);
-        telemetry.addData("DpadDown", DpadDown);
         telemetry.addData("Angle", angle);
         telemetry.addData("Distance", power);
         telemetry.addData("rightX", rightX);
@@ -78,13 +79,14 @@ public class Drive extends Control {
         telemetry.addData("rightTurn", rightTurn);
         telemetry.addData("buttonA", buttonA);
         telemetry.addData("buttonB", buttonB);
+        telemetry.addData("servoPos", hraezlyr.servoClaw.getPosition());
 
-        //telemetry.addData("Cascade Height", hraezlyr.cascadeMotor1.getCurrentPosition());
+
         telemetry.update();
 
         //System for cascade level system
 
-        if(dpadRight){
+      /*  if(dpadRight){
             switch(zHeight){// it go up if it already low
                 case GROUND:
                     zHeight = Level.LOW;
@@ -111,33 +113,21 @@ public class Drive extends Control {
                     break;
             }
         }
-
-            if(DpadUp && !DpadDown) {
-                hraezlyr.cascadeMotor1.setPower(0.3);
-                hraezlyr.cascadeMotor2.setPower(0.3);
-            }
-            if(DpadDown && !DpadUp) {
-                hraezlyr.cascadeMotor1.setPower(-0.3);
-                hraezlyr.cascadeMotor2.setPower(-0.3);
-            }
-            if(!DpadDown && !DpadUp){
-                hraezlyr.cascadeMotor1.setPower(0);
-                hraezlyr.cascadeMotor2.setPower(0);
-            }
-
-
+        */
+            cascadeLiftManual(verticalPower);
+            hraezlyr.horizontalMotor.setPower(-horizontalPower);
 
 
 
         if(buttonA){
 
-            hraezlyr.servoClawClose.setPosition(1);
+            hraezlyr.servoClaw.setPosition(0);
 
         }
 
         if(buttonB) {
 
-            hraezlyr.servoClawClose.setPosition(-1);
+            hraezlyr.servoClaw.setPosition(1);
         }
     }
 
