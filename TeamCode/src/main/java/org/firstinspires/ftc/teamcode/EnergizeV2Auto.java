@@ -117,7 +117,9 @@ public class EnergizeV2Auto extends LinearOpMode {
 
         redLED = hardwareMap.get(DigitalChannel.class, "redLED");
         greenLED = hardwareMap.get(DigitalChannel.class, "greenLED");
-
+        
+        redLED.setMode(DigitalChannel.Mode.OUTPUT);
+        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
         // Initializes Drive directions.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
