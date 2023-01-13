@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -17,6 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous(name="Energize V2 Auto", group="Linear Opmode")
+//@Disabled
 public class EnergizeV2Auto extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -53,14 +55,12 @@ public class EnergizeV2Auto extends LinearOpMode {
 
     private DcMotor liftMotor1 = null;
     private DcMotor liftMotor2 = null;
-    
-    private DigitalChannel redLED;
-    private DigitalChannel greenLED;
-
-        boolean toggle = false;
 
     private Servo rightServo;
     private Servo leftServo;
+
+    private DigitalChannel redLED;
+    private DigitalChannel greenLED;
 
     // Drive motor position variables:
     private int lfPos;
@@ -76,7 +76,7 @@ public class EnergizeV2Auto extends LinearOpMode {
     private double fast = 0.6; // Fast speed
     private double medium = 0.3; // Medium speed
     private double slow = 0.1; // Slow speed
-    private double clicksPerDeg = clicksPerInch / 3.99; // empirically measured
+    private double clicksPerDeg = clicksPerInch / 4.99; // empirically measured
 
     private final double MAX_POWER = 0.75;
     private final double MAX_HEIGHT = 90;
@@ -104,8 +104,6 @@ public class EnergizeV2Auto extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBack");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
-         redLED = hardwareMap.get(DigitalChannel.class, "redLED");
-         greenLED = hardwareMap.get(DigitalChannel.class, "greenLED");
 
         rightServo = hardwareMap.get(Servo.class,"rightservo");
         rightServo.setPosition(0.1);
@@ -117,9 +115,9 @@ public class EnergizeV2Auto extends LinearOpMode {
         sensorTouch = hardwareMap.get(DigitalChannel.class, "sensor_touch");
         sensorTouch.setMode(DigitalChannel.Mode.INPUT);
 
-         redLED.setMode(DigitalChannel.Mode.OUTPUT);
-         greenLED.setMode(DigitalChannel.Mode.OUTPUT);
-        
+        redLED = hardwareMap.get(DigitalChannel.class, "redLED");
+        greenLED = hardwareMap.get(DigitalChannel.class, "greenLED");
+
         // Initializes Drive directions.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -169,25 +167,26 @@ public class EnergizeV2Auto extends LinearOpMode {
 
                 if(tagFound)
                 {
-                     if (tagOfInterest.id == 1) {
-                            redLED.setState(true);
-                            greenLED.setState(false);
-                        }
-                        else if (tagOfInterest.id == 3){
-                            redLED.setState(false);
-                            greenLED.setState(true);
-                        }
-                        else if (tagOfInterest.id == 9){
-                            redLED.setState(false);
-                            greenLED.setState(false);
-                        }
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    if (tagOfInterest.id == 1) {
+                        redLED.setState(true);
+                        greenLED.setState(false);
+                    }
+                    else if (tagOfInterest.id == 3){
+                        redLED.setState(false);
+                        greenLED.setState(true);
+                    }
+                    else if (tagOfInterest.id == 9){
+                        redLED.setState(false);
+                        greenLED.setState(false);
+                    }
                     tagToTelemetry(tagOfInterest);
                 }
-                else
-                {
-                    telemetry.addLine("Don't see tag of interest :(");
 
+                else {
+                    telemetry.addLine("Don't see tag of interest :(");
+                    redLED.setState(true);
+                    greenLED.setState(true);
                     if(tagOfInterest == null)
                     {
                         telemetry.addLine("(The tag has never been seen)");
@@ -202,8 +201,6 @@ public class EnergizeV2Auto extends LinearOpMode {
             }
             else
             {
-                redLED.setState(true);
-                greenLED.setState(true);
                 telemetry.addLine("Don't see tag of interest :(");
 
                 if(tagOfInterest == null)
@@ -251,116 +248,19 @@ public class EnergizeV2Auto extends LinearOpMode {
         else
         {
             if (tagOfInterest.id == 1) {
-                // Drive to place preloaded cone.
-                gripper(close);
-                sleep(500);
-                moveWholeBlock("forward", medium);
-                sleep(500);
-                strafe(12, fast);
-                //score cone
-                // lift function to small junction
-                // lift function to 0
-                gripper(open);
-                sleep(500);
-                strafe(-12, fast);
-                sleep(500);
-                moveWholeBlock("forward", medium);
-                sleep(500);
-                // turn 90 degrees counterclockwise
-                // sleep(500);
-                gripper(close);
-                sleep(500); // remove once lift function has been added.
-                // lift small junction
-                // sleep(250)
-                // moveHalfBlock("backward", medium)
-                // sleep(500)
-                // turn 90 degrees counterclockwise
-                gripper(open);
-                strafe(-24, fast); // in place of turn.
-                sleep(500);
-                strafe(12, fast);
-                sleep(1000);
-
-                // Park based on tag.
-                strafe(12, fast);
-                sleep(1000);
-                moveWholeBlock("backward", medium);
-                sleep(500);
                 strafe(-24, fast);
-                sleep(500);
+                Wait(0.5);
+                moveWholeBlock("forward", medium);
             }
+
             else if (tagOfInterest.id == 3) {
-                // Drive to place preloaded cone.
                 moveWholeBlock("forward", medium);
-                sleep(500);
-                strafe(12, fast);
-                //score cone
-                // lift function to small junction
-                // lift function to 0
-                gripper(open);
-                sleep(500);
-                strafe(-12, fast);
-                sleep(500);
-                moveWholeBlock("forward", medium);
-                sleep(500);
-                // turn 90 degrees counterclockwise
-                // sleep(500);
-                gripper(close);
-                sleep(500); // remove once lift function has been added.
-                // lift small junction
-                // sleep(250)
-                // moveHalfBlock("backward", medium)
-                // sleep(500)
-                // turn 90 degrees counterclockwise
-                gripper(open);
-                strafe(-24, fast); // in place of turn.
-                sleep(500);
-                strafe(12, fast);
-                sleep(1000);
-
-                // Park based on tag.
-                strafe(12, fast);
-                sleep(500);
-                moveWholeBlock("backward", fast);
-                sleep(500);
             }
+
             else if (tagOfInterest.id == 9) {
-                // Drive to place preloaded cone.
-                moveWholeBlock("forward", medium);
-                sleep(500);
-                strafe(12, fast);
-                //score cone
-                // lift function to small junction
-                // lift function to 0
-                gripper(open);
-                sleep(500);
-                strafe(-12, fast);
-                sleep(500);
-                moveWholeBlock("forward", medium);
-                sleep(500);
-                // turn 90 degrees counterclockwise
-                // sleep(500);
-                gripper(close);
-                sleep(500); // remove once lift function has been added.
-                // lift small junction
-                // sleep(250)
-                // moveHalfBlock("backward", medium)
-                // sleep(500)
-                // turn 90 degrees counterclockwise
-                gripper(open);
-                strafe(-24, fast); // in place of turn.
-                sleep(500);
-                strafe(12, fast);
-                sleep(1000);
-
-                // Park based on tag.
-                strafe(12, fast);
-                sleep(500);
-                moveWholeBlock("backward", medium);
-                sleep(1000);
                 strafe(24, fast);
-                sleep(500);
-
+                Wait(0.5);
+                moveWholeBlock("forward", medium);
             }
 
         }
@@ -796,6 +696,13 @@ public class EnergizeV2Auto extends LinearOpMode {
 
         }
         else if (position == 3) {
+
+        }
+    }
+
+    private void Wait(double seconds) {
+        runtime.reset();
+        while (runtime.time() < seconds) {
 
         }
     }
