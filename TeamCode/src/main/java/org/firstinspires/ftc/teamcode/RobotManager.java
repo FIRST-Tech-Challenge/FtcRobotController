@@ -298,13 +298,23 @@ public class RobotManager {
         Position startPos = new Position(robot.getPosition().getX(), robot.getPosition().getY(),
                 robot.getPosition().getRotation(), "POI startPos");
 
-        navigation.path.add(navigation.pathIndex,
-                new Position(startPos.getX() + Navigation.HORSESHOE_SIZE, startPos.getY(),
-                        startPos.getRotation(), "POI dropoff"));
+        //The direction that the robot moves away at will need to depend on which side we are playing on
+        switch(startingSide) {
+            case OUR_COLOR:
+                navigation.path.add(navigation.pathIndex,
+                    new Position(startPos.getX(), startPos.getY() + Navigation.HORSESHOE_SIZE, //horseshoe moves towards junction
+                            startPos.getRotation(), "POI dropoff our color"));
+                break;
+            case THEIR_COLOR:
+                navigation.path.add(navigation.pathIndex,
+                        new Position(startPos.getX(), startPos.getY() - Navigation.HORSESHOE_SIZE,
+                                startPos.getRotation(), "POI dropoff their color"));
+                break;
+        }
 
         travelToNextPOI();
 
-        flipHorseshoe();
+        //flipHorseshoe(); not needed anymore because no more servo
 
         // Lower linear slides
         robot.desiredSlidesState = getLoweredSlidesState(robot.desiredSlidesState);
@@ -324,7 +334,7 @@ public class RobotManager {
             retracted = mechanismDriving.updateSlides(robot);
         }
 
-        flipHorseshoe();
+        //flipHorseshoe(); not needed anymore because no more horseshoe
     }
 
     /** Picks up a cone.
