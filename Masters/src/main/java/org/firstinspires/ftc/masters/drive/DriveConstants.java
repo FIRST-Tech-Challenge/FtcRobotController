@@ -46,8 +46,8 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.8; // in
-    public static double GEAR_RATIO = 1*63/61.09; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 13.8; // in
+    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 14; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
