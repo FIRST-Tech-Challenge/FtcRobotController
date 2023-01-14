@@ -44,12 +44,12 @@ public class Chassis {
         double leftBackPower;
         double rightBackPower;
 
-        if (Math.abs(Math.atan2(Math.abs(left_y), Math.abs(left_x))) < Math.PI/10.0) {
+        if (Math.abs(Math.atan2(Math.abs(left_y), Math.abs(left_x))) < Math.PI/12.0) {
             leftFrontPower = -left_x * 0.8 - strafe_side * 0.6;
             rightFrontPower = left_x * 0.8 + strafe_side * 0.6;
             leftBackPower = left_x * 0.8 - strafe_side * 0.6;
             rightBackPower = -left_x * 0.8 + strafe_side * 0.6;
-        } else if (Math.abs(Math.atan2(Math.abs(left_x), Math.abs(left_y))) < Math.PI/10.0) {
+        } else if (Math.abs(Math.atan2(Math.abs(left_x), Math.abs(left_y))) < Math.PI/12.0) {
             leftFrontPower = left_y * 0.8 - strafe_side * 0.6;
             rightFrontPower = left_y * 0.8 + strafe_side * 0.6;
             leftBackPower = left_y * 0.8 - strafe_side * 0.6;
