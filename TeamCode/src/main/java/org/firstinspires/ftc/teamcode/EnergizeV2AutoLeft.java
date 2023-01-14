@@ -109,7 +109,8 @@ public class EnergizeV2AutoLeft extends LinearOpMode {
         rightServo.setPosition(1.0);
         leftServo = hardwareMap.get(Servo.class,"leftservo");
         leftServo.setPosition(0.0);
-
+        Wait(5.0);
+        gripper(close);
 
         sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
 
