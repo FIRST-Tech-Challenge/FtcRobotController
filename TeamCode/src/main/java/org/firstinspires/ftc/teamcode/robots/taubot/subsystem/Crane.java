@@ -716,6 +716,8 @@ public class Crane implements Subsystem {
 
             case 0:
                 release();
+                Vector3 dif = correctPos.subtract(fieldPositionTarget);
+                robot.driveTrain.setPoseEstimate(new Pose2d(robot.driveTrain.getPoseEstimate().getX()+dif.x,robot.driveTrain.getPoseEstimate().getY()+dif.y));
                 dropTimer = futureTime(0.3); //enough time for cone to start dropping
                 dropConeStage++;
                 updateScoringPattern();
@@ -751,8 +753,6 @@ public class Crane implements Subsystem {
     double shoulderAmps, extenderAmps;
 
     public final double craneLengthOffset =  0.432;
-
-
 
     boolean inverseKinematic = false;
     double targetHeight = 0.0 ;
@@ -1048,8 +1048,6 @@ public class Crane implements Subsystem {
         bulbGripped = true;
     }
 
-    CranePositionMemory defaultPos = new CranePositionMemory(0,0.40,0.30);
-
     public void pickupSequence(){
         articulate(Articulation.pickupCone);
     }
@@ -1062,8 +1060,10 @@ public class Crane implements Subsystem {
        return craneCalibrationEnabled;
     }
 
+    Vector3 correctPos;
     public void dropSequence(){
         articulate(Articulation.dropCone);
+        correctPos = new Vector3(robot.field.getPatternObject().x(),robot.field.getPatternObject().y(),robot.field.getPatternObject().z());
     }
 
     public void setGripper(boolean g){
