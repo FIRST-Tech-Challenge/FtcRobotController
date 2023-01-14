@@ -756,7 +756,9 @@ public class HardwareSlimbot
                 double minPower = (degreesToGo > 0.0)? -0.30 : +0.30;
                 double liftMotorPower = minPower + (degreesToGo * -0.02); // our PID is just "P"
                 // adjust base power according to lowering/lifting (lowering cuts it; raising boosts it)
-                liftMotorPower *= (lowering)? 0.50 : 1.50;
+                // when down near collect point we need more power, so don't reduce it as much
+                double loweringFactor = (liftAngle > (LIFT_ANGLE_COLLECT-10.0))? 0.75 : 0.50;
+                liftMotorPower *= (lowering)? loweringFactor : 1.50;
                 // Ensure we don't request more than 100% motor power, even if long distance from target
                 if( liftMotorPower >  LIFT_MOTOR_MAX ) liftMotorPower =  LIFT_MOTOR_MAX;
                 if( liftMotorPower < -LIFT_MOTOR_MAX ) liftMotorPower = -LIFT_MOTOR_MAX;
@@ -837,7 +839,7 @@ public class HardwareSlimbot
 
     /*--------------------------------------------------------------------------------------------*/
     /* turretPosRun()                                                                             */
-    public void turretPosRun()
+    public void turretPosRun( boolean teleopMode )
     {
         // Has an automatic movement been initiated?
         if( turretMotorAuto ) {
@@ -845,12 +847,14 @@ public class HardwareSlimbot
             turretMotorCycles++;
             // Current distance from target (angle degrees)
             double degreesToGo = turretAngleTarget - turretAngle;
+            double degreesToGoAbs = Math.abs(degreesToGo);
+            int waitCycles = (teleopMode)? 5 : 2;
             // Have we achieved the target?
             // (temporarily limit to 16 cycles when verifying any major math changes!)
 //          if( turretMotorCycles >= 16 ) {
-            if( Math.abs(degreesToGo) <= 1.0 ) {
+            if( degreesToGoAbs < 1.0 ) {
                 turretMotor.setPower( 0.0 );
-                if( ++turretMotorWait >= 2 ) {
+                if( ++turretMotorWait >= waitCycles ) {
                     turretMotorAuto = false;
                     writeTurretLog();
                 }
@@ -860,8 +864,14 @@ public class HardwareSlimbot
                 // Reset the wait count back to zero
                 turretMotorWait = 0;
                 double turretMotorPower;
-                turretMotorPower = 0.004 * degreesToGo;
-                turretMotorPower += degreesToGo > 0 ? 0.11 : -0.11;
+                if( teleopMode ) {  // Teleop (be FAST)
+                    turretMotorPower = (degreesToGoAbs < 5.0)? 0.0 : (0.006 * degreesToGo);
+                    turretMotorPower += (degreesToGo > 0)? 0.08 : -0.08;  // min power
+                }
+                else {  // Autonomous (be ACCURATE)
+                    turretMotorPower = 0.004 * degreesToGo;
+                    turretMotorPower += (degreesToGo > 0)? 0.11 : -0.11;  // min power
+                }
                 if( turretMotorPower < -0.25 ) turretMotorPower = -0.25;
                 if( turretMotorPower > +0.25 ) turretMotorPower = +0.25;
                 turretMotorPowerSet = turretMotorPower;

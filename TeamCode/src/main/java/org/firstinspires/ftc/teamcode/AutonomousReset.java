@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * Autonomous reset program
  */
 
-@Autonomous(name="Autonomous Reset", group="7592")
+@Autonomous(name="Autonomous Robot-Reset", group="7592")
 //@Disabled
 public class AutonomousReset extends LinearOpMode {
 
@@ -53,7 +53,7 @@ public class AutonomousReset extends LinearOpMode {
     public void performEveryLoop() {
         robot.readBulkData();
         robot.liftPosRun();
-        robot.turretPosRun();
+        robot.turretPosRun(false);
     }
     /*--------------------------------------------------------------------------------------------*/
     // Automatically move the robot mechanisms to the starting Autonomous configuration

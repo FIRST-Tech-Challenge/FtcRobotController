@@ -103,7 +103,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.readBulkData();
         globalCoordinatePositionUpdate();
         robot.liftPosRun();
-        robot.turretPosRun();
+        robot.turretPosRun(false);
     } // performEveryLoop
 
     /*---------------------------------------------------------------------------------*/

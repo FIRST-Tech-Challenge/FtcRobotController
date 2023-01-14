@@ -53,7 +53,7 @@ public abstract class Teleop extends LinearOpMode {
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
     boolean   autoDrive                = false;
 
-    boolean   batteryVoltsEnabled = true;  // enable only during testing (takes time!)
+    boolean   batteryVoltsEnabled = false;  // enable only during testing (takes time!)
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
     boolean   rangeSensorsEnabled = false; // enable only when designing an Autonomous plan (takes time!)
     int       rangeSensorIndex = 1;        // only send a new ping out every other control cycle, and rotate sensors
@@ -167,7 +167,7 @@ public abstract class Teleop extends LinearOpMode {
 
             // Execute any automatic movements
             robot.liftPosRun();
-            robot.turretPosRun();
+            robot.turretPosRun(true);
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -248,7 +248,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.addData("Cone Sensors", "Top: %b Bottom: %b", robot.topConeSensor.getState(), robot.bottomConeSensor.getState());
             if( batteryVoltsEnabled ) {
-               telemetry.addData("Batteries", "%CtlHub=.3f V, ExHub=%.3f V",
+               telemetry.addData("Batteries", "CtlHub=%.3f V, ExHub=%.3f V",
                     robot.readBatteryControlHub()/1000.0, robot.readBatteryExpansionHub()/1000.0 );
             }
             telemetry.update();
@@ -736,7 +736,7 @@ public abstract class Teleop extends LinearOpMode {
         {  // Raise collector to vertical position for better navigation around
            // poles on the field (but only if arm in correct location to do so
            if( robot.liftAngle > robot.LIFT_ANGLE_MOTORS ) {
-              robot.grabberSetTilt( robot.GRABBER_TILT_SAFE );
+              robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
            }
         }
         //===================================================================
@@ -900,10 +900,10 @@ public abstract class Teleop extends LinearOpMode {
             } // intake
             // Currently on an EJECTION cycle?
             else {
-                // Ensure we eject for at least 100 msec before using sensor (in case sensor fails)
-                boolean bottomSensorClear = robot.bottomConeSensor.getState() && (elapsedTime > 100);
+                // Ensure we eject for at least 200 msec before using sensor (in case sensor fails)
+                boolean bottomSensorClear = robot.bottomConeSensor.getState() && (elapsedTime > 200);
                 // Also have a max timeout in case sensor fails
-                boolean maxEjectTimeReached = (elapsedTime >= 350);
+                boolean maxEjectTimeReached = (elapsedTime >= 400);
                 // Is cycle complete?
                 if( bottomSensorClear || maxEjectTimeReached) {
                     // stop ejecting cone

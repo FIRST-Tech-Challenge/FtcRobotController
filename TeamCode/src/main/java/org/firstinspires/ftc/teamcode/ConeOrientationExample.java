@@ -30,6 +30,7 @@ import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -45,6 +46,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
  * of the vision processing to usercode.
  */
 @TeleOp(name="Cone-Test", group="Skunkworks")
+@Disabled
 public class ConeOrientationExample extends LinearOpMode
 {
     // Vision stuff
@@ -67,7 +69,7 @@ public class ConeOrientationExample extends LinearOpMode
 
     public void performEveryLoop() {
         robot.readBulkData();
-        robot.turretPosRun();
+        robot.turretPosRun(false);
         robot.liftPosRun();
     }
         /**

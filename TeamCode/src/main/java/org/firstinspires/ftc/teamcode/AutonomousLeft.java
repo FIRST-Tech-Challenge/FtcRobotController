@@ -123,7 +123,8 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
-            telemetry.addData("ALLIANCE", "%s (%s)", (blueAlliance)? "BLUE":"RED", "X=blue O=red");
+            telemetry.addData("ALLIANCE", "%s %c (X=blue O=red)",
+                    ((blueAlliance)? "BLUE":"RED"), ((forceAlliance)? '*':' '));
             // If vision pipeline diagrees with forced alliance setting, report it
             if( forceAlliance && (blueAlliance != pipelineLow.isBlueAlliance) )
                telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
@@ -276,31 +277,36 @@ public class AutonomousLeft extends AutonomousBase {
                     case 1:  cycleDistance = 31; break;
                     default: cycleDistance = 31;
                 }
-                telemetry.addData("Skill", "alignToConeStack");
+                telemetry.addData("Skill", "alignToConeStack (%.1f)",
+                        autonomousTimer.milliseconds()/1000.0);
                 telemetry.update();
                 alignToConeStack(blueAlliance, cycleDistance);
             }
 
             if (opModeIsActive()) {
-                telemetry.addData("Skill", "collectCone");
+                telemetry.addData("Skill", "collectCone (%.1f)",
+                autonomousTimer.milliseconds()/1000.0);
                 telemetry.update();
                 collectCone();  // decrements fiveStackHeight!
             }
 
             if (opModeIsActive()) {
-                telemetry.addData("Skill", "moveToTallJunctionFromStack");
+                telemetry.addData("Skill", "moveToTallJunctionFromStack (%.1f)",
+                        autonomousTimer.milliseconds()/1000.0);
                 telemetry.update();
                 moveToTallJunctionFromStack();
             }
 
             if( opModeIsActive()) {
-                telemetry.addData("Skill", "rotateToCenterPole");
+                telemetry.addData("Skill", "rotateToCenterPole (%.1f)",
+                autonomousTimer.milliseconds()/1000.0);
                 telemetry.update();
                 alignToPole(false);
             }
 
             if( opModeIsActive() ) {
-                telemetry.addData("Skill", "scoreStackCone");
+                telemetry.addData("Skill", "scoreStackCone (%.1f)",
+                autonomousTimer.milliseconds()/1000.0);
                 telemetry.update();
                 scoreCone();
             }
@@ -367,8 +373,14 @@ public class AutonomousLeft extends AutonomousBase {
         intakeTimer.reset();
         robot.grabberSpinEject();
         // Wait 300 msec
-        while( opModeIsActive() && (intakeTimer.milliseconds() < 300 && !robot.bottomConeSensor.getState()) ) {
+        while( opModeIsActive() ) {
             performEveryLoop();
+            // Ensure we eject for at least 200 msec before using sensor (in case sensor fails)
+            boolean bottomSensorClear = robot.bottomConeSensor.getState() && (intakeTimer.milliseconds() > 200);
+            // Also have a max timeout in case sensor fails
+            boolean maxEjectTimeReached = (intakeTimer.milliseconds() >= 400);
+            // Is cycle complete?
+            if( bottomSensorClear || maxEjectTimeReached) break;
         }
         // Stop the ejector
         robot.grabberSpinStop();
@@ -485,41 +497,52 @@ public class AutonomousLeft extends AutonomousBase {
         // or don't complete that operation, then autoYpos and autoXpos will need to
         // be redefined here to the correct values.
 
+        // Tilt the collector up away from the pole we just scored on
+        robot.grabberSetTilt( robot.GRABBER_TILT_SAFE );
+        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
+
+        // Initialize so that turret rotates back to center as we turn
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+
+        // Determine the angle to turn the drivetrain
         switch( signalZoneLocation ) {
-           case 3  : autoAngle=+90.0; break; // Turn fully to +90deg (BLUE)
-           default : autoAngle=  0.0; break; // Realign back to 0deg (RED/GREEN)
+            case 2  : autoAngle=-179.9; break; // Turn fully to -180deg (GREEN)
+            default : autoAngle=-90.0;  break; // Remain at -90deg (RED/BLUE)
         }
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
-        // Now that we've turned away from the pole, lower lift to driving position
-        robot.grabberSetTilt( robot.GRABBER_TILT_SAFE );
-        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
+        // Initialize so that lift lowers to driving position
         robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
 
         if( signalZoneLocation == 1 ) {  // RED
-           // Strafe left one tile
-           autoXpos -= 21.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
-           // Back away from center line, but stay within Signal Zone 1
-           autoYpos -= 11.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
-        } // // signalZoneLocation 1
+            // Drive one tile closer to field wall
+            autoYpos=51.5;  autoXpos=-8.0;  autoAngle=-90.0;    // (inches, inches, degrees)
+            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_70, TURN_SPEED_60, DRIVE_THRU );
+            // Turn back toward substation
+            autoXpos=-9.0;  autoAngle = -179.9;
+            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
+            // Back away from center line, but stay within Signal Zone 1
+            autoYpos=38.5;  autoXpos=-17.0;
+            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
+        } // signalZoneLocation 1
         else if( signalZoneLocation == 3 ) {  // BLUE
-           // Drive forward one tile pointing 90deg
-           autoXpos += 24.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
-           // Turn back toward substation
-           autoAngle = 180.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
-           // Drive closer to the substation to center in Signal Zone 3
-           autoYpos -= 9.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
+            // Drive forward one tile pointing 90deg
+            autoYpos=51.5;  autoXpos=21.5;  autoAngle=-90.0;    // (inches, inches, degrees)
+            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_70, TURN_SPEED_60, DRIVE_THRU );
+            // Turn back toward substation
+            autoAngle = -179.9;
+            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
+            // Drive closer to the substation to center in Signal Zone 3
+            autoYpos=38.5;  autoXpos=28.0;
+            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         } // signalZoneLocation 3
         else { // signalZoneLocation 2  // GREEN
-           // Drive back one tile closer to the substation in Signal Zone 2
-           autoYpos -= 19.0;
-           driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
+            // Drive back one tile closer to the substation in Signal Zone 2
+            autoYpos=38.5;  autoXpos=4.0;
+            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+            driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         } // signalZoneLocation 2
 
         // Ensure we complete all lift movement before ending autonomous

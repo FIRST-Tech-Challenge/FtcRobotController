@@ -26,6 +26,7 @@ import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -41,6 +42,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
  * of the vision processing to usercode.
  */
 @TeleOp(name="Pole-Test", group="Skunkworks")
+@Disabled
 public class PoleOrientationExample extends LinearOpMode
 {
     final int LOGSIZE = 12;
@@ -73,7 +75,7 @@ public class PoleOrientationExample extends LinearOpMode
 
     public void performEveryLoop() {
         robot.readBulkData();
-        robot.turretPosRun();
+        robot.turretPosRun(false);
         robot.liftPosRun();
     }
 
@@ -154,7 +156,7 @@ public class PoleOrientationExample extends LinearOpMode
 
         // Perform setup needed to center turret
 //        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.turretPosInit(-32.5 );
+        robot.turretPosInit(+32.5 );
         robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
         while( robot.turretMotorAuto == true || robot.liftMotorAuto == true) {
             performEveryLoop();
@@ -343,7 +345,7 @@ public class PoleOrientationExample extends LinearOpMode
 
         // Normalize the values so none exceed +/- 1.0
         maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
-                Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
+                   Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
         if (maxPower > 1.0)
         {
             rearLeft   /= maxPower;
