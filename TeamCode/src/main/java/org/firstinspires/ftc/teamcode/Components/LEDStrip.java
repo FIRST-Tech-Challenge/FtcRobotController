@@ -6,13 +6,17 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 public class LEDStrip{
     RevBlinkinLedDriver blinkin;
+    RevBlinkinLedDriver.BlinkinPattern[] stackLevelColors = {RevBlinkinLedDriver.BlinkinPattern.VIOLET, RevBlinkinLedDriver.BlinkinPattern.BLUE,
+            RevBlinkinLedDriver.BlinkinPattern.YELLOW, RevBlinkinLedDriver.BlinkinPattern.ORANGE};
 
     public LEDStrip(){
         blinkin = op.hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 //        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 
-
+    public void setStackLevelColor(int level) {
+        blinkin.setPattern(stackLevelColors[level]);
+    }
 
 
 

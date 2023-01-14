@@ -12,10 +12,10 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class BlueRightAutoHighMeep {
 
-    public static double dropX = -32, dropY = 4.9, dropA = toRadians(140), dropET = toRadians(320);
+    public static double dropX = -31.75, dropY = 2, dropA = toRadians(130), dropET = toRadians(310);
 
-    public static double pickupX1 = -45.5, pickupY1 = 10.5, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
-    public static double pickupX2 = -63.2, pickupY2 = 10.5, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
+    public static double pickupX1 = -45.5, pickupY1 = 11.75, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
+    public static double pickupX2 = -63.2, pickupY2 = 11.75, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
 
     public static void main(String[] args) {
 
@@ -27,36 +27,38 @@ public class BlueRightAutoHighMeep {
                 .setConstraints(80, 60, 9.057, 6.057, 14)
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-29.6, 62.25, toRadians(60)))
-                                        .setReversed(true).splineToSplineHeading(new Pose2d(-36, 40, toRadians(70)), toRadians(250))
-                                        .splineToSplineHeading(new Pose2d(-36, 26, toRadians(105)), toRadians(285))
-                                        .splineToSplineHeading(new Pose2d(-28, 7.9, toRadians(110)), toRadians(290))
+                                        .setReversed(true).splineTo(new Vector2d(-36, 40), toRadians(260))
+//                                        .splineTo(new Vector2d(-36, 27), toRadians(280))
+                                        .splineTo(new Vector2d(-35, 16), toRadians(310))
+                                        .addTemporalMarker(()->{})
+                                        .splineToSplineHeading(new Pose2d(-29.2, 6.4, toRadians(140)), toRadians(310))
                                         .setReversed(false)
-                                        .splineToSplineHeading(new Pose2d(pickupX1, pickupY1, pickupA1), pickupET1)
-                                        .splineToSplineHeading(new Pose2d(pickupX2, pickupY2, pickupA2), pickupET2)
+                                        .splineToSplineHeading(new Pose2d(-62.9, 12.5, toRadians(180)), toRadians(180))
                                         .setReversed(true)
-                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
+                                        .splineToSplineHeading(new Pose2d(-40,9.5,toRadians(135)),toRadians(330))
+                                        .splineToLinearHeading(new Pose2d(dropX, dropY,dropA), toRadians(330))
                                         .setReversed(false)
-//                                        .splineToSplineHeading(new Pose2d(-45.5, 10, toRadians(180)), toRadians(180))
-                                        .splineToSplineHeading(new Pose2d(-63.2, 10.5, toRadians(180)), toRadians(180))
-                                        .setReversed(true)
-                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
-                                        .setReversed(false)
-                                        .splineToSplineHeading(new Pose2d(-63.2, 10.5, toRadians(180)), toRadians(180))
-                                        .setReversed(true)
-                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
-                                        .setReversed(false)
-                                        .splineToSplineHeading(new Pose2d(-63.2, 10.5, toRadians(180)), toRadians(180))
-                                        .setReversed(true)
-                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
-                                        .setReversed(false)
-                                        .splineToSplineHeading(new Pose2d(-63.2, 10.5, toRadians(180)), toRadians(180))
-                                        .setReversed(true)
-                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
-                                        .setReversed(false)
-                                        .splineToConstantHeading(new Vector2d(-35,7), toRadians(50))
-                                        .splineTo(new Vector2d(-10,12), toRadians(0))//
-//                                        .splineToConstantHeading(new Vector2d(-10,10), toRadians(0))
-                                        .setReversed(true)
+////                                        .splineToSplineHeading(new Pose2d(-45.5, 10, toRadians(180)), toRadians(180))
+//                                        .splineToSplineHeading(new Pose2d(-63.2, 10.5, toRadians(180)), toRadians(180))
+//                                        .setReversed(true)
+//                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
+//                                        .setReversed(false)
+//                                        .splineToSplineHeading(new Pose2d(-63.2, 10.5, toRadians(180)), toRadians(180))
+//                                        .setReversed(true)
+//                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
+//                                        .setReversed(false)
+//                                        .splineToSplineHeading(new Pose2d(-63.2, 10.5, toRadians(180)), toRadians(180))
+//                                        .setReversed(true)
+//                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
+//                                        .setReversed(false)
+//                                        .splineToSplineHeading(new Pose2d(-63.2, 10.5, toRadians(180)), toRadians(180))
+//                                        .setReversed(true)
+//                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
+//                                        .setReversed(false)
+//                                        .splineToConstantHeading(new Vector2d(-35,7), toRadians(50))
+//                                        .splineTo(new Vector2d(-10,12), toRadians(0))//
+////                                        .splineToConstantHeading(new Vector2d(-10,10), toRadians(0))
+//                                        .setReversed(true)
 //                                        .addDisplacementMarker(10,() -> meepMeep.setDarkMode(true))
 //                                        .addDisplacementMarker(() -> meepMeep.setDarkMode(false))
 //                                        .UNSTABLE_addDisplacementMarkerOffset(10,()->{})

@@ -124,7 +124,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             telemetry.update();
             robot.updateClawStates();
             robot.updateLiftArmStates();
-            if(getRuntime()>7){
+            if(getRuntime()>3){
                 int color = robot.cv.getPosition();
 
                 if (color == 1) {

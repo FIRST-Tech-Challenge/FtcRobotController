@@ -8,6 +8,9 @@ import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
@@ -15,6 +18,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Components.Aligner;
 import org.firstinspires.ftc.teamcode.Components.CV.CVMaster;
@@ -45,10 +49,15 @@ public class PwPRobot extends BasicRobot {
     private ArrayList<Integer> seq;
     private boolean regularDrive = true;
     private LEDStrip leds = null;
+    private VoltageSensor voltageSensor = null;
 
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
+        voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
+        kV*=12/ voltageSensor.getVoltage();
+        kA *= 12/ voltageSensor.getVoltage();
+        kStatic *= 12/voltageSensor.getVoltage();
         roadrun = new SampleMecanumDrive(opMode.hardwareMap);
         cv = new CVMaster();
         gp = new RFGamepad();
@@ -92,7 +101,9 @@ public class PwPRobot extends BasicRobot {
             }
         }
     }
-
+    public void done(){
+        queuer.done();
+    }
     public void updateLiftArmStates() {
         liftArm.updateLiftArmStates();
     }
@@ -293,6 +304,10 @@ public class PwPRobot extends BasicRobot {
         imu.setAngle(newPose.getHeading());
     }
 
+    public int getStackLevel() {
+        return lift.getStackLevel();
+    }
+
     public void heartbeatRed() {
         leds.heartbeatred();
     }
@@ -311,6 +326,10 @@ public class PwPRobot extends BasicRobot {
 
     public void larsonScannerBlue() {
         leds.cp1larsonscanner();
+    }
+
+    public void setStackLevelColor(int level) {
+        leds.setStackLevelColor(level);
     }
 
     public void teleOp() {
@@ -339,7 +358,7 @@ public class PwPRobot extends BasicRobot {
         if (CLAW_OPEN.getStatus()) {
             darkGreen();
         }
-        if (op.getRuntime() > 90) {
+        if (op.getRuntime() > 90 && op.getRuntime() < 92) {
             rainbowRainbow();
         }
 
@@ -374,14 +393,21 @@ public class PwPRobot extends BasicRobot {
 
         if (op.gamepad2.dpad_down) {
             lift.iterateConeStackDown();
+            if (op.getRuntime() < 90 || op.getRuntime() > 92) {
+                setStackLevelColor(getStackLevel());
+            }
             liftArm.cycleLiftArmToCylce();
             logger.log("/RobotLogs/GeneralRobot", "Lift,iterateConeStackDown(),Cone Stack Lowered by 1", true);
         }
         if (op.gamepad2.dpad_up) {
             lift.iterateConeStackUp();
+            if (op.getRuntime() < 90 || op.getRuntime() > 92) {
+                setStackLevelColor(getStackLevel());
+            }
             liftArm.cycleLiftArmToCylce();
             logger.log("/RobotLogs/GeneralRobot", "Lift,iterateConeStackUp(),Cone Stack Raised by 1", true);
         }
+
         //when not manual lifting, automate lifting
 
 //        if (field.lookingAtPole() && op.gamepad1.dpad_up && !roadrun.isBusy()) {
@@ -428,9 +454,9 @@ public class PwPRobot extends BasicRobot {
             if (regularDrive) {
                 roadrun.setWeightedDrivePower(
                         new Pose2d(
-                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 3)),
-                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 3)),
-                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.5 * abs(vals[2]) + 0.15 * pow(abs(vals[2]), 3))
+                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.04 * pow(abs(vals[1]), 3)),
+                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.04 * pow(abs(vals[0]), 3)),
+                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.5 * abs(vals[2]))
                         )
                 );
             } else {

@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-@Disabled
+
 @Autonomous(name= "LogReset", preselectTeleOp = "OneGPTeleop")
 public class LogReset extends LinearOpMode {
     File myObj = new File("/storage/emulated/0/tmp/LogIndex.csv");
