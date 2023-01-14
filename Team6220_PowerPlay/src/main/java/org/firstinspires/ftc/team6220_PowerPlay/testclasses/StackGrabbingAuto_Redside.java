@@ -5,7 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
+<<<<<<< HEAD
+=======
 @Disabled
+>>>>>>> 67d8246cb1e10345c14aeb1b0488dd4325cdec76
 @Autonomous(name = "StackGrabbingAuto_Red", group = "Test")
 public class StackGrabbingAuto_Redside extends ConeDetection {
     int stackHeight = 4;
@@ -46,6 +49,7 @@ public class StackGrabbingAuto_Redside extends ConeDetection {
         turnToAngle(90);
         driveInches(0, 35);
         //Strafe until the robot is centered on the cone
+        detectGrab(lowerRed,upperRed);
         while (stackHeight >= 0) {
             while (Math.abs(coneDetectionPipeline.distance) > 50) {
                 motorFL.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));
