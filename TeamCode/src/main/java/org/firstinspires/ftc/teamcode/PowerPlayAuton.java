@@ -176,6 +176,8 @@ public class PowerPlayAuton extends LinearOpMode {
             case "LARGE_LARGE":
                 PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.LARGE_LARGE.clone();
                 break;
+            case "PARK_ONLY":
+                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PARK_ONLY.clone();
         }
 /*
         switch (autonMode) {
