@@ -16,6 +16,8 @@ import java.util.List;
 public class ColorDetectPipeline extends OpenCvPipeline {
     private Size blurSize = new Size(25, 25);
     private double erodeSize = 220;
+    private int[] ca;
+    private int[] co;
 
     public boolean isRunning = false;
     public Rect detectedRect = new Rect();
@@ -29,6 +31,11 @@ public class ColorDetectPipeline extends OpenCvPipeline {
     private Mat hierarchy = new Mat();
     private ArrayList<MatOfPoint> contours = new ArrayList<>();
     private Mat finalOutput = new Mat();
+
+    public ColorDetectPipeline(int[] colorTarget, int[] colorTolerance) {
+        ca = colorTarget;
+        co = colorTolerance;
+    }
 
     Mat targetToleranceMatte(Mat img, int[] ca, int[] co) {
         double[] lower = new double[3], upper = new double[3];
@@ -45,8 +52,6 @@ public class ColorDetectPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) throws IllegalArgumentException {
-        int[] ca = {35, 127, 127};
-        int[] co = {100, 255, 255};
         return processFrameWithRange(input, ca, co);
     }
 
@@ -91,8 +96,8 @@ public class ColorDetectPipeline extends OpenCvPipeline {
 
             // Transform the detected rectangle's coordinates so that (0, 0) is at the center of the image,
             // and instead of detectedRect.x and detectedRect.y corresponding to the top-left corner they correspond to the center of the rectangle
-            detectedRect.x -= input.width() * 0.5 - detectedRect.width * 0.5;
-            detectedRect.y -= input.height() * 0.5 - detectedRect.height * 0.5;
+            detectedRect.x -= (input.width() - detectedRect.width) * 0.5;
+            detectedRect.y -= (input.height() - detectedRect.height) * 0.5;
         }
 
         rectDetected = contours.size() > 0;
