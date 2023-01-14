@@ -10,7 +10,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Power Play Red Left")
+@Autonomous(name = "Power Play Left")
 public class PowerPlayRedLeft extends LinearOpMode {
 
 
@@ -52,47 +52,80 @@ public class PowerPlayRedLeft extends LinearOpMode {
         drive.liftTop();
 
         TrajectorySequence startTo270Pole = drive.trajectorySequenceBuilder(startPose)
-                .splineToLinearHeading(new Pose2d( new Vector2d(- 9,-50), Math.toRadians(90)), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(new Vector2d(-8,-27),Math.toRadians(45)))
+                .splineToLinearHeading(new Pose2d( new Vector2d(- 11,-54), Math.toRadians(90)), Math.toRadians(90))
+                .lineToLinearHeading(new Pose2d(new Vector2d(-11,-30.5),Math.toRadians(45)))
                 .build();
         drive.followTrajectorySequence(startTo270Pole);
 
 
-//        drive.setArmServoMiddle();
-//        while (drive.armMotor.isBusy() && opModeIsActive()) {
-//
-//        }
-
-//        drive.liftMiddle();
-//        while (drive.linearSlide.isBusy() && drive.frontSlide.isBusy() && opModeIsActive()) {
-//
-//        }
-
         //use vision to align
 
         //drop cone
+        drive.liftMiddle();
+        sleep(1000);
         drive.openClaw();
         sleep(300);
+        drive.liftTop();
+
         TrajectorySequence back = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .back(2)
                 .build();
         drive.followTrajectorySequence(back);
-        drive.setArmServoBottom();
         drive.turn(Math.toRadians(45));
+
+        drive.setArmServoTop();
+        drive.liftDown();
+        while (this.opModeIsActive() && (drive.linearSlide.getCurrentPosition()>200|| drive.frontSlide.getCurrentPosition()>200)){
+
+        }
+        drive.setArmServoBottom();
+
+        TrajectorySequence secondCone = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .splineToLinearHeading(new Pose2d(new Vector2d(-11,-12),Math.toRadians(150)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-50,-12),Math.toRadians(180)), Math.toRadians(180))
+                .build();
+        drive.followTrajectorySequence(secondCone);
+
+        drive.openClaw();
+
+        TrajectorySequence score = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .splineToLinearHeading(new Pose2d(new Vector2d(-11,-12),Math.toRadians(180)), Math.toRadians(180))
+                .build();
+        drive.followTrajectorySequence(score);
+
+
+        TrajectorySequence newCone = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .splineToLinearHeading(new Pose2d(new Vector2d(-50,-12),Math.toRadians(180)), Math.toRadians(180))
+                .build();
+        drive.followTrajectorySequence(newCone);
+
+        drive.followTrajectorySequence(score);
+
+        drive.followTrajectorySequence(newCone);
+
+        drive.followTrajectorySequence(score);
+
+        drive.followTrajectorySequence(newCone);
+
+        drive.followTrajectorySequence(score);
+
+        drive.turn(90);
+
+
         switch (sleeveColor) {
-            case RED:
-                //Parking 2
-                TrajectorySequence park2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .strafeTo(new Vector2d(-36, -34))
-                        .build();
-                drive.followTrajectorySequence(park2);
-                break;
             case GRAY:
                 //Parking 1
                 TrajectorySequence park1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .strafeTo(new Vector2d(-62, -34))
+                        .strafeTo(new Vector2d(-64, -12))
                         .build();
                 drive.followTrajectorySequence(park1);
+                break;
+            case RED:
+                //Parking 2
+                TrajectorySequence park2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .strafeTo(new Vector2d(-38, -12))
+                        .build();
+                drive.followTrajectorySequence(park2);
                 break;
             case GREEN:
                 //Parking 3
@@ -101,6 +134,11 @@ public class PowerPlayRedLeft extends LinearOpMode {
                 break;
 
         }
+
+
+        // sleep(1000);
+
+        sleep (200);
 
 
 

@@ -4,14 +4,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Power Play Blue Left")
+//@Autonomous(name = "Power Play Blue Left")
 public class PowerPlayBlueLeft extends LinearOpMode{
 
     @Override
@@ -54,17 +53,8 @@ public class PowerPlayBlueLeft extends LinearOpMode{
         drive.followTrajectorySequence(startTo270Pole);
 
 
-//        drive.setArmServoMiddle();
-//        while (drive.armMotor.isBusy() && opModeIsActive()) {
-//
-//        }
-
-//        drive.liftMiddle();
-//        while (drive.linearSlide.isBusy() && drive.frontSlide.isBusy() && opModeIsActive()) {
-//
-//        }
-
         //use vision to align
+        drive.liftMiddle();
 
         //drop cone
         drive.openClaw();

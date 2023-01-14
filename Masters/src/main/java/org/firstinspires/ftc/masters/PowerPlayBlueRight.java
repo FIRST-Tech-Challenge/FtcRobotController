@@ -11,7 +11,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Power Play Blue Right")
+//@Autonomous(name = "Power Play Blue Right")
 public class PowerPlayBlueRight extends LinearOpMode{
 
     @Override
@@ -50,6 +50,9 @@ public class PowerPlayBlueRight extends LinearOpMode{
                 .build();
         drive.followTrajectorySequence(startTo270Pole);
 
+//        VVVVVVVVVVVVVVVVVVV?
+        drive.liftMiddle();
+
         //use vision to align
         //drop cone
         drive.openClaw();
@@ -69,9 +72,10 @@ public class PowerPlayBlueRight extends LinearOpMode{
                         .strafeTo(new Vector2d(-36, 34))
                         .build();
                 drive.followTrajectorySequence(park2);
+                break;
                 //Parking 2
             case GRAY:
-
+                break;
             case GREEN:
                 TrajectorySequence park1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .strafeTo(new Vector2d(-62, 34))
