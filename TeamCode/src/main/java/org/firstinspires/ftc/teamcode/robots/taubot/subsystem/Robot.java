@@ -79,7 +79,7 @@ public class Robot implements Subsystem {
         crane = new Crane(hardwareMap, this, simulated);
         underarm = new UnderArm(hardwareMap, this, simulated);
 
-        subsystems = new Subsystem[] {driveTrain, turret, crane};//, underarm}; //{driveTrain, turret, crane};
+        subsystems = new Subsystem[] {driveTrain, turret, crane, underarm}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -99,11 +99,14 @@ public class Robot implements Subsystem {
         telemetryMap.put("Articulation", articulation);
         telemetryMap.put("AutonState", autonIndex);
         telemetryMap.put("auto-dump enabled", autoDumpEnabled);
+
+        for (int i = 0; i < subsystems.length; i++) {
+            String name = subsystems[i].getClass().getSimpleName();
+            telemetryMap.put(name + " Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (subsystemUpdateTimes[i] * 1e-6), (int) (1 / (subsystemUpdateTimes[i] * 1e-9))));
+        }
+
         if(debug) {
-            for (int i = 0; i < subsystems.length; i++) {
-                String name = subsystems[i].getClass().getSimpleName();
-                telemetryMap.put(name + " Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (subsystemUpdateTimes[i] * 1e-6), (int) (1 / (subsystemUpdateTimes[i] * 1e-9))));
-            }
+
         }
         telemetryMap.put("Update Pose happens " ,updatePoseHappens);
 
@@ -116,6 +119,7 @@ public class Robot implements Subsystem {
         telemetryMap.put("turn until degrees done", turnUntilDegreesDone);
         telemetryMap.put("Scoring Pattern", field.getPatternIndex());
         telemetryMap.put("Pole Index", field.getScoringTargetIndex());
+        telemetryMap.put("Pattern Name", field.getPatternName());
 
 
         return telemetryMap;

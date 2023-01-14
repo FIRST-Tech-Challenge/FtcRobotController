@@ -157,9 +157,14 @@ public class DriverControls {
         }
 
         if(stickyGamepad1.b){
-            robot.crane.dropSequence();
-            robot.field.incTarget();
-            robot.crane.updateScoringPattern();
+            if(robot.crane.isBulbGripped()) {
+                robot.crane.dropSequence();
+                robot.field.incTarget();
+                robot.crane.updateScoringPattern();
+            }else{
+                robot.crane.dropSequence();
+                robot.crane.updateScoringPattern();
+            }
         }
 
         if(stickyGamepad1.x){

@@ -121,48 +121,64 @@ public class Field {
         return  patternIndex;
     }
 
-    int scoringTargetIndex = 0;
+    int scoringTargetIndex = -1;
 
     public void incTarget(){
         switch (patternIndex){
             case 0:
                 if(scoringTargetIndex < closeRightPattern.length-1){
                     scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
                 }
                 break;
             case 1:
                 if(scoringTargetIndex < closeRightPattern.length-1){
                     scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
                 }
                 break;
             case 2:
                 if(scoringTargetIndex < closeLeftPattern.length-1){
                     scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
                 }
                 break;
             case 3:
                 if(scoringTargetIndex < closeLeftPattern.length-1){
                     scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
                 }
                 break;
             case 4:
                 if(scoringTargetIndex < farRightPattern.length-1){
                     scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
                 }
                 break;
             case 5:
                 if(scoringTargetIndex < farRightPattern.length-1){
                     scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
                 }
                 break;
             case 6:
                 if(scoringTargetIndex < farLeftPattern.length-1){
                     scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
                 }
                 break;
             case 7:
                 if(scoringTargetIndex < farLeftPattern.length-1){
                     scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
                 }
                 break;
         }
@@ -178,12 +194,12 @@ public class Field {
     public void incScoringPattern(){
 
         if(patternIndex < 4) patternIndex++;
-        scoringTargetIndex = 0;
+        scoringTargetIndex = -1;
     }
     public void decScoringPattern(){
 
         if(patternIndex > 0) patternIndex--;
-        scoringTargetIndex = 0;
+        scoringTargetIndex = -1;
     }
 
     FieldThing rightSubSource;
@@ -216,7 +232,33 @@ public class Field {
         }
     }
 
+    public String getPatternName(){
+        switch (patternIndex){
+            case 0:
+                return "SUB_CLOSE_RIGHT";
+            case 1:
+                return "CONE_CLOSE_RIGHT";
+            case 2:
+                return "SUB_FAR_RIGHT";
+            case 3:
+                return "CONE_FAR_RIGHT";
+            case 4:
+                return "SUB_CLOSE_LEFT";
+            case 5:
+                return "CONE_CLOSE_LEFT";
+            case 6:
+                return "SUB_FAR_LEFT";
+            case 7:
+                return "CONE_FAR_LEFT";
+            default:
+                return "NULL";
+        }
+    }
+
     public FieldThing getPatternObject(){
+        if(scoringTargetIndex == -1){
+            scoringTargetIndex = 0;
+        }
         switch (patternIndex){
             case 0:
                 return closeRightPattern[scoringTargetIndex];
@@ -248,8 +290,8 @@ public class Field {
         rightSubSource = objects[9];
         leftSubSource = objects[8];
 
-        rightConeSource = objects[4];
-        leftConeSource = objects[5];
+        rightConeSource = objects[5];
+        leftConeSource = objects[4];
 
         closeRightPattern[0] = objects[34];
         closeRightPattern[1] = objects[33];

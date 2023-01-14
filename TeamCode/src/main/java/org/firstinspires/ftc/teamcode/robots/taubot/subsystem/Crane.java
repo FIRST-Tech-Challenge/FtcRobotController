@@ -381,6 +381,9 @@ public class Crane implements Subsystem {
         }
     }
 
+    public boolean isBulbGripped(){
+        return bulbGripped;
+    }
     public void movePIDShoulder(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
 
         //initialization of the PID calculator's output range, target value and multipliers

@@ -252,8 +252,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         } else {
             leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
-            chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE
-                    + DISTANCE_TARGET_TO_BACK_WHEEL;
+            //chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
 
         }
 

@@ -110,8 +110,6 @@ public class UnderArm implements Subsystem {
         toHomeEnabled = true;
     }
 
-    public boolean shoulderInitialized = false;
-
     public void calibrateShoulder() {
         elbowServo.setPosition(servoNormalize(elbowServoValue(80)));
         wristServo.setPosition(servoNormalize(wristServoValue(0)));
@@ -120,7 +118,6 @@ public class UnderArm implements Subsystem {
 
     public void configureShoulder(){
         shoulderServo.setPosition(0);
-        shoulderInitialized = true;
     }
 
     public enum Articulation {
@@ -378,22 +375,10 @@ public class UnderArm implements Subsystem {
         if (wristTargetAngle > 180)
             wristTargetAngle -= 360;
 
-        shoulderPosition = shoulderServo.getPosition();
-        //shoulderAngle = SHOULDER_START_ANGLE + shoulderPosition / SHOULDER_TICKS_PER_DEGREE;
-//
-//        shoulderPID.setPID(SHOULDER_PID);
-//        shoulderPID.setSetpoint(shoulderTargetAngle);
-//        shoulderPID.setInput(shoulderAngle);
-//        shoulderCorrection = shoulderPID.performPID();
-
-//        shoulderMotor.setPower(shoulderCorrection);
-        if (shoulderInitialized) { //don't move arm until shoulder initialized
-            shoulderServo.setPosition(servoNormalize(elbowServoValue(shoulderTargetAngle)));
-            elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));
-            wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));
-            turretServo.setPosition(servoNormalize(turretServoValue(turretTargetAngle)));
-        }
-
+        shoulderServo.setPosition(servoNormalize(shoulderServoValue(shoulderTargetAngle)));
+        elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));
+        wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));
+        turretServo.setPosition(servoNormalize(turretServoValue(turretTargetAngle)));
     }
 
     @Override
