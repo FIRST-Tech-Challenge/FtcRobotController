@@ -44,9 +44,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
             originalAngle = startAngle + 180;
         }
 
-        x = Math.signum(x) * (Constants.DRIVE_CURVE_FACTOR * x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(x, 3));
-        y = Math.signum(y) * (Constants.DRIVE_CURVE_FACTOR * y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(y, 3));
-        t = Math.signum(t) * (Constants.DRIVE_CURVE_FACTOR * t + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(t, 3));
+        x = Constants.DRIVE_CURVE_FACTOR * x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(x, 3);
+        y = Constants.DRIVE_CURVE_FACTOR * y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(y, 3);
+        t = Constants.DRIVE_CURVE_FACTOR * t + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(t, 3);
 
         xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
         yRotatedVector = x * Math.sin(negativeHeadingRadians) + y * Math.cos(negativeHeadingRadians);
