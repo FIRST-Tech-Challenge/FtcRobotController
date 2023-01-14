@@ -11,7 +11,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import java.util.Date;
 
 @Autonomous(name = "Power Play Left")
-public class PowerPlayRedLeft extends LinearOpMode {
+public class PowerPlayLeft extends LinearOpMode {
 
 
     Pose2d westPoleDeposit = new Pose2d(new Vector2d(-14,-14),Math.toRadians(135));
