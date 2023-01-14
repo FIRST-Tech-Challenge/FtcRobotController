@@ -22,10 +22,10 @@ public class BasicAuto extends LinearOpMode {
     private void drive(double pow, double time) {
         double t = time*1000;
         int t1 = (int)t;
-        robot.LFMotor.setPower(pow);
-        robot.RFMotor.setPower(pow);
-        robot.LBMotor.setPower(pow);
-        robot.RBMotor.setPower(pow);
+        robot.motors[robot.RFMotor].setPower(pow);
+        robot.motors[robot.RBMotor].setPower(pow);
+        robot.motors[robot.LFMotor].setPower(pow);
+        robot.motors[robot.LBMotor].setPower(pow);
         sleep(t1);
         stopMotors();
     }
@@ -34,19 +34,19 @@ public class BasicAuto extends LinearOpMode {
         robot.stop();
     }
 
-    public void strafe2(Direction direction, double power, double t) {
-        if(direction == Direction.LEFT) {
-            robot.LFMotor.setPower(-power);
-            robot.RFMotor.setPower(power);
-            robot.LBMotor.setPower(power);
-            robot.RBMotor.setPower(-power);
-        } else if(direction == Direction.RIGHT) {
-            robot.LFMotor.setPower(power);
-            robot.RFMotor.setPower(-power);
-            robot.LBMotor.setPower(-power);
-            robot.RBMotor.setPower(power);
-        }
-        sleep((int)t*1000);
-        stopMotors();
-    }
+//    public void strafe2(Direction direction, double power, double t) {
+//        if(direction == Direction.LEFT) {
+//            robot.LFMotor.setPower(-power);
+//            robot.RFMotor.setPower(power);
+//            robot.LBMotor.setPower(power);
+//            robot.RBMotor.setPower(-power);
+//        } else if(direction == Direction.RIGHT) {
+//            robot.LFMotor.setPower(power);
+//            robot.RFMotor.setPower(-power);
+//            robot.LBMotor.setPower(-power);
+//            robot.RBMotor.setPower(power);
+//        }
+//        sleep((int)t*1000);
+//        stopMotors();
+//    }
 }

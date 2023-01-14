@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.hardware.*;
 
 public class BasicMecanum {
 
-    public DcMotor RFMotor;
-    public DcMotor RBMotor;
-    public DcMotor LFMotor;
-    public DcMotor LBMotor;
+    public DcMotor[] motors = {null, null, null, null};
+    public int RFMotor = 0;
+    public int RBMotor = 1;
+    public int LFMotor = 2;
+    public int LBMotor = 3;
 
-    DcMotor[] motors = {RFMotor, RBMotor, LFMotor, LBMotor};
     String[] names = {"RFMotor", "RBMotor", "LFMotor", "LBMotor"};
 
     public double mult = 0.29;
@@ -21,9 +21,6 @@ public class BasicMecanum {
 
         for (int i = 0; i < 5; i++) {
             motors[i] = Map.dcMotor.get(names[i]);
-        }
-
-        for (int i = 0; i < 5; i++) {
             motors[i].setPower(0.0);
             motors[i].setDirection(DcMotor.Direction.FORWARD);
             motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -71,10 +68,9 @@ public class BasicMecanum {
     //Stop moving function
 
     public void stop() {
-        motors[2].setPower(0);
-        motors[0].setPower(0);
-        motors[3].setPower(0);
-        motors[1].setPower(0);
+        for (DcMotor motor: motors) {
+            motor.setPower(0);
+        }
     }
 
     //Pivot in place based on input from two buttons (left/right (booleans)) and a power setting (0-1 (double-precision float))
@@ -82,10 +78,7 @@ public class BasicMecanum {
     public void pivotTurn(double power, boolean rightBumper, boolean leftBumper) {
         power = power*0.5;
         if(rightBumper && leftBumper) {
-            motors[0].setPower(0);
-            motors[2].setPower(0);
-            motors[1].setPower(0);
-            motors[3].setPower(0);
+            this.stop();
         } else if(leftBumper) {
             motors[0].setPower(power);
             motors[2].setPower(-power * mult);

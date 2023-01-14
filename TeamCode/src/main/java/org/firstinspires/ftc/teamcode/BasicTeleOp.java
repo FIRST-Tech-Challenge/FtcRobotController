@@ -41,10 +41,10 @@ public class BasicTeleOp extends LinearOpMode {
             powR = rightRatio * maxRatio;
             powL = leftRatio * maxRatio;
             //Uses left trigger to determine slowdown.
-            robot.RFMotor.setPower(-powR * accel);
-            robot.RBMotor.setPower(-powR * accel);
-            robot.LFMotor.setPower(-powL * accel);
-            robot.LBMotor.setPower(-powL * accel);
+            robot.motors[robot.RFMotor].setPower(-powR * accel);
+            robot.motors[robot.RBMotor].setPower(-powR * accel);
+            robot.motors[robot.LFMotor].setPower(-powL * accel);
+            robot.motors[robot.LBMotor].setPower(-powL * accel);
 
             robot.pivotTurn(1, gamepad1.left_bumper, gamepad1.right_bumper);
             //Strafing controls
