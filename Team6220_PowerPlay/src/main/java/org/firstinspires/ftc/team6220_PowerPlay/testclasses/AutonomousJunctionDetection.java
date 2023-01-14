@@ -30,9 +30,7 @@ public class AutonomousJunctionDetection extends BaseAutonomous {
             }
 
             @Override
-            public void onError(int errorCode) {
-
-            }
+            public void onError(int errorCode) {}
         });
 
         initialize();
