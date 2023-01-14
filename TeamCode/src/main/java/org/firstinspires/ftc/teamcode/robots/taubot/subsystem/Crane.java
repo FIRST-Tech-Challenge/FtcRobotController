@@ -46,6 +46,7 @@ import org.firstinspires.ftc.teamcode.util.Vector3;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Config(value = "PPCrane")
 public class Crane implements Subsystem {
@@ -662,12 +663,13 @@ public class Crane implements Subsystem {
             case 1:
                 if(extensionOnTarget()) {
                     calculateFieldTargeting(fieldPositionTarget);
-                    goToCalculatedTarget();
+                    setShoulderTargetAngle(calculatedAngle);
+                    setExtendTargetPos(calculatedLength);
                     homeInd++;
                 }
                 break;
             case 2:
-                if(shoulderOnTarget() && extensionOnTarget() && turretOnTarget()){
+                if(shoulderOnTarget() && extensionOnTarget()){
                     homeInd = 0;
                     return true;
                 }
@@ -717,7 +719,7 @@ public class Crane implements Subsystem {
             case 0:
                 release();
                 Vector3 dif = correctPos.subtract(fieldPositionTarget);
-                robot.driveTrain.setPoseEstimate(new Pose2d(robot.driveTrain.getPoseEstimate().getX()+dif.x,robot.driveTrain.getPoseEstimate().getY()+dif.y));
+                //robot.driveTrain.setPoseEstimate(new Pose2d(robot.driveTrain.getPoseEstimate().getX()+dif.x,robot.driveTrain.getPoseEstimate().getY()+dif.y));
                 dropTimer = futureTime(0.3); //enough time for cone to start dropping
                 dropConeStage++;
                 updateScoringPattern();
@@ -1060,7 +1062,7 @@ public class Crane implements Subsystem {
        return craneCalibrationEnabled;
     }
 
-    Vector3 correctPos;
+    Vector3 correctPos = new Vector3(0,0,0);
     public void dropSequence(){
         articulate(Articulation.dropCone);
         correctPos = new Vector3(robot.field.getPatternObject().x(),robot.field.getPatternObject().y(),robot.field.getPatternObject().z());
