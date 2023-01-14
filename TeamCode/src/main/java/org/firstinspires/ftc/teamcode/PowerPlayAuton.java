@@ -161,20 +161,14 @@ public class PowerPlayAuton extends LinearOpMode {
         }
 
         switch (autonMode) {
-            case "MEDIUM_LARGE":
-                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.MEDIUM_LARGE.clone();
+            case "SMALL":
+                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.SMALL.clone();
                 break;
-            case "SMALL_LARGE":
-                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.SMALL_LARGE.clone();
+            case "MEDIUM":
+                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.MEDIUM.clone();
                 break;
-            case "SMALL_MEDIUM":
-                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.SMALL_MEDIUM.clone();
-                break;
-            case "SMALL_SMALL":
-                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.SMALL_SMALL.clone();
-                break;
-            case "LARGE_LARGE":
-                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.LARGE_LARGE.clone();
+            case "LARGE":
+                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.LARGE.clone();
                 break;
             case "PARK_ONLY":
                 PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PARK_ONLY.clone();
