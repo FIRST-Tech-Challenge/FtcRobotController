@@ -396,10 +396,10 @@ public class Robot {
             direction = 1;
         }
 
-        double pwr = -0.75;
+        double pwr = -0.5;
 
 
-        while (Math.abs(angleCurrent - angleEnd) > 10) {
+        while (Math.abs(angleCurrent - angleEnd) > 5) {
             FLMotor.setPower(-pwr * direction);
             FRMotor.setPower(pwr * direction);
             BLMotor.setPower(-pwr * direction);
@@ -433,9 +433,43 @@ public class Robot {
     }
 
 
+    public void SwingArm(boolean updown){
+        timeout_ms = 5000;
+        runtime.reset();
+        double speed;
+        int Position;
+        double holdingPower;
+
+        if(updown){ // Swing arm up.
+            speed = 1;
+            Position = 75;
+            holdingPower = 1;
+        }
+        else{ // Swing arm down.
+             speed = 0.5;
+             Position = 20;
+             holdingPower =0;
+        }
+
+        this.swingArm.setTargetPosition(Position);
+        //Set the power of the motor.
+        this.swingArm.setPower(speed);
+        //set the mode to go to the target position
+        this.swingArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        while ((runtime.milliseconds() < timeout_ms) && (this.swingArm.isBusy())) {
+
+        }
+        this.swingArm.setPower(holdingPower);
+
+    }
+
     public void SwingArmToPosition(double speed, int Position, double holdingPower) {
         timeout_ms = 5000;
         runtime.reset();
+
+
 
         this.swingArm.setTargetPosition(Position);
         //Set the power of the motor.
@@ -472,7 +506,7 @@ public class Robot {
 
     public void initArmClaw(){
         claw.setPosition(1);
-        SwingArmToPosition(1,65, swingArmHoldingPower);
+        SwingArmToPosition(1,70, swingArmHoldingPower);
         claw.setPosition(0);
 
     }
@@ -483,76 +517,68 @@ public class Robot {
         claw.setPosition(1);
         swingArm.setPower(swingArmHoldingPower);
 
+        timeout_ms = 300;
+        runtime.reset();
+        while(runtime.milliseconds() < timeout_ms){
+
+        }
+
+        DriveToPosition(0.5, 0, 80, true);
+
+
         //Drive to the pole
         if(LR) { // True = Left
-            DriveToPosition(0.5, -8, 100, true);
-            turnRobotToAngle(280);
+            turnRobotToAngle(315);
         }
         else{
-            DriveToPosition(0.5, 8, 100, true);
-            turnRobotToAngle(90);
+            turnRobotToAngle(45);
         }
 
         /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
         //Moves the slider to the correct height
-        MoveSlider(1, 1000, 1850);
+        MoveSlider(1, 1000, 1550);
 
 
 //        //Swings the arm down
-        SwingArmToPosition(-1, 20, 0);
+         SwingArmToPosition(-1, 20, 0);
+         //SwingArm(false);
 
         // Lower the slider a little bit to catch the cone in pole.
-        MoveSlider(1, -100, 100);
+        MoveSlider(1, -500, 100);
 
         //Open and close the claw to drop the cone
         claw.setPosition(0);
-        timeout_ms = 500;
+        timeout_ms = 1500;
         runtime.reset();
         while ((runtime.milliseconds() < timeout_ms)) {
         }
         claw.setPosition(1);
 
         //Raises slider a little bit to not get caught on the pole
-        MoveSlider(1, 100, 150);
+        MoveSlider(1, 1000, 500);
         //Swings the arm back up
-        SwingArmToPosition(1, 65, swingArmHoldingPower);
+        SwingArmToPosition(1, 70, swingArmHoldingPower);
         //lower the slider
         MoveSlider(-1, -1000, 1200);
 
     }
 
-    public void ParkFromMedium(boolean LR, int location){
-        if(LR) {
-            turnRobotToAngle(350);
-        }
-        else {
-            turnRobotToAngle(20);
-        }
-
+    public void ParkFromMedium(int location){
+        turnRobotToAngle(360);
         switch(location){
             case 1:
-                DriveToPosition(0.5, 75, -40, true);
-                //Turn the robot to either be facing the alliance station, or turn towards it so that it is faster to drive to it.
-                if(LR) {
-                    turnRobotToAngle(270);
-                } else {
-                    turnRobotToAngle(180);
-                }
+                DriveToPosition(0.5, -70, -5, true);
+                break;
             case 2:
-                DriveToPosition(0.5, 0, -40, true);
-                if(LR) {
-                    turnRobotToAngle(270);
-                } else {
-                    turnRobotToAngle(90);
-                }
+                DriveToPosition(0.5, 0, -5, true);
+                break;
             case 3:
-                DriveToPosition(0.5, -75, -40, true);
-                if(LR) {
-                    turnRobotToAngle(180);
-                } else {
-                    turnRobotToAngle(90);
-                }
+                DriveToPosition(0.5, 70, -5, true);
+                break;
         }
+        turnRobotToAngle(175);
+        DriveToPosition(0.5, 0, -10, true);
+
 
     }
 
@@ -584,7 +610,7 @@ public class Robot {
         // sleep(500); // TODO: Replace with while loop timer.
         claw.setPosition(0);
         //swing arm back up
-        SwingArmToPosition(1, 65, swingArmHoldingPower);
+        SwingArmToPosition(1, 70, swingArmHoldingPower);
         //lower slider
         MoveSlider(0.6, 0,1200);
         //Moves back to the stack

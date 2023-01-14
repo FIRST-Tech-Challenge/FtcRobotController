@@ -18,20 +18,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Left", group = "Concept")
 public class AutoLeft extends LinearOpMode {
 
-    private static final String tfodModel = "jan2023mk2";
-    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel + ".tflite";
-
-    private static final String[] LABELS = {
-            "arrow",
-            "balloon",
-            "bar",
-            "pole",
-    };
-    private static final String VUFORIA_KEY =
-            "AWtcstb/////AAABmfYaB2Q4dURcmKS8qV2asrhnGIuQxM/ioq6TnYqZseP/c52ZaYTjs4/2xhW/91XEaX7c3aw74P3kGZybIaXued3nGShb7oNQyRkVePnFYbabnU/G8em37JQrH309U1zOYtM3bEhRej91Sq6cf6yLjiSXJ+DxxLtSgWvO5f+wM3Wny8MbGUpVSiogYnI7UxEz8OY88d+hgal9u3GhhISdnNucsL+fRAE8mKwT1jGDgUVE1uAJoZFvo95AJWS2Yhdq/N/HpxEH3sBXEm99ci+mdQsl0m96PMCDfV5RgWBjhLbBEIJyQ/xKAbw5Yfr/AKCeB86WDPhR3+Mr8BUvsrycZA6FDJnN5sZZwTg0ZE22+gFL";
-    private VuforiaLocalizer vuforia;
-    private TFObjectDetector tfod;
-
 
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
@@ -85,7 +71,7 @@ public class AutoLeft extends LinearOpMode {
 //                            telemetry.addData("Robot Location", robot.Location);
                             telemetry.addData("parking target", parkingTarget);
                         }
-//                        telemetry.update();
+                        telemetry.update();
                     }
                 }
 
@@ -98,11 +84,11 @@ public class AutoLeft extends LinearOpMode {
 
                     case deliverPreLoad:
                         robot.deliverPreLoad(true);
-                        Step = AutoSteps.endAuto;
+                        Step = AutoSteps.parkFromMedium;
                         break;
 
                     case parkFromMedium:
-                        robot.ParkFromMedium(true, parkingTarget);
+                        robot.ParkFromMedium(parkingTarget);
                         Step = AutoSteps.endAuto;
 
                     case endAuto:

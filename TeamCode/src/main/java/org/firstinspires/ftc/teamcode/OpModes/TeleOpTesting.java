@@ -35,7 +35,7 @@ public class TeleOpTesting extends LinearOpMode {
         while (opModeIsActive()) {
 
             if(gamepad1.a) {
-                robot.ParkFromMedium(true, 1);
+                robot.ParkFromMedium( 1);
             }
 
         }
