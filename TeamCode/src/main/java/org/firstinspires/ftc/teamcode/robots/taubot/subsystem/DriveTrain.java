@@ -92,6 +92,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private long lastLoopTime, loopTime;
 
     private static Vector2 position;
+    private static double headingOffsetForTeleOp;
 
     //devices ---------------------------------------------------------
     List<DcMotorEx> motors;
@@ -311,8 +312,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     }
 
+    private static double lastRunHeading;
+
     public void updatePositionForNextRun(){
         position = new Vector2(getPoseEstimate().getX(),getPoseEstimate().getY());
+        lastRunHeading = getRawHeading();
     }
 
     @Override
@@ -401,7 +405,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
             setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
-            setPoseEstimate(new Pose2d(position.x,position.y));
+            setPoseEstimate(new Pose2d(position.x,position.y,lastRunHeading));
         }
     }
 

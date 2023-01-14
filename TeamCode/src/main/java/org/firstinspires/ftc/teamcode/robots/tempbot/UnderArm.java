@@ -52,16 +52,16 @@ public class UnderArm{
     public static double SHOULDER_TOLERANCE = 1;
     public static double SHOULDER_POWER = 1.0;
 
-    public static double SHOULDER_DEG_MIN = -60; // negative angles are counter clockwise while looking at the left side
+    public static double SHOULDER_DEG_MIN = -90; // negative angles are counter clockwise while looking at the left side
     public static double SHOULDER_DEG_MAX = 90; // of the robot
 
-    public static double ELBOW_DEG_MIN = -80;
-    public static double WRIST_DEG_MIN = -180;
-    public static double TURRET_DEG_MIN = -45;
+    public static double ELBOW_DEG_MIN = -150;
+    public static double WRIST_DEG_MIN = -170;
+    public static double TURRET_DEG_MIN = -180;
 
-    public static double ELBOW_DEG_MAX = 140;
-    public static double WRIST_DEG_MAX = 180;
-    public static double TURRET_DEG_MAX = 45;
+    public static double ELBOW_DEG_MAX = 150;
+    public static double WRIST_DEG_MAX = 170;
+    public static double TURRET_DEG_MAX = 180;
 
     //these 5 config variables won't have any effect if changed in dashboard since they are currently assigned at compile
     public static double HITIER_ELBOW = 76;
@@ -380,13 +380,6 @@ public class UnderArm{
     public void update() {
 
         articulate(articulation);
-
-        if (shoulderTargetAngle > 180)
-            shoulderTargetAngle -= 360;
-        if (elbowTargetAngle > 180)
-            elbowTargetAngle -= 360;
-        if (wristTargetAngle > 180)
-            wristTargetAngle -= 360;
 
         shoulderServo.setPosition(servoNormalize(shoulderServoValue(shoulderTargetAngle)));
         elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));

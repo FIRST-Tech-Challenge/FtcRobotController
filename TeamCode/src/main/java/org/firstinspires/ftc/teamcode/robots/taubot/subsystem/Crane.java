@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.util.CranePositionMemory;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.PIDController;
@@ -164,9 +165,6 @@ public class Crane implements Subsystem {
             turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
             shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             extenderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-            if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
-                extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
             extenderMotor.setTargetPosition(0);
             shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -198,15 +196,17 @@ public class Crane implements Subsystem {
         shoulderPID.setIntegralCutIn(ten);
         shoulderPID.enableIntegralZeroCrossingReset(false);
 
-        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+ten,robot.driveTrain.getPoseEstimate().getY(),8);
-        goToFieldCoordinate(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
+        articulate(Articulation.start);
     }
 
-    public void resetCrane(){
+    public void resetCrane(Constants.Position start){
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
-            fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+ten,robot.driveTrain.getPoseEstimate().getY(),8);
+            fieldPositionTarget = new Vector3(start.getPose().getX()+ten-1,start.getPose().getY(),8);
+            extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             fieldPositionTarget = new Vector3(home.x+robot.turret.getTurretPosition().getX(),home.y+robot.turret.getTurretPosition().getY(),home.z);
+            extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
 
@@ -441,7 +441,8 @@ public class Crane implements Subsystem {
         pickupCone,
         home,
         coneStackRight,
-        coneStackLeft
+        coneStackLeft,
+        start
     }
 
     public Articulation getArticulation() {
@@ -454,6 +455,12 @@ public class Crane implements Subsystem {
         switch(articulation){
             case noIK:
 
+                break;
+            case start:
+                if(craneStart()){
+                    articulation = Articulation.manual;
+                    return Articulation.manual;
+                }
                 break;
             case manual:
                 holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
@@ -497,6 +504,14 @@ public class Crane implements Subsystem {
                 return target;
         }
         return target;
+    }
+
+    public boolean craneStart(){
+        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+ten-1,robot.driveTrain.getPoseEstimate().getY(),8);
+        calculateFieldTargeting(fieldPositionTarget);
+        setExtendTargetPos(calculatedLength);
+        setShoulderTargetAngle(calculatedAngle);
+        return shoulderOnTarget() && extensionOnTarget();
     }
 
     int coneStackStage = 0;
@@ -853,7 +868,7 @@ public class Crane implements Subsystem {
     Vector3 deltaGripperPosition = new Vector3(10,0,8);
 
     boolean holdFieldPosition = true;
-    boolean driverDrivingRobot = true;
+    boolean driverDrivingRobot = false;
 
     public void driverIsDriving(){
         driverDrivingRobot = true;

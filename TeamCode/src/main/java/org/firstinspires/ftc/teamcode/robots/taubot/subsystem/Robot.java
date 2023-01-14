@@ -192,7 +192,18 @@ public class Robot implements Subsystem {
 
     boolean turnUntilDegreesDone = false;
     long autonTime;
+    boolean initAuton = false;
+    long totalAutonTime;
+
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
+        if(!initAuton){
+            totalAutonTime = futureTime(27);
+            initAuton = true;
+        }
+        if(System.nanoTime() > totalAutonTime){
+            autonTarget = 6;
+        }
+
         switch (autonIndex){
             case 0:
                 crane.driverIsDriving();
@@ -271,7 +282,7 @@ public class Robot implements Subsystem {
                 break;
             case 6:
                 crane.nudgeLeft();
-                crane.articulate(Crane.Articulation.manual);
+                crane.articulate(Crane.Articulation.home);
                 autonIndex=0;
                 return true;
             default:

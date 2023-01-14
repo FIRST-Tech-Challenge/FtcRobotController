@@ -44,6 +44,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
@@ -265,21 +266,22 @@ public class PowerPlay_6832 extends OpMode {
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
 
+
+        robot.turret.resetHeading();
+
         resetGame();
+
         if(gameState.equals(GameState.TELE_OP)){
-            robot.crane.resetCrane();
+            robot.crane.resetCrane(startingPosition);
         }
 
         if(gameState.equals(GameState.DEMO)){
-            robot.crane.resetCrane();
             robot.driveTrain.setPoseEstimate(startingPosition.getPose());
+            robot.crane.resetCrane(startingPosition);
         }
         robot.crane.updateScoringPattern();
 
         rumble();
-
-
-
     }
 
     public void resetGame(){
@@ -292,6 +294,7 @@ public class PowerPlay_6832 extends OpMode {
         @Override
     public void loop() {
             robot.driveTrain.updatePositionForNextRun();
+            robot.turret.updateHeadingForNextRun();
             dc.updateStickyGamepads();
             dc.handleStateSwitch();
 

@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.util.PIDController;
+import org.firstinspires.ftc.teamcode.util.Vector3;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,6 +42,8 @@ public class Turret implements Subsystem {
     BNO055IMU turretIMU;
 
     Orientation imuAngles;
+
+    private static double pastHeading;
 
     private Robot robot;
 
@@ -69,8 +72,6 @@ public class Turret implements Subsystem {
         turretIMU.initialize(parametersIMUTurret);
     }
 
-
-    boolean initialized = false;
     double offsetHeading;
 
     void customWrapHeading(){
@@ -96,22 +97,26 @@ public class Turret implements Subsystem {
         return  correction;
     }
 
+    public void updateHeadingForNextRun(){
+        pastHeading = heading;
+    }
+
+    public void resetHeading(){
+        offsetHeading = (heading-imuAngles.firstAngle)% 360;
+        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)) {
+            offsetHeading += pastHeading;
+        }
+    }
+
     public double getError(){
         return -distanceBetweenAngles(heading,targetHeading);
     }
     public void update(Canvas fieldOverlay) {
 
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-
-        if (!initialized) {
-            //first time in - we assume that the robot has not started moving and that orientation values are set to the current absolute orientation
-            //so first set of imu readings are effectively offsets
-            offsetHeading = (heading-imuAngles.firstAngle)% 360;
-            initialized = true;
-        }
         //offset = heading - initialHeading
         //update current IMU heading before doing any other calculations
-        heading = wrapAngle(offsetHeading + imuAngles.firstAngle);
+        heading = wrapAngle(offsetHeading + imuAngles.firstAngle) ;
 
         turretPID.setPID(TURRET_PID);
         turretPID.setTolerance(TURRET_TOLERANCE);
@@ -149,7 +154,7 @@ public class Turret implements Subsystem {
      */
     public void setHeading(double angle){
         heading = angle;
-        initialized = false; //triggers recalc of heading offset at next IMU update cycle
+        resetHeading();
     }
 
     public static double localX = -5;
