@@ -55,7 +55,7 @@ public class AutonomousDrive extends LinearOpMode {
         });
 
         // initialize the driveController (we do that after initializing the camera in order to enable "camera stream" in the drive controller)
-        DriveController driveController = new DriveController(hardwareMap);
+        RobotController driveController = new RobotController(hardwareMap, gamepad1);
 
         Pose2d startPose = new Pose2d(-61.4, -37.4, 0);
         Pose2d scoringPose = new Pose2d(-4.5, -36.5, Math.toRadians(-76));

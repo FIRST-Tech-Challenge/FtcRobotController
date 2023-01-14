@@ -28,10 +28,10 @@ class elevatorPositions{
     public static int bottom = 0    ;
 }
 
-
-class DriveController {
+class RobotController {
     /** GENERAL CONSTANTS */
     private final double sq2 = Math.sqrt(2);
+    private Gamepad gamepad;
 
     /** SERVO CONSTANTS */
     private final double grabberOut = 0.26;
@@ -59,13 +59,9 @@ class DriveController {
     private final double grabberCatchTrigger = 8.5;
 
     /** SENSORS */
-    public final BNO055IMU imu;
+    private final BNO055IMU imu;
     private final DistanceSensor grabberSensor;
-    TouchSensor armSensor;
-
-    /** TIME KEEPING VARIABLES */
-    final private ElapsedTime armTime;
-    final private ElapsedTime elevatorTime;
+    private final TouchSensor armSensor;
 
     /** SERVOS */
     final private Servo puffer ;
@@ -87,29 +83,15 @@ class DriveController {
     final private DcMotor backLeft  ;
 
     /** DRIVING STATE KEEPERS */
-    private double frontRightPower;
-    private double frontLeftPower ;
-    private double backRightPower ;
-    private double backLeftPower  ;
-
     public double overallDrivingPower;
 
     /** ELEVATOR MOTORS */
     final private DcMotorEx elevatorLeft ;
     final private DcMotorEx elevatorRight;
 
-    /** ELEVATOR STATE KEEPERS */
-    private int elevatorPosition;
-    private double elevatorPower;
-    private boolean stopElevator;
 
-
-    public DriveController(HardwareMap hm) {
-        /** TIME KEEPING VARIABLES */
-        // initialize the time keeping variables
-        armTime      = new ElapsedTime();
-        elevatorTime = new ElapsedTime();
-
+    public RobotController(HardwareMap hm, Gamepad gamepad) {
+        this.gamepad = gamepad;
         /** SENSORS */
         // getting the imu from the hardware map
         imu = hm.get(BNO055IMU.class, "imu");
@@ -172,12 +154,6 @@ class DriveController {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft .setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // setting the default driving state
-        frontRightPower = 0;
-        frontLeftPower  = 0;
-        backRightPower  = 0;
-        backLeftPower   = 0;
-
         overallDrivingPower = 1;
 
         // getting the elevator motors
@@ -190,109 +166,92 @@ class DriveController {
         // set the left elevator motor to use the encoder
         elevatorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevatorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // setting the default elevator state
-        elevatorPosition = 0;
-        elevatorPower    = 0;
-        stopElevator = false;
     }
 
-    /** IN PROGRESS */
-    public void moveArm(double position) {
-        // temporary
-        if (armTime.seconds() > 0.2 && armTime.seconds() < 0.8 && grabberSensor.getDistance(DistanceUnit.CM) < grabberCatchTrigger) {
-            setArmPosition(armIn);
-        } else if (armTime.seconds() > 0.8 || grabberSensor.getDistance(DistanceUnit.CM) > grabberCatchTrigger) {
-            if (position > 0) {
-                grabber.setPosition(grabberOpen);
-                setGrabberPosition(grabberOut);
-            } else {
-                setGrabberPosition(grabberIn);
-            }
-            setArmPosition(position * (armOut - armIn) + armIn);
-        }
+    public void scoringController(){
 
-        if (grabberSensor.getDistance(DistanceUnit.CM) < grabberCatchTrigger && grabberLeft.getPosition() == grabberOut && grabber.getPosition() == grabberOpen) {
-            grabber.setPosition(grabberGrab);
-            armTime.reset();
-        }
     }
 
-    public void setElevatorPosition(int position) {
-        if (position == elevatorPositions.bottom && elevatorPosition != position) {
-            puffer.setPosition(pufferInit);
-            setPlacerPosition(placerIn);
-        } else if (position != elevatorPositions.bottom && elevatorPosition == elevatorPositions.bottom) {
-            puffer.setPosition(pufferGrab);
-            grabber.setPosition(grabberOpen);
+    public void collectingController(){
 
-            elevatorTime.reset();
-            stopElevator = true;
-        }
-        elevatorPosition = position;
+
     }
 
-    public void scoreCone() {
-        puffer.setPosition(pufferRelease);
-    }
-
-    public void update() {
-        // getting the biggest of the driving powers
-        double biggest = Math.max(
-                Math.max
-                        (
-                                Math.abs(this.frontRightPower),
-                                Math.abs(this.backRightPower)
-                        ),
-                Math.max
-                        (
-                                Math.abs(this.frontLeftPower),
-                                Math.abs(this.backLeftPower)
-                        )
-        );
-
-        // normalizing the powers to be at most 1
-        if (biggest > 1) {
-            this.frontRightPower /= biggest;
-            this.backRightPower  /= biggest;
-            this.frontLeftPower  /= biggest;
-            this.backLeftPower   /= biggest;
-        }
-
-        // set the driving powers into the driving motors with consideration of the overall driving power
-        this.frontRight.setPower(this.frontRightPower * overallDrivingPower);
-        this.frontLeft .setPower(this.frontLeftPower  * overallDrivingPower);
-        this.backRight .setPower(this.backRightPower  * overallDrivingPower);
-        this.backLeft  .setPower(this.backLeftPower   * overallDrivingPower);
-
-        // change the elevator power if the elevator is not paused
-        if (!stopElevator) elevatorPower = Math.max(Math.min((elevatorPosition - elevatorLeft.getCurrentPosition()) / 2300.0, 1), -1);
+    int elevatorPosition = elevatorPositions.bottom;
+    double elevatorPower = 0;
+    public void elevatorController(){
+        elevatorPower = Math.max(Math.min((elevatorPosition - elevatorLeft.getCurrentPosition()) / 2300.0, 1), -1);
 
         // make the elevator weaker when coming down to compensate for gravity
         if (elevatorPower < 0) elevatorPower /= 2;
 
         // set the elevator power into the elevator motors
-        this.elevatorLeft.setPower(elevatorPower);
-        this.elevatorRight.setPower(elevatorPower);
+        elevatorLeft .setPower(elevatorPower);
+        elevatorRight.setPower(elevatorPower);
 
-        // reset the motors power to avoid accidents
-        frontRightPower = 0;
-        frontLeftPower  = 0;
-        backRightPower  = 0;
-        backLeftPower   = 0;
-
-        overallDrivingPower = 1;
-
-        elevatorPower = 0;
-
-        // temporary
-        if (elevatorTime.seconds() < 1 && elevatorTime.seconds() > 0.3) {
-            if (elevatorPosition / 2 < elevatorLeft.getCurrentPosition() && elevatorLeft.getCurrentPosition() < elevatorPosition) {
-                setPlacerPosition(placerOutTeleOp);
-            }
-            stopElevator = false;
-        }
+        elevatorController();
     }
+
+    Vector joystick_left = new Vector(0, 0);
+    double A, B;
+    public void driveController() {
+        joystick_left.x =  gamepad.left_stick_x;
+        joystick_left.y = -gamepad.left_stick_y;
+
+        // make the bot field oriented while considering the starting angle
+        joystick_left.addAngle(-getRobotAngle() - AutonomousDrive.lastAngle);
+
+
+        // using my equations to calculate the power ratios
+        A = (joystick_left.y - joystick_left.x) / sq2;
+        B = (joystick_left.y + joystick_left.x) / sq2;
+
+        // slow mode if the grabber is out
+        if (grabberLeft.getPosition() == grabberOut) {
+            overallDrivingPower = 0.4;
+        } else {
+            overallDrivingPower = 1;
+        }
+            // setting the powers in consideration of the turning speed
+            setDrivingPower((A - gamepad.right_stick_x * 0.7) * overallDrivingPower,
+                            (B + gamepad.right_stick_x * 0.7) * overallDrivingPower,
+                            (B - gamepad.right_stick_x * 0.7) * overallDrivingPower,
+                            (A + gamepad.right_stick_x * 0.7) * overallDrivingPower);
+    }
+
+    public double getRobotAngle() {
+        // get the angle from the imu
+        double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+
+        // normalize the angle
+        if (angle < 0) angle += Math.PI * 2;
+        angle = Math.PI * 2 - angle;
+
+        return angle;
+    }
+
+    public void setArmPosition(double position) {
+        armLeft .setPosition(position);
+        armRight.setPosition(position);
+    }
+
+    public void setPlacerPosition(double position) {
+        placerLeft .setPosition(position);
+        placerRight.setPosition(position);
+    }
+
+    public void setGrabberPosition(double position) {
+        grabberLeft .setPosition(position);
+        grabberRight.setPosition(position);
+    }
+
+    public void setDrivingPower(double frontRightPower, double frontLeftPower, double backRightPower, double backLeftPower) {
+        frontRight.setPower(frontRightPower * overallDrivingPower);
+        frontLeft .setPower(frontLeftPower  * overallDrivingPower);
+        backRight .setPower(backRightPower  * overallDrivingPower);
+        backLeft  .setPower(backLeftPower   * overallDrivingPower);
+    }
+
 
     public void cycle() {
         try {
@@ -302,6 +261,8 @@ class DriveController {
                 setGrabberPosition(grabberPile[i]);
 
                 Thread.sleep(1500);
+                elevatorLeft .setPower(elevatorPower);
+                elevatorRight.setPower(elevatorPower);
 
                 setArmPosition(armOut);
 
@@ -335,21 +296,8 @@ class DriveController {
 
             score();
         } catch (InterruptedException e) {}
+        elevatorController();
     }
-
-    public void elevatorController(){
-        while (true){
-            elevatorPower = Math.max(Math.min((elevatorPosition - elevatorLeft.getCurrentPosition()) / 2300.0, 1), -1);
-
-            // make the elevator weaker when coming down to compensate for gravity
-            if (elevatorPower < 0) elevatorPower /= 2;
-
-            // set the elevator power into the elevator motors
-            this.elevatorLeft.setPower(elevatorPower);
-            this.elevatorRight.setPower(elevatorPower);
-        }
-    }
-
     public void score(){
         try {
             puffer.setPosition(pufferGrab);
@@ -372,49 +320,6 @@ class DriveController {
 
     }
 
-
-    /** DONE */
-    public void mecanumDrive(Vector direction, double turningSpeed) {
-        // using my equations to calculate the power ratios
-        double A = (direction.y - direction.x) / sq2;
-        double B = (direction.y + direction.x) / sq2;
-
-        // setting the powers in consideration of the turning speed
-        setDrivingPower(A - turningSpeed, B + turningSpeed, B - turningSpeed, A + turningSpeed);
-    }
-
-    public double getRobotAngle() {
-        // get the angle from the imu
-        double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-
-        // normalize the angle
-        if (angle < 0) angle += Math.PI * 2;
-        angle = Math.PI * 2 - angle;
-
-        return angle;
-    }
-
-    public void setArmPosition(double position) {
-        armLeft .setPosition(position);
-        armRight.setPosition(position);
-    }
-
-    public void setPlacerPosition(double position) {
-        placerLeft .setPosition(position);
-        placerRight.setPosition(position);
-    }
-
-    public void setGrabberPosition(double position) {
-        grabberLeft .setPosition(position);
-        grabberRight.setPosition(position);
-    }
-
-    public void setDrivingPower(double frontRightPower, double frontLeftPower, double backRightPower, double backLeftPower) {
-        this.frontRightPower = frontRightPower;
-        this.frontLeftPower  = frontLeftPower ;
-        this.backRightPower  = backRightPower ;
-        this.backLeftPower   = backLeftPower  ;
-    }
 }
 
 
