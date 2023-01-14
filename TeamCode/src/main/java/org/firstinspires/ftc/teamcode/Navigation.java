@@ -449,6 +449,9 @@ public class Navigation {
     }
 
     private void setParkingLocation(RobotManager.StartingSide startingSide) {
+        /*
+        //Parks in a terminal or a substation for 2 points
+        //TODO: IMPRORTANT NOTE: this might not work because the positions are not transformed. make sure this will work as intended. might be able to just use one position.
         switch(startingSide) {
             case OUR_COLOR:
                 path.add(AutonomousPaths.terminalPositionOurColor); //If we are starting on our color then park in the terminal on our side
@@ -457,6 +460,11 @@ public class Navigation {
                 path.add(AutonomousPaths.substationPositionTheirColor); //If we are starting on their color then park in the substation
                 break;
         }
+         */
+
+        //Parks in a signal parking spot to have a chance for 20 points
+        path.add(AutonomousPaths.intermediateBottomLeft); //No transformation occurs on this position so it will be the same
+        path.add(AutonomousPaths.signalLocation1);
     }
 
     /** Sets drive motor powers to make the robot move a certain way.
