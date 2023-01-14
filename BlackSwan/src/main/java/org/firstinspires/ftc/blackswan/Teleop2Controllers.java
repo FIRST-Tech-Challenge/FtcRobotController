@@ -17,7 +17,7 @@ public class Teleop2Controllers extends LinearOpMode {
         DcMotor linearslide = hardwareMap.dcMotor.get("linearSlide");
 
         Servo clawservo = hardwareMap.servo.get("daclaw");
-        Servo daSpinster = hardwareMap.servo.get("daSpinster");
+        Servo daSpinster = hardwareMap.servo.get("spinster");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
