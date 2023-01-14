@@ -26,28 +26,9 @@ public class Test extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Servo armRight = hardwareMap.servo.get("armRight");
-        Servo armLeft = hardwareMap.servo.get("armLeft");
-
-        armRight.setDirection(Servo.Direction.REVERSE);
-
         waitForStart();
 
-        double position = 0;
-        double sensitivity = 1;
 
-        while (opModeIsActive()){
-            armLeft.setPosition(position - gamepad1.left_stick_y * sensitivity);
-            armRight.setPosition(position - gamepad1.left_stick_y * sensitivity);
-            if (A_pressed()){
-                position -= gamepad1.left_stick_y * sensitivity;
-                sensitivity /= 2;
-                sleep(500);
-            }
-
-            telemetry.addData("position", position - gamepad1.left_stick_y * sensitivity);
-            telemetry.update();
-        }
     }
 
     private boolean a = true;
