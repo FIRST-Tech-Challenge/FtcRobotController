@@ -70,7 +70,7 @@ public class Chassis {
             rightBackPower /= max;
         }
 
-        if (gamepad.left_bumper) {
+        if (gamepad.left_bumper || gamepad.right_bumper) {
             motorFL.setPower(leftFrontPower * 0.3);
             motorFR.setPower(rightFrontPower * 0.3);
             motorBL.setPower(leftBackPower * 0.3);
