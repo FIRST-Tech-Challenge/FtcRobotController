@@ -45,6 +45,10 @@ public class OpModePoleTracker extends DriveMethods {
     int slidePosition = 0;
     int targetHeight = 0;
     double imuHeading = 0;
+    double leftX;
+    double leftY;
+    double rightX;
+    int counter;
 
 
 
@@ -54,9 +58,9 @@ public class OpModePoleTracker extends DriveMethods {
     @Override
     public void runOpMode(){
 
-        initMotorsBlue();
-
-        calibrateNavXIMU();
+//        initMotorsBlue();
+//
+//        calibrateNavXIMU();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -72,6 +76,7 @@ public class OpModePoleTracker extends DriveMethods {
             @Override
             public void onOpened()
             {
+                //Adjust this to reduce load?????
                 camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
 
 
@@ -93,8 +98,9 @@ public class OpModePoleTracker extends DriveMethods {
 //        isIMURecorded = false;
         visionAutoActivated = false;
 
-        slidePosition = motorSlide.getCurrentPosition();
+//        slidePosition = motorSlide.getCurrentPosition();
 
+        counter = 0;
         while(opModeIsActive()){
 
 
@@ -112,8 +118,8 @@ public class OpModePoleTracker extends DriveMethods {
                 level2Aligned = false;
                 level3Aligned = false;
                 visionAutoActivated = false;
-                stopMotors();
-                motorSlide.setPower(0);
+//                stopMotors();
+//                motorSlide.setPower(0);
             }
 
             //this means we are no longer looking at our object of choice
@@ -123,8 +129,8 @@ public class OpModePoleTracker extends DriveMethods {
                 level2Aligned = false;
                 level3Aligned = false;
                 visionAutoActivated = false;
-                stopMotors();
-                motorSlide.setPower(0);
+//                stopMotors();
+//                motorSlide.setPower(0);
             }
 
             errorX = targetX - getCenterX();
@@ -137,6 +143,23 @@ public class OpModePoleTracker extends DriveMethods {
             if(Math.abs(alignPowerAdded) > 0.17){
                 alignPowerAdded = (errorX/(Math.abs(errorX)))*0.17;
             }
+
+
+            // Uncomment to supposedly turn on Teleop,
+//            leftY = -gamepad1.left_stick_y;
+//            leftX = gamepad1.left_stick_x;
+//            rightX = gamepad1.right_stick_x;
+//
+//                motorFL.setPower(leftY + leftX + rightX);
+//                motorBL.setPower(leftY - leftX + rightX);
+//                motorFR.setPower(leftY - leftX - rightX);
+//                motorBR.setPower(leftY + leftX - rightX);
+//
+
+            // This is for timing iterations
+                System.out.println("-----------------------------------------------------------------------------Counter: " + counter);
+                counter++;
+
 
 
 
@@ -152,25 +175,25 @@ public class OpModePoleTracker extends DriveMethods {
                     telemetry.addLine("errorX divide thingy: " + (errorX/(Math.abs(errorX))));
 
                     telemetry.update();
-                    stopMotors();
+//                    stopMotors();
                     sleep(500);
                     //Robot is in front of pole well enough, entering level2...
                 }
 
                 if(levelCounter == 1 && level1Aligned == false){
 //                    dividerX = 300; //<-- Arbitrary number for tuning
-            motorFL.setPower(-alignPowerAdded);
-            motorBL.setPower(-alignPowerAdded);
-            motorFR.setPower(alignPowerAdded);
-            motorBR.setPower(alignPowerAdded);
+//            motorFL.setPower(-alignPowerAdded);
+//            motorBL.setPower(-alignPowerAdded);
+//            motorFR.setPower(alignPowerAdded);
+//            motorBR.setPower(alignPowerAdded);
                 }
 
                 if(levelCounter == 2 && Math.abs(errorX) < 5){ //TODO will need to add distance condition
                     level2Aligned = true;
-                    imuHeading = getCumulativeZ(); //Need
+//                    imuHeading = getCumulativeZ(); //Need
 //                    isIMURecorded = true; // honestly wholly redundant
                     levelCounter = 3;
-                    stopMotors();
+//                    stopMotors();
                     telemetry.addLine("Going into level3!...");
                     telemetry.update();
                     sleep(500);
@@ -192,10 +215,10 @@ public class OpModePoleTracker extends DriveMethods {
 
 //                    }
 
-                     motorFL.setPower(-alignPowerAdded);
-                     motorBL.setPower(-alignPowerAdded);
-                     motorFR.setPower(alignPowerAdded);
-                     motorBR.setPower(alignPowerAdded);
+//                     motorFL.setPower(-alignPowerAdded);
+//                     motorBL.setPower(-alignPowerAdded);
+//                     motorFR.setPower(alignPowerAdded);
+//                     motorBR.setPower(alignPowerAdded);
                 }
 
                 if (levelCounter == 3 && getPercentColor() < 20){
@@ -204,15 +227,16 @@ public class OpModePoleTracker extends DriveMethods {
                 }
 
                 if(levelCounter == 3 && level3Aligned == false){
-                    motorSlide.setPower(0.5);
-                    slidePosition = motorSlide.getCurrentPosition();
+//                    motorSlide.setPower(0.5);
+//                    slidePosition = motorSlide.getCurrentPosition();
+
                     //Slide go up <-- Honestly just use a consistent power for ease
                 }
 
                 //For all the marbles, this is the sequence that stacks
                 if(level3Aligned == true){
-                    slidePosition = motorSlide.getCurrentPosition();
-                    stopMotors();
+//                    slidePosition = motorSlide.getCurrentPosition();
+//                    stopMotors();
 //                    telemetry.addLine("We going to the top babeeeeeeee");
 //                    telemetry.addLine("Slide position: " + slidePosition);
 //                    telemetry.update();
@@ -225,19 +249,19 @@ public class OpModePoleTracker extends DriveMethods {
                         targetHeight = highHeight;
                     }
 
-                    clawClamp();
-                    GoToHeight(targetHeight);
-                    sleep(250);
-                    driveForDistance(0.1,Direction.FORWARD,0.2,imuHeading);
-                    sleep(250);
-                    GoToHeight(targetHeight - 30);
-                    sleep(100);
-                    clawRelease();
-                    sleep(100);
-                    GoToHeight(targetHeight);
-                    sleep(100);
-                    driveForDistance(0.1, Direction.BACKWARD, 0.2, imuHeading);
-                    goToDown();
+//                    clawClamp();
+//                    GoToHeight(targetHeight);
+//                    sleep(250);
+//                    driveForDistance(0.1,Direction.FORWARD,0.2,imuHeading);
+//                    sleep(250);
+//                    GoToHeight(targetHeight - 30);
+//                    sleep(100);
+//                    clawRelease();
+//                    sleep(100);
+//                    GoToHeight(targetHeight);
+//                    sleep(100);
+//                    driveForDistance(0.1, Direction.BACKWARD, 0.2, imuHeading);
+//                    goToDown();
 
                     levelCounter = 1;
                     level1Aligned = false;

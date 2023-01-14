@@ -221,8 +221,8 @@ public class PipePoleTracker extends OpenCvPipeline {
                 for (int i = 0; i < gridY; i++) {
                     for (int j = 0; j < gridX; j++) {
                         double percentColor = (Core.countNonZero(matsGrid[i][j])) / rectanglesGrid[i][j].area();
-                        System.out.println("Percent Color of (" + i + ", " + j + ") is: " + percentColor);
-                        System.out.println("Number of Pixels at (" + i + ", " + j + ") is: " + Core.countNonZero(matsGrid[i][j]));
+//                        System.out.println("Percent Color of (" + i + ", " + j + ") is: " + percentColor);
+//                        System.out.println("Number of Pixels at (" + i + ", " + j + ") is: " + Core.countNonZero(matsGrid[i][j]));
 
                         if (percentColor > threshold) {
                             identifiedBoxesBoolean[i][j] = true;
