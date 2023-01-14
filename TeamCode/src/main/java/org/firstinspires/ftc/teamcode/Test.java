@@ -25,30 +25,27 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class Test extends LinearOpMode {
     @Override
     public void runOpMode() {
+
         Servo armRight = hardwareMap.servo.get("armRight");
         Servo armLeft = hardwareMap.servo.get("armLeft");
 
-        Servo grabber = hardwareMap.servo.get("grabber");
-        DistanceSensor s = hardwareMap.get(DistanceSensor.class, "grabberSensor");
-
         armRight.setDirection(Servo.Direction.REVERSE);
-
-        boolean i = true;
 
         waitForStart();
 
-        while (opModeIsActive()){
-            armRight.setPosition(i ? 0.36:0.56);
-            armLeft.setPosition(i ? 0.36:0.56);
+        double position = 0;
+        double sensitivity = 1;
 
+        while (opModeIsActive()){
+            armLeft.setPosition(position - gamepad1.left_stick_y * sensitivity);
+            armRight.setPosition(position - gamepad1.left_stick_y * sensitivity);
             if (A_pressed()){
-                i = !i;
+                position -= gamepad1.left_stick_y * sensitivity;
+                sensitivity /= 2;
+                sleep(500);
             }
 
-            if (s.getDistance(DistanceUnit.CM) < 8.5) grabber.setPosition(0.775);
-            else grabber.setPosition(0.45);
-
-            telemetry.addData("s", s.getDistance(DistanceUnit.CM));
+            telemetry.addData("position", position - gamepad1.left_stick_y * sensitivity);
             telemetry.update();
         }
     }

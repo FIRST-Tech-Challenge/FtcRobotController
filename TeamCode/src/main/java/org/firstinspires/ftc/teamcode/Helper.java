@@ -40,13 +40,13 @@ class DriveController {
 
     private final double[] grabberPile = {0.41, 0.38, 0.34, 0.31, 0.28};
 
-    private final double armOut = 0.61;
-    private final double armIn  = 0.41;
+    private final double armOut = 0.89; // hiTech value 0.61;
+    private final double armIn  = 0.5;  // hiTech value 0.41;
 
     private final double placerIn  = 0.01;
 
     private final double placerOutAutonomous = 0.76;
-    private final double placerOutTeleOp = 0.85; // 0.76
+    private final double placerOutTeleOp = 0.85;
 
     private final double pufferInit    = 0.14;
     private final double pufferGrab    = 0.36;
@@ -150,8 +150,8 @@ class DriveController {
         grabberRight = hm.servo.get("grabberRight");
         grabberLeft  = hm.servo.get("grabberLeft" );
 
-        // flipping the right servos direction
-        armRight    .setDirection(Servo.Direction.REVERSE);
+        // flipping the relevant servos direction
+        armLeft     .setDirection(Servo.Direction.REVERSE);
         placerRight .setDirection(Servo.Direction.REVERSE);
         grabberRight.setDirection(Servo.Direction.REVERSE);
 
