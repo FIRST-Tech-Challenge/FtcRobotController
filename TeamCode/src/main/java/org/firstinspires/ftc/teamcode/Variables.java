@@ -89,8 +89,8 @@ public class Variables {
 
 
 
-    public static int gridX = 15;
-    public static int gridY = 15;
+    public static int gridX = 20;
+    public static int gridY = 20;
     public static int gridTotal = gridX * gridY;
 
     public static boolean level1Assigment = false;
