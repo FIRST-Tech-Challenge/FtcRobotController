@@ -68,6 +68,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     protected final int armMotorMid = 450;
 
 
+
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 0);
 
@@ -91,6 +92,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotorEx frontSlide;
     public DcMotorEx slideOtherer;
     public DcMotorEx armMotor;
+
+
 
     private Servo THE_CLAW;
 
@@ -152,8 +155,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
         linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide");
+        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide"); // This one is named Jim in spirit
         slideOtherer = hardwareMap.get(DcMotorEx.class, "slideOtherer");
+
         armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
 
         THE_CLAW = hardwareMap.servo.get("clawServo");
@@ -178,9 +182,11 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-       setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
