@@ -9,11 +9,10 @@ public class robotCameraTest extends ConeDetection{
     int[] lowerBlue = {42, 128, 114};
     int[] upperBlue = {168, 242, 255};
     @Override
+    //♥sabida♥
     public void runOpMode() throws InterruptedException
     {
-        ConeDetectionPipeline coneDetectionPipeline = new ConeDetectionPipeline();
-        coneDetectionPipeline.setRanges(lowerBlue,upperBlue);
-        detectGrab();
+        detectGrab(lowerBlue,upperBlue);
         initialize();
         telemetry.addLine("waiting for start");
         telemetry.update();
