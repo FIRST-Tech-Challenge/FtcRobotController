@@ -24,9 +24,7 @@ public abstract class ConeDetection extends BaseAutonomous {
             }
 
             @Override
-            public void onError(int errorCode) {
-
-            }
+            public void onError(int errorCode) {}
         });
     }
 }
