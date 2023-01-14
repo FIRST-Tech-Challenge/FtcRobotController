@@ -50,32 +50,29 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 
 		//Trajectories
 		initialize();
-
 		TrajectorySequence junction = bot.trajectorySequenceBuilder(startPose)
 				//If 13.53 V, y = -3.5
-
 				// Mechanisms deposit preload at high junction with a 0.65 delay
-				.UNSTABLE_addTemporalMarkerOffset(0.65,()->{
+				.UNSTABLE_addTemporalMarkerOffset(0.75,()->{
 					slideControl.setHighJunction(telemetry);
 					armControl.setExtake();
 					clawControl.toggleWristRotate();
 					//slideControl.setIntakeOrGround();
 					//armControl.setIntake();
 				})
-				.lineToLinearHeading(new Pose2d(xFirstLinear, yFirstLinear, Math.toRadians(90))) //preload
-				//moves down after flipping
+				// MOVES TO HIGH JUNCTION FOR FIRST TIME
+				.lineToLinearHeading(new Pose2d(xFirstLinear, yFirstLinear, Math.toRadians(90)))
 				.waitSeconds(0.5)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(1450); // overrides current target position of slides
+					slideControl.setCustom(1450); // Overrides current target position of slides
 				})
-				.waitSeconds(.25)
+				.waitSeconds(.8)
 				//opens claw
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
-				/*
 				.waitSeconds(0.15)
-				//moves to
+				// MOVES TO CONE STACK
 				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
 					clawControl.toggleWristRotate();
 					slideControl.setCustom(700);
@@ -87,42 +84,52 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
+
+
+
+
+
+
+			   // GOING TO HIGH JUNCTION FOR THE SECOND TIME
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1370);
 				})
 				.waitSeconds(.25)
-				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{
-					slideControl.setHighJunction(telemetry);
+				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{ //0.7 old value
+					slideControl.setHighJunction(telemetry); // 2nd time at high junction
 					armControl.setCustom(990);
 					clawControl.toggleWristRotate();
 				})
 				.lineToLinearHeading(new Pose2d(xSecondToJunction,ySecondToJunction,Math.toRadians(angle)))
-
-				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+				.UNSTABLE_addTemporalMarkerOffset(1,()->{
 					slideControl.setCustom(1450);
 				})
-				.waitSeconds(.25)
+				.waitSeconds(1) // OLD VALUE: 0.25
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
-
-				.waitSeconds(0.15)
-				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
-
+				.waitSeconds(0.25) // OLD VALUE: 0.15
+				// PREPPING PIDS FOR CONE STACK \\
+				.UNSTABLE_addTemporalMarkerOffset(1.25,()->{ // OLD VALUE: 0.25
 					clawControl.toggleWristRotate();
-					slideControl.setCustom(620);
-					armControl.setIntake();//
+					slideControl.setCustom(600);// OLD VALUE: 620
+					armControl.setIntake();
 				})
-				.waitSeconds(0.25)
+				.waitSeconds(1.25) // OLD VALUE: 0.25
+				// GOING TO THE CONE STACK \\
 				.lineToLinearHeading(new Pose2d(47 ,25.5, Math.toRadians(91.45)))
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(1310);
+					slideControl.setCustom(1310); // RAISES SLIDES BEFORE GOING TO THE JUNCTION FOR THE THIRD TIME
 				})
+
+
+				/*
+				// GOING TO JUNCTION FOR THIRD TIME
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{
 					slideControl.setHighJunction(telemetry);
