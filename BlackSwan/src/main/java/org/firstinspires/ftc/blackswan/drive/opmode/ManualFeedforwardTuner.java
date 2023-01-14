@@ -43,7 +43,6 @@ import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kV;
  * Pressing B/O (Xbox/PS4) will cede control back to the tuning process.
  */
 @Config
-@Disabled
 @Autonomous(group = "drive")
 public class ManualFeedforwardTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in
