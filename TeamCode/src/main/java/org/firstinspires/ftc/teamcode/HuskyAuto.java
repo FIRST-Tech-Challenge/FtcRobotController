@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.HuskyBot.CLAW_LIFT_START_POSITION;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "Auto", group = "Auto", preselectTeleOp = "Husky TeleOpMode")
@@ -39,6 +41,8 @@ public class HuskyAuto extends HuskyAutoBase {
 
         waitForStart();
         runtime.reset();
+
+        huskyBot.clawLift.setPosition(1.0);
 
         this.parkLocation = getParkLocation();
 
