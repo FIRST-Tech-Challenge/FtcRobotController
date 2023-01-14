@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
+@Disabled
 @Autonomous(name = "RobotCenteringTest", group = "Test")
 public class RobotCenteringTest extends ConeDetection
 {

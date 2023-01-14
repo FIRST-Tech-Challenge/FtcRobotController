@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 @Autonomous(name = "RobotCameraTestJunctionDet", group = "Test")
 public class junctionTopDetect extends ConeDetection{
     int[] lowerYellow = {112, 100, 100};

@@ -44,15 +44,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
             originalAngle = startAngle + 180;
         }
 
-        if (gamepad1.left_trigger > 0.25) {
-            x = gamepad1.left_stick_x * 0.3;
-            y = -gamepad1.left_stick_y * 0.3;
-            t = gamepad1.right_stick_x * 0.2;
-        } else {
-            x = gamepad1.left_stick_x * 0.75;
-            y = -gamepad1.left_stick_y * 0.75;
-            t = gamepad1.right_stick_x * 0.5;
-        }
+        x = Math.signum(x) * (Constants.DRIVE_CURVE_FACTOR * x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(x, 3));
+        y = Math.signum(y) * (Constants.DRIVE_CURVE_FACTOR * y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(y, 3));
+        t = Math.signum(t) * (Constants.DRIVE_CURVE_FACTOR * t + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(t, 3));
 
         xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
         yRotatedVector = x * Math.sin(negativeHeadingRadians) + y * Math.cos(negativeHeadingRadians);
@@ -64,6 +58,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
         driveWithIMU(xPower, yPower, tPower);
     }
+
 
     public void driveGrabberWithController() {
         if (gamepad2.x) {
