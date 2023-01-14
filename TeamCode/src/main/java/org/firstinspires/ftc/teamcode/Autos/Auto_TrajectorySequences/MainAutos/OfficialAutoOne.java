@@ -21,13 +21,15 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	private Slide slideControl;
 	private Claw clawControl;
 
-	public static double x = 59;
-	public static double y = -0.75;
-	public static double firstLinetoHeadingX = 60;
+	public static double xFirstLinear = 59;
+	public static double yFirstLinear = -0.75;
 	public static double angle = 125;
-	public static double strafe = 14;
-	public static double x2 = 53.5;
-	public static double y2 = -4;
+	public static double xSecondToJunction = 53.5;
+	public static double ySecondToJunction = -4;
+	public static double xThirdToJunction = 53.5;
+	public static double yThirdToJunction = -4;
+	public static double xFourthToJunction = 53.5;
+	public static double yFourthToJunction = -4;
 
 
 
@@ -63,7 +65,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					//slideControl.setIntakeOrGround();
 					//armControl.setIntake();
 				})
-				.lineToLinearHeading(new Pose2d(x, y, Math.toRadians(90))) //preload
+				.lineToLinearHeading(new Pose2d(xFirstLinear, yFirstLinear, Math.toRadians(90))) //preload
 				//moves down after flipping
 				.waitSeconds(0.5)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -98,7 +100,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					armControl.setCustom(990);
 					clawControl.toggleWristRotate();
 				})
-				.lineToLinearHeading(new Pose2d(x2,y2,Math.toRadians(angle)))
+				.lineToLinearHeading(new Pose2d(xSecondToJunction,ySecondToJunction,Math.toRadians(angle)))
 
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1450);
@@ -130,7 +132,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					armControl.setCustom(990);
 					clawControl.toggleWristRotate();
 				})
-				.lineToLinearHeading(new Pose2d(x2,y2,Math.toRadians(angle)))
+				.lineToLinearHeading(new Pose2d(xThirdToJunction,yThirdToJunction,Math.toRadians(angle)))
 
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1450);
@@ -162,7 +164,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					armControl.setCustom(990);
 					clawControl.toggleWristRotate();
 				})
-				.lineToLinearHeading(new Pose2d(x2,y2,Math.toRadians(angle)))
+				.lineToLinearHeading(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
 
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1450);
@@ -182,12 +184,12 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.waitSeconds(0.25)
 				.addTemporalMarker(() -> {
 					if(tagUse == 1){
-						Trajectory zoneOne = bot.trajectoryBuilder(new Pose2d(x2,y2,Math.toRadians(angle)))
+						Trajectory zoneOne = bot.trajectoryBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
 								.lineToLinearHeading(new Pose2d(46,22,91))
 								.build();
 						bot.followTrajectoryAsync(zoneOne);
 					}else if(tagUse == 3){
-					Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(x2,y2,Math.toRadians(angle)))
+					Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
 							.lineToLinearHeading(new Pose2d(46,-25,90))
 							.build();
 						bot.followTrajectoryAsync(zoneThree);
