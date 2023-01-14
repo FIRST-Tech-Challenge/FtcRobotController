@@ -52,12 +52,8 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 		initialize();
 
 		TrajectorySequence junction = bot.trajectorySequenceBuilder(startPose)
-				.UNSTABLE_addTemporalMarkerOffset(0, ()->{
-					clawControl.toggleAutoOpenClose();
-				})
 				//If 13.53 V, y = -3.5
 				// Mechanisms deposit preload at high junction with a 0.65 delay
-				.waitSeconds(0.5)
 				.UNSTABLE_addTemporalMarkerOffset(0.75,()->{
 					slideControl.setHighJunction(telemetry);
 					armControl.setExtake();
@@ -76,7 +72,13 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
-				.waitSeconds(0.15)
+				.waitSeconds(0.5)
+				.UNSTABLE_addTemporalMarkerOffset(0, ()->{
+					slideControl.setIntakeOrGround();
+					armControl.setIntake();
+					clawControl.toggleWristRotate();
+				})
+				/*.waitSeconds(0.15)
 				// MOVES TO CONE STACK
 				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
 					clawControl.toggleWristRotate();

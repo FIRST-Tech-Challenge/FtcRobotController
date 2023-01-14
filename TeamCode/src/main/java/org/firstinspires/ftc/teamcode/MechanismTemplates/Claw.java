@@ -32,7 +32,7 @@ public class Claw {
         clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
 
         // Presets for teleOp
-        clawJoint.setPosition(OPEN);
+        clawJoint.setPosition(CLOSE);
         wristJoint.setPosition(WRIST_INTAKE_POSITION);
 
         isOpen = new SignalEdgeDetector(rightBumper);
@@ -45,7 +45,7 @@ public class Claw {
         wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
         clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
 
-        clawJoint.setPosition(OPEN);
+        clawJoint.setPosition(CLOSE);
         wristJoint.setPosition(WRIST_INTAKE_POSITION);
     }
 
