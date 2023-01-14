@@ -85,3 +85,8 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+.idea/misc.xml
+java_pid17884.hprof
+
+.idea/
