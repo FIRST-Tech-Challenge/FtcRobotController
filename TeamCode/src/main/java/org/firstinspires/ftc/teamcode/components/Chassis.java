@@ -71,10 +71,10 @@ public class Chassis {
         }
 
         if (gamepad.left_bumper) {
-            motorFL.setPower(leftFrontPower * 0.5);
-            motorFR.setPower(rightFrontPower * 0.5);
-            motorBL.setPower(leftBackPower * 0.5);
-            motorBR.setPower(rightBackPower * 0.5);
+            motorFL.setPower(leftFrontPower * 0.3);
+            motorFR.setPower(rightFrontPower * 0.3);
+            motorBL.setPower(leftBackPower * 0.3);
+            motorBR.setPower(rightBackPower * 0.3);
         } else {
             motorFL.setPower(leftFrontPower);
             motorFR.setPower(rightFrontPower);
