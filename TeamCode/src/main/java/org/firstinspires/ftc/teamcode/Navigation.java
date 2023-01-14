@@ -1007,13 +1007,20 @@ class AutonomousPaths {
 
     //Paths (parking part of paths will be added on later during run time)
     //The last position in a path is always a position where the robot can travel directly to the substation or terminal for parking
-    public static final ArrayList<Position> PARK_ONLY = new ArrayList<>(Arrays.asList());
-    public static final ArrayList<Position> LARGE_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, leftLargeJunction, intermediateCenterLeft, signalCone, intermediateCenterLeft, leftLargeJunction, intermediateBottomLeft)); //Puts two cones on the same junction
-    public static final ArrayList<Position> MEDIUM_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, leftLargeJunction, intermediateCenterLeft, signalCone, mediumJunction, intermediateBottomCenter));
-    public static final ArrayList<Position> SMALL_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomRight, rightSmallJunction, intermediateCenterRight, signalCone, intermediateCenterLeft, leftLargeJunction, intermediateBottomLeft));
-    public static final ArrayList<Position> SMALL_MEDIUM = new ArrayList<>(Arrays.asList(intermediateBottomRight, rightSmallJunction, intermediateCenterRight, signalCone, mediumJunction, intermediateBottomCenter));
-    public static final ArrayList<Position> SMALL_SMALL = new ArrayList<>(Arrays.asList(intermediateBottomRight, rightSmallJunction, intermediateCenterRight, signalCone, leftSmallJunction, intermediateBottomCenter));
+//    public static final ArrayList<Position> PARK_ONLY = new ArrayList<>(Arrays.asList());
+//    public static final ArrayList<Position> LARGE_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, leftLargeJunction, intermediateCenterLeft, signalCone, intermediateCenterLeft, leftLargeJunction, intermediateBottomLeft)); //Puts two cones on the same junction
+//    public static final ArrayList<Position> MEDIUM_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft, leftLargeJunction, intermediateCenterLeft, signalCone, mediumJunction, intermediateBottomCenter));
+//    public static final ArrayList<Position> SMALL_LARGE = new ArrayList<>(Arrays.asList(intermediateBottomRight, rightSmallJunction, intermediateCenterRight, signalCone, intermediateCenterLeft, leftLargeJunction, intermediateBottomLeft));
+//    public static final ArrayList<Position> SMALL_MEDIUM = new ArrayList<>(Arrays.asList(intermediateBottomRight, rightSmallJunction, intermediateCenterRight, signalCone, mediumJunction, intermediateBottomCenter));
+//    public static final ArrayList<Position> SMALL_SMALL = new ArrayList<>(Arrays.asList(intermediateBottomRight, rightSmallJunction, intermediateCenterRight, signalCone, leftSmallJunction, intermediateBottomCenter));
+    //Paths
+    public static final ArrayList<Position> MEDIUM = new ArrayList<>(Arrays.asList(intermediateBottomLeft, mediumJunction, intermediateBottomLeft));
 
+    public static final ArrayList<Position> LARGE = new ArrayList<>(Arrays.asList(intermediateBottomLeft,leftLargeJunction));
+
+    public static final ArrayList<Position> SMALL = new ArrayList<>(Arrays.asList(intermediateBottomRight, rightSmallJunction, intermediateBottomRight));
+
+    public static final ArrayList<Position> PARK_ONLY = new ArrayList<>(Arrays.asList());
 
     //Location is for parking location retrieved from signal and starting location is for whether the robot started on the left or the right
     /*

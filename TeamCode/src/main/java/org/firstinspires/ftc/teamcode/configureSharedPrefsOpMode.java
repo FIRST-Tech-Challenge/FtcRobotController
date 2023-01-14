@@ -16,7 +16,7 @@ public class configureSharedPrefsOpMode extends OpMode {
             {"0_SECONDS","5_SECONDS","10_SECONDS","15_SECONDS","20_SECONDS"},
             {"THEIR_COLOR","OUR_COLOR"},
             {"BLUE","RED"},
-            {"MEDIUM_LARGE","SMALL_LARGE","SMALL_MEDIUM","SMALL_SMALL","LARGE_LARGE", "PARK_ONLY"}
+            {"SMALL", "MEDIUM", "LARGE", "PARK_ONLY"}
     };
     String [] currentValues=new String[VALUES.length];
     final String[] PREF_NAMES ={"movement mode","wait time","starting side","alliance color","auton type"};//human-readable names of the prefs
