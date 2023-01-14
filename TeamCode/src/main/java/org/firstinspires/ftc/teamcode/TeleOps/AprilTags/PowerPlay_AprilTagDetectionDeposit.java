@@ -68,7 +68,7 @@ public class PowerPlay_AprilTagDetectionDeposit extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        while (isStarted() && tagUse == 0)
+        while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
