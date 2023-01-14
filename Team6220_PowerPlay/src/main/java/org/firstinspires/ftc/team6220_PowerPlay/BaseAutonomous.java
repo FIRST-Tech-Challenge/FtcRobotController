@@ -174,9 +174,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             }
 
             @Override
-            public void onError(int errorCode) {
-
-            }
+            public void onError(int errorCode) {}
         });
 
         // replaces waitForStart()
