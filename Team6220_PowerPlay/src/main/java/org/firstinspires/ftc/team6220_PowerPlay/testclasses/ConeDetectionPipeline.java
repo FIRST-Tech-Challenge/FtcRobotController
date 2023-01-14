@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
+import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -15,7 +16,6 @@ import java.util.List;
 
 public class ConeDetectionPipeline extends OpenCvPipeline {
     //Baller fields
-    public int centerX = 960;
     public double Xpos = 0.0;
     public double Ypos = 0.0;
     public double distance = 0;
@@ -89,7 +89,7 @@ public class ConeDetectionPipeline extends OpenCvPipeline {
             //Save coordinates of the bounding box to fields, if there is a bounding box
             if (m.get_m00() > 0) {
                 double cX = boundingRect.x + (boundingRect.width / 2);
-                distance = cX - centerX;
+                distance = cX - Constants.ROBOT_CAMERA_CENTER_X;
                 Xpos = boundingRect.x + (boundingRect.width / 2);
                 Ypos = boundingRect.y + (boundingRect.height / 2);
                 coneSize = boundingRect.width * boundingRect.height;

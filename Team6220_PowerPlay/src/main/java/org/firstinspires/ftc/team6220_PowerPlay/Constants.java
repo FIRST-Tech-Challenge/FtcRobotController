@@ -36,4 +36,7 @@ public class Constants {
 
     public static final int CAMERA_CENTER_X = 400;
     public static final int CAMERA_CENTER_Y = 300;
+
+    public static final int ROBOT_CAMERA_CENTER_X = 960;
+    public static final int ROBOT_CAMERA_CENTER_Y = 540;
 }
