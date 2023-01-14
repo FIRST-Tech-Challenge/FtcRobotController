@@ -35,7 +35,7 @@ public class Chassis {
     }
 
     public static void joyStick(Gamepad gamepad) {
-        double left_y = (Math.abs(gamepad.left_stick_y) < 0.2) ? 0 : gamepad.left_stick_y;
+        double left_y = gamepad.left_stick_y;
         double left_x = gamepad.left_stick_x;
         double strafe_side = gamepad.right_stick_x;
 
@@ -44,21 +44,21 @@ public class Chassis {
         double leftBackPower;
         double rightBackPower;
 
-        if (Math.atan2(left_y, left_x) < Math.PI/10.0) {
+        if (Math.abs(Math.atan2(left_y, Math.abs(left_x))) < Math.PI/10.0) {
             leftFrontPower = -left_x * 0.8 - strafe_side * 0.6;
             rightFrontPower = left_x * 0.8 + strafe_side * 0.6;
             leftBackPower = left_x * 0.8 - strafe_side * 0.6;
             rightBackPower = -left_x * 0.8 + strafe_side * 0.6;
-        } else if (Math.atan2(left_x, left_y) < Math.PI/10.0) {
+        } else if (Math.abs(Math.atan2(left_x, Math.abs(left_y))) < Math.PI/10.0) {
             leftFrontPower = left_y * 0.8 - strafe_side * 0.6;
             rightFrontPower = left_y * 0.8 + strafe_side * 0.6;
             leftBackPower = left_y * 0.8 - strafe_side * 0.6;
             rightBackPower = left_y * 0.8 + strafe_side * 0.6;
         } else {
-            leftFrontPower = (left_y - left_x) * 0.7 - strafe_side * 0.6;
-            rightFrontPower = (left_y + left_x) * 0.7 + strafe_side * 0.6;
-            leftBackPower = (left_y + left_x) * 0.7 - strafe_side * 0.6;
-            rightBackPower = (left_y - left_x) * 0.7 + strafe_side * 0.6;
+            leftFrontPower = (left_y - left_x) * 0.6 - strafe_side * 0.6;
+            rightFrontPower = (left_y + left_x) * 0.6 + strafe_side * 0.6;
+            leftBackPower = (left_y + left_x) * 0.6 - strafe_side * 0.6;
+            rightBackPower = (left_y - left_x) * 0.6 + strafe_side * 0.6;
         }
 
         double max = Math.max(Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower)), Math.max(Math.abs(leftBackPower), Math.abs(rightBackPower)));
