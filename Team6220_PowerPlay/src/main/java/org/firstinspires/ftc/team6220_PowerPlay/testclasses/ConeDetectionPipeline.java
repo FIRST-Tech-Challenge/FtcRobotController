@@ -15,6 +15,8 @@ import java.util.List;
 
 public class ConeDetectionPipeline extends OpenCvPipeline {
     public int centerX = 960;
+    public double Xpos = 0.0;
+    public double Ypos = 0.0;
     public double distance = 0;
     public double coneSize = 0;
     public boolean grab = false;
@@ -70,10 +72,12 @@ public class ConeDetectionPipeline extends OpenCvPipeline {
 
             Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
             Moments m = Imgproc.moments(contours.get(maxValIdx), false);
-
+            Imgproc.rectangle(input, boundingRect, new Scalar(40, 200, 0), 10);
             if (m.get_m00() > 0) {
-                double cX = (m.get_m10() / m.get_m00());
-                distance = centerX - cX;
+                double cX = boundingRect.x + (boundingRect.width / 2);
+                distance = cX - centerX;
+                Xpos = boundingRect.x + (boundingRect.width / 2);
+                Ypos = boundingRect.y + (boundingRect.height / 2);
                 coneSize = boundingRect.width * boundingRect.height;
                 grab = Math.abs(distance) < 30 && coneSize < 3000;
             }
