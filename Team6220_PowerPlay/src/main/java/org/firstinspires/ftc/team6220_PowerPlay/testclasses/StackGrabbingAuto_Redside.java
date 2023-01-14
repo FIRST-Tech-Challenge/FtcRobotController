@@ -9,14 +9,12 @@ import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 @Autonomous(name = "StackGrabbingAuto_Red", group = "Test")
 public class StackGrabbingAuto_Redside extends ConeDetection {
     int stackHeight = 4;
-    int[] lowerRed = {42, 128, 114};
-    int[] upperRed = {168, 242, 255};
+    int[] lowerRed = {0, 150, 20};
+    int[] upperRed = {10, 255, 255};
 
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-        ConeDetectionPipeline coneDetectionPipeline = new ConeDetectionPipeline();
-        coneDetectionPipeline.setRanges(lowerRed, upperRed);
         //Grab cone
         servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
         sleep(1500);
@@ -47,7 +45,6 @@ public class StackGrabbingAuto_Redside extends ConeDetection {
         driveInches(90, 10);
         turnToAngle(90);
         driveInches(0, 35);
-        detectGrab();
         //Strafe until the robot is centered on the cone
         while (stackHeight >= 0) {
             while (Math.abs(coneDetectionPipeline.distance) > 50) {

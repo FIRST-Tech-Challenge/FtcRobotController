@@ -15,16 +15,14 @@ public class RobotCenteringTest extends ConeDetection
     public void runOpMode() throws InterruptedException
     {
         initialize();
-        ConeDetectionPipeline coneDetectionPipeline = new ConeDetectionPipeline();
-        coneDetectionPipeline.setRanges(lowerBlue, upperBlue);
-        telemetry.addData("distance", coneDetectionPipeline.distance);
-        telemetry.addLine("waiting for start");
-        telemetry.update();
         waitForStart();
         driveSlides(400);
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
+        detectGrab(lowerBlue,upperBlue);
         while(opModeIsActive()){
             if(coneDetectionPipeline.distance > 10){
+                telemetry.addData("distance", coneDetectionPipeline.distance);
+                telemetry.update();
                 motorFL.setPower(1*Math.signum(coneDetectionPipeline.distance));
                 motorFR.setPower(-1*Math.signum(coneDetectionPipeline.distance));
                 motorBL.setPower(-1*Math.signum(coneDetectionPipeline.distance));

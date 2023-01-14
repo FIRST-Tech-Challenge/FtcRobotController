@@ -35,9 +35,13 @@ public class AutonomousJunctionDetection extends BaseAutonomous {
             }
         });
 
+        initialize();
         waitForStart();
 
         while (opModeIsActive()) {
+            if(pipeline.rectDetected)
+                driveWithIMU(pipeline.detectedRect.x/800.0, 0, 0);
+
             telemetry.addData("x", pipeline.detectedRect.x);
             telemetry.addData("y", pipeline.detectedRect.y);
             telemetry.addData("🏃‍💨", pipeline.isRunning);

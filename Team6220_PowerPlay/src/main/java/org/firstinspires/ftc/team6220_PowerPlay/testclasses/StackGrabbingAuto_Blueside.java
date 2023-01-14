@@ -10,8 +10,8 @@ import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 @Autonomous(name = "StackGrabbingAuto_Blue", group = "Test")
 public class StackGrabbingAuto_Blueside extends ConeDetection {
     int stackHeight = 4;
-    int[] lowerBlue = {42, 128, 114};
-    int[] upperBlue = {168, 242, 255};
+    int[] lowerBlue = {100, 150, 20};
+    int[] upperBlue = {140, 255, 255};
     @Override
     public void runOpMode() throws InterruptedException
     {

@@ -11,9 +11,7 @@ public class junctionTopDetect extends ConeDetection{
     @Override
     public void runOpMode() throws InterruptedException
     {
-        ConeDetectionPipeline coneDetectionPipeline = new ConeDetectionPipeline();
-        coneDetectionPipeline.setRanges(lowerYellow,upperYellow);
-        detectGrab();
+        detectGrab(lowerYellow, upperYellow);
         initialize();
         telemetry.addLine("waiting for start");
         telemetry.update();
