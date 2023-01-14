@@ -194,6 +194,7 @@ public class Right extends LinearOpMode {
             craneinput(500);
             Left.setPower(.3);
             crane(-1, 650);
+            gyroTurning(0);
             moveandspin(.8,-1000,-1,1000);
             strafeRightwithcrane(1,680,-1,1900);
             move(.5,-360);
