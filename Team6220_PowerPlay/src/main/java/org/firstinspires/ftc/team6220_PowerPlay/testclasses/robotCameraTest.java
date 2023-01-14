@@ -8,10 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 public class robotCameraTest extends ConeDetection{
     int[] lowerBlue = {42, 128, 114};
     int[] upperBlue = {168, 242, 255};
+
     @Override
-    //♥sabida♥
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
         detectGrab(lowerBlue,upperBlue);
         initialize();
         telemetry.addLine("waiting for start");

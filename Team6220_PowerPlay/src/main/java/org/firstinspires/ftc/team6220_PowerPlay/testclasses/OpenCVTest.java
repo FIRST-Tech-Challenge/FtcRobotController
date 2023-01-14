@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 public class OpenCVTest extends ConeDetection {
     int[] lowerBlue = {100, 150, 20};
     int[] upperBlue = {140, 255, 255};
+
     @Override
     public void runOpMode() throws InterruptedException {
         detectGrab(lowerBlue, upperBlue);

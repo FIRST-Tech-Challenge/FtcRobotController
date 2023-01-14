@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
+@Disabled
 @Autonomous(name = "StackGrabbingAuto_Red", group = "Test")
 public class StackGrabbingAuto_Redside extends ConeDetection {
     int stackHeight = 4;

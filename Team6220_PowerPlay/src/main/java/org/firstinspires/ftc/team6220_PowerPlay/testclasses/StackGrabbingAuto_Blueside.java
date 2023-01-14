@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
+@Disabled
 @Autonomous(name = "StackGrabbingAuto_Blue", group = "Test")
-
 public class StackGrabbingAuto_Blueside extends ConeDetection {
 
     int stackHeight = 4;

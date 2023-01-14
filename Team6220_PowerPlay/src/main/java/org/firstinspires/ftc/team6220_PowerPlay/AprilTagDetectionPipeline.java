@@ -38,8 +38,6 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
 
     // units are meters
     private final double tagSize = 0.03429;
-    private final double tagSizeX = 0.03429;
-    private final double tagSizeY = 0.03429;
 
     private float decimation;
     private boolean needToSetDecimation;
@@ -78,9 +76,9 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
         }
 
         for (AprilTagDetection detection : detections) {
-            Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagSizeX, tagSizeY);
-            drawAxisMarker(input, tagSizeY / 2.0, 6, pose.rVector, pose.tVector, cameraMatrix);
-            draw3DCubeMarker(input, tagSizeX, tagSizeX, tagSizeY, 5, pose.rVector, pose.tVector, cameraMatrix);
+            Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagSize, tagSize);
+            drawAxisMarker(input, tagSize / 2.0, 6, pose.rVector, pose.tVector, cameraMatrix);
+            draw3DCubeMarker(input, tagSize, tagSize, tagSize, 5, pose.rVector, pose.tVector, cameraMatrix);
         }
 
         return input;
