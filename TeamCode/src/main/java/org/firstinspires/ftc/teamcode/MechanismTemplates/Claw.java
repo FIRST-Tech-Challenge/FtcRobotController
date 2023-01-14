@@ -45,7 +45,7 @@ public class Claw {
         wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
         clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
 
-        clawJoint.setPosition(CLOSE);
+        clawJoint.setPosition(OPEN);
         wristJoint.setPosition(WRIST_INTAKE_POSITION);
     }
 
