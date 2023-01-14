@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.Team.BasicRobots.BasicMecanum;
 
 public class Robot extends BasicMecanum {
-
     public void init(HardwareMap Map) {
         super.init(Map);
         //Add stuff here
