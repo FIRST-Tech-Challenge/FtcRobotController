@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
 
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -45,6 +47,8 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.update();
+            logger.log("/RobotLogs/GeneralRobot", "Vel"+robot.roadrun.getPoseVelocity().getX());
+            logger.log("/RobotLogs/GeneralRobot", "Vel"+robot.roadrun.getPoseVelocity().getY());
         }
     }
 }

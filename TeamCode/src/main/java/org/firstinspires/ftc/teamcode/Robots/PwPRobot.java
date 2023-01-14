@@ -8,9 +8,6 @@ import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
@@ -50,14 +47,19 @@ public class PwPRobot extends BasicRobot {
     private boolean regularDrive = true;
     private LEDStrip leds = null;
     private VoltageSensor voltageSensor = null;
+    boolean finished = false;
 
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
         voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
-        kV*=12/ voltageSensor.getVoltage();
-        kA *= 12/ voltageSensor.getVoltage();
-        kStatic *= 12/voltageSensor.getVoltage();
+//        kV*=13/ voltageSensor.getVoltage();
+//        kA *= 13/ voltageSensor.getVoltage();
+//        kStatic *= 13/voltageSensor.getVoltage();
+//        MAX_ANG_ACCEL /= 13/ voltageSensor.getVoltage();
+//        MAX_ANG_VEL /= 13/ voltageSensor.getVoltage();
+//        MAX_VEL/=13/ voltageSensor.getVoltage();
+//        MAX_ACCEL/= 13/ voltageSensor.getVoltage();
         roadrun = new SampleMecanumDrive(opMode.hardwareMap);
         cv = new CVMaster();
         gp = new RFGamepad();
@@ -69,6 +71,7 @@ public class PwPRobot extends BasicRobot {
 //        clawExtension = new ClawExtension();
         lift = new Lift();
         leds = new LEDStrip();
+        finished=true;
     }
 //    com.qualcomm.ftcrobotcontroller I/art: Waiting for a blocking GC Alloc
 //2023-01-05 14:19:08.807 9944-10985/com.qualcomm.ftcrobotcontroller I/art: Alloc sticky concurrent mark sweep GC freed 340391(7MB) AllocSpace objects, 0(0B) LOS objects, 20% free, 43MB/54MB, paused 2.675ms total 197.819ms
@@ -78,6 +81,13 @@ public class PwPRobot extends BasicRobot {
     public void stop() {
         lift.setLiftPower(0.0);
         logger.log("/RobotLogs/GeneralRobot", "program stoped");
+    }
+    public void queuedStop() {
+        if(queuer.queue(false, finished)) {
+            lift.setLiftPower(0.0);
+            logger.log("/RobotLogs/GeneralRobot", "program stoped");
+            finished = true;
+        }
     }
 
     public void delay(double p_delay) {
