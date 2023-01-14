@@ -38,7 +38,7 @@ public class AutonomousDrive extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-    // initialize the camera
+        // initialize the camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam"), cameraMonitorViewId);
         webcam.setPipeline(new PipeLine());
@@ -55,7 +55,7 @@ public class AutonomousDrive extends LinearOpMode {
         });
 
         // initialize the driveController (we do that after initializing the camera in order to enable "camera stream" in the drive controller)
-        DriveController driveController = new DriveController(hardwareMap);
+        RobotController robotController = new RobotController(hardwareMap, telemetry);
 
         Pose2d startPose = new Pose2d(-61.4, -37.4, 0);
         Pose2d scoringPose = new Pose2d(-4.5, -36.5, Math.toRadians(-76));
@@ -74,10 +74,11 @@ public class AutonomousDrive extends LinearOpMode {
         TrajectorySequence scoringToParking3 = drive.trajectorySequenceBuilder(scoringPose).lineToLinearHeading(parking2).lineToLinearHeading(parking3).build();
 
 
-        Thread elevatorController = new Thread(driveController::elevatorController);
-        Thread Cycle = new Thread(driveController::cycle);
+        Thread elevatorController = robotController.elevatorController;
+        Thread Cycle = robotController.autoCycle;
 
         waitForStart();
+        if (isStopRequested()) return;
         resetRuntime();
 
 
@@ -106,7 +107,7 @@ public class AutonomousDrive extends LinearOpMode {
 
             while (opModeIsActive()) {
                 lastAngle = delayMaker;
-                delayMaker = driveController.getRobotAngle();
+                delayMaker = robotController.getRobotAngle();
             }
         }
     }
@@ -129,7 +130,15 @@ class PipeLine extends OpenCvPipeline {
     private final Mat ThresholdBlueImage = new Mat();
 
     // the part of the input image with the cone
-    private final Rect coneWindow = new Rect(100, 60, 80, 100);
+    private final Rect coneWindow = new Rect(132, 100, 70, 85);
+
+    // for the visual indicator
+    private final Rect coneWindowOutLine = new Rect(
+            0,
+            0,
+            coneWindow.width,
+            coneWindow.height
+    );
 
     // the color threshold
     private final Scalar thresholdMin = new Scalar(160, 160, 160);
@@ -156,9 +165,9 @@ class PipeLine extends OpenCvPipeline {
         AutonomousDrive.blue = Core.mean(ThresholdBlueImage).val[0];
 
         // visual que
-        if       (AutonomousDrive.red > 60) Imgproc.rectangle(small, new Point(0, 0), new Point(79.0, 99.0), new Scalar(255, 0  , 0  ));
-        else if (AutonomousDrive.blue > 60) Imgproc.rectangle(small, new Point(0, 0), new Point(79.0, 99.0), new Scalar(0  , 0  , 255));
-        else                                Imgproc.rectangle(small, new Point(0, 0), new Point(79.0, 99.0), new Scalar(255, 255, 255));
+        if      (AutonomousDrive.red  > 60) Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 0  , 0  ), 2);
+        else if (AutonomousDrive.blue > 60) Imgproc.rectangle(small, coneWindowOutLine, new Scalar(0  , 0  , 255), 2);
+        else                                Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 255, 255), 2);
 
 
         // show the small image

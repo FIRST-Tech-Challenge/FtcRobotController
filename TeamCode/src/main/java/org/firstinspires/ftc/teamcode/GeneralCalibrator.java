@@ -18,30 +18,38 @@ public class GeneralCalibrator extends LinearOpMode {
     public void runOpMode() {
         waitForStart();
 
+        String[] names = {
+                "grabber",
+                "puffer",
+                "placerRight",
+                "armRight",
+                "grabberRight"
+        };
+
         ServoSystem[] systems = {
-                new ServoSystem(0, 1, new Pair<>("grabber", false)),
-                new ServoSystem(0, 1, new Pair<>("puffer", false)),
-                new ServoSystem(0, 1, new Pair<>("placerRight", true), new Pair<String, Boolean>("placerLeft" , false)),
-                new ServoSystem(0, 1, new Pair<>("armRight", false), new Pair<String, Boolean>("armLeft"    , true)),
-                new ServoSystem(0, 1, new Pair<>("grabberRight", true), new Pair<String, Boolean>("grabberLeft", false))
+                new ServoSystem(0, 1, new Pair<>(names[0], false)),
+                new ServoSystem(0, 1, new Pair<>(names[1], false)),
+                new ServoSystem(0, 1, new Pair<>(names[2], true), new Pair<String, Boolean>("placerLeft" , false)),
+                new ServoSystem(0, 1, new Pair<>(names[3], false), new Pair<String, Boolean>("armLeft"    , true)),
+                new ServoSystem(0, 1, new Pair<>(names[4], false), new Pair<String, Boolean>("grabberLeft", true))
         };
 
         int i = 0;
 
 
-        while (opModeIsActive() && gamepad1.a){
-            if (firstPress(gamepad1.right_bumper)){
+        while (opModeIsActive() && !gamepad1.a){
+            if (B_Pressed(gamepad1.b)) {
                 i++;
-            } else if (firstPress(gamepad1.left_bumper)){
+            }
+            if (X_Pressed(gamepad1.x)){
                 i--;
             }
             i = (i + systems.length) % systems.length;
 
-            for (Servo servo : systems[i].servos) {
-                telemetry.addLine(servo.getDeviceName());
-            }
+            telemetry.addLine(names[i]);
             telemetry.update();
         }
+        sleep(500);
 
         while (opModeIsActive()){
             try {
@@ -54,9 +62,9 @@ public class GeneralCalibrator extends LinearOpMode {
     }
 
 
-        public static double position = 0;
-    public static double sensitivity = 1;
-    public static void calibrate(double wantedPosition, boolean controllerButton, Telemetry output, ArrayList<Servo> servos) throws InterruptedException{
+    public double position = 0;
+    public double sensitivity = 1;
+    public void calibrate(double wantedPosition, boolean controllerButton, Telemetry output, ArrayList<Servo> servos) throws InterruptedException{
         wantedPosition *= sensitivity;
         wantedPosition += position;
 
@@ -64,7 +72,7 @@ public class GeneralCalibrator extends LinearOpMode {
             servo.setPosition(wantedPosition);
         }
 
-        if (firstPress(controllerButton)) {
+        if (A_Pressed(controllerButton)) {
             position = wantedPosition;
             sensitivity /= 2;
             Thread.sleep(500);
@@ -74,15 +82,39 @@ public class GeneralCalibrator extends LinearOpMode {
         output.update();
     }
 
-    private static boolean wasPressedLastTime = true;
-    public static boolean firstPress(boolean button) {
+    private static boolean A_wasPressedLastTime = true;
+    public static boolean A_Pressed(boolean button) {
         if (button) {
-            if (wasPressedLastTime) {
-                wasPressedLastTime = false;
+            if (A_wasPressedLastTime) {
+                A_wasPressedLastTime = false;
                 return true;
             }
         } else {
-            wasPressedLastTime = true;
+            A_wasPressedLastTime = true;
+        }
+        return false;
+    }
+    private static boolean B_wasPressedLastTime = true;
+    public static boolean B_Pressed(boolean button) {
+        if (button) {
+            if (B_wasPressedLastTime) {
+                B_wasPressedLastTime = false;
+                return true;
+            }
+        } else {
+            B_wasPressedLastTime = true;
+        }
+        return false;
+    }
+    private static boolean X_wasPressedLastTime = true;
+    public static boolean X_Pressed(boolean button) {
+        if (button) {
+            if (X_wasPressedLastTime) {
+                X_wasPressedLastTime = false;
+                return true;
+            }
+        } else {
+            X_wasPressedLastTime = true;
         }
         return false;
     }
@@ -95,6 +127,8 @@ public class GeneralCalibrator extends LinearOpMode {
         public ArrayList<Servo> servos;
 
         public ServoSystem(double minPosition, double maxPosition, Pair<String, Boolean>... namesAndToFlip){
+            servos = new ArrayList<>();
+
             for(Pair<String, Boolean> nameAndToFlip : namesAndToFlip){
 
                 servos.add(hardwareMap.servo.get(nameAndToFlip.fst));
