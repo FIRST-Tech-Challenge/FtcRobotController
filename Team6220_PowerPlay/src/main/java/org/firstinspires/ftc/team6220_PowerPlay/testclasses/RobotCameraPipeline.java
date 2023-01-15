@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConeDetectionPipeline extends OpenCvPipeline {
+public class RobotCameraPipeline extends OpenCvPipeline {
     //Baller fields
     public double Xpos = 0.0;
     public double Ypos = 0.0;

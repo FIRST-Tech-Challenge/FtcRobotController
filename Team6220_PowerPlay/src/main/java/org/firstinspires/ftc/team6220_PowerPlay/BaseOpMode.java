@@ -8,14 +8,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.team6220_PowerPlay.testclasses.ConeAndJunctionDetectionPipeline;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.firstinspires.ftc.team6220_PowerPlay.testclasses.ConeDetectionPipeline;
+import org.firstinspires.ftc.team6220_PowerPlay.testclasses.GrabberCameraPipeline;
+import org.firstinspires.ftc.team6220_PowerPlay.testclasses.RobotCameraPipeline;
 
 import java.util.List;
 
@@ -189,17 +186,17 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // takes a detection pipeline and temporarily takes control of the robot movement
     // until the robot has centered by reading the pipeline fields
-    public void centerJunctionTop(ConeDetectionPipeline pipeline) {
+    public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
         do {
-            xOffset = pipeline.Xpos - Constants.CAMERA_CENTER_X;
-            yOffset = Constants.CAMERA_CENTER_Y - pipeline.Ypos;
+            xOffset = pipeline.junctionX - Constants.CAMERA_CENTER_X;
+            yOffset = Constants.CAMERA_CENTER_Y - pipeline.junctionY;
 
             // convert the offsets to motor powers to drive with
             driveWithIMU(offsetToMotorPower(xOffset), offsetToMotorPower(yOffset), 0);
 
             // while either of the offsets are still too large
-        } while (Math.abs(xOffset) > Constants.AUTOCENTER_ACCURACY || Math.abs(yOffset) > Constants.AUTOCENTER_ACCURACY);
+        } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
     }
 
     // scales the offset from pixels to a motor power, stopping at +1/-1,
