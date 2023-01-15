@@ -133,7 +133,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
             // apply a constant to turn the angle into a turn speed
-            tPower = -Constants.CORRECTION_CONSTANT * angleError;
+            tPower = -Constants.HEADING_CORRECTION_KP * angleError;
         }
 
         // if the rotation rate is low, then that means all the momentum has left the robot's turning and can therefore turn the correction back on
@@ -162,10 +162,10 @@ public abstract class BaseOpMode extends LinearOpMode {
      */
     public void driveSlides(int targetPosition) {
         int error = targetPosition - motorLeftSlides.getCurrentPosition();
-        double motorPower = error * 0.01;
+        double motorPower = error * Constants.SLIDE_MOTOR_KP;
 
         // slides not yet at target position
-        if (Math.abs(error) > 20) {
+        if (Math.abs(error) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS) {
             // slides going down - joystick
             if (error < 0 && error > -200) {
                 motorLeftSlides.setPower(-0.3);
@@ -181,8 +181,8 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
         // slides at target position
         } else {
-            motorLeftSlides.setPower(0.05);
-            motorRightSlides.setPower(0.05);
+            motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+            motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
         }
     }
 }

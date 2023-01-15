@@ -59,7 +59,6 @@ public abstract class BaseTeleOp extends BaseOpMode {
         driveWithIMU(xPower, yPower, tPower);
     }
 
-
     public void driveGrabberWithController() {
         if (gamepad2.x) {
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);

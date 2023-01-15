@@ -46,6 +46,7 @@ public class StackGrabbingAuto_Redside extends ConeDetection {
         turnToAngle(90);
         driveInches(0, 35);
         //Strafe until the robot is centered on the cone
+        detectGrab(lowerRed,upperRed);
         while (stackHeight >= 0) {
             while (Math.abs(coneDetectionPipeline.distance) > 50) {
                 motorFL.setPower(0.25 * Math.signum(coneDetectionPipeline.distance));

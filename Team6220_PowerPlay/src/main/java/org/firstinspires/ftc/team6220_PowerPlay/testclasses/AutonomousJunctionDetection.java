@@ -26,13 +26,11 @@ public class AutonomousJunctionDetection extends BaseAutonomous {
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode) {
-
-            }
+            public void onError(int errorCode) {}
         });
 
         initialize();

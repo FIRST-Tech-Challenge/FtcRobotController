@@ -53,9 +53,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             eBL = motorBL.getCurrentPosition();
             eBR = motorBR.getCurrentPosition();
 
-            motorBR.setVelocity(100, AngleUnit.RADIANS);
-
-            turningPower = (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle) * 0.02;
+            turningPower = (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle) * Constants.HEADING_CORRECTION_KP;
 
             motorFL.setPower(yPower + xPower + turningPower);
             motorFR.setPower(yPower - xPower - turningPower);
@@ -84,7 +82,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         double angleError = targetAngle - currentAngle + startAngle;
         double motorPower;
 
-        while (Math.abs(angleError) >= 1 && opModeIsActive()) {
+        while (Math.abs(angleError) >= Constants.ROBOT_HEADING_TOLERANCE_DEGREES && opModeIsActive()) {
             currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             angleError = targetAngle - currentAngle + startAngle;
 
@@ -96,11 +94,11 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
             // robot is turning counter-clockwise
             if (angleError > 0) {
-                motorPower = Math.min(angleError / -250.0, -0.05);
+                motorPower = Math.min(angleError / -250.0, -Constants.MINIMUM_TURNING_POWER);
 
             // robot is turning clockwise
             } else {
-                motorPower = Math.max(angleError / -250.0, 0.05);
+                motorPower = Math.max(angleError / -250.0, Constants.MINIMUM_TURNING_POWER);
             }
 
             motorFL.setPower(motorPower);
@@ -129,9 +127,9 @@ public abstract class BaseAutonomous extends BaseOpMode {
         double motorPower;
 
         // while slides aren't at target position
-        while (Math.abs(error) > 50 && opModeIsActive()) {
+        while (Math.abs(error) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS && opModeIsActive()) {
             error = targetPosition - motorLeftSlides.getCurrentPosition();
-            motorPower = error * 0.01;
+            motorPower = error * Constants.SLIDE_MOTOR_KP;
 
             // slides going down - full speed
             if (error < 0) {
@@ -144,8 +142,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
             }
         }
 
-        motorLeftSlides.setPower(0.05);
-        motorRightSlides.setPower(0.05);
+        motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+        motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
     }
 
     // detect signal on signal sleeve
@@ -170,13 +168,11 @@ public abstract class BaseAutonomous extends BaseOpMode {
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                robotCamera.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
+                robotCamera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode) {
-
-            }
+            public void onError(int errorCode) {}
         });
 
         // replaces waitForStart()
