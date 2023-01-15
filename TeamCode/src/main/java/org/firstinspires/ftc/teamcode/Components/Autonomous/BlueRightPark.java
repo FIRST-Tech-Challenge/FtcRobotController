@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-@Disabled
+//@Disabled
 @Config
 @Autonomous(name = "BlueRightPark")
 
@@ -51,6 +51,7 @@ public class BlueRightPark extends LinearOpMode {
             telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
             telemetry.update();
             robot.updateLiftArmStates();
+            //robot.leds.rainbowforest();
 
         }
         resetRuntime();
@@ -63,10 +64,13 @@ public class BlueRightPark extends LinearOpMode {
             logger.loopcounter++;
             robot.followTrajectorySequenceAsync(parkTrajectory);
             if (dummyP == 1) {
+                //robot.leds.red();
                 robot.followTrajectoryAsync(park1trajectory);
             } else if (dummyP == 3) {
+                //robot.leds.green();
                 robot.followTrajectoryAsync(park3trajectory);
             } else {
+                //robot.leds.yellow();
 //            robot.followTrajectoryAsync(park2trajectory);
             }
             robot.setFirstLoop(false);

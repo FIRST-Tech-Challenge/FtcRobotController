@@ -19,10 +19,10 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous(name = "BlueRightAutoMidCycleTuned")
+@Autonomous(name = "RedRightAutoMidCycleTuned")
 
 
-public class BlueRightAutoMidCycleTuned extends LinearOpMode {
+public class RedRightAutoMidCycleTuned extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;
@@ -69,6 +69,7 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
                 .setReversed(true)
                 .splineToSplineHeading(new Pose2d(dropX+1.75, dropY-1.75 , dropA), dropET)
                 .build();
+        //SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_ACCEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
         TrajectorySequence pickupTrajectory2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY, dropA))
                 .setReversed(false)
                 .splineToSplineHeading(new Pose2d(-63.2, 10.5, toRadians(180)), toRadians(180))
