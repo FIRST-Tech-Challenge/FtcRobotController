@@ -5,8 +5,10 @@ public class Constants {
 
     public static final double HEADING_CORRECTION_KP = 0.03;
 
-    public static final double DRIVE_CURVE_FACTOR = 0.3;
+    public static final double DRIVE_CURVE_FACTOR = 0.4;
     public static final double MINIMUM_TURNING_POWER = 0.05;
+    public static final double MAXIMUM_TURNING_POWER = 0.3;
+    public static final double MAXIMUM_DRIVE_SPEED = 0.6;
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;
 
@@ -17,11 +19,11 @@ public class Constants {
     public static final int SLIDE_HIGH = 3800;
     public static final int SLIDE_MEDIUM = 2750;
     public static final int SLIDE_LOW = 1650;
-    public static final int SLIDE_STOW = 600;
-    public static final int SLIDE_STACK_FOUR = 480;
-    public static final int SLIDE_STACK_THREE = 360;
-    public static final int SLIDE_STACK_TWO = 240;
-    public static final int SLIDE_STACK_ONE = 120;
+    public static final int SLIDE_STOW = 800;
+    public static final int SLIDE_STACK_FOUR = 600;
+    public static final int SLIDE_STACK_THREE = 450;
+    public static final int SLIDE_STACK_TWO = 300;
+    public static final int SLIDE_STACK_ONE = 180;
     public static final int SLIDE_BOTTOM = 0;
 
     public static final double GRABBER_INITIALIZE_POSITION = 1.0;

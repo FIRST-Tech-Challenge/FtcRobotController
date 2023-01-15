@@ -133,7 +133,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
             // apply a constant to turn the angle into a turn speed
-            tPower = -Constants.HEADING_CORRECTION_KP * angleError;
+            tPower = Math.min(-Constants.HEADING_CORRECTION_KP * angleError, Constants.MAXIMUM_TURNING_POWER);
         }
 
         // if the rotation rate is low, then that means all the momentum has left the robot's turning and can therefore turn the correction back on
