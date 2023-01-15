@@ -197,11 +197,18 @@ public class Crane implements Subsystem {
         shoulderPID.enableIntegralZeroCrossingReset(false);
 
         articulate(Articulation.start);
+
+        goTargetInd = 0;
+        homeInd = 0;
+        coneCycleStage = 0;
+        coneStackStage = 0;
+        pickupConeStage = 0;
+        dropConeStage = 0;
     }
 
     public void resetCrane(Constants.Position start){
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
-            fieldPositionTarget = new Vector3(start.getPose().getX()+ten-1,start.getPose().getY(),8);
+            fieldPositionTarget = new Vector3(start.getPose().getX()+ten-1,start.getPose().getY(),9);
             extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
@@ -631,7 +638,7 @@ public class Crane implements Subsystem {
 
     public boolean goToFieldCoordinate(double x, double y, double z){
         fieldPositionTarget = new Vector3(x,y,z);
-        calculateFieldTargeting(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
+        calculateFieldTargeting(x,y,z);
 
         switch(goTargetInd){
             case 0:
@@ -652,12 +659,15 @@ public class Crane implements Subsystem {
                     goToTimer = futureTime(0.4);
                     goTargetInd++;
                 }
+                break;
             case 3:
                 if(System.nanoTime() > goToTimer){
-                    goTargetInd = 0;
-                    return true;
+                    goTargetInd++;
                 }
                 break;
+            case 4:
+                goTargetInd = 0;
+                return true;
         }
 
         return false;
@@ -705,7 +715,7 @@ public class Crane implements Subsystem {
                 break;
             case 1:
                 if(System.nanoTime() >= pickupTimer) {
-                    setShoulderTargetAngle(getShoulderAngle() + 8);
+                    setShoulderTargetAngle(getShoulderAngle() + 15);
                     pickupConeStage++;
                 }
                 break;
@@ -1120,6 +1130,11 @@ public class Crane implements Subsystem {
         telemetryMap.put("Drop Stage", dropConeStage);
         telemetryMap.put("ConeStackStage", coneStackStage);
         telemetryMap.put("ConeCycle Stage", coneCycleStage);
+        telemetryMap.put("GoTo Stage", goTargetInd);
+        telemetryMap.put("Home Stage", homeInd);
+        telemetryMap.put("Shoulder On Target", shoulderOnTarget());
+        telemetryMap.put("Extend On Target", extensionOnTarget());
+        telemetryMap.put("Turret On Target", turretOnTarget());
         telemetryMap.put("Shoulder Error", shoulderPID.getError());
         telemetryMap.put("Extend Error", extendPID.getError());
 

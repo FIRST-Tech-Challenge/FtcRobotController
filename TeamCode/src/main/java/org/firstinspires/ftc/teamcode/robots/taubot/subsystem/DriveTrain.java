@@ -398,10 +398,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public void resetGridDrive(Position start){
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
-            setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
             for (DcMotorEx motor : motors) {
                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
+            setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
         }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
             setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){

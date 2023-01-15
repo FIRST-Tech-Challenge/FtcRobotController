@@ -98,6 +98,7 @@ public class Robot implements Subsystem {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
         telemetryMap.put("AutonState", autonIndex);
+        telemetryMap.put("Auton Time", totalAutonTime/1e9);
         telemetryMap.put("auto-dump enabled", autoDumpEnabled);
 
         for (int i = 0; i < subsystems.length; i++) {
@@ -193,15 +194,19 @@ public class Robot implements Subsystem {
     boolean turnUntilDegreesDone = false;
     long autonTime;
     boolean initAuton = false;
+    boolean autonRunWithinTime = true;
     long totalAutonTime;
 
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
         if(!initAuton){
             totalAutonTime = futureTime(27);
+            autonRunWithinTime = true;
             initAuton = true;
         }
-        if(System.nanoTime() > totalAutonTime){
-            autonTarget = 6;
+        if(System.nanoTime() >= totalAutonTime && autonRunWithinTime){
+            crane.articulate(Crane.Articulation.manual);
+            autonRunWithinTime = false;
+            autonTarget = 5;
         }
 
         switch (autonIndex){
@@ -210,22 +215,20 @@ public class Robot implements Subsystem {
                 if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20)){
                     autonIndex++;
                 }
-                crane.articulate(Crane.Articulation.noIK);
                 break;
             case 1:
                 crane.driverNotDriving();
+                crane.articulate(Crane.Articulation.noIK);
                 if(startingPosition.equals( Constants.Position.START_LEFT)) {
-                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,Field.INCHES_PER_GRID,36);
-                    if (System.nanoTime() >= autonTime && crane.extensionOnTarget() && crane.shoulderOnTarget() && crane.turretOnTarget()) {
+                    if (System.nanoTime() >= autonTime && crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,Field.INCHES_PER_GRID,36)) {
                         crane.setGripper(false);
-                        autonTime = futureTime(0.3);
+                        autonTime = futureTime(0.5);
                         autonIndex++;
                     }
                 }else{
-                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,-Field.INCHES_PER_GRID-1,36);
-                    if (System.nanoTime() >= autonTime && crane.extensionOnTarget() && crane.shoulderOnTarget() && crane.turretOnTarget()) {
+                    if (System.nanoTime() >= autonTime && crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,-Field.INCHES_PER_GRID-1,36)) {
                         crane.setGripper(false);
-                        autonTime = futureTime(0.3);
+                        autonTime = futureTime(0.5);
                         autonIndex++;
                     }
                 }
@@ -252,6 +255,7 @@ public class Robot implements Subsystem {
                 break;
             case 4:
                 if(System.nanoTime() >= autonTime) {
+                    /*
                     if(startingPosition.equals( Constants.Position.START_LEFT)){
                         crane.articulate(Crane.Articulation.coneStackLeft);
                     }else{
@@ -260,10 +264,17 @@ public class Robot implements Subsystem {
                     if(crane.getArticulation() == Crane.Articulation.manual){
                         autonIndex++;
                     }
+                     */
+                    autonIndex++;
                 }
                 break;
             case 5:
-                if(autonTarget  ==  1 || Objects.isNull(autonTarget)){
+                if(crane.goHome()){
+                    autonIndex++;
+                }
+                break;
+            case 6:
+                if(autonTarget == 1 || Objects.isNull(autonTarget)){
                     autonIndex++;
                 }
                 if(startingPosition.equals( Constants.Position.START_LEFT)){
@@ -280,10 +291,19 @@ public class Robot implements Subsystem {
                     }
                 }
                 break;
-            case 6:
+            case 7:
+                autonTime = futureTime(0.5);
+                autonIndex++;
+                break;
+            case 8:
+                if(System.nanoTime() >= autonTime) {
+                    autonIndex++;
+                }
+                break;
+            case 9:
                 crane.nudgeLeft();
-                crane.articulate(Crane.Articulation.home);
-                autonIndex=0;
+                crane.setCraneTarget(turret.getTurretPosition().getX()-2,turret.getTurretPosition().getY(),26);
+                autonIndex = 0;
                 return true;
             default:
                 return false;
