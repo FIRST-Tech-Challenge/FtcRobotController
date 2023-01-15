@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 
 @Config
 object ArmConstants {
-    @JvmField var ticksPerUnit = 353.0/90.0
+    @JvmField var ticksPerUnit = 496.0/90.0
     @JvmField var homePos = -71.0
     @JvmField var autoHomePos = 227.0
     @JvmField var intervalPos = -50.0
@@ -22,5 +22,5 @@ object ArmConstants {
     @JvmField var maxVel = 400.0
     @JvmField var maxAccel = 700.0
     @JvmField var allowedPositionError = 5.0
-    @JvmField var disabledPosition = -71.0
+    @JvmField var disabledPosition = -62.0
 }

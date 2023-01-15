@@ -17,11 +17,11 @@ class HomeSequence(
     firstArmAngle : Double,
     secondArmAngle : Double
 ) : ParallelGroup(
-    LiftCmds.LiftHomeCmd(lift),
-    ClawCmds.ClawCloseCmd(claw),
     SequentialGroup(
-    InstantCmd({arm.setPos(firstArmAngle)}, arm),
-    WaitCmd(1.0),
+        InstantCmd({arm.setPos(firstArmAngle)}, arm),
+        WaitCmd(1.0),
         ClawCmds.ClawOpenCmd(claw),
-    InstantCmd({arm.setPos(secondArmAngle)}, arm))
+        InstantCmd({arm.setPos(secondArmAngle)}, arm)),
+    LiftCmds.LiftHomeCmd(lift),
+    ClawCmds.ClawCloseCmd(claw)
 )
