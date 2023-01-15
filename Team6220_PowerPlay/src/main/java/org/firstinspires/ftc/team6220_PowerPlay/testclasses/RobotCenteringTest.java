@@ -26,7 +26,7 @@ public class RobotCenteringTest extends ConeDetection
                 driveWithIMU(0.4*Math.signum(robotCameraPipeline.distance),0,0);
             }
             driveWithIMU(0, 0, 0);
-            if(coneDetectionPipeline.coneSize < 54000){
+            if(robotCameraPipeline.coneSize < 54000){
                 driveWithIMU(0,0.4,0);
             }
             driveSlidesAutonomous(Constants.SLIDE_LOW);
