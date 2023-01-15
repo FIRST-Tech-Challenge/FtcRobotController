@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name = "CVtest", group = "Test")
 public class OpenCVTest extends ConeDetection {
-    int[] lowerBlue = {100, 150, 20};
-    int[] upperBlue = {140, 255, 255};
+    int[] lowerRed = {100, 150, 20};
+    int[] upperRed = {140, 255, 255};
 
     @Override
     public void runOpMode() throws InterruptedException {
-        detectGrab(lowerBlue, upperBlue);
+        detectGrab(lowerRed, upperRed);
         waitForStart();
 
         while (opModeIsActive()) {

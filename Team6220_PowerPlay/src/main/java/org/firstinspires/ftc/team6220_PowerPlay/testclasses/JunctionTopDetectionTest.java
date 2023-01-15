@@ -37,7 +37,8 @@ public class JunctionTopDetectionTest extends BaseAutonomous {
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("frames run", pipeline.framesRun);
+            telemetry.addData("junctionX", pipeline.junctionX);
+            telemetry.addData("junctionY", pipeline.junctionY);
             telemetry.update();
         }
     }
