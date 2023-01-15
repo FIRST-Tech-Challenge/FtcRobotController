@@ -3,7 +3,6 @@ package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@Disabled
 @Autonomous(name = "CVtest", group = "Test")
 public class OpenCVTest extends ConeDetection {
     int[] lowerBlue = {100, 150, 20};
