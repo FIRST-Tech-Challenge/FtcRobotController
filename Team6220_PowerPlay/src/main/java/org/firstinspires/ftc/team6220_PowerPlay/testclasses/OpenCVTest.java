@@ -16,6 +16,11 @@ public class OpenCVTest extends ConeDetection {
 
         while (opModeIsActive()) {
             telemetry.addData("distance to center", coneDetectionPipeline.distance);
+            telemetry.addData("cone bounding box area", coneDetectionPipeline.coneSize);
+            telemetry.addData("cone contour area", coneDetectionPipeline.coneSizeContourArea);
+            telemetry.addData("bounding box and contour area comparison", coneDetectionPipeline.coneSize - coneDetectionPipeline.coneSizeContourArea);
+            telemetry.addData("bounding box long axis", coneDetectionPipeline.longAxis);
+            telemetry.addData("bounding box short axis", coneDetectionPipeline.shortAxis);
             telemetry.update();
         }
     }
