@@ -38,4 +38,8 @@ public class Constants {
 
     public static final int CAMERA_CENTER_X = 400;
     public static final int CAMERA_CENTER_Y = 300;
+
+    // is used with absolute value of offset, so it's technically this x2
+    public static final double AUTOCENTER_ACCURACY = 20.0;
+
 }

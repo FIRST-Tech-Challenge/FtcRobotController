@@ -45,6 +45,8 @@ public class AutonomousJunctionDetection extends BaseAutonomous {
             telemetry.addData("🏃‍💨", pipeline.isRunning);
             telemetry.addData("counter", pipeline.counter);
             telemetry.addData("🟨", pipeline.rectDetected);
+            telemetry.addData("contour area", pipeline.biggestContourArea);
+            telemetry.addData("bounding box area", pipeline.biggestContourBoundingBoxArea);
             telemetry.update();
         }
     }

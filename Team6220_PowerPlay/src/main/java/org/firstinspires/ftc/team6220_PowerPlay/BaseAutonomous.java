@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.team6220_PowerPlay.testclasses.ConeDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -225,4 +226,22 @@ public abstract class BaseAutonomous extends BaseOpMode {
             return tagOfInterest.id;
         }
     }
+
+    // max width 800
+    /*
+    // moves towards a stack while centering on it, until the stack fills the entire camera view
+    // then move forward 3 inches to position the grabber over the stack
+    public void centerConeStack(ConeDetectionPipeline pipeline) {
+        double xOffset, yOffset;
+        do {
+            xOffset = pipeline.Xpos - Constants.CAMERA_CENTER_X;
+            yOffset = Constants.CAMERA_CENTER_Y - pipeline.Ypos;
+
+            // convert the offsets to motor powers to drive with
+            //driveWithIMU(offsetToMotorPower(xOffset), offsetToMotorPower(yOffset), 0);
+
+            // while either not centered in front of stack, or not close enough that the stack fills the view
+        } while (Math.abs(xOffset) > Constants.AUTOCENTER_ACCURACY || );
+    }
+    */
 }
