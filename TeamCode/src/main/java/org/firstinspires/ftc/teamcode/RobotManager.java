@@ -148,9 +148,6 @@ public class RobotManager {
             if (gamepads.getAnalogValues().gamepad2RightStickX < -0.5) {
                 navigation.wheel_speeds[3] -= 0.01;
             }
-
-            // TODO: Add button for compliant wheels (on and off switch)
-            
         }
 
         mechanismDriving.adjustDesiredSlideHeight(gamepads.getAnalogValues(), robot);
@@ -168,7 +165,6 @@ public class RobotManager {
      */
     public void driveMechanisms() {
        mechanismDriving.updateHorseshoe(robot);
-       mechanismDriving.updateCompliantWheels(robot);
        mechanismDriving.updateSlides(robot);
        mechanismDriving.updateClaw(robot);
     }

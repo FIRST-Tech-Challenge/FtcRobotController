@@ -26,12 +26,10 @@ public class Robot {
     public enum ParkingPosition {INSIDE, MIDDLE, OUTSIDE}
     public enum HorseshoeState {FRONT, REAR}
     public enum ClawState {OPEN, CLOSED}
-    public enum CompliantWheelsState {OFF, ON}
 
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
     public HorseshoeState desiredHorseshoeState;
     public ClawState desiredClawState;
-    public CompliantWheelsState desiredCompliantWheelsState;
 
     enum BarcodeScanState {CHECK_SCAN, SCAN}
 
@@ -60,11 +58,8 @@ public class Robot {
     HashMap<RobotConfig.DriveMotors, DcMotor> driveMotors = new HashMap<RobotConfig.DriveMotors, DcMotor>();
 
     // Hardware
-    public DcMotor compliantWheelsMotorLeft, compliantWheelsMotorRight, slidesMotor;
-    public Servo horseshoe;
-    public Servo horseshoeIndicator;
-    public Servo claw;
-    public Servo clawIndicator;
+    public DcMotor slidesMotor;
+    public Servo horseshoe, horseshoeIndicator, claw, clawIndicator;
 
     // Other
     public Telemetry telemetry;
@@ -84,8 +79,6 @@ public class Robot {
         desiredHorseshoeState = HorseshoeState.FRONT;
         desiredClawState = ClawState.CLOSED;
 
-        compliantWheelsMotorLeft = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.COMPLIANT_WHEELS_MOTOR_LEFT));
-        compliantWheelsMotorRight = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.COMPLIANT_WHEELS_MOTOR_RIGHT));
         slidesMotor = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR));
         horseshoe = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE));
         horseshoeIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE_INDICATOR));
@@ -126,13 +119,11 @@ public class Robot {
  *  pertaining to the robot's state.
  */
 class RobotConfig {
-    enum Motors {COMPLIANT_WHEELS_MOTOR_LEFT, COMPLIANT_WHEELS_MOTOR_RIGHT, SLIDES_MOTOR}
+    enum Motors {SLIDES_MOTOR}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
     enum Servos {HORSESHOE, HORSESHOE_INDICATOR, CLAW, CLAW_INDICATOR}
 
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
-        put(Motors.COMPLIANT_WHEELS_MOTOR_LEFT, "cw_motor_left");
-        put(Motors.COMPLIANT_WHEELS_MOTOR_RIGHT, "cw_motor_right");
         put(Motors.SLIDES_MOTOR, "slides_motor");
     }};
 
