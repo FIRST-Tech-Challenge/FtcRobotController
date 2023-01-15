@@ -64,6 +64,7 @@ public class Robot {
     public Servo horseshoe;
     public Servo horseshoeIndicator;
     public Servo claw;
+    public Servo clawIndicator;
 
     // Other
     public Telemetry telemetry;
@@ -81,6 +82,7 @@ public class Robot {
         resetBarcodeScanMap();
 
         desiredHorseshoeState = HorseshoeState.FRONT;
+        desiredClawState = ClawState.CLOSED;
 
         compliantWheelsMotorLeft = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.COMPLIANT_WHEELS_MOTOR_LEFT));
         compliantWheelsMotorRight = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.COMPLIANT_WHEELS_MOTOR_RIGHT));
@@ -88,6 +90,7 @@ public class Robot {
         horseshoe = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE));
         horseshoeIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE_INDICATOR));
         claw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW));
+        clawIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_INDICATOR));
 
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
             driveMotors.put(motor, hardwareMap.get(DcMotor.class, RobotConfig.DriveMotorNames.get(motor)));
@@ -125,7 +128,7 @@ public class Robot {
 class RobotConfig {
     enum Motors {COMPLIANT_WHEELS_MOTOR_LEFT, COMPLIANT_WHEELS_MOTOR_RIGHT, SLIDES_MOTOR}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
-    enum Servos {HORSESHOE, HORSESHOE_INDICATOR, CLAW}
+    enum Servos {HORSESHOE, HORSESHOE_INDICATOR, CLAW, CLAW_INDICATOR}
 
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
         put(Motors.COMPLIANT_WHEELS_MOTOR_LEFT, "cw_motor_left");
@@ -151,5 +154,6 @@ class RobotConfig {
         put(Servos.HORSESHOE, "horseshoe");
         put(Servos.HORSESHOE_INDICATOR, "horseshoe_indicator");
         put(Servos.CLAW, "claw");
+        put(Servos.CLAW_INDICATOR, "claw_indicator");
     }};
 }

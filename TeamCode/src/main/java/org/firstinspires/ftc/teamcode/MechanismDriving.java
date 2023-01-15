@@ -50,10 +50,10 @@ public class MechanismDriving {
     public void updateClaw(Robot robot) {
         switch (robot.desiredClawState) {
             case CLOSED:
-                robot.claw.setPosition(CLAW_CLOSED_POS);//closed
+                robot.claw.setPosition(CLAW_CLOSED_POS); //closed
                 break;
             case OPEN:
-                robot.claw.setPosition(CLAW_OPEN_POS);//open
+                robot.claw.setPosition(CLAW_OPEN_POS); //open
                 break;
         }
     }

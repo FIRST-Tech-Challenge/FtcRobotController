@@ -109,6 +109,14 @@ public class RobotManager {
                 robot.desiredHorseshoeState = Robot.HorseshoeState.REAR; //Rear is back.
         }
 
+        // Claw
+        if (getButtonRelease(GamepadWrapper.DriverAction.OPEN_CLAW)) {
+            robot.desiredClawState = Robot.ClawState.OPEN;
+        }
+        if (getButtonRelease(GamepadWrapper.DriverAction.CLOSE_CLAW)) {
+            robot.desiredClawState = Robot.ClawState.CLOSED;
+        }
+
         // Adjust relative wheel speeds.
 
         if (robot.wheelSpeedAdjustment) {
@@ -162,6 +170,7 @@ public class RobotManager {
        mechanismDriving.updateHorseshoe(robot);
        mechanismDriving.updateCompliantWheels(robot);
        mechanismDriving.updateSlides(robot);
+       mechanismDriving.updateClaw(robot);
     }
 
     /** Changes drivetrain motor inputs based off the controller inputs.
@@ -323,6 +332,9 @@ public class RobotManager {
             lowered = mechanismDriving.updateSlides(robot);
         }
 
+        // Drop cone
+        openClaw();
+
         // Move back to starting position.
         navigation.path.add(navigation.pathIndex, startPos);
         travelToNextPOI();
@@ -339,15 +351,9 @@ public class RobotManager {
 
     /** Picks up a cone.
      */
+    // TODO: Implement picking up cones from levels higher than the ground level
     public void pickUpCone() {
-        // Suck the cone into the horseshoe
-        // robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.ON;
-        double startTime = elapsedTime.milliseconds();
-//        while (elapsedTime.milliseconds() - startTime < MechanismDriving.COMPLIANT_WHEELS_TIME)
-//            mechanismDriving.updateCompliantWheels(robot);
-        // Turns off compliant wheels
-//        robot.desiredCompliantWheelsState = Robot.CompliantWheelsState.OFF;
-//        mechanismDriving.updateCompliantWheels(robot);
+        closeClaw();
     }
 
     /** Returns whether the driver is attempting to move the robot linearly

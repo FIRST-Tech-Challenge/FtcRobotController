@@ -10,7 +10,7 @@ public class GamepadWrapper {
         TURN_ON_ULTRA_FINE_MOVEMENT, TURN_ON_FINE_MOVEMENT, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
                               MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT, MOVE_STRAIGHT_RIGHT,
                               COMPLIANT_WHEELS_TOGGLE, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE,
-                              HORSESHOE_TO_FRONT,HORSESHOE_TO_BACK
+                              HORSESHOE_TO_FRONT, HORSESHOE_TO_BACK, OPEN_CLAW, CLOSE_CLAW
     }
 
     Gamepad gamepad1, gamepad2;
@@ -72,6 +72,10 @@ public class GamepadWrapper {
                 return gamepad2.right_bumper;
             case HORSESHOE_TO_FRONT:
                 return gamepad2.left_bumper;
+            case OPEN_CLAW:
+                return gamepad2.y;
+            case CLOSE_CLAW:
+                return gamepad2.b;
         }
         assert false;
         return false;
