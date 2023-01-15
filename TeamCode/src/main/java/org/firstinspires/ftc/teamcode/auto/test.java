@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.config.Hardware2;
  * @author KarthikPeri
  */
 
-@Autonomous(name="armTest")
-public class armTest extends BaseOpMode {
+@Autonomous(name="Test")
+public class test extends BaseOpMode {
     Hardware2 robot = new Hardware2(true);
 
     /*
@@ -24,12 +24,9 @@ public class armTest extends BaseOpMode {
         robot.initTeleOpIMU(hardwareMap);
         waitForStart();
 
-        robot.getArm().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveUtils.encoderClaw(this, 0.6,1825,5);
-        //robot.getArm().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveUtils.encoderClaw(this,-0.5,-1825,10);
+       DriveUtils.encoderStrafe(this,0.4,-26,5);
 
-        }
+    }
     @Override
     public Hardware2 getRobot () {
         return robot;
