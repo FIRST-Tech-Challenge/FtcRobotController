@@ -2,9 +2,7 @@ package org.firstinspires.ftc.team417_PowerPlay;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team417_PowerPlay.drive.SampleMecanumDrive;
 
@@ -12,7 +10,7 @@ abstract public class BaseOpMode extends LinearOpMode {
 
     DcMotor motorArm;
 
-    Servo grabberServo;
+    Servo leftGrabberServo;
     Toggler grabberToggle;
 
     SampleMecanumDrive drive;
@@ -39,7 +37,7 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        grabberServo = hardwareMap.servo.get("grabberServo");
+        leftGrabberServo = hardwareMap.servo.get("leftGrabberServo");
         grabberToggle = new Toggler();
 
         drive.setMotorPowers(0, 0, 0, 0);

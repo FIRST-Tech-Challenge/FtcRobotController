@@ -25,7 +25,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         initializeHardware();
         time = new ElapsedTime();
         time.reset();
-        grabberServo.setPosition(GRABBER_OPEN);
+        leftGrabberServo.setPosition(GRABBER_OPEN);
     }
 
     public void driveUsingControllers() {
@@ -115,9 +115,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
         grabberClosed = grabberToggle.toggle(gamepad2.a);
 
         if (grabberClosed) {
-            grabberServo.setPosition(GRABBER_CLOSED);
+            leftGrabberServo.setPosition(GRABBER_CLOSED);
         } else {
-            grabberServo.setPosition(GRABBER_OPEN);
+            leftGrabberServo.setPosition(GRABBER_OPEN);
         }
     }
 
@@ -125,7 +125,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         telemetry.addData("Arm power", armPower);
         telemetry.addData("Arm target", armEncoderPosition);
         telemetry.addData("Arm current position", motorArm.getCurrentPosition());
-        telemetry.addData("Grabber position", grabberServo.getPosition());
+        telemetry.addData("Grabber position", leftGrabberServo.getPosition());
         telemetry.addData("Grabber closed", grabberClosed);
         telemetry.addData("Arm level", armLevel);
         telemetry.update();
