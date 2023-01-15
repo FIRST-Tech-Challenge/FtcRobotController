@@ -192,7 +192,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void liftToPosition(Lift.LiftConstants targetJunction) {
-        if (queuer.queue(true, lift.isDone() && abs(lift.getLiftPosition() - targetJunction.getValue()) < 20)) {
+        if (queuer.queue(true, lift.isDone() || abs(lift.getLiftPosition() - targetJunction.getValue()) < 20)) {
             lift.liftToPosition(targetJunction);
         }
     }
@@ -208,13 +208,13 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void liftToPosition(int tickTarget) {
-        if (queuer.queue(true, lift.isDone() && abs(lift.getLiftPosition() - tickTarget) < 20)) {
+        if (queuer.queue(true, lift.isDone() || abs(lift.getLiftPosition() - tickTarget) < 20)) {
             lift.liftToPosition(tickTarget);
         }
     }
 
     public void liftToPosition(int tickTarget, boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, lift.isDone() && abs(lift.getLiftPosition() - tickTarget) < 20)) {
+        if (queuer.queue(p_asynchronous, lift.isDone() || abs(lift.getLiftPosition() - tickTarget) < 20)) {
             lift.liftToPosition(tickTarget);
         }
     }
