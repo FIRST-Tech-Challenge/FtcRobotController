@@ -23,6 +23,8 @@ public class ColorDetectPipeline extends OpenCvPipeline {
     public Rect detectedRect = new Rect();
     public boolean rectDetected = false;
     public int counter = 0;
+    public double biggestContourArea = 0;
+    public double biggestContourBoundingBoxArea = 0;
 
     private Mat frame = new Mat();
     private Mat matte = new Mat();
@@ -35,6 +37,10 @@ public class ColorDetectPipeline extends OpenCvPipeline {
     public ColorDetectPipeline(int[] colorTarget, int[] colorTolerance) {
         ca = colorTarget;
         co = colorTolerance;
+    }
+
+    double RectArea(Rect r) {
+        return r.width*r.height;
     }
 
     Mat targetToleranceMatte(Mat img, int[] ca, int[] co) {
@@ -77,13 +83,11 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         // Get the contours of the image
         Imgproc.findContours(thresholdMatte, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // Find largest contour and then draw a rectangle around it for display
-        double maxArea;
-        int maxAreaContour;
         if (contours.size() > 0) {
-            maxArea = 0.0;
-            maxAreaContour = 0;
+            double maxArea = 0.0;
+            int maxAreaContour = 0;
 
+            // Find the biggest contour
             for (int i = 0; i < contours.size(); i++) {
                 if (Imgproc.contourArea(contours.get(i)) > maxArea) {
                     maxArea = Imgproc.contourArea(contours.get(i));
@@ -91,7 +95,14 @@ public class ColorDetectPipeline extends OpenCvPipeline {
                 }
             }
 
+            // Find the bounding box of the biggest contour
             detectedRect = Imgproc.boundingRect(contours.get(maxAreaContour));
+
+            // Calculate the area of both the biggest contour and the bounding box
+            biggestContourBoundingBoxArea = RectArea(detectedRect);
+            biggestContourArea = Imgproc.contourArea(contours.get(maxAreaContour));
+
+            // Draw the bounding box
             Imgproc.rectangle(input, detectedRect, new Scalar(40, 200, 0), 10);
 
             // Transform the detected rectangle's coordinates so that (0, 0) is at the center of the image,
@@ -103,7 +114,6 @@ public class ColorDetectPipeline extends OpenCvPipeline {
         rectDetected = contours.size() > 0;
         counter = contours.size();
 
-        //Imgproc.cvtColor(input, finalOutput, Imgproc.COLOR_HSV2BGR);
         contours = new ArrayList<>();
         hierarchy = new Mat();
         return input;
