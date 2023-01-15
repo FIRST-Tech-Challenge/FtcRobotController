@@ -92,7 +92,7 @@ public class ConeDetectionPipeline extends OpenCvPipeline {
             //Save coordinates of the bounding box to fields, if there is a bounding box
             if (m.get_m00() > 0) {
                 double cX = boundingRect.x + (boundingRect.width / 2);
-                distance = cX - Constants.ROBOT_CAMERA_CENTER_X;
+                distance = cX - Constants.CAMERA_CENTER_X;
                 Xpos = boundingRect.x + (boundingRect.width / 2);
                 Ypos = boundingRect.y + (boundingRect.height / 2);
                 if(boundingRect.height > boundingRect.width){
