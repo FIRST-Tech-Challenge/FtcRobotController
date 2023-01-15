@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_PowerPlay.testclasses.ConeAndJunctionDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.firstinspires.ftc.team6220_PowerPlay.testclasses.ConeDetectionPipeline;
 
 import java.util.List;
 
@@ -184,5 +185,26 @@ public abstract class BaseOpMode extends LinearOpMode {
             motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
             motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
         }
+    }
+
+    // takes a detection pipeline and temporarily takes control of the robot movement
+    // until the robot has centered by reading the pipeline fields
+    public void centerJunctionTop(ConeDetectionPipeline pipeline) {
+        double xOffset, yOffset;
+        do {
+            xOffset = pipeline.Xpos - Constants.CAMERA_CENTER_X;
+            yOffset = Constants.CAMERA_CENTER_Y - pipeline.Ypos;
+
+            // convert the offsets to motor powers to drive with
+            driveWithIMU(offsetToMotorPower(xOffset), offsetToMotorPower(yOffset), 0);
+
+            // while either of the offsets are still too large
+        } while (Math.abs(xOffset) > Constants.AUTOCENTER_ACCURACY || Math.abs(yOffset) > Constants.AUTOCENTER_ACCURACY);
+    }
+
+    // scales the offset from pixels to a motor power, stopping at +1/-1,
+    // and slopes in towards 0 power after a certain point when nearing 0 offset
+    private double offsetToMotorPower(double offsetPixels) {
+        return (-0.1 * offsetPixels) / (Math.abs(0.25 * offsetPixels) + 15.0);
     }
 }
