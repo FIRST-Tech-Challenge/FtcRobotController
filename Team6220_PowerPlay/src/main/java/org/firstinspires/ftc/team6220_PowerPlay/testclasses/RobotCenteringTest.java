@@ -19,7 +19,7 @@ public class RobotCenteringTest extends ConeDetection
         driveSlides(400);
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
         while(opModeIsActive()){
-            if(Math.abs(coneDetectionPipeline.distance) > 10){
+            if(Math.abs(coneDetectionPipeline.distance) > 30){
                 telemetry.addData("distance", coneDetectionPipeline.distance);
                 telemetry.update();
                 driveWithIMU(0.4*Math.signum(coneDetectionPipeline.distance),0,0);
