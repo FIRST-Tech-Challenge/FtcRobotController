@@ -82,6 +82,7 @@ public class Navigation {
     public Position travelToNextPOI(Robot robot) {
         while (true) {
             if (path.size() <= pathIndex) {
+                robot.telemetry.addData("Path size <= to path index, end of travel. pathIndex:", pathIndex);
                 return null;
             }
             Position target = path.get(pathIndex);
@@ -380,13 +381,13 @@ public class Navigation {
 
             setDriveMotorPowers(strafeAngle, power, 0.0, robot, false);
 
-            robot.telemetry.addData("X", startX);
-            robot.telemetry.addData("Y", startY);
-            robot.telemetry.addData("X", currentX);
-            robot.telemetry.addData("Y", currentY);
+            robot.telemetry.addData("Start X", startX);
+            robot.telemetry.addData("Start Y", startY);
+            robot.telemetry.addData("Current X", currentX);
+            robot.telemetry.addData("Current Y", currentY);
 
-            robot.telemetry.addData("tX", target.x);
-            robot.telemetry.addData("tY", target.y);
+            robot.telemetry.addData("Target X", target.x);
+            robot.telemetry.addData("Target Y", target.y);
             robot.telemetry.addData("Strafe angle", getAngleBetween(currentX,currentY, target.x,target.y));
             robot.telemetry.update();
 
@@ -440,7 +441,7 @@ public class Navigation {
                 copy.setY(-copy.getY());
                 copy.setRotation(-copy.getRotation());
             }
-            else if (startingSide == RobotManager.StartingSide.THEIR_COLOR) {
+            else if (startingSide == RobotManager.StartingSide.OUR_COLOR) {
                 copy.setY(-copy.getY());
                 copy.setRotation(-copy.getRotation());
             }
@@ -461,7 +462,7 @@ public class Navigation {
                 break;
         }
          */
-
+        // TODO: ADD CV CODE HERE
         //Parks in a signal parking spot to have a chance for 20 points
         path.add(AutonomousPaths.intermediateBottomLeft); //No transformation occurs on this position so it will be the same
         path.add(AutonomousPaths.signalLocation1);
@@ -1001,15 +1002,15 @@ class AutonomousPaths {
     //IMPORTANT NOTE: signal locations on the right side are not symmetrical with their counterparts on left side
     //TODO: intermediate positions will need to be created to safely move the robot from its last position to the signal location
     public static Position signalLocation1 = new Position(1.5 * TILE_SIZE, 1 * TILE_SIZE, 0, "signalLocation1");
-    public static Position signalLocation2 = new Position(1.5 * TILE_SIZE, 0, 0, "signalLocation2");
-    public static Position signalLocation3 = new Position(1.5 * TILE_SIZE, -1 * TILE_SIZE, 0, "signalLocation3");
+    public static Position signalLocation2 = new Position(0, 1.5 * TILE_SIZE,  0, "signalLocation2");
+    public static Position signalLocation3 = new Position(-1 * TILE_SIZE, 1.5 * TILE_SIZE, 0, "signalLocation3");
 
 
     //Intermediate positions (positions that you need to go to on the way to your destination)
     public static Position intermediateBottomLeft = new Position(0, 1 * TILE_SIZE, Math.PI / 2, "intermediateBottomLeft");
     public static Position intermediateCenterLeft = new Position(1 * TILE_SIZE, 1 * TILE_SIZE, -Math.PI / 2, "intermediateCenterLeft"); //Rotation is there so that signal cone can be picked up on next position in path
-    public static Position intermediateBottomRight = new Position(0, -1 * TILE_SIZE, Math.PI / 2, "intermediateBottomRight");
-    public static Position intermediateCenterRight = new Position(1 * TILE_SIZE, -1 * TILE_SIZE, Math.PI / 2, "intermediateCenterRight");
+    public static Position intermediateBottomRight = new Position(-1 * TILE_SIZE, 0, Math.PI / 2, "intermediateBottomRight");
+    public static Position intermediateCenterRight = new Position(-1 * TILE_SIZE, 1 * TILE_SIZE, Math.PI / 2, "intermediateCenterRight");
     public static Position intermediateBottomCenter = new Position(0, 0, Math.PI / 2, "intermediateBottomCenter");
 
 
