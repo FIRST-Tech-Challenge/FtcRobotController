@@ -123,7 +123,7 @@ public class Queuer {
                 if (done_condition) {
                     calculateCompleteCurrentEvent();
                     logger.log("/RobotLogs/GeneralRobot", "event" + currentlyQueueing + "Done" + "completeEvents" + completeCurrentEvent);
-                    if (currentlyQueueing > currentEvent) {
+                    if (currentlyQueueing > currentEvent && !queueElements.get(currentlyQueueing).isAsynchronous()) {
                         currentEvent = currentlyQueueing;
                         logger.log("/RobotLogs/GeneralRobot", "currentEvent" + currentEvent);
                     }

@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.Components.LEDStrip;
 import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
@@ -53,6 +54,9 @@ public class PwPRobot extends BasicRobot {
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
         voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
+        RFMotor.kP*= 13/ voltageSensor.getVoltage();
+        RFMotor.kA*= 13/ voltageSensor.getVoltage();
+
 //        kV*=13/ voltageSensor.getVoltage();
 //        kA *= 13/ voltageSensor.getVoltage();
 //        kStatic *= 13/voltageSensor.getVoltage();

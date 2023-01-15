@@ -15,7 +15,7 @@ public class MeepMeepTesting {
     public static double dropX = 32.2, dropY = 18.9 , dropA = toRadians(330), dropET = toRadians(150);
 
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
-    public static double pickupX2 = 64.75, pickupY2 = 11.8, pickupA2 = toRadians(0), pickupET2 = toRadians(180);
+    public static double pickupX2 = 64.75, pickupY2 = 11.75, pickupA2 = toRadians(0), pickupET2 = toRadians(180);
 
     public static void main(String[] args) {
 
@@ -31,13 +31,22 @@ public class MeepMeepTesting {
                                         .setReversed(true)
 //                                        .lineTo(new Vector2d(37.5,56))
 //                                        .splineToSplineHeading(new Pose2d(32, 30.5, toRadians(45)), toRadians(270))
+                                        .setReversed(true)
+//                .splineTo(new Vector2d(34,50),toRadians(270))
+//                .lineTo(new Vector2d(37.5,56))
+//                .splineToSplineHeading(new Pose2d(32, 30.5, toRadians(45)), toRadians(270))
                                         .lineTo(new Vector2d(37,55.5))
-                                        .splineToSplineHeading(new Pose2d(33, 30, toRadians(90)), toRadians(270))
-                                        .splineTo(new Vector2d(35.5, 13),toRadians(220))
+                                        .splineToSplineHeading(new Pose2d(36, 30, toRadians(90)), toRadians(270))
+//                                        .splineTo(new Vector2d(35.5, 13),toRadians(220))
                                         .splineToLinearHeading(new Pose2d(dropX,dropY,dropA),dropET)
+//                                        .lineTo(new Vector2d(37,55.5))
+//                                        .splineToSplineHeading(new Pose2d(33, 30, toRadians(90)), toRadians(270))
+//                                        .splineTo(new Vector2d(35.5, 13),toRadians(220))
+//                                        .splineToLinearHeading(new Pose2d(dropX,dropY,dropA),dropET)
                                         .setReversed(false)
 //                                        .splineToLinearHeading(new Pose2d(36,11.5, toRadians(0)),toRadians(240))
-                                        .splineTo(new Vector2d(pickupX2, pickupY2), 0)
+                                        .splineToSplineHeading(new Pose2d(pickupX2-10, pickupY2+2,toRadians(0)), 0)
+                                .splineToConstantHeading(new Vector2d(pickupX2, pickupY2), 0)
                                         .setReversed(true)
                                         .splineTo(new Vector2d(dropX,dropY), dropET)
 //                                        .setReversed(false)

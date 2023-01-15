@@ -44,6 +44,7 @@ public class QueueElement {
                 readyTime = op.getRuntime();
             }
             if (extraCondition) {
+                logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime);
                 return true;
             } else {
                 logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime);
