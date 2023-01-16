@@ -11,6 +11,7 @@ public class FSMTest extends BaseAutonomous {
         TRAJECT_1,
         TRAJECT_2,
         TRAJECT_3,
+        TRAJECT_4,
         IDLE
     }
 
@@ -72,14 +73,22 @@ public class FSMTest extends BaseAutonomous {
                         motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
                     }
                     if (!drive.isBusy()) {
+                        currentState = State.TRAJECT_4;
+                        motorArm.setPower(0);
+                        drive.followTrajectoryAsync(trajectory4);
+                    }
+                    break;
+                case TRAJECT_4:
+                    if (Math.abs(motorArm.getCurrentPosition() - LOW_JUNCT_ARM_POSITION) > ARM_ENCODER_TOLERANCE && opModeIsActive()) {
+                        motorArm.setPower((LOW_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
+                    }
+                    if(!drive.isBusy()){
                         currentState = State.IDLE;
                         motorArm.setPower(0);
                     }
-                    break;
                 case IDLE:
                     break;
             }
-
             drive.update();
         }
     }
