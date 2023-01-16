@@ -18,7 +18,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
     //Baller fields
     public double Xpos = 0.0;
     public double Ypos = 0.0;
-    public double xWidth = 0.0;
+    public double width = 0.0;
     public double longAxis = 0.0;
     public double shortAxis = 0.0;
     public double distance = 0;
@@ -96,7 +96,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
                 distance = cX - Constants.CAMERA_CENTER_X;
                 Xpos = boundingRect.x + (boundingRect.width / 2);
                 Ypos = boundingRect.y + (boundingRect.height / 2);
-                xWidth = boundingRect.width;
+                width = boundingRect.width;
                 if(boundingRect.height > boundingRect.width){
                     shortAxis = boundingRect.width;
                     longAxis = boundingRect.height;
