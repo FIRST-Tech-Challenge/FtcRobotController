@@ -18,7 +18,7 @@ class AutoRobot(startPose: Pose) {
         true
     )
 
-    val arm = Arm(hardware.armMotor)
+    val arm = Arm(hardware.armMotor, hardware.limitSwitch)
     val claw = Claw(hardware.clawServo)
     val lift = Lift(
         hardware.liftLeadMotor,

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.koawalib.commands.subsystems
 
 import com.asiankoala.koawalib.command.commands.InstantCmd
-import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
+import teamcode.v1.constants.ClawConstants
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 
 class ClawCmds {

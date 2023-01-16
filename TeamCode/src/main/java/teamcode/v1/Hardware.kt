@@ -7,12 +7,10 @@ import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.EncoderFactory
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.hardware.servo.KServo
-import com.asiankoala.koawalib.math.Pose
-import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
 import teamcode.v1.constants.ArmConstants
-import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
+import teamcode.v1.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
-import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
+import teamcode.v1.subsystems.KLimitSwitch
 
 class Hardware() {
     val fl = MotorFactory("fl")
@@ -74,6 +72,8 @@ class Hardware() {
 
     val clawServo = KServo("Claw")
         .startAt(ClawConstants.closePos)
+
+    val limitSwitch = KLimitSwitch("LimitSwitch")
 
     @Config
     companion object {

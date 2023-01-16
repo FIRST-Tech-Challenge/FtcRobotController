@@ -1,15 +1,12 @@
 package teamcode.mule
 
-import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.control.controller.PIDGains
 import com.asiankoala.koawalib.control.motor.FFGains
 import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.EncoderFactory
-import com.asiankoala.koawalib.hardware.motor.KEncoder
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.hardware.servo.KServo
-import com.asiankoala.koawalib.math.Pose
-import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
+import teamcode.v1.constants.ClawConstants
 import teamcode.mule.constants.MuleArmConstants
 
 class MuleHardware {

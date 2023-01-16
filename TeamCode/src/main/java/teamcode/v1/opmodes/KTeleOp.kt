@@ -31,7 +31,7 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
             driver.rightStick,
             0.9,
             0.9,
-            0.5,
+            0.75,
         )
     }
 
@@ -40,9 +40,9 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
         driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.highPos, LiftConstants.highPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
         driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos))
-        driver.x.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.groundPos, LiftConstants.groundPos))
+//        driver.x.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.groundPos, LiftConstants.groundPos))
         driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
-        driver.b.onPress(ClawCmds.ClawOpenCmd(robot.claw))
+        driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw))
         gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(2.0)}))
         gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(10.0)}))
     }
@@ -62,6 +62,6 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
         Logger.addTelemetryData("lift pos", robot.hardware.liftLeadMotor.pos)
         Logger.addTelemetryData("arm power", robot.arm.motor.power)
         Logger.addTelemetryData("lift power", robot.hardware.liftLeadMotor.power)
-
+        Logger.addTelemetryData("detect is true?", robot.arm.detect)
     }
 }

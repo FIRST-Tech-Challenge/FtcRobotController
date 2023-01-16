@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.koawalib.constants
+package teamcode.v1.constants
 
 import com.acmerobotics.dashboard.config.Config
 

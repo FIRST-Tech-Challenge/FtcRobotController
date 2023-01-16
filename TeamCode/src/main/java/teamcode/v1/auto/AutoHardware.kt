@@ -9,9 +9,10 @@ import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
 import teamcode.v1.constants.ArmConstants
-import org.firstinspires.ftc.teamcode.koawalib.constants.ClawConstants
+import teamcode.v1.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
+import teamcode.v1.subsystems.KLimitSwitch
 
 class AutoHardware(startPose: Pose) {
     val fl = MotorFactory("fl")
@@ -93,6 +94,8 @@ class AutoHardware(startPose: Pose) {
         OdoConstants.PERP_TRACKER,
         startPose
     )
+
+    val limitSwitch = KLimitSwitch("LimitSwitch")
 
     @Config
     companion object {
