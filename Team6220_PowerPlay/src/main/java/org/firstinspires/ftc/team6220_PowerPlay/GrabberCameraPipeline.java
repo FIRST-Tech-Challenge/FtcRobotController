@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
+package org.firstinspires.ftc.team6220_PowerPlay;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -13,24 +13,25 @@ import java.util.List;
 import org.opencv.core.Size;
 
 public class GrabberCameraPipeline extends OpenCvPipeline {
-    double[] black = {200, 200, 200};
-    double[] white = {235, 235, 235};
+    public double xPosition = 0.0;
+    public double yPosition = 0.0;
 
-    public int junctionX = 0;
-    public int junctionY = 0;
-
-    private Mat blackMask = new Mat();
+    private List<MatOfPoint> contours = new ArrayList<>();
+    private Mat hierarchy = new Mat();
+    public Mat hsv = new Mat();
+    public Mat blackMask = new Mat();
+    public Size blurSize = new Size(5,5);
 
     @Override
     public Mat processFrame(Mat mat) {
-        Size blurSize = new Size(5,5);
-        Mat hsv = new Mat();
         Imgproc.cvtColor(mat,hsv,Imgproc.COLOR_RGB2HSV);
-        List<MatOfPoint> contours = new ArrayList<>();
-        Imgproc.blur(hsv,hsv, blurSize);
+
+        Imgproc.blur(hsv, hsv, blurSize);
+
         Core.inRange(hsv, new Scalar(0, 0, 0), new Scalar(255, 255, 30), blackMask);
-        Mat hierarchy = new Mat();
-        Imgproc.findContours(blackMask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        Imgproc.findContours(blackMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
         if (contours.size() > 0) {
             double maxVal = 0.0;
             int maxValIdx = 0;
@@ -44,12 +45,16 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
                 }
             }
 
-            // draw bounding rectangle around the largest contour
             Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
+
             Imgproc.rectangle(mat, boundingRect, new Scalar(40, 200, 0), 10);
-            junctionX = boundingRect.x + (boundingRect.width / 2);
-            junctionY = boundingRect.y + (boundingRect.height / 2);
+
+            xPosition = boundingRect.x + (boundingRect.width * 0.5);
+            yPosition = boundingRect.y + (boundingRect.height * 0.5);
         }
+
+        contours = new ArrayList<>();
+        hierarchy = new Mat();
 
         return mat;
     }

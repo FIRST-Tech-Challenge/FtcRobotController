@@ -6,7 +6,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.team6220_PowerPlay.testclasses.RobotCameraPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -232,7 +231,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
     public void centerConeStack(RobotCameraPipeline pipeline) {
         double xOffset, width;
         do {
-            xOffset = pipeline.Xpos - Constants.CAMERA_CENTER_X;
+            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
             width = pipeline.width;
 
             // convert the width to motor power to drive forward with

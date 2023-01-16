@@ -1,28 +1,29 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.firstinspires.ftc.team6220_PowerPlay.GrabberCameraPipeline;
+import org.firstinspires.ftc.team6220_PowerPlay.RobotCameraPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Disabled
-@Autonomous(name = "JunctionTopDetectionTest", group = "Test")
-public class JunctionTopDetectionTest extends BaseAutonomous {
-    GrabberCameraPipeline pipeline = new GrabberCameraPipeline();
+//@Disabled
+@Autonomous(name = "AutonomousTest2", group = "Test")
+public class AutonomousTest2 extends BaseAutonomous {
+
+    public RobotCameraPipeline robotCameraPipeline = new RobotCameraPipeline();
     OpenCvCamera camera;
 
     @Override
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
-        camera.setPipeline(pipeline);
+        camera.setPipeline(robotCameraPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -36,8 +37,8 @@ public class JunctionTopDetectionTest extends BaseAutonomous {
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("junctionX", pipeline.xPosition);
-            telemetry.addData("junctionY", pipeline.yPosition);
+            telemetry.addData("xPosition", robotCameraPipeline.xPosition);
+            telemetry.addData("yPosition", robotCameraPipeline.yPosition);
             telemetry.update();
         }
     }

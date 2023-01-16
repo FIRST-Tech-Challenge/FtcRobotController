@@ -11,8 +11,6 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.team6220_PowerPlay.testclasses.GrabberCameraPipeline;
-import org.firstinspires.ftc.team6220_PowerPlay.testclasses.RobotCameraPipeline;
 
 import java.util.List;
 
@@ -189,8 +187,8 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
         do {
-            xOffset = pipeline.junctionX - Constants.CAMERA_CENTER_X;
-            yOffset = Constants.CAMERA_CENTER_Y - pipeline.junctionY;
+            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
+            yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
             // convert the offsets to motor powers to drive with
             driveWithIMU(offsetToMotorPower(xOffset), offsetToMotorPower(yOffset), 0);
