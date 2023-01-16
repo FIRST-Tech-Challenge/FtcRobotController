@@ -44,9 +44,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
             originalAngle = startAngle + 180;
         }
 
-        x = Math.min(Constants.DRIVE_CURVE_FACTOR * gamepad1.left_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.left_stick_x, 3), Constants.MAXIMUM_DRIVE_SPEED);
-        y = Math.min(Constants.DRIVE_CURVE_FACTOR * -gamepad1.left_stick_y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(-gamepad1.left_stick_y, 3), Constants.MAXIMUM_DRIVE_SPEED);
-        t = Math.min(Constants.DRIVE_CURVE_FACTOR * gamepad1.right_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.right_stick_x, 3), Constants.MAXIMUM_DRIVE_SPEED) * 0.75;
+        x = Math.min(Constants.DRIVE_CURVE_FACTOR * gamepad1.left_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.left_stick_x, 3), Constants.MAXIMUM_DRIVE_POWER);
+        y = Math.min(Constants.DRIVE_CURVE_FACTOR * -gamepad1.left_stick_y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(-gamepad1.left_stick_y, 3), Constants.MAXIMUM_DRIVE_POWER);
+        t = Math.min(Constants.DRIVE_CURVE_FACTOR * gamepad1.right_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.right_stick_x, 3), Constants.MAXIMUM_TURNING_POWER);
 
         xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
         yRotatedVector = x * Math.sin(negativeHeadingRadians) + y * Math.cos(negativeHeadingRadians);
