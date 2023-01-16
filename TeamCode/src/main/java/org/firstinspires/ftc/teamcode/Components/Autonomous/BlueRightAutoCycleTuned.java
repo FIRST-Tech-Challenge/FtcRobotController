@@ -25,7 +25,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
 
     public static double dummyP = 3;
 
-    public static double dropX = -30.4, dropY = 3.15, dropA = toRadians(140), dropET = toRadians(310);
+    public static double dropX = -30, dropY = 3, dropA = toRadians(140), dropET = toRadians(310);
 
     public static double pickupX1 = -45.5, pickupY1 = 11.75, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
     public static double pickupX2 = -62.9, pickupY2 = 11.75, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
@@ -49,12 +49,12 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
                 .build();
         TrajectorySequence pickupSecondPartTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-52, 11.75, toRadians(180)))
                 .splineToSplineHeading(new Pose2d(-62.8, 11.75,toRadians(180)), toRadians(180))
-                .addTemporalMarker(robot::done)
+//                .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29.8, 4.75, toRadians(140)))
 //                .splineToSplineHeading(new Pose2d(-45, 11.75, toRadians(180)), toRadians(178))
-                .splineToSplineHeading(new Pose2d(-52.4, 8,toRadians(180)), toRadians(180))
-                .splineToConstantHeading(new Vector2d(-62.6, 11.75), toRadians(180))
+                .splineToSplineHeading(new Pose2d(-52.4, 7,toRadians(180)), toRadians(184))
+                .splineToConstantHeading(new Vector2d(-63, 11.75), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence dropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-62, 12.0,toRadians(180))).setReversed(true)
@@ -63,8 +63,8 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence pickupTrajectory2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, toRadians(140)))
-                .splineToSplineHeading(new Pose2d(-52.4, 7.5,toRadians(180)), toRadians(181))
-                .splineToConstantHeading(new Vector2d(-62.6, 11.5), toRadians(180))
+                .splineToSplineHeading(new Pose2d(-52.4, 7,toRadians(180)), toRadians(184))
+                .splineToConstantHeading(new Vector2d(-63, 11.5), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence parkTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
@@ -84,7 +84,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(-60, 13, toRadians(180)), toRadians(180))
                 .build();
         resetRuntime();
-        robot.larsonScannerBlue();
+        robot.cp1shot();
         while(!isStarted()){
             telemetry.addData("pos",robot.cv.getPosition());
             telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
@@ -153,10 +153,11 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
 //                robot.liftToPosition((int) (LIFT_HIGH_JUNCTION.getValue()-100),false);
                 robot.openClaw(false);
             }
+            robot.delay(0.8);
             robot.lowerLiftArmToIntake(true);
-            robot.delay(0.5);
+            robot.delay(1.5);
             robot.wideClaw();
-            robot.delay(0.5);
+            robot.delay(1.5);
             robot.liftToPosition(0);
 
             if (dummyP == 1) {

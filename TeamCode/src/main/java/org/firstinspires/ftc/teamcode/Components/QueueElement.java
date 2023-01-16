@@ -42,12 +42,12 @@ public class QueueElement {
             // update when start for delay logic
             if (readyTime > op.getRuntime()) {
                 readyTime = op.getRuntime();
+                logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime);
             }
             if (extraCondition) {
-                logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime);
                 return true;
             } else {
-                logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime);
+//                logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime);
                 return false;
             }
         } else {

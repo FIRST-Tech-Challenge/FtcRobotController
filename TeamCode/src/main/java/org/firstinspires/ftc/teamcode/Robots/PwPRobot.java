@@ -127,7 +127,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
-        if (queuer.queue(false, !roadrun.isBusy())) {
+        if (queuer.queue(false, !roadrun.isBusy()&&roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec())<3)) {
             if (!roadrun.isBusy()) {
                 roadrun.followTrajectorySequenceAsync(trajectorySequence);
             }
@@ -338,8 +338,8 @@ public class PwPRobot extends BasicRobot {
         leds.rainbowrainbow();
     }
 
-    public void larsonScannerBlue() {
-        leds.cp1larsonscanner();
+    public void cp1shot() {
+        leds.cp1shot();
     }
 
     public void setStackLevelColor(int level) {

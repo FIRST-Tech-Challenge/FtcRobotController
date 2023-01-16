@@ -145,7 +145,7 @@ public class Claw {
     }
     public void wideClaw(){
         if(ARM_INTAKE.getStatus()&&!CLAW_WIDE.status){
-            claw.setPosition(CLAW_WIDE_POS);
+            claw.setPosition(CLAW_WIDE_POS+0.04);
             ClawStates.CLAW_WIDE.setStatus(true);
             clawPos = CLAW_WIDE_POS;
         }

@@ -45,7 +45,20 @@ public class Queuer {
      * same as regular queue, but will wait for extra_condition to be true before running
      */
     public void done(){
-        queueElements.get(currentlyQueueing).setDone(true);
+        int inde=908;
+        for(int i=currentEvent+1;i<queueElements.size();i++){
+            if(!queueElements.get(i).isAsynchronous()){
+                inde=i;
+                break;
+            }
+        }
+        if(inde!=908) {
+            queueElements.get(inde).setDone(true);
+            calculateCompleteCurrentEvent();
+//        logger.log("/RobotLogs/GeneralRobot", "event" + currentlyQueueing + "Done" + "completeEvents" + completeCurrentEvent);
+                currentEvent = inde;
+                logger.log("/RobotLogs/GeneralRobot", "currentEventDone" + currentEvent);
+        }
     }
     public boolean queue(boolean p_asynchronous, boolean done_condition, boolean extra_condition) {
         //create new queue element if it is first loop
