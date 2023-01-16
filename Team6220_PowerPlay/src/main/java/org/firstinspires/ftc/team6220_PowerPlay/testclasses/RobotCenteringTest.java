@@ -5,16 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
-@Disabled
 @Autonomous(name = "RobotCenteringTest", group = "Test")
 public class RobotCenteringTest extends ConeDetection
 {
-    int[] lowerRed = {100, 150, 20};
-    int[] upperRed = {140, 255, 255};
     @Override
     public void runOpMode() throws InterruptedException
     {
-        detectGrab(lowerRed,upperRed);
+        detectGrab(Constants.lowerRed,Constants.upperRed);
         initialize();
         waitForStart();
         driveSlidesAutonomous(400);
