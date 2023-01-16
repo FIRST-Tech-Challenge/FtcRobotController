@@ -6,23 +6,27 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.firstinspires.ftc.team6220_PowerPlay.GrabberCameraPipeline;
+import org.firstinspires.ftc.team6220_PowerPlay.RobotCameraPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 //@Disabled
 @Autonomous(name = "AutonomousTest", group = "Test")
-public class AutonomousTest extends BaseAutonomous {
+public class AutonomousTest extends ConeDetection {
 
-    public GrabberCameraPipeline grabberCameraPipeline = new GrabberCameraPipeline();
+    public RobotCameraPipeline robotCameraPipeline;
     OpenCvCamera camera;
 
     @Override
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
-        camera.setPipeline(grabberCameraPipeline);
+        robotCameraPipeline = new RobotCameraPipeline();
+        robotCameraPipeline.setRanges(Constants.lowerRed, Constants.upperRed);
+
+        camera.setPipeline(robotCameraPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -36,8 +40,8 @@ public class AutonomousTest extends BaseAutonomous {
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("xPosition", grabberCameraPipeline.xPosition);
-            telemetry.addData("yPosition", grabberCameraPipeline.yPosition);
+            telemetry.addData("xPosition", robotCameraPipeline.xPosition);
+            telemetry.addData("yPosition", robotCameraPipeline.yPosition);
             telemetry.update();
         }
     }
