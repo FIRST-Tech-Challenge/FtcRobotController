@@ -43,7 +43,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         Imgproc.cvtColor(input, HSV, Imgproc.COLOR_BGR2HSV);
 
         // blur the HSV frame based on the blur size
-        Imgproc.blur(HSV, HSV, blurSize);
+        Imgproc.GaussianBlur(HSV, HSV, blurSize,0);
 
         // mask the frame based on the ranges
         Core.inRange(HSV, intToScalar(lower), intToScalar(upper), HSV);
@@ -99,6 +99,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
             }
         }
 
+        contours.clear();
         return input;
     }
 }
