@@ -654,9 +654,12 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                 focusRect2 = new Rect(new Point(lowestX,0), new Point(highestX, inputOriginal.rows()));
 
+                input = input.submat(focusRect2);
+                inputMask = inputMask.submat(focusRect2);
+
                 percentColor = ((Core.countNonZero(inputMask))/focusRect2.area())*100;
 
-                Imgproc.rectangle(inputOriginal, focusRect2, blue, 2);
+                Imgproc.rectangle(inputOriginal, focusRect2, red, 2);
 
 //                if(percentColor < 0.1){
 //                    System.out.println("STOP! You've reached the top of the pole!!!");
@@ -699,8 +702,12 @@ public class PipePoleTracker extends OpenCvPipeline {
 //        inputOriginal.release(); <-- Causes app exit/crash
 
 
+        if(levelString.equals("three")){
+            return inputMask;
+        }else{
+            return inputOriginal;
 
-        return inputOriginal;
+        }
     }
 
 

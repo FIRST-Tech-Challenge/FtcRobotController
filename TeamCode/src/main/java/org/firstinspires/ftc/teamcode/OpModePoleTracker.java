@@ -221,14 +221,23 @@ public class OpModePoleTracker extends DriveMethods {
 //                     motorBR.setPower(alignPowerAdded);
 //                }
 
-                if (levelCounter == 3 && getPercentColor() < 20){
+                if (levelCounter == 3 && getPercentColor() < 10 && getPercentColor() > 0){
                     level3Aligned = true;
+                    telemetry.addLine("We're at the top of the pole!");
+                    telemetry.addLine("level3Aligned: " + level3Aligned);
+                    telemetry.addLine("Percent Color: " + getPercentColor());
+                    telemetry.update();
+                    sleep(1000);
+
 
                 }
 
                 if(levelCounter == 3 && level3Aligned == false){
                     motorSlide.setPower(0.5);
                     slidePosition = motorSlide.getCurrentPosition();
+                    telemetry.addLine("Measuring the pole height!");
+                    telemetry.addLine("Percent Color: " + getPercentColor());
+                    telemetry.update();
 
                     //Slide go up <-- Honestly just use a consistent power for ease
                 }
@@ -252,16 +261,16 @@ public class OpModePoleTracker extends DriveMethods {
 
                     clawClamp();
                     GoToHeight(targetHeight);
-                    sleep(250);
-//                    driveForDistance(0.1,Direction.FORWARD,0.2,imuHeading);
+                    sleep(300);
+                    driveForDistance(0.2,Direction.FORWARD,0.2,imuHeading);
 //                    sleep(250);
-                    GoToHeight(targetHeight - 30);
-                    sleep(100);
+                    GoToHeight(targetHeight - 60);
+                    sleep(350);
                     clawRelease();
-                    sleep(100);
+                    sleep(200);
                     GoToHeight(targetHeight);
-                    sleep(250);
-//                    driveForDistance(0.1, Direction.BACKWARD, 0.2, imuHeading);
+                    sleep(300);
+                    driveForDistance(0.2, Direction.BACKWARD, 0.2, imuHeading);
                     goToDown();
 
                     levelCounter = 1;
@@ -333,7 +342,7 @@ public class OpModePoleTracker extends DriveMethods {
             telemetry.addLine("centerX: " + getCenterX());
             telemetry.addLine("Power Applied: " + alignPowerAdded);
 //            telemetry.addLine("level1Aligned?: " + level1Aligned);
-//            telemetry.addLine("level2Aligned?: " + level2Aligned);
+            telemetry.addLine("level3Aligned?: " + level3Aligned);
             telemetry.addLine("Activated?: " + visionAutoActivated);
 //            telemetry.addLine("IMU Heading: " + imuHeading);
 //            telemetry.addLine("Slide Position: " + slidePosition);
