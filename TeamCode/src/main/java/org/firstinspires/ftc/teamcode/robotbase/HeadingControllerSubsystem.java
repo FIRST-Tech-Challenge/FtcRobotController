@@ -30,7 +30,7 @@ public class HeadingControllerSubsystem extends SubsystemBase {
 
     public HeadingControllerSubsystem(DoubleSupplier gyroValue,
                                       IntSupplier closestOrientationTarget) {
-        kP = 0.02;
+        kP = 0.06;
         controller = new PIDController(kP, kI, kD);
         this.gyroValue = gyroValue;
         this.closestOrientationTarget = closestOrientationTarget;

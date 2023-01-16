@@ -1,9 +1,6 @@
-package org.firstinspires.ftc.teamcode.powerplay;
+package org.firstinspires.ftc.teamcode.powerplayV2;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -12,14 +9,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robotbase.RobotEx;
 
-public class PowerPlayRobot extends RobotEx {
+public class PowerPlayRobotV2 extends RobotEx {
     private ClawSubsystem claw;
     private SliderSubsystem slider;
+    private FrontSliderSubsystem frontSlider;
     private ArmSubsystem arm;
     private ConeDetectorSubsystem cone_detector;
 
-    public PowerPlayRobot(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                          GamepadEx toolOp) {
+    public PowerPlayRobotV2(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
+                            GamepadEx toolOp) {
         super(hardwareMap, telemetry, driverOp, toolOp, false, true,
                 true, true, true, true,
                 true);
@@ -28,12 +26,12 @@ public class PowerPlayRobot extends RobotEx {
     @Override
     public void initMechanisms(HardwareMap hardwareMap) {
         ////////////////////////////////////////// Claw //////////////////////////////////////////
-//        claw = new ClawSubsystem(hardwareMap);
-//        toolOp.getGamepadButton(GamepadKeys.Button.A)
-//                .whenPressed(new ClawCommand(claw));
+        claw = new ClawSubsystem(hardwareMap);
+        toolOp.getGamepadButton(GamepadKeys.Button.A)
+                .whenPressed(new ClawCommand(claw));
 
         ////////////////////////////////////////// Slider //////////////////////////////////////////
-//        slider = new SliderSubsystem(hardwareMap);
+        slider = new SliderSubsystem(hardwareMap);
 //
 //        //Levels
 //        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
@@ -47,12 +45,21 @@ public class PowerPlayRobot extends RobotEx {
 //                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.PARK));
 //        toolOp.getGamepadButton(GamepadKeys.Button. LEFT_STICK_BUTTON)
 //                .whenPressed(new SliderCommand(slider, SliderSubsystem.Level.GRAB));
-//
-////        Manual Height Adjustment
-//        new Trigger(() -> toolOp.getLeftY() >= 0.8).whileActiveContinuous(
-//                new SliderManualCommand(slider, 1));
-//        new Trigger(() -> toolOp.getLeftY() <= -0.8).whileActiveContinuous(
-//                new SliderManualCommand(slider, -1));
+
+//        Manual Height Adjustment
+        new Trigger(() -> toolOp.getLeftY() >= 0.8).whileActiveContinuous(
+                new SliderManualCommand(slider, 1));
+        new Trigger(() -> toolOp.getLeftY() <= -0.8).whileActiveContinuous(
+                new SliderManualCommand(slider, -1));
+
+        /////////////////////////////////////// Front Slider ///////////////////////////////////////
+        frontSlider = new FrontSliderSubsystem(hardwareMap);
+
+        //Manual Length
+        new Trigger(() -> -toolOp.getLeftY() >= 0.8).whileActiveContinuous(
+                new InstantCommand(frontSlider::increasePosition, frontSlider));
+        new Trigger(() -> -toolOp.getLeftY() <= -0.8).whileActiveContinuous(
+                new InstantCommand(frontSlider::decreasePosition, frontSlider));
 
         /////////////////////////////////////////// Arm ////////////////////////////////////////////
 //        arm = new ArmSubsystem(hardwareMap);

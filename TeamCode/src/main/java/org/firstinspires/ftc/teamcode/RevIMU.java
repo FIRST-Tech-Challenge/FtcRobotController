@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.hardware.GyroEx;
-//import com.qualcomm.hardware.IMU;
 import com.arcrobotics.ftclib.hardware.HardwareDevice;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -12,6 +9,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -20,7 +18,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Disabled
 public class RevIMU implements HardwareDevice {
-
     private IMU revIMU;
 
     /***
@@ -137,6 +134,10 @@ public class RevIMU implements HardwareDevice {
         YawPitchRollAngles ypr_angles = revIMU.getRobotYawPitchRollAngles();
         return new double[]{ypr_angles.getYaw(AngleUnit.DEGREES),
                 ypr_angles.getPitch(AngleUnit.DEGREES) - pitchOffset, ypr_angles.getRoll(AngleUnit.DEGREES) - rollOffset};
+    }
+
+    public double[] getXYZGs() {
+        return new double[3];
     }
 
     public void disable() {
