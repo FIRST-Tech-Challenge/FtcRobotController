@@ -27,7 +27,8 @@ public class Test extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Servo gr = hardwareMap.servo.get("grabber");
+        Servo gr = hardwareMap.servo.get("puffer");
+
 
         double p = 0;
         double v = 1;
@@ -44,6 +45,7 @@ public class Test extends LinearOpMode {
             }
             telemetry.addData("postion", p - gamepad1.left_stick_y * v);
             telemetry.update();
+
         }
 
     }
