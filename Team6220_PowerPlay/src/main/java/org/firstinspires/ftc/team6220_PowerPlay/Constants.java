@@ -42,12 +42,12 @@ public class Constants {
     public static final int JUNCTION_TOP_TOLERANCE = 25;
     public static final int ROBOT_CAMERA_TOLERANCE = 25;
 
-    public static final int[] lowerBlue = {0, 150, 20};
-    public static final int[] upperBlue = {10, 255, 255};
+    public static final int[] lowerRed = {0, 150, 20};
+    public static final int[] upperRed = {10, 255, 255};
 
-    public static final int[] lowerRed = {100, 50, 50};
-    public static final int[] upperRed = {140, 255, 255};
+    public static final int[] lowerBlue = {100, 150, 20};
+    public static final int[] upperBlue = {140, 255, 255};
 
-    public static final int[] lowerYellow = {21, 41, 133};
-    public static final int[] upperYellow = {40, 150, 133};
+    public static final int[] lowerYellow = {30, 150, 20};
+    public static final int[] upperYellow = {60, 255, 255};
 }

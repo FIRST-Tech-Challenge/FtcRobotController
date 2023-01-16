@@ -40,7 +40,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
     // masks the frame based on low and high HSV ranges
     public Mat maskFrame(Mat input, int[] lower, int[] upper) {
         // transition to HSV color space
-        Imgproc.cvtColor(input, HSV, Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(input, HSV, Imgproc.COLOR_RGB2HSV);
 
         // blur the HSV frame based on the blur size
         Imgproc.GaussianBlur(HSV, HSV, blurSize,0);
@@ -100,6 +100,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         }
 
         contours.clear();
+
         return input;
     }
 }
