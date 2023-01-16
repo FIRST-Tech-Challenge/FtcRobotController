@@ -28,7 +28,7 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
     public static double pickupX2 = 64, pickupY2 = 14.25, pickupA2 = toRadians(0), pickupET2 = toRadians(180);
 
-    double[] stackPos = {390, 290, 200, 80, 0};
+    double[] stackPos = {400,330,235,60,0};
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
@@ -157,9 +157,8 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
             robot.followTrajectorySequenceAsync(pickupTrajectory2);
             robot.closeClaw(false);
             robot.followTrajectorySequenceAsync(dropTrajectory);
-            robot.delay(0.4);
-            robot.raiseLiftArmToOuttake(true);
-            robot.delay(0.2);
+            robot.delay(0.61);            robot.raiseLiftArmToOuttake(true);
+            robot.delay(0.21);
             robot.liftToPosition(LIFT_MED_JUNCTION);
             robot.openClaw(false);
             for (int i = 0; i < 4; i++) {
@@ -171,10 +170,9 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
                 robot.liftToPosition((int) stackPos[i + 1]);
                 robot.closeClaw(false);
                 robot.followTrajectorySequenceAsync(dropTrajectory);
-                robot.delay(0.4);
+                robot.delay(0.53+0.015*(3-i));
                 robot.raiseLiftArmToOuttake(true);
-                robot.delay(0.2);
-                robot.liftToPosition(LIFT_MED_JUNCTION);
+                robot.delay(0.23+0.015*(3-i));                robot.liftToPosition(LIFT_MED_JUNCTION);
                 robot.openClaw(false);
             }
 
