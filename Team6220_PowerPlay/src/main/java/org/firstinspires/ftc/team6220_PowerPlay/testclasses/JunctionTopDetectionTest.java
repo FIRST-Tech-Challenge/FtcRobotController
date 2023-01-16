@@ -10,7 +10,6 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Disabled
 @Autonomous(name = "JunctionTopDetectionTest", group = "Test")
 public class JunctionTopDetectionTest extends BaseAutonomous {
     int[] lowerBlack = {0, 0, 0};
@@ -34,9 +33,11 @@ public class JunctionTopDetectionTest extends BaseAutonomous {
             @Override
             public void onError(int errorCode) {}
         });
-
+        initialize();
+        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+        sleep(1000);
+        driveSlidesAutonomous(Constants.SLIDE_TOP);
         waitForStart();
-
         while (opModeIsActive()) {
             telemetry.addData("junctionX", pipeline.junctionX);
             telemetry.addData("junctionY", pipeline.junctionY);

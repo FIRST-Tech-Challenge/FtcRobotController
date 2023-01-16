@@ -8,6 +8,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import org.opencv.core.Size;
@@ -18,18 +19,18 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
 
     public int junctionX = 0;
     public int junctionY = 0;
-
+    public double contourSize = 0.0;
+    private List<MatOfPoint> contours = new ArrayList<>();
+    private Mat hierarchy = new Mat();
+    private Mat hsv = new Mat();
     private Mat blackMask = new Mat();
+    private Size blurSize = new Size(5,5);
 
     @Override
     public Mat processFrame(Mat mat) {
-        Size blurSize = new Size(5,5);
-        Mat hsv = new Mat();
         Imgproc.cvtColor(mat,hsv,Imgproc.COLOR_RGB2HSV);
-        List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.blur(hsv,hsv, blurSize);
         Core.inRange(hsv, new Scalar(0, 0, 0), new Scalar(255, 255, 30), blackMask);
-        Mat hierarchy = new Mat();
         Imgproc.findContours(blackMask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         if (contours.size() > 0) {
             double maxVal = 0.0;
@@ -50,7 +51,8 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
             junctionX = boundingRect.x + (boundingRect.width / 2);
             junctionY = boundingRect.y + (boundingRect.height / 2);
         }
-
+        contours = new ArrayList<>();
+        hierarchy = new Mat();
         return mat;
     }
 }
