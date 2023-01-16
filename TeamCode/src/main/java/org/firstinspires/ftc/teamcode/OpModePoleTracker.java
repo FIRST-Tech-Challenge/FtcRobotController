@@ -24,6 +24,7 @@ import static org.firstinspires.ftc.teamcode.PipePoleTracker.getYResolution;
 
 import static org.firstinspires.ftc.teamcode.Variables.*;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -36,6 +37,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class OpModePoleTracker extends DriveMethods {
     String level = "one";
     int levelCounter = 1;
+    RevBlinkinLedDriver blinkinLedDriver;
+    RevBlinkinLedDriver.BlinkinPattern pattern;
+
+
 
     //The unit here is pixels
     int targetX;
@@ -59,8 +64,13 @@ public class OpModePoleTracker extends DriveMethods {
     public void runOpMode(){
 
         initMotorsBlue();
+            blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
-        calibrateNavXIMU();
+            pattern = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
+            blinkinLedDriver.setPattern(pattern);
+
+
+            calibrateNavXIMU();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -104,6 +114,27 @@ public class OpModePoleTracker extends DriveMethods {
         counter = 0;
         while(opModeIsActive()){
 
+            leftY = -gamepad1.left_stick_y;
+            leftX = gamepad1.left_stick_x;
+            rightX = gamepad1.right_stick_x;
+
+            motorFL.setPower((leftY + leftX + rightX));
+            motorBL.setPower((leftY - leftX + rightX));
+            motorFR.setPower((leftY - leftX - rightX));
+            motorBR.setPower((leftY + leftX - rightX));
+
+            if(level2Capable == false && visionAutoActivated == false){
+                pattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_RED;
+                blinkinLedDriver.setPattern(pattern);
+            }
+            if(level2Capable == true && visionAutoActivated == false){
+                pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                blinkinLedDriver.setPattern(pattern);
+            }
+            if(visionAutoActivated){
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+                blinkinLedDriver.setPattern(pattern);
+            }
 
             //Button triggers
             if(gamepad2.a && getLevel2Capable()){
