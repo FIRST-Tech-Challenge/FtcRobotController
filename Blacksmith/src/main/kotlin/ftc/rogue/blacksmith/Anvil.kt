@@ -513,21 +513,23 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     @JvmOverloads
     inline fun thenRun(
-        crossinline action: () -> Anvil,
+        crossinline nextTrajectory: (Pose2d) -> Anvil,
+        crossinline nextStartPose: () -> Pose2d = ::getEndPose,
         async: Boolean = true,
     ) = this.apply {
-        thenRunIf(action, async) { true }
+        thenRunIf(nextTrajectory, nextStartPose, async) { true }
     }
 
     @JvmOverloads
     inline fun thenRunIf(
-        crossinline action: () -> Anvil,
+        crossinline nextTrajectory: (Pose2d) -> Anvil,
+        crossinline nextStartPose: () -> Pose2d = ::getEndPose,
         async: Boolean = true,
         crossinline predicate: () -> Boolean,
     ): Anvil {
         addTemporalMarker {
             if (predicate()) {
-                action().build<Any>()
+                nextTrajectory( nextStartPose() ).build<Any>()
                 run(builtTrajectory, async)
             }
         }
@@ -536,13 +538,13 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     @JvmOverloads
     inline fun thenBranch(
-        crossinline trueAction: () -> Anvil,
-        crossinline elseAction: () -> Anvil,
+        crossinline trueAction: (Pose2d) -> Anvil,
+        crossinline elseAction: (Pose2d) -> Anvil,
         async: Boolean = true,
         crossinline predicate: () -> Boolean,
     ) = this.apply {
-        thenRunIf(trueAction, async) { predicate() }
-        thenRun(elseAction, async)
+        thenRunIf(trueAction, async = async) { predicate() }
+        thenRun(elseAction, async = async)
     }
 
     /**

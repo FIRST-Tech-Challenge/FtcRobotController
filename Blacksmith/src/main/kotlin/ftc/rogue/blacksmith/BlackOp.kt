@@ -49,12 +49,21 @@ abstract class BlackOp : LinearOpMode() {
      * Please override `go()` instead of this method.
      */
     final override fun runOpMode() {
+        telemetry.addLine("Restarting Scheduler")
+        telemetry.update()
         Scheduler.reset()
 
+        telemetry.addLine("Setting hwmap")
+        telemetry.update()
         hwMap = hardwareMap
         Companion.hwMap = hardwareMap
 
+        telemetry.addLine("Emitting BS start msg")
+        telemetry.update()
         Scheduler.emit(STARTING_MSG)
+
+        telemetry.addLine("go")
+        telemetry.update()
         go()
     }
 

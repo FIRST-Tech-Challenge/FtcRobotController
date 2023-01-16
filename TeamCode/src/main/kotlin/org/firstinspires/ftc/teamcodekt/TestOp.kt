@@ -7,24 +7,15 @@ import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.listeners.ReforgedGamepad
 import ftc.rogue.blacksmith.util.kt.invoke
-import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder
 import org.firstinspires.ftc.teamcodekt.components.Camera
 import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
 
 @TeleOp
-class TeastOp1 : BlackOp() {
+class TestOp1 : BlackOp() {
     override fun go() {
         val camera = Camera()
 
         val driver = ReforgedGamepad(gamepad1)
-
-        driver.left_trigger.onRise {
-            camera.targetAngle -= 2.5
-        }
-
-        driver.right_trigger.onRise {
-            camera.targetAngle += 2.5
-        }
 
         camera.update()
 
@@ -38,13 +29,13 @@ class TeastOp1 : BlackOp() {
 
 @TeleOp
 @Config
-class TeastOp2 : RogueBaseAuto() {
+class TestOp2 : RogueBaseAuto() {
     companion object {
         @JvmField
         var TEST_LIFT_HEIGHT = 100
     }
 
-    override fun executeOrder66() {
+    override fun execute() {
         val parallelEncoder = hwMap<DcMotorEx>( "FL")
         val perpendicularEncoder =  hwMap<DcMotorEx>( "BR")
 

@@ -32,7 +32,8 @@ class Drivetrain {
     private var lastPowers = DoubleArray(4)
 
     fun drive(gamepad: Gamepad, powerMulti: Double) {
-        val (x, y, r) = gamepad.getDriveSticks()
+        val (x, y, _r) = gamepad.getDriveSticks()
+        val r = _r * .885
 
         val theta = atan2(y, x)
         val power = hypot(x, y)

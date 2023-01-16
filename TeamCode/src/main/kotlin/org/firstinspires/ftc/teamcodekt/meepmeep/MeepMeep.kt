@@ -23,7 +23,7 @@ fun main() {
         .setColorScheme(ColorSchemeBlueDark())
         .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
         .setDimensions(12.0, 12.0)
-        .followTrajectorySequence(::mainTraj)
+        .followTrajectorySequence(::parkTraj)
 
     mm.setBackground(Background.FIELD_POWERPLAY_OFFICIAL)
         .setDarkMode(true)
@@ -31,6 +31,18 @@ fun main() {
         .addEntity(bot)
         .start()
 }
+
+private fun parkTraj(drive: DriveShim) =
+    Anvil.formTrajectory(drive, startPose) {
+        forward(74.0)
+
+        when (3) {
+            1 -> strafeLeft(60.0)
+            3 -> strafeRight(60.0)
+        }
+
+        this
+    }.build<TrajectorySequence>()
 
 private fun mainTraj(drive: DriveShim) =
     Anvil.formTrajectory(drive, startPose)

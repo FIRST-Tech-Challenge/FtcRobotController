@@ -23,7 +23,7 @@ object ClawConfig {
 class Claw {
     private val clawServo = SimpleServo(hwMap, DeviceNames.CLAW_SERVO, 0.0, 180.0)
 
-    private var targetPos = ClawConfig.CLOSE
+    var targetPos = ClawConfig.CLOSE
 
     /**
      * Open the claw to the narrow position for intaking objects. Used primarily for tele as it

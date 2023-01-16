@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.controller.PIDFController
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
+import ftc.rogue.blacksmith.BlackOp.Companion.mTelemetry
 import ftc.rogue.blacksmith.util.kt.clamp
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.Telemetry
@@ -20,9 +21,9 @@ object LiftConfig {
     @JvmField var F = 0.00002
 
     @JvmField var ZERO = 0
-    @JvmField var LOW  = 737
-    @JvmField var MID  = 1170
-    @JvmField var HIGH = 1550
+    @JvmField var LOW  = 707
+    @JvmField var MID  = 1140
+    @JvmField var HIGH = 1590
 
     @JvmField var MANUAL_ADJUSTMENT_MULTI = 50.0
 }
@@ -61,6 +62,7 @@ class Lift {
         targetHeight = LiftConfig.HIGH
     }
 
+
     fun update(liftDeadzone: Double) {
         val voltageCorrection = voltageScaler.voltageCorrection
 
@@ -69,6 +71,9 @@ class Lift {
 
         if(abs(correction) < liftDeadzone)
             correction = 0.0
+
+        mTelemetry.addData("Lift correction", correction)
+        mTelemetry.addData("Lift position", -liftEncoder.currentPosition)
 
         liftMotor.power = correction
     }

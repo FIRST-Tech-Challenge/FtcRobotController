@@ -4,24 +4,35 @@ package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.outoftheboxrobotics.photoncore.PhotonCore
 import ftc.rogue.blacksmith.BlackOp
+import ftc.rogue.blacksmith.util.kt.LateInitVal
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcodekt.components.*
+import org.firstinspires.ftc.teamcodekt.components.meta.AutoBotComponents
 import org.firstinspires.ftc.teamcodekt.components.meta.createAutoBotComponents
 
 abstract class RogueBaseAuto : BlackOp() {
-    protected val bot by evalOnGo(::createAutoBotComponents)
+//    protected val bot by evalOnGo(::createAutoBotComponents)
+    protected var bot by LateInitVal<AutoBotComponents>()
 
-    abstract fun executeOrder66()
+    abstract fun execute()
 
     final override fun go() {
+        bot = createAutoBotComponents()
+
+
+        telemetry.addLine("Staarting photon")
+        telemetry.update()
         PhotonCore.enable()
-        executeOrder66()
+
+        telemetry.addLine("Killing all the childen")
+        telemetry.update()
+        execute()
     }
 
     protected fun updateComponents() {
-        bot.updateBaseComponents(.0075)
+        bot.updateBaseComponents(0.0)
         bot.drive.update()
-//        mTelemetry.update()
+        mTelemetry.update()
     }
 
     companion object {

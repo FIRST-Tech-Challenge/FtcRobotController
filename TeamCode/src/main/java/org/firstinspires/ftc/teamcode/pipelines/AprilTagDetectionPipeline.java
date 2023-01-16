@@ -128,7 +128,6 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
         synchronized (detectionsUpdateSync)
         {
             ArrayList<AprilTagDetection> ret = detectionsUpdate;
-            detectionsUpdate = null;
             return ret;
         }
     }
@@ -161,8 +160,6 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 
     void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
     {
-        // The points in 3D space we wish to project onto the 2D image plane.
-        // The origin of the coordinate space is assumed to be in the center of the detection.
         MatOfPoint3f axis = new MatOfPoint3f(
                 new Point3(0,0,0),
                 new Point3(length,0,0),
@@ -184,8 +181,6 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 
     void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
     {
-        // The points in 3D space we wish to project onto the 2D image plane.
-        // The origin of the coordinate space is assumed to be in the center of the detection.
         MatOfPoint3f axis = new MatOfPoint3f(
                 new Point3(-tagWidth/2, tagHeight/2,0),
                 new Point3( tagWidth/2, tagHeight/2,0),
@@ -214,10 +209,8 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 
     private Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY)
     {
-        // The actual 2d points of the tag detected in the image
         MatOfPoint2f points2d = new MatOfPoint2f(points);
 
-        // The 3d points of the tag in an 'ideal projection'
         Point3[] arrayPoints3d = new Point3[4];
         arrayPoints3d[0] = new Point3(-tagsizeX/2, tagsizeY/2, 0);
         arrayPoints3d[1] = new Point3(tagsizeX/2, tagsizeY/2, 0);

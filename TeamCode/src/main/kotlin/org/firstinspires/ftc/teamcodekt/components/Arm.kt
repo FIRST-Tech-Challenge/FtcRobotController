@@ -25,7 +25,7 @@ class Arm {
      */
     private val armServo = SimpleServo(hwMap, DeviceNames.ARM_SERVO, 0.0, 180.0)
 
-    private var targetAngle = ArmConfig.RESTING
+    var targetAngle = ArmConfig.RESTING
 
     /**
      * Move the arm to the forward position. Intended for intaking or reverse depositing.
@@ -41,8 +41,21 @@ class Arm {
         targetAngle = ArmConfig.BACKWARDS
     }
 
+
+    fun setToForwardsPosAuto() {
+        targetAngle = ArmConfig.FORWARDS + 4
+    }
+
+    /**
+     * Move the arm to the backward position. Intended for normal depositing.
+     */
+    fun setToBackwardsPosAuto() {
+        targetAngle = ArmConfig.BACKWARDS + 4
+    }
+
+
     fun setToBackwardsPosButLikeSliiiightlyHigher() {
-        targetAngle = ArmConfig.BACKWARDS + 3.5
+        targetAngle = ArmConfig.BACKWARDS + 5
     }
 
     /**
