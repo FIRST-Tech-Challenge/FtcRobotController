@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.team6220_PowerPlay.testclasses.RobotCameraPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -226,21 +227,24 @@ public abstract class BaseAutonomous extends BaseOpMode {
         }
     }
 
-    // max width 800
-    /*
     // moves towards a stack while centering on it, until the stack fills the entire camera view
-    // then move forward 3 inches to position the grabber over the stack
-    public void centerConeStack(ConeDetectionPipeline pipeline) {
-        double xOffset, yOffset;
+    // puts the robot about 3 inches away from the junction based on manual testing
+    public void centerConeStack(RobotCameraPipeline pipeline) {
+        double xOffset, width;
         do {
             xOffset = pipeline.Xpos - Constants.CAMERA_CENTER_X;
-            yOffset = Constants.CAMERA_CENTER_Y - pipeline.Ypos;
+            width = pipeline.width;
 
-            // convert the offsets to motor powers to drive with
-            //driveWithIMU(offsetToMotorPower(xOffset), offsetToMotorPower(yOffset), 0);
+            // convert the width to motor power to drive forward with
+            driveWithIMU(offsetToMotorPower(xOffset), widthToMotorPower(width), 0);
 
-            // while either not centered in front of stack, or not close enough that the stack fills the view
-        } while (Math.abs(xOffset) > Constants.AUTOCENTER_ACCURACY || );
+        // while either not centered in front of stack, or not close enough that the stack fills the view
+        } while (Math.abs(xOffset) > Constants.ROBOT_CAMERA_TOLERANCE || width < 800 - Constants.ROBOT_CAMERA_TOLERANCE);
     }
-    */
+
+    // convert the width of the stack to the power to drive with
+    public double widthToMotorPower(double width) {
+        return 0.6 * ( 1.0 - 200.0 / (Math.abs(width - 800.0) + 200.0));
+    }
+
 }

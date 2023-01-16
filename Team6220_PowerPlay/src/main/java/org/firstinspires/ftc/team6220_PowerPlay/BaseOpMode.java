@@ -195,13 +195,13 @@ public abstract class BaseOpMode extends LinearOpMode {
             // convert the offsets to motor powers to drive with
             driveWithIMU(offsetToMotorPower(xOffset), offsetToMotorPower(yOffset), 0);
 
-            // while either of the offsets are still too large
+        // while either of the offsets are still too large
         } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
     }
 
     // scales the offset from pixels to a motor power, stopping at +1/-1,
     // and slopes in towards 0 power after a certain point when nearing 0 offset
-    private double offsetToMotorPower(double offsetPixels) {
+    public double offsetToMotorPower(double offsetPixels) {
         return (-0.1 * offsetPixels) / (Math.abs(0.25 * offsetPixels) + 15.0);
     }
 }

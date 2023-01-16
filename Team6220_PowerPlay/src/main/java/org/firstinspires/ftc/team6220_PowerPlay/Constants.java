@@ -40,5 +40,6 @@ public class Constants {
     public static final int CAMERA_CENTER_Y = 300;
 
     public static final int JUNCTION_TOP_TOLERANCE = 25;
+    public static final int ROBOT_CAMERA_TOLERANCE = 25;
 
 }
