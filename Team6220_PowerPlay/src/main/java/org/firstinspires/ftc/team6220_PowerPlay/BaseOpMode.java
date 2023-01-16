@@ -204,7 +204,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // scales the offset from pixels to a motor power, stopping at +1/-1,
     // and slopes in towards 0 power after a certain point when nearing 0 offset
-    private double offsetToMotorPower(double offsetPixels) {
+    public double offsetToMotorPower(double offsetPixels) {
         return (-0.1 * offsetPixels) / (Math.abs(0.25 * offsetPixels) + 15.0);
     }
 }

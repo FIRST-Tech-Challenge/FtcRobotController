@@ -227,21 +227,24 @@ public abstract class BaseAutonomous extends BaseOpMode {
         }
     }
 
-    // max width 800
-    /*
     // moves towards a stack while centering on it, until the stack fills the entire camera view
-    // then move forward 3 inches to position the grabber over the stack
+    // puts the robot about 3 inches away from the junction based on manual testing
     public void centerConeStack(ConeDetectionPipeline pipeline) {
-        double xOffset, yOffset;
+        double xOffset, xWidth;
         do {
             xOffset = pipeline.Xpos - Constants.CAMERA_CENTER_X;
-            yOffset = Constants.CAMERA_CENTER_Y - pipeline.Ypos;
+            xWidth = pipeline.xWidth;
 
-            // convert the offsets to motor powers to drive with
-            //driveWithIMU(offsetToMotorPower(xOffset), offsetToMotorPower(yOffset), 0);
+            // convert the width to motor power to drive forward with
+            driveWithIMU(offsetToMotorPower(xOffset), widthToMotorPower(xWidth), 0);
 
             // while either not centered in front of stack, or not close enough that the stack fills the view
-        } while (Math.abs(xOffset) > Constants.AUTOCENTER_ACCURACY || );
+        } while (Math.abs(xOffset) > Constants.AUTOCENTER_ACCURACY || xWidth < 800 - Constants.AUTOCENTER_ACCURACY);
     }
-    */
+
+    // convert the width of the stack to the power to drive with
+    public double widthToMotorPower(double width) {
+        return 0.75 * ( 1.0 - 100.0 / (Math.abs(width - 800.0) + 100.0) );
+    }
+
 }
