@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
@@ -18,6 +19,8 @@ import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 @TeleOp
 public class PP_MecanumTeleOp extends OpMode
 {
+    public static double rotation = 0.1; // will change in dashboard; remember to refresh page if this isn't showing up at first
+
     //"MC ABHI IS ON THE REPO!!!"
     public final double TURN_PRECESION = 0.65;
 
@@ -33,6 +36,8 @@ public class PP_MecanumTeleOp extends OpMode
 
 
     // Declaring mechanism objects
+    private Servo odoServo;
+
     private Arm armControl;
     private Slide slideControl;
     private Claw clawControl;
@@ -81,6 +86,8 @@ public class PP_MecanumTeleOp extends OpMode
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        odoServo = hardwareMap.get(Servo.class, "odoServo"); // Pin 0 on Expansion Hub
+
         // Reverse motors
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -88,6 +95,8 @@ public class PP_MecanumTeleOp extends OpMode
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
         clawControl = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
+
+        odoServo.setPosition(rotation);
     }// INIT()
 
     @Override
