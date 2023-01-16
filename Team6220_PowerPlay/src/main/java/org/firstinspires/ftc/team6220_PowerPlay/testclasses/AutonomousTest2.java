@@ -12,8 +12,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 //@Disabled
-@Autonomous(name = "AutonomousTest", group = "Test")
-public class AutonomousTest extends ConeDetection {
+@Autonomous(name = "AutonomousTest2", group = "Test")
+public class AutonomousTest2 extends BaseAutonomous {
 
     public RobotCameraPipeline robotCameraPipeline;
     OpenCvCamera camera;
@@ -24,7 +24,7 @@ public class AutonomousTest extends ConeDetection {
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
         robotCameraPipeline = new RobotCameraPipeline();
-        robotCameraPipeline.setRanges(Constants.lowerRed, Constants.upperRed);
+        robotCameraPipeline.setRanges(Constants.lowerBlue, Constants.upperBlue);
 
         camera.setPipeline(robotCameraPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
