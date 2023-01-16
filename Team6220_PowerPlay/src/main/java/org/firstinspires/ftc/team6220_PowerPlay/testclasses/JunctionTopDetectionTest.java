@@ -10,12 +10,13 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+@Disabled
 @Autonomous(name = "JunctionTopDetectionTest", group = "Test")
 public class JunctionTopDetectionTest extends BaseAutonomous {
     int[] lowerBlack = {0, 0, 0};
     int[] upperBlack = {60, 60, 60};
 
-    JunctionTopDetectionPipeline pipeline = new JunctionTopDetectionPipeline();
+    GrabberCameraPipeline pipeline = new GrabberCameraPipeline();
     OpenCvCamera camera;
 
     @Override

@@ -16,6 +16,6 @@ public class junctionTopDetect extends ConeDetection{
         telemetry.addLine("waiting for start");
         telemetry.update();
         waitForStart();
-        telemetry.addData("distance", coneDetectionPipeline.distance);
+        telemetry.addData("distance", robotCameraPipeline.distance);
     }
 }

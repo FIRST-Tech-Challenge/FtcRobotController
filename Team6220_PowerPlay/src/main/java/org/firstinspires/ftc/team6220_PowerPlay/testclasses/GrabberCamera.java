@@ -8,7 +8,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 public abstract class GrabberCamera extends BaseAutonomous {
-    public ConeDetectionPipeline GrabberCameraPipeline;
+    public RobotCameraPipeline GrabberCameraPipeline;
     OpenCvCamera camera;
 
     public void detectGrabGrabberCamera(int[] lower, int[] upper) {
@@ -16,7 +16,7 @@ public abstract class GrabberCamera extends BaseAutonomous {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), cameraMonitorViewId);
         //Create new instance of ConeDetectionPipeline
-        GrabberCameraPipeline = new ConeDetectionPipeline();
+        GrabberCameraPipeline = new RobotCameraPipeline();
         //Set ranges for the pipeline
         GrabberCameraPipeline.setRanges(lower, upper);
         //Assign pipeline to the camera

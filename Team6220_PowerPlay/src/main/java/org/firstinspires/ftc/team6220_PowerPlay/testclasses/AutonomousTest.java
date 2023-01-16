@@ -3,44 +3,40 @@ package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.robotcore.external.Const;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.List;
-
-@Disabled
+//@Disabled
 @Autonomous(name = "AutonomousTest", group = "Test")
 public class AutonomousTest extends BaseAutonomous {
-    double motorPower;
-    double x;
-    double width = 0;
+
+    public GrabberCameraPipeline grabberCameraPipeline;
+    OpenCvCamera camera;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // initialize
-        initialize();
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), cameraMonitorViewId);
 
-        // detects signal and replaces wait for start
-        int signal = detectSignal();
+        camera.setPipeline(grabberCameraPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
+            }
 
-        // grab cone
-        servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
+            @Override
+            public void onError(int errorCode) {}
+        });
 
-        // raise slides to stow position
-        driveSlidesAutonomous(Constants.SLIDE_STOW);
+        waitForStart();
 
-        // detect signal
-        detectSignal();
-
-        // drive forward 54 inches
-        // todo - 54?
-        driveInches(0, 54);
-
-        // turn to -45 degrees
-        turnToAngle(-45);
+        while (opModeIsActive()) {
+            centerJunctionTop(grabberCameraPipeline);
+        }
     }
 }
