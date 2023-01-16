@@ -55,7 +55,11 @@ public class MiddleJunctionParkLeftSide extends BaseAutonomous {
         motorArm.setPower(0);
         sleep(1300);
         // open servo
+<<<<<<< HEAD
         leftGrabberServo.setPosition(LEFT_GRABBER_OPEN);
+=======
+        leftGrabberServo.setPosition(GRABBER_OPEN);
+>>>>>>> 0eb1321eccaff22ac406c1c7cb3937de6ed4e33e
         drive.followTrajectory(clearJunction);
 
         // check if tagOfInterest is null first to avoid null pointer exception when accessing id

@@ -11,7 +11,10 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorArm;
 
     Servo leftGrabberServo;
+<<<<<<< HEAD
     Servo rightGrabberServo;
+=======
+>>>>>>> 0eb1321eccaff22ac406c1c7cb3937de6ed4e33e
     Toggler grabberToggle;
 
     SampleMecanumDrive drive;
@@ -43,7 +46,10 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftGrabberServo = hardwareMap.servo.get("leftGrabberServo");
+<<<<<<< HEAD
         rightGrabberServo = hardwareMap.servo.get("rightGrabberServo");
+=======
+>>>>>>> 0eb1321eccaff22ac406c1c7cb3937de6ed4e33e
         grabberToggle = new Toggler();
 
         drive.setMotorPowers(0, 0, 0, 0);
