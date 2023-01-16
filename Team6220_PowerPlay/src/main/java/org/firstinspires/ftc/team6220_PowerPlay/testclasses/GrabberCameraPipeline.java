@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
+import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -19,6 +20,8 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
 
     public int junctionX = 0;
     public int junctionY = 0;
+    public double distanceToCenterX = 0;
+    public double distanceToCenterY = 0;
     public double contourSize = 0.0;
     private List<MatOfPoint> contours = new ArrayList<>();
     private Mat hierarchy = new Mat();
@@ -34,23 +37,26 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
         Imgproc.findContours(blackMask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         if (contours.size() > 0) {
             double maxVal = 0.0;
-            int maxValIdx = 0;
+            int maxValIdx = -1;
 
             for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
                 double contourArea = Imgproc.contourArea(contours.get(contourIdx));
 
-                if (maxVal < contourArea) {
+                if (maxVal < contourArea && contourArea < 18000) {
                     maxVal = contourArea;
                     maxValIdx = contourIdx;
                 }
             }
-
+            if(maxValIdx != -1){
             // draw bounding rectangle around the largest contour
             Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
             Imgproc.rectangle(mat, boundingRect, new Scalar(40, 200, 0), 10);
             junctionX = boundingRect.x + (boundingRect.width / 2);
             junctionY = boundingRect.y + (boundingRect.height / 2);
-        }
+            contourSize = maxVal;
+            distanceToCenterX = junctionX - Constants.CAMERA_CENTER_X;
+            distanceToCenterY = junctionY - Constants.CAMERA_CENTER_Y;
+        }else{}}
         contours = new ArrayList<>();
         hierarchy = new Mat();
         return mat;

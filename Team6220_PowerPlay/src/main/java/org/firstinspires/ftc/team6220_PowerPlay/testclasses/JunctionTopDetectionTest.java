@@ -39,8 +39,9 @@ public class JunctionTopDetectionTest extends BaseAutonomous {
         driveSlidesAutonomous(Constants.SLIDE_TOP);
         waitForStart();
         while (opModeIsActive()) {
-            telemetry.addData("junctionX", pipeline.junctionX);
-            telemetry.addData("junctionY", pipeline.junctionY);
+            telemetry.addData("junctionX", pipeline.distanceToCenterX);
+            telemetry.addData("junctionY", pipeline.distanceToCenterY);
+            telemetry.addData("contour size", pipeline.contourSize);
             telemetry.update();
         }
     }
