@@ -47,4 +47,7 @@ public class Constants {
 
     public static final int[] lowerBlue = {100, 50, 50};
     public static final int[] upperBlue = {140, 255, 255};
+
+    public static final int[] lowerYellow = {21, 41, 133};
+    public static final int[] upperYellow = {40, 150, 133};
 }
