@@ -25,12 +25,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
         initializeHardware();
         time = new ElapsedTime();
         time.reset();
-<<<<<<< HEAD
+
         leftGrabberServo.setPosition(LEFT_GRABBER_OPEN);
-        rightGrabberServo.setPosition(RIGHT_GRABBER_OPEN);
-=======
-        leftGrabberServo.setPosition(GRABBER_OPEN);
->>>>>>> 0eb1321eccaff22ac406c1c7cb3937de6ed4e33e
+
     }
 
     public void driveUsingControllers() {
@@ -49,9 +46,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveStickCurve() {
-        double x = stickCurve(gamepad1.left_stick_x, 0.4, 0.2);
-        double y = stickCurve(-gamepad1.left_stick_y, 0.4, 0.2);
-        double turning = stickCurve(gamepad1.right_stick_x, 0.4, 0.2);
+        double x = stickCurve(gamepad1.left_stick_x, 0.2, 0.2);
+        double y = stickCurve(-gamepad1.left_stick_y, 0.2, 0.2);
+        double turning = stickCurve(gamepad1.right_stick_x, 0.2, 0.2);
         mecanumDrive(x, y, turning);
     }
 
@@ -134,17 +131,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
         grabberClosed = grabberToggle.toggle(gamepad2.a);
 
         if (grabberClosed) {
-<<<<<<< HEAD
             leftGrabberServo.setPosition(LEFT_GRABBER_CLOSED);
-            rightGrabberServo.setPosition(RIGHT_GRABBER_CLOSED);
         } else {
             leftGrabberServo.setPosition(LEFT_GRABBER_OPEN);
-            rightGrabberServo.setPosition(RIGHT_GRABBER_OPEN);
-=======
-            leftGrabberServo.setPosition(GRABBER_CLOSED);
-        } else {
-            leftGrabberServo.setPosition(GRABBER_OPEN);
->>>>>>> 0eb1321eccaff22ac406c1c7cb3937de6ed4e33e
         }
     }
 
