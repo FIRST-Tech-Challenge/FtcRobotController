@@ -18,8 +18,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
-import java.sql.Time;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 class elevatorPositions{
     public static int high   = 18500;
@@ -40,7 +44,7 @@ class RobotController {
     public final Thread driveController;
     public final Thread cycleController;
 
-    private final Thread score;
+    private final Thread teleScore;
     public final Thread autoCycle;
 
     /** SERVO CONSTANTS */
@@ -48,14 +52,14 @@ class RobotController {
     public final double grabberIn  = 0.09;
 
     //                                  low > > > > > > > > > > > high
-    public final double[] grabberPile = {0.77, 0.73, 0.7, 0.66, 0.6};
+    public final double[] grabberPile = {0.77, 0.73, 0.7, 0.66, 0.62};
 
     private final double armOut = 0.89; // hiTech value 0.61;
     private final double armIn  = 0.5;  // hiTech value 0.41;
 
     private final double placerIn  = 0;
 
-    private final double placerOutAutonomous = 0.78;
+    private final double placerOutAutonomous = 0.76;
     private final double placerOutTeleOp = 0.85;
 
     private final double pufferGrab    = 0.35;
@@ -71,7 +75,7 @@ class RobotController {
     private final BNO055IMU imu;
     private final DistanceSensor grabberSensor;
     private final TouchSensor armSensor;
-    private final TouchSensor elevatorSensor;
+    //private final TouchSensor elevatorSensor;
 
     /** SERVOS */
     private final Servo puffer ;
@@ -129,7 +133,7 @@ class RobotController {
         grabberSensor = hm.get(DistanceSensor.class, "grabberSensor");
         // getting the arm sensor
         armSensor = hm.get(TouchSensor.class, "armSensor");
-        elevatorSensor = hm.get(TouchSensor.class, "elevatorSensor");
+        //elevatorSensor = hm.get(TouchSensor.class, "elevatorSensor");
 
         /** SERVOS */
         // getting the edge units
@@ -152,9 +156,9 @@ class RobotController {
         grabberLeft  = hm.servo.get("grabberLeft" );
 
         // flipping the relevant servos direction
-        armLeft     .setDirection(Servo.Direction.REVERSE);
-        placerRight .setDirection(Servo.Direction.REVERSE);
-        grabberLeft .setDirection(Servo.Direction.REVERSE);
+        armLeft    .setDirection(Servo.Direction.REVERSE);
+        placerRight.setDirection(Servo.Direction.REVERSE);
+        grabberLeft.setDirection(Servo.Direction.REVERSE);
 
         // setting the servos position to their initial positions
         setArmPosition(armIn);
@@ -186,14 +190,14 @@ class RobotController {
         elevatorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevatorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        score = new Thread(() -> {
+        teleScore = new Thread(() -> {
             if (elevatorPosition != elevatorPositions.bottom) {
 //                telemetry.addData("elevator height", elevatorPosition);
                 try {
                     puffer.setPosition(pufferGrab);
                     grabber.setPosition(grabberOpen);
 
-                    Thread.sleep(750);
+                    safeSleep(750);
 
                     setPlacerPosition(placerOutTeleOp);
 
@@ -221,13 +225,14 @@ class RobotController {
         });
 
         autoCycle = new Thread(() -> {
-            score(4);
+            autoScore(true, 4);
             for (int i = 4; i > 0; i--){
                 collect(i);
-                score(i - 1);
+                autoScore(true, i - 1);
             }
 
-            score();
+            collect(0);
+            autoScore(false, 0);
         });
 
 
@@ -255,16 +260,16 @@ class RobotController {
                     }
                 }
 
-                if (!score.isAlive()) {
+                if (!teleScore.isAlive()) {
                     if (A_pressed()) {
                         elevatorPosition = elevatorPositions.high;
-                        score.start();
+                        teleScore.start();
                     } else if (X_pressed()) {
                         elevatorPosition = elevatorPositions.middle;
-                        score.start();
+                        teleScore.start();
                     } else if (Y_pressed()) {
                         elevatorPosition = elevatorPositions.low;
-                        score.start();
+                        teleScore.start();
                     }
                 }
             }
@@ -294,7 +299,7 @@ class RobotController {
                 joystick_left.y = -gamepad.left_stick_y;
 
                 // make the bot field oriented while considering the starting angle
-                joystick_left.addAngle(-getRobotAngle() - AutonomousDrive.lastAngle);
+                joystick_left.addAngle(-getRobotAngle() - AutonomousLeft.lastAngle);
 
 
                 // using my equations to calculate the power ratios
@@ -335,9 +340,9 @@ class RobotController {
         });
     }
 
-    private void safeSleep(int millisecond){
+    public void safeSleep(int millisecond) throws InterruptedException {
         et.reset();
-        while (et.milliseconds() < millisecond) {if (gamepad.isStopRequested){break;}}
+        while (et.milliseconds() < millisecond){if (gamepad.isStopRequested) throw new InterruptedException("stop requested");}
     }
 
     private boolean a = true;
@@ -406,19 +411,16 @@ class RobotController {
         backLeft  .setPower(backLeftPower   * overallDrivingPower);
     }
 
-    public void score(int nextConeNum) { score(true, nextConeNum); }
-    public void score() { score(false, 0); }
-
-    public void score(boolean prepareForNext, int nextConeNum){
+    public void autoScore(boolean prepareForNext, int nextConeNum){
         try {
+            puffer.setPosition(pufferGrab);
             if (grabber.getPosition() != grabberOpen){
                 grabber.setPosition(grabberOpen);
-                Thread.sleep(750);
+                safeSleep(50);
             }
-            puffer.setPosition(pufferGrab);
             elevatorPosition = elevatorPositions.high;
 
-            Thread.sleep(750);
+            safeSleep(750);
 
             setPlacerPosition(placerOutAutonomous);
 
@@ -426,15 +428,14 @@ class RobotController {
                 setGrabberPosition(grabberPile[nextConeNum]);
 
                 setArmPosition(armOut * 0.8);
+
             }
-
-            Thread.sleep(750);
-
-            puffer.setPosition(pufferRelease);
-
-            Thread.sleep(750);
+            safeSleep(400);
 
             puffer.setPosition(pufferRelease);
+
+            safeSleep(400);
+
             setPlacerPosition(placerIn);
             elevatorPosition = elevatorPositions.bottom;
         }catch (InterruptedException e){}
@@ -444,32 +445,31 @@ class RobotController {
     public void collect(int coneNum){
         try {
             setGrabberPosition(grabberPile[coneNum]);
-            Thread.sleep((int)(500 / (grabberIn - grabberPile[0]) * Math.abs(grabberPile[coneNum] - grabberLeft.getPosition())));
+            safeSleep((int)(500 / (grabberIn - grabberPile[0]) * Math.abs(grabberPile[coneNum] - grabberLeft.getPosition())));
 
             setArmPosition(armOut);
 
-            while (grabberSensor.getDistance(DistanceUnit.CM) < 6) {}
-
-            Thread.sleep(750);
+            while (grabberSensor.getDistance(DistanceUnit.CM) < 6) {
+                if (gamepad.isStopRequested) throw new InterruptedException("stop requested");
+            }
 
             grabber.setPosition(grabberGrab);
 
-            Thread.sleep(1500);
+            safeSleep(500);
 
             setGrabberPosition(grabberMiddle);
 
-            Thread.sleep(750);
+            safeSleep(500);
 
             setArmPosition(armIn);
 
             while (!armSensor.isPressed()) {
+                if (gamepad.isStopRequested) throw new InterruptedException("stop requested");
             }
-
-            Thread.sleep(750);
 
             setGrabberPosition(grabberIn);
 
-            Thread.sleep(750); // replacing the sensor for now
+            safeSleep(500); // replacing the sensor for now
         }catch (InterruptedException e){}
     }
 
@@ -477,7 +477,7 @@ class RobotController {
         elevatorController.interrupt();
         driveController.interrupt();
         cycleController.interrupt();
-        score.interrupt();
+        teleScore.interrupt();
         autoCycle.interrupt();
 
         elevatorPosition = elevatorPositions.bottom;
@@ -548,5 +548,67 @@ class Vector {
 
     public void addAngle(double angle) {
         this.setAngle(this.getAngle() + angle);
+    }
+}
+
+
+class PipeLine extends OpenCvPipeline {
+    // the part of the image with the cone
+    private Mat small;
+
+    // the converted small image (rgb -> YCrCb)
+    private final Mat YCrCbImage = new Mat();
+
+    // the Cr and Cb channels of the YCrCbImage
+    private final Mat RedChannel  = new Mat();
+    private final Mat BlueChannel = new Mat();
+
+    // the threshold bounded Cr and Cb channels
+    private final Mat ThresholdRedImage  = new Mat();
+    private final Mat ThresholdBlueImage = new Mat();
+
+    // the part of the input image with the cone
+    private final Rect coneWindow = new Rect(120, 112, 70, 85);
+
+    // for the visual indicator
+    private final Rect coneWindowOutLine = new Rect(
+            0,
+            0,
+            coneWindow.width,
+            coneWindow.height
+    );
+
+    // the color threshold
+    private final Scalar thresholdMin = new Scalar(160, 160, 160);
+    private final Scalar thresholdMax = new Scalar(255, 255, 255);
+
+    @Override
+    public Mat processFrame(Mat input){
+        // get the part of the input image with the cone
+        small = input.submat(coneWindow);
+
+        // convert the small image (rgb -> YCrCb)
+        Imgproc.cvtColor(small, YCrCbImage, Imgproc.COLOR_RGB2YCrCb);
+
+        // get the Cr and Cb channels of the YCrCbImage
+        Core.extractChannel(YCrCbImage, RedChannel , 1);
+        Core.extractChannel(YCrCbImage, BlueChannel, 2);
+
+        // threshold the Cr and Cb channels
+        Core.inRange(RedChannel , thresholdMin, thresholdMax, ThresholdRedImage );
+        Core.inRange(BlueChannel, thresholdMin, thresholdMax, ThresholdBlueImage);
+
+        // count the red and blue pixels and place them into the red and blue fields from AutonomousDrive
+        AutonomousLeft.red  = Core.mean(ThresholdRedImage ).val[0];
+        AutonomousLeft.blue = Core.mean(ThresholdBlueImage).val[0];
+
+        // visual que
+        if      (AutonomousLeft.red  > 60) Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 0  , 0  ), 2);
+        else if (AutonomousLeft.blue > 60) Imgproc.rectangle(small, coneWindowOutLine, new Scalar(0  , 0  , 255), 2);
+        else                                Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 255, 255), 2);
+
+
+        // show the small image
+        return small;
     }
 }
