@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -74,7 +75,7 @@ class RobotController {
     /** SENSORS */
     private final BNO055IMU imu;
     private final DistanceSensor grabberSensor;
-    private final TouchSensor armSensor;
+    private final DigitalChannel armSensor;
     //private final TouchSensor elevatorSensor;
 
     /** SERVOS */
@@ -132,7 +133,9 @@ class RobotController {
         // getting the grabber sensor
         grabberSensor = hm.get(DistanceSensor.class, "grabberSensor");
         // getting the arm sensor
-        armSensor = hm.get(TouchSensor.class, "armSensor");
+        //armSensor = hm.get(TouchSensor.class, "armSensor");
+        armSensor = hm.get(DigitalChannel.class, "armSensor");
+        armSensor.setMode(DigitalChannel.Mode.INPUT);
         //elevatorSensor = hm.get(TouchSensor.class, "elevatorSensor");
 
         /** SERVOS */
@@ -201,15 +204,19 @@ class RobotController {
 
                     setPlacerPosition(placerOutTeleOp);
 
-                    while (gamepad.left_trigger == 0) {
-                        telemetry.addLine("first while");
+                    while (gamepad.right_trigger == 0) {
+                        telemetry.addData("position", elevatorPosition);
+                        telemetry.addData("current position", elevatorLeft.getCurrentPosition());
+                        telemetry.addData("Current Power", elevatorLeft.getPower());
                         telemetry.update();
                     }
 
                     puffer.setPosition(pufferRelease);
 
-                    while (gamepad.left_trigger > 0) {
-                        telemetry.addLine("second while");
+                    while (gamepad.right_trigger > 0) {
+                        telemetry.addData("position", elevatorPosition);
+                        telemetry.addData("current position", elevatorLeft.getCurrentPosition());
+                        telemetry.addData("Current Power", elevatorLeft.getPower());
                         telemetry.update();
                     }
 
@@ -221,7 +228,7 @@ class RobotController {
             } else {
 //                telemetry.addData("elevator height", "not specified");
             }
-//            telemetry.update();
+            telemetry.update();
         });
 
         autoCycle = new Thread(() -> {
@@ -239,13 +246,13 @@ class RobotController {
         cycleController = new Thread(() -> {
             gamepad.isCycleControllerActive = true;
             while (gamepad.isCycleControllerActive) {
-                if (gamepad.right_trigger > 0 || gamepad.right_bumper) {
+                if (gamepad.left_trigger > 0 || gamepad.left_bumper) {
 
                     // bring the grabber down
                     setGrabberPosition(grabberPile[0]);
 
                     // bring the grabber out the correct amount
-                    setArmPosition(gamepad.right_trigger * (armOut - armIn) + armIn);
+                    setArmPosition(gamepad.left_trigger * (armOut - armIn) + armIn);
 
                     // catch the cone if its in range
                     if (grabberSensor.getDistance(DistanceUnit.CM) < grabberCatchTrigger)
@@ -253,7 +260,7 @@ class RobotController {
                     else grabber.setPosition(grabberOpen);
 
                 } else {
-                    if (armSensor.isPressed()) {
+                    if (!armSensor.getState()) {
                         setGrabberPosition(grabberIn);
                     } else {
                         setArmPosition(armIn);
@@ -331,11 +338,12 @@ class RobotController {
 //                telemetry.addData("left_stick_y", gamepad.left_stick_y);
 //                telemetry.addData("left_stick_x", gamepad.left_stick_x);
 //                telemetry.addData("right_stick_x", gamepad.right_stick_x);
-//                telemetry.addData("position", elevatorPosition);
-//                telemetry.addData("current position", elevatorLeft.getCurrentPosition());
+                telemetry.addData("position", elevatorPosition);
+                telemetry.addData("current position", elevatorLeft.getCurrentPosition());
+                telemetry.addData("Current Power", elevatorLeft.getPower());
 //                telemetry.addData("scoring", score.isAlive());
 //
-//                telemetry.update();
+                telemetry.update();
             }
         });
     }
@@ -463,7 +471,7 @@ class RobotController {
 
             setArmPosition(armIn);
 
-            while (!armSensor.isPressed()) {
+            while (!armSensor.getState()) {
                 if (gamepad.isStopRequested) throw new InterruptedException("stop requested");
             }
 

@@ -62,7 +62,7 @@ public class SensorDigitalTouch extends LinearOpMode {
     public void runOpMode() {
 
         // get a reference to our digitalTouch object.
-        digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "armSensor");
 
         // set the digital channel to input.
         digitalTouch.setMode(DigitalChannel.Mode.INPUT);
