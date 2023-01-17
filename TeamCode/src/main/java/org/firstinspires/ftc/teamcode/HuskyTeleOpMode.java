@@ -150,9 +150,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
             rx = gamepad1.right_stick_x;
 
             // uses the left trigger to dynamically shift between different drive speeds.
-            // when the trigger is fully released, driveVelocity = 0.2.
-            // when the trigger is fully pressed, driveVelocity = 1
-            float driveVelocity = (float) (0.2 + 0.8 * gamepad1.left_trigger);
+            // when the trigger is fully released, driveVelocity = 1.
+            // when the trigger is fully pressed, driveVelocity = 0.2.
+            float driveVelocity = (float) (1 - 0.8 * gamepad1.left_trigger);
 
             // calculate motor velocities.
             double frontLeftVelocity = (y + x + rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
@@ -208,17 +208,14 @@ public class HuskyTeleOpMode extends LinearOpMode {
             }
             huskyBot.armSwivelMotor.setPower(armSwivelPower);
 
-
-
-            // Arm Lift Controls
-
-            if(gamepad2.left_stick_y < 0)
-            {   // on the way up
-                armLiftPowerDivider = 3.0 - (huskyBot.armLiftMotor.getCurrentPosition()/ARM_LIFT_MAX_POSITION);
-            }
-            else { // on the way down
-                armLiftPowerDivider = 5.5;
-            }
+                    // Arm Lift Controls
+                    if(gamepad2.left_stick_y < 0){
+                        // on the way up
+                        armLiftPowerDivider = 3.5 - (huskyBot.armLiftMotor.getCurrentPosition()/ARM_LIFT_MAX_POSITION);
+                    }
+                    else { // on the way down
+                        armLiftPowerDivider = 5.5;
+                    }
 
             armLiftPower = -gamepad2.left_stick_y/armLiftPowerDivider;
             armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MIN_POWER, ARM_LIFT_MAX_POWER);
@@ -267,10 +264,6 @@ public class HuskyTeleOpMode extends LinearOpMode {
             if (gamepad2.left_trigger != 0) {
                 huskyBot.servoMove(huskyBot.clawGrab, gamepad2.left_trigger);
             }
-
-
-            // Lift the Claw
-
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Stick", "y (%.2f), x (%.2f), rx (%.2f)", y, x, rx);
