@@ -158,15 +158,15 @@ public class PowerPlayComputerVisionPipelines {
 
 
 //        Sizes for subregions of the camera from which our data is extracted
-        static final int REGION_WIDTH = 55;
-        static final int REGION_HEIGHT = 90;
+        static final int REGION_WIDTH = 32;
+        static final int REGION_HEIGHT = 50;
 
         /*
          * List for the storage of points, if you're only dealing with a few regions declare them all separately, the freight regions in the other pipeline
          * are done like this.
          */
 
-        Point topLeftPoint = new Point(150,65);
+        Point topLeftPoint = new Point(304, 186);
         Point bottomRightPoint = new Point(topLeftPoint.x+REGION_WIDTH, topLeftPoint.y+REGION_HEIGHT);
 
 
