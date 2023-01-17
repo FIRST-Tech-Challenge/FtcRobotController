@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -21,6 +23,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 import java.util.Locale;
@@ -36,26 +42,18 @@ public class RoadRunnerTest extends LinearOpMode {
     static final float MAX_SPEED = 1.0f;
     static final float MIN_SPEED = 0.4f;
     static final int ACCEL = 75;  // Scaling factor used in accel / decel code.  Was 100!
-    public float desiredHeading;
+    public double desiredHeading;
 
     Orientation angles;
     Acceleration gravity;
+    private OpenCvCamera webCam;
+    private boolean isCameraStreaming = false;
+    Pipeline modifyPipeline = new Pipeline();
 
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    private static final String[] LABELS = {
-            "Bolt",
-            "Bulbs",
-            "Panels"
-    };
-    private static final String VUFORIA_KEY =
-            "AVXWcGz/////AAABmZfYj2wlVElmo2nUkerrNGhEBBg+g8Gq1KY3/lN0SEBYx7HyMslyrHttOZoGtwRt7db9nfvCiG0TBEp7V/+hojHXCorf1CEvmJWWka9nFfAbOuyl1tU/IwdgHIvSuW6rbJY2UmMWXfjryO3t9nNtRqX004LcE8O2zkKdBTw0xdqq4dr9zeA9gX0uayps7t0TRmiToWRjGUs9tQB3BDmSinXxEnElq+z3SMJGcn5Aj44iEB7uy/wuB8cGCR6GfOpDRYqn/R8wwD757NucR5LXA48rulTdthGIuHoEjud1QzyQOv4BpaODj9Oi0TMuBmBzhFJMwWzyZ4lKVyOCbf3uCRia7Q+HO+LbFbghNIGIIzZC";
-    private VuforiaLocalizer vuforia;
-    private TFObjectDetector tfod;
+    private int resultROI = 2;
 
-    private int resultROI=2;
-
-    private  boolean done = false;
-
+    private boolean done = false;
+/*
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new SampleMecanumDrive(hardwareMap);
@@ -67,76 +65,46 @@ public class RoadRunnerTest extends LinearOpMode {
 
         desiredHeading = getHeading();
 
-        moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading, pidRotate);
-        moveUtils.resetEncoders();
-
         actuatorUtils.initializeActuator(arm, gripper);
 
 
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
 
-        initVuforia();
-        initTfod();
+        initOpenCV();
 
-        if (tfod != null) {
-            tfod.activate();
-
-            tfod.setZoom(1.5, 16.0 / 9.0);
-        }
         actuatorUtils.gripperClose(false);
 
-
         waitForStart();
-        currTime=System.currentTimeMillis();
-        startTime=currTime;
-        if (tfod != null && resultROI == 2) {
+        currTime = System.currentTimeMillis();
+        startTime = currTime;
+        if (resultROI == 2) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
+            done = false;
             while (!done && opModeIsActive()) {
-                if((currTime - startTime) < 3000){
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
-                        if (updatedRecognitions.size() != 0) {
-                            done = true;
-                        }
-                        // step through the list of recognitions and display image position/size information for each one
-                        // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
-
-                            telemetry.addData("", " ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-
-                            String imageCheck = recognition.getLabel();
-                            if (imageCheck.equals("Bolt")) {
-                                resultROI = 1;
-                            } else if (imageCheck.equals("Bulbs")) {
-                                resultROI = 2;
-                            } else if (imageCheck.equals("Panels")) {
-                                resultROI = 3;
-                            } else {
-                                resultROI = 2;
-                            }
-                            telemetry.addData("ResultROI", resultROI);
-
-                        }
-                        telemetry.update();
+                if (currTime - startTime < 500) {
+                    telemetry.addData("Camera: ", "Waiting to make sure valid data is incoming");
+                } else {
+                    telemetry.addData("Time Delta: ", (currTime - startTime));
+                    resultROI = modifyPipeline.getResultROI();
+                    if (resultROI == 1) {
+                        telemetry.addData("Resulting ROI: ", "Red");
+                        done = true;
+                    } else if (resultROI == 2) {
+                        telemetry.addData("Resulting ROI: ", "Green");
+                        done = true;
+                    } else if (resultROI == 3) {
+                        telemetry.addData("Resulting ROI: ", "Blue");
+                        done = true;
+                    } else {
+                        telemetry.addData("Resulting ROI: ", "Something went wrong.");
                     }
-                    currTime = System.currentTimeMillis();}
-
-                else {
-                    vuforia.close();
-                    done=true;
-                    resultROI=2;
                 }
+                telemetry.update();
+                currTime = System.currentTimeMillis();
+
             }
 
         }
@@ -144,28 +112,86 @@ public class RoadRunnerTest extends LinearOpMode {
         done = false;
         //lift arm up
         actuatorUtils.armPole(4);
-        while (((currTime - startTime) < 30000)&& !done && opModeIsActive()) {
+        while (((currTime - startTime) < 30000) && !done && opModeIsActive()) {
 
             switch (resultROI) {
                 case 1:
                     telemetry.addData("Strafing", "case 1");
                     telemetry.update();
-                    done=true;
+                    done = true;
                     break;
                 case 2:
-                    done=true;
+                    done = true;
                     break;
                 case 3:
                     // Far right
                     telemetry.addData("Executing", "case 3");
                     telemetry.update();
-                    done=true;
+                    done = true;
                     break;
             }
 
             currTime = System.currentTimeMillis();
 
         }
+
+         */
+        public static double DISTANCE = 48; // in
+
+        @Override
+        public void runOpMode() throws InterruptedException {
+            SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+            Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
+
+            drive.setPoseEstimate(startPose);
+
+            waitForStart();
+
+            if (isStopRequested()) return;
+
+            while (!isStopRequested()) {
+                TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
+                        .lineTo(new Vector2d (DISTANCE, 0))
+                        .turn(Math.toRadians(90))
+                        .lineTo(new Vector2d (DISTANCE, DISTANCE))
+                        .turn(Math.toRadians(90))
+                        .lineTo(new Vector2d (0, DISTANCE))
+                        .turn(Math.toRadians(90))
+                        .lineTo(new Vector2d (0, 0))
+                        .turn(Math.toRadians(90))
+                        .build();
+                drive.followTrajectorySequence(trajSeq);
+            }
+        }
+    }
+
+
+    /*private void initOpenCV() {
+        int cameraMonitorViewId2 = hardwareMap.appContext.getResources().getIdentifier(
+                "cameraMonitorViewId",
+                "id",
+                hardwareMap.appContext.getPackageName());
+        // For a webcam (uncomment below)
+        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId2);
+        // For a phone camera (uncomment below)
+        // webCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId2);
+        webCam.setPipeline(modifyPipeline);
+        webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                telemetry.addData("Pipeline: ", "Initialized");
+                telemetry.update();
+                isCameraStreaming = true;
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Error: ", "Something went wrong :(");
+                telemetry.update();
+            }
+        });
     }
 
     String formatAngle(AngleUnit angleUnit, double angle) {
@@ -176,37 +202,11 @@ public class RoadRunnerTest extends LinearOpMode {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 
-    public float getHeading() {
-        Orientation angles = drive.getRawExternalHeading();
-        return angles;
-    }
-
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-    }
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 300;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-
-        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
-        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+    public double getHeading() {
+        double angle = drive.getRawExternalHeading();
+        return angle;
     }
 
 }
+*/
 
