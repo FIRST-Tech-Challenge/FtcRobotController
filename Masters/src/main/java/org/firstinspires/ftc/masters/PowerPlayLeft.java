@@ -4,15 +4,19 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Power Play Right")
-public class PowerPlayRedRight extends LinearOpMode {
+@Autonomous(name = "Power Play Left")
+public class PowerPlayLeft extends LinearOpMode {
+
+
+    Pose2d westPoleDeposit = new Pose2d(new Vector2d(-14,-14),Math.toRadians(135));
+    Pose2d coneStack = new Pose2d(new Vector2d(-60,-12),Math.toRadians(180));
+
 
     @Override
     public void runOpMode() {
@@ -21,7 +25,7 @@ public class PowerPlayRedRight extends LinearOpMode {
         PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor sleeveColor = null;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(new Vector2d(36, -60), Math.toRadians(90));
+        Pose2d startPose = new Pose2d(new Vector2d(-36, -60), Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         drive.closeClaw();
@@ -48,8 +52,8 @@ public class PowerPlayRedRight extends LinearOpMode {
         drive.liftTop();
 
         TrajectorySequence startTo270Pole = drive.trajectorySequenceBuilder(startPose)
-                .splineToLinearHeading(new Pose2d( new Vector2d(11,-54), Math.toRadians(90)), Math.toRadians(90))
-                .lineToLinearHeading(new Pose2d(new Vector2d(11,-30.5),Math.toRadians(135)))
+                .splineToLinearHeading(new Pose2d( new Vector2d(- 11,-54), Math.toRadians(90)), Math.toRadians(90))
+                .lineToLinearHeading(new Pose2d(new Vector2d(-11,-30.5),Math.toRadians(45)))
                 .build();
         drive.followTrajectorySequence(startTo270Pole);
 
@@ -67,7 +71,7 @@ public class PowerPlayRedRight extends LinearOpMode {
                 .back(2)
                 .build();
         drive.followTrajectorySequence(back);
-        drive.turn(Math.toRadians(135));
+        drive.turn(Math.toRadians(45));
 
         drive.setArmServoTop();
         drive.liftDown();
@@ -77,21 +81,21 @@ public class PowerPlayRedRight extends LinearOpMode {
         drive.setArmServoBottom();
 
         TrajectorySequence secondCone = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .splineToLinearHeading(new Pose2d(new Vector2d(11,-12),Math.toRadians(30)), Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(new Vector2d(50,-12),Math.toRadians(0)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-11,-12),Math.toRadians(150)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-50,-12),Math.toRadians(180)), Math.toRadians(180))
                 .build();
         drive.followTrajectorySequence(secondCone);
 
         drive.openClaw();
 
         TrajectorySequence score = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .splineToLinearHeading(new Pose2d(new Vector2d(11,-12),Math.toRadians(0)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-11,-12),Math.toRadians(180)), Math.toRadians(180))
                 .build();
         drive.followTrajectorySequence(score);
 
 
         TrajectorySequence newCone = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .splineToLinearHeading(new Pose2d(new Vector2d(50,-12),Math.toRadians(0)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-50,-12),Math.toRadians(180)), Math.toRadians(180))
                 .build();
         drive.followTrajectorySequence(newCone);
 
@@ -107,18 +111,19 @@ public class PowerPlayRedRight extends LinearOpMode {
 
         drive.turn(90);
 
+
         switch (sleeveColor) {
             case GRAY:
                 //Parking 1
                 TrajectorySequence park1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .strafeTo(new Vector2d(64, -12))
+                        .strafeTo(new Vector2d(-64, -12))
                         .build();
                 drive.followTrajectorySequence(park1);
                 break;
             case RED:
                 //Parking 2
                 TrajectorySequence park2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .strafeTo(new Vector2d(38, -12))
+                        .strafeTo(new Vector2d(-38, -12))
                         .build();
                 drive.followTrajectorySequence(park2);
                 break;
@@ -129,6 +134,30 @@ public class PowerPlayRedRight extends LinearOpMode {
                 break;
 
         }
+
+
+        // sleep(1000);
+
+        sleep (200);
+
+
+
+//        TrajectorySequence toConeStack = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//                .lineToLinearHeading(coneStack)
+//                .build();
+//        drive.followTrajectorySequence(toConeStack);
+//
+//
+//        TrajectorySequence toWestPole = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//                .lineToLinearHeading(westPoleDeposit)
+//                .build();
+//        drive.followTrajectorySequence(toWestPole);
+//
+
+        //park in the correct spot
+//        drive.followTrajectorySequence(toConeStack);
+
+        //put lift down
 
     }
 

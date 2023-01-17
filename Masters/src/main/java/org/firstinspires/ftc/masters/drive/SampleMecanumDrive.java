@@ -61,17 +61,20 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static int SLIDE_BOTTOM = 0;
 
     //Fix values
-    protected final double clawServoOpen = 0.14;
-    protected final double clawServoClosed = 0.0;
+    protected final double clawServoOpen = 0.75;
+    protected final double clawServoClosed = 0.99;
     protected final int armMotorBottom = 0;
     protected final int armMotorTop = 600;
     protected final int armMotorMid = 450;
 
+    protected final double tipCenter = 0.77;
+    protected final double tipFront = 0.6;
+    protected final double tipBack =0.9;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 42.0/38.0;
+    public static double LATERAL_MULTIPLIER = 60/54;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -92,7 +95,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotorEx slideOtherer;
     public DcMotorEx armMotor;
 
-    private Servo THE_CLAW;
+    private Servo THE_CLAW, tippingServo;
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -112,10 +115,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-//        imu = hardwareMap.get(BNO055IMU.class, "imu");
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-//        imu.initialize(parameters);
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
 
         // TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
         // not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
@@ -144,19 +147,19 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
-//        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "encoderLeft"));
-//        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontLeft"));
-//        middleEncoder  = new Encoder(hardwareMap.get(DcMotorEx.class, "backLeft"));
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
         linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide");
+        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide"); // This one is named Jim in spirit
         slideOtherer = hardwareMap.get(DcMotorEx.class, "slideOtherer");
+
         armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
 
         THE_CLAW = hardwareMap.servo.get("clawServo");
+        tippingServo = hardwareMap.servo.get("tippingServo");
+
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -176,11 +179,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: reverse any motors using DcMotor.setDirection()
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+      //  leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-       setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -401,9 +406,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return 0;
+     //   return 0;
 
-//        return imu.getAngularOrientation().firstAngle;
+        return imu.getAngularOrientation().firstAngle;
     }
 
     @Override
