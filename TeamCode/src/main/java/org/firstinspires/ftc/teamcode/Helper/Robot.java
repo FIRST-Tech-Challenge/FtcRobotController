@@ -469,20 +469,27 @@ public class Robot {
         timeout_ms = 5000;
         runtime.reset();
 
-
-
-        this.swingArm.setTargetPosition(Position);
-        //Set the power of the motor.
-        this.swingArm.setPower(speed);
-        //set the mode to go to the target position
-        this.swingArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-        while ((runtime.milliseconds() < timeout_ms) && (this.swingArm.isBusy())) {
-
+        if(Position>50){//Swing up
+            this.swingArm.setPower(0.1);
         }
-       // swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.swingArm.setPower(holdingPower);
+        if(Position<50){ // Swing down
+            this.swingArm.setPower(-0.1);
+        }
+
+
+//
+//        this.swingArm.setTargetPosition(Position);
+//        //Set the power of the motor.
+//        this.swingArm.setPower(speed);
+//        //set the mode to go to the target position
+//        this.swingArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//
+//        while ((runtime.milliseconds() < timeout_ms) && (this.swingArm.isBusy())) {
+//
+//        }
+//       // swingArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        this.swingArm.setPower(holdingPower);
 
     }
 
@@ -506,7 +513,7 @@ public class Robot {
 
     public void initArmClaw(){
         claw.setPosition(1);
-        SwingArmToPosition(1,70, swingArmHoldingPower);
+        SwingArmToPosition(1,75, swingArmHoldingPower);
         claw.setPosition(0);
 
     }
@@ -523,7 +530,7 @@ public class Robot {
 
         }
 
-        DriveToPosition(0.5, 0, 80, true);
+        DriveToPosition(0.5, 0, 77, true);
 
 
         //Drive to the pole
@@ -533,6 +540,8 @@ public class Robot {
         else{
             turnRobotToAngle(45);
         }
+
+        DriveToPosition(0.5, 0, 5, true);
 
         /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
         //Moves the slider to the correct height
@@ -577,7 +586,7 @@ public class Robot {
                 break;
         }
         turnRobotToAngle(175);
-        DriveToPosition(0.5, 0, -10, true);
+        DriveToPosition(0.5, 0, -15, true);
 
 
     }
