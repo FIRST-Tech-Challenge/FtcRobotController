@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
-import org.firstinspires.ftc.team6220_PowerPlay.GrabberCameraPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.RobotCameraPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -37,11 +36,15 @@ public class AutonomousTest3 extends BaseAutonomous {
             public void onError(int errorCode) {}
         });
 
+        initialize();
         waitForStart();
+
+        centerRobotCamera(robotCameraPipeline, Constants.CONE_WIDTH, Constants.CONE_CENTERING_KP);
 
         while (opModeIsActive()) {
             telemetry.addData("xPosition", robotCameraPipeline.xPosition);
             telemetry.addData("yPosition", robotCameraPipeline.yPosition);
+            telemetry.addData("width", robotCameraPipeline.detectionWidth);
             telemetry.update();
         }
     }

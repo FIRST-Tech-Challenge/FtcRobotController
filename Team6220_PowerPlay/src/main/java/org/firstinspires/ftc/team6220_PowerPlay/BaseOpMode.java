@@ -182,7 +182,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
     }
 
-    // takes a detection pipeline and temporarily takes control of the robot movement
+    /*// takes a detection pipeline and temporarily takes control of the robot movement
     // until the robot has centered by reading the pipeline fields
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
@@ -201,5 +201,5 @@ public abstract class BaseOpMode extends LinearOpMode {
     // and slopes in towards 0 power after a certain point when nearing 0 offset
     public double offsetToMotorPower(double offsetPixels) {
         return (-0.1 * offsetPixels) / (Math.abs(0.25 * offsetPixels) + 15.0);
-    }
+    }*/
 }

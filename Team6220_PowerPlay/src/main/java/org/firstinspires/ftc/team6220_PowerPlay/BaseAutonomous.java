@@ -228,22 +228,27 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
     // moves towards a stack while centering on it, until the stack fills the entire camera view
     // puts the robot about 3 inches away from the junction based on manual testing
-    public void centerConeStack(RobotCameraPipeline pipeline) {
-        double xOffset, width;
+    public void centerRobotCamera(RobotCameraPipeline pipeline, int maxWidth) {
+        double xOffset, detectionWidth;
+
         do {
             xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
-            width = pipeline.width;
+            detectionWidth = pipeline.detectionWidth;
 
             // convert the width to motor power to drive forward with
-            driveWithIMU(offsetToMotorPower(xOffset), widthToMotorPower(width), 0);
+            driveWithIMU(Constants.CONE_CENTERING_KP, 0.3, 0.0);
+
+            telemetry.addData("xPosition", pipeline.xPosition);
+            telemetry.addData("yPosition", pipeline.yPosition);
+            telemetry.addData("width", detectionWidth);
+            telemetry.update();
 
         // while either not centered in front of stack, or not close enough that the stack fills the view
-        } while (Math.abs(xOffset) > Constants.ROBOT_CAMERA_TOLERANCE || width < 800 - Constants.ROBOT_CAMERA_TOLERANCE);
-    }
+        } while (detectionWidth < maxWidth);
 
-    // convert the width of the stack to the power to drive with
-    public double widthToMotorPower(double width) {
-        return 0.6 * ( 1.0 - 200.0 / (Math.abs(width - 800.0) + 200.0));
+        motorFL.setPower(0.0);
+        motorFR.setPower(0.0);
+        motorBL.setPower(0.0);
+        motorBR.setPower(0.0);
     }
-
 }

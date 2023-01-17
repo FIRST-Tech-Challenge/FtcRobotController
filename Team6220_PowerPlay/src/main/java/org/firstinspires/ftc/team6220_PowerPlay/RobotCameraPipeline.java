@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
-import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -17,7 +16,7 @@ import java.util.List;
 public class RobotCameraPipeline extends OpenCvPipeline {
     public double xPosition = 0.0;
     public double yPosition = 0.0;
-    public double width = 0.0;
+    public double detectionWidth = 0.0;
 
     private int[] lowerRange = {42, 128, 114};
     private int[] upperRange = {168, 242, 255};
@@ -95,7 +94,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
             if (moments.get_m00() > 0) {
                 xPosition = boundingRect.x + (boundingRect.width * 0.5);
                 yPosition = boundingRect.y + (boundingRect.height * 0.5);
-                width = boundingRect.width;
+                detectionWidth = boundingRect.width;
             }
         }
 
