@@ -36,6 +36,7 @@ public class GeneralDriver extends BaseTele {
             //hdw.checkAndGrabCone();
 
             if (gamepad1.dpad_right && gamepad1.x) {
+                sleep (400);
                 if ( hdw.iseMode()) {
                     hdw.seteMode(false);
                     telemetry.addLine("eMode off (Limits on slide)");

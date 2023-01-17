@@ -117,6 +117,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                 if ( qrCode == null || "".equals(qrCode)) {
                     //If not decoded correctly, tried to get color to find out qrCode.
                     detectMsgBuf.append(" Decode Fail, using color ");
+                    Log.d("9010", " Decode Fail, using color ");
 
                     //Crop image from point 0 and point 3
                     Rect range = new Rect(new Point(points.get(0, 1)),  new Point(points.get(0, 3))  );
@@ -190,12 +191,12 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                 Imgcodecs.imwrite("/sdcard/FIRST/qr-cropeed.jpg", croppedQR);
             }
 
-
         }
 
         detectMsgBuf.append("qr code: " + qrCode + " Tried: " + triedTimes + " mean value: " + meanVal);
         detectMsgBuf.append(" Duration: " + (endMills - startMills) );
         detectMsg = detectMsgBuf.toString();
+        Log.d("9010", detectMsg);
 
         return input;
     }

@@ -20,12 +20,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 /**
- * This is the Robot class for 2022 FTC Season
+ * This is the Robot class for 2022-2023 FTC Season
  *
  */
 public class Hardware2022 {
 
-    //This is max wheel motor velocity.
+    //This is max wheel and slide motor velocity.
     static public double ANGULAR_RATE = 2300.0;
     private final double MIN_VELOCITY = 0.1;
 
@@ -39,10 +39,10 @@ public class Hardware2022 {
     private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
-    private final int CONE_SLIDE_LOW = 3000  ;
+    private final int CONE_SLIDE_LOW = 2600  ;
     //Get accurate reading for auto
-    private final int CONE_SLIDE_MID = 4700 ;
-    private final int CONE_SLIDE_HIGH = 7000 ;
+    private final int CONE_SLIDE_MID = 4000 ;
+    private final int CONE_SLIDE_HIGH = 5500 ;
 
     private boolean debug = true;
     private Telemetry telemetry;
@@ -108,7 +108,6 @@ public class Hardware2022 {
         wheelBackRight = hwMap.get(DcMotorEx.class, "rrWheel");
         wheelBackLeft = hwMap.get(DcMotorEx.class, "lrWheel");
         vSlide = hwMap.get(DcMotorEx.class, "Vertical");
-
 
 
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -390,12 +389,15 @@ public class Hardware2022 {
      * @param power
      */
     public void freeMoveVerticalSlide(float power ) {
+        /*
         telemetry.addLine().addData("Encoder Reading", vSlide.getCurrentPosition() );
         telemetry.addLine().addData("pwer input", power );
         telemetry.update();
 
+         */
+
         if ( power != 0 ) {
-            Log.d("9010", "vSlide position" + vSlide.getCurrentPosition());
+            Log.d("9010", "vSlide position " + vSlide.getCurrentPosition());
         }
 
         if ( ( (vSlide.getCurrentPosition() - vsldieInitPosition)  <= CONE_SLIDE_HIGH
@@ -511,6 +513,7 @@ public class Hardware2022 {
             Log.d("9010", "Travel:  " + travel);
         }
 
+        Log.d("9010", "After SLide Drop Cone ");
         vSlide.setVelocity(0);
 
         //Thread.sleep(100);
