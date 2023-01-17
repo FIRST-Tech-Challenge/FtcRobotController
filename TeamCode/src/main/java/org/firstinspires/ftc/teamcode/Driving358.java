@@ -74,6 +74,8 @@ public abstract class Driving358 extends LinearOpMode {
     public void liftconeauto(int direction, double power,char remaining){
         //remaining is for the number of cones remaining in the stack
         int tickConversion = (int)(COUNTS_PER_MOTOR_REV/(3.14));//145; //How many ticks per 1cm of string pulled
+        // COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+        //            (WHEEL_DIAMETER_INCHES * 3.14);
         int cmMoveauto = 0;
         int ticks;
 //        if (position.equals("low")){
@@ -237,6 +239,7 @@ public abstract class Driving358 extends LinearOpMode {
                 }
                 motorStop();
                 runUsingEncoders();
+                reset();
                 break;
             case 'b':
                 //setting power of motors to go backward
@@ -266,6 +269,7 @@ public abstract class Driving358 extends LinearOpMode {
                 }
                 motorStop();
                 runUsingEncoders();
+                reset();
                 break;
 
             case 'r':
@@ -291,6 +295,7 @@ public abstract class Driving358 extends LinearOpMode {
                 }
                 motorStop();
                 runUsingEncoders();
+                reset();
                 break;
             case 'l' :
                 // to strafe left
@@ -315,6 +320,7 @@ public abstract class Driving358 extends LinearOpMode {
                 }
                 motorStop();
                 runUsingEncoders();
+                reset();
                 break;
 
             default:
@@ -324,12 +330,12 @@ public abstract class Driving358 extends LinearOpMode {
 
 
     public void liftlevel(double power, char direction){
-        int tickConversion = (int)(Driving358.COUNTS_PER_MOTOR_REV/(3.14));
+        int tickConversion = (int)(COUNTS_PER_MOTOR_REV/(3.14));   //(int)(Driving358.COUNTS_PER_MOTOR_REV/(3.14));
         int cmMovelift;
         int ticks;
         switch(direction){
             case '1' :
-                cmMovelift  = 5;
+                cmMovelift  = 14;  //14
                 ticks = tickConversion * cmMovelift;
                 if (power<0){
                     ticks*=-1;
@@ -346,7 +352,7 @@ public abstract class Driving358 extends LinearOpMode {
 
                 break;
             case '2' ://u for up
-                cmMovelift  = 9;
+                cmMovelift  = 10;//24
 
                 ticks = tickConversion * cmMovelift;
                 if (power<0){
@@ -364,7 +370,7 @@ public abstract class Driving358 extends LinearOpMode {
                 //cmMovelift = 0;
                 break;
             case '3'://u for up
-                cmMovelift = 3;
+                cmMovelift = 15;//35
                 ticks = tickConversion * cmMovelift;
                 if (power<0){
                     ticks*=-1;

@@ -110,43 +110,83 @@ public class BLUEautoTF extends Driving358 {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
-        waitForStart();
-        parkLevel = checkLevel();
-        sleep(200);
-        //move(.6, 'f', 10);
-        sleep(200);
-
         parkLevel = checkLevel();
         telemetry.addData("Level","%d",parkLevel);
         telemetry.update();
+        waitForStart();
+
+        //move(.1, 'f', 10);
+
+        // parkLevel = checkLevel();
+
+
+
+        clawrotate("close");
+
+        move(0.3, 'f',40);
+        move(0.3,'r',20);
+        liftlevel(0.2, '1');
+        //liftconeauto(1, 0.3,'5');//takes first cone from stack
+        clawrotate("open");
+        move(0.3,'l',15);
+        move(0.3, 'b',35);
+
+        //then just park
+
+
+        //liftdown();
+        //lift.setMode(DcMotor.RunMode.RUN_WITH_ENCODER);
+
+//        move(0.3,'l',18);
+//        move(0.3,'f',12);
+//
+//
+//        clawrotate("open");
+//        move(0.3,'b',12);
+//        move(0.3,'r',16);
+//
+//        move(0.3,'f',68);
+//
+//        rotate(0.3, 'l', 100);
+//        clawrotate("open");
+//        liftconeauto(1, 0.3,'5');//takes first cone from stack
+//        liftdown(0.2);
+//
+//        liftlevel(0.3, '1');// lift go up to height of lowest junction
+//        clawrotate("open");
+//        liftdown(0.2);
+
+
         switch (parkLevel) {//moves to the alliance shipping hub based on what it reads
             case (1)://Warehouse close. Scoring level 1. Bottom
-                move(.1, 'l', 55);
-                move(.1, 'f', 60);
+                move(.3, 'l', 55);
+                move(.3, 'f', 60);
+
 
                 break;
             case (2)://Mid. Scoring level 2. Mid
-                move(.1, 'f', 55);
-//                move(.6, 'r', 5);
-                //distanceMove(25, false);
+
+                move(.3, 'f', 55);
+
                 break;
             case (3)://warehouse far. scoring level 3 top
-                //levelLift('t');
-                move(.1, 'r', 55);
-                move(.1, 'f', 60);
-                //distanceMove(45, false);
+
+
+                move(.3, 'r', 55);
+                move(.3, 'f', 60);
+
                 break;
             default:
-                move(.6, 'r', 55);
+                move(.3, 'l', 5);//orginially 55
                 break;
         }
-        motorStop();
+        //motorStop();
     }
     private int checkLevel() {
         long programTime = System.currentTimeMillis();
         long waitTime = 5000L;
-        if (opModeIsActive() && (System.currentTimeMillis() - programTime )< waitTime) {
-            while (opModeIsActive()) {
+        if (opModeIsActive()) {
+            while (opModeIsActive() && (System.currentTimeMillis() - programTime )< waitTime) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -185,6 +225,7 @@ public class BLUEautoTF extends Driving358 {
                         telemetry.update();
                     }
                 }
+
             }
             return -1;
         }

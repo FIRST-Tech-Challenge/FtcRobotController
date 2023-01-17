@@ -68,7 +68,10 @@ public class    TeleOp_358 extends OpMode {
     private float turboModifier = 1.9f;// the amount that the speed will be increased in turbo mode. Must be <2. No increase is 1.
     private float precisionActive = 1f;
     private float turnReduction = .5f;//reduces the speed of turning. <1 to reduce. 1 if to leave as normal> yuh
-    private boolean buttonPressed = false;
+    private boolean abuttonPressed = false;
+    private boolean bbuttonPressed = false;
+    private boolean ybuttonPressed = false;
+
     private boolean previousXButton = false;
     //private float BRDrive = 1f;
 
@@ -151,25 +154,31 @@ public class    TeleOp_358 extends OpMode {
         int cmMove = 0;
         boolean enco=false;
         //low level
-        if (gamepad2.a && !this.buttonPressed) {
-            this.buttonPressed = true;
-            cmMove  = 1;
+        if (gamepad2.a && !this.abuttonPressed) {
+            this.abuttonPressed = true;
+            cmMove  = 14;
             enco = true;
+            telemetry.addData("a button prssee",1);
 
         }
-        telemetry.addData("a button prssee",1);
-        this.buttonPressed = gamepad2.a;
-//        //mid level
-//
-//            if (gamepad2.b){
-//               cmMove = 3;
-//                enco = true;
-//            }
-//        //high level
-//            if (gamepad2.y) {
-//                cmMove = 5;
-//                enco = true;
-//            }
+
+        if (gamepad2.b && !this.bbuttonPressed) {
+            this.bbuttonPressed = true;
+            cmMove  = 24;
+            enco = true;
+            telemetry.addData("b button prssee",2);
+        }
+        if (gamepad2.y && !this.ybuttonPressed) {
+            this.ybuttonPressed = true;
+            cmMove  = 34;
+            enco = true;
+            telemetry.addData("y button pressed",3);
+        }
+        this.abuttonPressed = gamepad2.a;
+        this.bbuttonPressed = gamepad2.b;
+        this.ybuttonPressed = gamepad2.y;
+
+
         if (enco) {
             int ticks = tickConversion * cmMove;
 //                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -258,6 +267,12 @@ public class    TeleOp_358 extends OpMode {
             //robot.rightServo.setPosition(0.95);
             robot.clawServo.setPosition(0.0);
             telemetry.addData("Right Trigger", gamepad2.x);
+        }
+        if (gamepad1.right_trigger > 0.5) {
+            //robot.leftServo.setPosition(0.95);
+            //robot.rightServo.setPosition(0.95);
+            robot.clawServo.setPosition(0.0);
+            telemetry.addData("Right Trigger", gamepad1.x);
         }
 
 

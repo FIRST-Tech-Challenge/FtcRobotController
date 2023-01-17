@@ -62,9 +62,9 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="DROP_CONE")
+@Autonomous(name="DROP_BLUE")
 //@Disabled
-public class Drop_Cone extends Driving358 {
+public class drop_blue extends Driving358 {
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     private static final String[] LABELS = {
             "1 Bolt",
@@ -113,11 +113,10 @@ public class Drop_Cone extends Driving358 {
         //robot.leftServo.setPosition(0);
         //robot.rightServo.setPosition(1);
         clawrotate("close");
-        rotate(0.1, 'l', 150);
+        rotate(0.1, 'r', 150);
         move(.6, 'f',10);
 
         clawrotate("open");
-
 
         //robot.leftServo.setPosition(1);
         //robot.rightServo.setPosition(0);

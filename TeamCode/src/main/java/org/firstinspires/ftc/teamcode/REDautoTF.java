@@ -111,23 +111,27 @@ public class REDautoTF extends Driving358 {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
-        waitForStart();
-        //parkLevel = checkLevel();
-        //move(.1, 'f', 10);
-
-        // parkLevel = checkLevel();
-        //telemetry.addData("Level","%d",parkLevel);
+        parkLevel = checkLevel();
+        telemetry.addData("Level","%d",parkLevel);
         telemetry.update();
+        waitForStart();
+
+        //move(.1, 'f', 5);
+
+         parkLevel = checkLevel();
+
+
 
         clawrotate("close");
 
-        move(0.3, 'f',20);
-        move(0.3,'l',18);
+        move(0.3, 'f',40);
+        move(0.3,'l',20);
         liftlevel(0.2, '1');
-        //liftconeauto(1, 0.3,'5');//takes first cone from stack
+        move(0.3,'l',5);
         clawrotate("open");
-        move(0.3,'r',18);
-        move(0.3, 'b',20);
+        move(0.3,'r',15);
+        move(0.3, 'b',35);
+
         //then just park
 
 
@@ -148,7 +152,7 @@ public class REDautoTF extends Driving358 {
 //        clawrotate("open");
 //        liftconeauto(1, 0.3,'5');//takes first cone from stack
 //        liftdown(0.2);
-//        rotate(0.1, 'l', 90);
+//
 //        liftlevel(0.3, '1');// lift go up to height of lowest junction
 //        clawrotate("open");
 //        liftdown(0.2);
@@ -156,25 +160,25 @@ public class REDautoTF extends Driving358 {
 
         switch (parkLevel) {//moves to the alliance shipping hub based on what it reads
             case (1)://Warehouse close. Scoring level 1. Bottom
-                move(.1, 'l', 55);
-                move(.1, 'f', 60);
+                move(.3, 'l', 55);
+                move(.3, 'f', 60);
 
 
                 break;
             case (2)://Mid. Scoring level 2. Mid
 
-                move(.1, 'f', 55);
+                move(.3, 'f', 55);
 
                 break;
             case (3)://warehouse far. scoring level 3 top
 
 
-                move(.1, 'r', 55);
-                move(.1, 'f', 60);
+                move(.3, 'r', 55);
+                move(.3, 'f', 60);
 
                 break;
             default:
-                move(.1, 'l', 5);//orginialy 55
+                move(.3, 'l', 5);//orginialy 55
                 break;
         }
         //motorStop();
