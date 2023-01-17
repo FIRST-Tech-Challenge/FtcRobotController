@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -19,17 +18,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+
+import java.sql.Time;
 
 class elevatorPositions{
-    public static int high   = 18800;
+    public static int high   = 18500;
     public static int middle = 12000;
     public static int low    = 5000 ;
     public static int bottom = 0    ;
 }
 
 class RobotController {
+
+    private ElapsedTime et = new ElapsedTime();
     /** GENERAL CONSTANTS */
     private final double sq2 = Math.sqrt(2);
     private final Telemetry telemetry;
@@ -44,7 +45,7 @@ class RobotController {
 
     /** SERVO CONSTANTS */
     private final double grabberMiddle = 0.26;
-    public final double grabberIn  = 0.1;
+    public final double grabberIn  = 0.09;
 
     //                                  low > > > > > > > > > > > high
     public final double[] grabberPile = {0.77, 0.73, 0.7, 0.66, 0.6};
@@ -52,15 +53,15 @@ class RobotController {
     private final double armOut = 0.89; // hiTech value 0.61;
     private final double armIn  = 0.5;  // hiTech value 0.41;
 
-    private final double placerIn  = 0.01;
+    private final double placerIn  = 0;
 
-    private final double placerOutAutonomous = 0.76;
+    private final double placerOutAutonomous = 0.78;
     private final double placerOutTeleOp = 0.85;
 
-    private final double pufferGrab    = 0.18;
-    private final double pufferRelease = 0.018;
+    private final double pufferGrab    = 0.35;
+    private final double pufferRelease = 0;
 
-    private final double grabberGrab = 0.58;
+    private final double grabberGrab = 0.61;
     private final double grabberOpen = 0.36;
 
     /** SENSOR CONSTANTS */
@@ -190,17 +191,22 @@ class RobotController {
 //                telemetry.addData("elevator height", elevatorPosition);
                 try {
                     puffer.setPosition(pufferGrab);
+                    grabber.setPosition(grabberOpen);
 
                     Thread.sleep(750);
 
                     setPlacerPosition(placerOutTeleOp);
 
                     while (gamepad.left_trigger == 0) {
+                        telemetry.addLine("first while");
+                        telemetry.update();
                     }
 
                     puffer.setPosition(pufferRelease);
 
                     while (gamepad.left_trigger > 0) {
+                        telemetry.addLine("second while");
+                        telemetry.update();
                     }
 
                     setPlacerPosition(placerIn);
@@ -226,7 +232,8 @@ class RobotController {
 
 
         cycleController = new Thread(() -> {
-            while (gamepad.cycleController) {
+            gamepad.isCycleControllerActive = true;
+            while (gamepad.isCycleControllerActive) {
                 if (gamepad.right_trigger > 0 || gamepad.right_bumper) {
 
                     // bring the grabber down
@@ -266,7 +273,8 @@ class RobotController {
         elevatorPosition = elevatorPositions.bottom;
         elevatorPower = 0;
         elevatorController = new Thread(() -> {
-            while (gamepad.elevatorController){
+            gamepad.isElevatorControllerActive = true;
+            while (gamepad.isElevatorControllerActive){
                 elevatorPower = Math.max(Math.min((elevatorPosition - elevatorLeft.getCurrentPosition()) / 2300.0, 1), -1);
 
                 // make the elevator weaker when coming down to compensate for gravity
@@ -280,7 +288,8 @@ class RobotController {
 
         joystick_left = new Vector(0, 0);
         driveController = new Thread(() ->{
-            while(gamepad.driveController) {
+            gamepad.isDriveControllerActive = true;
+            while(gamepad.isDriveControllerActive) {
                 joystick_left.x = gamepad.left_stick_x;
                 joystick_left.y = -gamepad.left_stick_y;
 
@@ -304,26 +313,31 @@ class RobotController {
                         (B - gamepad.right_stick_x * 0.7) * overallDrivingPower,
                         (A + gamepad.right_stick_x * 0.7) * overallDrivingPower);
 
-                telemetry.addData("left_trigger", gamepad.left_trigger);
-                telemetry.addData("left_bumper", gamepad.left_bumper);
-                telemetry.addData("right_trigger", gamepad.right_trigger);
-                telemetry.addData("right_bumper", gamepad.right_bumper);
-
-                telemetry.addData("a", gamepad.a);
-                telemetry.addData("b", gamepad.b);
-                telemetry.addData("x", gamepad.x);
-                telemetry.addData("y", gamepad.y);
-
-                telemetry.addData("left_stick_y", gamepad.left_stick_y);
-                telemetry.addData("left_stick_x", gamepad.left_stick_x);
-                telemetry.addData("right_stick_x", gamepad.right_stick_x);
-                telemetry.addData("position", elevatorPosition);
-                telemetry.addData("current position", elevatorLeft.getCurrentPosition());
-
-
-                telemetry.update();
+//                telemetry.addData("left_trigger", gamepad.left_trigger);
+//                telemetry.addData("left_bumper", gamepad.left_bumper);
+//                telemetry.addData("right_trigger", gamepad.right_trigger);
+//                telemetry.addData("right_bumper", gamepad.right_bumper);
+//
+//                telemetry.addData("a", gamepad.a);
+//                telemetry.addData("b", gamepad.b);
+//                telemetry.addData("x", gamepad.x);
+//                telemetry.addData("y", gamepad.y);
+//
+//                telemetry.addData("left_stick_y", gamepad.left_stick_y);
+//                telemetry.addData("left_stick_x", gamepad.left_stick_x);
+//                telemetry.addData("right_stick_x", gamepad.right_stick_x);
+//                telemetry.addData("position", elevatorPosition);
+//                telemetry.addData("current position", elevatorLeft.getCurrentPosition());
+//                telemetry.addData("scoring", score.isAlive());
+//
+//                telemetry.update();
             }
         });
+    }
+
+    private void safeSleep(int millisecond){
+        et.reset();
+        while (et.milliseconds() < millisecond) {if (gamepad.isStopRequested){break;}}
     }
 
     private boolean a = true;
@@ -483,9 +497,9 @@ class RobotController {
         gamepad.left_stick_x = 0;
         gamepad.right_stick_x = 0;
 
-        gamepad.driveController = false;
-        gamepad.elevatorController = false;
-        gamepad.cycleController = false;
+        gamepad.isDriveControllerActive = false;
+        gamepad.isElevatorControllerActive = false;
+        gamepad.isCycleControllerActive = false;
 
 
     }

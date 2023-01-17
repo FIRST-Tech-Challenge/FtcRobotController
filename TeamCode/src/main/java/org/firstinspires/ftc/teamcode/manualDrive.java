@@ -59,7 +59,9 @@ class gamepad{
     public static boolean x = false;
     public static boolean y = false;
 
-    public static boolean elevatorController = true;
-    public static boolean driveController = true;
-    public static boolean cycleController = true;
+    public static boolean isElevatorControllerActive = true;
+    public static boolean isDriveControllerActive = true;
+    public static boolean isCycleControllerActive = true;
+
+    public static boolean isStopRequested = false;
 }
