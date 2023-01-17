@@ -27,6 +27,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TankVelocityConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -40,7 +41,6 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
@@ -91,7 +91,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private Pose2d poseEstimate, poseError, poseVelocity;
     private long lastLoopTime, loopTime;
 
-    private static Vector2 position;
+    private static Vector2 cachePosition;
     private static double headingOffsetForTeleOp;
 
     //devices ---------------------------------------------------------
@@ -102,7 +102,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     private BNO055IMU imu = null;
     private VoltageSensor batteryVoltageSensor;
-    private final DistanceSensor chassisLengthDistanceSensor;
+    //private final DistanceSensor chassisLengthDistanceSensor; //todo add distance sensor and uncomment all lines using this
 
     private double compensatedBatteryVoltage;
 
@@ -131,10 +131,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             .addState(() -> {return true;})
             .build();
     private PathLine gridPathLine;
+    private Robot robot;
 
-    public DriveTrain (HardwareMap hardwareMap, boolean simulated){
-
+    public DriveTrain (HardwareMap hardwareMap, Robot robot, boolean simulated){
         super(simulated);
+        this.robot = robot;
         useMotorPowers = false;
 
         this.simulated = simulated;
@@ -143,14 +144,16 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         if (simulated) {
-            chassisLengthDistanceSensor = new DistanceSensorSim(
-                    MIN_CHASSIS_LENGTH - (DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL));
+            //todo uncomment distance sensor lines when it's added
+            //chassisLengthDistanceSensor = new DistanceSensorSim(
+            //        MIN_CHASSIS_LENGTH - (DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL));
             leftMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             rightMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             chariotMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             motors = Arrays.asList(leftMotor, rightMotor, chariotMotor);
         } else {
-            chassisLengthDistanceSensor = hardwareMap.get(DistanceSensor.class, "distChariot");
+            //todo uncomment next line when the sensor is added
+            //chassisLengthDistanceSensor = hardwareMap.get(DistanceSensor.class, "distChariot");
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
             leftMotor = hardwareMap.get(DcMotorEx.class, "motorLeft");
             rightMotor = hardwareMap.get(DcMotorEx.class, "motorRight");
@@ -209,7 +212,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
         chassisLengthPID.enable();
 
-        position = new Vector2(0,0);
+        cachePosition = new Vector2(0,0);
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
 
@@ -255,6 +258,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         } else {
             leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
+            //todo - add chassis length distance sensor
             //chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
 
         }
@@ -316,8 +320,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     private static double lastRunHeading = 0;
 
-    public void updatePositionForNextRun(){
-        position = new Vector2(getPoseEstimate().getX(),getPoseEstimate().getY());
+    public void cachePositionForNextRun(){
+        cachePosition = new Vector2(getPoseEstimate().getX(),getPoseEstimate().getY());
         lastRunHeading = getRawHeading();
     }
 
@@ -398,16 +402,27 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return telemetryMap;
     }
 
+    public void resetEncoders(){
+        for (DcMotorEx motor : motors) {
+            DcMotor.RunMode mode = motor.getMode();
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(mode);
+        }
+        robot.clearBulkCaches();
+        leftRelOffset = leftMotor.getCurrentPosition();
+        rightRelOffset = rightMotor.getCurrentPosition();
+        leftPosition=0;
+        rightPosition=0;
+    }
+
     public void resetGridDrive(Position start){
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
-            for (DcMotorEx motor : motors) {
-                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
+            resetEncoders();
             setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
         }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
             setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
-            setPoseEstimate(new Pose2d(position.x,position.y,lastRunHeading));
+            setPoseEstimate(new Pose2d(cachePosition.x, cachePosition.y,lastRunHeading));
         }
     }
 

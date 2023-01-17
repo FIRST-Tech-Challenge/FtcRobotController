@@ -74,7 +74,7 @@ public class Crane implements Subsystem {
         SHOULDER_IMU_ENABLE = shoulderImuEnable;
     }
 
-    public static boolean SHOULDER_IMU_ENABLE = false; //set false to disable IMU calls while testing off-robot subsystems
+    public static boolean SHOULDER_IMU_ENABLE = true; //set false to disable IMU calls while testing off-robot subsystems
 
     public static double kF = 0.2;
     public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.05, 0.005, 0.0);

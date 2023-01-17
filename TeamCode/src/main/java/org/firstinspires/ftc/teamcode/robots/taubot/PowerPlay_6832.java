@@ -44,7 +44,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
@@ -63,7 +62,7 @@ import java.util.Map;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "PowerPlay_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
-@Config
+@Config(value = "PP_6832")
 public class PowerPlay_6832 extends OpMode {
 
     /* Declare OpMode members. */
@@ -90,7 +89,7 @@ public class PowerPlay_6832 extends OpMode {
     public static boolean numericalDashboardEnabled = false;
     static Constants.Alliance alliance;
     static Constants.Position startingPosition;
-    public static GameState gameState;
+    public static GameState gameState = GameState.AUTONOMOUS;
     static int gameStateIndex;
 
     private long startTime;
@@ -204,7 +203,7 @@ public class PowerPlay_6832 extends OpMode {
         active = true;
         initializing = true;
         debugTelemetryEnabled = DEFAULT_DEBUG_TELEMETRY_ENABLED;
-        gameState = PowerPlay_6832.GameState.TELE_OP;
+        //gameState = PowerPlay_6832.GameState.TELE_OP;
 
         // timing
         lastLoopClockTime = System.nanoTime();
@@ -294,8 +293,8 @@ public class PowerPlay_6832 extends OpMode {
 
         @Override
     public void loop() {
-            robot.driveTrain.updatePositionForNextRun();
-            robot.turret.updateHeadingForNextRun();
+            robot.driveTrain.cachePositionForNextRun();
+            robot.turret.cacheHeadingForNextRun();
             dc.updateStickyGamepads();
             dc.handleStateSwitch();
 

@@ -74,7 +74,7 @@ public class Robot implements Subsystem {
         }
 
         // initializing subsystems
-        driveTrain = new DriveTrain(hardwareMap, simulated);
+        driveTrain = new DriveTrain(hardwareMap, this, simulated);
         turret = new Turret(hardwareMap, this, simulated);
         crane = new Crane(hardwareMap, this, simulated);
         underarm = new UnderArm(hardwareMap, this, simulated);
@@ -131,10 +131,14 @@ public class Robot implements Subsystem {
         return "Robot";
     }
 
-    @Override
-    public void update(Canvas fieldOverlay) {
+    public void clearBulkCaches(){
         for (LynxModule module : hubs)
             module.clearBulkCache();
+    }
+
+    @Override
+    public void update(Canvas fieldOverlay) {
+        clearBulkCaches(); //ALWAYS FIRST LINE IN UPDATE
 
         articulate(articulation);
 

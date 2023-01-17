@@ -19,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.util.PIDController;
-import org.firstinspires.ftc.teamcode.util.Vector3;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,7 +42,7 @@ public class Turret implements Subsystem {
 
     Orientation imuAngles;
 
-    private static double pastHeading;
+    private static double cacheHeading;
 
     private Robot robot;
 
@@ -97,14 +96,14 @@ public class Turret implements Subsystem {
         return  correction;
     }
 
-    public void updateHeadingForNextRun(){
-        pastHeading = heading;
+    public void cacheHeadingForNextRun(){
+        cacheHeading = heading;
     }
 
     public void resetHeading(){
         offsetHeading = (heading-imuAngles.firstAngle)% 360;
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)) {
-            offsetHeading += pastHeading;
+            offsetHeading += cacheHeading;
         }
     }
 
