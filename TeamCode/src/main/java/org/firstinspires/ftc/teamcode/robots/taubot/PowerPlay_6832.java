@@ -140,6 +140,7 @@ public class PowerPlay_6832 extends OpMode {
 
         TELE_OP("Tele-Op"),
         DEMO("Demo"),
+        UNDERARM_TEST("Underarm Testing"),
         MANUAL_DIAGNOSTIC("Manual Diagnostic"),
 
         CRANE_DEBUG("Crane Debug"),
@@ -311,6 +312,9 @@ public class PowerPlay_6832 extends OpMode {
                         break;
                     case DEMO:
                         dc.joystickDriveDemoMode();
+                        break;
+                    case UNDERARM_TEST:
+                        dc.UnderarmTesting();
                         break;
                     case MANUAL_DIAGNOSTIC:
                         //handleManualDiagnostic();

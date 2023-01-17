@@ -70,6 +70,12 @@ public class Crane implements Subsystem {
 
     public static double EXTEND_TICKS_PER_METER = 806/.2921; //todo verify this is still true
 
+    public static void setShoulderImuEnable(boolean shoulderImuEnable) {
+        SHOULDER_IMU_ENABLE = shoulderImuEnable;
+    }
+
+    public static boolean SHOULDER_IMU_ENABLE = false; //set false to disable IMU calls while testing off-robot subsystems
+
     public static double kF = 0.2;
     public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.05, 0.005, 0.0);
     public static double SHOULDER_MAX_PID_OUTPUT = 1;
@@ -151,6 +157,7 @@ public class Crane implements Subsystem {
         extenderTargetPos = 0;
         shoulderTargetAngle = 0;
         if (simulated) {
+            setShoulderImuEnable(false);
             shoulderMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             extenderMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             turretMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
@@ -172,23 +179,23 @@ public class Crane implements Subsystem {
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
             nudgeStickServo = hardwareMap.get(Servo.class, "nudgeSwivel");
             //nudgeDistanceSensor = hardwareMap.get(DistanceSensor.class, "nudgeDist");
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-            parameters.loggingEnabled      = true;
-            parameters.loggingTag          = "IMU";
-            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-            shoulderImu = hardwareMap.get(BNO055IMU.class, "shoulderIMU");
-            shoulderImu.initialize(parameters);
-            turretImu = hardwareMap.get(BNO055IMU.class, "turretIMU");
-            turretImu.initialize(parameters);
-
-            shoulderImu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-            turretImu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
         }
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        shoulderImu = hardwareMap.get(BNO055IMU.class, "shoulderIMU");
+        shoulderImu.initialize(parameters);
+        turretImu = hardwareMap.get(BNO055IMU.class, "turretIMU");
+        turretImu.initialize(parameters);
+
+        turretImu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
         extendPID = new PIDController(0,0,0);
         extendPID.setOutputRange(EXTEND_MIN_PID_OUTPUT, EXTEND_MAX_PID_OUTPUT);
         shoulderPID = new PIDController(0,0,0);
@@ -824,10 +831,14 @@ public class Crane implements Subsystem {
 
         currentStateMachine.execute();
 
-        angles   = shoulderImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        gravity  = shoulderImu.getGravity();
 
-        shoulderAngle = -AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
+        if (SHOULDER_IMU_ENABLE) { //external shoulder imu is attached
+            angles = shoulderImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            gravity = shoulderImu.getGravity();
+            shoulderAngle = -AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
+        }
+        else
+            shoulderAngle = 0;
 
         turretAngles = turretImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         turretGravity = turretImu.getGravity();

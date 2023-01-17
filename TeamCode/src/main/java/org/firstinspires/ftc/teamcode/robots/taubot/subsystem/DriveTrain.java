@@ -159,10 +159,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         }
             for (DcMotorEx motor : motors) {
-                MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-                motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-                motor.setMotorType(motorConfigurationType);
-
+                if (!simulated) {
+                    MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+                    motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+                    motor.setMotorType(motorConfigurationType);
+                }
                 //do not zero the encoders in the constructor
                 motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -208,6 +209,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
         chassisLengthPID.enable();
 
+        position = new Vector2(0,0);
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
 
@@ -312,7 +314,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     }
 
-    private static double lastRunHeading;
+    private static double lastRunHeading = 0;
 
     public void updatePositionForNextRun(){
         position = new Vector2(getPoseEstimate().getX(),getPoseEstimate().getY());

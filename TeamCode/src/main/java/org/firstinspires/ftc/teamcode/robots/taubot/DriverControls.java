@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.notJoystic
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.UnderArm;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProviders;
@@ -317,6 +318,26 @@ public class DriverControls {
         }
         if(visionProviderFinalized)
             auto.visionProvider.update();
+    }
+
+    public void UnderarmTesting(){
+        if(Math.abs(gamepad1.left_stick_y) > 0.05){
+            robot.underarm.adjustShoulder(gamepad1.left_stick_y);
+        }
+        if(Math.abs(gamepad1.right_stick_y) > 0.05){
+            robot.underarm.adjustElbow(gamepad1.right_stick_y);
+        }
+        if(Math.abs(gamepad1.right_stick_x) > 0.05){
+            robot.underarm.adjustLasso(gamepad1.right_stick_x);
+        }
+        if(Math.abs(gamepad1.left_stick_x) > 0.05){
+            robot.underarm.adjustTurret(gamepad1.left_stick_x);
+        }
+
+        if (stickyGamepad1.b) robot.underarm.articulate(UnderArm.Articulation.HOME);
+        if (stickyGamepad1.a) robot.underarm.articulate(UnderArm.Articulation.TRANSFER);
+
+
     }
 }
 

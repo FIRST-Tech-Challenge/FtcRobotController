@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.getStateMachine;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.map;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.servoNormalize;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.servoNormalizeExtended;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 
@@ -36,15 +37,15 @@ public class UnderArm implements Subsystem {
     public static int SHOULDER_START_ANGLE = 110;
     public static int IK_SHOULDER_OFFSET = 10;
     public static int IK_START_X = 2;
-    public static int SHOULDER_HOME_PWM = 1500;
-    public static int ELBOW_HOME_PWM = 1500;
+    public static int SHOULDER_HOME_PWM = 1540;
+    public static int ELBOW_HOME_PWM = 1520;
     public static int WRIST_HOME_PWM = 1500;
     public static int TURRET_HOME_PWM = 1500;
 
-    public static double SHOULDER_PWM_PER_DEGREE = 750.0/180.0; //todo all these ticksperdegree need to be measured
-    public static double ELBOW_PWM_PER_DEGREE = -600.0 / 90.0;
-    public static double WRIST_PWM_PER_DEGREE = 750.0 / 180.0;
-    public static double TURRET_PWM_PER_DEGREE = 750.0 / 180.0;
+    public static double SHOULDER_PWM_PER_DEGREE = (2013-SHOULDER_HOME_PWM)/90.0; //eyeball calibration 1/16/23
+    public static double ELBOW_PWM_PER_DEGREE = (2030-ELBOW_HOME_PWM)/90.0;
+    public static double WRIST_PWM_PER_DEGREE = 750.0 / 180.0; //todo if we need it
+    public static double TURRET_PWM_PER_DEGREE = 750.0 / 180.0; //todo
 
     public static double kF = 0.0;
     public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.01, 0, 0);
@@ -88,7 +89,7 @@ public class UnderArm implements Subsystem {
         this.robot = robot;
         PwmControl.PwmRange axonRange = new PwmControl.PwmRange(500, 2500);
 
-        if (simulated) {
+        if (false) { //if (simulated) { ignoring simulation as a way to test real underarm off robot
             shoulderServo = new ServoSim();
             elbowServo = new ServoSim();
             wristServo = new ServoSim();
@@ -141,7 +142,7 @@ public class UnderArm implements Subsystem {
         HIGH_TIER_LEFT(HITIER_SHOULDER, HITIER_ELBOW, HITIER_WRIST, -HITIER_TURRET, 1f, HITIER_DUMP),
         HIGH_TIER_RIGHT(HITIER_SHOULDER, HITIER_ELBOW, HITIER_WRIST, HITIER_TURRET, 1f, HITIER_DUMP),
 
-        TRANSFER(-45.598692297935486, -67.18511611223221, -19.45390723645687, 0, 0.4f, 0),
+        TRANSFER(-30, -30, -19.45390723645687, 0, 0.4f, 0),
         POST_DUMP(-24.44047723710537, 75.32890900969505, 180.0, 0.6f, 0),
 
         TEST_1(25, 90, 25, 1.5f, 0),
@@ -361,6 +362,23 @@ public class UnderArm implements Subsystem {
         return false;
     }
 
+    //todo these adjust methods are horrid - they need to have range limits applied to them and time based velocity if we are keeping them
+
+    public void adjustShoulder(double speed){
+        shoulderTargetAngle -= 2*speed;
+    }
+
+    public void adjustElbow(double speed){
+        elbowTargetAngle += 2*speed;
+    }
+
+    public void adjustLasso(double speed){
+        wristTargetAngle += 2*speed;
+    }
+
+    public void adjustTurret(double speed){
+        turretTargetAngle += 2*speed;
+    }
     @Override
     public void update(Canvas fieldOverlay) {
 
@@ -375,10 +393,10 @@ public class UnderArm implements Subsystem {
         if (wristTargetAngle > 180)
             wristTargetAngle -= 360;
 
-        shoulderServo.setPosition(servoNormalize(shoulderServoValue(shoulderTargetAngle)));
-        elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));
-        wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));
-        turretServo.setPosition(servoNormalize(turretServoValue(turretTargetAngle)));
+        shoulderServo.setPosition(servoNormalizeExtended(shoulderServoValue(shoulderTargetAngle)));
+        elbowServo.setPosition(servoNormalizeExtended(elbowServoValue(elbowTargetAngle)));
+        wristServo.setPosition(servoNormalizeExtended(wristServoValue(wristTargetAngle)));
+        turretServo.setPosition(servoNormalizeExtended(turretServoValue(turretTargetAngle)));
     }
 
     @Override
@@ -406,15 +424,15 @@ public class UnderArm implements Subsystem {
             telemetryMap.put("Elbow Target PWM", elbowServoValue(elbowTargetAngle));
             telemetryMap.put("Wrist Target PWM", wristServoValue(wristTargetAngle));
 
-            telemetryMap.put("bucket distance", getChariotDistance());
+            telemetryMap.put("chariot distance", getChariotDistance());
 
-            double shoulderAngle = wrapAngleRad(Math.toRadians(90 - shoulderTargetAngle));
-            double elbowAngle = -wrapAngleRad(Math.toRadians(180 - elbowTargetAngle));
-            double wristAngle = wrapAngleRad(Math.toRadians(180) - wrapAngleRad(-elbowAngle + Math.toRadians(wristTargetAngle)));
+            double shoulderAngleRads = wrapAngleRad(Math.toRadians(90 - shoulderTargetAngle));
+            double elbowAngleRads = -wrapAngleRad(Math.toRadians(180 - elbowTargetAngle));
+            double wristAngleRads = wrapAngleRad(Math.toRadians(180) - wrapAngleRad(-elbowAngleRads + Math.toRadians(wristTargetAngle)));
 
-            telemetryMap.put("horizontal distance", SHOULDER_TO_ELBOW * Math.cos(shoulderAngle) + ELBOW_TO_WRIST * Math.cos(shoulderAngle + elbowAngle));
-            telemetryMap.put("vertical distance", SHOULDER_TO_ELBOW * Math.sin(shoulderAngle) + ELBOW_TO_WRIST * Math.sin(shoulderAngle + elbowAngle));
-            telemetryMap.put("wrist absolute angle", wristAngle);
+            telemetryMap.put("horizontal distance", SHOULDER_TO_ELBOW * Math.cos(shoulderAngleRads) + ELBOW_TO_WRIST * Math.cos(shoulderAngleRads + elbowAngleRads));
+            telemetryMap.put("vertical distance", SHOULDER_TO_ELBOW * Math.sin(shoulderAngleRads) + ELBOW_TO_WRIST * Math.sin(shoulderAngleRads + elbowAngleRads));
+            telemetryMap.put("wrist absolute angle", wristAngleRads);
         }
 
         return telemetryMap;
