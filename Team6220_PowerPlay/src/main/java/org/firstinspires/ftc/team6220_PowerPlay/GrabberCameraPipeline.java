@@ -6,32 +6,35 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.opencv.core.Size;
 
 public class GrabberCameraPipeline extends OpenCvPipeline {
     public double xPosition = 0.0;
     public double yPosition = 0.0;
 
-    private List<MatOfPoint> contours = new ArrayList<>();
-    private Mat hierarchy = new Mat();
-    public Mat hsv = new Mat();
-    public Mat blackMask = new Mat();
-    public Size blurSize = new Size(5,5);
+    List<MatOfPoint> contours = new ArrayList<>();
+    Mat hierarchy = new Mat();
+    Mat mat = new Mat();
 
     @Override
-    public Mat processFrame(Mat mat) {
-        Imgproc.cvtColor(mat,hsv,Imgproc.COLOR_RGB2HSV);
+    public Mat processFrame(Mat input) {
+        // transform the RGB frame into a HSV frame
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
-        Imgproc.blur(hsv, hsv, blurSize);
+        // blur the HSV frame
+        Imgproc.GaussianBlur(mat, mat, Constants.BLUR_SIZE, 0);
 
-        Core.inRange(hsv, new Scalar(0, 0, 0), new Scalar(255, 255, 30), blackMask);
+        // mask the blurred frame
+        Core.inRange(mat, Constants.LOWER_BLACK, Constants.UPPER_BLACK, mat);
 
-        Imgproc.findContours(blackMask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        // find the contours in the masked frame
+        Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        // find the largest contour if there is one
         if (contours.size() > 0) {
             double maxVal = 0.0;
             int maxValIdx = 0;
@@ -45,17 +48,22 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
                 }
             }
 
+            // get the bounding rectangle around the largest contour
             Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
 
-            Imgproc.rectangle(mat, boundingRect, new Scalar(40, 200, 0), 10);
+            // get moments
+            Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
 
-            xPosition = boundingRect.x + (boundingRect.width * 0.5);
-            yPosition = boundingRect.y + (boundingRect.height * 0.5);
+            // draw the bounding rectangle on the frame
+            Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
+
+            if (moments.get_m00() > 0) {
+                xPosition = boundingRect.x + (boundingRect.width * 0.5);
+                yPosition = boundingRect.y + (boundingRect.height * 0.5);
+            }
         }
 
-        contours = new ArrayList<>();
-        hierarchy = new Mat();
-
-        return mat;
+        contours.clear();
+        return input;
     }
 }

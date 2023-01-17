@@ -6,17 +6,16 @@ import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
 //@Disabled
-@Autonomous(name = "AutonomousTest", group = "Test")
-public class AutonomousTest extends BaseAutonomous {
+@Autonomous(name = "CenterJunctionBottom", group = "Test")
+public class CenterJunctionBottom extends BaseAutonomous {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         initialize();
         initializeCameras(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
 
         waitForStart();
 
-        centerJunctionTop(grabberCameraPipeline);
+        centerConeStack(robotCameraPipeline);
     }
 }

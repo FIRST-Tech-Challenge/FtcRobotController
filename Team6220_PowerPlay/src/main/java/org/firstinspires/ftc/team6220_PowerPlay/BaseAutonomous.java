@@ -67,10 +67,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             remainingDistance = targetDistance - traveledDistance;
         }
 
-        motorFL.setPower(0.0);
-        motorFR.setPower(0.0);
-        motorBL.setPower(0.0);
-        motorBR.setPower(0.0);
+        stopDriveMotors();
     }
 
     /**
@@ -105,17 +102,9 @@ public abstract class BaseAutonomous extends BaseOpMode {
             motorFR.setPower(-motorPower);
             motorBL.setPower(motorPower);
             motorBR.setPower(-motorPower);
-
-            telemetry.addData("current", currentAngle);
-            telemetry.addData("error", angleError);
-            telemetry.addData("power", motorPower);
-            telemetry.update();
         }
 
-        motorFL.setPower(0.0);
-        motorFR.setPower(0.0);
-        motorBL.setPower(0.0);
-        motorBR.setPower(0.0);
+        stopDriveMotors();
     }
 
     /**
@@ -148,9 +137,6 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
     // detect signal on signal sleeve
     public int detectSignal() {
-        OpenCvCamera robotCamera;
-        AprilTagDetectionPipeline aprilTagDetectionPipeline;
-
         final int ID_TAG_OF_INTEREST_0 = 0; // tag 0 from the 36h11 family
         final int ID_TAG_OF_INTEREST_1 = 1; // tag 1 from the 36h11 family
         final int ID_TAG_OF_INTEREST_2 = 2; // tag 2 from the 36h11 family
@@ -224,31 +210,5 @@ public abstract class BaseAutonomous extends BaseOpMode {
         } else {
             return tagOfInterest.id;
         }
-    }
-
-    // moves towards a stack while centering on it, until the stack fills the entire camera view
-    // puts the robot about 3 inches away from the junction based on manual testing
-    public void centerRobotCamera(RobotCameraPipeline pipeline, int maxWidth) {
-        double xOffset, detectionWidth;
-
-        do {
-            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
-            detectionWidth = pipeline.detectionWidth;
-
-            // convert the width to motor power to drive forward with
-            driveWithIMU(Constants.CONE_CENTERING_KP, 0.3, 0.0);
-
-            telemetry.addData("xPosition", pipeline.xPosition);
-            telemetry.addData("yPosition", pipeline.yPosition);
-            telemetry.addData("width", detectionWidth);
-            telemetry.update();
-
-        // while either not centered in front of stack, or not close enough that the stack fills the view
-        } while (detectionWidth < maxWidth);
-
-        motorFL.setPower(0.0);
-        motorFR.setPower(0.0);
-        motorBL.setPower(0.0);
-        motorBR.setPower(0.0);
     }
 }

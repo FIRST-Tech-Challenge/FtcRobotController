@@ -8,9 +8,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.opencv.core.Scalar;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
@@ -37,6 +42,17 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // bulk reading
     private List<LynxModule> hubs;
+
+    // OpenCV
+    OpenCvCamera robotCamera;
+    OpenCvCamera grabberCamera;
+
+    public AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    public RobotCameraPipeline robotCameraPipeline;
+    public GrabberCameraPipeline grabberCameraPipeline;
+
+    int cameraMonitorViewID;
+    int[] viewportContainerIDs;
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -182,24 +198,81 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
     }
 
-    /*// takes a detection pipeline and temporarily takes control of the robot movement
-    // until the robot has centered by reading the pipeline fields
+    // centers the cone on the junction top
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
+
         do {
             xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
-            // convert the offsets to motor powers to drive with
-            driveWithIMU(offsetToMotorPower(xOffset), offsetToMotorPower(yOffset), 0);
+            // center the cone on the junction top
+            driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * xOffset, Constants.JUNCTION_TOP_CENTERING_KP * yOffset, 0.0);
 
-        // while either of the offsets are still too large
+        // while the cone isn't centered over the junction
         } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
+
+        stopDriveMotors();
     }
 
-    // scales the offset from pixels to a motor power, stopping at +1/-1,
-    // and slopes in towards 0 power after a certain point when nearing 0 offset
-    public double offsetToMotorPower(double offsetPixels) {
-        return (-0.1 * offsetPixels) / (Math.abs(0.25 * offsetPixels) + 15.0);
-    }*/
+    // moves towards the cone stack while centering on it until the stack fills the entire camera view
+    public void centerConeStack(RobotCameraPipeline pipeline) {
+        double xOffset, width;
+
+        do {
+            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
+            width = pipeline.width;
+
+            // drive forward while centering on the cone stack
+            driveWithIMU(Constants.CONE_CENTERING_KP * xOffset, 0.3, 0.0);
+
+            // while far enough that the cone stack doesn't fill the entire camera view
+        } while (width < Constants.CONE_WIDTH);
+
+        stopDriveMotors();
+    }
+
+    // sets all drive motor powers to 0
+    public void stopDriveMotors() {
+        motorFL.setPower(0.0);
+        motorFR.setPower(0.0);
+        motorBL.setPower(0.0);
+        motorBR.setPower(0.0);
+    }
+
+    public void initializeCameras(Scalar lowerRange, Scalar upperRange) {
+        cameraMonitorViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        viewportContainerIDs = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewID, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
+
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), viewportContainerIDs[0]);
+        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), viewportContainerIDs[1]);
+
+        robotCameraPipeline = new RobotCameraPipeline();
+        grabberCameraPipeline = new GrabberCameraPipeline();
+
+        robotCameraPipeline.setRanges(lowerRange, upperRange);
+
+        robotCamera.setPipeline(robotCameraPipeline);
+        grabberCamera.setPipeline(grabberCameraPipeline);
+
+        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                robotCamera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {}
+        });
+
+        grabberCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                robotCamera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {}
+        });
+    }
 }

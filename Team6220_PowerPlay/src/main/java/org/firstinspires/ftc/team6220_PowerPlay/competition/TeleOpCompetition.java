@@ -8,7 +8,7 @@ import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 public class TeleOpCompetition extends BaseTeleOp {
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         initialize();
         waitForStart();
 
