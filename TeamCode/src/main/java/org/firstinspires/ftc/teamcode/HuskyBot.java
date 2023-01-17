@@ -89,8 +89,8 @@ public class HuskyBot {
 
     public static final double CLAW_MOVE_INCREMENT = 0.05;
     public static final double CLAW_LIFT_MIN_RANGE = 0.3;
-    public static final double CLAW_LIFT_MAX_RANGE = 0.8;
-    public static final double CLAW_LIFT_START_POSITION = 0.9;   // scaled, see MIN and MAX_RANGE
+    public static final double CLAW_LIFT_MAX_RANGE = 1.0;
+    public static final double CLAW_LIFT_START_POSITION = 0.6;   // scaled, see MIN and MAX_RANGE
 
     public static final double CLAW_GRAB_MIN_RANGE = 0.1;
     public static final double CLAW_GRAB_MAX_RANGE = 0.54;

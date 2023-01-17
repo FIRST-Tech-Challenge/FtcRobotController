@@ -127,9 +127,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
             rx = gamepad1.right_stick_x;
 
             // uses the left trigger to dynamically shift between different drive speeds.
-            // when the trigger is fully released, driveVelocity = 1.
-            // when the trigger is fully pressed, driveVelocity = 0.2.
-            float driveVelocity = (float) (1 - 0.8 * gamepad1.left_trigger);
+            // when the trigger is fully released, driveVelocity = 0.2.
+            // when the trigger is fully pressed, driveVelocity = 1
+            float driveVelocity = (float) (0.2 + 0.8 * gamepad1.left_trigger);
 
             // calculate motor velocities.
             double frontLeftVelocity = (y + x + rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
