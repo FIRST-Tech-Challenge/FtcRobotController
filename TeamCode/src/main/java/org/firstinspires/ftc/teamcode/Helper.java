@@ -27,7 +27,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 class elevatorPositions{
-    public static int high   = 18500;
+    public static int high   = 19000;
     public static int middle = 12000;
     public static int low    = 5000 ;
     public static int bottom = 0    ;
@@ -63,8 +63,8 @@ class RobotController {
     private final double placerOutAutonomous = 0.76;
     private final double placerOutTeleOp = 0.85;
 
-    private final double pufferGrab    = 0.35;
-    private final double pufferRelease = 0;
+    private final double pufferGrab    = 0.45;
+    private final double pufferRelease = 0.1;
 
     private final double grabberGrab = 0.61;
     private final double grabberOpen = 0.36;
