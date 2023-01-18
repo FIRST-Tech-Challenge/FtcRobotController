@@ -46,6 +46,7 @@ public class PowerPlayAuton extends LinearOpMode {
 
         double startTime = robotManager.elapsedTime.milliseconds();
         while (robotManager.elapsedTime.milliseconds() - startTime < waitTime * 1000) {}
+
         Position lastPOI;
         robotManager.closeClaw(); // Close claw by default at the start of auton
 
@@ -55,6 +56,7 @@ public class PowerPlayAuton extends LinearOpMode {
             telemetry.addData("Action", lastPOI.action.name());
             telemetry.update();
             switch (lastPOI.action) {
+                // TODO: NO NEED FOR PICK_UP_CONE FUNCTION AS CONE IS ALREADY PLACED
                 case PICK_UP_CONE:
                     robotManager.pickUpCone(); //Robot should move forward a bit so it can put the cone into the intake
                     break;
