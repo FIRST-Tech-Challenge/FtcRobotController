@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -43,12 +45,12 @@ public class CameraTest extends LinearOpMode{
          *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
          *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
          */
-        private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
-        private static final String[] LABELS = {
-                "Ball",
-                "Cube",
-                "Duck",
-                "Marker"
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private ElapsedTime runtime = new ElapsedTime();
+    private static final String[] LABELS = {
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
         };
 
         /*
@@ -64,7 +66,7 @@ public class CameraTest extends LinearOpMode{
          * and paste it in to your code on the next line, between the double quotes.
          */
         private static final String VUFORIA_KEY =
-                "AQ0rZzP/////AAABmTRIZi0yo0NXiSsea78S8wVqSI8v64D/rFfE8zOk70jx0HCdjmPYt8x4SD3+csUaQZbgVuMkVpCeZovQydoVuMPO5E0pffJFdlnss7dY8+ZneTdIPSe/PUFLDIdqIvmxIFlQalKSM95pLuhIoBOK9bKbPHIsB6U2YgLdkLUDbaemHbE2Umla15R9guvN+7PLKRT71SKFAZrfQOSI8FphIHk2YWz1jryflHMAiGwqwe78wkB7NOPNePkDV0y+wmLI5C3jSm1w+lkGYsKl2zGwwyUZAUJSoskFU+X0hdEtWY9/QZAPLfCYTUPCqsihkiX4L8MGeCqfY6xidfjquqfeIluXBeOw2by431akuO52xGZb";;
+                "ARKI6MH/////AAABmXp1vsOr+UzDnmQkMbyHAdw4JycRJChz56Krh00hkZC7gVPzQFPlLMb2zjVM4jkdiPMAhkPpEjfVQdoTMdjvVTBPG//pqtjdfv2FwEM2JCtJoYBePOdmEMmypOw/mPremaykuQtSqek/KgFdqnc/uhzUHM7RkD9ulyEAD4MEazvGmzWi768F8cpNir5LdQru/1UTEnqYD4EmOb+uD4o9tLnBkv/2WRrQh/3IrO4B/+A2XIqIVTFMU2O6zKVDDscRN7uvTuS6CvAs04P5pPjYmkVIqiEYfexBNDXG8O+PnO/+4Mh8S2Oz/KqQ1f9axQAwduOHD18q2mRfZCuEyAbiSWtFhpTPUw8QkQb4xREPuLnY";;
 
         /**
          * {@link #vuforia} is the variable we will use to store our instance of the Vuforia

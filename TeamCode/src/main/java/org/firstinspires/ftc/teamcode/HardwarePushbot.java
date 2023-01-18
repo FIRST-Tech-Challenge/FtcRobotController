@@ -61,13 +61,9 @@ public class HardwarePushbot
     public DcMotor  frontRight  = null;
     public DcMotor  backLeft  = null;
     public DcMotor  backRight  = null;
+    public DcMotor  liftLeft   = null;
     public DcMotor liftRight = null;
-    public DcMotor liftLeft = null;
-    public CRServo gatherServo = null;
-    public DcMotor spinServo = null;
-    public Servo shuteServo = null;
-    public DcMotor cap = null;
-    public Servo bettershuteservo = null;
+    public Servo claw = null;
 
 
     /* local OpMode members. */
@@ -89,13 +85,11 @@ public class HardwarePushbot
         frontRight = hwMap.get(DcMotor.class, "frontRight");
         backRight = hwMap.get(DcMotor.class, "backRight");
         backLeft = hwMap.get(DcMotor.class, "backLeft");
-        liftLeft = hwMap.get(DcMotor.class, "liftLeft");
-        liftRight = hwMap.get(DcMotor.class, "liftRight");
-        gatherServo = hwMap.get(CRServo.class, "gatherServo");
-        spinServo = hwMap.get(DcMotor.class, "spinServo");
-        shuteServo = hwMap.get(Servo.class, "shuteServo");
-        cap = hwMap.get(DcMotor.class, "cap");
-        bettershuteservo = hwMap.get(Servo.class, "bettershuteservo");
+        liftLeft = hwMap.get(DcMotor.class, "liftleft");
+        liftRight = hwMap.get(DcMotor.class, "liftright");
+        claw = hwMap.get(Servo.class, "claw");
+
+
 
 
 
@@ -103,21 +97,14 @@ public class HardwarePushbot
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
-        liftLeft.setDirection(DcMotor.Direction.REVERSE);
-        spinServo.setDirection(DcMotor.Direction.FORWARD);
-        shuteServo.setDirection(Servo.Direction.FORWARD );
-        bettershuteservo.setDirection(Servo.Direction.FORWARD);
+
 
         // Set all motors to zero power
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backRight.setPower(0);
         backLeft.setPower(0);
-        liftLeft.setPower(0);
-        gatherServo.setPower(0);
-        spinServo.setPower((0));
-        //shuteServo.setPosition(0);
-        bettershuteservo.setPosition(0);
+
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -125,22 +112,25 @@ public class HardwarePushbot
         //frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //cap.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //gatherServo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        cap.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
 
 
 

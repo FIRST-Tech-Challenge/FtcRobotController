@@ -58,12 +58,6 @@ public class encoderTest extends OpMode
     private DcMotor FrontRight = null;
     private DcMotor BackLeft = null;
     private DcMotor BackRight = null;
-    private CRServo shuteServo = null;
-    private CRServo gatherServo = null;
-    private DcMotor spinServo = null;
-    private DcMotor liftRight = null;
-    private DcMotor liftLeft = null;
-    private DcMotor cap = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -80,14 +74,7 @@ public class encoderTest extends OpMode
         BackLeft = hardwareMap.get(DcMotor.class, "backLeft");
         BackRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        shuteServo = hardwareMap.get(CRServo.class, "shuteServo");
-        gatherServo = hardwareMap.get(CRServo.class, "gatherServo");
-        spinServo = hardwareMap.get(DcMotor.class, "spinServo");
 
-        liftRight = hardwareMap.get(DcMotor.class, "liftRight");
-        liftLeft = hardwareMap.get(DcMotor.class, "liftLeft");
-
-        cap = hardwareMap.get(DcMotor.class, "cap");
         /*cap.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         cap.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         cap.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
@@ -111,8 +98,7 @@ public class encoderTest extends OpMode
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
 
-        liftRight.setDirection(DcMotor.Direction.REVERSE);
-        //liftRight.setDirection(DcMotor.Direction.FORWARD);
+
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");

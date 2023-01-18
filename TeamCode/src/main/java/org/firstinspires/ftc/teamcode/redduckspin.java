@@ -205,8 +205,7 @@ public class redduckspin extends LinearOpMode {
 
             // Wait for the game to start (driver presses PLAY)
 //        List<Recognition> updatedRecognitions = tfod.getRecognitions();
-            robot.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
             // For Sampling. Note: change imageSavingEnabled to see what the Detector is sampling against
             telemetry.addData("pre int", "wowie");
@@ -768,7 +767,7 @@ public class redduckspin extends LinearOpMode {
 
             sleep(300);*/
 
-        robot.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        /*robot.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -828,13 +827,13 @@ public class redduckspin extends LinearOpMode {
 
         sleep(1500);
 
-        robot.spinServo.setPower(0.5);
+        //robot.spinServo.setPower(0.5);
         robot.frontLeft.setPower(-0.05);
         robot.frontRight.setPower(-0.05);
         robot.backLeft.setPower(-0.05);
         robot.backRight.setPower(-0.05);
         sleep(4300);
-        robot.spinServo.setPower(0);
+        //robot.spinServo.setPower(0);
         robot.frontLeft.setPower(0);
         robot.frontRight.setPower(0);
         robot.backLeft.setPower(0);
@@ -946,9 +945,9 @@ public class redduckspin extends LinearOpMode {
 
                 sleep(1200);
 
-                robot.gatherServo.setPower(0.4);
+                //robot.gatherServo.setPower(0.4);
                 sleep(2200);
-                robot.gatherServo.setPower(0);
+                //robot.gatherServo.setPower(0);
 
                 robot.liftLeft.setTargetPosition(0);
                 robot.liftRight.setTargetPosition(0);
@@ -1198,7 +1197,7 @@ public class redduckspin extends LinearOpMode {
 
                 sleep(2000);
 
-                break;
+                break;*/
         }
 
 
@@ -1217,5 +1216,5 @@ public class redduckspin extends LinearOpMode {
 //        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 //        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
 //    }
-    }
+    //}
 

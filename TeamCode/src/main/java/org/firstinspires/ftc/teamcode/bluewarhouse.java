@@ -305,8 +305,7 @@ public class bluewarhouse extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
 //        List<Recognition> updatedRecognitions = tfod.getRecognitions();
-        robot.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         // For Sampling. Note: change imageSavingEnabled to see what the Detector is sampling against
         telemetry.addData("pre int", "wowie");
@@ -342,6 +341,90 @@ public class bluewarhouse extends LinearOpMode {
                 telemetry.update();
                 break;
         }
+        frontLeftPosition += 300;
+        frontRightPosition += 300;
+        backLeftPosition += 300;
+        backRightPosition += 300;
+        //going foward
+
+        robot.frontLeft.setTargetPosition(frontLeftPosition);
+        robot.frontRight.setTargetPosition(frontRightPosition);
+        robot.backLeft.setTargetPosition(backLeftPosition);
+        robot.backRight.setTargetPosition(backRightPosition);
+
+
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        sleep(1000);
+
+        frontLeftPosition -= 600;
+        frontRightPosition += 600;
+        backLeftPosition += 600;
+        backRightPosition -= 600;
+        //going sideways
+
+        robot.frontLeft.setTargetPosition(frontLeftPosition);
+        robot.frontRight.setTargetPosition(frontRightPosition);
+        robot.backLeft.setTargetPosition(backLeftPosition);
+        robot.backRight.setTargetPosition(backRightPosition);
+
+
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        sleep(1000);
+
+        //make sure to lift the lift, use the claw to grab the cone then lift it more just to get it off
+
+        frontLeftPosition -= 600;
+        frontRightPosition -= 600;
+        backLeftPosition -= 600;
+        backRightPosition -= 600;
+        //going backwards
+
+        robot.frontLeft.setTargetPosition(frontLeftPosition);
+        robot.frontRight.setTargetPosition(frontRightPosition);
+        robot.backLeft.setTargetPosition(backLeftPosition);
+        robot.backRight.setTargetPosition(backRightPosition);
+
+
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        sleep(1200);
+
+        frontLeftPosition += 600;
+        frontRightPosition -= 600;
+        backLeftPosition += 600;
+        backRightPosition -= 600;
+        //turning sideways
+
+        robot.frontLeft.setTargetPosition(frontLeftPosition);
+        robot.frontRight.setTargetPosition(frontRightPosition);
+        robot.backLeft.setTargetPosition(backLeftPosition);
+        robot.backRight.setTargetPosition(backRightPosition);
+
+
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        sleep(1000);
+
+        //make sure to lift then release the claw right here
+
+
+
+
+
 
 // blue warhouse
         /*robot.frontLeft.setPower(-.30);
@@ -385,7 +468,7 @@ public class bluewarhouse extends LinearOpMode {
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);*/
 
-        robot.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        /*robot.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

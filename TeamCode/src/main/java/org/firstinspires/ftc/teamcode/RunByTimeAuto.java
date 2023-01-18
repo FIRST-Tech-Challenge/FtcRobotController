@@ -65,85 +65,40 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="encoder test auto yay woooo yeah ok", group="Pushbot")
+@Autonomous (name= "RIGHT HONEY", group = "Pushbot")
 public class RunByTimeAuto extends LinearOpMode {
-    private static final String TFOD_MODEL_ASSET = "FreightFrenzy_DM.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     private ElapsedTime runtime = new ElapsedTime();
     private static final String[] LABELS = {
-            //"Ball",
-            //"Cube",
-            "Duck",
-            "Marker"
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
     };
 
-    /*
-     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-     * web site at https://developer.vuforia.com/license-manager.
-     *
-     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-     * random data. As an example, here is a example of a fragment of a valid key:
-     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-     * Once you've obtained a license key, copy the string from the Vuforia web site
-     * and paste it in to your code on the next line, between the double quotes.
-     */
-    private static final String VUFORIA_KEY =
-            "AQ0rZzP/////AAABmTRIZi0yo0NXiSsea78S8wVqSI8v64D/rFfE8zOk70jx0HCdjmPYt8x4SD3+csUaQZbgVuMkVpCeZovQydoVuMPO5E0pffJFdlnss7dY8+ZneTdIPSe/PUFLDIdqIvmxIFlQalKSM95pLuhIoBOK9bKbPHIsB6U2YgLdkLUDbaemHbE2Umla15R9guvN+7PLKRT71SKFAZrfQOSI8FphIHk2YWz1jryflHMAiGwqwe78wkB7NOPNePkDV0y+wmLI5C3jSm1w+lkGYsKl2zGwwyUZAUJSoskFU+X0hdEtWY9/QZAPLfCYTUPCqsihkiX4L8MGeCqfY6xidfjquqfeIluXBeOw2by431akuO52xGZb";
+    ;
 
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
-    private VuforiaLocalizer vuforia;
 
-    /**
-     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
-     * Detection engine.
-     */
-    private TFObjectDetector tfod;
 
     @Override
     public void runOpMode() {
-        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
-        // first.
-        //initVuforia();
-        //initTfod();
-
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
-        /*if (tfod != null) {
-            tfod.activate();
-
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 16/9).
-            tfod.setZoom(1.0, 16 / 9.0);
-        }*/
-
-    /* Declare OpMode members. */
-    HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
-        ElapsedTime     runtime = new ElapsedTime();
 
 
-     final double     FORWARD_SPEED = 0.3;
-     final double     TURN_SPEED    = 0.3;
-     int markerPosition = 3;
-     int frontRightPosition = 0;
-     int frontLeftPosition = 0;
-     int backRightPosition = 0;
-     int backLeftPosition = 0;
+        HardwarePushbot robot = new HardwarePushbot();   // Use a Pushbot's hardware
+        robot.init(hardwareMap);
+        ElapsedTime runtime = new ElapsedTime();
+
+
+        final double FORWARD_SPEED = 0.3;
+        final double TURN_SPEED = 0.3;
+        int frontRightPosition = 0;
+        int frontLeftPosition = 0;
+        int backRightPosition = 0;
+        int backLeftPosition = 0;
 
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -152,117 +107,195 @@ public class RunByTimeAuto extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         //List<Recognition> updatedRecognitions = tfod.getRecognitions();
         waitForStart();
-        double currenttime = runtime.seconds();
-        /*while(opModeIsActive() && (runtime.seconds() - currenttime < 2)){
-            telemetry.addData("before", "listupdate");
-            telemetry.update();
-            sleep(1000);
-           updatedRecognitions = tfod.getUpdatedRecognitions();
-           telemetry.addData("after","listupdate");
-           telemetry.update();
-           sleep(1000);
 
-           telemetry.addData("# Object Detected", updatedRecognitions.size());
-            telemetry.update();
 
-             robot.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-         telemetry.addData("pre int", "wowie");
+        telemetry.addData("Status", "before reset");
         telemetry.update();
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId"," id", hardwareMap.appContext.getPackageName());
-        telemetry.addData("got past the int", "big wowie");
+        sleep(200);
+        robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        telemetry.addData("Status", "after reset");
         telemetry.update();
-        detector = new org.firstinspires.ftc.teamcode.TeamMarkerDetector(cameraMonitorViewId);
 
-        telemetry.addData("we got here", "before the waitForStart(); ");
-        telemetry.update();
-        waitForStart();
-
-        double currenttime = runtime.seconds()
-
-
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
-
-
-        }*/
-
-
-
-        ///////////////////////////////////////////
-
-//test program
-        robot.frontLeft.setPower(0.3);
+        robot.claw.setPosition(0.4);
         sleep(1000);
-        robot.frontLeft.setPower(0);
-
-        robot.frontLeft.setPower(-0.3);
+        robot.claw.setPosition(-1);
         sleep(1000);
-        robot.frontLeft.setPower(0);
-
-        robot.frontRight.setPower(0.3);
-        sleep(1000);
-        robot.frontRight.setPower(0);
-
-        robot.frontRight.setPower(-0.3);
-        sleep(1000);
-        robot.frontRight.setPower(0);
-
-        robot.backLeft.setPower(0.3);
-        sleep(1000);
-        robot.backLeft.setPower(0);
-
-        robot.backLeft.setPower(-0.3);
-        sleep(1000);
-        robot.backLeft.setPower(0);
-
-        robot.backRight.setPower(0.3);
-        sleep(1000);
-        robot.backRight.setPower(0);
-
-        robot.backRight.setPower(-0.3);
-        sleep(1000);
-        robot.backRight.setPower(0);
 
 
+        frontLeftPosition -= 1100;
+        frontRightPosition -= 1100;
+        backLeftPosition += 1100;
+        backRightPosition += 1100;
 
-    }
+        //going backwards
 
-    //}
+        robot.frontLeft.setTargetPosition(frontLeftPosition);
+        robot.frontRight.setTargetPosition(frontRightPosition);
+        robot.backLeft.setTargetPosition(backLeftPosition);
+        robot.backRight.setTargetPosition(backRightPosition);
 
+        robot.backLeft.setPower(0.5);
+        robot.backRight.setPower(0.5);
+        robot.frontLeft.setPower(0.5);
+        robot.frontRight.setPower(0.5);
 
-        /*private void initVuforia() {
-            /*
-             * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-             */
-            VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            //parameters.vuforiaLicenseKey = VUFORIA_KEY;
-            //parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-            //parameters.cameraDirection = CameraDirection.BACK;
-            //  Instantiate the Vuforia engine
-            //vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-            // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-        }
-
-        /**
-         * Initialize the TensorFlow Object Detection engine.
-         */
-        //private void initTfod() {
-            //int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                    //"tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            //TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-            //tfodParameters.minResultConfidence = 0.75f ;
-            //tfodParameters.isModelTensorFlow2 = true;
-            //tfodParameters.inputSize = 320;
-            //tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-            //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        //}
-//}
+        sleep(2500);
 
 
+        frontLeftPosition += 2600;
+        frontRightPosition -= 2600;
+        backLeftPosition += 2600;
+        backRightPosition -= 2600;
+        //going right sideways
 
+        robot.frontLeft.setTargetPosition(frontLeftPosition);
+        robot.frontRight.setTargetPosition(frontRightPosition);
+        robot.backLeft.setTargetPosition(backLeftPosition);
+        robot.backRight.setTargetPosition(backRightPosition);
+
+
+        robot.liftLeft.setPower(0.7);
+        robot.liftRight.setPower(0.7);
+        sleep(1300);
+        robot.liftLeft.setPower(0.1);
+        robot.liftRight.setPower(0.1);
+
+         robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+         sleep(2500);
+
+        frontLeftPosition += 470;
+        frontRightPosition -= 470;
+        backLeftPosition -= 470;
+        backRightPosition += 470;
+        //turning towards the pole
+
+       robot.frontLeft.setTargetPosition(frontLeftPosition);
+        robot.frontRight.setTargetPosition(frontRightPosition);
+        robot.backLeft.setTargetPosition(backLeftPosition);
+        robot.backRight.setTargetPosition(backRightPosition);
+
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        sleep(2000);
+
+        /*robot.liftLeft.setPower(0.5);
+        robot.liftRight.setPower(0.5);
+        sleep(1500);555
+        robot.liftLeft.setPower(0.5);
+        robot.liftRight.setPower(0.5);*/
+
+
+        /*frontLeftPosition += 400;
+        frontRightPosition += 400;
+        backLeftPosition -= 400;
+        backRightPosition -= 400;
+        //going towards the pole a bit
+
+         robot.frontLeft.setTargetPosition(frontLeftPosition);
+         robot.frontRight.setTargetPosition(frontRightPosition);
+         robot.backLeft.setTargetPosition(backLeftPosition);
+         robot.backRight.setTargetPosition(backRightPosition);
+
+         robot.frontLeft.setPower(0.3);
+         robot.frontRight.setPower(0.3);
+         robot.backRight.setPower(0.3);
+         robot.backLeft.setPower(0.3);
+
+         robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);   
+
+         sleep(1300);
+
+         robot.liftLeft.setPower(-0.5);
+         robot.liftRight.setPower(-0.5);
+         sleep(350);
+
+
+        frontLeftPosition -= 250;
+        frontRightPosition -= 250;
+        backRightPosition += 250;
+        backLeftPosition += 250;
+        //moving back from thw pole
+
+     robot.frontLeft.setTargetPosition(frontLeftPosition);
+     robot.frontRight.setTargetPosition(frontRightPosition);
+     robot.backLeft.setTargetPosition(backLeftPosition);
+     robot.backRight.setTargetPosition(backRightPosition);
+
+
+     robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+     robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+     robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+     robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+     sleep(1000);
+
+    frontLeftPosition -= 500;
+    frontRightPosition += 500;
+    backLeftPosition += 500;
+    backRightPosition -= 500;
+    // turning away from the pole
+
+    robot.frontLeft.setTargetPosition(frontLeftPosition);
+    robot.frontRight.setTargetPosition(frontRightPosition);
+    robot.backLeft.setTargetPosition(backLeftPosition);
+    robot.backRight.setTargetPosition(backRightPosition);
+
+
+    robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+    robot.liftLeft.setPower(0);
+    robot.liftRight.setPower(0);
+    sleep(250);
+    robot.liftRight.setPower(-0.5);
+    robot.liftLeft.setPower(-0.5);
+    sleep(250);
+    robot.liftRight.setPower(0);
+    robot.liftLeft.setPower(0);*/
+
+
+
+
+
+
+
+
+
+
+
+    }}

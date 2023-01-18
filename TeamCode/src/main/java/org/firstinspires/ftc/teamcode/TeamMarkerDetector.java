@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Constants;
  * Detector class that uses the Vuforia engine to grab a bitmap from the phone camera and detect the location of the Team Marker.
  */
 public class TeamMarkerDetector {
-  private static final String VUFORIA_KEY = "ASxSfhX/////AAABmWcpvgdyP053gmhPvX7/JZ5yybQKAVFnqMk+WjYvbuuiectzmcdkuftxSIgVawrOZ7CQOqdHzISXbHCAom4FhIzrDceJIIEGozFWpgAu5dUKc3q843Hd3x875VOBf8B7DlD7g9TgqxqgQRw9coEUBBeEJqy2KGy4NLPoIKLdiIx8yxSWm7SlooFSgmrutF/roBtVM/N+FhY6Sgdy9fgWssccAhd2IxdYllAaw4s1oC1jqtwbjIsdjNVogmwwXdTmqiKHait1PFyF2FDNfKi+7qs4Mc6KbvXD2FHA6RljkcN5Oo080o2QSVCzDuQtJeagh/CglB2PcatFWnebiWN+a43kEdrUaY+uq0YQ8m9IRBWE";
+  private static final String VUFORIA_KEY = "ARKI6MH/////AAABmXp1vsOr+UzDnmQkMbyHAdw4JycRJChz56Krh00hkZC7gVPzQFPlLMb2zjVM4jkdiPMAhkPpEjfVQdoTMdjvVTBPG//pqtjdfv2FwEM2JCtJoYBePOdmEMmypOw/mPremaykuQtSqek/KgFdqnc/uhzUHM7RkD9ulyEAD4MEazvGmzWi768F8cpNir5LdQru/1UTEnqYD4EmOb+uD4o9tLnBkv/2WRrQh/3IrO4B/+A2XIqIVTFMU2O6zKVDDscRN7uvTuS6CvAs04P5pPjYmkVIqiEYfexBNDXG8O+PnO/+4Mh8S2Oz/KqQ1f9axQAwduOHD18q2mRfZCuEyAbiSWtFhpTPUw8QkQb4xREPuLnY";
 
   private VuforiaLocalizer vuforiaLocalizer;
 

@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.HardwarePushbot;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 import com.qualcomm.robotcore.util.Range;
@@ -63,6 +64,12 @@ public class BasicOpMode_Iterative extends OpMode
     private DcMotor BackLeft = null;
     private DcMotor BackRight = null;
     private double firstTime = 0;
+    private Servo claw = null;
+    private DcMotor liftLeft   = null;
+    private DcMotor liftRight = null;
+    //private Servo claw = null;
+    //private DcMotor  liftLeft   = null;
+    //private DcMotor liftRight = null;
 
 
     /*
@@ -79,6 +86,10 @@ public class BasicOpMode_Iterative extends OpMode
         FrontRight = hardwareMap.get(DcMotor.class, "frontRight");
         BackLeft = hardwareMap.get(DcMotor.class, "backLeft");
         BackRight = hardwareMap.get(DcMotor.class, "backRight");
+        claw = hardwareMap.get(Servo.class, "claw");
+        liftLeft = hardwareMap.get(DcMotor.class, "liftleft");
+        liftRight = hardwareMap.get(DcMotor.class, "liftright");
+
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -104,7 +115,7 @@ public class BasicOpMode_Iterative extends OpMode
      */
     @Override
     public void start() {
-        runtime.reset();
+        //runtime.reset();
     }
 
     /*
@@ -117,6 +128,8 @@ public class BasicOpMode_Iterative extends OpMode
         double FrontrightPower;
         double BackleftPower;
         double BackrightPower;
+        double liftPower;
+        //double claw;
 
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
@@ -128,38 +141,77 @@ public class BasicOpMode_Iterative extends OpMode
         //leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
         //rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
-        FrontleftPower= gamepad1.left_stick_y - gamepad1.left_stick_x;
-        FrontrightPower= gamepad1.right_stick_y + gamepad1.right_stick_x;
-        BackleftPower= gamepad1.left_stick_y + gamepad1.left_stick_x;
-        BackrightPower= gamepad1.right_stick_y - gamepad1.right_stick_x;
 
-        if(gamepad1.dpad_up){
-            FrontleftPower = -0.25;
-            FrontrightPower = -0.25;
-            BackleftPower = -0.25;
-            BackrightPower = -0.25;
+            FrontleftPower = -gamepad1.left_stick_y + gamepad1.left_stick_x;
+            FrontrightPower = -gamepad1.right_stick_y - gamepad1.right_stick_x;
+            BackleftPower = gamepad1.left_stick_y + gamepad1.left_stick_x;
+            BackrightPower = gamepad1.right_stick_y - gamepad1.right_stick_x;
+
+        if(gamepad1.left_trigger >= 0.3){
+            FrontleftPower = -gamepad1.left_stick_y + gamepad1.left_stick_x +  FrontleftPower;
+            FrontrightPower = -gamepad1.right_stick_y - gamepad1.right_stick_x + FrontrightPower;
+            BackleftPower = gamepad1.left_stick_y + gamepad1.left_stick_x + BackleftPower;
+            BackrightPower = gamepad1.right_stick_y - gamepad1.right_stick_x +BackrightPower;
+
         }
 
-        if(gamepad1.dpad_down){
-            FrontleftPower = 0.25;
-            FrontrightPower = 0.25;
-            BackleftPower = 0.25;
-            BackrightPower = 0.25;
+
+        liftPower=.5;
+
+        if(gamepad2.dpad_up){
+            liftLeft.setTargetPosition(1500);
+            liftRight.setTargetPosition(1500);
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        if(gamepad1.dpad_right){
-            FrontleftPower = -0.25;
-            FrontrightPower = 0.25;
-            BackleftPower = 0.25;
-            BackrightPower = -0.25;
+        if(gamepad2.dpad_right){
+            liftLeft.setTargetPosition(500);
+            liftRight.setTargetPosition(500);
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        if(gamepad1.dpad_left){
-            FrontleftPower = 0.25;
-            FrontrightPower = -0.25;
-            BackleftPower = -0.25;
-            BackrightPower = 0.25;
+        if(gamepad2.dpad_left){
+            liftLeft.setTargetPosition(300);
+            liftRight.setTargetPosition(300);
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
+
+        if(gamepad2.dpad_down){
+            liftLeft.setTargetPosition(100);
+            liftRight.setTargetPosition(100);
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        if(gamepad2.a){
+            claw.setPosition(0);
+        }else if (gamepad2.b){
+            claw.setPosition(1);
+        }
+
+        if(gamepad2.left_trigger >= .3){
+            liftLeft.setPower(-liftPower*gamepad2.left_trigger*2);
+            liftRight.setPower(-liftPower*gamepad2.left_trigger*2);
+        } else if (gamepad2.right_trigger >= .3) {
+            liftLeft.setPower(liftPower * gamepad2.right_trigger*2);
+            liftRight.setPower(liftPower * gamepad2.right_trigger*2);
+        } else if(gamepad2.x){
+            liftLeft.setPower(-liftPower*0.5);
+            liftRight.setPower(-liftPower*0.5);
+        }else if(gamepad2.y){
+            liftLeft.setPower(liftPower * 0.5);
+            liftRight.setPower(liftPower * 0.5);
+        }else {
+            liftLeft.setPower(0);
+            liftRight.setPower(0);
+        }
+
+
+
+
 
         if(gamepad1.right_bumper) {
             FrontleftPower *= 0.8;
@@ -174,6 +226,8 @@ public class BasicOpMode_Iterative extends OpMode
             BackleftPower *= 0.8;
             BackrightPower *= 0.4;
         }
+
+
 
 
         /*if(gamepad2.left_trigger>0){
