@@ -106,9 +106,7 @@ public class TourneyDrive extends LinearOpMode {
             boolean grabberOpen = gamepad2.left_bumper;
             boolean grabberClose = gamepad2.right_bumper;
 
-            if(liftMotor.getCurrentPosition() > MAX_LIFT_POS || liftMotor.getCurrentPosition() < MIN_LIFT_POS){
-                liftMotor.setPower(0);
-            }else if(liftFast > .05 || liftFast < -.05 || liftSlow > .05 || liftSlow < -.05){
+            if(liftFast > .05 || liftFast < -.05 || liftSlow > .05 || liftSlow < -.05 && (!(liftMotor.getCurrentPosition() > MAX_LIFT_POS) || !(liftMotor.getCurrentPosition() < MIN_LIFT_POS))){
                 if(liftFast > .05 || liftFast < -.05){
                     if(liftFast > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS){
                             liftMotor.setPower(1);
