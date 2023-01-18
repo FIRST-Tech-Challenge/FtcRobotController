@@ -297,6 +297,7 @@ public class RobotManager {
         while (!extended) {
             extended = mechanismDriving.updateSlides(robot);
         }
+        flipHorseshoe();
 
         // Move into drop-off position.
         robot.positionManager.updatePosition(robot);
@@ -336,6 +337,7 @@ public class RobotManager {
         travelToNextPOI();
 
         // Retract slides.
+        flipHorseshoe();
         robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
         boolean retracted = mechanismDriving.updateSlides(robot);
         while (!retracted) {
