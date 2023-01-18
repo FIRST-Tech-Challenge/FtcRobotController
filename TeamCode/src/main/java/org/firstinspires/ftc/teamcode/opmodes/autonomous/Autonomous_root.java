@@ -112,7 +112,7 @@ public class Autonomous_root extends LinearOpMode {
                 chassis.stop();
 
                 chassis.resetEncoder();
-                chassis.runToPosition(-200,-200,-200,-200);
+                chassis.runToPosition(-350,-350,-350,-350);
                 chassis.stop();
 
                 arm.openGripper();
