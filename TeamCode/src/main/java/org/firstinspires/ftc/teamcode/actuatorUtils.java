@@ -72,9 +72,13 @@ public class actuatorUtils {
 
     //Method used to close gripper
     public static void gripperClose(boolean liftUp) throws InterruptedException {
+        gripperClose(liftUp, true);
+    }
+    public static void gripperClose(boolean liftUp, boolean doSleep) throws InterruptedException {
         gripper.setPosition(.6); //Position that grabs cone tightly
         if (liftUp == true) {
-            sleep(500);
+            if (doSleep)
+                sleep(500);
             arm.setTargetPosition(165); //Lifts arm up so we can move w/o drag
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
@@ -83,10 +87,15 @@ public class actuatorUtils {
 
     //Method to open gripper
     public static void gripperOpen(boolean liftDown) throws InterruptedException {
-        sleep(500);
+        gripperOpen(liftDown, true);
+    }
+    public static void gripperOpen(boolean liftDown, boolean doSleep) throws InterruptedException {
+        if (doSleep)
+            sleep(500);
         gripper.setPosition(.2); //Position to open gripper
         if (liftDown == true) {
-            sleep(1000);
+            if (doSleep)
+                sleep(1000);
             arm.setTargetPosition(minEncode); //Lowers arm to min pos.
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
@@ -95,13 +104,17 @@ public class actuatorUtils {
 
     //Method to move arm to pole heights
     public static void armPole(int desiredHeight) throws InterruptedException {
+        armPole(desiredHeight, true);
+    }
+    public static void armPole(int desiredHeight, boolean doSleep) throws InterruptedException {
         if (desiredHeight == 1)
         {
             arm.setTargetPosition(pos1);
             //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
-            sleep(2500);
+            if (doSleep)
+                sleep(2500);
         }
         else if(desiredHeight == 2)
         {
@@ -109,7 +122,8 @@ public class actuatorUtils {
             //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
-            sleep(2500);
+            if (doSleep)
+                sleep(2500);
         }
         else if(desiredHeight == 3)
         {
@@ -117,7 +131,8 @@ public class actuatorUtils {
             //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
-            sleep(2500);
+            if (doSleep)
+                sleep(2500);
         }
         else if(desiredHeight==4)
         {
@@ -125,7 +140,8 @@ public class actuatorUtils {
             //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
-            sleep(3000);
+            if (doSleep)
+                sleep(3000);
         }
     }
 
