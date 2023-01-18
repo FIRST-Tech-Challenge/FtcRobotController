@@ -8,6 +8,9 @@ public class main extends LinearOpMode {
 
 
     movement movement = new movement();
+    sensor sensor = new sensor();
+    composetelemetry composetelemetry = new composetelemetry();
+
 
     @Override
     public void runOpMode() {
@@ -16,7 +19,9 @@ public class main extends LinearOpMode {
         movement.Motor3 = hardwareMap.get(DcMotor.class, "Motor3");
         movement.Motor4 = hardwareMap.get(DcMotor.class, "Motor4");
 
-        //sensor.imu = hardwareMap.get(BNO055IMU.class, "imu");
+        sensor.imu = hardwareMap.get(BNO055IMU.class, "imu");
+        sensor.sensorIntitialize();
+        sensor.imu.initialize(sensor.parameters);
 
         while (opModeIsActive()){
             gamepader();

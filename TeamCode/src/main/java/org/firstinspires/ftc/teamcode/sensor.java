@@ -14,14 +14,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 
 public class sensor {
-    BNO055IMU imu;
+    public BNO055IMU imu;
 
     // State used for updating telemetry
-    Orientation angles;
-    Acceleration gravity;
+    public Orientation angles;
+    public Acceleration gravity;
+
+    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
     public void sensorIntitialize(){
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
