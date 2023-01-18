@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.Helper.Chassis;
 import org.firstinspires.ftc.teamcode.Helper.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -16,6 +17,8 @@ public class AutoPark extends LinearOpMode {
     double timeout_ms = 0;
     public int parkingTarget = 2;
     Robot robot = new Robot();
+    Chassis chassis = new Chassis();
+
 
     public enum AutoSteps {
         detectSignal, vSlider, deliverPreLoad, CycleThreeCones, park, endAuto
@@ -69,7 +72,7 @@ public class AutoPark extends LinearOpMode {
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
                             telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
                             telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-                            telemetry.addData("Robot Location", robot.Location);
+                            telemetry.addData("Robot Location", chassis.Location);
                             telemetry.addData("parking target", parkingTarget);
                         }
                         telemetry.update();
