@@ -43,17 +43,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     // bulk reading
     private List<LynxModule> hubs;
 
-    // OpenCV
-    OpenCvCamera robotCamera;
-    OpenCvCamera grabberCamera;
-
-    public AprilTagDetectionPipeline aprilTagDetectionPipeline;
-    public RobotCameraPipeline robotCameraPipeline;
-    public GrabberCameraPipeline grabberCameraPipeline;
-
-    int cameraMonitorViewID;
-    int[] viewportContainerIDs;
-
     // initializes the motors, servos, and IMUs
     public void initialize() {
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -224,7 +213,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             width = pipeline.width;
 
             // drive forward while centering on the cone stack
-            driveWithIMU(Constants.CONE_CENTERING_KP * xOffset, 0.3, 0.0);
+            driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.3, 0.0);
 
             // while far enough that the cone stack doesn't fill the entire camera view
         } while (width < Constants.CONE_WIDTH);
@@ -238,41 +227,5 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorFR.setPower(0.0);
         motorBL.setPower(0.0);
         motorBR.setPower(0.0);
-    }
-
-    public void initializeCameras(Scalar lowerRange, Scalar upperRange) {
-        cameraMonitorViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        viewportContainerIDs = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewID, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
-
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), viewportContainerIDs[0]);
-        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), viewportContainerIDs[1]);
-
-        robotCameraPipeline = new RobotCameraPipeline();
-        grabberCameraPipeline = new GrabberCameraPipeline();
-
-        robotCameraPipeline.setRanges(lowerRange, upperRange);
-
-        robotCamera.setPipeline(robotCameraPipeline);
-        grabberCamera.setPipeline(grabberCameraPipeline);
-
-        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                robotCamera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {}
-        });
-
-        grabberCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                robotCamera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {}
-        });
     }
 }

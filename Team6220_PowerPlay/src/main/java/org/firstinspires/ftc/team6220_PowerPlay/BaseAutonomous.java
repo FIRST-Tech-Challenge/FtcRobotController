@@ -137,6 +137,9 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
     // detect signal on signal sleeve
     public int detectSignal() {
+        OpenCvCamera robotCamera;
+        AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
         final int ID_TAG_OF_INTEREST_0 = 0; // tag 0 from the 36h11 family
         final int ID_TAG_OF_INTEREST_1 = 1; // tag 1 from the 36h11 family
         final int ID_TAG_OF_INTEREST_2 = 2; // tag 2 from the 36h11 family

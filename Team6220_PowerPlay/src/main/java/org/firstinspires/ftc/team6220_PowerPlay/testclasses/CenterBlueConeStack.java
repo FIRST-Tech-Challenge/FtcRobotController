@@ -14,10 +14,29 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(name = "CenterBlueConeStack", group = "Test")
 public class CenterBlueConeStack extends BaseAutonomous {
 
+    public RobotCameraPipeline robotCameraPipeline;
+    OpenCvCamera camera;
+
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-        initializeCameras(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
+
+        robotCameraPipeline = new RobotCameraPipeline();
+        robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
+
+        camera.setPipeline(robotCameraPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {}
+        });
 
         waitForStart();
 

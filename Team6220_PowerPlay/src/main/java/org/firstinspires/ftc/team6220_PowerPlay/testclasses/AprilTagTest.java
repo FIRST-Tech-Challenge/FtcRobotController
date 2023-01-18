@@ -17,13 +17,7 @@ public class AprilTagTest extends BaseAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-
         detectSignal();
-
         waitForStart();
-
-        initializeCameras(Constants.LOWER_RED, Constants.UPPER_RED);
-
-        driveInches(0, 12);
     }
 }
