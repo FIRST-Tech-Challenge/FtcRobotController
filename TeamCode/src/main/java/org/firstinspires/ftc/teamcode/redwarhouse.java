@@ -24,12 +24,8 @@ import org.firstinspires.ftc.teamcode.Constants;
     private static final String VUFORIA_KEY = "ARKI6MH/////AAABmXp1vsOr+UzDnmQkMbyHAdw4JycRJChz56Krh00hkZC7gVPzQFPlLMb2zjVM4jkdiPMAhkPpEjfVQdoTMdjvVTBPG//pqtjdfv2FwEM2JCtJoYBePOdmEMmypOw/mPremaykuQtSqek/KgFdqnc/uhzUHM7RkD9ulyEAD4MEazvGmzWi768F8cpNir5LdQru/1UTEnqYD4EmOb+uD4o9tLnBkv/2WRrQh/3IrO4B/+A2XIqIVTFMU2O6zKVDDscRN7uvTuS6CvAs04P5pPjYmkVIqiEYfexBNDXG8O+PnO/+4Mh8S2Oz/KqQ1f9axQAwduOHD18q2mRfZCuEyAbiSWtFhpTPUw8QkQb4xREPuLnY";
 
     private VuforiaLocalizer vuforiaLocalizer;
-
-
     private static final int Y_COORD = 955;
-
     private int stoneRightX, stoneCenterX, stoneLeftX;
-
     private static final int STONE_WIDTH = 340, STONE_HEIGHT = 460;
 
     private static final ColorPreset ACTIVE_ORANGE = ColorPreset.PURE_ORANGE;
@@ -62,12 +58,10 @@ import org.firstinspires.ftc.teamcode.Constants;
      *
      * @return The location of the team marker; LEFT, CENTER, or RIGHT
      */
-    //public Constants.SamplingLocation sample(boolean imageSavingEnabled) {
-
-
+    /*public boolean sample(boolean imageSavingEnabled) {
 //look up to location
         // THE PICTURE IS 1280x720 PLAESLKHDFKJADSHFKJSDHFKLHDFSKHSDKHDSFKHHS
-        /*Bitmap vuBitmap = getBitmap();
+        Bitmap vuBitmap = getBitmap();
         if (imageSavingEnabled) {
             FileUtils.saveImage(vuBitmap, null);
         }
@@ -115,7 +109,6 @@ import org.firstinspires.ftc.teamcode.Constants;
         Log.println(Log.INFO, "bitmapFILTER black for center", String.valueOf(getClosenessToColor(stoneCenter, ACTIVE_BLACK)));
         Log.println(Log.INFO, "bitmapFILTER black for left", String.valueOf(getClosenessToColor(stoneLeft, ACTIVE_BLACK)));
 
-/*
     if(getClosenessToColor(stoneLeft, ACTIVE_ORANGE) > getClosenessToColor(stoneRight, ACTIVE_ORANGE) && getClosenessToColor(stoneLeft, ACTIVE_ORANGE) > getClosenessToColor(stoneCenter, ACTIVE_ORANGE)) {
       return Constants.SamplingLocation.LEFT;
     } else if(getClosenessToColor(stoneCenter, ACTIVE_ORANGE) > getClosenessToColor(stoneLeft, ACTIVE_ORANGE) && getClosenessToColor(stoneCenter, ACTIVE_ORANGE) > getClosenessToColor(stoneRight, ACTIVE_ORANGE)) {
@@ -123,7 +116,7 @@ import org.firstinspires.ftc.teamcode.Constants;
     } else {
       return Constants.SamplingLocation.RIGHT;
     }
-*/
+
         /*double colorTolerance = 1/100000;
         if (getClosenessToColor(stoneCenter, ACTIVE_ORANGE)>colorTolerance){
             String seenColor = new String ("Orange");
@@ -144,10 +137,10 @@ import org.firstinspires.ftc.teamcode.Constants;
 //      return Constants.SamplingLocation.CENTER;
 //    } else {
 //      return Constants.SamplingLocation.LEFT;
-//    }
-    }
+//    }   grabs color maybe???*/
+   // }
 
-    /* grabs color maybe???*/
+
     /*public static String Constants.colorSeen sample(boolean imageSavingEnabled) {
         Bitmap vuBitmap = getBitmap();
         if (imageSavingEnabled) {
@@ -197,7 +190,7 @@ import org.firstinspires.ftc.teamcode.Constants;
         Log.println(Log.INFO, "bitmapFILTER black for center", String.valueOf(getClosenessToColor(stoneCenter, ACTIVE_BLACK)));
         Log.println(Log.INFO, "bitmapFILTER black for left", String.valueOf(getClosenessToColor(stoneLeft, ACTIVE_BLACK)));
 
-/*
+
     if(getClosenessToColor(stoneLeft, ACTIVE_ORANGE) > getClosenessToColor(stoneRight, ACTIVE_ORANGE) && getClosenessToColor(stoneLeft, ACTIVE_ORANGE) > getClosenessToColor(stoneCenter, ACTIVE_ORANGE)) {
       return Constants.SamplingLocation.LEFT;
     } else if(getClosenessToColor(stoneCenter, ACTIVE_ORANGE) > getClosenessToColor(stoneLeft, ACTIVE_ORANGE) && getClosenessToColor(stoneCenter, ACTIVE_ORANGE) > getClosenessToColor(stoneRight, ACTIVE_ORANGE)) {
@@ -205,8 +198,8 @@ import org.firstinspires.ftc.teamcode.Constants;
     } else {
       return Constants.SamplingLocation.RIGHT;
     }
-*/
-        /*double colorTolerance = 1/100000;
+
+        double colorTolerance = 1/100000;
         if (getClosenessToColor(stoneCenter, ACTIVE_ORANGE)>colorTolerance){
             String seenColor = new String ("Orange");
             return String seenColor;
@@ -224,11 +217,12 @@ import org.firstinspires.ftc.teamcode.Constants;
             return String seenColor;
         }
     }
-    /**
+
+    /*
      * Grabs a bitmap from the Vuforia engine for image processing
      * @return camera output as a bitmap
      */
-   /* public Bitmap getBitmap(){
+  /*  public Bitmap getBitmap(){
         Bitmap bitmap;
         VuforiaLocalizer.CloseableFrame frame;
 
@@ -245,7 +239,7 @@ import org.firstinspires.ftc.teamcode.Constants;
     /**
      * @return the closeness of a region to a color
      */
-    /*private double getClosenessToColor(Bitmap bitmap, ColorPreset colorPreset) {
+   /* private double getClosenessToColor(Bitmap bitmap, ColorPreset colorPreset) {
         int color;
         int r, g, b;
         double distanceSum = 0;
@@ -260,7 +254,6 @@ import org.firstinspires.ftc.teamcode.Constants;
                 distanceSum += getColorDistance(r, g, b, colorPreset.r, colorPreset.g, colorPreset.b);
             }
         }
-[]
         double averageDistance = distanceSum / pixels;
 
         if (averageDistance != 0) {
@@ -281,7 +274,7 @@ import org.firstinspires.ftc.teamcode.Constants;
      * @param targetB Target blue value
      * @return Distance between actual color and target color
      */
-    /*private double getColorDistance(int r, int g, int b, int targetR, int targetG, int targetB) { // does the actual Maths
+  /*  private double getColorDistance(int r, int g, int b, int targetR, int targetG, int targetB) { // does the actual Maths
         int rDifference = r - targetR;
         int gDifference = g - targetG;
         int bDifference = b - targetB;
@@ -303,4 +296,3 @@ import org.firstinspires.ftc.teamcode.Constants;
         this.vuforiaLocalizer = ClassFactory.getInstance().createVuforia(params);
         vuforiaLocalizer.enableConvertFrameToBitmap();
         vuforiaLocalizer.setFrameQueueCapacity(1);*/
-
