@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-public class telemetry {
+public class composetelemetry {
 
     public void composetelemetry(){
-
+//add telemetry
+// telemetry.update();
     }
 }
