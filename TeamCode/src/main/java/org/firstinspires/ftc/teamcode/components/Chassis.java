@@ -45,15 +45,29 @@ public class Chassis {
         double rightBackPower;
 
         if (Math.abs(Math.atan2(Math.abs(left_y), Math.abs(left_x))) < Math.PI/14.0) {
-            leftFrontPower = -left_x * 0.8 - strafe_side * 0.6;
-            rightFrontPower = left_x * 0.8 + strafe_side * 0.6;
-            leftBackPower = left_x * 0.8 - strafe_side * 0.6;
-            rightBackPower = -left_x * 0.8 + strafe_side * 0.6;
+            if (gamepad.right_bumper) {
+                leftFrontPower = -1;
+                rightFrontPower = 1;
+                leftBackPower = 1;
+                rightBackPower = -1;
+            } else {
+                leftFrontPower = -left_x * 0.8 - strafe_side * 0.6;
+                rightFrontPower = left_x * 0.8 + strafe_side * 0.6;
+                leftBackPower = left_x * 0.8 - strafe_side * 0.6;
+                rightBackPower = -left_x * 0.8 + strafe_side * 0.6;
+            }
         } else if (Math.abs(Math.atan2(Math.abs(left_x), Math.abs(left_y))) < Math.PI/14.0) {
-            leftFrontPower = left_y * 0.8 - strafe_side * 0.6;
-            rightFrontPower = left_y * 0.8 + strafe_side * 0.6;
-            leftBackPower = left_y * 0.8 - strafe_side * 0.6;
-            rightBackPower = left_y * 0.8 + strafe_side * 0.6;
+             if (gamepad.right_bumper) {
+                 leftFrontPower = 1;
+                 rightFrontPower = 1;
+                 leftBackPower = 1;
+                 rightBackPower = 1;
+             } else {
+                 leftFrontPower = left_y * 0.8 - strafe_side * 0.6;
+                 rightFrontPower = left_y * 0.8 + strafe_side * 0.6;
+                 leftBackPower = left_y * 0.8 - strafe_side * 0.6;
+                 rightBackPower = left_y * 0.8 + strafe_side * 0.6;
+             }
         } else {
             leftFrontPower = (left_y - left_x) * 0.6 - strafe_side * 0.6;
             rightFrontPower = (left_y + left_x) * 0.6 + strafe_side * 0.6;
@@ -70,11 +84,11 @@ public class Chassis {
             rightBackPower /= max;
         }
 
-        if (gamepad.left_bumper || gamepad.right_bumper) {
-            motorFL.setPower(leftFrontPower * 0.3);
-            motorFR.setPower(rightFrontPower * 0.3);
-            motorBL.setPower(leftBackPower * 0.3);
-            motorBR.setPower(rightBackPower * 0.3);
+        if (gamepad.left_bumper) {
+            motorFL.setPower(leftFrontPower * 0.35);
+            motorFR.setPower(rightFrontPower * 0.35);
+            motorBL.setPower(leftBackPower * 0.35);
+            motorBR.setPower(rightBackPower * 0.35);
         } else {
             motorFL.setPower(leftFrontPower);
             motorFR.setPower(rightFrontPower);
@@ -97,11 +111,11 @@ public class Chassis {
         motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while(motorFL.isBusy() || motorFR.isBusy() || motorBL.isBusy() || motorBR.isBusy()){
-            if (Math.abs(motorFL.getCurrentPosition() - FL) < 350 || Math.abs(motorFR.getCurrentPosition() - FR) < 350 || Math.abs(motorBL.getCurrentPosition() - BL) < 350 || Math.abs(motorBR.getCurrentPosition() - BR) < 350) {
-                motorFL.setPower(0.2);
-                motorFR.setPower(0.2);
-                motorBL.setPower(0.2);
-                motorBR.setPower(0.2);
+            if (Math.abs(motorFL.getCurrentPosition() - FL) < 400 || Math.abs(motorFR.getCurrentPosition() - FR) < 400 || Math.abs(motorBL.getCurrentPosition() - BL) < 400 || Math.abs(motorBR.getCurrentPosition() - BR) < 400) {
+                motorFL.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
+                motorFR.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
+                motorBL.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
+                motorBR.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
             } else {
                 motorFL.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
                 motorFR.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
