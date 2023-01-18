@@ -51,7 +51,7 @@ public class RoadRunnerTest extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         arm = hardwareMap.get(DcMotor.class, "arm");
         gripper = hardwareMap.get(Servo.class, "gripper");
-        Pose2d startPose = new Pose2d(-62, 40, 0);
+        Pose2d startPose = new Pose2d(-60, 40, 0);
         drive.setPoseEstimate(startPose);
         TrajectorySequence aSeq = autoSeq(startPose);
         //Reverse the arm direction so it moves in the proper direction
@@ -116,26 +116,27 @@ public class RoadRunnerTest extends LinearOpMode {
 
     private TrajectorySequence autoSeq(Pose2d pose) {
         TrajectorySequence seq = drive.trajectorySequenceBuilder(pose)
-                .lineToLinearHeading(new Pose2d(-36, -60, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(-90)))
                 .forward(24)
-                .turn(Math.toRadians(0))
-                .lineToLinearHeading(new Pose2d (-36, -36, Math.toRadians(-45)))
-                .forward(5)
+                .turn(90)
+                .forward(12)
+                .turn(-45)
+                .forward(9)
                 .waitSeconds(2)
-                .addTemporalMarker(1, () -> {
+                .addTemporalMarker(5, () -> {
                     try {
-                        actuatorUtils.armPole(1, false);
+                        actuatorUtils.armPole(1, true);
                         actuatorUtils.gripperOpen(true);
-                        actuatorUtils.armPole(4, false);
+                        actuatorUtils.armPole(4, true);
                     }
                     catch (InterruptedException ex) {
                         telemetry.addData(ex.getLocalizedMessage(), "");
                         telemetry.update();
                     }
                 })
-                .forward(-5)
-                .turn(45)
-                .lineToLinearHeading(new Pose2d (-12, -12, Math.toRadians(90)))
+                .forward(-9)
+                .turn(Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d (-12, 12, Math.toRadians(90)))
                 .build();
         return seq;
     }
