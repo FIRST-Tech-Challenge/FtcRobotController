@@ -177,7 +177,7 @@ public class RunByTimeAuto extends LinearOpMode {
 
         robot.liftLeft.setPower(0.7);
         robot.liftRight.setPower(0.7);
-        sleep(1300);
+        sleep(1400);
         robot.liftLeft.setPower(0.1);
         robot.liftRight.setPower(0.1);
 
@@ -188,10 +188,10 @@ public class RunByTimeAuto extends LinearOpMode {
 
          sleep(2500);
 
-        frontLeftPosition += 470;
-        frontRightPosition -= 470;
-        backLeftPosition -= 470;
-        backRightPosition += 470;
+        frontLeftPosition += 400;
+        frontRightPosition -= 400;
+        backLeftPosition -= 400;
+        backRightPosition += 400;
         //turning towards the pole
 
        robot.frontLeft.setTargetPosition(frontLeftPosition);
@@ -206,87 +206,67 @@ public class RunByTimeAuto extends LinearOpMode {
 
         sleep(2000);
 
-        /*robot.liftLeft.setPower(0.5);
-        robot.liftRight.setPower(0.5);
-        sleep(1500);555
-        robot.liftLeft.setPower(0.5);
-        robot.liftRight.setPower(0.5);*/
-
-
-        /*frontLeftPosition += 400;
-        frontRightPosition += 400;
-        backLeftPosition -= 400;
-        backRightPosition -= 400;
+        frontLeftPosition += 330;
+        frontRightPosition += 330;
+        backLeftPosition -= 330;
+        backRightPosition -= 330;
         //going towards the pole a bit
 
-         robot.frontLeft.setTargetPosition(frontLeftPosition);
-         robot.frontRight.setTargetPosition(frontRightPosition);
-         robot.backLeft.setTargetPosition(backLeftPosition);
-         robot.backRight.setTargetPosition(backRightPosition);
+        robot.frontLeft.setTargetPosition(frontLeftPosition);
+        robot.frontRight.setTargetPosition(frontRightPosition);
+        robot.backLeft.setTargetPosition(backLeftPosition);
+        robot.backRight.setTargetPosition(backRightPosition);
 
-         robot.frontLeft.setPower(0.3);
-         robot.frontRight.setPower(0.3);
-         robot.backRight.setPower(0.3);
-         robot.backLeft.setPower(0.3);
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-         robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-         robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-         robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-         robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);   
+        sleep(2000);
 
-         sleep(1300);
+        robot.liftLeft.setPower(-0.7);
+        robot.liftRight.setPower(-0.7);
+        sleep(1000);
+        robot.liftLeft.setPower(0.1);
+        robot.liftRight.setPower(0.1);
 
-         robot.liftLeft.setPower(-0.5);
-         robot.liftRight.setPower(-0.5);
-         sleep(350);
+        robot.claw.setPosition(0.5);
+        sleep(1000);
 
+        frontLeftPosition -= 440;
+        frontRightPosition += 440;
+        backLeftPosition += 440;
+        backRightPosition -= 440;
+        //turning back from the pole
 
-        frontLeftPosition -= 250;
-        frontRightPosition -= 250;
-        backRightPosition += 250;
-        backLeftPosition += 250;
-        //moving back from thw pole
+        robot.frontLeft.setTargetPosition(frontLeftPosition);
+        robot.frontRight.setTargetPosition(frontRightPosition);
+        robot.backLeft.setTargetPosition(backLeftPosition);
+        robot.backRight.setTargetPosition(backRightPosition);
 
-     robot.frontLeft.setTargetPosition(frontLeftPosition);
-     robot.frontRight.setTargetPosition(frontRightPosition);
-     robot.backLeft.setTargetPosition(backLeftPosition);
-     robot.backRight.setTargetPosition(backRightPosition);
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        sleep(2000);
 
-     robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-     robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-     robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-     robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeftPosition -= 2200;
+        frontRightPosition -= 2200;
+        backLeftPosition += 2200;
+        backRightPosition += 2200;
+        //going fowards
 
-     sleep(1000);
+        robot.frontLeft.setTargetPosition(frontLeftPosition);
+        robot.frontRight.setTargetPosition(frontRightPosition);
+        robot.backLeft.setTargetPosition(backLeftPosition);
+        robot.backRight.setTargetPosition(backRightPosition);
 
-    frontLeftPosition -= 500;
-    frontRightPosition += 500;
-    backLeftPosition += 500;
-    backRightPosition -= 500;
-    // turning away from the pole
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    robot.frontLeft.setTargetPosition(frontLeftPosition);
-    robot.frontRight.setTargetPosition(frontRightPosition);
-    robot.backLeft.setTargetPosition(backLeftPosition);
-    robot.backRight.setTargetPosition(backRightPosition);
-
-
-    robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-
-    robot.liftLeft.setPower(0);
-    robot.liftRight.setPower(0);
-    sleep(250);
-    robot.liftRight.setPower(-0.5);
-    robot.liftLeft.setPower(-0.5);
-    sleep(250);
-    robot.liftRight.setPower(0);
-    robot.liftLeft.setPower(0);*/
 
 
 

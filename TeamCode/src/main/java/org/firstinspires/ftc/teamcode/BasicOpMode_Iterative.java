@@ -189,7 +189,7 @@ public class BasicOpMode_Iterative extends OpMode
         if(gamepad2.a){
             claw.setPosition(0);
         }else if (gamepad2.b){
-            claw.setPosition(1);
+            claw.setPosition(0.8);
         }
 
         if(gamepad2.left_trigger >= .3){
