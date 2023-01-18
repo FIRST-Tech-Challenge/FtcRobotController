@@ -26,10 +26,8 @@ public class MechanismDriving {
     public static final long CLAW_SERVO_TIME = 500;
     //SPEED INFO: Scale from 0-1 in speed.
     public static final double HORSESHOE_FRONT_POS = 0, HORSESHOE_REAR_POS = 1.0; //These are not final values
-    public static final double COMPLIANT_WHEELS_SPEED = 1.0; //speed of compliant wheels
     // How long it takes for the horseshoe wheels to be guaranteed to have pushed the cone into the horseshoe.
     public static final long HORSESHOE_TIME = 500;
-    public static final long COMPLIANT_WHEELS_TIME = 2000;
     public static final int EPSILON = 50;  // slide encoder position tolerance;
 
     public static final double SLIDE_RAMP_DIST = 400;
@@ -50,10 +48,10 @@ public class MechanismDriving {
     public void updateClaw(Robot robot) {
         switch (robot.desiredClawState) {
             case CLOSED:
-                robot.claw.setPosition(CLAW_CLOSED_POS);//closed
+                robot.claw.setPosition(CLAW_CLOSED_POS); //closed
                 break;
             case OPEN:
-                robot.claw.setPosition(CLAW_OPEN_POS);//open
+                robot.claw.setPosition(CLAW_OPEN_POS); //open
                 break;
         }
     }
@@ -71,21 +69,6 @@ public class MechanismDriving {
                 robot.horseshoeIndicator.setPosition(1);
                 break;
         }
-    }
-
-    /** Starts and stops the compliant wheels
-     *
-     * @param robot The robot
-     */
-    public void updateCompliantWheels(Robot robot) {
-//        switch (robot.desiredCompliantWheelsState) {
-//            case OFF:
-//                robot.compliantWheelsMotor.setPower(0);
-//                break;
-//            case ON:
-//                robot.compliantWheelsMotor.setPower(COMPLIANT_WHEELS_SPEED);
-//                break;
-//        }
     }
 
     /** Sets the preferred position of the slides

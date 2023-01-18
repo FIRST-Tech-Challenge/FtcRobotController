@@ -47,9 +47,9 @@ public class PowerPlayAuton extends LinearOpMode {
         double startTime = robotManager.elapsedTime.milliseconds();
         while (robotManager.elapsedTime.milliseconds() - startTime < waitTime * 1000) {}
 
-
-
         Position lastPOI;
+        robotManager.closeClaw(); // Close claw by default at the start of auton
+
         while ((lastPOI = robotManager.travelToNextPOI()) != null) {
             telemetry.update();
             telemetry.addData("POI", lastPOI.name);

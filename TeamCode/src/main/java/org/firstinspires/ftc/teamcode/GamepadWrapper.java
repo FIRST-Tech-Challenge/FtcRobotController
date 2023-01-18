@@ -8,9 +8,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class GamepadWrapper {
     public enum DriverAction {SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,SET_SLIDES_VERY_LOW,
         TURN_ON_ULTRA_FINE_MOVEMENT, TURN_ON_FINE_MOVEMENT, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
-                              MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT, MOVE_STRAIGHT_RIGHT,
-                              COMPLIANT_WHEELS_TOGGLE, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE,
-                              HORSESHOE_TO_FRONT,HORSESHOE_TO_BACK
+        MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT, MOVE_STRAIGHT_RIGHT, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE,
+        HORSESHOE_TO_FRONT, HORSESHOE_TO_BACK, OPEN_CLAW, CLOSE_CLAW
     }
 
     Gamepad gamepad1, gamepad2;
@@ -36,10 +35,11 @@ public class GamepadWrapper {
      *
      *  This is essentially where the button mapping is stored. Assumes gamepad2 exclusively is used for mechanism
      *  driving.
+     *  Note: x = square, y = triangle, b = circle, a = X
      */
     public boolean getButtonState(DriverAction driverAction) {
         switch (driverAction) {
-            //Gamepad 1 Controls
+            // Gamepad 1 Controls
             case TURN_ON_FINE_MOVEMENT:
                 return gamepad1.left_bumper;
             case TURN_ON_ULTRA_FINE_MOVEMENT:
@@ -57,7 +57,7 @@ public class GamepadWrapper {
             case TURN_CLOCKWISE:
                 return gamepad1.x;
 
-            //Gamepad 2 Controls
+            // Gamepad 2 Controls
             case SET_SLIDES_RETRACTED:
                 return gamepad2.dpad_down;
             case SET_SLIDES_LOW:
@@ -72,6 +72,10 @@ public class GamepadWrapper {
                 return gamepad2.right_bumper;
             case HORSESHOE_TO_FRONT:
                 return gamepad2.left_bumper;
+            case OPEN_CLAW:
+                return gamepad2.y;
+            case CLOSE_CLAW:
+                return gamepad2.b;
         }
         assert false;
         return false;
