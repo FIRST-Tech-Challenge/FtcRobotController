@@ -16,8 +16,16 @@ public class main extends LinearOpMode {
         movement.Motor4 = hardwareMap.get(DcMotor.class, "Motor4");
 
         while (opModeIsActive()){
-
-            int a;
+            gamepader();
+        }
+    }
+    public void gamepader(){
+        if (Math.abs(gamepad1.right_stick_y) > Math.abs(gamepad1.right_stick_x)) {
+            movement.verticalMovement(gamepad1.right_stick_y);
+        } else if (Math.abs(gamepad1.right_stick_y) < Math.abs(gamepad1.right_stick_x)) {
+            movement.horizontalMovement(gamepad1.right_stick_x);
+        } else {
+            movement.stop();
         }
     }
 }

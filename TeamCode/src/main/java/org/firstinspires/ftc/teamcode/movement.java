@@ -9,6 +9,13 @@ public class movement {
     public DcMotor Motor3;
     public DcMotor Motor4;
 
+    public void stop(){
+        Motor1.setPower(0);
+        Motor2.setPower(0);
+        Motor3.setPower(0);
+        Motor4.setPower(0);
+    }
+
     public void verticalMovement(float power){
         Motor1.setPower(power * 1);
         Motor2.setPower(power * 1);
