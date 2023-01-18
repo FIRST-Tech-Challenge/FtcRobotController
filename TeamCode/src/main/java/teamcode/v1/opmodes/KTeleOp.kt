@@ -1,10 +1,12 @@
 package teamcode.v1.opmodes
 
 import com.asiankoala.koawalib.command.KOpMode
+import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.command.commands.MecanumCmd
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
+import com.asiankoala.koawalib.math.NVector
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import teamcode.v1.Robot
 import teamcode.v1.commands.sequences.DepositSequence
@@ -12,10 +14,14 @@ import teamcode.v1.commands.sequences.HomeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import teamcode.v1.constants.ArmConstants
 import teamcode.v1.constants.LiftConstants
+import kotlin.math.max
+import kotlin.math.pow
+import kotlin.math.sign
 
 @TeleOp
 open class KTeleOp() : KOpMode(photonEnabled = true) {
     private val robot by lazy { Robot() }
+    private var slowMode = false
 
     override fun mInit() {
         Logger.config = LoggerConfig.DASHBOARD_CONFIG
@@ -25,14 +31,33 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     }
 
     private fun scheduleDrive() {
-        robot.drive.defaultCommand = MecanumCmd(
-            robot.drive,
-            driver.leftStick,
-            driver.rightStick,
-            0.9,
-            0.9,
-            0.75,
-        )
+        robot.drive.defaultCommand = object : Cmd() {
+            val fastScalars = NVector(0.9, 0.9, 0.75)
+            val slowScalars = NVector(0.4, 0.4, 0.4)
+            val scalars get() = if(slowMode) slowScalars else fastScalars
+
+            private fun joystickFunction(s: Double, k: Double, x: Double): Double {
+                return max(0.0, s * x * (k * x.pow(3) - k + 1)) * x.sign
+            }
+
+            override fun execute() {
+                val raws = NVector(
+                    driver.leftStick.xSupplier.invoke(),
+                    driver.leftStick.ySupplier.invoke(),
+                    driver.rightStick.xSupplier.invoke()
+                )
+
+                robot.drive.powers = raws
+                    .mapIndexed { i, d -> joystickFunction(scalars[i], 1.0, d) }
+                    .asPose
+            }
+
+            init {
+                addRequirements(robot.drive)
+            }
+        }
+
+        driver.rightBumper.onPress(InstantCmd({ slowMode = !slowMode }))
     }
 
     private fun scheduleCycling() {
