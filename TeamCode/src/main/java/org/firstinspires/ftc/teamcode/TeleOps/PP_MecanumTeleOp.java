@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
@@ -88,6 +89,7 @@ public class PP_MecanumTeleOp extends OpMode
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
         clawControl = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
+        OdoPod odoControl = new OdoPod(hardwareMap);
     }// INIT()
 
     @Override
@@ -101,6 +103,7 @@ public class PP_MecanumTeleOp extends OpMode
         claw();
         slides();
 
+        OdoPod.retract();
         slideControl.update(telemetry);
         gamepad2_dpad_up.update();
         gamepad2_dpad_down.update();
@@ -175,17 +178,17 @@ public class PP_MecanumTeleOp extends OpMode
             clawControl.toggleWristRotate();
         }
         else if (gamepad2_B.isRisingEdge()) {
-           armControl.setExtake();
-          slideControl.setMidJunction();
-          clawControl.toggleWristRotate();
+            armControl.setExtake();
+            slideControl.setMidJunction();
+            clawControl.toggleWristRotate();
 
         }
         else if (gamepad2_A.isRisingEdge()) {
             slideControl.setLowJunction();
         }
         else if (gamepad2_X.isRisingEdge()){
-           clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
-           clawControl.wristInExtakePosition = false;
+            clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
+            clawControl.wristInExtakePosition = false;
             armControl.setIntake();
             slideControl.setIntakeOrGround();
 

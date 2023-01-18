@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetectionDeposit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -30,16 +31,22 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	public static double yThirdToJunction = -4;
 	public static double xFourthToJunction = 53.5;
 	public static double yFourthToJunction = -4;
+	public static double xParkZoneOne=46;
+	public static double yParkZoneOne=22;
+	public static double xParkZoneThree=46;
+	public static double yParkZoneThree=-25;
+
 
 	public void initialize(){
 		armControl = new Arm(hardwareMap);
 		slideControl = new Slide(hardwareMap);
 		clawControl = new Claw(hardwareMap);
+		OdoPod odoControl = new OdoPod(hardwareMap);
 	}
 
-    public void scan(){
-        super.runOpMode();
-    }
+	public void scan(){
+		super.runOpMode();
+	}
 
 	@Override
 	public void runOpMode()
@@ -58,8 +65,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					slideControl.setHighJunction(telemetry);
 					armControl.setExtake();
 					clawControl.toggleWristRotate();
-					//slideControl.setIntakeOrGround();
-					//armControl.setIntake();
+
 				})
 				// MOVES TO HIGH JUNCTION FOR FIRST TIME
 				.lineToLinearHeading(new Pose2d(xFirstLinear, yFirstLinear, Math.toRadians(90)))
@@ -196,13 +202,13 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.addTemporalMarker(() -> {
 					if(tagUse == 1){
 						Trajectory zoneOne = bot.trajectoryBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
-								.lineToLinearHeading(new Pose2d(46,22,91))
+								.lineToLinearHeading(new Pose2d(xParkZoneOne,yParkZoneOne,91))
 								.build();
 						bot.followTrajectoryAsync(zoneOne);
 					}else if(tagUse == 3){
-					Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
-							.lineToLinearHeading(new Pose2d(46,-25,90))
-							.build();
+						Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
+								.lineToLinearHeading(new Pose2d(xParkZoneThree,yParkZoneThree,90))
+								.build();
 						bot.followTrajectoryAsync(zoneThree);
 					}
 				})
