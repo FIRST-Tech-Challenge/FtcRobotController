@@ -167,11 +167,11 @@ class RogueRightAuto : RogueBaseAuto() {
                 1 -> {
                     splineToLinearHeading(30, -34, 90, 128.375 + 90)
                 }
-                2 -> {
-                    splineTo(144.65, -30.95, 0).doInReverse()
+                2 -> inReverse {
+                    splineTo(144.65, -30.95, 0)
                 }
-                3 -> {
-                    splineTo(89, -33, 270).doInReverse()
+                3 -> inReverse {
+                    splineTo(89, -33, 270)
                 }
             }
 
