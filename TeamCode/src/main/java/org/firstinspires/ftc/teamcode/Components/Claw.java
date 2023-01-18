@@ -43,7 +43,7 @@ public class Claw {
     private double lastOpenTime =-10;
     private double clawPos = 0.45;
     //temporary
-    public double CLAW_SERVO_SWITCH_TIME = 0.2;
+    public double CLAW_SERVO_SWITCH_TIME = 0.3;
     boolean shouldUseClawSensor = true;
 
     //States:

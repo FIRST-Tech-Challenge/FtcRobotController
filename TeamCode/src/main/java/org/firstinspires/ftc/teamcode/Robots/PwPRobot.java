@@ -49,11 +49,13 @@ public class PwPRobot extends BasicRobot {
     private LEDStrip leds = null;
     private VoltageSensor voltageSensor = null;
     boolean finished = false;
+    double voltage;
 
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
         voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
+        voltage = voltageSensor.getVoltage();
         RFMotor.kP*= 13/ voltageSensor.getVoltage();
         RFMotor.kA*= 13/ voltageSensor.getVoltage();
 
@@ -163,6 +165,9 @@ public class PwPRobot extends BasicRobot {
             claw.updateClawStates();
             claw.openClaw();
         }
+    }
+    public double getVoltage(){
+        return voltage;
     }
 
     public void closeClaw() {
@@ -374,6 +379,9 @@ public class PwPRobot extends BasicRobot {
         }
         if (op.getRuntime() > 90 && op.getRuntime() < 92) {
             rainbowRainbow();
+        }
+        if(op.gamepad1.b){
+            liftArm.flipCone();
         }
 
         //omnidirectional movement + turning

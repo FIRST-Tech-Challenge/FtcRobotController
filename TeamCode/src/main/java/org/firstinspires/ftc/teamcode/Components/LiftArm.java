@@ -8,8 +8,10 @@ import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.AR
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
-import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualServo;
+import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualServo;
+@Config
 public class LiftArm {
 
     private RFDualServo liftArmServo;
@@ -18,6 +20,7 @@ public class LiftArm {
     private final double LIFT_ARM_CYCLE_POS = 0.95;
 
     private final double LIFT_ARM_OUTTAKE_POS = 0.19;
+    public static double LIFT_ARM_FLIP_POS = 0.9;
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
@@ -116,6 +119,11 @@ public class LiftArm {
             return true;
         }else{
             return false;
+        }
+    }
+    public void flipCone(){
+        if(op.getRuntime()>liftArmServoLastSwitchTime+LIFT_ARM_SERVO_SWITCH_TIME) {
+            liftArmServo.setPositions(LIFT_ARM_FLIP_POS);
         }
     }
     public void cycleLiftArmToCylce(){
