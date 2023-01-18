@@ -43,10 +43,12 @@ object GlobalUnits {
     }
 
     @JvmStatic
-    fun pos(x: Number, y: Number, heading: Number) = Pose2d(x.toIn(), y.toIn(), heading.toRad())
+    @JvmOverloads
+    fun pos(x: Number = 0, y: Number = 0, heading: Number = 0) = Pose2d(x.toIn(), y.toIn(), heading.toRad())
 
     @JvmStatic
-    fun vec(x: Number, y: Number) = Vector2d(x.toIn(), y.toIn())
+    @JvmOverloads
+    fun vec(x: Number = 0, y: Number = 0) = Vector2d(x.toIn(), y.toIn())
 
     @JvmStatic
     fun pos(pose2d: Pose2d) = Pose2d(pose2d.x.toIn(), pose2d.y.toIn(), pose2d.heading.toRad())

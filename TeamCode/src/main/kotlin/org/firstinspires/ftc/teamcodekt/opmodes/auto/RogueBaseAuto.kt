@@ -3,8 +3,10 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.outoftheboxrobotics.photoncore.PhotonCore
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.util.kt.LateInitVal
+import org.checkerframework.checker.units.qual.A
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.meta.AutoBotComponents

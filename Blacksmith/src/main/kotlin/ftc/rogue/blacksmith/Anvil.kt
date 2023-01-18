@@ -186,79 +186,81 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     @PublishedApi
     internal lateinit var builtTrajectory: Any
 
+    private val builderDeque = ArrayDeque<() -> Unit>()
+
     // -- Direct path mappings (Basic) --
 
-    fun forward(distance: Number) = this.apply {
+    fun forward(distance: Number) = queueAndReturnThis {
         builderProxy.forward(distance.toIn())
     }
 
-    fun back(distance: Number) = this.apply {
+    fun back(distance: Number) = queueAndReturnThis {
         builderProxy.back(distance.toIn())
     }
 
-    fun turn(angle: Number) = this.apply {
+    fun turn(angle: Number) = queueAndReturnThis {
         builderProxy.turn(angle.toRad())
     }
 
-    fun strafeLeft(distance: Number) = this.apply {
+    fun strafeLeft(distance: Number) = queueAndReturnThis {
         builderProxy.strafeLeft(distance.toIn())
     }
 
-    fun strafeRight(distance: Number) = this.apply {
+    fun strafeRight(distance: Number) = queueAndReturnThis {
         builderProxy.strafeRight(distance.toIn())
     }
 
     // -- Direct path mappings (Lines) --
 
-    fun lineToConstantHeading(x: Number, y: Number) = this.apply {
+    fun lineToConstantHeading(x: Number, y: Number) = queueAndReturnThis {
         builderProxy.strafeTo( GlobalUnits.vec(x, y) )
     }
 
-    fun lineToLinearHeading(x: Number, y: Number, heading: Number) = this.apply {
+    fun lineToLinearHeading(x: Number, y: Number, heading: Number) = queueAndReturnThis {
         builderProxy.lineToLinearHeading( GlobalUnits.pos(x, y, heading) )
     }
 
-    fun lineToSplineHeading(x: Number, y: Number, heading: Number) = this.apply {
+    fun lineToSplineHeading(x: Number, y: Number, heading: Number) = queueAndReturnThis {
         builderProxy.lineToSplineHeading( GlobalUnits.pos(x, y, heading) )
     }
 
     // -- Direct path mappings (Splines) --
 
-    fun splineTo(x: Number, y: Number, endTangent: Number) = this.apply {
+    fun splineTo(x: Number, y: Number, endTangent: Number) = queueAndReturnThis {
         builderProxy.splineTo( GlobalUnits.vec(x, y), endTangent.toRad() )
     }
 
-    fun splineToConstantHeading(x: Number, y: Number, endTangent: Number) = this.apply {
+    fun splineToConstantHeading(x: Number, y: Number, endTangent: Number) = queueAndReturnThis {
         builderProxy.splineToConstantHeading(  GlobalUnits.vec(x, y), endTangent.toRad() )
     }
 
-    fun splineToLinearHeading(x: Number, y: Number, heading: Number, endTangent: Number) = this.apply {
+    fun splineToLinearHeading(x: Number, y: Number, heading: Number, endTangent: Number) = queueAndReturnThis {
         builderProxy.splineToLinearHeading( GlobalUnits.pos(x, y, heading), endTangent.toRad() )
     }
 
-    fun splineToSplineHeading(x: Number, y: Number, heading: Number, endTangent: Number) = this.apply {
+    fun splineToSplineHeading(x: Number, y: Number, heading: Number, endTangent: Number) = queueAndReturnThis {
         builderProxy.splineToSplineHeading( GlobalUnits.pos(x, y, heading), endTangent.toRad() )
     }
 
     // -- Advanced mappings --
 
-    fun waitTime(time: Number) = this.apply {
+    fun waitTime(time: Number) = queueAndReturnThis {
         builderProxy.waitSeconds(time.toSec())
     }
 
-    fun setReversed(reversed: Boolean) = this.apply {
+    fun setReversed(reversed: Boolean) = queueAndReturnThis {
         builderProxy.setReversed(reversed)
     }
 
-    fun setTangent(tangent: Number) = this.apply {
+    fun setTangent(tangent: Number) = queueAndReturnThis {
         builderProxy.setTangent(tangent.toDouble())
     }
 
-    fun addTrajectory(trajectory: Trajectory) = this.apply {
+    fun addTrajectory(trajectory: Trajectory) = queueAndReturnThis {
         builderProxy.addTrajectory(trajectory)
     }
 
-    fun addTrajectory(trajectory: () -> Trajectory) = this.apply {
+    fun addTrajectory(trajectory: () -> Trajectory) = queueAndReturnThis {
         builderProxy.addTrajectory(trajectory())
     }
 
@@ -268,7 +270,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     fun addTemporalMarker(
         offset: Number = 0.0,
         action: MarkerCallback
-    ) = this.apply {
+    ) = queueAndReturnThis {
         builderProxy.UNSTABLE_addTemporalMarkerOffset(offset.toSec(), action)
     }
 
@@ -276,7 +278,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     fun addDisplacementMarker(
         offset: Number = 0.0,
         action: MarkerCallback
-    ) = this.apply {
+    ) = queueAndReturnThis {
         builderProxy.UNSTABLE_addDisplacementMarkerOffset(offset.toSec(), action)
     }
 
@@ -284,7 +286,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         offsetX: Number,
         offsetY: Number,
         action: MarkerCallback
-    ) = this.apply {
+    ) = queueAndReturnThis {
         builderProxy.addSpatialMarker( GlobalUnits.vec(offsetX, offsetY), action )
     }
 
@@ -305,10 +307,17 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      *         builder.splineTo(...);  |          splineTo(...)
      *     });                         |       }
      */
-    inline fun inReverse(pathsToDoInReverse: Anvil.() -> Unit) = this.apply {
+    inline fun inReverse(crossinline pathsToDoInReverse: Anvil.() -> Unit) = this.apply {
         setReversed(true)
-        pathsToDoInReverse()
+        pathsToDoInReverse(this)
         setReversed(false)
+    }
+
+    fun doInReverse() = this.apply {
+        val thingToDoInReverse = builderDeque.removeLast()
+        inReverse {
+            builderDeque += thingToDoInReverse
+        }
     }
 
     /**
@@ -330,7 +339,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      *     }
      */
     @Suppress("UNCHECKED_CAST")
-    inline fun <T> withRawBuilder(builder: T.() -> Unit) = this.apply {
+    inline fun <T> withRawBuilder(crossinline builder: T.() -> Unit) = queueAndReturnThis {
         builder(builderProxy.internalBuilder as T)
     }
 
@@ -353,31 +362,31 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     // -- Constraints --
 
-    fun resetConstraints() = this.apply {
+    fun resetConstraints() = queueAndReturnThis {
         builderProxy.resetConstraints()
     }
 
-    fun setVelConstraint(velConstraint: TrajectoryVelocityConstraint) = this.apply {
+    fun setVelConstraint(velConstraint: TrajectoryVelocityConstraint) = queueAndReturnThis {
         builderProxy.setVelConstraint(velConstraint)
     }
 
-    fun resetVelConstraint() = this.apply {
+    fun resetVelConstraint() = queueAndReturnThis {
         builderProxy.resetVelConstraint()
     }
 
-    fun setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = this.apply {
+    fun setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = queueAndReturnThis {
         builderProxy.setAccelConstraint(accelConstraint)
     }
 
-    fun resetAccelConstraint() = this.apply {
+    fun resetAccelConstraint() = queueAndReturnThis {
         builderProxy.resetAccelConstraint()
     }
 
-    fun setTurnConstraint(maxAngVel: Number, maxAngAccel: Number) = this.apply {
+    fun setTurnConstraint(maxAngVel: Number, maxAngAccel: Number) = queueAndReturnThis {
         builderProxy.setTurnConstraint(maxAngVel.toDouble(), maxAngAccel.toDouble())
     }
 
-    fun resetTurnConstraint() = this.apply {
+    fun resetTurnConstraint() = queueAndReturnThis {
         builderProxy.resetTurnConstraint()
     }
 
@@ -543,14 +552,25 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         thenRun(elseAction, async = async)
     }
 
-    /**
-     * Maps to the [TrajectorySequenceBuilder.build] method, and returns the resulting
-     * [TrajectorySequence].
-     */
+    fun flush() {
+        for (i in builderDeque.indices) {
+            builderDeque.removeFirst().invoke()
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> build(): T = (builderProxy.build() as T).also { builtTrajectory = it }
+    fun <T : Any> build(): T {
+        flush()
+        return (builderProxy.build() as T).also { builtTrajectory = it }
+    }
 
     // -- Internal --
+
+    @PublishedApi
+    internal fun queueAndReturnThis(builderAction: () -> Unit): Anvil {
+        builderDeque += builderAction
+        return this
+    }
 
     @PublishedApi
     internal fun run(trajectory: Any, async: Boolean = true) = if (async) {

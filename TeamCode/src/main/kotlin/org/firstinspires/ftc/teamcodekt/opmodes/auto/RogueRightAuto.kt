@@ -19,7 +19,7 @@ class RogueRightAuto : RogueBaseAuto() {
         Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
         bot.camera.update()
-        signalID = bot.camera.waitForStartWithVision(this)
+        signalID = bot.camera.waitForStartWithVision(this) ?: 2
 
         Scheduler.launch(this, ::updateComponents)
     }
@@ -167,11 +167,11 @@ class RogueRightAuto : RogueBaseAuto() {
                 1 -> {
                     splineToLinearHeading(30, -34, 90, 128.375 + 90)
                 }
-                3 -> inReverse {
-                    splineTo(144.65, -30.95, 0)
+                2 -> {
+                    splineTo(144.65, -30.95, 0).doInReverse()
                 }
-                else -> inReverse {
-                    splineTo(89, -33, 270)
+                3 -> {
+                    splineTo(89, -33, 270).doInReverse()
                 }
             }
 

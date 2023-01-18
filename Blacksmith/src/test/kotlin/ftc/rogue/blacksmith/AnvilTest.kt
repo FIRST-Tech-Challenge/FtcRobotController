@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import testutil.roadrunner.drive.SampleMecanumDrive
 import testutil.roadrunner.trajectorysequence.TrajectorySequence
+import testutil.roadrunner.trajectorysequence.TrajectorySequenceBuilder
 import kotlin.math.PI
 
 // TODO: More thorough testing
@@ -41,6 +42,10 @@ internal class AnvilTest {
             .forward(5.0)
             .turn(PI)
             .turn(PI)
+            .addTemporalMarker({ 1.0 }) { }
+            .setReversed(true)
+            .back(10.0)
+            .setReversed(false)
             .build()
 
         val actual = Anvil.formTrajectory(drive, Pose2d()) {
@@ -59,6 +64,10 @@ internal class AnvilTest {
                     turn(PI)
                 }
             }
+            withRawBuilder<TrajectorySequenceBuilder> {
+                addTemporalMarker({ 1.0 }) { }
+            }
+            back(10).doInReverse()
         }.build<TrajectorySequence>()
 
         assertAll(

@@ -36,21 +36,19 @@ private fun mainTraj(drive: DriveShim) =
 
         splineToSplineHeading(75.650, -18.750, 140.400, 155.0)
 
-        // 2 -> splineToSplineHeading(75.650, -18.750, 140.400, 155.0)
-
         waitTime(100)
 
-        when (1) {
+        when (2) {
             1 -> {
                 splineToLinearHeading(28, -32, 90, 128.375 + 90)
             }
 
-            2 -> inReverse {
-                splineTo(86, -33, 270)
+            2 -> {
+                splineTo(86, -33, 270).doInReverse()
             }
 
-            3 -> inReverse {
-                splineTo(154.65, -30.95, 0)
+            3 -> {
+                splineTo(154.65, -30.95, 0).doInReverse()
             }
             else -> this
         }

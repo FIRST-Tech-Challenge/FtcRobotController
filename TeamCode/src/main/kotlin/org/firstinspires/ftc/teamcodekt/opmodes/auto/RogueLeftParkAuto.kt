@@ -5,10 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.units.GlobalUnits
+import kotlin.properties.Delegates
 
 @Autonomous
 class RogueLeftParkAuto : RogueBaseAuto() {
-    private var signalID = 2
+    private var signalID by Delegates.notNull<Int>()
 
     override fun executeOrder66() {
         val startPose = GlobalUnits.pos(91, -159, 90)
@@ -17,7 +18,7 @@ class RogueLeftParkAuto : RogueBaseAuto() {
         Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
         bot.camera.update()
-        signalID = bot.camera.waitForStartWithVision(this)
+        signalID = bot.camera.waitForStartWithVision(this) ?: 2
 
         Scheduler.launch(this, ::updateComponents)
     }

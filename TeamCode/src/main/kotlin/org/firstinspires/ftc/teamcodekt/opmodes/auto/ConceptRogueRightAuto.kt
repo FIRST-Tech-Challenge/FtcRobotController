@@ -16,19 +16,19 @@ class ConceptRogueRightAuto : RogueBaseAuto() {
     private var cycleNumber = 0
     private var signalZone = 0
 
-    override fun executeOrder66() = with(bot) {
+    override fun executeOrder66() {
         val startPose = Pose2d(91.toIn(), (-159).toIn(), 90.toRad())
         val startTraj = preload(startPose)
 
         Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
-        signalZone = camera.waitForStartWithVision(this@ConceptRogueRightAuto)
+        signalZone = bot.camera.waitForStartWithVision(this) ?: 2
         mTelemetry.addData("Final signal zone", signalZone)
         mTelemetry.update()
 
-        Scheduler.launch(this@ConceptRogueRightAuto) {
+        Scheduler.launch(this) {
             bot.updateBaseComponents(.01)
-            drive.update()
+            bot.drive.update()
             mTelemetry.update()
         }
     }

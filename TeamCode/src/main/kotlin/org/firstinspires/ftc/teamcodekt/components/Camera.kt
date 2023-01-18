@@ -62,11 +62,11 @@ class Camera {
         })
     }
 
-    fun waitForStartWithVision(opmode: LinearOpMode): Int {
+    fun waitForStartWithVision(opmode: LinearOpMode): Int? {
         val telemetry = BlackOp.mTelemetry
 
         var numFramesWithoutDetection = 0
-        var lastIntID = -1
+        var lastIntID: Int? = null
 
         while (!opmode.opModeIsActive()) {
             val detections = aprilTagDetectionPipeline.detectionsUpdate
