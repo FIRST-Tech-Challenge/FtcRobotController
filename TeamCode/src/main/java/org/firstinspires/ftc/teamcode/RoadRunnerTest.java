@@ -118,25 +118,26 @@ public class RoadRunnerTest extends LinearOpMode {
         TrajectorySequence seq = drive.trajectorySequenceBuilder(pose)
                 .lineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(-90)))
                 .forward(24)
-                .turn(90)
-                .forward(12)
-                .turn(-45)
+                .turn(Math.toRadians(90))
+                .forward(24)
+                .turn(Math.toRadians(-45))
                 .forward(9)
                 .waitSeconds(2)
-                .addTemporalMarker(5, () -> {
-                    try {
-                        actuatorUtils.armPole(1, true);
-                        actuatorUtils.gripperOpen(true);
-                        actuatorUtils.armPole(4, true);
-                    }
-                    catch (InterruptedException ex) {
-                        telemetry.addData(ex.getLocalizedMessage(), "");
-                        telemetry.update();
-                    }
-                })
+                //.addTemporalMarker(5, () -> {
+                //    try {
+                //        actuatorUtils.armPole(1, true);
+                //        actuatorUtils.gripperOpen(true);
+                //        actuatorUtils.armPole(4, true);
+                //   }
+                //    catch (InterruptedException ex) {
+                //        telemetry.addData(ex.getLocalizedMessage(), "");
+                //        telemetry.update();
+                //    }
+                //})
                 .forward(-9)
-                .turn(Math.toRadians(0))
-                .lineToLinearHeading(new Pose2d (-12, 12, Math.toRadians(90)))
+                .turn(Math.toRadians(45))
+                .forward(24)
+                .turn(Math.toRadians(90))
                 .build();
         return seq;
     }
