@@ -200,7 +200,7 @@ public class Crane implements Subsystem {
         extendPID.setOutputRange(EXTEND_MIN_PID_OUTPUT, EXTEND_MAX_PID_OUTPUT);
         shoulderPID = new PIDController(0,0,0);
         shoulderPID.setOutputRange(SHOULDER_MIN_PID_OUTPUT,SHOULDER_MAX_PID_OUTPUT);
-        shoulderPID.setIntegralCutIn(ten);
+        shoulderPID.setIntegralCutIn(10);
         shoulderPID.enableIntegralZeroCrossingReset(false);
 
         articulate(Articulation.start);
@@ -215,18 +215,11 @@ public class Crane implements Subsystem {
 
     public void resetCrane(Constants.Position start){
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
-            fieldPositionTarget = new Vector3(start.getPose().getX()+ten-1,start.getPose().getY(),9);
-            extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            fieldPositionTarget = new Vector3(start.getPose().getX()+9,start.getPose().getY(),9);
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             fieldPositionTarget = new Vector3(home.x+robot.turret.getTurretPosition().getX(),home.y+robot.turret.getTurretPosition().getY(),home.z);
-            extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
-
-    int five = 5;
-    int two = 2;
-    int ten = five * two;
 
     int calibrateStage=0;
     double futureTime;
@@ -242,12 +235,9 @@ public class Crane implements Subsystem {
                 calibrated = false; //allows us to call calibration mid-match in an emergency
                 //operator instruction: physically push arm to about 45 degrees and extend by 1 slide before calibrating
                 //shoulder all the way up and retract arm until they safely stall
-                shoulderActivePID = false;
                 extenderActivePID = false;
-                shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                shoulderMotor.setPower(.2); //move up at low power
-                extenderMotor.setPower(-0.2);
+                extenderMotor.setPower(-0.3);
                 futureTime = futureTime(.25);
                 calibrateStage++;
                 break;
@@ -255,7 +245,6 @@ public class Crane implements Subsystem {
             case 1:
                 if(System.nanoTime() > futureTime){
                     //sample low load amps
-                    runShoulderAmp = shoulderMotor.getCurrent(CurrentUnit.AMPS);
                     runExtendAmp = extenderMotor.getCurrent(CurrentUnit.AMPS);
                     calibrateStage++;
                 }
@@ -263,46 +252,20 @@ public class Crane implements Subsystem {
 
             case 2:
                 // both motors are stalled
-                if(shoulderMotor.getCurrent(CurrentUnit.AMPS) > 1 && extenderMotor.getCurrent(CurrentUnit.AMPS) > 1){
+                if(extenderMotor.getCurrent(CurrentUnit.AMPS) > 2.5){
                     extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     extenderMotor.setPower(-0.1); //barely stop it from extending
                     //enable PID on shoulder and rotate down to horizontal
-                    shoulderMotor.setPower(0.0);
-                    shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    shoulderAngleEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    shoulderTargetAngle = -SHOULDER_DEG_MAX;
-                    shoulderActivePID = true;
                     calibrateStage++;
                 }
                 break;
-
             case 3:
-                if (shoulderAngle > shoulderTargetAngle -2 && shoulderAngle < shoulderTargetAngle +2){ //shoulder is horizontal, so reset encoder to begin from here - normally use shoulderPID.onTarget(), but that might not be setup correctly yet
-                    shoulderActivePID = false;
-                    shoulderAngleEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //now horizontal should be at zero
-                    shoulderTargetAngle =0;
-                    shoulderActivePID = true;
-                    // WATCH OUT - begin extending arm - we want to find max extension (once established we will normally not do this)
-                    if (EXTENDER_CALIBRATE_MAX) extenderMotor.setPower(.6);
-                    calibrateStage++;
-                }
+                extendMaxTics = 3075;
+                calibrateStage++;
                 break;
 
-            case 4:
-                if (EXTENDER_CALIBRATE_MAX) {
-                    if (extenderMotor.getCurrent(CurrentUnit.AMPS) > 6) { //should be stalled at full extension
-                        extendMaxTics = extenderMotor.getCurrentPosition();
-                        calibrateStage++;
-                    }
-                }else {
-                    extendMaxTics = 3075;
-                    calibrateStage++;
-                }
-                break;
-
-            case 5: //enable extender PID to zero position - give 2 seconds to retract a good bit
+            case 4: //enable extender PID to zero position - give 2 seconds to retract a good bit
                 extenderMotor.setPower(0.0);
                 extenderTargetPos = 0;
                 extenderActivePID = true;
@@ -310,11 +273,10 @@ public class Crane implements Subsystem {
                 calibrateStage++;
                 break;
 
-            case 6:
+            case 5:
                 if (System.nanoTime()>futureTime) {
                     calibrateStage = 0;
                     calibrated = true;
-                    shoulderTargetAngle = 5; //initial angle up to clear look at signal
                     return true;
                 }
                 break;
@@ -418,7 +380,7 @@ public class Crane implements Subsystem {
             if (shoulderAmps < 4) {
                 shoulderMotor.setPower(shoulderCorrection);
             } else {
-                stallTimer = futureTime((double) five);
+                stallTimer = futureTime(5.0);
             }
         }else {
             shoulderMotor.setPower(0);
@@ -456,7 +418,8 @@ public class Crane implements Subsystem {
         home,
         coneStackRight,
         coneStackLeft,
-        start
+        start,
+        calibate
     }
 
     public Articulation getArticulation() {
@@ -467,6 +430,11 @@ public class Crane implements Subsystem {
         articulation = target;
 
         switch(articulation){
+            case calibate:
+                if(calibrate()){
+                    articulation = Articulation.manual;
+                    return Articulation.manual;
+                }
             case noIK:
 
                 break;
@@ -521,7 +489,7 @@ public class Crane implements Subsystem {
     }
 
     public boolean craneStart(){
-        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+ten-1,robot.driveTrain.getPoseEstimate().getY(),8);
+        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+9,robot.driveTrain.getPoseEstimate().getY(),8);
         calculateFieldTargeting(fieldPositionTarget);
         setExtendTargetPos(calculatedLength);
         setShoulderTargetAngle(calculatedAngle);
@@ -732,11 +700,30 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 3:
-                if(goToFieldthing(obj)){
+                calculateFieldTargeting(obj);
+                pickupConeStage++;
+                break;
+            case 4:
+                setTargetTurretAngle(calculatedTurretAngle+8);
+                setShoulderTargetAngle(calculatedAngle);
+                nudgeCenter(true);
+                if(shoulderOnTarget() && turretOnTarget()){
                     pickupConeStage++;
                 }
                 break;
-            case 4:
+            case 5:
+                setExtendTargetPos(calculatedLength);
+                if(extensionOnTarget()){
+                    pickupConeStage++;
+                }
+                break;
+            case 6:
+                setTargetTurretAngle(calculatedTurretAngle-5);
+                if(turretOnTarget()){
+                    pickupConeStage++;
+                }
+                break;
+            case 7:
                 pickupConeStage = 0;
                 return true;
         }
@@ -758,6 +745,7 @@ public class Crane implements Subsystem {
                 break;
             case 1:
                 if(System.nanoTime() >= dropTimer) {
+                    nudgeLeft();
                     setShoulderTargetAngle(getShoulderAngle() + 8);
                     dropConeStage++;
                 }
@@ -849,11 +837,7 @@ public class Crane implements Subsystem {
             robotIsNotTipping = withinError(turretPitch, 0, 4); //checks if robot is happy
         }
 
-        if(calibrated) {
-            //run the current articulation
-            articulate(articulation);
-
-        }
+        articulate(articulation);
 
         turretPos = robot.turret.getTurretPosition();
         axlePos = robot.turret.getAxlePosition();
@@ -948,7 +932,8 @@ public class Crane implements Subsystem {
     }
     public boolean calculateFieldTargeting(FieldThing obj){
         Pose2d coords = Field.convertToInches(obj.getPosition());
-        fieldPositionTarget = new Vector3(coords.getX(),coords.getY(),obj.z());
+        fieldPositionTarget = new Vector3(coords.getX(),coords.getY(),obj.z()-1);
+        calculateFieldTargeting(fieldPositionTarget);
         return true;
     }
 
@@ -979,7 +964,7 @@ public class Crane implements Subsystem {
 
         calculatedHeight = z-shoulderHeight;
 
-        calculatedDistance = (Math.sqrt(Math.pow(y - axlePos.getY(),2) + Math.pow(x - axlePos.getX(),2)))/INCHES_PER_METER;
+        calculatedDistance = 0.05 + (Math.sqrt(Math.pow(y - axlePos.getY(),2) + Math.pow(x - axlePos.getX(),2)))/INCHES_PER_METER;
 
         calculatedAngle = Math.toDegrees(Math.atan2(calculatedHeight, calculatedDistance));
         calculatedLength = (Math.sqrt(Math.pow(calculatedHeight, 2) + Math.pow(calculatedDistance, 2)));

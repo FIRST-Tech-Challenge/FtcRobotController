@@ -215,12 +215,14 @@ public class Robot implements Subsystem {
 
         switch (autonIndex){
             case 0:
+                //drive to general parking location
                 crane.driverIsDriving();
                 if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20)){
                     autonIndex++;
                 }
                 break;
             case 1:
+                //drop cone at nearest high pole
                 crane.driverNotDriving();
                 crane.articulate(Crane.Articulation.noIK);
                 if(startingPosition.equals( Constants.Position.START_LEFT)) {
@@ -243,6 +245,7 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 3:
+                //face conestack
                 if (startingPosition.equals(Constants.Position.START_LEFT)) {
                     if (driveTrain.turnUntilDegrees(90)) {
                         autonIndex++;
@@ -259,7 +262,7 @@ public class Robot implements Subsystem {
                 break;
             case 4:
                 if(System.nanoTime() >= autonTime) {
-                    /*
+                    //if we r on left side run cone stack left, if right run right cone stack
                     if(startingPosition.equals( Constants.Position.START_LEFT)){
                         crane.articulate(Crane.Articulation.coneStackLeft);
                     }else{
@@ -268,8 +271,6 @@ public class Robot implements Subsystem {
                     if(crane.getArticulation() == Crane.Articulation.manual){
                         autonIndex++;
                     }
-                     */
-                    autonIndex++;
                 }
                 break;
             case 5:
@@ -278,6 +279,7 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 6:
+                //drive to specific parking location
                 if(autonTarget == 1 || Objects.isNull(autonTarget)){
                     autonIndex++;
                 }
@@ -305,6 +307,7 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 9:
+                //get rdy for teleop
                 crane.nudgeLeft();
                 crane.setCraneTarget(turret.getTurretPosition().getX()-2,turret.getTurretPosition().getY(),26);
                 autonIndex = 0;

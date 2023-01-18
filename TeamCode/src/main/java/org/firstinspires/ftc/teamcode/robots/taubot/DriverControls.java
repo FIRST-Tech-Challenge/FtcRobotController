@@ -278,6 +278,10 @@ public class DriverControls {
 
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
             debugTelemetryEnabled = !debugTelemetryEnabled;
+
+        if(stickyGamepad1.dpad_down){
+            robot.crane.articulate(Crane.Articulation.calibate);
+        }
         /*
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
             if (robot.crane.shoulderInitialized)

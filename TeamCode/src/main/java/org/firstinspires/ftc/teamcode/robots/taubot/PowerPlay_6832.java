@@ -250,7 +250,6 @@ public class PowerPlay_6832 extends OpMode {
 
         update();
 
-        if (!armCalibrated && robot.crane.calibrateEnabled()) armCalibrated=robot.crane.calibrate();
     }
     private void rumble() {
         gamepad1.rumble((int) (RUMBLE_DURATION * 1000));
