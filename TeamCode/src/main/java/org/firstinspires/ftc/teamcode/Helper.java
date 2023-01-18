@@ -36,6 +36,8 @@ class elevatorPositions{
 class RobotController {
 
     private ElapsedTime et = new ElapsedTime();
+    private ElapsedTime armSafety = new ElapsedTime();
+    private ElapsedTime pufferSafety = new ElapsedTime();
     /** GENERAL CONSTANTS */
     private final double sq2 = Math.sqrt(2);
     private final Telemetry telemetry;
@@ -61,10 +63,10 @@ class RobotController {
     private final double placerIn  = 0;
 
     private final double placerOutAutonomous = 0.76;
-    private final double placerOutTeleOp = 0.85;
+    private final double placerOutTeleOp = 0.76;//0.85;
 
-    private final double pufferGrab    = 0.45;
-    private final double pufferRelease = 0.1;
+    private final double pufferGrab    = 0.14;
+    private final double pufferRelease = 0;
 
     private final double grabberGrab = 0.61;
     private final double grabberOpen = 0.36;
@@ -202,6 +204,11 @@ class RobotController {
 
                     safeSleep(750);
 
+                    if (elevatorPosition == elevatorPositions.middle){
+
+                        setPlacerPosition(placerOutTeleOp * 0.5);
+                        safeSleep(400);
+                    }
                     setPlacerPosition(placerOutTeleOp);
 
                     while (gamepad.right_trigger == 0) {
@@ -265,6 +272,7 @@ class RobotController {
                     } else {
                         setArmPosition(armIn);
                     }
+
                 }
 
                 if (!teleScore.isAlive()) {
@@ -313,17 +321,17 @@ class RobotController {
                 A = (joystick_left.y - joystick_left.x) / sq2;
                 B = (joystick_left.y + joystick_left.x) / sq2;
 
-                // slow mode if the grabber is out
-                if (grabberLeft.getPosition() == grabberPile[0]) {
+                // slow mode;
+                if (grabberLeft.getPosition() == grabberPile[0] || elevatorPosition != elevatorPositions.bottom) {
                     overallDrivingPower = 0.4;
                 } else {
                     overallDrivingPower = 1;
                 }
                 // setting the powers in consideration of the turning speed
-                setDrivingPower((A - gamepad.right_stick_x * 0.7) * overallDrivingPower,
-                        (B + gamepad.right_stick_x * 0.7) * overallDrivingPower,
-                        (B - gamepad.right_stick_x * 0.7) * overallDrivingPower,
-                        (A + gamepad.right_stick_x * 0.7) * overallDrivingPower);
+                setDrivingPower(A - gamepad.right_stick_x,
+                        B + gamepad.right_stick_x,
+                        B - gamepad.right_stick_x,
+                        A + gamepad.right_stick_x);
 
 //                telemetry.addData("left_trigger", gamepad.left_trigger);
 //                telemetry.addData("left_bumper", gamepad.left_bumper);
@@ -471,7 +479,8 @@ class RobotController {
 
             setArmPosition(armIn);
 
-            while (!armSensor.getState()) {
+            armSafety.reset();
+            while (armSensor.getState()) {
                 if (gamepad.isStopRequested) throw new InterruptedException("stop requested");
             }
 
@@ -611,8 +620,8 @@ class PipeLine extends OpenCvPipeline {
         AutonomousLeft.blue = Core.mean(ThresholdBlueImage).val[0];
 
         // visual que
-        if      (AutonomousLeft.red  > 60) Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 0  , 0  ), 2);
-        else if (AutonomousLeft.blue > 60) Imgproc.rectangle(small, coneWindowOutLine, new Scalar(0  , 0  , 255), 2);
+        if      (AutonomousLeft.red  > 45) Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 0  , 0  ), 2);
+        else if (AutonomousLeft.blue > 45) Imgproc.rectangle(small, coneWindowOutLine, new Scalar(0  , 0  , 255), 2);
         else                                Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 255, 255), 2);
 
 

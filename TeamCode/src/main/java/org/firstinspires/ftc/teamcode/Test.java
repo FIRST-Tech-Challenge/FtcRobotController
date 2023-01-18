@@ -11,23 +11,19 @@ public class Test extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-//        DigitalChannel armSensor = hardwareMap.get(DigitalChannel.class, "armSensor");
-        Servo puffer = hardwareMap.servo.get("puffer");
+        DigitalChannel armSensor;
+
+
+        armSensor = hardwareMap.get(DigitalChannel.class, "armSensor");
+        armSensor.setMode(DigitalChannel.Mode.INPUT);
+
         waitForStart();
         if (isStopRequested()) return;
         resetRuntime();
-
-        while (opModeIsActive()) {
-
-            if(gamepad1.a) {
-                puffer.setPosition(0.1); //Release
-            }
-            if(gamepad1.b) {
-                puffer.setPosition(0.45); //Close
-            }
-
+        while (opModeIsActive()){
+            telemetry.addData("s", armSensor.getState());
+            telemetry.update();
         }
-
 //        Servo grabberRight = hardwareMap.servo.get("grabberRight");
 //        Servo grabberLeft = hardwareMap.servo.get("grabberLeft");
 //
