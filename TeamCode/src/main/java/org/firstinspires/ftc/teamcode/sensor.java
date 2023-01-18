@@ -36,4 +36,7 @@ public class sensor {
         float angles1 = Float.valueOf(String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle))));
         return angles1;
     }
+    public void location(){
+
+    }
 }
