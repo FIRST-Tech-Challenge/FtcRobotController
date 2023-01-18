@@ -40,6 +40,18 @@ public class AutonomousTest extends BaseAutonomous {
 
         waitForStart();
 
+        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+
+        sleep(1000);
+
+        driveSlidesAutonomous(Constants.SLIDE_HIGH);
+
+        sleep(1000);
+
         centerJunctionTop(grabberCameraPipeline);
+
+        sleep(1000);
+
+        driveGrabber(Constants.GRABBER_OPEN_POSITION);
     }
 }

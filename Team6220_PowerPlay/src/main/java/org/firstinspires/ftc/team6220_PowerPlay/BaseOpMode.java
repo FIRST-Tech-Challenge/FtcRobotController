@@ -196,7 +196,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
             // center the cone on the junction top
-            driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * xOffset, Constants.JUNCTION_TOP_CENTERING_KP * yOffset, 0.0);
+            driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
 
         // while the cone isn't centered over the junction
         } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
@@ -212,8 +212,12 @@ public abstract class BaseOpMode extends LinearOpMode {
             xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
             width = pipeline.width;
 
-            // drive forward while centering on the cone stack
-            driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.3, 0.0);
+            // drive forward while centering on the cone stack if contour exists
+            if (pipeline.width == 0) {
+                break;
+            } else {
+                driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.3, Constants.CONE_CENTERING_KP * Math.signum(xOffset));
+            }
 
             // while far enough that the cone stack doesn't fill the entire camera view
         } while (width < Constants.CONE_WIDTH);
