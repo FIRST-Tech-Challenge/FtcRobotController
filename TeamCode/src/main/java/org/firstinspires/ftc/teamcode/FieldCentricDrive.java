@@ -118,8 +118,8 @@ public class FieldCentricDrive extends LinearOpMode {
             // Read inverse IMU heading, as the IMU heading is CW positive
             double botHeading = -imu.getAngularOrientation().firstAngle;
 
-            double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
-            double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
+            double rotX = (x*x) * Math.cos(botHeading) - (y*y) * Math.sin(botHeading);
+            double rotY = (x*x) * Math.sin(botHeading) + (y*y) * Math.cos(botHeading);
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
