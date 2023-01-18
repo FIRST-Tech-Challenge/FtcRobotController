@@ -281,9 +281,9 @@ public class RobotManager {
         }
     }
 
-    /** Delivers a piece of freight to a particular level of the alliance shipping hub.
+    /** Delivers a cone to a pole.
      *
-     *  @param level the level to which the cargo needs to be delivered.
+     *  @param level the level/height of the pole to which the cone needs to be delivered
      */
     public void deliverToPole(Robot.SlidesState level, Robot robot) {
         // Extend slides.
@@ -333,6 +333,8 @@ public class RobotManager {
         while (!retracted) {
             retracted = mechanismDriving.updateSlides(robot);
         }
+
+        // TODO: ROBOT NEEDS TO BACK UP otherwise flipping horeshoe will cause problems
 
         //flipHorseshoe(); not needed anymore because no more horseshoe
     }
