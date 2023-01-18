@@ -57,7 +57,7 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
             }
         }
 
-        driver.rightBumper.onPress(InstantCmd({ slowMode = !slowMode }))
+        driver.a.onPress(InstantCmd({ slowMode = !slowMode }))
     }
 
     private fun scheduleCycling() {
