@@ -16,7 +16,7 @@ class ConceptRogueRightAuto : RogueBaseAuto() {
     private var cycleNumber = 0
     private var signalZone = 0
 
-    override fun execute() = with(bot) {
+    override fun executeOrder66() = with(bot) {
         val startPose = Pose2d(91.toIn(), (-159).toIn(), 90.toRad())
         val startTraj = preload(startPose)
 

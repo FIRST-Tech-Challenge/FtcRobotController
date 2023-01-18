@@ -35,7 +35,7 @@ class TestOp2 : RogueBaseAuto() {
         var TEST_LIFT_HEIGHT = 100
     }
 
-    override fun execute() {
+    override fun executeOrder66() {
         val parallelEncoder = hwMap<DcMotorEx>( "FL")
         val perpendicularEncoder =  hwMap<DcMotorEx>( "BR")
 

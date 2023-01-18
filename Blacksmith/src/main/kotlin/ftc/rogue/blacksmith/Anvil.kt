@@ -3,7 +3,6 @@
 package ftc.rogue.blacksmith
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint
@@ -170,9 +169,6 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
             initialInstance.run(initialTrajectory, async)
         }
 
-        @JvmStatic
-        fun warmup() = WarmupHelper.start(100) // TODO: Test to see if this helps auto times
-
         // Private coroutine scope used for async trajectory creation, dw about it
         @PublishedApi
         internal val builderScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -192,55 +188,55 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     // -- Direct path mappings (Basic) --
 
-    fun forward(distance: Double) = this.apply {
+    fun forward(distance: Number) = this.apply {
         builderProxy.forward(distance.toIn())
     }
 
-    fun back(distance: Double) = this.apply {
+    fun back(distance: Number) = this.apply {
         builderProxy.back(distance.toIn())
     }
 
-    fun turn(angle: Double) = this.apply {
+    fun turn(angle: Number) = this.apply {
         builderProxy.turn(angle.toRad())
     }
 
-    fun strafeLeft(distance: Double) = this.apply {
+    fun strafeLeft(distance: Number) = this.apply {
         builderProxy.strafeLeft(distance.toIn())
     }
 
-    fun strafeRight(distance: Double) = this.apply {
+    fun strafeRight(distance: Number) = this.apply {
         builderProxy.strafeRight(distance.toIn())
     }
 
     // -- Direct path mappings (Lines) --
 
-    fun lineToConstantHeading(x: Double, y: Double) = this.apply {
+    fun lineToConstantHeading(x: Number, y: Number) = this.apply {
         builderProxy.strafeTo( GlobalUnits.vec(x, y) )
     }
 
-    fun lineToLinearHeading(x: Double, y: Double, heading: Double) = this.apply {
+    fun lineToLinearHeading(x: Number, y: Number, heading: Number) = this.apply {
         builderProxy.lineToLinearHeading( GlobalUnits.pos(x, y, heading) )
     }
 
-    fun lineToSplineHeading(x: Double, y: Double, heading: Double) = this.apply {
+    fun lineToSplineHeading(x: Number, y: Number, heading: Number) = this.apply {
         builderProxy.lineToSplineHeading( GlobalUnits.pos(x, y, heading) )
     }
 
     // -- Direct path mappings (Splines) --
 
-    fun splineTo(x: Double, y: Double, endTangent: Double) = this.apply {
+    fun splineTo(x: Number, y: Number, endTangent: Number) = this.apply {
         builderProxy.splineTo( GlobalUnits.vec(x, y), endTangent.toRad() )
     }
 
-    fun splineToConstantHeading(x: Double, y: Double, endTangent: Double) = this.apply {
+    fun splineToConstantHeading(x: Number, y: Number, endTangent: Number) = this.apply {
         builderProxy.splineToConstantHeading(  GlobalUnits.vec(x, y), endTangent.toRad() )
     }
 
-    fun splineToLinearHeading(x: Double, y: Double, heading: Double, endTangent: Double) = this.apply {
+    fun splineToLinearHeading(x: Number, y: Number, heading: Number, endTangent: Number) = this.apply {
         builderProxy.splineToLinearHeading( GlobalUnits.pos(x, y, heading), endTangent.toRad() )
     }
 
-    fun splineToSplineHeading(x: Double, y: Double, heading: Double, endTangent: Double) = this.apply {
+    fun splineToSplineHeading(x: Number, y: Number, heading: Number, endTangent: Number) = this.apply {
         builderProxy.splineToSplineHeading( GlobalUnits.pos(x, y, heading), endTangent.toRad() )
     }
 
@@ -254,8 +250,8 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         builderProxy.setReversed(reversed)
     }
 
-    fun setTangent(tangent: Double) = this.apply {
-        builderProxy.setTangent(tangent)
+    fun setTangent(tangent: Number) = this.apply {
+        builderProxy.setTangent(tangent.toDouble())
     }
 
     fun addTrajectory(trajectory: Trajectory) = this.apply {
@@ -377,8 +373,8 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         builderProxy.resetAccelConstraint()
     }
 
-    fun setTurnConstraint(maxAngVel: Double, maxAngAccel: Double) = this.apply {
-        builderProxy.setTurnConstraint(maxAngVel, maxAngAccel)
+    fun setTurnConstraint(maxAngVel: Number, maxAngAccel: Number) = this.apply {
+        builderProxy.setTurnConstraint(maxAngVel.toDouble(), maxAngAccel.toDouble())
     }
 
     fun resetTurnConstraint() = this.apply {
@@ -576,36 +572,5 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         inner class AnvilLaunchConfig2 internal constructor() {
             fun synchronously() { async = false }
         }
-    }
-
-    private object WarmupHelper {
-        fun start(numTimes: Int) = repeat(numTimes) {
-            createAndBuildSequence()
-        }
-
-        private val dummyDrive = Any()
-
-        private fun createAndBuildSequence() =
-            formTrajectory(dummyDrive, Pose2d()) {
-                forward(rand())
-                turn(rand())
-                addTemporalMarker(rand()) {
-                }
-                waitTime(rand())
-                inReverse {
-                    splineTo(rand(), rand(), rand())
-                }
-                doTimes(randInt()) {
-                    forward(rand())
-                }
-                lineToLinearHeading(rand(), rand(), rand())
-                splineTo(rand(), rand(), rand())
-                back(rand())
-                setReversed(true)
-            }.build<Any>()
-
-        private fun rand() = Math.random() * 100
-
-        private fun randInt() = (Math.random() * 5).toInt()
     }
 }

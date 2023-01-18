@@ -5,13 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.units.GlobalUnits
-import kotlin.properties.Delegates
 
 @Autonomous
 class RogueLeftParkAuto : RogueBaseAuto() {
     private var signalID = 2
 
-    override fun execute() {
+    override fun executeOrder66() {
         val startPose = GlobalUnits.pos(91, -159, 90)
         val startTraj = parkTraj(startPose)
 

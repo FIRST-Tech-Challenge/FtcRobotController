@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import ftc.rogue.blacksmith.listeners.Listener
-import org.firstinspires.ftc.teamcodekt.components.LiftConfig
-import org.firstinspires.ftc.teamcodekt.components.getDriveSticks
-import kotlin.math.abs
 import kotlin.math.sign
 
 @TeleOp

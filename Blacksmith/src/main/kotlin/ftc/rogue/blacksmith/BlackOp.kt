@@ -6,8 +6,6 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
-import ftc.rogue.blacksmith.util.kt.LateInitVal
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
@@ -49,22 +47,23 @@ abstract class BlackOp : LinearOpMode() {
      * Please override `go()` instead of this method.
      */
     final override fun runOpMode() {
-        telemetry.addLine("Restarting Scheduler")
-        telemetry.update()
+        quickLog("Restarting Scheduler")
         Scheduler.reset()
 
-        telemetry.addLine("Setting hwmap")
-        telemetry.update()
+        quickLog("Setting HwMap")
         hwMap = hardwareMap
         Companion.hwMap = hardwareMap
 
-        telemetry.addLine("Emitting BS start msg")
-        telemetry.update()
+        quickLog("Emitting BS start msg")
         Scheduler.emit(STARTING_MSG)
 
-        telemetry.addLine("go")
-        telemetry.update()
+        quickLog("Calling go")
         go()
+    }
+
+    protected fun quickLog(msg: String) {
+        telemetry.addLine(msg)
+        telemetry.update()
     }
 
     companion object {

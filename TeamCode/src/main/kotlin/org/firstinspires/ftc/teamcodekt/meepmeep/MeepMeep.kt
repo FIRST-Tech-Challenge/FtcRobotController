@@ -9,7 +9,6 @@ import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.meepmeep.MeepMeepPersistence
 import ftc.rogue.blacksmith.units.GlobalUnits
-import ftc.rogue.blacksmith.util.kt.pow
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.*
 
 private val startPose = GlobalUnits.pos(91, -163, 90)
@@ -23,7 +22,7 @@ fun main() {
         .setColorScheme(ColorSchemeBlueDark())
         .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
         .setDimensions(12.0, 12.0)
-        .followTrajectorySequence(::parkTraj)
+        .followTrajectorySequence(::mainTraj)
 
     mm.setBackground(Background.FIELD_POWERPLAY_OFFICIAL)
         .setDarkMode(true)
@@ -32,55 +31,28 @@ fun main() {
         .start()
 }
 
-private fun parkTraj(drive: DriveShim) =
-    Anvil.formTrajectory(drive, startPose) {
-        forward(74.0)
-
-        when (3) {
-            1 -> strafeLeft(60.0)
-            3 -> strafeRight(60.0)
-        }
-
-        this
-    }.build<TrajectorySequence>()
-
 private fun mainTraj(drive: DriveShim) =
-    Anvil.formTrajectory(drive, startPose)
-        .waitInitialGoToDeposit()
+    Anvil.formTrajectory(drive, startPose) {
 
-        .awaitDeposit()
+        splineToSplineHeading(75.650, -18.750, 140.400, 155.0)
 
-        .doTimes(5) {
-            awaitGoToIntake(it)
+        // 2 -> splineToSplineHeading(75.650, -18.750, 140.400, 155.0)
 
-            when (it) {
-                4 -> awaitFastIntake()
-                else -> awaitRegularIntake()
+        waitTime(100)
+
+        when (1) {
+            1 -> {
+                splineToLinearHeading(28, -32, 90, 128.375 + 90)
             }
 
-            awaitGoToDeposit(it)
+            2 -> inReverse {
+                splineTo(86, -33, 270)
+            }
 
-            awaitDeposit()
+            3 -> inReverse {
+                splineTo(154.65, -30.95, 0)
+            }
+            else -> this
         }
 
-        .build<TrajectorySequence>()
-
-private fun Anvil.waitInitialGoToDeposit() = this
-    .splineToSplineHeading(82.35, -11.35, 129.5, 117.5)
-
-private fun Anvil.awaitGoToDeposit(it: Int) = this
-    .splineToSplineHeading(82.35 + (it * .35), -11.35 - (it * 3.7), 131.5 + (it * 1.9), 155.0)
-
-private fun Anvil.awaitGoToIntake(it: Int) =
-    inReverse {
-        splineTo(159.5 - ((it * .6) pow 1.25), -28.75 - (it * .85), 0.0)
-    }
-
-private fun Anvil.awaitDeposit() = this
-    .waitTime(100)
-
-private fun Anvil.awaitRegularIntake() = this
-    .waitTime(225)
-
-private fun Anvil.awaitFastIntake() = this
-    .waitTime(20)
+    }.build<TrajectorySequence>()

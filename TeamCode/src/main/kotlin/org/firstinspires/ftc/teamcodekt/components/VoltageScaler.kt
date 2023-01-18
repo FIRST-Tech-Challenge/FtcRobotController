@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.controller.PIDFController
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
 
 @Config

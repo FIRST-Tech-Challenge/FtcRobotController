@@ -6,17 +6,13 @@ import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.units.GlobalUnits
 import org.firstinspires.ftc.teamcode.AutoData
-import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence
-import org.firstinspires.ftc.teamcodekt.components.ClawConfig
 import kotlin.properties.Delegates
 
 @Autonomous
 class RogueRightAuto : RogueBaseAuto() {
     private var signalID by Delegates.notNull<Int>()
 
-    override fun execute() {
+    override fun executeOrder66() {
         val startPose = GlobalUnits.pos(91, -159, 90)
         val startTraj = mainTraj(startPose)
 
@@ -61,31 +57,30 @@ class RogueRightAuto : RogueBaseAuto() {
         .addTemporalMarker {
             bot.lift.goToHigh()
             bot.claw.close()
-            bot.arm.setToForwardsPosAuto()
+            bot.arm.setToForwardsPos()
             bot.wrist.setToForwardsPos()
         }
 
     private fun Anvil.awaitInitialGoToDeposit() = this
-        .splineToSplineHeading(82.5, -12.75, 131.5, 115.0)
+        .splineToSplineHeading(82.5, -12.75, 131.75, 115.0)
 
-    private fun Anvil.awaitGoToDeposit(it: Int) = when(it) {
-        0 -> splineToSplineHeading(85.100, -10.250, 140.500, 155.0)
-        1 -> splineToSplineHeading(81.800, -14.905, 133.825, 155.0)
-        2 -> splineToSplineHeading(78.150, -17.450, 130.100, 155.0)
-        3 -> splineToSplineHeading(75.624, -20.575, 127.375, 155.0)
-        4 -> splineToSplineHeading(75.650, -16.250, 140.400, 155.0)
+    private fun Anvil.awaitGoToDeposit(it: Int) = when (it) {
+        0 -> splineToSplineHeading(85.100, -10.250, 141.000, 155.0)
+        1 -> splineToSplineHeading(81.800, -14.905, 131.725, 155.0)
+        2 -> splineToSplineHeading(77.150, -16.450, 131.100, 155.0)
+        3 -> splineToSplineHeading(74.624, -19.575, 128.375, 155.0)
+        4 -> splineToSplineHeading(74.950, -17.950, 140.400, 155.0)
         else -> this
     }
 
     private fun Anvil.awaitGoToIntake(it: Int) =
         inReverse {
-            when(it) {
-                // TODO: Change intake Y. Knocking over the cone stack sometimes as of before LM3 match 3.
-                0 -> splineTo(163.5500 - 1.85, -25.750, 0.0)
-                1 -> splineTo(161.7375 - 1.5, -26.925, 0.0)
-                2 -> splineTo(159.9250 - 1.015, -28.100, 0.0)
-                3 -> splineTo(158.1125 - 1.515, -29.275, 0.0)
-                4 -> splineTo(156.3000 - 1.65, -30.450, 0.0)
+            when (it) {
+                0 -> splineTo(161.0000, -25.850, 0.0)
+                1 -> splineTo(160.2375, -27.175, 0.0)
+                2 -> splineTo(158.9100, -28.400, 0.0)
+                3 -> splineTo(156.5975, -29.675, 0.0)
+                4 -> splineTo(154.6500, -30.950, 0.0)
             }
         }
 
@@ -104,12 +99,10 @@ class RogueRightAuto : RogueBaseAuto() {
         .addTemporalMarker {
             bot.lift.height = liftOffsets[iterations]
             bot.wrist.setToBackwardsPos()
-//            bot.arm.targetAngle = 58.5
             bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
         }
 
         .addTemporalMarker(150) {
-//            bot.claw.targetPos = .5755
             bot.claw.openForIntakeWide()
         }
 
@@ -135,7 +128,7 @@ class RogueRightAuto : RogueBaseAuto() {
         }
 
         .addTemporalMarker(425) {
-            bot.arm.setToForwardsPosAuto()
+            bot.arm.setToForwardsPos()
             bot.wrist.setToForwardsPos()
         }
 
@@ -170,22 +163,15 @@ class RogueRightAuto : RogueBaseAuto() {
         Anvil.formTrajectory(bot.drive, startPose) {
             resetBot()
 
-            back(15.0)
-
-            telemetry.addData("Signal ID", signalID)
-
             when (signalID) {
                 1 -> {
-                    turn(38.0)
-                    forward(61.0)
+                    splineToLinearHeading(30, -34, 90, 128.375 + 90)
                 }
-                3 -> {
-                    turn(45.0)
-                    back(60.0)
+                3 -> inReverse {
+                    splineTo(144.65, -30.95, 0)
                 }
-                else -> {
-                    turn(35.0)
-                    back(5.0)
+                else -> inReverse {
+                    splineTo(89, -33, 270)
                 }
             }
 

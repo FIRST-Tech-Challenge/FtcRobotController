@@ -20,7 +20,7 @@ public class BasePoleDetectorOp extends RogueBaseAuto {
      */
     @SuppressLint("DefaultLocale")
     @Override
-    public void execute() {
+    public void executeOrder66() {
         setPoleDetectorAsPipeline();
 
         while (!opModeIsActive()){
