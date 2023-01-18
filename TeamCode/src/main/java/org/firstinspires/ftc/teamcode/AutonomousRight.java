@@ -120,6 +120,7 @@ public class AutonomousRight extends AutonomousBase {
         }
         telemetry.addData("State", "Webcam Initialized");
         telemetry.update();
+        pipelineLow.overrideSide(false);
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
@@ -422,12 +423,12 @@ public class AutonomousRight extends AutonomousBase {
         // Range 28, 28, 29
         // + 14.8
         switch( fiveStackHeight ) {
-            case 5  : liftAngle5stack = 109.1; break;
-            case 4  : liftAngle5stack = 111.1; break;
-            case 3  : liftAngle5stack = 113.1; break;
-            case 2  : liftAngle5stack = 115.1; break; // TODO: Not measured
-            case 1  : liftAngle5stack = 117.1; break; // TODO: Not measured
-            default : liftAngle5stack = 119.1;
+            case 5  : liftAngle5stack = 104.1; break;
+            case 4  : liftAngle5stack = 106.1; break;
+            case 3  : liftAngle5stack = 108.1; break;
+            case 2  : liftAngle5stack = 110.1; break; // TODO: Not measured
+            case 1  : liftAngle5stack = 110.1; break; // TODO: Not measured
+            default : liftAngle5stack = 110.1;
         } // switch()
 
         // Lower the lift to the desired height (and ensure we're centered)

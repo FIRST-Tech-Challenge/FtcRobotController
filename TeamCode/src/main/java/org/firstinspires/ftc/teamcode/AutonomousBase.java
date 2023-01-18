@@ -204,7 +204,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
-        final int TURRET_CYCLES_AT_POS = 15;
+        final int TURRET_CYCLES_AT_POS = 8;
 
         double turretPower;
         double drivePower;
@@ -238,7 +238,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             performEveryLoop();
             // The sign is backwards because centralOffset is negative of the power we need.
             error = 0.0 - theLocalPole.centralOffset;
-            kpMin = (theLocalPole.centralOffset > 0)? -0.05 : +0.05;
+            kpMin = (theLocalPole.centralOffset > 0)? -0.095 : +0.095;
             if( theLocalPole.aligned ) kpMin = 0.0;
             errorChange = error - lastError;
             currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;

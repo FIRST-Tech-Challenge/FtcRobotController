@@ -2,6 +2,9 @@
 */
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsInstances.SONIC_RANGE_FRONT;
+import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_MOST_RECENT;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -144,6 +147,8 @@ public abstract class Teleop extends LinearOpMode {
 
             // If enabled, process ultrasonic range sensors
             if( rangeSensorsEnabled ) {
+                sonarRangeF = robot.fastSonarRange( SONIC_RANGE_FRONT, SONIC_MOST_RECENT );
+/*
                 // measure the next sensor
                 switch( rangeSensorIndex ) {
                     case 1 : processRangeSensors(rangeSensorIndex); break;
@@ -158,6 +163,8 @@ public abstract class Teleop extends LinearOpMode {
                 // increment to next index
                 if( ++rangeSensorIndex > 8 )
                     rangeSensorIndex = 1;
+
+ */
             } // rangeSensorsEnabled
 
             // Process all the driver/operator inputs
@@ -237,8 +244,9 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Collector", "%.2f %.2f",
                     robot.leftTiltServo.getPosition(), robot.rightTiltServo.getPosition() );
             if( rangeSensorsEnabled ) {
-               telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f in", sonarRangeL/2.54, sonarRangeR/2.54 );
-               telemetry.addData("Sonar Range (F/B)", "%.1f  %.1f in", sonarRangeF/2.54, sonarRangeB/2.54 );
+               telemetry.addData("Sonar Range (F)", "%.1f in", sonarRangeF/2.54 );
+//             telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f in", sonarRangeL/2.54, sonarRangeR/2.54 );
+//             telemetry.addData("Sonar Range (F/B)", "%.1f  %.1f in", sonarRangeF/2.54, sonarRangeB/2.54 );
             }
             telemetry.addData("Odometry (L/R/S)", "%d %d %d cts",
                     robot.leftOdometerCount, robot.rightOdometerCount, robot.strafeOdometerCount );
@@ -573,10 +581,10 @@ public abstract class Teleop extends LinearOpMode {
     void processRangeSensors( int sensorNum ) {
         // only send one ping per control cycle (left, right, front, or back)
         switch( sensorNum ) {
-            case 1 : sonarRangeL = robot.updateSonarRangeL(); break;
+            case 1 : /* sonarRangeL = robot.updateSonarRangeL(); */ break;
             case 3 : /* sonarRangeR = robot.updateSonarRangeR(); */ break;
-            case 5 : sonarRangeF = robot.updateSonarRangeF(); break;
-            case 7 : sonarRangeB = robot.updateSonarRangeB(); break;
+            case 5 : sonarRangeF = robot.updateSonarRangeF();  break;
+            case 7 : /* sonarRangeB = robot.updateSonarRangeB(); */ break;
             default : break;
         } // switch()
     } // processRangeSensors
@@ -591,10 +599,10 @@ public abstract class Teleop extends LinearOpMode {
         // repeatedly update all 4 readings.  Each loop adds a reading to the
         // internal array from which we return the new MEDIAN value.
         for( int i=0; i<5; i++ ) {
-          sonarRangeL = robot.updateSonarRangeL();
+//        sonarRangeL = robot.updateSonarRangeL();
 //        sonarRangeR = robot.updateSonarRangeR();
           sonarRangeF = robot.updateSonarRangeF();
-          sonarRangeB = robot.updateSonarRangeB();
+//        sonarRangeB = robot.updateSonarRangeB();
         }
     } // averagedRangeSensors
 

@@ -185,6 +185,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public Object lockRedCone = new Object();
     public Object lockPole = new Object();
     boolean detectPole, detectRedCone, detectBlueCone, detectSignal, isBlueAlliance, isLeft;
+    boolean overrideSide, overrideAlliance, overrideIsLeft, overrideIsBlue;
 
     public PowerPlaySuperPipeline(boolean signalDetection, boolean poleDetection,
                                   boolean redConeDetection, boolean blueConeDetection,
@@ -478,6 +479,16 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     List<AnalyzedTape> internalBlueTapeList = new ArrayList<>();
     AnalyzedTape theBlueTape = new AnalyzedTape();
 
+    public void overrideSide(boolean isLeft) {
+        overrideSide = true;
+        overrideIsLeft = isLeft;
+    }
+
+    public void overrideAlliance(boolean isBlue) {
+        overrideAlliance = true;
+        overrideIsBlue = isLeft;
+    }
+
     @Override
     public Mat processFrame(Mat input)
     {
@@ -528,7 +539,15 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             maxL = Math.max(avgRL, Math.max(avgBL, avgGL));
             maxR = Math.max(avgRR, Math.max(avgBR, avgGR));
 
-            allianceMax = Math.max(allianceAvgRR, Math.max(allianceAvgBR, Math.max(allianceAvgRL, allianceAvgBL)));
+            if(overrideSide) {
+                if(overrideIsLeft) {
+                    allianceMax = Math.max(allianceAvgRL, allianceAvgBL);
+                } else {
+                    allianceMax = Math.max(allianceAvgRR, allianceAvgBR);
+                }
+            } else {
+                allianceMax = Math.max(allianceAvgRR, Math.max(allianceAvgBR, Math.max(allianceAvgRL, allianceAvgBL)));
+            }
 
             // Draw a circle on the detected team shipping element
             markerL.x = (beaconDetectLeftTl.x + beaconDetectLeftBr.x) / 2;
@@ -650,27 +669,59 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 signalZoneR = 3;
             }
 
-            Imgproc.rectangle(input, allianceDetectRightTl, allianceDetectRightBr, TEAL, 1);
-            Imgproc.rectangle(input, allianceDetectLeftTl, allianceDetectLeftBr, new Scalar(0, 0, 255), 1);
-            if(allianceMax == allianceAvgRR) {
-                Imgproc.circle(input, allianceMarkerR, 5, new Scalar(0, 0, 255), -1);
-                isBlueAlliance = true;
-                isLeft = false;
-            } else if(allianceMax == allianceAvgBR) {
-                Imgproc.circle(input, allianceMarkerR, 5, new Scalar(255, 0, 0), -1);
-                isBlueAlliance = false;
-                isLeft = false;
-            } else if(allianceMax == allianceAvgRL) {
-                Imgproc.circle(input, allianceMarkerL, 5, new Scalar(0, 0, 255), -1);
-                isBlueAlliance = true;
-                isLeft = true;
-            } else if(allianceMax == allianceAvgBL) {
-                Imgproc.circle(input, allianceMarkerL, 5, new Scalar(255, 0, 0), -1);
-                isBlueAlliance = false;
-                isLeft = true;
+            if(overrideSide) {
+                if(overrideIsLeft) {
+                    Imgproc.rectangle(input, allianceDetectLeftTl, allianceDetectLeftBr, new Scalar(0, 0, 255), 1);
+                    if(allianceMax == allianceAvgRL) {
+                        Imgproc.circle(input, allianceMarkerL, 5, new Scalar(0, 0, 255), -1);
+                        isBlueAlliance = true;
+                        isLeft = true;
+                    } else if(allianceMax == allianceAvgBL) {
+                        Imgproc.circle(input, allianceMarkerL, 5, new Scalar(255, 0, 0), -1);
+                        isBlueAlliance = false;
+                        isLeft = true;
+                    } else {
+                        isBlueAlliance = true;
+                        isLeft = true;
+                    }
+                } else {
+                    Imgproc.rectangle(input, allianceDetectRightTl, allianceDetectRightBr, TEAL, 1);
+                    if(allianceMax == allianceAvgRR) {
+                        Imgproc.circle(input, allianceMarkerR, 5, new Scalar(0, 0, 255), -1);
+                        isBlueAlliance = true;
+                        isLeft = false;
+                    } else if(allianceMax == allianceAvgBR) {
+                        Imgproc.circle(input, allianceMarkerR, 5, new Scalar(255, 0, 0), -1);
+                        isBlueAlliance = false;
+                        isLeft = false;
+                    } else {
+                        isBlueAlliance = true;
+                        isLeft = false;
+                    }
+                }
             } else {
-                isBlueAlliance = true;
-                isLeft = true;
+                Imgproc.rectangle(input, allianceDetectLeftTl, allianceDetectLeftBr, new Scalar(0, 0, 255), 1);
+                Imgproc.rectangle(input, allianceDetectRightTl, allianceDetectRightBr, TEAL, 1);
+                if(allianceMax == allianceAvgRR) {
+                    Imgproc.circle(input, allianceMarkerR, 5, new Scalar(0, 0, 255), -1);
+                    isBlueAlliance = true;
+                    isLeft = false;
+                } else if(allianceMax == allianceAvgBR) {
+                    Imgproc.circle(input, allianceMarkerR, 5, new Scalar(255, 0, 0), -1);
+                    isBlueAlliance = false;
+                    isLeft = false;
+                } else if(allianceMax == allianceAvgRL) {
+                    Imgproc.circle(input, allianceMarkerL, 5, new Scalar(0, 0, 255), -1);
+                    isBlueAlliance = true;
+                    isLeft = true;
+                } else if(allianceMax == allianceAvgBL) {
+                    Imgproc.circle(input, allianceMarkerL, 5, new Scalar(255, 0, 0), -1);
+                    isBlueAlliance = false;
+                    isLeft = true;
+                } else {
+                    isBlueAlliance = true;
+                    isLeft = true;
+                }
             }
             input.copyTo(finalAutoImage);
         }

@@ -133,24 +133,24 @@ public class HardwareSlimbot
 
     protected AnalogInput liftEncoder      = null;    // US Digital absolute magnetic encoder (MA3)
     public double       liftAngle          = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
-    public double       liftAngleOffset    = 130.2;   // allows us to adjust the 0-360 deg range
-    public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)
+    public double       liftAngleOffset    = 145.3;   // allows us to adjust the 0-360 deg range
+    public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)li
 
-    public double       LIFT_ANGLE_MAX     = 120.2;   // absolute encoder angle at maximum rotation FRONT
+    public double       LIFT_ANGLE_MAX     = 120.0;   // absolute encoder angle at maximum rotation FRONT
     public double       LIFT_ANGLE_MIN     = -69.9;   // absolute encoder angle at maximum rotation REAR
     // NOTE: the motor doesn't stop immediately, so set the limits short of the absolute maximum
-    public double       LIFT_ANGLE_ASTART  = 123.1;   // lift position for starting autonomous
-    public double       LIFT_ANGLE_COLLECT = 117.0;   // lift position for collecting cones
-    public double       LIFT_ANGLE_GROUND  = 116.8;   // lift position for GROUND junction
-    public double       LIFT_ANGLE_LOW     = 108.3;   // lift position for LOW junction
-    public double       LIFT_ANGLE_MOTORS  =  97.5;   // lift position for cleaning front turret motor
-    public double       LIFT_ANGLE_5STACK  =  83.8;   // lift position for 5-stack ultrasonic reading
-    public double       LIFT_ANGLE_MED     =  80.4;   // lift position for MEDIUM junction (FRONT Teleop)
-    public double       LIFT_ANGLE_MED_B   = -60.2;   // lift position for MEDIUM junction (BACK Teleop)
-    public double       LIFT_ANGLE_HIGH    =  52.8;   // lift position for HIGH junction (FRONT Teleop)
-    public double       LIFT_ANGLE_AUTO_H  =  41.8;   // lift position for AUTONOMOUS (HIGH junction)
-    public double       LIFT_ANGLE_HIGH_B  = -26.0;   // lift position for HIGH junction (BACK Teleop)
-    public double       LIFT_ANGLE_HIGH_BA = -23.0;   // lift position for HIGH junction (BACK Auto)
+    public double       LIFT_ANGLE_ASTART  = 117.5;   // lift position for starting autonomous
+    public double       LIFT_ANGLE_COLLECT = 111.0;   // lift position for collecting cones
+    public double       LIFT_ANGLE_GROUND  = 111.8;   // lift position for GROUND junction
+    public double       LIFT_ANGLE_LOW     = 103.3;   // lift position for LOW junction
+    public double       LIFT_ANGLE_MOTORS  =  92.5;   // lift position for cleaning front turret motor
+    public double       LIFT_ANGLE_5STACK  =  78.8;   // lift position for 5-stack ultrasonic reading
+    public double       LIFT_ANGLE_MED     =  75.4;   // lift position for MEDIUM junction (FRONT Teleop)
+    public double       LIFT_ANGLE_MED_B   = -65.2;   // lift position for MEDIUM junction (BACK Teleop)
+    public double       LIFT_ANGLE_HIGH    =  47.8;   // lift position for HIGH junction (FRONT Teleop)
+    public double       LIFT_ANGLE_AUTO_H  =  36.8;   // lift position for AUTONOMOUS (HIGH junction)
+    public double       LIFT_ANGLE_HIGH_B  = -33.5;   // lift position for HIGH junction (BACK Teleop)
+    public double       LIFT_ANGLE_HIGH_BA = -30.0;   // lift position for HIGH junction (BACK Auto)
                                                       // (cone is loaded lower for auto, so higher lift point)
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
@@ -187,14 +187,14 @@ public class HardwareSlimbot
 
     public double       currentTilt          =  0.00;  // This holds the most recent grabber tilt command
     public double       GRABBER_TILT_MAX     =  0.50;  // 0.5 (max) is up; -0.5 (min) is down
-    public double       GRABBER_TILT_BACK_H  =  0.17;  // Backward scoring on the high pole
-    public double       GRABBER_TILT_BACK_M  =  0.17;  // Backward scoring on the mid pole
-    public double       GRABBER_TILT_INIT    =  0.00;  // Pointing straight up (overlaps front lift motor at some heights!)
-    public double       GRABBER_TILT_SAFE    = -0.15;  // Maximum upward tilt that's safe to raise/lower collector past front lift motor
-    public double       GRABBER_TILT_STORE   = -0.17;  // Stored angle for autonomous driving around
-    public double       GRABBER_TILT_AUTO_F  = -0.24;  // 45deg tilt for front scoring in autonomous
-    public double       GRABBER_TILT_FRONT_H = -0.17;  // Backward scoring on the high pole
-    public double       GRABBER_TILT_FRONT_M = -0.17;  // Backward scoring on the mid pole
+    public double       GRABBER_TILT_BACK_H  =  0.16;  // Backward scoring on the high pole
+    public double       GRABBER_TILT_BACK_M  =  0.16;  // Backward scoring on the mid pole
+    public double       GRABBER_TILT_INIT    = -0.03;  // Pointing straight up (overlaps front lift motor at some heights!)
+    public double       GRABBER_TILT_SAFE    = -0.12;  // Maximum upward tilt that's safe to raise/lower collector past front lift motor
+    public double       GRABBER_TILT_STORE   = -0.14;  // Stored angle for autonomous driving around
+    public double       GRABBER_TILT_AUTO_F  = -0.21;  // 45deg tilt for front scoring in autonomous
+    public double       GRABBER_TILT_FRONT_H = -0.14;  // Backward scoring on the high pole
+    public double       GRABBER_TILT_FRONT_M = -0.14;  // Backward scoring on the mid pole
     public double       GRABBER_TILT_GRAB    = -0.36;  // Extended horizontal at ground level for grabbing (front)
     public double       GRABBER_TILT_MIN     = -0.50;  // As far down as we can tilt (manual control)
 
@@ -352,8 +352,8 @@ public class HardwareSlimbot
         initIMU();
 
         //Instantiate Maxbotics ultrasonic range sensors (sensors wired to I2C ports)
-        sonarRangeL = hwMap.get( MaxSonarI2CXL.class, "leftUltrasonic" );   // I2C Bus 0
-        sonarRangeB = hwMap.get( MaxSonarI2CXL.class, "backUltrasonic" );   // I2C Bus 1
+//      sonarRangeL = hwMap.get( MaxSonarI2CXL.class, "leftUltrasonic" );   // I2C Bus 0
+//      sonarRangeB = hwMap.get( MaxSonarI2CXL.class, "backUltrasonic" );   // I2C Bus 1
         sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "frontUltrasonic" );  // I2C Bus 2
 //      sonarRangeR = hwMap.get( MaxSonarI2CXL.class, "rightUltrasonic" );  // I2C Bus 3
         topConeSensor = hwMap.get( DigitalChannel.class, "ProxTop" );
@@ -757,7 +757,7 @@ public class HardwareSlimbot
                 double liftMotorPower = minPower + (degreesToGo * -0.02); // our PID is just "P"
                 // adjust base power according to lowering/lifting (lowering cuts it; raising boosts it)
                 // when down near collect point we need more power, so don't reduce it as much
-                double loweringFactor = (liftAngle > (LIFT_ANGLE_COLLECT-10.0))? 0.75 : 0.50;
+                double loweringFactor = (liftAngle > (LIFT_ANGLE_COLLECT-10.0))? 0.77 : 0.50;
                 liftMotorPower *= (lowering)? loweringFactor : 1.50;
                 // Ensure we don't request more than 100% motor power, even if long distance from target
                 if( liftMotorPower >  LIFT_MOTOR_MAX ) liftMotorPower =  LIFT_MOTOR_MAX;
@@ -970,10 +970,10 @@ public class HardwareSlimbot
         // This version is intended for 1-time readings where the 50msec is okay (not control loops).
         int cm = 0;
         switch( sensorInstance ) {
-            case SONIC_RANGE_LEFT  : cm = sonarRangeL.getDistanceSync(); break;
-            case SONIC_RANGE_RIGHT : cm = sonarRangeR.getDistanceSync(); break;
+//          case SONIC_RANGE_LEFT  : cm = sonarRangeL.getDistanceSync(); break;
+//          case SONIC_RANGE_RIGHT : cm = sonarRangeR.getDistanceSync(); break;
             case SONIC_RANGE_FRONT : cm = sonarRangeF.getDistanceSync(); break;
-            case SONIC_RANGE_BACK  : cm = sonarRangeB.getDistanceSync(); break;
+//          case SONIC_RANGE_BACK  : cm = sonarRangeB.getDistanceSync(); break;
             default                : cm = 0;
         } // switch()
         return cm;
@@ -989,10 +989,10 @@ public class HardwareSlimbot
         // returned.
         int cm = 0;
         switch( sensorInstance ) {
-            case SONIC_RANGE_LEFT  : cm = sonarRangeL.getDistanceAsync(); break;
-            case SONIC_RANGE_RIGHT : cm = sonarRangeR.getDistanceAsync(); break;
+//          case SONIC_RANGE_LEFT  : cm = sonarRangeL.getDistanceAsync(); break;
+//          case SONIC_RANGE_RIGHT : cm = sonarRangeR.getDistanceAsync(); break;
             case SONIC_RANGE_FRONT : cm = sonarRangeF.getDistanceAsync(); break;
-            case SONIC_RANGE_BACK  : cm = sonarRangeB.getDistanceAsync(); break;
+//          case SONIC_RANGE_BACK  : cm = sonarRangeB.getDistanceAsync(); break;
             default                : cm = 0;
         } // switch()
         // Do we need to zero-out the value returned (likely from another time/place)?
