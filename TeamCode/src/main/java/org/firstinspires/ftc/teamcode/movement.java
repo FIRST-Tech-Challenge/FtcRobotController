@@ -9,21 +9,28 @@ public class movement {
     public DcMotor Motor3;
     public DcMotor Motor4;
 
-
-    public void motorinit(){
-
+    public void verticalMovement(float power){
+        Motor1.setPower(power * 1);
+        Motor2.setPower(power * 1);
+        Motor3.setPower(power * -1);
+        Motor4.setPower(power * -1);
     }
-
-    public void verticalMovement(){
-
+    public void horizontalMovement(float power){
+        Motor1.setPower(power * -1);
+        Motor2.setPower(power * 1);
+        Motor3.setPower(power * -1);
+        Motor4.setPower(power * 1);
     }
-    public void horizontalMovement(){
-
+    public void rightrotateMovement(float power){
+        Motor1.setPower(-1*power);
+        Motor2.setPower(-1*power);
+        Motor3.setPower(-1*power);
+        Motor4.setPower(-1*power);
     }
-    public void rightrotateMovement(){
-
-    }
-    public void leftrotateMovement(){
-
+    public void leftrotateMovement(float power){
+        Motor1.setPower(power);
+        Motor2.setPower(power);
+        Motor3.setPower(power);
+        Motor4.setPower(power);
     }
 }
