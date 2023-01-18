@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -14,6 +15,8 @@ public class main extends LinearOpMode {
         movement.Motor2 = hardwareMap.get(DcMotor.class, "Motor2");
         movement.Motor3 = hardwareMap.get(DcMotor.class, "Motor3");
         movement.Motor4 = hardwareMap.get(DcMotor.class, "Motor4");
+
+        //sensor.imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         while (opModeIsActive()){
             gamepader();
