@@ -45,8 +45,8 @@ public class Constants {
     public static final int CONE_WIDTH = 350;
     public static final double CONE_CENTERING_KP = 0.035;
 
-    public static final int JUNCTION_TOP_TOLERANCE = 25;
-    public static final double JUNCTION_TOP_CENTERING_KP = 0.1;
+    public static final int JUNCTION_TOP_TOLERANCE = 100;
+    public static final double JUNCTION_TOP_CENTERING_KP = 0.05;
 
     public static final Scalar LOWER_RED = new Scalar(170, 125, 50);
     public static final Scalar UPPER_RED = new Scalar(180, 255, 255);

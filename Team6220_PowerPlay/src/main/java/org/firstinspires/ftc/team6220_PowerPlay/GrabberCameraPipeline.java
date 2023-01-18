@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GrabberCameraPipeline extends OpenCvPipeline {
-    public double xPosition = 0.0;
-    public double yPosition = 0.0;
+    public double xPosition = Constants.CAMERA_CENTER_X;
+    public double yPosition = Constants.CAMERA_CENTER_Y;
 
     List<MatOfPoint> contours = new ArrayList<>();
     Mat hierarchy = new Mat();
@@ -61,6 +61,9 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
                 xPosition = boundingRect.x + (boundingRect.width * 0.5);
                 yPosition = boundingRect.y + (boundingRect.height * 0.5);
             }
+        } else {
+            xPosition = Constants.CAMERA_CENTER_X;
+            yPosition = Constants.CAMERA_CENTER_Y;
         }
 
         contours.clear();

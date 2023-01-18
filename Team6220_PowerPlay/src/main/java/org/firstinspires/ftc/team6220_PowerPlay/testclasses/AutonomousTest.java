@@ -44,13 +44,13 @@ public class AutonomousTest extends BaseAutonomous {
 
         sleep(1000);
 
-        driveSlidesAutonomous(Constants.SLIDE_HIGH);
+        driveSlidesAutonomous(Constants.SLIDE_TOP);
 
-        sleep(1000);
+        sleep(5000);
 
         centerJunctionTop(grabberCameraPipeline);
 
-        sleep(1000);
+        sleep(5000);
 
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
     }

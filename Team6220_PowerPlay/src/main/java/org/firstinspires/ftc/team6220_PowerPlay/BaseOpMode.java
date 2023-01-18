@@ -213,7 +213,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             width = pipeline.width;
 
             // drive forward while centering on the cone stack if contour exists
-            if (pipeline.width == 0) {
+            if (width == 0) {
                 break;
             } else {
                 driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.3, Constants.CONE_CENTERING_KP * Math.signum(xOffset));

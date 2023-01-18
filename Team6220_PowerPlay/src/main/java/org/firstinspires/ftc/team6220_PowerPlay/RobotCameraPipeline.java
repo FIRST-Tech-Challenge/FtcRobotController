@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RobotCameraPipeline extends OpenCvPipeline {
-    public double xPosition = 0.0;
-    public double yPosition = 0.0;
+    public double xPosition = Constants.CAMERA_CENTER_X;
+    public double yPosition = Constants.CAMERA_CENTER_Y;
     public double width = 0.0;
 
     private Scalar lowerRange;
@@ -74,8 +74,8 @@ public class RobotCameraPipeline extends OpenCvPipeline {
             }
         } else {
             width = 0.0;
-            xPosition = 0.0;
-            yPosition = 0.0;
+            xPosition = Constants.CAMERA_CENTER_X;
+            yPosition = Constants.CAMERA_CENTER_Y;
         }
 
         contours.clear();
