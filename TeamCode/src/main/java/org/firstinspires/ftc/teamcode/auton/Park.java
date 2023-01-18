@@ -12,8 +12,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 
-@Autonomous(name="RedRight", group="Test")
-public class RedRight extends automethods {
+@Autonomous(name="Park", group="Test")
+public class Park extends automethods {
     HardwarePushbot robot = new HardwarePushbot();// Use a Pushbot's hardware
 
 
@@ -157,17 +157,21 @@ public class RedRight extends automethods {
         /* Actually do something useful */
 
 
-            if(tagOfInterest == null || tagOfInterest.id == left){
-                firstpartautoRight2();
-                encoderDrive(.6,20,5);
-            }
-            else if (tagOfInterest.id == middle){
-                firstpartautoRight2();
-            }
-            else{
-                firstpartautoRight2();
-                encoderDrive(.6,-20,5);
-            }
+        if(tagOfInterest == null || tagOfInterest.id == left){
+            encoderDrive(.6,30,5);
+            strafeRight(.6,-25, 5);
+            //imuTurn(.3, 90);
+            //encoderDrive(.6, 20, 5);
+        }
+        else if (tagOfInterest.id == middle){
+            encoderDrive(.6,30,5);
+        }
+        else{
+            encoderDrive(.6,30,5);
+            strafeRight(.6,25,5);
+            //imuTurn(.3, 270);
+            //encoderDrive(.6, 25, 5);
+        }
 
 
 
@@ -189,77 +193,6 @@ public class RedRight extends automethods {
     }
 ////////////////////////////////////ROBOT  START////////////////////////////////////////////////////
 
-    public void firstpartautoRight() {
-        closeclaw();
-        encoderDrive(.5, 42, 10);
-        imuTurn(.5, 88);
-        setLevel(2);
-        encoderDrive(.3, 6, 5);
-        openClaw();
-        sleep(1000);
-        encoderDrive(.3, -6, 5);
-        setLevel(0);
-        strafeRight(.7, 12, 5);
-        sleep(500);
-
-    }
-
-    public void firstpartautoRight2() {
-        closeclaw();
-        encoderDrive(.5, 42, 10);
-        imuTurn(.5, 88);
-        setLevel(2);
-        encoderDrive(.3, 6, 5);
-        openClaw();
-        sleep(1000);
-        encoderDrive(.3, -6, 5);
-        setLevel(0);
-        encoderDrive(.3, 6, 5);
-        imuTurn(.5,180);
-        encoderDrive(.3, 12, 5);
-        sleep(500);
-
-
-    }
-
-    public void firstpartautoLeft() {
-        encoderDrive(.5, 40, 10);
-        imuTurn(.5, -90);
-        setLevel(2);
-        encoderDrive(.3, 3, 5);
-        openClaw();
-        sleep(1000);
-        encoderDrive(.3, -4, 5);
-        setLevel(0);
-        encoderDrive(.3,4, 5);
-        imuTurn(.5, -180);
-        encoderDrive(.7,-5,5);
-
-    }
-
-    public void twocones() {
-
-
-        encoderDrive(1,60,10);
-        imuTurn(.5,90);
-        setLevel(3);
-        encoderDrive(.3,3,5);
-        openClaw();
-        encoderDrive(.3,-4,5);
-        setLevel(0);
-        imuTurn(.7,180);
-        strafeRight(.7,-10,5);
-        encoderDrive(.7,10,5);
-        closeclaw();
-        encoderDrive(.7,-10,5);
-        strafeRight(.7,10,5);
-        imuTurn(.7,180);
-        setLevel(3);
-        encoderDrive(.3,4,3);
-        openClaw();
-        encoderDrive(.7,-4,3);
-        strafeRight(.7,20,5);
-    }
 
 
 

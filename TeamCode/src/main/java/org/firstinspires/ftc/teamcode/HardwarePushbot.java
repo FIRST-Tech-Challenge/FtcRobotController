@@ -29,6 +29,7 @@ public class HardwarePushbot {
 
     public static TouchSensor touchSensor = null;
 
+
     public static HardwareMap hwMap = null;
 
 
@@ -37,7 +38,7 @@ public class HardwarePushbot {
 
     //////////Servos
 
-    public static Servo claw1 = null;
+    public static Servo claw = null;
 
     public static void init(HardwareMap ahwMap) {
 
@@ -75,7 +76,7 @@ public class HardwarePushbot {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         viperSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        claw1 = hwMap.get(Servo.class, "claw1");
+        claw = hwMap.get(Servo.class, "claw");
 
 
         touchSensor = hwMap.get(TouchSensor.class, "touchSensor");
@@ -85,7 +86,6 @@ public class HardwarePushbot {
     public static void autoinit (HardwareMap ahwMap){
         // Save reference to Hardware map
         hwMap = ahwMap;
-        int viperStart = viperSlide.getCurrentPosition();
         //imu stuff
         imu = hwMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -96,6 +96,10 @@ public class HardwarePushbot {
         parameters.loggingTag = "imu";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
+
+        claw.setPosition(.05);
+
+
 
 
         //////close claw

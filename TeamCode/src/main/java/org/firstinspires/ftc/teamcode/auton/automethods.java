@@ -33,17 +33,17 @@ public class automethods extends LinearOpMode {
     double pusherPushing = .09;
     double pusherClose = .2;
 
-    double doorClose= 0.7;
-    double doorOpen =1;
+    double doorClose = 0.7;
+    double doorOpen = 1;
 
-    double twisterDeliver=0.4;
-    double twisterNeutral=0.815;
+    double twisterDeliver = 0.4;
+    double twisterNeutral = 0.815;
 
 
 
     /* Declare OpMode members. */
 ///////////////////////////////////wheel calibration//////////////////////////
-   // HardwarePushbot robot = new HardwarePushbot();   // Use a Pushbot's hardware
+    // HardwarePushbot robot = new HardwarePushbot();   // Use a Pushbot's hardware
 
 
     static final double COUNTS_PER_MOTOR_REV = 537.7;    //need to adjust for big wheels
@@ -110,7 +110,7 @@ public class automethods extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (robot.frontLeft.isBusy() && robot.backRight.isBusy() )) {
+                    (robot.frontLeft.isBusy() && robot.backRight.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1", "Running to %7d :%7d    : %7d:%7d", newLeftFrontTarget, newRightFrontTarget, newLeftBackTarget, newRightBackTarget);
@@ -141,31 +141,31 @@ public class automethods extends LinearOpMode {
 
     ////////////////////////////arm up init//////////////////////////////
 
-/*
-    public void startturn(double speed, double timeoutS)
-    {
-        if (opModeIsActive()) {
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.turntableLeft.setPower(speed);
-            robot.turntableRight.setPower(speed);
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS)) {
-                // Display it for the driver.
-                telemetry.addData("Running", "True");
-                telemetry.update();
-            }
-            // Stop all motion;
-            robot.turntableLeft.setPower(0);
-            robot.turntableRight.setPower(0);
-        }}
-*/
+    /*
+        public void startturn(double speed, double timeoutS)
+        {
+            if (opModeIsActive()) {
+                // reset the timeout time and start motion.
+                runtime.reset();
+                robot.turntableLeft.setPower(speed);
+                robot.turntableRight.setPower(speed);
+                // keep looping while we are still active, and there is time left, and both motors are running.
+                // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+                // its target position, the motion will stop.  This is "safer" in the event that the robot will
+                // always end the motion as soon as possible.
+                // However, if you require that BOTH motors have finished their moves before the robot continues
+                // onto the next step, use (isBusy() || isBusy()) in the loop test.
+                while (opModeIsActive() &&
+                        (runtime.seconds() < timeoutS)) {
+                    // Display it for the driver.
+                    telemetry.addData("Running", "True");
+                    telemetry.update();
+                }
+                // Stop all motion;
+                robot.turntableLeft.setPower(0);
+                robot.turntableRight.setPower(0);
+            }}
+    */
     //////////////////////////turning////////////////////
     public void imuTurn(double speed, double angle) {
 
@@ -217,7 +217,7 @@ public class automethods extends LinearOpMode {
         double robotError;
 
         // calculate error in -179 to +180 range  (
-        robotError = targetAngle - robot.imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle;
+        robotError = targetAngle - robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         while (robotError > 180) robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;
@@ -300,8 +300,9 @@ public class automethods extends LinearOpMode {
     }
 
     public float getZAngle() {
-        return (robot.imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle);
+        return (robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }
+
     public void imuHold(double holdTime) {
 
         ElapsedTime holdTimer = new ElapsedTime();
@@ -322,13 +323,11 @@ public class automethods extends LinearOpMode {
         // robot.wobble.setPower(0);
 
 
-
     }
 
 
-
-    public void setLevel(double level){
-        if(level == 0){
+    public void setLevel(double level) {
+        if (level == 0) {
             viperTarget = viperDown;
             viperDataSTR = "BOTTOM";
             robot.viperSlide.setTargetPosition(viperTarget);
@@ -336,7 +335,7 @@ public class automethods extends LinearOpMode {
             robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.viperSlide.setPower(.9);
 
-            while (robot.viperSlide.isBusy()){
+            while (robot.viperSlide.isBusy()) {
                 telemetry.addData("viperSlide", "running to %7d : %7d",
                         viperTarget,
                         robot.viperSlide.getCurrentPosition());
@@ -346,20 +345,17 @@ public class automethods extends LinearOpMode {
             robot.viperSlide.setPower(0);
 
 
-            timer.reset();
-            while(timer.time(TimeUnit.MILLISECONDS) < 300){
 
-            }
         }
-        if (level == 1){
-            viperTarget = viperDown-1000;
+        if (level == 1) {
+            viperTarget = viperDown - 1910;
             viperDataSTR = "LOW";
             robot.viperSlide.setTargetPosition(viperTarget);
             //move the viperSlide
             robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.viperSlide.setPower(.9);
 
-            while (robot.viperSlide.isBusy()){
+            while (robot.viperSlide.isBusy()) {
                 telemetry.addData("viperSlide", "running to %7d : %7d",
                         viperTarget,
                         robot.viperSlide.getCurrentPosition());
@@ -370,20 +366,19 @@ public class automethods extends LinearOpMode {
 
 
             timer.reset();
-            while(timer.time(TimeUnit.MILLISECONDS) < 300){
+            while (timer.time(TimeUnit.MILLISECONDS) < 300) {
 
             }
         }
-
-        else if (level == 2){
-            viperTarget = viperDown-1300;
+        else if (level == 2) {
+            viperTarget = viperDown - 3666;
             viperDataSTR = "MIDDLE";
             robot.viperSlide.setTargetPosition(viperTarget);
             //move the viperSlide
             robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.viperSlide.setPower(.9);
 
-            while (robot.viperSlide.isBusy()){
+            while (robot.viperSlide.isBusy()) {
                 telemetry.addData("viperSlide", "running to %7d : %7d",
                         viperTarget,
                         robot.viperSlide.getCurrentPosition());
@@ -393,20 +388,16 @@ public class automethods extends LinearOpMode {
             robot.viperSlide.setPower(0);
 
 
-            timer.reset();
-            while(timer.time(TimeUnit.MILLISECONDS) < 300){
 
-            }
-        }
-        else if (level == 3){
-            viperTarget = viperDown-1509;
+        } else if (level == 3) {
+            viperTarget = viperDown - 4920;
             viperDataSTR = "TOP";
             robot.viperSlide.setTargetPosition(viperTarget);
             //move the viperSlide
             robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.viperSlide.setPower(.9);
 
-            while (robot.viperSlide.isBusy()){
+            while (robot.viperSlide.isBusy()) {
                 telemetry.addData("viperSlide", "running to %7d : %7d",
                         viperTarget,
                         robot.viperSlide.getCurrentPosition());
@@ -417,7 +408,7 @@ public class automethods extends LinearOpMode {
 
 
             timer.reset();
-            while(timer.time(TimeUnit.MILLISECONDS) < 300){
+            while (timer.time(TimeUnit.MILLISECONDS) < 300) {
 
             }
         }
@@ -426,7 +417,7 @@ public class automethods extends LinearOpMode {
         //move the viperSlide
 
         robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (robot.viperSlide.isBusy()){
+        while (robot.viperSlide.isBusy()) {
             telemetry.addData("viperSlide", "running to %7d : %7d",
                     viperTarget,
                     robot.viperSlide.getCurrentPosition());
@@ -436,10 +427,11 @@ public class automethods extends LinearOpMode {
 
 
     }
-    public void setLevelDown(int viperTarget){
+
+    public void setLevelDown(int viperTarget) {
         timer.reset();
-        while(timer.time(TimeUnit.MILLISECONDS) < 1000){
-          //  robot.pusher.setPosition(pusherClose);
+        while (timer.time(TimeUnit.MILLISECONDS) < 1000) {
+            //  robot.pusher.setPosition(pusherClose);
             //robot.door.setPosition(doorClose);
             //robot.twister.setPosition(twisterNeutral);
         }
@@ -451,7 +443,7 @@ public class automethods extends LinearOpMode {
         robot.viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.viperSlide.setPower(-.9);
 
-        while (robot.viperSlide.isBusy()){
+        while (robot.viperSlide.isBusy()) {
             telemetry.addData("viperSlide", "running to %7d : %7d",
                     viperTarget,
                     robot.viperSlide.getCurrentPosition());
@@ -462,11 +454,16 @@ public class automethods extends LinearOpMode {
         //robot.door.setPosition(doorOpen);
 
     }
-    public void openClaw(){
-        robot.claw1.setPosition(.3);
+
+    public void openClaw() {
+        robot.claw.setPosition(.275);
     }
-    public void closeclaw(){
-        robot.claw1.setPosition(1);
+
+    public void closeclaw() {
+        robot.claw.setPosition(.05);
     }
+
+
+
 
 }

@@ -16,7 +16,7 @@ public class GamePad1 extends OpMode {
     double robotAngle;
     double rightX;
     double h;
-    double pmodify = .25;
+    double pmodify = .35;
 
     double frontLeftPower;
     double backLeftPower;
@@ -47,60 +47,73 @@ public class GamePad1 extends OpMode {
         backLeftPower = h * Math.cos(robotAngle) - rightX;
         backRightPower = h * Math.sin(robotAngle) + rightX;
 
-        robot.frontLeft.setPower(frontLeftPower);
-        robot.frontRight.setPower(frontRightPower);
-        robot.backLeft.setPower(backLeftPower);
-        robot.backRight.setPower(backRightPower);
+        if(gamepad1.right_trigger > .5) {
+            pmodify = .25;
+        }
+        else if(gamepad1.right_bumper){
+            pmodify = 1.5;
+        }
+        else{
+            pmodify = 1;
+        }
 
 
-
-        if(gamepad1.left_bumper){
-            robot.frontRight.setPower(frontRightPower * pmodify);
             robot.frontLeft.setPower(frontLeftPower * pmodify);
-            robot.backRight.setPower(backRightPower * pmodify);
+            robot.frontRight.setPower(frontRightPower * pmodify);
             robot.backLeft.setPower(backLeftPower * pmodify);
-        }
+            robot.backRight.setPower(backRightPower * pmodify);
+
+
+
+
 /////////////////////////////////////slide
-       // if (gamepad1.left_bumper) {//down halfway
-         //   robot.viperSlide.setPower(.5);
-        //}
 
-        //if (gamepad1.left_trigger > .5) {//down all way
-          //  robot.viperSlide.setPower(-.5);
-        //}
-
-        if(gamepad1.right_bumper){
-        robot.claw1.setPosition(.3);
+        if(gamepad1.circle ){
+            robot.claw.setPosition(.275);
+            try {
+                wait(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            setLevelUp(slideDown - 2100);
         }
-        if(gamepad1.right_trigger >.5){
-            robot.claw1.setPosition(1);
+        if (gamepad1.triangle ){
+            robot.claw.setPosition(.05);
         }
 
-        if (gamepad1.dpad_down) {//floor
+
+        if (gamepad1.dpad_down && !robot.touchSensor.isPressed()) {//floor
             setLevelDown(slideDown + 23);
 
         }
 
         if (gamepad1.dpad_left) {//low
-            setLevelDown(slideDown - 1100);
+            setLevelDown(slideDown - 2100);
         }
 
 
         if (gamepad1.dpad_up) {/////////medium
-            setLevelUp(slideDown - 2100);
+            setLevelUp(slideDown - 3666);
         }
 
-        if (gamepad1.dpad_right) {//high
-            setLevelDown(slideDown - 2947);
-
+        if(gamepad1.dpad_right){
+            setLevelDown(slideDown - 150);
         }
 
-        if(gamepad1.right_bumper){
-        robot.viperSlide.setPower(-.5);
+
+/////////////manual level set
+        if(gamepad1.left_bumper) {
+            robot.viperSlide.setPower(-.6);///up
+        }
+       else if(gamepad1.left_trigger >  .5 && !robot.touchSensor.isPressed()){///down
+            robot.viperSlide.setPower(.6);
         }
         else{
             robot.viperSlide.setPower(0);
         }
+
+
+
 
         //////////////////////////////////////Levels
 
@@ -121,6 +134,7 @@ public class GamePad1 extends OpMode {
                 telemetry.update();
             }
             robot.viperSlide.setPower(0);
+            robot.viperSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         public void setLevelDown(int slideTarget){
 
@@ -139,6 +153,7 @@ public class GamePad1 extends OpMode {
                 telemetry.update();
             }
             robot.viperSlide.setPower(0);
+            robot.viperSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         }
 
