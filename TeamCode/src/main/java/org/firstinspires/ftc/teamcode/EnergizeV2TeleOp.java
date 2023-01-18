@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -24,11 +23,17 @@ public class EnergizeV2TeleOp extends LinearOpMode {
     private ElapsedTime waitTimeToggle = new ElapsedTime();
     private DcMotor liftMotor1 = null;
     private DcMotor liftMotor2 = null;
+    private  DigitalChannel limitSwitch = null;
+
     double liftPower = 0.0;
     double INCREMENT = 0.01;
     double NEGATIVE_INCREMENT = -0.2;
     double MAX_SPEED = 0.7;
     double MIN_SPEED = 0.0;
+
+    double MAX_DRIVE_POWER = 0.75;
+
+    double PRECISION_MODE_THROTTLE = 2;
     //private DcMotor lift = null;
     Servo rightServo;
     Servo leftServo;
@@ -62,9 +67,11 @@ public class EnergizeV2TeleOp extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "leftBack");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
+
         redLED = hardwareMap.get(DigitalChannel.class, "redLED");
         greenLED = hardwareMap.get(DigitalChannel.class, "greenLED");
 
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
 
         // Corresponds driving servo names to servo variables and set beginning position.
         rightServo = hardwareMap.get(Servo.class,"rightservo");
@@ -90,7 +97,7 @@ public class EnergizeV2TeleOp extends LinearOpMode {
         liftMotor1.setDirection(DcMotor.Direction.REVERSE);
         liftMotor2.setDirection(DcMotor.Direction.REVERSE);
 
-        MoveLift(0.0);
+        //MoveLift(0.0);
 
         redLED.setMode(DigitalChannel.Mode.OUTPUT);
         greenLED.setMode(DigitalChannel.Mode.OUTPUT);
@@ -134,6 +141,31 @@ public class EnergizeV2TeleOp extends LinearOpMode {
                 rightBackPower /= max;
             }
 
+            if (leftFrontPower > MAX_DRIVE_POWER) {
+                leftFrontPower = MAX_DRIVE_POWER;
+            }
+            if (leftBackPower > MAX_DRIVE_POWER) {
+                leftBackPower = MAX_DRIVE_POWER;
+            }
+            if (rightFrontPower > MAX_DRIVE_POWER) {
+                rightFrontPower = MAX_DRIVE_POWER;
+            }
+            if (rightBackPower > MAX_DRIVE_POWER) {
+                rightBackPower = MAX_DRIVE_POWER;
+            }
+            if (leftFrontPower < - MAX_DRIVE_POWER) {
+                leftFrontPower = - MAX_DRIVE_POWER;
+            }
+            if (leftBackPower < - MAX_DRIVE_POWER) {
+                leftBackPower = - MAX_DRIVE_POWER;
+            }
+            if (rightFrontPower < - MAX_DRIVE_POWER) {
+                rightFrontPower = - MAX_DRIVE_POWER;
+            }
+            if (rightBackPower < - MAX_DRIVE_POWER) {
+                rightBackPower = - MAX_DRIVE_POWER;
+            }
+
             if (gamepad1.x && waitTimeToggle.time() > .75) {
                 toggle = !toggle;
                 if(toggle) {
@@ -151,10 +183,10 @@ public class EnergizeV2TeleOp extends LinearOpMode {
                 waitTimeToggle.reset();
             }
             if (toggle) {
-                leftFrontDrive.setPower(leftFrontPower / 2);
-                rightFrontDrive.setPower(rightFrontPower / 2);
-                leftBackDrive.setPower(leftBackPower / 2);
-                rightBackDrive.setPower(rightBackPower / 2);
+                leftFrontDrive.setPower(leftFrontPower / PRECISION_MODE_THROTTLE);
+                rightFrontDrive.setPower(rightFrontPower / PRECISION_MODE_THROTTLE);
+                leftBackDrive.setPower(leftBackPower / PRECISION_MODE_THROTTLE);
+                rightBackDrive.setPower(rightBackPower / PRECISION_MODE_THROTTLE);
             } else {
                 leftFrontDrive.setPower(leftFrontPower);
                 rightFrontDrive.setPower(rightFrontPower);
@@ -199,7 +231,7 @@ public class EnergizeV2TeleOp extends LinearOpMode {
             if(!sensorTouch.getState() && -gamepad2.left_stick_y < 0.0) {
                 dualLift(0.0);
             }
-            if (sensorRange.getDistance(DistanceUnit.CM) > MAX_HEIGHT && -gamepad2.left_stick_y > 0.0) {
+            else if (!limitSwitch.getState() && -gamepad2.left_stick_y > 0.0) {
                 dualLift(0.0);
             }
             else {
@@ -212,7 +244,8 @@ public class EnergizeV2TeleOp extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Lift Motors", "%5.2f", liftPower);
-            telemetry.addData("precision mode",String.valueOf(toggle));
+            telemetry.addData("Precision Mode",String.valueOf(toggle));
+            telemetry.addData("Limit Switch", String.valueOf(limitSwitch.getState()));
             telemetry.update();
         }
 
