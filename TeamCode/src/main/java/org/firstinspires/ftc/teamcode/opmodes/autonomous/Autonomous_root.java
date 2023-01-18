@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -39,6 +40,7 @@ public class Autonomous_root extends LinearOpMode {
     @Override
     public void runOpMode() {
         // init chassis
+        DistanceSensor distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         DcMotor motorFL = hardwareMap.get(DcMotor.class, "motorFL");
         DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBL");
@@ -56,7 +58,7 @@ public class Autonomous_root extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        Vision vision = new Vision(camera, telemetry);
+        Vision vision = new Vision(camera, telemetry, distanceSensor);
         vision.init();
 
         telemetry.addLine("waiting to start!");
@@ -78,13 +80,12 @@ public class Autonomous_root extends LinearOpMode {
         }
 
         boolean parked = false;
-        vision.setPoleDetector();
 
         while(opModeIsActive() && !parked) {
+            arm.closeGripper();
             chassis.runToPosition(-100, -100, -100, -100);
 
-            arm.closeGripper();
-            arm.runToPosition(arm.highJunction);
+            arm.runToPosition(arm.middleJunction);
 
             chassis.resetEncoder();
             chassis.runToPosition(-2000, -2000, -2000, -2000);
@@ -93,23 +94,29 @@ public class Autonomous_root extends LinearOpMode {
                 //RIGHT BLUE
                 chassis.runToPosition(-1700, -2300, -1700, -2300);
 
+                vision.setPoleDetector();
+
                 //微調整
-                while(Math.abs(vision.differenceX()) > 5) {
+                while(Math.abs(vision.differenceX()) != 0) {
                     double power = (vision.differenceX() > 0) ? 0.1 : -0.1;
                     chassis.turn(power);
 
                     telemetry.addData("difference", vision.differenceX());
                     telemetry.update();
                 }
+                telemetry.addLine("aligned!");
+                telemetry.update();
+
+                arm.runToPosition(arm.highJunction);
+
                 chassis.stop();
 
-
+                chassis.resetEncoder();
+                chassis.runToPosition(-200,-200,-200,-200);
+                chassis.stop();
 
                 arm.openGripper();
                 arm.runToPosition(0);
-
-                //RIGHT BLUE
-                chassis.runToPosition(-2300, -1700, -2300, -1700);
             }
 
             if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);

@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.vision.PoleDetector;
 import org.firstinspires.ftc.teamcode.vision.SleeveDetector;
 import org.openftc.apriltag.AprilTagDetection;
@@ -11,11 +14,15 @@ import java.util.ArrayList;
 
 public class Vision {
 
+    //Distance sensor
+    private DistanceSensor distanceSensor;
+
     //"Webcam 1"
     private OpenCvCamera camera;
     private Telemetry telemetry;
 
-    public Vision(OpenCvCamera openCvCamera, Telemetry t){
+    public Vision(OpenCvCamera openCvCamera, Telemetry t, DistanceSensor d){
+        this.distanceSensor = d;
         this.camera = openCvCamera;
         this.telemetry = t;
     }
@@ -80,5 +87,9 @@ public class Vision {
     public int tagId() {
         if(tagOfInterest != null) return tagOfInterest.id;
         else return -1;
+    }
+
+    public double distance() {
+        return distanceSensor.getDistance(DistanceUnit.MM);
     }
 }
