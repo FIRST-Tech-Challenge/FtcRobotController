@@ -49,8 +49,9 @@ public class AutonomousLeft extends LinearOpMode {
         // initialize the driveController (we do that after initializing the camera in order to enable "camera stream" in the drive controller)
         RobotController robotController = new RobotController(hardwareMap, telemetry);
 
-        Pose2d startPose = new Pose2d(-61.4, -37.4, 0);
-        Pose2d scoringPose = new Pose2d(-4, -37.5, Math.toRadians(-76));
+        Pose2d startPose = new Pose2d(-61.4, -30.7, 0);
+        Pose2d startPose2 = new Pose2d(-61.4, -35, 0);
+        Pose2d scoringPose = new Pose2d(-3.5, -37.5, Math.toRadians(-77));
 
         Pose2d parking1 = new Pose2d(-13, -13.8, 0);
         Pose2d parking2 = new Pose2d(-13, -37.4, 0);
@@ -59,7 +60,9 @@ public class AutonomousLeft extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPose);
 
-        TrajectorySequence startToScore = drive.trajectorySequenceBuilder(startPose).lineToLinearHeading(scoringPose).build();
+        TrajectorySequence start2ToScore = drive.trajectorySequenceBuilder(startPose2).lineToLinearHeading(scoringPose).build();
+
+        TrajectorySequence startToStart2 = drive.trajectorySequenceBuilder(startPose).lineToLinearHeading(startPose2).build();
 
         TrajectorySequence scoringToParking1 = drive.trajectorySequenceBuilder(scoringPose).lineToLinearHeading(parking2).lineToLinearHeading(parking1).build();
         TrajectorySequence scoringToParking2 = drive.trajectorySequenceBuilder(scoringPose).lineToLinearHeading(parking2).build();
@@ -100,7 +103,8 @@ public class AutonomousLeft extends LinearOpMode {
 
             webcam.closeCameraDevice();
 
-            follow(startToScore);
+            follow(startToStart2);
+            follow(start2ToScore);
             robotController.elevatorController.start();
             robotController.autoCycle.start();
 

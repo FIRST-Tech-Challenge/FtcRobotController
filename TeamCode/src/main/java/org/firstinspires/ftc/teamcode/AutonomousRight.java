@@ -50,7 +50,7 @@ public class AutonomousRight extends LinearOpMode {
         RobotController robotController = new RobotController(hardwareMap, telemetry);
 
         Pose2d startPose = new Pose2d(-61.4, -37.4, 0);
-        Pose2d scoringPose = new Pose2d(-4, -37.5, Math.toRadians(76));
+        Pose2d scoringPose = new Pose2d(-3.5, -36.5, Math.toRadians(77));
 
         Pose2d parking1 = new Pose2d(-13, -13.8, 0);
         Pose2d parking2 = new Pose2d(-13, -37.4, 0);

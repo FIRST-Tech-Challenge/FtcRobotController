@@ -439,9 +439,11 @@ class RobotController {
 
             setArmPosition(armOut);
 
-            while (grabberSensor.getDistance(DistanceUnit.CM) < 6) {
-                if (gamepad.isStopRequested) throw new InterruptedException("stop requested");
-            }
+            safeSleep(500);
+
+//            while (grabberSensor.getDistance(DistanceUnit.CM) < grabberCatchTrigger) {
+//                if (gamepad.isStopRequested) throw new InterruptedException("stop requested");
+//            }
 
             grabber.setPosition(grabberGrab);
 
