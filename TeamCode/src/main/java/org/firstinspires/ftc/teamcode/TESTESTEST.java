@@ -27,8 +27,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name = "LeftPPTerminal", group = "")
-public class LeftPPTerminal extends LinearOpMode {
+@Autonomous(name = "LeftTerminalCORRECT", group = "")
+public class TESTESTEST extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -96,7 +96,7 @@ public class LeftPPTerminal extends LinearOpMode {
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        pidRotate = new PIDController(.003, .00003, 0);
+        pidRotate = new PIDController(0.75, .5, .25);
 
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -199,7 +199,7 @@ public class LeftPPTerminal extends LinearOpMode {
     }
     private void beginAuto() throws InterruptedException {
         moveUtils.goStraight(1.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCCW(92); //og 92
+        moveUtils.turnCCW(90);
         moveUtils.goStraight(18,MAX_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
 
