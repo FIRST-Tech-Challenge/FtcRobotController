@@ -41,7 +41,6 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "Husky TeleOpMode", group = "TeleOp")
 public class HuskyTeleOpMode extends LinearOpMode {
-
     final double END_GAME_TIME = 80.0;  // last 40 seconds
     final double FINAL_TIME = 110.0;    // last 10 seconds
     HuskyBot huskyBot = new HuskyBot();
@@ -59,7 +58,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
         STEP_2,
         STEP_3,
         STEP_4
-    };
+    }
 
     ArmState armState = ArmState.ARM_WAIT;
 
@@ -153,7 +152,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     if(gamepad1.a) {
                         // Button A: Cone take position
 
-                        huskyBot.clawLift.setPosition(0.85);
+                        huskyBot.clawLift.setPosition(0.60);
                         huskyBot.clawGrab.setPosition(CLAW_GRAB_OPEN_POSITION);
 
                         armLiftTargetPos = -115;
@@ -192,6 +191,10 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
                         armState = ArmState.STEP_1;
                     }
+
+                    //
+                    // MANUAL ARM CONTROL
+                    //
 
                     // Arm Swivel Controls
                     armSwivelPower = -gamepad2.left_stick_x;
@@ -250,7 +253,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     // Step 1: Reset the arm extender (close)
 
                     huskyBot.armExtendMotor.setTargetPosition(0);
-                    huskyBot.armExtendMotor.setPower(ARM_EXTENSION_MAX_POWER);
+                    huskyBot.armExtendMotor.setPower(1.0);
                     huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                     armState = ArmState.STEP_2;
@@ -262,7 +265,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     // Then change the arm lift's position (up or down based on the target position)
 
                     if(huskyBot.armExtendMotor.isBusy()){
-                        if(finiteTimer.seconds() > 5){
+                        if(finiteTimer.seconds() > 7){
+                            gamepad1.rumble(1000);
+
                             huskyBot.armExtendMotor.setPower(0);
                             huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -276,6 +281,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                         huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
                         huskyBot.armLiftMotor.setTargetPosition(armLiftTargetPos);
+                        huskyBot.armLiftMotor.setPower(0.35);
                         huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                         armState = ArmState.STEP_3;
@@ -288,8 +294,11 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     // Then change the arm extender's position (in or out based on the target position)
 
                     if (huskyBot.armLiftMotor.isBusy()) {
-                        if(finiteTimer.seconds() > 5){
+                        if(finiteTimer.seconds() > 7){
+                            gamepad1.rumble(1000);
+
                             huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                            huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
 
                             armState = ArmState.ARM_WAIT;
                             break;
@@ -298,9 +307,10 @@ public class HuskyTeleOpMode extends LinearOpMode {
                         telemetry.addData("Arm State Status", "Arm lift is moving");
                     } else {
                         huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
 
                         huskyBot.armExtendMotor.setTargetPosition(armExtendTargetPos);
-                        huskyBot.armExtendMotor.setPower(ARM_EXTENSION_MAX_POWER);
+                        huskyBot.armExtendMotor.setPower(1.0);
                         huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                         armState = ArmState.STEP_4;
@@ -314,7 +324,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     // Then change armState to wait (default)
 
                     if (huskyBot.armExtendMotor.isBusy()) {
-                        if(finiteTimer.seconds() > 5){
+                        if(finiteTimer.seconds() > 7){
+                            gamepad1.rumble(1000);
+
                             huskyBot.armExtendMotor.setPower(0);
                             huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -328,7 +340,8 @@ public class HuskyTeleOpMode extends LinearOpMode {
                         huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
                         if(shouldChangeTheClawLift){
-                            if(finiteTimer.seconds() > 5){
+                            if(finiteTimer.seconds() > 7){
+                                gamepad1.rumble(1000);
                                 armState = ArmState.ARM_WAIT;
                                 break;
                             }
@@ -336,6 +349,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                             huskyBot.clawLift.setPosition(clawLiftTargetPos);
                         }
 
+                        gamepad1.rumble(200);
                         armState = ArmState.ARM_WAIT;
                     }
 
