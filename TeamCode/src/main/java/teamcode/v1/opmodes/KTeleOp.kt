@@ -64,7 +64,7 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
 
     private fun scheduleCycling() {
         + object : Cmd() {
-            private var armPos = ArmConstants.homePos
+            private var armPos = robot.hardware.armMotor.pos
                 override fun execute() {
                     if(driver.dpadUp.isJustPressed) {
                         armPos += 1.0
