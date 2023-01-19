@@ -47,24 +47,7 @@ public class Main_TeleOp extends LinearOpMode {
 
             //TODO: SET 1.0 FOR 11166-RC!!
             if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
-                leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                if (gamepad2.left_trigger > 0) {
-                    arm.armTarget = arm.getCurrentPosition();
-
-                    leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-                    leftLift.setPower(0.0);
-                    rightLift.setPower(0.0);
-                }
-
-                if (gamepad2.right_trigger > 0) {
-                    arm.armTarget = arm.getCurrentPosition();
-
-                    leftLift.setPower(1.0);
-                    rightLift.setPower(1.0);
-                }
+                arm.armTriggers(gamepad2);
             } else {
                 arm.setArmPower(gamepad2, 1.0);
             }
