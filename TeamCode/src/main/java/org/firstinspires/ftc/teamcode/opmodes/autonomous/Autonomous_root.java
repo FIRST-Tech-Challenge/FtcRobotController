@@ -94,6 +94,8 @@ public class Autonomous_root extends LinearOpMode {
 
                 vision.setPoleDetector();
 
+                arm.runToPosition(arm.lowJunction);
+
                 //微調整(Small Adjustment)
                 while(Math.abs(vision.differenceX()) != 0) {
                     double power = (vision.differenceX() > 0) ? 0.2 : -0.2;
