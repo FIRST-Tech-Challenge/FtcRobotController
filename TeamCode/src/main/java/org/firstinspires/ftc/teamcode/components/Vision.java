@@ -92,4 +92,8 @@ public class Vision {
     public double distance() {
         return distanceSensor.getDistance(DistanceUnit.MM);
     }
+
+    public int middleX() {
+        return poleDetector.middleX();
+    }
 }

@@ -91,20 +91,19 @@ public class Autonomous_root extends LinearOpMode {
 
             chassis.runToPosition(-2100, -2100, -2100, -2100);
 
+            vision.setPoleDetector();
+
             for(int i=0; i<1; i++){
                 //RIGHT BLUE
-                chassis.runToPosition(-1630, -2370, -1630, -2370);
-
-                vision.setPoleDetector();
+                chassis.runToPosition(-1600, -2400, -1600, -2400);
 
                 //微調整(Small Adjustment)
                 while(Math.abs(vision.differenceX()) != 0) {
                     double power = (vision.differenceX() > 0) ? 0.1 : -0.1;
                     chassis.turn(power);
-
-                    telemetry.addData("difference", vision.differenceX());
-                    telemetry.update();
                 }
+                telemetry.addData("difference", vision.differenceX());
+                telemetry.addData("middle", vision.middleX());
                 telemetry.addLine("aligned!");
                 telemetry.update();
 
@@ -114,7 +113,7 @@ public class Autonomous_root extends LinearOpMode {
 
                 chassis.resetEncoder();
 
-                chassis.runToPosition(-470,-470,-470,-470);
+                chassis.runToPosition(-500,-500,-500,-500);
                 chassis.stop();
 
                 arm.openGripper();
@@ -123,8 +122,6 @@ public class Autonomous_root extends LinearOpMode {
 
             if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
             else if (vision.tagId() == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
-
-            telemetry.addLine("parked!");
 
             parked = true;
         }

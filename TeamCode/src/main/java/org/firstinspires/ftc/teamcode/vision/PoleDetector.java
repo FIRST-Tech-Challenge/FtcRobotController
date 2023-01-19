@@ -20,7 +20,7 @@ public class PoleDetector extends OpenCvPipeline
     Telemetry telemetry;
     public PoleDetector(Telemetry t) {telemetry = t;}
     Mat mat = new Mat();
-    Rect maxRect = new Rect();
+    public Rect maxRect = new Rect();
 
     @Override
     public Mat processFrame(Mat input)
@@ -75,15 +75,14 @@ public class PoleDetector extends OpenCvPipeline
         Imgproc.rectangle(mat, maxRect, new Scalar(255, 0, 0), 2);
         Imgproc.circle(mat, new Point(maxRect.x + (maxRect.width/2), maxRect.y + (maxRect.height/2)), 1, new Scalar(255, 0, 255), 3);
 
-        telemetry.addData("contours size", String.valueOf(finalContours.size()));
+        telemetry.addData("maxRect", maxRect.area());
         telemetry.update();
 
         return mat;
     }
 
     public int differenceX () {
-        int difference = middleX() - mat.width()/2;
-        if(difference < 5) mat.release();
+        int difference = middleX() - (mat.width()/2);
         return difference;
     }
 
