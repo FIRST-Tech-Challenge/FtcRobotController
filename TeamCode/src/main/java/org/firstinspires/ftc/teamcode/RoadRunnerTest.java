@@ -54,6 +54,7 @@ public class RoadRunnerTest extends LinearOpMode {
         Pose2d startPose = new Pose2d(-60, 40, 0);
         drive.setPoseEstimate(startPose);
         TrajectorySequence aSeq = autoSeq(startPose);
+
         //Reverse the arm direction so it moves in the proper direction
         arm.setDirection(DcMotor.Direction.REVERSE);
 
@@ -108,6 +109,9 @@ public class RoadRunnerTest extends LinearOpMode {
         actuatorUtils.armPole(4);
         while (((currTime - startTime) < 30000) && !done && opModeIsActive()) {
             drive.followTrajectorySequence(aSeq);
+            telemetry.addData("IM at ", getHeading());
+            telemetry.update();
+            sleep(5000);
             drive.followTrajectorySequence(parkSeq(resultROI));
             currTime = System.currentTimeMillis();
             done = true;
@@ -116,28 +120,36 @@ public class RoadRunnerTest extends LinearOpMode {
 
     private TrajectorySequence autoSeq(Pose2d pose) {
         TrajectorySequence seq = drive.trajectorySequenceBuilder(pose)
-                .lineToLinearHeading(new Pose2d(-60, 36, Math.toRadians(-90)))
-                .forward(24)
-                .turn(Math.toRadians(90))
-                .forward(24)
-                .turn(Math.toRadians(-45))
+                .forward(6)
+                .turn(convertRad(-90))
+                .forward(28)
+                .turn(convertRad(90))
+                .forward(25)
+                .turn(convertRad(-45))
                 .forward(9)
-                .waitSeconds(2)
-                //.addTemporalMarker(5, () -> {
-                //    try {
-                //        actuatorUtils.armPole(1, true);
-                //        actuatorUtils.gripperOpen(true);
-                //        actuatorUtils.armPole(4, true);
-                //   }
-                //    catch (InterruptedException ex) {
-                //        telemetry.addData(ex.getLocalizedMessage(), "");
-                //        telemetry.update();
-                //    }
-                //})
-                .forward(-9)
-                .turn(Math.toRadians(45))
-                .forward(24)
-                .turn(Math.toRadians(90))
+
+                // .lineToLinearHeading(new Pose2d(-50, 40, Math.toRadians(-90)))
+              //  .lineToLinearHeading(new Pose2d(-26,40,0))
+               // .forward(24)
+                //.turn(Math.toRadians(90))
+               // .forward(24)
+                //.turn(Math.toRadians(-45))
+                //.waitSeconds(2)
+                .addTemporalMarker(20, () -> {
+                    try {
+                        actuatorUtils.armPole(1, true);
+                        actuatorUtils.gripperOpen(true);
+                        actuatorUtils.armPole(4, true);
+                    }
+                    catch (InterruptedException ex) {
+                       telemetry.addData(ex.getLocalizedMessage(), "");
+                       telemetry.update();
+                  }
+              })
+                //.forward(-9)
+               // .turn(Math.toRadians(45))
+            //    .forward(24)
+             //   .turn(Math.toRadians(90))
                 .build();
         return seq;
     }
@@ -186,7 +198,13 @@ public class RoadRunnerTest extends LinearOpMode {
         double angle = drive.getRawExternalHeading();
         return angle;
     }
-
+    private float convertRad(int input) {
+        float x;
+        x=input/180f;
+        x*=Math.PI;
+        x*=(1);
+        return x;
+    }
 }
 
 

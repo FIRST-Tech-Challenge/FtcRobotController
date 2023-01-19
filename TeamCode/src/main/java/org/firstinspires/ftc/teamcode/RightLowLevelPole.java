@@ -27,8 +27,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name = "LeftPPTerminal", group = "")
-public class LeftPPTerminal extends LinearOpMode {
+@Autonomous(name = "RightLowLevelPole", group = "")
+public class RightLowLevelPole extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -96,7 +96,7 @@ public class LeftPPTerminal extends LinearOpMode {
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        pidRotate = new PIDController(.003, .00003, 0);
+        pidRotate = new PIDController(0.75, .5, .25);
 
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -170,25 +170,21 @@ public class LeftPPTerminal extends LinearOpMode {
                 case 1:
                     // Far left
                     beginAuto();
-                    moveUtils.goStraight(-3,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(24);
-                    moveUtils.strafeBuddy(-2);
-                    moveUtils.goStraight(2,MIN_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.strafeBuddy(-17);
+                    moveUtils.goStraight(34f,MAX_SPEED,MIN_SPEED,ACCEL);
                     done=true;
                     break;
                 case 2:
                     // Middle
                     beginAuto();
-                    moveUtils.goStraight(-17,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(24);
-                    moveUtils.strafeBuddy(-2);
+                    moveUtils.goStraight(20f,MAX_SPEED,MIN_SPEED,ACCEL);
                     done=true;
                     break;
                 case 3:
                     // Far right
                     beginAuto();
-                    moveUtils.goStraight(-45,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(24);
+                    moveUtils.strafeBuddy(26);
+                    moveUtils.goStraight(28,MAX_SPEED,MIN_SPEED,ACCEL);
                     done=true;
                     break;
             }
@@ -198,11 +194,13 @@ public class LeftPPTerminal extends LinearOpMode {
         }
     }
     private void beginAuto() throws InterruptedException {
-        moveUtils.goStraight(1.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCCW(92); //og 92
-        moveUtils.goStraight(18,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.goStraight(4f,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCCW(30);
+        actuatorUtils.armPole(1);
+        moveUtils.goStraight(4f,MAX_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
-
+        moveUtils.goStraight(-4f,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCW(30);
     }
 
     void composeTelemetry() {
