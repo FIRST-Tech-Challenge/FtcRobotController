@@ -26,7 +26,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         time = new ElapsedTime();
         time.reset();
 
-        leftGrabberServo.setPosition(LEFT_GRABBER_OPEN);
+        grabberServo.setPosition(GRABBER_OPEN);
 
     }
 
@@ -41,8 +41,8 @@ abstract public class BaseTeleOp extends BaseOpMode {
     }
 
     public double stickCurve(double x, double a, double d) {
-        x = Math.signum(x)*Math.max(0, Math.min(1, (Math.abs(x)-d)/(1-d)));
-        return a*x+(1-a)*x*x*x;
+        x = Math.signum(x) * Math.max(0, Math.min(1, (Math.abs(x) - d) / (1 - d)));
+        return a * x + (1-a) * Math.pow(x, 3);
     }
 
     public void driveStickCurve() {
@@ -131,9 +131,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
         grabberClosed = grabberToggle.toggle(gamepad2.a);
 
         if (grabberClosed) {
-            leftGrabberServo.setPosition(LEFT_GRABBER_CLOSED);
+            grabberServo.setPosition(GRABBER_CLOSED);
         } else {
-            leftGrabberServo.setPosition(LEFT_GRABBER_OPEN);
+            grabberServo.setPosition(GRABBER_OPEN);
         }
     }
 
@@ -141,7 +141,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         telemetry.addData("Arm power", armPower);
         telemetry.addData("Arm target", armEncoderPosition);
         telemetry.addData("Arm current position", motorArm.getCurrentPosition());
-        telemetry.addData("Grabber position", leftGrabberServo.getPosition());
+        telemetry.addData("Grabber position", grabberServo.getPosition());
         telemetry.addData("Grabber closed", grabberClosed);
         telemetry.addData("Arm level", armLevel);
         telemetry.update();

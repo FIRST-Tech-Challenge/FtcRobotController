@@ -41,7 +41,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     public void initializeAuto() {
         initializeHardware();
-        leftGrabberServo.setPosition(GRABBER_HALF_CLOSED);
+        grabberServo.setPosition(GRABBER_HALF_CLOSED);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);

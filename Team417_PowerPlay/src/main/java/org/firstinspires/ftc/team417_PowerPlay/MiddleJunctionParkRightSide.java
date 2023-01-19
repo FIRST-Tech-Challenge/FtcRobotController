@@ -44,7 +44,7 @@ public class MiddleJunctionParkRightSide extends BaseAutonomous {
         updateTelemetryAfterStart();
 
 
-        leftGrabberServo.setPosition(LEFT_GRABBER_CLOSED);
+        grabberServo.setPosition(GRABBER_CLOSED);
 
         drive.followTrajectory(clearWall);
         raiseAndHoldArmGroundJunctionPosition();
@@ -58,7 +58,7 @@ public class MiddleJunctionParkRightSide extends BaseAutonomous {
         sleep(1300);
         // open servo
 
-        leftGrabberServo.setPosition(LEFT_GRABBER_OPEN);
+        grabberServo.setPosition(GRABBER_OPEN);
 
         drive.followTrajectory(clearJunction);
 

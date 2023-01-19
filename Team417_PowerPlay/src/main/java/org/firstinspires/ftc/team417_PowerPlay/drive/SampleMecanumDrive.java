@@ -54,7 +54,7 @@ import java.util.List;
 public class SampleMecanumDrive extends MecanumDrive {
     private static final double MAX_VOLTAGE = 12.0;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2.2, 0, 0); //changed 2 to 2.2 /16/2023
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2.2, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(2, 0, 0);
     // Lateral multiplier to make up for energy deficiency while strafing
     public static double LATERAL_MULTIPLIER = 60.0 / 46.319;

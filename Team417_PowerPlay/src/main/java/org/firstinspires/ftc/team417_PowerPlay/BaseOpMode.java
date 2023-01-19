@@ -10,15 +10,13 @@ abstract public class BaseOpMode extends LinearOpMode {
 
     DcMotor motorArm;
 
-    Servo leftGrabberServo;
-
-    Servo rightGrabberServo;
+    Servo grabberServo;
 
     Toggler grabberToggle;
 
     SampleMecanumDrive drive;
-    public static final double LEFT_GRABBER_OPEN = 0.75;
-    public static final double LEFT_GRABBER_CLOSED = 0.4;
+    public static final double GRABBER_OPEN = 0.75;
+    public static final double GRABBER_CLOSED = 0.4;
     public static final double GRABBER_HALF_CLOSED = 0.6;
 
     public static final int MAX_ARM_POSITION = 1600;
@@ -42,9 +40,7 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftGrabberServo = hardwareMap.servo.get("leftGrabberServo");
-
-        rightGrabberServo = hardwareMap.servo.get("rightGrabberServo");
+        grabberServo = hardwareMap.servo.get("leftGrabberServo");
 
         grabberToggle = new Toggler();
 
