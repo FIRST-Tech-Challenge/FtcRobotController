@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.koawalib.commands.subsystems
 
 import com.asiankoala.koawalib.command.commands.InstantCmd
+import com.asiankoala.koawalib.command.group.SequentialGroup
 import teamcode.v1.constants.ClawConstants
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 

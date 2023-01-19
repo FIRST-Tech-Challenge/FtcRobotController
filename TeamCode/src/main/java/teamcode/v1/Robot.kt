@@ -1,18 +1,22 @@
 package teamcode.v1
 
+import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.drive.KMecanumDrive
+import com.asiankoala.koawalib.subsystem.drive.KMecanumOdoDrive
 import teamcode.v1.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
 
-class Robot() {
-    val hardware = Hardware()
+class Robot(startPose: Pose) {
+    val hardware = Hardware(startPose)
 
-    val drive = KMecanumDrive(
+    val drive = KMecanumOdoDrive(
         hardware.fl,
         hardware.bl,
         hardware.br,
         hardware.fr,
+        hardware.odometry,
+        true
     )
 
     val arm = Arm(hardware.armMotor, hardware.limitSwitch)

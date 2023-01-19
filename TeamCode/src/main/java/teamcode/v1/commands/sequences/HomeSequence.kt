@@ -10,14 +10,22 @@ import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.LiftCmds
 import teamcode.v1.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
+import teamcode.v1.constants.ClawConstants
 
 class HomeSequence(
     lift: Lift,
     claw : Claw,
     arm : Arm,
     firstArmAngle : Double,
-    secondArmAngle : Double
+    secondArmAngle : Double,
+    clawPos : Double? = null
 ) : ParallelGroup(
+    InstantCmd({
+        if (clawPos != null) {
+            ClawConstants.openPos = clawPos
+        }
+    }
+    ),
     SequentialGroup(
         InstantCmd({arm.setPos(firstArmAngle)}, arm),
         WaitCmd(1.0),
@@ -25,7 +33,5 @@ class HomeSequence(
         InstantCmd({arm.setPos(secondArmAngle)}, arm)),
     LiftCmds.LiftHomeCmd(lift),
     ClawCmds.ClawCloseCmd(claw),
-//    WaitUntilCmd(arm::detect),
-//    InstantCmd({arm.setPos(secondArmAngle)}, arm)
-)
+    )
 

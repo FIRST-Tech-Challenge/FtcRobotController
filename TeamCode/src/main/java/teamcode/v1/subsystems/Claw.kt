@@ -11,4 +11,6 @@ class Claw(private val servo: KServo,
     fun setPos(pos: Double) {
         servo.position = pos
     }
+
+
 }

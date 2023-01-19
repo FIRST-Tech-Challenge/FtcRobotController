@@ -8,16 +8,23 @@ import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import teamcode.v1.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
+import teamcode.v1.constants.ClawConstants
 
 class DepositSequence(
     lift: Lift,
     arm : Arm,
     claw: Claw,
     armAngle : Double,
-    LiftHeight : Double
+    LiftHeight : Double,
+    clawPos : Double? = null
 ) : SequentialGroup(
+    InstantCmd({
+        if (clawPos != null) {
+            ClawConstants.openPos = clawPos
+        }
+    }),
     ClawCmds.ClawCloseCmd(claw),
     InstantCmd({arm.setPos(armAngle)}, arm),
     WaitCmd(0.3),
-    InstantCmd({lift.setPos(LiftHeight)}, lift)
+    InstantCmd({lift.setPos(LiftHeight)}, lift),
 )

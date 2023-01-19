@@ -7,12 +7,14 @@ import com.asiankoala.koawalib.command.commands.MecanumCmd
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.NVector
+import com.asiankoala.koawalib.subsystem.odometry.Odometry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import teamcode.v1.Robot
 import teamcode.v1.commands.sequences.DepositSequence
 import teamcode.v1.commands.sequences.HomeSequence
 import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
 import teamcode.v1.constants.ArmConstants
+import teamcode.v1.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
 import kotlin.math.max
 import kotlin.math.pow
@@ -20,7 +22,7 @@ import kotlin.math.sign
 
 @TeleOp
 open class KTeleOp() : KOpMode(photonEnabled = true) {
-    private val robot by lazy { Robot() }
+    private val robot by lazy { Robot(Odometry.lastPose) }
     private var slowMode = false
 
     override fun mInit() {
@@ -43,8 +45,8 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
             override fun execute() {
                 val raws = NVector(
                     driver.leftStick.xSupplier.invoke(),
-                    driver.leftStick.ySupplier.invoke(),
-                    driver.rightStick.xSupplier.invoke()
+                    -driver.leftStick.ySupplier.invoke(),
+                    -driver.rightStick.xSupplier.invoke()
                 )
 
                 robot.drive.powers = raws
@@ -61,13 +63,13 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     }
 
     private fun scheduleCycling() {
-        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, ArmConstants.intervalPos, ArmConstants.groundPos))
-        driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.highPos, LiftConstants.highPos))
+        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, ArmConstants.intervalPos, ArmConstants.groundPos, ClawConstants.intakePos))
+        driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.highPos, LiftConstants.highPos, ClawConstants.outtakePos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
-        driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos))
+        driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos, ClawConstants.outtakePos))
 //        driver.x.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.groundPos, LiftConstants.groundPos))
-        driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
-        driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw))
+        driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos, ClawConstants.outtakePos))
+        driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw ))
         gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(2.0)}))
         gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(10.0)}))
     }
@@ -88,5 +90,6 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
         Logger.addTelemetryData("arm power", robot.arm.motor.power)
         Logger.addTelemetryData("lift power", robot.hardware.liftLeadMotor.power)
         Logger.addTelemetryData("detect is true?", robot.arm.detect)
+        Logger.addTelemetryData("claw pos", ClawConstants.openPos)
     }
 }

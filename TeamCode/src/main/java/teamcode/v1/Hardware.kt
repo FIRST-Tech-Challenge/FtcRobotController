@@ -7,12 +7,16 @@ import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.EncoderFactory
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.hardware.servo.KServo
+import com.asiankoala.koawalib.math.Pose
+import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
+import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
+import teamcode.v1.auto.AutoHardware
 import teamcode.v1.constants.ArmConstants
 import teamcode.v1.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
 import teamcode.v1.subsystems.KLimitSwitch
 
-class Hardware() {
+class Hardware(startPose: Pose) {
     val fl = MotorFactory("fl")
         .reverse
         .brake
@@ -40,10 +44,10 @@ class Hardware() {
             .zero(LiftConstants.homePos)
             .reverse
         )
-        .withPositionControl(
+        .withMotionProfileControl(
             PIDGains(LiftConstants.kP, LiftConstants.kI, LiftConstants.kD),
             FFGains(kS = LiftConstants.kS, kV = LiftConstants.kV, kA = LiftConstants.kA, kG = LiftConstants.kG),
-//            MotionConstraints(LiftConstants.maxVel, LiftConstants.maxAccel),
+            MotionConstraints(LiftConstants.maxVel, LiftConstants.maxAccel),
             allowedPositionError = LiftConstants.allowedPositionError,
             disabledPosition = LiftConstants.disabledPosition
         )
@@ -64,7 +68,7 @@ class Hardware() {
         .withMotionProfileControl(
             PIDGains(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD),
             FFGains(kS = ArmConstants.kS, kV = ArmConstants.kV, kA = ArmConstants.kA, kCos = ArmConstants.kCos),
-            MotionConstraints(ArmConstants.maxVel, ArmConstants.maxAccel),
+            MotionConstraints(ArmConstants.maxVel, ArmConstants.maxAccel, ArmConstants.maxDeccel),
             allowedPositionError = ArmConstants.allowedPositionError,
             disabledPosition = ArmConstants.disabledPosition
         )
@@ -74,6 +78,27 @@ class Hardware() {
         .startAt(ClawConstants.closePos)
 
     val limitSwitch = KLimitSwitch("LimitSwitch")
+
+    private val leftEncoder = EncoderFactory(Hardware.ticksPerUnit)
+        .revEncoder
+        .build(fl)
+    private val rightEncoder = EncoderFactory(Hardware.ticksPerUnit)
+        .reverse
+        .revEncoder
+        .build(bl)
+    private val auxEncoder = EncoderFactory(Hardware.ticksPerUnit)
+        .reverse
+        .revEncoder
+        .build(fr)
+
+    val odometry = KThreeWheelOdometry(
+        leftEncoder,
+        rightEncoder,
+        auxEncoder,
+        OdoConstants.TRACK_WIDTH,
+        OdoConstants.PERP_TRACKER,
+        startPose
+    )
 
     @Config
     companion object {
