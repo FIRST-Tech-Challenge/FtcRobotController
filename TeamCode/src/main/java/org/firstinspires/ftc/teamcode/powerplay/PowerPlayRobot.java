@@ -20,13 +20,12 @@ public class PowerPlayRobot extends RobotEx {
 
     public PowerPlayRobot(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
                           GamepadEx toolOp) {
-        super(hardwareMap, telemetry, driverOp, toolOp, false, true,
-                true, true, true, true,
-                true);
+        super(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, true,
+                true, true, true, true, true);
     }
 
     @Override
-    public void initMechanisms(HardwareMap hardwareMap) {
+    public void initMechanismsTeleOp(HardwareMap hardwareMap) {
         ////////////////////////////////////////// Claw //////////////////////////////////////////
 //        claw = new ClawSubsystem(hardwareMap);
 //        toolOp.getGamepadButton(GamepadKeys.Button.A)
