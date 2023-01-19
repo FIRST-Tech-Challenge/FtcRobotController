@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,8 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Power Play TeleOp", group = "competition")
-public class PowerPlayTeleopBase extends LinearOpMode {
+@Config
+@TeleOp(name="slide position", group = "competition")
+public class armSlidePositioning extends LinearOpMode {
 
 
     //RobotClass robot;
@@ -37,21 +39,21 @@ public class PowerPlayTeleopBase extends LinearOpMode {
     double maxPowerConstraint = 0.75;
 
     //Fix values
-    public static int SLIDE_HIGH = 1000;
-    public static int SLIDE_MIDDLE = 400;
+    public static int SLIDE_HIGH = 1150;
+    public static int SLIDE_MIDDLE = 550;
     public static int SLIDE_BOTTOM = 0;
 
     //Fix values
     protected final double clawServoOpen = 0.75;
     protected final double clawServoClosed = 0.99;
     protected final int armMotorBottom = 0;
-    protected final int armMotorTop = 600;
-    protected final int armMotorMid = 450;
-    protected final int armMotorBottomJunction = 330;
+    public static int armMotorTop = 600;
+    public static int armMotorMid = 450;
+    public static int armMotorBottomJunction = 330;
 
-    protected final double tipCenter = 0.77;
-    protected final double tipBack = 0.6;
-    protected final double tipFront =0.99;
+    public final double tipCenter = 0.77;
+    public final double tipBack = 0.6;
+    public final double tipFront =0.99;
 
 
     int strafeConstant=1;
@@ -128,8 +130,8 @@ public class PowerPlayTeleopBase extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
 //        armMotor.setPosition(.15);
-        clawServo.setPosition(clawServoOpen);
-        tippingServo.setPosition(tipCenter);
+        clawServo.setPosition(clawServoClosed);
+        tippingServo.setPosition(tipFront);
         boolean moveArm = false;
         boolean openClaw = true;
 
@@ -141,72 +143,19 @@ public class PowerPlayTeleopBase extends LinearOpMode {
         while (opModeIsActive()) {
             telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
             telemetry.addData("arm encoder", armMotor.getCurrentPosition());
-            double y = 0;
-            double x = 0;
-            double rx = 0;
-            telemetry.addData("left y", gamepad1.left_stick_y);
-            telemetry.addData("left x", gamepad1.left_stick_x);
-            telemetry.addData("right x", gamepad1.right_stick_x);
 
-            y = -gamepad1.left_stick_y;
-            x = gamepad1.left_stick_x;
-            rx = gamepad1.right_stick_x;
-            if (Math.abs(y) < 0.2) {
-                y = 0;
-            }
-            if (Math.abs(x) < 0.2) {
-                x = 0;
-            }
-
-            double leftFrontPower = y + strafeConstant* x + rx;
-            double leftRearPower = y - strafeConstant* x + rx;
-            double rightFrontPower = y - strafeConstant* x - rx;
-            double rightRearPower = y + strafeConstant*x - rx;
-
-            if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
-
-                double max;
-                max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
-                max = Math.max(max, Math.abs(rightFrontPower));
-                max = Math.max(max, Math.abs(rightRearPower));
-
-                leftFrontPower /= max;
-                leftRearPower /= max;
-                rightFrontPower /= max;
-                rightRearPower /= max;
-            }
-
-            leftFrontMotor.setPower(leftFrontPower * maxPowerConstraint);
-            leftRearMotor.setPower(leftRearPower * maxPowerConstraint);
-            rightFrontMotor.setPower(rightFrontPower * maxPowerConstraint);
-            rightRearMotor.setPower(rightRearPower * maxPowerConstraint);
-
-            telemetry.addData("left front power", leftFrontPower);
-            telemetry.addData("left back power", leftRearPower);
-            telemetry.addData("right front power", rightFrontPower);
-            telemetry.addData("right back power", rightRearPower);
-
-            if (gamepad1.a) {
-                maxPowerConstraint = 1;
-            }
-
-            if (gamepad1.x) {
-                maxPowerConstraint = 0.75;
-            }
-
-            if (gamepad1.b) {
-                maxPowerConstraint = 0.25;
-            }
-
-            if (gamepad2.a) {
+            if (gamepad2.a){
                 clawServo.setPosition(clawServoClosed);
-                openClaw = false;
             }
 
-            if (gamepad2.b) {
+            if (gamepad2.y){
                 clawServo.setPosition(clawServoOpen);
-                openClaw = true;
             }
+
+            if (gamepad2.b){
+                tippingServo.setPosition(tipFront);
+            }
+
 
             if (gamepad2.dpad_up) {
                 moveArm = false;
@@ -224,11 +173,6 @@ public class PowerPlayTeleopBase extends LinearOpMode {
                 frontSlide.setPower(.6);
                 slideOtherer.setPower(.6);
             }
-
-            if (armMotor.getCurrentPosition()>50){
-                tippingServo.setPosition(tipFront);
-            }
-
 
             if (gamepad2.dpad_right) {
                 moveArm = false;
@@ -280,7 +224,6 @@ public class PowerPlayTeleopBase extends LinearOpMode {
                 armMotor.setTargetPosition(armMotorBottom);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.3);
-                tippingServo.setPosition(tipCenter);
             }
 
             if (gamepad2.left_bumper) {
