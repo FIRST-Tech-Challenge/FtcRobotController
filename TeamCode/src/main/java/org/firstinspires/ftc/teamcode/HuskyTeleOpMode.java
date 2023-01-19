@@ -41,7 +41,6 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "Husky TeleOpMode", group = "TeleOp")
 public class HuskyTeleOpMode extends LinearOpMode {
-
     final double END_GAME_TIME = 80.0;  // last 40 seconds
     final double FINAL_TIME = 110.0;    // last 10 seconds
     HuskyBot huskyBot = new HuskyBot();
@@ -53,9 +52,23 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
     double armLiftPowerDivider = 4;
 
-    // double clawLevel = 0.9;
+    public enum ArmState {
+        ARM_WAIT,
+        STEP_1,
+        STEP_2,
+        STEP_3,
+        STEP_4
+    }
+
+    ArmState armState = ArmState.ARM_WAIT;
+
+    int armLiftTargetPos;
+    int armExtendTargetPos;
+    double clawLiftTargetPos;
+    boolean shouldChangeTheClawLift = false;
 
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime finiteTimer = new ElapsedTime();
 
     // method to smoothly accelerate a motor given a target velocity.
     void smoothAcceleration(DcMotorEx motor, double targetVel, double accelRate) {
@@ -79,43 +92,6 @@ public class HuskyTeleOpMode extends LinearOpMode {
         motor.setVelocity(currentVel + changeVel);
     }
 
-
-    // Sets Arm Position to Encoder Values for Ease of Lifing Cones
-    void setArmPosition(int armLiftPos, int armExtendPos){
-        // Close the extend motor
-        huskyBot.armExtendMotor.setTargetPosition(0);
-        huskyBot.armExtendMotor.setPower(ARM_EXTENSION_MAX_POWER+0.35);
-        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (opModeIsActive() && (huskyBot.armExtendMotor.isBusy())) {
-        }
-
-        huskyBot.armExtendMotor.setPower(0);
-
-        huskyBot.armLiftMotor.setTargetPosition(armLiftPos);
-        huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (opModeIsActive() && (huskyBot.armLiftMotor.isBusy())) {
-        }
-        huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        huskyBot.armExtendMotor.setTargetPosition(armExtendPos);
-        huskyBot.armExtendMotor.setPower(ARM_EXTENSION_MAX_POWER);
-        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        runtime.reset();
-
-        while (opModeIsActive() && (huskyBot.armExtendMotor.isBusy())) {
-        }
-
-
-        huskyBot.armExtendMotor.setPower(0);
-
-        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-
-
     @Override
     public void runOpMode() {
         huskyBot.init(hardwareMap);
@@ -130,7 +106,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
         huskyBot.clawLift.setPosition(CLAW_LIFT_START_POSITION);
         huskyBot.clawGrab.setPosition(CLAW_GRAB_CLOSE_POSITION);
-   
+
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -167,32 +143,70 @@ public class HuskyTeleOpMode extends LinearOpMode {
             smoothAcceleration(huskyBot.rearRightDrive, rearRightVelocity, HuskyBot.VELOCITY_CONSTANT/5);
 
 
+            // Finite state machine
+            switch (armState){
+                case ARM_WAIT:
+                    finiteTimer.reset();
+                    shouldChangeTheClawLift = false;
 
-            //OTHER CONTROLS --------------------------------------------------------------------------------------------
+                    if(gamepad1.a) {
+                        // Button A: Cone take position
 
-            // arm encoder preset values
-//            if(gamepad1.y)
-//                setArmPosition(-115, 0.9, -1414);
-//            if(gamepad1.x)
-//                setArmPosition(473, 0.55, 0);
-//            if(gamepad1.a)
-//                setArmPosition(846, 0.10, -1000);
-//            if(gamepad1.b)
-//                setArmPosition(((int) ARM_LIFT_MAX_POSITION), 0.35, -3240);
+                        huskyBot.clawLift.setPosition(0.60);
+                        huskyBot.clawGrab.setPosition(CLAW_GRAB_OPEN_POSITION);
 
+                        armLiftTargetPos = -115;
+                        armExtendTargetPos = -1550;
 
+                        armState = ArmState.STEP_1;
+                    }
+                    if(gamepad1.x){
+                        // Button X: Small junction position
 
-            // Arm Swivel Controls
-            armSwivelPower = -gamepad2.left_stick_x;
-            armSwivelPower = Range.clip(armSwivelPower, -ARM_SWIVEL_MAX_POWER, ARM_SWIVEL_MAX_POWER);
-            // swivel limiters
-            if (huskyBot.armSwivelMotor.getCurrentPosition() <= -ARM_SWIVEL_LIMIT) {
-                armSwivelPower = (armSwivelPower < 0) ? 0 : armSwivelPower;
-            }
-            if (huskyBot.armSwivelMotor.getCurrentPosition() >= ARM_SWIVEL_LIMIT) {
-                armSwivelPower = (armSwivelPower > 0) ? 0 : armSwivelPower;
-            }
-            huskyBot.armSwivelMotor.setPower(armSwivelPower);
+                        armLiftTargetPos = 473;
+                        armExtendTargetPos = 0;
+                        clawLiftTargetPos = 0.55;
+
+                        shouldChangeTheClawLift = true;
+
+                        armState = ArmState.STEP_1;
+                    }
+                    if(gamepad1.b) {
+                        // Button B: Medium junction position
+                        armLiftTargetPos = 846;
+                        armExtendTargetPos = -1000;
+                        clawLiftTargetPos = 0.10;
+
+                        shouldChangeTheClawLift = true;
+
+                        armState = ArmState.STEP_1;
+                    }
+                    if(gamepad1.y) {
+                        // Button Y: High junction position
+                        armLiftTargetPos = (int) ARM_LIFT_MAX_POSITION;
+                        armExtendTargetPos = -3240;
+                        clawLiftTargetPos = 0.35;
+
+                        shouldChangeTheClawLift = true;
+
+                        armState = ArmState.STEP_1;
+                    }
+
+                    //
+                    // MANUAL ARM CONTROL
+                    //
+
+                    // Arm Swivel Controls
+                    armSwivelPower = -gamepad2.left_stick_x;
+                    armSwivelPower = Range.clip(armSwivelPower, -ARM_SWIVEL_MAX_POWER, ARM_SWIVEL_MAX_POWER);
+                    // swivel limiters
+                    if (huskyBot.armSwivelMotor.getCurrentPosition() <= -ARM_SWIVEL_LIMIT) {
+                        armSwivelPower = (armSwivelPower < 0) ? 0 : armSwivelPower;
+                    }
+                    if (huskyBot.armSwivelMotor.getCurrentPosition() >= ARM_SWIVEL_LIMIT) {
+                        armSwivelPower = (armSwivelPower > 0) ? 0 : armSwivelPower;
+                    }
+                    huskyBot.armSwivelMotor.setPower(armSwivelPower);
 
                     // Arm Lift Controls
                     if(gamepad2.left_stick_y < 0){
@@ -203,37 +217,146 @@ public class HuskyTeleOpMode extends LinearOpMode {
                         armLiftPowerDivider = 5.5;
                     }
 
-            armLiftPower = -gamepad2.left_stick_y/armLiftPowerDivider;
-            armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MIN_POWER, ARM_LIFT_MAX_POWER);
+                    armLiftPower = -gamepad2.left_stick_y/armLiftPowerDivider;
+                    armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MIN_POWER, ARM_LIFT_MAX_POWER);
 
-            if (armLiftPower == 0) {
-                armLiftPower = ARM_LIFT_POWER_AT_REST;
+                    if (armLiftPower == 0) {
+                        armLiftPower = ARM_LIFT_POWER_AT_REST;
+                    }
+                    if (huskyBot.armLiftMotor.getCurrentPosition() > ARM_LIFT_MAX_POSITION && armLiftPower > 0) {
+                        armLiftPower = 0;
+                    }
+
+                    huskyBot.armLiftMotor.setPower(armLiftPower);
+
+
+                    // Increases/Decreases Arm Length
+                    armExtendPower = gamepad2.dpad_up ? -ARM_EXTENSION_MAX_POWER : (gamepad2.dpad_down ? ARM_EXTENSION_MAX_POWER : 0);
+                    // Use Magnetic Limit Switches to limit extension of the arm.
+                    if (huskyBot.armExtendMin.isPressed()) {
+                        armExtendPower = (armExtendPower > 0) ? 0 : armExtendPower;
+                    }
+                    if (huskyBot.armExtendMax.isPressed()) {
+                        armExtendPower = (armExtendPower < 0) ? 0 : armExtendPower;
+                    }
+                    huskyBot.armExtendMotor.setPower(armExtendPower);
+
+                    // Claw Lift Servo Control
+
+                    if (gamepad2.right_stick_y != 0) {
+                        huskyBot.servoMove(huskyBot.clawLift, -gamepad2.right_stick_y);
+                    }
+
+
+                    break;
+                case STEP_1:
+                    // Step 1: Reset the arm extender (close)
+
+                    huskyBot.armExtendMotor.setTargetPosition(0);
+                    huskyBot.armExtendMotor.setPower(1.0);
+                    huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    armState = ArmState.STEP_2;
+
+                    break;
+                case STEP_2:
+                    // Step 2:
+                    // Wait until the step 1 is completed
+                    // Then change the arm lift's position (up or down based on the target position)
+
+                    if(huskyBot.armExtendMotor.isBusy()){
+                        if(finiteTimer.seconds() > 7){
+                            gamepad1.rumble(1000);
+
+                            huskyBot.armExtendMotor.setPower(0);
+                            huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                            armState = ArmState.ARM_WAIT;
+                            break;
+                        }
+
+                        telemetry.addData("Arm State Status", "Arm is extending");
+                    } else {
+                        huskyBot.armExtendMotor.setPower(0);
+                        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                        huskyBot.armLiftMotor.setTargetPosition(armLiftTargetPos);
+                        huskyBot.armLiftMotor.setPower(0.35);
+                        huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                        armState = ArmState.STEP_3;
+                    }
+
+                    break;
+                case STEP_3:
+                    // Step 3:
+                    // Wait until the step 2 is completed
+                    // Then change the arm extender's position (in or out based on the target position)
+
+                    if (huskyBot.armLiftMotor.isBusy()) {
+                        if(finiteTimer.seconds() > 7){
+                            gamepad1.rumble(1000);
+
+                            huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                            huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
+
+                            armState = ArmState.ARM_WAIT;
+                            break;
+                        }
+
+                        telemetry.addData("Arm State Status", "Arm lift is moving");
+                    } else {
+                        huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
+
+                        huskyBot.armExtendMotor.setTargetPosition(armExtendTargetPos);
+                        huskyBot.armExtendMotor.setPower(1.0);
+                        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                        armState = ArmState.STEP_4;
+                    }
+
+
+                    break;
+                case STEP_4:
+                    // Step 4:
+                    // Wait until the step 3 is completed
+                    // Then change armState to wait (default)
+
+                    if (huskyBot.armExtendMotor.isBusy()) {
+                        if(finiteTimer.seconds() > 7){
+                            gamepad1.rumble(1000);
+
+                            huskyBot.armExtendMotor.setPower(0);
+                            huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                            armState = ArmState.ARM_WAIT;
+                            break;
+                        }
+
+                        telemetry.addData("Arm State Status", "Arm is extending");
+                    } else {
+                        huskyBot.armExtendMotor.setPower(0);
+                        huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                        if(shouldChangeTheClawLift){
+                            if(finiteTimer.seconds() > 7){
+                                gamepad1.rumble(1000);
+                                armState = ArmState.ARM_WAIT;
+                                break;
+                            }
+
+                            huskyBot.clawLift.setPosition(clawLiftTargetPos);
+                        }
+
+                        gamepad1.rumble(200);
+                        armState = ArmState.ARM_WAIT;
+                    }
+
+                    break;
+
+                default:
             }
-            if (huskyBot.armLiftMotor.getCurrentPosition() > ARM_LIFT_MAX_POSITION && armLiftPower > 0) {
-                armLiftPower = 0;
-            }
-
-            huskyBot.armLiftMotor.setPower(armLiftPower);
-
-
-            // Increases/Decreases Arm Length
-            armExtendPower = gamepad2.dpad_up ? -ARM_EXTENSION_MAX_POWER : (gamepad2.dpad_down ? ARM_EXTENSION_MAX_POWER : 0);
-            // Use Magnetic Limit Switches to limit extension of the arm.
-            if (huskyBot.armExtendMin.isPressed()) {
-                armExtendPower = (armExtendPower > 0) ? 0 : armExtendPower;
-            }
-            if (huskyBot.armExtendMax.isPressed()) {
-                armExtendPower = (armExtendPower < 0) ? 0 : armExtendPower;
-            }
-            huskyBot.armExtendMotor.setPower(armExtendPower);
-
-            // Claw Lift Servo Control
-
-            if (gamepad2.right_stick_y != 0) {
-                huskyBot.servoMove(huskyBot.clawLift, -gamepad2.right_stick_y);
-            }
-
-
 
             // Open/Close the Claw
             if (gamepad2.right_bumper || gamepad1.right_bumper) {
