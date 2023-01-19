@@ -3,7 +3,6 @@ package teamcode.v1.opmodes
 import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.InstantCmd
-import com.asiankoala.koawalib.command.commands.MecanumCmd
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.NVector
@@ -12,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import teamcode.v1.Robot
 import teamcode.v1.commands.sequences.DepositSequence
 import teamcode.v1.commands.sequences.HomeSequence
-import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
+import teamcode.v1.commands.subsystems.ClawCmds
 import teamcode.v1.constants.ArmConstants
 import teamcode.v1.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
@@ -63,12 +62,11 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     }
 
     private fun scheduleCycling() {
-        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, ArmConstants.intervalPos, ArmConstants.groundPos, ClawConstants.intakePos))
-        driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.highPos, LiftConstants.highPos, ClawConstants.outtakePos))
+        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, ArmConstants.intervalPos, ArmConstants.groundPos))
+        driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.highPos, LiftConstants.highPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
-        driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos, ClawConstants.outtakePos))
-//        driver.x.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.groundPos, LiftConstants.groundPos))
-        driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos, ClawConstants.outtakePos))
+        driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos))
+        driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
         driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw ))
         gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(2.0)}))
         gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(10.0)}))
@@ -84,12 +82,9 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     }
 
     override fun mLoop() {
-        Logger.addVar("robot vel", robot.hardware.liftLeadMotor.vel)
         Logger.addTelemetryData("arm pos", robot.hardware.armMotor.pos)
         Logger.addTelemetryData("lift pos", robot.hardware.liftLeadMotor.pos)
         Logger.addTelemetryData("arm power", robot.arm.motor.power)
         Logger.addTelemetryData("lift power", robot.hardware.liftLeadMotor.power)
-        Logger.addTelemetryData("detect is true?", robot.arm.detect)
-        Logger.addTelemetryData("claw pos", ClawConstants.openPos)
     }
 }

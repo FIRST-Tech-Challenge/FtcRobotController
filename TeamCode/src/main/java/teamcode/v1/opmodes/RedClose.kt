@@ -14,10 +14,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import teamcode.v1.auto.AutoRobot
 import teamcode.v1.commands.sequences.DepositSequence
 import teamcode.v1.commands.sequences.HomeSequence
-import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
+import teamcode.v1.commands.subsystems.ClawCmds
 import teamcode.v1.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
-import org.firstinspires.ftc.teamcode.koawalib.vision.AutoOpMode
+import teamcode.v1.vision.AutoOpMode
 
 @Autonomous(preselectTeleOp = "KTeleOp")
 class RedClose : AutoOpMode() {

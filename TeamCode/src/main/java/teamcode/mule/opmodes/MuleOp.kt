@@ -5,7 +5,7 @@ import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.ClawCmds
+import teamcode.v1.commands.subsystems.ClawCmds
 import teamcode.mule.MuleRobot
 import teamcode.mule.commands.MuleArmCommands
 import teamcode.mule.constants.MuleArmConstants

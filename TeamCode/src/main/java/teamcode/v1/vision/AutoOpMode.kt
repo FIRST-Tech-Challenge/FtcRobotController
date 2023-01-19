@@ -1,15 +1,16 @@
-package org.firstinspires.ftc.teamcode.koawalib.vision
+package teamcode.v1.vision
 
 import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.logger.Logger
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 import org.openftc.apriltag.AprilTagDetection
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 
-open class AutoOpMode : KOpMode() {
+open class AutoOpMode : KOpMode(photonEnabled = true) {
     lateinit var camera : OpenCvCamera
     lateinit var pipeline : SleevePipeline
 
