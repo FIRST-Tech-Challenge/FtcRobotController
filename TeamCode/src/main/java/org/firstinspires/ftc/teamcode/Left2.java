@@ -205,25 +205,25 @@ public class Left2 extends LinearOpMode {
 
             switch (location){//determine where to park
                 case 0:
-                    move(.2,200);
+                    move(.2,-200);
                     stopMotors();
                     sleep(3000);
                     break;
                 case 1:
                     strafeRight(1,700);
                     gyroTurning(0);
-                    move(.6,-1200);
+                    move(.6,-1000);
                     strafeLeft(.5,300);
                     sleep(3000);
                     break;
                 case 2:
-                    move(.2,-100);
+                    move(.2,-200);
                     stopMotors();
                     sleep(3000);
                     break;
                 case 3:
                     strafeRight(1,700);
-                    move(.6,1200);
+                    move(.6,1000);
                     strafeLeft(.5,300);
                     sleep(3000);
                     break;

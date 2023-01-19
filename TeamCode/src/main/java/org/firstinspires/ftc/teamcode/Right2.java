@@ -216,7 +216,7 @@ public class Right2 extends LinearOpMode {
                     sleep(3000);
                     break;
                 case 2:
-                    move(.2,100);
+                    move(.2,200);
                     stopMotors();
                     sleep(3000);
                     break;
