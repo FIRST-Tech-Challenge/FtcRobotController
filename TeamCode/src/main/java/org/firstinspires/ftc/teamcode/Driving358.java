@@ -43,6 +43,7 @@ public abstract class Driving358 extends LinearOpMode {
 //        robot.carousel.setPower(0);
         reset();
     }
+
     public void reset(){
         robot.lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -213,6 +214,7 @@ public abstract class Driving358 extends LinearOpMode {
 
 
     public void move(double power, char direction, double distance){
+        reset();
         double ticks = COUNTS_PER_INCH * distance/3;
 //        double ticks = 7.5* distance;
         switch(direction){
@@ -238,7 +240,7 @@ public abstract class Driving358 extends LinearOpMode {
 
                 }
                 motorStop();
-                runUsingEncoders();
+                //runUsingEncoders();
                 reset();
                 break;
             case 'b':
@@ -268,7 +270,7 @@ public abstract class Driving358 extends LinearOpMode {
 
                 }
                 motorStop();
-                runUsingEncoders();
+                //runUsingEncoders();
                 reset();
                 break;
 
@@ -294,7 +296,7 @@ public abstract class Driving358 extends LinearOpMode {
 
                 }
                 motorStop();
-                runUsingEncoders();
+                //runUsingEncoders();
                 reset();
                 break;
             case 'l' :
@@ -319,12 +321,13 @@ public abstract class Driving358 extends LinearOpMode {
 
                 }
                 motorStop();
-                runUsingEncoders();
+                //runUsingEncoders();
                 reset();
                 break;
 
             default:
                 motorStop();
+
         }
     }
 
