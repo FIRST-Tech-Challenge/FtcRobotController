@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Claw {
-    public Servo claw;
+    public Servo servo;
 
     public double OPEN = 0;
     public double CLOSE = 1;
@@ -15,8 +15,22 @@ public class Claw {
 
         hwMap = ahwMap;
         //Init motors and servos
-        claw = hwMap.get(Servo.class, "claw");
-        claw.setDirection(Servo.Direction.FORWARD);
+        servo = hwMap.get(Servo.class, "claw");
+        servo.setDirection(Servo.Direction.FORWARD);
     }
+
+    public void open() {
+        servo.setPosition(OPEN);
+    }
+
+    public void close() {
+        servo.setPosition(CLOSE);
+    }
+
+    public double getPosition() {
+        double position =  servo.getPosition();
+        return position;
+    }
+
 
 }

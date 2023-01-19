@@ -1,33 +1,17 @@
 package org.firstinspires.ftc.teamcode.Helper;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //Related to IMU
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 // Related to vision
-import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 public class Robot {
@@ -37,12 +21,12 @@ public class Robot {
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
 
-    Claw claw = new Claw();
-    SwingArm swingArm = new SwingArm();
-    Chassis chassis = new Chassis();
-    VSlider verticalSlider = new VSlider();
+    public Claw claw = new Claw();
+    public Arm arm = new Arm();
+    public Chassis chassis = new Chassis();
+    public VSlider verticalSlider = new VSlider();
 
-    public double swingArmHoldingPower = 1;
+    public double armHoldingPower = 1;
 
 
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
@@ -66,13 +50,15 @@ public class Robot {
     //tells you how long the robot has run for
 
 
-    //
-    public void Robot() {
-
-    }
 
     public void init(HardwareMap ahwMap) throws InterruptedException {
         hwMap = ahwMap;
+        claw.init(hwMap);
+        chassis.init(hwMap);
+        arm.init(hwMap);
+        verticalSlider.init(hwMap);
+
+
     }
 
     public void initVuforia() {
@@ -281,94 +267,51 @@ public class Robot {
 
 //        vSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        verticalSlider.vSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalSlider.vSlider.setTargetPosition(Position);
+        verticalSlider.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalSlider.motor.setTargetPosition(Position);
         //Set the power of the motor.
-        verticalSlider.vSlider.setPower(speed);
+        verticalSlider.motor.setPower(speed);
         //Run to position.
-        verticalSlider.vSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        verticalSlider.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while ((runtime.milliseconds() < timeout_ms) && (verticalSlider.vSlider.isBusy())) {
+        while ((runtime.milliseconds() < timeout_ms) && (verticalSlider.motor.isBusy())) {
         }
-        verticalSlider.vSlider.setPower(0);
+        verticalSlider.motor.setPower(0);
     }
 
 
-    public void SwingArm(boolean updown){
-        timeout_ms = 5000;
-        runtime.reset();
-        double speed;
-        int Position;
-        double holdingPower;
 
-        if(updown){ // Swing arm up.
-            speed = 1;
-            Position = 75;
-            holdingPower = 1;
-        }
-        else{ // Swing arm down.
-             speed = 0.5;
-             Position = 20;
-             holdingPower =0;
-        }
-
-        swingArm.swingArm.setTargetPosition(Position);
-        //Set the power of the motor.
-        swingArm.swingArm.setPower(speed);
-        //set the mode to go to the target position
-        swingArm.swingArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-        while ((runtime.milliseconds() < timeout_ms) && (swingArm.swingArm.isBusy())) {
-
-        }
-        swingArm.swingArm.setPower(holdingPower);
-
-    }
-
-    public void SwingArmToPosition(double speed, int Position, double holdingPower) {
-        timeout_ms = 5000;
-        runtime.reset();
-
-        if(Position>50){//Swing up
-            swingArm.swingArm.setPower(0.1);
-        }
-        if(Position<50){ // Swing down
-            swingArm.swingArm.setPower(-0.1);
-        }
-
-    }
 
     public void Park(int location) {
         if (location == 1) {
-            claw.claw.setPosition(0);
+            claw.servo.setPosition(0);
             this.DriveToPosition(0.3, -75, 75, true);
         }
 
         if (location == 2) {
-            claw.claw.setPosition(0);
+            claw.servo.setPosition(0);
             this.DriveToPosition(0.3, 0, 75, true);
         }
 
         if (location == 3) {
-            claw.claw.setPosition(0);
+            claw.servo.setPosition(0);
             this.DriveToPosition(0.3, 75, 75, true);
 
         }
     }
 
     public void initArmClaw(){
-        claw.claw.setPosition(1);
-        SwingArmToPosition(1,75, swingArmHoldingPower);
-        claw.claw.setPosition(0);
+        claw.close();
+        arm.swingUp();
+        claw.open();
 
     }
 
     public void deliverPreLoad(boolean LR) {
         /** First swing the arm up and go to the pole. **/
         //Close claw, the arm is already up.
-        claw.claw.setPosition(1);
-        swingArm.swingArm.setPower(swingArmHoldingPower);
+        claw.servo.setPosition(1);
+        arm.motor.setPower(armHoldingPower);
 
         timeout_ms = 300;
         runtime.reset();
@@ -395,24 +338,24 @@ public class Robot {
 
 
 //        //Swings the arm down
-         SwingArmToPosition(-1, 20, 0);
-         //SwingArm(false);
+         arm.swingDown();
+         //Arm(false);
 
         // Lower the slider a little bit to catch the cone in pole.
         MoveSlider(1, -500, 100);
 
         //Open and close the claw to drop the cone
-        claw.claw.setPosition(0);
+        claw.open();
         timeout_ms = 1500;
         runtime.reset();
         while ((runtime.milliseconds() < timeout_ms)) {
         }
-        claw.claw.setPosition(1);
+        claw.close();
 
         //Raises slider a little bit to not get caught on the pole
         MoveSlider(1, 1000, 500);
         //Swings the arm back up
-        SwingArmToPosition(1, 70, swingArmHoldingPower);
+        arm.swingUp();
         //lower the slider
         MoveSlider(-1, -1000, 1200);
 
@@ -445,12 +388,12 @@ public class Robot {
         }
         /** First go to the stack of cones and grab a cone **/
         //Open the claw and swing the arm down
-        claw.claw.setPosition(0);
-        SwingArmToPosition(1,20, 0);
+        claw.servo.setPosition(0);
+        arm.swingDown();
         //Drive forward slightly
         DriveToPosition(0.6, 0, 25, true);
         //close the claw and grab onto the cone
-        claw.claw.setPosition(1);
+        claw.servo.setPosition(1);
         /** Now drive to the medium pole **/
         //Drive to the pole and face it
         DriveToPosition(0.7,0,-60, true);
@@ -459,13 +402,13 @@ public class Robot {
         /** Now deliver the cone **/
         //Move the slider to the right height and swing down
         MoveSlider(0.6, 1000,2400);
-        SwingArmToPosition(1, 20, 0);
+        arm.swingDown();
         //Open and close claw
-        claw.claw.setPosition(1);
+        claw.servo.setPosition(1);
         // sleep(500); // TODO: Replace with while loop timer.
-        claw.claw.setPosition(0);
+        claw.servo.setPosition(0);
         //swing arm back up
-        SwingArmToPosition(1, 70, swingArmHoldingPower);
+        arm.swingUp();
         //lower slider
         MoveSlider(0.6, 0,1200);
         //Moves back to the stack
@@ -474,45 +417,39 @@ public class Robot {
         DriveToPosition(0.7,0,60, true);
     }
 
-    public void closeClaw() {
-        claw.claw.setPosition(claw.CLOSE);
-    }
 
-    public void openClaw() {
-        claw.claw.setPosition(claw.OPEN);
-    }
 
     public int getVSliderPos() {
-        int VSliderPosition = verticalSlider.vSlider.getCurrentPosition();
+        int VSliderPosition = getVSliderPos();
         return VSliderPosition;
     }
     public int getSwingArmPos() {
-        int SwingArmPosition = swingArm.swingArm.getCurrentPosition();
+        int SwingArmPosition = getSwingArmPos();
         return SwingArmPosition;
     }
     public double getClawPos() {
-        double position = claw.claw.getPosition();
+        double position = getClawPos();
         return position;
     }
     public int getFLMotorPos() {
-        int position = chassis.FLMotor.getCurrentPosition();
+        int position = getFLMotorPos();
         return position;
     }
     public int getFRMotorPos() {
-        int position = chassis.FRMotor.getCurrentPosition();
+        int position = getFRMotorPos();
         return position;
     }
     public int getBLMotorPos() {
-        int position = chassis.BLMotor.getCurrentPosition();
+        int position = getBLMotorPos();
         return position;
     }
     public int getBRMotorPos() {
-        int position = chassis.BRMotor.getCurrentPosition();
+        int position = getBRMotorPos();
         return position;
     }
 
     public void setVSliderPower(double power){
-        verticalSlider.vSlider.setPower(power);
+        verticalSlider.motor.setPower(power);
     }
 
 }

@@ -25,7 +25,7 @@ public class AutoLeft extends LinearOpMode {
     Robot robot = new Robot();
 
     public enum AutoSteps {
-        detectSignal, deliverPreLoad, parkFromMedium, endAuto
+        detectSignal, deliverPreLoad, cycleCones, parkFromMedium, endAuto
     }
 
     public AutoSteps Step = AutoSteps.detectSignal;
@@ -86,6 +86,9 @@ public class AutoLeft extends LinearOpMode {
                         robot.deliverPreLoad(true);
                         Step = AutoSteps.parkFromMedium;
                         break;
+
+                    case cycleCones:
+                        robot.CycleCone(true);
 
                     case parkFromMedium:
                         robot.ParkFromMedium(parkingTarget);

@@ -94,20 +94,20 @@ public class Teleop extends LinearOpMode {
 
             // Claw
             if(gamepad2.x) {
-                robot.closeClaw();
+                robot.claw.close();
             }
             if(gamepad2.y) {
-                robot.openClaw();
+                robot.claw.open();
             }
 
             // Arm
             if(gamepad2.right_bumper) {
-                robot.closeClaw();
-                robot.SwingArmToPosition(1, 65, robot.swingArmHoldingPower);
+                robot.claw.close();
+                robot.arm.swingUp();
             }
             if(gamepad2.left_bumper) {
-                robot.closeClaw();
-                robot.SwingArmToPosition(-1, 20, 0);
+                robot.claw.close();
+                robot.arm.swingDown();
             }
 
 
