@@ -9,16 +9,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="forward", group="Teleop")
 //@Disabled
-public class forward extends LinearOpMode {
+public abstract class forward extends LinearOpMode {
 
         // Drive motor and arm variables
         DcMotor lf = null;
         DcMotor rf = null;
         DcMotor lb = null;
         DcMotor rb = null;
-
         DcMotor tower1 = null;
-
         // Servo Variables
         Servo clamp = null;
 
@@ -32,6 +30,8 @@ public class forward extends LinearOpMode {
     private float tPower;
     private float tdPower;
     @Override
+
+
     public void runOpMode() {
 
         telemetry.addData("Status", "Initialized");
@@ -73,7 +73,7 @@ public class forward extends LinearOpMode {
             if (gamepad2.a) {
                 clamp.setPosition(0.4);
             } else {
-                clamp.setPosition(1);
+                clamp.setPosition(0.9);
             }
                 boolean rsPower;
                 boolean lsPower;
@@ -105,12 +105,12 @@ public class forward extends LinearOpMode {
             }
 
 
-                lf.setPower(lPower * 0.9);
-                rf.setPower(rPower * 0.9);
-                lb.setPower(lPower * 0.9);
-                rb.setPower(rPower * 0.9);
-                tower1.setPower(tPower * 1.0);
-                tower1.setPower(tdPower * -.5);
+                lf.setPower(lPower * 0.65);
+                rf.setPower(rPower * 0.65);
+                lb.setPower(lPower * 0.65);
+                rb.setPower(rPower * 0.65);
+                tower1.setPower(tPower * -1.0);
+                tower1.setPower(tdPower * .5);
 
 
 
@@ -119,5 +119,4 @@ public class forward extends LinearOpMode {
 
     private void setPosition(double v) {
     }
-
 }
