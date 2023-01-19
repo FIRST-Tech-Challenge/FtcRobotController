@@ -320,6 +320,9 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         }
     }
 
+    @JvmField
+    val noop = queueAndReturnThis {}
+
     /**
      * Allows for interation with the raw [TrajectorySequenceBuilder] instance to allow for usage
      * of methods not included in this class.

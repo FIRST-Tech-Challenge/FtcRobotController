@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.AutoData
 import kotlin.properties.Delegates
 
 @Autonomous
-class RogueRightAuto : RogueBaseAuto() {
-    override val startPose = GlobalUnits.pos(91, -159, 90)
+class RogueLeftAuto : RogueBaseAuto() {
+    override val startPose = GlobalUnits.pos(-91, -159, 90)
 
     override fun mainTraj(startPose: Pose2d) =
         Anvil.formTrajectory(bot.drive, startPose)
@@ -50,23 +50,23 @@ class RogueRightAuto : RogueBaseAuto() {
         }
 
     private fun Anvil.awaitInitialGoToDeposit() = this
-        .splineToSplineHeading(82.5, -12.75, 131.75, 115)
+        .splineToSplineHeading(-82.5, -12.75, 48.25, 65)
 
     private fun Anvil.awaitGoToDeposit(it: Int) = when (it) {
-        0 -> splineToSplineHeading(85.100, -10.250, 141.000, 155)
-        1 -> splineToSplineHeading(81.800, -14.905, 131.725, 155)
-        2 -> splineToSplineHeading(77.150, -16.450, 131.100, 155)
-        3 -> splineToSplineHeading(74.624, -19.575, 128.375, 155)
-//        4 -> splineToSplineHeading(74.950, -17.950, 140.400, 155)
+        0 -> splineToSplineHeading(-85.100, -10.250, 39.000, 25)
+        1 -> splineToSplineHeading(-81.800, -14.905, 48.275, 25)
+        2 -> splineToSplineHeading(-77.150, -16.450, 48.900, 25)
+        3 -> splineToSplineHeading(-74.624, -19.575, 51.625, 25)
+//        4 -> splineToSplineHeading(-74.950, -17.950, 39.600, 25)
         else -> this
     }
 
     private fun Anvil.awaitGoToIntake(it: Int) = when (it) {
-        0 -> splineTo(161.0000, -25.850, 0)
-        1 -> splineTo(160.2375, -27.175, 0)
-        2 -> splineTo(158.9100, -28.400, 0)
-        3 -> splineTo(156.5975, -29.675, 0)
-//        4 -> splineTo(154.6500, -30.950, 0)
+        0 -> splineTo(-161.0000, -25.850, 180)
+        1 -> splineTo(-160.2375, -27.175, 180)
+        2 -> splineTo(-158.9100, -28.400, 180)
+        3 -> splineTo(-156.5975, -29.675, 180)
+//        4 -> splineTo(-154.6500, -30.950, 180)
         else -> noop
     }.doInReverse()
 
@@ -102,7 +102,6 @@ class RogueRightAuto : RogueBaseAuto() {
             bot.claw.openForIntakeNarrow()
             bot.intake.enable()
         }
-
     private fun Anvil.awaitRegularIntake() = this
         .addTemporalMarker {
             bot.intake.disable()
@@ -145,19 +144,20 @@ class RogueRightAuto : RogueBaseAuto() {
             bot.claw.close()
         }
 
+
     private fun parkTraj(startPose: Pose2d) =
         Anvil.formTrajectory(bot.drive, startPose) {
             resetBot()
 
             when (signalID) {
-                1 -> {
-                    splineToLinearHeading(30, -34, 90, 218)
+                1 -> inReverse {
+                    splineTo(-89, -33, -90)
                 }
                 2 -> inReverse {
-                    splineTo(145, -31, 0)
+                    splineTo(-144.65, -30.95, 180)
                 }
-                3 -> inReverse {
-                    splineTo(89, -33, 270)
+                3 -> {
+                    splineToLinearHeading(-30, -34, 90, -38.375)
                 }
             }
 

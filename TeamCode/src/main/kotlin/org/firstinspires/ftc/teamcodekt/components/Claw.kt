@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 @Config
 object ClawConfig {
     @JvmField var INTAKE_WIDE   = 0.6475
-    @JvmField var INTAKE_NARROW = 0.575
+    @JvmField var INTAKE_NARROW = 0.592
     @JvmField var DEPOSIT       = 0.666
     @JvmField var CLOSE         = 0.425
 }

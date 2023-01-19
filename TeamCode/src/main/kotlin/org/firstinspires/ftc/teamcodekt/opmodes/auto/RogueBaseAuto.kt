@@ -2,36 +2,52 @@
 
 package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
+import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.outoftheboxrobotics.photoncore.PhotonCore
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.BlackOp
+import ftc.rogue.blacksmith.Scheduler
+import ftc.rogue.blacksmith.units.GlobalUnits
 import ftc.rogue.blacksmith.util.kt.LateInitVal
 import org.checkerframework.checker.units.qual.A
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.meta.AutoBotComponents
 import org.firstinspires.ftc.teamcodekt.components.meta.createAutoBotComponents
+import kotlin.properties.Delegates
 
 abstract class RogueBaseAuto : BlackOp() {
     //    protected val bot by evalOnGo(::createAutoBotComponents)
     protected var bot by LateInitVal<AutoBotComponents>()
 
-    abstract fun executeOrder66()
+    protected var signalID by Delegates.notNull<Int>()
+
+    protected abstract val startPose: Pose2d
+
+    protected abstract fun mainTraj(startPose: Pose2d): Anvil
 
     final override fun go() {
         bot = createAutoBotComponents()
 
         quickLog("Starting futon")
+
         PhotonCore.enable()
 
         quickLog("Killing all the childen")
-        executeOrder66()
-    }
 
-    protected fun updateComponents() {
-        bot.updateBaseComponents(0.0)
-        bot.drive.update()
-        mTelemetry.update()
+        val startTraj = mainTraj(startPose)
+
+        Anvil.startAutoWith(startTraj).onSchedulerLaunch()
+
+        bot.camera.update()
+        signalID = bot.camera.waitForStartWithVision(this) ?: 2
+
+        Scheduler.launch(this) {
+            bot.updateBaseComponents(0.0)
+            bot.drive.update()
+            mTelemetry.update()
+        }
     }
 
     companion object {

@@ -46,6 +46,12 @@ class Lift {
             targetHeight = height.clamp(LiftConfig.ZERO, LiftConfig.HIGH)
         }
 
+    var rawHeight: Int
+        get() = targetHeight
+        set(height) {
+            targetHeight = height
+        }
+
     fun goToZero() {
         targetHeight = LiftConfig.ZERO
     }
@@ -61,7 +67,6 @@ class Lift {
     fun goToHigh() {
         targetHeight = LiftConfig.HIGH
     }
-
 
     fun update(liftDeadzone: Double) {
         val voltageCorrection = voltageScaler.voltageCorrection
@@ -80,5 +85,9 @@ class Lift {
 
     fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<Lift>) {
         telemetry.addData("Lift motor", dataSupplier(this))
+    }
+
+    fun resetEncoder() {
+        liftEncoder.resetEncoder()
     }
 }

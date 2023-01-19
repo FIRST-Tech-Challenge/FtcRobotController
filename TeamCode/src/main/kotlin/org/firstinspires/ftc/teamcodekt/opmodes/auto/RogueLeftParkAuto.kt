@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.units.GlobalUnits
 import kotlin.properties.Delegates
 
+@Disabled
 @Autonomous
 class RogueLeftParkAuto : RogueBaseAuto() {
     private var signalID by Delegates.notNull<Int>()

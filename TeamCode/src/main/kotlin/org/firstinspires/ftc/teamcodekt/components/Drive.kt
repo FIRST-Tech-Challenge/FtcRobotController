@@ -33,7 +33,7 @@ class Drivetrain {
 
     fun drive(gamepad: Gamepad, powerMulti: Double) {
         val (x, y, _r) = gamepad.getDriveSticks()
-        val r = _r * .885
+        val r = _r * .9
 
         val theta = atan2(y, x)
         val power = hypot(x, y)
@@ -59,9 +59,9 @@ class Drivetrain {
         powers.mapInPlace { (it pow 3) * _powerMulti }
 
         withEachMotor {
-//            if (abs(powers[it] - lastPowers[it]) > 0.005) { // Caching motor powers may increase loop times?
+            if (abs(powers[it] - lastPowers[it]) > 0.0005) { // Caching motor powers may increase loop times?
                 this.power = powers[it]
-//            }
+            }
         }
 
         lastPowers = powers

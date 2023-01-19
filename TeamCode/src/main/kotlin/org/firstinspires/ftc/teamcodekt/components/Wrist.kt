@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 
 @Config
 object WristConfig {
-    @JvmField var FORWARDS  = 0.8275
-    @JvmField var BACKWARDS = 0.171
+    @JvmField var FORWARDS  = 0.81
+    @JvmField var BACKWARDS = 0.151
     @JvmField var REST      = 0.5
 }
 
