@@ -14,11 +14,13 @@ public class main extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //initialize motors
         movement.Motor1 = hardwareMap.get(DcMotor.class, "Motor1");
         movement.Motor2 = hardwareMap.get(DcMotor.class, "Motor2");
         movement.Motor3 = hardwareMap.get(DcMotor.class, "Motor3");
         movement.Motor4 = hardwareMap.get(DcMotor.class, "Motor4");
 
+        //initialize sensor
         sensor.imu = hardwareMap.get(BNO055IMU.class, "imu");
         sensor.sensorIntitialize();
         sensor.imu.initialize(sensor.parameters);
@@ -27,6 +29,7 @@ public class main extends LinearOpMode {
             gamepader();
         }
     }
+    //gamepad input
     public void gamepader(){
         if (Math.abs(gamepad1.right_stick_y) > Math.abs(gamepad1.right_stick_x)) {
             movement.verticalMovement(gamepad1.right_stick_y);

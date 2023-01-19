@@ -24,6 +24,7 @@ public class sensor {
 
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
+    //initialize sensor
     public void sensorIntitialize(){
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;

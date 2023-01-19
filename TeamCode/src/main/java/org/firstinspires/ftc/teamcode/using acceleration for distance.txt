@@ -1,0 +1,40 @@
+import java.lang.Math;
+
+public class MyClass {
+    public static void main(String args[]) {
+        double angle = 5;
+        double time = 1;
+        double acceleration = 8;
+        
+        double distance;
+        double [] coordinates = new double[2];
+        coordinates[0] = 0;
+        coordinates[1] = 0;
+        double velocity = 0;
+        
+        distance = findDistance(velocity, time, acceleration);
+        velocity = findVelocity(acceleration, time);
+        coordinates = findCoordinates(angle, distance, coordinates);
+        
+        System.out.println("Distance: "+distance);
+        System.out.println("Velocity: "+velocity);
+        System.out.println("Coordinates: "+coordinates[0]+" "+coordinates[1]);
+        
+    }
+    public static double findDistance(double startingvelocity, double time, double acceleration){
+        double s;
+        s = startingvelocity+((acceleration*time*time)/2);
+        return s;
+    }
+    public static double findVelocity(double acceleration, double time){
+        double v;
+        v = acceleration*time;
+        return v;
+    }
+    
+    public static double[] findCoordinates(double angle, double distance, double[] coordinates){
+        coordinates[0] = Math.sin(90-angle)*distance + coordinates[0];
+        coordinates[1] = Math.cos(90-angle)*distance + coordinates[0];
+        return coordinates;
+    }
+}
