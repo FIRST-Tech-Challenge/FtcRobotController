@@ -8,8 +8,9 @@ import com.acmerobotics.roadrunner.Twist2dIncrDual;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.teamcode.util.BNO055Wrapper;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.firstinspires.ftc.teamcode.util.Localizer;
 import org.firstinspires.ftc.teamcode.util.RawEncoder;
@@ -20,21 +21,21 @@ public final class TwoDeadWheelLocalizer implements Localizer {
     public static double PERP_X_TICKS = 0.0;
 
     public final Encoder par, perp;
-    public final BNO055Wrapper imu;
+    public final IMU imu;
 
     private int lastParPos, lastPerpPos;
     private Rotation2d lastHeading;
 
     private final double inPerTick;
 
-    public TwoDeadWheelLocalizer(HardwareMap hardwareMap, BNO055Wrapper imu, double inPerTick) {
+    public TwoDeadWheelLocalizer(HardwareMap hardwareMap, IMU imu, double inPerTick) {
         par = new RawEncoder(hardwareMap.get(DcMotorEx.class, "par"));
         perp = new RawEncoder(hardwareMap.get(DcMotorEx.class, "perp"));
         this.imu = imu;
 
         lastParPos = par.getPositionAndVelocity().position;
         lastPerpPos = perp.getPositionAndVelocity().position;
-        lastHeading = imu.getHeading();
+        lastHeading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         this.inPerTick = inPerTick;
     }
@@ -42,13 +43,13 @@ public final class TwoDeadWheelLocalizer implements Localizer {
     public Twist2dIncrDual<Time> updateAndGetIncr() {
         Encoder.PositionVelocityPair parPosVel = par.getPositionAndVelocity();
         Encoder.PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
-        Rotation2d heading = imu.getHeading();
+        Rotation2d heading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         int parPosDelta = parPosVel.position - lastParPos;
         int perpPosDelta = perpPosVel.position - lastPerpPos;
         double headingDelta = heading.minus(lastHeading);
 
-        double headingVel = imu.getHeadingVelocity();
+        double headingVel = imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
 
         Twist2dIncrDual<Time> twistIncr = new Twist2dIncrDual<>(
                 new Vector2dDual<>(

@@ -6,13 +6,13 @@ import com.acmerobotics.roadrunner.Twist2d;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.TankDrive;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
-import org.firstinspires.ftc.teamcode.util.BNO055Wrapper;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.firstinspires.ftc.teamcode.util.Localizer;
 import org.firstinspires.ftc.teamcode.util.OverflowEncoder;
@@ -37,7 +37,7 @@ final class DriveView {
     public final List<RawEncoder> leftEncs, rightEncs, parEncs, perpEncs;
     public final List<RawEncoder> forwardEncs;
 
-    public final BNO055Wrapper imu;
+    public final IMU imu;
 
     public final VoltageSensor voltageSensor;
 

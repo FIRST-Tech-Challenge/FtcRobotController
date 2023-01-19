@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.tuning;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.firstinspires.ftc.teamcode.util.MidpointTimer;
@@ -119,7 +120,7 @@ public final class AngularRampLogger extends LinearOpMode {
             }
             data.encTimes.add(t.addSplit());
 
-            AngularVelocity av = view.imu.getAngularVelocity();
+            AngularVelocity av = view.imu.getRobotAngularVelocity(AngleUnit.RADIANS);
             data.angVels.get(0).add((double) av.xRotationRate);
             data.angVels.get(1).add((double) av.yRotationRate);
             data.angVels.get(2).add((double) av.zRotationRate);
