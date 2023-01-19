@@ -36,8 +36,6 @@ class elevatorPositions{
 class RobotController {
 
     private ElapsedTime et = new ElapsedTime();
-    private ElapsedTime armSafety = new ElapsedTime();
-    private ElapsedTime pufferSafety = new ElapsedTime();
     /** GENERAL CONSTANTS */
     private final double sq2 = Math.sqrt(2);
     private final Telemetry telemetry;
@@ -197,33 +195,29 @@ class RobotController {
 
         teleScore = new Thread(() -> {
             if (elevatorPosition != elevatorPositions.bottom) {
-//                telemetry.addData("elevator height", elevatorPosition);
                 try {
                     puffer.setPosition(pufferGrab);
                     grabber.setPosition(grabberOpen);
 
-                    safeSleep(750);
+                    safeSleep(200);
 
-                    if (elevatorPosition == elevatorPositions.middle){
-
-                        setPlacerPosition(placerOutTeleOp * 0.5);
-                        safeSleep(400);
-                    }
                     setPlacerPosition(placerOutTeleOp);
 
                     while (gamepad.right_trigger == 0) {
-                        telemetry.addData("position", elevatorPosition);
-                        telemetry.addData("current position", elevatorLeft.getCurrentPosition());
-                        telemetry.addData("Current Power", elevatorLeft.getPower());
+                        if (gamepad.isStopRequested) {
+                            throw new InterruptedException("stop requested");
+                        }
+                        telemetry.addData("aaa", "aaa");
                         telemetry.update();
                     }
 
                     puffer.setPosition(pufferRelease);
 
                     while (gamepad.right_trigger > 0) {
-                        telemetry.addData("position", elevatorPosition);
-                        telemetry.addData("current position", elevatorLeft.getCurrentPosition());
-                        telemetry.addData("Current Power", elevatorLeft.getPower());
+                        if (gamepad.isStopRequested) {
+                            throw new InterruptedException("stop requested");
+                        }
+                        telemetry.addData("aaa", "aaa");
                         telemetry.update();
                     }
 
@@ -233,9 +227,7 @@ class RobotController {
                 } catch (InterruptedException e) {
                 }
             } else {
-//                telemetry.addData("elevator height", "not specified");
             }
-            telemetry.update();
         });
 
         autoCycle = new Thread(() -> {
@@ -262,9 +254,11 @@ class RobotController {
                     setArmPosition(gamepad.left_trigger * (armOut - armIn) + armIn);
 
                     // catch the cone if its in range
-                    if (grabberSensor.getDistance(DistanceUnit.CM) < grabberCatchTrigger)
+                    if (grabberSensor.getDistance(DistanceUnit.CM) < grabberCatchTrigger) {
                         grabber.setPosition(grabberGrab);
-                    else grabber.setPosition(grabberOpen);
+                    } else {
+                        grabber.setPosition(grabberOpen);
+                    }
 
                 } else {
                     if (!armSensor.getState()) {
@@ -275,17 +269,15 @@ class RobotController {
 
                 }
 
-                if (!teleScore.isAlive()) {
-                    if (A_pressed()) {
-                        elevatorPosition = elevatorPositions.high;
-                        teleScore.start();
-                    } else if (X_pressed()) {
-                        elevatorPosition = elevatorPositions.middle;
-                        teleScore.start();
-                    } else if (Y_pressed()) {
-                        elevatorPosition = elevatorPositions.low;
-                        teleScore.start();
-                    }
+                if (A_pressed()) {
+                    elevatorPosition = elevatorPositions.high;
+                    if (!teleScore.isAlive()) teleScore.start();
+                } else if (X_pressed()) {
+                    elevatorPosition = elevatorPositions.middle;
+                    if (!teleScore.isAlive()) teleScore.start();
+                } else if (Y_pressed()) {
+                    elevatorPosition = elevatorPositions.low;
+                    if (!teleScore.isAlive()) teleScore.start();
                 }
             }
         });
@@ -322,7 +314,9 @@ class RobotController {
                 B = (joystick_left.y + joystick_left.x) / sq2;
 
                 // slow mode;
-                if (grabberLeft.getPosition() == grabberPile[0] || elevatorPosition != elevatorPositions.bottom) {
+                if (grabberLeft.getPosition() == grabberPile[0] ||
+                    elevatorPosition != elevatorPositions.bottom ||
+                    gamepad.right_bumper) {
                     overallDrivingPower = 0.4;
                 } else {
                     overallDrivingPower = 1;
@@ -332,26 +326,6 @@ class RobotController {
                         B + gamepad.right_stick_x,
                         B - gamepad.right_stick_x,
                         A + gamepad.right_stick_x);
-
-//                telemetry.addData("left_trigger", gamepad.left_trigger);
-//                telemetry.addData("left_bumper", gamepad.left_bumper);
-//                telemetry.addData("right_trigger", gamepad.right_trigger);
-//                telemetry.addData("right_bumper", gamepad.right_bumper);
-//
-//                telemetry.addData("a", gamepad.a);
-//                telemetry.addData("b", gamepad.b);
-//                telemetry.addData("x", gamepad.x);
-//                telemetry.addData("y", gamepad.y);
-//
-//                telemetry.addData("left_stick_y", gamepad.left_stick_y);
-//                telemetry.addData("left_stick_x", gamepad.left_stick_x);
-//                telemetry.addData("right_stick_x", gamepad.right_stick_x);
-                telemetry.addData("position", elevatorPosition);
-                telemetry.addData("current position", elevatorLeft.getCurrentPosition());
-                telemetry.addData("Current Power", elevatorLeft.getPower());
-//                telemetry.addData("scoring", score.isAlive());
-//
-                telemetry.update();
             }
         });
     }
@@ -479,7 +453,6 @@ class RobotController {
 
             setArmPosition(armIn);
 
-            armSafety.reset();
             while (armSensor.getState()) {
                 if (gamepad.isStopRequested) throw new InterruptedException("stop requested");
             }
