@@ -88,13 +88,13 @@ public class Autonomous_root extends LinearOpMode {
             chassis.resetEncoder();
             chassis.runToPosition(-2000, -2000, -2000, -2000);
 
+            arm.runToPosition(arm.lowJunction);
+
             for(int i=0; i<1; i++){
                 //RIGHT BLUE
                 chassis.runToPosition(-1700, -2300, -1700, -2300);
 
                 vision.setPoleDetector();
-
-                arm.runToPosition(arm.lowJunction);
 
                 //微調整(Small Adjustment)
                 while(Math.abs(vision.differenceX()) != 0) {
