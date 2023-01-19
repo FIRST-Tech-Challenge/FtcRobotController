@@ -3,6 +3,7 @@ package teamcode.v1.opmodes
 import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.InstantCmd
+import com.asiankoala.koawalib.command.commands.LoopCmd
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.NVector
@@ -62,14 +63,30 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     }
 
     private fun scheduleCycling() {
+        + object : Cmd() {
+            private var armPos = ArmConstants.homePos
+                override fun execute() {
+                    if(driver.dpadUp.isJustPressed) {
+                        armPos += 1.0
+                        + LoopCmd({robot.arm.setPos(armPos)})
+                    } else if(driver.dpadDown.isJustPressed) {
+                        armPos +- 1.0
+                        + LoopCmd({robot.arm.setPos(armPos)})
+                    } else if(driver.dpadUp.isJustReleased || driver.dpadDown.isJustReleased) {
+                        armPos += 0.0
+                        + InstantCmd({robot.arm.setPos(armPos)})
+                    }
+                    }
+                    }
+
         driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, ArmConstants.intervalPos, ArmConstants.groundPos))
         driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.highPos, LiftConstants.highPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
-        driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos))
-        driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
-        driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw ))
-        gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(2.0)}))
-        gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(10.0)}))
+        driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos))
+        driver.x.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
+        driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw))
+        gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(-15.5)}))
+        gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(-200.0)}))
     }
 
     private fun scheduleTest() {
