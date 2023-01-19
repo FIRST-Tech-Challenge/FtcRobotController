@@ -111,11 +111,11 @@ public class Chassis {
         motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while(motorFL.isBusy() || motorFR.isBusy() || motorBL.isBusy() || motorBR.isBusy()){
-            if (Math.abs(motorFL.getCurrentPosition() - FL) < 400 || Math.abs(motorFR.getCurrentPosition() - FR) < 400 || Math.abs(motorBL.getCurrentPosition() - BL) < 400 || Math.abs(motorBR.getCurrentPosition() - BR) < 400) {
-                motorFL.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
-                motorFR.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
-                motorBL.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
-                motorBR.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
+            if (Math.abs(motorFL.getCurrentPosition() - FL) < 350 || Math.abs(motorFR.getCurrentPosition() - FR) < 350 || Math.abs(motorBL.getCurrentPosition() - BL) < 350 || Math.abs(motorBR.getCurrentPosition() - BR) < 350) {
+                motorFL.setPower(Math.abs(motorFL.getCurrentPosition()-FL)/1000.0 + 0.15);
+                motorFR.setPower(Math.abs(motorFL.getCurrentPosition()-FL)/1000.0 + 0.15);
+                motorBL.setPower(Math.abs(motorFL.getCurrentPosition()-FL)/1000.0 + 0.15);
+                motorBR.setPower(Math.abs(motorFL.getCurrentPosition()-FL)/1000.0 + 0.15);
             } else {
                 motorFL.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
                 motorFR.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
@@ -123,6 +123,44 @@ public class Chassis {
                 motorBR.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
             }
         }
+    }
+
+    public void forward(double power) {
+        motorFL.setPower(power);
+        motorFR.setPower(power);
+        motorBL.setPower(power);
+        motorBR.setPower(power);
+    }
+
+    public void strafe(double power) {
+        motorFL.setPower(power);
+        motorFR.setPower(-power);
+        motorBL.setPower(-power);
+        motorBR.setPower(power);
+    }
+
+    public void turn(double power) {
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorFL.setPower(power);
+        motorFR.setPower(-power);
+        motorBL.setPower(power);
+        motorBR.setPower(-power);
+    }
+
+    public void stop() {
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorFL.setPower(0);
+        motorFR.setPower(0);
+        motorBL.setPower(0);
+        motorBR.setPower(0);
     }
 
     public static void resetEncoder() {

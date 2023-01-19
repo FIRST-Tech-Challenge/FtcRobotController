@@ -111,6 +111,27 @@ public class Arm {
             }
     }
 
+    public void armTriggers(Gamepad gamepad) {
+        leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (gamepad.left_trigger > 0) {
+            armTarget = getCurrentPosition();
+
+            leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            leftLift.setPower(0.0);
+            rightLift.setPower(0.0);
+        }
+
+        if (gamepad.right_trigger > 0) {
+            armTarget = getCurrentPosition();
+
+            leftLift.setPower(1.0);
+            rightLift.setPower(1.0);
+        }
+    }
+
     public int getCurrentPosition(){ return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition()) / 2; }
 
     public int getTargetPosition(){ return (leftLift.getTargetPosition() + rightLift.getTargetPosition()) / 2; }

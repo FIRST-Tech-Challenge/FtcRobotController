@@ -88,6 +88,8 @@ public class Autonomous_root extends LinearOpMode {
             chassis.resetEncoder();
             chassis.runToPosition(-2000, -2000, -2000, -2000);
 
+            arm.runToPosition(arm.lowJunction);
+
             for(int i=0; i<1; i++){
                 //RIGHT BLUE
                 chassis.runToPosition(-1700, -2300, -1700, -2300);
@@ -110,7 +112,7 @@ public class Autonomous_root extends LinearOpMode {
                 chassis.stop();
 
                 chassis.resetEncoder();
-                chassis.runToPosition(-200,-200,-200,-200);
+                chassis.runToPosition(-400,-400,-400,-400);
                 chassis.stop();
 
                 arm.openGripper();
