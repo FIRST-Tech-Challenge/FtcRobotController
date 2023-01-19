@@ -22,6 +22,7 @@
 package org.firstinspires.ftc.teamcode.TeleOps.AprilTags;
 
 import org.opencv.calib3d.Calib3d;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
@@ -102,8 +103,12 @@ public class PowerPlay_AprilTagDetectionPipeline extends OpenCvPipeline
     @Override
     public Mat processFrame(Mat input)
     {
+        Mat output = new Mat();
         // Convert to greyscale
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
+        //Rotation
+        // Core.rotate(input,output,Core.ROTATE_90_CLOCKWISE);
+       // input = output;
 
         synchronized (decimationSync)
         {
