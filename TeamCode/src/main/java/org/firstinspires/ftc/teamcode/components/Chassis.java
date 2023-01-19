@@ -125,6 +125,44 @@ public class Chassis {
         }
     }
 
+    public void forward(double power) {
+        motorFL.setPower(power);
+        motorFR.setPower(power);
+        motorBL.setPower(power);
+        motorBR.setPower(power);
+    }
+
+    public void strafe(double power) {
+        motorFL.setPower(power);
+        motorFR.setPower(-power);
+        motorBL.setPower(-power);
+        motorBR.setPower(power);
+    }
+
+    public void turn(double power) {
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorFL.setPower(power);
+        motorFR.setPower(-power);
+        motorBL.setPower(power);
+        motorBR.setPower(-power);
+    }
+
+    public void stop() {
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorFL.setPower(0);
+        motorFR.setPower(0);
+        motorBL.setPower(0);
+        motorBR.setPower(0);
+    }
+
     public static void resetEncoder() {
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
