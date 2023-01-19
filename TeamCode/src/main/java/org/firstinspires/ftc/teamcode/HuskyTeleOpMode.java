@@ -170,29 +170,15 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
             //OTHER CONTROLS --------------------------------------------------------------------------------------------
 
-
-             // arm encoder preset values
-            // Cone take position
-            if(gamepad1.a) {
-                huskyBot.clawGrab.setPosition(CLAW_GRAB_OPEN_POSITION);
-                huskyBot.clawLift.setPosition(0.85);
-                setArmPosition(-115, -1550);
-            }
-            // Small junction position
-            if(gamepad1.x){
-                setArmPosition(473,  0);
-                huskyBot.clawLift.setPosition(0.55);
-            }
-            // Medium junction position
-            if(gamepad1.b) {
-                setArmPosition(846, -1000);
-                huskyBot.clawLift.setPosition(0.10);
-            }
-            // High junction position
-            if(gamepad1.y) {
-                setArmPosition(((int) ARM_LIFT_MAX_POSITION), -3240);
-                huskyBot.clawLift.setPosition(0.35);
-            }
+            // arm encoder preset values
+//            if(gamepad1.y)
+//                setArmPosition(-115, 0.9, -1414);
+//            if(gamepad1.x)
+//                setArmPosition(473, 0.55, 0);
+//            if(gamepad1.a)
+//                setArmPosition(846, 0.10, -1000);
+//            if(gamepad1.b)
+//                setArmPosition(((int) ARM_LIFT_MAX_POSITION), 0.35, -3240);
 
 
 
