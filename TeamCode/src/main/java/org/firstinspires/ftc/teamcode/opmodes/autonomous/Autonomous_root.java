@@ -85,8 +85,6 @@ public class Autonomous_root extends LinearOpMode {
             arm.closeGripper();
             chassis.runToPosition(-100, -100, -100, -100);
 
-            arm.runToPosition(arm.middleJunction);
-
             chassis.resetEncoder();
             chassis.runToPosition(-2000, -2000, -2000, -2000);
 
@@ -96,9 +94,9 @@ public class Autonomous_root extends LinearOpMode {
 
                 vision.setPoleDetector();
 
-                //微調整
+                //微調整(Small Adjustment)
                 while(Math.abs(vision.differenceX()) != 0) {
-                    double power = (vision.differenceX() > 0) ? 0.1 : -0.1;
+                    double power = (vision.differenceX() > 0) ? 0.2 : -0.2;
                     chassis.turn(power);
 
                     telemetry.addData("difference", vision.differenceX());
