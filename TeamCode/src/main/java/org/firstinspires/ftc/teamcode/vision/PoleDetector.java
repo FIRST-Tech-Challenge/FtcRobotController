@@ -6,6 +6,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -19,6 +20,7 @@ public class PoleDetector extends OpenCvPipeline
     Telemetry telemetry;
     public PoleDetector(Telemetry t) {telemetry = t;}
     Mat mat = new Mat();
+    Rect maxRect = new Rect();
 
     @Override
     public Mat processFrame(Mat input)
@@ -56,26 +58,36 @@ public class PoleDetector extends OpenCvPipeline
             Imgproc.convexHull(initialContours.get(i), hull);
             if(hull.total() >= 10){
                 finalContours.add(initialContours.get(i));
+                Imgproc.putText(mat, String.valueOf(hull.total()), initialContours.get(i).toArray()[0], 1, 1, new Scalar(0, 255, 0));
                 Imgproc.drawContours(mat, initialContours, i, new Scalar(255, 255, 255), 2);
             }
         }
 
         MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[finalContours.size()];
         Rect[] boundRect = new Rect[finalContours.size()];
-        Rect maxRect = new Rect();
         for (int j = 0; j < finalContours.size(); j++) {
             contoursPoly[j] = new MatOfPoint2f();
             Imgproc.approxPolyDP(new MatOfPoint2f(finalContours.get(j).toArray()), contoursPoly[j], 3, true);
             boundRect[j] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[j].toArray()));
-            Imgproc.putText(mat, String.valueOf(hull.total()), finalContours.get(j).toArray()[0], 1, 1, new Scalar(0, 255, 0));
             if(boundRect[j].area() > maxRect.area()) maxRect = boundRect[j];
             Imgproc.rectangle(mat, boundRect[j], new Scalar(255, 255, 255));
         }
         Imgproc.rectangle(mat, maxRect, new Scalar(255, 0, 0), 2);
+        Imgproc.circle(mat, new Point(maxRect.x + (maxRect.width/2), maxRect.y + (maxRect.height/2)), 1, new Scalar(255, 0, 255), 3);
 
-        telemetry.addLine(String.valueOf(finalContours.size()));
+        telemetry.addData("contours size", String.valueOf(finalContours.size()));
         telemetry.update();
 
         return mat;
+    }
+
+    public int differenceX () {
+        int difference = middleX() - mat.width()/2;
+        if(difference < 5) mat.release();
+        return difference;
+    }
+
+    public int middleX () {
+        return maxRect.x + (maxRect.width/2);
     }
 }

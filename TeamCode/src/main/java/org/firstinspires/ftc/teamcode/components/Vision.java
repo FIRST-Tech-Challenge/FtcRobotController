@@ -1,46 +1,55 @@
 package org.firstinspires.ftc.teamcode.components;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.vision.PoleDetector;
 import org.firstinspires.ftc.teamcode.vision.SleeveDetector;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
 public class Vision {
 
+    //Distance sensor
+    private DistanceSensor distanceSensor;
+
     //"Webcam 1"
-    private static OpenCvCamera camera;
+    private OpenCvCamera camera;
+    private Telemetry telemetry;
 
-    public Vision(OpenCvCamera openCvCamera){
+    public Vision(OpenCvCamera openCvCamera, Telemetry t, DistanceSensor d){
+        this.distanceSensor = d;
         this.camera = openCvCamera;
+        this.telemetry = t;
     }
-    static SleeveDetector aprilTagDetectionPipeline;
 
-    static AprilTagDetection tagOfInterest = null;
+    SleeveDetector aprilTagDetectionPipeline;
+    PoleDetector poleDetector;
+
+    AprilTagDetection tagOfInterest = null;
 
     //c&p :(
     //Convert from the counts per revolution of the encoder to counts per inch
-    static final double HD_COUNTS_PER_REV = 28;
-    static final double DRIVE_GEAR_REDUCTION = 2-0.15293;
-    static final double WHEEL_CIRCUMFERENCE_MM = 90 * Math.PI;
-    static final double DRIVE_COUNTS_PER_MM = (HD_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE_MM;
+    final double HD_COUNTS_PER_REV = 28;
+    final double DRIVE_GEAR_REDUCTION = 2-0.15293;
+    final double WHEEL_CIRCUMFERENCE_MM = 90 * Math.PI;
+    final double DRIVE_COUNTS_PER_MM = (HD_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE_MM;
 
     // Lens intrinsics
     // NOTE: this calibration is for the C920 webcam at 800x448.
-    static final double fx = 578.272;
-    static final double fy = 578.272;
-    static final double cx = 402.145;
-    static final double cy = 221.506;
+    final double fx = 578.272;
+    final double fy = 578.272;
+    final double cx = 402.145;
+    final double cy = 221.506;
 
     // UNITS ARE METERS
-    static double tagsize = 0.166;
+    double tagsize = 0.166;
 
-    public static void init() {
+    public void init() {
         aprilTagDetectionPipeline = new SleeveDetector(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -57,7 +66,14 @@ public class Vision {
         });
     }
 
-    public static void searchTags() {
+    public void setPoleDetector() {
+        poleDetector = new PoleDetector(telemetry);
+        camera.setPipeline(poleDetector);
+    }
+
+    public int differenceX() { return poleDetector.differenceX(); }
+
+    public void searchTags() {
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
         for(AprilTagDetection tag : currentDetections) {
@@ -68,8 +84,12 @@ public class Vision {
         }
     }
 
-    public static int tagId() {
+    public int tagId() {
         if(tagOfInterest != null) return tagOfInterest.id;
         else return -1;
+    }
+
+    public double distance() {
+        return distanceSensor.getDistance(DistanceUnit.MM);
     }
 }

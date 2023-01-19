@@ -1,20 +1,25 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Vision;
+import org.firstinspires.ftc.teamcode.vision.PoleDetector;
 import org.firstinspires.ftc.teamcode.vision.SleeveDetector;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
@@ -35,6 +40,7 @@ public class Autonomous_root extends LinearOpMode {
     @Override
     public void runOpMode() {
         // init chassis
+        DistanceSensor distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         DcMotor motorFL = hardwareMap.get(DcMotor.class, "motorFL");
         DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBL");
@@ -52,7 +58,7 @@ public class Autonomous_root extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        Vision vision = new Vision(camera);
+        Vision vision = new Vision(camera, telemetry, distanceSensor);
         vision.init();
 
         telemetry.addLine("waiting to start!");
@@ -77,21 +83,42 @@ public class Autonomous_root extends LinearOpMode {
 
         while(opModeIsActive() && !parked) {
             arm.closeGripper();
-
-            chassis.runToPosition(-50, -50, -50, -50);
-
-            sleep(500);
-
-            //arm.runToPosition(200);
+            chassis.runToPosition(-100, -100, -100, -100);
 
             chassis.resetEncoder();
+            chassis.runToPosition(-2000, -2000, -2000, -2000);
+
+            for(int i=0; i<1; i++){
+                //RIGHT BLUE
+                chassis.runToPosition(-1700, -2300, -1700, -2300);
+
+                vision.setPoleDetector();
+
+                //微調整(Small Adjustment)
+                while(Math.abs(vision.differenceX()) != 0) {
+                    double power = (vision.differenceX() > 0) ? 0.2 : -0.2;
+                    chassis.turn(power);
+
+                    telemetry.addData("difference", vision.differenceX());
+                    telemetry.update();
+                }
+                telemetry.addLine("aligned!");
+                telemetry.update();
+
+                arm.runToPosition(arm.highJunction);
+
+                chassis.stop();
+
+                chassis.resetEncoder();
+                chassis.runToPosition(-200,-200,-200,-200);
+                chassis.stop();
+
+                arm.openGripper();
+                arm.runToPosition(0);
+            }
 
             if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
             else if (vision.tagId() == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
-
-            chassis.resetEncoder();
-
-            chassis.runToPosition(-1500, -1500, -1500, -1500);
 
             telemetry.addLine("parked!");
 
