@@ -163,7 +163,10 @@ public class PipePoleTracker extends OpenCvPipeline {
                 //this little thing is so the submat is retained without rerunning all the below stuff
                 if (levelString.equals("two") && level2Assignment == true) {
 
-                    //TODO - Another test of the system is to remove the submat assignment and see if it still works (leave input as is)
+                    lowestX = 112;
+                    highestX = 336;
+                    focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
+
                     input = input.submat(focusRect);
                     inputMask = inputMask.submat(focusRect);
 
@@ -171,12 +174,16 @@ public class PipePoleTracker extends OpenCvPipeline {
                     y_resolution = focusRect.height;
 
                     percentColor = ((Core.countNonZero(inputMask))/focusRect.area())*100;
+
+
                 }
 
                 if (levelString.equals("two") && level2Assignment == false && focusRect != null) {
 
-                    //TODO (potential fix) if it's some how focusRect, try re-declaring focusRect here with lowest/highestX/Y
-                    //TODO Another another test is run the submat code, and get ride of all the calculations to see if the assigment is right
+                    lowestX = 112;
+                    highestX = 336;
+                    focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
+
                     input = input.submat(focusRect);
                     inputMask = inputMask.submat(focusRect);
 
@@ -558,6 +565,22 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                     Imgproc.ellipse(inputOriginal, new RotatedRect(objectCenters[indexOfBiggest], new Size(8, 8), 180), blue, Imgproc.FILLED);
 
+                    //Y and X are inverted for the grid.... my bad
+                    largestObjectWidth = 0;
+                    largestObjectLowestX = gridX;
+                    largestObjectHighestX = 0;
+                    for(int i = 0; i < objectSizes[indexOfBiggest]; i++) {
+                        if (objects.get(indexOfBiggest).get(i).y < largestObjectLowestX) {
+                            largestObjectLowestX = (int) objects.get(indexOfBiggest).get(i).y;
+                        }
+                        if (objects.get(indexOfBiggest).get(i).y > largestObjectHighestX) {
+                            largestObjectHighestX = (int) objects.get(indexOfBiggest).get(i).y;
+                        } else {
+
+                        }
+                    }
+                    largestObjectWidth = largestObjectHighestX - largestObjectLowestX + 1;
+
                     //If we are in level one, we continue drawing a rectangle around the largest object (prep for level 2 & 3)
                     if (levelString.equals("one")) {
 
@@ -617,10 +640,7 @@ public class PipePoleTracker extends OpenCvPipeline {
 
 
 
-//                        focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
-//                        Imgproc.rectangle(inputOriginal, focusRect, red, 2);
-
-
+                        focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 
 
                     }
@@ -634,7 +654,6 @@ public class PipePoleTracker extends OpenCvPipeline {
                 System.out.println("--------------------highestY " + highestY);
                 System.out.println("focusRect.x: " + focusRect.x);
 
-                focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 
             }
             //There are 4 requirements for level3: level2 is true, robot is aligned, robot is close enough, and the imu has recorded a value
@@ -791,6 +810,9 @@ public class PipePoleTracker extends OpenCvPipeline {
         return largestSize;
     }
 
+    public static int getLargestObjectWidth(){
+        return largestObjectWidth;
+    }
 
 
 }

@@ -83,6 +83,10 @@ public class Variables {
     public static int box_height = 0;
     public static int centerX;
     public static int largestSize = 0;
+    public static int largestObjectWidth = 0;
+    public static int largestObjectLowestX = 640;
+    public static int largestObjectHighestX = 0;
+
 
     public static int boxBL_x;
     public static int boxBL_y;
