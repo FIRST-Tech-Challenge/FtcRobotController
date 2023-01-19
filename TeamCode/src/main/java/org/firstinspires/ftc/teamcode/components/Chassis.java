@@ -112,10 +112,10 @@ public class Chassis {
 
         while(motorFL.isBusy() || motorFR.isBusy() || motorBL.isBusy() || motorBR.isBusy()){
             if (Math.abs(motorFL.getCurrentPosition() - FL) < 400 || Math.abs(motorFR.getCurrentPosition() - FR) < 400 || Math.abs(motorBL.getCurrentPosition() - BL) < 400 || Math.abs(motorBR.getCurrentPosition() - BR) < 400) {
-                motorFL.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
-                motorFR.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
-                motorBL.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
-                motorBR.setPower(Math.abs(motorFL.getCurrentPosition()-FL) + 0.1);
+                motorFL.setPower(Math.abs(motorFL.getCurrentPosition()-FL)/1000.0 + 0.1);
+                motorFR.setPower(Math.abs(motorFL.getCurrentPosition()-FL)/1000.0 + 0.1);
+                motorBL.setPower(Math.abs(motorFL.getCurrentPosition()-FL)/1000.0 + 0.1);
+                motorBR.setPower(Math.abs(motorFL.getCurrentPosition()-FL)/1000.0 + 0.1);
             } else {
                 motorFL.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
                 motorFR.setPower(0.5/(1+Math.pow(3,-3*runtime.seconds())));
