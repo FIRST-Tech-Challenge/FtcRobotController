@@ -30,7 +30,7 @@ public class TourneyDrive extends LinearOpMode {
     static final double MIN_POS2    =     0;
 
     static final double MIN_LIFT_POS = 0;
-    static final double MAX_LIFT_POS = 173 * 33;
+    static final double MAX_LIFT_POS = 173 * 34.5;
 
     double position = 1;
     double position2 = 0;
@@ -58,6 +58,10 @@ public class TourneyDrive extends LinearOpMode {
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -99,6 +103,8 @@ public class TourneyDrive extends LinearOpMode {
             boolean adjustRightStrafe = gamepad1.dpad_right;
             boolean adjustBackward = gamepad1.dpad_down;
             boolean adjustForward = gamepad1.dpad_up;
+            boolean adjustLeftTurn = gamepad1.left_bumper;
+            boolean adjustRightTurn = gamepad1.right_bumper;
 
             double liftFast = -gamepad2.left_stick_y;
             double liftSlow = -gamepad2.right_stick_y;
@@ -111,7 +117,7 @@ public class TourneyDrive extends LinearOpMode {
                     if(liftFast > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS){
                             liftMotor.setPower(1);
                     }else if(liftFast < -.05 && liftMotor.getCurrentPosition() > MIN_LIFT_POS){
-                            liftMotor.setPower(-.8);
+                            liftMotor.setPower(-1);
                     }else{
                         liftMotor.setPower(0);
                     }
@@ -155,6 +161,16 @@ public class TourneyDrive extends LinearOpMode {
                 lAdjust = -.25;
                 lbAdjust = .25;
                 rAdjust = .25;
+                rbAdjust = -.25;
+            }else if(adjustLeftTurn){
+                lAdjust = -.25;
+                lbAdjust = -.25;
+                rAdjust = .25;
+                rbAdjust = .25;
+            }else if(adjustRightTurn){
+                lAdjust = .25;
+                lbAdjust = .25;
+                rAdjust = -.25;
                 rbAdjust = -.25;
             }else{
                 lAdjust = 0;
