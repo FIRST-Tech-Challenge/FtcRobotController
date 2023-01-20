@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Chassis {
-    public static DcMotor motorFL;
-    public static DcMotor motorFR;
-    public static DcMotor motorBL;
-    public static DcMotor motorBR;
+    public DcMotor motorFL;
+    public DcMotor motorFR;
+    public DcMotor motorBL;
+    public DcMotor motorBR;
 
-    private static ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
     public Chassis(DcMotor mFL, DcMotor mFR, DcMotor mBL, DcMotor mBR){
         this.motorFL = mFL;
@@ -19,7 +19,7 @@ public class Chassis {
         this.motorBR = mBR;
     }
 
-    public static void init() {
+    public void init() {
         motorBR.setDirection(DcMotor.Direction.REVERSE);
         motorFR.setDirection(DcMotor.Direction.REVERSE);
 
@@ -34,7 +34,7 @@ public class Chassis {
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public static void joyStick(Gamepad gamepad) {
+    public void joyStick(Gamepad gamepad) {
         double left_y = gamepad.left_stick_y;
         double left_x = gamepad.left_stick_x;
         double strafe_side = gamepad.right_stick_x;
@@ -97,7 +97,7 @@ public class Chassis {
         }
     }
 
-    public static void runToPosition(int FL, int FR, int BL, int BR) {
+    public void runToPosition(int FL, int FR, int BL, int BR) {
         runtime.reset();
 
         motorFL.setTargetPosition(FL);
@@ -163,7 +163,7 @@ public class Chassis {
         motorBR.setPower(0);
     }
 
-    public static void resetEncoder() {
+    public void resetEncoder() {
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
