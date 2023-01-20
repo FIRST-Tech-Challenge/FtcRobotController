@@ -196,8 +196,11 @@ public abstract class BaseOpMode extends LinearOpMode {
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
             // center the cone on the junction top
-            driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
-
+            if(pipeline.detected) {
+                driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
+            }else{
+                break;
+            }
         // while the cone isn't centered over the junction
         } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
 
