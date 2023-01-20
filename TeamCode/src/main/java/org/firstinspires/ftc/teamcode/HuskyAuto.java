@@ -29,7 +29,13 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.HuskyBot.CLAW_LIFT_START_POSITION;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous(name = "Auto", group = "Auto", preselectTeleOp = "Husky TeleOpMode")
 public class HuskyAuto extends HuskyAutoBase {
@@ -40,13 +46,48 @@ public class HuskyAuto extends HuskyAutoBase {
         waitForStart();
         runtime.reset();
 
+        huskyBot.clawLift.setPosition(1.0);
+
         this.parkLocation = getParkLocation();
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        // Backup Plan Trajectory
+        Trajectory backupPlanTrajA = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(8)
+                .build();
+        Trajectory backupPlanTrajB = drive.trajectoryBuilder(backupPlanTrajA.end())
+                .strafeLeft(8)
+                .build();
+
+        // Location 1 Trajectory
+        Trajectory location1TrajA = drive.trajectoryBuilder(new Pose2d())
+                .forward(26)
+                .build();
+        Trajectory location1TrajB = drive.trajectoryBuilder(location1TrajA.end())
+                .strafeLeft(24)
+                .build();
+
+        // Location 2 Trajectory
+        Trajectory location2TrajA = drive.trajectoryBuilder(new Pose2d())
+                .forward(26)
+                .build();
+
+        // Location 3 Trajectory
+        Trajectory location3TrajA = drive.trajectoryBuilder(new Pose2d())
+                .forward(26)
+                .build();
+        Trajectory location3TrajB = drive.trajectoryBuilder(location3TrajA.end())
+                .strafeRight(24)
+                .build();
+
+
 
         // Backup plan for apriltag detection (move the robot little bit right and try to detect again
         if(this.parkLocation == Location.LOCATION_0){
-            encoderStrafe(AUTO_STRAFE_SPEED, BACKUP_STRAFE_DISTANCE, 2);
+            drive.followTrajectory(backupPlanTrajA);
             this.parkLocation = getParkLocation();
-            encoderStrafe(AUTO_STRAFE_SPEED, -BACKUP_STRAFE_DISTANCE, 2);
+            drive.followTrajectory(backupPlanTrajB);
         }
 
         // Set the park location to 2 if it couldn't detect the apriltag even after the backup plan
@@ -57,15 +98,15 @@ public class HuskyAuto extends HuskyAutoBase {
 
         switch (this.parkLocation){
             case LOCATION_1:
-                encoderDrive(AUTO_DRIVE_SPEED, FORWARD_DISTANCE, 2);
-                encoderStrafe(AUTO_STRAFE_SPEED, -STRAFE_DISTANCE, 2);
+                drive.followTrajectory(location1TrajA);
+                drive.followTrajectory(location1TrajB);
                 break;
             case LOCATION_2:
-                encoderDrive(AUTO_DRIVE_SPEED, FORWARD_DISTANCE, 2);
+                drive.followTrajectory(location2TrajA);
                 break;
             case LOCATION_3:
-                encoderDrive(AUTO_DRIVE_SPEED, FORWARD_DISTANCE, 2);
-                encoderStrafe(AUTO_STRAFE_SPEED, STRAFE_DISTANCE, 2);
+                drive.followTrajectory(location3TrajA);
+                drive.followTrajectory(location3TrajB);
                 break;
         }
 
