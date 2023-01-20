@@ -4,14 +4,10 @@ public class Constants {
     // ratios
     static final double TICKS_PER_REVOLUTION = 537.6; // Neverest orbital 20, 7 pulse per revolution
     static final double GEAR_RATIO = 1.0;
-    static final double TICKS_PER_MOTOR_REVOLUTION = 560.0;
     static final double WHEEL_DIAMETER = 4.0; // inches
-    static final double MM_PER_REVOLUTION = Math.PI * WHEEL_DIAMETER;
-    static final double TICKS_PER_WHEEL_REVOLUTION = TICKS_PER_MOTOR_REVOLUTION / GEAR_RATIO;
     static final double TICKS_PER_INCH =  (TICKS_PER_REVOLUTION * GEAR_RATIO) / (WHEEL_DIAMETER * Math.PI);
     static final double INCHES_PER_REVOLUTION = Math.PI * WHEEL_DIAMETER;
     static final double INCHES_PER_TICK = INCHES_PER_REVOLUTION / TICKS_PER_REVOLUTION;
-    static final double COUNTS_PER_MM = TICKS_PER_WHEEL_REVOLUTION / MM_PER_REVOLUTION;
 
     // controls
     public static final double MINIMUM_JOYSTICK_POWER = 0.0;
@@ -29,7 +25,6 @@ public class Constants {
     public static final double POSITION_TOLERANCE_MM = 2*25.4;
 
     // Servo positions
-    // todo change positions later we do not know them haha
-    public static final double OPEN_CLAW = 1;
-    public static final double CLOSED_CLAW = 0;
+    public static final double OPEN_CLAW = 1.0;
+    public static final double CLOSED_CLAW = 0.0;
 }

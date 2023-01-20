@@ -26,3 +26,4 @@ public class AutoDetectPark extends BaseAutonomous {
         driveInches(0, 30);
     }
 }
+

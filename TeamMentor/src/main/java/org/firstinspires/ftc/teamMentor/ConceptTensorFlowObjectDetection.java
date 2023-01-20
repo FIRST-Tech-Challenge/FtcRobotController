@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamMentor;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -51,7 +52,7 @@ import java.util.List;
  * is explained below.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-// @Disabled
+//@Disabled
 public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
     /*
@@ -61,7 +62,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "PowerPlay_BCDM.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
     private static final String[] LABELS = {
@@ -84,7 +85,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
      */
     private static final String VUFORIA_KEY =
             //" -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
-    // Vuforia licence key - Truong
+            // Vuforia licence key - Truong
             "AdTQ1zz/////AAABmcsU0JSsfUAAnZVqALQznloFPRzK4IDs9AKHiU80F9ncKlBHZBPTN3XWUSLbcsKUfy/iW4P/y64OCRHrAiUTE430LhFnx8rGRtKUv8P03XTaE11Xj9gbN5vThAIBcrnk/CovUIBFJjptCseciz/akh2mWHAlNznx5kWdP0QbFRi9i6fZffoHXaBXYERvzyK/wYYxMLuwVL+qBGIuRzJRS4f2b6RZ8cq/SEs6Ulfg5HQgV24KqFA65+T7iGXKCrdQMi0eUN0Oc4DmrKrHKF55bEtA108/jh8cz1tAwsrAvjle6JUX+yUQ4RDX8Zv/GpuWdek3VFGxumvh8EdQAmZqUmaWdcrpHLXMcftKdOjyvyUf";
 
     /**

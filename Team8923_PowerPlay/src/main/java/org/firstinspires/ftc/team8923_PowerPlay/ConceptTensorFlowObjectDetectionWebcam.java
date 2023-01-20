@@ -111,7 +111,6 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
                 }
             }
         }
-    }
 
     /**
      * Initialize the Vuforia localization engine.

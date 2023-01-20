@@ -3,6 +3,8 @@ package org.firstinspires.ftc.team8923_PowerPlay;
 import static org.firstinspires.ftc.team8923_PowerPlay.Constants.CLOSED_CLAW;
 import static org.firstinspires.ftc.team8923_PowerPlay.Constants.OPEN_CLAW;
 
+import com.qualcomm.robotcore.util.Range;
+
 abstract public class BaseTeleOp extends BaseOpMode {
 
     private boolean isSlowMode = false;
@@ -10,6 +12,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
     private Toggle driveSpeedToggle = new Toggle();
 
     double driveSpeed = 0.8;
+
     double mechanismSpeed = 0.9;
 
     public void driveRobot() {
