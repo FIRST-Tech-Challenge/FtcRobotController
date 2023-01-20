@@ -28,7 +28,7 @@ public class EnergizeV2TeleOp_UPDATED extends LinearOpMode {
     double NEGATIVE_INCREMENT = -0.2;
     double MAX_SPEED = 0.7;
     double MIN_SPEED = 0.0;
-
+    
     double MAX_DRIVE_POWER = 0.75;
 
     double PRECISION_MODE_THROTTLE = 4;
