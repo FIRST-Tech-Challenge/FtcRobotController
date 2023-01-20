@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 
 @Disabled
-@TeleOp(name = "TeleOpTest", group = "Test")
+@TeleOp(name = "TeleOpTest")
 public class TeleOpTest extends BaseTeleOp {
 
     @Override

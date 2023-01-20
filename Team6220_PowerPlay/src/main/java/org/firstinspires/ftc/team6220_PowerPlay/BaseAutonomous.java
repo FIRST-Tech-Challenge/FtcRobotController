@@ -122,8 +122,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
             // slides going down - full speed
             if (error < 0) {
-                motorLeftSlides.setPower(-0.75);
-                motorRightSlides.setPower(-0.75);
+                motorLeftSlides.setPower(-1.0);
+                motorRightSlides.setPower(-1.0);
             // slides going up - proportional control
             } else {
                 motorLeftSlides.setPower(motorPower);
