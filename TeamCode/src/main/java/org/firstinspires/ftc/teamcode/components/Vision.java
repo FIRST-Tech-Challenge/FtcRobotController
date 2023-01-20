@@ -71,8 +71,8 @@ public class Vision {
         camera.setPipeline(poleDetector);
     }
 
-    public int differenceX() { return poleDetector.differenceX(); }
-    public int middleX() { return poleDetector.middleX(); }
+    public double differenceX() { return poleDetector.differenceX(); }
+    public double middleX() { return poleDetector.middleX(); }
 
     public void searchTags() {
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();

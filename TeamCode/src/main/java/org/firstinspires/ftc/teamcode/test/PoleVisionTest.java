@@ -40,6 +40,7 @@ public class PoleVisionTest extends LinearOpMode {
         telemetry.addLine("waiting to start!");
         telemetry.update();
 
+        waitForStart();
 
         while(opModeIsActive()) {
             chassis.turn(0.1);

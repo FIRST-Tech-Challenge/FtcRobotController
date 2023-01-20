@@ -75,18 +75,15 @@ public class PoleDetector extends OpenCvPipeline
         Imgproc.rectangle(mat, maxRect, new Scalar(255, 0, 0), 2);
         Imgproc.circle(mat, new Point(maxRect.x + (maxRect.width/2), maxRect.y + (maxRect.height/2)), 1, new Scalar(255, 0, 255), 3);
 
-        telemetry.addData("maxRect", maxRect.area());
-        telemetry.update();
-
         return mat;
     }
 
-    public int differenceX () {
-        int difference = middleX() - (mat.width()/2);
+    public double differenceX () {
+        double difference = middleX() + (mat.width()/2.0);
         return difference;
     }
 
-    public int middleX () {
-        return maxRect.x + (maxRect.width/2);
+    public double middleX () {
+        return (double) maxRect.x - (maxRect.width/2.0);
     }
 }
