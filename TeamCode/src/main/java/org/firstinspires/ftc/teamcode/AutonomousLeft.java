@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -48,26 +49,25 @@ public class AutonomousLeft extends LinearOpMode {
 
         // initialize the driveController (we do that after initializing the camera in order to enable "camera stream" in the drive controller)
         RobotController robotController = new RobotController(hardwareMap, telemetry);
-
-        Pose2d startPose = new Pose2d(-61.4, -30.7, 0);
-        Pose2d startPose2 = new Pose2d(-61.4, -35, 0);
-        Pose2d scoringPose = new Pose2d(-3.5, -37.5, Math.toRadians(-77));
-
-        Pose2d parking1 = new Pose2d(-13, -13.8, 0);
-        Pose2d parking2 = new Pose2d(-13, -37.4, 0);
-        Pose2d parking3 = new Pose2d(-13, -61  , 0);
-
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(startPose);
 
-        TrajectorySequence start2ToScore = drive.trajectorySequenceBuilder(startPose2).lineToLinearHeading(scoringPose).build();
+        Pose2d startPose = new Pose2d(30.7, 61.4, Math.toRadians(-90));
+        Pose2d scoringPose = new Pose2d(37, 3, Math.toRadians(-164));
 
-        TrajectorySequence startToStart2 = drive.trajectorySequenceBuilder(startPose).lineToLinearHeading(startPose2).build();
+        Pose2d parking1 = new Pose2d(61  , 34, Math.toRadians(-90));
+        Pose2d parking2 = new Pose2d(37.4, 34, Math.toRadians(-90));
+        Pose2d parking3 = new Pose2d(13.8, 34, Math.toRadians(-90));
+
+        TrajectorySequence startToScore = drive.trajectorySequenceBuilder(startPose)
+                .splineToConstantHeading(new Vector2d(35, 58), Math.toRadians(-85))
+                .splineToSplineHeading(new Pose2d(37.5, 20, Math.toRadians(-105)), Math.toRadians(-90))
+                .splineToSplineHeading(scoringPose, Math.toRadians(-90)).build();
 
         TrajectorySequence scoringToParking1 = drive.trajectorySequenceBuilder(scoringPose).lineToLinearHeading(parking2).lineToLinearHeading(parking1).build();
         TrajectorySequence scoringToParking2 = drive.trajectorySequenceBuilder(scoringPose).lineToLinearHeading(parking2).build();
         TrajectorySequence scoringToParking3 = drive.trajectorySequenceBuilder(scoringPose).lineToLinearHeading(parking2).lineToLinearHeading(parking3).build();
 
+        drive.setPoseEstimate(startPose);
 
         waitForStart();
         if (isStopRequested()) return;
@@ -103,8 +103,7 @@ public class AutonomousLeft extends LinearOpMode {
 
             webcam.closeCameraDevice();
 
-            follow(startToStart2);
-            follow(start2ToScore);
+            follow(startToScore);
             robotController.elevatorController.start();
             robotController.autoCycle.start();
 
