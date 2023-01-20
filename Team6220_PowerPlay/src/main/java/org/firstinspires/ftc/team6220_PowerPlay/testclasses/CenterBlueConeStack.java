@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
@@ -10,8 +11,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-//@Disabled
-@Autonomous(name = "CenterBlueConeStack", group = "Test")
+@Disabled
+@Autonomous(name = "CenterBlueConeStack")
 public class CenterBlueConeStack extends BaseAutonomous {
 
     public RobotCameraPipeline robotCameraPipeline;
@@ -21,13 +22,15 @@ public class CenterBlueConeStack extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
         initialize();
 
+        //Initialize camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
-        robotCameraPipeline = new RobotCameraPipeline();
-        robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
-
+        //Set pipeline to the camera, and set the ranges
+        robotCameraPipeline = new RobotCameraPipeline(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
         camera.setPipeline(robotCameraPipeline);
+
+        //Start streaming camera
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -39,7 +42,7 @@ public class CenterBlueConeStack extends BaseAutonomous {
         });
 
         waitForStart();
-
+        //Center on the cone stack
         centerConeStack(robotCameraPipeline);
     }
 }

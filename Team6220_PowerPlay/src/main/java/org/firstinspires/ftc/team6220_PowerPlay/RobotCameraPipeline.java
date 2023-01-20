@@ -24,6 +24,12 @@ public class RobotCameraPipeline extends OpenCvPipeline {
     Mat hierarchy = new Mat();
     Mat mat = new Mat();
 
+    // constructor so you can set the ranges on initialize
+    public RobotCameraPipeline(Scalar lowerRange, Scalar upperRange) {
+        this.lowerRange = lowerRange;
+        this.upperRange = upperRange;
+    }
+
     // method used to set the ranges for the pipeline
     public void setRanges(Scalar lowerRange, Scalar upperRange) {
         this.lowerRange = lowerRange;

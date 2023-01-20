@@ -53,7 +53,7 @@ public class Constants {
     public static final int CONE_WIDTH = 350;
     public static final double CONE_CENTERING_KP = 0.035;
 
-    public static final int JUNCTION_TOP_TOLERANCE = 100;
+    public static final int JUNCTION_TOP_TOLERANCE = 25;
     public static final double JUNCTION_TOP_CENTERING_KP = 0.05;
 
     public static final Scalar LOWER_RED = new Scalar(170, 125, 50);
@@ -65,8 +65,8 @@ public class Constants {
     public static final Scalar LOWER_YELLOW = new Scalar(15, 75, 100);
     public static final Scalar UPPER_YELLOW = new Scalar(35, 255, 255);
 
-    public static final Scalar LOWER_BLACK = new Scalar(0, 0, 0);
-    public static final Scalar UPPER_BLACK = new Scalar(180, 255, 40);
+    public static final Scalar LOWER_BLACK = new Scalar(50, 0, 0);
+    public static final Scalar UPPER_BLACK = new Scalar(115, 255, 40);
 
     public static final Size BLUR_SIZE = new Size(5, 5);
 }

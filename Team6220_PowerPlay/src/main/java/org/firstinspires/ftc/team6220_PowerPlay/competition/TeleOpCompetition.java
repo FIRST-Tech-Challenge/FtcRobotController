@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 
-@TeleOp(name = "TeleOp Competition", group = "Competition")
+@TeleOp(name = "TeleOp Competition")
 public class TeleOpCompetition extends BaseTeleOp {
 
     @Override
