@@ -6,9 +6,16 @@ import static java.lang.Math.max;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Wheels {
+
+    public static final double TICKS_PER_ROTATION = 3611.2; // נמדד על ידי סיבוב הרובוט 20 פעם
+
+    public static final double WHEEL_DIAMETER_CM = 9.6;
+    public static final double WHEEL_CIRCUMFERENCE_CM = WHEEL_DIAMETER_CM * Math.PI;
+    public static final double MOTOR_ENCODER_RESOLUTION = 537.7;
+    public static final double TICKS_PER_CM = MOTOR_ENCODER_RESOLUTION / WHEEL_CIRCUMFERENCE_CM;
+
     private final DcMotor frontLeft;
     private final DcMotor frontRight;
     private final DcMotor backLeft;
@@ -25,8 +32,18 @@ public class Wheels {
         backRight = opMode.hardwareMap.get(DcMotor.class, "BackRight");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-        public void runWithIncoder() {
+        public void runWithEncoder() {
 //            frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //            frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //            backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -37,44 +54,149 @@ public class Wheels {
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
+        public  void stop(){
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
 
-    public void driveForword(int forword){
+            frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
-        driveWeelForword(frontRight,0.6, forword, "frontRight");
-        driveWeelForword(frontLeft,0.6, forword , "frontLeft");
-        driveWeelForword(backRight, 0.6, forword, "backRight");
-        driveWeelForword(backLeft, 0.6, forword, "backLeft");
-        opMode.telemetry.update();
+        public  void rotateByEncoder(double degrees, double power){
+            double toPosition = degrees/360 * TICKS_PER_ROTATION;
+            driveWheelToPosition(frontRight,power, -toPosition);
+            driveWheelToPosition(frontLeft,power, toPosition);
+            driveWheelToPosition(backRight, power, -toPosition);
+            driveWheelToPosition(backLeft, power, toPosition);
+            while (opMode.opModeIsActive() && motorsIsBussy()) {
+                opMode.telemetry.addData("Front Position",  "%7d :%7d",
+                        frontRight.getCurrentPosition(),
+                        frontLeft.getCurrentPosition());
+                opMode.telemetry.addData("Back Position",  "%7d :%7d",
+                        backRight.getCurrentPosition(),
+                        backLeft.getCurrentPosition());
+                opMode.telemetry.update();
+                opMode.idle();
+            }
+            stop();
+        }
+    public void driveForward(double distanceCM, double power){
+        double toPosition = distanceCM * TICKS_PER_CM;
+        driveWheelToPosition(frontRight,power, toPosition);
+        driveWheelToPosition(frontLeft,power, toPosition);
+        driveWheelToPosition(backRight, power, toPosition);
+        driveWheelToPosition(backLeft, power, toPosition);
+        while (opMode.opModeIsActive() && motorsIsBussy()) {
+            opMode.telemetry.addData("Front Position",  "%7d :%7d",
+                    frontRight.getCurrentPosition(),
+                    frontLeft.getCurrentPosition());
+            opMode.telemetry.addData("Back Position",  "%7d :%7d",
+                    backRight.getCurrentPosition(),
+                    backLeft.getCurrentPosition());
+            opMode.telemetry.update();
+            opMode.idle();
+        }
+        stop();
+    }
+    public void driveBackrword(double distanceCM, double power){
+        double toPosition = distanceCM * TICKS_PER_CM;
+        driveWheelToPosition(frontRight,power, -toPosition);
+        driveWheelToPosition(frontLeft,power, -toPosition);
+        driveWheelToPosition(backRight, power, -toPosition);
+        driveWheelToPosition(backLeft, power, -toPosition);
+        while (opMode.opModeIsActive() && motorsIsBussy()) {
+            opMode.telemetry.addData("Front Position",  "%7d :%7d",
+                    frontRight.getCurrentPosition(),
+                    frontLeft.getCurrentPosition());
+            opMode.telemetry.addData("Back Position",  "%7d :%7d",
+                    backRight.getCurrentPosition(),
+                    backLeft.getCurrentPosition());
+            opMode.telemetry.update();
+            opMode.idle();
+        }
+        stop();
     }
 
-    public void driveLeft(int left){
-        driveWeelLeft(frontRight,0.8 ,left, "frontRight");
-        driveWeelLeft(frontLeft,0.8 ,-left, "frontLeft");
-        driveWeelLeft(backRight,0.8 ,-left, "backRight");
-        driveWeelLeft(backLeft,0.8 ,left, "backLeft");
+    public void driveLeft(double distanceCM, double power){
+        double toPosition = distanceCM * TICKS_PER_CM;
+        driveWheelToPosition(frontRight,power ,toPosition);
+        driveWheelToPosition(frontLeft,power ,-toPosition);
+        driveWheelToPosition(backRight,power ,-toPosition);
+        driveWheelToPosition(backLeft,power ,toPosition);
+        while (opMode.opModeIsActive() && motorsIsBussy()) {
+            opMode.telemetry.addData("Front Position",  "%7d :%7d",
+                    frontRight.getCurrentPosition(),
+                    frontLeft.getCurrentPosition());
+            opMode.telemetry.addData("Back Position",  "%7d :%7d",
+                    backRight.getCurrentPosition(),
+                    backLeft.getCurrentPosition());
+            opMode.telemetry.update();
+            opMode.idle();
+        }
+        stop();
+    }
+    public void driveRight(double distanceCM, double power){
+        double toPosition = distanceCM * TICKS_PER_CM;
+        driveWheelToPosition(frontRight,power ,-toPosition);
+        driveWheelToPosition(frontLeft,power ,toPosition);
+        driveWheelToPosition(backRight,power ,toPosition);
+        driveWheelToPosition(backLeft,power ,-toPosition);
+        while (opMode.opModeIsActive() && motorsIsBussy()) {
+            opMode.telemetry.addData("Front Position",  "%7d :%7d",
+                    frontRight.getCurrentPosition(),
+                    frontLeft.getCurrentPosition());
+            opMode.telemetry.addData("Back Position",  "%7d :%7d",
+                    backRight.getCurrentPosition(),
+                    backLeft.getCurrentPosition());
+            opMode.telemetry.update();
+            opMode.idle();
+        }
+        stop();
+    }
+    public boolean motorsIsBussy(){
+        return  frontLeft  .isBusy() ||
+                frontRight .isBusy() ||
+                backLeft   .isBusy() ||
+                backRight  .isBusy();
+    }
+    public void driveByEncoder(){
+    }
+    private void driveWheelToPosition(DcMotor wheel, double power, double toPosition){
+        wheel.setTargetPosition((int) Math.round(toPosition) + wheel.getCurrentPosition());
+        wheel.setPower(power);
+        wheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    private void driveWheelToAbsolutePosition(DcMotor wheel, double power, double toPosition){
+        wheel.setTargetPosition((int) Math.round(toPosition));
+        wheel.setPower(power);
+        wheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
-    private void driveWeelLeft(DcMotor weel, double power, int left, String weelName){
-        weel.setTargetPosition(left);
-        weel.setPower(power);
-        weel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        opMode.telemetry.addData(weelName + " position: ", weel.getCurrentPosition());
-    }
-
-    private void driveWeelForword(DcMotor weel, double power, int forword, String weelName){
-
-        weel.setTargetPosition(forword);
-        weelsCurrentPosition = forword;
-        weel.setPower(power);
-        weel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        opMode.telemetry.addData(weelName + " position: ", weel.getCurrentPosition());
-     }
-
-    public void driveByJoystick(double x, double y, double rot) {
+    public double[] calculateMecanum(double x, double y, double rot){
         double fr = y - x - rot;
         double br = y + x - rot;
         double fl = y + x + rot;
         double bl = y - x + rot;
+        opMode.telemetry.addData("Front Position",  "%7d :%7d",
+                frontRight.getCurrentPosition(),
+                frontLeft.getCurrentPosition());
+        opMode.telemetry.addData("Back Position",  "%7d :%7d",
+                backRight.getCurrentPosition(),
+                backLeft.getCurrentPosition());
+        return new double[]{fr,br,fl,bl};
+
+    }
+    public void driveByJoystick(double x, double y, double rot) {
+        double[] wheelPower = calculateMecanum(x ,y ,rot);
+        double fr = wheelPower[0];
+        double br = wheelPower[1];
+        double fl = wheelPower[2];
+        double bl = wheelPower[3];
 
         double norm = max(max(abs(fr), abs(br)), max(abs(fr), abs(br)));
 

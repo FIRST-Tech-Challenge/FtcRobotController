@@ -29,13 +29,10 @@
 
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.hardware.Wheels;
 
 
 /**
@@ -51,7 +48,7 @@ import org.firstinspires.ftc.teamcode.hardware.Wheels;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Wheels Basic: Linear OpMode", group="Linear Opmode")
+@Autonomous(name="Wheels Basic: Linear OpMode", group="Linear Opmode")
 //@Disabled
 public class WheelsOpModeLinear extends LinearOpMode {
 
@@ -63,32 +60,41 @@ public class WheelsOpModeLinear extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Wheels w = new Wheels(this);
+        Wheels wheels = new Wheels(this);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         boolean robotPosition = true;
         boolean roboPosition2 = false;
 
-        w.runWithIncoder();
-        w.weelsCurrentPosition = 0;
+        wheels.runWithEncoder();
+        wheels.weelsCurrentPosition = 0;
 
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
-//        while (opModeIsActive()) {
-        while (!isStarted() && !isStopRequested()){
+        if (opModeIsActive()) {
 
-            w.driveLeft(1500);
-            telemetry.addData("hey i finish the first step", " ");
-            w.driveForword(-1000);
+
+            // Determine new target position, and pass to motor controller
+
+
+            // Turn On RUN_TO_POSITION
+
+            wheels.driveLeft(60, 0.6);
+
+            // reset the timeout time and start motion.
+
+                // Display it for the driver.
+
+            wheels.driveForward(120, 0.6);
 
             xAxis = gamepad1.left_stick_x;
             yAxis = -gamepad1.left_stick_y;
             rot = gamepad1.right_stick_x;
 
-            w.driveByJoystick(xAxis, yAxis, rot);
+            wheels.driveByJoystick(xAxis, yAxis, rot);
 
             telemetry.addData("Left JoyStick", "X: %f, Y: %f", xAxis, yAxis);
             telemetry.addData("Status", "Run Time: " + runtime.toString());

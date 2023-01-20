@@ -101,6 +101,10 @@ public class RobotDriveOpMode extends LinearOpMode {
 
             tevelRobot.elevator.setElevetorDown(gamepad2.right_trigger > 0.1);
 
+            if (gamepad1.dpad_left) {
+                tevelRobot.wheels.driveByJoystick(0,0, 0.5);
+            }
+
             telemetry.update();
             }
     }
