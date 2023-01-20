@@ -185,8 +185,6 @@ public class RobotManager {
         if (!movedStraight) {
             navigation.maneuver(
                     gamepads.getAnalogValues(),
-                    gamepads.getButtonState(GamepadWrapper.DriverAction.TURN_COUNTER_CLOCKWISE),
-                    gamepads.getButtonState(GamepadWrapper.DriverAction.TURN_CLOCKWISE),
                     robot);
         }
     }
