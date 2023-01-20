@@ -3,7 +3,7 @@ package teamcode.v1.auto
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.drive.KMecanumOdoDrive
 import teamcode.v1.subsystems.Arm
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
+import teamcode.v1.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
 
 class AutoRobot(startPose: Pose) {

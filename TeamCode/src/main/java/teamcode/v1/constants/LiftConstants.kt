@@ -7,7 +7,7 @@ object LiftConstants {
     @JvmField var ticksPerUnit = 1950.0/18.0
     @JvmField var homePos = 0.0
     @JvmField var groundPos = 0.0
-    @JvmField var lowPos = 9.0
+    @JvmField var lowPos = 0.0
     @JvmField var midPos = 5.0
     @JvmField var highPos = 15.5
     @JvmField var kP = 0.65

@@ -1,8 +1,7 @@
 package teamcode.mule
 
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
+import teamcode.v1.subsystems.Claw
 import teamcode.mule.subsystems.MuleArm
-import teamcode.mule.MuleHardware
 
 class MuleRobot() {
     val hardware = MuleHardware()

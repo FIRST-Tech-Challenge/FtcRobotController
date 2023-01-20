@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
 import teamcode.v1.auto.AutoHardware
 import teamcode.v1.constants.ArmConstants
 import teamcode.v1.constants.ClawConstants
+import teamcode.v1.constants.GuideConstants
 import teamcode.v1.constants.LiftConstants
 import teamcode.v1.subsystems.KLimitSwitch
 
@@ -76,6 +77,9 @@ class Hardware(startPose: Pose) {
 
     val clawServo = KServo("Claw")
         .startAt(ClawConstants.closePos)
+
+    val guideServo = KServo("Guide")
+        .startAt(GuideConstants.homePos)
 
     val limitSwitch = KLimitSwitch("LimitSwitch")
 

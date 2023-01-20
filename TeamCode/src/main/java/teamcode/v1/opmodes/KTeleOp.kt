@@ -13,8 +13,10 @@ import teamcode.v1.Robot
 import teamcode.v1.commands.sequences.DepositSequence
 import teamcode.v1.commands.sequences.HomeSequence
 import teamcode.v1.commands.subsystems.ClawCmds
+import teamcode.v1.commands.subsystems.GuideCmds
 import teamcode.v1.constants.ArmConstants
 import teamcode.v1.constants.ClawConstants
+import teamcode.v1.constants.GuideConstants
 import teamcode.v1.constants.LiftConstants
 import kotlin.math.max
 import kotlin.math.pow
@@ -63,28 +65,12 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     }
 
     private fun scheduleCycling() {
-        + object : Cmd() {
-            private var armPos = robot.hardware.armMotor.pos
-                override fun execute() {
-                    if(driver.dpadUp.isJustPressed) {
-                        armPos += 1.0
-                        + LoopCmd({robot.arm.setPos(armPos)})
-                    } else if(driver.dpadDown.isJustPressed) {
-                        armPos +- 1.0
-                        + LoopCmd({robot.arm.setPos(armPos)})
-                    } else if(driver.dpadUp.isJustReleased || driver.dpadDown.isJustReleased) {
-                        armPos += 0.0
-                        + InstantCmd({robot.arm.setPos(armPos)})
-                    }
-                    }
-                    }
-
-        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, ArmConstants.intervalPos, ArmConstants.groundPos))
-        driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.highPos, LiftConstants.highPos))
+        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos))
+        driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.highPos, LiftConstants.highPos, GuideConstants.depositPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
-        driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.midPos, LiftConstants.midPos))
-        driver.x.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, ArmConstants.lowPos, LiftConstants.lowPos))
-        driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw))
+        driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.midPos, LiftConstants.midPos, GuideConstants.depositPos))
+        driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.lowPos, LiftConstants.lowPos, GuideConstants.lowPos))
+        driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide))
         gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(-15.5)}))
         gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(-200.0)}))
     }
