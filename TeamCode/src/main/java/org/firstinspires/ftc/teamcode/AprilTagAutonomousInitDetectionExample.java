@@ -154,6 +154,9 @@ public class AprilTagAutonomousInitDetectionExample extends Driving358
 
 
         //starting moves
+        clawrotate("open");
+        clawrotate("close");
+
         move(0.3, 'f',35);
         move(0.3,'l',25);
 
@@ -177,17 +180,22 @@ public class AprilTagAutonomousInitDetectionExample extends Driving358
         if (tagOfInterest == null){
             move (0.3,'l', 30);
             move (0.3,'b', 40);
+            liftlevel(0.2,'1');
+
 
         }
         //else if (tagOfInterest.id== LEFT) move(0.1,'f',10);
         else if (tagOfInterest.id== LEFT) {
             move(.3, 'l', 30);
+            liftlevel(0.2,'1');
         }
         else if (tagOfInterest.id == CENTER) {
             move(.3, 'r', 25);
+            liftlevel(0.2,'1');
         }
         else if (tagOfInterest.id == RIGHT) {
             move(.3, 'r', 58);
+            liftlevel(0.2,'1');
         }
 
 
