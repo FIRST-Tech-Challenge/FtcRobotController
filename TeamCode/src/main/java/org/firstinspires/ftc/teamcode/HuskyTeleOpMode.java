@@ -194,18 +194,6 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     // MANUAL ARM CONTROL
                     //
 
-                    // Arm Swivel Controls
-                    armSwivelPower = -gamepad2.left_stick_x;
-                    armSwivelPower = Range.clip(armSwivelPower, -ARM_SWIVEL_MAX_POWER, ARM_SWIVEL_MAX_POWER);
-                    // swivel limiters
-                    if (huskyBot.armSwivelMotor.getCurrentPosition() <= -ARM_SWIVEL_LIMIT) {
-                        armSwivelPower = (armSwivelPower < 0) ? 0 : armSwivelPower;
-                    }
-                    if (huskyBot.armSwivelMotor.getCurrentPosition() >= ARM_SWIVEL_LIMIT) {
-                        armSwivelPower = (armSwivelPower > 0) ? 0 : armSwivelPower;
-                    }
-                    huskyBot.armSwivelMotor.setPower(armSwivelPower);
-
                     // Arm Lift Controls
                     if(gamepad2.left_stick_y < 0){
                         // on the way up
@@ -250,7 +238,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                 case STEP_1:
                     // Step 1: Reset the arm extender (close)
 
-                    huskyBot.armExtendMotor.setTargetPosition(0);
+                    huskyBot.armExtendMotor.setTargetPosition(-10);
                     huskyBot.armExtendMotor.setPower(1.0);
                     huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -355,6 +343,18 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
                 default:
             }
+
+            // Arm Swivel Controls
+            armSwivelPower = -gamepad2.left_stick_x;
+            armSwivelPower = Range.clip(armSwivelPower, -ARM_SWIVEL_MAX_POWER, ARM_SWIVEL_MAX_POWER);
+            // Arm Swivel Limiters
+            if (huskyBot.armSwivelMotor.getCurrentPosition() <= ARM_SWIVEL_RIGHT_LIMIT) {
+                armSwivelPower = (armSwivelPower < 0) ? 0 : armSwivelPower;
+            }
+            if (huskyBot.armSwivelMotor.getCurrentPosition() >= ARM_SWIVEL_LEFT_LIMIT) {
+                armSwivelPower = (armSwivelPower > 0) ? 0 : armSwivelPower;
+            }
+            huskyBot.armSwivelMotor.setPower(armSwivelPower);
 
             // Open/Close the Claw
             if (gamepad2.right_bumper || gamepad1.right_bumper) {
