@@ -79,11 +79,11 @@ public class PoleDetector extends OpenCvPipeline
     }
 
     public double differenceX () {
-        double difference = middleX() + (mat.width()/2.0);
+        double difference = middleX() - (mat.width()/2.0);
         return difference;
     }
 
     public double middleX () {
-        return (double) maxRect.x - (maxRect.width/2.0);
+        return (double) maxRect.x + (maxRect.width/2.0);
     }
 }
