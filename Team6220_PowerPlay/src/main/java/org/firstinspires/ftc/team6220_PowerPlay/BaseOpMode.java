@@ -8,14 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.opencv.core.Scalar;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
@@ -134,7 +129,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
             // apply a constant to turn the angle into a turn speed
-            tPower = Math.min(-Constants.HEADING_CORRECTION_KP * angleError, Constants.MAXIMUM_TURNING_POWER);
+            tPower = Math.min(-Constants.HEADING_CORRECTION_KP * angleError, Constants.MAXIMUM_TURN_POWER);
         }
 
         // if the rotation rate is low, then that means all the momentum has left the robot's turning and can therefore turn the correction back on

@@ -44,9 +44,13 @@ public abstract class BaseTeleOp extends BaseOpMode {
             originalAngle = startAngle + 180;
         }
 
-        x = Math.min(Constants.DRIVE_CURVE_FACTOR * gamepad1.left_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.left_stick_x, 3), Constants.MAXIMUM_DRIVE_POWER);
-        y = Math.min(Constants.DRIVE_CURVE_FACTOR * -gamepad1.left_stick_y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(-gamepad1.left_stick_y, 3), Constants.MAXIMUM_DRIVE_POWER);
-        t = Math.min(Constants.DRIVE_CURVE_FACTOR * gamepad1.right_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.right_stick_x, 3), Constants.MAXIMUM_TURNING_POWER);
+        x = Constants.DRIVE_CURVE_FACTOR * gamepad1.left_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.left_stick_x, 3);
+        y = Constants.DRIVE_CURVE_FACTOR * -gamepad1.left_stick_y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(-gamepad1.left_stick_y, 3);
+        t = Constants.DRIVE_CURVE_FACTOR * gamepad1.right_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.right_stick_x, 3);
+
+        x = Math.max(Math.abs(x), Constants.MAXIMUM_DRIVE_POWER) * Math.signum(x);
+        y = Math.max(Math.abs(y), Constants.MAXIMUM_DRIVE_POWER) * Math.signum(y);
+        t = Math.max(Math.abs(t), Constants.MAXIMUM_TURN_POWER) * Math.signum(t);
 
         xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
         yRotatedVector = x * Math.sin(negativeHeadingRadians) + y * Math.cos(negativeHeadingRadians);

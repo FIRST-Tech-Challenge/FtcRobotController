@@ -89,11 +89,11 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
             // robot is turning counter-clockwise
             if (angleError > 0) {
-                motorPower = Math.min(angleError / -Constants.TURNING_KP, -Constants.MINIMUM_TURNING_POWER);
+                motorPower = Math.min(angleError / -Constants.TURNING_KP, -Constants.MINIMUM_TURN_POWER);
 
             // robot is turning clockwise
             } else {
-                motorPower = Math.max(angleError / -Constants.TURNING_KP, Constants.MINIMUM_TURNING_POWER);
+                motorPower = Math.max(angleError / -Constants.TURNING_KP, Constants.MINIMUM_TURN_POWER);
             }
 
             motorFL.setPower(motorPower);
