@@ -46,11 +46,7 @@ public class AutonomousTest extends BaseAutonomous {
 
         driveSlidesAutonomous(Constants.SLIDE_TOP);
 
-        sleep(5000);
-
         centerJunctionTop(grabberCameraPipeline);
-
-        sleep(5000);
 
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
     }

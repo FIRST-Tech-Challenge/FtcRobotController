@@ -22,12 +22,14 @@ public class CenterJunctionBottom extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
         initialize();
 
+        //Initialize camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
-        robotCameraPipeline = new RobotCameraPipeline();
-        robotCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
+        //Set pipeline to the camera, and set the ranges
+        robotCameraPipeline = new RobotCameraPipeline(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
 
+        //Start streaming camera
         camera.setPipeline(robotCameraPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -41,6 +43,7 @@ public class CenterJunctionBottom extends BaseAutonomous {
 
         waitForStart();
 
+        //Center on the cone stack
         centerConeStack(robotCameraPipeline);
     }
 }

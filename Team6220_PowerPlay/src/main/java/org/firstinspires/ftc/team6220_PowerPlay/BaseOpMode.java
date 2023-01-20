@@ -190,7 +190,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     // centers the cone on the junction top
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
-
         do {
             xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
@@ -198,6 +197,8 @@ public abstract class BaseOpMode extends LinearOpMode {
             // center the cone on the junction top
             if(pipeline.detected) {
                 driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
+                telemetry.addData("detected = ", pipeline.detected);
+                telemetry.update();
             }else{
                 break;
             }
