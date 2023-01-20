@@ -109,9 +109,9 @@ public class EnergizeV2TeleOp_UPDATED extends LinearOpMode {
         while (opModeIsActive()) {
             double max;
 
-            double axial = -gamepad1.left_stick_y;
-            double lateral = gamepad1.left_stick_x;
-            double yaw = gamepad1.right_stick_x;
+            double axial = Math.pow(-gamepad1.left_stick_y, 3);
+            double lateral = Math.pow(gamepad1.left_stick_x, 3);
+            double yaw = Math.pow(gamepad1.right_stick_x, 3);
 
             double leftFrontPower = 0;
             double rightFrontPower = 0;
