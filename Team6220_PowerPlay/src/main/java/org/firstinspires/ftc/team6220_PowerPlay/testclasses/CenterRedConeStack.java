@@ -25,8 +25,7 @@ public class CenterRedConeStack extends BaseAutonomous {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
-        robotCameraPipeline = new RobotCameraPipeline();
-        robotCameraPipeline.setRanges(Constants.LOWER_RED, Constants.UPPER_RED);
+        robotCameraPipeline = new RobotCameraPipeline(Constants.LOWER_RED, Constants.UPPER_RED);
 
         camera.setPipeline(robotCameraPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

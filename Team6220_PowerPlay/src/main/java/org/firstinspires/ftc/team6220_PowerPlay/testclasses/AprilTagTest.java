@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Disabled
+//@Disabled
 @Autonomous(name = "AprilTagTest")
 public class AprilTagTest extends BaseAutonomous {
 
@@ -35,6 +35,8 @@ public class AprilTagTest extends BaseAutonomous {
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
 
+        robotCamera.setPipeline(aprilTagDetectionPipeline);
+
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -45,9 +47,10 @@ public class AprilTagTest extends BaseAutonomous {
             public void onError(int errorCode) {}
         });
 
-        robotCamera.setPipeline(aprilTagDetectionPipeline);
         signal = detectSignal();
 
         waitForStart();
+
+        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
     }
 }
