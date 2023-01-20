@@ -4,7 +4,9 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class Chassis {
@@ -17,6 +19,10 @@ public class Chassis {
 
     //IMU
     public static BNO055IMU imu;
+
+    private ElapsedTime runtime = new ElapsedTime();
+
+    int timeout_ms;
 
 
 
@@ -122,4 +128,128 @@ public class Chassis {
 
         imu.initialize(parameters);
     }
+
+
+    public void Drive(double speed, int distance) {
+
+        runtime.reset();
+        timeout_ms = 10000;
+
+        robotY += distance;
+        Location[1] = robotY;
+
+        int targetFL;
+        int targetFR;
+        int targetBR;
+        int targetBL;
+
+        int FLPos = FLMotor.getCurrentPosition();
+        int FRPos = FRMotor.getCurrentPosition();
+        int BLPos = BLMotor.getCurrentPosition();
+        int BRPos = BRMotor.getCurrentPosition();
+
+        targetFR = FRPos + (int) (distance * COUNTS_PER_CM_Hex);
+        targetBR = BRPos + (int) (distance * COUNTS_PER_CM_Hex);
+        targetFL = FLPos + (int) (distance * COUNTS_PER_CM_Hex);
+        targetBL = BLPos + (int) (distance * COUNTS_PER_CM_Hex);
+
+        //Set motor targets
+        FLMotor.setTargetPosition(targetFL);
+        BLMotor.setTargetPosition(targetBL);
+        FRMotor.setTargetPosition(targetFR);
+        BRMotor.setTargetPosition(targetBR);
+
+        //set the mode to go to the target position
+        FLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Set the power of the motor.
+        FLMotor.setPower(speed);
+        FRMotor.setPower(speed);
+        BLMotor.setPower(speed);
+        BRMotor.setPower(speed);
+
+        while ((runtime.milliseconds() < timeout_ms) && (FLMotor.isBusy() && FRMotor.isBusy())) {
+
+        }
+        this.stopDriveMotors();
+    }
+
+    public void Strafe(double speed, int distance) {
+
+        robotX += distance;
+
+        runtime.reset();
+        timeout_ms = 10000;
+
+        robotX += distance;
+        Location[0] = robotX;
+
+        int targetFL;
+        int targetFR;
+        int targetBR;
+        int targetBL;
+
+        int FLPos = FLMotor.getCurrentPosition();
+        int FRPos = FRMotor.getCurrentPosition();
+        int BLPos = BLMotor.getCurrentPosition();
+        int BRPos = BRMotor.getCurrentPosition();
+
+        targetFR = FRPos - (int) (distance * COUNTS_PER_CM_Hex);
+        targetBR = BRPos + (int) (distance * COUNTS_PER_CM_Hex);
+        targetFL = FLPos + (int) (distance * COUNTS_PER_CM_Hex);
+        targetBL = BLPos - (int) (distance * COUNTS_PER_CM_Hex);
+
+        //Set motor targets
+        FLMotor.setTargetPosition(targetFL);
+        BLMotor.setTargetPosition(targetBL);
+        FRMotor.setTargetPosition(targetFR);
+        BRMotor.setTargetPosition(targetBR);
+
+        //set the mode to go to the target position
+        FLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Set the power of the motor.
+        FLMotor.setPower(speed);
+        FRMotor.setPower(speed);
+        BLMotor.setPower(speed);
+        BRMotor.setPower(speed);
+
+        while ((runtime.milliseconds() < timeout_ms) && (FLMotor.isBusy() && FRMotor.isBusy())) {
+
+        }
+        this.stopDriveMotors();
+    }
+
+    public void stopDriveMotors(){
+        // Stop all motion;
+        FLMotor.setPower(0);
+        FRMotor.setPower(0);
+        BLMotor.setPower(0);
+        BRMotor.setPower(0);
+
+        // Turn off RUN_TO_POSITION
+        FLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void DriveToPosition(double Speed, int posX, int posY, boolean forwardFirst) {
+        if(forwardFirst) {
+            this.Drive(Speed, -posY);
+            this.Strafe(Speed, -posX);
+        }
+        else{
+            this.Strafe(Speed, -posX);
+            this.Drive(Speed, -posY);
+        };
+        System.out.println(Arrays.toString(Location));
+    }
+
 }

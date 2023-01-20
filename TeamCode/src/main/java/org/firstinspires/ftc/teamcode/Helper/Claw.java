@@ -27,10 +27,5 @@ public class Claw {
         servo.setPosition(CLOSE);
     }
 
-    public double getPosition() {
-        double position =  servo.getPosition();
-        return position;
-    }
-
 
 }

@@ -17,7 +17,6 @@ public class Teleop extends LinearOpMode {
     double timeout_ms = 0;
 
     Robot robot = new Robot();
-    Chassis chassis = new Chassis();
 
     //How fast your robot will accelerate.
     public double acceleration = 0.5;
@@ -36,22 +35,22 @@ public class Teleop extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException{
         /**
          * Instance of Robot class is initalized
          */
         robot.init(hardwareMap);
 
-        /**
-         * This code is run during the init phase, and when opMode is not active
-         * i.e. When "INIT" Button is pressed on the Driver Station App
-         */
-
-        telemetry.addData("FL Motor Encoder", robot.getFLMotorPos());
-        telemetry.addData("BL Motor Encoder", robot.getBLMotorPos());
-        telemetry.addData("BR Motor Encoder", robot.getBRMotorPos());
-        telemetry.addData("FR Motor Encoder", robot.getFRMotorPos());
-        telemetry.update();
+//        /**
+//         * This code is run during the init phase, and when opMode is not active
+//         * i.e. When "INIT" Button is pressed on the Driver Station App
+//         */
+//
+//        telemetry.addData("FL Motor Encoder", robot.getFLMotorPos());
+//        telemetry.addData("BL Motor Encoder", robot.getBLMotorPos());
+//        telemetry.addData("BR Motor Encoder", robot.getBRMotorPos());
+//        telemetry.addData("FR Motor Encoder", robot.getFRMotorPos());
+//        telemetry.update();
 
         waitForStart();
 
@@ -79,17 +78,17 @@ public class Teleop extends LinearOpMode {
              Joystick controls for Drivetrain
              */
 
-            chassis.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power);
-            chassis.BLMotor.setPower(DRIVETRAIN_SPEED * bl_power);
-            chassis.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power);
-            chassis.BRMotor.setPower(DRIVETRAIN_SPEED * br_power);
+            robot.chassis.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power);
+            robot.chassis.BLMotor.setPower(DRIVETRAIN_SPEED * bl_power);
+            robot.chassis.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power);
+            robot.chassis.BRMotor.setPower(DRIVETRAIN_SPEED * br_power);
 
             /**
              * Joystick controls for slider, arm, and claw.
              */
 
             double vSliderPower =  -gamepad2.left_stick_y;
-            robot.setVSliderPower(vSliderPower);
+            robot.vSlider.motor.setPower(vSliderPower);
 
 
             // Claw
@@ -111,16 +110,16 @@ public class Teleop extends LinearOpMode {
             }
 
 
-            telemetry.addData("FL Motor Encoder", robot.getFLMotorPos());
-            telemetry.addData("BL Motor Encoder", robot.getBLMotorPos());
-            telemetry.addData("BR Motor Encoder", robot.getBRMotorPos());
-            telemetry.addData("FR Motor Encoder", robot.getFRMotorPos());
+            telemetry.addData("FL Motor Encoder", robot.chassis.FLMotor.getCurrentPosition());
+            telemetry.addData("BL Motor Encoder", robot.chassis.BLMotor.getCurrentPosition());
+            telemetry.addData("BR Motor Encoder", robot.chassis.BRMotor.getCurrentPosition());
+            telemetry.addData("FR Motor Encoder", robot.chassis.FRMotor.getCurrentPosition());
             telemetry.addData("vSliderPower", vSliderPower);
-            telemetry.addData("vSlider Encoder", robot.getVSliderPos());
-            telemetry.addData("swingArm Encoder", robot.getSwingArmPos());
-            telemetry.addData("Claw Position", robot.getClawPos());
+            telemetry.addData("vSlider Encoder", robot.vSlider.motor.getCurrentPosition());
+            telemetry.addData("swingArm Encoder", robot.arm.motor.getCurrentPosition());
+            telemetry.addData("Claw Position", robot.claw.servo.getPosition());
             org.firstinspires.ftc.robotcore.external.navigation.Orientation angle;
-            angle = chassis.imu.getAngularOrientation();
+            angle = robot.chassis.imu.getAngularOrientation();
             telemetry.addData("Angular Orientation", angle);
             int angleFloat = (int) (robot.modAngle(angle.firstAngle));
             telemetry.addData("Orientation in 0-360", angleFloat);
