@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.masters;
+package org.firstinspires.ftc.masters.oldAndUselessStuff;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
