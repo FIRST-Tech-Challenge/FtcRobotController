@@ -244,7 +244,11 @@ public class PowerPlayTeleopTry extends LinearOpMode {
             }
             if (gamepad2.dpad_left) {
                 clawServo.setPosition(clawServoClosed);
-
+                if (linearSlideMotor.getCurrentPosition()>50) {
+                    slideTarget = SLIDE_BOTTOM;
+                    moveSlideMotors(slideTarget, 0.6);
+                }
+                stateSlide= STATE_SLIDE.RETRACTING;
 //                moveArm = false;
 //
 //                moveSlideMotors(SLIDE_BOTTOM, 0.4);
@@ -417,7 +421,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
         frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(speed);
-        linearSlideMotor.setPower(speed);
+        frontSlide.setPower(speed);
         slideOtherer.setPower(speed);
     }
 
