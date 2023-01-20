@@ -37,8 +37,8 @@ public class Auto2022_23v2 extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    //private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/team3666.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    //private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/team3666.tflite";
 
     private static final String[] LABELS = {
             "1 Bolt",
@@ -104,28 +104,6 @@ public class Auto2022_23v2 extends LinearOpMode {
     // General constants
     double oneFootCm = 30.48;
 
-    // Variables for turning
-    private double          robotHeading  = 0;
-    private double          headingOffset = 0;
-    private double          headingError  = 0;
-    private double  targetHeading = 0;
-    private double  driveSpeed    = 0;
-    private double  turnSpeed     = 0;
-    private double  leftSpeed     = 0;
-    private double  rightSpeed    = 0;
-    private int     leftTarget    = 0;
-    private int     rightTarget   = 0;
-    static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
-    static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
-    static final double     HEADING_THRESHOLD       = 4.0 ;
-    static final double     COUNTS_PER_MOTOR_REV    = 537.6 ;   // eg: GoBILDA 312 RPM Yellow Jacket
-    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 3.93701 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
-
     private static final String VUFORIA_KEY =
             "AclDUAH/////AAABmYzSWAdyDktyn7LeKaYpXPkeHMDuWfVt+ZWKtbsATYUHu+lKEe6ywQGLZLm5MRmxfQ4UQRSZ8hR7Hx7cwiYcj7DBcqr2CcI/KXvXFnaoaSHonQcH5UjgGwygyR0DRMvRI9Mm+MnWqdwgQuS4eNYgz/vAuNpeGRJmwimGZkb9kb9Uai+RaH2V33PvH4TZepOg//RReZrL33oLxaLEchTHATEKR1xj6NLzHuZVuOTnIaMwPHRrkkK/cyMqaog/be+k2uxxQ2Lxtb2Yb4nHt4n8Rs7ajT/dUSsP/6pZdWmVs7BmIafbHlLFlS/6+1rDbSfOHqEyHFoLDq/hselgdVG2pzEzPcr3ntMwoIAPjiA799i5";
     private VuforiaLocalizer vuforia;
@@ -150,7 +128,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                /*if (tfod != null) {
+                if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -176,13 +154,6 @@ public class Auto2022_23v2 extends LinearOpMode {
                             hasMoved = true;
                         }
                     }
-                }*/
-
-                if(!hasMoved){
-                    turnToHeading(.5,90);
-                    waitTime(5);
-                    turnToHeading(.5,180);
-                    hasMoved = true;
                 }
 
                 /* Use the code below to test ticks per inch
@@ -229,19 +200,19 @@ public class Auto2022_23v2 extends LinearOpMode {
         waitTime(.5);
         moveLift(5);
         movePercentOfFoot(true,20.0/12);
+        turnNinety(false);
         moveLift(17);
         movePercentOfFoot(true,3.0/12);
-        turnToHeading(.5,90);
         moveLift(9);
         moveGrabber(false);
         movePercentOfFoot(false,3.0/12);
-        turnToHeading(.5,0);
+        turnNinety(true);
         movePercentOfFoot(true,10.0/12);
         if(signal.equals("1 Bolt")){
-            turnToHeading(.5,90);
+            turnNinety(false);
             movePercentOfFoot(true,21.0/12);
         }else if(signal.equals("3 Panel")){
-            turnToHeading(.5,270);
+            turnNinety(true);
             movePercentOfFoot(true,23.0/12);
         }
         moveLift(0);
@@ -317,8 +288,8 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        //tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
     public void strafeVelo(boolean isLeft, double maxPercent, double time){
@@ -339,27 +310,12 @@ public class Auto2022_23v2 extends LinearOpMode {
         }
     }
 
+    /**
+     * Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
+     * @param CW
+     */
     public void turnNinety(boolean CW){
-        // Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
         double originalAngle = getAngle();
-
-        double time = .8;
-        runtime.reset();
-
-        /*if(CW){
-            while(opModeIsActive() && runtime.seconds() < time){
-                leftVelo(.75);
-                rightVelo(-.75);
-            }
-        }else{
-            while(opModeIsActive() && runtime.seconds() < time){
-                leftVelo(-.75);
-                rightVelo(.75);
-            }
-        }
-        if(time >= runtime.seconds()){
-            motorsOff();
-        }*/
 
         if(CW) {
             //left = +; right = -
@@ -369,7 +325,7 @@ public class Auto2022_23v2 extends LinearOpMode {
                     rightVelo(-.5);
                 }
             }else{
-                while (opModeIsActive() && -getAngle() > originalAngle - 90 && getAngle() < originalAngle + 5) {
+                while (opModeIsActive() && getAngle() > originalAngle - 90 && getAngle() < originalAngle + 5) {
                     leftVelo(.5);
                     rightVelo(-.5);
                 }
@@ -391,6 +347,11 @@ public class Auto2022_23v2 extends LinearOpMode {
         motorsOff();
     }
 
+    /**
+     * Moves forward or backward depending on the amount specified in feetAmount
+     * @param forward
+     * @param feetAmount
+     */
     public void movePercentOfFoot(boolean forward, double feetAmount){
         //using motor encoders
         double driveTrainCorrection = 1;
@@ -419,6 +380,9 @@ public class Auto2022_23v2 extends LinearOpMode {
         resetEncoders();
     }
 
+    /**
+     * Picks up one of the cones from the stacked pile depending on how many cones there are on it
+     */
     public void pickupCone(){
         double conePosMod = coneCount * coneSeparationDistance;
         moveLift(firstConePos - conePosMod);
@@ -428,6 +392,10 @@ public class Auto2022_23v2 extends LinearOpMode {
         coneCount++;
     }
 
+    /**
+     * Drives forward until it reads red or blue tape below it
+     * @param red
+     */
     public void moveToTape(boolean red){
         if(red){
             while(opModeIsActive() && color.red() < 1200){
@@ -443,6 +411,10 @@ public class Auto2022_23v2 extends LinearOpMode {
         movePercentOfFoot(true, 10.0/12);
     }
 
+    /**
+     * Moves the linear slide up to a specified height in inches
+     * @param toHeight
+     */
     public void moveLift(double toHeight){
         if(opModeIsActive()){
             int targetTick = (int) (tickPerInchForLift * toHeight);
@@ -471,6 +443,10 @@ public class Auto2022_23v2 extends LinearOpMode {
         }
     }
 
+    /**
+     * Opens and closes the grabber
+     * @param closed
+     */
     public void moveGrabber(boolean closed){
         if(closed){
             servoGrabber1.setPosition(MAX_POS);
@@ -504,22 +480,32 @@ public class Auto2022_23v2 extends LinearOpMode {
         rightBackDrive.setPower(percent);
     }
 
-
     //Primitive functions
 
+    /**
+     * Pauses all movement for the specified time in seconds
+     * @param time
+     */
     public void waitTime(double time){ // Waits for time (seconds)
         runtime.reset();
         while(opModeIsActive() && runtime.seconds()<time){
         }
     }
 
-    public void motorsOff(){ // Turns all motors off
+    /**
+     * Turns all wheels off
+     */
+    public void motorsOff(){
         leftDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightDrive.setPower(0);
         rightBackDrive.setPower(0);
     }
 
+    /**
+     * Turns all wheels on at specified power
+     * @param powerPercent
+     */
     public void motorsOn(double powerPercent){
         leftDrive.setPower(powerPercent);
         leftBackDrive.setPower(powerPercent);
@@ -527,6 +513,9 @@ public class Auto2022_23v2 extends LinearOpMode {
         rightBackDrive.setPower(powerPercent);
     }
 
+    /**
+     * Resets all wheel encoders to be at 0 and to run without encoders
+     */
     public void resetEncoders() { // Reset all encoder positions
         leftDrive.setMode(STOP_AND_RESET_ENCODER);
         leftBackDrive.setMode(STOP_AND_RESET_ENCODER);
@@ -546,6 +535,10 @@ public class Auto2022_23v2 extends LinearOpMode {
         rightBackDrive.setTargetPosition(target);
     }
 
+    /**
+     * Calculates the angle the robot is at and returns the orientation
+     * @return Current Orientation
+     */
     public double getAngle(){
         if(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle < 0){
             return 360 + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // Addition since the value is negative
@@ -553,94 +546,29 @@ public class Auto2022_23v2 extends LinearOpMode {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
-    public void turnToHeading(double maxTurnSpeed, double heading) {
-
-        // Run getSteeringCorrection() once to pre-calculate the current error
-        getSteeringCorrection(heading, P_DRIVE_GAIN);
-
-        // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
-
-            // Determine required steering to keep on heading
-            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
-
-            // Clip the speed to the maximum permitted value.
-            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
-
-            // Pivot in place by applying the turning correction
-            moveRobot(0, turnSpeed);
-
-            // Display drive status for the driver.
-            sendTelemetry(false);
+    /**
+     * Finds whether turning clockwise or counterclockwise reaches the target angle faster.
+     * Returns true for clockwise and false for counterclockwise
+     * @param target
+     * @return true (CW) or false (CCW)
+     */
+    public boolean direction(double target){
+        if(target > getAngle()){
+            double x1 = target - getAngle();
+            double x2 = 360 - x1;
+            if(x1 < x2){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            double x1 = getAngle() - target;
+            double x2 = 360 - x1;
+            if(x1 > x2){
+                return true;
+            }else{
+                return false;
+            }
         }
-
-        // Stop all motion;
-        moveRobot(0, 0);
-    }
-
-    public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
-        targetHeading = desiredHeading;  // Save for telemetry
-
-        // Get the robot heading by applying an offset to the IMU heading
-        robotHeading = getRawHeading() - headingOffset;
-
-        // Determine the heading current error
-        headingError = targetHeading - robotHeading;
-
-        // Normalize the error to be within +/- 180 degrees
-        while (headingError > 180)  headingError -= 360;
-        while (headingError <= -180) headingError += 360;
-
-        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
-        return Range.clip(headingError * proportionalGain, -1, 1);
-    }
-
-    public void moveRobot(double drive, double turn) {
-        driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
-        turnSpeed  = turn;      // save this value as a class member so it can be used by telemetry.
-
-        leftSpeed  = drive - turn;
-        rightSpeed = drive + turn;
-
-        // Scale speeds down if either one exceeds +/- 1.0;
-        double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-        if (max > 1.0)
-        {
-            leftSpeed /= max;
-            rightSpeed /= max;
-        }
-
-        leftDrive.setPower(leftSpeed);
-        leftBackDrive.setPower(leftSpeed);
-        rightDrive.setPower(rightSpeed);
-        rightBackDrive.setPower(rightSpeed);
-    }
-
-    private void sendTelemetry(boolean straight) {
-
-        if (straight) {
-            telemetry.addData("Motion", "Drive Straight");
-            telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftTarget,  rightTarget);
-            telemetry.addData("Actual Pos L:R",  "%7d:%7d",      leftDrive.getCurrentPosition(),
-                    rightDrive.getCurrentPosition());
-        } else {
-            telemetry.addData("Motion", "Turning");
-        }
-
-        telemetry.addData("Angle Target:Current", "%5.2f:%5.0f", targetHeading, robotHeading);
-        telemetry.addData("Error:Steer",  "%5.1f:%5.1f", headingError, turnSpeed);
-        telemetry.addData("Wheel Speeds L:R.", "%5.2f : %5.2f", leftSpeed, rightSpeed);
-        telemetry.update();
-    }
-
-    public double getRawHeading() {
-        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angles.firstAngle;
-    }
-
-    public void resetHeading() {
-        // Save a new heading offset equal to the current raw heading.
-        headingOffset = getRawHeading();
-        robotHeading = 0;
     }
 }
