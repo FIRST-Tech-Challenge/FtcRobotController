@@ -30,7 +30,8 @@ public class Team1RedTeleOp extends TeleOpModeBase { // Ensure you extend the ba
         GamepadEx gamepad = Inputs.gamepad1;
         Motor left_motor = HardwareMapContainer.motor0;
         Motor right_motor = HardwareMapContainer.motor1;
-        Coordinates leftJoystick = new Coordinates(gamepad.getLeftX(), gamepad.getLeftY());
+        Joystick leftJoystick = new Joystick(gamepad.getLeftX(), gamepad.getLeftY());
+        Joystick rightJoystick = new Joystick(gamepad.getRightX(), gamepad.getRightY());
         /* Arcade drive */
         leftJoystick.Transpose(0, 1, -1, 1);
         DifferentialDrive drive = new DifferentialDrive(left_motor, right_motor);
@@ -42,16 +43,23 @@ public class Team1RedTeleOp extends TeleOpModeBase { // Ensure you extend the ba
     }
 }
 
-class Coordinates {
+class Joystick {
     double x;
     double y;
-    public Coordinates(double x1, double y1) {
+    public Joystick(double x1, double y1) {
         x = x1;
         y = y1;
     }
 
+    /**
+     *
+     * @param min1 Min of the first range
+     * @param max1 Max of the first range
+     * @param min2 min of the first range
+     * @param max2 max of the first range
+     */
     public void Transpose(int min1, int max1, int min2, int max2) {
-        x = ((x - (min1 - 0)/(max1 - min1)) * (max2 - min2)) - (min2 - 0);
-        y = ((y - (min1 - 0)/(max1 - min1)) * (max2 - min2)) - (min2 - 0);
+        x = (((x - (min1))/(max1 - min1)) * (max2 - min2)) - (min2);
+        y = (((y - (min1))/(max1 - min1)) * (max2 - min2)) - (min2);
     }
 }
