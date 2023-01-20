@@ -552,7 +552,7 @@ public class Auto2022_23v2 extends LinearOpMode {
      * @param target
      * @return true (CW) or false (CCW)
      */
-    public boolean direction(double target){
+    public boolean optimalDirection(double target){
         if(target > getAngle()){
             double x1 = target - getAngle();
             double x2 = 360 - x1;
