@@ -123,7 +123,7 @@ abstract public class BaseOpMode extends LinearOpMode {
     public void driveMecanumGyro(double driveAngle, double drivePower, double turnPower){
 
         // proportionality constant to correct angle error
-        double kpConstant = 0.02;
+        double kpConstant = 0.01;
         // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
         double x = drivePower * Math.cos(Math.toRadians(driveAngle));
         double y = drivePower * Math.sin(Math.toRadians(driveAngle));
@@ -131,6 +131,12 @@ abstract public class BaseOpMode extends LinearOpMode {
         double robotAngle = imu.getAngularOrientation().firstAngle;
 
         double angleError = robotAngle - referenceAngle;
+
+        if(angleError > 180.0){
+            angleError -= 360.0;
+        } else if(angleError < -180.0){
+            angleError += 360.0;
+        }
         double pivotCorrection = angleError * kpConstant;
 
         double sumPivotTurning = pivotCorrection + turnPower;
