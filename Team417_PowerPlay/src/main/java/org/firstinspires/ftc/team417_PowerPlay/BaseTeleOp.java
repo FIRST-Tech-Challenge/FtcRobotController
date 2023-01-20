@@ -42,13 +42,13 @@ abstract public class BaseTeleOp extends BaseOpMode {
 
     public double stickCurve(double x, double a, double d) {
         x = Math.signum(x) * Math.max(0, Math.min(1, (Math.abs(x) - d) / (1 - d)));
-        return a * x + (1-a) * Math.pow(x, 3);
+        return a * x + (0.75-a) * Math.pow(x, 3);
     }
 
     public void driveStickCurve() {
-        double x = stickCurve(gamepad1.left_stick_x, 0.2, 0.2);
-        double y = stickCurve(-gamepad1.left_stick_y, 0.2, 0.2);
-        double turning = stickCurve(gamepad1.right_stick_x, 0.2, 0.2);
+        double x = stickCurve(gamepad1.left_stick_x, 0.1, 0.1);
+        double y = stickCurve(-gamepad1.left_stick_y, 0.1, 0.1);
+        double turning = stickCurve(gamepad1.right_stick_x, 0.1, 0.2);
         mecanumDrive(x, y, turning);
     }
 

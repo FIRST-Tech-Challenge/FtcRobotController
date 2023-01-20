@@ -15,7 +15,7 @@ abstract public class BaseOpMode extends LinearOpMode {
     Toggler grabberToggle;
 
     SampleMecanumDrive drive;
-    public static final double GRABBER_OPEN = 0.75;
+    public static final double GRABBER_OPEN = 0.65;
     public static final double GRABBER_CLOSED = 0.4;
     public static final double GRABBER_HALF_CLOSED = 0.6;
 
@@ -27,7 +27,7 @@ abstract public class BaseOpMode extends LinearOpMode {
     public static final int MIN_ARM_POSITION = 0;
     public static final int ARM_ENCODER_TOLERANCE = 10;
 
-    public static final int FIRST_CONE_STACK_ARM_POSITION = 500;
+    public static final int FIRST_CONE_STACK_ARM_POSITION = 350;
     public static final int SECOND_CONE_STACK_ARM_POSITION = 400;
     public void initializeHardware() {
         drive = new SampleMecanumDrive(hardwareMap);
