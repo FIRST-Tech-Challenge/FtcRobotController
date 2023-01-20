@@ -24,15 +24,13 @@ public abstract class BaseAutonomous extends BaseOpMode {
         // encoder values of the drive motors
         int eFL, eFR, eBL, eBR;
 
-        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        double turningPower;
-
         // looking at robot from the back, x is left/right and y is forwards/backwards
         double xPosition, yPosition;
 
         // power for any heading
-        double xPower = Math.cos(Math.toRadians(heading + 95)) * Constants.MAXIMUM_DRIVE_POWER;
-        double yPower = Math.sin(Math.toRadians(heading + 95)) * Constants.MAXIMUM_DRIVE_POWER;
+        double ratio;
+        double xPower;
+        double yPower;
 
         double traveledDistance;
         double remainingDistance = targetDistance;
@@ -53,12 +51,12 @@ public abstract class BaseAutonomous extends BaseOpMode {
             eBL = motorBL.getCurrentPosition();
             eBR = motorBR.getCurrentPosition();
 
-            turningPower = (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle) * Constants.HEADING_CORRECTION_KP;
+            ratio = remainingDistance / targetDistance;
 
-            motorFL.setPower(yPower + xPower + turningPower);
-            motorFR.setPower(yPower - xPower - turningPower);
-            motorBL.setPower(yPower - xPower + turningPower);
-            motorBR.setPower(yPower + xPower - turningPower);
+            xPower = Math.max(Math.cos(Math.toRadians(heading + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * Constants.MAXIMUM_DRIVE_POWER * ratio, Constants.MINIMUM_DRIVE_POWER);
+            yPower = Math.max(Math.sin(Math.toRadians(heading + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * Constants.MAXIMUM_DRIVE_POWER * ratio, Constants.MINIMUM_DRIVE_POWER);
+
+            driveWithIMU(xPower, yPower, 0.0);
 
             xPosition = (eFL - eFR - eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;
             yPosition = (eFL + eFR + eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;
@@ -91,11 +89,11 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
             // robot is turning counter-clockwise
             if (angleError > 0) {
-                motorPower = Math.min(angleError / -250.0, -Constants.MINIMUM_TURNING_POWER);
+                motorPower = Math.min(angleError / -Constants.TURNING_KP, -Constants.MINIMUM_TURNING_POWER);
 
             // robot is turning clockwise
             } else {
-                motorPower = Math.max(angleError / -250.0, Constants.MINIMUM_TURNING_POWER);
+                motorPower = Math.max(angleError / -Constants.TURNING_KP, Constants.MINIMUM_TURNING_POWER);
             }
 
             motorFL.setPower(motorPower);

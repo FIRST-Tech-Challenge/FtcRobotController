@@ -8,10 +8,18 @@ public class Constants {
 
     public static final double HEADING_CORRECTION_KP = 0.03;
 
-    public static final double DRIVE_CURVE_FACTOR = 0.4;
+    public static final double TURNING_KP = 0.00625;
+
+    public static final int UNIT_CIRCLE_OFFSET_DEGREES = 95;
+
+    public static final double DRIVE_CURVE_FACTOR = 0.31;
+
     public static final double MINIMUM_TURNING_POWER = 0.05;
     public static final double MAXIMUM_TURNING_POWER = 0.25;
+
+    public static final double MINIMUM_DRIVE_POWER = 0.05;
     public static final double MAXIMUM_DRIVE_POWER = 0.5;
+
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;
 
