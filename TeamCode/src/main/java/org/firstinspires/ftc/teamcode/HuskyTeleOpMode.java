@@ -128,7 +128,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
             // uses the left trigger to dynamically shift between different drive speeds.
             // when the trigger is fully released, driveVelocity = 1.
             // when the trigger is fully pressed, driveVelocity = 0.2.
-            float driveVelocity = (float) (1 - 0.8 * gamepad1.left_trigger);
+            float driveVelocity = (float) (0.2 + 0.8 * gamepad1.left_trigger);
 
             // calculate motor velocities.
             double frontLeftVelocity = (y + x + rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
@@ -150,22 +150,20 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     shouldChangeTheClawLift = false;
 
                     if(gamepad1.a) {
-                        // Button A: Cone take position
-
-                        huskyBot.clawLift.setPosition(0.60);
+                        // Button A: Ground position
+                        huskyBot.clawLift.setPosition(CLAW_LIFT_GROUND_POSITION);
                         huskyBot.clawGrab.setPosition(CLAW_GRAB_OPEN_POSITION);
 
-                        armLiftTargetPos = -115;
-                        armExtendTargetPos = -1550;
+                        armLiftTargetPos = ARM_LIFT_GROUND_POSITION;
+                        armExtendTargetPos = ARM_EXTEND_GROUND_POSITION;
 
                         armState = ArmState.STEP_1;
                     }
                     if(gamepad1.x){
-                        // Button X: Small junction position
-
-                        armLiftTargetPos = 473;
-                        armExtendTargetPos = 0;
-                        clawLiftTargetPos = 0.55;
+                        // Button X: Low junction position
+                        armLiftTargetPos = ARM_LIFT_LOW_POSITION;
+                        armExtendTargetPos = ARM_EXTEND_LOW_POSITION;
+                        clawLiftTargetPos = CLAW_LIFT_LOW_POSITION;
 
                         shouldChangeTheClawLift = true;
 
@@ -173,9 +171,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     }
                     if(gamepad1.b) {
                         // Button B: Medium junction position
-                        armLiftTargetPos = 846;
-                        armExtendTargetPos = -1000;
-                        clawLiftTargetPos = 0.10;
+                        armLiftTargetPos = ARM_LIFT_MED_POSITION;
+                        armExtendTargetPos = ARM_EXTEND_MED_POSITION;
+                        clawLiftTargetPos = CLAW_LIFT_MED_POSITION;
 
                         shouldChangeTheClawLift = true;
 
@@ -183,9 +181,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     }
                     if(gamepad1.y) {
                         // Button Y: High junction position
-                        armLiftTargetPos = (int) ARM_LIFT_MAX_POSITION;
-                        armExtendTargetPos = -3240;
-                        clawLiftTargetPos = 0.35;
+                        armLiftTargetPos = ARM_LIFT_HIGH_POSITION;
+                        armExtendTargetPos = ARM_EXTEND_HIGH_POSITION;
+                        clawLiftTargetPos = CLAW_LIFT_HIGH_POSITION;
 
                         shouldChangeTheClawLift = true;
 

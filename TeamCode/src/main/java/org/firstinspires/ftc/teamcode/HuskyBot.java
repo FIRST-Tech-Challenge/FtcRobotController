@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -45,6 +46,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * This class can be used to define all the specific hardware for the robot.
  * <p>
  */
+@Config
 public class HuskyBot {
     /* Public OpMode members. */
     public DcMotorEx frontLeftDrive = null;
@@ -59,7 +61,7 @@ public class HuskyBot {
 
     // Claw (on the Arm) Servo Init.
     public Servo clawLift = null;
-    public Servo clawGrab = null; // TODO: set this to be fixed open/close positions.
+    public Servo clawGrab = null;
 
     // Webcam
     public OpenCvWebcam webcam;
@@ -74,18 +76,17 @@ public class HuskyBot {
     public static final double VELOCITY_CONSTANT = 537.7 * 312/60;
 
 
-
+    // Define Arm Constants: Power
     public static final double ARM_SWIVEL_MAX_POWER = 0.35;
     public static final double ARM_LIFT_MAX_POWER = 0.5;
     public static final double ARM_LIFT_MIN_POWER = 0.01;
     public static final double ARM_LIFT_POWER_AT_REST = 0.12;
-    public static final double ARM_SWIVEL_LIMIT = 650;
-
-
-    public static final double ARM_ZERO_POSITION = 350;
-
     public static final double ARM_EXTENSION_MAX_POWER = 0.6;
-    public  static  final double ARM_LIFT_MAX_POSITION = 910;
+
+    // Define Arm Constants: Encoder and Servo Values
+    public static final int ARM_SWIVEL_LIMIT = 650;
+
+    public static final int ARM_LIFT_MAX_POSITION = 910;
 
     public static final double CLAW_MOVE_INCREMENT = 0.05;
     public static final double CLAW_LIFT_MIN_RANGE = 0.3;
@@ -96,6 +97,12 @@ public class HuskyBot {
     public static final double CLAW_GRAB_MAX_RANGE = 0.54;
     public static final double CLAW_GRAB_OPEN_POSITION = 0.3;
     public static final double CLAW_GRAB_CLOSE_POSITION = 1.0;
+
+    // Define Arm Constants: Preset Junction Positions
+    public static final int ARM_LIFT_GROUND_POSITION = 20, ARM_EXTEND_GROUND_POSITION = -1825; public static final double CLAW_LIFT_GROUND_POSITION = 0.60;
+    public static final int ARM_LIFT_LOW_POSITION = 360, ARM_EXTEND_LOW_POSITION = 0; public static final double CLAW_LIFT_LOW_POSITION = 0.60;
+    public static final int ARM_LIFT_MED_POSITION = 660, ARM_EXTEND_MED_POSITION = -490; public static final double CLAW_LIFT_MED_POSITION = 0.45;
+    public static final int ARM_LIFT_HIGH_POSITION = 880, ARM_EXTEND_HIGH_POSITION = -3215; public static final double CLAW_LIFT_HIGH_POSITION = 0.30;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -109,26 +116,25 @@ public class HuskyBot {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        // Define and Initialize Motors
+        // Define and Initialize Drive Motors
         frontLeftDrive = hwMap.get(DcMotorEx.class, "front_left_drive");
         rearLeftDrive = hwMap.get(DcMotorEx.class, "rear_left_drive");
         frontRightDrive = hwMap.get(DcMotorEx.class, "front_right_drive");
         rearRightDrive = hwMap.get(DcMotorEx.class, "rear_right_drive");
 
-        // Define and Init. Arm Motors
-        armSwivelMotor = hwMap.get(DcMotorEx.class, "arm_swivel");
-        armLiftMotor = hwMap.get(DcMotorEx.class, "arm_lift");
-        armExtendMotor = hwMap.get(DcMotorEx.class, "arm_extend");
+        // Set Drive Motors to Zero Power
+        frontLeftDrive.setPower(0);
+        rearLeftDrive.setPower(0);
+        frontRightDrive.setPower(0);
+        rearRightDrive.setPower(0);
 
-        // Define and Init. Claw Servos
+        // Reset Drive Motor Encoders
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        clawLift = hwMap.get(Servo.class, "claw_lift");
-        clawGrab = hwMap.get(Servo.class, "claw_grab");
-
-        // Define and Init. Magnetic Limit Switches
-        armExtendMax = hwMap.get(TouchSensor.class, "arm_extend_max");
-        armExtendMin = hwMap.get(TouchSensor.class, "arm_extend_min");
-
+        // Set Drive Motor Behaviors
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -137,41 +143,12 @@ public class HuskyBot {
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        // Set all motors to zero power
-        frontLeftDrive.setPower(0);
-        rearLeftDrive.setPower(0);
-        frontRightDrive.setPower(0);
-        rearRightDrive.setPower(0);
-
-        // Set all arm-related motors and servos to zero power.
-        armSwivelMotor.setPower(0);
-
-        armLiftMotor.setPower(0);
-        armLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        armLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        armExtendMotor.setPower(0);
-
-
-        clawLift.scaleRange(CLAW_LIFT_MIN_RANGE, CLAW_LIFT_MAX_RANGE);
-        clawGrab.scaleRange(CLAW_GRAB_MIN_RANGE, CLAW_GRAB_MAX_RANGE);
-
-        // this base configuration sets the drive motors to run without encoders and the arm motor
-        // to run with encoder. if any opmode requires different setting, that should be changed in
-        // the opmode itself
-        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rearLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rearRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        // Set Drive Motor PIDF Coefficients
         // https://docs.google.com/document/u/1/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/mobilebasic
         // todo these still need to be tuned
         frontLeftDrive.setVelocityPIDFCoefficients(1.82, 0.182, 0, 18.2);
@@ -182,6 +159,43 @@ public class HuskyBot {
         frontRightDrive.setPositionPIDFCoefficients(5.0);
         rearRightDrive.setVelocityPIDFCoefficients(1.27, 0.127, 0, 12.7);
         rearRightDrive.setPositionPIDFCoefficients(5.0);
+
+
+        // Define and Initialize Arm Motors and Servos
+        armSwivelMotor = hwMap.get(DcMotorEx.class, "arm_swivel");
+        armLiftMotor = hwMap.get(DcMotorEx.class, "arm_lift");
+        armExtendMotor = hwMap.get(DcMotorEx.class, "arm_extend");
+
+        clawLift = hwMap.get(Servo.class, "claw_lift");
+        clawGrab = hwMap.get(Servo.class, "claw_grab");
+        clawLift.scaleRange(CLAW_LIFT_MIN_RANGE, CLAW_LIFT_MAX_RANGE);
+        clawGrab.scaleRange(CLAW_GRAB_MIN_RANGE, CLAW_GRAB_MAX_RANGE);
+
+        // Define and Init. Magnetic Limit Switches
+        armExtendMax = hwMap.get(TouchSensor.class, "arm_extend_max");
+        armExtendMin = hwMap.get(TouchSensor.class, "arm_extend_min");
+
+        // Set Arm Motors to Zero Power
+        armSwivelMotor.setPower(0);
+        armLiftMotor.setPower(0);
+        armExtendMotor.setPower(0);
+
+        // Reset Arm Motor Encoders
+        armSwivelMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armExtendMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set Arm Motor Behaviors
+        armSwivelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armExtendMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        armLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        armSwivelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     public void servoMove(Servo servo, double targetPosition) {
