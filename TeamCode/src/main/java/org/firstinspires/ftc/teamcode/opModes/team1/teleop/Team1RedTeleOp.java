@@ -24,7 +24,7 @@ public class Team1RedTeleOp extends TeleOpModeBase { // Ensure you extend the ba
     @Override
     public void setup() {
         // TODO: Move to own OpMode
-        
+
         // Runs once at INIT
         teleop = new Team1GenericTeleOp();
         // Run generic TeleOp
