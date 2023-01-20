@@ -31,6 +31,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.ConeStack;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.FieldThing;
 import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
+import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.active;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DistanceSensorSim;
@@ -214,7 +215,7 @@ public class Crane implements Subsystem {
     }
 
     public void resetCrane(Constants.Position start){
-        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
+        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST)){
             fieldPositionTarget = new Vector3(start.getPose().getX()+9,start.getPose().getY(),9);
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             fieldPositionTarget = new Vector3(home.x+robot.turret.getTurretPosition().getX(),home.y+robot.turret.getTurretPosition().getY(),home.z);
@@ -518,7 +519,7 @@ public class Crane implements Subsystem {
             case 1:
                 if (goToFieldCoordinate(pos.getX(), pos.getY(), obj.z()+4)) {
                     coneCycleStage++;
-                    cycleTimer = futureTime(1);
+                    cycleTimer = futureTime(0.1);
                 }
                 break;
             case 2:
@@ -531,7 +532,7 @@ public class Crane implements Subsystem {
                 if(System.nanoTime() >= cycleTimer) {
                     grab();
                     obj.takeCone();
-                    cycleTimer = futureTime(0.5);
+                    cycleTimer = futureTime(0.3);
                     coneCycleStage++;
                 }
                 break;
@@ -554,15 +555,15 @@ public class Crane implements Subsystem {
                     temp = robot.field.objects[32];
                 }
                 Pose2d tempPos = Field.convertToInches(temp.getPosition());
-                if (goToFieldCoordinate(tempPos.getX()+2, tempPos.getY()+2, temp.z())) {
+                if (goToFieldCoordinate(tempPos.getX(), tempPos.getY(), temp.z())) {
                     coneCycleStage++;
-                    cycleTimer = futureTime(1);
+                    cycleTimer = futureTime(0.4);
                 }
                 break;
             case 7:
                 if(System.nanoTime() >= cycleTimer) {
                     release();
-                    cycleTimer = futureTime(0.5);
+                    cycleTimer = futureTime(0.3);
                     coneCycleStage++;
                 }
                 break;
@@ -837,7 +838,9 @@ public class Crane implements Subsystem {
             robotIsNotTipping = withinError(turretPitch, 0, 4); //checks if robot is happy
         }
 
-        articulate(articulation);
+        if(active) {
+            articulate(articulation);
+        }
 
         turretPos = robot.turret.getTurretPosition();
         axlePos = robot.turret.getAxlePosition();
@@ -964,7 +967,7 @@ public class Crane implements Subsystem {
 
         calculatedHeight = z-shoulderHeight;
 
-        calculatedDistance = 0.05 + (Math.sqrt(Math.pow(y - axlePos.getY(),2) + Math.pow(x - axlePos.getX(),2)))/INCHES_PER_METER;
+        calculatedDistance = (Math.sqrt(Math.pow(y - axlePos.getY(),2) + Math.pow(x - axlePos.getX(),2)))/INCHES_PER_METER;
 
         calculatedAngle = Math.toDegrees(Math.atan2(calculatedHeight, calculatedDistance));
         calculatedLength = (Math.sqrt(Math.pow(calculatedHeight, 2) + Math.pow(calculatedDistance, 2)));

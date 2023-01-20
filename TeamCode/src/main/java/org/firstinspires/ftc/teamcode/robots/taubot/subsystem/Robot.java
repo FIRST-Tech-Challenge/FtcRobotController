@@ -98,7 +98,7 @@ public class Robot implements Subsystem {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
         telemetryMap.put("AutonState", autonIndex);
-        telemetryMap.put("Auton Time", totalAutonTime/1e9);
+        telemetryMap.put("Auton Time", (totalAutonTime-System.nanoTime())/1e9);
         telemetryMap.put("auto-dump enabled", autoDumpEnabled);
 
         for (int i = 0; i < subsystems.length; i++) {
@@ -201,119 +201,121 @@ public class Robot implements Subsystem {
     boolean autonRunWithinTime = true;
     long totalAutonTime;
 
-    public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
-        if(!initAuton){
-            totalAutonTime = futureTime(27);
-            autonRunWithinTime = true;
-            initAuton = true;
-        }
-        if(System.nanoTime() >= totalAutonTime && autonRunWithinTime){
-            crane.articulate(Crane.Articulation.manual);
-            autonRunWithinTime = false;
-            autonTarget = 5;
-        }
+    int timeSupervisor = 0;
 
-        switch (autonIndex){
+    public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
+
+        switch (timeSupervisor) {
             case 0:
-                //drive to general parking location
-                crane.driverIsDriving();
-                if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20)){
-                    autonIndex++;
-                }
+                totalAutonTime = futureTime(24);
+                autonIndex = 0;
+                timeSupervisor++;
                 break;
             case 1:
-                //drop cone at nearest high pole
-                crane.driverNotDriving();
-                crane.articulate(Crane.Articulation.noIK);
-                if(startingPosition.equals( Constants.Position.START_LEFT)) {
-                    if (System.nanoTime() >= autonTime && crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,Field.INCHES_PER_GRID,36)) {
-                        crane.setGripper(false);
-                        autonTime = futureTime(0.5);
-                        autonIndex++;
-                    }
-                }else{
-                    if (System.nanoTime() >= autonTime && crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,-Field.INCHES_PER_GRID-1,36)) {
-                        crane.setGripper(false);
-                        autonTime = futureTime(0.5);
-                        autonIndex++;
-                    }
+                if(System.nanoTime() >= totalAutonTime){
+                    timeSupervisor++;
+                }
+                switch (autonIndex) {
+                    case 0:
+                        //drive to general parking location
+                        crane.articulate(Crane.Articulation.noIK);
+                        crane.driverIsDriving();
+                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-7, 0, 30)) {
+                            autonIndex++;
+                        }
+                        break;
+                    case 1:
+                        //drop cone at nearest high pole
+                        crane.driverNotDriving();
+                        if (startingPosition.equals(Constants.Position.START_LEFT)) {
+                            if (System.nanoTime() >= autonTime && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 1.5, Field.INCHES_PER_GRID, 36)) {
+                                crane.setGripper(false);
+                                autonTime = futureTime(0.3);
+                                autonIndex++;
+                            }
+                        } else {
+                            if (System.nanoTime() >= autonTime && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 1.5, -Field.INCHES_PER_GRID - 1, 36)) {
+                                crane.setGripper(false);
+                                autonTime = futureTime(0.3);
+                                autonIndex++;
+                            }
+                        }
+                        break;
+                    case 2:
+                        if (System.nanoTime() >= autonTime && crane.goHome()) {
+                            autonIndex++;
+                        }
+                        break;
+                    case 3:
+                        //face conestack
+                        if (startingPosition.equals(Constants.Position.START_LEFT)) {
+                            if (driveTrain.turnUntilDegrees(90)) {
+                                autonIndex++;
+                                turnUntilDegreesDone = true;
+                                //autonTime = futureTime(0.2);
+                            }
+                        } else {
+                            if (driveTrain.turnUntilDegrees(-90)) {
+                                autonIndex++;
+                                turnUntilDegreesDone = true;
+                                //autonTime = futureTime(0.2);
+                            }
+                        }
+                        break;
+                    case 4:
+                        if (System.nanoTime() >= autonTime) {
+                            //if we r on left side run cone stack left, if right run right cone stack
+                            if (startingPosition.equals(Constants.Position.START_LEFT)) {
+                                crane.articulate(Crane.Articulation.coneStackLeft);
+                            } else {
+                                crane.articulate(Crane.Articulation.coneStackRight);
+                            }
+                            if (crane.getArticulation() == Crane.Articulation.manual) {
+                                autonIndex++;
+                            }
+                        }
+                        break;
+                    case 5:
+                        autonIndex = 0;
+                        timeSupervisor++;
+                        break;
                 }
                 break;
             case 2:
-                if(System.nanoTime() >= autonTime && crane.goHome()){
-                    autonIndex++;
+                crane.articulate(Crane.Articulation.home);
+                if (crane.getArticulation() == Crane.Articulation.manual) {
+                    crane.articulate(Crane.Articulation.noIK);
+                    timeSupervisor++;
                 }
                 break;
             case 3:
-                //face conestack
+                if (autonTarget == 1 || Objects.isNull(autonTarget)) {
+                    timeSupervisor++;
+                }
                 if (startingPosition.equals(Constants.Position.START_LEFT)) {
-                    if (driveTrain.turnUntilDegrees(90)) {
-                        autonIndex++;
-                        turnUntilDegreesDone = true;
-                        autonTime = futureTime(3);
+                    if (autonTarget == 0) {
+                        if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID + 3, 90, 20))
+                            timeSupervisor++;
+                    } else if (autonTarget == 2) {
+                        if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID, 90, 20))
+                            timeSupervisor++;
                     }
                 } else {
-                    if (driveTrain.turnUntilDegrees(-90)) {
-                        autonIndex++;
-                        turnUntilDegreesDone = true;
-                        autonTime = futureTime(3);
+                    if (autonTarget == 0) {
+                        if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID, 270, 20))
+                            timeSupervisor++;
+                    } else if (autonTarget == 2) {
+                        if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID + 3, 270, 20))
+                            timeSupervisor++;
                     }
                 }
                 break;
             case 4:
-                if(System.nanoTime() >= autonTime) {
-                    //if we r on left side run cone stack left, if right run right cone stack
-                    if(startingPosition.equals( Constants.Position.START_LEFT)){
-                        crane.articulate(Crane.Articulation.coneStackLeft);
-                    }else{
-                        crane.articulate(Crane.Articulation.coneStackRight);
-                    }
-                    if(crane.getArticulation() == Crane.Articulation.manual){
-                        autonIndex++;
-                    }
-                }
-                break;
-            case 5:
-                if(crane.goHome()){
-                    autonIndex++;
-                }
-                break;
-            case 6:
-                //drive to specific parking location
-                if(autonTarget == 1 || Objects.isNull(autonTarget)){
-                    autonIndex++;
-                }
-                if(startingPosition.equals( Constants.Position.START_LEFT)){
-                    if(autonTarget == 0){
-                        if(driveTrain.driveUntilDegrees(0.8*Field.INCHES_PER_GRID+3,90,20))autonIndex++;
-                    }else if(autonTarget == 2){
-                        if(driveTrain.driveUntilDegrees(-0.8*Field.INCHES_PER_GRID,90,20))autonIndex++;
-                    }
-                }else{
-                    if(autonTarget == 0){
-                        if(driveTrain.driveUntilDegrees(-0.8*Field.INCHES_PER_GRID, 270,20))autonIndex++;
-                    }else if(autonTarget == 2){
-                        if(driveTrain.driveUntilDegrees(0.8*Field.INCHES_PER_GRID+3,270,20))autonIndex++;
-                    }
-                }
-                break;
-            case 7:
-                autonTime = futureTime(0.5);
-                autonIndex++;
-                break;
-            case 8:
-                if(System.nanoTime() >= autonTime) {
-                    autonIndex++;
-                }
-                break;
-            case 9:
-                //get rdy for teleop
                 crane.nudgeLeft();
-                crane.setCraneTarget(turret.getTurretPosition().getX()-2,turret.getTurretPosition().getY(),26);
-                autonIndex = 0;
+                crane.setCraneTarget(turret.getTurretPosition().getX() - 2, turret.getTurretPosition().getY(), 26);
+                crane.articulate(Crane.Articulation.manual);
+                timeSupervisor = 0;
                 return true;
-            default:
-                return false;
         }
         return false;
     }

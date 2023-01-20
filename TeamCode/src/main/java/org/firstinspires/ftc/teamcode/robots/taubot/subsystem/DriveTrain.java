@@ -65,6 +65,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Config(value = "PPDriveTrain")
 public class DriveTrain extends DiffyDrive implements Subsystem {
@@ -212,7 +213,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
         chassisLengthPID.enable();
 
-        cachePosition = new Vector2(0,0);
+        if(Objects.isNull(cachePosition)) {
+            cachePosition = new Vector2(0, 0);
+        }
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
 
@@ -416,10 +419,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     }
 
     public void resetGridDrive(Position start){
+        resetEncoders();
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
-            resetEncoders();
             setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
-        }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
+        }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST)){
             setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             setPoseEstimate(new Pose2d(cachePosition.x, cachePosition.y,lastRunHeading));

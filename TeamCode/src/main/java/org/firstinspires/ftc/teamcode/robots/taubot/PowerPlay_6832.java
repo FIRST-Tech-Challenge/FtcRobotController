@@ -82,7 +82,7 @@ public class PowerPlay_6832 extends OpMode {
     static public int state = 0;
 
     // global state
-    static boolean active;
+    public static boolean active;
     public static boolean debugTelemetryEnabled;
     static boolean gridDriveActive = false;
     private boolean initializing, smoothingEnabled;
@@ -138,6 +138,7 @@ public class PowerPlay_6832 extends OpMode {
         AUTONOMOUS("Autonomous", true),
 
         TELE_OP("Tele-Op"),
+        TEST("Test"),
         DEMO("Demo"),
         UNDERARM_TEST("Underarm Testing"),
         MANUAL_DIAGNOSTIC("Manual Diagnostic"),
@@ -274,7 +275,7 @@ public class PowerPlay_6832 extends OpMode {
             robot.crane.resetCrane(startingPosition);
         }
 
-        if(gameState.equals(GameState.DEMO)){
+        if(gameState.equals(GameState.TEST)){
             robot.driveTrain.setPoseEstimate(startingPosition.getPose());
             robot.crane.resetCrane(startingPosition);
         }
@@ -305,7 +306,18 @@ public class PowerPlay_6832 extends OpMode {
                     rumble();
                 }
                 switch(gameState) {
+                    case AUTONOMOUS:
+                        if(robot.AutonRun(auto.visionProvider.getMostFrequentPosition().getIndex(),startingPosition)) {
+                            gameState = GameState.TELE_OP;
+                            gameStateIndex = 1;
+                            active = false;
+                            //super.stop();
+                        }
+                        break;
                     case TELE_OP:
+                        dc.joystickDrive();
+                        break;
+                    case TEST:
                         dc.joystickDrive();
                         break;
                     case DEMO:
@@ -321,11 +333,6 @@ public class PowerPlay_6832 extends OpMode {
 
                     case CRANE_DEBUG:
                         //handleCraneDebug();
-                        break;
-                    case AUTONOMOUS:
-                        if(robot.AutonRun(auto.visionProvider.getMostFrequentPosition().getIndex(),startingPosition)) {
-                            gameState = GameState.TELE_OP;
-                        }
                         break;
                     case BACK_AND_FORTH:
                         auto.backAndForth.execute();
