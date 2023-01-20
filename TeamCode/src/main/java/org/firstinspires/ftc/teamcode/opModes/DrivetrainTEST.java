@@ -17,7 +17,7 @@ public class DrivetrainTEST extends TeleOpModeBase {
     GamepadEx gamepadEx = new GamepadEx(gamepad1);
     Motor m_motor_1;
     Motor m_motor_2;
-    Motor m_motor_3;
+    Motor m_motor_3;         
     Motor m_motor_4;
 
     //groups motors together for drive
@@ -46,3 +46,4 @@ public class DrivetrainTEST extends TeleOpModeBase {
         m_drive.arcadeDrive(gamepadEx.getLeftY(),gamepadEx.getLeftX());
     }
 }
+
