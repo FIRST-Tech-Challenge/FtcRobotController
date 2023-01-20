@@ -72,6 +72,7 @@ public class Vision {
     }
 
     public int differenceX() { return poleDetector.differenceX(); }
+    public int middleX() { return poleDetector.middleX(); }
 
     public void searchTags() {
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -91,9 +92,5 @@ public class Vision {
 
     public double distance() {
         return distanceSensor.getDistance(DistanceUnit.MM);
-    }
-
-    public int middleX() {
-        return poleDetector.middleX();
     }
 }
