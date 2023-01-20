@@ -6,6 +6,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENC
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -54,8 +55,9 @@ public class Auto2022_23v2 extends LinearOpMode {
     public Servo servoGrabber1;
     public Servo servoGrabber2;
 
-    // Sensor built into control hub
+    // Sensors
     BNO055IMU imu;
+    ColorSensor color;
 
     public ElapsedTime runtime = new ElapsedTime();
 
@@ -91,8 +93,8 @@ public class Auto2022_23v2 extends LinearOpMode {
     // Cone information
 
     public int coneCount = 1;
-    public double firstConePos = 4.62;
-    public double coneSeparationDistance = firstConePos/4;
+    public double firstConePos = 5.775;
+    public double coneSeparationDistance = firstConePos/5;
 
     // Image information
     public double center = 0;
@@ -177,23 +179,25 @@ public class Auto2022_23v2 extends LinearOpMode {
                 }*/
 
                 if(!hasMoved){
-                    movePercentOfFoot(true,30.0/12);
+                    turnToHeading(.5,90);
+                    waitTime(5);
+                    turnToHeading(.5,180);
                     hasMoved = true;
                 }
 
                 /* Use the code below to test ticks per inch
                  * Uncomment and run, then find how high the linear slide moved.
-                 * 173 ticks as of writing this is the amount needed to lift up one inch.
+                 * 1730 ticks as of writing this is the amount needed to lift up ten inches.
                  * Change the liftCorrection variable to account for the difference in distance
-                 * For example: After running the code, the linear slide moved 1.3 inches.
-                 * Change liftCorrection to .7. This accounts for it being .3 inches over since
-                 * you're taking .3 inches off of the current one inch
+                 * For example: After running the code, the linear slide moved 13 inches.
+                 * Change liftCorrection to .7. This accounts for it being 3 inches over since
+                 * you're taking 3 inches off of the current one inch
                  */
 
                 /*
                 if(!hasMoved){
                     liftMotor.setMode(STOP_AND_RESET_ENCODER);
-                    liftMotor.setTargetPosition(173);
+                    liftMotor.setTargetPosition(1730);
                     liftMotor.setMode(RUN_TO_POSITION);
                     liftMotor.setPower(1.0);
                     hasMoved = true;
@@ -205,7 +209,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     public void moveToZone(String signal){
         telemetry.addData("Detected:",signal);
-        if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
+        /*if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
             movePercentOfFoot(true,30.0/12);
             turnNinety(false);
             movePercentOfFoot(true,21.0/12);
@@ -219,9 +223,29 @@ public class Auto2022_23v2 extends LinearOpMode {
             movePercentOfFoot(true,30.0/12);
             turnNinety(true);
             movePercentOfFoot(true,23.0/12);
-        }
-    }
+        }*/
 
+        moveGrabber(true);
+        waitTime(.5);
+        moveLift(5);
+        movePercentOfFoot(true,20.0/12);
+        moveLift(17);
+        movePercentOfFoot(true,3.0/12);
+        turnToHeading(.5,90);
+        moveLift(9);
+        moveGrabber(false);
+        movePercentOfFoot(false,3.0/12);
+        turnToHeading(.5,0);
+        movePercentOfFoot(true,10.0/12);
+        if(signal.equals("1 Bolt")){
+            turnToHeading(.5,90);
+            movePercentOfFoot(true,21.0/12);
+        }else if(signal.equals("3 Panel")){
+            turnToHeading(.5,270);
+            movePercentOfFoot(true,23.0/12);
+        }
+        moveLift(0);
+    }
 
     public void setUpHardware() { // Assigns motor names in phone to the objects in code
         leftDrive  = hardwareMap.get(DcMotorEx.class, "left_front_drive");
@@ -232,6 +256,8 @@ public class Auto2022_23v2 extends LinearOpMode {
         liftMotor  = hardwareMap.get(DcMotorEx.class, "lift_motor");
         servoGrabber1 = hardwareMap.get(Servo.class, "servo_grabber_one");
         servoGrabber2 = hardwareMap.get(Servo.class, "servo_grabber_two");
+
+        color = hardwareMap.get(ColorSensor.class, "sensor_color");
 
         // Makes all motors go forward, if they don't, switch the direction
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -295,22 +321,6 @@ public class Auto2022_23v2 extends LinearOpMode {
         tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
-    //Drive functions
-    public void setVelo(boolean forward, double maxPercent, double time){ // Move forward or backward
-        int direction = -1;
-        if(forward){
-            direction = 1;
-        }
-        runtime.reset();
-        while(opModeIsActive() && runtime.seconds() < time){
-            leftVelo(maxPercent*direction);
-            rightVelo(maxPercent*direction);
-        }
-        if(runtime.seconds() >= time){
-            motorsOff();
-        }
-    }
-
     public void strafeVelo(boolean isLeft, double maxPercent, double time){
         //Strafe left or right
         int direction = -1;
@@ -331,7 +341,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     public void turnNinety(boolean CW){
         // Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
-        double originalAngle = -imu.getAngularOrientation().firstAngle;
+        double originalAngle = getAngle();
 
         double time = .8;
         runtime.reset();
@@ -353,28 +363,28 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         if(CW) {
             //left = +; right = -
-            if(originalAngle - .9 < 0) {
-                while (opModeIsActive() && (-imu.getAngularOrientation().firstAngle < originalAngle + .05 || -imu.getAngularOrientation().firstAngle > originalAngle - .9 + 3.6)) {
-                    leftVelo(.75);
-                    rightVelo(-.75);
+            if(originalAngle - 90 < 0) {
+                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - 90 + 360)) {
+                    leftVelo(.5);
+                    rightVelo(-.5);
                 }
             }else{
-                while (opModeIsActive() && -imu.getAngularOrientation().firstAngle > originalAngle - .9 && -imu.getAngularOrientation().firstAngle < originalAngle + .05) {
-                    leftVelo(.75);
-                    rightVelo(-.75);
+                while (opModeIsActive() && -getAngle() > originalAngle - 90 && getAngle() < originalAngle + 5) {
+                    leftVelo(.5);
+                    rightVelo(-.5);
                 }
             }
         }else{
             //left = -; right = +
-            if(originalAngle + .9 > 3.6) {
-                while (opModeIsActive() && (-imu.getAngularOrientation().firstAngle > originalAngle - .05 || -imu.getAngularOrientation().firstAngle < originalAngle + .9 - 3.6)) {
-                    leftVelo(-.75);
-                    rightVelo(.75);
+            if(originalAngle + 90 > 360) {
+                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + 9 - 360)) {
+                    leftVelo(-.5);
+                    rightVelo(.5);
                 }
             }else{
-                while (opModeIsActive() && -imu.getAngularOrientation().firstAngle < originalAngle + .9 && -imu.getAngularOrientation().firstAngle > originalAngle - .05) {
-                    leftVelo(-.75);
-                    rightVelo(.75);
+                while (opModeIsActive() && getAngle() < originalAngle + 90 && getAngle() > originalAngle - 5) {
+                    leftVelo(-.5);
+                    rightVelo(.5);
                 }
             }
         }
@@ -416,6 +426,21 @@ public class Auto2022_23v2 extends LinearOpMode {
         waitTime(1);
         moveLift(firstConePos - conePosMod + 5);
         coneCount++;
+    }
+
+    public void moveToTape(boolean red){
+        if(red){
+            while(opModeIsActive() && color.red() < 1200){
+                motorsOn(.5);
+            }
+        }else{
+            while(opModeIsActive() && color.blue() < 1200){
+                motorsOn(.5);
+            }
+        }
+        motorsOff();
+        moveLift(12);
+        movePercentOfFoot(true, 10.0/12);
     }
 
     public void moveLift(double toHeight){
@@ -521,13 +546,11 @@ public class Auto2022_23v2 extends LinearOpMode {
         rightBackDrive.setTargetPosition(target);
     }
 
-    // Some physics equations put into functions
-    public static double getVelo(double radius, double rpm){ // in m/s in theory; v = vangular * r
-        return ((rpm/60)*Math.PI)*radius;
-    }
-
-    public static double getDistance(double radius, double rpm, double time){ //whatever unit radius is in; x = vt
-        return getVelo(radius,rpm)*time;
+    public double getAngle(){
+        if(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle < 0){
+            return 360 + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // Addition since the value is negative
+        }
+        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
     public void turnToHeading(double maxTurnSpeed, double heading) {
