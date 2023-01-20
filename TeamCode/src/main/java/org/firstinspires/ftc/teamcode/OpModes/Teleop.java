@@ -13,16 +13,14 @@ import org.firstinspires.ftc.teamcode.Helper.Robot;
 public class Teleop extends LinearOpMode {
 
     //tells you how long the robot has run for
-    private ElapsedTime runtime = new ElapsedTime();
-    double timeout_ms = 0;
+//    private ElapsedTime runtime = new ElapsedTime();
+//    double timeout_ms = 0;
 
     Robot robot = new Robot();
 
     //How fast your robot will accelerate.
     public double acceleration = 0.5;
 
-    // holding power for vertical slider.
-    private double holdingPower = 0.0001;
 
     //Motor powers
     public double fl_power = 0;
@@ -41,16 +39,16 @@ public class Teleop extends LinearOpMode {
          */
         robot.init(hardwareMap);
 
-//        /**
-//         * This code is run during the init phase, and when opMode is not active
-//         * i.e. When "INIT" Button is pressed on the Driver Station App
-//         */
-//
-//        telemetry.addData("FL Motor Encoder", robot.getFLMotorPos());
-//        telemetry.addData("BL Motor Encoder", robot.getBLMotorPos());
-//        telemetry.addData("BR Motor Encoder", robot.getBRMotorPos());
-//        telemetry.addData("FR Motor Encoder", robot.getFRMotorPos());
-//        telemetry.update();
+        /**
+         * This code is run during the init phase, and when opMode is not active
+         * i.e. When "INIT" Button is pressed on the Driver Station App
+         */
+
+        telemetry.addData("FL Motor Encoder", robot.chassis.FLMotor.getCurrentPosition());
+        telemetry.addData("BL Motor Encoder", robot.chassis.BLMotor.getCurrentPosition());
+        telemetry.addData("BR Motor Encoder", robot.chassis.BRMotor.getCurrentPosition());
+        telemetry.addData("FR Motor Encoder", robot.chassis.FRMotor.getCurrentPosition());
+        telemetry.update();
 
         waitForStart();
 
@@ -114,7 +112,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("BL Motor Encoder", robot.chassis.BLMotor.getCurrentPosition());
             telemetry.addData("BR Motor Encoder", robot.chassis.BRMotor.getCurrentPosition());
             telemetry.addData("FR Motor Encoder", robot.chassis.FRMotor.getCurrentPosition());
-            telemetry.addData("vSliderPower", vSliderPower);
+            telemetry.addData("vSliderPower", robot.vSlider.motor.getPower());
             telemetry.addData("vSlider Encoder", robot.vSlider.motor.getCurrentPosition());
             telemetry.addData("swingArm Encoder", robot.arm.motor.getCurrentPosition());
             telemetry.addData("Claw Position", robot.claw.servo.getPosition());
@@ -123,8 +121,6 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("Angular Orientation", angle);
             int angleFloat = (int) (robot.modAngle(angle.firstAngle));
             telemetry.addData("Orientation in 0-360", angleFloat);
-
-
 
             telemetry.update();
 

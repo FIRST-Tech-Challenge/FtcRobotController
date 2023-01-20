@@ -18,7 +18,7 @@ public class Chassis {
     public int[] Location = {robotX,robotY};
 
     //IMU
-    public static BNO055IMU imu;
+    public  BNO055IMU imu;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -95,7 +95,7 @@ public class Chassis {
 
 
 
-
+        imu                             = hwMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit            = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -103,7 +103,6 @@ public class Chassis {
         parameters.useExternalCrystal   = true;
         parameters.mode                 = BNO055IMU.SensorMode.IMU;
         parameters.loggingTag           = "IMU";
-        imu                             = hwMap.get(BNO055IMU.class, "imu");
 
         //Since our Rev Expansion is in Vertical Position, so we need to Z & X
 
