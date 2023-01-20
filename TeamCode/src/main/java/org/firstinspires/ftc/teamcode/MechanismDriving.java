@@ -11,15 +11,13 @@ public class MechanismDriving {
     private static int desiredSlidePosition;
     public boolean testing=false;
 
-    // TODO: empirically measure values of slides positions
-    // TODO: empirically measure number of encoder counts for lowering horseshoe
-    public static final int LOWERING_AMOUNT = -2140;
+//    public static final int LOWERING_AMOUNT = -2140;
     public static final Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
        put(Robot.SlidesState.RETRACTED, 0);
        put(Robot.SlidesState.LOW, -4770);
        put(Robot.SlidesState.MEDIUM, -8020);
        put(Robot.SlidesState.HIGH, -13270);//may need to be higher
-       put(Robot.SlidesState.VERY_LOW, -1000);
+//       put(Robot.SlidesState.VERY_LOW, -1000);
     }};
     public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 1.0; //These are not final values
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
@@ -32,15 +30,15 @@ public class MechanismDriving {
 
     public static final double SLIDE_RAMP_DIST = 400;
     public static final double SLIDES_MAX_SPEED = 1;
-    public static final double SLIDE_MIN_SPEED =0.15;
+    public static final double SLIDE_MIN_SPEED = 0.4;
 
 
     public static final int slidesAdjustmentSpeed = 2;
 
     public MechanismDriving() {
-        slidePositions.put(Robot.SlidesState.LOW_LOWERED, slidePositions.get(Robot.SlidesState.LOW) - LOWERING_AMOUNT);
-        slidePositions.put(Robot.SlidesState.MEDIUM_LOWERED, slidePositions.get(Robot.SlidesState.MEDIUM) - LOWERING_AMOUNT);
-        slidePositions.put(Robot.SlidesState.HIGH_LOWERED, slidePositions.get(Robot.SlidesState.HIGH) - LOWERING_AMOUNT);
+//        slidePositions.put(Robot.SlidesState.LOW_LOWERED, slidePositions.get(Robot.SlidesState.LOW) - LOWERING_AMOUNT);
+//        slidePositions.put(Robot.SlidesState.MEDIUM_LOWERED, slidePositions.get(Robot.SlidesState.MEDIUM) - LOWERING_AMOUNT);
+//        slidePositions.put(Robot.SlidesState.HIGH_LOWERED, slidePositions.get(Robot.SlidesState.HIGH) - LOWERING_AMOUNT);
     }
 
     /** Sets the claw position to the robot's desired state.
@@ -88,20 +86,21 @@ public class MechanismDriving {
 //            Robot.desiredSlidesState
 //        }
     }
-
+    
+//    public void getTargetSlidesEncoderCount(AnalogValues, )
+    
     /** Sets slide motor powers to move in direction of desired position, if necessary.
      *
      * @return whether the slides are in the desired position.
      */
-    public boolean updateSlides(Robot robot) {
+    public boolean updateSlides(Robot robot, double slidesPower) {
 
        if (Robot.desiredSlidesState != Robot.SlidesState.UNREADY) {
            if(!testing)
                setSlidePosition(robot, slidePositions.get(Robot.desiredSlidesState));
 
            // Speed is proportional to the fraction of the ramp distance that we have left.
-           double slidesSpeed = SLIDES_MAX_SPEED * Range.clip(Math.abs(desiredSlidePosition - robot.slidesMotor.getCurrentPosition())/ SLIDE_RAMP_DIST, SLIDE_MIN_SPEED, 1);
-           slidesSpeed = Range.clip(slidesSpeed, 0.4, 1);
+           double slidesSpeed = slidesPower * Range.clip(Math.abs(desiredSlidePosition - robot.slidesMotor.getCurrentPosition())/ SLIDE_RAMP_DIST, SLIDE_MIN_SPEED, 1);
 
            // If the current position is less than desired position then move it up
            if (desiredSlidePosition - robot.slidesMotor.getCurrentPosition() > EPSILON) {

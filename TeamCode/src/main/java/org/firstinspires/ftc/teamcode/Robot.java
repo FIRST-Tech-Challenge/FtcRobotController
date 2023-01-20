@@ -22,7 +22,7 @@ import java.util.Objects;
 public class Robot {
     // Robot desired states.
 
-    public enum SlidesState {RETRACTED, LOW, LOW_LOWERED, MEDIUM, MEDIUM_LOWERED, HIGH, HIGH_LOWERED, UNREADY,VERY_LOW}
+    public enum SlidesState {RETRACTED, LOW, MEDIUM, HIGH, UNREADY, MOVE_UP, MOVE_DOWN}
     public enum ParkingPosition {INSIDE, MIDDLE, OUTSIDE}
     public enum HorseshoeState {FRONT, REAR}
     public enum ClawState {OPEN, CLOSED}
