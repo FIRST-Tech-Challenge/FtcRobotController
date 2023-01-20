@@ -216,7 +216,7 @@ public class Crane implements Subsystem {
 
     public void resetCrane(Constants.Position start){
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST)){
-            fieldPositionTarget = new Vector3(start.getPose().getX()+9,start.getPose().getY(),9);
+            fieldPositionTarget = new Vector3(start.getPose().getX()+6,start.getPose().getY(),9);
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             fieldPositionTarget = new Vector3(home.x+robot.turret.getTurretPosition().getX(),home.y+robot.turret.getTurretPosition().getY(),home.z);
         }
@@ -490,7 +490,7 @@ public class Crane implements Subsystem {
     }
 
     public boolean craneStart(){
-        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+9,robot.driveTrain.getPoseEstimate().getY(),8);
+        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+6,robot.driveTrain.getPoseEstimate().getY(),8);
         calculateFieldTargeting(fieldPositionTarget);
         setExtendTargetPos(calculatedLength);
         setShoulderTargetAngle(calculatedAngle);
@@ -873,7 +873,7 @@ public class Crane implements Subsystem {
         }
     }
 
-    Vector3 deltaGripperPosition = new Vector3(10,0,8);
+    Vector3 deltaGripperPosition = new Vector3(7,0,8);
 
     boolean holdFieldPosition = true;
     boolean driverDrivingRobot = false;

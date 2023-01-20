@@ -44,6 +44,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
@@ -248,6 +249,7 @@ public class PowerPlay_6832 extends OpMode {
 
         //run all driver controls needed in init_loop
         dc.init_loop();
+        robot.crane.articulate(Crane.Articulation.start);
 
         update();
 

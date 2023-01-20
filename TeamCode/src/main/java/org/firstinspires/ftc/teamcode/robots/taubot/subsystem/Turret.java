@@ -124,7 +124,9 @@ public class Turret implements Subsystem {
         correction = turretPID.performPID();
         error = turretPID.getError();
         //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
-        motor.setPower(correction);
+        if(Crane.robotIsNotTipping) {
+            motor.setPower(correction);
+        }
     }
 
     public void stop() {
