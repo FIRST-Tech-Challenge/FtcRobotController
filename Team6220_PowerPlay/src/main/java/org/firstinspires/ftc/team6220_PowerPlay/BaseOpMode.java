@@ -8,14 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.opencv.core.Scalar;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
@@ -134,7 +129,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
             // apply a constant to turn the angle into a turn speed
-            tPower = Math.min(-Constants.HEADING_CORRECTION_KP * angleError, Constants.MAXIMUM_TURNING_POWER);
+            tPower = Math.min(-Constants.HEADING_CORRECTION_KP * angleError, Constants.MAXIMUM_TURN_POWER);
         }
 
         // if the rotation rate is low, then that means all the momentum has left the robot's turning and can therefore turn the correction back on
@@ -190,14 +185,18 @@ public abstract class BaseOpMode extends LinearOpMode {
     // centers the cone on the junction top
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
-
         do {
             xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
             // center the cone on the junction top
-            driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
-
+            if(pipeline.detected) {
+                driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
+                telemetry.addData("detected = ", pipeline.detected);
+                telemetry.update();
+            }else{
+                break;
+            }
         // while the cone isn't centered over the junction
         } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
 
