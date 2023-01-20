@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp
 public class Servotesting extends LinearOpMode {
@@ -19,6 +22,8 @@ public class Servotesting extends LinearOpMode {
     private DcMotor Crain;
     private DcMotor Spin;
 
+    private Rev2mDistanceSensor distance;
+
 
     public void runOpMode() throws InterruptedException {
 
@@ -33,6 +38,8 @@ public class Servotesting extends LinearOpMode {
         Left = hardwareMap.get(CRServo.class, "Lefts");
         Crain = hardwareMap.get(DcMotor.class, "Crane");
         Spin = hardwareMap.get(DcMotor.class, "Spin");
+
+        distance = hardwareMap.get(Rev2mDistanceSensor.class,"distance");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -157,7 +164,7 @@ public class Servotesting extends LinearOpMode {
 
 
 
-            telemetry.addData("spin position",Spin.getCurrentPosition());
+            telemetry.addData("distance",distance.getDistance(DistanceUnit.INCH));
             telemetry.update();
         }
 

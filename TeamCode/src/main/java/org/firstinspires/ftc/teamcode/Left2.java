@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;                                     //imports
 import static java.lang.Thread.sleep;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.robotcore.hardware.CRServo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -43,6 +45,7 @@ public class Left2 extends LinearOpMode {
     int RIGHT = 3;
 
     int location;
+    double distancesnap;
 
     AprilTagDetection tagOfInterest = null;                             //setting motor varibles
     DcMotor frontLeft;
@@ -52,6 +55,7 @@ public class Left2 extends LinearOpMode {
     DcMotor Spin;
     DcMotor Crane;
     CRServo Left;
+    Rev2mDistanceSensor distance;
 
 
     BNO055IMU imu;
@@ -167,6 +171,8 @@ public class Left2 extends LinearOpMode {
         Spin = hardwareMap.get(DcMotor.class, "Spin");
         Crane = hardwareMap.get(DcMotor.class, "Crane");
 
+        distance=hardwareMap.get(Rev2mDistanceSensor.class,"distance");
+
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -174,11 +180,13 @@ public class Left2 extends LinearOpMode {
 
 
         if (opModeIsActive()) {//start of queue for autonnums movment
-
+            telemetry.addData("distance",distance.getDistance(DistanceUnit.INCH));
+            telemetry.update();
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithcrane(1,1950,-1,2300);
+            strafeLeftwithcrane2(1,15,-1,2300);
+            //strafeLeftwithcrane(1,1950,-1,2300);
             //crane2(1,-7600);
             move(.5,330);
             sleep(100);
@@ -401,6 +409,18 @@ public class Left2 extends LinearOpMode {
         backLeft.setPower(power);
         crane(powerc,timec);
         while (frontLeft.isBusy() && opModeIsActive()) {
+        }
+
+    }
+    public void strafeLeftwithcrane2(double power, int distances,double powerc, int timec) {
+        crane(powerc, timec);
+        frontRight.setPower(-power);
+        frontLeft.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(-power);
+        if (distance.getDistance(DistanceUnit.INCH)>distances){
+            stopMotors();
+
         }
 
     }
