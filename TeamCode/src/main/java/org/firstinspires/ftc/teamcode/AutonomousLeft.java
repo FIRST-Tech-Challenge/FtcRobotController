@@ -52,11 +52,11 @@ public class AutonomousLeft extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
 
         Pose2d startPose = new Pose2d(30.7, 61.4, Math.toRadians(-90));
-        Pose2d scoringPose = new Pose2d(37, 3, Math.toRadians(-164));
+        Pose2d scoringPose = new Pose2d(37, 2, Math.toRadians(-165));
 
-        Pose2d parking1 = new Pose2d(61  , 34, Math.toRadians(-90));
-        Pose2d parking2 = new Pose2d(37.4, 34, Math.toRadians(-90));
-        Pose2d parking3 = new Pose2d(13.8, 34, Math.toRadians(-90));
+        Pose2d parking1 = new Pose2d(61  , 12, Math.toRadians(-90));
+        Pose2d parking2 = new Pose2d(37.4, 12, Math.toRadians(-90));
+        Pose2d parking3 = new Pose2d(13.8, 12, Math.toRadians(-90));
 
         TrajectorySequence startToScore = drive.trajectorySequenceBuilder(startPose)
                 .splineToConstantHeading(new Vector2d(35, 58), Math.toRadians(-85))

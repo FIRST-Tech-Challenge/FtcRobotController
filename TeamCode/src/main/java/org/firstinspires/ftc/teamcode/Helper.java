@@ -27,7 +27,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 class elevatorPositions{
-    public static int high   = 18500;
+    public static int high   = 19500;
     public static int middle = 12000;
     public static int low    = 5000 ;
     public static int bottom = 0    ;
@@ -55,13 +55,13 @@ class RobotController {
     public final double grabberIn  = 0.09;
 
     //                                  low > > > > > > > > > > > high
-    public final double[] grabberPile = {0.77, 0.73, 0.69, 0.65, 0.61};
+    public final double[] grabberPile = {0.76, 0.72, 0.69, 0.65, 0.61};
 
     private final double armOut = 0.89; // hiTech value 0.61;
     private final double armIn  = 0.5;  // hiTech value 0.41;
 
     private final double placerIn  = 0;
-    private final double placerOut = 0.74;//0.85;
+    private final double placerOut = 0.78;// 0.74;
 
     private final double pufferGrab    = 0.14;
     private final double pufferRelease = 0;
@@ -202,7 +202,11 @@ class RobotController {
                     puffer.setPosition(pufferGrab);
                     grabber.setPosition(grabberOpen);
 
-                    safeSleep(200);
+                    while(elevatorPosition - elevatorLeft.getCurrentPosition() > 10000){
+                        if (gamepad.isStopRequested){
+                            throw new InterruptedException("stop requested");
+                        }
+                    }
 
                     setPlacerPosition(placerOut);
 
@@ -420,7 +424,7 @@ class RobotController {
             puffer.setPosition(pufferGrab);
             if (grabber.getPosition() != grabberOpen){
                 grabber.setPosition(grabberOpen);
-                safeSleep(50);
+                safeSleep(100);
             }
             elevatorPosition = elevatorPositions.high;
 
@@ -434,7 +438,7 @@ class RobotController {
                 setArmPosition(armOut * 0.8);
 
             }
-            safeSleep(400);
+            safeSleep(500);
 
             puffer.setPosition(pufferRelease);
 
@@ -453,7 +457,7 @@ class RobotController {
 
             setArmPosition(armOut);
 
-            safeSleep(500);
+            safeSleep(400);
 
 //            while (grabberSensor.getDistance(DistanceUnit.CM) < grabberCatchTrigger) {
 //                if (gamepad.isStopRequested) throw new InterruptedException("stop requested");
@@ -461,7 +465,7 @@ class RobotController {
 
             grabber.setPosition(grabberGrab);
 
-            safeSleep(500);
+            safeSleep(400);
 
             setGrabberPosition(grabberMiddle);
 
@@ -475,7 +479,7 @@ class RobotController {
 
             setGrabberPosition(grabberIn);
 
-            safeSleep(500); // replacing the sensor for now
+            safeSleep(300); // replacing the sensor for now
         }catch (InterruptedException e){}
     }
 
@@ -574,7 +578,7 @@ class PipeLine extends OpenCvPipeline {
     private final Mat ThresholdBlueImage = new Mat();
 
     // the part of the input image with the cone
-    private final Rect coneWindow = new Rect(35, 112, 50, 85);
+    private final Rect coneWindow = new Rect(35, 124, 43, 73);
 
     // for the visual indicator
     private final Rect coneWindowOutLine = new Rect(
