@@ -185,7 +185,7 @@ public class Left2 extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithcrane2(1,15,-1,2300);
+            strafeLeftwithcrane2(1,32,-1,2300);
             //strafeLeftwithcrane(1,1950,-1,2300);
             //crane2(1,-7600);
             move(.5,330);
@@ -414,14 +414,25 @@ public class Left2 extends LinearOpMode {
     }
     public void strafeLeftwithcrane2(double power, int distances,double powerc, int timec) {
         crane(powerc, timec);
-        frontRight.setPower(-power);
-        frontLeft.setPower(power);
-        backRight.setPower(power);
-        backLeft.setPower(-power);
-        if (distance.getDistance(DistanceUnit.INCH)>distances){
-            stopMotors();
+        distancesnap=distance.getDistance(DistanceUnit.INCH);
+
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        while(distance.getDistance(DistanceUnit.INCH)<distances && opModeIsActive()){
+            frontRight.setPower(-1);
+            frontLeft.setPower(1);
+            backRight.setPower(1);
+            backLeft.setPower(-1);
 
         }
+        stopMotors();
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
     public void strafeRightwithcrane(double power, int position,double powerc, int timec)  {

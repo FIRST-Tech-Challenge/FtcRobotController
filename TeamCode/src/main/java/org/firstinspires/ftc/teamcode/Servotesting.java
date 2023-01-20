@@ -39,7 +39,7 @@ public class Servotesting extends LinearOpMode {
         Crain = hardwareMap.get(DcMotor.class, "Crane");
         Spin = hardwareMap.get(DcMotor.class, "Spin");
 
-        distance = hardwareMap.get(Rev2mDistanceSensor.class,"distance");
+       distance = hardwareMap.get(Rev2mDistanceSensor.class,"distance");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -164,7 +164,7 @@ public class Servotesting extends LinearOpMode {
 
 
 
-            telemetry.addData("distance",distance.getDistance(DistanceUnit.INCH));
+           telemetry.addData("distance",distance.getDistance(DistanceUnit.INCH));
             telemetry.update();
         }
 

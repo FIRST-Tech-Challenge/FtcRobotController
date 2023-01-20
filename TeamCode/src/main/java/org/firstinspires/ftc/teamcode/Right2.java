@@ -2,13 +2,16 @@ package org.firstinspires.ftc.teamcode;                                         
 import static java.lang.Thread.sleep;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.robotcore.hardware.CRServo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -43,6 +46,7 @@ public class Right2 extends LinearOpMode {
     int RIGHT = 3;
 
     int location;
+    double distancesnap;
 
     AprilTagDetection tagOfInterest = null;                         //setting motor varibles
     DcMotor frontLeft;
@@ -53,6 +57,7 @@ public class Right2 extends LinearOpMode {
     DcMotor Crane;
     CRServo Left;
 
+    Rev2mDistanceSensor distance;
 
     BNO055IMU imu;
     Orientation angles;
@@ -167,6 +172,9 @@ public class Right2 extends LinearOpMode {
         Spin = hardwareMap.get(DcMotor.class, "Spin");
         Crane = hardwareMap.get(DcMotor.class, "Crane");
 
+        distance=hardwareMap.get(Rev2mDistanceSensor.class,"distance");
+
+
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -177,7 +185,7 @@ public class Right2 extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithcrane(1,1950,-1,2300);
+            strafeLeftwithcrane2(1,32,-1,2300);
             //crane2(1,-7600);
             move(.5,-330);
             sleep(100);
@@ -395,6 +403,29 @@ public class Right2 extends LinearOpMode {
         crane(powerc,timec);
         while (frontLeft.isBusy() && opModeIsActive()) {
         }
+
+    }
+    public void strafeLeftwithcrane2(double power, int distances,double powerc, int timec) {
+        crane(powerc, timec);
+        distancesnap=distance.getDistance(DistanceUnit.INCH);
+
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        while(distance.getDistance(DistanceUnit.INCH)<distances && opModeIsActive()){
+            frontRight.setPower(-1);
+            frontLeft.setPower(1);
+            backRight.setPower(1);
+            backLeft.setPower(-1);
+
+        }
+        stopMotors();
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
     public void strafeRightwithcrane(double power, int position,double powerc, int timec)  {
