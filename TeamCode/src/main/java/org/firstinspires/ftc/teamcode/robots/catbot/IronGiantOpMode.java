@@ -23,6 +23,8 @@ import java.util.ArrayList;
 @TeleOp(name="Iron Giant OpMode", group="Challenge")
 public class IronGiantOpMode extends OpMode {
     //autonomous variables
+    //hello :)
+    //this is the ghost of christmas past :)
     public static boolean auton = true; // controls if auton will run set to true to run with auton
     public static  boolean testing = false;// turns off normal robot motion
     public static boolean red = true; // team boolean variable red true is red team
