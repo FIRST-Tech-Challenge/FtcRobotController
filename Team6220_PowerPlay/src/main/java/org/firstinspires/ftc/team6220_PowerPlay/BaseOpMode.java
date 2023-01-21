@@ -8,9 +8,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
@@ -37,6 +41,14 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // bulk reading
     private List<LynxModule> hubs;
+
+    // OpenCV
+    public static OpenCvCamera robotCamera;
+    public static OpenCvCamera grabberCamera;
+
+    public static AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    public static RobotCameraPipeline robotCameraPipeline;
+    public static GrabberCameraPipeline grabberCameraPipeline;
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -102,6 +114,13 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
+        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
+
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
+        robotCameraPipeline = new RobotCameraPipeline();
+        grabberCameraPipeline = new GrabberCameraPipeline();
 
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }

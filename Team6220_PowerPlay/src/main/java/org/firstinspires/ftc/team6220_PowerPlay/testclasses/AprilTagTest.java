@@ -17,25 +17,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(name = "AprilTagTest")
 public class AprilTagTest extends BaseAutonomous {
 
-    public AprilTagDetectionPipeline aprilTagDetectionPipeline;
-
-    public OpenCvCamera robotCamera;
-
-    public int cameraMonitorViewId;
-
-    int signal;
-
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-
-        cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
-
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
-
-        robotCamera.setPipeline(aprilTagDetectionPipeline);
 
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -47,7 +31,9 @@ public class AprilTagTest extends BaseAutonomous {
             public void onError(int errorCode) {}
         });
 
-        signal = detectSignal();
+        robotCamera.setPipeline(aprilTagDetectionPipeline);
+
+        int signal = detectSignal();
 
         waitForStart();
 

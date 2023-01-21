@@ -135,9 +135,6 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
     // detect signal on signal sleeve
     public int detectSignal() {
-        OpenCvCamera robotCamera;
-        AprilTagDetectionPipeline aprilTagDetectionPipeline;
-
         final int ID_TAG_OF_INTEREST_0 = 0; // tag 0 from the 36h11 family
         final int ID_TAG_OF_INTEREST_1 = 1; // tag 1 from the 36h11 family
         final int ID_TAG_OF_INTEREST_2 = 2; // tag 2 from the 36h11 family
@@ -146,12 +143,6 @@ public abstract class BaseAutonomous extends BaseOpMode {
         AprilTagDetection tagOfInterest = null;
         boolean tagFound = false;
 
-        // initializes camera
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
-
-        robotCamera.setPipeline(aprilTagDetectionPipeline);
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -161,6 +152,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
             @Override
             public void onError(int errorCode) {}
         });
+
+        robotCamera.setPipeline(aprilTagDetectionPipeline);
 
         // replaces waitForStart()
         // detects AprilTags during initialization
@@ -200,8 +193,6 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
             telemetry.update();
         }
-
-        robotCamera.stopStreaming();
 
         // return default
         if (tagOfInterest == null) {
