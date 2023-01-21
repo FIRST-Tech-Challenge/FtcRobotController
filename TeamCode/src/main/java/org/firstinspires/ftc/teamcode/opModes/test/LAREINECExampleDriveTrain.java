@@ -34,7 +34,7 @@ public class LAREINECExampleDriveTrain extends TeleOpModeBase { // Ensure you ex
         // Runs in the main loop
         teleop.every_tick();
         TelemetryContainer.getTelemetry().addLine("No Transpose");
-        Joystick leftJoystick = new Joystick(Inputs.gamepad1.getLeftX(), Inputs.gamepad1.getLeftY());
+        Joystick leftJoystick = new Joystick(-Inputs.gamepad1.getLeftX(), Inputs.gamepad1.getLeftY()); // X reversed to correct
 
         // Drive
         drive.arcadeDrive(leftJoystick.y, leftJoystick.x);
