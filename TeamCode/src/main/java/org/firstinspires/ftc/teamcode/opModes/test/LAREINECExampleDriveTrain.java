@@ -20,7 +20,6 @@ public class LAREINECExampleDriveTrain extends TeleOpModeBase { // Ensure you ex
 
     @Override
     public void setup() {
-        // TODO: Move to own OpMode
 
         // Runs once at INIT
         teleop = new Team1GenericTeleOp();
