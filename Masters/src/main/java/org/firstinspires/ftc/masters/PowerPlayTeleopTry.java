@@ -53,16 +53,16 @@ public class PowerPlayTeleopTry extends LinearOpMode {
     public static double p =0.015;
     public static double i=0;
     public static double p_arm=0.025, i_arm=0.05, d_arm=0.0001;
-    public static double f_arm=0.16;
+    public static double f_arm=0.2;
 
     //Fix values
     public static double clawServoOpen = 0.56;
-    public static double clawServoClosed = 0.85;
+    public static double clawServoClosed = 0.88;
     protected final int ARM_BOTTOM = 0;
     protected final int ARM_STOP = 100;
-    public final int ARM_MID_TOP = 350;
+    public final int ARM_MID_TOP = 450;
     public final int ARM_BOTTOM_JUNCTION = 300;
-    protected final int ARM_BACK = 350+1400/4;
+    protected final int ARM_BACK = 600;
 
     public final double TIP_CENTER = 0.77;
     public final double TIP_BACK = 0.6;
@@ -222,7 +222,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 clawServo.setPosition(clawServoClosed);
 
             } else if (gamepad2.b) {
-                tippingServo.setPosition(TIP_CENTER);
+               // tippingServo.setPosition(TIP_CENTER);
                 clawServo.setPosition(clawServoOpen);
 
             }
@@ -239,7 +239,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
       if (gamepad2.dpad_up && gamepad2.left_trigger>0.1){
                 previousState = currentState;
-                currentState = STATE.HIGH;
+                currentState = STATE.BACK_HIGH;
                 armSelection = ARM_BACK;
                 slideSelection= SLIDE_HIGH;
 
@@ -272,7 +272,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
             if (gamepad2.dpad_right && gamepad2.left_trigger>0.1){
                 previousState = currentState;
-                currentState = STATE.MID;
+                currentState = STATE.BACK_MID;
                 slideSelection = SLIDE_MIDDLE;
                 armSelection = ARM_BACK;
                 if (previousState == STATE.ZERO){
