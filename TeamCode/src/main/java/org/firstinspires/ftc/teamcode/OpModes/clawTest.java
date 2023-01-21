@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Helper.Robot;
 
-@TeleOp(name = "VSlider Test", group = "LinearOpMode")
+@TeleOp(name = "Claw Test", group = "LinearOpMode")
 
-public class TeleOpTesting extends LinearOpMode {
+public class clawTest extends LinearOpMode {
     //tells you how long the robot has run for
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
@@ -33,10 +33,6 @@ public class TeleOpTesting extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-
-            if(gamepad1.a) {
-                robot.ParkFromMedium( 1);
-            }
 
         }
 

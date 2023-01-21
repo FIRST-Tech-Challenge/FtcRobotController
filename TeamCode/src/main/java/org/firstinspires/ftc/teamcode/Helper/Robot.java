@@ -85,7 +85,7 @@ public class Robot {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        // chassis.tfod.loadModelFromFile(tfodPath, LABELS);
+        // chassis.tfod.loadMo  delFromFile(tfodPath, LABELS);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
 
 
