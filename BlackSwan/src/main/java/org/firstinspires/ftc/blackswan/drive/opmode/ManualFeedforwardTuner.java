@@ -1,5 +1,12 @@
 package org.firstinspires.ftc.blackswan.drive.opmode;
 
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kV;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -10,22 +17,13 @@ import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.blackswan.drive.SampleMecanumDrive;
 
 import java.util.Objects;
-
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kV;
-
 
 /*
  * This routine is designed to tune the open-loop feedforward coefficients. Although it may seem unnecessary,
@@ -47,7 +45,7 @@ import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kV;
 public class ManualFeedforwardTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in
 
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+    private FtcDashboard dashboard = FtcDashboard.getInstance();
 
     private SampleMecanumDrive drive;
 
@@ -71,7 +69,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
                     "when using the built-in drive motor velocity PID.");
         }
 
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        Telemetry telemetry = new MultipleTelemetry(this.telemetry, dashboard.getTelemetry());
 
         drive = new SampleMecanumDrive(hardwareMap);
 
