@@ -120,10 +120,10 @@ public class Tanay_Test extends OpMode {
         }
         // OPENING AND CLOSING
         if (gamepad2.b) {
-            ClawX.setPosition(0.8);
+            ClawX.setPosition(0.62);
         }
         if (gamepad2.a) {
-            ClawX.setPosition(0.93);
+            ClawX.setPosition(0.8);
         }
 
         //INCREASING THE SLIDE'S HEIGHT
@@ -177,11 +177,13 @@ public class Tanay_Test extends OpMode {
 
         if (((DistanceSensor) color).getDistance(DistanceUnit.CM) <=5) {
             if(color.blue() > 100){
-                ClawX.setPosition(0.93);
+                ClawX.setPosition(0.8);
             }
             if(color.red() > 100){
-                ClawX.setPosition(0.93);
+                ClawX.setPosition(0.8);
             }
+        } else {
+            ClawX.setPosition(0.62);
         }
 
         telemetry.addData("ClawX Pos", ClawX.getPosition());
