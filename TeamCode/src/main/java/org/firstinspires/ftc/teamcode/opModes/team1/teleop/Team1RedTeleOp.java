@@ -11,6 +11,7 @@ public class Team1RedTeleOp extends TeleOpModeBase {
 
     @Override
     public void setup() {
+        // Runs once at INIT
         teleop = new Team1GenericTeleOp();
         teleop.setup(TeamColour.RED);
     }
