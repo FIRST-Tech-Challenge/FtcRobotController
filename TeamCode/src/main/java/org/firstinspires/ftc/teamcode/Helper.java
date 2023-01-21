@@ -61,7 +61,7 @@ class RobotController {
     private final double armIn  = 0.5;  // hiTech value 0.41;
 
     private final double placerIn  = 0;
-    private final double placerOut = 0.78;// 0.74;
+    private final double placerOut = 0.75;// 0.78
 
     private final double pufferGrab    = 0.14;
     private final double pufferRelease = 0;
@@ -563,6 +563,9 @@ class Vector {
 
 
 class PipeLine extends OpenCvPipeline {
+
+    public static int parkingPosition = 0;
+
     // the part of the image with the cone
     private Mat small;
 
@@ -578,19 +581,30 @@ class PipeLine extends OpenCvPipeline {
     private final Mat ThresholdBlueImage = new Mat();
 
     // the part of the input image with the cone
-    private final Rect coneWindow = new Rect(35, 124, 43, 73);
+    private final Rect coneWindowRight = new Rect(267, 128, 43, 73);
+    private final Rect coneWindowLeft  = new Rect(35 , 124, 43, 73);
+    private Rect coneWindow;
 
     // for the visual indicator
-    private final Rect coneWindowOutLine = new Rect(
-            0,
-            0,
-            coneWindow.width,
-            coneWindow.height
-    );
+    private final Rect coneWindowOutLine;
 
     // the color threshold
     private final Scalar thresholdMin = new Scalar(160, 160, 160);
     private final Scalar thresholdMax = new Scalar(255, 255, 255);
+
+    public PipeLine(Boolean isRight){
+        if (isRight) {
+            coneWindow = coneWindowRight;
+        } else {
+            coneWindow = coneWindowLeft;
+        }
+        coneWindowOutLine = new Rect(
+                0,
+                0,
+                coneWindow.width,
+                coneWindow.height
+        );
+    }
 
     @Override
     public Mat processFrame(Mat input){
@@ -608,17 +622,28 @@ class PipeLine extends OpenCvPipeline {
         Core.inRange(RedChannel , thresholdMin, thresholdMax, ThresholdRedImage );
         Core.inRange(BlueChannel, thresholdMin, thresholdMax, ThresholdBlueImage);
 
-        // count the red and blue pixels and place them into the red and blue fields from AutonomousDrive
-        AutonomousLeft.red  = Core.mean(ThresholdRedImage ).val[0];
-        AutonomousLeft.blue = Core.mean(ThresholdBlueImage).val[0];
 
-        // visual que
-        if      (AutonomousLeft.red  > 45) Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 0  , 0  ), 2);
-        else if (AutonomousLeft.blue > 45) Imgproc.rectangle(small, coneWindowOutLine, new Scalar(0  , 0  , 255), 2);
-        else                               Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 255, 255), 2);
+        if (Core.mean(ThresholdRedImage ).val[0] > 45){// red
 
+            parkingPosition = 2;
+            // visual signal
+            Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 0  , 0  ), 2);
 
-        // show the small image
+        } else if (Core.mean(ThresholdBlueImage).val[0] > 45){// blue
+
+            parkingPosition = 1;
+            // visual signal
+            Imgproc.rectangle(small, coneWindowOutLine, new Scalar(0  , 0  , 255), 2);
+
+        } else {// white
+
+            parkingPosition = 0;
+            // visual signal
+            Imgproc.rectangle(small, coneWindowOutLine, new Scalar(255, 255, 255), 2);
+
+        }
+
+        // show the image
         return input;
     }
 }

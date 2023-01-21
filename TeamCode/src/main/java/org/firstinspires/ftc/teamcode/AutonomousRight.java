@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,8 +18,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class AutonomousRight extends LinearOpMode {
     // the camera
     private OpenCvWebcam webcam;
-    // to store the red and blue values from the camera
-    public static double red, blue;
 
 
     // we save the finishing angle for the field oriented after this op mode
@@ -33,7 +32,7 @@ public class AutonomousRight extends LinearOpMode {
         // initialize the camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam"), cameraMonitorViewId);
-        webcam.setPipeline(new PipeLine());
+        webcam.setPipeline(new PipeLine(true));
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -48,23 +47,26 @@ public class AutonomousRight extends LinearOpMode {
 
         // initialize the driveController (we do that after initializing the camera in order to enable "camera stream" in the drive controller)
         RobotController robotController = new RobotController(hardwareMap, telemetry);
-
-        Pose2d startPose = new Pose2d(-61.4, -37.4, 0);
-        Pose2d scoringPose = new Pose2d(-3.5, -36.5, Math.toRadians(77));
-
-        Pose2d parking1 = new Pose2d(-13, -13.8, 0);
-        Pose2d parking2 = new Pose2d(-13, -37.4, 0);
-        Pose2d parking3 = new Pose2d(-13, -61  , 0);
-
         drive = new SampleMecanumDrive(hardwareMap);
+
+        Pose2d startPose = new Pose2d(-30.7, 61.4, Math.toRadians(-90));
+        Pose2d scoringPose = new Pose2d(-37, 2.25, Math.toRadians(-15));
+
+        Pose2d parking1 = new Pose2d(-61  , 33, Math.toRadians(-90));
+        Pose2d parking2_1 = new Pose2d(-36, 20, Math.toRadians(-90));
+        Pose2d parking2_2 = new Pose2d(-36, 33, Math.toRadians(-90));
+        Pose2d parking3 = new Pose2d(-13.8, 33, Math.toRadians(-90));
+
+        TrajectorySequence startToScore = drive.trajectorySequenceBuilder(startPose)
+                .splineToConstantHeading(new Vector2d(-35, 58), Math.toRadians(-95))
+                .splineToSplineHeading(new Pose2d(-37.5, 20, Math.toRadians(-75)), Math.toRadians(-90))
+                .splineToSplineHeading(scoringPose, Math.toRadians(-90)).build();
+
+        TrajectorySequence scoringToParking1 = drive.trajectorySequenceBuilder(parking2_2).lineToLinearHeading(parking1).build();
+        TrajectorySequence scoringToParking2 = drive.trajectorySequenceBuilder(scoringPose).setTangent(Math.toRadians(90)).splineToSplineHeading(parking2_1, Math.toRadians(90)).splineToSplineHeading(parking2_2, Math.toRadians(90)).build();
+        TrajectorySequence scoringToParking3 = drive.trajectorySequenceBuilder(parking2_2).lineToLinearHeading(parking3).build();
+
         drive.setPoseEstimate(startPose);
-
-        TrajectorySequence startToScore = drive.trajectorySequenceBuilder(startPose).lineToLinearHeading(scoringPose).build();
-
-        TrajectorySequence scoringToParking1 = drive.trajectorySequenceBuilder(scoringPose).lineToLinearHeading(parking2).lineToLinearHeading(parking1).build();
-        TrajectorySequence scoringToParking2 = drive.trajectorySequenceBuilder(scoringPose).lineToLinearHeading(parking2).build();
-        TrajectorySequence scoringToParking3 = drive.trajectorySequenceBuilder(scoringPose).lineToLinearHeading(parking2).lineToLinearHeading(parking3).build();
-
 
         waitForStart();
         if (isStopRequested()) return;
@@ -107,14 +109,28 @@ public class AutonomousRight extends LinearOpMode {
             while(robotController.autoCycle.isAlive()){
                 if (!opModeIsActive()) throw new InterruptedException("stop requested");
             }
+
+
             robotController.safeSleep(500);
 
             robotController.elevatorController.interrupt();
 
-            if (red > 45)       follow(scoringToParking3);
-            else if (blue > 45) follow(scoringToParking2);
-            else                follow(scoringToParking1);
-
+            switch (PipeLine.parkingPosition) {
+                case 0: {
+                    follow(scoringToParking2);
+                    follow(scoringToParking3);
+                    break;
+                }
+                case 1: {
+                    follow(scoringToParking2);
+                    break;
+                }
+                case 2: {
+                    follow(scoringToParking2);
+                    follow(scoringToParking1);
+                    break;
+                }
+            }
             telemetry.addData("time", getRuntime());
             telemetry.update();
 
