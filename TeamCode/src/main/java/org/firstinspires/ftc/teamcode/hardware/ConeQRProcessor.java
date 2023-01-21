@@ -84,6 +84,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
 
     @Override
     public Mat processFrame (Mat input) {
+        Log.d("9010", "Entering processFrame isDecoded: "  + isDecoded());
         String qrCode = null;
 
         detectMsgBuf = new StringBuffer();
@@ -96,16 +97,17 @@ public class ConeQRProcessor  extends OpenCvPipeline {
         Mat croppedQR = null;
 
         if ( !decoded) {
+            Log.d("9010", "Starting qr code process ");
             startMills  = System.currentTimeMillis();
             Mat grey = new Mat();
             Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);
             qrCode = decoder.detectAndDecodeCurved(grey, points);
             endMills  = System.currentTimeMillis();
-            System.out.println(points.dump());
+            Log.d("9010", "qr code coordination: " + points.dump() + " QR code: " + qrCode);
             if (!points.empty()) {
                 //Detected. However not necessary decode correctly.
 
-                Log.d("TeamCode", "QR code: " + qrCode);
+                Log.d("9010", "QR code by decoder: " + qrCode);
 
                 /*
                 for (int i = 0; i < points.cols(); i++) {

@@ -22,7 +22,8 @@ public class RightAuto extends BaseAuto {
         YawPitchRollAngles orientation = hdw.imu.getRobotYawPitchRollAngles();
         double initHeading = orientation.getYaw(AngleUnit.DEGREES);
 
-        hdw.moveYAxis(33, 0.3);
+        hdw.moveYAxis(48, 0.3);
+        hdw.moveYAxis(-6, -0.3);
         hdw.goToHeight(Hardware2022.SlideHeight.Mid);
         //Get initial heading
 
@@ -33,14 +34,20 @@ public class RightAuto extends BaseAuto {
         hdw.dropCone();
         hdw.goToHeight(Hardware2022.SlideHeight.Mid);
         hdw.moveYAxis(-7, -0.3);
-        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
 
         //Turn back to init heading.
         orientation = hdw.imu.getRobotYawPitchRollAngles();
         double currentHeading = orientation.getYaw(AngleUnit.DEGREES);
-        Log.d("9010", "after turn heading: " + currentHeading);
+        Log.d("9010", "after Op heading: " + currentHeading);
+        Log.d("9010", "Turn back for : " + (initHeading - currentHeading) );
 
         hdw.turn(initHeading - currentHeading);
+
+        orientation = hdw.imu.getRobotYawPitchRollAngles();
+        currentHeading = orientation.getYaw(AngleUnit.DEGREES);
+        Log.d("9010", "after trun back heading (Init) : " + currentHeading);
+
+
     }
 
 }

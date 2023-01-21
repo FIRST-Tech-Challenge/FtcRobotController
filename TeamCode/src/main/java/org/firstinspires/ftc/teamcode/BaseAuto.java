@@ -62,7 +62,7 @@ public abstract class BaseAuto extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                webCam.startStreaming(1280,720, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                webCam.startStreaming(1280,720, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
@@ -117,6 +117,8 @@ public abstract class BaseAuto extends LinearOpMode {
             }
         }
 
+        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
+
 
         while (opModeIsActive())  {
             idle();
@@ -145,7 +147,7 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.update();
         //Move right
         //hdw.moveYAxis(28, 0.3);
-        hdw.moveXAxis( 23.5, 0.3);
+        hdw.moveXAxis( 23.0, 0.3);
 
     }
 

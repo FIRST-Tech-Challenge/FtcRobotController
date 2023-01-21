@@ -41,7 +41,7 @@ public class Hardware2022 {
     //Encoder value of VSlide height in Cone mode,
     private final int CONE_SLIDE_LOW = 2600  ;
     //Get accurate reading for auto
-    private final int CONE_SLIDE_MID = 4000 ;
+    private final int CONE_SLIDE_MID = 3400 ;
     private final int CONE_SLIDE_HIGH = 5500 ;
 
     private boolean debug = true;
@@ -356,6 +356,11 @@ public class Hardware2022 {
             wheelBackRight.setVelocity(-velocityCaculated * Hardware2022.ANGULAR_RATE);
         }
 
+
+        wheelFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wheelFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wheelBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wheelBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheelFrontRight.setVelocity(0);
         wheelFrontLeft.setVelocity(0);
         wheelBackRight.setVelocity(0);
@@ -509,8 +514,8 @@ public class Hardware2022 {
          && ( travel < 2000 )) {
             vSlide.setVelocity(power * ANGULAR_RATE);
             travel = slideStartPostion - vSlide.getCurrentPosition();
-            Log.d("9010", "postion:  " + vSlide.getCurrentPosition());
-            Log.d("9010", "Travel:  " + travel);
+            //Log.d("9010", "postion:  " + vSlide.getCurrentPosition());
+            //Log.d("9010", "Travel:  " + travel);
         }
 
         Log.d("9010", "After SLide Drop Cone ");
