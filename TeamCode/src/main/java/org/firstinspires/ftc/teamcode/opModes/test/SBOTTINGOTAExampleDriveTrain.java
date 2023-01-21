@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 
 @Disabled
-@TeleOp(name="Drivetrain Demo", group="Demo")
+@TeleOp(name="Drivetrain Demo [sbottingota]", group="Demo")
 public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
     public DifferentialDrive driveTrain;
     public Telemetry telemetry = TelemetryContainer.getTelemetry();
