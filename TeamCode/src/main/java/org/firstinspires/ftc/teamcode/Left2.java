@@ -191,8 +191,9 @@ public class Left2 extends LinearOpMode {
             move(.5,330);
             sleep(100);
             intake(-1,1300);
+            move(.5,-300);
             //new
-           /* move(.5,-300);
+           /*
             strafeLeftwithcrane(1,600,1,1000);//500
             gyroTurning(0);
             sleep(1000);
@@ -422,10 +423,10 @@ public class Left2 extends LinearOpMode {
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         while(distance.getDistance(DistanceUnit.INCH)<distances && opModeIsActive()){
-            frontRight.setPower(-1);
-            frontLeft.setPower(1);
-            backRight.setPower(1);
-            backLeft.setPower(-1);
+            frontRight.setPower(-power);
+            frontLeft.setPower(power);
+            backRight.setPower(power);
+            backLeft.setPower(-power);
 
         }
         stopMotors();

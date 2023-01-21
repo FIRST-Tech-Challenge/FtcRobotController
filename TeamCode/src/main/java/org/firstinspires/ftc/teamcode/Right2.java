@@ -185,13 +185,14 @@ public class Right2 extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithcrane2(1,32,-1,2300);
+            strafeLeftwithdistanceandcrane(1,32,-1,2300);
             //crane2(1,-7600);
             move(.5,-330);
             sleep(100);
             intake(-1,1300);
+            move(.5,300);
             //new
-            /*move(.5,300);
+            /*
             strafeLeftwithcrane(1,600,1,1000);//500
             gyroTurning(0);
             sleep(1000);
@@ -209,7 +210,6 @@ public class Right2 extends LinearOpMode {
             intake(-1,1300);
             move(.5,330);
 */
-
             switch (location){                  //parking
                 case 0:
                     move(.2,200);
@@ -235,6 +235,7 @@ public class Right2 extends LinearOpMode {
                     sleep(3000);
                     break;
             }
+           resetallmotors();
         }
     }
 
@@ -322,6 +323,20 @@ public class Right2 extends LinearOpMode {
         backRight.setPower(0);
     }
 
+    public void resetallmotors() {
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Crane.setPower(0);
+        Left.setPower(0);
+
+    }
+
     public void move(double power, int position) {
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -405,7 +420,7 @@ public class Right2 extends LinearOpMode {
         }
 
     }
-    public void strafeLeftwithcrane2(double power, int distances,double powerc, int timec) {
+    public void strafeLeftwithdistanceandcrane(double power, int distances,double powerc, int timec) {
         crane(powerc, timec);
         distancesnap=distance.getDistance(DistanceUnit.INCH);
 
@@ -415,10 +430,10 @@ public class Right2 extends LinearOpMode {
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         while(distance.getDistance(DistanceUnit.INCH)<distances && opModeIsActive()){
-            frontRight.setPower(-1);
-            frontLeft.setPower(1);
-            backRight.setPower(1);
-            backLeft.setPower(-1);
+            frontRight.setPower(-power);
+            frontLeft.setPower(power);
+            backRight.setPower(power);
+            backLeft.setPower(-power);
 
         }
         stopMotors();
