@@ -46,8 +46,10 @@ public class OpModePoleTracker extends DriveMethods {
     //The unit here is pixels
     int targetX;
     int targetWidth;
+    double targetDistance;
     double errorX;
     int errorWidth;
+    int currentWidth;
     double dividerX = 500;
     double alignPowerAddedX;
     double alignPowerAddedWidth;
@@ -60,7 +62,7 @@ public class OpModePoleTracker extends DriveMethods {
 
 
     //The unit here is boxes
-    int targetDistance;
+
 
     @Override
     public void runOpMode(){
@@ -169,8 +171,8 @@ public class OpModePoleTracker extends DriveMethods {
                 level2Aligned = false;
                 level3Aligned = false;
                 visionAutoActivated = false;
-                stopMotors();
-                motorSlide.setPower(0);
+//                stopMotors();
+//                motorSlide.setPower(0);
             }
 
             errorX = targetX - getCenterX();
@@ -199,6 +201,7 @@ public class OpModePoleTracker extends DriveMethods {
                     imuHeading = getCumulativeZ(); //Need
                     levelCounter = 2;
                     telemetry.addLine("level1 complete!");
+                    telemetry.addLine("IMU Heading: " + imuHeading);
                     telemetry.addLine("errorX: " + errorX);
                     telemetry.addLine("errorX divide thingy: " + (errorX/(Math.abs(errorX))));
 
@@ -217,24 +220,31 @@ public class OpModePoleTracker extends DriveMethods {
                 }
 
                 //Level2 below (untested at the moment - 1/17/23)
-                if(levelCounter == 2 && Math.abs(errorWidth) <= 3){ //TODO will need to add distance condition
-                    level2Aligned = true;
+                if(levelCounter == 2 && getLevel2Assigment() == true){
+                    currentWidth = getLargestObjectWidth();
+                    targetDistance = (double)((69-(currentWidth*4))/100) - 0.05; //This is in meters, and should position the robot roughly
+                    // 0.05 meter (5 cms) from the pole.
+
+                    driveForDistance(targetDistance, Direction.FORWARD, 0.3, imuHeading); //Get ontop of the pole while using the imu
+
                     levelCounter = 3;
-                    stopMotors();
+                    level2Aligned = true;
                     telemetry.addLine("Level2 Complete!");
-                    telemetry.addLine("Largest Oject Width: " + getLargestObjectWidth());
-                    telemetry.addLine("Error width: "+ errorWidth);
+                    telemetry.addLine("Current Width: " + currentWidth);
+                    telemetry.addLine("Target Distance: "+ targetDistance);
                     telemetry.update();
                 }
 
 
-                if(levelCounter == 2 && level2Aligned == false){ //TODO feed different inputs into this to make more aggressive
 
-                     motorFL.setPower(alignPowerAddedWidth - alignPowerAddedX/2.75);
-                     motorBL.setPower(alignPowerAddedWidth - alignPowerAddedX/2.75);
-                     motorFR.setPower(alignPowerAddedWidth + alignPowerAddedX/2.75);
-                     motorBR.setPower(alignPowerAddedWidth + alignPowerAddedX/2.75);
-                }
+//                if(levelCounter == 2 && level2Aligned == false){ //TODO feed different inputs into this to make more aggressive
+//
+//
+//                     motorFL.setPower(alignPowerAddedWidth - alignPowerAddedX/2.75);
+//                     motorBL.setPower(alignPowerAddedWidth - alignPowerAddedX/2.75);
+//                     motorFR.setPower(alignPowerAddedWidth + alignPowerAddedX/2.75);
+//                     motorBR.setPower(alignPowerAddedWidth + alignPowerAddedX/2.75);
+//                }
 
                 if (levelCounter == 3 && getPercentColor() < 10 && getPercentColor() > 0){
                     level3Aligned = true;
@@ -279,7 +289,7 @@ public class OpModePoleTracker extends DriveMethods {
                     clawClamp();
                     GoToHeight(targetHeight);
                     sleep(300);
-                    driveForDistance(0.16,Direction.FORWARD,0.2,imuHeading);
+                    driveForDistance(0.05,Direction.FORWARD,0.2,imuHeading);
 //                    sleep(250);
                     GoToHeight(targetHeight - 75);
                     sleep(350);
@@ -287,7 +297,7 @@ public class OpModePoleTracker extends DriveMethods {
                     sleep(200);
                     GoToHeight(targetHeight);
                     sleep(300);
-                    driveForDistance(0.16, Direction.BACKWARD, 0.2, imuHeading);
+                    driveForDistance(0.05, Direction.BACKWARD, 0.2, imuHeading);
                     goToDown();
 
                     levelCounter = 1;
