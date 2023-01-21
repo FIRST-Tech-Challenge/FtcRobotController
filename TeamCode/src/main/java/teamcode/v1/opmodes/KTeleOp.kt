@@ -23,7 +23,7 @@ import kotlin.math.pow
 import kotlin.math.sign
 
 @TeleOp
-open class KTeleOp() : KOpMode(photonEnabled = true) {
+open class KTeleOp() : KOpMode(photonEnabled = false) {
     private val robot by lazy { Robot(Odometry.lastPose) }
     private var slowMode = false
 
@@ -65,14 +65,18 @@ open class KTeleOp() : KOpMode(photonEnabled = true) {
     }
 
     private fun scheduleCycling() {
-        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos))
+        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, LiftConstants.homePos, GuideConstants.telePos))
         driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.highPos, LiftConstants.highPos, GuideConstants.depositPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
         driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.midPos, LiftConstants.midPos, GuideConstants.depositPos))
         driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.lowPos, LiftConstants.lowPos, GuideConstants.lowPos))
-        driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide))
-        gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(-15.5)}))
-        gunner.rightBumper.onPress(InstantCmd({robot.arm.setPos(-200.0)}))
+        driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos))
+        driver.x.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 3.0, GuideConstants.telePos))
+        driver.b.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 5.0, GuideConstants.telePos))
+        gunner.leftTrigger.onPress(InstantCmd({robot.lift.setPos(-15.5)}))
+        gunner.rightTrigger.onPress(InstantCmd({robot.arm.setPos(-270.0)}))
+        gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(11.0)}))
+        gunner.rightBumper.onPress(InstantCmd({robot.lift.setPos(0.0)}))
     }
 
     private fun scheduleTest() {

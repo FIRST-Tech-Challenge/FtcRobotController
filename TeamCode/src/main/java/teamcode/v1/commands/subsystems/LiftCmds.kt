@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.koawalib.commands.subsystems
 
 import com.asiankoala.koawalib.command.commands.InstantCmd
 import teamcode.v1.constants.LiftConstants
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
+import teamcode.v1.subsystems.Lift
 
 class LiftCmds {
     open class LiftCmd(lift: Lift, pos: Double) : InstantCmd({ lift.setPos(pos) }, lift)

@@ -1,98 +1,100 @@
-//package teamcode.v1.opmodes
-//
-//import com.asiankoala.koawalib.command.commands.*
-//import com.asiankoala.koawalib.command.group.SequentialGroup
-//import com.asiankoala.koawalib.logger.Logger
-//import com.asiankoala.koawalib.logger.LoggerConfig
-//import com.asiankoala.koawalib.math.Pose
-//import com.asiankoala.koawalib.math.Vector
-//import com.asiankoala.koawalib.math.radians
-//import com.asiankoala.koawalib.path.*
-//import com.asiankoala.koawalib.path.gvf.SimpleGVFController
-//import com.asiankoala.koawalib.util.OpModeState
-//import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-//import teamcode.v1.auto.AutoRobot
-//import teamcode.v1.commands.sequences.DepositSequence
-//import teamcode.v1.commands.sequences.HomeSequence
-//import teamcode.v1.commands.subsystems.ClawCmds
-//import teamcode.v1.constants.ClawConstants
-//import teamcode.v1.constants.LiftConstants
-//import teamcode.v1.vision.AutoOpMode
-//
-//@Autonomous(preselectTeleOp = "KTeleOp")
-//class BlueFar : AutoOpMode() {
-//    private val robot by lazy { AutoRobot(startPose) }
-//
-//    private val startPose = Pose(-66.0, 36.0, 180.0.radians)
-//
-//    private lateinit var mainCommand: Cmd
-//
-//    private val path1 = HermitePath(
-//        FLIPPED_HEADING_CONTROLLER,
-//        Pose(startPose.x, startPose.y, 0.0),
-//        Pose(-24.0, 36.0, 0.0),
-//        Pose(-9.0, 26.0, 315.0.radians)
-//    )
-//
-//    private val intakePath = HermitePath(
-//        DEFAULT_HEADING_CONTROLLER,
-//        Pose(-9.0, 26.0, 130.0.radians),
-//        Pose(-14.0, 56.0, 90.0.radians)
-//    )
-//
-//    private val depositPath = HermitePath(
-//        FLIPPED_HEADING_CONTROLLER,
-//        Pose(-14.0, 56.0, 270.0.radians),
-//        Pose(-7.0, 28.0, 310.0.radians)
-//    )
-//
-//    private val leftPath = HermitePath(
-//        {180.0.radians},
-//        Pose(-7.0, 28.0, 180.0.radians),
-//        Pose(-12.0, 11.0, 180.0.radians),
-//        Pose(-16.0, 11.0, 180.0.radians),
-//        Pose(-20.0, 11.0, 180.0.radians)
-//    )
-//
-//    private val middlePath = HermitePath(
-//        {180.0.radians},
-//        Pose(-7.0, 28.0, 180.0.radians),
-//        Pose(-12.0, 35.0, 180.0.radians),
-//        Pose(-16.0, 35.0, 180.0.radians),
-//        Pose(-20.0, 35.0, 180.0.radians)
-//    )
-//
-//    private val rightPath = HermitePath(
-//        {180.0.radians},
-//        Pose(-7.0, 28.0, 180.0.radians),
-//        Pose(-12.0, 58.0, 180.0.radians),
-//        Pose(-16.0, 58.0, 180.0.radians),
-//        Pose(-20.0, 58.0, 180.0.radians)
-//    )
-//
-//    override fun mInit() {
-//        super.mInit()
-//        robot.claw.setPos(ClawConstants.closePos)
-//        Logger.config = LoggerConfig(
-//            isLogging = true,
-//            false,
-//            isDashboardEnabled = true,
-//            isTelemetryEnabled = true
-//        )
-//
-//        mainCommand = SequentialGroup(
-//            WaitUntilCmd {opModeState == OpModeState.START},
-//            GVFCmd(
-//                robot.drive,
-//                SimpleGVFController(path1, 0.6, 20.0, 6.0, 0.5, 5.0, 10.0),
-//                Pair(
-//                    DepositSequence(robot.lift, robot.arm, robot.claw, 135.0, LiftConstants.highPos), ProjQuery(
-//                    Vector(-45.0, 45.0)
-//                )
-//                )
-//            ),
-//            ClawCmds.ClawOpenCmd(robot.claw),
-//            WaitCmd(0.5),
+package teamcode.v1.opmodes
+
+import com.asiankoala.koawalib.command.commands.*
+import com.asiankoala.koawalib.command.group.SequentialGroup
+import com.asiankoala.koawalib.logger.Logger
+import com.asiankoala.koawalib.logger.LoggerConfig
+import com.asiankoala.koawalib.math.Pose
+import com.asiankoala.koawalib.math.Vector
+import com.asiankoala.koawalib.math.radians
+import com.asiankoala.koawalib.path.*
+import com.asiankoala.koawalib.path.gvf.SimpleGVFController
+import com.asiankoala.koawalib.util.OpModeState
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import teamcode.v1.auto.AutoRobot
+import teamcode.v1.commands.sequences.DepositSequence
+import teamcode.v1.commands.sequences.HomeSequence
+import teamcode.v1.commands.subsystems.ClawCmds
+import teamcode.v1.constants.ArmConstants
+import teamcode.v1.constants.ClawConstants
+import teamcode.v1.constants.GuideConstants
+import teamcode.v1.constants.LiftConstants
+import teamcode.v1.vision.AutoOpMode
+
+@Autonomous(preselectTeleOp = "KTeleOp")
+class BlueFar : AutoOpMode() {
+    private val robot by lazy { AutoRobot(startPose) }
+
+    private val startPose = Pose(-66.0, 36.0, 180.0.radians)
+
+    private lateinit var mainCommand: Cmd
+
+    private val path1 = HermitePath(
+        FLIPPED_HEADING_CONTROLLER,
+        Pose(startPose.x, startPose.y, 0.0),
+        Pose(-24.0, 36.0, 0.0),
+        Pose(-8.0, 28.0, 315.0.radians)
+    )
+
+    private val intakePath = HermitePath(
+        DEFAULT_HEADING_CONTROLLER,
+        Pose(-8.0, 28.0, 130.0.radians),
+        Pose(-14.0, 56.0, 90.0.radians)
+    )
+
+    private val depositPath = HermitePath(
+        FLIPPED_HEADING_CONTROLLER,
+        Pose(-14.0, 56.0, 270.0.radians),
+        Pose(-7.0, 28.0, 310.0.radians)
+    )
+
+    private val leftPath = HermitePath(
+        {180.0.radians},
+        Pose(-7.0, 28.0, 180.0.radians),
+        Pose(-12.0, 11.0, 180.0.radians),
+        Pose(-16.0, 11.0, 180.0.radians),
+        Pose(-20.0, 11.0, 180.0.radians)
+    )
+
+    private val middlePath = HermitePath(
+        {180.0.radians},
+        Pose(-7.0, 28.0, 180.0.radians),
+        Pose(-12.0, 35.0, 180.0.radians),
+        Pose(-16.0, 35.0, 180.0.radians),
+        Pose(-20.0, 35.0, 180.0.radians)
+    )
+
+    private val rightPath = HermitePath(
+        {180.0.radians},
+        Pose(-7.0, 28.0, 180.0.radians),
+        Pose(-12.0, 58.0, 180.0.radians),
+        Pose(-16.0, 58.0, 180.0.radians),
+        Pose(-20.0, 58.0, 180.0.radians)
+    )
+
+    override fun mInit() {
+        super.mInit()
+        robot.claw.setPos(ClawConstants.closePos)
+        Logger.config = LoggerConfig(
+            isLogging = true,
+            false,
+            isDashboardEnabled = true,
+            isTelemetryEnabled = true
+        )
+
+        mainCommand = SequentialGroup(
+            WaitUntilCmd {opModeState == OpModeState.START},
+            GVFCmd(
+                robot.drive,
+                SimpleGVFController(path1, 0.6, 20.0, 6.0, 0.5, 5.0, 10.0),
+                Pair(
+                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 145.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+                    Vector(-45.0, 45.0)
+                )
+                )
+            ),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
+            WaitCmd(0.5),
 //            HomeSequence(robot.lift, robot.claw, robot.arm, 0.0, -30.0),
 //            GVFCmd(
 //                robot.drive,
@@ -158,17 +160,17 @@
 //                    GVFCmd(robot.drive, SimpleGVFController(leftPath, 0.5, 30.0, 6.0, 0.5, 5.0, 10.0)),
 //                ) { tagOfInterest!!.id == MIDDLE },
 //            ) { tagOfInterest!!.id == RIGHT }
-//        )
-//        mainCommand.schedule()
-//    }
-//
-//    override fun mLoop() {
-//        super.mLoop()
-//        Logger.addTelemetryData("arm pos", robot.arm.motor.pos)
-//    }
-//
-//    override fun mStop() {
-//        super.mStop()
-//        ClawCmds.ClawCloseCmd(robot.claw)
-//    }
-//}
+        )
+        mainCommand.schedule()
+    }
+
+    override fun mLoop() {
+        super.mLoop()
+        Logger.addTelemetryData("arm pos", robot.arm.motor.pos)
+    }
+
+    override fun mStop() {
+        super.mStop()
+        ClawCmds.ClawCloseCmd(robot.claw)
+    }
+}

@@ -79,15 +79,15 @@ class Hardware(startPose: Pose) {
         .startAt(ClawConstants.closePos)
 
     val guideServo = KServo("Guide")
-        .startAt(GuideConstants.homePos)
+        .startAt(GuideConstants.telePos)
 
     val limitSwitch = KLimitSwitch("LimitSwitch")
 
     private val leftEncoder = EncoderFactory(Hardware.ticksPerUnit)
+        .reverse
         .revEncoder
         .build(fl)
     private val rightEncoder = EncoderFactory(Hardware.ticksPerUnit)
-        .reverse
         .revEncoder
         .build(bl)
     private val auxEncoder = EncoderFactory(Hardware.ticksPerUnit)

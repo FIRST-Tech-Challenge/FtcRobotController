@@ -3,6 +3,7 @@ package teamcode.v1.auto
 import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.control.controller.PIDGains
 import com.asiankoala.koawalib.control.motor.FFGains
+import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.EncoderFactory
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.hardware.servo.KServo
@@ -12,6 +13,7 @@ import teamcode.v1.constants.ArmConstants
 import teamcode.v1.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
 import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
+import teamcode.v1.constants.GuideConstants
 import teamcode.v1.subsystems.KLimitSwitch
 
 class AutoHardware(startPose: Pose) {
@@ -42,10 +44,10 @@ class AutoHardware(startPose: Pose) {
             .zero(LiftConstants.homePos)
             .reverse
         )
-        .withPositionControl(
+        .withMotionProfileControl(
             PIDGains(LiftConstants.kP, LiftConstants.kI, LiftConstants.kD),
             FFGains(kS = LiftConstants.kS, kV = LiftConstants.kV, kA = LiftConstants.kA, kG = LiftConstants.kG),
-//            MotionConstraints(LiftConstants.maxVel, LiftConstants.maxAccel),
+            MotionConstraints(LiftConstants.maxVel, LiftConstants.maxAccel),
             allowedPositionError = LiftConstants.allowedPositionError,
             disabledPosition = LiftConstants.disabledPosition
         )
@@ -64,9 +66,10 @@ class AutoHardware(startPose: Pose) {
             .reverse
             .zero(ArmConstants.autoHomePos)
         )
-        .withPositionControl(
+        .withMotionProfileControl(
             PIDGains(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD),
             FFGains(kS = ArmConstants.kS, kV = ArmConstants.kV, kA = ArmConstants.kA, kCos = ArmConstants.kCos),
+            MotionConstraints(ArmConstants.maxVel, ArmConstants.maxAccel),
             allowedPositionError = ArmConstants.allowedPositionError
         )
         .build()
@@ -85,6 +88,9 @@ class AutoHardware(startPose: Pose) {
         .reverse
         .revEncoder
         .build(fr)
+
+    val guideServo = KServo("Guide")
+        .startAt(GuideConstants.homePos)
 
     val odometry = KThreeWheelOdometry(
         leftEncoder,

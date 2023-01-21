@@ -2,14 +2,11 @@ package teamcode.v1.commands.sequences
 
 import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.command.commands.WaitCmd
-import com.asiankoala.koawalib.command.commands.WaitUntilCmd
 import com.asiankoala.koawalib.command.group.SequentialGroup
 import teamcode.v1.commands.subsystems.ClawCmds
 import teamcode.v1.subsystems.Arm
 import teamcode.v1.subsystems.Claw
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
-import teamcode.v1.commands.subsystems.GuideCmds
-import teamcode.v1.constants.GuideConstants
+import teamcode.v1.subsystems.Lift
 import teamcode.v1.subsystems.Guide
 
 class DepositSequence(
@@ -25,5 +22,6 @@ class DepositSequence(
     InstantCmd({arm.setPos(armAngle)}, arm),
     WaitCmd(0.3),
     InstantCmd({lift.setPos(LiftHeight)}, lift),
+    WaitCmd(0.1),
     InstantCmd({guide.setPos(GripPos)}),
 )

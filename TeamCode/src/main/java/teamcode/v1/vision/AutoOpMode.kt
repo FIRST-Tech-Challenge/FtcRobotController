@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 
-open class AutoOpMode : KOpMode(photonEnabled = true) {
+open class AutoOpMode : KOpMode(photonEnabled = false) {
     lateinit var camera : OpenCvCamera
     lateinit var pipeline : SleevePipeline
 

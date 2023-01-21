@@ -10,8 +10,8 @@ class ClawCmds {
     open class ClawCmd(claw: Claw, pos: Double) : InstantCmd({ claw.setPos(pos) }, claw)
 
     class ClawCloseCmd(claw: Claw) : ClawCmd(claw, ClawConstants.closePos)
-    class ClawOpenCmd(claw: Claw, guide : Guide) : SequentialGroup(
+    class ClawOpenCmd(claw: Claw, guide : Guide, GripPos: Double) : SequentialGroup(
         ClawCmd(claw, ClawConstants.openPos),
-        GuideCmds.GuideHomeCmd(guide)
+        InstantCmd({guide.setPos(GripPos)})
     )
 }
