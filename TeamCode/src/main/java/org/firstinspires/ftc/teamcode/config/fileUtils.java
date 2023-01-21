@@ -17,7 +17,7 @@ public class fileUtils {
     // Comment must appear on a single line, no rollover
     // This myBlock method writes a number (as text) to a file.
     // It has 2 inputs and no outputs (keyword void).
-    public static void writeToFile (double myNumber, String toFileName) {
+    public static void writeToFile (String myString, String toFileName) {
 
         // Using the properties of the specified "to" file name,
         // declare a filename to be used in this method.  See Note 1 above.
@@ -25,10 +25,10 @@ public class fileUtils {
 
         // Write the provided number to the newly declared filename.
         // See Note 3 above.
-        ReadWriteFile.writeFile(myFileName, String.valueOf(myNumber));
+        ReadWriteFile.writeFile(myFileName, String.valueOf(myString));
 
         telemetry.addData("Filename", toFileName);
-        telemetry.addData("Number being written", myNumber);
+        telemetry.addData("Number being written", myString);
         telemetry.update();         // display info on Driver Station screen
 
     }   // end of method writeToFile()

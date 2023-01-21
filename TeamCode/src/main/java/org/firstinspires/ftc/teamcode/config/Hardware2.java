@@ -20,7 +20,7 @@ public class Hardware2 {
     public Servo rightClaw = null;
 
     public boolean runThisWithEncoder = true;
-    //public BNO055IMU imu;
+    public BNO055IMU imu;
 
     // Other variable names
     HardwareMap hwMap;
@@ -45,6 +45,7 @@ public class Hardware2 {
         this.hwMap = hwMap;
 
         period.reset();
+
 
 
         frontLeftMotor = hwMap.dcMotor.get("front_left");

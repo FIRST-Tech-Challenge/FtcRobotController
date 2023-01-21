@@ -4,8 +4,14 @@ import static android.os.SystemClock.sleep;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.config.BaseOpMode.*;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 public class DriveUtils {
@@ -22,6 +28,15 @@ public class DriveUtils {
         telemetry.update();
     }
 
+    public static void initiate(BaseOpMode baseOpMode)
+    {
+        while (!baseOpMode.isStopRequested() && !baseOpMode.getRobot().imu.isGyroCalibrated())
+        {
+            sleep(50);
+            baseOpMode.idle();
+        }
+    }
+
     public static void setPosition(String positionChange) {
         position = positionChange;
     }
@@ -30,7 +45,10 @@ public class DriveUtils {
     {
         return position;
     }
-
+    static Orientation lastAngles = new Orientation();
+    static double globalAngle;
+    double power = .50;
+    double correction;
     /**
      * Logs a line.
      *
@@ -219,6 +237,103 @@ public class DriveUtils {
 
             sleep(250);
         }
+    }
+    private void resetAngle(BaseOpMode baseOpMode)
+    {
+        lastAngles = baseOpMode.getRobot().imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        globalAngle = 0;
+    }
+    public static double getAngle(BaseOpMode baseOpMode)
+    {
+        // We experimentally determined the Z axis is the axis we want to use for heading angle.
+        // We have to process the angle because the imu works in euler angles so the Z axis is
+        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+
+        Orientation angles = baseOpMode.getRobot().imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles;
+
+        return globalAngle;
+    }
+    private double checkDirection(BaseOpMode baseOpMode)
+    {
+        // The gain value determines how sensitive the correction is to direction changes.
+        // You will have to experiment with your robot to get small smooth direction changes
+        // to stay on a straight line.
+        double correction, angle, gain = .01;  // was .10
+
+        angle = getAngle(baseOpMode);
+
+        if (angle == 0)
+            correction = 0;             // no adjustment.
+        else
+            correction = -angle;        // reverse sign of angle for correction.
+
+        correction = correction * gain;
+
+        return correction;
+    }
+    private void rotate(int degrees, double power, BaseOpMode baseOpMode)
+    {
+        double  leftPower, rightPower;
+
+        // restart imu movement tracking.
+        resetAngle(baseOpMode);
+
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+
+        if (degrees < 0)
+        {   // turn right.
+            leftPower = power;
+            rightPower = -power;
+        }
+        else if (degrees > 0)
+        {   // turn left.
+            leftPower = -power;
+            rightPower = power;
+        }
+        else return;
+
+        // set power to rotate.
+        baseOpMode.getRobot().backLeftMotor.setPower(leftPower);
+        baseOpMode.getRobot().backRightMotor.setPower(rightPower);
+        baseOpMode.getRobot().frontLeftMotor.setPower(leftPower);
+        baseOpMode.getRobot().frontRightMotor.setPower(rightPower);
+
+        // rotate until turn is completed.
+        if (degrees < 0)
+        {
+            // On right turn we have to get off zero first.
+            while (baseOpMode.opModeIsActive() && getAngle(baseOpMode) == 0) {}
+
+            while (baseOpMode.opModeIsActive() && getAngle(baseOpMode) > degrees) {}
+        }
+        else    // left turn.
+            while (baseOpMode.opModeIsActive() && getAngle(baseOpMode) < degrees) {}
+
+        // turn the motors off.
+        baseOpMode.getRobot().backLeftMotor.setPower(0);
+        baseOpMode.getRobot().backRightMotor.setPower(0);
+        baseOpMode.getRobot().frontLeftMotor.setPower(0);
+        baseOpMode.getRobot().frontRightMotor.setPower(0);
+
+        // wait for rotation to stop.
+        sleep(1000);
+
+        // reset angle tracking on new heading.
+        resetAngle(baseOpMode);
     }
 
 
