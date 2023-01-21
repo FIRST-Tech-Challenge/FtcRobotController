@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
 import org.firstinspires.ftc.teamcode.opModes.team1.teleop.Team1GenericTeleOp;
 
 @TeleOp(name="Drivetrain Demo", group="Demo") // Registers TeleOp OpMode Entrypoint
-public class ExampleDriveTrain extends TeleOpModeBase { // Ensure you extend the base
+public class LAREINECExampleDriveTrain extends TeleOpModeBase { // Ensure you extend the base
     Team1GenericTeleOp teleop;
 
     DifferentialDrive drive;
