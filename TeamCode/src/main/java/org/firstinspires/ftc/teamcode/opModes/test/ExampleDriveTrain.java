@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TeamColour;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 import org.firstinspires.ftc.teamcode.opModes.team1.teleop.Team1GenericTeleOp;
 
-@TeleOp(name="Team 1 red", group="Team 1") // Registers TeleOp OpMode Entrypoint
+@TeleOp(name="Drivetrain Demo", group="Demo") // Registers TeleOp OpMode Entrypoint
 public class ExampleDriveTrain extends TeleOpModeBase { // Ensure you extend the base
     Team1GenericTeleOp teleop;
 
