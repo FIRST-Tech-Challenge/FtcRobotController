@@ -1,13 +1,25 @@
 package org.firstinspires.ftc.blackswan;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+
+@Config
 @TeleOp(name = "Teleop 1 controllers")
 public class TeleopGOODOneController extends LinearOpMode {
+
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    public static double openClaw = 0.50;
+    public static double closeClaw = 0.2;
+    public static double rotateClaw = 0.70;
+
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
@@ -31,6 +43,8 @@ public class TeleopGOODOneController extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -71,16 +85,16 @@ public class TeleopGOODOneController extends LinearOpMode {
                 }
             }
 
-            if (gamepad1.a) {
-                clawservo.setPosition(0.45);
+            if (gamepad1.b) {
+                clawservo.setPosition(openClaw);
             }
 
-            if (gamepad1.b) {
-                clawservo.setPosition(0);
+            if (gamepad1.a) {
+                clawservo.setPosition(closeClaw);
             }
 
             if (gamepad1.right_stick_button && linearslide.getCurrentPosition() > 1000){
-                daSpinster.setPosition(.65);
+                daSpinster.setPosition(rotateClaw);
             }
 
             telemetry.addData("GamepadX", x);
