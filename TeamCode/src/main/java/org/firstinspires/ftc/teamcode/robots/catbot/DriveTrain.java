@@ -103,5 +103,5 @@ class DriveTrain {
         this.motorBackLeft.setDirection(DcMotorEx.Direction.REVERSE);
         this.motorFrontLeft.setDirection(DcMotorEx.Direction.REVERSE);
     }
-    public int getMotorFrontLeftPosition(){return motorFrontLeft.getCurrentPosition();}
+    public double getMotorAvgPosition(){return (double)(Math.abs(motorFrontLeft.getCurrentPosition())+Math.abs(motorFrontRight.getCurrentPosition())+Math.abs(motorBackLeft.getCurrentPosition())+Math.abs(motorBackRight.getCurrentPosition()))/4.0;}
 }

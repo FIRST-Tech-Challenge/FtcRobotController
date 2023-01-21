@@ -12,7 +12,7 @@ public class Strafe extends Task{
     }
     @Override
     public boolean run() {
-        if(robot.driveTrain.getMotorFrontLeftPosition() < tiles*STRAFETICKSPERTILE) {
+        if(robot.driveTrain.getMotorAvgPosition() < Math.abs(tiles*STRAFETICKSPERTILE)) {
             robot.driveTrain.mechanumDrive(0, (tiles/Math.abs(tiles))*MAXMOTORSPEED, 0);
             return true;
         }
