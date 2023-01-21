@@ -179,6 +179,15 @@ public abstract class Driving358 extends LinearOpMode {
 
     }
 
+    public void claw(boolean grab){
+        if (grab){
+            robot.clawServo.setPosition(0.0);
+        }
+        else{
+            robot.clawServo.setPosition(0.8);
+        }
+    }
+
 
     public void liftdown(){
 
@@ -338,7 +347,10 @@ public abstract class Driving358 extends LinearOpMode {
         int ticks;
         switch(direction){
             case '1' :
-                cmMovelift  = 14;  //14
+                telemetry.addData("lowest", 1);
+
+                //cmMovelift  = 14;  //14
+                cmMovelift = 5;
                 ticks = tickConversion * cmMovelift;
                 if (power<0){
                     ticks*=-1;
@@ -350,7 +362,8 @@ public abstract class Driving358 extends LinearOpMode {
                 while (robot.lift.isBusy()) {
 
                 }
-
+                telemetry.addData("lowest pow 0", 1);
+                robot.lift.setPower(0);
                 robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
                 break;
@@ -403,7 +416,7 @@ public abstract class Driving358 extends LinearOpMode {
             case "open":
                 //robot.leftServo.setPosition(0.6);
                 //robot.rightServo.setPosition(0.34);
-                robot.clawServo.setPosition(0.5);
+                robot.clawServo.setPosition(0.8);
                 break;
         }
 

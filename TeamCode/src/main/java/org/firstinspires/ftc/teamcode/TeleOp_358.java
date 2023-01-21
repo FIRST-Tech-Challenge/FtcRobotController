@@ -71,6 +71,7 @@ public class    TeleOp_358 extends OpMode {
     private boolean abuttonPressed = false;
     private boolean bbuttonPressed = false;
     private boolean ybuttonPressed = false;
+    private boolean clawpressed = false;
 
     private boolean previousXButton = false;
     //private float BRDrive = 1f;
@@ -135,16 +136,19 @@ public class    TeleOp_358 extends OpMode {
             vm = gamepad2.right_stick_y;
         }
         //else if (robot.touch.isPressed()) vm = 0;
-        else if (Math.abs(gamepad2.right_stick_y) <.2 && Math.abs(gamepad2.right_stick_y) >0)
-            vm=0.15;
+//        else if (Math.abs(gamepad2.right_stick_y) <.2 && Math.abs(gamepad2.right_stick_y) >0)
+//            vm=0.15;
 
         //FOR controlling slider
+        /*
         if (Math.abs(gamepad2.left_stick_y)>.2){
             robot.slideServo.setPower(gamepad2.left_stick_y);
         }
         else {
             robot.slideServo.setPower(0);
         }
+
+         */
 
         //int ticks = tickConversion * cmMove * direction;
 
@@ -156,7 +160,8 @@ public class    TeleOp_358 extends OpMode {
         //low level
         if (gamepad2.a && !this.abuttonPressed) {
             this.abuttonPressed = true;
-            cmMove  = 14;
+            cmMove = 5;
+            //cmMove  = 14;
             enco = true;
             telemetry.addData("a button prssee",1);
 
@@ -261,19 +266,25 @@ public class    TeleOp_358 extends OpMode {
         //======================================
         //----------CLAW--------------
         //======================================
-
-        if (gamepad2.right_trigger > 0.5) {
+        this.clawpressed = (gamepad2.right_trigger > 0.5);
+        if (this.clawpressed) robot.clawServo.setPosition(0.0);
+        else  robot.clawServo.setPosition(0.8);
+        /*
+        if (gamepad2.right_trigger > 0.5&& !this.clawpressed) {
+            this.clawpressed = true;
             //robot.leftServo.setPosition(0.95);
             //robot.rightServo.setPosition(0.95);
             robot.clawServo.setPosition(0.0);
+
             telemetry.addData("Right Trigger", gamepad2.x);
         }
-        if (gamepad1.right_trigger > 0.5) {
+        else if (gamepad1.right_trigger > 0.5) {
             //robot.leftServo.setPosition(0.95);
             //robot.rightServo.setPosition(0.95);
             robot.clawServo.setPosition(0.0);
             telemetry.addData("Right Trigger", gamepad1.x);
-        }
+
+
 
 
 //        if (gamepad2.right_trigger>0.5&&!this.previousXButton) {
@@ -292,7 +303,10 @@ public class    TeleOp_358 extends OpMode {
             //----------CLAW ROTATOR----------------
             //======================================
         }
+
 //        this.previousXButton = gamepad2.right_trigger>0.5;
+
+         */
     }
 }
 
