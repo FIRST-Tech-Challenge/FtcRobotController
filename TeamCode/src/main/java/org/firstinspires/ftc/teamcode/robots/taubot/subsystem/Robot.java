@@ -226,7 +226,7 @@ public class Robot implements Subsystem {
                         crane.driverIsDriving();
                         turnDone = false;
                         onPole = false;
-                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-4, 0, 30)) {
+                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-5, 0, 30)) {
                             autonIndex++;
                         }
                         break;
@@ -237,7 +237,7 @@ public class Robot implements Subsystem {
                             if (!turnDone && driveTrain.turnUntilDegrees(90)) {
                                 turnDone = true;
                             }
-                            if(!onPole && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 3, Field.INCHES_PER_GRID + 2, 36)){
+                            if(!onPole && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID - 2 , Field.INCHES_PER_GRID - 2.5, 39)){
                                 onPole = true;
                             }
                             if(turnDone && onPole){
@@ -249,7 +249,7 @@ public class Robot implements Subsystem {
                             if (!turnDone && driveTrain.turnUntilDegrees(-90)) {
                                 turnDone = true;
                             }
-                            if(!onPole && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 3, -Field.INCHES_PER_GRID - 2, 36)){
+                            if(!onPole && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 2.5, -Field.INCHES_PER_GRID - 2, 39)){
                                 onPole = true;
                             }
                             if(turnDone && onPole){
@@ -297,7 +297,7 @@ public class Robot implements Subsystem {
                 }
                 if (startingPosition.equals(Constants.Position.START_LEFT)) {
                     if (autonTarget == 0) {
-                        if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID-1, 90, 30))
+                        if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID-4, 90, 30))
                             timeSupervisor++;
                     } else if (autonTarget == 2) {
                         if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID+4, 90, 30))

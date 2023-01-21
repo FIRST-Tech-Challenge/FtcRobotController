@@ -517,13 +517,14 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 1:
-                if (goToFieldCoordinate(pos.getX(), pos.getY(), obj.z())) {
+                if (goToFieldCoordinate(pos.getX()-1, pos.getY(), obj.z())) {
                     coneCycleStage++;
+                    nudgeLeft();
                     cycleTimer = futureTime(0.2);
                 }
                 break;
             case 2:
-                if(System.nanoTime() >= cycleTimer && goToFieldCoordinate(pos.getX(), pos.getY(), obj.z() - 5)){
+                if(System.nanoTime() >= cycleTimer && goToFieldCoordinate(pos.getX()-1, pos.getY(), obj.z() - 5)){
                     coneCycleStage++;
                     cycleTimer = futureTime(0.2);
                 }
@@ -555,10 +556,16 @@ public class Crane implements Subsystem {
                     temp = robot.field.objects[32];
                 }
                 Pose2d tempPos = Field.convertToInches(temp.getPosition());
-                if (goToFieldCoordinate(tempPos.getX()+4, tempPos.getY(), temp.z()+1)) {
-                    nudgeCenter(true);
-                    coneCycleStage++;
-                    cycleTimer = futureTime(0.5);
+                if(rightConeStack) {
+                    if (goToFieldCoordinate(tempPos.getX() + 4.5, tempPos.getY(), temp.z() + 3)) {
+                        coneCycleStage++;
+                        cycleTimer = futureTime(0.5);
+                    }
+                }else{
+                    if (goToFieldCoordinate(tempPos.getX() + 1, tempPos.getY()-3.5, temp.z() + 3)) {
+                        coneCycleStage++;
+                        cycleTimer = futureTime(0.5);
+                    }
                 }
                 break;
             case 7:
@@ -570,7 +577,6 @@ public class Crane implements Subsystem {
                 break;
             case 8:
                 if(System.nanoTime() >= cycleTimer) {
-                    nudgeLeft();
                     setShoulderTargetAngle(getShoulderAngle() + 12);
                     coneCycleStage++;
                 }
