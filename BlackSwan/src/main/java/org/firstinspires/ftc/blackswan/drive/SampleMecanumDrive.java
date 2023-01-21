@@ -1,5 +1,17 @@
 package org.firstinspires.ftc.blackswan.drive;
 
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kV;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -29,7 +41,6 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.blackswan.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.blackswan.trajectorySequence.TrajectorySequenceBuilder;
-
 import org.firstinspires.ftc.blackswan.trajectorySequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.blackswan.util.LynxModuleUtil;
 
@@ -37,25 +48,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kV;
-
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(4, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 
