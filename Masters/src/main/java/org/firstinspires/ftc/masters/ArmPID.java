@@ -5,15 +5,17 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @Config
+@TeleOp(name="arm PID")
 public class ArmPID extends LinearOpMode {
 
     PIDController controller;
 
-    public static double p=0, i=0, d=0;
-    public static double f=0;
+    public static double p_arm=0.025, i_arm=0.05, d_arm=0.0001;
+    public static double f_arm=0.16;
 
     public static int target =0;
 
@@ -23,22 +25,25 @@ public class ArmPID extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        controller = new PIDController(p, i, d);
+        controller = new PIDController(p_arm, i_arm, d_arm);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         armServo = hardwareMap.get(DcMotorEx.class, "armServo");
 
         waitForStart();
         while (opModeIsActive()){
-            controller.setPID(p, i, d);
+            controller.setPID(p_arm, i_arm, d_arm);
             int armPos = armServo.getCurrentPosition();
             double pid = controller.calculate(armPos, target);
 
-            double ff = Math.cos(Math.toRadians(target/ticks_in_degree - 30))*f;
+            double ff = Math.cos(Math.toRadians(target/ticks_in_degree))*f_arm;
 
             double power = pid +ff;
-
-            armServo.setPower(power);
+            if (target ==0 && armPos<10){
+                armServo.setPower(0);
+            } else {
+                armServo.setPower(power);
+            }
 
             telemetry.addData("pos", armPos);
             telemetry.addData("target", target);
