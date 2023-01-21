@@ -142,7 +142,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                     //Apply mask to input image, and copy to new image.
                     Mat result  = new Mat(croppedQR.size(), CvType.CV_8UC3, new Scalar(255, 255, 255));
                     croppedQR.copyTo(result, tobeRemove);
-                    //Imgcodecs.imwrite("c:/sdcard/FIRST/crop-removed.jpg",result );
+                    Imgcodecs.imwrite("c:/sdcard/FIRST/crop-removed.jpg",result );
 
                     Mat hsvResult = new Mat();
                     Imgproc.cvtColor(result, hsvResult, Imgproc.COLOR_RGB2HSV);

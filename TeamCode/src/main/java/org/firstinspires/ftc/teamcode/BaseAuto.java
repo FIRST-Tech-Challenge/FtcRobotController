@@ -93,7 +93,7 @@ public abstract class BaseAuto extends LinearOpMode {
         sleep(1000);
 
         //TODO
-        scoreMidPole();
+        //scoreMidPole();
 
         switch ( currentSide) {
             case Sleev1: {
@@ -117,7 +117,7 @@ public abstract class BaseAuto extends LinearOpMode {
             }
         }
 
-        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
+        //hdw.goToHeight(Hardware2022.SlideHeight.Ground);
 
 
         while (opModeIsActive())  {
@@ -130,7 +130,7 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        //hdw.moveYAxis(28.0, -0.3);
+        hdw.moveYAxis(33.0, -0.3);
         hdw.moveXAxis( -25.0, 0.3);
     }
 
@@ -138,7 +138,7 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 2 ", this.currentSide);
         telemetry.update();
         //Move forward
-        //hdw.moveYAxis( 28.0, 0.3);
+        hdw.moveYAxis( 33.0, 0.3);
 
     }
 
@@ -146,7 +146,7 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 3 ", this.currentSide);
         telemetry.update();
         //Move right
-        //hdw.moveYAxis(28, 0.3);
+        hdw.moveYAxis(33, 0.3);
         hdw.moveXAxis( 23.0, 0.3);
 
     }
