@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.test;
 
         import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
         import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -11,9 +11,9 @@ package org.firstinspires.ftc.teamcode.opModes;
         import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 
 
-@TeleOp(name="SomeName", group="Test")
+@TeleOp(name="Drivetrain Demo", group="Demo")
 
-public class DrivetrainTEST extends TeleOpModeBase {
+public class ExampleDriveTrain extends TeleOpModeBase {
     //new code, shoved this here, hope it works?
     GamepadEx gamepadEx = new GamepadEx(gamepad1);
 
