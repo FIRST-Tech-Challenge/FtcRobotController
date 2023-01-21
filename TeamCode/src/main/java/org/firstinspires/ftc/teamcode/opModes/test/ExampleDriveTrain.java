@@ -35,10 +35,14 @@ public class ExampleDriveTrain extends TeleOpModeBase { // Ensure you extend the
         TelemetryContainer.getTelemetry().addLine("No Transpose");
         Joystick leftJoystick = new Joystick(Inputs.gamepad1.getLeftX(), Inputs.gamepad1.getLeftY());
 
+        // Drive
         drive.arcadeDrive(leftJoystick.y, leftJoystick.x);
         TelemetryContainer.getTelemetry().addData("Joystick Y", Inputs.gamepad1.getLeftY());
         TelemetryContainer.getTelemetry().addData("Left Joystick - uses Coordinates class - x", leftJoystick.x);
-        TelemetryContainer.getTelemetry().addData("Left Joystick - uses coordinates class - y", leftJoystick.y);
+        TelemetryContainer.getTelemetry().addData("Left Joystick - uses coordinates class - y", leftJoystick.y/2);
+
+        // Spinning Motor
+        HardwareMapContainer.motor2.set(Inputs.gamepad1.getRightY());
     }
 }
 
