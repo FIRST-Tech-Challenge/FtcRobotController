@@ -10,12 +10,9 @@ import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-
-import org.firstinspires.ftc.blackswan.drive.SampleMecanumDrive;
 
 import java.util.Objects;
 
@@ -25,6 +22,8 @@ import static org.firstinspires.ftc.blackswan.drive.DriveConstants.RUN_USING_ENC
 import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.blackswan.drive.DriveConstants.kV;
+
+import org.firstinspires.ftc.blackswan.drive.SampleMecanumDrive;
 
 
 /*
