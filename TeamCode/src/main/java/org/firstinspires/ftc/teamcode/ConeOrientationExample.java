@@ -46,7 +46,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
  * of the vision processing to usercode.
  */
 @TeleOp(name="Cone-Test", group="Skunkworks")
-@Disabled
+//@Disabled
 public class ConeOrientationExample extends LinearOpMode
 {
     // Vision stuff
@@ -92,17 +92,17 @@ public class ConeOrientationExample extends LinearOpMode
                         2, //The number of sub-containers to create
                         OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY); //Whether to split the container vertically or horizontally
         webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Back"), viewportContainerIds[0]);
+                "Webcam Low"), viewportContainerIds[0]);
         webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                pipelineBack = new PowerPlaySuperPipeline(false, true,
-                        false, false, 144.0);
-                webcamBack.setPipeline(pipelineBack);
+                pipelineBack = new PowerPlaySuperPipeline(false, false,
+                        false, true, 144.0);
+                webcamBack.setPipeline(pipelineLow);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                pipelineLow.debugType = Pole;
+                pipelineLow.debugType = ConeBlue;
                 backCameraInitialized = true;
             }
 

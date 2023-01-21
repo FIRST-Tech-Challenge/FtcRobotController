@@ -133,7 +133,7 @@ public class HardwareSlimbot
 
     protected AnalogInput liftEncoder      = null;    // US Digital absolute magnetic encoder (MA3)
     public double       liftAngle          = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
-    public double       liftAngleOffset    = 145.3;   // allows us to adjust the 0-360 deg range
+    public double       liftAngleOffset    = 79.1;    // allows us to adjust the -180 to +180 deg range
     public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)li
 
     public double       LIFT_ANGLE_MAX     = 120.0;   // absolute encoder angle at maximum rotation FRONT

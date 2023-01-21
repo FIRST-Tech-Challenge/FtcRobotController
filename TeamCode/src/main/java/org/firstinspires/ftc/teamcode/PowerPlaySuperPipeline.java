@@ -307,7 +307,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         ConeBlue
     }
     Stage[] stages = Stage.values();
-    public DebugObjects debugType = Pole;
+    public DebugObjects debugType = DebugObjects.ConeBlue;
 
     // Keep track of what stage the viewport is showing
     int stageNum = 0;
