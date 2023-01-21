@@ -1,26 +1,26 @@
 package org.firstinspires.ftc.blackswan.drive.opmode;
 
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_RPM;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.blackswan.drive.DriveConstants.rpmToVelocity;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.blackswan.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.blackswan.util.LoggingUtil;
 import org.firstinspires.ftc.blackswan.util.RegressionUtil;
-import org.firstinspires.ftc.robotcore.internal.system.Misc;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.MAX_RPM;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.blackswan.drive.DriveConstants.rpmToVelocity;
 
 /*
  * Op mode for computing kV, kStatic, and kA from various drive routines. For the curious, here's an
@@ -33,7 +33,6 @@ import static org.firstinspires.ftc.blackswan.drive.DriveConstants.rpmToVelocity
  *      regression.
  */
 @Config
-@Disabled
 @Autonomous(group = "drive")
 public class AutomaticFeedforwardTuner extends LinearOpMode {
     public static double MAX_POWER = 0.7;
@@ -46,7 +45,7 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
                     "when using the built-in drive motor velocity PID.");
         }
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
