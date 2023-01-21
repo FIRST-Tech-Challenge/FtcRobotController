@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.config.BaseOpMode;
 import org.firstinspires.ftc.teamcode.config.DriveUtils;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.config.Hardware2;
 /**
  * @author KarthikPeri
  */
+@Disabled
 @Autonomous(name="autov1")
 public class autov1 extends BaseOpMode {
     Hardware2 robot = new Hardware2(false);

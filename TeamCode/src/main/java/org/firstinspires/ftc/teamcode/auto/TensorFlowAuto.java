@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.config.DriveUtils;
 import org.firstinspires.ftc.teamcode.config.Hardware2;
 
 import java.util.List;
-
+@Disabled
 @Autonomous(name = "TFPowerPlayAuto")
 public class TensorFlowAuto extends BaseOpMode {
     Hardware2 robot = new Hardware2(false);

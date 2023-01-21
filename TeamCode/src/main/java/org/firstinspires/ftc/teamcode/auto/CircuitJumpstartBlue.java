@@ -3,9 +3,8 @@ package org.firstinspires.ftc.teamcode.auto;
 import static org.firstinspires.ftc.teamcode.config.DriveUtils.getPosition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.auto.SkystoneDetector;
+import org.firstinspires.ftc.teamcode.config.AutoUtils;
 import org.firstinspires.ftc.teamcode.config.BaseOpMode;
 import org.firstinspires.ftc.teamcode.config.DriveUtils;
 import org.firstinspires.ftc.teamcode.config.Hardware2;
@@ -14,8 +13,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="DO THIS AUTO")
-public class AutoMode extends BaseOpMode {
+@Autonomous(name="BlueAlliance Near BlueTerminal")
+public class CircuitJumpstartBlue extends BaseOpMode {
     Hardware2 robot = new Hardware2(true);
     // Handle hardware stuff...
 
@@ -24,14 +23,37 @@ public class AutoMode extends BaseOpMode {
     // store as variable here so we can access the location
     SleeveDetection detector = new SleeveDetection();
     OpenCvCamera phoneCam;
-    public void autoScoring() {
-        DriveUtils.encoderDrive(this, 0.4, -27,-27,5);
-        DriveUtils.encoderStrafe(this,0.4,-13.5,5);
-        DriveUtils.encoderClaw(this,-0.6,1825,5);
-        DriveUtils.encoderClaw(this,0.5,-1825,10);
+
+    public enum ClawPositions {
+        ABOVE_GROUND(300),
+        MEDIUM_JUNCTION(1850),
+        DOWN_OVER_JUNCTION(-600),
+        FROM_OVER_JUNCTION_TO_STARTING_HEIGHT(-1550);
+        public final int encoderTicks;
+        ClawPositions(int encoderTicks) {
+            this.encoderTicks = encoderTicks;
+        }
+        public int getValue(){
+            return encoderTicks;
+        }
+    }
+
+    public void terminalScoring() {
+        AutoUtils.moveClawToSpecificPosition(this,ClawPositions.ABOVE_GROUND.getValue(), 0.4);
+        //turnright 90
+        AutoUtils.tileMove(this, "Front", 1,0.4);
+        DriveUtils.moveClaw(this, "Open");
+        AutoUtils.tileMove(this, "Back", 1,0.4);
+        AutoUtils.tileStrafe(this, "Left" ,2,0.4);
+        AutoUtils.tileMove(this, "Front", 1,0.4);
 
 
     }
+    public void smallJunctionScoring(){
+        AutoUtils.tileMove(this, "Back", 1,0.4);
+        AutoUtils.tileStrafe(this, "Right" ,1,0.4);
+    }
+
 
     @Override
     public void runOpMode() {
@@ -56,15 +78,15 @@ public class AutoMode extends BaseOpMode {
 
             String position = getPosition();
             if (position == "center") {
-                autoScoring();
+                terminalScoring();
                 DriveUtils.encoderStrafe(this,0.4,13.5,5);
                 // Drives forward to go into the middle parking area
                 //DriveUtils.encoderDrive(this, 0.5, 10, 10, 7);
             } else if (position == "right") {
-                autoScoring();
+                terminalScoring();
                 DriveUtils.encoderStrafe(this,0.4,40.5,5);
             } else if (position == "left") {
-                autoScoring();
+                terminalScoring();
                 DriveUtils.encoderStrafe(this,0.4,-13.5,5);
             }
 
