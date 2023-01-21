@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
@@ -50,6 +51,7 @@ public class PwPRobot extends BasicRobot {
     private VoltageSensor voltageSensor = null;
     boolean finished = false;
     double voltage;
+    boolean manualSlides = false;
 
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
@@ -58,6 +60,9 @@ public class PwPRobot extends BasicRobot {
         voltage = voltageSensor.getVoltage();
         RFMotor.kP*= 13/ voltageSensor.getVoltage();
         RFMotor.kA*= 13/ voltageSensor.getVoltage();
+        DriveConstants.MAX_ANG_ACCEL *= 12.8/voltageSensor.getVoltage();
+        DriveConstants.MAX_ANG_VEL *= 12.8/voltageSensor.getVoltage();
+
 
 //        kV*=13/ voltageSensor.getVoltage();
 //        kA *= 13/ voltageSensor.getVoltage();
@@ -217,13 +222,13 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void liftToPosition(int tickTarget) {
-        if (queuer.queue(true, lift.isDone() || abs(lift.getLiftPosition() - tickTarget) < 20)) {
+        if (queuer.queue(true, lift.isDone() || abs(lift.getLiftPosition() - tickTarget) < 50)) {
             lift.liftToPosition(tickTarget);
         }
     }
 
     public void liftToPosition(int tickTarget, boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, lift.isDone() || abs(lift.getLiftPosition() - tickTarget) < 20)) {
+        if (queuer.queue(p_asynchronous, lift.isDone() || abs(lift.getLiftPosition() - tickTarget) < 50)) {
             lift.liftToPosition(tickTarget);
         }
     }
@@ -360,6 +365,8 @@ public class PwPRobot extends BasicRobot {
         gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
         boolean isY = gp.readGamepad(op.gamepad1.y, "gamepad1_y", "Status");
                 gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
+        boolean isX2 = gp.readGamepad(op.gamepad2.x, "gamepad2_x", "Status");
+        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
         gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
         gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
         gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Value");
@@ -367,8 +374,16 @@ public class PwPRobot extends BasicRobot {
         gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Value");
         gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Value");
         gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
+        boolean isBumper2 =         gp.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "Status");
+
         if (isY) {
             regularDrive = !regularDrive;
+        }
+        if(isX2){
+            manualSlides = !manualSlides;
+        }
+        if(isBumper2){
+            lift.resetEncoder();
         }
 
         if (CLAW_CLOSED.getStatus()) {
@@ -406,12 +421,21 @@ public class PwPRobot extends BasicRobot {
         if (op.gamepad1.dpad_down && op.gamepad2.dpad_down) {
             lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger) / 3);
         } else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
-            lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
-            lift.updateLastManualTime();
-        } else {
+            if(manualSlides){
+                lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger) / 2.4);
+                lift.updateLastManualTime();
+            } else {
+                lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
+                lift.updateLastManualTime();
+            }
+        } else if(!manualSlides){
 //            lift.setLiftPower(0);
             lift.liftToTarget();
         }
+        else{
+            lift.setLiftRawPower(0);
+        }
+
 
         if (op.gamepad2.dpad_down) {
             lift.iterateConeStackDown();
@@ -476,8 +500,8 @@ public class PwPRobot extends BasicRobot {
             if (regularDrive) {
                 roadrun.setWeightedDrivePower(
                         new Pose2d(
-                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.04 * pow(abs(vals[1]), 3)),
-                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.04 * pow(abs(vals[0]), 3)),
+                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.55 * abs(vals[1]) + 0.05 * pow(abs(vals[1]), 3)),
+                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.55 * abs(vals[0]) + 0.05 * pow(abs(vals[0]), 3)),
                                 abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.5 * abs(vals[2]))
                         )
                 );
@@ -534,8 +558,11 @@ public class PwPRobot extends BasicRobot {
         if (op.getRuntime() - claw.getLastTime() > .4 && op.getRuntime() - claw.getLastTime() < .7 && CLAW_CLOSED.getStatus()) {
             liftArm.raiseLiftArmToOuttake();
         }
+        if (op.getRuntime() - claw.getLastTime() > 1 && op.getRuntime() - claw.getLastTime() < 1.3 && CLAW_CLOSED.getStatus()&&lift.getStackPos()==lift.getLiftTarget()) {
+            lift.setLiftTarget(0);
+        }
         if(CLAW_OPEN.getStatus()&& ARM_INTAKE.getStatus()&&!CLAW_WIDE.getStatus()){
-            claw.wideClaw();
+            claw.teleClaw();
         }
 
 

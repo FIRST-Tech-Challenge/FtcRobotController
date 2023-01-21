@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Components.LEDStrip;
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
+@Disabled
 
 @TeleOp(name = "LEDTest2")
 

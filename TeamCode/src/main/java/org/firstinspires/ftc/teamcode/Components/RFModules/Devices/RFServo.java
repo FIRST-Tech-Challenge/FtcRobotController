@@ -116,6 +116,9 @@ public class RFServo implements Servo {
     public double getLastTime() {
         return lasttime;
     }
+    public void setLastTime(double lastTime){
+        lasttime = lastTime;
+    }
 
     @Override
     public void scaleRange(double min, double max) {

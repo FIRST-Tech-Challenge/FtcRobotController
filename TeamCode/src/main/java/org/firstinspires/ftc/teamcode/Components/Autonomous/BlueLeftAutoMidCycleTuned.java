@@ -28,7 +28,7 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
     public static double pickupX2 = 64, pickupY2 = 14.25, pickupA2 = toRadians(0), pickupET2 = toRadians(180);
 
-    double[] stackPos = {400,330,235,60,0};
+    double[] stackPos = {400,330,235,80,0};
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
@@ -53,7 +53,6 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
                 .addDisplacementMarker(10,()->{robot.roadrun.followTrajectorySequenceAsync(initialTrajectoryPart2);})
                 .splineToSplineHeading(new Pose2d(36, 17, toRadians(90)), toRadians(270))
                 .splineToSplineHeading(new Pose2d(29,7, toRadians(45)), toRadians(215))
-                .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence pickupTrajectoryPart2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(pickupX2-15,16,0))
                 .setReversed(false)
@@ -112,7 +111,7 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
                 .setReversed(false)
                 .splineToLinearHeading(new Pose2d(dropX+4,dropY-7, toRadians(-5)),toRadians(dropA))
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(13,13,toRadians(0)), toRadians(0))
+                .splineToLinearHeading(new Pose2d(15,13,toRadians(0)), toRadians(0))
                 .build();
         while(!isStarted()){
             telemetry.addData("pos",robot.cv.getPosition());
@@ -144,9 +143,9 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
             logger.loopcounter++;
             robot.followTrajectorySequenceAsync(initialtrajectory);
             robot.raiseLiftArmToOuttake(true);
-            robot.delay(0.9);
+            robot.delay(0.3);
             robot.liftToPosition(LIFT_MED_JUNCTION);
-            robot.delay(0.2);
+            robot.delay(0.15);
             robot.openClaw(false);
             robot.delay(0.4);
             robot.cycleLiftArmToCycle(true);
@@ -157,22 +156,29 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
             robot.followTrajectorySequenceAsync(pickupTrajectory2);
             robot.closeClaw(false);
             robot.followTrajectorySequenceAsync(dropTrajectory);
-            robot.delay(0.61);            robot.raiseLiftArmToOuttake(true);
+            robot.delay(0.61);
+            robot.raiseLiftArmToOuttake(true);
             robot.delay(0.21);
             robot.liftToPosition(LIFT_MED_JUNCTION);
             robot.openClaw(false);
             for (int i = 0; i < 4; i++) {
                 robot.followTrajectorySequenceAsync(pickupTrajectory2);
-                robot.cycleLiftArmToCycle(true);
-                robot.delay(1);
+                if(i!=3) {
+                    robot.cycleLiftArmToCycle(true);
+                }else{
+                    robot.lowerLiftArmToIntake(true);
+                }
+                robot.delay(0.5);
                 robot.wideClaw();
-                robot.delay(0.6);
+                robot.delay(0.5);
                 robot.liftToPosition((int) stackPos[i + 1]);
                 robot.closeClaw(false);
                 robot.followTrajectorySequenceAsync(dropTrajectory);
-                robot.delay(0.53+0.015*(3-i));
+                robot.delay(0.3+0.005*(3-i));
                 robot.raiseLiftArmToOuttake(true);
-                robot.delay(0.23+0.015*(3-i));                robot.liftToPosition(LIFT_MED_JUNCTION);
+                robot.delay(0.0+0.005*(3-i));
+                robot.liftToPosition(LIFT_MED_JUNCTION);
+                robot.delay(0.15);
                 robot.openClaw(false);
             }
 

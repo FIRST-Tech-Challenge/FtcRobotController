@@ -35,6 +35,9 @@ public class Claw {
 
     private final double CLAW_WIDE_POS = 0.72;
 
+    private final double CLAW_Tele_POS = 0.72;
+
+
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
     private double lastCheckTime = 0;
@@ -43,7 +46,7 @@ public class Claw {
     private double lastOpenTime =-10;
     private double clawPos = 0.45;
     //temporary
-    public double CLAW_SERVO_SWITCH_TIME = 0.3;
+    public final double CLAW_SERVO_SWITCH_TIME = 0.3;
     boolean shouldUseClawSensor = true;
 
     //States:
@@ -58,7 +61,7 @@ public class Claw {
         CLAW_CLOSING(false, "CLAW_CLOSING"),
         CLAW_OPEN(true, "CLAW_OPEN"),
         CLAW_OPENING(false, "CLAW_OPENING"),
-        CLAW_WIDE(true, "CLAW_OPEN");
+        CLAW_WIDE(false, "CLAW_OPEN");
 
         boolean status;
         String name;
@@ -100,12 +103,11 @@ public class Claw {
         else{
             claw.setPosition(CLAW_OPEN_POS);
             CLAW_OPEN.setStatus(true);
-            CLAW_SERVO_SWITCH_TIME = 0.3;
         }
         shouldUseClawSensor = true;
     }
     public void setClawFlipTime(double flipTime){
-        CLAW_SERVO_SWITCH_TIME = flipTime;
+        claw.setLastTime(flipTime);
     }
 
     public void updateClawStates() {
@@ -144,8 +146,15 @@ public class Claw {
                 CLAW_SERVO_SWITCH_TIME + " " + op.getRuntime());
     }
     public void wideClaw(){
-        if(ARM_INTAKE.getStatus()&&!CLAW_WIDE.status){
+        if(ARM_INTAKE.getStatus()&& (CLAW_OPEN.status|| CLAW_CLOSED.status)){
             claw.setPosition(CLAW_WIDE_POS+0.04);
+            ClawStates.CLAW_WIDE.setStatus(true);
+            clawPos = CLAW_WIDE_POS;
+        }
+    }
+    public void teleClaw(){
+        if(ARM_INTAKE.getStatus()&&!CLAW_WIDE.status){
+            claw.setPosition(CLAW_Tele_POS);
             ClawStates.CLAW_WIDE.setStatus(true);
             clawPos = CLAW_WIDE_POS;
         }
@@ -204,18 +213,22 @@ public class Claw {
         //no input
 
 
-        //the state of claw closed has to be true TODO: refer to line 16
+        //the state of claw closed has to be true
         if (CLAW_CLOSED.status|| CLAW_WIDE.status) {
+            logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
+                    + CLAW_OPENING.status +"clawClosed" + CLAW_CLOSED.getStatus() + "clawWide" + CLAW_WIDE.getStatus(), true);
             //set servo position
             claw.setPosition(CLAW_OPEN_POS);
-            //TODO: need separate CLAW_OPEN_POS constant?
 
             //set state of claw open to true
             CLAW_OPENING.setStatus(true);
+            CLAW_CLOSED.setStatus(false);
+            CLAW_WIDE.setStatus(false);
+
             clawPos= CLAW_OPEN_POS;
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
-                    + ",Claw Opened", true);
+                    + CLAW_OPENING.status +"clawClosed" + CLAW_CLOSED.getStatus() + "clawWide" + CLAW_WIDE.getStatus(), true);
         }
     }
     public void openClaw(double delay) {

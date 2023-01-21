@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Components;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static java.lang.Double.min;
 import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 
 @Config
 public class Lift {
-    private final int MAX_LIFT_TICKS = 1720;
+    private final int MAX_LIFT_TICKS = 1690;
     private final double LIFT_GRAVITY_CONSTANT = 0.075;
     //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
@@ -40,7 +41,7 @@ public class Lift {
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    double[] coneStack = {400,330,235,60,0};
+    double[] coneStack = {400,330,235,80,0};
     private int stackLevel = 0;
     private double lastStackTime =0;
 
@@ -222,11 +223,11 @@ public class Lift {
         double distance = targetTickCount - liftMotor.getCurrentPosition();
 
         done = (abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
-        setLiftTarget(targetTickCount);
+        setLiftTarget(min(targetTickCount,MAX_LIFT_TICKS));
 
         // no conditions
         // log when movement starts & when reach target position
-        logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetTickCount + " ticks" + liftMotor.getCurrentPosition());
+        logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + liftTarget + " ticks" + liftMotor.getCurrentPosition());
         //async, no use sleep/wait with time, can use multiple processes
     }
 
@@ -280,6 +281,9 @@ public class Lift {
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftTarget = 0;
     }
+    public double getLiftTarget(){
+        return liftTarget;
+    }
 
     public void liftToTargetAuto() {
         liftMotor.setPosition(liftTarget);
@@ -330,12 +334,16 @@ public class Lift {
     public int getStackLevel(){
         return stackLevel;
     }
+    public double getStackPos(){
+        return coneStack[stackLevel];
+    }
+
     public void raiseLiftOffStack(){
         setLiftTarget(coneStack[stackLevel]+500);
     }
 
     public void setLiftTarget(double p_liftTarget) {
-        liftTarget = p_liftTarget;
+        liftTarget = min(MAX_LIFT_TICKS,p_liftTarget);
         logger.log("/RobotLogs/GeneralRobot", "Lift," + "setLiftTarget()," + "Lift target set to:" + p_liftTarget + " ticks", true);
     }
 
