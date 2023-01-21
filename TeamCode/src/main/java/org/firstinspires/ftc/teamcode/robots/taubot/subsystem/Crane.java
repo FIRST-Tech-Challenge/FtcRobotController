@@ -31,6 +31,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.ConeStack;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.FieldThing;
 import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
+import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.active;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DistanceSensorSim;
@@ -38,13 +39,16 @@ import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.util.CranePositionMemory;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.PIDController;
+import org.firstinspires.ftc.teamcode.util.Vector2;
 import org.firstinspires.ftc.teamcode.util.Vector3;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Config(value = "PPCrane")
 public class Crane implements Subsystem {
@@ -67,6 +71,12 @@ public class Crane implements Subsystem {
 
     public static double EXTEND_TICKS_PER_METER = 806/.2921; //todo verify this is still true
 
+    public static void setShoulderImuEnable(boolean shoulderImuEnable) {
+        SHOULDER_IMU_ENABLE = shoulderImuEnable;
+    }
+
+    public static boolean SHOULDER_IMU_ENABLE = true; //set false to disable IMU calls while testing off-robot subsystems
+
     public static double kF = 0.2;
     public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.05, 0.005, 0.0);
     public static double SHOULDER_MAX_PID_OUTPUT = 1;
@@ -76,7 +86,7 @@ public class Crane implements Subsystem {
     public static double SHOULDER_ADJUST = 13;
     public static double EXTEND_ADJUST = .05;
     public static double TURRET_ADJUST = 20;
-    public static double HEIGHT_ADJUST = 5;
+    public static double HEIGHT_ADJUST = 13;
     public static double DISTANCE_ADJUST = 30;
 
     public static double SHOULDER_ERROR_MAX = 4;
@@ -148,6 +158,7 @@ public class Crane implements Subsystem {
         extenderTargetPos = 0;
         shoulderTargetAngle = 0;
         if (simulated) {
+            setShoulderImuEnable(false);
             shoulderMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             extenderMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             turretMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
@@ -162,9 +173,6 @@ public class Crane implements Subsystem {
             turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
             shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             extenderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-            if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
-                extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
             extenderMotor.setTargetPosition(0);
             shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -172,37 +180,47 @@ public class Crane implements Subsystem {
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
             nudgeStickServo = hardwareMap.get(Servo.class, "nudgeSwivel");
             //nudgeDistanceSensor = hardwareMap.get(DistanceSensor.class, "nudgeDist");
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-            parameters.loggingEnabled      = true;
-            parameters.loggingTag          = "IMU";
-            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-            shoulderImu = hardwareMap.get(BNO055IMU.class, "shoulderIMU");
-            shoulderImu.initialize(parameters);
-            turretImu = hardwareMap.get(BNO055IMU.class, "turretIMU");
-            turretImu.initialize(parameters);
-
-            shoulderImu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-            turretImu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
         }
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        shoulderImu = hardwareMap.get(BNO055IMU.class, "shoulderIMU");
+        shoulderImu.initialize(parameters);
+        turretImu = hardwareMap.get(BNO055IMU.class, "turretIMU");
+        turretImu.initialize(parameters);
+
+        turretImu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
         extendPID = new PIDController(0,0,0);
         extendPID.setOutputRange(EXTEND_MIN_PID_OUTPUT, EXTEND_MAX_PID_OUTPUT);
         shoulderPID = new PIDController(0,0,0);
         shoulderPID.setOutputRange(SHOULDER_MIN_PID_OUTPUT,SHOULDER_MAX_PID_OUTPUT);
-        shoulderPID.setIntegralCutIn(ten);
+        shoulderPID.setIntegralCutIn(10);
         shoulderPID.enableIntegralZeroCrossingReset(false);
 
-        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+ten,robot.driveTrain.getPoseEstimate().getY(),8);
-        goToFieldCoordinate(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
+        articulate(Articulation.start);
+
+        goTargetInd = 0;
+        homeInd = 0;
+        coneCycleStage = 0;
+        coneStackStage = 0;
+        pickupConeStage = 0;
+        dropConeStage = 0;
     }
 
-    int five = 5;
-    int two = 2;
-    int ten = five * two;
+    public void resetCrane(Constants.Position start){
+        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST)){
+            fieldPositionTarget = new Vector3(start.getPose().getX()+6,start.getPose().getY(),9);
+        }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
+            fieldPositionTarget = new Vector3(home.x+robot.turret.getTurretPosition().getX(),home.y+robot.turret.getTurretPosition().getY(),home.z);
+        }
+    }
 
     int calibrateStage=0;
     double futureTime;
@@ -218,12 +236,9 @@ public class Crane implements Subsystem {
                 calibrated = false; //allows us to call calibration mid-match in an emergency
                 //operator instruction: physically push arm to about 45 degrees and extend by 1 slide before calibrating
                 //shoulder all the way up and retract arm until they safely stall
-                shoulderActivePID = false;
                 extenderActivePID = false;
-                shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                shoulderMotor.setPower(.2); //move up at low power
-                extenderMotor.setPower(-0.2);
+                extenderMotor.setPower(-0.3);
                 futureTime = futureTime(.25);
                 calibrateStage++;
                 break;
@@ -231,7 +246,6 @@ public class Crane implements Subsystem {
             case 1:
                 if(System.nanoTime() > futureTime){
                     //sample low load amps
-                    runShoulderAmp = shoulderMotor.getCurrent(CurrentUnit.AMPS);
                     runExtendAmp = extenderMotor.getCurrent(CurrentUnit.AMPS);
                     calibrateStage++;
                 }
@@ -239,46 +253,20 @@ public class Crane implements Subsystem {
 
             case 2:
                 // both motors are stalled
-                if(shoulderMotor.getCurrent(CurrentUnit.AMPS) > 1 && extenderMotor.getCurrent(CurrentUnit.AMPS) > 1){
+                if(extenderMotor.getCurrent(CurrentUnit.AMPS) > 2.5){
                     extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     extenderMotor.setPower(-0.1); //barely stop it from extending
                     //enable PID on shoulder and rotate down to horizontal
-                    shoulderMotor.setPower(0.0);
-                    shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    shoulderAngleEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    shoulderTargetAngle = -SHOULDER_DEG_MAX;
-                    shoulderActivePID = true;
                     calibrateStage++;
                 }
                 break;
-
             case 3:
-                if (shoulderAngle > shoulderTargetAngle -2 && shoulderAngle < shoulderTargetAngle +2){ //shoulder is horizontal, so reset encoder to begin from here - normally use shoulderPID.onTarget(), but that might not be setup correctly yet
-                    shoulderActivePID = false;
-                    shoulderAngleEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //now horizontal should be at zero
-                    shoulderTargetAngle =0;
-                    shoulderActivePID = true;
-                    // WATCH OUT - begin extending arm - we want to find max extension (once established we will normally not do this)
-                    if (EXTENDER_CALIBRATE_MAX) extenderMotor.setPower(.6);
-                    calibrateStage++;
-                }
+                extendMaxTics = 3075;
+                calibrateStage++;
                 break;
 
-            case 4:
-                if (EXTENDER_CALIBRATE_MAX) {
-                    if (extenderMotor.getCurrent(CurrentUnit.AMPS) > 6) { //should be stalled at full extension
-                        extendMaxTics = extenderMotor.getCurrentPosition();
-                        calibrateStage++;
-                    }
-                }else {
-                    extendMaxTics = 3075;
-                    calibrateStage++;
-                }
-                break;
-
-            case 5: //enable extender PID to zero position - give 2 seconds to retract a good bit
+            case 4: //enable extender PID to zero position - give 2 seconds to retract a good bit
                 extenderMotor.setPower(0.0);
                 extenderTargetPos = 0;
                 extenderActivePID = true;
@@ -286,11 +274,10 @@ public class Crane implements Subsystem {
                 calibrateStage++;
                 break;
 
-            case 6:
+            case 5:
                 if (System.nanoTime()>futureTime) {
                     calibrateStage = 0;
                     calibrated = true;
-                    shoulderTargetAngle = 5; //initial angle up to clear look at signal
                     return true;
                 }
                 break;
@@ -372,6 +359,9 @@ public class Crane implements Subsystem {
         }
     }
 
+    public boolean isBulbGripped(){
+        return bulbGripped;
+    }
     public void movePIDShoulder(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
 
         //initialization of the PID calculator's output range, target value and multipliers
@@ -391,7 +381,7 @@ public class Crane implements Subsystem {
             if (shoulderAmps < 4) {
                 shoulderMotor.setPower(shoulderCorrection);
             } else {
-                stallTimer = futureTime((double) five);
+                stallTimer = futureTime(5.0);
             }
         }else {
             shoulderMotor.setPower(0);
@@ -428,7 +418,9 @@ public class Crane implements Subsystem {
         pickupCone,
         home,
         coneStackRight,
-        coneStackLeft
+        coneStackLeft,
+        start,
+        calibate
     }
 
     public Articulation getArticulation() {
@@ -439,8 +431,19 @@ public class Crane implements Subsystem {
         articulation = target;
 
         switch(articulation){
+            case calibate:
+                if(calibrate()){
+                    articulation = Articulation.manual;
+                    return Articulation.manual;
+                }
             case noIK:
 
+                break;
+            case start:
+                if(craneStart()){
+                    articulation = Articulation.manual;
+                    return Articulation.manual;
+                }
                 break;
             case manual:
                 holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
@@ -486,6 +489,14 @@ public class Crane implements Subsystem {
         return target;
     }
 
+    public boolean craneStart(){
+        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+6,robot.driveTrain.getPoseEstimate().getY(),8);
+        calculateFieldTargeting(fieldPositionTarget);
+        setExtendTargetPos(calculatedLength);
+        setShoulderTargetAngle(calculatedAngle);
+        return shoulderOnTarget() && extensionOnTarget();
+    }
+
     int coneStackStage = 0;
     public boolean coneStack(boolean rightConeStack){
         if(coneCycle(rightConeStack)){
@@ -508,7 +519,7 @@ public class Crane implements Subsystem {
             case 1:
                 if (goToFieldCoordinate(pos.getX(), pos.getY(), obj.z()+4)) {
                     coneCycleStage++;
-                    cycleTimer = futureTime(1);
+                    cycleTimer = futureTime(0.1);
                 }
                 break;
             case 2:
@@ -521,7 +532,7 @@ public class Crane implements Subsystem {
                 if(System.nanoTime() >= cycleTimer) {
                     grab();
                     obj.takeCone();
-                    cycleTimer = futureTime(0.5);
+                    cycleTimer = futureTime(0.3);
                     coneCycleStage++;
                 }
                 break;
@@ -544,15 +555,15 @@ public class Crane implements Subsystem {
                     temp = robot.field.objects[32];
                 }
                 Pose2d tempPos = Field.convertToInches(temp.getPosition());
-                if (goToFieldCoordinate(tempPos.getX()+2, tempPos.getY()+2, temp.z())) {
+                if (goToFieldCoordinate(tempPos.getX(), tempPos.getY(), temp.z())) {
                     coneCycleStage++;
-                    cycleTimer = futureTime(1);
+                    cycleTimer = futureTime(0.4);
                 }
                 break;
             case 7:
                 if(System.nanoTime() >= cycleTimer) {
                     release();
-                    cycleTimer = futureTime(0.5);
+                    cycleTimer = futureTime(0.3);
                     coneCycleStage++;
                 }
                 break;
@@ -603,7 +614,7 @@ public class Crane implements Subsystem {
 
     public boolean goToFieldCoordinate(double x, double y, double z){
         fieldPositionTarget = new Vector3(x,y,z);
-        calculateFieldTargeting(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
+        calculateFieldTargeting(x,y,z);
 
         switch(goTargetInd){
             case 0:
@@ -624,12 +635,15 @@ public class Crane implements Subsystem {
                     goToTimer = futureTime(0.4);
                     goTargetInd++;
                 }
+                break;
             case 3:
                 if(System.nanoTime() > goToTimer){
-                    goTargetInd = 0;
-                    return true;
+                    goTargetInd++;
                 }
                 break;
+            case 4:
+                goTargetInd = 0;
+                return true;
         }
 
         return false;
@@ -650,12 +664,13 @@ public class Crane implements Subsystem {
             case 1:
                 if(extensionOnTarget()) {
                     calculateFieldTargeting(fieldPositionTarget);
-                    goToCalculatedTarget();
+                    setShoulderTargetAngle(calculatedAngle);
+                    setExtendTargetPos(calculatedLength);
                     homeInd++;
                 }
                 break;
             case 2:
-                if(shoulderOnTarget() && extensionOnTarget() && turretOnTarget()){
+                if(shoulderOnTarget() && extensionOnTarget()){
                     homeInd = 0;
                     return true;
                 }
@@ -676,7 +691,7 @@ public class Crane implements Subsystem {
                 break;
             case 1:
                 if(System.nanoTime() >= pickupTimer) {
-                    setShoulderTargetAngle(getShoulderAngle() + 8);
+                    setShoulderTargetAngle(getShoulderAngle() + 15);
                     pickupConeStage++;
                 }
                 break;
@@ -686,11 +701,30 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 3:
-                if(goToFieldthing(obj)){
+                calculateFieldTargeting(obj);
+                pickupConeStage++;
+                break;
+            case 4:
+                setTargetTurretAngle(calculatedTurretAngle+8);
+                setShoulderTargetAngle(calculatedAngle);
+                nudgeCenter(true);
+                if(shoulderOnTarget() && turretOnTarget()){
                     pickupConeStage++;
                 }
                 break;
-            case 4:
+            case 5:
+                setExtendTargetPos(calculatedLength);
+                if(extensionOnTarget()){
+                    pickupConeStage++;
+                }
+                break;
+            case 6:
+                setTargetTurretAngle(calculatedTurretAngle-5);
+                if(turretOnTarget()){
+                    pickupConeStage++;
+                }
+                break;
+            case 7:
                 pickupConeStage = 0;
                 return true;
         }
@@ -704,12 +738,15 @@ public class Crane implements Subsystem {
 
             case 0:
                 release();
+                Vector3 dif = correctPos.subtract(fieldPositionTarget);
+                //robot.driveTrain.setPoseEstimate(new Pose2d(robot.driveTrain.getPoseEstimate().getX()+dif.x,robot.driveTrain.getPoseEstimate().getY()+dif.y));
                 dropTimer = futureTime(0.3); //enough time for cone to start dropping
                 dropConeStage++;
                 updateScoringPattern();
                 break;
             case 1:
                 if(System.nanoTime() >= dropTimer) {
+                    nudgeLeft();
                     setShoulderTargetAngle(getShoulderAngle() + 8);
                     dropConeStage++;
                 }
@@ -739,8 +776,6 @@ public class Crane implements Subsystem {
     double shoulderAmps, extenderAmps;
 
     public final double craneLengthOffset =  0.432;
-
-
 
     boolean inverseKinematic = false;
     double targetHeight = 0.0 ;
@@ -785,10 +820,14 @@ public class Crane implements Subsystem {
 
         currentStateMachine.execute();
 
-        angles   = shoulderImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        gravity  = shoulderImu.getGravity();
 
-        shoulderAngle = -AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
+        if (SHOULDER_IMU_ENABLE) { //external shoulder imu is attached
+            angles = shoulderImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            gravity = shoulderImu.getGravity();
+            shoulderAngle = -AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
+        }
+        else
+            shoulderAngle = 0;
 
         turretAngles = turretImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         turretGravity = turretImu.getGravity();
@@ -799,10 +838,8 @@ public class Crane implements Subsystem {
             robotIsNotTipping = withinError(turretPitch, 0, 4); //checks if robot is happy
         }
 
-        if(calibrated) {
-            //run the current articulation
+        if(active) {
             articulate(articulation);
-
         }
 
         turretPos = robot.turret.getTurretPosition();
@@ -836,10 +873,10 @@ public class Crane implements Subsystem {
         }
     }
 
-    Vector3 deltaGripperPosition = new Vector3(10,0,8);
+    Vector3 deltaGripperPosition = new Vector3(7,0,8);
 
     boolean holdFieldPosition = true;
-    boolean driverDrivingRobot = true;
+    boolean driverDrivingRobot = false;
 
     public void driverIsDriving(){
         driverDrivingRobot = true;
@@ -898,7 +935,8 @@ public class Crane implements Subsystem {
     }
     public boolean calculateFieldTargeting(FieldThing obj){
         Pose2d coords = Field.convertToInches(obj.getPosition());
-        fieldPositionTarget = new Vector3(coords.getX(),coords.getY(),obj.z());
+        fieldPositionTarget = new Vector3(coords.getX(),coords.getY(),obj.z()-1);
+        calculateFieldTargeting(fieldPositionTarget);
         return true;
     }
 
@@ -1036,8 +1074,6 @@ public class Crane implements Subsystem {
         bulbGripped = true;
     }
 
-    CranePositionMemory defaultPos = new CranePositionMemory(0,0.40,0.30);
-
     public void pickupSequence(){
         articulate(Articulation.pickupCone);
     }
@@ -1050,8 +1086,10 @@ public class Crane implements Subsystem {
        return craneCalibrationEnabled;
     }
 
+    Vector3 correctPos = new Vector3(0,0,0);
     public void dropSequence(){
         articulate(Articulation.dropCone);
+        correctPos = new Vector3(robot.field.getPatternObject().x(),robot.field.getPatternObject().y(),robot.field.getPatternObject().z());
     }
 
     public void setGripper(boolean g){
@@ -1091,6 +1129,11 @@ public class Crane implements Subsystem {
         telemetryMap.put("Drop Stage", dropConeStage);
         telemetryMap.put("ConeStackStage", coneStackStage);
         telemetryMap.put("ConeCycle Stage", coneCycleStage);
+        telemetryMap.put("GoTo Stage", goTargetInd);
+        telemetryMap.put("Home Stage", homeInd);
+        telemetryMap.put("Shoulder On Target", shoulderOnTarget());
+        telemetryMap.put("Extend On Target", extensionOnTarget());
+        telemetryMap.put("Turret On Target", turretOnTarget());
         telemetryMap.put("Shoulder Error", shoulderPID.getError());
         telemetryMap.put("Extend Error", extendPID.getError());
 

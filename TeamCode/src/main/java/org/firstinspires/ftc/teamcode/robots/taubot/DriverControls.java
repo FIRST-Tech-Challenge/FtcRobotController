@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.notJoystic
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.UnderArm;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProviders;
@@ -139,22 +140,16 @@ public class DriverControls {
     }
 
     void joystickDriveDemoMode(){
-        if(gamepad1.y){
-            robot.crane.doOrbit();
-        }
-
         if(gamepad1.dpad_up){
-            robot.crane.goHome();
+            robot.crane.articulate(Crane.Articulation.home);
         }
 
         if(stickyGamepad1.left_bumper){
             robot.crane.decNudgeIndex();
-            robot.crane.articulate(Crane.Articulation.coneStackLeft);
         }
 
         if(stickyGamepad1.right_bumper){
             robot.crane.incNudgeIndex();
-            robot.crane.articulate(Crane.Articulation.coneStackRight);
         }
 
         if(stickyGamepad1.a) {
@@ -163,9 +158,35 @@ public class DriverControls {
         }
 
         if(stickyGamepad1.b){
-            robot.crane.dropSequence();
+            if(robot.crane.isBulbGripped()) {
+                robot.crane.dropSequence();
+                robot.field.incTarget();
+                robot.crane.updateScoringPattern();
+            }else{
+                robot.crane.dropSequence();
+                robot.crane.updateScoringPattern();
+            }
         }
 
+        if(stickyGamepad1.x){
+            robot.field.incTarget();
+            robot.crane.updateScoringPattern();
+        }
+
+        if(stickyGamepad1.y){
+            robot.field.decTarget();
+            robot.crane.updateScoringPattern();
+        }
+
+        if(stickyGamepad1.dpad_right){
+            robot.field.incScoringPattern();
+            robot.crane.updateScoringPattern();
+        }
+
+        if(stickyGamepad1.dpad_left){
+            robot.field.decScoringPattern();
+            robot.crane.updateScoringPattern();
+        }
 
         if(!gamepad1.dpad_down) {
             if (notJoystickDeadZone(gamepad1.right_stick_x)){
@@ -179,12 +200,14 @@ public class DriverControls {
             if (gamepad1.right_trigger>.05) robot.crane.adjustZ(0.7*gamepad1.right_trigger);
             if (gamepad1.left_trigger>.05) robot.crane.adjustZ(-0.7*gamepad1.left_trigger);
 
-
             //manual override of drivetrain
-            if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
-                robot.driveTrain.ManualArcadeDrive(-0.7*gamepad1.left_stick_y,  0.7*gamepad1.left_stick_x);
+            if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
+                robot.driveTrain.ManualArcadeDrive(-0.7 * gamepad1.left_stick_y, 0.7 * gamepad1.left_stick_x);
+                robot.crane.driverIsDriving();
+            }
             else {
                 robot.driveTrain.ManualDriveOff();
+                robot.crane.driverNotDriving();
             }
         }else{
             if (notJoystickDeadZone(gamepad1.right_stick_x)){
@@ -197,11 +220,15 @@ public class DriverControls {
 
             if (gamepad1.right_trigger>.05) robot.crane.adjustZ(gamepad1.right_trigger);
             if (gamepad1.left_trigger>.05) robot.crane.adjustZ(-gamepad1.left_trigger);
+
             //manual override of drivetrain
-            if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
-                robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y,  gamepad1.left_stick_x);
+            if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
+                robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x);
+                robot.crane.driverIsDriving();
+            }
             else {
                 robot.driveTrain.ManualDriveOff();
+                robot.crane.driverNotDriving();
             }
         }
     }
@@ -251,6 +278,10 @@ public class DriverControls {
 
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
             debugTelemetryEnabled = !debugTelemetryEnabled;
+
+        if(stickyGamepad1.dpad_down){
+            robot.crane.articulate(Crane.Articulation.calibate);
+        }
         /*
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
             if (robot.crane.shoulderInitialized)
@@ -291,6 +322,26 @@ public class DriverControls {
         }
         if(visionProviderFinalized)
             auto.visionProvider.update();
+    }
+
+    public void UnderarmTesting(){
+        if(Math.abs(gamepad1.left_stick_y) > 0.05){
+            robot.underarm.adjustShoulder(gamepad1.left_stick_y);
+        }
+        if(Math.abs(gamepad1.right_stick_y) > 0.05){
+            robot.underarm.adjustElbow(gamepad1.right_stick_y);
+        }
+        if(Math.abs(gamepad1.right_stick_x) > 0.05){
+            robot.underarm.adjustLasso(gamepad1.right_stick_x);
+        }
+        if(Math.abs(gamepad1.left_stick_x) > 0.05){
+            robot.underarm.adjustTurret(gamepad1.left_stick_x);
+        }
+
+        if (stickyGamepad1.b) robot.underarm.articulate(UnderArm.Articulation.HOME);
+        if (stickyGamepad1.a) robot.underarm.articulate(UnderArm.Articulation.TRANSFER);
+
+
     }
 }
 

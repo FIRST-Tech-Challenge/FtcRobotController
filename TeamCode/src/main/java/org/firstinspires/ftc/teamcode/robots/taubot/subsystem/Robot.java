@@ -44,6 +44,7 @@ public class Robot implements Subsystem {
     public DriveTrain driveTrain;
     public Turret turret;
     public Crane crane;
+    public UnderArm underarm;
     public Subsystem[] subsystems;
     public Field field;
 
@@ -73,11 +74,12 @@ public class Robot implements Subsystem {
         }
 
         // initializing subsystems
-        driveTrain = new DriveTrain(hardwareMap, simulated);
+        driveTrain = new DriveTrain(hardwareMap, this, simulated);
         turret = new Turret(hardwareMap, this, simulated);
         crane = new Crane(hardwareMap, this, simulated);
+        underarm = new UnderArm(hardwareMap, this, simulated);
 
-        subsystems = new Subsystem[] {driveTrain, turret, crane}; //{driveTrain, turret, crane};
+        subsystems = new Subsystem[] {driveTrain, turret, crane, underarm}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -96,12 +98,16 @@ public class Robot implements Subsystem {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
         telemetryMap.put("AutonState", autonIndex);
+        telemetryMap.put("Auton Time", (totalAutonTime-System.nanoTime())/1e9);
         telemetryMap.put("auto-dump enabled", autoDumpEnabled);
+
+        for (int i = 0; i < subsystems.length; i++) {
+            String name = subsystems[i].getClass().getSimpleName();
+            telemetryMap.put(name + " Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (subsystemUpdateTimes[i] * 1e-6), (int) (1 / (subsystemUpdateTimes[i] * 1e-9))));
+        }
+
         if(debug) {
-            for (int i = 0; i < subsystems.length; i++) {
-                String name = subsystems[i].getClass().getSimpleName();
-                telemetryMap.put(name + " Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (subsystemUpdateTimes[i] * 1e-6), (int) (1 / (subsystemUpdateTimes[i] * 1e-9))));
-            }
+
         }
         telemetryMap.put("Update Pose happens " ,updatePoseHappens);
 
@@ -114,6 +120,7 @@ public class Robot implements Subsystem {
         telemetryMap.put("turn until degrees done", turnUntilDegreesDone);
         telemetryMap.put("Scoring Pattern", field.getPatternIndex());
         telemetryMap.put("Pole Index", field.getScoringTargetIndex());
+        telemetryMap.put("Pattern Name", field.getPatternName());
 
 
         return telemetryMap;
@@ -124,10 +131,14 @@ public class Robot implements Subsystem {
         return "Robot";
     }
 
-    @Override
-    public void update(Canvas fieldOverlay) {
+    public void clearBulkCaches(){
         for (LynxModule module : hubs)
             module.clearBulkCache();
+    }
+
+    @Override
+    public void update(Canvas fieldOverlay) {
+        clearBulkCaches(); //ALWAYS FIRST LINE IN UPDATE
 
         articulate(articulation);
 
@@ -186,86 +197,125 @@ public class Robot implements Subsystem {
 
     boolean turnUntilDegreesDone = false;
     long autonTime;
+    boolean initAuton = false;
+    boolean autonRunWithinTime = true;
+    long totalAutonTime;
+
+    int timeSupervisor = 0;
+
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
-        switch (autonIndex){
+
+        switch (timeSupervisor) {
             case 0:
-                crane.driverIsDriving();
-                if(driveTrain.driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20)){
-                    autonIndex++;
-                }
-                crane.articulate(Crane.Articulation.noIK);
+                totalAutonTime = futureTime(24);
+                autonIndex = 0;
+                timeSupervisor++;
                 break;
             case 1:
-                crane.driverNotDriving();
-                if(startingPosition.equals( Constants.Position.START_LEFT)) {
-                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,Field.INCHES_PER_GRID,36);
-                    if (System.nanoTime() >= autonTime && withinErrorPercent(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinError(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
-                        crane.setGripper(false);
-                        autonTime = futureTime(0.3);
-                        autonIndex++;
-                    }
-                }else{
-                    crane.goToFieldCoordinate(3*Field.INCHES_PER_GRID+1.5,-Field.INCHES_PER_GRID-1,36);
-                    if (System.nanoTime() >= autonTime && withinErrorPercent(crane.getExtendMeters(), crane.getExtenderTargetPos(), 0.05) && withinErrorPercent(crane.getShoulderAngle(), crane.getShoulderTargetAngle(), 0.07)) {
-                        crane.setGripper(false);
-                        autonTime = futureTime(0.3);
-                        autonIndex++;
-                    }
+                if(System.nanoTime() >= totalAutonTime){
+                    timeSupervisor++;
+                }
+                switch (autonIndex) {
+                    case 0:
+                        //drive to general parking location
+                        crane.articulate(Crane.Articulation.noIK);
+                        crane.driverIsDriving();
+                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-7, 0, 30)) {
+                            autonIndex++;
+                        }
+                        break;
+                    case 1:
+                        //drop cone at nearest high pole
+                        crane.driverNotDriving();
+                        if (startingPosition.equals(Constants.Position.START_LEFT)) {
+                            if (System.nanoTime() >= autonTime && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 1.5, Field.INCHES_PER_GRID, 36)) {
+                                crane.setGripper(false);
+                                autonTime = futureTime(0.3);
+                                autonIndex++;
+                            }
+                        } else {
+                            if (System.nanoTime() >= autonTime && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 1.5, -Field.INCHES_PER_GRID - 1, 36)) {
+                                crane.setGripper(false);
+                                autonTime = futureTime(0.3);
+                                autonIndex++;
+                            }
+                        }
+                        break;
+                    case 2:
+                        if (System.nanoTime() >= autonTime && crane.goHome()) {
+                            autonIndex++;
+                        }
+                        break;
+                    case 3:
+                        //face conestack
+                        if (startingPosition.equals(Constants.Position.START_LEFT)) {
+                            if (driveTrain.turnUntilDegrees(90)) {
+                                autonIndex++;
+                                turnUntilDegreesDone = true;
+                                //autonTime = futureTime(0.2);
+                            }
+                        } else {
+                            if (driveTrain.turnUntilDegrees(-90)) {
+                                autonIndex++;
+                                turnUntilDegreesDone = true;
+                                //autonTime = futureTime(0.2);
+                            }
+                        }
+                        break;
+                    case 4:
+                        if (System.nanoTime() >= autonTime) {
+                            //if we r on left side run cone stack left, if right run right cone stack
+                            if (startingPosition.equals(Constants.Position.START_LEFT)) {
+                                crane.articulate(Crane.Articulation.coneStackLeft);
+                            } else {
+                                crane.articulate(Crane.Articulation.coneStackRight);
+                            }
+                            if (crane.getArticulation() == Crane.Articulation.manual) {
+                                autonIndex++;
+                            }
+                        }
+                        break;
+                    case 5:
+                        autonIndex = 0;
+                        timeSupervisor++;
+                        break;
                 }
                 break;
             case 2:
-                if (startingPosition.equals(Constants.Position.START_LEFT)) {
-                    if (driveTrain.turnUntilDegrees(90)) {
-                        autonIndex++;
-                        turnUntilDegreesDone = true;
-                        autonTime = futureTime(3);
-                    }
-                } else {
-                    if (driveTrain.turnUntilDegrees(-90)) {
-                        autonIndex++;
-                        turnUntilDegreesDone = true;
-                        autonTime = futureTime(3);
-                    }
+                crane.articulate(Crane.Articulation.home);
+                if (crane.getArticulation() == Crane.Articulation.manual) {
+                    crane.articulate(Crane.Articulation.noIK);
+                    timeSupervisor++;
                 }
                 break;
             case 3:
-                if(System.nanoTime() >= autonTime) {
-                    if(startingPosition.equals( Constants.Position.START_LEFT)){
-                        crane.articulate(Crane.Articulation.coneStackLeft);
-                    }else{
-                        crane.articulate(Crane.Articulation.coneStackRight);
+                if (autonTarget == 1 || Objects.isNull(autonTarget)) {
+                    timeSupervisor++;
+                }
+                if (startingPosition.equals(Constants.Position.START_LEFT)) {
+                    if (autonTarget == 0) {
+                        if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID + 3, 90, 20))
+                            timeSupervisor++;
+                    } else if (autonTarget == 2) {
+                        if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID, 90, 20))
+                            timeSupervisor++;
                     }
-                    if(crane.getArticulation() == Crane.Articulation.manual){
-                        autonIndex++;
+                } else {
+                    if (autonTarget == 0) {
+                        if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID, 270, 20))
+                            timeSupervisor++;
+                    } else if (autonTarget == 2) {
+                        if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID + 3, 270, 20))
+                            timeSupervisor++;
                     }
                 }
                 break;
             case 4:
-                if(autonTarget  ==  1 || Objects.isNull(autonTarget)){
-                    autonIndex++;
-                }
-                if(startingPosition.equals( Constants.Position.START_LEFT)){
-                    if(autonTarget == 0){
-                        if(driveTrain.driveUntilDegrees(0.8*Field.INCHES_PER_GRID+3,90,20))autonIndex++;
-                    }else if(autonTarget == 2){
-                        if(driveTrain.driveUntilDegrees(-0.8*Field.INCHES_PER_GRID,90,20))autonIndex++;
-                    }
-                }else{
-                    if(autonTarget == 0){
-                        if(driveTrain.driveUntilDegrees(-0.8*Field.INCHES_PER_GRID, 270,20))autonIndex++;
-                    }else if(autonTarget == 2){
-                        if(driveTrain.driveUntilDegrees(0.8*Field.INCHES_PER_GRID+3,270,20))autonIndex++;
-                    }
-                }
-                break;
-            case 5:
                 crane.nudgeLeft();
-                crane.fieldPositionTarget = new Vector3(driveTrain.getPoseEstimate().getX(),driveTrain.getPoseEstimate().getY(),26);
+                crane.setCraneTarget(turret.getTurretPosition().getX() - 2, turret.getTurretPosition().getY(), 26);
                 crane.articulate(Crane.Articulation.manual);
-                autonIndex=0;
+                timeSupervisor = 0;
                 return true;
-            default:
-                return false;
         }
         return false;
     }

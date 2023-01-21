@@ -18,11 +18,11 @@ public class Field {
 
     public FieldThing[] objects = new FieldThing[37];
 
-    public FieldThing[] substationRightPattern = new FieldThing[9];
-    public FieldThing[] substationLeftPattern = new FieldThing[9];
+    public FieldThing[] closeRightPattern = new FieldThing[7];
+    public FieldThing[] closeLeftPattern = new FieldThing[7];
 
-    public FieldThing[] coneStackRightPattern = new FieldThing[9];
-    public FieldThing[] coneStackLeftPattern = new FieldThing[9];
+    public FieldThing[] farRightPattern = new FieldThing[6];
+    public FieldThing[] farLeftPattern = new FieldThing[6];
     public boolean isBlue;
 
     //todo decide on start position
@@ -35,8 +35,8 @@ public class Field {
 
     HashMap<String, FieldThing[]> mapObjects = new HashMap<String, FieldThing[]>();
 
-    ConeStack coneStackRight = new ConeStack("AllianceRightStack",2.82,2.45,0);
-    ConeStack coneStackLeft = new ConeStack("AllianceLeftStack",-2.82,2.5,0);
+    ConeStack coneStackRight = new ConeStack("AllianceRightStack",2.75,2.5,0);
+    ConeStack coneStackLeft = new ConeStack("AllianceLeftStack",-2.75,2.5,0);
 
 
     public Field(boolean isBlue){
@@ -121,13 +121,72 @@ public class Field {
         return  patternIndex;
     }
 
-    int scoringTargetIndex = 1;
+    int scoringTargetIndex = -1;
 
     public void incTarget(){
-        scoringTargetIndex++;
+        switch (patternIndex){
+            case 0:
+                if(scoringTargetIndex < closeRightPattern.length-1){
+                    scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
+                }
+                break;
+            case 1:
+                if(scoringTargetIndex < closeRightPattern.length-1){
+                    scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
+                }
+                break;
+            case 2:
+                if(scoringTargetIndex < closeLeftPattern.length-1){
+                    scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
+                }
+                break;
+            case 3:
+                if(scoringTargetIndex < closeLeftPattern.length-1){
+                    scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
+                }
+                break;
+            case 4:
+                if(scoringTargetIndex < farRightPattern.length-1){
+                    scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
+                }
+                break;
+            case 5:
+                if(scoringTargetIndex < farRightPattern.length-1){
+                    scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
+                }
+                break;
+            case 6:
+                if(scoringTargetIndex < farLeftPattern.length-1){
+                    scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
+                }
+                break;
+            case 7:
+                if(scoringTargetIndex < farLeftPattern.length-1){
+                    scoringTargetIndex++;
+                }else{
+                    scoringTargetIndex = -1;
+                }
+                break;
+        }
     }
     public void decTarget(){
-        if(scoringTargetIndex > 1) scoringTargetIndex--;
+
+        if(scoringTargetIndex > 0) scoringTargetIndex--;
+
     }
 
     int patternIndex = 0;
@@ -135,76 +194,134 @@ public class Field {
     public void incScoringPattern(){
 
         if(patternIndex < 4) patternIndex++;
+        scoringTargetIndex = -1;
     }
     public void decScoringPattern(){
+
         if(patternIndex > 0) patternIndex--;
+        scoringTargetIndex = -1;
     }
+
+    FieldThing rightSubSource;
+    FieldThing rightConeSource;
+
+    FieldThing leftSubSource;
+    FieldThing leftConeSource;
 
     public FieldThing getConeSource(){
         switch (patternIndex){
             case 0:
-                return substationRightPattern[0];
+                return rightSubSource;
             case 1:
-                return substationLeftPattern[0];
+                return rightConeSource;
             case 2:
-                return coneStackLeftPattern[0];
+                return rightSubSource;
             case 3:
-                return coneStackRightPattern[0];
+                return rightConeSource;
+            case 4:
+                return leftSubSource;
+            case 5:
+                return leftConeSource;
+            case 6:
+                return leftSubSource;
+            case 7:
+                return leftConeSource;
+
             default:
                 return null;
+        }
+    }
+
+    public String getPatternName(){
+        switch (patternIndex){
+            case 0:
+                return "SUB_CLOSE_RIGHT";
+            case 1:
+                return "CONE_CLOSE_RIGHT";
+            case 2:
+                return "SUB_FAR_RIGHT";
+            case 3:
+                return "CONE_FAR_RIGHT";
+            case 4:
+                return "SUB_CLOSE_LEFT";
+            case 5:
+                return "CONE_CLOSE_LEFT";
+            case 6:
+                return "SUB_FAR_LEFT";
+            case 7:
+                return "CONE_FAR_LEFT";
+            default:
+                return "NULL";
         }
     }
 
     public FieldThing getPatternObject(){
+        if(scoringTargetIndex == -1){
+            scoringTargetIndex = 0;
+        }
         switch (patternIndex){
             case 0:
-                return substationLeftPattern[scoringTargetIndex];
+                return closeRightPattern[scoringTargetIndex];
             case 1:
-                return substationRightPattern[scoringTargetIndex];
+                return closeRightPattern[scoringTargetIndex];
             case 2:
-                return coneStackLeftPattern[scoringTargetIndex];
+                return farRightPattern[scoringTargetIndex];
             case 3:
-                return coneStackRightPattern[scoringTargetIndex];
+                return farRightPattern[scoringTargetIndex];
+            case 4:
+                return closeLeftPattern[scoringTargetIndex];
+            case 5:
+                return closeLeftPattern[scoringTargetIndex];
+            case 6:
+                return farLeftPattern[scoringTargetIndex];
+            case 7:
+                return farLeftPattern[scoringTargetIndex];
             default:
                 return null;
         }
     }
 
+    public String getPattern(){
+        return "";
+    }
+
     public void initPatterns(){
-        substationRightPattern[0] = objects[9];
-        substationRightPattern[1] = objects[34];
-        substationRightPattern[2] = objects[33];
-        substationRightPattern[3] = objects[30];
-        substationRightPattern[4] = objects[24];
-        substationRightPattern[5] = objects[26];
-        substationRightPattern[6] = objects[29];
-        substationRightPattern[7] = objects[25];
-        substationRightPattern[8] = objects[32];
 
-        substationLeftPattern[0] = objects[8];
-        substationLeftPattern[1] = objects[34];
-        substationLeftPattern[2] = objects[32];
-        substationLeftPattern[3] = objects[29];
-        substationLeftPattern[4] = objects[23];
-        substationLeftPattern[5] = objects[25];
-        substationLeftPattern[6] = objects[30];
-        substationLeftPattern[7] = objects[26];
-        substationLeftPattern[8] = objects[33];
+        rightSubSource = objects[9];
+        leftSubSource = objects[8];
 
-        coneStackRightPattern[0] = objects[5];
-        coneStackRightPattern[1] = objects[33];
-        coneStackRightPattern[2] = objects[34];
-        coneStackRightPattern[3] = objects[30];
-        coneStackRightPattern[4] = objects[28];
-        coneStackRightPattern[5] = objects[24];
+        rightConeSource = objects[5];
+        leftConeSource = objects[4];
 
-        coneStackLeftPattern[0] = objects[4];
-        coneStackLeftPattern[1] = objects[32];
-        coneStackLeftPattern[2] = objects[34];
-        coneStackLeftPattern[3] = objects[29];
-        coneStackLeftPattern[4] = objects[27];
-        coneStackLeftPattern[5] = objects[23];
+        closeRightPattern[0] = objects[34];
+        closeRightPattern[1] = objects[33];
+        closeRightPattern[2] = objects[32];
+        closeRightPattern[3] = objects[30];
+        closeRightPattern[4] = objects[29];
+        closeRightPattern[5] = objects[24];
+        closeRightPattern[6] = objects[26];
 
+        farRightPattern[0] = objects[33];
+        farRightPattern[1] = objects[32];
+        farRightPattern[2] = objects[31];
+        farRightPattern[3] = objects[28];
+        farRightPattern[4] = objects[27];
+        farRightPattern[5] = objects[22];
+
+        closeLeftPattern[0] = objects[34];
+        closeLeftPattern[1] = objects[32];
+        closeLeftPattern[2] = objects[33];
+        closeLeftPattern[3] = objects[29];
+        closeLeftPattern[4] = objects[30];
+        closeLeftPattern[5] = objects[23];
+        closeLeftPattern[6] = objects[25];
+
+        farLeftPattern[0] = objects[32];
+        farLeftPattern[1] = objects[33];
+        farLeftPattern[2] = objects[31];
+        farLeftPattern[3] = objects[27];
+        farLeftPattern[4] = objects[28];
+        farLeftPattern[5] = objects[21];
     }
 
     public ConeStack getRightConeStack(){

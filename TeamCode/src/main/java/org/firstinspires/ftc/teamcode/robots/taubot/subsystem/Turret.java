@@ -42,6 +42,8 @@ public class Turret implements Subsystem {
 
     Orientation imuAngles;
 
+    private static double cacheHeading;
+
     private Robot robot;
 
     public Turret( HardwareMap hardwareMap, Robot robot, boolean simulated) {
@@ -69,8 +71,6 @@ public class Turret implements Subsystem {
         turretIMU.initialize(parametersIMUTurret);
     }
 
-
-    boolean initialized = false;
     double offsetHeading;
 
     void customWrapHeading(){
@@ -96,22 +96,26 @@ public class Turret implements Subsystem {
         return  correction;
     }
 
+    public void cacheHeadingForNextRun(){
+        cacheHeading = heading;
+    }
+
+    public void resetHeading(){
+        offsetHeading = (heading-imuAngles.firstAngle)% 360;
+        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)) {
+            offsetHeading += cacheHeading;
+        }
+    }
+
     public double getError(){
         return -distanceBetweenAngles(heading,targetHeading);
     }
     public void update(Canvas fieldOverlay) {
 
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-
-        if (!initialized) {
-            //first time in - we assume that the robot has not started moving and that orientation values are set to the current absolute orientation
-            //so first set of imu readings are effectively offsets
-            offsetHeading = (heading-imuAngles.firstAngle)% 360;
-            initialized = true;
-        }
         //offset = heading - initialHeading
         //update current IMU heading before doing any other calculations
-        heading = wrapAngle(offsetHeading + imuAngles.firstAngle);
+        heading = wrapAngle(offsetHeading + imuAngles.firstAngle) ;
 
         turretPID.setPID(TURRET_PID);
         turretPID.setTolerance(TURRET_TOLERANCE);
@@ -120,7 +124,9 @@ public class Turret implements Subsystem {
         correction = turretPID.performPID();
         error = turretPID.getError();
         //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
-        motor.setPower(correction);
+        if(Crane.robotIsNotTipping) {
+            motor.setPower(correction);
+        }
     }
 
     public void stop() {
@@ -149,7 +155,7 @@ public class Turret implements Subsystem {
      */
     public void setHeading(double angle){
         heading = angle;
-        initialized = false; //triggers recalc of heading offset at next IMU update cycle
+        resetHeading();
     }
 
     public static double localX = -5;

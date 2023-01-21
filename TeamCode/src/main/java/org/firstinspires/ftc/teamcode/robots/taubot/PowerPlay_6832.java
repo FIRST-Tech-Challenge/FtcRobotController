@@ -44,11 +44,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProviders;
+import org.firstinspires.ftc.teamcode.util.Vector2;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -61,7 +63,7 @@ import java.util.Map;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "PowerPlay_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
-@Config
+@Config(value = "PP_6832")
 public class PowerPlay_6832 extends OpMode {
 
     /* Declare OpMode members. */
@@ -81,14 +83,14 @@ public class PowerPlay_6832 extends OpMode {
     static public int state = 0;
 
     // global state
-    static boolean active;
+    public static boolean active;
     public static boolean debugTelemetryEnabled;
     static boolean gridDriveActive = false;
     private boolean initializing, smoothingEnabled;
     public static boolean numericalDashboardEnabled = false;
     static Constants.Alliance alliance;
     static Constants.Position startingPosition;
-    public static GameState gameState;
+    public static GameState gameState = GameState.AUTONOMOUS;
     static int gameStateIndex;
 
     private long startTime;
@@ -137,7 +139,9 @@ public class PowerPlay_6832 extends OpMode {
         AUTONOMOUS("Autonomous", true),
 
         TELE_OP("Tele-Op"),
+        TEST("Test"),
         DEMO("Demo"),
+        UNDERARM_TEST("Underarm Testing"),
         MANUAL_DIAGNOSTIC("Manual Diagnostic"),
 
         CRANE_DEBUG("Crane Debug"),
@@ -201,7 +205,7 @@ public class PowerPlay_6832 extends OpMode {
         active = true;
         initializing = true;
         debugTelemetryEnabled = DEFAULT_DEBUG_TELEMETRY_ENABLED;
-        gameState = PowerPlay_6832.GameState.TELE_OP;
+        //gameState = PowerPlay_6832.GameState.TELE_OP;
 
         // timing
         lastLoopClockTime = System.nanoTime();
@@ -245,10 +249,10 @@ public class PowerPlay_6832 extends OpMode {
 
         //run all driver controls needed in init_loop
         dc.init_loop();
+        robot.crane.articulate(Crane.Articulation.start);
 
         update();
 
-        if (!armCalibrated && robot.crane.calibrateEnabled()) armCalibrated=robot.crane.calibrate();
     }
     private void rumble() {
         gamepad1.rumble((int) (RUMBLE_DURATION * 1000));
@@ -264,24 +268,35 @@ public class PowerPlay_6832 extends OpMode {
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
 
-        if(gameState.equals(GameState.AUTONOMOUS)) {
-            resetGame();
+
+        robot.turret.resetHeading();
+
+        resetGame();
+
+        if(gameState.equals(GameState.TELE_OP)){
+            robot.crane.resetCrane(startingPosition);
+        }
+
+        if(gameState.equals(GameState.TEST)){
+            robot.driveTrain.setPoseEstimate(startingPosition.getPose());
+            robot.crane.resetCrane(startingPosition);
         }
         robot.crane.updateScoringPattern();
 
         rumble();
-
-
-
     }
 
     public void resetGame(){
         robot.driveTrain.resetGridDrive(startingPosition);
-
     }
+
+    private static Vector2 position;
+    private static Vector2 craneTarget;
 
         @Override
     public void loop() {
+            robot.driveTrain.cachePositionForNextRun();
+            robot.turret.cacheHeadingForNextRun();
             dc.updateStickyGamepads();
             dc.handleStateSwitch();
 
@@ -293,11 +308,25 @@ public class PowerPlay_6832 extends OpMode {
                     rumble();
                 }
                 switch(gameState) {
+                    case AUTONOMOUS:
+                        if(robot.AutonRun(auto.visionProvider.getMostFrequentPosition().getIndex(),startingPosition)) {
+                            gameState = GameState.TELE_OP;
+                            gameStateIndex = 1;
+                            active = false;
+                            //super.stop();
+                        }
+                        break;
                     case TELE_OP:
+                        dc.joystickDrive();
+                        break;
+                    case TEST:
                         dc.joystickDrive();
                         break;
                     case DEMO:
                         dc.joystickDriveDemoMode();
+                        break;
+                    case UNDERARM_TEST:
+                        dc.UnderarmTesting();
                         break;
                     case MANUAL_DIAGNOSTIC:
                         //handleManualDiagnostic();
@@ -306,11 +335,6 @@ public class PowerPlay_6832 extends OpMode {
 
                     case CRANE_DEBUG:
                         //handleCraneDebug();
-                        break;
-                    case AUTONOMOUS:
-                        if(robot.AutonRun(auto.visionProvider.getMostFrequentPosition().getIndex(),startingPosition)) {
-                            gameState = GameState.TELE_OP;
-                        }
                         break;
                     case BACK_AND_FORTH:
                         auto.backAndForth.execute();
@@ -438,10 +462,8 @@ public class PowerPlay_6832 extends OpMode {
         }
         opModeTelemetryMap.put("Average Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
         opModeTelemetryMap.put("Last Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
-        if(debugTelemetryEnabled) {
-            opModeTelemetryMap.put("Average Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageUpdateTime * 1e-6), (int) (1 / (averageUpdateTime * 1e-9))));
-            opModeTelemetryMap.put("Last Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (updateTime * 1e-6), (int) (1 / (updateTime * 1e-9))));
-        }
+        opModeTelemetryMap.put("Average Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageUpdateTime * 1e-6), (int) (1 / (averageUpdateTime * 1e-9))));
+        opModeTelemetryMap.put("Last Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (updateTime * 1e-6), (int) (1 / (updateTime * 1e-9))));
 
         //here we can add telemetry specific to certain gameStates
         switch(gameState) {

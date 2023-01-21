@@ -26,6 +26,19 @@ public class Utils {
         return (pulse - 750.0) / 1500.0;
     }
 
+    /**
+     * convert servo controller pulse width to double on 0 - 1 scale
+     * @param pulse pwm signal to be converted
+     * @return
+     */
+    public static double servoNormalizeExtended(double pulse) {
+
+        //use for extended REV expansion hubs range of 500 to 2500ms
+        if (pulse<500) pulse = 500;
+        if (pulse>2500) pulse = 2500;
+        return (pulse - 500.0) / 2000.0;
+    }
+
     public static boolean withinErrorPercent(double value, double target, double percent){
         return (Math.abs(target-value)/target <= percent);
     }

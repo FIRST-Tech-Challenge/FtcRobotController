@@ -12,6 +12,7 @@
             <Servo name="blinkin" port="4" />
             <AnalogInput name="gripperLeft" port="0" />
             <AnalogInput name="gripperRight" port="1" />
+            <REV_VL53L0X_RANGE_SENSOR name="distTarget" port="0" bus="0" />
             <LynxEmbeddedIMU name="turretIMU" port="0" bus="0" />
             <AdafruitBNO055IMU name="shoulderIMU" port="0" bus="2" />
         </LynxModule>
@@ -19,6 +20,7 @@
             <Servo name="hook" port="0" />
             <RevRobotics40HDHexMotor name="motorRight" port="0" />
             <RevRobotics40HDHexMotor name="motorLeft" port="1" />
+            <RevRobotics40HDHexMotor name="motorChariot" port="2" />
             <LynxEmbeddedIMU name="baseIMU" port="0" bus="0" />
             <Servo name="firstLinkServo" port="0" />
             <Servo name="secondLinkServo" port="1" />
