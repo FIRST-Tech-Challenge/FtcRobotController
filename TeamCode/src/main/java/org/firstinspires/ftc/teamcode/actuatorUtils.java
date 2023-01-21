@@ -20,7 +20,7 @@ public class actuatorUtils {
     private static int pos2 = 3000; //Med pole height
     private static int cone1 = 800; //Height for top cone in stack
     private static int cone2 = 700; //Height for second cone in stack
-    private static int cone3 = 600; //Height for second cone in stack
+    private static int cone3 = 600; //Height for third cone in stack
     private static double armPower = .7f; //Set power to .7 so arm does not go up too fast
 
 
@@ -137,6 +137,14 @@ public class actuatorUtils {
         else if(desiredHeight==4)
         {
             arm.setTargetPosition(minEncode);
+            //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(armPower);
+            if (doSleep)
+                sleep(3000);
+        }
+        else if (desiredHeight==0){
+            arm.setTargetPosition(0);
             //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);

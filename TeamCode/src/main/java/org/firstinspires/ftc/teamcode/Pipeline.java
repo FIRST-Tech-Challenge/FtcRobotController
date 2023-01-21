@@ -33,8 +33,8 @@ public class Pipeline extends OpenCvPipeline {
     //Scalar pinkhighColorValue = pinkValue.mul(pinkValue,1+colorScale);
 
     //green = 183, 203, 176 RGB
-    Scalar greenlowColorValue = new Scalar(45,100,100);
-    Scalar greenhighColorValue = new Scalar(75,255,255);
+    Scalar greenlowColorValue = new Scalar(40,100,50);
+    Scalar greenhighColorValue = new Scalar(80,255,255);
     //Scalar greenValue = new Scalar(189,8,61);
     //Scalar greenlowColorValue = greenValue.mul(greenValue,1-colorScale);
     //Scalar greenhighColorValue = greenValue.mul(greenValue,1+colorScale);
@@ -101,7 +101,7 @@ public class Pipeline extends OpenCvPipeline {
         // Adds the rectangles so we can see where we are looking (the ROIs)
         //Imgproc.rectangle(mat, new Point(ROIStartCol, LeftROIStartRow), new Point(ROIEndCol, LeftROIEndRow), new Scalar(128,128,128), 2);
         //Imgproc.rectangle(mat, new Point(ROIStartCol, MiddleROIStartRow), new Point(ROIEndCol, MiddleROIEndRow), new Scalar(128,128,128), 2);
-        return mat;
+        return redmask;
     }
 
     private int evaluateROIs(Mat redmask, Mat greenmask, Mat bluemask) {
