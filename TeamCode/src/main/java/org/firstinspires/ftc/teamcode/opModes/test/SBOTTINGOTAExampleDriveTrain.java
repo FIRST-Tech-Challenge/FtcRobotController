@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
 
 @Disabled
 @TeleOp(name="Drivetrain Demo", group="Demo")
-public class ExampleDriveTrain extends TeleOpModeBase {
+public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
     public DifferentialDrive driveTrain;
     public Telemetry telemetry = TelemetryContainer.getTelemetry();
 
