@@ -18,4 +18,28 @@ public enum AxesSigns {
     AxesSigns(int bVal) {
         this.bVal = bVal;
     }
+
+    public static AxesSigns fromBinaryValue(int bVal) {
+        int maskedVal = bVal & 0x07;
+        switch (maskedVal) {
+            case 0b000:
+                return AxesSigns.PPP;
+            case 0b001:
+                return AxesSigns.PPN;
+            case 0b010:
+                return AxesSigns.PNP;
+            case 0b011:
+                return AxesSigns.PNN;
+            case 0b100:
+                return AxesSigns.NPP;
+            case 0b101:
+                return AxesSigns.NPN;
+            case 0b110:
+                return AxesSigns.NNP;
+            case 0b111:
+                return AxesSigns.NNN;
+            default:
+                throw new IllegalStateException("Unexpected value for maskedVal: " + maskedVal);
+        }
+    }
 }

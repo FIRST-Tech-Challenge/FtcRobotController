@@ -56,7 +56,7 @@ import java.io.File;
  * You can create your own "raw" folder from scratch, or you can copy the one from the FtcRobotController module.
  *
  *     Android Studio coders will ultimately need a folder in your path as follows:
- *       <project root>/TeamCode/src/main/res/raw
+ *       <project root>/blackswan/src/main/res/raw
  *
  *     Copy any .wav files you want to play into this folder.
  *     Make sure that your files ONLY use lower-case characters, and have no spaces or special characters other than underscore.
