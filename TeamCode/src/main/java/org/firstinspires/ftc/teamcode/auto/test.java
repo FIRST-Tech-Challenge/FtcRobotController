@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.config.Hardware2;
 
 @Autonomous(name="Test")
 public class test extends BaseOpMode {
-    Hardware2 robot = new Hardware2(true);
+    Hardware2 robot = new Hardware2(false);
 
     /*
     KIMCHI RAMEN
@@ -23,8 +23,6 @@ public class test extends BaseOpMode {
     public void runOpMode() throws InterruptedException {
         robot.initTeleOpIMU(hardwareMap);
         waitForStart();
-
-       DriveUtils.encoderStrafe(this,0.4,-26,5);
 
     }
     @Override

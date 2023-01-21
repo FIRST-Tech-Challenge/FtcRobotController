@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.config.DriveUtils.getPosition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.config.AutoUtils;
 import org.firstinspires.ftc.teamcode.config.BaseOpMode;
 import org.firstinspires.ftc.teamcode.config.DriveUtils;
 import org.firstinspires.ftc.teamcode.config.Hardware2;
@@ -12,8 +13,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="Medium Junction is on the Right")
-public class MediumJuncRight extends BaseOpMode {
+@Autonomous(name="BlueAlliance Near BlueTerminal")
+public class CircuitJumpstartBlue extends BaseOpMode {
     Hardware2 robot = new Hardware2(true);
     // Handle hardware stuff...
 
@@ -37,16 +38,20 @@ public class MediumJuncRight extends BaseOpMode {
         }
     }
 
-    public void autoScoringRight() {
-        DriveUtils.encoderClaw(this,0.6,300,5); //Raises the claw up so the cone won't hit the ground
-        DriveUtils.encoderDrive(this, 0.8, -26,-26,5); //Drives forward
-        DriveUtils.encoderStrafe(this,0.4,13.7,5); //Strafes to be inline with the medium junction
-        DriveUtils.encoderClaw(this,0.6,1850,5); // Raises the claw up to match the height of the junction
-        DriveUtils.encoderDrive(this,0.3,-5.6,-5.6,5); // Drives forward so the cone will drop on the junction
-        DriveUtils.encoderClaw(this,-0.5,-600,5); //Lowers the claw onto the junction
-        DriveUtils.moveClaw(this,"Open"); // Opens the claw
-        DriveUtils.encoderDrive(this,0.3,8,8,5); //Drives Back
-        DriveUtils.encoderClaw(this,-0.5,-1550,10); //Returns claw to original position
+    public void terminalScoring() {
+        AutoUtils.moveClawToSpecificPosition(this,ClawPositions.ABOVE_GROUND.getValue(), 0.4);
+        //turnright 90
+        AutoUtils.tileMove(this, "Front", 1,0.4);
+        DriveUtils.moveClaw(this, "Open");
+        AutoUtils.tileMove(this, "Back", 1,0.4);
+        AutoUtils.tileStrafe(this, "Left" ,2,0.4);
+        AutoUtils.tileMove(this, "Front", 1,0.4);
+
+
+    }
+    public void smallJunctionScoring(){
+        AutoUtils.tileMove(this, "Back", 1,0.4);
+        AutoUtils.tileStrafe(this, "Right" ,1,0.4);
     }
 
 
@@ -73,16 +78,16 @@ public class MediumJuncRight extends BaseOpMode {
 
             String position = getPosition();
             if (position == "center") {
-                autoScoringRight();
-                DriveUtils.encoderStrafe(this,0.4,-13.5,5);
+                terminalScoring();
+                DriveUtils.encoderStrafe(this,0.4,13.5,5);
                 // Drives forward to go into the middle parking area
                 //DriveUtils.encoderDrive(this, 0.5, 10, 10, 7);
             } else if (position == "right") {
-                autoScoringRight();
-                DriveUtils.encoderStrafe(this,0.4,13.5,5);
+                terminalScoring();
+                DriveUtils.encoderStrafe(this,0.4,40.5,5);
             } else if (position == "left") {
-                autoScoringRight();
-                DriveUtils.encoderStrafe(this,0.4,-40.5,5);
+                terminalScoring();
+                DriveUtils.encoderStrafe(this,0.4,-13.5,5);
             }
 
 

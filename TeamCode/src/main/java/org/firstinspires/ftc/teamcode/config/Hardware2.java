@@ -18,6 +18,7 @@ public class Hardware2 {
     public DcMotor verticalLiftMotor = null;
     public Servo leftClaw = null;
     public Servo rightClaw = null;
+    public BNO055IMU imu;
 
     public boolean runThisWithEncoder = true;
     //public BNO055IMU imu;
@@ -91,6 +92,14 @@ public class Hardware2 {
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
+
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES; //unit for turning
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = true;
+        imu.initialize(parameters);
 
 
 
@@ -167,6 +176,7 @@ public class Hardware2 {
     }
 
     public DcMotor getArm() { return verticalLiftMotor; }
+    public BNO055IMU getImu() {return imu;}
 }
 
 

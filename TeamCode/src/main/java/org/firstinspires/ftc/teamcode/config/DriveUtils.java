@@ -6,6 +6,12 @@ import static org.firstinspires.ftc.teamcode.config.BaseOpMode.*;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 public class DriveUtils {
@@ -55,8 +61,8 @@ public class DriveUtils {
             robot.getLeftClaw().setPosition(0.7);
             robot.getRightClaw().setPosition(0.3);
         } else if (direction.equalsIgnoreCase("Close")) {
-            robot.getLeftClaw().setPosition(0.1);
-            robot.getRightClaw().setPosition(0.9);
+            robot.getLeftClaw().setPosition(0);
+            robot.getRightClaw().setPosition(1);
         }
     }
 
@@ -101,12 +107,88 @@ public class DriveUtils {
             robot.getBackLeftDrive().setPower(Math.abs(speed));
             robot.getBackRightDrive().setPower(Math.abs(speed));
             // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
             //telemetry
+            while (BaseOpMode.opModeIsActive() && (runtime.seconds() < timeoutS) &&
+                    (robot.getLeftDrive().isBusy() && robot.getRightDrive().isBusy())) {
+                // Display it for the driver.
+            }
+            // Stop all motion (set the power of each motor to 0)
+            robot.getLeftDrive().setPower(0);
+            robot.getRightDrive().setPower(0);
+            robot.getBackLeftDrive().setPower(0);
+            robot.getBackRightDrive().setPower(0);
+            // Reset all motors and Turn off RUN_TO_POSITION
+            robot.getBackLeftDrive().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.getBackRightDrive().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.getLeftDrive().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.getRightDrive().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            sleep(100);   // optional pause after each move
+        }
+
+    }
+    public static void encoderDriveWithAcceleration(BaseOpMode BaseOpMode, double speed,
+                                    double leftInches, double rightInches,
+                                    double timeoutS) {
+//
+        int backLeftTarget;
+        int backRightTarget;
+        int rightTarget;
+        int leftTarget;
+        final ElapsedTime runtime = new ElapsedTime();
+
+        // Ensure that the opmode is still active
+        if (BaseOpMode.opModeIsActive()) {
+            Hardware2 robot = BaseOpMode.getRobot();
+            // Determine new target position, and pass to motor controller
+            backLeftTarget = robot.getBackLeftDrive().getCurrentPosition() + (int) (rightInches / FTCConstants.COUNTS_PER_INCH);
+            backRightTarget = robot.getBackRightDrive().getCurrentPosition() + (int) (leftInches / FTCConstants.COUNTS_PER_INCH);
+            rightTarget = robot.getRightDrive().getCurrentPosition() + (int) (rightInches / FTCConstants.COUNTS_PER_INCH);
+            leftTarget = robot.getLeftDrive().getCurrentPosition() + (int) (leftInches / FTCConstants.COUNTS_PER_INCH);
+            // set the targetPosition for each motor
+            // call the motor's setPosition() method and pass it new target value
+            robot.getBackLeftDrive().setTargetPosition(backLeftTarget);
+            robot.getBackRightDrive().setTargetPosition(backRightTarget);
+            robot.getLeftDrive().setTargetPosition(leftTarget);
+            robot.getRightDrive().setTargetPosition(rightTarget);
+
+            // Turn On RUN_TO_POSITION
+            robot.getLeftDrive().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.getRightDrive().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.getBackLeftDrive().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.getBackRightDrive().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.getLeftDrive().setPower(Math.abs(speed));
+            robot.getRightDrive().setPower(Math.abs(speed));
+            robot.getBackLeftDrive().setPower(Math.abs(speed));
+            robot.getBackRightDrive().setPower(Math.abs(speed));
+
+            /**
+             * Following code accelerates the robot
+             * in 5 increments until the robot reaches 20% of distance traveled
+             * then in another 5 increments to decelerate starting at 80% until 0
+             */
+            double incrementalPower = speed / 5;
+            double percentOfDistanceTraveled = 0.6;  // Robot should have traveled 60%
+            boolean currentStep = false;
+                for (; percentOfDistanceTraveled == 1; percentOfDistanceTraveled += 0.08 ) {
+                    while (!currentStep) { // to make sure that the while condition below constantly checks
+                        while (robot.getBackLeftDrive().getCurrentPosition() >= (backLeftTarget * percentOfDistanceTraveled) && currentStep == false) {
+                            speed -= incrementalPower;
+
+
+                            robot.setPowerOfAllMotorsTo(Math.abs(speed));
+
+
+                            currentStep = true;
+                        }
+                    }
+                }
+
+
+
+
+
             while (BaseOpMode.opModeIsActive() && (runtime.seconds() < timeoutS) &&
                     (robot.getLeftDrive().isBusy() && robot.getRightDrive().isBusy())) {
                 // Display it for the driver.
@@ -220,6 +302,8 @@ public class DriveUtils {
             sleep(250);
         }
     }
+
+
 
 
 }
