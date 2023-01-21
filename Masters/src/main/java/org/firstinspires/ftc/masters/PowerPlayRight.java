@@ -43,20 +43,16 @@ public class PowerPlayRight extends LinearOpMode {
 
         // Trajectory from start to nearest tall pole
         Trajectory startToFirstDeposit = drive.trajectoryBuilder(startPose)
-                .splineToLinearHeading(new Pose2d( new Vector2d(14,-60), Math.toRadians(90)), Math.toRadians(180))
-                .build();
-
-        Trajectory startToFirstDeposit2 = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(new Vector2d(10.75,-35.5),Math.toRadians(135)))
+                .splineToConstantHeading(new Vector2d(14,-60),Math.toRadians(90))
+                .splineTo(new Vector2d(10.75,-35.5),Math.toRadians(135))
                 .build();
 
         Trajectory firstDepositToConeStack = drive.trajectoryBuilder(drive.getPoseEstimate())
-                // Ideally just a turn -45
-                .splineToLinearHeading(new Pose2d( new Vector2d(20,-14), Math.toRadians(0)),Math.toRadians(0))
+                .splineTo(new Vector2d(20,-14), Math.toRadians(0))
                 .build();
 
         Trajectory scoreNewCone = drive.trajectoryBuilder(drive.getPoseEstimate())
-                .splineToLinearHeading(new Pose2d(new Vector2d(32.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
+                .splineTo(new Vector2d(32.5,-11.5),Math.toRadians(315))
                 .build();
 
         Trajectory fromScoreNewConeToConeStack = drive.trajectoryBuilder(drive.getPoseEstimate())
@@ -93,70 +89,57 @@ public class PowerPlayRight extends LinearOpMode {
             drive.update();
             switch (currentState) {
                 case SCORE_1:
-                    telemetry.addData("First trajectory","");
-                    telemetry.update();
                     if (!drive.isBusy()) {
-                        telemetry.addData("Finished first trajectory","");
-                        telemetry.update();
-                        currentState = State.SCORE_2;
-//                        drive.followTrajectoryAsync(startToFirstDeposit2);
+                        currentState = State.NEW_CONE_FROM_SCORE_1;
+                        drive.followTrajectoryAsync(firstDepositToConeStack);
                     }
                     break;
-                case SCORE_2:
-//                    telemetry.addData("Second trajectory","");
-//                    telemetry.update();
-//                    if (!drive.isBusy()) {
-//                        currentState = State.NEW_CONE_FROM_SCORE_1;
-//                        drive.turnAsync(Math.toRadians(-45));
-//                        drive.followTrajectoryAsync(firstDepositToConeStack);
-//                    }
-//                    break;
-//                case NEW_CONE_FROM_SCORE_1:
-//                    telemetry.addData("Set up grab new cone","");
-//                    telemetry.update();
-//                    if (!drive.isBusy()) {
-//                        currentState = State.SCORE_CONE;
-//                        drive.followTrajectoryAsync(scoreNewCone);
-//                    }
-//                    break;
-//                case SCORE_CONE:
-//                    if (!drive.isBusy() && getRuntime() < 900000000) {
-//                        currentState = State.NEW_CONE;
-//                        drive.followTrajectoryAsync(fromScoreNewConeToConeStack);
-//
-//                    } else if(!drive.isBusy()) {
-//
-//                        if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
-//                            currentState = State.PARK_GRAY;
-//                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
-//                            currentState = State.PARK_GREEN;
-//                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.RED) {
-//                            currentState = State.PARK_RED;
-//                        }
-//                    }
-//                    break;
-//                case NEW_CONE:
-//                    if (!drive.isBusy()) {
-//                        currentState = State.SCORE_CONE;
-//                        drive.followTrajectoryAsync(scoreNewCone);
-//                    } else if(getRuntime() == 900000000) {
-//
-//                    }
-//                    break;
-//                case PARK_GRAY:
-//                    drive.followTrajectoryAsync(parkGray);
-//                    if (!drive.isBusy()) {
-//
-//                    }
-//                    break;
-//                case PARK_RED:
-//                    drive.followTrajectoryAsync(parkRed);
-//                    if (!drive.isBusy()) {
-//
-//                    }
-//                    break;
-//                case PARK_GREEN:
-//                    break;
+                case NEW_CONE_FROM_SCORE_1:
+                    telemetry.addData("Set up grab new cone","");
+                    telemetry.update();
+                    if (!drive.isBusy()) {
+                        currentState = State.SCORE_CONE;
+                        drive.followTrajectoryAsync(scoreNewCone);
+                    }
+                    break;
+                case SCORE_CONE:
+                    if (!drive.isBusy() && getRuntime() < 900000000) {
+                        currentState = State.NEW_CONE;
+                        drive.followTrajectoryAsync(fromScoreNewConeToConeStack);
+
+                    } else if(!drive.isBusy()) {
+
+                        if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
+                            currentState = State.PARK_GRAY;
+                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
+                            currentState = State.PARK_GREEN;
+                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.RED) {
+                            currentState = State.PARK_RED;
+                        }
+                    }
+                    break;
+                case NEW_CONE:
+                    if (!drive.isBusy()) {
+                        currentState = State.SCORE_CONE;
+                        drive.followTrajectoryAsync(scoreNewCone);
+                    } else if(getRuntime() == 900000000) {
+
+                    }
+                    break;
+                case PARK_GRAY:
+                    drive.followTrajectoryAsync(parkGray);
+                    if (!drive.isBusy()) {
+
+                    }
+                    break;
+                case PARK_RED:
+                    drive.followTrajectoryAsync(parkRed);
+                    if (!drive.isBusy()) {
+
+                    }
+                    break;
+                case PARK_GREEN:
+                    break;
             }
         }
 
