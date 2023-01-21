@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,7 +34,12 @@ public class VSliderTest extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            
+            if (gamepad2.a) {
+                robot.vSlider.MoveSlider(1,1000,1000);
+                sleep(1000);
+                robot.vSlider.MoveSlider(1,-1000,1000);
+            }
+
         }
 
     }
