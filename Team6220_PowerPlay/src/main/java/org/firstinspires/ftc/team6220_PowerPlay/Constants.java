@@ -69,4 +69,10 @@ public class Constants {
     public static final Scalar UPPER_BLACK = new Scalar(115, 255, 40);
 
     public static final Size BLUR_SIZE = new Size(5, 5);
+
+    public static final int CIRCLE_DETECTOR_MIN_DIST = 150;
+    public static final int CIRCLE_DETECTOR_UPPER_CANNY_THRESHOLD = 200;
+    public static final int CIRCLE_DETECTOR_CENTER_DETECT_THRESHOLD = 100;
+    public static final int CIRCLE_DETECTOR_MIN_RADIUS = 0;
+    public static final int CIRCLE_DETECTOR_MAX_RADIUS = 0;
 }

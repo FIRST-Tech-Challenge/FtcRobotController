@@ -18,10 +18,12 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
     public double yPosition = Constants.CAMERA_CENTER_Y;
     public boolean detected = false;
 
+    //fields
     List<MatOfPoint> contours = new ArrayList<>();
     Mat hierarchy = new Mat();
     Mat circleThresh = new Mat();
     Mat mask = new Mat();
+    Mat circles = new Mat();
     Point centerPoint = new Point(Constants.CAMERA_CENTER_X,Constants.CAMERA_CENTER_Y);
 
     @Override
@@ -32,51 +34,55 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
         //crop the input image based on the circle
         input.copyTo(mask,circleThresh);
 
-        // transform the RGB frame into a HSV frame
+        //transform the RGB frame into a HSV frame
         Imgproc.cvtColor(input, mask, Imgproc.COLOR_RGB2HSV);
 
-        // blur the HSV frame
+        //blur the HSV frame
         Imgproc.GaussianBlur(mask, mask, Constants.BLUR_SIZE, 0);
 
-        // mask the blurred frame
+        //mask the blurred frame
         Core.inRange(mask, Constants.LOWER_BLACK, Constants.UPPER_BLACK, mask);
 
-        // find the contours in the masked frame
-        Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        //detect circles in frame
+        Imgproc.HoughCircles(mask, circles, Imgproc.HOUGH_GRADIENT,
+                /*Inverse ration of resolution*/1,
+                /*Minimum distance between circle centers*/Constants.CIRCLE_DETECTOR_MIN_DIST,
+                /*Upper threshold for the internal Canny edge detector*/ Constants.CIRCLE_DETECTOR_UPPER_CANNY_THRESHOLD,
+                /*Threshold for center detection*/ Constants.CIRCLE_DETECTOR_CENTER_DETECT_THRESHOLD,
+                /*Minimum radius of detected circles*/ Constants.CIRCLE_DETECTOR_MIN_RADIUS,
+                /*Maximum radius of detected circles*/ Constants.CIRCLE_DETECTOR_MAX_RADIUS);
 
-        // find the largest contour if there is one
-        if (contours.size() > 0) {
+        //find largest circle if one exists, and set the detected boolean to true
+        if (circles.empty() == false) {
             detected = true;
-            double maxVal = 0.0;
-            int maxValIdx = 0;
+            double maxCircle = 0.0;
+            int maxCircleId = 0;
 
-            for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
-                double contourArea = Imgproc.contourArea(contours.get(contourIdx));
-
-                if (maxVal < contourArea) {
-                    maxVal = contourArea;
-                    maxValIdx = contourIdx;
+            //loop through circles and find the one with the largest radius, then assign the id of that circle to a variable
+            for (int circleId = 0; circleId < circles.cols(); circleId++) {
+                double[] data = circles.get(0, circleId);
+                double currentRadius = data[2];
+                if (maxCircle < currentRadius) {
+                    maxCircle = currentRadius;
+                    maxCircleId = circleId;
                 }
             }
 
-            // get the bounding rectangle around the largest contour
-            Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
+            //find the data for the largest circle
+            Point center = new Point(Math.round(circles.get(0,maxCircleId)[0]), Math.round(Math.round(circles.get(0,maxCircleId)[1])));
+            int radius = (int) Math.round(Math.round(circles.get(0,maxCircleId)[2]));
+            Imgproc.circle(mask, center, radius, new Scalar(0, 0, 255), 3, 8, 0);
 
-            // get moments
-            Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
+            //set Xpos and Ypos to the x and y of the circle
+            xPosition = center.x;
+            yPosition = center.y;
 
-            // draw the bounding rectangle on the frame
-            Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
-
-            if (moments.get_m00() > 0) {
-                xPosition = boundingRect.x + (boundingRect.width * 0.5);
-                yPosition = boundingRect.y + (boundingRect.height * 0.5);
-            }
+            //i3f no circles are found set the detected boolean to false and the Xpos and Ypos to 0,0
         } else {
-            xPosition = Constants.CAMERA_CENTER_X;
-            yPosition = Constants.CAMERA_CENTER_Y;
-            detected = false;
-        }
+        xPosition = Constants.CAMERA_CENTER_X;
+        yPosition = Constants.CAMERA_CENTER_Y;
+        detected = false;
+    }
 
         contours.clear();
         return mask;
