@@ -6,14 +6,14 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.MovingStatistics;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.blackswan.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.blackswan.drive.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.robotcore.internal.system.Misc;
 
 /**
  * This routine determines the effective forward offset for the lateral tracking wheel.
@@ -35,7 +35,6 @@ import org.firstinspires.ftc.robotcore.internal.system.Misc;
  * satisfactory result is produced.
  */
 @Config
-@Disabled
 @Autonomous(group="drive")
 public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
     public static double ANGLE = 180; // deg
@@ -44,7 +43,7 @@ public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 

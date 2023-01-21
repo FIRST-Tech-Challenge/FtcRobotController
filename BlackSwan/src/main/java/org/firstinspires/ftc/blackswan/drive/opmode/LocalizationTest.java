@@ -14,7 +14,6 @@ import org.firstinspires.ftc.blackswan.drive.SampleMecanumDrive;
  * exercise is to ascertain whether the localizer has been configured properly (note: the pure
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
-//@Disabled
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
     @Override
