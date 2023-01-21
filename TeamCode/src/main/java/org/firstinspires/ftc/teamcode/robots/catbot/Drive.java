@@ -12,7 +12,7 @@ class Drive extends Task{
     }
     @Override
     public boolean run() {
-        if(Math.abs(robot.driveTrain.getMotorFrontLeftPosition()) < Math.abs(tiles*TICKSPERTILE)) {
+        if(robot.driveTrain.getMotorAvgPosition() < Math.abs(tiles*TICKSPERTILE)) {
             robot.driveTrain.mechanumDrive((tiles/Math.abs(tiles))*MAXMOTORSPEED, 0, 0);
             return true;
         }

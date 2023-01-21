@@ -12,7 +12,7 @@ public class Turn extends Task{
     }
     @Override
     public boolean run() {
-        if(Math.abs(robot.driveTrain.getMotorFrontLeftPosition()) < Math.abs((degrees/90)*TICKSPER90DEGREES)) {
+        if(robot.driveTrain.getMotorAvgPosition() < Math.abs((degrees/90)*TICKSPER90DEGREES)) {
             robot.driveTrain.mechanumDrive(0, 0, (degrees/Math.abs(degrees))*MAXMOTORSPEED);
             return true;
         }
