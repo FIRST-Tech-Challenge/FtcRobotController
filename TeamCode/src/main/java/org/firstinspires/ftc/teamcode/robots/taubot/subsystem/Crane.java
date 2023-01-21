@@ -502,7 +502,7 @@ public class Crane implements Subsystem {
         if(coneCycle(rightConeStack)){
             coneStackStage++;
         }
-        return coneStackStage >= 5;
+        return coneStackStage >= 2;
     }
 
     int coneCycleStage = 0;
@@ -517,22 +517,22 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 1:
-                if (goToFieldCoordinate(pos.getX(), pos.getY(), obj.z()+4)) {
+                if (goToFieldCoordinate(pos.getX(), pos.getY(), obj.z())) {
                     coneCycleStage++;
-                    cycleTimer = futureTime(0.1);
+                    cycleTimer = futureTime(0.2);
                 }
                 break;
             case 2:
-                if(System.nanoTime() >= cycleTimer && goToFieldCoordinate(pos.getX(), pos.getY(), obj.z() - 6.5)){
+                if(System.nanoTime() >= cycleTimer && goToFieldCoordinate(pos.getX(), pos.getY(), obj.z() - 5)){
                     coneCycleStage++;
-                    cycleTimer = futureTime(1);
+                    cycleTimer = futureTime(0.2);
                 }
                 break;
             case 3:
                 if(System.nanoTime() >= cycleTimer) {
                     grab();
                     obj.takeCone();
-                    cycleTimer = futureTime(0.3);
+                    cycleTimer = futureTime(0.1);
                     coneCycleStage++;
                 }
                 break;
@@ -555,20 +555,22 @@ public class Crane implements Subsystem {
                     temp = robot.field.objects[32];
                 }
                 Pose2d tempPos = Field.convertToInches(temp.getPosition());
-                if (goToFieldCoordinate(tempPos.getX(), tempPos.getY(), temp.z())) {
+                if (goToFieldCoordinate(tempPos.getX()+4, tempPos.getY(), temp.z()+1)) {
+                    nudgeCenter(true);
                     coneCycleStage++;
-                    cycleTimer = futureTime(0.4);
+                    cycleTimer = futureTime(0.5);
                 }
                 break;
             case 7:
                 if(System.nanoTime() >= cycleTimer) {
                     release();
-                    cycleTimer = futureTime(0.3);
+                    cycleTimer = futureTime(0.2);
                     coneCycleStage++;
                 }
                 break;
             case 8:
                 if(System.nanoTime() >= cycleTimer) {
+                    nudgeLeft();
                     setShoulderTargetAngle(getShoulderAngle() + 12);
                     coneCycleStage++;
                 }
@@ -614,8 +616,7 @@ public class Crane implements Subsystem {
 
     public boolean goToFieldCoordinate(double x, double y, double z){
         fieldPositionTarget = new Vector3(x,y,z);
-        calculateFieldTargeting(x,y,z);
-
+        calculateFieldTargeting(fieldPositionTarget);
         switch(goTargetInd){
             case 0:
                 setShoulderTargetAngle(calculatedAngle);
@@ -655,6 +656,7 @@ public class Crane implements Subsystem {
 
     public boolean goHome(){
         fieldPositionTarget = new Vector3(home.x+robot.turret.getTurretPosition().getX(),home.y+robot.turret.getTurretPosition().getY(),home.z);
+        calculateFieldTargeting(fieldPositionTarget);
         switch (homeInd){
             case 0:
                 holdFieldPosition = false;
@@ -663,7 +665,6 @@ public class Crane implements Subsystem {
                 break;
             case 1:
                 if(extensionOnTarget()) {
-                    calculateFieldTargeting(fieldPositionTarget);
                     setShoulderTargetAngle(calculatedAngle);
                     setExtendTargetPos(calculatedLength);
                     homeInd++;
@@ -696,35 +697,27 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 2:
+                nudgeLeft();
                 if(shoulderOnTarget() && goHome()){
                     pickupConeStage++;
                 }
                 break;
             case 3:
-                calculateFieldTargeting(obj);
-                pickupConeStage++;
+                if(goToFieldthing(obj)){
+                    pickupConeStage++;
+                }
                 break;
             case 4:
-                setTargetTurretAngle(calculatedTurretAngle+8);
-                setShoulderTargetAngle(calculatedAngle);
                 nudgeCenter(true);
-                if(shoulderOnTarget() && turretOnTarget()){
-                    pickupConeStage++;
-                }
+                pickupConeStage++;
                 break;
             case 5:
-                setExtendTargetPos(calculatedLength);
-                if(extensionOnTarget()){
-                    pickupConeStage++;
-                }
-                break;
-            case 6:
                 setTargetTurretAngle(calculatedTurretAngle-5);
                 if(turretOnTarget()){
                     pickupConeStage++;
                 }
                 break;
-            case 7:
+            case 6:
                 pickupConeStage = 0;
                 return true;
         }
@@ -803,6 +796,7 @@ public class Crane implements Subsystem {
         deltaTime = (System.nanoTime()-lastTime)/1e9;
         lastTime = System.nanoTime();
 
+        calculateFieldTargeting(fieldPositionTarget);
         //nudgeDistance = nudgeDistanceSensor.getDistance(DistanceUnit.METER);
 
         robotPosition = new Vector3(robot.driveTrain.getPoseEstimate().getX(),robot.driveTrain.getPoseEstimate().getY(),shoulderHeight);

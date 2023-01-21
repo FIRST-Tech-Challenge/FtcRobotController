@@ -240,6 +240,10 @@ public class PowerPlay_6832 extends OpMode {
             configureDashboardDebug();
         else
             configureDashboardMatch();
+
+        gameState = GameState.TELE_OP;
+        gameStateIndex = 1;
+
         telemetry.update();
     }
 
@@ -284,6 +288,8 @@ public class PowerPlay_6832 extends OpMode {
         robot.crane.updateScoringPattern();
 
         rumble();
+
+        teleOpIndex = 0;
     }
 
     public void resetGame(){
@@ -292,6 +298,8 @@ public class PowerPlay_6832 extends OpMode {
 
     private static Vector2 position;
     private static Vector2 craneTarget;
+
+    int teleOpIndex = 0;
 
         @Override
     public void loop() {
@@ -317,7 +325,20 @@ public class PowerPlay_6832 extends OpMode {
                         }
                         break;
                     case TELE_OP:
-                        dc.joystickDrive();
+                        switch(teleOpIndex){
+                            case 0:
+                                teleOpIndex++;
+                                break;
+                            case 1:
+                                if(robot.driveTrain.runToTeleOpPosition(startingPosition.equals(Constants.Position.START_RIGHT))){
+                                    teleOpIndex++;
+                                }
+                                break;
+                            case 2:
+                                dc.joystickDrive();
+                                break;
+
+                        }
                         break;
                     case TEST:
                         dc.joystickDrive();
@@ -464,6 +485,7 @@ public class PowerPlay_6832 extends OpMode {
         opModeTelemetryMap.put("Last Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
         opModeTelemetryMap.put("Average Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageUpdateTime * 1e-6), (int) (1 / (averageUpdateTime * 1e-9))));
         opModeTelemetryMap.put("Last Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (updateTime * 1e-6), (int) (1 / (updateTime * 1e-9))));
+        opModeTelemetryMap.put("teleOp", teleOpIndex);
 
         //here we can add telemetry specific to certain gameStates
         switch(gameState) {

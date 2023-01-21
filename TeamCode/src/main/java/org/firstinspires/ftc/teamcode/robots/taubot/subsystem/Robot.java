@@ -98,6 +98,7 @@ public class Robot implements Subsystem {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
         telemetryMap.put("AutonState", autonIndex);
+        telemetryMap.put("Time Thing", timeSupervisor);
         telemetryMap.put("Auton Time", (totalAutonTime-System.nanoTime())/1e9);
         telemetryMap.put("auto-dump enabled", autoDumpEnabled);
 
@@ -201,13 +202,16 @@ public class Robot implements Subsystem {
     boolean autonRunWithinTime = true;
     long totalAutonTime;
 
+    boolean turnDone = false;
+    boolean onPole = false;
+
     int timeSupervisor = 0;
 
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
 
         switch (timeSupervisor) {
             case 0:
-                totalAutonTime = futureTime(24);
+                totalAutonTime = futureTime(28);
                 autonIndex = 0;
                 timeSupervisor++;
                 break;
@@ -220,7 +224,9 @@ public class Robot implements Subsystem {
                         //drive to general parking location
                         crane.articulate(Crane.Articulation.noIK);
                         crane.driverIsDriving();
-                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-7, 0, 30)) {
+                        turnDone = false;
+                        onPole = false;
+                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-4, 0, 30)) {
                             autonIndex++;
                         }
                         break;
@@ -228,15 +234,27 @@ public class Robot implements Subsystem {
                         //drop cone at nearest high pole
                         crane.driverNotDriving();
                         if (startingPosition.equals(Constants.Position.START_LEFT)) {
-                            if (System.nanoTime() >= autonTime && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 1.5, Field.INCHES_PER_GRID, 36)) {
+                            if (!turnDone && driveTrain.turnUntilDegrees(90)) {
+                                turnDone = true;
+                            }
+                            if(!onPole && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 3, Field.INCHES_PER_GRID + 2, 36)){
+                                onPole = true;
+                            }
+                            if(turnDone && onPole){
                                 crane.setGripper(false);
-                                autonTime = futureTime(0.3);
+                                autonTime = futureTime(0.2);
                                 autonIndex++;
                             }
                         } else {
-                            if (System.nanoTime() >= autonTime && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 1.5, -Field.INCHES_PER_GRID - 1, 36)) {
+                            if (!turnDone && driveTrain.turnUntilDegrees(-90)) {
+                                turnDone = true;
+                            }
+                            if(!onPole && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 3, -Field.INCHES_PER_GRID - 2, 36)){
+                                onPole = true;
+                            }
+                            if(turnDone && onPole){
                                 crane.setGripper(false);
-                                autonTime = futureTime(0.3);
+                                autonTime = futureTime(0.2);
                                 autonIndex++;
                             }
                         }
@@ -247,20 +265,7 @@ public class Robot implements Subsystem {
                         }
                         break;
                     case 3:
-                        //face conestack
-                        if (startingPosition.equals(Constants.Position.START_LEFT)) {
-                            if (driveTrain.turnUntilDegrees(90)) {
-                                autonIndex++;
-                                turnUntilDegreesDone = true;
-                                //autonTime = futureTime(0.2);
-                            }
-                        } else {
-                            if (driveTrain.turnUntilDegrees(-90)) {
-                                autonIndex++;
-                                turnUntilDegreesDone = true;
-                                //autonTime = futureTime(0.2);
-                            }
-                        }
+                        autonIndex++;
                         break;
                     case 4:
                         if (System.nanoTime() >= autonTime) {
@@ -282,35 +287,33 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 2:
+                autonIndex = 0;
                 crane.articulate(Crane.Articulation.home);
                 if (crane.getArticulation() == Crane.Articulation.manual) {
                     crane.articulate(Crane.Articulation.noIK);
-                    timeSupervisor++;
                 }
-                break;
-            case 3:
                 if (autonTarget == 1 || Objects.isNull(autonTarget)) {
                     timeSupervisor++;
                 }
                 if (startingPosition.equals(Constants.Position.START_LEFT)) {
                     if (autonTarget == 0) {
-                        if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID + 3, 90, 20))
+                        if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID-1, 90, 30))
                             timeSupervisor++;
                     } else if (autonTarget == 2) {
-                        if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID, 90, 20))
+                        if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID+4, 90, 30))
                             timeSupervisor++;
                     }
                 } else {
                     if (autonTarget == 0) {
-                        if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID, 270, 20))
+                        if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID+4, 270, 30))
                             timeSupervisor++;
                     } else if (autonTarget == 2) {
-                        if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID + 3, 270, 20))
+                        if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID-1, 270, 30))
                             timeSupervisor++;
                     }
                 }
                 break;
-            case 4:
+            case 3:
                 crane.nudgeLeft();
                 crane.setCraneTarget(turret.getTurretPosition().getX() - 2, turret.getTurretPosition().getY(), 26);
                 crane.articulate(Crane.Articulation.manual);

@@ -320,6 +320,16 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         chariotMotor.setPower(chassisLengthCorrection);
 
     }
+    Pose2d currentPoseTiles = new Pose2d(0,0);
+
+    public boolean runToTeleOpPosition(boolean rightSide){
+        currentPoseTiles = Field.convertToGrids(getPoseEstimate());
+        if(rightSide){
+            return driveUntilDegrees(0.5-currentPoseTiles.getY(),270,30);
+        }else{
+            return driveUntilDegrees(currentPoseTiles.getY()+0.5,90,30);
+        }
+    }
 
     private static double lastRunHeading = 0;
 
@@ -344,8 +354,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             telemetryMap.put("Heading", heading);
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
-            telemetryMap.put("x target", driveTargetPos.getX());
-            telemetryMap.put("y target", driveTargetPos.getY());
+            telemetryMap.put("x tiles", currentPoseTiles.getX());
+            telemetryMap.put("y tiles", currentPoseTiles.getY());
             telemetryMap.put("pose heading", Math.toDegrees(poseEstimate.getHeading()));
             telemetryMap.put("raw heading", Math.toDegrees(rawHeading));
             telemetryMap.put("raw heading radians", rawHeading);

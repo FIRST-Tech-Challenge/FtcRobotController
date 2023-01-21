@@ -35,8 +35,8 @@ public class Field {
 
     HashMap<String, FieldThing[]> mapObjects = new HashMap<String, FieldThing[]>();
 
-    ConeStack coneStackRight = new ConeStack("AllianceRightStack",2.75,2.5,0);
-    ConeStack coneStackLeft = new ConeStack("AllianceLeftStack",-2.75,2.5,0);
+    ConeStack coneStackRight = new ConeStack("AllianceRightStack",2.92,2.44,0);
+    ConeStack coneStackLeft = new ConeStack("AllianceLeftStack",-2.92,2.44,0);
 
 
     public Field(boolean isBlue){
@@ -65,8 +65,8 @@ public class Field {
         mapObjects.put("AllianceStack", new FieldThing[]{objects[4], objects[5]});
         mapObjects.put("EnemyStack", new FieldThing[]{objects[6], objects[7]} );
 
-        objects[8] = new FieldThing("AllianceSubstationLeft",-0.2,0.5,0);
-        objects[9] = new FieldThing("AllianceSubstationRight",0.2,0.5,0);
+        objects[8] = new FieldThing("AllianceSubstationLeft",-0.3,0.3,0);
+        objects[9] = new FieldThing("AllianceSubstationRight",0.3,0.3,0);
 
         mapObjects.put("AllianceSubstation", new FieldThing[]{objects[8]});
         mapObjects.put("EnemySubstation", new FieldThing[]{objects[9]} );
@@ -482,7 +482,7 @@ public class Field {
     }
 
     public static Pose2d convertToGrids(Pose2d pos){
-        return  new Pose2d(pos.getX()/INCHES_PER_GRID, pos.getY()/INCHES_PER_GRID, pos.getHeading());
+        return  new Pose2d(pos.getX()/INCHES_PER_GRID, -pos.getY()/INCHES_PER_GRID, pos.getHeading());
     }
 
     public static Pose2d convertToInches(Pose2d pos){

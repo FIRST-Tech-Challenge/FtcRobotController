@@ -19,7 +19,7 @@ public class ConeStack extends FieldThing{
 
     @Override
     public double z(){
-        return 12 - 1.4*(5 - coneNum);
+        return 11 - 1.4*(5 - coneNum);
     }
 //duck
 }
