@@ -219,8 +219,8 @@ public class Right2 extends LinearOpMode {
                 case 1:
                     strafeRight(1,700);
                     gyroTurning(0);
-                    move(.6,-1200);
-                    strafeLeft(.5,500);
+                    move(.6,-1000);
+                    //strafeLeft(.5,500);
                     sleep(3000);
                     break;
                 case 2:
@@ -230,8 +230,8 @@ public class Right2 extends LinearOpMode {
                     break;
                 case 3:
                     strafeRight(1,700);
-                    move(.6,1200);
-                    strafeLeft(.5,500);
+                    move(.6,1000);
+                    //strafeLeft(.5,500);
                     sleep(3000);
                     break;
             }
