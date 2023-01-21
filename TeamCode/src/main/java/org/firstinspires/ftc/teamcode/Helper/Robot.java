@@ -223,60 +223,79 @@ public class Robot {
 
     }
 
-    public void ParkFromMedium(int location){
-        turnRobotToAngle(360);
-        switch(location){
-            case 1:
-                chassis.DriveToPosition(0.5, -70, -5, true);
-                break;
-            case 2:
-                chassis.DriveToPosition(0.5, 0, -5, true);
-                break;
-            case 3:
-                chassis.DriveToPosition(0.5, 70, -5, true);
-                break;
-        }
+    public void ParkFromMedium(int location, boolean fromFront){
         turnRobotToAngle(175);
-        chassis.DriveToPosition(0.5, 0, -15, true);
-
-
+        if(fromFront) {
+            switch(location){
+                case 1:
+                    chassis.DriveToPosition(0.5, -70, -5, true);
+                    break;
+                case 2:
+                    chassis.DriveToPosition(0.5, 0, -5, true);
+                    break;
+                case 3:
+                    chassis.DriveToPosition(0.5, 70, -5, true);
+                    break;
+            }
+        }
+        else {
+            switch(location){
+                case 1:
+                    chassis.DriveToPosition(0.5, -80, -5, true);
+                    break;
+                case 2:
+                    chassis.DriveToPosition(0.5, -60, -5, true);
+                    break;
+                case 3:
+                    chassis.DriveToPosition(0.5, 50, -5, true);
+                    break;
+            }
+        }
     }
 
 
 
     public void CycleCone(boolean LR){
         if(LR){
-
+            /** First go to the stack of cones and grab a cone **/
+            turnRobotToAngle(360);
+            chassis.DriveToPosition(0.5, 0, 60, true);
+            turnRobotToAngle(90);
+            //Open the claw and swing the arm down
+            claw.close();
+            arm.swingDown();
+            claw.open();
+            //Drive forward slightly
+            chassis.DriveToPosition(0.3, 0, 60, true);
+            //close the claw and grab onto the cone
+            claw.close();
+            //swing up
+            arm.swingUp();
+            /** Now drive to the medium pole **/
+            //Drive to the pole and face it
+            chassis.DriveToPosition(0.7,0,-60, true);
+            turnRobotToAngle(210);
+            chassis.stopDriveMotors();
+            /** Now deliver the cone **/
+            //Move the slider to the right height and swing down
+            vSlider.MoveSlider(0.6, 1000,2400);
+            arm.swingDown();
+            //Open and close claw
+            claw.open();
+            timeout_ms = 500;
+            runtime.reset();
+            while ((runtime.milliseconds() < timeout_ms)) {
+            }
+            claw.close();
+            //swing arm back up
+            arm.swingUp();
+            //lower slider
+            vSlider.MoveSlider(0.6, -1000,1200);
+            //Moves back to the stack
+            turnRobotToAngle(90);
+            chassis.stopDriveMotors();
+            chassis.DriveToPosition(0.7,0,60, true);
         }
-        /** First go to the stack of cones and grab a cone **/
-        //Open the claw and swing the arm down
-        claw.servo.setPosition(0);
-        arm.swingDown();
-        //Drive forward slightly
-        chassis.DriveToPosition(0.6, 0, 25, true);
-        //close the claw and grab onto the cone
-        claw.servo.setPosition(1);
-        /** Now drive to the medium pole **/
-        //Drive to the pole and face it
-        chassis.DriveToPosition(0.7,0,-60, true);
-        turnRobotToAngle(210);
-        chassis.stopDriveMotors();
-        /** Now deliver the cone **/
-        //Move the slider to the right height and swing down
-       vSlider.MoveSlider(0.6, 1000,2400);
-        arm.swingDown();
-        //Open and close claw
-        claw.servo.setPosition(1);
-        // sleep(500); // TODO: Replace with while loop timer.
-        claw.servo.setPosition(0);
-        //swing arm back up
-        arm.swingUp();
-        //lower slider
-       vSlider.MoveSlider(0.6, 0,1200);
-        //Moves back to the stack
-        turnRobotToAngle(90);
-        chassis.stopDriveMotors();
-        chassis.DriveToPosition(0.7,0,60, true);
     }
 
 }

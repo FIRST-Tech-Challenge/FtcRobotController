@@ -34,9 +34,9 @@ public class clawTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             if(gamepad2.y){
-                robot.claw.servo.setPosition(0);
+                robot.claw.open();
             if(gamepad2.x){
-                robot.claw.servo.setPosition(1);
+                robot.claw.close();
             }
             }
         }
