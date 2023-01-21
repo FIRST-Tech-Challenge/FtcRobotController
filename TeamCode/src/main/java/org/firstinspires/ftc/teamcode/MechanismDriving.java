@@ -11,13 +11,11 @@ public class MechanismDriving {
     private static int desiredSlidePosition;
     public boolean testing=false;
 
-//    public static final int LOWERING_AMOUNT = -2140;
     public static final Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
        put(Robot.SlidesState.RETRACTED, 0);
-       put(Robot.SlidesState.LOW, -4770);
-       put(Robot.SlidesState.MEDIUM, -8020);
-       put(Robot.SlidesState.HIGH, -13270);//may need to be higher
-//       put(Robot.SlidesState.VERY_LOW, -1000);
+       put(Robot.SlidesState.LOW, 4770);
+       put(Robot.SlidesState.MEDIUM, 8020);
+       put(Robot.SlidesState.HIGH, 13270);
     }};
     public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 1.0; //These are not final values
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
@@ -77,18 +75,22 @@ public class MechanismDriving {
         desiredSlidePosition = position;
     }
 
-    /** Sets desired states of slide motor powers using joystick.
-     *
-     * TODO: implement this
+    /** Returns the target encoder count given the robot's desired slides state.
      */
-    public void adjustDesiredSlideHeight(AnalogValues analogValues, Robot robot) {
-//        if (analogValues.gamepad2LeftStickY < -RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
-//            Robot.desiredSlidesState
-//        }
+    public int getTargetSlidesEncoderCount(Robot robot) {
+        int encoderCount;
+        switch (Robot.desiredSlidesState) {
+            case MOVE_UP:
+                encoderCount = robot.slidesMotor.getCurrentPosition() + EPSILON + 1;
+            case MOVE_DOWN:
+                encoderCount = robot.slidesMotor.getCurrentPosition() + EPSILON + 1;
+            default:
+                encoderCount = slidePositions.get(Robot.desiredSlidesState);
+        }
+        // TODO: this negation was added during the competition but it may not be necessary.
+        return -encoderCount;
     }
-    
-//    public void getTargetSlidesEncoderCount(AnalogValues, )
-    
+
     /** Sets slide motor powers to move in direction of desired position, if necessary.
      *
      * @return whether the slides are in the desired position.
@@ -97,7 +99,7 @@ public class MechanismDriving {
 
        if (Robot.desiredSlidesState != Robot.SlidesState.UNREADY) {
            if(!testing)
-               setSlidePosition(robot, slidePositions.get(Robot.desiredSlidesState));
+               setSlidePosition(robot, getTargetSlidesEncoderCount(robot));
 
            // Speed is proportional to the fraction of the ramp distance that we have left.
            double slidesSpeed = slidesPower * Range.clip(Math.abs(desiredSlidePosition - robot.slidesMotor.getCurrentPosition())/ SLIDE_RAMP_DIST, SLIDE_MIN_SPEED, 1);

@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -82,7 +83,7 @@ public class RobotManager {
         if (gamepads.getAnalogValues().gamepad2LeftStickY > RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
             Robot.desiredSlidesState = Robot.SlidesState.MOVE_UP;
         }
-        if (gamepads.getAnalogValues().gamepad2LeftStickY < RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
+        if (gamepads.getAnalogValues().gamepad2LeftStickY < -RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
             Robot.desiredSlidesState = Robot.SlidesState.MOVE_DOWN;
         }
 
@@ -141,8 +142,6 @@ public class RobotManager {
             }
         }
 
-        mechanismDriving.adjustDesiredSlideHeight(gamepads.getAnalogValues(), robot);
-
         robot.telemetry.addData("Front Motor Relative Speeds", "left (%.2f), right (%.2f)",
                 navigation.wheel_speeds[2], navigation.wheel_speeds[3]);
         robot.telemetry.addData("Rear Motor Relative Speeds", "left (%.2f), right (%.2f)",
@@ -155,9 +154,14 @@ public class RobotManager {
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
      */
     public void driveMechanisms() {
-       mechanismDriving.updateHorseshoe(robot);
-       mechanismDriving.updateSlides(robot, Math.abs(gamepads.getAnalogValues().gamepad2LeftStickY));
-       mechanismDriving.updateClaw(robot);
+        double slidesPower = Range.clip(Math.abs(gamepads.getAnalogValues().gamepad2LeftStickY), 0, 1);
+        if (slidesPower < JOYSTICK_DEAD_ZONE_SIZE) {
+            slidesPower = MechanismDriving.SLIDES_MAX_SPEED;
+        }
+
+        mechanismDriving.updateHorseshoe(robot);
+        mechanismDriving.updateSlides(robot, slidesPower);
+        mechanismDriving.updateClaw(robot);
     }
 
     /** Changes drivetrain motor inputs based off the controller inputs.
