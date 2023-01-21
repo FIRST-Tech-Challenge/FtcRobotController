@@ -16,10 +16,10 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
-import org.firstinspires.ftc.blackswan.trajectorysequence.sequencesegment.SequenceSegment;
-import org.firstinspires.ftc.blackswan.trajectorysequence.sequencesegment.TrajectorySegment;
-import org.firstinspires.ftc.blackswan.trajectorysequence.sequencesegment.TurnSegment;
-import org.firstinspires.ftc.blackswan.trajectorysequence.sequencesegment.WaitSegment;
+import org.firstinspires.ftc.blackswan.trajectorySequence.sequencesegment.SequenceSegment;
+import org.firstinspires.ftc.blackswan.trajectorySequence.sequencesegment.TrajectorySegment;
+import org.firstinspires.ftc.blackswan.trajectorySequence.sequencesegment.TurnSegment;
+import org.firstinspires.ftc.blackswan.trajectorySequence.sequencesegment.WaitSegment;
 import org.firstinspires.ftc.blackswan.util.DashboardUtil;
 
 import java.util.ArrayList;

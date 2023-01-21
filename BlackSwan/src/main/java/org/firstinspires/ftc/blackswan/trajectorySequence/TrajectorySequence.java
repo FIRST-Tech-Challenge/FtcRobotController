@@ -2,7 +2,7 @@ package org.firstinspires.ftc.blackswan.trajectorySequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-import org.firstinspires.ftc.blackswan.trajectorysequence.sequencesegment.SequenceSegment;
+import org.firstinspires.ftc.blackswan.trajectorySequence.sequencesegment.SequenceSegment;
 
 import java.util.Collections;
 import java.util.List;
