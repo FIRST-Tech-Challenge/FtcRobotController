@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.testing;
+package org.firstinspires.ftc.teamcode.opModes.test;
 
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 
 @Disabled
-@TeleOp(name="DriveTrainTest",group="Test")
-public class TestOpMode extends TeleOpModeBase {
+@TeleOp(name="Drivetrain Demo", group="Demo")
+public class ExampleDriveTrain extends TeleOpModeBase {
     public DifferentialDrive driveTrain;
     public Telemetry telemetry = TelemetryContainer.getTelemetry();
 
