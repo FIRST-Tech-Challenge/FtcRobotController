@@ -187,6 +187,18 @@ public class Navigation {
         }
 
         double moveDirection = Math.atan2(analogValues.gamepad1LeftStickY, analogValues.gamepad1LeftStickX);
+        if (Math.abs(moveDirection) < Math.PI / 12) {
+            moveDirection = 0.0;
+        }
+        else if (Math.abs(moveDirection - Math.PI / 2) < Math.PI / 12) {
+            moveDirection = Math.PI / 2;
+        }
+        else if (Math.abs(moveDirection - Math.PI) % Math.PI < Math.PI / 12) {
+            moveDirection = Math.PI;
+        }
+        else if (Math.abs(moveDirection + Math.PI / 2) < Math.PI / 12) {
+            moveDirection = -Math.PI / 2;
+        }
         setDriveMotorPowers(moveDirection, strafePower, turn, robot, false);
     }
 
