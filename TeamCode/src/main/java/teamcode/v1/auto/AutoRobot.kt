@@ -2,6 +2,8 @@ package teamcode.v1.auto
 
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.drive.KMecanumOdoDrive
+import teamcode.v1.constants.ArmConstants
+import teamcode.v1.constants.LiftConstants
 import teamcode.v1.subsystems.Arm
 import teamcode.v1.subsystems.Claw
 import teamcode.v1.subsystems.Lift
@@ -28,7 +30,7 @@ class AutoRobot(startPose: Pose) {
     )
 
     init {
-        arm.setPos(210.0)
-        lift.setPos(0.0)
+        arm.setPos(ArmConstants.autoHomePos)
+        lift.setPos(LiftConstants.homePos)
     }
 }
