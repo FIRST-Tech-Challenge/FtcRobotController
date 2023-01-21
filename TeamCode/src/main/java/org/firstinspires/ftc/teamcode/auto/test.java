@@ -23,7 +23,7 @@ public class test extends BaseOpMode {
     public void runOpMode() throws InterruptedException {
         robot.initTeleOpIMU(hardwareMap);
         waitForStart();
-
+        DriveUtils.rotate(90,0.3,this);
     }
     @Override
     public Hardware2 getRobot () {

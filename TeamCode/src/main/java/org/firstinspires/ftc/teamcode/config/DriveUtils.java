@@ -153,6 +153,7 @@ public class DriveUtils {
         int rightTarget;
         int leftTarget;
         final ElapsedTime runtime = new ElapsedTime();
+        double correction = getAngle(BaseOpMode);
 
         // Ensure that the opmode is still active
         if (BaseOpMode.opModeIsActive()) {
@@ -176,10 +177,10 @@ public class DriveUtils {
             robot.getBackRightDrive().setMode(DcMotor.RunMode.RUN_TO_POSITION);
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.getLeftDrive().setPower(Math.abs(speed));
-            robot.getRightDrive().setPower(Math.abs(speed));
-            robot.getBackLeftDrive().setPower(Math.abs(speed));
-            robot.getBackRightDrive().setPower(Math.abs(speed));
+            robot.getLeftDrive().setPower(Math.abs(speed + correction));
+            robot.getRightDrive().setPower(Math.abs(speed + correction));
+            robot.getBackLeftDrive().setPower(Math.abs(speed + correction));
+            robot.getBackRightDrive().setPower(Math.abs(speed + correction));
 
             /**
              * Following code accelerates the robot
@@ -239,6 +240,7 @@ public class DriveUtils {
         int rightTarget;
         int leftTarget;
         final ElapsedTime runtime = new ElapsedTime();
+        double correction = getAngle(BaseOpMode);
 
         // Ensure that the opmode is still active
         if (BaseOpMode.opModeIsActive()) {
@@ -261,10 +263,10 @@ public class DriveUtils {
             robot.getBackRightDrive().setMode(DcMotor.RunMode.RUN_TO_POSITION);
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.getLeftDrive().setPower(Math.abs(speed));
-            robot.getRightDrive().setPower(Math.abs(speed));
-            robot.getBackLeftDrive().setPower(Math.abs(speed));
-            robot.getBackRightDrive().setPower(Math.abs(speed));
+            robot.getLeftDrive().setPower(Math.abs(speed + correction));
+            robot.getRightDrive().setPower(Math.abs(speed + correction));
+            robot.getBackLeftDrive().setPower(Math.abs(speed + correction));
+            robot.getBackRightDrive().setPower(Math.abs(speed + correction));
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
             // its target position, the motion will stop.  This is "safer" in the event that the robot will
@@ -320,7 +322,7 @@ public class DriveUtils {
             sleep(250);
         }
     }
-    private void resetAngle(BaseOpMode baseOpMode)
+    private static void resetAngle(BaseOpMode baseOpMode)
     {
         lastAngles = baseOpMode.getRobot().imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
@@ -366,7 +368,7 @@ public class DriveUtils {
 
         return correction;
     }
-    private void rotate(int degrees, double power, BaseOpMode baseOpMode)
+    public static void rotate(int degrees, double power, BaseOpMode baseOpMode)
     {
         double  leftPower, rightPower;
 
