@@ -184,10 +184,11 @@ public class Right2 extends LinearOpMode {
         if (opModeIsActive()) {                 //start of the autonmous queue
             Left.setPower(.3);
             sleep(500);
-            crane(-1,400);
-            strafeLeftwithdistanceandcrane(1,32,-1,2300);
+            //crane(-1,400);
+            //strafeLeftwithdistanceandcrane(1,32,-1,2300);
+            strafeLeftwithdistanceandcrane(1,32,1,-2000);
             //crane2(1,-7600);
-            move(.5,-330);
+            move(.5,-200);
             sleep(100);
             intake(-1,1300);
             move(.5,300);
@@ -212,7 +213,7 @@ public class Right2 extends LinearOpMode {
 */
             switch (location){                  //parking
                 case 0:
-                    move(.2,200);
+                    //move(.2,200);
                     stopMotors();
                     sleep(3000);
                     break;
@@ -224,7 +225,7 @@ public class Right2 extends LinearOpMode {
                     sleep(3000);
                     break;
                 case 2:
-                    move(.2,200);
+                    //move(.2,200);
                     stopMotors();
                     sleep(3000);
                     break;
@@ -421,14 +422,14 @@ public class Right2 extends LinearOpMode {
 
     }
     public void strafeLeftwithdistanceandcrane(double power, int distances,double powerc, int timec) {
-        crane(powerc, timec);
+
         distancesnap=distance.getDistance(DistanceUnit.INCH);
 
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        crane2(powerc, timec);
         while(distance.getDistance(DistanceUnit.INCH)<distances && opModeIsActive()){
             frontRight.setPower(-power);
             frontLeft.setPower(power);

@@ -164,8 +164,8 @@ public class Servotesting extends LinearOpMode {
 
 
 
-           telemetry.addData("distance",distance.getDistance(DistanceUnit.INCH));
-            telemetry.update();
+           //telemetry.addData("distance",distance.getDistance(DistanceUnit.INCH));
+            //telemetry.update();
         }
 
 
