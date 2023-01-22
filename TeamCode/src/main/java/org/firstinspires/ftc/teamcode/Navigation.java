@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -48,8 +47,7 @@ public class Navigation {
     // ================
     static final double MOVEMENT_MAX_POWER = 1;
     static final double ROTATION_POWER = 0.6;
-    static final double FINE_MOVEMENT_SCALE_FACTOR = 0.5;
-    static final double ULTRA_FINE_MOVEMENT_SCALE_FACTOR = 0.25;
+    static final double SLOW_MOVEMENT_SCALE_FACTOR = 0.5;
 
     // INSTANCE ATTRIBUTES
     // ===================
@@ -122,30 +120,17 @@ public class Navigation {
 
         AnalogValues analogValues = gamepads.getAnalogValues();
 
-        double throttle = analogValues.gamepad1RightTrigger;
-        if (throttle < RobotManager.TRIGGER_DEAD_ZONE_SIZE) {  // Throttle dead zone.
-            // Determine power scale factor using constant from distance of joystick from center.
-            double distance = Range.clip(Math.sqrt(Math.pow(analogValues.gamepad1LeftStickX, 2)
-                    + Math.pow(analogValues.gamepad1LeftStickY, 2)), 0, 1);
-            if (distance <= RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {  // joystick dead zone
-                // Joystick is not used, but hasMovementDirection is true, so one of the straight movement buttons must
-                // have been pressed.
-                strafePower = MOVEMENT_MAX_POWER;
-            } else {
-                strafePower = distance * MOVEMENT_MAX_POWER;
+        double distance = Range.clip(Math.sqrt(Math.pow(analogValues.gamepad1LeftStickX, 2)
+                + Math.pow(analogValues.gamepad1LeftStickY, 2)), 0, 1);
+        if (distance <= RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {  // joystick dead zone
+            // Joystick is not used, but hasMovementDirection is true, so one of the straight movement buttons must
+            // have been pressed.
+            strafePower = SLOW_MOVEMENT_SCALE_FACTOR;
+        } else {
+            strafePower = distance * MOVEMENT_MAX_POWER;
+            if (Robot.desiredSlidesState == Robot.SlidesState.HIGH) {
+                strafePower *= SLOW_MOVEMENT_SCALE_FACTOR;
             }
-        }
-        else {
-            strafePower = throttle * MOVEMENT_MAX_POWER;
-        }
-
-        switch (robot.movementMode) {
-            case FINE:
-                strafePower *= FINE_MOVEMENT_SCALE_FACTOR;
-                break;
-            case ULTRA_FINE:
-                strafePower *= ULTRA_FINE_MOVEMENT_SCALE_FACTOR;
-                break;
         }
     }
 
@@ -155,7 +140,7 @@ public class Navigation {
      */
     public boolean moveStraight(boolean forward, boolean backward, boolean left, boolean right, Robot robot) {
         double direction;
-        if (forward || backward) {
+        if(forward || backward) {
             if (left) {//move NW
                 direction = Math.PI * 0.75;
             }
@@ -184,31 +169,29 @@ public class Navigation {
 
     /** Changes drivetrain motor inputs based off the controller inputs.
      */
-    public void maneuver(AnalogValues analogValues, boolean turnCC, boolean turnC, Robot robot) {
+    public void maneuver(AnalogValues analogValues, Robot robot) {
         // Uses left stick to go forward, and right stick to turn.
         // NOTE: right-side drivetrain motor inputs don't have to be negated because their directions will be reversed
         //       upon initialization.
 
         double turn = -analogValues.gamepad1RightStickX;
-        if (turnCC) {
-            turn = -ROTATION_POWER;
-        }
-        if (turnC) {
-            turn = ROTATION_POWER;
-        }
         if (Math.abs(turn) < RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
             turn = 0;
         }
-        switch (robot.movementMode) {
-            case FINE:
-                turn *= FINE_MOVEMENT_SCALE_FACTOR;
-                break;
-            case ULTRA_FINE:
-                turn *= ULTRA_FINE_MOVEMENT_SCALE_FACTOR;
-                break;
-        }
 
         double moveDirection = Math.atan2(analogValues.gamepad1LeftStickY, analogValues.gamepad1LeftStickX);
+        if (Math.abs(moveDirection) < Math.PI / 12) {
+            moveDirection = 0.0;
+        }
+        else if (Math.abs(moveDirection - Math.PI / 2) < Math.PI / 12) {
+            moveDirection = Math.PI / 2;
+        }
+        else if (Math.abs(moveDirection - Math.PI) % Math.PI < Math.PI / 12) {
+            moveDirection = Math.PI;
+        }
+        else if (Math.abs(moveDirection + Math.PI / 2) < Math.PI / 12) {
+            moveDirection = -Math.PI / 2;
+        }
         setDriveMotorPowers(moveDirection, strafePower, turn, robot, false);
     }
 

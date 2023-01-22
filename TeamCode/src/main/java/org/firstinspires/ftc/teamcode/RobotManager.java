@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -67,7 +68,7 @@ public class RobotManager {
     public void readControllerInputs() {
         // Linear slides
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
-            if(robot.desiredHorseshoeState==Robot.HorseshoeState.FRONT)
+            if (robot.desiredClawRotatorState == Robot.ClawRotatorState.FRONT)
                 Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
         }
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
@@ -79,42 +80,34 @@ public class RobotManager {
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
             Robot.desiredSlidesState = Robot.SlidesState.HIGH;
         }
-        if(getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_VERY_LOW)){
-            Robot.desiredSlidesState = Robot.SlidesState.VERY_LOW;
+        if (gamepads.getAnalogValues().gamepad2LeftStickY > RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
+            Robot.desiredSlidesState = Robot.SlidesState.MOVE_UP;
         }
-
-        // Fine movement/rotation.
-        if (getButtonRelease(GamepadWrapper.DriverAction.TURN_ON_FINE_MOVEMENT)) {
-            robot.movementMode = Robot.MovementMode.FINE;
-        }
-        if (getButtonRelease(GamepadWrapper.DriverAction.TURN_ON_ULTRA_FINE_MOVEMENT)) {
-            robot.movementMode = Robot.MovementMode.ULTRA_FINE;
-
-        }
-        if(gamepads.getAnalogValues().gamepad1LeftTrigger > RobotManager.TRIGGER_DEAD_ZONE_SIZE){
-            robot.movementMode = Robot.MovementMode.NORMAL;
+        if (gamepads.getAnalogValues().gamepad2LeftStickY < -RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
+            Robot.desiredSlidesState = Robot.SlidesState.MOVE_DOWN;
         }
 
         //if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {
         //    robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
         //}
 
-        //Horseshoe movement FRONT
-        if(getButtonRelease(GamepadWrapper.DriverAction.HORSESHOE_TO_FRONT)){
-            robot.desiredHorseshoeState = Robot.HorseshoeState.FRONT;
+        if (getButtonRelease(GamepadWrapper.DriverAction.POSITION_CLAW_FRONT)){
+            robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
         }
-        //Horseshoe movement BACK
-        if(getButtonRelease(GamepadWrapper.DriverAction.HORSESHOE_TO_BACK)){
-            if(Robot.desiredSlidesState!=Robot.SlidesState.RETRACTED)
-                robot.desiredHorseshoeState = Robot.HorseshoeState.REAR; //Rear is back.
+        if (getButtonRelease(GamepadWrapper.DriverAction.POSITION_CLAW_SIDE)){
+            robot.desiredClawRotatorState = Robot.ClawRotatorState.SIDE;
+        }
+        if (getButtonRelease(GamepadWrapper.DriverAction.POSITION_CLAW_REAR)){
+            robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
         }
 
         // Claw
-        if (getButtonRelease(GamepadWrapper.DriverAction.OPEN_CLAW)) {
-            robot.desiredClawState = Robot.ClawState.OPEN;
-        }
-        if (getButtonRelease(GamepadWrapper.DriverAction.CLOSE_CLAW)) {
-            robot.desiredClawState = Robot.ClawState.CLOSED;
+        if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_CLAW)) {
+            if (robot.desiredClawState == Robot.ClawState.OPEN) {
+                robot.desiredClawState = Robot.ClawState.CLOSED;
+            } else {
+                robot.desiredClawState = Robot.ClawState.OPEN;
+            }
         }
 
         // Adjust relative wheel speeds.
@@ -150,8 +143,6 @@ public class RobotManager {
             }
         }
 
-        mechanismDriving.adjustDesiredSlideHeight(gamepads.getAnalogValues(), robot);
-
         robot.telemetry.addData("Front Motor Relative Speeds", "left (%.2f), right (%.2f)",
                 navigation.wheel_speeds[2], navigation.wheel_speeds[3]);
         robot.telemetry.addData("Rear Motor Relative Speeds", "left (%.2f), right (%.2f)",
@@ -164,9 +155,14 @@ public class RobotManager {
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
      */
     public void driveMechanisms() {
-       mechanismDriving.updateHorseshoe(robot);
-       mechanismDriving.updateSlides(robot);
-       mechanismDriving.updateClaw(robot);
+        double slidesPower = Range.clip(Math.abs(gamepads.getAnalogValues().gamepad2LeftStickY), 0, 1);
+        if (slidesPower < JOYSTICK_DEAD_ZONE_SIZE) {
+            slidesPower = MechanismDriving.SLIDES_MAX_SPEED;
+        }
+
+        mechanismDriving.updateClawRotator(robot);
+        mechanismDriving.updateSlides(robot, slidesPower);
+        mechanismDriving.updateClaw(robot);
     }
 
     /** Changes drivetrain motor inputs based off the controller inputs.
@@ -185,8 +181,6 @@ public class RobotManager {
         if (!movedStraight) {
             navigation.maneuver(
                     gamepads.getAnalogValues(),
-                    gamepads.getButtonState(GamepadWrapper.DriverAction.TURN_COUNTER_CLOCKWISE),
-                    gamepads.getButtonState(GamepadWrapper.DriverAction.TURN_CLOCKWISE),
                     robot);
         }
     }
@@ -241,12 +235,12 @@ public class RobotManager {
      *  This horse shoe code here is part of the linear slides and helps the cone position into the poles.
      */
     public void flipHorseshoe() {
-        switch (robot.desiredHorseshoeState) {
-            case FRONT: robot.desiredHorseshoeState = Robot.HorseshoeState.REAR;
-            case REAR: robot.desiredHorseshoeState = Robot.HorseshoeState.FRONT;
+        switch (robot.desiredClawRotatorState) {
+            case FRONT: robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
+            case REAR: robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
         }
         double startTime = robot.elapsedTime.milliseconds(); //Starts the time of the robot in milliseconds.
-        mechanismDriving.updateHorseshoe(robot);
+        mechanismDriving.updateClawRotator(robot);
         //case Robot.HorseshoeState.FRONT/REAR (Remove the / in between if needed to be added back. Only set 1 variable at a time)
         //Waiting for servo to finish rotation
         while (robot.elapsedTime.milliseconds() - startTime < MechanismDriving.HORSESHOE_TIME) {}
@@ -277,76 +271,76 @@ public class RobotManager {
      *  @param currentSlidesState the current state of the linear slides
      *  @return the lowered SlidesState (or the retracted SlidesState if it was already retracted)
      */
-    public Robot.SlidesState getLoweredSlidesState(Robot.SlidesState currentSlidesState) {
-        switch (currentSlidesState) {
-            case LOW: return Robot.SlidesState.LOW_LOWERED;
-            case MEDIUM: return Robot.SlidesState.MEDIUM_LOWERED;
-            case HIGH: return Robot.SlidesState.HIGH_LOWERED;
-            default: return Robot.SlidesState.RETRACTED;
-        }
-    }
+//    public Robot.SlidesState getLoweredSlidesState(Robot.SlidesState currentSlidesState) {
+//        switch (currentSlidesState) {
+//            case LOW: return Robot.SlidesState.LOW_LOWERED;
+//            case MEDIUM: return Robot.SlidesState.MEDIUM_LOWERED;
+//            case HIGH: return Robot.SlidesState.HIGH_LOWERED;
+//            default: return Robot.SlidesState.RETRACTED;
+//        }
+//    }
 
     /** Delivers a cone to a pole.
      *
      *  @param level the level/height of the pole to which the cone needs to be delivered
      */
     public void deliverToPole(Robot.SlidesState level, Robot robot) {
-        // Extend slides.
-        robot.desiredSlidesState = level;
-        boolean extended = mechanismDriving.updateSlides(robot);
-        while (!extended) {
-            extended = mechanismDriving.updateSlides(robot);
-        }
-        flipHorseshoe();
-
-        // Move into drop-off position.
-        robot.positionManager.updatePosition(robot);
-        Position startPos = new Position(robot.getPosition().getX(), robot.getPosition().getY(),
-                robot.getPosition().getRotation(), "POI startPos");
-
-        //The direction that the robot moves away at will need to depend on which side we are playing on
-        switch(startingSide) {
-            case OUR_COLOR:
-                navigation.path.add(navigation.pathIndex,
-                    new Position(startPos.getX(), startPos.getY() + Navigation.HORSESHOE_SIZE, //horseshoe moves towards junction
-                            startPos.getRotation(), "POI dropoff our color"));
-                break;
-            case THEIR_COLOR:
-                navigation.path.add(navigation.pathIndex,
-                        new Position(startPos.getX(), startPos.getY() - Navigation.HORSESHOE_SIZE,
-                                startPos.getRotation(), "POI dropoff their color"));
-                break;
-        }
-
-        travelToNextPOI();
-
-        //flipHorseshoe(); not needed anymore because no more servo
-
-        // Lower linear slides
-        robot.desiredSlidesState = getLoweredSlidesState(robot.desiredSlidesState);
-        boolean lowered = mechanismDriving.updateSlides(robot);
-        while (!lowered) {
-            lowered = mechanismDriving.updateSlides(robot);
-        }
-
-        // Drop cone
-        openClaw();
-
-        // Move back to starting position.
-        navigation.path.add(navigation.pathIndex, startPos);
-        travelToNextPOI();
-
-        // Retract slides.
-        flipHorseshoe();
-        robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
-        boolean retracted = mechanismDriving.updateSlides(robot);
-        while (!retracted) {
-            retracted = mechanismDriving.updateSlides(robot);
-        }
-
-        // TODO: ROBOT NEEDS TO BACK UP otherwise flipping horeshoe will cause problems
-
-        //flipHorseshoe(); not needed anymore because no more horseshoe
+//        // Extend slides.
+//        robot.desiredSlidesState = level;
+//        boolean extended = mechanismDriving.updateSlides(robot);
+//        while (!extended) {
+//            extended = mechanismDriving.updateSlides(robot);
+//        }
+//        flipHorseshoe();
+//
+//        // Move into drop-off position.
+//        robot.positionManager.updatePosition(robot);
+//        Position startPos = new Position(robot.getPosition().getX(), robot.getPosition().getY(),
+//                robot.getPosition().getRotation(), "POI startPos");
+//
+//        //The direction that the robot moves away at will need to depend on which side we are playing on
+//        switch(startingSide) {
+//            case OUR_COLOR:
+//                navigation.path.add(navigation.pathIndex,
+//                    new Position(startPos.getX(), startPos.getY() + Navigation.HORSESHOE_SIZE, //horseshoe moves towards junction
+//                            startPos.getRotation(), "POI dropoff our color"));
+//                break;
+//            case THEIR_COLOR:
+//                navigation.path.add(navigation.pathIndex,
+//                        new Position(startPos.getX(), startPos.getY() - Navigation.HORSESHOE_SIZE,
+//                                startPos.getRotation(), "POI dropoff their color"));
+//                break;
+//        }
+//
+//        travelToNextPOI();
+//
+//        //flipHorseshoe(); not needed anymore because no more servo
+//
+//        // Lower linear slides
+////        robot.desiredSlidesState = getLoweredSlidesState(robot.desiredSlidesState);
+//        boolean lowered = mechanismDriving.updateSlides(robot);
+//        while (!lowered) {
+//            lowered = mechanismDriving.updateSlides(robot);
+//        }
+//
+//        // Drop cone
+//        openClaw();
+//
+//        // Move back to starting position.
+//        navigation.path.add(navigation.pathIndex, startPos);
+//        travelToNextPOI();
+//
+//        // Retract slides.
+//        flipHorseshoe();
+//        robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
+//        boolean retracted = mechanismDriving.updateSlides(robot);
+//        while (!retracted) {
+//            retracted = mechanismDriving.updateSlides(robot);
+//        }
+//
+//        // TODO: ROBOT NEEDS TO BACK UP otherwise flipping horeshoe will cause problems
+//
+//        //flipHorseshoe(); not needed anymore because no more horseshoe
     }
 
     /** Picks up a cone.
