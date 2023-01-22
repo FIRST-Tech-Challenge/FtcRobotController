@@ -25,7 +25,8 @@ public class CenterJunctionBottom extends BaseAutonomous {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
-        robotCameraPipeline = new RobotCameraPipeline(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
+        robotCameraPipeline = new RobotCameraPipeline();
+        robotCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
 
         camera.setPipeline(robotCameraPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

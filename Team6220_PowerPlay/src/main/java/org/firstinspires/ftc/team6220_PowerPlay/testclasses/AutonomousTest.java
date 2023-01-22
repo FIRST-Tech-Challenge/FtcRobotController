@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Disabled
+//@Disabled
 @Autonomous(name = "AutonomousTest")
 public class AutonomousTest extends BaseAutonomous {
 
@@ -20,10 +20,10 @@ public class AutonomousTest extends BaseAutonomous {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        initialize();
+        //initialize();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
         grabberCameraPipeline = new GrabberCameraPipeline();
 
