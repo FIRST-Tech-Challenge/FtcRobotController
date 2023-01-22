@@ -191,7 +191,7 @@ public class Left2 extends LinearOpMode {
             move(.5,330);
             sleep(100);
             intake(-1,1300);
-            move(.5,-300);
+            move(.5,-200);
             //new
            /*
             strafeLeftwithcrane(1,600,1,1000);//500
@@ -214,7 +214,7 @@ public class Left2 extends LinearOpMode {
 
             switch (location){//determine where to park
                 case 0:
-                    move(.2,-200);
+                    //move(.2,-200);
                     stopMotors();
                     sleep(3000);
                     break;
@@ -226,7 +226,7 @@ public class Left2 extends LinearOpMode {
                     sleep(3000);
                     break;
                 case 2:
-                    move(.2,-200);
+                    //move(.2,-200);
                     stopMotors();
                     sleep(3000);
                     break;

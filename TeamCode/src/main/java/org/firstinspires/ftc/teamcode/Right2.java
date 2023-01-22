@@ -190,7 +190,7 @@ public class Right2 extends LinearOpMode {
             move(.5,-200);
             sleep(100);
             intake(-1,1300);
-            move(.5,300);
+            move(.5,200);
             //new
             /*
             strafeLeftwithcrane(1,600,1,1000);//500
