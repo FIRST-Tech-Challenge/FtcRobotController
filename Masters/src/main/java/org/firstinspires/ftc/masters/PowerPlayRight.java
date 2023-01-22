@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.masters;
 
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK;
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -16,6 +20,8 @@ public class PowerPlayRight extends LinearOpMode {
     enum State {
         SCORE_1,
         SCORE_2,
+        PICKUP,
+        BACK_UP,
         NEW_CONE_FROM_SCORE_1,
         SCORE_CONE,
         NEW_CONE,
@@ -24,6 +30,13 @@ public class PowerPlayRight extends LinearOpMode {
         PARK_GREEN
 
     }
+
+    LiftPIDController liftPIDController;
+    ArmPIDController armPIDController;
+
+    int armTarget=0, liftTarget =0;
+
+    int numberOfConesPickedUp =0;
 
     @Override
     public void runOpMode() {
@@ -35,9 +48,10 @@ public class PowerPlayRight extends LinearOpMode {
         Pose2d startPose = new Pose2d(new Vector2d(37.5, -64.25), Math.toRadians(90)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);
 
+        liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
+        armPIDController = new ArmPIDController(drive.armMotor);
+        drive.tipCenter();
         drive.closeClaw();
-
-
 
         State currentState;
 
@@ -52,7 +66,11 @@ public class PowerPlayRight extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(59, -14))
                 .build();
 
-        Trajectory scoreNewCone = drive.trajectoryBuilder(drive.getPoseEstimate())
+        Trajectory conePickup = drive.trajectoryBuilder(firstDepositToConeStack.end())
+                .lineTo(new Vector2d(49, -14))
+                .build();
+
+        Trajectory scoreNewCone = drive.trajectoryBuilder(conePickup.end())
                 .splineTo(new Vector2d(32.5,-11.5),Math.toRadians(315))
                 .build();
 
@@ -71,6 +89,7 @@ public class PowerPlayRight extends LinearOpMode {
         waitForStart();
 
         drive.closeClaw();
+        drive.tipCenter();
 
         long startTime = new Date().getTime();
         long time = 0;
@@ -91,34 +110,84 @@ public class PowerPlayRight extends LinearOpMode {
             switch (currentState) {
                 case SCORE_1:
                     if (!drive.isBusy()) {
+                        drive.openClaw();
+                        sleep(500);
+                        drive.closeClaw();
                         currentState = State.NEW_CONE_FROM_SCORE_1;
                         drive.followTrajectoryAsync(firstDepositToConeStack);
+                    } else {
+                        armTarget = ARM_MID_TOP;
+                        if (drive.armMotor.getCurrentPosition()>100){
+                            liftTarget= SLIDE_HIGH;
+                            drive.tipFront();
+                        }
                     }
                     break;
                 case NEW_CONE_FROM_SCORE_1:
-                    telemetry.addData("Set up grab new cone","");
+                    telemetry.addData("Set up to grab new cone","");
                     telemetry.update();
                     if (!drive.isBusy()) {
-                        currentState = State.SCORE_CONE;
-                        drive.followTrajectoryAsync(scoreNewCone);
+
+                        currentState = State.PICKUP;
+//                        drive.closeClaw();
+//
+//                        currentState = State.SCORE_CONE;
+//                        drive.followTrajectoryAsync(scoreNewCone);
+                    } else {
+                        liftTarget = 75;
+                        if (drive.linearSlide.getCurrentPosition()<100){
+                            armTarget = 0;
+                            drive.openClaw();
+                            drive.tipCenter();
+                        }
                     }
                     break;
-//                case SCORE_CONE:
-//                    if (!drive.isBusy() && getRuntime() < 900000000) {
-//                        currentState = State.NEW_CONE;
-//                        drive.followTrajectoryAsync(fromScoreNewConeToConeStack);
-//
-//                    } else if(!drive.isBusy()) {
-//
-//                        if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
-//                            currentState = State.PARK_GRAY;
-//                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
-//                            currentState = State.PARK_GREEN;
-//                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.RED) {
-//                            currentState = State.PARK_RED;
-//                        }
-//                    }
-//                    break;
+                case PICKUP:
+                    drive.closeClaw();
+                    liftTarget = 150;
+                    if (drive.linearSlide.getCurrentPosition()>140){
+                        currentState = State.BACK_UP;
+                        drive.followTrajectoryAsync(conePickup);
+                    }
+                    break;
+                case BACK_UP:
+                    if (!drive.isBusy()){
+                        armTarget = ARM_BACK;
+                        drive.followTrajectory(scoreNewCone);
+                        currentState= State.SCORE_CONE;
+                    }
+                    break;
+
+
+                case SCORE_CONE:
+
+                    if (!drive.isBusy()){
+                        drive.openClaw();
+                        sleep(500);
+                        time = new Date().getTime() - startTime;
+                        if (time< 25_000){
+                            //go get other cone
+                            currentState = State.NEW_CONE_FROM_SCORE_1;
+                            drive.followTrajectoryAsync(fromScoreNewConeToConeStack);
+
+                        } else {
+                            //go park
+                            if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
+                                drive.followTrajectoryAsync(parkGray);
+                                currentState = State.PARK_GRAY;
+                            } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
+                                drive.followTrajectoryAsync(parkRed);
+                                currentState = State.PARK_GREEN;
+                            } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.RED) {
+                                currentState = State.PARK_RED;
+                            }
+                        }
+                    } else {
+                        if (drive.armMotor.getCurrentPosition()>100){
+                            liftTarget = SLIDE_HIGH;
+                        }
+                    }
+                    break;
 //                case NEW_CONE:
 //                    if (!drive.isBusy()) {
 //                        currentState = State.SCORE_CONE;
@@ -127,22 +196,52 @@ public class PowerPlayRight extends LinearOpMode {
 //
 //                    }
 //                    break;
-//                case PARK_GRAY:
-//                    drive.followTrajectoryAsync(parkGray);
-//                    if (!drive.isBusy()) {
-//
-//                    }
-//                    break;
-//                case PARK_RED:
-//                    drive.followTrajectoryAsync(parkRed);
-//                    if (!drive.isBusy()) {
-//
-//                    }
-//                    break;
-//                case PARK_GREEN:
-//                    break;
+                case PARK_GRAY:
+
+                    liftTarget= 0;
+                    if (drive.linearSlide.getCurrentPosition()<100){
+                        armTarget = 0;
+                    }
+                    if (!drive.isBusy()) {
+                        if (drive.armMotor.getCurrentPosition()<50){
+                            drive.openClaw();
+                            drive.tipCenter();
+                        }
+                    }
+                    break;
+                case PARK_RED:
+
+                    liftTarget= 0;
+                    if (drive.linearSlide.getCurrentPosition()<100){
+                        armTarget = 0;
+                    }
+                    if (!drive.isBusy()) {
+                        if (drive.armMotor.getCurrentPosition()<50){
+                            drive.openClaw();
+                            drive.tipCenter();
+                        }
+                    }
+                    break;
+                case PARK_GREEN:
+                    liftTarget= 0;
+                    if (drive.linearSlide.getCurrentPosition()<100){
+                        armTarget = 0;
+                    }
+                    if (drive.armMotor.getCurrentPosition()<50){
+                        drive.openClaw();
+                        drive.tipCenter();
+                    }
+                    break;
             }
         }
+
+        armPIDController.setTarget(armTarget);
+        drive.armMotor.setVelocity(armPIDController.calculateVelocity());
+
+        liftPIDController.setTarget(liftTarget);
+
+        drive.linearSlide.setPower(liftPIDController.calculatePower());
+
 
     }
 

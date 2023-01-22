@@ -1,5 +1,15 @@
 package org.firstinspires.ftc.masters.drive;
 
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM;
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
+import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_CLOSED;
+import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_OPEN;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_BOTTOM;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
+import static org.firstinspires.ftc.masters.BadgerConstants.TIP_BACK;
+import static org.firstinspires.ftc.masters.BadgerConstants.TIP_CENTER;
+import static org.firstinspires.ftc.masters.BadgerConstants.TIP_FRONT;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
@@ -55,22 +65,6 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
 
-    //Fix values
-    public static int SLIDE_HIGH = 1350;
-    public static int SLIDE_MIDDLE = 550;
-    public static int SLIDE_BOTTOM = 0;
-
-    //Fix values
-    protected final double clawServoOpen = 0.75;
-    protected final double clawServoClosed = 0.99;
-    protected final int armMotorBottom = 0;
-    protected final int armMotorTop = 600;
-    protected final int armMotorMid = 450;
-
-    protected final double tipCenter = 0.77;
-    protected final double tipFront = 0.6;
-    protected final double tipBack =0.9;
-
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
 
@@ -95,7 +89,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotorEx slideOtherer;
     public DcMotorEx armMotor;
 
-    private Servo THE_CLAW, tippingServo;
+    private Servo claw, tippingServo;
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -157,7 +151,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
 
-        THE_CLAW = hardwareMap.servo.get("clawServo");
+        claw = hardwareMap.servo.get("clawServo");
         tippingServo = hardwareMap.servo.get("tippingServo");
 
 
@@ -194,11 +188,23 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void openClaw(){
-        THE_CLAW.setPosition(clawServoOpen);
+        claw.setPosition(CLAW_OPEN);
     }
 
     public void closeClaw(){
-        THE_CLAW.setPosition(clawServoClosed);
+        claw.setPosition(CLAW_CLOSED);
+    }
+
+    public void tipCenter(){
+        tippingServo.setPosition(TIP_CENTER);
+    }
+
+    public void tipFront(){
+        tippingServo.setPosition(TIP_FRONT);
+    }
+
+    public void tipBack(){
+        tippingServo.setPosition(TIP_BACK);
     }
 
     public void liftTop(){
@@ -241,19 +247,19 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void setArmServoTop() {
-        armMotor.setTargetPosition(armMotorTop);
+        armMotor.setTargetPosition(ARM_MID_TOP);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(0.3);
     }
 
     public void setArmServoBottom() {
-        armMotor.setTargetPosition(armMotorBottom);
+        armMotor.setTargetPosition(ARM_BOTTOM);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(0.3);
     }
 
     public void setArmServoMiddle() {
-        armMotor.setTargetPosition(armMotorMid);
+        armMotor.setTargetPosition(ARM_MID_TOP);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(0.3);
     }

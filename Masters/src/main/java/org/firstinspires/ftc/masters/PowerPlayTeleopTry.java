@@ -1,5 +1,18 @@
 package org.firstinspires.ftc.masters;
 
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK;
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM;
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM_JUNCTION;
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
+import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_CLOSED;
+import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_OPEN;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_BOTTOM;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
+import static org.firstinspires.ftc.masters.BadgerConstants.TIP_BACK;
+import static org.firstinspires.ftc.masters.BadgerConstants.TIP_CENTER;
+import static org.firstinspires.ftc.masters.BadgerConstants.TIP_FRONT;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -46,36 +59,9 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
     double maxPowerConstraint = 0.75;
 
-    //Fix values
-    public static int SLIDE_HIGH = 1000;
-    public static int SLIDE_MIDDLE = 400;
-    public static int SLIDE_BOTTOM = 0;
-
-    public static double f_lift=0.06;
-    public static double d = 0.000001;
-    public static double p =0.015;
-    public static double i=0;
-    public static double p_arm=0.025, i_arm=0.05, d_arm=0.0001;
-    public static double f_arm=0.2;
-
-    //Fix values
-    public static double clawServoOpen = 0.56;
-    public static double clawServoClosed = 0.88;
-    protected final int ARM_BOTTOM = 0;
-   // protected final int ARM_STOP = 100;
-    public final int ARM_MID_TOP = 450;
-    public final int ARM_BOTTOM_JUNCTION = 300;
-    protected final int ARM_BACK = 600;
-
-    public final double TIP_CENTER = 0.77;
-    public final double TIP_BACK = 0.6;
-    public final double TIP_FRONT =0.99;
-
-
     int strafeConstant=1;
 
     STATE currentState= STATE.ZERO, previousState = STATE.ZERO;
-
 
     int armSelection =0, slideSelection =0;
 
@@ -156,7 +142,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
 
-        clawServo.setPosition(clawServoOpen);
+        clawServo.setPosition(CLAW_OPEN);
         tippingServo.setPosition(TIP_CENTER);
         boolean moveArm = false;
         boolean openClaw = true;
@@ -224,11 +210,11 @@ public class PowerPlayTeleopTry extends LinearOpMode {
             }
 //
             if (gamepad2.a) {
-                clawServo.setPosition(clawServoClosed);
+                clawServo.setPosition(CLAW_CLOSED);
 
             } else if (gamepad2.b) {
                // tippingServo.setPosition(TIP_CENTER);
-                clawServo.setPosition(clawServoOpen);
+                clawServo.setPosition(CLAW_OPEN);
 
             }
 
@@ -255,7 +241,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                     armTarget = armSelection;
                 }
                 set= false;
-                clawServo.setPosition(clawServoClosed);
+                clawServo.setPosition(CLAW_CLOSED);
             }
             else if (gamepad2.dpad_up){
 
@@ -271,7 +257,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                     armTarget = armSelection;
                 }
                 set=false;
-                clawServo.setPosition(clawServoClosed);
+                clawServo.setPosition(CLAW_CLOSED);
 
             }
 
@@ -287,7 +273,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                     slideTarget = slideSelection;
                 }
                 set=false;
-                clawServo.setPosition(clawServoClosed);
+                clawServo.setPosition(CLAW_CLOSED);
             }
             else if (gamepad2.dpad_right) {
                 previousState = currentState;
@@ -301,7 +287,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                     slideTarget = slideSelection;
                 }
                 set=false;
-                clawServo.setPosition(clawServoClosed);
+                clawServo.setPosition(CLAW_CLOSED);
             }
 
             if (gamepad2.dpad_down) {
@@ -318,7 +304,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                     slideTarget = SLIDE_BOTTOM;
                 }
                 set=false;
-                clawServo.setPosition(clawServoClosed);
+                clawServo.setPosition(CLAW_CLOSED);
             }
 
             if (gamepad2.dpad_left) {
@@ -334,7 +320,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                     }
                 }
                 set=false;
-                clawServo.setPosition(clawServoClosed);
+                clawServo.setPosition(CLAW_CLOSED);
 
             }
 
@@ -351,7 +337,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 }
 
                 if (armMotor.getCurrentPosition()<200 && !set){
-                    clawServo.setPosition(clawServoOpen);
+                    clawServo.setPosition(CLAW_OPEN);
                     tippingServo.setPosition(TIP_CENTER);
                     armTarget =0;
                     set=true;
@@ -392,7 +378,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 previousState= currentState;
                 currentState = STATE.MANUAL;
                 if(openClaw){
-                    clawServo.setPosition(clawServoClosed);
+                    clawServo.setPosition(CLAW_CLOSED);
                     openClaw = false;
                 }
                 //armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -406,7 +392,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 previousState= currentState;
                 currentState = STATE.MANUAL;
                 if(openClaw){
-                    clawServo.setPosition(clawServoClosed);
+                    clawServo.setPosition(CLAW_CLOSED);
                     openClaw = false;
                 }
                 moveArm = true;
@@ -430,15 +416,16 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
         liftPIDController.setTarget(slideTarget);
 
-        linearSlideMotor.setPower(liftPIDController.calculatePower());
-        frontSlide.setPower(liftPIDController.calculatePower());
-        slideOtherer.setPower(liftPIDController.calculatePower());
+        double power= liftPIDController.calculatePower();
 
+        linearSlideMotor.setPower(power);
+        frontSlide.setPower(power);
+        slideOtherer.setPower(power);
 
         telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
         telemetry.addData("front", frontSlide.getCurrentPosition());
         telemetry.addData("other", slideOtherer.getCurrentPosition());
-//
+
     }
 
     protected void moveArm (){
