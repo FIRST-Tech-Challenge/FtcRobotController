@@ -174,6 +174,7 @@ public class LeftPPTerminal extends LinearOpMode {
                     moveUtils.strafeBuddy(24);
                     moveUtils.strafeBuddy(-2);
                     moveUtils.goStraight(2,MIN_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
                 case 2:
@@ -182,6 +183,7 @@ public class LeftPPTerminal extends LinearOpMode {
                     moveUtils.goStraight(-17,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.strafeBuddy(24);
                     moveUtils.strafeBuddy(-2);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
                 case 3:
@@ -189,6 +191,7 @@ public class LeftPPTerminal extends LinearOpMode {
                     beginAuto();
                     moveUtils.goStraight(-45,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.strafeBuddy(24);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
             }

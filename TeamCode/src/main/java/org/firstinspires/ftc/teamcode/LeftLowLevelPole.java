@@ -27,8 +27,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name = "RightPPTerminal", group = "")
-public class RightPPTerminal extends LinearOpMode {
+@Autonomous(name = "LeftLowLevelPole", group = "")
+public class LeftLowLevelPole extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -51,8 +51,9 @@ public class RightPPTerminal extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
 
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    private static final String[] LABELS = {            "Bolt",
+    /*private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String[] LABELS = {
+            "Bolt",
             "Bulbs",
             "Panels"
     };
@@ -60,7 +61,7 @@ public class RightPPTerminal extends LinearOpMode {
             "AVXWcGz/////AAABmZfYj2wlVElmo2nUkerrNGhEBBg+g8Gq1KY3/lN0SEBYx7HyMslyrHttOZoGtwRt7db9nfvCiG0TBEp7V/+hojHXCorf1CEvmJWWka9nFfAbOuyl1tU/IwdgHIvSuW6rbJY2UmMWXfjryO3t9nNtRqX004LcE8O2zkKdBTw0xdqq4dr9zeA9gX0uayps7t0TRmiToWRjGUs9tQB3BDmSinXxEnElq+z3SMJGcn5Aj44iEB7uy/wuB8cGCR6GfOpDRYqn/R8wwD757NucR5LXA48rulTdthGIuHoEjud1QzyQOv4BpaODj9Oi0TMuBmBzhFJMwWzyZ4lKVyOCbf3uCRia7Q+HO+LbFbghNIGIIzZC";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
-
+*/
     private int resultROI=2;
 
     private  boolean done = false;
@@ -95,7 +96,7 @@ public class RightPPTerminal extends LinearOpMode {
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        pidRotate = new PIDController(.003, .00003, 0);
+        pidRotate = new PIDController(0.75, .5, .25);
 
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -116,15 +117,13 @@ public class RightPPTerminal extends LinearOpMode {
         Long currTime = startTime;
 
         initOpenCV();
-        /*initVuforia();
-        initTfod();
+  /*      initTfod();
 
         if (tfod != null) {
             tfod.activate();
 
             tfod.setZoom(1.5, 16.0 / 9.0);
-        }
-        */
+        }*/
         actuatorUtils.gripperClose(false);
 
 
@@ -137,7 +136,7 @@ public class RightPPTerminal extends LinearOpMode {
             // the last time that call was made.
             done = false;
             while (!done && opModeIsActive()) {
-                if (currTime - startTime < 500) {
+                if (currTime - startTime < 100) {
                     telemetry.addData("Camera: ", "Waiting to make sure valid data is incoming");
                 } else {
                     telemetry.addData("Time Delta: ", (currTime - startTime));
@@ -171,29 +170,23 @@ public class RightPPTerminal extends LinearOpMode {
                 case 1:
                     // Far left
                     beginAuto();
-                    moveUtils.goStraight(-45,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(90);
-                    moveUtils.goStraight(20,MIN_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.strafeBuddy(-23);
+                    moveUtils.goStraight(28f,MAX_SPEED,MIN_SPEED,ACCEL);
                     actuatorUtils.armPole(0);
                     done=true;
                     break;
                 case 2:
                     // Middle
                     beginAuto();
-                    moveUtils.goStraight(-18,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(-20);
-                    moveUtils.strafeBuddy(3);
+                    moveUtils.goStraight(20f,MAX_SPEED,MIN_SPEED,ACCEL);
                     actuatorUtils.armPole(0);
                     done=true;
                     break;
                 case 3:
                     // Far right
                     beginAuto();
-                    moveUtils.goStraight(-10,MIN_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(90);
-                    moveUtils.goStraight(22,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.strafeBuddy(15);
-                    moveUtils.goStraight(4,MIN_SPEED,MIN_SPEED,ACCEL);
+                    moveUtils.strafeBuddy(24);
+                    moveUtils.goStraight(28,MAX_SPEED,MIN_SPEED,ACCEL);
                     actuatorUtils.armPole(0);
                     done=true;
                     break;
@@ -204,11 +197,13 @@ public class RightPPTerminal extends LinearOpMode {
         }
     }
     private void beginAuto() throws InterruptedException {
-        moveUtils.goStraight(1.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCW(90);
-        moveUtils.goStraight(24,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.goStraight(4f,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCW(56);
+        actuatorUtils.armPole(1);
+        moveUtils.goStraight(10f,MAX_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
-
+        moveUtils.goStraight(-12f,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCCW(56);
     }
 
     void composeTelemetry() {
@@ -303,7 +298,7 @@ public class RightPPTerminal extends LinearOpMode {
             }
         });
     }
-    private void initTfod() {
+    /*private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -317,5 +312,5 @@ public class RightPPTerminal extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
-
+*/
 }

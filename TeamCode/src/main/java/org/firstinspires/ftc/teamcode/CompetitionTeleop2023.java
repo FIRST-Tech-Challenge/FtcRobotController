@@ -139,7 +139,7 @@ public class CompetitionTeleop2023 extends OpMode {
                 telemetry.addData("arm ticks", arm.getCurrentPosition());
                 telemetry.update();
                 //Moves the arm down
-            } else if (gamepad2.right_trigger >= .1 && arm.getCurrentPosition() > minEncode) {
+            } else if (gamepad2.right_trigger >= .1 && arm.getCurrentPosition() > 10) {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 arm.setPower(-gamepad2.right_trigger);
             } else {

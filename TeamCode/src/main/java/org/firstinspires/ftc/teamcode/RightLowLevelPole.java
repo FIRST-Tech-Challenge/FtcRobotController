@@ -136,7 +136,7 @@ public class RightLowLevelPole extends LinearOpMode {
             // the last time that call was made.
             done = false;
             while (!done && opModeIsActive()) {
-                if (currTime - startTime < 500) {
+                if (currTime - startTime < 100) {
                     telemetry.addData("Camera: ", "Waiting to make sure valid data is incoming");
                 } else {
                     telemetry.addData("Time Delta: ", (currTime - startTime));
@@ -172,12 +172,14 @@ public class RightLowLevelPole extends LinearOpMode {
                     beginAuto();
                     moveUtils.strafeBuddy(-17);
                     moveUtils.goStraight(34f,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
                 case 2:
                     // Middle
                     beginAuto();
                     moveUtils.goStraight(20f,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
                 case 3:
@@ -185,6 +187,7 @@ public class RightLowLevelPole extends LinearOpMode {
                     beginAuto();
                     moveUtils.strafeBuddy(26);
                     moveUtils.goStraight(28,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
             }
@@ -195,12 +198,12 @@ public class RightLowLevelPole extends LinearOpMode {
     }
     private void beginAuto() throws InterruptedException {
         moveUtils.goStraight(4f,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCCW(30);
+        moveUtils.turnCCW(36);  // original 30
         actuatorUtils.armPole(1);
         moveUtils.goStraight(4f,MAX_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
-        moveUtils.goStraight(-4f,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCW(30);
+        moveUtils.goStraight(-7.5f,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCW(36);
     }
 
     void composeTelemetry() {
