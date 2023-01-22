@@ -21,7 +21,7 @@ public class MechanismDriving {
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
     public static final long CLAW_SERVO_TIME = 500;
     //SPEED INFO: Scale from 0-1 in speed.
-    public static final double HORSESHOE_FRONT_POS = 0, HORSESHOE_REAR_POS = 1.0; //These are not final values
+    public static final double CLAW_ROTATOR_FRONT_POS = 0, CLAW_ROTATOR_REAR_POS = 1.0, CLAW_ROTATOR_SIDE_POS = 0.5;
     // How long it takes for the horseshoe wheels to be guaranteed to have pushed the cone into the horseshoe.
     public static final long HORSESHOE_TIME = 500;
     public static final int EPSILON = 50;  // slide encoder position tolerance;
@@ -52,17 +52,18 @@ public class MechanismDriving {
         }
     }
 
-    /** Sets the horseshoe position to the robot's desired state.
+    /** Sets the claw position to the robot's desired state.
      */
-    public void updateHorseshoe(Robot robot) {
-        switch (robot.desiredHorseshoeState) {
+    public void updateClawRotator(Robot robot) {
+        switch (robot.desiredClawRotatorState) {
             case FRONT:
-                robot.horseshoe.setPosition(HORSESHOE_FRONT_POS); //facing the front of the robot
-                robot.horseshoeIndicator.setPosition(0);
+                robot.clawRotator.setPosition(CLAW_ROTATOR_FRONT_POS); //facing the front of the robot
+                break;
+            case SIDE:
+                robot.clawRotator.setPosition(CLAW_ROTATOR_SIDE_POS);
                 break;
             case REAR:
-                robot.horseshoe.setPosition(HORSESHOE_REAR_POS); //facing the rear of the robot
-                robot.horseshoeIndicator.setPosition(1);
+                robot.clawRotator.setPosition(CLAW_ROTATOR_REAR_POS); //facing the rear of the robot
                 break;
         }
     }

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,11 +20,11 @@ public class Robot {
 
     public enum SlidesState {RETRACTED, LOW, MEDIUM, HIGH, UNREADY, MOVE_UP, MOVE_DOWN}
     public enum ParkingPosition {INSIDE, MIDDLE, OUTSIDE}
-    public enum HorseshoeState {FRONT, REAR}
+    public enum ClawRotatorState {FRONT, SIDE, REAR}
     public enum ClawState {OPEN, CLOSED}
 
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
-    public HorseshoeState desiredHorseshoeState;
+    public ClawRotatorState desiredClawRotatorState;
     public ClawState desiredClawState;
 
     enum BarcodeScanState {CHECK_SCAN, SCAN}
@@ -56,7 +55,7 @@ public class Robot {
 
     // Hardware
     public DcMotor slidesMotor;
-    public Servo horseshoe, horseshoeIndicator, claw, clawIndicator;
+    public Servo clawRotator, claw, clawIndicator;
 
     // Other
     public Telemetry telemetry;
@@ -73,12 +72,11 @@ public class Robot {
         numBarcodeAttempts = 0;
         resetBarcodeScanMap();
 
-        desiredHorseshoeState = HorseshoeState.FRONT;
+        desiredClawRotatorState = ClawRotatorState.FRONT;
         desiredClawState = ClawState.CLOSED;
 
         slidesMotor = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR));
-        horseshoe = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE));
-        horseshoeIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.HORSESHOE_INDICATOR));
+        clawRotator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_ROTATOR));
         claw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW));
         clawIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_INDICATOR));
 
@@ -118,7 +116,7 @@ public class Robot {
 class RobotConfig {
     enum Motors {SLIDES_MOTOR}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
-    enum Servos {HORSESHOE, HORSESHOE_INDICATOR, CLAW, CLAW_INDICATOR}
+    enum Servos {CLAW_ROTATOR, CLAW, CLAW_INDICATOR}
 
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
         put(Motors.SLIDES_MOTOR, "slides_motor");
@@ -139,8 +137,7 @@ class RobotConfig {
     }};
 
     public static final Map<Servos, String> ServoNames = new HashMap<Servos, String>() {{
-        put(Servos.HORSESHOE, "horseshoe");
-        put(Servos.HORSESHOE_INDICATOR, "horseshoe_indicator");
+        put(Servos.CLAW_ROTATOR, "claw_rotator");
         put(Servos.CLAW, "claw");
         put(Servos.CLAW_INDICATOR, "claw_indicator");
     }};

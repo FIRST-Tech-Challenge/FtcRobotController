@@ -68,7 +68,7 @@ public class RobotManager {
     public void readControllerInputs() {
         // Linear slides
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
-            if (robot.desiredHorseshoeState == Robot.HorseshoeState.FRONT)
+            if (robot.desiredClawRotatorState == Robot.ClawRotatorState.FRONT)
                 Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
         }
         if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
@@ -91,22 +91,23 @@ public class RobotManager {
         //    robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
         //}
 
-        //Horseshoe movement FRONT
-        if(getButtonRelease(GamepadWrapper.DriverAction.HORSESHOE_TO_FRONT)){
-            robot.desiredHorseshoeState = Robot.HorseshoeState.FRONT;
+        if (getButtonRelease(GamepadWrapper.DriverAction.POSITION_CLAW_FRONT)){
+            robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
         }
-        //Horseshoe movement BACK
-        if(getButtonRelease(GamepadWrapper.DriverAction.HORSESHOE_TO_BACK)){
-            if(Robot.desiredSlidesState!=Robot.SlidesState.RETRACTED)
-                robot.desiredHorseshoeState = Robot.HorseshoeState.REAR; //Rear is back.
+        if (getButtonRelease(GamepadWrapper.DriverAction.POSITION_CLAW_SIDE)){
+            robot.desiredClawRotatorState = Robot.ClawRotatorState.SIDE;
+        }
+        if (getButtonRelease(GamepadWrapper.DriverAction.POSITION_CLAW_REAR)){
+            robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
         }
 
         // Claw
-        if (getButtonRelease(GamepadWrapper.DriverAction.OPEN_CLAW)) {
-            robot.desiredClawState = Robot.ClawState.OPEN;
-        }
-        if (getButtonRelease(GamepadWrapper.DriverAction.CLOSE_CLAW)) {
-            robot.desiredClawState = Robot.ClawState.CLOSED;
+        if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_CLAW)) {
+            if (robot.desiredClawState == Robot.ClawState.OPEN) {
+                robot.desiredClawState = Robot.ClawState.CLOSED;
+            } else {
+                robot.desiredClawState = Robot.ClawState.OPEN;
+            }
         }
 
         // Adjust relative wheel speeds.
@@ -159,7 +160,7 @@ public class RobotManager {
             slidesPower = MechanismDriving.SLIDES_MAX_SPEED;
         }
 
-        mechanismDriving.updateHorseshoe(robot);
+        mechanismDriving.updateClawRotator(robot);
         mechanismDriving.updateSlides(robot, slidesPower);
         mechanismDriving.updateClaw(robot);
     }
@@ -234,12 +235,12 @@ public class RobotManager {
      *  This horse shoe code here is part of the linear slides and helps the cone position into the poles.
      */
     public void flipHorseshoe() {
-        switch (robot.desiredHorseshoeState) {
-            case FRONT: robot.desiredHorseshoeState = Robot.HorseshoeState.REAR;
-            case REAR: robot.desiredHorseshoeState = Robot.HorseshoeState.FRONT;
+        switch (robot.desiredClawRotatorState) {
+            case FRONT: robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
+            case REAR: robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
         }
         double startTime = robot.elapsedTime.milliseconds(); //Starts the time of the robot in milliseconds.
-        mechanismDriving.updateHorseshoe(robot);
+        mechanismDriving.updateClawRotator(robot);
         //case Robot.HorseshoeState.FRONT/REAR (Remove the / in between if needed to be added back. Only set 1 variable at a time)
         //Waiting for servo to finish rotation
         while (robot.elapsedTime.milliseconds() - startTime < MechanismDriving.HORSESHOE_TIME) {}
