@@ -21,7 +21,7 @@ public class Hardware2 {
     public BNO055IMU imu;
 
     public boolean runThisWithEncoder = true;
-    public BNO055IMU imu;
+
 
     // Other variable names
     HardwareMap hwMap;

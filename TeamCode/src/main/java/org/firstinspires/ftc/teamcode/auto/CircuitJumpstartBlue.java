@@ -26,38 +26,50 @@ public class CircuitJumpstartBlue extends BaseOpMode {
 
 
 //        ABOVE_GROUND(300),
-//        MEDIUM_JUNCTION(1850),
+//        MEDIUM_JUNCTION(2000),
 //        DOWN_OVER_JUNCTION(-600),
-//        FROM_OVER_JUNCTION_TO_STARTING_HEIGHT(-1550),
+//        FROM_OVER_JUNCTION_TO_STARTING_HEIGHT(-1700),
 //        TO_TOP_CONE_STACK(170),
-//        SMALL_JUNCTION(1150);
+//        SMALL_JUNCTION(250),
+//        HIGH_JUNCTION(2650);
 
 
-    public void terminalScoring() {
-        DriveUtils.encoderClaw(this,0.4,300,5);
-        DriveUtils.rotate(90,0.3,this);
-        AutoUtils.tileMove(this, "Front", 1,0.4);
+    public void highJunctionScoring() {
+        DriveUtils.encoderClaw(this,0.7,300,5); // Raises the claw to BASE height
+        DriveUtils.encoderStrafe(this,0.4,-23.5,5);
+        AutoUtils.tileMove(this,"Front",2,0.5);
+        AutoUtils.tileStrafe(this, "Right" ,0.5,0.4);
+        DriveUtils.encoderClaw(this,0.7,2650,10);
+        DriveUtils.encoderDrive(this,0.5,-4,-4,5); // Drives forward so the cone will drop on the junction
+        DriveUtils.encoderClaw(this,0.7, -300,5);
+        sleep(100);
         DriveUtils.moveClaw(this, "Open");
-        AutoUtils.tileMove(this, "Back", 1,0.4);
-        AutoUtils.tileStrafe(this, "Left" ,2,0.4);
+        sleep(100);
+        DriveUtils.encoderDrive(this,0.5,4,4,5); //Drives Back
+        DriveUtils.encoderClaw(this,0.7,-2350,10);
+        AutoUtils.tileStrafe(this, "Right" ,0.40,0.5);
+        DriveUtils.rotate(-90,0.3,this);
+
+
     }
     public void grabbingCone() {
-        AutoUtils.tileMove(this, "Front", 1.15,0.3);
-        DriveUtils.encoderClaw(this,0.4,170,5);
+        AutoUtils.tileMove(this, "Front", 0.85,0.5);
+        DriveUtils.encoderClaw(this,0.7,300,5);
+        DriveUtils.encoderDrive(this,0.3,-5,-5,5);
         DriveUtils.moveClaw(this, "Close");
-        sleep(1000);
-        DriveUtils.encoderClaw(this, 0.4, 600,5);
-        AutoUtils.tileMove(this, "Back", 1,0.3);
-        DriveUtils.encoderClaw(this,0.4,-770,5);
+        sleep(250);
+        DriveUtils.encoderClaw(this, 0.7, 600,5);
+        AutoUtils.tileMove(this, "Back", 0.85,0.4);
+        DriveUtils.encoderDrive(this,0.3,3,3,5);
     }
     public void smallJunctionScoring(){
-        AutoUtils.tileStrafe(this, "Right" ,0.5,0.4);
-        DriveUtils.encoderClaw(this,0.6,1150,5); // Raises the claw up to match the height of the junction
-        DriveUtils.encoderDrive(this,0.3,-5.3,-5.3,5); // Drives forward so the cone will drop on the junction
-        DriveUtils.encoderClaw(this,-0.5,-600,5); //Lowers the claw onto the junction
+        AutoUtils.tileStrafe(this, "Right" ,0.55,0.4);
+        DriveUtils.encoderClaw(this,0.7,250,5); // Raises the claw up to match the height of the junction
+        DriveUtils.encoderDrive(this,0.5,-3.5,-3.5,5); // Drives forward so the cone will drop on the junction
+        DriveUtils.encoderClaw(this,0.7,-300,5); //Lowers the claw onto the junction
         DriveUtils.moveClaw(this,"Open"); // Opens the claw
-        DriveUtils.encoderDrive(this,0.3,5.3,5.3,5); //Drives Back
-        AutoUtils.tileStrafe(this, "Left" ,0.5,0.4);
+        DriveUtils.encoderDrive(this,0.4,3.5,3.5,5); //Drives Back
+
     }
 
 
@@ -79,29 +91,29 @@ public class CircuitJumpstartBlue extends BaseOpMode {
         // Remember to change the camera rotation
         phoneCam.startStreaming(width, height, OpenCvCameraRotation.SIDEWAYS_LEFT);
         DriveUtils.initiate(this);
-        DriveUtils.moveClaw(this,"Open");
+        DriveUtils.moveClaw(this,"Close");
         waitForStart();
         //...
+        phoneCam.stopStreaming();
+        phoneCam.closeCameraDevice();
 
             String position = getPosition();
-            position = "center";
             if (position == "center") {
-                terminalScoring();
+                highJunctionScoring();
                 grabbingCone();
                 smallJunctionScoring();
-//                DriveUtils.encoderStrafe(this,0.4,13.5,5);
-                // Drives forward to go into the middle parking area
-                //DriveUtils.encoderDrive(this, 0.5, 10, 10, 7);
             } else if (position == "right") {
-                terminalScoring();
+                highJunctionScoring();
                 grabbingCone();
                 smallJunctionScoring();
-//                DriveUtils.encoderStrafe(this,0.4,40.5,5);
+                AutoUtils.tileStrafe(this,"Right", .45, 0.6);
+                AutoUtils.tileMove(this,"Front", 1, 0.6);
             } else if (position == "left") {
-                terminalScoring();
+                highJunctionScoring();
                 grabbingCone();
                 smallJunctionScoring();
-//                DriveUtils.encoderStrafe(this,0.4,-13.5,5);
+                AutoUtils.tileStrafe(this,"Left", .55, 0.6);
+                AutoUtils.tileMove(this,"Back", 1, 0.6);
             }
 
 
