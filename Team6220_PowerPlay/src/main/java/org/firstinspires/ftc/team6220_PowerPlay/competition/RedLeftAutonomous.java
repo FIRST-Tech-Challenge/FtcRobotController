@@ -1,16 +1,9 @@
 package org.firstinspires.ftc.team6220_PowerPlay.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.team6220_PowerPlay.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
-import org.firstinspires.ftc.team6220_PowerPlay.RobotCameraPipeline;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 //@Disabled
 @Autonomous(name = "RedLeftAutonomous")
@@ -34,7 +27,9 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         driveSlidesAutonomous(Constants.SLIDE_STOW);
 
-        driveInches(7.32, 55);
+        driveAutonomous(-7.32, 55);
+
+        driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
         turnToAngle(-45);
 
@@ -58,7 +53,7 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         driveSlides(Constants.SLIDE_LOW);
 
-        driveInches(153.4, 6.7);
+        driveAutonomous(153.4, 6.7);
 
         turnToAngle(180);
 
@@ -82,7 +77,7 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         driveSlides(Constants.SLIDE_LOW);
 
-        driveInches(153.4, 6.7);
+        driveAutonomous(153.4, 6.7);
 
         turnToAngle(180);
 
@@ -106,7 +101,7 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         driveSlides(Constants.SLIDE_LOW);
 
-        driveInches(153.4, 6.7);
+        driveAutonomous(153.4, 6.7);
 
         turnToAngle(180);
 
@@ -130,7 +125,7 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         driveSlides(Constants.SLIDE_LOW);
 
-        driveInches(153.4, 6.7);
+        driveAutonomous(153.4, 6.7);
 
         turnToAngle(180);
 
@@ -154,7 +149,7 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         driveSlides(Constants.SLIDE_LOW);
 
-        driveInches(153.4, 6.7);
+        driveAutonomous(153.4, 6.7);
 
         turnToAngle(180);
 

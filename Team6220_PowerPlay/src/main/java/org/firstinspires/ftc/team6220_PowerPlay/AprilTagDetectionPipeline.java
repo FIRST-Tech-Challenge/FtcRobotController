@@ -17,31 +17,34 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 
 public class AprilTagDetectionPipeline extends OpenCvPipeline {
-    private long aprilTagPointer;
-    private final Mat gray = new Mat();
-    private final Object detectionsUpdateSync = new Object();
-    private ArrayList<AprilTagDetection> detections = new ArrayList<>();
-    private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
-
-    Mat cameraMatrix;
     private static final Scalar blue = new Scalar(7, 197, 235, 255);
     private static final Scalar red = new Scalar(255, 0, 0, 255);
     private static final Scalar green = new Scalar(0, 255, 0, 255);
     private static final Scalar white = new Scalar(255, 255, 255, 255);
 
+    private final Mat gray = new Mat();
+    private final Object detectionsUpdateSync = new Object();
+
     // units are pixels
-    // calibration is for Logitech C920 webcam at 800 x 600
-    private final double fx = 775.790; // focal length x
-    private final double fy = 775.790; // focal length y
-    private final double cx = 400.898; // camera principal point x
-    private final double cy = 300.790; // camera principal point y
+    // calibration is for Logitech C920 webcam at 1920 x 1080
+    private final double fx = 1385.920; // focal length x
+    private final double fy = 1385.920; // focal length y
+    private final double cx = 951.982; // camera principal point x
+    private final double cy = 534.084; // camera principal point y
 
     // units are meters
     private final double tagSize = 0.03429;
+    private final Object decimationSync = new Object();
+
+    Mat cameraMatrix;
+
+    private long aprilTagPointer;
+
+    private ArrayList<AprilTagDetection> detections = new ArrayList<>();
+    private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
 
     private float decimation;
     private boolean needToSetDecimation;
-    private final Object decimationSync = new Object();
 
     public AprilTagDetectionPipeline() {
         constructMatrix();

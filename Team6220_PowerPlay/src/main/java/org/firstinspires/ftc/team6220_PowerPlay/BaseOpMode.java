@@ -14,7 +14,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
@@ -30,25 +29,20 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // servos
     public static ServoImplEx servoGrabber;
-
+    // OpenCV
+    public static OpenCvCamera robotCamera;
+    public static OpenCvCamera grabberCamera;
+    public static AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    public static RobotCameraPipeline robotCameraPipeline;
+    public static GrabberCameraPipeline grabberCameraPipeline;
     // IMU
     public BNO055IMU imu;
     public double originalAngle;
     public double startAngle;
-
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
-
     // bulk reading
     private List<LynxModule> hubs;
-
-    // OpenCV
-    public static OpenCvCamera robotCamera;
-    public static OpenCvCamera grabberCamera;
-
-    public static AprilTagDetectionPipeline aprilTagDetectionPipeline;
-    public static RobotCameraPipeline robotCameraPipeline;
-    public static GrabberCameraPipeline grabberCameraPipeline;
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -133,11 +127,11 @@ public abstract class BaseOpMode extends LinearOpMode {
             originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // set original angle
             turnFlag = true;
 
-        // otherwise read imu for correction
+            // otherwise read imu for correction
         } else {
             // obtain the current angle's error from the original angle
             double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            double angleError = originalAngle  - currentAngle;
+            double angleError = originalAngle - currentAngle;
 
             // flip to inverse of angles above 180 / below -180 (to prevent infinity-rotate bug)
             // to make sure to use the shorter angle
@@ -148,7 +142,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
             // apply a constant to turn the angle into a turn speed
-            tPower = Math.min(-Constants.HEADING_CORRECTION_KP * angleError, Constants.MAXIMUM_TURN_POWER);
+            tPower = Math.min(Math.abs(-Constants.HEADING_CORRECTION_KP_TELEOP * angleError), Constants.MAXIMUM_TURN_POWER_TELEOP) * Math.signum(-angleError);
         }
 
         // if the rotation rate is low, then that means all the momentum has left the robot's turning and can therefore turn the correction back on
@@ -185,16 +179,16 @@ public abstract class BaseOpMode extends LinearOpMode {
             if (error < 0 && error > -200) {
                 motorLeftSlides.setPower(-0.3);
                 motorRightSlides.setPower(-0.3);
-            // slides going down - bumpers
+                // slides going down - bumpers
             } else if (error < -200) {
                 motorLeftSlides.setPower(-1.0);
                 motorRightSlides.setPower(-1.0);
-            // slides going up - proportional control
+                // slides going up - proportional control
             } else {
                 motorLeftSlides.setPower(motorPower);
                 motorRightSlides.setPower(motorPower);
             }
-        // slides at target position
+            // slides at target position
         } else {
             motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
             motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
@@ -209,14 +203,14 @@ public abstract class BaseOpMode extends LinearOpMode {
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
             // center the cone on the junction top
-            if(pipeline.detected) {
+            if (pipeline.detected) {
                 driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
                 telemetry.addData("detected = ", pipeline.detected);
                 telemetry.update();
-            }else{
+            } else {
                 break;
             }
-        // while the cone isn't centered over the junction
+            // while the cone isn't centered over the junction
         } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
 
         stopDriveMotors();

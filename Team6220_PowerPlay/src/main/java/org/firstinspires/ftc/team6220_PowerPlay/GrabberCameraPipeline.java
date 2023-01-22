@@ -4,10 +4,8 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
@@ -24,15 +22,15 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
     Mat circleThresh = new Mat();
     Mat mask = new Mat();
     Mat circles = new Mat();
-    Point centerPoint = new Point(Constants.CAMERA_CENTER_X,Constants.CAMERA_CENTER_Y);
+    Point centerPoint = new Point(Constants.CAMERA_CENTER_X, Constants.CAMERA_CENTER_Y);
 
     @Override
     public Mat processFrame(Mat input) {
         //make the circle that will be used to crop the image
-        Imgproc.circle(circleThresh, centerPoint, 200, new Scalar(255,255,255), -1, 8, 0 );
+        Imgproc.circle(circleThresh, centerPoint, 200, new Scalar(255, 255, 255), -1, 8, 0);
 
         //crop the input image based on the circle
-        input.copyTo(mask,circleThresh);
+        input.copyTo(mask, circleThresh);
 
         //transform the RGB frame into a HSV frame
         Imgproc.cvtColor(input, mask, Imgproc.COLOR_RGB2HSV);
@@ -69,8 +67,8 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
             }
 
             //find the data for the largest circle
-            Point center = new Point(Math.round(circles.get(0,maxCircleId)[0]), Math.round(Math.round(circles.get(0,maxCircleId)[1])));
-            int radius = (int) Math.round(Math.round(circles.get(0,maxCircleId)[2]));
+            Point center = new Point(Math.round(circles.get(0, maxCircleId)[0]), Math.round(Math.round(circles.get(0, maxCircleId)[1])));
+            int radius = (int) Math.round(Math.round(circles.get(0, maxCircleId)[2]));
             Imgproc.circle(mask, center, radius, new Scalar(0, 0, 255), 3, 8, 0);
 
             //set Xpos and Ypos to the x and y of the circle
@@ -79,10 +77,10 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
 
             //i3f no circles are found set the detected boolean to false and the Xpos and Ypos to 0,0
         } else {
-        xPosition = Constants.CAMERA_CENTER_X;
-        yPosition = Constants.CAMERA_CENTER_Y;
-        detected = false;
-    }
+            xPosition = Constants.CAMERA_CENTER_X;
+            yPosition = Constants.CAMERA_CENTER_Y;
+            detected = false;
+        }
 
         contours.clear();
         return mask;

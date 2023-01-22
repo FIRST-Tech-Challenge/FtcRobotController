@@ -6,19 +6,23 @@ import org.opencv.core.Size;
 public class Constants {
     public static final double INCHES_PER_METER = 100 / 2.54;
 
-    public static final double HEADING_CORRECTION_KP = 0.03;
+    public static final double HEADING_CORRECTION_KP_TELEOP = 0.03;
+    public static final double HEADING_CORRECTION_KP_AUTONOMOUS = 0.001;
 
-    public static final double TURNING_KP = 0.005;
+    public static final double TURNING_KP = 0.008;
 
     public static final int UNIT_CIRCLE_OFFSET_DEGREES = 90;
 
-    public static final double DRIVE_CURVE_FACTOR = 0.31;
+    public static final double DRIVE_CURVE_FACTOR = 0.55;
 
     public static final double MINIMUM_TURN_POWER = 0.05;
-    public static final double MAXIMUM_TURN_POWER = 0.25;
-
     public static final double MINIMUM_DRIVE_POWER = 0.05;
-    public static final double MAXIMUM_DRIVE_POWER = 0.5;
+
+    public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.3;
+    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.6;
+
+    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
+    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.7;
 
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;

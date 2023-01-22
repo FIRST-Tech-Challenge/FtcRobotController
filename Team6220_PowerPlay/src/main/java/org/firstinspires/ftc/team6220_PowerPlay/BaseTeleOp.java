@@ -44,13 +44,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
             originalAngle = startAngle + 180;
         }
 
-        x = Constants.DRIVE_CURVE_FACTOR * gamepad1.left_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.left_stick_x, 3);
-        y = Constants.DRIVE_CURVE_FACTOR * -gamepad1.left_stick_y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(-gamepad1.left_stick_y, 3);
-        t = Constants.DRIVE_CURVE_FACTOR * gamepad1.right_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.right_stick_x, 3);
-
-        x = Math.max(Math.abs(x), Constants.MAXIMUM_DRIVE_POWER) * Math.signum(x);
-        y = Math.max(Math.abs(y), Constants.MAXIMUM_DRIVE_POWER) * Math.signum(y);
-        t = Math.max(Math.abs(t), Constants.MAXIMUM_TURN_POWER) * Math.signum(t);
+        x = (Constants.DRIVE_CURVE_FACTOR * gamepad1.left_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.left_stick_x, 3)) * Constants.MAXIMUM_DRIVE_POWER_TELEOP;
+        y = (Constants.DRIVE_CURVE_FACTOR * -gamepad1.left_stick_y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(-gamepad1.left_stick_y, 3)) * Constants.MAXIMUM_DRIVE_POWER_TELEOP;
+        t = (Constants.DRIVE_CURVE_FACTOR * gamepad1.right_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.right_stick_x, 3)) * Constants.MAXIMUM_TURN_POWER_TELEOP;
 
         xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
         yRotatedVector = x * Math.sin(negativeHeadingRadians) + y * Math.cos(negativeHeadingRadians);
@@ -161,7 +157,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
         // don't let target position go below slide bottom position
         if (slideTargetPosition <= Constants.SLIDE_BOTTOM) {
             slideTargetPosition = Constants.SLIDE_BOTTOM;
-        // don't let target position go above slide top position
+            // don't let target position go above slide top position
         } else if (slideTargetPosition >= Constants.SLIDE_TOP) {
             slideTargetPosition = Constants.SLIDE_TOP;
         }

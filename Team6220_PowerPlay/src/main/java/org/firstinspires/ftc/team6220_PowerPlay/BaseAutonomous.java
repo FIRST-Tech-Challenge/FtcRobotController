@@ -2,13 +2,11 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
@@ -17,12 +15,16 @@ import java.util.Locale;
 public abstract class BaseAutonomous extends BaseOpMode {
     /**
      * this method will allow the robot to drive straight in a specified direction given a specified heading and distance
-     * @param heading 360-degree direction robot should move (front is 0)
+     * @param driveCourse 360-degree direction robot should drive (front is 0)
      * @param targetDistance distance robot should move in inches
      */
-    public void driveInches(double heading, double targetDistance) {
+    public void driveAutonomous(double driveCourse, double targetDistance) {
         // encoder values of the drive motors
         int eFL, eFR, eBL, eBR;
+
+        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        double currentAngle;
+        double tPower;
 
         // looking at robot from the back, x is left/right and y is forwards/backwards
         double xPosition, yPosition;
@@ -51,12 +53,18 @@ public abstract class BaseAutonomous extends BaseOpMode {
             eBL = motorBL.getCurrentPosition();
             eBR = motorBR.getCurrentPosition();
 
-            ratio = remainingDistance / targetDistance;
+            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            tPower = (currentAngle - startAngle) * Constants.HEADING_CORRECTION_KP_AUTONOMOUS;
 
-            xPower = Math.max(Math.cos(Math.toRadians(heading + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * Constants.MAXIMUM_DRIVE_POWER * ratio, Constants.MINIMUM_DRIVE_POWER);
-            yPower = Math.max(Math.sin(Math.toRadians(heading + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * Constants.MAXIMUM_DRIVE_POWER * ratio, Constants.MINIMUM_DRIVE_POWER);
+            ratio = Math.max(remainingDistance / targetDistance, 0.1);
 
-            driveWithIMU(xPower, yPower, 0.0);
+            xPower = Math.cos(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * ratio * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
+            yPower = Math.sin(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * ratio * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
+
+            motorFL.setPower(yPower + xPower + tPower);
+            motorFR.setPower(yPower - xPower - tPower);
+            motorBL.setPower(yPower - xPower + tPower);
+            motorBR.setPower(yPower + xPower - tPower);
 
             xPosition = (eFL - eFR - eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;
             yPosition = (eFL + eFR + eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;
@@ -87,14 +95,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
                 angleError += 360.0;
             }
 
-            // robot is turning counter-clockwise
-            if (angleError > 0) {
-                motorPower = Math.min(angleError / -Constants.TURNING_KP, -Constants.MINIMUM_TURN_POWER);
-
-            // robot is turning clockwise
-            } else {
-                motorPower = Math.max(angleError / -Constants.TURNING_KP, Constants.MINIMUM_TURN_POWER);
-            }
+            motorPower = angleError * -Constants.TURNING_KP;
+            motorPower = Math.max(Math.min(Math.abs(motorPower), Constants.MAXIMUM_TURN_POWER_AUTONOMOUS), Constants.MINIMUM_TURN_POWER) * Math.signum(motorPower);
 
             motorFL.setPower(motorPower);
             motorFR.setPower(-motorPower);
@@ -122,7 +124,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             if (error < 0) {
                 motorLeftSlides.setPower(-1.0);
                 motorRightSlides.setPower(-1.0);
-            // slides going up - proportional control
+                // slides going up - proportional control
             } else {
                 motorLeftSlides.setPower(motorPower);
                 motorRightSlides.setPower(motorPower);
@@ -146,11 +148,12 @@ public abstract class BaseAutonomous extends BaseOpMode {
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                robotCamera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
+                robotCamera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode) {}
+            public void onError(int errorCode) {
+            }
         });
 
         robotCamera.setPipeline(aprilTagDetectionPipeline);
@@ -185,7 +188,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
                     telemetry.addLine(String.format(Locale.US, "Roll Rotation: %d degrees", (int) (Math.toDegrees(tagOfInterest.pose.roll))));
                 }
 
-            // tag has never been detected
+                // tag has never been detected
             } else {
                 telemetry.addLine("can't see tag of interest :(\n");
                 telemetry.addLine("the tag has never been seen");
@@ -198,7 +201,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         if (tagOfInterest == null) {
             return 1;
 
-        // return detected tag
+            // return detected tag
         } else {
             return tagOfInterest.id;
         }

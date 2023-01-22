@@ -17,12 +17,13 @@ public class RobotCameraPipeline extends OpenCvPipeline {
     public double yPosition = Constants.CAMERA_CENTER_Y;
     public double width = 0.0;
 
-    private Scalar lowerRange;
-    private Scalar upperRange;
-
     List<MatOfPoint> contours = new ArrayList<>();
+
     Mat hierarchy = new Mat();
     Mat mat = new Mat();
+
+    private Scalar lowerRange;
+    private Scalar upperRange;
 
     // method used to set the ranges for the pipeline
     public void setRanges(Scalar lowerRange, Scalar upperRange) {
