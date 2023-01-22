@@ -44,7 +44,7 @@ public class Chassis {
         double leftBackPower;
         double rightBackPower;
 
-        if (Math.abs(Math.atan2(Math.abs(left_y), Math.abs(left_x))) < Math.PI/14.0) {
+        if (Math.abs(Math.atan2(Math.abs(left_y), Math.abs(left_x))) < Math.PI/14.0 && strafe_side == 0) {
             if (gamepad.right_bumper) {
                 leftFrontPower = -1;
                 rightFrontPower = 1;
@@ -56,7 +56,7 @@ public class Chassis {
                 leftBackPower = left_x * 0.8 - strafe_side * 0.6;
                 rightBackPower = -left_x * 0.8 + strafe_side * 0.6;
             }
-        } else if (Math.abs(Math.atan2(Math.abs(left_x), Math.abs(left_y))) < Math.PI/14.0) {
+        } else if (Math.abs(Math.atan2(Math.abs(left_x), Math.abs(left_y))) < Math.PI/14.0 && strafe_side == 0) {
              if (gamepad.right_bumper) {
                  leftFrontPower = 1;
                  rightFrontPower = 1;
@@ -69,10 +69,10 @@ public class Chassis {
                  rightBackPower = left_y * 0.8 + strafe_side * 0.6;
              }
         } else {
-            leftFrontPower = (left_y - left_x) * 0.6 - strafe_side * 0.6;
-            rightFrontPower = (left_y + left_x) * 0.6 + strafe_side * 0.6;
-            leftBackPower = (left_y + left_x) * 0.6 - strafe_side * 0.6;
-            rightBackPower = (left_y - left_x) * 0.6 + strafe_side * 0.6;
+            leftFrontPower = (left_y - left_x) * 0.7 - strafe_side * 0.7;
+            rightFrontPower = (left_y + left_x) * 0.7 + strafe_side * 0.7;
+            leftBackPower = (left_y + left_x) * 0.7 - strafe_side * 0.7;
+            rightBackPower = (left_y - left_x) * 0.7 + strafe_side * 0.7;
         }
 
         double max = Math.max(Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower)), Math.max(Math.abs(leftBackPower), Math.abs(rightBackPower)));
