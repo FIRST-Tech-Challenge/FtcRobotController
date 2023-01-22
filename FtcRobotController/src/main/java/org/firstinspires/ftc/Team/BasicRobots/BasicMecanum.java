@@ -20,17 +20,19 @@ public class BasicMecanum {
     //public double mult = 0.29;
 
     public void init(HardwareMap Map) {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             motors[i] = Map.dcMotor.get(names[i]);
         }
         
         mapAll(m -> {
             m.setPower(0.0);
-            m.setDirection(DcMotorSimple.Direction.FORWARD);
             m.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         });
+
+        mapRight(m -> m.setDirection(DcMotorSimple.Direction.FORWARD));
+        mapLeft(m -> m.setDirection(DcMotorSimple.Direction.REVERSE));
     }
 
     public void mapAll (Consumer<DcMotor> f) {
@@ -64,6 +66,16 @@ public class BasicMecanum {
     public void mapBack (Consumer<DcMotor> f) {
         f.accept(motors[RBMotor]);
         f.accept(motors[LBMotor]);
+    }
+
+    public void mapRightDiagonal (Consumer<DcMotor> f) {
+        f.accept(motors[RFMotor]);
+        f.accept(motors[LBMotor]);
+    }
+
+    public void mapLeftDiagonal (Consumer<DcMotor> f) {
+        f.accept(motors[LFMotor]);
+        f.accept(motors[RBMotor]);
     }
 
     //Move straight function
@@ -103,66 +115,49 @@ public class BasicMecanum {
     }
 
     //Pivot in place based on input from two buttons (left/right (booleans)) and a power setting (0-1 (double-precision float))
-
     public void pivotTurn(double input_power, boolean rightBumper, boolean leftBumper) {
-        final double power = input_power * 0.5;
+        //final double power = input_power * 0.5;
+        final double power = input_power;
         if(rightBumper && leftBumper) {
             this.stop();
         } else if(leftBumper) {
-            mapRight(m -> m.setPower(power));
-            mapLeft(m -> m.setPower(-power));
-        } else if(rightBumper) {
-            mapRight(m -> m.setPower(-power));
             mapLeft(m -> m.setPower(power));
+            mapRight(m -> m.setPower(-power));
+        } else if(rightBumper) {
+            mapLeft(m -> m.setPower(-power));
+            mapRight(m -> m.setPower(power));
         }
+    }
+
+    double on (boolean trigger) {
+        return trigger ? 1.0 : 0.0;
     }
 
     //Strafe in all 8 directions based on button inputs (up/down/left/right (boolean)) and a power setting (0-1 (double-precision float))
 
     public void octoStrafe(double power, boolean up, boolean down, boolean left, boolean right) {
         if (up) {
-            if (right) {
-                motors[0].setPower(power);
-                motors[2].setPower(0);
-                motors[1].setPower(0);
-                motors[3].setPower(power);
-            } else if (left) {
-                motors[0].setPower(0);
-                motors[2].setPower(power);
-                motors[1].setPower(power);
-                motors[3].setPower(0);
+            if (right | left) {
+                mapLeftDiagonal(m -> m.setPower(power * on(right)));
+                mapRightDiagonal(m -> m.setPower(power * on(left)));
             } else {
                 mapAll(m -> m.setPower(power));
             }
         } else if (down) {
-            if (right) {
-                motors[0].setPower(0);
-                motors[2].setPower(-power);
-                motors[1].setPower(-power);
-                motors[3].setPower(0);
-            } else if (left) {
-                motors[0].setPower(-power);
-                motors[2].setPower(0);
-                motors[1].setPower(0);
-                motors[3].setPower(-power);
+            if (right | left) {
+                mapLeftDiagonal(m -> m.setPower(-power * on(left)));
+                mapRightDiagonal(m -> m.setPower(-power * on(right)));
             } else {
-                motors[0].setPower(-1);
-                motors[2].setPower(-power);
-                motors[1].setPower(-1);
-                motors[3].setPower(-power);
+                mapAll(m -> m.setPower(-power));
             }
         }
         else {
             if (right) {
-                motors[0].setPower(-power);
-                motors[2].setPower(power);
-                motors[1].setPower(power);
-                motors[3].setPower(-power);
+                mapLeftDiagonal(m -> m.setPower(power));
+                mapRightDiagonal(m -> m.setPower(-power));
             } else if (left) {
-                motors[0].setPower(power);
-                motors[2].setPower(-power);
-                motors[1].setPower(-power);
-                motors[3].setPower(power);
+                mapLeftDiagonal(m -> m.setPower(-power));
+                mapRightDiagonal(m -> m.setPower(power));
             }
         }
     }
