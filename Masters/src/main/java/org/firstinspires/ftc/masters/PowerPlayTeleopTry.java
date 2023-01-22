@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.checkerframework.checker.units.qual.A;
+
 @Config
 @TeleOp(name="Power Play TeleOp DO NOT USE", group = "test")
 public class PowerPlayTeleopTry extends LinearOpMode {
@@ -21,8 +23,9 @@ public class PowerPlayTeleopTry extends LinearOpMode {
    // SampleMecanumDriveCancelable drive;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    PIDController armController, liftController;
-
+//    PIDController liftController;
+    ArmPIDController armPIDController;
+    LiftPIDController liftPIDController;
     /* Declare OpMode members. */
     private final ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontMotor = null;
@@ -30,15 +33,15 @@ public class PowerPlayTeleopTry extends LinearOpMode {
     DcMotor leftRearMotor = null;
     DcMotor rightRearMotor = null;
     //DcMotor intakeMotor = null;
-    DcMotor linearSlideMotor = null;
-    DcMotor frontSlide = null;
-    DcMotor slideOtherer = null;
+    DcMotorEx linearSlideMotor = null;
+    DcMotorEx frontSlide = null;
+    DcMotorEx slideOtherer = null;
 
     private final double ticks_in_degree = 1425/360;
 
 
     Servo clawServo = null;
-    DcMotor armMotor = null;
+    DcMotorEx armMotor = null;
     Servo tippingServo = null;
 
     double maxPowerConstraint = 0.75;
@@ -59,7 +62,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
     public static double clawServoOpen = 0.56;
     public static double clawServoClosed = 0.88;
     protected final int ARM_BOTTOM = 0;
-    protected final int ARM_STOP = 100;
+   // protected final int ARM_STOP = 100;
     public final int ARM_MID_TOP = 450;
     public final int ARM_BOTTOM_JUNCTION = 300;
     protected final int ARM_BACK = 600;
@@ -111,12 +114,12 @@ public class PowerPlayTeleopTry extends LinearOpMode {
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
-        linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
-        frontSlide = hardwareMap.dcMotor.get("frontSlide");
-        slideOtherer = hardwareMap.dcMotor.get("slideOtherer");
+        linearSlideMotor = hardwareMap.get(DcMotorEx.class, "linearSlide");
+        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide");
+        slideOtherer = hardwareMap.get(DcMotorEx.class, "slideOtherer");
 
         clawServo = hardwareMap.servo.get("clawServo");
-        armMotor = hardwareMap.dcMotor.get("armServo");
+        armMotor = hardwareMap.get(DcMotorEx.class,"armServo");
         tippingServo = hardwareMap.servo.get("tippingServo");
 
         // Set the drive motor direction:
@@ -146,8 +149,10 @@ public class PowerPlayTeleopTry extends LinearOpMode {
         frontSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        liftController = new PIDController(p, i, d);
-        armController = new PIDController(p_arm, i_arm, d_arm);
+        //liftController = new PIDController(p, i, d);
+//        armController = new PIDController(p_arm, i_arm, d_arm);
+        armPIDController = new ArmPIDController(armMotor);
+        liftPIDController = new LiftPIDController(linearSlideMotor, frontSlide, slideOtherer);
 
         // Wait for the game to start (driver presses PLAY)
 
@@ -320,7 +325,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 if (currentState!=STATE.ZERO) {
                     previousState = currentState;
                     currentState = STATE.ZERO;
-                    armSelection = ARM_STOP;
+                    armSelection = ARM_BOTTOM;
                     slideSelection = SLIDE_BOTTOM;
                     if (previousState == STATE.BOTTOM) {
                         armTarget = armSelection;
@@ -342,7 +347,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
             } else if (currentState == STATE.ZERO && previousState!=STATE.ZERO ){
 
                 if (linearSlideMotor.getCurrentPosition()<100 ){
-                    armTarget=ARM_STOP;
+                    armTarget=ARM_BOTTOM;
                 }
 
                 if (armMotor.getCurrentPosition()<200 && !set){
@@ -423,20 +428,12 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
     protected void moveSlideMotors (){
 
-        int liftPos = linearSlideMotor.getCurrentPosition();
-        double pid = liftController.calculate(liftPos, slideTarget);
+        liftPIDController.setTarget(slideTarget);
 
-        double power = pid +f_lift;
+        linearSlideMotor.setPower(liftPIDController.calculatePower());
+        frontSlide.setPower(liftPIDController.calculatePower());
+        slideOtherer.setPower(liftPIDController.calculatePower());
 
-//        if (slideTarget<50 && liftPos<50){
-//            linearSlideMotor.setPower(0);
-//            frontSlide.setPower(0);
-//            slideOtherer.setPower(0);
-//        } else {
-            linearSlideMotor.setPower(power);
-            frontSlide.setPower(power);
-            slideOtherer.setPower(power);
-      //  }
 
         telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
         telemetry.addData("front", frontSlide.getCurrentPosition());
@@ -445,18 +442,11 @@ public class PowerPlayTeleopTry extends LinearOpMode {
     }
 
     protected void moveArm (){
-        int armPos = armMotor.getCurrentPosition();
-        double pid = armController.calculate(armPos, armTarget);
+        armPIDController.setTarget(armTarget);
+        double velocity = armPIDController.calculateVelocity();
+        armMotor.setVelocity(velocity);
 
-        double ff = Math.cos(Math.toRadians(armTarget/ticks_in_degree))*f_arm;
-
-        double power = pid +ff;
-        if (armTarget ==0 && armPos<10){
-            armMotor.setPower(0);
-        } else {
-            armMotor.setPower(power);
-        }
-        telemetry.addData("power", power);
+        telemetry.addData("power", velocity);
     }
 
     enum STATE{

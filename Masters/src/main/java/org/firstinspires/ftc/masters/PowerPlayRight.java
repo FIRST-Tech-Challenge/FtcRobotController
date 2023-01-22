@@ -47,8 +47,9 @@ public class PowerPlayRight extends LinearOpMode {
                 .splineTo(new Vector2d(10.75,-35.5),Math.toRadians(135))
                 .build();
 
-        Trajectory firstDepositToConeStack = drive.trajectoryBuilder(drive.getPoseEstimate())
+        Trajectory firstDepositToConeStack = drive.trajectoryBuilder(startToFirstDeposit.end())
                 .splineTo(new Vector2d(20,-14), Math.toRadians(0))
+                .lineToConstantHeading(new Vector2d(59, -14))
                 .build();
 
         Trajectory scoreNewCone = drive.trajectoryBuilder(drive.getPoseEstimate())
@@ -102,44 +103,44 @@ public class PowerPlayRight extends LinearOpMode {
                         drive.followTrajectoryAsync(scoreNewCone);
                     }
                     break;
-                case SCORE_CONE:
-                    if (!drive.isBusy() && getRuntime() < 900000000) {
-                        currentState = State.NEW_CONE;
-                        drive.followTrajectoryAsync(fromScoreNewConeToConeStack);
-
-                    } else if(!drive.isBusy()) {
-
-                        if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
-                            currentState = State.PARK_GRAY;
-                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
-                            currentState = State.PARK_GREEN;
-                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.RED) {
-                            currentState = State.PARK_RED;
-                        }
-                    }
-                    break;
-                case NEW_CONE:
-                    if (!drive.isBusy()) {
-                        currentState = State.SCORE_CONE;
-                        drive.followTrajectoryAsync(scoreNewCone);
-                    } else if(getRuntime() == 900000000) {
-
-                    }
-                    break;
-                case PARK_GRAY:
-                    drive.followTrajectoryAsync(parkGray);
-                    if (!drive.isBusy()) {
-
-                    }
-                    break;
-                case PARK_RED:
-                    drive.followTrajectoryAsync(parkRed);
-                    if (!drive.isBusy()) {
-
-                    }
-                    break;
-                case PARK_GREEN:
-                    break;
+//                case SCORE_CONE:
+//                    if (!drive.isBusy() && getRuntime() < 900000000) {
+//                        currentState = State.NEW_CONE;
+//                        drive.followTrajectoryAsync(fromScoreNewConeToConeStack);
+//
+//                    } else if(!drive.isBusy()) {
+//
+//                        if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
+//                            currentState = State.PARK_GRAY;
+//                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
+//                            currentState = State.PARK_GREEN;
+//                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.RED) {
+//                            currentState = State.PARK_RED;
+//                        }
+//                    }
+//                    break;
+//                case NEW_CONE:
+//                    if (!drive.isBusy()) {
+//                        currentState = State.SCORE_CONE;
+//                        drive.followTrajectoryAsync(scoreNewCone);
+//                    } else if(getRuntime() == 900000000) {
+//
+//                    }
+//                    break;
+//                case PARK_GRAY:
+//                    drive.followTrajectoryAsync(parkGray);
+//                    if (!drive.isBusy()) {
+//
+//                    }
+//                    break;
+//                case PARK_RED:
+//                    drive.followTrajectoryAsync(parkRed);
+//                    if (!drive.isBusy()) {
+//
+//                    }
+//                    break;
+//                case PARK_GREEN:
+//                    break;
             }
         }
 

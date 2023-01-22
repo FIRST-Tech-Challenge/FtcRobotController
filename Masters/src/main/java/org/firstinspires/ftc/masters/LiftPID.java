@@ -14,13 +14,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp(name="Lift PID")
 public class LiftPID extends LinearOpMode {
 
-    PIDController liftController, armController;
+    PIDController liftController;
+    ArmPIDController armPIDController;
 
     public static double p=0.04, i=0, d=0.0001;
     public static double f=0.06;
     public static double p_arm=0.025, i_arm=0.05, d_arm=0.0001;
     public static double f_arm=0.16;
+    public static double multiplier = 0.5;
+    public  static double multiplierZero = 0.2;
 
+    public int ticks= 385;
     public static int target =0;
     int armTarget = 300;
 
@@ -28,9 +32,10 @@ public class LiftPID extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        double multi = multiplier;
 
         liftController = new PIDController(p, i, d);
-        armController = new PIDController(p_arm, i_arm, d_arm);
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         linearSlideMotor = hardwareMap.get(DcMotorEx.class,"linearSlide");
@@ -47,33 +52,32 @@ public class LiftPID extends LinearOpMode {
 
         double ticks_in_degree = 1425/360;
 
+        armPIDController = new ArmPIDController(armServo);
+
         waitForStart();
         while (opModeIsActive()){
+            if (target ==0){
+                multi= multiplierZero;
+            } else {
+                multi= multiplier;
+            }
             liftController.setPID(p, i, d);
             int liftPos = linearSlideMotor.getCurrentPosition();
             double pid = liftController.calculate(liftPos, target);
 
             double power = pid +f;
 
-            linearSlideMotor.setPower(power);
-            frontSlide.setPower(power);
-            slideOtherer.setPower(power);
+            linearSlideMotor.setPower((liftController.calculate(linearSlideMotor.getCurrentPosition(), target)+f) *multi);
+            frontSlide.setPower((liftController.calculate(linearSlideMotor.getCurrentPosition(), target)+f) *multi);
+            slideOtherer.setPower((liftController.calculate(linearSlideMotor.getCurrentPosition(), target)+f) *multi);
 
             telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
             telemetry.addData("front", frontSlide.getCurrentPosition());
             telemetry.addData("other", slideOtherer.getCurrentPosition());
 
-            int armPos = armServo.getCurrentPosition();
-            double pidArm = armController.calculate(armPos, armTarget);
+            armPIDController.setTarget(armTarget);
+            armServo.setVelocity(armPIDController.calculateVelocity());
 
-            double ff = Math.cos(Math.toRadians(target/ticks_in_degree))*f;
-
-            double armPower = pidArm +ff;
-            if (target ==0 && armPos<10){
-                armServo.setPower(0);
-            } else {
-                armServo.setPower(armPower);
-            }
 
             telemetry.addData("target", target);
             telemetry.update();
