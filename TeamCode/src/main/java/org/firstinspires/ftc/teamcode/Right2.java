@@ -184,9 +184,8 @@ public class Right2 extends LinearOpMode {
         if (opModeIsActive()) {                 //start of the autonmous queue
             Left.setPower(.3);
             sleep(500);
-            //crane(-1,400);
-            //strafeLeftwithdistanceandcrane(1,32,-1,2300);
-            strafeLeftwithdistanceandcrane(1,32,1,-2000);
+            crane(-1,400);
+            strafeLeftwithdistanceandcrane(1,32,-1,2000);
             //crane2(1,-7600);
             move(.5,-200);
             sleep(100);
@@ -429,7 +428,7 @@ public class Right2 extends LinearOpMode {
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        crane2(powerc, timec);
+        crane(powerc, timec);
         while(distance.getDistance(DistanceUnit.INCH)<distances && opModeIsActive()){
             frontRight.setPower(-power);
             frontLeft.setPower(power);
