@@ -47,8 +47,8 @@ public class BasicTeleOp extends LinearOpMode {
 //            robot.mapLeft(m -> m.setPower(powLeft));
             if (gamepad1.left_bumper | gamepad1.right_bumper) {
                 robot.pivotTurn(1, gamepad1.left_bumper, gamepad1.right_bumper);
-            } else if (gamepad1.dpad_up | gamepad1.dpad_down | gamepad1.dpad_left | gamepad1.dpad_right) {
-                robot.octoStrafe(1, gamepad1.dpad_up, gamepad1.dpad_down, gamepad1.dpad_left, gamepad1.dpad_right);
+            } else if (Math.abs(gamepad1.right_stick_x) > 0.5 | Math.abs(gamepad1.right_stick_y) > 0.5) {
+                robot.octoStrafe(-0.7, gamepad1.right_stick_y > 0.5, gamepad1.right_stick_y < -0.5, gamepad1.right_stick_x > 0.5, gamepad1.right_stick_x < -0.5);
             } else {
                 robot.stop();
             }
