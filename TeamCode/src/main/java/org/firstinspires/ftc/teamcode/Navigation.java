@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -48,7 +47,7 @@ public class Navigation {
     // ================
     static final double MOVEMENT_MAX_POWER = 1;
     static final double ROTATION_POWER = 0.6;
-    static final double DPAD_MOVEMENT_SCALE_FACTOR = 0.5;
+    static final double SLOW_MOVEMENT_SCALE_FACTOR = 0.5;
 
     // INSTANCE ATTRIBUTES
     // ===================
@@ -126,19 +125,13 @@ public class Navigation {
         if (distance <= RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {  // joystick dead zone
             // Joystick is not used, but hasMovementDirection is true, so one of the straight movement buttons must
             // have been pressed.
-            strafePower = DPAD_MOVEMENT_SCALE_FACTOR;
+            strafePower = SLOW_MOVEMENT_SCALE_FACTOR;
         } else {
             strafePower = distance * MOVEMENT_MAX_POWER;
+            if (Robot.desiredSlidesState == Robot.SlidesState.HIGH) {
+                strafePower *= SLOW_MOVEMENT_SCALE_FACTOR;
+            }
         }
-//
-//        switch (robot.movementMode) {
-//            case FINE:
-//                strafePower *= DPAD_MOVEMENT_SCALE_FACTOR;
-//                break;
-//            case ULTRA_FINE:
-//                strafePower *= ULTRA_FINE_MOVEMENT_SCALE_FACTOR;
-//                break;
-//        }
     }
 
     /** Moves the robot straight in one of the cardinal directions or at a 45 degree angle.
