@@ -216,13 +216,13 @@ object Scheduler {
     private val messages = mutableMapOf<Any, MutableList<Runnable>>()
 
     @JvmStatic
-    fun emit(message: Any) {
-        messages[message]?.forEach(Runnable::run)
+    fun on(message: Any, callback: Runnable) {
+        messages.getOrPut(message, ::ArrayList) += callback
     }
 
     @JvmStatic
-    fun on(message: Any, callback: Runnable) {
-        messages.getOrPut(message, ::ArrayList) += callback
+    fun emit(message: Any) {
+        messages[message]?.forEach(Runnable::run)
     }
 
     private val listenersToAdd = mutableSetOf<Listener>()

@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcodekt.components.meta
 
 object DeviceNames {
-    const val ARM_SERVO = "AR"
-    const val CLAW_SERVO = "CL"
-    const val WRIST_SERVO = "WR"
-    const val CAM_SERVO = "CA"
+    const val ARM_SERVO    = "AR"
+    const val CAM_SERVO    = "CA"
+    const val CLAW_SERVO   = "CL"
+    const val WRIST_SERVO  = "WR"
     const val INTAKE_SERVO = "IN"
 
     const val DRIVE_FL = "FL"
@@ -12,7 +12,7 @@ object DeviceNames {
     const val DRIVE_BL = "BL"
     const val DRIVE_BR = "BR"
 
-    const val LIFT_MOTOR = "LI"
+    const val LIFT_MOTOR   = "LI"
     const val LIFT_ENCODER = "FR"
 
     const val WEBCAM1 = "Webcam 1"

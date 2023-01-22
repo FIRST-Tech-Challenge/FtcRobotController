@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 class Arm {
     private val armServo = SimpleServo(hwMap, DeviceNames.ARM_SERVO, 0.0, 180.0)
 
-    private var targetAngle = ARM_RESTING
+    var targetAngle = ARM_RESTING
 
     fun setToForwardsPos() {
         targetAngle = ARM_FORWARDS

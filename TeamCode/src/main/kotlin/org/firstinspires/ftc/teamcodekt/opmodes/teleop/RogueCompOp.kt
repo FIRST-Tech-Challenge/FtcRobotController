@@ -11,21 +11,12 @@ class RogueCompOp : RogueBaseTele() {
     }
 
     private fun describeDriverControls() = with(driver) {
-        dpad_up   .onRise(bot.lift::goToHigh)
-        dpad_down .onRise(bot.lift::goToZero)
-        dpad_right.onRise(bot.lift::goToMid)
-        dpad_left .onRise(bot.lift::goToLow)
-
-        left_trigger.whileHigh {
-            powerMulti = 0.8
-        }
-
         right_trigger.whileHigh {
             powerMulti = 0.275
         }
 
         (right_trigger + left_trigger).whileHigh {
-            powerMulti = -0.1
+            powerMulti = -0.1 // Lets robot stop on a dime
         }
     }
 
@@ -44,6 +35,9 @@ class RogueCompOp : RogueBaseTele() {
 
         reverseDepositChain.invokeOn(y)
         reverseDepositChain.cancelOn(x)
+
+        coneLaunchingChain.invokeOn(b)
+        coneLaunchingChain.cancelOn(x)
 
         // -- MANUAL CLAW CONTROLS --
 

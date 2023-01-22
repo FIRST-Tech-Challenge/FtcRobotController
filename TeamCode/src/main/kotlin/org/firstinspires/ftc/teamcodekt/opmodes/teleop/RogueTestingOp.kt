@@ -17,5 +17,8 @@ class RogueTestingOp : RogueBaseTele() {
 
         reverseDepositChain.invokeOn(driver.y)
         reverseDepositChain.cancelOn(driver.x)
+
+        coneLaunchingChain.invokeOn(driver.b)
+        coneLaunchingChain.cancelOn(driver.x)
     }
 }

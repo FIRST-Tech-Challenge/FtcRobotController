@@ -50,23 +50,23 @@ class RogueLeftAuto : RogueBaseAuto() {
         }
 
     private fun Anvil.awaitInitialGoToDeposit() = this
-        .splineToSplineHeading(-82.5, -12.75, 48.25, 65)
+        .splineToSplineHeading(-82.5, -12.75, 50, 65)
 
     private fun Anvil.awaitGoToDeposit(it: Int) = when (it) {
-        0 -> splineToSplineHeading(-85.100, -10.250, 39.000, 25)
-        1 -> splineToSplineHeading(-81.800, -14.905, 48.275, 25)
-        2 -> splineToSplineHeading(-77.150, -16.450, 48.900, 25)
-        3 -> splineToSplineHeading(-74.624, -19.575, 51.625, 25)
-//        4 -> splineToSplineHeading(-74.950, -17.950, 39.600, 25)
+        0 -> splineToSplineHeading(-85.100, -10.250, 41.250, 25)
+        1 -> splineToSplineHeading(-81.800, -14.905, 50.275, 25)
+        2 -> splineToSplineHeading(-77.150, -13.450, 49.900, 25)
+        3 -> splineToSplineHeading(-79.624, -12.575, 51.625, 25)
+        4 -> splineToSplineHeading(-79.950, -12.950, 48.600, 25)
         else -> this
     }
 
     private fun Anvil.awaitGoToIntake(it: Int) = when (it) {
-        0 -> splineTo(-161.0000, -25.850, 180)
-        1 -> splineTo(-160.2375, -27.175, 180)
-        2 -> splineTo(-158.9100, -28.400, 180)
-        3 -> splineTo(-156.5975, -29.675, 180)
-//        4 -> splineTo(-154.6500, -30.950, 180)
+        0 -> splineTo(-163.9000, -21.250, 180)
+        1 -> splineTo(-163.4375, -22.575, 180)
+        2 -> splineTo(-162.9100, -21.400, 180)
+        3 -> splineTo(-161.9975, -23.575, 180)
+        4 -> splineTo(-160.9900, -23.750, 180)
         else -> noop
     }.doInReverse()
 
@@ -94,7 +94,7 @@ class RogueLeftAuto : RogueBaseAuto() {
 
     private fun Anvil.fastIntakePrep(iterations: Int) = this
         .addTemporalMarker {
-            bot.lift.height  = liftOffsets[iterations]
+            bot.lift.height = liftOffsets[iterations]
 
             bot.arm.setToBackwardsPos()
             bot.wrist.setToBackwardsPos()
@@ -125,12 +125,12 @@ class RogueLeftAuto : RogueBaseAuto() {
             bot.claw.close()
         }
 
-        .addTemporalMarker(135) {
+        .addTemporalMarker(15) {
             bot.arm.setToForwardsPos()
             bot.lift.goToHigh()
         }
 
-        .addTemporalMarker(250) {
+        .addTemporalMarker(100) {
             bot.wrist.setToForwardsPos()
         }
 

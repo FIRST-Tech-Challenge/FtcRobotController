@@ -158,5 +158,4 @@ public class SensorMRGyro extends LinearOpMode {
   String formatFloat(float rate) {
     return String.format("%.3f", rate);
   }
-
 }

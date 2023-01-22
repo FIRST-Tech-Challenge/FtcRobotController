@@ -47,7 +47,7 @@ abstract class BlackOp : LinearOpMode() {
      * Please override `go()` instead of this method.
      */
     final override fun runOpMode() {
-        quickLog("Restarting Scheduler")
+        quickLog("Resetting Scheduler")
         Scheduler.reset()
 
         quickLog("Setting HwMap")
@@ -121,7 +121,7 @@ abstract class BlackOp : LinearOpMode() {
      * READ DOCS FOR THIS
      */
     protected inline fun <reified T : Any> createOnGo(noinline arg: () -> Any) =
-        createOnGo<T>(*arrayOf(arg))
+        createOnGo<T>(*arrayOf(arg)) // Need to do spread on array or type checker errors
 
     /**
      * READ DOCS FOR THIS

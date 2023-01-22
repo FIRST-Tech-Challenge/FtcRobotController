@@ -2,33 +2,36 @@
 
 package org.firstinspires.ftc.teamcodekt.components.chains
 
+import com.acmerobotics.dashboard.config.Config
 import ftc.rogue.blacksmith.chains.CancellableChain
 import ftc.rogue.blacksmith.listeners.Listener
 import ftc.rogue.blacksmith.listeners.after
 import org.firstinspires.ftc.teamcodekt.components.meta.TeleOpBotComponents
 
-class ReverseDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
+@Config
+class ConeLaunchingChain(val bot: TeleOpBotComponents) : CancellableChain {
     private var isCancelled = false
 
-    override fun invokeOn(button: Listener) = button
+    override fun invokeOn(button: Listener) = (button)
         .onRise {
             isCancelled = false
-            bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-            bot.wrist.setToBackwardsPos()
+            bot.arm.targetAngle = 25.0
+            bot.wrist.setToForwardsPos()
         }
         .onFall {
             if (isCancelled) {
                 return@onFall
             }
 
-            bot.claw.openForDeposit()
+            bot.arm.targetAngle = 145.0
 
-            after(300).milliseconds {
-                finish()
+            after(WAITING_TIME_B4_LAUNCH).milliseconds {
+                bot.intake.reverse()
+                bot.claw.openForIntakeWide()
             }
 
-            after(500).milliseconds {
-                bot.lift.goToZero()
+            after(WAITING_TIME_B4_RESET).milliseconds {
+                finish()
             }
         }
         .hook()
@@ -41,6 +44,17 @@ class ReverseDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
         bot.claw.close()
         bot.arm.setToRestingPos()
         bot.wrist.setToRestingPos()
-        isCancelled = false
+        bot.intake.disable()
+
+        isCancelled = true
+
+        after(65).milliseconds {
+            bot.lift.goToZero()
+        }
+    }
+
+    companion object {
+        @JvmField var WAITING_TIME_B4_LAUNCH = 245L
+        @JvmField var WAITING_TIME_B4_RESET = WAITING_TIME_B4_LAUNCH + 125L
     }
 }

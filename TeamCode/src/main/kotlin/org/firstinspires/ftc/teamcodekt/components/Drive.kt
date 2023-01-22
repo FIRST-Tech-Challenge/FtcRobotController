@@ -67,14 +67,6 @@ class Drivetrain {
         lastPowers = powers
     }
 
-    fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<DcMotorEx>) {
-        val motorCaptions = arrayOf("Front left", "Front right", "Back left", "Back right")
-
-        withEachMotor {
-            telemetry.addData("${motorCaptions[it]} motor", dataSupplier(this))
-        }
-    }
-
     private fun DoubleArray.mapInPlace(transform: (Double) -> Double) = repeat(size) {
         this[it] = transform(this[it])
     }

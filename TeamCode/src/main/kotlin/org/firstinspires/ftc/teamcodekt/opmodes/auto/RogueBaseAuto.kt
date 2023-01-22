@@ -18,26 +18,19 @@ import org.firstinspires.ftc.teamcodekt.components.meta.createAutoBotComponents
 import kotlin.properties.Delegates
 
 abstract class RogueBaseAuto : BlackOp() {
-    //    protected val bot by evalOnGo(::createAutoBotComponents)
+//    protected val bot by evalOnGo(::createAutoBotComponents)
     protected var bot by LateInitVal<AutoBotComponents>()
-
     protected var signalID by Delegates.notNull<Int>()
 
     protected abstract val startPose: Pose2d
-
     protected abstract fun mainTraj(startPose: Pose2d): Anvil
 
     final override fun go() {
         bot = createAutoBotComponents()
 
-        quickLog("Starting futon")
-
         PhotonCore.enable()
 
-        quickLog("Killing all the childen")
-
         val startTraj = mainTraj(startPose)
-
         Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
         bot.camera.update()

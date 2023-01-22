@@ -83,10 +83,6 @@ class Lift {
         liftMotor.power = correction
     }
 
-    fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<Lift>) {
-        telemetry.addData("Lift motor", dataSupplier(this))
-    }
-
     fun resetEncoder() {
         liftEncoder.resetEncoder()
     }

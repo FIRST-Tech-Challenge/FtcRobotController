@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcodekt.opmodes.auto
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.Anvil
-import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.units.GlobalUnits
 import org.firstinspires.ftc.teamcode.AutoData
-import kotlin.properties.Delegates
 
 @Autonomous
 class RogueRightAuto : RogueBaseAuto() {
@@ -20,7 +18,7 @@ class RogueRightAuto : RogueBaseAuto() {
 
             .awaitInitialGoToDeposit()
 
-            .awaitDeposit()
+            .deposit()
 
             .doTimes(NUM_CYCLES) {
                 when (it) {
@@ -37,7 +35,7 @@ class RogueRightAuto : RogueBaseAuto() {
 
                 awaitGoToDeposit(it)
 
-                awaitDeposit()
+                deposit()
             }
             .thenRunPreformed(0)
 
@@ -50,14 +48,14 @@ class RogueRightAuto : RogueBaseAuto() {
         }
 
     private fun Anvil.awaitInitialGoToDeposit() = this
-        .splineToSplineHeading(82.5, -12.75, 131.75, 115)
+        .splineToSplineHeading(81, -11.35, 135.75, 115)
 
     private fun Anvil.awaitGoToDeposit(it: Int) = when (it) {
-        0 -> splineToSplineHeading(85.100, -10.250, 141.000, 155)
-        1 -> splineToSplineHeading(81.800, -14.905, 131.725, 155)
-        2 -> splineToSplineHeading(77.150, -16.450, 131.100, 155)
-        3 -> splineToSplineHeading(74.624, -19.575, 128.375, 155)
-//        4 -> splineToSplineHeading(74.950, -17.950, 140.400, 155)
+        0 -> splineToSplineHeading(81.000, -11.750, 142.200, 155)
+        1 -> splineToSplineHeading(78.800, -13.905, 140.725, 155)
+        2 -> splineToSplineHeading(76.850, -15.750, 137.850, 155)
+        3 -> splineToSplineHeading(74.624, -19.575, 136.275, 155)
+        4 -> splineToSplineHeading(75.950, -18.950, 145.900, 155)
         else -> this
     }
 
@@ -66,34 +64,32 @@ class RogueRightAuto : RogueBaseAuto() {
         1 -> splineTo(160.2375, -27.175, 0)
         2 -> splineTo(158.9100, -28.400, 0)
         3 -> splineTo(156.5975, -29.675, 0)
-//        4 -> splineTo(154.6500, -30.950, 0)
+        4 -> splineTo(154.6500, -30.950, 0)
         else -> noop
     }.doInReverse()
 
-    private fun Anvil.awaitDeposit() = this
-        .addTemporalMarker(-65) {
+    private fun Anvil.deposit() = this
+        .addTemporalMarker(-165) {
             bot.lift.height -= AutoData.DEPOSIT_DROP_AMOUNT
         }
 
-        .addTemporalMarker {
+        .addTemporalMarker(-100) {
             bot.claw.openForDeposit()
         }
 
-        .waitTime(100)
-
     private fun Anvil.regularIntakePrep(iterations: Int) = this
-        .addTemporalMarker {
+        .addTemporalMarker(185) {
             bot.lift.height = liftOffsets[iterations]
             bot.wrist.setToBackwardsPos()
             bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
         }
 
-        .addTemporalMarker(150) {
+        .addTemporalMarker(325) {
             bot.claw.openForIntakeWide()
         }
 
     private fun Anvil.fastIntakePrep(iterations: Int) = this
-        .addTemporalMarker {
+        .addTemporalMarker(185) {
             bot.lift.height  = liftOffsets[iterations]
 
             bot.arm.setToBackwardsPos()

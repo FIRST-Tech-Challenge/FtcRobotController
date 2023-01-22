@@ -7,6 +7,7 @@ import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.listeners.ReforgedGamepad
 import org.firstinspires.ftc.teamcodekt.components.*
+import org.firstinspires.ftc.teamcodekt.components.chains.ConeLaunchingChain
 import org.firstinspires.ftc.teamcodekt.components.chains.IntakeChain
 import org.firstinspires.ftc.teamcodekt.components.chains.RegularDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.ReverseDepositChain
@@ -23,6 +24,7 @@ abstract class RogueBaseTele : BlackOp() {
     protected val intakeChain by createOnGo<IntakeChain> { bot }
     protected val regularDepositChain by createOnGo<RegularDepositChain> { bot }
     protected val reverseDepositChain by createOnGo<ReverseDepositChain> { bot }
+    protected val coneLaunchingChain by createOnGo<ConeLaunchingChain> { bot }
 
     final override fun go() {
         PhotonCore.enable()

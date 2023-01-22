@@ -21,8 +21,8 @@ abstract class BaseBotComponents {
     }
 }
 
-fun createTeleOpBotComponents(): TeleOpBotComponents {
-    return TeleOpBotComponents(
+fun createTeleOpBotComponents() =
+    TeleOpBotComponents(
         hwMap(DeviceNames.COLOR_SENSOR),
         Drivetrain(),
         Claw(),
@@ -31,7 +31,6 @@ fun createTeleOpBotComponents(): TeleOpBotComponents {
         Wrist(),
         Lift()
     )
-}
 
 data class TeleOpBotComponents(
     val rcs: RevColorSensorV3,
@@ -43,15 +42,16 @@ data class TeleOpBotComponents(
     override val lift: Lift,
 ) : BaseBotComponents()
 
-fun createAutoBotComponents() = AutoBotComponents(
-    SampleMecanumDrive(hwMap),
-    Camera(),
-    Claw(),
-    Intake(),
-    Arm(),
-    Wrist(),
-    Lift(),
-)
+fun createAutoBotComponents() =
+    AutoBotComponents(
+        SampleMecanumDrive(hwMap),
+        Camera(),
+        Claw(),
+        Intake(),
+        Arm(),
+        Wrist(),
+        Lift(),
+    )
 
 data class AutoBotComponents(
     val drive: SampleMecanumDrive,

@@ -9,13 +9,10 @@ import org.firstinspires.ftc.teamcodekt.components.meta.TeleOpBotComponents
 
 class RegularDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
     private var isCancelled = false
-    private var isRunning = false
 
     override fun invokeOn(button: Listener) = (button + { bot.lift.height > 500 })
         .onRise {
             isCancelled = false
-            isRunning = true
-
             bot.arm.setToForwardsPos()
             bot.wrist.setToForwardsPos()
         }
@@ -26,34 +23,28 @@ class RegularDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
 
             bot.lift.height = (bot.lift.height - 300).coerceAtLeast(250)
 
-            after(450).milliseconds {
+            after(190).milliseconds {
                 bot.claw.openForDeposit()
             }
 
-            after(650).milliseconds {
+            after(395).milliseconds {
                 finish()
             }
 
-            after(800).milliseconds {
+            after(425).milliseconds {
                 bot.lift.goToZero()
             }
         }
         .hook()
 
-    override fun cancelOn(button: Listener) = button
-        .onRise {
-            isCancelled = true
-
-            if (isRunning) {
-                finish()
-            }
-        }
+    override fun cancelOn(button: Listener) = (button + { !isCancelled })
+        .onRise(::finish)
         .hook()
 
     private fun finish() {
         bot.claw.close()
         bot.arm.setToRestingPos()
         bot.wrist.setToRestingPos()
-        isRunning = false
+        isCancelled = true
     }
 }
