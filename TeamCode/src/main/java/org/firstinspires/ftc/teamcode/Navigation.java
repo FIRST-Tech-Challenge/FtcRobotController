@@ -459,7 +459,7 @@ public class Navigation {
      *  @param turn the speed at which the robot should rotate (clockwise). Must be in the interval [-1, 1]. Set this to
      *              zero if you only want the robot to strafe.
      */
-    private void setDriveMotorPowers(double strafeDirection, double power, double turn, Robot robot, boolean debug) {
+    public void setDriveMotorPowers(double strafeDirection, double power, double turn, Robot robot, boolean debug) {
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
             Objects.requireNonNull(robot.driveMotors.get(motor)).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
