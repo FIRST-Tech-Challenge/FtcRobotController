@@ -60,8 +60,8 @@ public class PwPRobot extends BasicRobot {
         voltage = voltageSensor.getVoltage();
         RFMotor.kP*= 13/ voltageSensor.getVoltage();
         RFMotor.kA*= 13/ voltageSensor.getVoltage();
-        DriveConstants.MAX_ANG_ACCEL *= 12.8/voltageSensor.getVoltage();
-        DriveConstants.MAX_ANG_VEL *= 12.8/voltageSensor.getVoltage();
+//        DriveConstants.MAX_ANG_ACCEL *= 12.8/voltageSensor.getVoltage();
+//        DriveConstants.MAX_ANG_VEL *= 12.8/voltageSensor.getVoltage();
 
 
 //        kV*=13/ voltageSensor.getVoltage();

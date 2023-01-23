@@ -45,8 +45,8 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
     public static double dummyX2 = 35, dummyY2 = 11, dummyA2 = 0;
 
     public static double dummyX3 = 53, dummyY3 = 11, dummyA3 = 0;
-    public static double dropX=29.75, dropY=4.9;
-    double[] stackPos = {400,330,235,80,0};
+    public static double dropX=29.75+0.5, dropY=4.9;
+    double[] stackPos = {400*1.03,330*1.03,235*1.03,80*1.03,0};
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
