@@ -628,7 +628,7 @@ public class Auto2022_23v2 extends LinearOpMode {
             }
         }
     }
-
+    
     /**
      * Finds the smallest angle change needed to reach the target angle from current angle
      * @param target
@@ -639,8 +639,7 @@ public class Auto2022_23v2 extends LinearOpMode {
         double x2 = 360 - x1;
         if(x1 < x2){
             return x1;
-        }else{
+        }else {
             return x2;
         }
-    }
 }
