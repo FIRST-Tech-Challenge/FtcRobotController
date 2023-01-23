@@ -30,7 +30,6 @@ public abstract class BaseAutonomous extends BaseOpMode {
         double xPosition, yPosition;
 
         // power for any heading
-        double ratio;
         double xPower;
         double yPower;
 
@@ -56,10 +55,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
             currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             tPower = (currentAngle - startAngle) * Constants.HEADING_CORRECTION_KP_AUTONOMOUS;
 
-            ratio = Math.max(remainingDistance / targetDistance, 0.2);
-
-            xPower = Math.cos(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * ratio * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
-            yPower = Math.sin(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * ratio * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
+            xPower = Math.cos(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
+            yPower = Math.sin(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
 
             motorFL.setPower(yPower + xPower + tPower);
             motorFR.setPower(yPower - xPower - tPower);
@@ -152,8 +149,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             }
 
             @Override
-            public void onError(int errorCode) {
-            }
+            public void onError(int errorCode) {}
         });
 
         robotCamera.setPipeline(aprilTagDetectionPipeline);
@@ -197,11 +193,13 @@ public abstract class BaseAutonomous extends BaseOpMode {
             telemetry.update();
         }
 
+        robotCamera.stopStreaming();
+
         // return default
         if (tagOfInterest == null) {
             return 1;
 
-            // return detected tag
+        // return detected tag
         } else {
             return tagOfInterest.id;
         }

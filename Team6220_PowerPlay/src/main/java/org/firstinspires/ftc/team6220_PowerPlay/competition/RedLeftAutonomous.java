@@ -4,181 +4,135 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
-//@Disabled
 @Autonomous(name = "RedLeftAutonomous")
 public class RedLeftAutonomous extends BaseAutonomous {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        // initialize motors, servos, imu, cameras, etc.
         initialize();
 
+        // set color ranges for detecting cone stack
         robotCameraPipeline.setRanges(Constants.LOWER_RED, Constants.UPPER_RED);
 
+        // detect april tag in initialize
         int signal = detectSignal();
 
-        waitForStart();
+        // start streaming at 800 x 600
+        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                robotCamera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
+            }
 
+            @Override
+            public void onError(int errorCode) {}
+        });
+
+        // set pipeline to the one that detect cone stacks
         robotCamera.setPipeline(robotCameraPipeline);
 
+        // grab pre-loaded cone
         driveGrabber(Constants.GRABBER_CLOSE_POSITION);
 
+        // sleep so grabber has time to grip cone
         sleep(1000);
 
+        // raise slides so cone doesn't drag on tiles
         driveSlidesAutonomous(Constants.SLIDE_STOW);
 
+        // drive forward to high junction
         driveAutonomous(0, 58);
 
+        // raise slides to high junction height
         driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
-        driveAutonomous(-90, 10);
+        // strafe right to face high junction
+        driveAutonomous(-90, 9);
 
+        // sleep to make sure robot has stopped moving
         sleep(500);
 
+        // drop cone on junction
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
 
+        // sleep to make sure cone has fallen
         sleep(500);
 
+        // drive backward so robot is in center of junctions
+        driveAutonomous(180, 2);
+
+        /*
+        *
+        * 1 + 0 above
+        *
+        * 1 + 1 below
+        *
+        *  */
+
+        // turn to face cone stack
         turnToAngle(90);
 
+        // lower slides to height of top cone of the cone stack
         driveSlidesAutonomous(Constants.SLIDE_STACK_FOUR);
 
+        // center on and drive to cone stack
         centerConeStack(robotCameraPipeline);
 
+        // sleep to make sure robot has stopped moving
         sleep(500);
 
+        // grab top cone on cone stack
         driveGrabber(Constants.GRABBER_CLOSE_POSITION);
 
-        sleep(500);
+        // sleep so grabber has time to grip cone
+        sleep(1000);
 
+        // raise slides so cone doesn't knock over cone stack
         driveSlidesAutonomous(Constants.SLIDE_LOW);
 
-        driveAutonomous(180, 12);
+        // drive backward to high junction
+        driveAutonomous(-90, 36);
 
-        turnToAngle(180);
+        // turn to face high junction
+        turnToAngle(0);
 
+        // drive forward so cone is above high junction
         driveAutonomous(0, 2);
 
+        // sleep to make sure robot has stopped moving
         sleep(500);
 
+        // drop cone on junction
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
 
+        // sleep to make sure cone has fallen
         sleep(500);
 
+        // drive backward so robot is in center of junctions
         driveAutonomous(180, 2);
 
-        turnToAngle(90);
+        // park in correct signal position
+        switch (signal) {
+            // strafe left to park in zone 1
+            case 0:
+                driveAutonomous(90, 36);
+                break;
 
-        driveSlidesAutonomous(Constants.SLIDE_STACK_THREE);
+            // strafe left to park in zone 2
+            case 1:
+                driveAutonomous(90, 12);
+                break;
 
-        centerConeStack(robotCameraPipeline);
+            // strafe right to park in zone 3
+            case 2:
+                driveAutonomous(-90, 12);
+                break;
+        }
 
-        sleep(500);
-
-        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
-
-        sleep(500);
-
-        driveSlidesAutonomous(Constants.SLIDE_LOW);
-
-        driveAutonomous(180, 12);
-
-        turnToAngle(180);
-
-        driveAutonomous(0, 2);
-
-        sleep(500);
-
-        driveGrabber(Constants.GRABBER_OPEN_POSITION);
-
-        sleep(500);
-
-        driveAutonomous(180, 2);
-
-        turnToAngle(90);
-
-        driveSlidesAutonomous(Constants.SLIDE_STACK_TWO);
-
-        centerConeStack(robotCameraPipeline);
-
-        sleep(500);
-
-        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
-
-        sleep(500);
-
-        driveSlidesAutonomous(Constants.SLIDE_LOW);
-
-        driveAutonomous(180, 12);
-
-        turnToAngle(180);
-
-        driveAutonomous(0, 2);
-
-        sleep(500);
-
-        driveGrabber(Constants.GRABBER_OPEN_POSITION);
-
-        sleep(500);
-
-        driveAutonomous(180, 2);
-
-        turnToAngle(90);
-
-        driveSlidesAutonomous(Constants.SLIDE_STACK_ONE);
-
-        centerConeStack(robotCameraPipeline);
-
-        sleep(500);
-
-        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
-
-        sleep(500);
-
-        driveSlidesAutonomous(Constants.SLIDE_LOW);
-
-        driveAutonomous(180, 12);
-
-        turnToAngle(180);
-
-        driveAutonomous(0, 2);
-
-        sleep(500);
-
-        driveGrabber(Constants.GRABBER_OPEN_POSITION);
-
-        sleep(500);
-
-        driveAutonomous(180, 2);
-
-        turnToAngle(90);
-
-        driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
-
-        centerConeStack(robotCameraPipeline);
-
-        sleep(500);
-
-        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
-
-        sleep(500);
-
-        driveSlidesAutonomous(Constants.SLIDE_LOW);
-
-        driveAutonomous(180, 12);
-
-        turnToAngle(180);
-
-        driveAutonomous(0, 2);
-
-        sleep(500);
-
-        driveGrabber(Constants.GRABBER_OPEN_POSITION);
-
-        sleep(500);
-
-        driveAutonomous(180, 2);
-
-        turnToAngle(90);
+        robotCamera.stopStreaming();
     }
 }
