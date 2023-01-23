@@ -128,7 +128,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                /*if (tfod != null) {
+                if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -154,25 +154,6 @@ public class Auto2022_23v2 extends LinearOpMode {
                             hasMoved = true;
                         }
                     }
-                }*/
-
-                if(!hasMoved){
-                    moveGrabber(true);
-                    waitTime(.5);
-                    moveLift(5);
-                    movePercentOfFoot(true,20.0/12);
-                    turnNinety(false);
-                    moveLift(17);
-                    movePercentOfFoot(true,3.0/12);
-                    moveLift(9);
-                    moveGrabber(false);
-                    movePercentOfFoot(false,3.0/12);
-                    moveLift(0);
-                    turnNinety(true);
-                    movePercentOfFoot(true,10.0/12);
-                    turnNinety(false);
-                    movePercentOfFoot(true,21.0/12);
-                    hasMoved = true;
                 }
 
                 /* Use the code below to test ticks per inch
@@ -218,15 +199,14 @@ public class Auto2022_23v2 extends LinearOpMode {
         moveGrabber(true);
         waitTime(.5);
         moveLift(5);
-        movePercentOfFoot(true,20.0/12);
-        turnNinety(false);
+        movePercentOfFoot(true,19.0/12);
         moveLift(17);
-        movePercentOfFoot(true,3.0/12);
+        turnNinety(false);
         moveLift(9);
         moveGrabber(false);
-        movePercentOfFoot(false,3.0/12);
+        moveLift(12);
         turnNinety(true);
-        movePercentOfFoot(true,10.0/12);
+        movePercentOfFoot(true,11.0/12);
         if(signal.equals("1 Bolt")){
             turnNinety(false);
             movePercentOfFoot(true,21.0/12);
@@ -331,7 +311,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
-     * @param CW
+     * @param CW True or false
      */
     public void turnNinety(boolean CW){
         double originalAngle = getAngle();
@@ -368,7 +348,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Turns to the desired angle as specified in targetAngle, assuming starting position is 0 degrees
-     * @param targetAngle
+     * @param targetAngle Target angle to rotate to
      */
     public void turnToAngle(double targetAngle){
         double originalAngle = getAngle();
@@ -405,17 +385,17 @@ public class Auto2022_23v2 extends LinearOpMode {
     }
 
     /**
-     * Moves forward or backward depending on the amount specified in feetAmount
-     * @param forward
-     * @param feetAmount
+     * Moves forward or backward depending on the amount specified in inches
+     * @param forward True or false
+     * @param inches Amount to move forward
      */
-    public void movePercentOfFoot(boolean forward, double feetAmount){
+    public void movePercentOfFoot(boolean forward, double inches){
         //using motor encoders
         double driveTrainCorrection = 1;
 
         double oneRotationDistance = diameter * Math.PI; // In cm
-        double rotationAmount = oneFootCm / oneRotationDistance;
-        double totalTicks = rotationAmount * ticksPerRotation * feetAmount * 2 * driveTrainCorrection; // *2 is to account for gear ratio
+        double rotationAmount = (oneFootCm / 12) / oneRotationDistance;
+        double totalTicks = rotationAmount * ticksPerRotation * inches * 2 * driveTrainCorrection; // *2 is to account for gear ratio
 
         resetEncoders();
 
@@ -451,7 +431,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Drives forward until it reads red or blue tape below it
-     * @param red
+     * @param red True or false
      */
     public void moveToTape(boolean red){
         if(red){
@@ -470,7 +450,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Moves the linear slide up to a specified height in inches
-     * @param toHeight
+     * @param toHeight Height to move to (inches)
      */
     public void moveLift(double toHeight){
         if(opModeIsActive()){
@@ -502,7 +482,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Opens and closes the grabber
-     * @param closed
+     * @param closed True or false
      */
     public void moveGrabber(boolean closed){
         if(closed){
@@ -541,7 +521,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Pauses all movement for the specified time in seconds
-     * @param time
+     * @param time How many seconds
      */
     public void waitTime(double time){ // Waits for time (seconds)
         runtime.reset();
@@ -561,7 +541,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Turns all wheels on at specified power
-     * @param powerPercent
+     * @param powerPercent Percent of power to run at
      */
     public void motorsOn(double powerPercent){
         leftDrive.setPower(powerPercent);
@@ -606,40 +586,39 @@ public class Auto2022_23v2 extends LinearOpMode {
     /**
      * Finds whether turning clockwise or counterclockwise reaches the target angle faster.
      * Returns true for clockwise and false for counterclockwise
-     * @param target
+     * @param target Target angle to rotate to
      * @return true (CW) or false (CCW)
      */
     public boolean optimalDirection(double target){
         if(target > getAngle()){
             double x1 = target - getAngle();
             double x2 = 360 - x1;
-            if(x1 < x2){
-                return true;
-            }else{
-                return false;
-            }
+            return x1 < x2;
         }else{
             double x1 = getAngle() - target;
             double x2 = 360 - x1;
-            if(x1 > x2){
-                return true;
-            }else{
-                return false;
-            }
+            return x1 > x2;
         }
     }
-    
+
     /**
      * Finds the smallest angle change needed to reach the target angle from current angle
-     * @param target
+     * @param target Target angle to reach
      * @return Shortest angle to target
      */
-    public double optimalAngleChange(double target){
-        double x1 = target - getAngle();
-        double x2 = 360 - x1;
-        if(x1 < x2){
+    public double optimalAngleChange(double target) {
+        double x1;
+        double x2;
+        if(target > getAngle()){
+            x1 = target - getAngle();
+        }else{
+            x1 = getAngle() - target;
+        }
+        x2 = 360 - x1;
+        if (x1 < x2) {
             return x1;
-        }else {
+        } else {
             return x2;
         }
+    }
 }
