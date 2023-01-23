@@ -113,13 +113,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
-        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
-
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
-        robotCameraPipeline = new RobotCameraPipeline();
-        grabberCameraPipeline = new GrabberCameraPipeline();
-
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
 
