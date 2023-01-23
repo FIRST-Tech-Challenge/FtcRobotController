@@ -120,6 +120,18 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                 if (levelString.equals("one") && level1Assigment == false) {
 
+                    gridX = 20;
+                    gridY = 20;
+
+                    rectanglesGrid = new Rect[gridY][gridX];
+                    rectanglesGridDraw = new Rect[gridY][gridX];
+                    matsGrid = new Mat[gridY][gridX];
+                    identifiedBoxesBoolean = new boolean[gridY][gridX];
+                    centersX = new int[gridY][gridX];
+                    centersXDraw = new int[gridY][gridX];
+                    centersY = new int[gridY][gridX];
+                    centersYDraw = new int[gridY][gridX];
+
                     x_resolution = input.cols();
                     y_resolution = input.rows();
 
@@ -153,6 +165,7 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                     level1Assigment = true;
                     level2Assignment = false;
+                    level3Assignment = false;
                 }
 
                 /**
@@ -162,6 +175,10 @@ public class PipePoleTracker extends OpenCvPipeline {
                 // However each time the capture.read is run, it resizes "input" into the original resolution, SOOOOO
                 //this little thing is so the submat is retained without rerunning all the below stuff
                 if (levelString.equals("two") && level2Assignment == true) {
+
+//                    gridX = 40;
+//                    gridY = 40;
+
 
                     lowestX = 112;
                     highestX = 336;
@@ -179,6 +196,18 @@ public class PipePoleTracker extends OpenCvPipeline {
                 }
 
                 if (levelString.equals("two") && level2Assignment == false && focusRect != null) {
+
+                    gridX = 40;
+                    gridY = 10;
+
+                    rectanglesGrid = new Rect[gridY][gridX];
+                    rectanglesGridDraw = new Rect[gridY][gridX];
+                    matsGrid = new Mat[gridY][gridX];
+                    identifiedBoxesBoolean = new boolean[gridY][gridX];
+                    centersX = new int[gridY][gridX];
+                    centersXDraw = new int[gridY][gridX];
+                    centersY = new int[gridY][gridX];
+                    centersYDraw = new int[gridY][gridX];
 
                     lowestX = 112;
                     highestX = 336;
@@ -211,13 +240,13 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                     level2Assignment = true;
                     level1Assigment = false;
+                    level3Assignment = false;
                 }
 
 //                boxBL_x = rectanglesGridDraw[gridY-1][gridX-1].x;
 //                boxBL_y = rectanglesGridDraw[gridY-1][gridX-1].y;
 
-                //TODO Potentially this is the crash spot because it is creating submats of 0 size
-                // Creating grid's subMats
+
                 for (int i = 0; i < gridY; i++) {
                     for (int j = 0; j < gridX; j++) {
                         matsGrid[i][j] = inputMask.submat(rectanglesGrid[i][j]);
@@ -671,7 +700,7 @@ public class PipePoleTracker extends OpenCvPipeline {
 //                input = input.submat(focusRect);
 //                inputMask = inputMask.submat(focusRect);
 
-                focusRect2 = new Rect(new Point(lowestX,0), new Point(highestX, inputOriginal.rows()));
+                focusRect2 = new Rect(new Point(50,0), new Point(400, inputOriginal.rows()));
 
                 input = input.submat(focusRect2);
                 inputMask = inputMask.submat(focusRect2);
@@ -686,6 +715,10 @@ public class PipePoleTracker extends OpenCvPipeline {
 //                else {
 //                    System.out.println("Percent Color: " + percentColor);
 //                }
+
+                level2Assignment = false;
+                level1Assigment = false;
+                level3Assignment = true;
             }
 
 
@@ -801,6 +834,10 @@ public class PipePoleTracker extends OpenCvPipeline {
     public static boolean getLevel2Assigment(){
         return level2Assignment;
     }
+    public static boolean getLevel3Assigment(){
+        return level3Assignment;
+    }
+
 
     public static int getCenterX(){
         return centerX;

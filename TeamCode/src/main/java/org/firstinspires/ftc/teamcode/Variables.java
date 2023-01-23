@@ -101,6 +101,7 @@ public class Variables {
     public static boolean level2 = false;
     public static boolean level2Assignment = false;
     public static boolean level3 = false;
+    public static boolean level3Assignment = false;
     public static boolean level1Aligned = false;
     public static boolean level2Aligned = false;
     public static boolean level3Aligned = false;

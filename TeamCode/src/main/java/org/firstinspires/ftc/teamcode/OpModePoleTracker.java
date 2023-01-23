@@ -113,7 +113,7 @@ public class OpModePoleTracker extends DriveMethods {
 //        isIMURecorded = false;
         visionAutoActivated = false;
 
-        GoToHeight(collectHeight);
+//        GoToHeight(collectHeight);
         slidePosition = motorSlide.getCurrentPosition();
 
 
@@ -127,6 +127,19 @@ public class OpModePoleTracker extends DriveMethods {
             motorBL.setPower((leftY - leftX + rightX)/2);
             motorFR.setPower((leftY - leftX - rightX)/2);
             motorBR.setPower((leftY + leftX - rightX)/2);
+
+            if(gamepad1.dpad_up){
+                goToCollect();
+            }
+            if(gamepad1.dpad_down){
+                goToDown();
+            }
+            if(gamepad1.right_bumper){
+                clawClamp();
+            }
+            if(gamepad1.left_bumper){
+                clawRelease();
+            }
 
             if(level2Capable == false && visionAutoActivated == false){
                 pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
@@ -150,9 +163,9 @@ public class OpModePoleTracker extends DriveMethods {
             if(gamepad2.a && getLevel2Capable()){
 //                levelCounter = 2;
                 visionAutoActivated = true;
-
-
             }
+
+
 
             if(gamepad2.x){
                 levelCounter = 1;
@@ -165,7 +178,7 @@ public class OpModePoleTracker extends DriveMethods {
             }
 
             //this means we are no longer looking at our object of choice
-            if(getLargestSize() == 0) {
+            if(levelCounter != 3 && getLargestSize() == 0) {
                 levelCounter = 1;
                 level1Aligned = false;
                 level2Aligned = false;
@@ -222,17 +235,18 @@ public class OpModePoleTracker extends DriveMethods {
                 //Level2 below (untested at the moment - 1/17/23)
                 if(levelCounter == 2 && getLevel2Assigment() == true){
                     currentWidth = getLargestObjectWidth();
-                    targetDistance = (double)((69-(currentWidth*4))/100) - 0.05; //This is in meters, and should position the robot roughly
-                    // 0.05 meter (5 cms) from the pole.
+                    targetDistance = (50-currentWidth)/100.0 - 0.2; //This is in meters, and should position the robot roughly
+                    // 0.15 meter (5 cms) from the pole.
 
-                    driveForDistance(targetDistance, Direction.FORWARD, 0.3, imuHeading); //Get ontop of the pole while using the imu
+                    driveForDistance(targetDistance, Direction.FORWARD, 0.2, imuHeading); //Get ontop of the pole while using the imu
 
                     levelCounter = 3;
                     level2Aligned = true;
                     telemetry.addLine("Level2 Complete!");
                     telemetry.addLine("Current Width: " + currentWidth);
                     telemetry.addLine("Target Distance: "+ targetDistance);
-                    telemetry.update();
+
+
                 }
 
 
@@ -246,14 +260,13 @@ public class OpModePoleTracker extends DriveMethods {
 //                     motorBR.setPower(alignPowerAddedWidth + alignPowerAddedX/2.75);
 //                }
 
-                if (levelCounter == 3 && getPercentColor() < 10 && getPercentColor() > 0){
+                if (levelCounter == 3 && level3Assignment && getPercentColor() < 10){
                     level3Aligned = true;
-
                     telemetry.addLine("We're at the top of the pole!");
                     telemetry.addLine("level3Aligned: " + level3Aligned);
                     telemetry.addLine("Percent Color: " + getPercentColor());
                     telemetry.update();
-                    sleep(1000);
+//                    sleep(1000);
 
 
                 }
@@ -263,8 +276,8 @@ public class OpModePoleTracker extends DriveMethods {
                     motorSlide.setPower(0.5);
                     slidePosition = motorSlide.getCurrentPosition();
                     telemetry.addLine("Measuring the pole height!");
+                    telemetry.addLine("Slide Position: " + motorSlide.getCurrentPosition());
                     telemetry.addLine("Percent Color: " + getPercentColor());
-                    telemetry.update();
 
                     //Slide go up <-- Honestly just use a consistent power for ease
                 }
@@ -276,20 +289,19 @@ public class OpModePoleTracker extends DriveMethods {
                     telemetry.addLine("We going to the top babeeeeeeee");
                     telemetry.addLine("Slide position: " + slidePosition);
                     telemetry.addLine("targetHeight: " + targetHeight);
-                    telemetry.update();
 //                    sleep(500);
-                    if(slidePosition >= 0 && slidePosition <= lowHeight){
+                    if(slidePosition >= 0 && slidePosition <= 1300){
                         targetHeight = lowHeight;
-                    }else if(slidePosition > lowHeight && slidePosition <= midHeight){
+                    }else if(slidePosition > 1300 && slidePosition <= 2500){
                         targetHeight = midHeight;
-                    }else if(slidePosition > midHeight && slidePosition <= highHeight){
+                    }else if(slidePosition > 2500){
                         targetHeight = highHeight;
                     }
 
                     clawClamp();
                     GoToHeight(targetHeight);
                     sleep(300);
-                    driveForDistance(0.05,Direction.FORWARD,0.2,imuHeading);
+                    driveForDistance(0.115,Direction.FORWARD,0.2,imuHeading);
 //                    sleep(250);
                     GoToHeight(targetHeight - 75);
                     sleep(350);
@@ -297,7 +309,7 @@ public class OpModePoleTracker extends DriveMethods {
                     sleep(200);
                     GoToHeight(targetHeight);
                     sleep(300);
-                    driveForDistance(0.05, Direction.BACKWARD, 0.2, imuHeading);
+                    driveForDistance(0.15, Direction.BACKWARD, 0.2, imuHeading);
                     goToDown();
 
                     levelCounter = 1;
