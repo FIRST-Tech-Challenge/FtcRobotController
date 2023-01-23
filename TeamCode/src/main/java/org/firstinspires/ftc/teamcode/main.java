@@ -13,6 +13,7 @@ public class main extends LinearOpMode {
     sensor sensor = new sensor();
     composetelemetry composetelemetry = new composetelemetry();
 
+    ARM ARM = new ARM();
 
     @Override
     public void runOpMode() {
@@ -21,6 +22,9 @@ public class main extends LinearOpMode {
         movement.Motor2 = hardwareMap.get(DcMotor.class, "Motor2");
         movement.Motor3 = hardwareMap.get(DcMotor.class, "Motor3");
         movement.Motor4 = hardwareMap.get(DcMotor.class, "Motor4");
+
+        ARM.Motor5 = hardwareMap.get(DcMotor.class, "Motor1");
+        ARM.Motor6 = hardwareMap.get(DcMotor.class, "Motor1");
 
         //initialize sensor
         sensor.imu = hardwareMap.get(BNO055IMU.class, "imu");
