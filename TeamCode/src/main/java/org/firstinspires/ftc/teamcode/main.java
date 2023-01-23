@@ -23,8 +23,8 @@ public class main extends LinearOpMode {
         movement.Motor3 = hardwareMap.get(DcMotor.class, "Motor3");
         movement.Motor4 = hardwareMap.get(DcMotor.class, "Motor4");
 
-        ARM.Motor5 = hardwareMap.get(DcMotor.class, "Motor1");
-        ARM.Motor6 = hardwareMap.get(DcMotor.class, "Motor1");
+        ARM.Motor5 = hardwareMap.get(DcMotor.class, "Motor5");
+        ARM.Motor6 = hardwareMap.get(DcMotor.class, "Motor6");
 
         //initialize sensor
         sensor.imu = hardwareMap.get(BNO055IMU.class, "imu");
