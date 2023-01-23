@@ -11,14 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -80,26 +77,19 @@ public class Auto2022_23v2 extends LinearOpMode {
     static final double MIN_POS     =     1;
     static final double MIN_POS2    =     0;
 
-    public double servoDirection = 0;
     public double position = 1;
     public double position2 = 0;
 
     // Wheel constants
     public double ticksPerRotation = 537.6; // For AndyMark NeveRest 20
     public double rpm = 340;
-    public double maxVelocity = rpm * ticksPerRotation;
     public double diameter = 10; //cm
 
     // Cone information
 
     public int coneCount = 1;
     public double firstConePos = 5.775;
-    public double coneSeparationDistance = firstConePos/5;
-
-    // Image information
-    public double center = 0;
-    public double leftCenter = 0;
-    public double rightCenter = 0;
+    public double coneSeparationDistance = firstConePos / 5;
 
     // General constants
     double oneFootCm = 30.48;
@@ -199,20 +189,20 @@ public class Auto2022_23v2 extends LinearOpMode {
         moveGrabber(true);
         waitTime(.5);
         moveLift(5);
-        movePercentOfFoot(true,19.0/12);
+        moveInchAmount(true,19);
         moveLift(17);
         turnNinety(false);
         moveLift(9);
         moveGrabber(false);
         moveLift(12);
         turnNinety(true);
-        movePercentOfFoot(true,11.0/12);
+        moveInchAmount(true,11);
         if(signal.equals("1 Bolt")){
             turnNinety(false);
-            movePercentOfFoot(true,21.0/12);
+            moveInchAmount(true,21);
         }else if(signal.equals("3 Panel")){
             turnNinety(true);
-            movePercentOfFoot(true,23.0/12);
+            moveInchAmount(true,23);
         }
         moveLift(0);
     }
@@ -389,7 +379,7 @@ public class Auto2022_23v2 extends LinearOpMode {
      * @param forward True or false
      * @param inches Amount to move forward
      */
-    public void movePercentOfFoot(boolean forward, double inches){
+    public void moveInchAmount(boolean forward, double inches){
         //using motor encoders
         double driveTrainCorrection = 1;
 
@@ -445,7 +435,7 @@ public class Auto2022_23v2 extends LinearOpMode {
         }
         motorsOff();
         moveLift(12);
-        movePercentOfFoot(true, 10.0/12);
+        moveInchAmount(true, 10);
     }
 
     /**
@@ -615,10 +605,6 @@ public class Auto2022_23v2 extends LinearOpMode {
             x1 = getAngle() - target;
         }
         x2 = 360 - x1;
-        if (x1 < x2) {
-            return x1;
-        } else {
-            return x2;
-        }
+        return Math.min(x1, x2);
     }
 }
