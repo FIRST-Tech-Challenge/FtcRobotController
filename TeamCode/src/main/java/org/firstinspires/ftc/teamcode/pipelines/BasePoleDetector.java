@@ -25,6 +25,7 @@ public class BasePoleDetector extends OpenCvPipeline {
      */
     private double angle;
 
+
     // Simple frame size in pixels determined empirically through Mat.rows() and Mat.cols().
     private static int frameWidth = 1280;
     private static int frameHeight = 760;
@@ -72,28 +73,23 @@ public class BasePoleDetector extends OpenCvPipeline {
      * @param src is the source matrix - what is put into the function
      * @return a mat with only the edges of the main bodies given some contrast threshold.
      */
-    public Mat canny(Mat src) {
-        // Define the size of the input image if this is the first loop run
+    public Mat analyze(Mat src) {
+        // Define the size of the input image
         if (frameWidth == -1 && frameHeight == -1) {
             frameWidth = src.cols();
             frameHeight = src.rows();
         }
 
-        // Create matrices storing the grayscale and canny edge images
         Mat gray = new Mat(frameHeight, frameWidth, src.type());
         Mat edges = new Mat(frameHeight, frameWidth, src.type());
-        Mat lines = new Mat(frameHeight, frameWidth, src.type());
 
-        // Make the color grayscale
         Imgproc.cvtColor(src, gray, Imgproc.COLOR_RGB2GRAY);
-        // Imgproc.blur(gray, gray, new Size(3, 3)); // Not needed, if too many things are being detected though re add it
+        // Imgproc.blur(gray, gray, new Size(3, 3));
+        Imgproc.Canny(gray, edges, 30, 350);
 
-        // Employ a canny edge detector to find the edges in the image
-        // IF TOO MANY/FEW LINES ARE BEING DETECTED, CHANGE THIS FIRST!!!
-        Imgproc.Canny(gray, edges, 10, 100);
-
-        // Use a probabalistic hough line transform to detect the lines present in an image
-        Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180, 120, 150, 100);
+        Mat lines = new Mat();
+        // Imgproc.HoughLines(edges, lines, 1, Math.PI/180, 150);
+        Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180, 10, 250, 100);
 
 
         // Draw the lines
@@ -103,26 +99,29 @@ public class BasePoleDetector extends OpenCvPipeline {
             Point p1 = new Point(l[2], l[3]);
 
             if (Math.abs((-p1.y + p0.y) / (p1.x - p0.x)) > 3) {
-                Imgproc.line(src, p0, p1, new Scalar(0, 0, 255), 3, Imgproc.LINE_AA, 0);
+                if (Math.max(p1.y, p0.y) >= src.rows() - 1 && Math.min(p1.y, p0.y) < 20) {
+                    Imgproc.line(src, p0, p1, new Scalar(0, 0, 255), 3, Imgproc.LINE_AA, 0);
 
-                //  telemetry.addData("Pixel extrapolated pos", calculateTopXPixels(p0, p1));
+                    telemetry.addData("Angle:", newAngleMeasurement(p0, p1));
+                    // telemetry.addData("Pole angle", angle);
+                    telemetry.update();
 
-                // Perform biased averaging
-                if (angle != -1)
-                    angle = MU.avg(angle, (pixelXAngle(calculateTopXPixels(p0, p1))));
-                else
-                    angle = pixelXAngle(calculateTopXPixels(p0, p1));
+//                    if (angle != -1)
+//                        angle = avg(angle, (pixelXAngle(calculateTopXPixels(p0, p1))));
+//                    else
+//                        angle = pixelXAngle(calculateTopXPixels(p0, p1));
+                }
             }
+
         }
 
-        // VERY IMPORTANT - release matrices to prevent a memory leak!
         lines.release();
         gray.release();
         edges.release();
+        // src.release();
 
         return src;
     }
-
 
     /**
      * Process the frame by returning the canny edge of the input image
@@ -138,7 +137,11 @@ public class BasePoleDetector extends OpenCvPipeline {
 
         telemetry.update();
 
-        return canny(img);
+        return analyze(img);
+    }
+
+    private double newAngleMeasurement(Point p0, Point p1) {
+        return (calculateTopXPixels(p0, p1) - 640) * 0.0469;
     }
 
 
@@ -213,7 +216,7 @@ public class BasePoleDetector extends OpenCvPipeline {
         return Math.asin(r / h * Math.sin(theta));
     }
 
-    public double getPoleAngle(){
+    public double getPoleAngle() {
         return angle;
     }
 }

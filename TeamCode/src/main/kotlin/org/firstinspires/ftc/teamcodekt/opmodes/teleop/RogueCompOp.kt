@@ -5,11 +5,6 @@ import kotlin.math.sign
 
 @TeleOp
 class RogueCompOp : RogueBaseTele() {
-    override fun describeControls() {
-        describeCodriverControls()
-        describeDriverControls()
-    }
-
     private fun describeDriverControls() = with(driver) {
         right_trigger.whileHigh {
             powerMulti = 0.275
@@ -70,5 +65,10 @@ class RogueCompOp : RogueBaseTele() {
         bumpersPressed.onFall {
             bot.lift.resetEncoder()
         }
+    }
+
+    override fun describeControls() {
+        describeCodriverControls()
+        describeDriverControls()
     }
 }

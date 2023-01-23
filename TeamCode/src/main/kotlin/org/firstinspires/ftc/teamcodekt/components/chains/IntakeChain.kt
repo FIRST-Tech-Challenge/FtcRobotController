@@ -39,7 +39,6 @@ class IntakeChain(val bot: TeleOpBotComponents) : Chain {
 
         Listener { isRunning && bot.rcs.getDistance(DistanceUnit.CM) < .8 }.onRise {
             bot.intake.disable()
-            isRunning = false
 
             after(75).milliseconds {
                 bot.claw.close()
@@ -48,6 +47,7 @@ class IntakeChain(val bot: TeleOpBotComponents) : Chain {
             after(250).milliseconds {
                 bot.wrist.setToRestingPos()
                 bot.arm.setToRestingPos()
+                isRunning = false
             }
         }
     }
