@@ -11,14 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -61,9 +58,6 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     public ElapsedTime runtime = new ElapsedTime();
 
-    public double off = 0.0;
-    public double corrections = 1.0;
-
     public boolean hasMoved = false;
 
     // Linear slide information
@@ -80,26 +74,19 @@ public class Auto2022_23v2 extends LinearOpMode {
     static final double MIN_POS     =     1;
     static final double MIN_POS2    =     0;
 
-    public double servoDirection = 0;
     public double position = 1;
     public double position2 = 0;
 
     // Wheel constants
     public double ticksPerRotation = 537.6; // For AndyMark NeveRest 20
     public double rpm = 340;
-    public double maxVelocity = rpm * ticksPerRotation;
     public double diameter = 10; //cm
 
     // Cone information
 
     public int coneCount = 1;
     public double firstConePos = 5.775;
-    public double coneSeparationDistance = firstConePos/5;
-
-    // Image information
-    public double center = 0;
-    public double leftCenter = 0;
-    public double rightCenter = 0;
+    public double coneSeparationDistance = firstConePos / 5;
 
     // General constants
     double oneFootCm = 30.48;
@@ -128,7 +115,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                /*if (tfod != null) {
+                if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -154,25 +141,6 @@ public class Auto2022_23v2 extends LinearOpMode {
                             hasMoved = true;
                         }
                     }
-                }*/
-
-                if(!hasMoved){
-                    moveGrabber(true);
-                    waitTime(.5);
-                    moveLift(5);
-                    movePercentOfFoot(true,20.0/12);
-                    turnNinety(false);
-                    moveLift(17);
-                    movePercentOfFoot(true,3.0/12);
-                    moveLift(9);
-                    moveGrabber(false);
-                    movePercentOfFoot(false,3.0/12);
-                    moveLift(0);
-                    turnNinety(true);
-                    movePercentOfFoot(true,10.0/12);
-                    turnNinety(false);
-                    movePercentOfFoot(true,21.0/12);
-                    hasMoved = true;
                 }
 
                 /* Use the code below to test ticks per inch
@@ -218,21 +186,20 @@ public class Auto2022_23v2 extends LinearOpMode {
         moveGrabber(true);
         waitTime(.5);
         moveLift(5);
-        movePercentOfFoot(true,20.0/12);
-        turnNinety(false);
+        moveInchAmount(true,19);
         moveLift(17);
-        movePercentOfFoot(true,3.0/12);
+        turnNinety(false);
         moveLift(9);
         moveGrabber(false);
-        movePercentOfFoot(false,3.0/12);
+        moveLift(12);
         turnNinety(true);
-        movePercentOfFoot(true,10.0/12);
+        moveInchAmount(true,11);
         if(signal.equals("1 Bolt")){
             turnNinety(false);
-            movePercentOfFoot(true,21.0/12);
+            moveInchAmount(true,21);
         }else if(signal.equals("3 Panel")){
             turnNinety(true);
-            movePercentOfFoot(true,23.0/12);
+            moveInchAmount(true,23);
         }
         moveLift(0);
     }
@@ -331,35 +298,60 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
-     * @param CW
+     * @param CW True or false
      */
     public void turnNinety(boolean CW){
         double originalAngle = getAngle();
 
         if(CW) {
-            //left = +; right = -
             if(originalAngle - 90 < 0) {
                 while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - 90 + 360)) {
-                    leftVelo(.5);
-                    rightVelo(-.5);
+                    leftVelo(1);
+                    rightVelo(-1);
                 }
             }else{
                 while (opModeIsActive() && getAngle() > originalAngle - 90 && getAngle() < originalAngle + 5) {
-                    leftVelo(.5);
-                    rightVelo(-.5);
+                    leftVelo(1);
+                    rightVelo(-1);
                 }
             }
         }else{
-            //left = -; right = +
             if(originalAngle + 90 > 360) {
                 while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + 9 - 360)) {
-                    leftVelo(-.5);
-                    rightVelo(.5);
+                    leftVelo(-1);
+                    rightVelo(1);
                 }
             }else{
                 while (opModeIsActive() && getAngle() < originalAngle + 90 && getAngle() > originalAngle - 5) {
-                    leftVelo(-.5);
-                    rightVelo(.5);
+                    leftVelo(-1);
+                    rightVelo(1);
+                }
+            }
+        }
+        motorsOff();
+
+        if(!CW) {
+            if(originalAngle - 90 < 0) {
+                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - 90 + 360)) {
+                    leftVelo(.1);
+                    rightVelo(-.1);
+                }
+            }else{
+                while (opModeIsActive() && getAngle() > originalAngle - 90 && getAngle() < originalAngle + 5) {
+                    leftVelo(.1);
+                    rightVelo(-.1);
+                }
+            }
+        }else{
+            if(originalAngle + 90 > 360) {
+                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + 9 - 360)) {
+                    leftVelo(-.1);
+                    rightVelo(.1);
+                }
+            }else{
+                while (opModeIsActive() && getAngle() < originalAngle + 90 && getAngle() > originalAngle - 5) {
+                    leftVelo(-.1);
+                    rightVelo(.1);
                 }
             }
         }
@@ -368,7 +360,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Turns to the desired angle as specified in targetAngle, assuming starting position is 0 degrees
-     * @param targetAngle
+     * @param targetAngle Target angle to rotate to
      */
     public void turnToAngle(double targetAngle){
         double originalAngle = getAngle();
@@ -379,25 +371,52 @@ public class Auto2022_23v2 extends LinearOpMode {
         if(CW) {
             if(originalAngle - changeInAngle < 0) {
                 while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - changeInAngle + 360)) {
-                    leftVelo(.5);
-                    rightVelo(-.5);
+                    leftVelo(1);
+                    rightVelo(-1);
                 }
             }else{
                 while (opModeIsActive() && getAngle() > originalAngle - changeInAngle && getAngle() < originalAngle + 5) {
-                    leftVelo(.5);
-                    rightVelo(-.5);
+                    leftVelo(1);
+                    rightVelo(-1);
                 }
             }
         }else{
             if(originalAngle + changeInAngle > 360) {
                 while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + changeInAngle - 360)) {
-                    leftVelo(-.5);
-                    rightVelo(.5);
+                    leftVelo(-1);
+                    rightVelo(1);
                 }
             }else{
                 while (opModeIsActive() && getAngle() < originalAngle + changeInAngle && getAngle() > originalAngle - 5) {
-                    leftVelo(-.5);
-                    rightVelo(.5);
+                    leftVelo(-1);
+                    rightVelo(1);
+                }
+            }
+        }
+        motorsOff();
+
+        if(!CW) {
+            if(originalAngle - changeInAngle < 0) {
+                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - changeInAngle + 360)) {
+                    leftVelo(.1);
+                    rightVelo(-.1);
+                }
+            }else{
+                while (opModeIsActive() && getAngle() > originalAngle - changeInAngle && getAngle() < originalAngle + 5) {
+                    leftVelo(.1);
+                    rightVelo(-.1);
+                }
+            }
+        }else{
+            if(originalAngle + changeInAngle > 360) {
+                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + changeInAngle - 360)) {
+                    leftVelo(-.1);
+                    rightVelo(.1);
+                }
+            }else{
+                while (opModeIsActive() && getAngle() < originalAngle + changeInAngle && getAngle() > originalAngle - 5) {
+                    leftVelo(-.1);
+                    rightVelo(.1);
                 }
             }
         }
@@ -405,17 +424,17 @@ public class Auto2022_23v2 extends LinearOpMode {
     }
 
     /**
-     * Moves forward or backward depending on the amount specified in feetAmount
-     * @param forward
-     * @param feetAmount
+     * Moves forward or backward depending on the amount specified in inches
+     * @param forward True or false
+     * @param inches Amount to move forward
      */
-    public void movePercentOfFoot(boolean forward, double feetAmount){
+    public void moveInchAmount(boolean forward, double inches){
         //using motor encoders
         double driveTrainCorrection = 1;
 
         double oneRotationDistance = diameter * Math.PI; // In cm
-        double rotationAmount = oneFootCm / oneRotationDistance;
-        double totalTicks = rotationAmount * ticksPerRotation * feetAmount * 2 * driveTrainCorrection; // *2 is to account for gear ratio
+        double rotationAmount = (oneFootCm / 12) / oneRotationDistance;
+        double totalTicks = rotationAmount * ticksPerRotation * inches * 2 * driveTrainCorrection; // *2 is to account for gear ratio
 
         resetEncoders();
 
@@ -451,7 +470,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Drives forward until it reads red or blue tape below it
-     * @param red
+     * @param red True or false
      */
     public void moveToTape(boolean red){
         if(red){
@@ -465,12 +484,12 @@ public class Auto2022_23v2 extends LinearOpMode {
         }
         motorsOff();
         moveLift(12);
-        movePercentOfFoot(true, 10.0/12);
+        moveInchAmount(true, 10);
     }
 
     /**
      * Moves the linear slide up to a specified height in inches
-     * @param toHeight
+     * @param toHeight Height to move to (inches)
      */
     public void moveLift(double toHeight){
         if(opModeIsActive()){
@@ -502,7 +521,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Opens and closes the grabber
-     * @param closed
+     * @param closed True or false
      */
     public void moveGrabber(boolean closed){
         if(closed){
@@ -541,7 +560,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Pauses all movement for the specified time in seconds
-     * @param time
+     * @param time How many seconds
      */
     public void waitTime(double time){ // Waits for time (seconds)
         runtime.reset();
@@ -561,7 +580,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Turns all wheels on at specified power
-     * @param powerPercent
+     * @param powerPercent Percent of power to run at
      */
     public void motorsOn(double powerPercent){
         leftDrive.setPower(powerPercent);
@@ -606,41 +625,35 @@ public class Auto2022_23v2 extends LinearOpMode {
     /**
      * Finds whether turning clockwise or counterclockwise reaches the target angle faster.
      * Returns true for clockwise and false for counterclockwise
-     * @param target
+     * @param target Target angle to rotate to
      * @return true (CW) or false (CCW)
      */
     public boolean optimalDirection(double target){
         if(target > getAngle()){
             double x1 = target - getAngle();
             double x2 = 360 - x1;
-            if(x1 < x2){
-                return true;
-            }else{
-                return false;
-            }
+            return x1 < x2;
         }else{
             double x1 = getAngle() - target;
             double x2 = 360 - x1;
-            if(x1 > x2){
-                return true;
-            }else{
-                return false;
-            }
+            return x1 > x2;
         }
     }
 
     /**
      * Finds the smallest angle change needed to reach the target angle from current angle
-     * @param target
+     * @param target Target angle to reach
      * @return Shortest angle to target
      */
-    public double optimalAngleChange(double target){
-        double x1 = target - getAngle();
-        double x2 = 360 - x1;
-        if(x1 < x2){
-            return x1;
+    public double optimalAngleChange(double target) {
+        double x1;
+        double x2;
+        if(target > getAngle()){
+            x1 = target - getAngle();
         }else{
-            return x2;
+            x1 = getAngle() - target;
         }
+        x2 = 360 - x1;
+        return Math.min(x1, x2);
     }
 }
