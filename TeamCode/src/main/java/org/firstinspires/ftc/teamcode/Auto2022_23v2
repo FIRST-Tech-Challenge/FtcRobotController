@@ -58,9 +58,6 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     public ElapsedTime runtime = new ElapsedTime();
 
-    public double off = 0.0;
-    public double corrections = 1.0;
-
     public boolean hasMoved = false;
 
     // Linear slide information
