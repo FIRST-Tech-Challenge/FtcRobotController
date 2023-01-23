@@ -29,18 +29,22 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // servos
     public static ServoImplEx servoGrabber;
+
     // OpenCV
     public static OpenCvCamera robotCamera;
     public static OpenCvCamera grabberCamera;
     public static AprilTagDetectionPipeline aprilTagDetectionPipeline;
     public static RobotCameraPipeline robotCameraPipeline;
     public static GrabberCameraPipeline grabberCameraPipeline;
+
     // IMU
     public BNO055IMU imu;
     public double originalAngle;
     public double startAngle;
+
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
+
     // bulk reading
     private List<LynxModule> hubs;
 
@@ -198,6 +202,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     // centers the cone on the junction top
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
+
         do {
             xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
@@ -205,12 +210,11 @@ public abstract class BaseOpMode extends LinearOpMode {
             // center the cone on the junction top
             if (pipeline.detected) {
                 driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
-                telemetry.addData("detected = ", pipeline.detected);
-                telemetry.update();
             } else {
                 break;
             }
-            // while the cone isn't centered over the junction
+
+        // while the cone isn't centered over the junction
         } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
 
         stopDriveMotors();
@@ -228,7 +232,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             if (width == 0) {
                 break;
             } else {
-                driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.3, Constants.CONE_CENTERING_KP * Math.signum(xOffset));
+                driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.2, Constants.CONE_CENTERING_KP * Math.signum(xOffset));
             }
 
             // while far enough that the cone stack doesn't fill the entire camera view

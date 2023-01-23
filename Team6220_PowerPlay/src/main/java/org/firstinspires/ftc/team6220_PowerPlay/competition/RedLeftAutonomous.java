@@ -27,11 +27,11 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         driveSlidesAutonomous(Constants.SLIDE_STOW);
 
-        driveAutonomous(-7.32, 55);
+        driveAutonomous(0, 58);
 
         driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
-        turnToAngle(-45);
+        driveAutonomous(-90, 10);
 
         sleep(500);
 
@@ -41,7 +41,7 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         turnToAngle(90);
 
-        driveSlides(Constants.SLIDE_STACK_FOUR);
+        driveSlidesAutonomous(Constants.SLIDE_STACK_FOUR);
 
         centerConeStack(robotCameraPipeline);
 
@@ -51,21 +51,25 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         sleep(500);
 
-        driveSlides(Constants.SLIDE_LOW);
+        driveSlidesAutonomous(Constants.SLIDE_LOW);
 
-        driveAutonomous(153.4, 6.7);
+        driveAutonomous(180, 12);
 
         turnToAngle(180);
+
+        driveAutonomous(0, 2);
 
         sleep(500);
 
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
 
         sleep(500);
+
+        driveAutonomous(180, 2);
 
         turnToAngle(90);
 
-        driveSlides(Constants.SLIDE_STACK_THREE);
+        driveSlidesAutonomous(Constants.SLIDE_STACK_THREE);
 
         centerConeStack(robotCameraPipeline);
 
@@ -75,21 +79,25 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         sleep(500);
 
-        driveSlides(Constants.SLIDE_LOW);
+        driveSlidesAutonomous(Constants.SLIDE_LOW);
 
-        driveAutonomous(153.4, 6.7);
+        driveAutonomous(180, 12);
 
         turnToAngle(180);
+
+        driveAutonomous(0, 2);
 
         sleep(500);
 
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
 
         sleep(500);
+
+        driveAutonomous(180, 2);
 
         turnToAngle(90);
 
-        driveSlides(Constants.SLIDE_STACK_TWO);
+        driveSlidesAutonomous(Constants.SLIDE_STACK_TWO);
 
         centerConeStack(robotCameraPipeline);
 
@@ -99,21 +107,25 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         sleep(500);
 
-        driveSlides(Constants.SLIDE_LOW);
+        driveSlidesAutonomous(Constants.SLIDE_LOW);
 
-        driveAutonomous(153.4, 6.7);
+        driveAutonomous(180, 12);
 
         turnToAngle(180);
+
+        driveAutonomous(0, 2);
 
         sleep(500);
 
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
 
         sleep(500);
+
+        driveAutonomous(180, 2);
 
         turnToAngle(90);
 
-        driveSlides(Constants.SLIDE_STACK_ONE);
+        driveSlidesAutonomous(Constants.SLIDE_STACK_ONE);
 
         centerConeStack(robotCameraPipeline);
 
@@ -123,21 +135,25 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         sleep(500);
 
-        driveSlides(Constants.SLIDE_LOW);
+        driveSlidesAutonomous(Constants.SLIDE_LOW);
 
-        driveAutonomous(153.4, 6.7);
+        driveAutonomous(180, 12);
 
         turnToAngle(180);
+
+        driveAutonomous(0, 2);
 
         sleep(500);
 
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
 
         sleep(500);
+
+        driveAutonomous(180, 2);
 
         turnToAngle(90);
 
-        driveSlides(Constants.SLIDE_BOTTOM);
+        driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
 
         centerConeStack(robotCameraPipeline);
 
@@ -147,14 +163,22 @@ public class RedLeftAutonomous extends BaseAutonomous {
 
         sleep(500);
 
-        driveSlides(Constants.SLIDE_LOW);
+        driveSlidesAutonomous(Constants.SLIDE_LOW);
 
-        driveAutonomous(153.4, 6.7);
+        driveAutonomous(180, 12);
 
         turnToAngle(180);
+
+        driveAutonomous(0, 2);
 
         sleep(500);
 
         driveGrabber(Constants.GRABBER_OPEN_POSITION);
+
+        sleep(500);
+
+        driveAutonomous(180, 2);
+
+        turnToAngle(90);
     }
 }

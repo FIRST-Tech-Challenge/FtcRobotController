@@ -13,7 +13,7 @@ public class Constants {
 
     public static final int UNIT_CIRCLE_OFFSET_DEGREES = 90;
 
-    public static final double DRIVE_CURVE_FACTOR = 0.55;
+    public static final double DRIVE_CURVE_FACTOR = 0.7;
 
     public static final double MINIMUM_TURN_POWER = 0.05;
     public static final double MINIMUM_DRIVE_POWER = 0.05;
@@ -22,7 +22,7 @@ public class Constants {
     public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.6;
 
     public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
-    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.7;
+    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.6;
 
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;
@@ -54,11 +54,11 @@ public class Constants {
     public static final int CAMERA_CENTER_X = CAMERA_X / 2;
     public static final int CAMERA_CENTER_Y = CAMERA_Y / 2;
 
-    public static final int CONE_WIDTH = 350;
+    public static final int CONE_WIDTH = 500;
     public static final double CONE_CENTERING_KP = 0.035;
 
-    public static final int JUNCTION_TOP_TOLERANCE = 25;
-    public static final double JUNCTION_TOP_CENTERING_KP = 0.05;
+    public static final int JUNCTION_TOP_TOLERANCE = 5;
+    public static final double JUNCTION_TOP_CENTERING_KP = 0.1;
 
     public static final Scalar LOWER_RED = new Scalar(170, 125, 50);
     public static final Scalar UPPER_RED = new Scalar(180, 255, 255);

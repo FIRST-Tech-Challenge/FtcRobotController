@@ -19,28 +19,20 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
     public double yPosition = Constants.CAMERA_CENTER_Y;
     public boolean detected = false;
 
-    //fields
     List<MatOfPoint> contours = new ArrayList<>();
     Mat hierarchy = new Mat();
     Mat mat = new Mat();
 
     @Override
     public Mat processFrame(Mat input) {
-        //crop frame based on rectangle
-
-        //transform the RGB frame into a HSV frame
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
-        //blur the HSV frame
         Imgproc.GaussianBlur(mat, mat, Constants.BLUR_SIZE, 0);
 
-        //mask the blurred frame
         Core.inRange(mat, Constants.LOWER_BLACK, Constants.UPPER_BLACK, mat);
 
-        //find contours
         Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        //find the largest contour if there is one
         if (contours.size() > 0) {
             detected = true;
             double maxVal = 0.0;
@@ -54,22 +46,19 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
                 }
             }
 
-            // get the bounding rectangle around the largest contour
             Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
+
             xPosition = boundingRect.x + (boundingRect.width * 0.5);
             yPosition = boundingRect.y + (boundingRect.height * 0.5);
-            double distanceFromCenter = Math.sqrt(Math.pow(Math.abs((xPosition - Constants.CAMERA_CENTER_X)),2) + Math.pow(Math.abs((yPosition - Constants.CAMERA_CENTER_Y)),2));
-            if(distanceFromCenter < 250)
-            {
-                // get moments
 
+            double distanceFromCenter = Math.sqrt(Math.pow(Math.abs((xPosition - Constants.CAMERA_CENTER_X)), 2) + Math.pow(Math.abs((yPosition - Constants.CAMERA_CENTER_Y)), 2));
+
+            if (distanceFromCenter < 250) {
                 Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
 
-                // draw the bounding rectangle on the frame
                 Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
 
-                if (moments.get_m00() > 0)
-                {
+                if (moments.get_m00() > 0) {
                     xPosition = boundingRect.x + (boundingRect.width * 0.5);
                     yPosition = boundingRect.y + (boundingRect.height * 0.5);
                 }

@@ -56,7 +56,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             tPower = (currentAngle - startAngle) * Constants.HEADING_CORRECTION_KP_AUTONOMOUS;
 
-            ratio = Math.max(remainingDistance / targetDistance, 0.1);
+            ratio = Math.max(remainingDistance / targetDistance, 0.2);
 
             xPower = Math.cos(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * ratio * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
             yPower = Math.sin(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * ratio * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
