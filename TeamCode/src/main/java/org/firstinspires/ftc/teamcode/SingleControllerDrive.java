@@ -13,14 +13,14 @@ public class SingleControllerDrive extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    private DcMotor leftFrontDrive;
+    private DcMotor leftBackDrive;
+    private DcMotor rightFrontDrive;
+    private DcMotor rightBackDrive;
 
-    private DcMotor liftMotor = null;
-    private Servo servoGrabber1 = null;
-    private Servo servoGrabber2 = null;
+    private DcMotor liftMotor;
+    private Servo servoGrabber1;
+    private Servo servoGrabber2;
 
 
     static final double MAX_POS     =    .52;
@@ -106,8 +106,8 @@ public class SingleControllerDrive extends LinearOpMode {
             double liftUp = gamepad1.right_trigger;
             double liftDown = gamepad1.left_trigger;
 
-            boolean liftUpSlow = gamepad1.b;
-            boolean liftDownSlow = gamepad1.a;
+            boolean liftUpSlow = gamepad1.a;
+            boolean liftDownSlow = gamepad1.b;
 
             boolean grabberOpen = gamepad1.left_bumper;
             boolean grabberClose = gamepad1.right_bumper;
@@ -115,18 +115,32 @@ public class SingleControllerDrive extends LinearOpMode {
             if(liftUp > .05 || liftDown > .05 || liftUpSlow || liftDownSlow && (!(liftMotor.getCurrentPosition() > MAX_LIFT_POS) || !(liftMotor.getCurrentPosition() < MIN_LIFT_POS))){
                 if(liftUp > .05 || liftDown > .05){
                     if(liftUp > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS){
+                        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         liftMotor.setPower(1);
                     }else if(liftDown > .05 && liftMotor.getCurrentPosition() > MIN_LIFT_POS){
+                        if(liftMotor.getCurrentPosition() > MAX_LIFT_POS / 2){
+                            liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        }else{
+                            liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        }
                         liftMotor.setPower(-1);
                     }else{
+                        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         liftMotor.setPower(0);
                     }
                 }else{
                     if(liftUpSlow && liftMotor.getCurrentPosition() < MAX_LIFT_POS){
+                        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         liftMotor.setPower(.5);
                     }else if(liftDownSlow && liftMotor.getCurrentPosition() > MIN_LIFT_POS){
+                        if(liftMotor.getCurrentPosition() > MAX_LIFT_POS / 2){
+                            liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        }else{
+                            liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        }
                         liftMotor.setPower(-.4);
                     }else{
+                        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         liftMotor.setPower(0);
                     }
                 }
