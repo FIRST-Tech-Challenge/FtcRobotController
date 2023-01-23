@@ -26,39 +26,37 @@ import teamcode.v1.vision.AutoOpMode
 class ParkBlueClose : AutoOpMode() {
     private val robot by lazy { AutoRobot(startPose) }
 
-    private val startPose = Pose(-66.0, -40.0, 180.0.radians)
+    private val startPose = Pose(-66.0, 40.0, 180.0.radians)
 
     private lateinit var mainCommand: Cmd
 
     private val path1 = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
         Pose(startPose.x, startPose.y, 0.0),
-        Pose(-45.0, -40.0, 0.0),
-        Pose(-10.0, -31.5, 310.0.radians)
+        Pose(-45.0, 40.0, 0.0),
+        Pose(-17.0, 40.0, 0.0.radians)
     )
 
     private val leftPath = HermitePath(
         {180.0.radians},
-        Pose(-14.0, -31.5, 180.0.radians),
-        Pose(-18.0, -15.0, 180.0.radians),
-        Pose(-22.0, -15.0, 180.0.radians),
-        Pose(-24.0, -15.0, 180.0.radians)
+        Pose(-17.0, 40.0, 180.0.radians),
+        Pose(-17.0, 66.0, 180.0.radians),
     )
 
     private val middlePath = HermitePath(
         {180.0.radians},
-        Pose(-10.0, -31.5, 180.0.radians),
-        Pose(-16.0, -39.0, 180.0.radians),
-        Pose(-18.0, -39.0, 180.0.radians),
-        Pose(-20.0, -39.0, 180.0.radians)
+        Pose(-17.0, 40.0, 180.0.radians),
+        Pose(-17.0, 40.0, 180.0.radians),
+        Pose(-17.0, 40.0, 180.0.radians),
+        Pose(-17.0, 40.0, 180.0.radians)
     )
 
     private val rightPath = HermitePath(
         {180.0.radians},
-        Pose(-10.0, -31.5, 180.0.radians),
-        Pose(-16.0, -60.0, 180.0.radians),
-        Pose(-18.0, -60.0, 180.0.radians),
-        Pose(-20.0, -60.0, 180.0.radians)
+        Pose(-10.0, 40.0, 180.0.radians),
+        Pose(-16.0, 20.0, 180.0.radians),
+        Pose(-18.0, 20.0, 180.0.radians),
+        Pose(-20.0, 20.0, 180.0.radians)
     )
 
     override fun mInit() {
@@ -73,20 +71,11 @@ class ParkBlueClose : AutoOpMode() {
 
         mainCommand = SequentialGroup(
             WaitUntilCmd {opModeState == OpModeState.START},
-            InstantCmd({robot.lift.setPos(7.0)}),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(path1, 0.6, 30.0, 6.0, 0.7, 5.0, 10.0),
-                Pair(
-                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 145.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
-                        Vector(-60.0, -40.0)
-                    )
-                )
             ),
-            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
-            WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 0.0, GuideConstants.telePos),
-            WaitCmd(0.5),
+            WaitCmd(1.0),
             ChooseCmd(
                 GVFCmd(robot.drive,
                     SimpleGVFController(rightPath, 0.5, 30.0, 6.0, 0.6, 5.0, 10.0)),
@@ -95,7 +84,8 @@ class ParkBlueClose : AutoOpMode() {
                         SimpleGVFController(middlePath, 0.5, 30.0, 6.0, 0.6, 5.0, 10.0)),
                     GVFCmd(robot.drive, SimpleGVFController(leftPath, 0.5, 30.0, 6.0, 0.6, 5.0, 10.0)),
                 ) { tagOfInterest!!.id == MIDDLE },
-            ) { tagOfInterest!!.id == RIGHT }
+            ) { tagOfInterest!!.id == RIGHT },
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, -1.0, GuideConstants.telePos),
         )
         mainCommand.schedule()
     }

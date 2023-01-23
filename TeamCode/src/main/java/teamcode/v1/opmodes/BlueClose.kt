@@ -83,12 +83,7 @@ class BlueClose : AutoOpMode() {
     override fun mInit() {
         super.mInit()
         robot.claw.setPos(ClawConstants.closePos)
-        Logger.config = LoggerConfig(
-            isLogging = true,
-            false,
-            isDashboardEnabled = true,
-            isTelemetryEnabled = true
-        )
+        Logger.config = LoggerConfig.COMP_CONFIG
 
         mainCommand = SequentialGroup(
             WaitUntilCmd {opModeState == OpModeState.START},

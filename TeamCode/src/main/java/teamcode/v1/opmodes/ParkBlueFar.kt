@@ -40,25 +40,25 @@ class ParkBlueFar : AutoOpMode() {
     private val leftPath = HermitePath(
         {180.0.radians},
         Pose(-14.0, 31.5, 180.0.radians),
-        Pose(-18.0, 60.0, 180.0.radians),
-        Pose(-22.0, 60.0, 180.0.radians),
-        Pose(-24.0, 60.0, 180.0.radians)
+        Pose(-16.0, 60.0, 180.0.radians),
+        Pose(-20.0, 60.0, 180.0.radians),
+        Pose(-22.0, 60.0, 180.0.radians)
     )
 
     private val middlePath = HermitePath(
         {180.0.radians},
         Pose(-10.0, 31.5, 180.0.radians),
-        Pose(-16.0, 39.0, 180.0.radians),
-        Pose(-18.0, 39.0, 180.0.radians),
-        Pose(-20.0, 39.0, 180.0.radians)
+        Pose(-16.0, 41.0, 180.0.radians),
+        Pose(-18.0, 41.0, 180.0.radians),
+        Pose(-20.0, 41.0, 180.0.radians)
     )
 
     private val rightPath = HermitePath(
         {180.0.radians},
         Pose(-10.0, 31.5, 180.0.radians),
-        Pose(-16.0, 15.0, 180.0.radians),
-        Pose(-18.0, 15.0, 180.0.radians),
-        Pose(-20.0, 15.0, 180.0.radians)
+        Pose(-16.0, 20.0, 180.0.radians),
+        Pose(-18.0, 20.0, 180.0.radians),
+        Pose(-20.0, 20.0, 180.0.radians)
     )
 
     override fun mInit() {
@@ -74,18 +74,20 @@ class ParkBlueFar : AutoOpMode() {
         mainCommand = SequentialGroup(
             WaitUntilCmd {opModeState == OpModeState.START},
             InstantCmd({robot.lift.setPos(7.0)}),
+            InstantCmd({robot.arm.setPos(160.0)}),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(path1, 0.6, 30.0, 6.0, 0.7, 5.0, 10.0),
                 Pair(
-                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 145.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 155.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                         Vector(-60.0, 40.0)
                     )
                 )
             ),
+            WaitCmd(2.0),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 0.0, GuideConstants.telePos),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, -1.0, GuideConstants.telePos),
             WaitCmd(0.5),
             ChooseCmd(
                 GVFCmd(robot.drive,

@@ -59,9 +59,9 @@ class RedClose : AutoOpMode() {
     private val leftPath = HermitePath(
         {180.0.radians},
         Pose(-14.0, 33.5, 180.0.radians),
-        Pose(-18.0, 60.0, 180.0.radians),
-        Pose(-22.0, 60.0, 180.0.radians),
-        Pose(-24.0, 60.0, 180.0.radians)
+        Pose(-16.0, 60.0, 180.0.radians),
+        Pose(-20.0, 60.0, 180.0.radians),
+        Pose(-22.0, 60.0, 180.0.radians)
     )
 
     private val middlePath = HermitePath(
