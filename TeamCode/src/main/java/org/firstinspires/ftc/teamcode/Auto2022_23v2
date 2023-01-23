@@ -1,25 +1,34 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import java.util.List;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import java.lang.Math.*;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.util.List;
 
 @Autonomous(name = "Auto 2022", group = "Linear Opmode")
 //@Disabled
 
-public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZone just without a bunch of old functions to make it easier to read
+public class Auto2022_23v2 extends LinearOpMode {
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -29,7 +38,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    //private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
+    //private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/team3666.tflite";
 
     private static final String[] LABELS = {
             "1 Bolt",
@@ -37,28 +46,63 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
             "3 Panel"
     };
 
-    //general constants
-    double oneFootCm = 30.48;
-
-    //drivetrain
     public DcMotorEx leftDrive;
     public DcMotorEx rightDrive;
     public DcMotorEx leftBackDrive;
     public DcMotorEx rightBackDrive;
 
+    public DcMotorEx liftMotor;
+    public Servo servoGrabber1;
+    public Servo servoGrabber2;
+
+    // Sensors
+    BNO055IMU imu;
+    ColorSensor color;
+
     public ElapsedTime runtime = new ElapsedTime();
 
     public double off = 0.0;
     public double corrections = 1.0;
-    public int count = 0;
 
     public boolean hasMoved = false;
 
-    //Wheel constants
-    public double maxVelocity = 340 * 537.6; //for AndyMark NeveRest 20 motor when using .setVelocity()
+    // Linear slide information
+    public double liftCorrection = 1;
+
+    public double tickPerInchForLift = 173 * liftCorrection;
+
+    final double MIN_LIFT_POS = 0;
+    final double MAX_LIFT_POS = tickPerInchForLift * 35;
+
+    // Servo information
+    static final double MAX_POS     =    .52;
+    static final double MAX_POS2    =    .48;
+    static final double MIN_POS     =     1;
+    static final double MIN_POS2    =     0;
+
+    public double servoDirection = 0;
+    public double position = 1;
+    public double position2 = 0;
+
+    // Wheel constants
+    public double ticksPerRotation = 537.6; // For AndyMark NeveRest 20
     public double rpm = 340;
-    public double radius = 10; //cm
-    public double oneFootTime = oneFootCm/(getVelo(radius,rpm)*.75); //using a velo of maxVelocity * .75; change the distance unit depending on radius units
+    public double maxVelocity = rpm * ticksPerRotation;
+    public double diameter = 10; //cm
+
+    // Cone information
+
+    public int coneCount = 1;
+    public double firstConePos = 5.775;
+    public double coneSeparationDistance = firstConePos/5;
+
+    // Image information
+    public double center = 0;
+    public double leftCenter = 0;
+    public double rightCenter = 0;
+
+    // General constants
+    double oneFootCm = 30.48;
 
     private static final String VUFORIA_KEY =
             "AclDUAH/////AAABmYzSWAdyDktyn7LeKaYpXPkeHMDuWfVt+ZWKtbsATYUHu+lKEe6ywQGLZLm5MRmxfQ4UQRSZ8hR7Hx7cwiYcj7DBcqr2CcI/KXvXFnaoaSHonQcH5UjgGwygyR0DRMvRI9Mm+MnWqdwgQuS4eNYgz/vAuNpeGRJmwimGZkb9kb9Uai+RaH2V33PvH4TZepOg//RReZrL33oLxaLEchTHATEKR1xj6NLzHuZVuOTnIaMwPHRrkkK/cyMqaog/be+k2uxxQ2Lxtb2Yb4nHt4n8Rs7ajT/dUSsP/6pZdWmVs7BmIafbHlLFlS/6+1rDbSfOHqEyHFoLDq/hselgdVG2pzEzPcr3ntMwoIAPjiA799i5";
@@ -84,7 +128,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                if (tfod != null) {
+                /*if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -106,66 +150,136 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
                         }
                         telemetry.update();
                         if (updatedRecognitions.size() > 0 && !hasMoved) {
-                            moveToZone(updatedRecognitions.get(0).getLabel(), count);
+                            moveToZone(updatedRecognitions.get(0).getLabel());
                             hasMoved = true;
                         }
                     }
+                }*/
+
+                if(!hasMoved){
+                    moveGrabber(true);
+                    waitTime(.5);
+                    moveLift(5);
+                    movePercentOfFoot(true,20.0/12);
+                    turnNinety(false);
+                    moveLift(17);
+                    movePercentOfFoot(true,3.0/12);
+                    moveLift(9);
+                    moveGrabber(false);
+                    movePercentOfFoot(false,3.0/12);
+                    moveLift(0);
+                    turnNinety(true);
+                    movePercentOfFoot(true,10.0/12);
+                    turnNinety(false);
+                    movePercentOfFoot(true,21.0/12);
+                    hasMoved = true;
                 }
+
+                /* Use the code below to test ticks per inch
+                 * Uncomment and run, then find how high the linear slide moved.
+                 * 1730 ticks as of writing this is the amount needed to lift up ten inches.
+                 * Change the liftCorrection variable to account for the difference in distance
+                 * For example: After running the code, the linear slide moved 13 inches.
+                 * Change liftCorrection to .7. This accounts for it being 3 inches over since
+                 * you're taking 3 inches off of the current one inch
+                 */
+
+                /*
+                if(!hasMoved){
+                    liftMotor.setMode(STOP_AND_RESET_ENCODER);
+                    liftMotor.setTargetPosition(1730);
+                    liftMotor.setMode(RUN_TO_POSITION);
+                    liftMotor.setPower(1.0);
+                    hasMoved = true;
+                }
+                 */
             }
         }
     }
 
-    /**
-     * Initialize the Vuforia localization engine.
-     */
-
-    /* Change this function completely:
-     *
-     * Using DcMotorEx function, convert tps from strafeVelo into rpm, then use physics stuff to
-     * get distance travelled (make sure to measure radius of current wheels that are being used),
-     * then multiply by the count variable to get total distance. Convert that distance into time
-     * by converting the tps being used in the moveToZone function into rpm, then using more physics
-     * equations to get time. Input that time variable into the F() function, and either subtract
-     * or add to the time it would need to be on for to move to the correction position.
-     *
-     * The functions that set the power for the motors also need to be changed to the .setVelocity()
-     * functions that were recently added to make this work correctly.
-     */
-
-    public void moveToZone(String signal, int count){
+    public void moveToZone(String signal){
         telemetry.addData("Detected:",signal);
-        double timeAdjustment = getDistance(radius,rpm,.5)*count; // get time by looking at strafe command in runOpMode()
-        if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
-            moveTwoFeet(true);
+        /*if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
+            movePercentOfFoot(true,30.0/12);
             turnNinety(false);
-            moveTwoFeet(true);
+            movePercentOfFoot(true,21.0/12);
         }
 
         if(signal.equals("2 Bulb")){ // go to location 2 (return to start and forward)
-            moveTwoFeet(true);
+            movePercentOfFoot(true,30.0/12);
         }
 
         if(signal.equals("3 Panel")){ // go to location 3 (right and forward)
-            moveTwoFeet(true);
+            movePercentOfFoot(true,30.0/12);
             turnNinety(true);
-            moveTwoFeet(true);
-        }
-    }
+            movePercentOfFoot(true,23.0/12);
+        }*/
 
+        moveGrabber(true);
+        waitTime(.5);
+        moveLift(5);
+        movePercentOfFoot(true,20.0/12);
+        turnNinety(false);
+        moveLift(17);
+        movePercentOfFoot(true,3.0/12);
+        moveLift(9);
+        moveGrabber(false);
+        movePercentOfFoot(false,3.0/12);
+        turnNinety(true);
+        movePercentOfFoot(true,10.0/12);
+        if(signal.equals("1 Bolt")){
+            turnNinety(false);
+            movePercentOfFoot(true,21.0/12);
+        }else if(signal.equals("3 Panel")){
+            turnNinety(true);
+            movePercentOfFoot(true,23.0/12);
+        }
+        moveLift(0);
+    }
 
     public void setUpHardware() { // Assigns motor names in phone to the objects in code
         leftDrive  = hardwareMap.get(DcMotorEx.class, "left_front_drive");
         leftBackDrive  = hardwareMap.get(DcMotorEx.class, "left_back_drive");
         rightDrive = hardwareMap.get(DcMotorEx.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotorEx.class, "right_back_drive");
-        // Makes all motors go forward, if they don't, switch this stuff
+
+        liftMotor  = hardwareMap.get(DcMotorEx.class, "lift_motor");
+        servoGrabber1 = hardwareMap.get(Servo.class, "servo_grabber_one");
+        servoGrabber2 = hardwareMap.get(Servo.class, "servo_grabber_two");
+
+        color = hardwareMap.get(ColorSensor.class, "sensor_color");
+
+        // Makes all motors go forward, if they don't, switch the direction
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        liftMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        servoGrabber1.setPosition(position);
+        servoGrabber2.setPosition(position2);
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        // Technically this is the default, however specifying it is clearer
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        // Without this, data retrieving from the IMU throws an exception
+        imu.initialize(parameters);
+
+        liftMotor.setMode(STOP_AND_RESET_ENCODER); // Set to 0 just in case
     }
 
-
+    /**
+     * Initialize the Vuforia localization engine.
+     */
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -194,23 +308,7 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
-    }
-
-    //Drive functions
-    public void setVelo(boolean forward, double maxPercent, double time){ // Move forward or backward
-        int direction = -1;
-        if(forward){
-            direction = 1;
-        }
-        runtime.reset();
-        while(opModeIsActive() && runtime.seconds() < time){
-            leftVelo(maxPercent*direction);
-            rightVelo(maxPercent*direction);
-        }
-        if(runtime.seconds() >= time){
-            motorsOff();
-        }
+        //tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
     public void strafeVelo(boolean isLeft, double maxPercent, double time){
@@ -231,98 +329,188 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         }
     }
 
+    /**
+     * Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
+     * @param CW
+     */
     public void turnNinety(boolean CW){
-        // Turns 90 degrees either clockwise or counter clockwise, depending on value of CW
-        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        // Technically this is the default, however specifying it is clearer
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        // Without this, data retrieving from the IMU throws an exception
-        imu.initialize(parameters);
+        double originalAngle = getAngle();
 
-        double originalAngle = -imu.getAngularOrientation().firstAngle + 1.80;
-
-        double time = .8;
-        runtime.reset();
-
-        /*if(CW){
-            while(opModeIsActive() && runtime.seconds() < time){
-                leftVelo(.75);
-                rightVelo(-.75);
-            }
-        }else{
-            while(opModeIsActive() && runtime.seconds() < time){
-                leftVelo(-.75);
-                rightVelo(.75);
-            }
-        }
-        if(time >= runtime.seconds()){
-            motorsOff();
-        }*/
-
-        if(CW){
+        if(CW) {
             //left = +; right = -
-            while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + 1.80 > originalAngle - .9) {
-                leftVelo(.75);
-                rightVelo(-.75);
+            if(originalAngle - 90 < 0) {
+                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - 90 + 360)) {
+                    leftVelo(.5);
+                    rightVelo(-.5);
+                }
+            }else{
+                while (opModeIsActive() && getAngle() > originalAngle - 90 && getAngle() < originalAngle + 5) {
+                    leftVelo(.5);
+                    rightVelo(-.5);
+                }
             }
         }else{
             //left = -; right = +
-            while(opModeIsActive() && -imu.getAngularOrientation().firstAngle + 1.80 < originalAngle + .9) {
-                leftVelo(-.75);
-                rightVelo(.75);
+            if(originalAngle + 90 > 360) {
+                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + 9 - 360)) {
+                    leftVelo(-.5);
+                    rightVelo(.5);
+                }
+            }else{
+                while (opModeIsActive() && getAngle() < originalAngle + 90 && getAngle() > originalAngle - 5) {
+                    leftVelo(-.5);
+                    rightVelo(.5);
+                }
             }
         }
         motorsOff();
     }
 
-    public void turnOneEighty(){
-        turnNinety(true);
-        turnNinety(true);
+    /**
+     * Turns to the desired angle as specified in targetAngle, assuming starting position is 0 degrees
+     * @param targetAngle
+     */
+    public void turnToAngle(double targetAngle){
+        double originalAngle = getAngle();
+        double changeInAngle = optimalAngleChange(targetAngle);
+
+        boolean CW = optimalDirection(targetAngle);
+
+        if(CW) {
+            if(originalAngle - changeInAngle < 0) {
+                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - changeInAngle + 360)) {
+                    leftVelo(.5);
+                    rightVelo(-.5);
+                }
+            }else{
+                while (opModeIsActive() && getAngle() > originalAngle - changeInAngle && getAngle() < originalAngle + 5) {
+                    leftVelo(.5);
+                    rightVelo(-.5);
+                }
+            }
+        }else{
+            if(originalAngle + changeInAngle > 360) {
+                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + changeInAngle - 360)) {
+                    leftVelo(-.5);
+                    rightVelo(.5);
+                }
+            }else{
+                while (opModeIsActive() && getAngle() < originalAngle + changeInAngle && getAngle() > originalAngle - 5) {
+                    leftVelo(-.5);
+                    rightVelo(.5);
+                }
+            }
+        }
+        motorsOff();
     }
 
-    public void moveOneFoot(boolean forward){
+    /**
+     * Moves forward or backward depending on the amount specified in feetAmount
+     * @param forward
+     * @param feetAmount
+     */
+    public void movePercentOfFoot(boolean forward, double feetAmount){
         //using motor encoders
-        double oneRotationDistance = 10 * Math.PI; // In cm
-        int ticksPerRotation = 538;
+        double driveTrainCorrection = 1;
 
+        double oneRotationDistance = diameter * Math.PI; // In cm
         double rotationAmount = oneFootCm / oneRotationDistance;
-        int totalTicks = (int) rotationAmount * ticksPerRotation;
+        double totalTicks = rotationAmount * ticksPerRotation * feetAmount * 2 * driveTrainCorrection; // *2 is to account for gear ratio
 
         resetEncoders();
 
         if(forward){
-            encoderTarget(totalTicks);
-            leftVelo(.75);
-            rightVelo(.75);
-            while(opModeIsActive() && leftDrive.isBusy()){
-                telemetry.addData("Left encoder", leftDrive.getCurrentPosition() + "  busy=" + leftDrive.isBusy());
-                telemetry.addData("Right encoder", rightDrive.getCurrentPosition() + "  busy=" + rightDrive.isBusy());
+            motorsOn(.75);
+            while(opModeIsActive() && leftBackDrive.getCurrentPosition() < totalTicks){
+                telemetry.addData("Encoder Value:", leftBackDrive.getCurrentPosition());
                 telemetry.update();
-                idle();
             }
         }else{
-            encoderTarget(-totalTicks);
-            leftVelo(.75);
-            rightVelo(.75);
-            while(opModeIsActive() && leftDrive.isBusy()){
-                telemetry.addData("Left encoder", leftDrive.getCurrentPosition() + "  busy=" + leftDrive.isBusy());
-                telemetry.addData("Right encoder", rightDrive.getCurrentPosition() + "  busy=" + rightDrive.isBusy());
+            totalTicks = -totalTicks;
+            motorsOn(-.75);
+            while(opModeIsActive() && leftBackDrive.getCurrentPosition() > totalTicks){
+                telemetry.addData("Encoder Value:", leftBackDrive.getCurrentPosition());
                 telemetry.update();
-                idle();
             }
         }
         motorsOff();
         resetEncoders();
     }
 
-    public void moveTwoFeet(boolean forward){
-        if(forward){
-            moveOneFoot(true);
-            moveOneFoot(true);
+    /**
+     * Picks up one of the cones from the stacked pile depending on how many cones there are on it
+     */
+    public void pickupCone(){
+        double conePosMod = coneCount * coneSeparationDistance;
+        moveLift(firstConePos - conePosMod);
+        moveGrabber(true);
+        waitTime(1);
+        moveLift(firstConePos - conePosMod + 5);
+        coneCount++;
+    }
+
+    /**
+     * Drives forward until it reads red or blue tape below it
+     * @param red
+     */
+    public void moveToTape(boolean red){
+        if(red){
+            while(opModeIsActive() && color.red() < 1200){
+                motorsOn(.5);
+            }
         }else{
-            moveOneFoot(false);
-            moveOneFoot(false);
+            while(opModeIsActive() && color.blue() < 1200){
+                motorsOn(.5);
+            }
+        }
+        motorsOff();
+        moveLift(12);
+        movePercentOfFoot(true, 10.0/12);
+    }
+
+    /**
+     * Moves the linear slide up to a specified height in inches
+     * @param toHeight
+     */
+    public void moveLift(double toHeight){
+        if(opModeIsActive()){
+            int targetTick = (int) (tickPerInchForLift * toHeight);
+
+            // Initial movement to get as close as possible
+            liftMotor.setTargetPosition(targetTick);
+            liftMotor.setMode(RUN_TO_POSITION);
+            liftMotor.setPower(1.0);
+
+            while(opModeIsActive() && liftMotor.isBusy()){
+                telemetry.addData("Lift Encoder Value:",liftMotor.getCurrentPosition());
+                telemetry.update();
+            }
+            liftMotor.setPower(0);
+
+            // Secondary movement to get to correct value using lower power
+            liftMotor.setTargetPosition(targetTick);
+            liftMotor.setMode(RUN_TO_POSITION);
+            liftMotor.setPower(.25);
+
+            while(opModeIsActive() && liftMotor.isBusy()){
+                telemetry.addData("Lift Encoder Value:",liftMotor.getCurrentPosition());
+                telemetry.update();
+            }
+            liftMotor.setPower(0);
+        }
+    }
+
+    /**
+     * Opens and closes the grabber
+     * @param closed
+     */
+    public void moveGrabber(boolean closed){
+        if(closed){
+            servoGrabber1.setPosition(MAX_POS);
+            servoGrabber2.setPosition(MAX_POS2);
+        }else{
+            servoGrabber1.setPosition(MIN_POS);
+            servoGrabber2.setPosition(MIN_POS2);
         }
     }
 
@@ -349,27 +537,47 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         rightBackDrive.setPower(percent);
     }
 
-
     //Primitive functions
 
+    /**
+     * Pauses all movement for the specified time in seconds
+     * @param time
+     */
     public void waitTime(double time){ // Waits for time (seconds)
         runtime.reset();
         while(opModeIsActive() && runtime.seconds()<time){
         }
     }
 
-    public void motorsOff(){ // Turns all motors off
+    /**
+     * Turns all wheels off
+     */
+    public void motorsOff(){
         leftDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightDrive.setPower(0);
         rightBackDrive.setPower(0);
     }
 
+    /**
+     * Turns all wheels on at specified power
+     * @param powerPercent
+     */
+    public void motorsOn(double powerPercent){
+        leftDrive.setPower(powerPercent);
+        leftBackDrive.setPower(powerPercent);
+        rightDrive.setPower(powerPercent);
+        rightBackDrive.setPower(powerPercent);
+    }
+
+    /**
+     * Resets all wheel encoders to be at 0 and to run without encoders
+     */
     public void resetEncoders() { // Reset all encoder positions
-        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDrive.setMode(STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(STOP_AND_RESET_ENCODER);
 
         leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -382,24 +590,57 @@ public class Auto2022_23v2 extends LinearOpMode { //same as AutoReadSignalMoveZo
         leftBackDrive.setTargetPosition(target);
         rightDrive.setTargetPosition(target);
         rightBackDrive.setTargetPosition(target);
-
-        leftDrive.setTargetPositionTolerance(4);
-        leftBackDrive.setTargetPositionTolerance(4);
-        rightDrive.setTargetPositionTolerance(4);
-        rightBackDrive.setTargetPositionTolerance(4);
-
-        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    // Some physics equations put into functions
-    public static double getVelo(double radius, double rpm){ // in m/s in theory; v = vangular * r
-        return ((rpm/60)*Math.PI)*radius;
+    /**
+     * Calculates the angle the robot is at and returns the orientation
+     * @return Current Orientation
+     */
+    public double getAngle(){
+        if(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle < 0){
+            return 360 + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // Addition since the value is negative
+        }
+        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
-    public static double getDistance(double radius, double rpm, double time){ //whatever unit radius is in; x = vt
-        return getVelo(radius,rpm)*time;
+    /**
+     * Finds whether turning clockwise or counterclockwise reaches the target angle faster.
+     * Returns true for clockwise and false for counterclockwise
+     * @param target
+     * @return true (CW) or false (CCW)
+     */
+    public boolean optimalDirection(double target){
+        if(target > getAngle()){
+            double x1 = target - getAngle();
+            double x2 = 360 - x1;
+            if(x1 < x2){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            double x1 = getAngle() - target;
+            double x2 = 360 - x1;
+            if(x1 > x2){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Finds the smallest angle change needed to reach the target angle from current angle
+     * @param target
+     * @return Shortest angle to target
+     */
+    public double optimalAngleChange(double target){
+        double x1 = target - getAngle();
+        double x2 = 360 - x1;
+        if(x1 < x2){
+            return x1;
+        }else{
+            return x2;
+        }
     }
 }

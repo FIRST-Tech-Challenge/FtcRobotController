@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,9 +15,12 @@ public class LinearSlide extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    private DcMotor liftMotor = null;
+    private DcMotorEx liftMotor = null;
     private Servo servoGrabber1 = null;
     private Servo servoGrabber2 = null;
+
+    static final double MIN_LIFT_POS =  0;
+    static final double MAX_LIFT_POS =  5000;
 
     static final double MAX_POS     =    .5;
     static final double MAX_POS2    =    .50;
@@ -38,11 +42,12 @@ public class LinearSlide extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        liftMotor  = hardwareMap.get(DcMotor.class, "lift_motor");
+        liftMotor  = hardwareMap.get(DcMotorEx.class, "lift_motor");
         servoGrabber1 = hardwareMap.get(Servo.class, "servo_grabber_one");
         servoGrabber2 = hardwareMap.get(Servo.class, "servo_grabber_two");
 
         liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -59,12 +64,12 @@ public class LinearSlide extends LinearOpMode {
             double lift = -gamepad2.left_stick_y;
             double grabber = -gamepad2.right_stick_y;
 
-            if(lift > .05){
+            if(lift > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS){
                 liftMotor.setPower(1);
             }else{
                 liftMotor.setPower(0);
             }
-            if(lift < -.05){
+            if(lift < -.05 && liftMotor.getCurrentPosition() > MIN_LIFT_POS){
                 liftMotor.setPower(-.4);
             }else{
                 liftMotor.setPower(0);
