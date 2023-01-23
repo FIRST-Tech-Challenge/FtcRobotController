@@ -128,7 +128,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                if (tfod != null) {
+                /*if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -154,6 +154,25 @@ public class Auto2022_23v2 extends LinearOpMode {
                             hasMoved = true;
                         }
                     }
+                }*/
+
+                if(!hasMoved){
+                    moveGrabber(true);
+                    waitTime(.5);
+                    moveLift(5);
+                    movePercentOfFoot(true,20.0/12);
+                    turnNinety(false);
+                    moveLift(17);
+                    movePercentOfFoot(true,3.0/12);
+                    moveLift(9);
+                    moveGrabber(false);
+                    movePercentOfFoot(false,3.0/12);
+                    moveLift(0);
+                    turnNinety(true);
+                    movePercentOfFoot(true,10.0/12);
+                    turnNinety(false);
+                    movePercentOfFoot(true,21.0/12);
+                    hasMoved = true;
                 }
 
                 /* Use the code below to test ticks per inch
@@ -339,6 +358,44 @@ public class Auto2022_23v2 extends LinearOpMode {
                 }
             }else{
                 while (opModeIsActive() && getAngle() < originalAngle + 90 && getAngle() > originalAngle - 5) {
+                    leftVelo(-.5);
+                    rightVelo(.5);
+                }
+            }
+        }
+        motorsOff();
+    }
+
+    /**
+     * Turns to the desired angle as specified in targetAngle, assuming starting position is 0 degrees
+     * @param targetAngle
+     */
+    public void turnToAngle(double targetAngle){
+        double originalAngle = getAngle();
+        double changeInAngle = optimalAngleChange(targetAngle);
+
+        boolean CW = optimalDirection(targetAngle);
+
+        if(CW) {
+            if(originalAngle - changeInAngle < 0) {
+                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - changeInAngle + 360)) {
+                    leftVelo(.5);
+                    rightVelo(-.5);
+                }
+            }else{
+                while (opModeIsActive() && getAngle() > originalAngle - changeInAngle && getAngle() < originalAngle + 5) {
+                    leftVelo(.5);
+                    rightVelo(-.5);
+                }
+            }
+        }else{
+            if(originalAngle + changeInAngle > 360) {
+                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + changeInAngle - 360)) {
+                    leftVelo(-.5);
+                    rightVelo(.5);
+                }
+            }else{
+                while (opModeIsActive() && getAngle() < originalAngle + changeInAngle && getAngle() > originalAngle - 5) {
                     leftVelo(-.5);
                     rightVelo(.5);
                 }
@@ -569,6 +626,21 @@ public class Auto2022_23v2 extends LinearOpMode {
             }else{
                 return false;
             }
+        }
+    }
+
+    /**
+     * Finds the smallest angle change needed to reach the target angle from current angle
+     * @param target
+     * @return Shortest angle to target
+     */
+    public double optimalAngleChange(double target){
+        double x1 = target - getAngle();
+        double x2 = 360 - x1;
+        if(x1 < x2){
+            return x1;
+        }else{
+            return x2;
         }
     }
 }
