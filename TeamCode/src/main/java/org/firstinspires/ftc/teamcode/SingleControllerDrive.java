@@ -23,14 +23,22 @@ public class SingleControllerDrive extends LinearOpMode {
     private Servo servoGrabber1 = null;
     private Servo servoGrabber2 = null;
 
-    static final double MAX_POS     =    .5;
-    static final double MAX_POS2    =    .50;
+
+    static final double MAX_POS     =    .52;
+    static final double MAX_POS2    =    .48;
     static final double MIN_POS     =     1;
     static final double MIN_POS2    =     0;
 
-    double direction = 0;
+    static final double MIN_LIFT_POS = 0;
+    static final double MAX_LIFT_POS = 173 * 34.5;
+
     double position = 1;
     double position2 = 0;
+
+    double lAdjust = 0;
+    double lbAdjust = 0;
+    double rAdjust = 0;
+    double rbAdjust = 0;
 
     @Override
     public void runOpMode() {
@@ -45,6 +53,15 @@ public class SingleControllerDrive extends LinearOpMode {
         liftMotor  = hardwareMap.get(DcMotor.class, "lift_motor");
         servoGrabber1 = hardwareMap.get(Servo.class, "servo_grabber_one");
         servoGrabber2 = hardwareMap.get(Servo.class, "servo_grabber_two");
+
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -82,54 +99,83 @@ public class SingleControllerDrive extends LinearOpMode {
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
 
-            boolean liftUp = gamepad1.left_bumper;
-            boolean liftDown = gamepad1.right_bumper;
-            boolean grabberOpen = gamepad1.b;
-            boolean grabberClose = gamepad1.x;
+            boolean adjustBackward = gamepad1.dpad_down;
+            boolean adjustForward = gamepad1.dpad_up;
+            boolean adjustLeftTurn = gamepad1.dpad_left;
+            boolean adjustRightTurn = gamepad1.dpad_right;
 
-            if(liftUp){
-                liftMotor.setPower(1);
-            }else{
-                liftMotor.setPower(0);
-            }
-            if(liftDown){
-                liftMotor.setPower(-.4);
-            }else{
-                liftMotor.setPower(0);
-            }
+            double liftUp = gamepad1.right_trigger;
+            double liftDown = gamepad1.left_trigger;
 
-            if(grabberClose || grabberOpen){
-                if(grabberOpen){
-                    direction = .1;
+            boolean liftUpSlow = gamepad1.b;
+            boolean liftDownSlow = gamepad1.a;
+
+            boolean grabberOpen = gamepad1.left_bumper;
+            boolean grabberClose = gamepad1.right_bumper;
+
+            if(liftUp > .05 || liftDown > .05 || liftUpSlow || liftDownSlow && (!(liftMotor.getCurrentPosition() > MAX_LIFT_POS) || !(liftMotor.getCurrentPosition() < MIN_LIFT_POS))){
+                if(liftUp > .05 || liftDown > .05){
+                    if(liftUp > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS){
+                        liftMotor.setPower(1);
+                    }else if(liftDown > .05 && liftMotor.getCurrentPosition() > MIN_LIFT_POS){
+                        liftMotor.setPower(-1);
+                    }else{
+                        liftMotor.setPower(0);
+                    }
                 }else{
-                    direction = -.1;
+                    if(liftUpSlow && liftMotor.getCurrentPosition() < MAX_LIFT_POS){
+                        liftMotor.setPower(.5);
+                    }else if(liftDownSlow && liftMotor.getCurrentPosition() > MIN_LIFT_POS){
+                        liftMotor.setPower(-.4);
+                    }else{
+                        liftMotor.setPower(0);
+                    }
                 }
             }else{
-                direction = 0;
+                liftMotor.setPower(0);
             }
 
-            position+=direction;
-            position2+= -direction;
-
-            if(position < MAX_POS || position2 > MAX_POS2){
-                position=MAX_POS;
-                position2=MAX_POS2;
+            if(grabberClose){
+                servoGrabber1.setPosition(MAX_POS);
+                servoGrabber2.setPosition(MAX_POS2);
+            }else if(grabberOpen){
+                servoGrabber1.setPosition(MIN_POS);
+                servoGrabber2.setPosition(MIN_POS2);
             }
 
-            if(position > MIN_POS || position2 < MIN_POS2){
-                position=MIN_POS;
-                position2=MIN_POS2;
+            if(adjustForward){
+                lAdjust = .25;
+                lbAdjust = .25;
+                rAdjust = .25;
+                rbAdjust = .25;
+            }else if(adjustBackward){
+                lAdjust = -.25;
+                lbAdjust = -.25;
+                rAdjust = -.25;
+                rbAdjust = -.25;
+            }else if(adjustLeftTurn){
+                lAdjust = -.25;
+                lbAdjust = -.25;
+                rAdjust = .25;
+                rbAdjust = .25;
+            }else if(adjustRightTurn){
+                lAdjust = .25;
+                lbAdjust = .25;
+                rAdjust = -.25;
+                rbAdjust = -.25;
+            }else{
+                lAdjust = 0;
+                lbAdjust = 0;
+                rAdjust = 0;
+                rbAdjust = 0;
             }
-
-            servoGrabber1.setPosition(position);
-            servoGrabber2.setPosition(position2);
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftFrontPower  = axial + lateral + yaw + lAdjust;
+            double rightFrontPower = axial - lateral - yaw + rAdjust;
+            double leftBackPower   = axial - lateral + yaw + lbAdjust;
+            double rightBackPower  = axial + lateral - yaw + rbAdjust;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
