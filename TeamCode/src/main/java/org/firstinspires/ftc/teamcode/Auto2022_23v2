@@ -66,7 +66,7 @@ public class Auto2022_23v2 extends LinearOpMode {
     public double tickPerInchForLift = 173 * liftCorrection;
 
     final double MIN_LIFT_POS = 0;
-    final double MAX_LIFT_POS = tickPerInchForLift * 35;
+    final double MAX_LIFT_POS = tickPerInchForLift * 34.5;
 
     // Servo information
     static final double MAX_POS     =    .52;
@@ -117,7 +117,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                /*if (tfod != null) {
+                if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -143,26 +143,6 @@ public class Auto2022_23v2 extends LinearOpMode {
                             hasMoved = true;
                         }
                     }
-                }*/
-
-                if(!hasMoved){
-                    moveGrabber(true);
-                    waitTime(.5);
-                    moveLift(5);
-                    moveInchAmount(true,19);
-                    moveLift(17);
-                    turnNinety(false);
-                    moveLift(9);
-                    moveGrabber(false);
-                    moveLift(12);
-                    turnNinety(true);
-                    moveInchAmount(true,11);
-
-                    turnNinety(false);
-                    moveInchAmount(true,21);
-
-                    moveLift(0);
-                    hasMoved = true;
                 }
 
                 /* Use the code below to test ticks per inch
@@ -360,29 +340,30 @@ public class Auto2022_23v2 extends LinearOpMode {
     public void turnToAngle(double targetAngle){
         double originalAngle = getAngle();
         double changeInAngle = optimalAngleChange(targetAngle);
+        double turningCorrection = (angleCorrection / 90) * changeInAngle;
 
         boolean CW = optimalDirection(targetAngle);
 
         if(CW) {
-            if(originalAngle - changeInAngle < 0) {
-                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - changeInAngle + angleCorrection + 360)) {
+            if(originalAngle - changeInAngle < 0 && !(originalAngle < 0)) {
+                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - changeInAngle + turningCorrection + 360)) {
                     leftVelo(.75);
                     rightVelo(-.75);
                 }
             }else{
-                while (opModeIsActive() && getAngle() > originalAngle - changeInAngle  + angleCorrection && getAngle() < originalAngle + 5) {
+                while (opModeIsActive() && getAngle() > originalAngle - changeInAngle  + turningCorrection && getAngle() < originalAngle + 5) {
                     leftVelo(.75);
                     rightVelo(-.75);
                 }
             }
         }else{
             if(originalAngle + changeInAngle > 360) {
-                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + changeInAngle - angleCorrection - 360)) {
+                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + changeInAngle - turningCorrection - 360)) {
                     leftVelo(-.75);
                     rightVelo(.75);
                 }
             }else{
-                while (opModeIsActive() && getAngle() < originalAngle + changeInAngle - angleCorrection && getAngle() > originalAngle - 5) {
+                while (opModeIsActive() && getAngle() < originalAngle + changeInAngle - turningCorrection && getAngle() > originalAngle - 5) {
                     leftVelo(-.75);
                     rightVelo(.75);
                 }
@@ -466,7 +447,7 @@ public class Auto2022_23v2 extends LinearOpMode {
             // Initial movement to get as close as possible
             liftMotor.setTargetPosition(targetTick);
             liftMotor.setMode(RUN_TO_POSITION);
-            liftMotor.setPower(1.0);
+            liftMotor.setPower(1);
 
             while(opModeIsActive() && liftMotor.isBusy()){
                 telemetry.addData("Lift Encoder Value:",liftMotor.getCurrentPosition());
@@ -485,6 +466,66 @@ public class Auto2022_23v2 extends LinearOpMode {
             }
             liftMotor.setPower(0);
         }
+    }
+
+    /**
+     * Combines moveLift and moveInchAmount to be faster and more fluid. Moves forward and raises lift at the same time,
+     * stopping individually when it reaches the desired height or distance.
+     * @param forward True or false
+     * @param distance How many inches to move forward
+     * @param height Distance to raise linear slide by
+     */
+    public void moveLiftAndDrive(boolean forward, double distance, double height){
+        // Linear slide calculations
+        int targetTick = (int) (tickPerInchForLift * height);
+
+        boolean correctionsDone = false;
+
+        // Drive train calculations
+        double driveTrainCorrection = 1;
+
+        double oneRotationDistance = diameter * Math.PI; // In cm
+        double rotationAmount = (oneFootCm / 12) / oneRotationDistance;
+        double totalTicks = rotationAmount * ticksPerRotation * distance * 2 * driveTrainCorrection; // *2 is to account for gear ratio
+
+        resetEncoders();
+
+        liftMotor.setTargetPosition(targetTick);
+        liftMotor.setMode(RUN_TO_POSITION);
+
+        liftMotor.setPower(1);
+
+        if(forward){
+            motorsOn(.75);
+            while(opModeIsActive() && liftMotor.isBusy() || leftBackDrive.getCurrentPosition() < totalTicks){
+                if(leftBackDrive.getCurrentPosition() > totalTicks){
+                    motorsOff();
+                }
+                if(!liftMotor.isBusy() && !correctionsDone){
+                    liftMotor.setTargetPosition(targetTick);
+                    liftMotor.setMode(RUN_TO_POSITION);
+                    liftMotor.setPower(.25);
+                }else{
+                    liftMotor.setPower(0);
+                }
+            }
+        }else{
+            totalTicks = -totalTicks;
+            motorsOn(-.75);
+            while(opModeIsActive() && liftMotor.isBusy() || leftBackDrive.getCurrentPosition() > totalTicks){
+                if(leftBackDrive.getCurrentPosition() < totalTicks){
+                    motorsOff();
+                }
+                if(!liftMotor.isBusy() && !correctionsDone){
+                    liftMotor.setTargetPosition(targetTick);
+                    liftMotor.setMode(RUN_TO_POSITION);
+                    liftMotor.setPower(.25);
+                }else{
+                    liftMotor.setPower(0);
+                }
+            }
+        }
+        resetEncoders();
     }
 
     /**
