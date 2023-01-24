@@ -68,6 +68,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
     int armTarget =0, slideTarget =0;
     boolean set = true;
 
+
     @Override
     public void runOpMode() {
         /*
@@ -109,7 +110,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
         tippingServo = hardwareMap.servo.get("tippingServo");
 
         // Set the drive motor direction:
-       // leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
         rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -207,6 +208,12 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 maxPowerConstraint = 0.75;
             } else if (gamepad1.b) {
                 maxPowerConstraint = 0.25;
+            }
+
+            if (gamepad1.left_trigger>0.2){
+                armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                sleep(200);
+                armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 //
             if (gamepad2.a) {
@@ -385,7 +392,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 moveArm = true;
                // armMotor.setPower(-0.3);
                 if (armTarget>0){
-                    armTarget = armTarget -5;
+                    armTarget = armTarget -8;
                 }
             }
             else if (gamepad2.left_stick_y<-0.6){
@@ -396,15 +403,10 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                     openClaw = false;
                 }
                 moveArm = true;
-                armTarget = armTarget+5;
-               // armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-               // armMotor.setPower(0.4);
+                armTarget = armTarget+8;
+
             }
-//            else if (moveArm) {
-//                armMotor.setTargetPosition(armMotor.getCurrentPosition());
-//                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                armMotor.setPower(0.3);
-//            }
+
 
             moveSlideMotors();
             moveArm();
@@ -431,7 +433,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
     protected void moveArm (){
         armPIDController.setTarget(armTarget);
         double velocity = armPIDController.calculateVelocity();
-        armMotor.setVelocity(velocity);
+        armMotor.setPower(velocity);
 
         telemetry.addData("power", velocity);
     }

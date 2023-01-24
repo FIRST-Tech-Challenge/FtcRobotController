@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.masters;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
+@Config
 public class LiftPIDController {
 
     DcMotorEx mainSlideMotor, slideMotor2, slideMotor3;
     PIDController liftController;
     int target =0;
-    public static double multiplier = 0.5;
+    public static double multiplier = 0.4;
     public static double multiplierZero = 0.1;
     public static double p=0.04, i=0, d=0.0001;
     public static double f=0.06;
