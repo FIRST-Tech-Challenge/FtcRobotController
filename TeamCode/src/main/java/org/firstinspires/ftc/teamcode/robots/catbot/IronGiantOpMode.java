@@ -75,9 +75,9 @@ public class IronGiantOpMode extends OpMode {
         telemetryOutput();
         if(!testing){
             telemetry.addData("should auton be running? \t", autonomous.hasBehaviors());
-            if (!calibrate && calibrateOn)
-                calibrate = robot.elevatorNClaw.calib();
-            else if(autonomous.hasBehaviors()) {
+//            if (!calibrate && calibrateOn)
+//                calibrate = robot.elevatorNClaw.calib();
+            if(autonomous.hasBehaviors()) {
                 autonomous.runBehaviors();
             }
             else {
