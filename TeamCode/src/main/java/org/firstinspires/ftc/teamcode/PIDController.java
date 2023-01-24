@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PIDController {
-    protected double kp;
-    protected double ki;
-    protected double kd;
-    protected double integralSum = 0.0;
-    protected double lastError = 0.0;
-    protected double previousFilterEstimate = 0.0;
+    public final double kp;
+    public final double ki;
+    public final double kd;
+    public double integralSum = 0.0;
+    public double lastError = 0.0;
+    public double previousFilterEstimate = 0.0;
+    public double error = 0.0;
+    public double derivative = 0.0;
     protected ElapsedTime timer;
 
     /**
@@ -29,9 +31,7 @@ public class PIDController {
      * @param state where we currently are, I.E. motor position
      */
     public double update (double target, double state) {
-        double error;
         double errorChange;
-        double derivative;
         double a = 0.707;
         double currentFilterEstimate;
         double result;

@@ -205,8 +205,8 @@ public abstract class AutonomousBase extends LinearOpMode {
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
         final int TURRET_CYCLES_AT_POS = 8;
-        double kpMin;
-        PIDController pidController = new PIDController(0.00035, 0.002, 0.00012);
+        // First try, 0.01 has 0.1 power at 10 pixels
+        PIDController pidController = new PIDController(0.01, 0.000, 0.000);
 
         double turretPower;
         double drivePower;
@@ -220,13 +220,8 @@ public abstract class AutonomousBase extends LinearOpMode {
                 theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
             turretPower = pidController.update(0.0, -theLocalPole.centralOffset);
-            kpMin = (theLocalPole.centralOffset > 0)? -0.095 : +0.095;
-            if( theLocalPole.aligned ) kpMin = 0.0;
-            turretPower += kpMin;
+            turretPower = Math.copySign(Math.max(1.0, abs(turretPower)), turretPower);
 
-            // Clamp it temporarily
-            if( turretPower > +0.20 ) turretPower = +0.20;
-            if( turretPower < -0.20 ) turretPower = -0.20;
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
             } else {

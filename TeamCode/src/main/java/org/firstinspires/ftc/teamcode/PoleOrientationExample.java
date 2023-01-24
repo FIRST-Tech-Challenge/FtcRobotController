@@ -201,87 +201,56 @@ public class PoleOrientationExample extends LinearOpMode
 
     /*---------------------------------------------------------------------------------*/
 
+    void logPid(int alignedCount, double turretPower, PIDController pid) {
+        // Only save "meaningful" entries (not final 15 aligned results with all zeros!)
+        if( alignedCount <= 3 ) {
+            // Shift all previous instrumentation readings down one entry
+            for( int index=1; index<LOGSIZE; index++ ) {
+                errorHistory[index-1] = errorHistory[index];
+                kpMinHistory[index-1] = kpMinHistory[index];
+                kpHistory[index-1]    = kpHistory[index];
+                kiHistory[index-1]    = kiHistory[index];
+                kdHistory[index-1]    = kdHistory[index];
+                kTHistory[index-1]    = kTHistory[index];
+            }
+            // Add the latest numbers to the end
+            errorHistory[LOGSIZE-1] = pid.error;
+            kpHistory[LOGSIZE-1]    = (pid.kp * pid.error);
+            kiHistory[LOGSIZE-1]    = (pid.ki * pid.integralSum);
+            kdHistory[LOGSIZE-1]    = (pid.kd * pid.derivative);
+            kTHistory[LOGSIZE-1]    = turretPower;
+        }
+
+        telemetry.addData("turretPower: ", turretPower);
+        telemetry.addData("PID", "error: %.2f, errorPwr: %.3f", pid.error, (pid.kp*pid.error) );
+        telemetry.addData("PID", "integralSum: %.3f, integralSumPwr: %.3f", pid.integralSum, pid.ki*pid.integralSum);
+        telemetry.addData("PID", "derivative: %.3f, derivativePwr: %.3f", pid.derivative, pid.kd*pid.derivative);
+        telemetry.update();
+    }
+
     void alignToPole(boolean turretFacingFront) {
         PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
-        final int TURRET_CYCLES_AT_POS = 15;
+        final int TURRET_CYCLES_AT_POS = 8;
+        // First try, 0.01 has 0.1 power at 10 pixels
+        PIDController pidController = new PIDController(0.0001, 0.000, 0.000);
 
         double turretPower;
         double drivePower;
-        // PID stuff
-        // Possible values 0.002, 0.005, 0.00005
-        double kpMin;  // see below (could be POSITIVE or NEGATIVE)
-        double kp = 0.00035;
-        double ki = 0.002;
-        double kd = 0.00012;
-        double error;
-        double errorChange;
-        double integralSum = 0.0;
-        double derivative;
-        double lastError = 0.0;
-        double a = 0.707;
-        double currentFilterEstimate;
-        double previousFilterEstimate = 0.0;
-        // This value should be related to ki*integralSum where that value does not exceed
-        // something like 25% max power (so if our max power is 0.20 the limit for ki*integralSum
-        // would be 0.05 and 0.05 / ki = maxIntegralSum. Start high and bring it down once ki solved
-        double maxIntegralSum = 11.0;
 
         // If we add back front camera, use boolean to determine which pipeline to use.
 //        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
         alignmentPipeline = pipelineBack;
-        ElapsedTime timer = new ElapsedTime();
 
         theLocalPole = alignmentPipeline.getDetectedPole();
         while (opModeIsActive() && ((theLocalPole.alignedCount <= TURRET_CYCLES_AT_POS) ||
                 theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
-            // The sign is backwards because centralOffset is negative of the power we need.
-            error = 0.0 - theLocalPole.centralOffset;
-            kpMin = (theLocalPole.centralOffset > 0)? -0.05 : +0.05;
-            if( theLocalPole.aligned ) kpMin = 0.0;
-            errorChange = error - lastError;
-            currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;
-            previousFilterEstimate = currentFilterEstimate;
-            derivative = currentFilterEstimate / timer.seconds();
-            integralSum = integralSum + (error * timer.seconds());
-            if( integralSum >  maxIntegralSum) integralSum =  maxIntegralSum;
-            if( integralSum < -maxIntegralSum) integralSum = -maxIntegralSum;
-//          if( theLocalPole.aligned ) integralSum = 0.0;   // TEST THIS??
-            turretPower = kpMin + (kp * error) + (ki * integralSum) + (kd * derivative);
-            // Clamp it temporarily
-            if( turretPower > +0.20 ) turretPower = +0.20;
-            if( turretPower < -0.20 ) turretPower = -0.20;
-            lastError = error;
-            timer.reset();
-
-            // Only save "meaningful" entries (not final 15 aligned results with all zeros!)
-            if( theLocalPole.alignedCount <= 3 ) {
-               // Shift all previous instrumentation readings down one entry
-               for( int index=1; index<LOGSIZE; index++ ) {
-                   errorHistory[index-1] = errorHistory[index];
-                   kpMinHistory[index-1] = kpMinHistory[index];
-                   kpHistory[index-1]    = kpHistory[index];
-                   kiHistory[index-1]    = kiHistory[index];
-                   kdHistory[index-1]    = kdHistory[index];
-                   kTHistory[index-1]    = kTHistory[index];
-               }
-               // Add the latest numbers to the end
-               errorHistory[LOGSIZE-1] = error;
-               kpMinHistory[LOGSIZE-1] = kpMin;
-               kpHistory[LOGSIZE-1]    = (kp * error);
-               kiHistory[LOGSIZE-1]    = (ki * integralSum);
-               kdHistory[LOGSIZE-1]    = (kd * derivative);
-               kTHistory[LOGSIZE-1]    = turretPower;
-               }
-            
-            telemetry.addData("turretPower: ", turretPower);
-            telemetry.addData("PID", "error: %.2f, errorPwr: %.3f + %.3f", error, kpMin, (kp*error) );
-            telemetry.addData("PID", "integralSum: %.3f, integralSumPwr: %.3f", integralSum, ki*integralSum);
-            telemetry.addData("PID", "derivative: %.3f, derivativePwr: %.3f", derivative, kd*derivative);
-            telemetry.update();
+            turretPower = pidController.update(0.0, theLocalPole.centralOffset);
+            turretPower = Math.copySign(Math.max(1.0, abs(turretPower)), turretPower);
+            logPid(theLocalPole.alignedCount, turretPower, pidController);
 
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
