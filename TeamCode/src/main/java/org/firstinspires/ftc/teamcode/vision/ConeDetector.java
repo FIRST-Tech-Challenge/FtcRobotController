@@ -26,7 +26,6 @@ public class ConeDetector extends OpenCvPipeline
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         if (mat.empty()) return input;
-
         /* blue
         Scalar blue_lowHSV = new Scalar (95,64,20);
         Scalar blue_highHSV = new Scalar (135,255,255);
@@ -55,7 +54,6 @@ public class ConeDetector extends OpenCvPipeline
 
         Mat edges = new Mat();
         Imgproc.Canny(thresh, edges, 100, 200);
-
 
         List<MatOfPoint> contours = new ArrayList<>();
         MatOfInt hull = new MatOfInt();

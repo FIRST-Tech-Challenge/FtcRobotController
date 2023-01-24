@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -45,10 +44,9 @@ public class Autonomous_root extends LinearOpMode {
         arm.init();
         arm.armTarget = 0;
 
-        DistanceSensor distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        Vision vision = new Vision(camera, telemetry, distanceSensor);
+        Vision vision = new Vision(camera, telemetry);
         vision.init();
 
         telemetry.addLine("waiting to start!");
@@ -74,14 +72,13 @@ public class Autonomous_root extends LinearOpMode {
         while(opModeIsActive() && !parked) {
             arm.closeGripper();
             chassis.runToPosition(-100, -100, -100, -100);
-            arm.runToPosition(arm.lowJunction);
 
             chassis.resetEncoder();
             chassis.runToPosition(-2500, -2500, -2500, -2500);
 
             chassis.runToPosition(-2100, -2100, -2100, -2100);
 
-            vision.setPoleDetector();
+            vision.setDetector("pole");
 
             for(int i=0; i<1; i++){
                 //RIGHT BLUE
@@ -89,26 +86,33 @@ public class Autonomous_root extends LinearOpMode {
 
                 //微調整(Small Adjustment)
                 while(Math.abs(vision.differenceX()) > 5) {
-                    double power = (vision.differenceX() < 0) ? 0.1 : -0.1;
+                    double power = (vision.differenceX() < 0) ? 0.2 : -0.2;
                     chassis.turn(power);
-
-                    telemetry.addData("difference", vision.differenceX());
-                    telemetry.addData("middle", vision.middleX());
-                    telemetry.addLine("aligned!");
-                    telemetry.update();
                 }
-
-                arm.runToPosition(arm.highJunction);
-
                 chassis.stop();
 
                 chassis.resetEncoder();
+                chassis.runToPosition(-250,-250,-250,-250);
+
+                chassis.stop();
+                while(Math.abs(vision.differenceX()) > 5) {
+                    double power = (vision.differenceX() < 0) ? 0.2 : -0.2;
+                    chassis.turn(power);
+                }
+                chassis.stop();
+
+                arm.runToPosition(arm.highJunction);
 
                 chassis.runToPosition(-500,-500,-500,-500);
                 chassis.stop();
 
                 arm.openGripper();
+                //RUN TO CAM POSITION
                 arm.runToPosition(0);
+
+                chassis.runToPosition(-250,-250,-250,-250);
+
+
             }
 
             if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);

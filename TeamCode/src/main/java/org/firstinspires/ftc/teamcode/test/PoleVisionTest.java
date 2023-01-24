@@ -34,7 +34,7 @@ public class PoleVisionTest extends LinearOpMode {
         DistanceSensor distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        Vision vision = new Vision(camera, telemetry, distanceSensor);
+        Vision vision = new Vision(camera, telemetry);
         vision.init();
 
         telemetry.addLine("waiting to start!");
@@ -42,17 +42,22 @@ public class PoleVisionTest extends LinearOpMode {
 
         waitForStart();
 
-        while(opModeIsActive()) {
-            chassis.turn(0.1);
-            sleep(4000);
-            chassis.turn(-0.1);
-            sleep(4000);
-            chassis.stop();
-            vision.setPoleDetector();
+        boolean parked = false;
 
-            telemetry.addData("difference", vision.differenceX());
-            telemetry.addData("middle", vision.middleX());
-            telemetry.update();
+        while(opModeIsActive() && !parked) {
+            vision.setDetector("pole");
+
+            while(Math.abs(vision.differenceX()) > 5) {
+                double power = (vision.differenceX() < 0) ? 0.1 : -0.1;
+                chassis.turn(power);
+
+                telemetry.addData("difference", vision.differenceX());
+                telemetry.addData("middle", vision.middleX());
+                telemetry.update();
+            }
+            chassis.stop();
+
+            parked = true;
         }
     }
 }

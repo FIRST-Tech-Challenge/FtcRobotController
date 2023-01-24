@@ -13,6 +13,8 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class PoleDetector extends OpenCvPipeline
@@ -20,25 +22,15 @@ public class PoleDetector extends OpenCvPipeline
     Telemetry telemetry;
     public PoleDetector(Telemetry t) {telemetry = t;}
     Mat mat = new Mat();
-    public Rect maxRect = new Rect();
+    public Rect pole = new Rect();
+    final int screenWidth = 640;
 
     @Override
     public Mat processFrame(Mat input)
     {
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
-
-        if (mat.empty()) return input;
-
-        // yellow
-        Scalar yellow_lowHSV = new Scalar (10,64,20);
-        Scalar yellow_highHSV = new Scalar (30,255,255);
-        Mat thresh = new Mat();
-
-        //yellow
-        Core.inRange(mat, yellow_lowHSV, yellow_highHSV, thresh);
-
-        Mat edges = new Mat();
-        Imgproc.Canny(thresh, edges, 100, 200);
+        if (input.empty()) return input;
+        //return poleDetection(input, new Scalar (95,64,20), new Scalar (135,255,255));
+        return poleDetection(input, new Scalar (13,64,20), new Scalar (27,255,255));
 
 //        Logitech HD Webcam C270, 640x480
 //        <Calibration
@@ -47,43 +39,51 @@ public class PoleDetector extends OpenCvPipeline
 //            principalPoint="319.495f, 242.502f"
 //            distortionCoefficients="-0.0449369, 1.17277, 0, 0, -3.63244, 0, 0, 0"
 //        />
+    }
 
-        List<MatOfPoint> initialContours = new ArrayList<>();
-        List<MatOfPoint> finalContours = new ArrayList<>();
-        MatOfInt hull = new MatOfInt();
-        Mat hierarchy = new Mat();
-        Imgproc.findContours(edges, initialContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+    private Mat poleDetection(Mat input, Scalar lowColor, Scalar highColor) {
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
-        for (int i = 0; i < initialContours.size(); i++) {
-            Imgproc.convexHull(initialContours.get(i), hull);
-            if(hull.total() >= 10){
-                finalContours.add(initialContours.get(i));
-                Imgproc.putText(mat, String.valueOf(hull.total()), initialContours.get(i).toArray()[0], 1, 1, new Scalar(0, 255, 0));
-                Imgproc.drawContours(mat, initialContours, i, new Scalar(255, 255, 255), 2);
-            }
+        // yellow
+        Scalar lowHSV = lowColor;
+        Scalar highHSV = highColor;
+        Mat thresh = new Mat();
+
+        //yellow
+        Core.inRange(mat, lowHSV, highHSV, thresh);
+
+        Mat edges = new Mat();
+        Imgproc.Canny(thresh, edges, 100, 200);
+
+        List<MatOfPoint> contours = new ArrayList<>();
+
+        Imgproc.findContours(edges, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        contours.removeIf(c -> Imgproc.boundingRect(c).height < 20);
+        Imgproc.drawContours(input, contours, -1, new Scalar(255, 255, 255));
+
+        if(!contours.isEmpty()) {
+            MatOfPoint biggestPole = Collections.max(contours, Comparator.comparingDouble(t0 -> Imgproc.boundingRect(t0).width));
+            pole = Imgproc.boundingRect(biggestPole);
+
+            Imgproc.rectangle(input, pole, new Scalar(255, 0, 0), 2);
+            Imgproc.circle(input, new Point(pole.x + (pole.width/2), pole.y + (pole.height/2)), 1, new Scalar(255, 0, 255), 3);
+            Imgproc.putText(input, "Pole " + (pole.x + (pole.width/2.0)) +","+(pole.y + (pole.height/2.0)), new Point(pole.x, pole.y < 10 ? (pole.y+pole.height+20) : (pole.y - 8)), Imgproc.FONT_HERSHEY_SIMPLEX, 0.8, new Scalar(255, 255, 255), 2);
         }
 
-        MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[finalContours.size()];
-        Rect[] boundRect = new Rect[finalContours.size()];
-        for (int j = 0; j < finalContours.size(); j++) {
-            contoursPoly[j] = new MatOfPoint2f();
-            Imgproc.approxPolyDP(new MatOfPoint2f(finalContours.get(j).toArray()), contoursPoly[j], 3, true);
-            boundRect[j] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[j].toArray()));
-            if(boundRect[j].area() > maxRect.area()) maxRect = boundRect[j];
-            Imgproc.rectangle(mat, boundRect[j], new Scalar(255, 255, 255));
-        }
-        Imgproc.rectangle(mat, maxRect, new Scalar(255, 0, 0), 2);
-        Imgproc.circle(mat, new Point(maxRect.x + (maxRect.width/2), maxRect.y + (maxRect.height/2)), 1, new Scalar(255, 0, 255), 3);
+        contours.clear();
+        mat.release();
+        edges.release();
+        thresh.release();
 
-        return mat;
+        return input;
     }
 
     public double differenceX () {
-        double difference = middleX() - (mat.width()/2.0);
+        double difference = middleX() - (screenWidth/2.0);
         return difference;
     }
 
     public double middleX () {
-        return (double) maxRect.x + (maxRect.width/2.0);
+        return (double) pole.x + (pole.width/2.0);
     }
 }
