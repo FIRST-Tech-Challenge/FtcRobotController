@@ -187,15 +187,16 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         moveGrabber(true);
         waitTime(.5);
-        moveLift(5);
+        /*moveLift(5);
         moveInchAmount(true,19);
-        moveLift(17);
+        moveLift(17);*/
+        moveLiftAndDrive(true,17,17);
         turnNinety(false);
         moveLift(9);
         moveGrabber(false);
         moveLift(12);
         turnNinety(true);
-        moveInchAmount(true,11);
+        moveLiftAndDrive(true,11,0);
         if(signal.equals("1 Bolt")){
             turnNinety(false);
             moveInchAmount(true,21);
@@ -203,7 +204,6 @@ public class Auto2022_23v2 extends LinearOpMode {
             turnNinety(true);
             moveInchAmount(true,23);
         }
-        moveLift(0);
     }
 
     public void setUpHardware() { // Assigns motor names in phone to the objects in code
