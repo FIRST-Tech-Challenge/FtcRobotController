@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -42,6 +43,9 @@ public abstract class BaseOpMode extends LinearOpMode {
     public double originalAngle;
     public double startAngle;
 
+    // Blinkin
+    public static RevBlinkinLedDriver blinkinChassis;
+
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
 
@@ -63,6 +67,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
         motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLeftSlides");
         motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRightSlides");
+        blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
 
         motorFL.setDirection(DcMotorEx.Direction.FORWARD);
         motorFR.setDirection(DcMotorEx.Direction.REVERSE);
@@ -240,5 +245,14 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorFR.setPower(0.0);
         motorBL.setPower(0.0);
         motorBR.setPower(0.0);
+    }
+
+    public void driveLeds() {
+        if(grabberCameraPipeline.detected) {
+            blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+        }
+        else {
+            blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_GRADIENT);
+        }
     }
 }
