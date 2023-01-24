@@ -85,7 +85,6 @@ public class Auto2022_23v2 extends LinearOpMode {
     public double angleCorrection = 6.43;
 
     // Cone information
-
     public int coneCount = 1;
     public double firstConePos = 5.775;
     public double coneSeparationDistance = firstConePos / 5;
@@ -112,7 +111,9 @@ public class Auto2022_23v2 extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
-        waitForStart();
+        while(!isStarted() && !isStopRequested()){
+
+        }
         runtime.reset();
 
         if (opModeIsActive()) {
