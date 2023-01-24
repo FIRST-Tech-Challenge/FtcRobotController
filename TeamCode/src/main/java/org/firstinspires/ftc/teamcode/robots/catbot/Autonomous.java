@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.catbot;
 import java.util.LinkedList;
 import java.util.Queue;
 
-class Autonomous {
+public class Autonomous {
     Queue<Task> behaviors;
     Robot robot;
     public Autonomous(Robot robot)

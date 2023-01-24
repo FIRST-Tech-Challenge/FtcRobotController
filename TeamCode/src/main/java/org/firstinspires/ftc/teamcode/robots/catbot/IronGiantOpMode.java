@@ -3,23 +3,17 @@ package org.firstinspires.ftc.teamcode.robots.catbot;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.pipeline.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-
 import java.util.ArrayList;
 
-@Config("IronGiantGameVariables")
+@Config ("IronGiantGameVariables")
 @TeleOp(name="Iron Giant OpMode", group="Challenge")
 public class IronGiantOpMode extends OpMode {
     //autonomous variables
@@ -327,6 +321,7 @@ public class IronGiantOpMode extends OpMode {
     public void autonVisionTelemetry() {
         if (tagOfInterest != null) {
             telemetry.addLine("Tag snapshot:\n");
+            auton = true;
             tagToTelemetry(tagOfInterest);
             telemetry.update();
         } else {

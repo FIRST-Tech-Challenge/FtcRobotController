@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robots.catbot;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -28,7 +27,7 @@ class ElevatorNClaw {
     private static boolean calibrate;
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
-    public static int elevatorSpeed = 150;
+    public static int elevatorSpeed = 300=oi-`;
     public ElevatorNClaw(Telemetry telemetry, HardwareMap hardwareMap) {
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
