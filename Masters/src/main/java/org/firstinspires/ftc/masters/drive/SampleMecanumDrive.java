@@ -144,13 +144,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
-        linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide"); // This one is named Jim in spirit
-        slideOtherer = hardwareMap.get(DcMotorEx.class, "slideOtherer");
-
-        armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
-
         claw = hardwareMap.servo.get("clawServo");
         tippingServo = hardwareMap.servo.get("tippingServo");
 
@@ -160,6 +153,15 @@ public class SampleMecanumDrive extends MecanumDrive {
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
             motor.setMotorType(motorConfigurationType);
         }
+
+
+        linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
+        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide"); // This one is named Jim in spirit
+        slideOtherer = hardwareMap.get(DcMotorEx.class, "slideOtherer");
+
+        armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
+
 
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -185,6 +187,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         frontSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideOtherer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideOtherer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void openClaw(){

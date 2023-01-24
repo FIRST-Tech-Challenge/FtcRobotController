@@ -1,24 +1,25 @@
 package org.firstinspires.ftc.masters;
 
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-
+@Config
 public class ArmPIDController {
 
     PIDController controller;
 
-    public static double p_arm = 0.006, i_arm = 0.001, d_arm = 0.0001;
-    public static double f_arm = 0.08;
+    public static double p_arm = 0.008, i_arm = 0.00, d_arm = 0.000;
+    public static double f_arm = 0.09;
 
     protected int target = 0;
 
     public static double multiplier = 0.6;
     public static double multiplierZero = 0.3;
 
-    private final double ticks = 1425;
-    private final double ticks_in_degree = 1425 / 360;
+    private final double ticks_per_seconds = 2785 * 117 /60;
+    private final double ticks_in_degree = 2785 / 360;
 
     DcMotorEx armMotor;
 
@@ -43,14 +44,15 @@ public class ArmPIDController {
 
         double power = pid + ff;
 
-        double velocity =0;
-        if (target == 0) {
-            velocity  = power * multiplierZero * ticks;
-        } else {
-            velocity = power * multiplier * ticks;
-        }
+//        if (power>1){
+//            power =1;
+//        }
+//
+//        if (target == 0 && armPos< 400){
+//            power = - Math.min(Math.abs(power), 0.2);
+//        }
 
-        return velocity;
+        return power;
 
     }
 
