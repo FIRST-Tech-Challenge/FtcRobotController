@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_CLOSED;
 import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_OPEN;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_BOTTOM;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_CONE_INCREMENT;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
 import static org.firstinspires.ftc.masters.BadgerConstants.TIP_BACK;
@@ -32,11 +33,8 @@ import org.checkerframework.checker.units.qual.A;
 public class PowerPlayTeleopTry extends LinearOpMode {
 
 
-    //RobotClass robot;
-   // SampleMecanumDriveCancelable drive;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-//    PIDController liftController;
     ArmPIDController armPIDController;
     LiftPIDController liftPIDController;
     /* Declare OpMode members. */
@@ -67,6 +65,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
     int armTarget =0, slideTarget =0;
     boolean set = true;
+    boolean trigger = false;
 
 
     @Override
@@ -361,25 +360,27 @@ public class PowerPlayTeleopTry extends LinearOpMode {
             }
 
 
-//            if (gamepad2.right_stick_y > 0.6) {
-//                if(openClaw){
-//                    clawServo.setPosition(clawServoClosed);
-//                    openClaw = false;
-//                }
-//                armTarget = ARM_BOTTOM;
-//
-//            } else if (gamepad2.right_stick_y < -0.6) {
-//                if(openClaw){
-//                    clawServo.setPosition(clawServoClosed);
-//                    openClaw = false;
-//                }
-//                armTarget = ARM_MID_TOP;
-////                armMotor.setTargetPosition(armMotorMid);
-////                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-////                armMotor.setPower(0.3);
-//                moveArm=false;
-//            }
+            if (gamepad2.right_trigger>0.3 && !trigger){
+                trigger = true;
+                armTarget += SLIDE_CONE_INCREMENT;
+            } else {
+                trigger = false;
+            }
 
+            if (gamepad2.right_stick_y>0.5){
+                previousState= currentState;
+                currentState = STATE.MANUAL;
+                if (armMotor.getCurrentPosition()>100){
+                    slideTarget += 10;
+                }
+
+            } else if (gamepad2.right_stick_y<-0/5){
+                previousState= currentState;
+                currentState = STATE.MANUAL;
+                if (armMotor.getCurrentPosition()>100){
+                    slideTarget -= 10;
+                }
+            }
 
             if (gamepad2.left_stick_y>0.6){
                 previousState= currentState;
@@ -391,9 +392,9 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 //armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 moveArm = true;
                // armMotor.setPower(-0.3);
-                if (armTarget>0){
-                    armTarget = armTarget -8;
-                }
+
+                armTarget = armTarget -8;
+
             }
             else if (gamepad2.left_stick_y<-0.6){
                 previousState= currentState;

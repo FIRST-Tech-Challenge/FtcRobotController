@@ -22,6 +22,8 @@ public class BadgerConstants {
     public static final double TIP_BACK = 0.6;
     public static final double TIP_FRONT =0.99;
 
+    public static int SLIDE_CONE_INCREMENT = 20;
+
 
 
 }
