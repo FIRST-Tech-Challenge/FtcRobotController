@@ -22,9 +22,9 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	private Slide slideControl;
 	private Claw clawControl;
 
-	public static double xFirstLinear = 62;
+	public static double xFirstLinear = 63;
 	public static double yFirstLinear = 2;
-	public static double angle = 142;
+	public static double angle = 147;
 	public static double xSecondToJunction = 53;
 	public static double ySecondToJunction = -4;
 	public static double xThirdToJunction = 54;
@@ -63,7 +63,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				//If 13.53 V, y = -3.5
 				// Mechanisms deposit preload at high junction with a 0.65 delay
 				.UNSTABLE_addTemporalMarkerOffset(0.75,()->{
-					slideControl.setHighJunction(telemetry);
+					slideControl.setCustom(2200);
 					armControl.setExtake();
 					clawControl.toggleWristRotate();
 
@@ -102,14 +102,14 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 
 
 
-			   // GOING TO HIGH JUNCTION FOR THE SECOND TIME
+				// GOING TO HIGH JUNCTION FOR THE SECOND TIME
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1370);
 				})
 				.waitSeconds(.45)
 				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{ //0.7 old value
-					slideControl.setHighJunction(telemetry); // 2nd time at high junction
+					slideControl.setCustom(2200); // 2nd time at high junction
 					armControl.setCustom(990);
 					clawControl.toggleWristRotate();
 				})
@@ -147,7 +147,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				//GOING TO JUNCTION FOR THIRD TIME
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0.3,()->{
-					slideControl.setHighJunction(telemetry);
+					slideControl.setCustom(2200);
 					armControl.setCustom(990);
 					clawControl.toggleWristRotate();
 				})
@@ -180,16 +180,16 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					slideControl.setCustom(1310);
 				})
 				.waitSeconds(.25)
-				.UNSTABLE_addTemporalMarkerOffset(0.65,()->{
-					slideControl.setHighJunction(telemetry);
+				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{
+					slideControl.setCustom(2200);
 					armControl.setCustom(990);
 					clawControl.toggleWristRotate();
 				})
 				.waitSeconds(0.5)
 				.lineToLinearHeading(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
 
-				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(1450);
+				.UNSTABLE_addTemporalMarkerOffset(1,()->{
+					slideControl.setCustom(1350);
 				})
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -202,8 +202,9 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					slideControl.setIntakeOrGround();
 					armControl.setIntake();
 				})
-				/*
+
 				.waitSeconds(0.25)
+				/*
 				.addTemporalMarker(() -> {
 					if(tagUse == 1){
 						Trajectory zoneOne = bot.trajectoryBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
