@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.HuskyBot.*;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -75,26 +77,26 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
     // region DEFINE FUNCTIONS
     // method to smoothly accelerate a motor given a target velocity.
-    void smoothAcceleration(DcMotorEx motor, double targetVel, double accelRate) {
-        double currentVel = motor.getVelocity();
-        double changeVel = 0;
-
-        // check if currentVel is close to targetVel. if it is, set velocity directly to the target.
-        if (Math.abs(currentVel - targetVel) < accelRate) {
-            currentVel = targetVel;
-        }
-        else {
-            // if motor is decelerating (approaching 0 vel), increase deceleration rate.
-            if (Math.abs(currentVel) > Math.abs(targetVel)) {
-                accelRate *= 2;
-            }
-            // set +/- changeVel based on if currentVel is lower or higher than targetVel.
-            changeVel = (currentVel < targetVel) ? accelRate : -accelRate;
-        }
-
-        // change the velocity of the motor (accelerate) based on changeVel.
-        motor.setVelocity(currentVel + changeVel);
-    }
+//    void smoothAcceleration(DcMotorEx motor, double targetVel, double accelRate) {
+//        double currentVel = motor.getVelocity();
+//        double changeVel = 0;
+//
+//        // check if currentVel is close to targetVel. if it is, set velocity directly to the target.
+//        if (Math.abs(currentVel - targetVel) < accelRate) {
+//            currentVel = targetVel;
+//        }
+//        else {
+//            // if motor is decelerating (approaching 0 vel), increase deceleration rate.
+//            if (Math.abs(currentVel) > Math.abs(targetVel)) {
+//                accelRate *= 2;
+//            }
+//            // set +/- changeVel based on if currentVel is lower or higher than targetVel.
+//            changeVel = (currentVel < targetVel) ? accelRate : -accelRate;
+//        }
+//
+//        // change the velocity of the motor (accelerate) based on changeVel.
+//        motor.setVelocity(currentVel + changeVel);
+//    }
     // endregion
 
     @Override
@@ -102,6 +104,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
         // region INITIALIZATION
         huskyBot.init(hardwareMap);
+        huskyBot.drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -130,26 +133,25 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
 
         // region DRIVE MECHANISMS
-            y = -gamepad1.left_stick_y; // Remember, this is reversed!
-            x = gamepad1.left_stick_x;
-            rx = gamepad1.right_stick_x;
+            Pose2d poseEstimate = huskyBot.drive.getPoseEstimate();
 
+            Vector2d input = new Vector2d(
+                    -gamepad1.left_stick_y,
+                    -gamepad1.left_stick_x
+                    ).rotated(-poseEstimate.getHeading());
             // uses the left trigger to dynamically shift between different drive speeds.
             // when the trigger is fully released, driveVelocity = 1.
             // when the trigger is fully pressed, driveVelocity = 0.2.
-            float driveVelocity = (float) (0.2 + 0.8 * gamepad1.left_trigger);
+            double driveVelocity = (0.2 + 0.8 * gamepad1.left_trigger);
 
-            // calculate motor velocities.
-            double frontLeftVelocity = (y + x + rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
-            double rearLeftVelocity = (y - x + rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
-            double frontRightVelocity = (y - x - rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
-            double rearRightVelocity = (y + x - rx) * driveVelocity * HuskyBot.VELOCITY_CONSTANT;
-
-            // apply the calculated values to the motors using smooth acceleration.
-            smoothAcceleration(huskyBot.frontLeftDrive, frontLeftVelocity, HuskyBot.VELOCITY_CONSTANT/5);
-            smoothAcceleration(huskyBot.rearLeftDrive, rearLeftVelocity, HuskyBot.VELOCITY_CONSTANT/5);
-            smoothAcceleration(huskyBot.frontRightDrive, frontRightVelocity, HuskyBot.VELOCITY_CONSTANT/5);
-            smoothAcceleration(huskyBot.rearRightDrive, rearRightVelocity, HuskyBot.VELOCITY_CONSTANT/5);
+            huskyBot.drive.setWeightedDrivePower(
+                    new Pose2d(
+                            input.getX() * driveVelocity,
+                            input.getY() * driveVelocity,
+                            -gamepad1.right_stick_x * driveVelocity
+                    )
+            );
+            huskyBot.drive.update();
         // endregion
 
 
@@ -390,14 +392,13 @@ public class HuskyTeleOpMode extends LinearOpMode {
         // region TELEMETRY
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Stick", "y (%.2f), x (%.2f), rx (%.2f)", y, x, rx);
-            telemetry.addData("Actual Vel", "fl (%.2f), rl (%.2f)",
-                    huskyBot.frontLeftDrive.getVelocity(), huskyBot.rearLeftDrive.getVelocity());
-            telemetry.addData("Actual Vel", "fr (%.2f), rr (%.2f)",
-                    huskyBot.frontRightDrive.getVelocity(), huskyBot.rearRightDrive.getVelocity());
-            telemetry.addData("Target Vel", "fl (%.2f), rl (%.2f)", frontLeftVelocity, rearLeftVelocity);
-            telemetry.addData("Target Vel", "fr (%.2f), rr (%.2f)", frontRightVelocity, rearRightVelocity);
-            telemetry.addData("Power", "front left (%.2f), rear left (%.2f)", huskyBot.frontLeftDrive.getPower(), huskyBot.rearLeftDrive.getPower());
-            telemetry.addData("Power", "front right (%.2f), rear right (%.2f)", huskyBot.frontLeftDrive.getPower(), huskyBot.rearLeftDrive.getPower());
+            telemetry.addData("Heading", poseEstimate.getHeading());
+//            telemetry.addData("Actual Vel", "fl (%.2f), rl (%.2f)", huskyBot.frontLeftDrive.getVelocity(), huskyBot.rearLeftDrive.getVelocity());
+//            telemetry.addData("Actual Vel", "fr (%.2f), rr (%.2f)", huskyBot.frontRightDrive.getVelocity(), huskyBot.rearRightDrive.getVelocity());
+//            telemetry.addData("Target Vel", "fl (%.2f), rl (%.2f)", frontLeftVelocity, rearLeftVelocity);
+//            telemetry.addData("Target Vel", "fr (%.2f), rr (%.2f)", frontRightVelocity, rearRightVelocity);
+//            telemetry.addData("Power", "front left (%.2f), rear left (%.2f)", huskyBot.frontLeftDrive.getPower(), huskyBot.rearLeftDrive.getPower());
+//            telemetry.addData("Power", "front right (%.2f), rear right (%.2f)", huskyBot.frontLeftDrive.getPower(), huskyBot.rearLeftDrive.getPower());
 
             // Show the Arm/Claw Telemetry
             telemetry.addData("Arm Swivel", "Power: (%.2f), Pos: (%d)",

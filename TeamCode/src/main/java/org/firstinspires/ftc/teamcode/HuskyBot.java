@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
@@ -49,6 +50,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Config
 public class HuskyBot {
     /* Public OpMode members. */
+    public SampleMecanumDrive drive = null;
+
     public DcMotorEx frontLeftDrive = null;
     public DcMotorEx frontRightDrive = null;
     public DcMotorEx rearLeftDrive = null;
@@ -117,49 +120,53 @@ public class HuskyBot {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
+        // Define and Initialize Mecanum Drive
+        drive = new SampleMecanumDrive(ahwMap);
+        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         // Define and Initialize Drive Motors
-        frontLeftDrive = hwMap.get(DcMotorEx.class, "front_left_drive");
-        rearLeftDrive = hwMap.get(DcMotorEx.class, "rear_left_drive");
-        frontRightDrive = hwMap.get(DcMotorEx.class, "front_right_drive");
-        rearRightDrive = hwMap.get(DcMotorEx.class, "rear_right_drive");
-
-        // Set Drive Motors to Zero Power
-        frontLeftDrive.setPower(0);
-        rearLeftDrive.setPower(0);
-        frontRightDrive.setPower(0);
-        rearRightDrive.setPower(0);
-
-        // Reset Drive Motor Encoders
-        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rearLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rearRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Set Drive Motor Behaviors
-        frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rearLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rearRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        frontLeftDrive = hwMap.get(DcMotorEx.class, "front_left_drive");
+//        rearLeftDrive = hwMap.get(DcMotorEx.class, "rear_left_drive");
+//        frontRightDrive = hwMap.get(DcMotorEx.class, "front_right_drive");
+//        rearRightDrive = hwMap.get(DcMotorEx.class, "rear_right_drive");
+//
+//        // Set Drive Motors to Zero Power
+//        frontLeftDrive.setPower(0);
+//        rearLeftDrive.setPower(0);
+//        frontRightDrive.setPower(0);
+//        rearRightDrive.setPower(0);
+//
+//        // Reset Drive Motor Encoders
+//        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rearLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rearRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        // Set Drive Motor Behaviors
+//        frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rearLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rearRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+//        rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+//
+//        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Set Drive Motor PIDF Coefficients
         // https://docs.google.com/document/u/1/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/mobilebasic
         // todo these still need to be tuned
-        frontLeftDrive.setVelocityPIDFCoefficients(1.82, 0.182, 0, 18.2);
-        frontLeftDrive.setPositionPIDFCoefficients(5.0);
-        rearLeftDrive.setVelocityPIDFCoefficients(1.18, 0.118, 0, 11.8);
-        rearLeftDrive.setPositionPIDFCoefficients(5.0);
-        frontRightDrive.setVelocityPIDFCoefficients(1.43, 0.143, 0, 14.3);
-        frontRightDrive.setPositionPIDFCoefficients(5.0);
-        rearRightDrive.setVelocityPIDFCoefficients(1.27, 0.127, 0, 12.7);
-        rearRightDrive.setPositionPIDFCoefficients(5.0);
+//        frontLeftDrive.setVelocityPIDFCoefficients(1.82, 0.182, 0, 18.2);
+//        frontLeftDrive.setPositionPIDFCoefficients(5.0);
+//        rearLeftDrive.setVelocityPIDFCoefficients(1.18, 0.118, 0, 11.8);
+//        rearLeftDrive.setPositionPIDFCoefficients(5.0);
+//        frontRightDrive.setVelocityPIDFCoefficients(1.43, 0.143, 0, 14.3);
+//        frontRightDrive.setPositionPIDFCoefficients(5.0);
+//        rearRightDrive.setVelocityPIDFCoefficients(1.27, 0.127, 0, 12.7);
+//        rearRightDrive.setPositionPIDFCoefficients(5.0);
 
 
         // Define and Initialize Arm Motors and Servos
