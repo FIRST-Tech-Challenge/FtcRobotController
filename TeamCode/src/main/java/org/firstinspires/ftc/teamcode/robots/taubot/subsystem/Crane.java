@@ -436,6 +436,7 @@ public class Crane implements Subsystem {
                     articulation = Articulation.manual;
                     return Articulation.manual;
                 }
+                break;
             case noIK:
 
                 break;
@@ -449,6 +450,7 @@ public class Crane implements Subsystem {
                 holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
                 break;
             case dropCone:
+                pickupConeStage = 0;
                 updateScoringPattern();
                 if(dropCone(source)){
                     articulation = Articulation.manual;
@@ -457,6 +459,8 @@ public class Crane implements Subsystem {
                 break;
 
             case home:
+                pickupConeStage = 0;
+                dropConeStage = 0;
                 if(goHome()){
                     articulation = Articulation.manual;
                     return Articulation.manual;
@@ -464,6 +468,7 @@ public class Crane implements Subsystem {
                 break;
 
             case pickupCone:
+                dropConeStage = 0;
                 updateScoringPattern();
                 if(pickupCone(targetPole)){
                     articulation = Articulation.manual;
@@ -502,7 +507,7 @@ public class Crane implements Subsystem {
         if(coneCycle(rightConeStack)){
             coneStackStage++;
         }
-        return coneStackStage >= 2;
+        return coneStackStage >= 1;
     }
 
     int coneCycleStage = 0;
@@ -557,21 +562,21 @@ public class Crane implements Subsystem {
                 }
                 Pose2d tempPos = Field.convertToInches(temp.getPosition());
                 if(rightConeStack) {
-                    if (goToFieldCoordinate(tempPos.getX() + 4.5, tempPos.getY(), temp.z() + 3)) {
+                    if (goToFieldCoordinate(tempPos.getX() + 3.5, tempPos.getY() + 1, temp.z() + 3)) {
                         coneCycleStage++;
-                        cycleTimer = futureTime(0.5);
+                        cycleTimer = futureTime(0.9);
                     }
                 }else{
                     if (goToFieldCoordinate(tempPos.getX() + 1, tempPos.getY()-3.5, temp.z() + 3)) {
                         coneCycleStage++;
-                        cycleTimer = futureTime(0.5);
+                        cycleTimer = futureTime(0.9);
                     }
                 }
                 break;
             case 7:
                 if(System.nanoTime() >= cycleTimer) {
                     release();
-                    cycleTimer = futureTime(0.2);
+                    cycleTimer = futureTime(0.4);
                     coneCycleStage++;
                 }
                 break;
@@ -714,7 +719,6 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 4:
-                nudgeCenter(true);
                 pickupConeStage++;
                 break;
             case 5:

@@ -39,9 +39,9 @@ public class FieldThing {
     public double z() {
         switch (height) {
             case 0:
-                return 7;
+                return 10;
             case 1:
-                return 7;
+                return 10;
             case 2:
                 return 17;
             case 3:
