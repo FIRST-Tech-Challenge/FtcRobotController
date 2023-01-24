@@ -23,6 +23,7 @@ public class RobotManager {
 
     public enum AllianceColor {BLUE, RED}
     public enum StartingSide {OUR_COLOR, THEIR_COLOR} //add starting side here later
+    public enum ParkingPosition {LEFT, RIGHT, CENTER}
     public Robot robot;
     public AllianceColor allianceColor;
     public StartingSide startingSide;
