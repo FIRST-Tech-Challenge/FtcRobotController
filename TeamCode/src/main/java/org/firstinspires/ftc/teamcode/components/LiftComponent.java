@@ -46,7 +46,7 @@ public class LiftComponent {
      */
     public void setHeight(double height) {
         height -= initialHeightOffset; // Get height relative to starting position
-        double angle = Math.sin(height/(2*this.barLength));
+        double angle = Math.asin(height/(2*this.barLength));
         this.motor.setTargetPosition((int)(countsPerRotation*angle));
     }
 }
