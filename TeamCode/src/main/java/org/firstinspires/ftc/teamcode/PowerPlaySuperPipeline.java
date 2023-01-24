@@ -246,7 +246,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // Create a subdirectory based on DATE
         String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
-        String directoryPath = directory + "/" + "AutoImage_" + timeString + ".png";
         directory = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//" + dateString;
         if (blueAlliance) {
             if (leftSide) {
@@ -262,8 +261,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             }
         }
         // Create the directory structure to store the autonomous image used to start auto.
-        File autonomousDir = new File(directory);
-        autonomousDir.mkdirs();
+        File baseDir = new File(directory);
+        baseDir.mkdirs();
+
+        String filePath = directory + "/" + "AutoImage_" + timeString + ".png";
 
         new Thread(new Runnable()
         {
@@ -273,7 +274,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 try
                 {
                     Imgproc.cvtColor(finalAutoImage, finalAutoImage, Imgproc.COLOR_RGB2BGR);
-                    Imgcodecs.imwrite(directoryPath, finalAutoImage);
+                    Imgcodecs.imwrite(filePath, finalAutoImage);
                 }
                 catch (Exception e)
                 {
