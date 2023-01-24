@@ -27,7 +27,7 @@ class ElevatorNClaw {
     private static boolean calibrate;
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
-    public static int elevatorSpeed = 300=oi-`;
+    public static int elevatorSpeed = 300;
     public ElevatorNClaw(Telemetry telemetry, HardwareMap hardwareMap) {
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
