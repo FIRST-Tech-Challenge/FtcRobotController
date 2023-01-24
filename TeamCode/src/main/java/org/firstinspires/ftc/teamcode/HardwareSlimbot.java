@@ -103,9 +103,9 @@ public class HardwareSlimbot
     public double       turretAngleOffset  = 299.0;   // allows us to adjust the 0-360 deg range
     public double       turretAngleTarget  = 0.0;     // Automatic movement target angle (degrees)
 
-    public double       TURRET_ANGLE_MAX    = +90.0;   // absolute encoder angles at maximum rotation RIGHT
+    public double       TURRET_ANGLE_MAX    = 170.0;   // absolute encoder angles at maximum rotation RIGHT
     public double       TURRET_ANGLE_CENTER = 0.0 ;    // turret centered
-    public double       TURRET_ANGLE_MIN    = -90.0;   // absolute encoder angles at maximum rotation LEFT
+    public double       TURRET_ANGLE_MIN    = -170.0;   // absolute encoder angles at maximum rotation LEFT
     public double       TURRET_ANGLE_AUTO_CYCLE_HIGH = -56.5;
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture

@@ -205,55 +205,28 @@ public abstract class AutonomousBase extends LinearOpMode {
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
         final int TURRET_CYCLES_AT_POS = 8;
+        double kpMin;
+        PIDController pidController = new PIDController(0.00035, 0.002, 0.00012);
 
         double turretPower;
         double drivePower;
-        // PID stuff
-        // Possible values 0.002, 0.005, 0.00005
-        double kpMin;  // see below (could be POSITIVE or NEGATIVE)
-        double kp = 0.00035;
-        double ki = 0.002;
-        double kd = 0.00012;
-        double error;
-        double errorChange;
-        double integralSum = 0.0;
-        double derivative;
-        double lastError = 0.0;
-        double a = 0.707;
-        double currentFilterEstimate;
-        double previousFilterEstimate = 0.0;
-        // This value should be related to ki*integralSum where that value does not exceed
-        // something like 25% max power (so if our max power is 0.20 the limit for ki*integralSum
-        // would be 0.05 and 0.05 / ki = maxIntegralSum. Start high and bring it down once ki solved
-        double maxIntegralSum = 11.0;
 
         // If we add back front camera, use boolean to determine which pipeline to use.
 //        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
         alignmentPipeline = pipelineBack;
-        ElapsedTime timer = new ElapsedTime();
 
         theLocalPole = alignmentPipeline.getDetectedPole();
         while (opModeIsActive() && ((theLocalPole.alignedCount <= TURRET_CYCLES_AT_POS) ||
                 theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
-            // The sign is backwards because centralOffset is negative of the power we need.
-            error = 0.0 - theLocalPole.centralOffset;
+            turretPower = pidController.update(0.0, -theLocalPole.centralOffset);
             kpMin = (theLocalPole.centralOffset > 0)? -0.095 : +0.095;
             if( theLocalPole.aligned ) kpMin = 0.0;
-            errorChange = error - lastError;
-            currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;
-            previousFilterEstimate = currentFilterEstimate;
-            derivative = currentFilterEstimate / timer.seconds();
-            integralSum = integralSum + (error * timer.seconds());
-            if( integralSum >  maxIntegralSum) integralSum =  maxIntegralSum;
-            if( integralSum < -maxIntegralSum) integralSum = -maxIntegralSum;
-//          if( theLocalPole.aligned ) integralSum = 0.0;   // TEST THIS??
-            turretPower = kpMin + (kp * error) + (ki * integralSum) + (kd * derivative);
+            turretPower += kpMin;
+
             // Clamp it temporarily
             if( turretPower > +0.20 ) turretPower = +0.20;
             if( turretPower < -0.20 ) turretPower = -0.20;
-            lastError = error;
-            timer.reset();
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
             } else {
