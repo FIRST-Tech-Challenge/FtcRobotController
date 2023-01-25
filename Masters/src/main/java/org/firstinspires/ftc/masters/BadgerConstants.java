@@ -11,6 +11,7 @@ public class BadgerConstants {
 
     public static  int ARM_BOTTOM = 0;
     public static  int ARM_MID_TOP = 800;
+    public static  int ARM_CONE_STACK=130;
 
     public static  int ARM_BOTTOM_JUNCTION = 600;
     public static int ARM_BACK = 1200;
@@ -22,7 +23,7 @@ public class BadgerConstants {
     public static final double TIP_BACK = 0.6;
     public static final double TIP_FRONT =0.99;
 
-    public static int SLIDE_CONE_INCREMENT = 20;
+    public static int SLIDE_CONE_INCREMENT = 14;
 
 
 

@@ -35,7 +35,8 @@ public class PowerPlayRight extends LinearOpMode {
         NEW_CONE,
         PARK_GRAY,
         PARK_RED,
-        PARK_GREEN
+        PARK_GREEN,
+        DONE
 
     }
 
@@ -47,7 +48,7 @@ public class PowerPlayRight extends LinearOpMode {
     int numberOfConesPickedUp =0;
 
     public static  double xCenterJunction = 5;
-    public static double yCenterJunction =-33;
+    public static double yCenterJunction =-34;
 
     public static double xIntermediateStack =20;
     public static double yIntermediateStack = -12;
@@ -76,7 +77,7 @@ public class PowerPlayRight extends LinearOpMode {
         // Trajectory from start to nearest tall pole
         Trajectory startToFirstDeposit = drive.trajectoryBuilder(startPose)
                 .splineToConstantHeading(new Vector2d(12,-62),Math.toRadians(90))
-                .splineTo(new Vector2d(xCenterJunction, yCenterJunction),Math.toRadians(135))
+                .splineTo(new Vector2d(xCenterJunction, yCenterJunction),Math.toRadians(137))
                 .build();
 
         Trajectory backUpFromJunction = drive.trajectoryBuilder(startToFirstDeposit.end())
@@ -104,13 +105,19 @@ public class PowerPlayRight extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(new Vector2d(59,-14),Math.toRadians(0)))
                 .build();
 
-        Trajectory parkGray = drive.trajectoryBuilder(scoreNewCone.end())
-                .splineToLinearHeading(new Pose2d(new Vector2d(11.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
+        Trajectory parkRed = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(45))))
+                .strafeTo(new Vector2d(36,-37 ))
+
+               // .splineToLinearHeading(new Pose2d(new Vector2d(11.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
                 .build();
 
-        Trajectory parkRed = drive.trajectoryBuilder(scoreNewCone.end())
-                .splineToLinearHeading(new Pose2d(new Vector2d(23.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
+        Trajectory parkGreen = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(45))))
+                .strafeTo(new Vector2d(62,-37))
                 .build();
+
+//        Trajectory parkRed = drive.trajectoryBuilder(scoreNewCone.end())
+//                .splineToLinearHeading(new Pose2d(new Vector2d(23.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
+//                .build();
 
         waitForStart();
 
@@ -162,10 +169,21 @@ public class PowerPlayRight extends LinearOpMode {
                 case TURN:
                     if (!drive.isBusy()){
                         liftTarget = 0;
-                        drive.closeClaw();
-                        currentState= State.NEW_CONE_FROM_SCORE_1;
-                        drive.followTrajectoryAsync(firstDepositToConeStack1);
+                       // drive.closeClaw();
+                       // currentState = State.DONE;
+                        if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.RED) {
+                                drive.followTrajectoryAsync(parkRed);
+                                currentState = State.PARK_RED   ;
+                            } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
+                                drive.followTrajectoryAsync(parkGreen);
+                                currentState = State.PARK_GREEN;
+                            } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
+                                currentState = State.PARK_GRAY;
+                            }
+//                        currentState= State.PICKUP;
+//                        drive.followTrajectoryAsync(firstDepositToConeStack1);
                     }
+                    break;
                 case NEW_CONE_FROM_SCORE_1:
                     telemetry.addData("Set up to grab new cone","");
                     telemetry.update();
@@ -253,19 +271,8 @@ public class PowerPlayRight extends LinearOpMode {
 //                    }
 //                    break;
                 case PARK_GRAY:
-
-                    liftTarget= 0;
-                    if (drive.linearSlide.getCurrentPosition()<100){
-                        armTarget = 0;
-                    }
-                    if (!drive.isBusy()) {
-                        if (drive.armMotor.getCurrentPosition()<50){
-                            drive.openClaw();
-                            drive.tipCenter();
-                        }
-                    }
-                    break;
                 case PARK_RED:
+                case PARK_GREEN:
 
                     liftTarget= 0;
                     if (drive.linearSlide.getCurrentPosition()<100){
@@ -278,7 +285,20 @@ public class PowerPlayRight extends LinearOpMode {
                         }
                     }
                     break;
-                case PARK_GREEN:
+//                case PARK_RED:
+//
+//                    liftTarget= 0;
+//                    if (drive.linearSlide.getCurrentPosition()<100){
+//                        armTarget = 0;
+//                    }
+//                    if (!drive.isBusy()) {
+//                        if (drive.armMotor.getCurrentPosition()<50){
+//                            drive.openClaw();
+//                            drive.tipCenter();
+//                        }
+//                    }
+//                    break;
+//                case PARK_GREEN:
 //                    liftTarget= 0;
 //                    if (drive.linearSlide.getCurrentPosition()<100){
 //                        armTarget = 0;
@@ -287,12 +307,14 @@ public class PowerPlayRight extends LinearOpMode {
 //                        drive.openClaw();
 //                        drive.tipCenter();
 //                    }
+//                    break;
+                case DONE:
                     break;
             }
 
 
             armPIDController.setTarget(armTarget);
-            drive.armMotor.setVelocity(armPIDController.calculateVelocity());
+            drive.armMotor.setPower(armPIDController.calculateVelocity());
 
             liftPIDController.setTarget(liftTarget);
 

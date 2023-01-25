@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM_JUNCTION;
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_CONE_STACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_CLOSED;
 import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_OPEN;
@@ -66,6 +67,8 @@ public class PowerPlayTeleopTry extends LinearOpMode {
     int armTarget =0, slideTarget =0;
     boolean set = true;
     boolean trigger = false;
+
+    int stackIncrement=0;
 
 
     @Override
@@ -362,23 +365,32 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
             if (gamepad2.right_trigger>0.3 && !trigger){
                 trigger = true;
-                armTarget += SLIDE_CONE_INCREMENT;
+                previousState = currentState;
+                currentState = STATE.CONE;
+                armTarget = ARM_CONE_STACK;
+                slideSelection += SLIDE_CONE_INCREMENT;
             } else {
                 trigger = false;
+            }
+
+            if (currentState == STATE.CONE){
+                if (armMotor.getCurrentPosition()>100){
+                    slideTarget = slideSelection;
+                }
             }
 
             if (gamepad2.right_stick_y>0.5){
                 previousState= currentState;
                 currentState = STATE.MANUAL;
                 if (armMotor.getCurrentPosition()>100){
-                    slideTarget += 10;
+                    slideTarget -= 12;
                 }
 
             } else if (gamepad2.right_stick_y<-0/5){
                 previousState= currentState;
                 currentState = STATE.MANUAL;
                 if (armMotor.getCurrentPosition()>100){
-                    slideTarget -= 10;
+                    slideTarget += 12;
                 }
             }
 
@@ -440,7 +452,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
     }
 
     enum STATE{
-        ZERO, BOTTOM, MID, HIGH, BACK_MID, BACK_HIGH, MANUAL
+        ZERO, BOTTOM, MID, HIGH, BACK_MID, BACK_HIGH, MANUAL, CONE
     }
 
 
