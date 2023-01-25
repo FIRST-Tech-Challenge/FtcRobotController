@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
@@ -82,7 +83,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private double targetLeftVelocity, targetRightVelocity;
     private double leftPower, rightPower, chariotPower;
     private boolean useMotorPowers;
-    private double chassisLength, targetChassisLength, chassisLengthCorrection;
+    public static double targetChassisLength = 0.2;
+    private double chassisLength, chassisLengthCorrection;
     private boolean maintainHeadingEnabled, imuOffsetsInitialized;
     private double maintainHeading, maintainHeadingCorrection;
     private boolean chassisLengthOnTarget;
@@ -103,7 +105,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     private BNO055IMU imu = null;
     private VoltageSensor batteryVoltageSensor;
-    //private final DistanceSensor chassisLengthDistanceSensor; //todo add distance sensor and uncomment all lines using this
+    private DistanceSensor chassisLengthDistanceSensor; //todo add distance sensor and uncomment all lines using this
 
     private double compensatedBatteryVoltage;
 
@@ -146,15 +148,15 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         if (simulated) {
             //todo uncomment distance sensor lines when it's added
-            //chassisLengthDistanceSensor = new DistanceSensorSim(
-            //        MIN_CHASSIS_LENGTH - (DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL));
+            chassisLengthDistanceSensor = new DistanceSensorSim(
+                            MIN_CHASSIS_LENGTH - (DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL));
             leftMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             rightMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             chariotMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             motors = Arrays.asList(leftMotor, rightMotor, chariotMotor);
         } else {
             //todo uncomment next line when the sensor is added
-            //chassisLengthDistanceSensor = hardwareMap.get(DistanceSensor.class, "distChariot");
+            chassisLengthDistanceSensor = hardwareMap.get(DistanceSensor.class, "distChariot");
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
             leftMotor = hardwareMap.get(DcMotorEx.class, "motorLeft");
             rightMotor = hardwareMap.get(DcMotorEx.class, "motorRight");
@@ -256,13 +258,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             double dt = loopTime / 1e9;
             leftPosition += leftVelocity * dt;
             rightPosition += rightVelocity * dt;
-            chassisLength = targetChassisLength;
+            chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
+
 
         } else {
             leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
             //todo - add chassis length distance sensor
-            //chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
+            chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.METER) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
 
         }
 
@@ -307,13 +310,13 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         if (useMotorPowers) {
             leftMotor.setPower(leftPower);
             rightMotor.setPower(rightPower);
-            chariotMotor.setPower(chariotPower);
         } else {
             leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
             rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
         }
 
         //set the PID for the chassis length / chariot extension
+        chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
         chassisLengthPID.setInput(chassisLength);
         chassisLengthPID.setSetpoint(targetChassisLength);
         chassisLengthCorrection = chassisLengthPID.performPID();
@@ -373,6 +376,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
             telemetryMap.put("roll", Math.toDegrees(roll));
             telemetryMap.put("pitch", Math.toDegrees(pitch));
+            telemetryMap.put("Chassis Length", chassisLength);
+            telemetryMap.put("Chassis Correction", chassisLengthCorrection);
+            telemetryMap.put("Motor Input Correction", chariotMotor.getPower());
+            telemetryMap.put("Motor Ticks", chariotMotor.getCurrentPosition());
 
             telemetryMap.put("left position", leftPosition);
             telemetryMap.put("right position", rightPosition);
