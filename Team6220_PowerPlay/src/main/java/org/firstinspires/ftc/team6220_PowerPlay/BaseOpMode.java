@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.R;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
@@ -43,9 +44,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     public double originalAngle;
     public double startAngle;
 
-    // Blinkin
-    public static RevBlinkinLedDriver blinkinChassis;
-
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
 
@@ -67,7 +65,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
         motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLeftSlides");
         motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRightSlides");
-        blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
 
         motorFL.setDirection(DcMotorEx.Direction.FORWARD);
         motorFR.setDirection(DcMotorEx.Direction.REVERSE);
@@ -117,6 +114,13 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
+        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
+
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
+        robotCameraPipeline = new RobotCameraPipeline();
+        grabberCameraPipeline = new GrabberCameraPipeline();
 
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
@@ -245,14 +249,5 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorFR.setPower(0.0);
         motorBL.setPower(0.0);
         motorBR.setPower(0.0);
-    }
-
-    public void driveLeds() {
-        if(grabberCameraPipeline.detected) {
-            blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
-        }
-        else {
-            blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_GRADIENT);
-        }
     }
 }

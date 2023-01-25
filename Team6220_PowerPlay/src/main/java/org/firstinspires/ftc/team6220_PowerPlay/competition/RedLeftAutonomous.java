@@ -45,13 +45,13 @@ public class RedLeftAutonomous extends BaseAutonomous {
         driveSlidesAutonomous(Constants.SLIDE_STOW);
 
         // drive forward to high junction
-        driveAutonomous(0, 58);
+        driveAutonomous(0, 56);
 
         // raise slides to high junction height
         driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
         // strafe right to face high junction
-        driveAutonomous(-90, 9);
+        driveAutonomous(-90, 10);
 
         // sleep to make sure robot has stopped moving
         sleep(500);
