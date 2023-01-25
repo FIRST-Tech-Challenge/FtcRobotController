@@ -237,7 +237,8 @@ public abstract class Teleop extends LinearOpMode {
                     frontLeft, robot.frontLeftMotorVel, frontRight, robot.frontRightMotorVel );
             telemetry.addData("Rear ", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
                     rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
-            telemetry.addData("Turret", "%.1f deg  %.2f mA",  robot.turretAngle, robot.turretMotorAmps );
+            telemetry.addData("Turret", "%.1f deg  %.2f pwr  %.2f mA",
+                    robot.turretAngle, robot.turretMotorPwr, robot.turretMotorAmps );
             telemetry.addData("Lift",   "%.1f deg  %.2f pwr  %.2f mA",
                     robot.liftAngle, robot.liftMotorPwr, robot.liftMotorAmps );
             telemetry.addData("Score mode", "%s", (rearScoring)? "REAR":"FRONT");

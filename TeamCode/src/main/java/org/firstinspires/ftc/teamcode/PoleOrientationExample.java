@@ -180,14 +180,14 @@ public class PoleOrientationExample extends LinearOpMode
             // Use the camera to align to the pole, and set the correct distance away
             alignToPole(false);
             telemetry.addLine("Aligned... waiting for kick");
-            telemetry.addData(" ","## ERR @ Pwr (Pmin + P + I + D)");
+            telemetry.addData(" ","#  ERR @ Pwr  (Pmin   +   P   +   I   +   D)");
             for( int index=0; index<LOGSIZE; index++ ) {
-                telemetry.addData(" ","%d %.1f @ %.1f (%.1f + %.1f + %.1f + %.1f)",
+                telemetry.addData(" ","%2d %.1f @ %.2f (%.2f + %.2f + %.2f + %.2f)",
                         index, errorHistory[index], kTHistory[index],
                         kpMinHistory[index], kpHistory[index], kiHistory[index], kdHistory[index] );
             }
             telemetry.update();
-            sleep( 2000 );
+            sleep( 5000 );
         }
 
         // Close out the vision
@@ -215,6 +215,7 @@ public class PoleOrientationExample extends LinearOpMode
             }
             // Add the latest numbers to the end
             errorHistory[LOGSIZE-1] = pid.error;
+            kpMinHistory[LOGSIZE-1] = (pid.error > 0)? 0.075 : -0.075;
             kpHistory[LOGSIZE-1]    = (pid.kp * pid.error);
             kiHistory[LOGSIZE-1]    = (pid.ki * pid.integralSum);
             kdHistory[LOGSIZE-1]    = (pid.kd * pid.derivative);
@@ -226,7 +227,7 @@ public class PoleOrientationExample extends LinearOpMode
         telemetry.addData("PID", "integralSum: %.3f, integralSumPwr: %.3f", pid.integralSum, pid.ki*pid.integralSum);
         telemetry.addData("PID", "derivative: %.3f, derivativePwr: %.3f", pid.derivative, pid.kd*pid.derivative);
         telemetry.update();
-    }
+    } // logPid
 
     void alignToPole(boolean turretFacingFront) {
         PowerPlaySuperPipeline alignmentPipeline;
@@ -234,11 +235,14 @@ public class PoleOrientationExample extends LinearOpMode
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
         final int TURRET_CYCLES_AT_POS = 8;
-        // First try, 0.01 has 0.1 power at 10 pixels
-        PIDController pidController = new PIDController(0.0001, 0.000, 0.000);
+        // minPower=0; kp = 0.0027
+        PIDController pidController = new PIDController(0.00008,0.000, 0.00010);
 
         double turretPower;
+		double turretPowerMax = 0.20;  // maximum we don't want the PID to exceed
+        double turretPowerMin = 0.075;  // minimum needed to create turret movement at 11-pixel error
         double drivePower;
+        double kpMin;  // see below (could be POSITIVE or NEGATIVE)
 
         // If we add back front camera, use boolean to determine which pipeline to use.
 //        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
@@ -249,7 +253,15 @@ public class PoleOrientationExample extends LinearOpMode
                 theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
             turretPower = pidController.update(0.0, theLocalPole.centralOffset);
-            turretPower = Math.copySign(Math.max(1.0, abs(turretPower)), turretPower);
+			// The turret requires a non-zero minimum power just to start moving
+			// Augment the PID result with that power (unless we're inside our
+			// tolerance, in which case we want to drop to zero power and stop)
+            kpMin = (theLocalPole.centralOffset > 0)? -turretPowerMin : +turretPowerMin;
+            if( theLocalPole.aligned ) kpMin = 0.0;
+            turretPower += kpMin;
+            // Ensure we never exceed a safe power
+            if( turretPower > +turretPowerMax ) turretPower = +turretPowerMax;
+            if( turretPower < -turretPowerMax ) turretPower = -turretPowerMax;
             logPid(theLocalPole.alignedCount, turretPower, pidController);
 
             if(theLocalPole.properDistanceHigh) {

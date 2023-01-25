@@ -298,55 +298,55 @@ public class HardwareSlimbot
 
         // Define and Initialize odometry pod encoders
 //      leftOdometer   = hwMap.get(DcMotorEx.class,"LeftOdom");             // port0 (ideally a "REVERSE" motor port)
-//        rightOdometer  = hwMap.get(DcMotorEx.class,"RightOdom");  // port1 (ideally a "FORWARD" motor port)
+        rightOdometer  = hwMap.get(DcMotorEx.class,"RightOdom");  // port1 (ideally a "FORWARD" motor port)
 //      strafeOdometer = hwMap.get(DcMotorEx.class,"StrafeOdom");           // port2 (ideally a "REVERSE" motor port)
 
-//        rightOdometer.setDirection(DcMotor.Direction.FORWARD);
+        rightOdometer.setDirection(DcMotor.Direction.FORWARD);
 //      leftOdometer.setDirection(DcMotor.Direction.REVERSE);
 //      strafeOdometer.setDirection(DcMotor.Direction.REVERSE);
 
         // Zero all odometry encoders
-//        rightOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //      leftOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //      strafeOdometer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Define and Initialize turret/lift motors
-//        turretMotor  = hwMap.get(DcMotorEx.class,"Turret");  // Expansion Hub port 3
-//        turretMotor.setDirection(DcMotor.Direction.FORWARD);
-//        turretMotor.setPower( 0.0 );
-//        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        turretEncoder = hwMap.get(AnalogInput.class, "turretMA3");
+        turretMotor  = hwMap.get(DcMotorEx.class,"Turret");  // Expansion Hub port 3
+        turretMotor.setDirection(DcMotor.Direction.FORWARD);
+        turretMotor.setPower( 0.0 );
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        turretEncoder = hwMap.get(AnalogInput.class, "turretMA3");
 
-//        liftMotorF = hwMap.get(DcMotorEx.class,"LiftFront");   // Expansion Hub port 0
-//        liftMotorB = hwMap.get(DcMotorEx.class,"LiftBack");    // Expansion Hub port 1
-//        liftMotorF.setDirection(DcMotor.Direction.REVERSE);
-//        liftMotorB.setDirection(DcMotor.Direction.FORWARD);
-//        liftMotorsSetPower( 0.0 );
-//        liftMotorF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);  // for odometry
-//        liftMotorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);  // for odometry
-//        liftMotorF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        liftMotorB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        liftMotorF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        liftMotorB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        liftEncoder = hwMap.get(AnalogInput.class, "liftMA3");
+        liftMotorF = hwMap.get(DcMotorEx.class,"LiftFront");   // Expansion Hub port 0
+        liftMotorB = hwMap.get(DcMotorEx.class,"LiftBack");    // Expansion Hub port 1
+        liftMotorF.setDirection(DcMotor.Direction.REVERSE);
+        liftMotorB.setDirection(DcMotor.Direction.FORWARD);
+        liftMotorsSetPower( 0.0 );
+        liftMotorF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);  // for odometry
+        liftMotorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);  // for odometry
+        liftMotorF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotorB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotorF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotorB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftEncoder = hwMap.get(AnalogInput.class, "liftMA3");
 
         // Initialize servos
-//        leftTiltServo = hwMap.servo.get("leftTilt");      // servo port 0 (Control Hub)
-//        rightTiltServo = hwMap.servo.get("rightTilt");    // servo port 1 (Control Hub)
-//        grabberSetTilt( GRABBER_TILT_INIT );
+        leftTiltServo = hwMap.servo.get("leftTilt");      // servo port 0 (Control Hub)
+        rightTiltServo = hwMap.servo.get("rightTilt");    // servo port 1 (Control Hub)
+        grabberSetTilt( GRABBER_TILT_INIT );
 
-//        rotateServo = hwMap.servo.get("rotator");         // servo port 3 (Control Hub)
-//        rotateServo.setPosition( GRABBER_ROTATE_UP );
+        rotateServo = hwMap.servo.get("rotator");         // servo port 3 (Control Hub)
+        rotateServo.setPosition( GRABBER_ROTATE_UP );
 
-//        leftSpinServo = hwMap.crservo.get("leftSpin");    // servo port 4 (Control Hub)
-//        leftSpinServo.setDirection( CRServo.Direction.REVERSE );
-//        leftSpinServo.setPower( 0.0 );
+        leftSpinServo = hwMap.crservo.get("leftSpin");    // servo port 4 (Control Hub)
+        leftSpinServo.setDirection( CRServo.Direction.REVERSE );
+        leftSpinServo.setPower( 0.0 );
 
-//        rightSpinServo = hwMap.crservo.get("rightSpin");  // servo port 5 (Control Hub)
-//        rightSpinServo.setDirection( CRServo.Direction.FORWARD );
-//        rightSpinServo.setPower( 0.0 );
+        rightSpinServo = hwMap.crservo.get("rightSpin");  // servo port 5 (Control Hub)
+        rightSpinServo.setDirection( CRServo.Direction.FORWARD );
+        rightSpinServo.setPower( 0.0 );
 
         // Initialize REV Expansion Hub IMU
         initIMU();
@@ -354,10 +354,10 @@ public class HardwareSlimbot
         //Instantiate Maxbotics ultrasonic range sensors (sensors wired to I2C ports)
 //      sonarRangeL = hwMap.get( MaxSonarI2CXL.class, "leftUltrasonic" );   // I2C Bus 0
 //      sonarRangeB = hwMap.get( MaxSonarI2CXL.class, "backUltrasonic" );   // I2C Bus 1
-//        sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "frontUltrasonic" );  // I2C Bus 2
+        sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "frontUltrasonic" );  // I2C Bus 2
 //      sonarRangeR = hwMap.get( MaxSonarI2CXL.class, "rightUltrasonic" );  // I2C Bus 3
-//        topConeSensor = hwMap.get( DigitalChannel.class, "ProxTop" );
-//        bottomConeSensor = hwMap.get( DigitalChannel.class, "ProxBottom" );
+        topConeSensor = hwMap.get( DigitalChannel.class, "ProxTop" );
+        bottomConeSensor = hwMap.get( DigitalChannel.class, "ProxBottom" );
 
         // Make a note that we just finished autonomous setup
         transitionFromAutonomous = (isAutonomous)? true:false;
@@ -428,7 +428,7 @@ public class HardwareSlimbot
     /*--------------------------------------------------------------------------------------------*/
     public void readBulkData() {
         // For MANUAL mode, we must clear the BulkCache once per control cycle
-//        expansionHub.clearBulkCache();
+        expansionHub.clearBulkCache();
         controlHub.clearBulkCache();
         // Get a fresh set of values for this cycle
         //   getCurrentPosition() / getTargetPosition() / getTargetPositionTolerance()
@@ -446,48 +446,48 @@ public class HardwareSlimbot
         rearLeftMotorPos   = rearLeftMotor.getCurrentPosition();
         rearLeftMotorVel   = rearLeftMotor.getVelocity();
         rearLeftMotorAmps  = rearLeftMotor.getCurrent(MILLIAMPS);
-//        turretAngle        = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
-//        liftAngle          = computeAbsoluteAngle( liftEncoder.getVoltage(),   liftAngleOffset );
+        turretAngle        = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
+        liftAngle          = computeAbsoluteAngle( liftEncoder.getVoltage(),   liftAngleOffset );
         //===== EXPANSION HUB VALUES =====
-//        turretMotorPos     = turretMotor.getCurrentPosition();
-//        turretMotorVel     = turretMotor.getVelocity();
-//        turretMotorPwr     = turretMotor.getPower();
-//        turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
-//        liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
-//        double liftMotorPwrPrior = liftMotorPwr;
-//        liftMotorPwr       = liftMotorF.getPower();
-//        liftMotorRamp      = isPwrRampingDown( liftMotorPwrPrior, liftMotorPwr );
+        turretMotorPos     = turretMotor.getCurrentPosition();
+        turretMotorVel     = turretMotor.getVelocity();
+        turretMotorPwr     = turretMotor.getPower();
+        turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
+        liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
+        double liftMotorPwrPrior = liftMotorPwr;
+        liftMotorPwr       = liftMotorF.getPower();
+        liftMotorRamp      = isPwrRampingDown( liftMotorPwrPrior, liftMotorPwr );
         // Parse right odometry encoder
-//        rightOdometerPrev  = rightOdometerCount;
-//        rightOdometerCount = rightOdometer.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
+        rightOdometerPrev  = rightOdometerCount;
+        rightOdometerCount = rightOdometer.getCurrentPosition(); // Must be POSITIVE when bot moves FORWARD
         // Parse left odometry encoder
-//        leftOdometerPrev   = leftOdometerCount;
-//        leftOdometerCount  = -liftMotorB.getCurrentPosition();   // Must be POSITIVE when bot moves FORWARD
+        leftOdometerPrev   = leftOdometerCount;
+        leftOdometerCount  = -liftMotorB.getCurrentPosition();   // Must be POSITIVE when bot moves FORWARD
         // Parse rear odometry encoder
-//        strafeOdometerPrev  = strafeOdometerCount;
-//        strafeOdometerCount = -liftMotorF.getCurrentPosition();  // Must be POSITIVE when bot moves RIGHT
+        strafeOdometerPrev  = strafeOdometerCount;
+        strafeOdometerCount = -liftMotorF.getCurrentPosition();  // Must be POSITIVE when bot moves RIGHT
 
         // Do we need to capture lift motor instrumentation data?
-//        if( liftMotorLogEnable ) {
-//            liftMotorLogTime[liftMotorLogIndex]  = liftMotorTimer.milliseconds();
-//            liftMotorLogAngle[liftMotorLogIndex] = liftAngle;
-//            liftMotorLogPwr[liftMotorLogIndex]   = liftMotorPwr;
-//            liftMotorLogAmps[liftMotorLogIndex]  = liftMotorAmps;
+        if( liftMotorLogEnable ) {
+            liftMotorLogTime[liftMotorLogIndex]  = liftMotorTimer.milliseconds();
+            liftMotorLogAngle[liftMotorLogIndex] = liftAngle;
+            liftMotorLogPwr[liftMotorLogIndex]   = liftMotorPwr;
+            liftMotorLogAmps[liftMotorLogIndex]  = liftMotorAmps;
             // If the log is now full, disable further logging
-//            if( ++liftMotorLogIndex >= LIFTMOTORLOG_SIZE )
-//                liftMotorLogEnable = false;
-//        } // liftMotorLogEnable
+            if( ++liftMotorLogIndex >= LIFTMOTORLOG_SIZE )
+                liftMotorLogEnable = false;
+        } // liftMotorLogEnable
 
         // Do we need to capture turret motor instrumentation data?
-//        if( turretMotorLogEnable ) {
-//            turretMotorLogTime[turretMotorLogIndex]  = turretMotorTimer.milliseconds();
-//            turretMotorLogAngle[turretMotorLogIndex] = turretAngle;
-//            turretMotorLogPwr[turretMotorLogIndex]   = turretMotorPwr;
-//            turretMotorLogAmps[turretMotorLogIndex]  = turretMotorAmps;
+        if( turretMotorLogEnable ) {
+            turretMotorLogTime[turretMotorLogIndex]  = turretMotorTimer.milliseconds();
+            turretMotorLogAngle[turretMotorLogIndex] = turretAngle;
+            turretMotorLogPwr[turretMotorLogIndex]   = turretMotorPwr;
+            turretMotorLogAmps[turretMotorLogIndex]  = turretMotorAmps;
             // If the log is now full, disable further logging
-//            if( ++turretMotorLogIndex >= TURRETMOTORLOG_SIZE )
-//                turretMotorLogEnable = false;
-//        } // turretMotorLogEnable
+            if( ++turretMotorLogIndex >= TURRETMOTORLOG_SIZE )
+                turretMotorLogEnable = false;
+        } // turretMotorLogEnable
 
     } // readBulkData
 

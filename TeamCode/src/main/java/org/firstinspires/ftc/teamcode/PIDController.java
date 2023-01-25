@@ -32,7 +32,7 @@ public class PIDController {
      */
     public double update (double target, double state) {
         double errorChange;
-        double a = 0.707;
+        double a = 0.10;  // 0.707
         double currentFilterEstimate;
         double result;
 
