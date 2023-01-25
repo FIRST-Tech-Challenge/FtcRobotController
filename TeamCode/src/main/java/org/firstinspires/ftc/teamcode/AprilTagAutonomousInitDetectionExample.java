@@ -212,11 +212,6 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             sleep(20);
         }
 
-        /*
-         * The START command just came in: now work off the latest snapshot acquired
-         * during the init loop.
-         */
-
         /* Update the telemetry */
         if(tagOfInterest != null)
         {
@@ -230,7 +225,6 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             telemetry.update();
         }
 
-        /* Actually do something useful */
         if(tagOfInterest == null){
             moveGrabber(true);
             waitTime(.5);
@@ -245,7 +239,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             for(int i = 0; i < 3; i++){
                 moveToTape(true);
                 pickupCone();
-                moveLiftAndDrive(true,40,MAX_LIFT_POS);
+                moveLiftAndDrive(true,45,MAX_LIFT_POS);
                 turnNinety(false);
                 moveLift(30);
                 moveGrabber(false);
