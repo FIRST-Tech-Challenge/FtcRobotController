@@ -23,7 +23,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	private Claw clawControl;
 
 	public static double xFirstLinear = 63;
-	public static double yFirstLinear = 3.5;
+	public static double yFirstLinear = 4;
 	public static double angle = 150;
 	public static double xSecondToJunction = 53;
 	public static double ySecondToJunction = -4;
@@ -206,7 +206,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					armControl.setIntake();
 				})
 
-				.waitSeconds(0.25)
+				.waitSeconds(0.45)
 
 				.addTemporalMarker(() -> {
 					if(tagUse == 1){
