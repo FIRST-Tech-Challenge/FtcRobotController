@@ -236,13 +236,12 @@ public class PoleOrientationExample extends LinearOpMode
         final double DRIVE_OFFSET = 0.04522;
         final int TURRET_CYCLES_AT_POS = 8;
         // minPower=0; kp = 0.0027
-        PIDController pidController = new PIDController(0.00008,0.000, 0.00010);
+        PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.000, 0.00010, 0.075,
+                PowerPlaySuperPipeline.MAX_POLE_OFFSET);
 
         double turretPower;
 		double turretPowerMax = 0.20;  // maximum we don't want the PID to exceed
-        double turretPowerMin = 0.075;  // minimum needed to create turret movement at 11-pixel error
         double drivePower;
-        double kpMin;  // see below (could be POSITIVE or NEGATIVE)
 
         // If we add back front camera, use boolean to determine which pipeline to use.
 //        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
@@ -256,9 +255,6 @@ public class PoleOrientationExample extends LinearOpMode
 			// The turret requires a non-zero minimum power just to start moving
 			// Augment the PID result with that power (unless we're inside our
 			// tolerance, in which case we want to drop to zero power and stop)
-            kpMin = (theLocalPole.centralOffset > 0)? -turretPowerMin : +turretPowerMin;
-            if( theLocalPole.aligned ) kpMin = 0.0;
-            turretPower += kpMin;
             // Ensure we never exceed a safe power
             if( turretPower > +turretPowerMax ) turretPower = +turretPowerMax;
             if( turretPower < -turretPowerMax ) turretPower = -turretPowerMax;

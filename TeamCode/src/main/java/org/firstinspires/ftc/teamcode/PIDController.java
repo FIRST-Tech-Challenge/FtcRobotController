@@ -9,8 +9,8 @@ public class PIDController {
     public double integralSum = 0.0;
     public double lastError = 0.0;
     public double previousFilterEstimate = 0.0;
-    public double error = 0.0;
-    public double derivative = 0.0;
+    public double error;
+    public double derivative;
     protected ElapsedTime timer;
 
     /**
@@ -51,5 +51,15 @@ public class PIDController {
         timer.reset();
 
         return result;
+    }
+
+    /**
+     * Reset the PID for a new target
+     */
+    public void reset() {
+        integralSum = 0.0;
+        lastError = 0.0;
+        previousFilterEstimate = 0.0;
+        timer.reset();
     }
 }
