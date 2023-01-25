@@ -194,6 +194,9 @@ public class PP_MecanumTeleOp extends OpMode
 
         }
 
+        if(!armControl.isActive){
+
+        }
 
     }
 
