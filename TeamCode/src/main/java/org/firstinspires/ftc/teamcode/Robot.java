@@ -95,6 +95,7 @@ public class Robot {
         slidesMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         if (desiredSlidesState == SlidesState.UNREADY) {//if the slides have yet to be initialised then reset the encoders for the slides and set the slide state to retracted
+            this.telemetry.addData("desired string state", desiredSlidesState.toString());
             slidesMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             slidesMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             desiredSlidesState = SlidesState.RETRACTED;

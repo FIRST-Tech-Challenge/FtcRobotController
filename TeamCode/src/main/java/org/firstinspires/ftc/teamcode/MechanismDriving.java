@@ -15,13 +15,14 @@ public class MechanismDriving {
        put(Robot.SlidesState.RETRACTED, 0);
        put(Robot.SlidesState.LOW, 4770);
        put(Robot.SlidesState.MEDIUM, 8020);
-       put(Robot.SlidesState.HIGH, 13270);
+       put(Robot.SlidesState.HIGH, 13770);
+       put(Robot.SlidesState.UNREADY, 0);
     }};
     public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 0.8; //These are not final values
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
     public static final long CLAW_SERVO_TIME = 500;
     //SPEED INFO: Scale from 0-1 in speed.
-    public static final double CLAW_ROTATOR_FRONT_POS = 0, CLAW_ROTATOR_REAR_POS = 1.0, CLAW_ROTATOR_SIDE_POS = 0.45;
+    public static final double CLAW_ROTATOR_FRONT_POS = 0, CLAW_ROTATOR_REAR_POS = 0.8, CLAW_ROTATOR_SIDE_POS = 0.40;
     // How long it takes for the horseshoe wheels to be guaranteed to have pushed the cone into the horseshoe.
     public static final long HORSESHOE_TIME = 500;
     public static final int EPSILON = 50;  // slide encoder position tolerance;
@@ -86,15 +87,13 @@ public class MechanismDriving {
             case MOVE_DOWN:
                 encoderCount = robot.slidesMotor.getCurrentPosition() + EPSILON + 1;
             default:
+                robot.telemetry.addData("desired slide state", Robot.desiredSlidesState.toString());
                 try {
                     encoderCount = slidePositions.get(Robot.desiredSlidesState);
                 } catch (Exception e) {
                     robot.telemetry.addData("desired slide state", Robot.desiredSlidesState.toString());
-                    try {
-                        robot.elapsedTime.wait(10000);
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    double start_time = robot.elapsedTime.time();
+                    while (robot.elapsedTime.time()-start_time < 10000) {}
                     throw e;
                 }
         }

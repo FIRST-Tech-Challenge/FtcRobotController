@@ -47,10 +47,10 @@ public class RobotManager {
         this.startingSide = startingSide;
 
         elapsedTime.reset();
+        robot = new Robot(hardwareMap, telemetry, elapsedTime);
+        robot.telemetry.addData("auton path", path.size());
         navigation = new Navigation(path, allianceColor, startingSide, movementMode);
         mechanismDriving = new MechanismDriving();
-
-        robot = new Robot(hardwareMap, telemetry, elapsedTime);
 
 //        if (!path.isEmpty()) {
 //            computerVision = new ComputerVision(hardwareMap, new AutonPipeline(robot, telemetry, allianceColor));

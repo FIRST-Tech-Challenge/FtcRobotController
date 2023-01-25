@@ -22,7 +22,7 @@ import java.util.Random;
 public class PowerPlayAuton extends LinearOpMode {
 
     private RobotManager robotManager;
-    private ElapsedTime elapsedTime = new ElapsedTime();
+    private ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -75,17 +75,18 @@ public class PowerPlayAuton extends LinearOpMode {
 
         telemetry.setMsTransmissionInterval(50);
 
+        initSharedPreferences();
+        robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, PowerPlayAuton.navigationPath,
+                PowerPlayAuton.allianceColor, PowerPlayAuton.startingSide,
+                PowerPlayAuton.movementMode, telemetry, elapsedTime);
+        IMUPositioning.Initialize(this);
+
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
         while (!isStarted() && !isStopRequested())
         {
-            initSharedPreferences();
-            robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, PowerPlayAuton.navigationPath,
-                    PowerPlayAuton.allianceColor, PowerPlayAuton.startingSide,
-                    PowerPlayAuton.movementMode, telemetry, elapsedTime);
-            IMUPositioning.Initialize(this);
 
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
@@ -168,7 +169,7 @@ public class PowerPlayAuton extends LinearOpMode {
         if(tagOfInterest == null || tagOfInterest.id == left)
         {
             System.out.println("Left");
-            robotManager.navigation.setDriveMotorPowers(Math.PI, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
+            robotManager.navigation.setDriveMotorPowers(0, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
 
         }
         else if(tagOfInterest.id == middle) {
@@ -177,27 +178,30 @@ public class PowerPlayAuton extends LinearOpMode {
         }
         else if(tagOfInterest.id == right) {
             System.out.println("right");
-            robotManager.navigation.setDriveMotorPowers(0, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
+            robotManager.navigation.setDriveMotorPowers(Math.PI, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
         }
 
         if (moving) {
-            waitMilliseconds(1000);
+            waitMilliseconds(750);
             robotManager.navigation.stopMovement(robotManager.robot);
         }
 
         // Move forward
-        robotManager.navigation.setDriveMotorPowers(Math.PI / 2, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
-        waitMilliseconds(1000);
+        robotManager.navigation.setDriveMotorPowers(-Math.PI / 2, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
+        waitMilliseconds(750);
         robotManager.navigation.stopMovement(robotManager.robot);
 
         while (opModeIsActive()) {}
     }
 
     private void waitMilliseconds(long ms) {
-        try {
-            elapsedTime.wait(ms);
-        }
-        catch (InterruptedException e) {}
+//        try {
+            double start_time = elapsedTime.time();
+            while (elapsedTime.time()-start_time < ms) {
+            }
+//            elapsedTime.wait(ms);
+//        }
+//        catch (InterruptedException e) {}
     }
 
     // ANDROID SHARED PREFERENCES
