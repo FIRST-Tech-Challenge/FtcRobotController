@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.HuskyBot.*;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -39,7 +40,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
+@Config
 @TeleOp(name = "Husky TeleOpMode", group = "TeleOp")
 public class HuskyTeleOpMode extends LinearOpMode {
 
@@ -142,7 +143,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
             // uses the left trigger to dynamically shift between different drive speeds.
             // when the trigger is fully released, driveVelocity = 1.
             // when the trigger is fully pressed, driveVelocity = 0.2.
-            double driveVelocity = (0.2 + 0.8 * gamepad1.left_trigger);
+            double driveVelocity = (0.35 + 0.5 * gamepad1.left_trigger);
 
             huskyBot.drive.setWeightedDrivePower(
                     new Pose2d(
