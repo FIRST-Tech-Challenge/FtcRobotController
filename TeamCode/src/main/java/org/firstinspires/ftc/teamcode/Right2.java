@@ -185,10 +185,13 @@ public class Right2 extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithdistanceandcrane(1,32,-1,2000);
+            strafeLeftwithdistanceandcrane(1,32,-1,1600);
             //crane2(1,-7600);
-            move(.5,-200);
-            sleep(100);
+            move(.5,-330);
+            sleep(1000);
+            move(.5,40);
+            sleep(200);
+            crane(1,250);
             intake(-1,1300);
             move(.5,200);
             //new
@@ -219,7 +222,7 @@ public class Right2 extends LinearOpMode {
                 case 1:
                     strafeRight(1,700);
                     gyroTurning(0);
-                    move(.6,-1000);
+                    move(.6,-1100);
                     //strafeLeft(.5,500);
                     sleep(3000);
                     break;
@@ -230,6 +233,7 @@ public class Right2 extends LinearOpMode {
                     break;
                 case 3:
                     strafeRight(1,700);
+                    gyroTurning(0);
                     move(.6,1000);
                     //strafeLeft(.5,500);
                     sleep(3000);

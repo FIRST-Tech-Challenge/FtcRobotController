@@ -180,16 +180,17 @@ public class Left2 extends LinearOpMode {
 
 
         if (opModeIsActive()) {//start of queue for autonnums movment
-            telemetry.addData("distance",distance.getDistance(DistanceUnit.INCH));
-            telemetry.update();
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithcrane2(1,32,-1,2300);
+            strafeLeftwithcrane2(1,32,-1,1600);
             //strafeLeftwithcrane(1,1950,-1,2300);
             //crane2(1,-7600);
             move(.5,330);
-            sleep(100);
+            sleep(1000);
+            move(.5,40);
+            sleep(200);
+            crane(1,250);
             intake(-1,1300);
             move(.5,-200);
             //new
@@ -222,7 +223,7 @@ public class Left2 extends LinearOpMode {
                     strafeRight(1,700);
                     gyroTurning(0);
                     move(.6,-1000);
-                    strafeLeft(.5,300);
+                    //strafeLeft(.5,300);
                     sleep(3000);
                     break;
                 case 2:
@@ -232,8 +233,9 @@ public class Left2 extends LinearOpMode {
                     break;
                 case 3:
                     strafeRight(1,700);
+                    gyroTurning(0);
                     move(.6,1000);
-                    strafeLeft(.5,300);
+                    //strafeLeft(.5,300);
                     sleep(3000);
                     break;
             }
