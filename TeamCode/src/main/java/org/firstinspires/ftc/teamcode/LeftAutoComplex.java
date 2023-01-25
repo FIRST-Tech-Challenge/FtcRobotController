@@ -1,21 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.hardware.Hardware2022;
 
-@Autonomous(name = "RightAuto")
-public class RightAuto extends BaseAuto {
+@Autonomous(name = "LeftAutoComplex")
+public class LeftAutoComplex extends BaseAuto {
 
-        @Override
-        void parkTerminal() {
-            hdw.moveXAxis(30, 0.5);
-        }
+    @Override
+    void parkTerminal() {
+        hdw.moveXAxis(-30, 0.5);
+    }
 
     @Override
     void scoreMidPole () {
@@ -29,7 +29,7 @@ public class RightAuto extends BaseAuto {
 
         Log.d("9010", "before turn heading: " + initHeading);
 
-        hdw.turn (45);
+        hdw.turn (-45);
         hdw.moveYAxis(12, 0.3);
         hdw.dropCone();
         hdw.goToHeight(Hardware2022.SlideHeight.Mid);
@@ -47,8 +47,34 @@ public class RightAuto extends BaseAuto {
         currentHeading = orientation.getYaw(AngleUnit.DEGREES);
         Log.d("9010", "after trun back heading (Init) : " + currentHeading);
 
+    }
+
+    @Override
+    void parkZone1( ) {
+        telemetry.addData("Park zone 1 ", this.currentSide);
+        telemetry.update();
+        //Move Left
+        hdw.moveXAxis( -24.0, 0.3);
+        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
+    }
+
+    @Override
+    void parkZone2( ) {
+        telemetry.addData("Park zone 2 ", this.currentSide);
+        telemetry.update();
+        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
+        //Stay in place
+
+    }
+
+    @Override
+    void parkZone3( ) {
+        telemetry.addData("Park zone 3 ", this.currentSide);
+        telemetry.update();
+        //Move right
+        hdw.moveXAxis( 24.0, 0.3);
+        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
 
     }
 
 }
-

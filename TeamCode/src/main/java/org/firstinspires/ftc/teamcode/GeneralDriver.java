@@ -22,7 +22,7 @@ public class GeneralDriver extends BaseTele {
         hdw.createHardware();
         robotWheel = new MecanumWheels();
 
-        double powerDrivePercentage = 0.5 ;
+        double powerDrivePercentage = 0.7 ;
 
         telemetry.addData("[>]", "All set?");
         telemetry.update();
