@@ -15,32 +15,6 @@ public class AutonomousTest extends BaseAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-
-        grabberCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                grabberCamera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-            }
-        });
-
-        grabberCamera.setPipeline(grabberCameraPipeline);
-
         waitForStart();
-
-        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
-
-        sleep(1000);
-
-        driveSlidesAutonomous(Constants.SLIDE_HIGH);
-
-        sleep(2000);
-
-        centerJunctionTop(grabberCameraPipeline);
-
-        driveGrabber(Constants.GRABBER_OPEN_POSITION);
     }
 }

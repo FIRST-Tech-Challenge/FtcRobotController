@@ -16,6 +16,7 @@ public class TeleOpCompetition extends BaseTeleOp {
             driveFieldCentric();
             driveGrabberWithController();
             driveSlidesWithController();
+            resetIMU();
         }
     }
 }

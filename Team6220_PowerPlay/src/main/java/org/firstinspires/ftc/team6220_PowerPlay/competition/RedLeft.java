@@ -2,23 +2,18 @@ package org.firstinspires.ftc.team6220_PowerPlay.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "RedLeftAutonomous")
-public class RedLeftAutonomous extends BaseAutonomous {
+@Autonomous(name = "RedLeft")
+public class RedLeft extends BaseAutonomous {
 
     @Override
     public void runOpMode() throws InterruptedException {
         // initialize motors, servos, imu, cameras, etc.
         initialize();
-
-        // set color ranges for detecting cone stack
-        robotCameraPipeline.setRanges(Constants.LOWER_RED, Constants.UPPER_RED);
 
         // detect april tag in initialize
         int signal = detectSignal();
@@ -59,7 +54,7 @@ public class RedLeftAutonomous extends BaseAutonomous {
         sleep(500);
 
         // lower cone on to junction
-        driveSlidesAutonomous(Constants.SLIDE_HIGH - 100);
+        driveSlidesAutonomous(Constants.SLIDE_HIGH - 200);
 
         // sleep to make sure robot has stopped moving
         sleep(500);
@@ -71,82 +66,26 @@ public class RedLeftAutonomous extends BaseAutonomous {
         sleep(500);
 
         // drive backward so robot is in center of junctions
-        driveAutonomous(180, 2);
+        driveAutonomous(180, 3);
 
-        /*
-        *
-        * 1 + 0 above
-        *
-        * 1 + 1 below
-        *
-        *  */
-
-        // turn to face cone stack
-        turnToAngle(90);
-
-        // lower slides to height of top cone of the cone stack
-        driveSlidesAutonomous(Constants.SLIDE_STACK_FOUR);
-
-        // center on and drive to cone stack
-        centerConeStack(robotCameraPipeline);
-
-        // sleep to make sure robot has stopped moving
-        sleep(500);
-
-        // grab top cone on cone stack
-        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
-
-        // sleep so grabber has time to grip cone
-        sleep(1000);
-
-        // raise slides so cone doesn't knock over cone stack
-        driveSlidesAutonomous(Constants.SLIDE_LOW);
-
-        // drive backward to high junction
-        driveAutonomous(-90, 36);
-
-        // raise slides to high junction height
-        driveSlidesAutonomous(Constants.SLIDE_HIGH);
-
-        // turn to face high junction
-        turnToAngle(0);
-
-        // drive forward so cone is above high junction
-        driveAutonomous(0, 2);
-
-        // sleep to make sure robot has stopped moving
-        sleep(500);
-
-        // lower cone on to junction
-        driveSlidesAutonomous(Constants.SLIDE_HIGH - 100);
-
-        // sleep to make sure robot has stopped moving
-        sleep(500);
-
-        // drop cone on junction
-        driveGrabber(Constants.GRABBER_OPEN_POSITION);
-
-        // sleep to make sure cone has fallen
-        sleep(500);
-
-        // drive backward so robot is in center of junctions
-        driveAutonomous(180, 2);
+        // lower slides to ground
+        driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
 
         // park in correct signal position
         switch (signal) {
             // strafe left to park in zone 1
             case 0:
-                driveAutonomous(90, 36);
+                driveAutonomous(90, 33);
                 break;
 
             // strafe left to park in zone 2
             case 1:
-                driveAutonomous(90, 12);
+                driveAutonomous(90, 11);
                 break;
 
             // strafe right to park in zone 3
             case 2:
-                driveAutonomous(-90, 12);
+                driveAutonomous(-90, 11);
                 break;
         }
 

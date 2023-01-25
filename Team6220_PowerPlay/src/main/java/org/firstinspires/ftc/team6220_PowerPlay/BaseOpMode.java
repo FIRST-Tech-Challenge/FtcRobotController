@@ -115,9 +115,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
         grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
@@ -236,9 +234,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             if (width == 0) {
                 break;
             } else {
-                driveWithIMU(-0.2, Constants.CONE_CENTERING_KP * Math.signum(xOffset), Constants.CONE_CENTERING_KP * Math.signum(xOffset));
-                telemetry.addData("xOffset", xOffset);
-                telemetry.update();
+                driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.2, Constants.CONE_CENTERING_KP * Math.signum(xOffset));
             }
 
             // while far enough that the cone stack doesn't fill the entire camera view

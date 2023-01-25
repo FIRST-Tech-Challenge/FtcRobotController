@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -174,5 +176,12 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
         stacks[1] = stack;
         junctions[1] = junction;
+    }
+
+    public void resetIMU() {
+        if (gamepad1.left_bumper && gamepad1.right_bumper) {
+            startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        }
     }
 }
