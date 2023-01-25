@@ -2,9 +2,11 @@ package org.firstinspires.ftc.team6220_PowerPlay.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "RedLeftAutonomous")
@@ -51,7 +53,13 @@ public class RedLeftAutonomous extends BaseAutonomous {
         driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
         // strafe right to face high junction
-        driveAutonomous(-90, 10);
+        driveAutonomous(-90, 11);
+
+        // sleep to make sure robot has stopped moving
+        sleep(500);
+
+        // lower cone on to junction
+        driveSlidesAutonomous(Constants.SLIDE_HIGH - 100);
 
         // sleep to make sure robot has stopped moving
         sleep(500);
@@ -97,11 +105,20 @@ public class RedLeftAutonomous extends BaseAutonomous {
         // drive backward to high junction
         driveAutonomous(-90, 36);
 
+        // raise slides to high junction height
+        driveSlidesAutonomous(Constants.SLIDE_HIGH);
+
         // turn to face high junction
         turnToAngle(0);
 
         // drive forward so cone is above high junction
         driveAutonomous(0, 2);
+
+        // sleep to make sure robot has stopped moving
+        sleep(500);
+
+        // lower cone on to junction
+        driveSlidesAutonomous(Constants.SLIDE_HIGH - 100);
 
         // sleep to make sure robot has stopped moving
         sleep(500);

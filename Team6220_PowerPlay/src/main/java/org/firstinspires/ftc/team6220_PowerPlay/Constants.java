@@ -54,7 +54,7 @@ public class Constants {
     public static final int CAMERA_CENTER_X = CAMERA_X / 2;
     public static final int CAMERA_CENTER_Y = CAMERA_Y / 2;
 
-    public static final int CONE_WIDTH = 400;
+    public static final int CONE_WIDTH = 300;
     public static final double CONE_CENTERING_KP = 0.035;
 
     public static final int JUNCTION_TOP_TOLERANCE = 5;
