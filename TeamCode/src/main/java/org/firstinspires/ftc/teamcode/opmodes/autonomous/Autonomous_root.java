@@ -9,6 +9,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Vision;
+import org.firstinspires.ftc.teamcode.components.teaminfo.InitialSide;
+import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
+import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
@@ -18,13 +21,6 @@ public class Autonomous_root extends LinearOpMode {
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
-
-    //Team information
-    private enum TeamColor {red, blue}
-    private enum InitialSide {right, left}
-
-    TeamColor teamColor;
-    InitialSide initialSide;
 
     @Override
     public void runOpMode() {
@@ -55,13 +51,16 @@ public class Autonomous_root extends LinearOpMode {
         while (!isStarted() && !isStopRequested()) {
             vision.searchTags();
 
-            if(gamepad1.b || gamepad2.b) teamColor = TeamColor.red;
-            if(gamepad1.x || gamepad2.x) teamColor = TeamColor.blue;
-            if(gamepad1.dpad_right || gamepad2.dpad_right) initialSide = InitialSide.right;
-            if(gamepad1.dpad_left || gamepad2.dpad_left) initialSide = InitialSide.left;
+            if(gamepad1.b || gamepad2.b) TeamInfo.teamColor = TeamColor.RED;
+            if(gamepad1.x || gamepad2.x) TeamInfo.teamColor = TeamColor.BLUE;
+            if(gamepad1.dpad_right || gamepad2.dpad_right) TeamInfo.initialSide = InitialSide.RIGHT;
+            if(gamepad1.dpad_left || gamepad2.dpad_left) TeamInfo.initialSide = InitialSide.LEFT;
 
             if(vision.tagId() > 0) telemetry.addData("Detected tag ID:", vision.tagId());
             else telemetry.addLine("Don't see tag of interest :(");
+
+            telemetry.addData("Team color", TeamInfo.teamColor);
+            telemetry.addData("Initial side", TeamInfo.initialSide);
             telemetry.update();
 
             sleep(20);
@@ -77,42 +76,57 @@ public class Autonomous_root extends LinearOpMode {
             chassis.runToPosition(-2500, -2500, -2500, -2500);
 
             chassis.runToPosition(-2100, -2100, -2100, -2100);
+            chassis.resetEncoder();
 
             vision.setDetector("pole");
+            sleep(2500);
 
-            for(int i=0; i<1; i++){
-                //RIGHT BLUE
-                chassis.runToPosition(-1600, -2400, -1600, -2400);
+            for(int i=0; i<2; i++){
+                //RIGHT POSITION
+                chassis.runToPosition(400, -400, 400, -400);
 
-                //微調整(Small Adjustment)
-                while(Math.abs(vision.differenceX()) > 5) {
-                    double power = (vision.differenceX() < 0) ? 0.2 : -0.2;
-                    chassis.turn(power);
-                }
-                chassis.stop();
+                adjust(chassis, vision);
 
                 chassis.resetEncoder();
-                chassis.runToPosition(-250,-250,-250,-250);
+                chassis.runToPosition(-220,-220,-220,-220);
 
-                chassis.stop();
-                while(Math.abs(vision.differenceX()) > 5) {
-                    double power = (vision.differenceX() < 0) ? 0.2 : -0.2;
-                    chassis.turn(power);
-                }
-                chassis.stop();
+                adjust(chassis, vision);
 
                 arm.runToPosition(arm.highJunction);
 
-                chassis.runToPosition(-500,-500,-500,-500);
+                chassis.runToPosition(-450,-450,-450,-450);
                 chassis.stop();
 
                 arm.openGripper();
-                //RUN TO CAM POSITION
+
+                //TODO: RUN TO CAM POSITION
                 arm.runToPosition(0);
 
-                chassis.runToPosition(-250,-250,-250,-250);
+                telemetry.addLine("Scored one cone??");
+                telemetry.update();
 
+                vision.setDetector("cone");
 
+                chassis.runToPosition(-220,-220,-220,-220);
+
+                chassis.runToPosition(-1650,1250,-1650,1250);
+
+                adjust(chassis, vision);
+
+                chassis.resetEncoder();
+                chassis.runToPosition(-600, -600, -600, -600);
+
+                adjust(chassis, vision);
+
+                chassis.runToPosition(-1200, -1200, -1200, -1200);
+
+                arm.closeGripper();
+
+                chassis.runToPosition(-50, -50, -50, -50);
+
+                chassis.runToPosition(1000, -1000, 1000, -1000);
+
+                chassis.resetEncoder();
             }
 
             if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
@@ -120,5 +134,16 @@ public class Autonomous_root extends LinearOpMode {
 
             parked = true;
         }
+    }
+
+    void adjust(Chassis chassis, Vision vision){
+        chassis.stop();
+        while(Math.abs(vision.getAutonPipeline().differenceX()) > 5) {
+            double power = (vision.getAutonPipeline().differenceX() < 0) ? 0.1 : -0.1;
+            chassis.turn(power);
+            telemetry.addData("difference", vision.getAutonPipeline().differenceX());
+            telemetry.update();
+        }
+        chassis.stop();
     }
 }

@@ -60,31 +60,19 @@ public class SleeveDetector extends OpenCvPipeline
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
     private final Object detectionsUpdateSync = new Object();
-
-    double fx;
-    double fy;
-    double cx;
-    double cy;
-
-    // UNITS ARE METERS
-    double tagsize;
-    double tagsizeX;
-    double tagsizeY;
+    // Lens intrinsics
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    final double tagsize = 0.166;
+    final double fx = 578.272;
+    final double fy = 578.272;
+    final double cx = 402.145;
+    final double cy = 221.506;
 
     private float decimation;
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    public SleeveDetector(double tagsize, double fx, double fy, double cx, double cy)
-    {
-        this.tagsize = tagsize;
-        this.tagsizeX = tagsize;
-        this.tagsizeY = tagsize;
-        this.fx = fx;
-        this.fy = fy;
-        this.cx = cx;
-        this.cy = cy;
-
+    public SleeveDetector() {
         // Allocate a native context object. See the corresponding deletion in the finalizer
         nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
     }
@@ -92,15 +80,11 @@ public class SleeveDetector extends OpenCvPipeline
     @Override
     public void finalize()
     {
-        // Might be null if createApriltagDetector() threw an exception
-        if(nativeApriltagPtr != 0)
-        {
+        if(nativeApriltagPtr != 0) {
             // Delete the native context we created in the constructor
             AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr);
             nativeApriltagPtr = 0;
-        }
-        else
-        {
+        } else {
             System.out.println("SleeveDetector.finalize(): nativeApriltagPtr was NULL");
         }
     }

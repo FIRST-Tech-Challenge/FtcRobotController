@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.test;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+//import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -31,7 +31,7 @@ public class PoleVisionTest extends LinearOpMode {
         Arm arm = new Arm(leftLift, rightLift, gripper);
         arm.init();
 
-        DistanceSensor distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+        //DistanceSensor distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         Vision vision = new Vision(camera, telemetry);
@@ -40,24 +40,17 @@ public class PoleVisionTest extends LinearOpMode {
         telemetry.addLine("waiting to start!");
         telemetry.update();
 
+        vision.setDetector("pole");
+
         waitForStart();
 
-        boolean parked = false;
-
-        while(opModeIsActive() && !parked) {
-            vision.setDetector("pole");
-
-            while(Math.abs(vision.differenceX()) > 5) {
-                double power = (vision.differenceX() < 0) ? 0.1 : -0.1;
-                chassis.turn(power);
-
-                telemetry.addData("difference", vision.differenceX());
-                telemetry.addData("middle", vision.middleX());
-                telemetry.update();
-            }
-            chassis.stop();
-
-            parked = true;
+        while(Math.abs(vision.getAutonPipeline().differenceX()) > 5) {
+            double power = (vision.getAutonPipeline().differenceX() < 0) ? 0.1 : -0.1;
+            chassis.turn(power);
+            telemetry.addData("difference", vision.getAutonPipeline().differenceX());
+            telemetry.addData("target", vision.getAutonPipeline().target);
+            telemetry.update();
         }
+        chassis.stop();
     }
 }

@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.components;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.teamcode.vision.PoleDetector;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.Autonomous_root;
+import org.firstinspires.ftc.teamcode.vision.AutonDetector;
 import org.firstinspires.ftc.teamcode.vision.SleeveDetector;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -17,34 +18,25 @@ public class Vision {
     private DistanceSensor distanceSensor;
 
     //"Webcam 1"
-    private OpenCvCamera camera;
-    private Telemetry telemetry;
+    private final OpenCvCamera camera;
+    private final Telemetry telemetry;
     public Vision(OpenCvCamera openCvCamera, Telemetry t){
         this.camera = openCvCamera;
         this.telemetry = t;
     }
 
-    SleeveDetector aprilTagDetectionPipeline;
-    PoleDetector poleDetector;
+    SleeveDetector sleeveDetector;
+    AutonDetector autonDetector;
     AprilTagDetection tagOfInterest = null;
 
     public void init() {
-        // Lens intrinsics
-        // NOTE: this calibration is for the C920 webcam at 800x448.
-        final double tagsize = 0.166;
-        final double fx = 578.272;
-        final double fy = 578.272;
-        final double cx = 402.145;
-        final double cy = 221.506;
-        aprilTagDetectionPipeline = new SleeveDetector(tagsize, fx, fy, cx, cy);
-
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        sleeveDetector = new SleeveDetector();
+        autonDetector = new AutonDetector(telemetry);
+        setDetector("sleeve");
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -52,18 +44,24 @@ public class Vision {
         });
     }
 
+    private String currentDetector = "";
     public void setDetector(String d) {
-        //if(d == "pole") camera.setPipeline(new AutonDetector(telemetry));
-        poleDetector = new PoleDetector(telemetry);
-        if(d == "pole") camera.setPipeline(poleDetector);
+        if(d.equals("sleeve") && !currentDetector.equals("sleeve")) {
+            camera.setPipeline(sleeveDetector);
+        } else {
+            if(d.equals("pole")) autonDetector.detectMode = AutonDetector.DetectMode.POLE;
+            else if(d.equals("cone")) autonDetector.detectMode = AutonDetector.DetectMode.CONE;
+            if(!currentDetector.equals("pole") && !currentDetector.equals("cone")) camera.setPipeline(autonDetector);
+        }
+        currentDetector = d;
     }
 
-    public double differenceX(){
-        return poleDetector.differenceX();
+    public AutonDetector getAutonPipeline(){
+        return autonDetector;
     }
 
     public void searchTags() {
-        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+        ArrayList<AprilTagDetection> currentDetections = sleeveDetector.getLatestDetections();
 
         for(AprilTagDetection tag : currentDetections) {
             if(tag.id == 1 || tag.id == 2 || tag.id == 3) {

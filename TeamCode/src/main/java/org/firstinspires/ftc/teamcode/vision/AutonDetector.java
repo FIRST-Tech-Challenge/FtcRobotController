@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
+import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -19,18 +21,17 @@ public class AutonDetector extends OpenCvPipeline {
     Telemetry telemetry;
     public AutonDetector(Telemetry t){ this.telemetry = t; }
 
-    public enum DetectColor {NONE, RED, BLUE, YELLOW}
+    public enum DetectMode {CONE, POLE, NONE}
 
-    public DetectColor detectColor = DetectColor.RED;
-    //public DetectMode detectMode = DetectMode.NONE;
+    public DetectMode detectMode = DetectMode.NONE;
     private Mat mat = new Mat();
-    final int screenWidth = 640;
+    private int screenWidth;
 
     public Rect target = new Rect();
 
     @Override
     public Mat processFrame(Mat input) {
-        if(input.empty()) return mat;
+        screenWidth = input.width();
         return autonDetection(input);
     }
 
@@ -38,9 +39,11 @@ public class AutonDetector extends OpenCvPipeline {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         Mat thresh = new Mat();
-        if(detectColor.equals(DetectColor.RED)) thresh = redThresh();
-        if(detectColor.equals(DetectColor.BLUE)) thresh = blueThresh();
-        if(detectColor.equals(DetectColor.YELLOW)) thresh = yellowThresh();
+        if(detectMode == DetectMode.POLE) thresh = yellowThresh();
+        else if (detectMode == DetectMode.CONE){
+            if(TeamInfo.teamColor == TeamColor.RED) thresh = redThresh();
+            else if(TeamInfo.teamColor == TeamColor.BLUE) thresh = blueThresh();
+        }
 
         Mat edges = new Mat();
         Imgproc.Canny(thresh, edges, 100, 200);
@@ -56,7 +59,7 @@ public class AutonDetector extends OpenCvPipeline {
             target = Imgproc.boundingRect(biggestWidth);
 
             Imgproc.rectangle(input, target, new Scalar(255, 0, 0), 2);
-            Imgproc.circle(input, new Point(target.x + (target.width/2), target.y + (target.height/2)), 1, new Scalar(255, 0, 255), 3);
+            Imgproc.circle(input, new Point(target.x + (target.width/2.0), target.y + (target.height/2.0)), 1, new Scalar(255, 0, 255), 3);
         }
 
         contours.clear();
@@ -109,7 +112,10 @@ public class AutonDetector extends OpenCvPipeline {
     }
 
     public double differenceX () {
-        double difference = (target.x + (target.width/2.0)) - (screenWidth/2.0);
-        return difference;
+        return middleX() - (screenWidth/2.0);
+    }
+
+    private double middleX () {
+        return target.x + (target.width/2.0);
     }
 }
