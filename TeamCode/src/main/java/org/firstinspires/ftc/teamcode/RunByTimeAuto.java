@@ -267,15 +267,4 @@ public class RunByTimeAuto extends LinearOpMode {
         robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-hujgvghh
-
-
-
-
-
-
-
-
-
-
     }}

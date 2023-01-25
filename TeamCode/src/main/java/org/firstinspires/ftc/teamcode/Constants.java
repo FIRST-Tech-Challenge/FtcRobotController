@@ -5,5 +5,4 @@ public class Constants {
   public enum SamplingLocation {
     LEFT, CENTER, RIGHT
   }
-
 }

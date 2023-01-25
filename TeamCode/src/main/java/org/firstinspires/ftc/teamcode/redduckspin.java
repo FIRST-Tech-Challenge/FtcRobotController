@@ -224,7 +224,8 @@ public class redduckspin extends LinearOpMode {
 
 
             // Perform sampling
-            samplingLocation = detector.sample(true);
+           /* boolean thisSample = true;
+            samplingLocation = detector.sample(thisSample);
             sleep(1);
 
             switch (samplingLocation) {
@@ -240,7 +241,7 @@ public class redduckspin extends LinearOpMode {
                     telemetry.addData("right", "");
                     telemetry.update();
                     break;
-            }
+            }*/
 
 
 
