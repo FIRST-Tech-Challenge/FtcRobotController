@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.;
 
 
-@TeleOp(name="forward", group="Teleop")
+@TeleOp(name="Teleoptest", group="Teleop")
 //@Disabled
-public abstract class forward extends LinearOpMode {
+public class Teleoptest extends LinearOpMode {
 
         // Drive motor and arm variables
         DcMotor lf = null;
@@ -29,9 +29,8 @@ public abstract class forward extends LinearOpMode {
     private float rbPower;
     private float tPower;
     private float tdPower;
+
     @Override
-
-
     public void runOpMode() {
 
         telemetry.addData("Status", "Initialized");
@@ -116,7 +115,4 @@ public abstract class forward extends LinearOpMode {
 
             }
         }
-
-    private void setPosition(double v) {
-    }
 }
