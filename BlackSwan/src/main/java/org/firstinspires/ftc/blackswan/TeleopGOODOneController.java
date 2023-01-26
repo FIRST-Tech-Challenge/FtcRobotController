@@ -17,7 +17,7 @@ public class TeleopGOODOneController extends LinearOpMode {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     public static double openClaw = 0.50;
-    public static double closeClaw = 0.2;
+    public static double closeClaw = 0.2 ;
     public static double rotateClaw = 0.70;
 
     @Override
