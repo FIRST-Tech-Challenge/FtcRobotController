@@ -80,14 +80,15 @@ public class AutoLeft extends LinearOpMode {
 
                     case deliverPreLoad:
                         robot.deliverPreLoad(true);
-                        Step = AutoSteps.parkFromMedium;
+                        Step = AutoSteps.cycleCones;
                         break;
 
                     case cycleCones:
                         robot.CycleCone(true);
+                        Step = AutoSteps.endAuto;
 
                     case parkFromMedium:
-                        robot.ParkFromMedium(parkingTarget, true);
+                        robot.ParkFromMedium(parkingTarget, false);
                         Step = AutoSteps.endAuto;
 
                     case endAuto:

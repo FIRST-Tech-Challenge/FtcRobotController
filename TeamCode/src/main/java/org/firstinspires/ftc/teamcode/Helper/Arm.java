@@ -17,12 +17,17 @@ public class Arm {
     int Position;
     double holdingPower;
 
+    private int YEAR = 2021;
+
+
     public void init(HardwareMap ahwMap) throws InterruptedException {
 
         hwMap = ahwMap;
         //Init motors and servos
         motor = hwMap.get(DcMotor.class, "swingArm");
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -31,41 +36,41 @@ public class Arm {
 
     public void swingUp(){
         ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
-        speed = 1;
-        Position = 75;
-        holdingPower = 1;
+        speed = 0.7;
+        Position = 495;
+        timeout_ms = 500;
 
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setTargetPosition(Position);
-        //Set the power of the motor.
-        motor.setPower(speed);
         //set the mode to go to the target position
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //Set the power of the motor.
+        motor.setPower(speed);
 
+        runtime.reset();
 
         while ((runtime.milliseconds() < timeout_ms) && (motor.isBusy())) {
         }
-        motor.setPower(holdingPower);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setPower(0);
 
     }
 
     public void swingDown(){
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        speed = 0.5;
-        Position = 20;
-        holdingPower = 0;
+        speed = 0.7;
+        Position = 55;
 
         motor.setTargetPosition(Position);
-        //Set the power of the motor.
-        motor.setPower(speed);
         //set the mode to go to the target position
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //Set the power of the motor.
+        motor.setPower(speed);
 
 
         while ((runtime.milliseconds() < timeout_ms) && (motor.isBusy())) {
         }
-        motor.setPower(holdingPower);
 
     }
 }

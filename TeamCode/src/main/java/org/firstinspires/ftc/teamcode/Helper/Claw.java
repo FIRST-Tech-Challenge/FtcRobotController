@@ -7,7 +7,7 @@ public class Claw {
     public Servo servo;
 
     public double OPEN = 0;
-    public double CLOSE = 1;
+    public double CLOSE = 0.8;
 
     HardwareMap hwMap = null;
 
@@ -29,3 +29,12 @@ public class Claw {
 
 
 }
+
+
+
+
+
+
+
+
+

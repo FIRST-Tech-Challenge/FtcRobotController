@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Helper;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //Related to IMU
@@ -28,6 +30,7 @@ public class Robot {
 
     public double armHoldingPower = 1;
 
+    private int robotInUse = 2022;
 
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     public static final String[] LABELS = {
@@ -57,6 +60,16 @@ public class Robot {
         chassis.init(hwMap);
         arm.init(hwMap);
         vSlider.init(hwMap);
+
+        if(robotInUse == 2021) {
+            arm.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+            vSlider.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+            claw.servo.setDirection(Servo.Direction.FORWARD);
+        } else if (robotInUse == 2022) {
+            arm.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+            vSlider.motor.setDirection(DcMotorSimple.Direction.FORWARD);
+            claw.servo.setDirection(Servo.Direction.REVERSE);
+        }
 
 
     }
@@ -119,10 +132,10 @@ public class Robot {
         float direction = 0;
 
         if(modAngle((angleEnd - angleCurrent)) >= 180) {
-            //Go CW
+            //Go Clockwise
             direction = -1;
         } else if (modAngle((angleEnd - angleCurrent)) <= 180) {
-            //Go CCW
+            //Go Counter Clockwise
             direction = 1;
         }
 
@@ -173,30 +186,29 @@ public class Robot {
         /** First swing the arm up and go to the pole. **/
         //Close claw, the arm is already up.
         claw.servo.setPosition(1);
-        arm.motor.setPower(armHoldingPower);
 
-        timeout_ms = 300;
+        timeout_ms = 500;
         runtime.reset();
         while(runtime.milliseconds() < timeout_ms){
 
         }
 
-        chassis.DriveToPosition(0.5, 0, 77, true);
+        chassis.DriveToPosition(0.8, 0, 70, true);
 
 
         //Drive to the pole
         if(LR) { // True = Left
-            turnRobotToAngle(315);
+            turnRobotToAngle(312);
         }
         else{
             turnRobotToAngle(45);
         }
 
-        chassis.DriveToPosition(0.5, 0, 5, true);
+        chassis.DriveToPosition(0.8, 0, 10, true);
 
         /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
         //Moves the slider to the correct height
-       vSlider.MoveSlider(1, 1000, 1550);
+       vSlider.MoveSlider(1, 1000, 2000);
 
 
 //        //Swings the arm down
@@ -214,10 +226,10 @@ public class Robot {
         }
         claw.close();
 
+        chassis.DriveToPosition(0.8,0,-5, true);
+
         //Raises slider a little bit to not get caught on the pole
        vSlider.MoveSlider(1, 1000, 500);
-        //Swings the arm back up
-        arm.swingUp();
         //lower the slider
        vSlider.MoveSlider(-1, -1000, 1200);
 
@@ -257,29 +269,25 @@ public class Robot {
 
     public void CycleCone(boolean LR){
         if(LR){
-            /** First go to the stack of cones and grab a cone **/
+            /** First go to the stack of cones **/
             turnRobotToAngle(360);
-            chassis.DriveToPosition(0.5, 0, 60, true);
+            chassis.DriveToPosition(0.8, 0, 50, true);
+            /** Now cycle the cones**/
             turnRobotToAngle(90);
-            //Open the claw and swing the arm down
-            claw.close();
-            arm.swingDown();
+            //Open the claw
             claw.open();
             //Drive forward slightly
-            chassis.DriveToPosition(0.3, 0, 60, true);
+            chassis.DriveToPosition(0.8, 0, 55, true);
             //close the claw and grab onto the cone
             claw.close();
-            //swing up
-            arm.swingUp();
             /** Now drive to the medium pole **/
             //Drive to the pole and face it
-            chassis.DriveToPosition(0.7,0,-60, true);
-            turnRobotToAngle(210);
+            chassis.DriveToPosition(0.8,0,-50, true);
+            turnRobotToAngle(205);
             chassis.stopDriveMotors();
             /** Now deliver the cone **/
-            //Move the slider to the right height and swing down
-            vSlider.MoveSlider(0.6, 1000,2400);
-            arm.swingDown();
+            //Move the slider to the right height
+            vSlider.MoveSlider(1, 1000,2400);
             //Open and close claw
             claw.open();
             timeout_ms = 500;
@@ -287,14 +295,38 @@ public class Robot {
             while ((runtime.milliseconds() < timeout_ms)) {
             }
             claw.close();
-            //swing arm back up
-            arm.swingUp();
             //lower slider
-            vSlider.MoveSlider(0.6, -1000,1200);
-            //Moves back to the stack
-            turnRobotToAngle(90);
+            vSlider.MoveSlider(1, -1000,1200);
+        }
+        else{
+            /** First go to the stack of cones **/
+            turnRobotToAngle(360);
+            chassis.DriveToPosition(0.8, 0, 50, true);
+            /** Now cycle the cones**/
+            turnRobotToAngle(270);
+            //Open the claw
+            claw.open();
+            //Drive forward slightly
+            chassis.DriveToPosition(0.8, 0, 55, true);
+            //close the claw and grab onto the cone
+            claw.close();
+            /** Now drive to the medium pole **/
+            //Drive to the pole and face it
+            chassis.DriveToPosition(0.8,0,-50, true);
+            turnRobotToAngle(135);
             chassis.stopDriveMotors();
-            chassis.DriveToPosition(0.7,0,60, true);
+            /** Now deliver the cone **/
+            //Move the slider to the right height
+            vSlider.MoveSlider(1, 1000,2400);
+            //Open and close claw
+            claw.open();
+            timeout_ms = 500;
+            runtime.reset();
+            while ((runtime.milliseconds() < timeout_ms)) {
+            }
+            claw.close();
+            //lower slider
+            vSlider.MoveSlider(1, -1000,1200);
         }
     }
 
