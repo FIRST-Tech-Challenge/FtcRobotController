@@ -104,11 +104,11 @@ public class Teleoptest extends LinearOpMode {
             }
 
 
-                lf.setPower(lPower * 0.65);
-                rf.setPower(rPower * 0.65);
-                lb.setPower(lPower * 0.65);
-                rb.setPower(rPower * 0.65);
-                tower1.setPower(tPower * -1.0);
+                lf.setPower(lPower * 0.50);
+                rf.setPower(rPower * 0.50);
+                lb.setPower(lPower * 0.50);
+                rb.setPower(rPower * 0.50);
+                tower1.setPower(tPower * -.85);
                 tower1.setPower(tdPower * .5);
 
 
