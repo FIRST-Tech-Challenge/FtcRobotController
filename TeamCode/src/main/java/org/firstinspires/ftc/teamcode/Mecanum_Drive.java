@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name = "MecanumDrive", group = "TeleOp")
+@TeleOp(name = "Mecanum_Drive", group = "TeleOp")
 
 public class Mecanum_Drive extends OpMode {
 
