@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name = "MecanumDrive", group = "TeleOp")
 
-public class MecanumDrive extends OpMode {
+public class Mecanum_Drive extends OpMode {
 
 
     DcMotor right_drive;
