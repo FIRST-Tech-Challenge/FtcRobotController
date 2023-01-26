@@ -108,6 +108,8 @@ public class Variables {
 //    public static boolean isIMURecorded = false;
 //    public static boolean topOfPole = false;
     public static boolean visionAutoActivated = false;
+    public static double imuHeading = 0;
+
 
 
     public static Rect[][] rectanglesGrid = new Rect[gridY][gridX];
