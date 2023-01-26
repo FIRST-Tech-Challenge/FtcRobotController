@@ -1,5 +1,15 @@
 package org.firstinspires.ftc.masters.drive;
 
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM;
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
+import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_CLOSED;
+import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_OPEN;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_BOTTOM;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
+import static org.firstinspires.ftc.masters.BadgerConstants.TIP_BACK;
+import static org.firstinspires.ftc.masters.BadgerConstants.TIP_CENTER;
+import static org.firstinspires.ftc.masters.BadgerConstants.TIP_FRONT;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
@@ -55,26 +65,10 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
 
-    //Fix values
-    public static int SLIDE_HIGH = 1350;
-    public static int SLIDE_MIDDLE = 550;
-    public static int SLIDE_BOTTOM = 0;
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0, 1);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(11.5, 0, 1);
 
-    //Fix values
-    protected final double clawServoOpen = 0.75;
-    protected final double clawServoClosed = 0.99;
-    protected final int armMotorBottom = 0;
-    protected final int armMotorTop = 600;
-    protected final int armMotorMid = 450;
-
-    protected final double tipCenter = 0.77;
-    protected final double tipFront = 0.6;
-    protected final double tipBack =0.9;
-
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
-
-    public static double LATERAL_MULTIPLIER = 60/54;
+    public static double LATERAL_MULTIPLIER = 60/54 * 60/59;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -95,7 +89,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotorEx slideOtherer;
     public DcMotorEx armMotor;
 
-    private Servo THE_CLAW, tippingServo;
+    private Servo claw, tippingServo;
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -150,14 +144,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
-        linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
-        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide"); // This one is named Jim in spirit
-        slideOtherer = hardwareMap.get(DcMotorEx.class, "slideOtherer");
-
-        armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
-
-        THE_CLAW = hardwareMap.servo.get("clawServo");
+        claw = hardwareMap.servo.get("clawServo");
         tippingServo = hardwareMap.servo.get("tippingServo");
 
 
@@ -166,6 +153,15 @@ public class SampleMecanumDrive extends MecanumDrive {
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
             motor.setMotorType(motorConfigurationType);
         }
+
+
+        linearSlide = hardwareMap.get(DcMotorEx.class, "linearSlide");
+        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontSlide = hardwareMap.get(DcMotorEx.class, "frontSlide"); // This one is named Jim in spirit
+        slideOtherer = hardwareMap.get(DcMotorEx.class, "slideOtherer");
+
+        armMotor = hardwareMap.get(DcMotorEx.class, "armServo");
+
 
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -179,7 +175,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: reverse any motors using DcMotor.setDirection()
 
-      //  leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
@@ -191,14 +187,31 @@ public class SampleMecanumDrive extends MecanumDrive {
         frontSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideOtherer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideOtherer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void openClaw(){
-        THE_CLAW.setPosition(clawServoOpen);
+        claw.setPosition(CLAW_OPEN);
     }
 
     public void closeClaw(){
-        THE_CLAW.setPosition(clawServoClosed);
+        claw.setPosition(CLAW_CLOSED);
+    }
+
+    public void tipCenter(){
+        tippingServo.setPosition(TIP_CENTER);
+    }
+
+    public void tipFront(){
+        tippingServo.setPosition(TIP_FRONT);
+    }
+
+    public void tipBack(){
+        tippingServo.setPosition(TIP_BACK);
     }
 
     public void liftTop(){
@@ -241,19 +254,19 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void setArmServoTop() {
-        armMotor.setTargetPosition(armMotorTop);
+        armMotor.setTargetPosition(ARM_MID_TOP);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(0.3);
     }
 
     public void setArmServoBottom() {
-        armMotor.setTargetPosition(armMotorBottom);
+        armMotor.setTargetPosition(ARM_BOTTOM);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(0.3);
     }
 
     public void setArmServoMiddle() {
-        armMotor.setTargetPosition(armMotorMid);
+        armMotor.setTargetPosition(ARM_MID_TOP);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(0.3);
     }

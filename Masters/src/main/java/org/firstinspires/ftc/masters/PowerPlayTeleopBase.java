@@ -97,7 +97,7 @@ public class PowerPlayTeleopBase extends LinearOpMode {
         tippingServo = hardwareMap.servo.get("tippingServo");
 
         // Set the drive motor direction:
-       // leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
         rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
