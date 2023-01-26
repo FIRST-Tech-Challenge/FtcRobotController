@@ -106,13 +106,14 @@ public class PowerPlayRight extends LinearOpMode {
                 .build();
 
         Trajectory parkRed = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(45))))
-                .strafeTo(new Vector2d(36,-37 ))
+                .lineToLinearHeading(new Pose2d(new Vector2d(36,-38),Math.toRadians(90)))
 
                // .splineToLinearHeading(new Pose2d(new Vector2d(11.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
                 .build();
 
         Trajectory parkGreen = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(45))))
-                .strafeTo(new Vector2d(62,-37))
+                .lineToLinearHeading(new Pose2d(new Vector2d(62,-38 ),Math.toRadians(90)))
+               // .strafeTo(new Vector2d(62,-37))
                 .build();
 
 //        Trajectory parkRed = drive.trajectoryBuilder(scoreNewCone.end())
