@@ -10,7 +10,7 @@ public class Turn extends Task{
     {
         this.robot = robot;
         this.degrees = degrees;
-        deltaPosition = robot.driveTrain.getMotorAvgPosition() + Math.abs(degrees*TICKSPER90DEGREES);
+        deltaPosition = robot.driveTrain.getMotorAvgPosition() + Math.abs((degrees/90)*TICKSPER90DEGREES);
     }
     @Override
     public boolean run() {
