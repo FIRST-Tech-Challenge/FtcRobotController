@@ -16,8 +16,8 @@ public class Claw {
 
     // claw positions
     public static double OPEN = 0.75;
-    public static double CLOSE = 0.58;
-    public static double AUTOCLOSE = 0.44;
+    public static double CLOSE = 0.55;
+    public static double AUTOCLOSE = 0.55;
 
     // wrist positions
     public static double WRIST_INTAKE_POSITION = 0.255; // wrist rotates to intake cone, greater values move clockwise, less move counterclockwise
@@ -46,7 +46,7 @@ public class Claw {
         wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
         clawJoint = hardwareMap.get(Servo.class, "CLAW"); // Pin 1
 
-        clawJoint.setPosition(CLOSE);
+        clawJoint.setPosition(AUTOCLOSE);
         wristJoint.setPosition(WRIST_INTAKE_POSITION);
     }
 
@@ -55,7 +55,7 @@ public class Claw {
     public void toggleOpenClose() {
         if (isOpen.isRisingEdge()) {
             if (clawToggled) {
-                clawJoint.setPosition(CLOSE);
+                clawJoint.setPosition(AUTOCLOSE);
             } else {
                 clawJoint.setPosition(OPEN);
             }
