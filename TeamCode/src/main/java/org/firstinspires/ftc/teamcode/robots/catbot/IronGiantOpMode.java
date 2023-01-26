@@ -19,12 +19,12 @@ public class IronGiantOpMode extends OpMode {
     //autonomous variables
     //hello :)
     //this is the ghost of christmas past :)
-    public static boolean auton = true; // controls if auton will run set to true to run with auton
+    public boolean auton = true; // controls if auton will run set to true to run with auton
     public static  boolean testing = false;// turns off normal robot motion
     public static boolean red = true; // team boolean variable red true is red team
     public static boolean farmCones = false;
     //miscellaneous variables
-    public static boolean calibrateOn = false;// turns off automatic elevator calibration
+    public static boolean calibrateOn = true;// turns off automatic elevator calibration
     private boolean calibrate = false;
     public static float DEADZONE = .1f;
     //vision variables
@@ -122,7 +122,7 @@ public class IronGiantOpMode extends OpMode {
         if(red)
         {
             if(!farmCones) {
-                autonomous.add(new Drive(robot, 1.5));
+                autonomous.add(new Drive(robot, 1.15));
                 autonomous.add(new ClawMove(robot, true));
                 autonomous.add(new Drive(robot, -1));
                 autonomous.add(new Turn(robot, 90));
@@ -176,7 +176,7 @@ public class IronGiantOpMode extends OpMode {
         {
             if(!farmCones) {
                 autonomous.add(new Turn(robot, -180));
-                autonomous.add(new Drive(robot, 1.5));
+                autonomous.add(new Drive(robot, 1.15));
                 autonomous.add(new ClawMove(robot, true));
                 autonomous.add(new Drive(robot, -1));
                 switch (tagValue) {
