@@ -38,6 +38,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	public static double angleConeStack = 91.45;
 	public static double xSecondPark = 54;
 	public static double ySecondPark = 0;
+	public static int arm = 925;
 
 
 	public void initialize(){
@@ -65,7 +66,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				//If 13.53 V, y = -3.5
 				// Mechanisms deposit preload at high junction with a 0.65 delay
 				.UNSTABLE_addTemporalMarkerOffset(0.75,()->{
-					slideControl.setCustom(2200);
+					slideControl.setCustom(2400);
 					armControl.setExtake();
 					clawControl.toggleWristRotate();
 
@@ -74,7 +75,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.lineToLinearHeading(new Pose2d(xFirstLinear, yFirstLinear, Math.toRadians(90)))
 				.waitSeconds(0.5)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(1350); // Overrides current target position of slides
+					slideControl.setCustom(1370); // Overrides current target position of slides
 				})
 				.waitSeconds(.35)
 				//opens claw
@@ -89,7 +90,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.waitSeconds(0.15)
 				// MOVES TO CONE STACK
 				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
-					slideControl.setCustom(710);
+					slideControl.setCustom(740);
 					armControl.setIntake();
 				})
 				.waitSeconds(0.25)
@@ -111,14 +112,14 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				})
 				.waitSeconds(.45)
 				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{ //0.7 old value
-					slideControl.setCustom(2200); // 2nd time at high junction
-					armControl.setCustom(990);
+					slideControl.setCustom(2400); // 2nd time at high junction
+					armControl.setCustom(arm);
 					clawControl.toggleWristRotate();
 				})
 
 				.lineToLinearHeading(new Pose2d(xSecondToJunction,ySecondToJunction,Math.toRadians(angle)))
 				.UNSTABLE_addTemporalMarkerOffset(0.15,()->{
-					slideControl.setCustom(1350);
+					slideControl.setCustom(1370);
 				})
 				.waitSeconds(0.35) // OLD VALUE: 0.25
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -129,7 +130,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				// PREPPING PIDS FOR CONE STACK \\
 				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{ // OLD VALUE: 0.25
 					clawControl.toggleWristRotate();
-					slideControl.setCustom(600);// OLD VALUE: 620
+					slideControl.setCustom(630);// OLD VALUE: 620
 					armControl.setIntake();
 				})
 				.waitSeconds(0.35) // OLD VALUE: 0.25
@@ -149,14 +150,14 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				//GOING TO JUNCTION FOR THIRD TIME
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0.3,()->{
-					slideControl.setCustom(2200);
-					armControl.setCustom(990);
+					slideControl.setCustom(2400);
+					armControl.setCustom(arm);
 					clawControl.toggleWristRotate();
 				})
 				.lineToLinearHeading(new Pose2d(xThirdToJunction,yThirdToJunction,Math.toRadians(angle)))
 
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(1350);
+					slideControl.setCustom(1370);
 				})
 				.waitSeconds(.35)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -167,7 +168,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
 
 					clawControl.toggleWristRotate();
-					slideControl.setCustom(475);
+					slideControl.setCustom(490);
 					armControl.setIntake();
 				})
 				.waitSeconds(0.25)
@@ -183,8 +184,8 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				})
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{
-					slideControl.setCustom(2200);
-					armControl.setCustom(990);
+					slideControl.setCustom(2400);
+					armControl.setCustom(arm);
 					clawControl.toggleWristRotate();
 				})
 				.waitSeconds(0.5)
@@ -192,39 +193,49 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.lineToLinearHeading(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
 
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(1350);
+					slideControl.setCustom(1370);
 				})
 				.waitSeconds(.35)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.15)
-				.UNSTABLE_addTemporalMarkerOffset(0.25,()->{
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 
 					clawControl.toggleWristRotate();
+
+				})
+				.waitSeconds(0.25)
+
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setIntakeOrGround();
 					armControl.setIntake();
 				})
+				.waitSeconds(0.25)
 
-				.waitSeconds(0.45)
+
 
 				.addTemporalMarker(() -> {
 					if(tagUse == 1){
-						Trajectory zoneOne = bot.trajectoryBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
-								.lineToLinearHeading(new Pose2d(xParkZoneOne,yParkZoneOne,90))
+						TrajectorySequence zoneOne = bot.trajectorySequenceBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
+								.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
+								.forward(28)
 								.build();
-						bot.followTrajectoryAsync(zoneOne);
-					}else if(tagUse == 2) {
+						bot.followTrajectorySequenceAsync(zoneOne);
+					}/*else if(tagUse == 2) {
 						TrajectorySequence zoneTwo = bot.trajectorySequenceBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
-								.lineToLinearHeading(new Pose2d(xSecondPark,ySecondPark,Math.toRadians(90)))
+								.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
 								.build();
-					}else if(tagUse == 3){
+						bot.followTrajectorySequenceAsync(zoneTwo);
+					}else{
 						Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
-								.lineToLinearHeading(new Pose2d(xParkZoneThree,yParkZoneThree,90))
+								.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
+								.back(28)
 								.build();
 						bot.followTrajectoryAsync(zoneThree);
-					}
+					}*/
 				})
+				.waitSeconds(3)
 
 				.build();
 
