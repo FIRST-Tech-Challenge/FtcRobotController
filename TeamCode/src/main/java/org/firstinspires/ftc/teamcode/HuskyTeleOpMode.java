@@ -31,9 +31,12 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.HuskyBot.*;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -53,12 +56,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
     boolean endGameRumbled = false;
     boolean finalRumbled = false;
 
-    double x, y, rx;
-
     double armSwivelPower = 0.0;
     double armExtendPower = 0.0;
     double armLiftPower = 0.0;
-    double armLiftPowerDivider = 4;
 
     private ElapsedTime finiteTimer = new ElapsedTime();
     public enum ArmState {
@@ -75,6 +75,13 @@ public class HuskyTeleOpMode extends LinearOpMode {
     double clawLiftTargetPos;
     boolean shouldChangeTheClawLift = false;
     // endregion
+
+    private PIDController armController;
+    public static double p = 0, i = 0, d = 0;
+    public static double f = 0, l = 0;
+    public static int target = 0;
+
+    private final double ARM_LIFT_TICKS_PER_DEGREE = 28.0 * 5.23 * 5.23 * 3.61 / 360;
 
     // region DEFINE FUNCTIONS
     // method to smoothly accelerate a motor given a target velocity.
@@ -107,8 +114,8 @@ public class HuskyTeleOpMode extends LinearOpMode {
         huskyBot.init(hardwareMap);
         huskyBot.drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+//        telemetry.addData("Status", "Initialized");
+//        telemetry.update();
 
         waitForStart();
         runtime.reset();
@@ -116,6 +123,8 @@ public class HuskyTeleOpMode extends LinearOpMode {
         huskyBot.clawLift.setPosition(CLAW_LIFT_START_POSITION);
         huskyBot.clawGrab.setPosition(CLAW_GRAB_CLOSE_POSITION);
         // endregion
+        armController = new PIDController(p, i, d);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // region TELE-OP LOOP
         while (opModeIsActive()) {
@@ -160,23 +169,24 @@ public class HuskyTeleOpMode extends LinearOpMode {
             // region Blocked by Preset FSM
             if (armState == ArmState.ARM_WAIT) {
                 // Arm Lift Controls
-                if (gamepad2.left_stick_y < 0) {
-                    // on the way up
-                    armLiftPowerDivider = 3.5 - ((double) huskyBot.armLiftMotor.getCurrentPosition() / ARM_LIFT_MAX_POSITION);
-                } else { // on the way down
-                    armLiftPowerDivider = 5.5;
-                }
+                armController.setPID(p, i, d);
 
-                armLiftPower = -gamepad2.left_stick_y / armLiftPowerDivider;
-                armLiftPower = Range.clip(armLiftPower, -ARM_LIFT_MIN_POWER, ARM_LIFT_MAX_POWER);
+                int armPos = huskyBot.armLiftMotor.getCurrentPosition();
+                int extendPos = huskyBot.armExtendMotor.getCurrentPosition();
 
-                if (armLiftPower == 0) {
-                    armLiftPower = ARM_LIFT_POWER_AT_REST;
-                }
-                if (huskyBot.armLiftMotor.getCurrentPosition() > ARM_LIFT_MAX_POSITION && armLiftPower > 0) {
-                    armLiftPower = 0;
-                }
+                double targetArmAngle = Math.cos(Math.toRadians((target - 470) / ARM_LIFT_TICKS_PER_DEGREE));
+
+                double pid = armController.calculate(armPos, target);
+                double ff = (l * extendPos + 1) * f * targetArmAngle;
+
+                armLiftPower = pid + ff;
                 huskyBot.armLiftMotor.setPower(armLiftPower);
+
+                telemetry.addData("extend ", extendPos);
+                telemetry.addData("target angle ", targetArmAngle);
+                telemetry.addData("pos ", armPos);
+                telemetry.addData("target ", target);
+                telemetry.update();
 
 
                 // Increases/Decreases Arm Length
@@ -399,7 +409,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
             }
         // endregion
 
-
+/*
         // region TELEMETRY
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Stick", "y (%.2f), x (%.2f), rx (%.2f)", y, x, rx);
@@ -424,7 +434,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
             telemetry.addData("Arm Lift Power Divider", armLiftPowerDivider);
             telemetry.update();
         // endregion
-
+*/
         }
         // endregion
 
