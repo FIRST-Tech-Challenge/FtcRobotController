@@ -28,9 +28,9 @@ public class PIDControllerTurret extends PIDController{
         double kpMinValue;
         double pidValue = super.update(target, state);
 
-        if(abs(error) <= kpMinDeadZone) {
+        if(abs(state) <= kpMinDeadZone) {
             kpMinValue = 0.0;
-        } else if(error > 0) {
+        } else if(state > 0) {
             kpMinValue = -kpMin;
         } else {
             kpMinValue = +kpMin;

@@ -423,12 +423,12 @@ public class AutonomousLeft extends AutonomousBase {
         // Range 28, 28, 29
         // + 14.8
         switch( fiveStackHeight ) {
-            case 5  : liftAngle5stack = 104.1; break;
-            case 4  : liftAngle5stack = 106.1; break;
-            case 3  : liftAngle5stack = 108.1; break;
-            case 2  : liftAngle5stack = 110.1; break; // TODO: Not measured
-            case 1  : liftAngle5stack = 110.1; break; // TODO: Not measured
-            default : liftAngle5stack = 110.1;
+            case 5  : liftAngle5stack = 97.0; break;
+            case 4  : liftAngle5stack = 98.0; break;
+            case 3  : liftAngle5stack = 99.0; break;
+            case 2  : liftAngle5stack = 100.0; break; // TODO: Not measured
+            case 1  : liftAngle5stack = 100.0; break; // TODO: Not measured
+            default : liftAngle5stack = 100.0;
         } // switch()
 
         // Lower the lift to the desired height (and ensure we're centered)

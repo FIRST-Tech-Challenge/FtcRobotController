@@ -246,8 +246,6 @@ public abstract class Teleop extends LinearOpMode {
                     robot.leftTiltServo.getPosition(), robot.rightTiltServo.getPosition() );
             if( rangeSensorsEnabled ) {
                telemetry.addData("Sonar Range (F)", "%.1f in", sonarRangeF/2.54 );
-//             telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f in", sonarRangeL/2.54, sonarRangeR/2.54 );
-//             telemetry.addData("Sonar Range (F/B)", "%.1f  %.1f in", sonarRangeF/2.54, sonarRangeB/2.54 );
             }
             telemetry.addData("Odometry (L/R/S)", "%d %d %d cts",
                     robot.leftOdometerCount, robot.rightOdometerCount, robot.strafeOdometerCount );
