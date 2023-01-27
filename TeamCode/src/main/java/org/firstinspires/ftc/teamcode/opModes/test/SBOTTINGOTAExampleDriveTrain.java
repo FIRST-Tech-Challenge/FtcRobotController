@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
 @TeleOp(name="Drivetrain Demo [sbottingota]", group="Demo")
 public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
     public DifferentialDrive driveTrain;
-    public Telemetry telemetry = TelemetryContainer.getTelemetry();
+    public Telemetry telemetry;
 
 
     private enum DriveModes {
@@ -47,6 +47,7 @@ public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
 
     @Override
     public void setup() {
+        telemetry = TelemetryContainer.getTelemetry();
         driveTrain = new DifferentialDrive(HardwareMapContainer.motor0, HardwareMapContainer.motor1);
     }
 
@@ -80,7 +81,7 @@ public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
             double joystickY = Inputs.gamepad1.getLeftY();
 
 
-            driveTrain.arcadeDrive(joystickX * speedMultiplier, joystickY * speedMultiplier);
+            driveTrain.arcadeDrive(joystickY * speedMultiplier, joystickX * speedMultiplier);
 
             telemetry.addData("Joystick x", joystickX);
             telemetry.addData("Joystick y", joystickY);
