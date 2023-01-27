@@ -6,6 +6,8 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rogue.blacksmith.annotations.CreateOnStart
+import ftc.rogue.blacksmith.util.getFieldsAnnotatedWith
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
@@ -24,7 +26,7 @@ import kotlin.reflect.KProperty
  *
  *  i like cars
  */
-abstract class BlackOp : LinearOpMode() {
+abstract class BlackOp() : LinearOpMode() {
     @JvmField
     protected val mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
@@ -50,6 +52,11 @@ abstract class BlackOp : LinearOpMode() {
         Companion.mTelemetry = mTelemetry
 
         Scheduler.emit(STARTING_MSG)
+
+        Scheduler.on(STARTING_MSG) {
+            this::class.java.getFieldsAnnotatedWith(CreateOnStart::class.java).forEach { it.set(this, it.type.getConstructor().newInstance()) }
+        }
+
         go()
     }
 

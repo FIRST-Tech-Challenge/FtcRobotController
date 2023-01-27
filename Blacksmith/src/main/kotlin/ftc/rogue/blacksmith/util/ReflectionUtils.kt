@@ -1,5 +1,6 @@
 package ftc.rogue.blacksmith.util
 
+import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
@@ -29,4 +30,8 @@ internal fun <T> Any.invokeMethodRethrowingI(name: String, vararg params: Any): 
     } catch (e: InvocationTargetException) {
         throw e.targetException
     }
+}
+
+fun Class<*>.getFieldsAnnotatedWith(annotation: Class<out Annotation>): List<Field> {
+    return this.declaredFields.filter { it.isAnnotationPresent(annotation) }
 }

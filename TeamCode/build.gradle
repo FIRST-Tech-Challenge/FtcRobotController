@@ -22,7 +22,6 @@ android {
 repositories {
     maven { url 'https://jitpack.io' }
     maven { url 'https://maven.brott.dev/' }
-    jcenter()
 }
 
 dependencies {
@@ -45,6 +44,4 @@ dependencies {
     implementation 'org.openftc:apriltag:1.1.0'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
-
-//    implementation 'org.reflections:reflections:0.10.2'
 }

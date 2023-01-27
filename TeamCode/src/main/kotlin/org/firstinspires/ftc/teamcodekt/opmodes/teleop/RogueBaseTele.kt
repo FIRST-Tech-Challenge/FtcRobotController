@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcodekt.components.chains.RegularDepositChain
 import org.firstinspires.ftc.teamcodekt.components.chains.ReverseDepositChain
 import org.firstinspires.ftc.teamcodekt.components.meta.createTeleOpBotComponents
 
-abstract class RogueBaseTele : BlackOp()                                                                                                            {
+abstract class RogueBaseTele : BlackOp()                                                                                                                           {
     protected val driver   by createOnGo<ReforgedGamepad> { gamepad1 }
     protected val codriver by createOnGo<ReforgedGamepad> { gamepad2 }
 
@@ -26,18 +26,18 @@ abstract class RogueBaseTele : BlackOp()                                        
     protected val reverseDepositChain by createOnGo< ReverseDepositChain > { bot }
     protected val coneLaunchingChain  by createOnGo< ConeLaunchingChain  > { bot }
 
-    final override fun go()                                                                                                                         {
+    final override fun go()                                                                                                                                                                 {
         PhotonCore.enable()
 
         describeControls()
 
-        Scheduler.beforeEach                                                                                                                        {
-            powerMulti = 1.0                                                                                                                        }
+        Scheduler.beforeEach                                                                                                                                                                {
+            powerMulti = 1.0                                                                                                                                                                }
 
-        Scheduler.launchOnStart                                                                                                                     (
-          opmode = this                                                                                                                             )                                                                                                       {
+        Scheduler.launchOnStart                                                                                                                                                             (
+          opmode = this                                                                                                                                                                     )                                                                                                       {
             bot.drivetrain.drive(driver.gamepad, powerMulti)
             bot.updateBaseComponents(.05)
-            mTelemetry.update()                                                                                                                     }}
+            mTelemetry.update()                                                                                                                                                             }}
 
-    abstract fun describeControls()                                                                                                                 }
+    abstract fun describeControls()                                                                                                                                                         }
