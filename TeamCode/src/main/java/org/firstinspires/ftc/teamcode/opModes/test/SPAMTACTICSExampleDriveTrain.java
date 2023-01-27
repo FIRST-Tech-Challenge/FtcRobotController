@@ -10,9 +10,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
+
 /**
  * Description: [Fill in]
  * Hardware:
@@ -27,8 +30,8 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
  * Controls:
  *  [Button] Function
  */
-@TeleOp(name="Drivetrain Demo", group="Demo")
-public class ExampleDriveTrain extends TeleOpModeBase {
+@TeleOp(name="Drivetrain Demo [spamtactics]", group="Demo")
+public class SPAMTACTICSExampleDriveTrain extends TeleOpModeBase { // TODO: Test fully with field if using; we had no field when this was created.
     // Declare class members here
     //left wheel
     Motor motor1 = HardwareMapContainer.motor0;
@@ -36,7 +39,7 @@ public class ExampleDriveTrain extends TeleOpModeBase {
     Motor motor2 = HardwareMapContainer.motor1;
     //Motor motor3 = HardwareMapContainer.motor2;
     //Motor motor4 = HardwareMapContainer.motor3;
-    RevIMU internal_measurement_unit;
+    RevIMU internal_measurement_unit; // This works really well!
 
     @Override
     public void setup() {
@@ -54,22 +57,23 @@ public class ExampleDriveTrain extends TeleOpModeBase {
         double leftY = Inputs.gamepad1.getLeftY();
         double nextheading = Math.atan2(leftY,leftX);
 
+        //The necessary speed
+        double rightX= Inputs.gamepad1.getRightX();
+
+        TelemetryContainer.getTelemetry().addData("Speed", rightX);
+        TelemetryContainer.getTelemetry().addData("NOW Heading", startheading);
+        TelemetryContainer.getTelemetry().addData("AIM Heading", nextheading);
+
         if(startheading==nextheading){
-            //The necessary speed
-            double rightX= Inputs.gamepad1.getRightX();
-            motor1.set(rightX)
-        } else if ((startheading-nextheading>0)|| (startheading-nextheading<-180)) {
-            motor1.set(1);
-            motor2.set(-1);
+            motor1.set(rightX);
+            motor2.set(rightX);
+        } else if ((startheading-nextheading>0)|| (startheading-nextheading<180)) {
+            motor1.set(rightX);
+            motor2.set(-rightX);
 
         } else{
-            motor1.set(-1);
-            motor2.set(1);
+            motor1.set(-rightX);
+            motor2.set(rightX);
         }
-
-
-
-
-
     }
 }
