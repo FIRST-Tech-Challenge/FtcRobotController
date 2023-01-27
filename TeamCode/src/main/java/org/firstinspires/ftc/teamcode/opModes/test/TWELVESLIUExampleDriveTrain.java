@@ -7,16 +7,15 @@ package org.firstinspires.ftc.teamcode.opModes.test;
         import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import com.qualcomm.robotcore.hardware.DcMotor;
+
+        import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
         import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
         import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 
 
 @TeleOp(name="Drivetrain Demo", group="Demo")
 
-public class ExampleDriveTrain extends TeleOpModeBase {
-    //new code, shoved this here, hope it works?
-    GamepadEx gamepadEx = new GamepadEx(gamepad1);
-
+public class TWELVESLIUExampleDriveTrain extends TeleOpModeBase {
     DifferentialDrive m_drive;
     MotorGroup myMotors1;
     MotorGroup myMotors2;
@@ -39,11 +38,11 @@ public class ExampleDriveTrain extends TeleOpModeBase {
     public void every_tick() {
         // Code to run in a loop after `PLAY` is pressed
         telemetry.addData("Status", "Running");
-        telemetry.addData("X", gamepadEx.getLeftX());
-        telemetry.addData("Y", gamepadEx.getLeftY());
+        telemetry.addData("X", Inputs.gamepad1.getLeftX());
+        telemetry.addData("Y", Inputs.gamepad1.getLeftY());
         telemetry.update();
         //p sure the test motor thing is useless so I deleted it
-        m_drive.arcadeDrive(gamepadEx.getLeftY(),gamepadEx.getLeftX());
+        m_drive.arcadeDrive(Inputs.gamepad1.getLeftY(), Inputs.gamepad1.getLeftX());
     }
 }
 
