@@ -79,7 +79,7 @@ public class actuatorUtils {
         if (liftUp == true) {
             if (doSleep)
                 sleep(500);
-            arm.setTargetPosition(165); //Lifts arm up so we can move w/o drag
+            arm.setTargetPosition(minEncode); //Lifts arm up so we can move w/o drag
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
         }
