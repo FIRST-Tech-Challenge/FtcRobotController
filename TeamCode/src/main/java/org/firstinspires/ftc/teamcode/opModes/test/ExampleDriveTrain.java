@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.test;
 
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.hardware.GyroEx;
@@ -27,8 +27,8 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
  * Controls:
  *  [Button] Function
  */
-@TeleOp(name="<OpMode>", group="<OpMode group name>")
-public class Test extends TeleOpModeBase {
+@TeleOp(name="Drivetrain Demo", group="Demo")
+public class ExampleDriveTrain extends TeleOpModeBase {
     // Declare class members here
     //left wheel
     Motor motor1 = HardwareMapContainer.motor0;
