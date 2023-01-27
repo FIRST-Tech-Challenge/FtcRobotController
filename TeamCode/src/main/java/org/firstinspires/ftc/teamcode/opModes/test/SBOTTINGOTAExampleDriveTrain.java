@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.PSButtons;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
@@ -18,12 +19,12 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
  * Left joystick for arcade drive ({@link DifferentialDrive#arcadeDrive(double, double)})
  * Both joysticks for tank drive ({@link DifferentialDrive#tankDrive(double, double)})
  *
- * X to toggle between arcade and tank drive.
- * Y to toggle between inputting a 0 to 1 value or -1 to 1 value into the current drive mode (test).
+ * Cross button to toggle between arcade and tank drive.
+ * Triangle button to toggle between inputting a 0 to 1 value or -1 to 1 value into the current drive mode (test).
  *
  * R1 and L1 to increase and decrease the sensitivity respectively.
  */
-//TODO: change buttons to be PlayStation controller buttons rather than XBox Buttons
+
 @Disabled
 @TeleOp(name="Drivetrain Demo [sbottingota]", group="Demo")
 public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
@@ -54,7 +55,7 @@ public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
 
     @Override
     public void every_tick() {
-        if (Inputs.gamepad1.wasJustPressed(GamepadKeys.Button.X)) {
+        if (Inputs.gamepad1.wasJustPressed(PSButtons.CROSS)) {
             if (driveMode.equals(DriveModes.TANK_DRIVE)) {
                 driveMode = DriveModes.ARCADE_DRIVE;
             } else {
@@ -62,7 +63,7 @@ public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
             }
         }
 
-        if (Inputs.gamepad1.wasJustPressed(GamepadKeys.Button.Y)) {
+        if (Inputs.gamepad1.wasJustPressed(PSButtons.TRIANGLE)) {
             if (inputType.equals(InputTypes.MINUS_ONE_TO_ONE)) {
                 inputType = InputTypes.ZERO_TO_ONE;
             } else {
