@@ -70,6 +70,15 @@ public class Arm {
         }
     }
 
+    public void fall() {
+        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setPower(0.0);
+        rightLift.setPower(0.0);
+    }
+
     public void setArmPower(Gamepad gamepad, double power) {
         boolean drop = manualArm == ManualArm.drop;
             if (manualArm == ManualArm.none) {

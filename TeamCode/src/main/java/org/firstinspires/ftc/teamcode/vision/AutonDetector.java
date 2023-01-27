@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+//import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
+//import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
 import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.opencv.core.Core;
@@ -51,7 +53,7 @@ public class AutonDetector extends OpenCvPipeline {
         List<MatOfPoint> contours = new ArrayList<>();
 
         Imgproc.findContours(edges, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-        contours.removeIf(c -> Imgproc.boundingRect(c).height < 20);
+        contours.removeIf(c -> Imgproc.boundingRect(c).height < 20 || Imgproc.boundingRect(c).area() < 50);
         Imgproc.drawContours(input, contours, -1, new Scalar(255, 255, 255));
 
         if(!contours.isEmpty()) {
@@ -101,8 +103,8 @@ public class AutonDetector extends OpenCvPipeline {
 
     private Mat yellowThresh() {
         // yellow
-        Scalar lowHSV = new Scalar (13,64,20);
-        Scalar highHSV = new Scalar (27,255,255);
+        Scalar lowHSV = new Scalar (10,64,20);
+        Scalar highHSV = new Scalar (30,255,255);
         Mat thresh = new Mat();
 
         //yellow

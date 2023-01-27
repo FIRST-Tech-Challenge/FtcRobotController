@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -29,7 +30,8 @@ public class Autonomous_root extends LinearOpMode {
         DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         DcMotor motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR);
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR, imu, telemetry);
         chassis.init();
 
         // init arms
@@ -75,22 +77,21 @@ public class Autonomous_root extends LinearOpMode {
             chassis.resetEncoder();
             chassis.runToPosition(-2500, -2500, -2500, -2500);
 
+            vision.setDetector("pole");
+
             chassis.runToPosition(-2100, -2100, -2100, -2100);
             chassis.resetEncoder();
 
-            vision.setDetector("pole");
-            sleep(2500);
+            //RIGHT POSITION
+            for(int i=0; i<1; i++){
+                chassis.runToAngle(40);
 
-            for(int i=0; i<2; i++){
-                //RIGHT POSITION
-                chassis.runToPosition(400, -400, 400, -400);
-
-                adjust(chassis, vision);
+                adjust(chassis, vision, 0);
 
                 chassis.resetEncoder();
                 chassis.runToPosition(-220,-220,-220,-220);
 
-                adjust(chassis, vision);
+                adjust(chassis, vision,0);
 
                 arm.runToPosition(arm.highJunction);
 
@@ -99,48 +100,37 @@ public class Autonomous_root extends LinearOpMode {
 
                 arm.openGripper();
 
-                //TODO: RUN TO CAM POSITION
-                arm.runToPosition(0);
-
-                telemetry.addLine("Scored one cone??");
-                telemetry.update();
-
                 vision.setDetector("cone");
 
                 chassis.runToPosition(-220,-220,-220,-220);
 
-                chassis.runToPosition(-1650,1250,-1650,1250);
+                //TODO: RUN TO CAM POSITION
+                arm.fall();
 
-                adjust(chassis, vision);
+                chassis.runToAngle(-90);
 
-                chassis.resetEncoder();
-                chassis.runToPosition(-600, -600, -600, -600);
-
-                adjust(chassis, vision);
-
-                chassis.runToPosition(-1200, -1200, -1200, -1200);
-
-                arm.closeGripper();
-
-                chassis.runToPosition(-50, -50, -50, -50);
-
-                chassis.runToPosition(1000, -1000, 1000, -1000);
+                adjust(chassis, vision, 1);
+                chassis.stop();
 
                 chassis.resetEncoder();
+                adjust(chassis, vision, 1);
+                chassis.stop();
+
+                if(vision.tagId() == RIGHT) chassis.runToPosition(-1200, -1200, -1200, -1200);
+                else if(vision.tagId() == MIDDLE) chassis.runToPosition(100, 100, 100, 100);
+                else if(vision.tagId() == LEFT) chassis.runToPosition(800, 800, 800, 800);
             }
-
-            if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
-            else if (vision.tagId() == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
-
             parked = true;
         }
     }
 
-    void adjust(Chassis chassis, Vision vision){
-        chassis.stop();
+    void adjust(Chassis chassis, Vision vision, int mode){
+        final int turn = 0;
+        final int strafe = 1;
         while(Math.abs(vision.getAutonPipeline().differenceX()) > 5) {
-            double power = (vision.getAutonPipeline().differenceX() < 0) ? 0.1 : -0.1;
-            chassis.turn(power);
+            double power = (vision.getAutonPipeline().differenceX() < 0) ? 0.2 : -0.2;
+            if(mode == turn) chassis.turn(power);
+            if(mode == strafe) chassis.strafe(power);
             telemetry.addData("difference", vision.getAutonPipeline().differenceX());
             telemetry.update();
         }

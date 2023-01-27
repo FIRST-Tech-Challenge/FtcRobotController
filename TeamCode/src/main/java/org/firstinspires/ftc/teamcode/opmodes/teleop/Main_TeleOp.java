@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.components.Arm;
@@ -17,7 +18,8 @@ public class Main_TeleOp extends LinearOpMode {
         DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         DcMotor motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR);
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR, imu, telemetry);
         chassis.init();
 
         // init arms
