@@ -51,9 +51,9 @@ public class RoadRunnerTest extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         arm = hardwareMap.get(DcMotor.class, "arm");
         gripper = hardwareMap.get(Servo.class, "gripper");
-        Pose2d startPose = new Pose2d(-60, 40, 0);
+        Pose2d startPose = new Pose2d(-63, 40.5, 0);
         drive.setPoseEstimate(startPose);
-        TrajectorySequence aSeq = autoSeq(startPose);
+        //TrajectorySequence aSeq = autoSeq(startPose);
 
         //Reverse the arm direction so it moves in the proper direction
         arm.setDirection(DcMotor.Direction.REVERSE);
@@ -106,58 +106,110 @@ public class RoadRunnerTest extends LinearOpMode {
         done = false;
 
         //lift arm up
-        actuatorUtils.armPole(4);
+        actuatorUtils.armPole(4, false);
         while (((currTime - startTime) < 30000) && !done && opModeIsActive()) {
-            drive.followTrajectorySequence(aSeq);
+            autoSeq();
             telemetry.addData("IM at ", getHeading());
             telemetry.update();
-            sleep(5000);
-            drive.followTrajectorySequence(parkSeq(resultROI));
+//            sleep(5000);
+            parkSeq(resultROI);
+            while (arm.getCurrentPosition() > -20) {
+                telemetry.addData("ARM Position = ", arm.getCurrentPosition());
+                telemetry.update();
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                arm.setPower(-0.7);
+            }
+            arm.setPower(0);
+            arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            telemetry.addData("ARM Position = ", arm.getCurrentPosition());
+            telemetry.update();
             currTime = System.currentTimeMillis();
             done = true;
         }
     }
 
-    private TrajectorySequence autoSeq(Pose2d pose) {
-        TrajectorySequence seq = drive.trajectorySequenceBuilder(pose)
-                .forward(6)
-                .turn(convertRad(-90))
-                .forward(28)
-                .turn(convertRad(90))
-                .forward(25)
-                .turn(convertRad(-45))
-                .forward(9)
-
-                // .lineToLinearHeading(new Pose2d(-50, 40, Math.toRadians(-90)))
-              //  .lineToLinearHeading(new Pose2d(-26,40,0))
-               // .forward(24)
-                //.turn(Math.toRadians(90))
-               // .forward(24)
-                //.turn(Math.toRadians(-45))
-                //.waitSeconds(2)
-                .addTemporalMarker(20, () -> {
-                    try {
-                        actuatorUtils.armPole(1, true);
-                        actuatorUtils.gripperOpen(true);
-                        actuatorUtils.armPole(4, true);
-                    }
-                    catch (InterruptedException ex) {
-                       telemetry.addData(ex.getLocalizedMessage(), "");
-                       telemetry.update();
-                  }
-              })
-                //.forward(-9)
-               // .turn(Math.toRadians(45))
-            //    .forward(24)
-             //   .turn(Math.toRadians(90))
+    private void autoSeq() {
+        TrajectorySequence seq1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-60, 13, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-35,13,Math.toRadians(-45)))
                 .build();
-        return seq;
-    }
-    private TrajectorySequence parkSeq(int park) {
-        TrajectorySequence seq = drive.trajectorySequenceBuilder(new Pose2d())
-                    .forward(((park-1)*-12))
+        try {
+            actuatorUtils.armPole(3,false);
+        } catch (InterruptedException e) {
+            telemetry.addData(e.getMessage(), "");
+            telemetry.update();
+        }
+        drive.followTrajectorySequence(seq1);
+        //sleep(1000);
+        TrajectorySequence seq2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-27.5, 5.5, Math.toRadians(-45)))
+                .build();
+        drive.followTrajectorySequence(seq2);
+        TrajectorySequence seq3 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-35,13, Math.toRadians(0)))
+                .build();
+        try {
+            actuatorUtils.gripperOpen(false);
+        } catch (InterruptedException e) {
+            telemetry.addData(e.getMessage(), "");
+            telemetry.update();
+        }
+        drive.followTrajectorySequence(seq3);
+        try {
+            actuatorUtils.armPole(4,false);
+        } catch (InterruptedException e) {
+            telemetry.addData(e.getMessage(), "");
+            telemetry.update();
+        }
+        TrajectorySequence seq4 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-13,13, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-13, 65, Math.toRadians(90)))
+                .build();
+        drive.followTrajectorySequence(seq4);
+        for (int i = 0; i < 2 ; i++) {
+            try {
+                actuatorUtils.gripperClose(true);
+                actuatorUtils.armPole(1, false);
+            } catch (InterruptedException e) {
+                telemetry.addData(e.getMessage(), "");
+                telemetry.update();
+            }
+            TrajectorySequence seq5 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(-13, 52, Math.toRadians(90)))
+                    .lineToLinearHeading(new Pose2d(-13, 49, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-17, 49, Math.toRadians(180)))
+                    //.lineToLinearHeading(new Pose2d(-18, 50, Math.toRadians(180)))
+                    //.lineToLinearHeading(new Pose2d(-12, 64.5, Math.toRadians(90)))
                     .build();
-        return seq;
+            drive.followTrajectorySequence(seq5);
+            try {
+                actuatorUtils.gripperOpen(false);
+                actuatorUtils.armPole(4, false);
+            } catch (InterruptedException e) {
+                telemetry.addData(e.getMessage(), "");
+                telemetry.update();
+            }
+            TrajectorySequence seq6 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(-13, 49, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-13, 65, Math.toRadians(90)))
+                    //.turn(Math.toRadians(-90))
+                    .build();
+            drive.followTrajectorySequence(seq6);
+        }
+    }
+    private void parkSeq(int park) {
+        Pose2d pose = drive.getPoseEstimate();
+        if (park == 1) {
+            return;
+        } else if (park == 2) {
+            pose = new Pose2d(-12, 36, Math.toRadians(90));
+        } else {
+            pose = new Pose2d(-12, 12, Math.toRadians(90));
+        }
+        TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(pose)
+                    .build();
+        drive.followTrajectorySequence(seq);
     }
     private void initOpenCV() {
         int cameraMonitorViewId2 = hardwareMap.appContext.getResources().getIdentifier(
