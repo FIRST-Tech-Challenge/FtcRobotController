@@ -198,7 +198,7 @@ public class HardwareSlimbot
     public double       GRABBER_TILT_FRONT_M = -0.28;  // Front scoring on the mid pole
     public double       GRABBER_TILT_FRONT_L = -0.28;  // Front scoring on the low pole
     public double       GRABBER_TILT_GRAB    = -0.36;  // Extended horizontal at ground level for grabbing (front)
-    public double       GRABBER_TILT_GRAB2   = -0.32;  // Slightly angled up for collecting from 5-stack (front)
+    public double       GRABBER_TILT_GRAB2   = -0.33;  // Slightly angled up for collecting from 5-stack (front)
     public double       GRABBER_TILT_MIN     = -0.50;  // As far down as we can tilt (manual control)
 
     public Servo        rotateServo         = null;   // rotate GRABBER left/right
@@ -210,8 +210,8 @@ public class HardwareSlimbot
     public double       GRABBER_PULL_POWER  = +0.50;
     public double       GRABBER_PUSH_POWER  = -0.50;
 
+    //====== INFRARED PROXIMITY DETECTORS FOR CONE GRABBER ====================================================================
     public DigitalChannel topConeSensor;
-
     public DigitalChannel bottomConeSensor;
 
 

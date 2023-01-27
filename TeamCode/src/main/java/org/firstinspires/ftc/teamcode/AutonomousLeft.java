@@ -78,8 +78,7 @@ public class AutonomousLeft extends AutonomousBase {
             @Override
             public void onOpened()
             {
-                pipelineBack = new PowerPlaySuperPipeline(false, true,
-                        false, false, 144.0);
+                pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
                 webcamBack.setPipeline(pipelineBack);
                 webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 backCameraInitialized = true;
@@ -120,7 +119,7 @@ public class AutonomousLeft extends AutonomousBase {
         }
         telemetry.addData("State", "Webcam Initialized");
         telemetry.update();
-        pipelineLow.overrideSide(true);
+        pipelineLow.overrideSide(true);  // LEFT
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
@@ -130,7 +129,6 @@ public class AutonomousLeft extends AutonomousBase {
             if( forceAlliance && (blueAlliance != pipelineLow.isBlueAlliance) )
                telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
             telemetry.addData("STARTING", "%s", "LEFT");
-//          telemetry.addData("STARTINGp", "%s", (pipelineLow.isLeft)? "LEFT":"RIGHT");
             telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRL + " G: " +
                     pipelineLow.avgGL + " B: " + pipelineLow.avgBL + " Zone: " +
                     pipelineLow.signalZoneL);
@@ -240,11 +238,11 @@ public class AutonomousLeft extends AutonomousBase {
         }
 
         // Center on pole
-//      if( opModeIsActive()) {
-//          telemetry.addData("Skill", "alignToPole");
-//          telemetry.update();
-//          alignToPole(false);
-//      }
+        if( opModeIsActive()) {
+            telemetry.addData("Skill", "alignToPole");
+            telemetry.update();
+            alignToPole(false);
+        }
 
         // Deposit cone on junction
         if( opModeIsActive() ) {
@@ -271,12 +269,12 @@ public class AutonomousLeft extends AutonomousBase {
 
             if (opModeIsActive()) {
                 switch(fiveStackHeight) {
-                    case 5:  cycleDistance = 31; break;
-                    case 4:  cycleDistance = 30; break;
-                    case 3:  cycleDistance = 30; break;
-                    case 2:  cycleDistance = 30; break;
-                    case 1:  cycleDistance = 30; break;
-                    default: cycleDistance = 30;
+                    case 5:  cycleDistance = 30; break;
+                    case 4:  cycleDistance = 29; break;
+                    case 3:  cycleDistance = 29; break;
+                    case 2:  cycleDistance = 29; break;
+                    case 1:  cycleDistance = 29; break;
+                    default: cycleDistance = 29;
                 }
                 telemetry.addData("Skill", "alignToConeStack (%.1f)",
                         autonomousTimer.milliseconds()/1000.0);
@@ -419,9 +417,6 @@ public class AutonomousLeft extends AutonomousBase {
         robot.grabberSetTilt( robot.GRABBER_TILT_GRAB2 );
 
         // Determine the correct lift-angle height based on how many cones remain
-        // 80.6 height to light cone to after collecting, and for sonar
-        // Range 28, 28, 29
-        // + 14.8
         switch( fiveStackHeight ) {
             case 5  : liftAngle5stack = 103.3; break;
             case 4  : liftAngle5stack = 106.2; break;

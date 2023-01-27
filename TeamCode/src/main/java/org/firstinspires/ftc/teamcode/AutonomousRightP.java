@@ -12,9 +12,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /* This program is for a damaged robot.  All it does is inspect the beacon sleeve and park. */
-@Autonomous(name="Autonomous _ Left PARK ONLY", group="7592", preselectTeleOp = "Teleop-Left")
+@Autonomous(name="Autonomous _ Right PARK ONLY", group="7592", preselectTeleOp = "Teleop-Right")
 //@Disabled
-public class AutonomousLeftP extends AutonomousBase {
+public class AutonomousRightP extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drivetrain.
@@ -98,7 +98,7 @@ public class AutonomousLeftP extends AutonomousBase {
         }
         telemetry.addData("State", "Webcam Initialized");
         telemetry.update();
-        pipelineLow.overrideSide(true);  // LEFT
+        pipelineLow.overrideSide(false);  // RIGHT
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
@@ -107,10 +107,10 @@ public class AutonomousLeftP extends AutonomousBase {
             // If vision pipeline diagrees with forced alliance setting, report it
             if( forceAlliance && (blueAlliance != pipelineLow.isBlueAlliance) )
                telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
-            telemetry.addData("STARTING", "%s", "LEFT");
-            telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRL + " G: " +
-                    pipelineLow.avgGL + " B: " + pipelineLow.avgBL + " Zone: " +
-                    pipelineLow.signalZoneL);
+            telemetry.addData("STARTING", "%s", "RIGHT");
+            telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRR + " G: " +
+                    pipelineLow.avgGR + " B: " + pipelineLow.avgBR + " Zone: " +
+                    pipelineLow.signalZoneR);
             telemetry.update();
             // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
@@ -137,8 +137,8 @@ public class AutonomousLeftP extends AutonomousBase {
         
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
-            signalZone = pipelineLow.signalZoneL;
-            pipelineLow.saveLastAutoImage(blueAlliance, true);
+            signalZone = pipelineLow.signalZoneR;
+            pipelineLow.saveLastAutoImage(blueAlliance, false);
         }
         // Turn off detecting the signal.
         pipelineLow.signalDetection(false);
@@ -173,18 +173,18 @@ public class AutonomousLeftP extends AutonomousBase {
     /* | 1 | 2 | 3 |                                                                              */
     /* +---+---+---+                                                                              */
     /* |   | S |   |     S = Starting floor tile                                                  */
-    /* +---+---+---/                                                                              */
+    /* \---+---+---+                                                                              */
     private void signalZoneParking( int signalZoneLocation ) {
 
         // We're not moving the lift.  Keep grabber in the stored/init position
         robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
 
         // Initial movement is just to steer clear of the ground junction in front of the robot
-        autoYpos=6.0;  autoXpos=4.0;  autoAngle=0;    // (inches, inches, degrees)
+        autoYpos=6.0;  autoXpos=-4.0;  autoAngle=0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
 
         // Now that we're away from the back wall and the ground junction, rotate and move out
-        autoYpos=29.0;  autoXpos=8.0;  autoAngle=-178.0;
+        autoYpos=29.0;  autoXpos=-8.0;  autoAngle=+178.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
 
         if( signalZoneLocation == 1 ) {  // RED
@@ -208,4 +208,4 @@ public class AutonomousLeftP extends AutonomousBase {
 
     } // signalZoneParking
 
-} /* AutonomousLeftP */
+} /* AutonomousRightP */
