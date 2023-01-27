@@ -21,8 +21,9 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
  * X to toggle between arcade and tank drive.
  * Y to toggle between inputting a 0 to 1 value or -1 to 1 value into the current drive mode (test).
  *
- * R1 and L1 to make the robot go faster and slower respectively.
+ * R1 and L1 to increase and decrease the sensitivity respectively.
  */
+//TODO: change buttons to be PlayStation controller buttons rather than XBox Buttons
 @Disabled
 @TeleOp(name="Drivetrain Demo [sbottingota]", group="Demo")
 public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
@@ -43,7 +44,7 @@ public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
     private DriveModes driveMode = DriveModes.ARCADE_DRIVE;
     private InputTypes inputType = InputTypes.ZERO_TO_ONE;
 
-    private int speedMultiplier = 1;
+    private int sensitivity = 1;
 
     @Override
     public void setup() {
@@ -70,9 +71,9 @@ public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
         }
 
         if (Inputs.gamepad1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-            speedMultiplier /= 2;
+            sensitivity /= 2;
         } else if (Inputs.gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-            speedMultiplier *= 2;
+            sensitivity *= 2;
         }
 
 
@@ -80,8 +81,15 @@ public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
             double joystickX = Inputs.gamepad1.getLeftX();
             double joystickY = Inputs.gamepad1.getLeftY();
 
+            if (inputType.equals(InputTypes.ZERO_TO_ONE)) {
+                joystickX = (joystickX + 1) / 2;
+                joystickY = (joystickY + 1) / 2;
+            }
 
-            driveTrain.arcadeDrive(joystickY * speedMultiplier, joystickX * speedMultiplier);
+            joystickX *= sensitivity;
+            joystickY *= sensitivity;
+
+            driveTrain.arcadeDrive(joystickX, joystickY);
 
             telemetry.addData("Joystick x", joystickX);
             telemetry.addData("Joystick y", joystickY);
@@ -94,13 +102,15 @@ public class SBOTTINGOTAExampleDriveTrain extends TeleOpModeBase {
                 rightJoystickY = (rightJoystickY + 1) / 2;
             }
 
-            driveTrain.tankDrive(leftJoystickY * speedMultiplier,
-                    rightJoystickY * speedMultiplier);
+            leftJoystickY *= sensitivity;
+            rightJoystickY *= sensitivity;
+
+            driveTrain.tankDrive(leftJoystickY, rightJoystickY);
 
             telemetry.addData("Let's print the left joystick y", leftJoystickY);
             telemetry.addData("Let's print the right joystick y", rightJoystickY);
         }
 
-        telemetry.addData("Let's print the speed multiplier", speedMultiplier);
+        telemetry.addData("Let's print the speed multiplier", sensitivity);
     }
 }
