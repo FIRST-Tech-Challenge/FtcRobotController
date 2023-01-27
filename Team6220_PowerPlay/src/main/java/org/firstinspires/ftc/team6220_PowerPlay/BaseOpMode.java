@@ -31,6 +31,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // servos
     public static ServoImplEx servoGrabber;
+    public static RevBlinkinLedDriver blinkinChassis;
 
     // OpenCV
     public static OpenCvCamera robotCamera;
@@ -102,6 +103,12 @@ public abstract class BaseOpMode extends LinearOpMode {
         PwmControl.PwmRange maxRange = new PwmControl.PwmRange(500, 2500, 20000);
         servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
         servoGrabber.setPwmRange(maxRange);
+        try {
+            blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
+        }
+        catch (Exception e) {
+
+        }
 
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -249,5 +256,15 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorFR.setPower(0.0);
         motorBL.setPower(0.0);
         motorBR.setPower(0.0);
+    }
+
+    public void driveLeds() {
+        if(blinkinChassis != null) {
+            if (grabberCameraPipeline.detected) {
+                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            } else {
+                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
+            }
+        }
     }
 }
