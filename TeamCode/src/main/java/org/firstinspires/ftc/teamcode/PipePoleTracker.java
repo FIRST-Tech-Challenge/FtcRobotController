@@ -180,7 +180,7 @@ public class PipePoleTracker extends OpenCvPipeline {
 //                    gridY = 40;
 
 
-                    lowestX = 112;
+                    lowestX = 111;
                     highestX = 336;
                     focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 
@@ -197,8 +197,8 @@ public class PipePoleTracker extends OpenCvPipeline {
 
                 if (levelString.equals("two") && level2Assignment == false && focusRect != null) {
 
-                    gridX = 40;
-                    gridY = 10;
+                    gridX = 75;
+                    gridY = 5;
 
                     rectanglesGrid = new Rect[gridY][gridX];
                     rectanglesGridDraw = new Rect[gridY][gridX];
@@ -209,7 +209,7 @@ public class PipePoleTracker extends OpenCvPipeline {
                     centersY = new int[gridY][gridX];
                     centersYDraw = new int[gridY][gridX];
 
-                    lowestX = 112;
+                    lowestX = 111;
                     highestX = 336;
                     focusRect = new Rect(new Point(lowestX, lowestY), new Point(highestX, highestY));
 

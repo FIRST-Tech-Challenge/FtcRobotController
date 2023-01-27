@@ -52,7 +52,7 @@ public class Variables {
     public static double clicksPerRotation = 537.6;
     public static double rotationsPerMeter = 1/0.3015928947;
 
-    public static final double Clamp = 0.48;
+    public static final double Clamp = 0.45;
     public static final double Release = 0.56;
 
     public static final int downHeight = 0;
@@ -86,6 +86,8 @@ public class Variables {
     public static int largestObjectWidth = 0;
     public static int largestObjectLowestX = 640;
     public static int largestObjectHighestX = 0;
+    public static double targetDistance;
+
 
 
     public static int boxBL_x;

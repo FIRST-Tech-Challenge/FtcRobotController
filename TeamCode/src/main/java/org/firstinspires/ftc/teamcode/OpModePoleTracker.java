@@ -24,6 +24,11 @@ import static org.firstinspires.ftc.teamcode.PipePoleTracker.getXResolution;
 import static org.firstinspires.ftc.teamcode.PipePoleTracker.getYResolution;
 
 import static org.firstinspires.ftc.teamcode.Variables.*;
+import static org.firstinspires.ftc.teamcode.Variables.Direction.BACKWARD;
+import static org.firstinspires.ftc.teamcode.Variables.Direction;
+import static org.firstinspires.ftc.teamcode.Variables.Direction.FORWARD;
+import static org.firstinspires.ftc.teamcode.Variables.Direction.LEFT;
+import static org.firstinspires.ftc.teamcode.Variables.Direction.RIGHT;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -47,10 +52,9 @@ public class OpModePoleTracker extends DriveMethods {
     //The unit here is pixels
     int targetX;
     int targetWidth;
-    double targetDistance;
     double errorX;
     int errorWidth;
-    int currentWidth;
+    double currentWidth;
     double dividerX = 500;
     double alignPowerAddedX;
     double alignPowerAddedWidth;
@@ -65,16 +69,18 @@ public class OpModePoleTracker extends DriveMethods {
 
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() {
 
         initMotorsBlue();
-            blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        motorSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
-            pattern = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
-            blinkinLedDriver.setPattern(pattern);
+        pattern = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
+        blinkinLedDriver.setPattern(pattern);
 
 
-            calibrateNavXIMU();
+        calibrateNavXIMU();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -85,19 +91,17 @@ public class OpModePoleTracker extends DriveMethods {
         camera.setPipeline(pipePoleTracker);
 
 
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 //Adjust this to reduce load?????
-                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
 
             }
+
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
                 /*
                  * This will be called if the camera could not be opened
                  */
@@ -117,57 +121,56 @@ public class OpModePoleTracker extends DriveMethods {
         slidePosition = motorSlide.getCurrentPosition();
 
 
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
 
             leftY = -gamepad1.left_stick_y;
             leftX = gamepad1.left_stick_x;
             rightX = gamepad1.right_stick_x;
 
-            motorFL.setPower((leftY + leftX + rightX)/2);
-            motorBL.setPower((leftY - leftX + rightX)/2);
-            motorFR.setPower((leftY - leftX - rightX)/2);
-            motorBR.setPower((leftY + leftX - rightX)/2);
+            motorFL.setPower((leftY + leftX + rightX) / 2);
+            motorBL.setPower((leftY - leftX + rightX) / 2);
+            motorFR.setPower((leftY - leftX - rightX) / 2);
+            motorBR.setPower((leftY + leftX - rightX) / 2);
 
-            if(gamepad1.dpad_up){
+            if (gamepad1.dpad_up) {
                 goToCollect();
             }
-            if(gamepad1.dpad_down){
+            if (gamepad1.dpad_down) {
                 goToDown();
             }
-            if(gamepad1.right_bumper){
+            if (gamepad1.right_bumper) {
                 clawClamp();
             }
-            if(gamepad1.left_bumper){
+            if (gamepad1.left_bumper) {
                 clawRelease();
             }
 
-            if(level2Capable == false && visionAutoActivated == false){
+            if (level2Capable == false && visionAutoActivated == false) {
                 pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
                 blinkinLedDriver.setPattern(pattern);
             }
-            if(level2Capable == true && visionAutoActivated == false){
+            if (level2Capable == true && visionAutoActivated == false) {
                 pattern = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
                 blinkinLedDriver.setPattern(pattern);
             }
-            if(visionAutoActivated && levelCounter == 1 || levelCounter == 2){
+            if (visionAutoActivated && levelCounter == 1 || levelCounter == 2) {
                 pattern = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
                 blinkinLedDriver.setPattern(pattern);
             }
 
-            if(visionAutoActivated && levelCounter == 3){
+            if (visionAutoActivated && levelCounter == 3) {
                 pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
                 blinkinLedDriver.setPattern(pattern);
             }
 
             //Button triggers
-            if(gamepad2.a && getLevel2Capable()){
+            if (gamepad2.a && getLevel2Capable()) {
 //                levelCounter = 2;
                 visionAutoActivated = true;
             }
 
 
-
-            if(gamepad2.x){
+            if (gamepad2.x) {
                 levelCounter = 1;
                 level1Aligned = false;
                 level2Aligned = false;
@@ -178,7 +181,7 @@ public class OpModePoleTracker extends DriveMethods {
             }
 
             //this means we are no longer looking at our object of choice
-            if(levelCounter != 3 && getLargestSize() == 0) {
+            if (levelCounter != 3 && getLargestSize() == 0) {
                 levelCounter = 1;
                 level1Aligned = false;
                 level2Aligned = false;
@@ -194,64 +197,66 @@ public class OpModePoleTracker extends DriveMethods {
             dividerX = 400;
 
 
+            if (visionAutoActivated) {
+
+                alignPowerAddedX = errorX / dividerX;
+
+                alignPowerAddedWidth = (double) errorWidth / 45;
 
 
-
-
-            if(visionAutoActivated){
-
-                alignPowerAddedX = errorX/dividerX;
-
-                alignPowerAddedWidth = (double)errorWidth/45;
-
-
-                if(Math.abs(alignPowerAddedX) > 0.14){
-                    alignPowerAddedX = (errorX/(Math.abs(errorX)))*0.14;
+                if (Math.abs(alignPowerAddedX) > 0.14) {
+                    alignPowerAddedX = (errorX / (Math.abs(errorX))) * 0.14;
                 }
 
-                if(levelCounter == 1 && Math.abs(errorX) < 32){//TODO will need to add distance condition
+                if (levelCounter == 1 && Math.abs(errorX) < 32) {//TODO will need to add distance condition
                     level1Aligned = true;
                     imuHeading = getCumulativeZ() + 1.5;
                     levelCounter = 2;
                     telemetry.addLine("level1 complete!");
                     telemetry.addLine("IMU Heading: " + imuHeading);
                     telemetry.addLine("errorX: " + errorX);
-                    telemetry.addLine("errorX divide thingy: " + (errorX/(Math.abs(errorX))));
+                    telemetry.addLine("errorX divide thingy: " + (errorX / (Math.abs(errorX))));
 
                     telemetry.update();
                     stopMotors();
                     //Robot is in front of pole well enough, entering level2...
                 }
 
-                if(levelCounter == 1 && level1Aligned == false){
+                if (levelCounter == 1 && level1Aligned == false) {
 
-                motorFL.setPower(-alignPowerAddedX);
-                motorBL.setPower(-alignPowerAddedX);
-                motorFR.setPower(alignPowerAddedX);
-                motorBR.setPower(alignPowerAddedX);
+                    motorFL.setPower(-alignPowerAddedX);
+                    motorBL.setPower(-alignPowerAddedX);
+                    motorFR.setPower(alignPowerAddedX);
+                    motorBR.setPower(alignPowerAddedX);
 
                 }
 
                 //Level2 below (untested at the moment - 1/17/23)
-                if(levelCounter == 2 && getLevel2Assigment() == true){
+                if (levelCounter == 2 && getLevel2Assigment() == true) {
                     currentWidth = getLargestObjectWidth();
-                    if(currentWidth < 15){
-                        targetDistance = 50 + 4*((15-currentWidth)^2) ;
+//                    if (currentWidth < 15) {
+                        targetDistance = (((640.0/(currentWidth*getBoxWidth()))*1.27)/(0.260284))-Math.pow(0.925,currentWidth-50) - 15; //This is in CENTImeters!
                         level2Aligned = false;
+//                        targetDistance = 2;
 //                    }else if(currentWidth > 25){
 //                        targetDistance = (25-currentWidth) - 9;
 //                        level2Aligned = false;
 //                    }else {
-                        targetDistance = (50 - currentWidth) / 100.0 - 0.2; //This is in meters, and should position the robot roughly
+//                        targetDistance = (50 - currentWidth) / 100.0 - 0.2; //This is in meters, and should position the robot roughly
                         // 0.15 meter (5 cms) from the pole.
 //                    }
-//                    driveForDistanceCorrectly(targetDistance, Direction.FORWARD, 0.2, imuHeading); //Get ontop of the pole while using the imu
+                    telemetry.addLine("Target Distance: " + targetDistance);
+                    telemetry.update();
+//                    sleep(5000);
+                    driveForDistanceCorrectly(targetDistance/100.0, Direction.FORWARD, 0.2, imuHeading); //Get ontop of the pole while using the imu
 //
-//                    levelCounter = 3;
-//                    level2Aligned = true;
-                    telemetry.addLine("Level2 Complete!");
-                    telemetry.addLine("Current Width: " + currentWidth);
-                    telemetry.addLine("Target Distance: "+ targetDistance);
+                    levelCounter = 3;
+                    level2Aligned = true;
+                        telemetry.addLine("Level2 Complete!");
+
+
+
+
 
 
                 }
@@ -259,7 +264,6 @@ public class OpModePoleTracker extends DriveMethods {
 //                if(level2Aligned){
 //                    levelCounter = 3;
 //                }
-
 
 
 //                if(levelCounter == 2 && level2Aligned == false){ //TODO feed different inputs into this to make more aggressive
@@ -271,76 +275,74 @@ public class OpModePoleTracker extends DriveMethods {
 //                     motorBR.setPower(alignPowerAddedWidth + alignPowerAddedX/2.75);
 //                }
 
-                if (levelCounter == 3 && level3Assignment && getPercentColor() < 10){
-                    level3Aligned = true;
-                    telemetry.addLine("We're at the top of the pole!");
-                    telemetry.addLine("level3Aligned: " + level3Aligned);
-                    telemetry.addLine("Percent Color: " + getPercentColor());
-                    telemetry.update();
+                    if (levelCounter == 3 && level3Assignment && getPercentColor() < 10) {
+                        level3Aligned = true;
+                        telemetry.addLine("We're at the top of the pole!");
+                        telemetry.addLine("level3Aligned: " + level3Aligned);
+                        telemetry.addLine("Percent Color: " + getPercentColor());
+                        telemetry.update();
 //                    sleep(1000);
 
 
-                }
-
-                if(levelCounter == 3 && level3Aligned == false){
-                    clawClamp();
-                    motorSlide.setPower(0.5);
-                    slidePosition = motorSlide.getCurrentPosition();
-                    telemetry.addLine("Measuring the pole height!");
-                    telemetry.addLine("Slide Position: " + motorSlide.getCurrentPosition());
-                    telemetry.addLine("Percent Color: " + getPercentColor());
-
-                    //Slide go up <-- Honestly just use a consistent power for ease
-                }
-
-                //For all the marbles, this is the sequence that stacks
-                if(level3Aligned == true){
-                    slidePosition = motorSlide.getCurrentPosition();
-                    stopMotors();
-                    telemetry.addLine("We going to the top babeeeeeeee");
-                    telemetry.addLine("Slide position: " + slidePosition);
-                    telemetry.addLine("targetHeight: " + targetHeight);
-//                    sleep(500);
-                    if(slidePosition >= 0 && slidePosition <= 1300){
-                        targetHeight = lowHeight;
-                    }else if(slidePosition > 1300 && slidePosition <= 2500){
-                        targetHeight = midHeight;
-                    }else if(slidePosition > 2500){
-                        targetHeight = highHeight;
                     }
 
-                    clawClamp();
-                    GoToHeight(targetHeight);
-                    sleep(300);
-                    driveForDistanceCorrectly(0.115,Direction.FORWARD,0.2,imuHeading);
+                    if (levelCounter == 3 && level3Aligned == false) {
+                        clawClamp();
+                        motorSlide.setPower(0.5);
+                        slidePosition = motorSlide.getCurrentPosition();
+                        telemetry.addLine("Measuring the pole height!");
+                        telemetry.addLine("Slide Position: " + motorSlide.getCurrentPosition());
+                        telemetry.addLine("Percent Color: " + getPercentColor());
+
+                        //Slide go up <-- Honestly just use a consistent power for ease
+                    }
+
+                    //For all the marbles, this is the sequence that stacks
+                    if (level3Aligned == true) {
+                        slidePosition = motorSlide.getCurrentPosition();
+                        stopMotors();
+                        telemetry.addLine("We going to the top babeeeeeeee");
+                        telemetry.addLine("Slide position: " + slidePosition);
+                        telemetry.addLine("targetHeight: " + targetHeight);
+//                    sleep(500);
+                        if (slidePosition >= 0 && slidePosition <= 1300) {
+                            targetHeight = lowHeight;
+                        } else if (slidePosition > 1300 && slidePosition <= 2500) {
+                            targetHeight = midHeight;
+                        } else if (slidePosition > 2500) {
+                            targetHeight = highHeight;
+                        }
+
+                        clawClamp();
+                        GoToHeight(targetHeight);
+                        sleep(300);
+                        driveForDistanceCorrectly(0.1, FORWARD, 0.2, imuHeading);
 //                    sleep(250);
-                    GoToHeight(targetHeight - 75);
-                    sleep(350);
-                    clawRelease();
-                    sleep(200);
-                    GoToHeight(targetHeight);
-                    sleep(300);
-                    driveForDistanceCorrectly(0.15, Direction.BACKWARD, 0.2, imuHeading);
-                    goToDown();
+                        GoToHeight(targetHeight - 75);
+                        sleep(350);
+                        clawRelease();
+                        sleep(200);
+                        GoToHeight(targetHeight);
+                        sleep(300);
+                        driveForDistanceCorrectly(0.15, BACKWARD, 0.2, imuHeading);
+                        goToDown();
 
-                    levelCounter = 1;
-                    level1Aligned = false;
-                    level2Aligned = false;
-                    level3Aligned = false;
-                    visionAutoActivated = false;
-                    targetX = 225; //TODO Avoid hard coding this value? Or maybe just take from the original resolution setting above
+                        levelCounter = 1;
+                        level1Aligned = false;
+                        level2Aligned = false;
+                        level3Aligned = false;
+                        visionAutoActivated = false;
+                        targetX = 225; //TODO Avoid hard coding this value? Or maybe just take from the original resolution setting above
 //                    dividerX = 200;
-                    //Back to manual driving!!!
+                        //Back to manual driving!!!
 
+                    }
                 }
-            }
-
 
 
 //            if(level.equals("two") && Math.abs(errorX) < 8){
 //                level2Aligned = true;
 //            }
-
 
 
 //            if(level2Aligned == false){
@@ -352,34 +354,35 @@ public class OpModePoleTracker extends DriveMethods {
 //            }
 
 
+                if (levelCounter == 1) {
+                    level = "one";
+                }
+
+                if (levelCounter == 2) {
+                    level = "two";
+                }
+
+                if (levelCounter == 3) {
+                    level = "three";
+                }
 
 
-            if(levelCounter == 1){
-                level = "one";
-            }
-
-            if(levelCounter == 2){
-                level = "two";
-            }
-
-            if(levelCounter == 3){
-                level = "three";
-            }
-
-
-
-            telemetry.addLine("Target Heading (+1): " + imuHeading);
-            telemetry.addLine("Current Heading: " + getCumulativeZ());
-            telemetry.addLine("errorX: " + errorX);
-            telemetry.addLine("errorWidth: " + errorWidth);
-            telemetry.addLine("current width: " + getLargestObjectWidth());
-            telemetry.addLine("Current Level: " + getLevelString());
+                telemetry.addLine("Current Width (boxes): " + currentWidth);
+                telemetry.addLine("Box Width: " + getBoxWidth());
+                telemetry.addLine("Current Width (pixels): " + currentWidth*getBoxWidth());
+//                telemetry.addLine("Target Distance: " + targetDistance);
+//                telemetry.addLine("Target Heading (+1): " + imuHeading);
+//                telemetry.addLine("Current Heading: " + getCumulativeZ());
+                telemetry.addLine("errorX: " + errorX);
+                telemetry.addLine("errorWidth: " + errorWidth);
+//                telemetry.addLine("current width: " + getLargestObjectWidth());
+//                telemetry.addLine("Current Level: " + getLevelString());
 //            telemetry.addLine("Level1 Assigment: " + getLevel1Assigment());
-//            telemetry.addLine("Level2 Assignment : " + getLevel2Assigment());
+            telemetry.addLine("Level2 Assignment? : " + getLevel2Assigment());
 //            telemetry.addLine("X_resolution: " + getXResolution());
 //            telemetry.addLine("Y_resolution: " + getYResolution());
-            telemetry.addLine("Level 2 Capable?: " + getLevel2Capable());
-            telemetry.addLine("Percent Color: " + getPercentColor());
+                telemetry.addLine("Level 2 Capable?: " + getLevel2Capable());
+                telemetry.addLine("Percent Color: " + getPercentColor());
 //            telemetry.addLine("Focus Rectangle Width " + getRectWidth());
 //            telemetry.addLine("Focus Rectangle Height: " + getRectHeight());
 //            telemetry.addLine("Rectangle Min Width: " + getMinRectWidth());
@@ -387,37 +390,30 @@ public class OpModePoleTracker extends DriveMethods {
 //            telemetry.addLine("Box Width: " + getBoxWidth());
 //            telemetry.addLine("Box Height: " + getBoxHeight());
 //            telemetry.addLine("Center X: " + getCenterX());
-            telemetry.addLine("LowestX: " + getLowestX());
-            telemetry.addLine("LowestY: " + getLowestY());
-            telemetry.addLine("HighestX: " + getHighestX());
-            telemetry.addLine("HighestY: " + getHighestY());
-            telemetry.addLine("targetX: " + targetX);
-            telemetry.addLine("centerX: " + getCenterX());
-            telemetry.addLine("Power Applied X: " + alignPowerAddedX);
-            telemetry.addLine("Power Applied Width: " + alignPowerAddedWidth);
+                telemetry.addLine("LowestX: " + getLowestX());
+                telemetry.addLine("LowestY: " + getLowestY());
+                telemetry.addLine("HighestX: " + getHighestX());
+                telemetry.addLine("HighestY: " + getHighestY());
+                telemetry.addLine("targetX: " + targetX);
+                telemetry.addLine("centerX: " + getCenterX());
+                telemetry.addLine("Power Applied X: " + alignPowerAddedX);
+                telemetry.addLine("Power Applied Width: " + alignPowerAddedWidth);
 //            telemetry.addLine("level1Aligned?: " + level1Aligned);
-            telemetry.addLine("level3Aligned?: " + level3Aligned);
-            telemetry.addLine("Activated?: " + visionAutoActivated);
+                telemetry.addLine("level3Aligned?: " + level3Aligned);
+                telemetry.addLine("Activated?: " + visionAutoActivated);
 //            telemetry.addLine("Slide Position: " + slidePosition);
 //            telemetry.addLine("Largest Size: " + getLargestSize());
 
 
+                telemetry.update();
 
-
-
-
-
-
-
-
-            telemetry.update();
-
-            pipePoleTracker = new PipePoleTracker(level);
-            camera.setPipeline(pipePoleTracker);
+                pipePoleTracker = new PipePoleTracker(level);
+                camera.setPipeline(pipePoleTracker);
+            }
         }
-    }
 
-    public void driveForDistanceCorrectly(double distanceMeters, Direction movementDirection, double power, double heading) { // distance: 2, strafe: false, power: 0.5
+
+     public void driveForDistanceCorrectly(double distanceMeters, Direction movementDirection, double power, double heading) { // distance: 2, strafe: false, power: 0.5
         targetZ = heading;
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
