@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.opModes.test;
         import com.arcrobotics.ftclib.gamepad.GamepadEx;
         import com.arcrobotics.ftclib.hardware.motors.Motor;
         import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -14,7 +15,7 @@ package org.firstinspires.ftc.teamcode.opModes.test;
 
 
 @TeleOp(name="Drivetrain Demo", group="Demo")
-
+@Disabled
 public class TWELVESLIUExampleDriveTrain extends TeleOpModeBase {
     DifferentialDrive m_drive;
     MotorGroup myMotors1;

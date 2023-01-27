@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 
 /**
@@ -29,9 +30,8 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeB
 
 // no clue what the thing up there is for
 public class ExampleServoController extends TeleOpModeBase {
-
+    // TODO: Test
     ServoEx servoex;
-    GamepadEx gamepadEx;
     GamepadButton grabButton;
     boolean buttonPressed;
     boolean servoPosition;
@@ -39,9 +39,8 @@ public class ExampleServoController extends TeleOpModeBase {
     // true if going to 120 or on 120, false if going to 240 or in 240
     @Override
     public void setup() {
-        this.gamepadEx = new GamepadEx(gamepad1);
         this.grabButton = new GamepadButton(
-                gamepadEx, GamepadKeys.Button.A
+                Inputs.gamepad1, GamepadKeys.Button.A
         );
 
         // Initialise servo
@@ -52,7 +51,7 @@ public class ExampleServoController extends TeleOpModeBase {
 
     @Override
     public void every_tick() {
-        buttonPressed = gamepadEx.getButton(GamepadKeys.Button.A);
+        buttonPressed = Inputs.gamepad1.getButton(GamepadKeys.Button.A);
         if (buttonPressed){
             if (!lastPressed){
                 if (servoPosition){
@@ -70,7 +69,7 @@ public class ExampleServoController extends TeleOpModeBase {
         }
 
         telemetry.addData("Status", "Running");
-        telemetry.addData("Pressed", gamepadEx.getButton(GamepadKeys.Button.A));
+        telemetry.addData("Pressed", Inputs.gamepad1.getButton(GamepadKeys.Button.A));
         telemetry.update();
     }
 }
