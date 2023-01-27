@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
@@ -32,10 +31,6 @@ abstract class BlackOp : LinearOpMode() {
     @JvmField
     protected var hwMap = hardwareMap
 
-    init {
-        Companion.mTelemetry = this.mTelemetry
-    }
-
     /**
      * The method to override in place of runOpMode.
      *
@@ -47,23 +42,15 @@ abstract class BlackOp : LinearOpMode() {
      * Please override `go()` instead of this method.
      */
     final override fun runOpMode() {
-        quickLog("Resetting Scheduler")
         Scheduler.reset()
 
-        quickLog("Setting HwMap")
         hwMap = hardwareMap
+
         Companion.hwMap = hardwareMap
+        Companion.mTelemetry = mTelemetry
 
-        quickLog("Emitting BS start msg")
         Scheduler.emit(STARTING_MSG)
-
-        quickLog("Calling go")
         go()
-    }
-
-    protected fun quickLog(msg: String) {
-        telemetry.addLine(msg)
-        telemetry.update()
     }
 
     companion object {
@@ -79,7 +66,7 @@ abstract class BlackOp : LinearOpMode() {
         fun mTelemetry() = mTelemetry
 
         @get:JvmSynthetic
-        var mTelemetry = telemetry
+        var mTelemetry by Delegates.notNull<MultipleTelemetry>()
             private set
 
         /**
@@ -90,9 +77,6 @@ abstract class BlackOp : LinearOpMode() {
          * **DO NOT CALL/USE DIRECTLY BEFORE A [BlackOp] INSTANCE IS INITIALIZED OR IT WON'T
          * BE THE RIGHT HARDWARE MAP**
          */
-        @JvmStatic
-        fun hwMap() = hwMap
-
         @get:JvmSynthetic
         var hwMap by Delegates.notNull<HardwareMap>()
             private set
@@ -138,7 +122,7 @@ abstract class BlackOp : LinearOpMode() {
             }
 
             constructor?.newInstance(*invokedArgs) as? T
-                ?: throw FaultyCreationException("No constructor found for $clazz with args $argTypes")
+                ?: throw CreationException("No constructor found for $clazz with args $argTypes")
         }
 
     // -- INTERNAL --
@@ -159,5 +143,5 @@ abstract class BlackOp : LinearOpMode() {
     }
 
     @PublishedApi
-    internal class FaultyCreationException(message: String) : RuntimeException(message)
+    internal class CreationException(message: String) : RuntimeException(message)
 }

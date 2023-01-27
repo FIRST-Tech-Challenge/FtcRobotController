@@ -476,12 +476,6 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
                 throw IllegalArgumentException("No preformed trajectory with key '$key'")
             }
 
-            var followerFunction: (Any) -> Unit = driveProxy::followTrajectorySequence
-
-            if (async) { // Have to do this or else the compiler crashes for some reason
-                followerFunction = driveProxy::followTrajectorySequenceAsync
-            }
-
 //            val followerFunction: (Any) -> Unit = if (async) {    Does anyone know why
 //                driveProxy::followTrajectorySequenceAsync         this crashes it?
 //            } else {
@@ -493,9 +487,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 //            null: KtCallableReferenceExpression: driveProxy::followTrajectorySequenceAsync
 
             if (predicate()) {
-                followerFunction(
-                    runBlocking { preformedTrajectories[key]?.await() }!!
-                )
+                run( runBlocking { preformedTrajectories[key]?.await() }!!, async )
             }
         }
         return this
@@ -570,20 +562,25 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     // -- Internal --
 
     @PublishedApi
-    internal fun queueAndReturnThis(builderAction: () -> Unit): Anvil {
+    internal fun queueAndReturnThis(builderAction: () -> Unit) = this.apply {
         builderDeque += builderAction
-        return this
     }
 
     @PublishedApi
-    internal fun run(trajectory: Any, async: Boolean = true) = if (async) {
+    internal fun run(trajectory: Any, async: Boolean) = if (async) {
         driveProxy.followTrajectorySequenceAsync(trajectory)
     } else {
         driveProxy.followTrajectorySequence(trajectory)
     }
 
     @PublishedApi
-    internal fun getEndPose() = builtTrajectory.invokeMethodRethrowing<Pose2d>("end")
+    internal fun getEndPose(): Pose2d {
+        if (!::builtTrajectory.isInitialized) {
+            throw IllegalStateException("No trajectory has been built yet")
+        }
+
+        return builtTrajectory.invokeMethodRethrowing("end")
+    }
 
     class AnvilLaunchConfig1 internal constructor() {
         private var async = true

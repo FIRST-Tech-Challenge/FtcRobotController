@@ -11,9 +11,9 @@ import ftc.rogue.blacksmith.units.GlobalUnits;
 public class AutoData {
     public static int DEPOSIT_DROP_AMOUNT = 500;
 
-    public static int AUTO_INTAKE_LIFT_HEIGHT_1 = 284;
-    public static int AUTO_INTAKE_LIFT_HEIGHT_2 = 214;
-    public static int AUTO_INTAKE_LIFT_HEIGHT_3 = 157;
-    public static int AUTO_INTAKE_LIFT_HEIGHT_4 = 95;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_1 = 281 + 5;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_2 = 210 + 5;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_3 = 150 + 6;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_4 = 93 - 5 + 5;
     public static int AUTO_INTAKE_LIFT_HEIGHT_5 = 0;
 }

@@ -48,23 +48,23 @@ class RogueRightAuto : RogueBaseAuto() {
         }
 
     private fun Anvil.awaitInitialGoToDeposit() = this
-        .splineToSplineHeading(81, -11.35, 135.75, 115)
+        .splineToSplineHeading(81, -11.35, 133.75, 115)
 
     private fun Anvil.awaitGoToDeposit(it: Int) = when (it) {
-        0 -> splineToSplineHeading(81.000, -11.750, 142.200, 155)
-        1 -> splineToSplineHeading(78.800, -13.905, 140.725, 155)
-        2 -> splineToSplineHeading(76.850, -15.750, 137.850, 155)
-        3 -> splineToSplineHeading(74.624, -19.575, 136.275, 155)
-        4 -> splineToSplineHeading(75.950, -18.950, 145.900, 155)
+        0 -> splineToSplineHeading(81.000, -11.750, 140.200, 155)
+        1 -> splineToSplineHeading(78.800, -13.905, 138.125, 155)
+        2 -> splineToSplineHeading(76.850, -15.750, 134.850, 155)
+        3 -> splineToSplineHeading(74.624, -19.575, 134.275, 155)
+        4 -> splineToSplineHeading(75.950, -19.350, 142.900, 155)
         else -> this
     }
 
     private fun Anvil.awaitGoToIntake(it: Int) = when (it) {
-        0 -> splineTo(161.0000, -25.850, 0)
-        1 -> splineTo(160.2375, -27.175, 0)
-        2 -> splineTo(158.9100, -28.400, 0)
-        3 -> splineTo(156.5975, -29.675, 0)
-        4 -> splineTo(154.6500, -30.950, 0)
+        0 -> splineTo(162.5000, -25.850, 0)
+        1 -> splineTo(162.1750, -27.175, 0)
+        2 -> splineTo(161.4100, -28.400, 0)
+        3 -> splineTo(159.2975, -29.675, 0)
+        4 -> splineTo(157.6500, -30.950, 0)
         else -> noop
     }.doInReverse()
 
@@ -150,10 +150,10 @@ class RogueRightAuto : RogueBaseAuto() {
                     splineToLinearHeading(30, -34, 90, 218)
                 }
                 2 -> inReverse {
-                    splineTo(145, -31, 0)
+                    splineTo(95.5, -24, 0)
                 }
                 3 -> inReverse {
-                    splineTo(89, -33, 270)
+                    splineTo(160, -33, 0)
                 }
             }
 

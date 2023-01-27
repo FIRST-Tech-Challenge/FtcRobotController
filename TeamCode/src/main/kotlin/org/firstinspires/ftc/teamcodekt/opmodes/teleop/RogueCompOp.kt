@@ -31,8 +31,8 @@ class RogueCompOp : RogueBaseTele() {
         reverseDepositChain.invokeOn(y)
         reverseDepositChain.cancelOn(x)
 
-        coneLaunchingChain.invokeOn(b)
-        coneLaunchingChain.cancelOn(x)
+//        coneLaunchingChain.invokeOn(b)
+//        coneLaunchingChain.cancelOn(x)
 
         // -- MANUAL CLAW CONTROLS --
 
@@ -56,7 +56,7 @@ class RogueCompOp : RogueBaseTele() {
             bot.lift.height += (-codriver.right_stick_y() * 10).toInt()
         }
 
-        // -- LIFT MANUAL RESET --
+        // -- MANUAL LIFT RESET --
 
         (bumpersPressed + right_stick_y(deadzone = .1)).whileHigh {
             bot.lift.rawHeight += (-codriver.right_stick_y() * 2.5).toInt()
