@@ -51,11 +51,15 @@ abstract class BlackOp() : LinearOpMode() {
         Companion.hwMap = hardwareMap
         Companion.mTelemetry = mTelemetry
 
+        tast()
+
         Scheduler.emit(STARTING_MSG)
 
-        Scheduler.on(STARTING_MSG) {
-            this::class.java.getFieldsAnnotatedWith(CreateOnStart::class.java).forEach { it.set(this, it.type.getConstructor().newInstance()) }
-        }
+        this::class.java
+            .getFieldsAnnotatedWith(CreateOnStart::class.java)
+            .forEach {
+                it.set(this, it.type.getConstructor().newInstance())
+            }
 
         go()
     }
