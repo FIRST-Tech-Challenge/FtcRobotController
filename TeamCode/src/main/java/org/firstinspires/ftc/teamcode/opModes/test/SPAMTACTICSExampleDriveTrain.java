@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
  *  [Button] Function
  */
 @TeleOp(name="Drivetrain Demo [spamtactics]", group="Demo")
-public class SPAMTACTICSExampleDriveTrain extends TeleOpModeBase { // TODO: Test fully with field if using; we had no field when this was created.
+public class SPAMTACTICSExampleDriveTrain extends TeleOpModeBase { // TODO: Test fully with field if using; we had no field when this was created; sometimes throws an internal error from FTCLib
     // Declare class members here
     //left wheel
     Motor motor1 = HardwareMapContainer.motor0;
@@ -67,7 +67,7 @@ public class SPAMTACTICSExampleDriveTrain extends TeleOpModeBase { // TODO: Test
         if(startheading==nextheading){
             motor1.set(rightX);
             motor2.set(rightX);
-        } else if ((startheading-nextheading>0)|| (startheading-nextheading<180)) {
+        } else if ((startheading-nextheading>0)|| (startheading-nextheading<Math.PI)) { // Angles are in radians
             motor1.set(rightX);
             motor2.set(-rightX);
 
