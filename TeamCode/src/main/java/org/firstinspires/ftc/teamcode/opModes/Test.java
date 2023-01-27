@@ -3,15 +3,16 @@ package org.firstinspires.ftc.teamcode.opModes;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.hardware.GyroEx;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
-
 /**
  * Description: [Fill in]
  * Hardware:
@@ -29,7 +30,12 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
 @TeleOp(name="<OpMode>", group="<OpMode group name>")
 public class Test extends TeleOpModeBase {
     // Declare class members here
-
+    //left wheel
+    Motor motor1 = HardwareMapContainer.motor0;
+    //right wheel
+    Motor motor2 = HardwareMapContainer.motor1;
+    //Motor motor3 = HardwareMapContainer.motor2;
+    //Motor motor4 = HardwareMapContainer.motor3;
     RevIMU internal_measurement_unit;
 
     @Override
@@ -46,12 +52,22 @@ public class Test extends TeleOpModeBase {
         //The required heading
         double leftX= Inputs.gamepad1.getLeftX();
         double leftY = Inputs.gamepad1.getLeftY();
-        double nextheading = 
-        //The necessary speed
-        double rightX= Inputs.gamepad1.getRightX();
-        if (rightX!=0){
-            //find the scale of maximum motor speed relative to maximum input for rightX
+        double nextheading = Math.atan2(leftY,leftX);
+
+        if(startheading==nextheading){
+            //The necessary speed
+            double rightX= Inputs.gamepad1.getRightX();
+            motor1.set(rightX)
+        } else if ((startheading-nextheading>0)|| (startheading-nextheading<-180)) {
+            motor1.set(1);
+            motor2.set(-1);
+
+        } else{
+            motor1.set(-1);
+            motor2.set(1);
         }
+
+
 
 
 
