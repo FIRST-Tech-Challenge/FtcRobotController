@@ -809,7 +809,7 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Raise lift to LOW junction
             robot.grabberSpinStop();
-            robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+            robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_L );
             robot.liftPosInit( robot.LIFT_ANGLE_LOW );
             liftFrontToBack = true;  // lifting
         }
@@ -888,14 +888,20 @@ public abstract class Teleop extends LinearOpMode {
             double elapsedTime = grabberRunTimer.milliseconds();
             // Current on an INTAKE cycle?
             if( grabberIntake ) {
-                // Is first phase complete?
-                if( (!robot.topConeSensor.getState() || elapsedTime >= 1000) && !grabberLifting) {
+                // Ensure we don't drive down below our lower limit
+                boolean stopForRange = (robot.liftAngle >= robot.LIFT_ANGLE_MAX)? true : false;
+                if( stopForRange ) {
+                    robot.liftMotorsSetPower( 0.0 );
+                }
+                // Is first phase of collection complete?
+                boolean stopForSensor  = !robot.topConeSensor.getState();
+                boolean stopForTimeout = (elapsedTime >= 1000)? true : false;
+                if( (stopForSensor || stopForTimeout ) && !grabberLifting) {
                     // stop collecting
                     robot.grabberSpinStop();
                     // reverse lift motors
                     robot.liftMotorsSetPower( 0.40 );
                     grabberRunTimer.reset();
-
                     grabberLifting = true;
                 }
                 // Is second phase complete?

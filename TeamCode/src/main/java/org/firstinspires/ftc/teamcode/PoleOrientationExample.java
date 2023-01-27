@@ -240,7 +240,7 @@ public class PoleOrientationExample extends LinearOpMode
                 PowerPlaySuperPipeline.MAX_POLE_OFFSET);
 
         double turretPower;
-		double turretPowerMax = 0.20;  // maximum we don't want the PID to exceed
+        double turretPowerMax = 0.14;  // maximum we don't want the PID to exceed
         double drivePower;
 
         // If we add back front camera, use boolean to determine which pipeline to use.
@@ -252,9 +252,6 @@ public class PoleOrientationExample extends LinearOpMode
                 theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
             turretPower = pidController.update(0.0, theLocalPole.centralOffset);
-			// The turret requires a non-zero minimum power just to start moving
-			// Augment the PID result with that power (unless we're inside our
-			// tolerance, in which case we want to drop to zero power and stop)
             // Ensure we never exceed a safe power
             if( turretPower > +turretPowerMax ) turretPower = +turretPowerMax;
             if( turretPower < -turretPowerMax ) turretPower = -turretPowerMax;

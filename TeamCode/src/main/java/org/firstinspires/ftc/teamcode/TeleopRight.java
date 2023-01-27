@@ -15,7 +15,8 @@ public class TeleopRight extends Teleop {
 
     @Override
     public void setAllianceSpecificBehavior() {
-        // PowerPlay is symmetric for Red and Blue, but differs for LEFT and RIGHT sides
+        // PowerPlay is symmetric for Red vs. Blue, and Left vs. Right
+        // during Tele-Op.  We define this, but so far never use it.
         leftAlliance = false;
     }
 } // TeleopRight

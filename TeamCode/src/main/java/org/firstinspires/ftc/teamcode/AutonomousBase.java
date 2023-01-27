@@ -205,10 +205,12 @@ public abstract class AutonomousBase extends LinearOpMode {
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
         final int TURRET_CYCLES_AT_POS = 8;
-        // First try, 0.01 has 0.1 power at 10 pixels
-        PIDController pidController = new PIDController(0.01, 0.000, 0.000);
+        // minPower=0; kp = 0.0027
+        PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.000, 0.00010, 0.085,
+                (PowerPlaySuperPipeline.MAX_POLE_OFFSET - 4) );
 
         double turretPower;
+        double turretPowerMax = 0.14;  // maximum we don't want the PID to exceed
         double drivePower;
 
         // If we add back front camera, use boolean to determine which pipeline to use.
@@ -219,8 +221,10 @@ public abstract class AutonomousBase extends LinearOpMode {
         while (opModeIsActive() && ((theLocalPole.alignedCount <= TURRET_CYCLES_AT_POS) ||
                 theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
-            turretPower = pidController.update(0.0, -theLocalPole.centralOffset);
-            turretPower = Math.copySign(Math.max(1.0, abs(turretPower)), turretPower);
+            turretPower = pidController.update(0.0, theLocalPole.centralOffset);
+            // Ensure we never exceed a safe power
+            if( turretPower > +turretPowerMax ) turretPower = +turretPowerMax;
+            if( turretPower < -turretPowerMax ) turretPower = -turretPowerMax;
 
             if(theLocalPole.properDistanceHigh) {
                 drivePower = 0.0;
@@ -239,6 +243,11 @@ public abstract class AutonomousBase extends LinearOpMode {
             } else {
                 driveAndRotateTurretAngle(drivePower, turretPower, turretFacingFront);
             }
+
+            telemetry.addData("alignToPole", "ang=%d (%.1f) dist=%d (%.1f)",
+              theLocalPole.alignedCount, theLocalPole.centralOffset,
+                    theLocalPole.properDistanceHighCount, theLocalPole.highDistanceOffset );
+            telemetry.update();
 
             theLocalPole = alignmentPipeline.getDetectedPole();
         }

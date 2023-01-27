@@ -415,20 +415,20 @@ public class AutonomousRight extends AutonomousBase {
     private void collectCone() {
         double liftAngle5stack;
 
-        // Lower the collector to the horizontal collecting position
-        robot.grabberSetTilt( robot.GRABBER_TILT_GRAB );
+        // Lower the collector to the nearly-horizontal collecting position
+        robot.grabberSetTilt( robot.GRABBER_TILT_GRAB2 );
 
         // Determine the correct lift-angle height based on how many cones remain
         // 80.6 height to light cone to after collecting, and for sonar
         // Range 28, 28, 29
         // + 14.8
         switch( fiveStackHeight ) {
-            case 5  : liftAngle5stack = 97.0; break;
-            case 4  : liftAngle5stack = 98.0; break;
-            case 3  : liftAngle5stack = 99.0; break;
-            case 2  : liftAngle5stack = 100.0; break; // TODO: Not measured
-            case 1  : liftAngle5stack = 100.0; break; // TODO: Not measured
-            default : liftAngle5stack = 100.0;
+            case 5  : liftAngle5stack = 103.3; break;
+            case 4  : liftAngle5stack = 106.2; break;
+            case 3  : liftAngle5stack = 109.0; break;
+            case 2  : liftAngle5stack = 111.0; break; // TODO: Not measured
+            case 1  : liftAngle5stack = 113.0; break; // TODO: Not measured
+            default : liftAngle5stack = 113.0;
         } // switch()
 
         // Lower the lift to the desired height (and ensure we're centered)

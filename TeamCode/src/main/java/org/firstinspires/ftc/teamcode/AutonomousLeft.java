@@ -240,11 +240,11 @@ public class AutonomousLeft extends AutonomousBase {
         }
 
         // Center on pole
-        if( opModeIsActive()) {
-            telemetry.addData("Skill", "alignToPole");
-            telemetry.update();
-            alignToPole(false);
-        }
+//      if( opModeIsActive()) {
+//          telemetry.addData("Skill", "alignToPole");
+//          telemetry.update();
+//          alignToPole(false);
+//      }
 
         // Deposit cone on junction
         if( opModeIsActive() ) {
@@ -272,11 +272,11 @@ public class AutonomousLeft extends AutonomousBase {
             if (opModeIsActive()) {
                 switch(fiveStackHeight) {
                     case 5:  cycleDistance = 31; break;
-                    case 4:  cycleDistance = 31; break;
-                    case 3:  cycleDistance = 31; break;
-                    case 2:  cycleDistance = 31; break;
-                    case 1:  cycleDistance = 31; break;
-                    default: cycleDistance = 31;
+                    case 4:  cycleDistance = 30; break;
+                    case 3:  cycleDistance = 30; break;
+                    case 2:  cycleDistance = 30; break;
+                    case 1:  cycleDistance = 30; break;
+                    default: cycleDistance = 30;
                 }
                 telemetry.addData("Skill", "alignToConeStack (%.1f)",
                         autonomousTimer.milliseconds()/1000.0);
@@ -346,7 +346,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
 
         // We're past the medium junction pole, so okay to rotate the turret
-        robot.turretPosInit( -34.5 );
+        robot.turretPosInit( -36.0 );
 
         // Drive partway there (while lift raises past the front motor)
         autoYpos=34.5;  autoXpos=4.5;
@@ -357,8 +357,8 @@ public class AutonomousLeft extends AutonomousBase {
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
         // Drive the final distance to the high junction pole
-        autoYpos=54.0;  autoXpos=8.0;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_TO );
+        autoYpos=54.3;  autoXpos=8.8;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_70, DRIVE_TO );
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
@@ -415,20 +415,20 @@ public class AutonomousLeft extends AutonomousBase {
     private void collectCone() {
         double liftAngle5stack;
 
-        // Lower the collector to the horizontal collecting position
-        robot.grabberSetTilt( robot.GRABBER_TILT_GRAB );
+        // Lower the collector to the nearly-horizontal collecting position
+        robot.grabberSetTilt( robot.GRABBER_TILT_GRAB2 );
 
         // Determine the correct lift-angle height based on how many cones remain
         // 80.6 height to light cone to after collecting, and for sonar
         // Range 28, 28, 29
         // + 14.8
         switch( fiveStackHeight ) {
-            case 5  : liftAngle5stack = 97.0; break;
-            case 4  : liftAngle5stack = 98.0; break;
-            case 3  : liftAngle5stack = 99.0; break;
-            case 2  : liftAngle5stack = 100.0; break; // TODO: Not measured
-            case 1  : liftAngle5stack = 100.0; break; // TODO: Not measured
-            default : liftAngle5stack = 100.0;
+            case 5  : liftAngle5stack = 103.3; break;
+            case 4  : liftAngle5stack = 106.2; break;
+            case 3  : liftAngle5stack = 109.0; break;
+            case 2  : liftAngle5stack = 111.0; break; // TODO: Not measured
+            case 1  : liftAngle5stack = 113.0; break; // TODO: Not measured
+            default : liftAngle5stack = 113.0;
         } // switch()
 
         // Lower the lift to the desired height (and ensure we're centered)

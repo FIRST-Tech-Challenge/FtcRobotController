@@ -27,7 +27,9 @@ public class PIDControllerTurret extends PIDController{
     public double update (double target, double state) {
         double kpMinValue;
         double pidValue = super.update(target, state);
-
+        // The turret requires a non-zero minimum power just to start moving
+        // Augment the PID result with that power (unless we're inside our
+        // tolerance, in which case we want to drop to zero power and stop)
         if(abs(state) <= kpMinDeadZone) {
             kpMinValue = 0.0;
         } else if(state > 0) {

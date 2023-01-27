@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * Autonomous reset program
  */
 
-@Autonomous(name="Autonomous Robot-Reset", group="7592")
+@Autonomous(name="Autonomous _ Robot-Reset", group="7592")
 //@Disabled
 public class AutonomousReset extends LinearOpMode {
 
@@ -72,8 +72,8 @@ public class AutonomousReset extends LinearOpMode {
         }
         // With arm in starting position, it's safe to store the collector
         robot.grabberSetTilt( robot.GRABBER_TILT_INIT );
-        // Wait 1.5 seconds for grabber to actually tilt up before ending program
-        sleep(1500);
+        // Wait 2.5 seconds for grabber to actually tilt up before ending program
+        sleep(2500);
     } // resetMechanismsForAutonomous
 
 } /* AutonomousReset */
