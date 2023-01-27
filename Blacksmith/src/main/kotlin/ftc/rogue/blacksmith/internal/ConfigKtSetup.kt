@@ -18,7 +18,7 @@ import java.util.concurrent.Executors
 
 private var configKtClassesAdded = false
 
-@OnCreate
+//@OnCreate
 fun ftcDashboardStartedListener(context: Context) {
     if (configKtClassesAdded)
         return

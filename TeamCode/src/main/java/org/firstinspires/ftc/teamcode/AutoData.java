@@ -2,10 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import ftc.rogue.blacksmith.Anvil;
-import ftc.rogue.blacksmith.annotations.CreateOnStart;
-import ftc.rogue.blacksmith.units.GlobalUnits;
-
 // TODO: Find better file location for this
 
 @Config

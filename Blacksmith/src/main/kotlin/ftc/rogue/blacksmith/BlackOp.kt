@@ -52,8 +52,6 @@ abstract class BlackOp() : LinearOpMode() {
         Companion.hwMap = hardwareMap
         Companion.mTelemetry = mTelemetry
 
-        tryConfigKtSetup()
-
         Scheduler.emit(STARTING_MSG)
 
         this::class.java

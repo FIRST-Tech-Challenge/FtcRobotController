@@ -13,7 +13,3 @@ object MoerTeasting {
 
 var HELLO = 4.toInt().coerceAtLeast(2).clamp<Int>(0, 5)
 var WHELLO = "4"
-
-fun main() {
-    tryConfigKtSetup()
-}

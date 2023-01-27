@@ -2,12 +2,19 @@ package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import kotlin.math.sign
+import kotlin.math.sqrt
 
 @TeleOp
 class RogueCompOp : RogueBaseTele() {
     private fun describeDriverControls() = with(driver) {
-        right_trigger.whileHigh {
-            powerMulti = (0.265 * driver.right_trigger())
+        (left_bumper + right_bumper).onRise {
+            bot.drivetrain.resetIMU()
+        }
+
+        b.onRise(bot.drivetrain::switchMode)
+
+        right_trigger(deadzone = .2).whileHigh {
+            powerMulti = (0.275 * sqrt(driver.right_trigger()))
         }
 
         (right_trigger + left_trigger).whileHigh {
