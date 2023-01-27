@@ -12,7 +12,7 @@ import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
 import teamcode.v1.constants.ArmConstants
 import teamcode.v1.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
-import org.firstinspires.ftc.teamcode.koawalib.constants.OdoConstants
+import teamcode.v1.constants.OdoConstants
 import teamcode.v1.constants.GuideConstants
 import teamcode.v1.subsystems.KLimitSwitch
 

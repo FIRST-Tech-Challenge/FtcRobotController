@@ -14,7 +14,7 @@ object ArmConstants {
     @JvmField var highPos = 150.0
     @JvmField var kP = 0.015
     @JvmField var kI = 0.00
-    @JvmField var kD = 0.001
+    @JvmField var kD = 0.0015
     @JvmField var kS = 0.0
     @JvmField var kV = 0.00001
     @JvmField var kA = 0.0
