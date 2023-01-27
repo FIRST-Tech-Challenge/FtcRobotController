@@ -3,12 +3,9 @@ package org.firstinspires.ftc.teamcode.teamUtil.trajectoryAssembly;
 import org.firstinspires.ftc.teamcode.teamUtil.*;
 import org.firstinspires.ftc.teamcode.teamUtil.trajectoryAssembly.trajectoryMarkers.*;
 
-import static org.apache.commons.math3.util.Precision.compareTo;
-
-import androidx.appcompat.widget.ActionBarOverlayLayout;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Math;
 
 public class trajectoryAssembly {
     private final List<trajectoryMarker> trajectoryMarkers;
@@ -61,7 +58,11 @@ public class trajectoryAssembly {
     }
 
     void sortMarkers(List<trajectoryMarker> list){
-        list.sort((trajectoryMarker i1, trajectoryMarker i2) -> compareTo(i1.getStartTime(), i2.getStartTime(), 0.001));
+        list.sort((trajectoryMarker i1, trajectoryMarker i2) -> {
+            Double item1 = i1.getStartTime();
+            Double item2 = i2.getStartTime();
+            return item1.compareTo(item2);
+        });
     }
 
     private void motionProfiling(){

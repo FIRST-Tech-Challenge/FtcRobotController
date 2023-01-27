@@ -13,7 +13,7 @@ public class robotConstants {
     }
 
     public enum configuredSystems {
-        MECANUM, BOTH_MODULES, LEFT_MODULE, RIGHT_MODULE, LIFT, WRIST, INTAKE, ARM, LOGGING, ENCODER_READ, LIMIT_SWITCH
+        MECANUM, BOTH_MODULES, LEFT_MODULE, RIGHT_MODULE, LIFT, WRIST, INTAKE, ARM, LOGGING, ENCODER_READ, LIMIT_SWITCH, GAMEPADS
     }
 
     public enum poleHeightNames {

@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.teamUtil.gamepadEX.gamepadEX;
 
-@TeleOp(name="Servo Arm Test", group="Worlds")
+@Disabled
+@TeleOp(name="Servo Arm Test (OUTDATED)", group="OUTDATED TEST")
 public class armTest extends OpMode{
     private Servo wrist;
     private Servo arm;
-
     private boolean armState = true;
     private boolean aState = false;
 

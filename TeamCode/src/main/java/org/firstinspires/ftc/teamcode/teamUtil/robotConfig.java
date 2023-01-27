@@ -7,12 +7,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.teamcode.subsystems.*;
+import org.firstinspires.ftc.teamcode.teamUtil.gamepadEX.gamepadEX;
 import org.firstinspires.ftc.teamcode.teamUtil.robotConstants.configuredSystems;
 import org.firstinspires.ftc.teamcode.teamUtil.trajectoryAssembly.trajectoryAssembly;
 
 public class robotConfig {
     public HardwareMap hardwareMap;
     public OpMode opmode;
+    /**
+     * note that the auto clearing setting on telemetry has been turned off, and telemetry item objects need to be used to update lines with new values. allows for some better control.
+     */
     public Telemetry telemetry;
     public static configuredSystems[] configuredSystems;
     public static pose2D robotPose2D;
@@ -26,20 +30,25 @@ public class robotConfig {
     public intake intake;
     public limitSwitch limitSwitch;
 
-    public log log;
     public encoderRead encoderRead;
 
     public mecanumDriveBase mecanum;
     public swerveDriveBase swerve;
 
+    public gamepadEX gamepadEX1;
+    public gamepadEX gamepadEX2;
+
+
     public robotConfig(OpMode opmode, configuredSystems... config){
         this.opmode = opmode;
         this.hardwareMap = opmode.hardwareMap;
         this.telemetry = opmode.telemetry;
-        configuredSystems = new configuredSystems[config.length+2];
+        this.telemetry.setAutoClear(false);
+        configuredSystems = new configuredSystems[config.length+3];
         configuredSystems[0] = robotConstants.configuredSystems.LOGGING;
         configuredSystems[1] = robotConstants.configuredSystems.ENCODER_READ;
-        System.arraycopy(config, 0, configuredSystems, 2, config.length);
+        configuredSystems[2] = robotConstants.configuredSystems.GAMEPADS;
+        System.arraycopy(config, 0, configuredSystems, 3, config.length);
 
         for (configuredSystems system : configuredSystems) {
             telemetry.addLine("initialising: "+system.toString());
@@ -88,6 +97,10 @@ public class robotConfig {
                     limitSwitch = new limitSwitch(this);
                     break;
 
+                case GAMEPADS:
+                    gamepadEX1 = new gamepadEX(opmode.gamepad1);
+                    gamepadEX2 = new gamepadEX(opmode.gamepad2);
+                    break;
             }
             telemetry.addLine("initialised: "+system.toString());
             telemetry.update();
@@ -130,4 +143,9 @@ public class robotConfig {
         }
     }
 
+    public void systemsUpdate(){
+        telemetry.update();
+        gamepadEX1.update();
+        gamepadEX2.update();
+    }
 }

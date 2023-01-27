@@ -142,7 +142,9 @@ public class swerveDriveBase {
         if(!(enabledModules == robotConstants.enabledModules.BOTH)) {
             return;
         }
-        robotConfig.currentTrajectoryAssembly.update();
+        if(robotConfig.currentTrajectoryAssembly != null){
+            robotConfig.currentTrajectoryAssembly.update();
+        }
         double xPositionError = targetPose2D.coordinate2D.x - robotConfig.robotPose2D.coordinate2D.x;
         double yPositionError = targetPose2D.coordinate2D.y - robotConfig.robotPose2D.coordinate2D.y;
 

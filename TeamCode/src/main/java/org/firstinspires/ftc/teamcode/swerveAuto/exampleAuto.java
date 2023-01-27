@@ -13,7 +13,7 @@ public class exampleAuto extends LinearOpMode {
     ElapsedTime elapsedTime = new ElapsedTime();
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         telemetry.addLine("initilising");
         telemetry.update();
         r = new robotConfig(this, robotConstants.configuredSystems.BOTH_MODULES);
@@ -28,9 +28,9 @@ public class exampleAuto extends LinearOpMode {
                 .addOffsetActionMarker(10, () -> {
                     telemetry.addLine("hey");
                 })
-                .addSegment(new pose2D(new coordinate2D(1000, 0), new angle(90)))
-                .addSegment(new pose2D(new coordinate2D(1000, 1000), new angle(90)))
-                .addSegment(new pose2D(new coordinate2D(0, 1000), new angle(90)))
+                .addSegment(new pose2D(new coordinate2D(2000, 0), new angle(90)))
+                .addSegment(new pose2D(new coordinate2D(2000, 2000), new angle(90)))
+                .addSegment(new pose2D(new coordinate2D(0, 2000), new angle(90)))
                 .addOffsetActionMarker(10, () -> {
                     telemetry.addLine("hey");
                 })
