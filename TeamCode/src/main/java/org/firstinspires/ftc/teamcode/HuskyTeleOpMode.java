@@ -76,8 +76,10 @@ public class HuskyTeleOpMode extends LinearOpMode {
     boolean shouldChangeTheClawLift = false;
     // endregion
 
-    private PIDController armController;
-    public static double p = 0, i = 0, d = 0;
+    private PIDController armUpPID;
+    private PIDController armDownPID;
+    public static double up_Kp = 0, up_Ki = 0, up_Kd = 0;
+    public static double down_Kp = 0, down_Ki = 0, down_Kd = 0;
     public static double f = 0, l = 0;
     public static int target = 0;
 
@@ -123,7 +125,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
         huskyBot.clawLift.setPosition(CLAW_LIFT_START_POSITION);
         huskyBot.clawGrab.setPosition(CLAW_GRAB_CLOSE_POSITION);
         // endregion
-        armController = new PIDController(p, i, d);
+        armUpPID = new PIDController(up_Kp, up_Ki, up_Kd);
+        armDownPID = new PIDController(down_Kp, down_Ki, down_Kd);
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // region TELE-OP LOOP
@@ -169,23 +173,31 @@ public class HuskyTeleOpMode extends LinearOpMode {
             // region Blocked by Preset FSM
             if (armState == ArmState.ARM_WAIT) {
                 // Arm Lift Controls
-                armController.setPID(p, i, d);
+                armUpPID.setPID(up_Kp, up_Ki, up_Kd);
+                armDownPID.setPID(down_Kp, down_Ki, down_Kd);
 
                 int armPos = huskyBot.armLiftMotor.getCurrentPosition();
+                double pid;
+                if (target >= armPos) {
+                    pid = armUpPID.calculate(armPos, target);
+                } else {
+                    pid = armDownPID.calculate(armPos, target);
+                }
+
                 int extendPos = huskyBot.armExtendMotor.getCurrentPosition();
-
-                double targetArmAngle = Math.cos(Math.toRadians((target - 470) / ARM_LIFT_TICKS_PER_DEGREE));
-
-                double pid = armController.calculate(armPos, target);
-                double ff = (l * extendPos + 1) * f * targetArmAngle;
+                double targetArmAngle = Math.toRadians((target - 470) / ARM_LIFT_TICKS_PER_DEGREE);
+                double ff = (l * extendPos + 1) * f * Math.cos(targetArmAngle);
 
                 armLiftPower = pid + ff;
                 huskyBot.armLiftMotor.setPower(armLiftPower);
 
                 telemetry.addData("extend ", extendPos);
                 telemetry.addData("target angle ", targetArmAngle);
-                telemetry.addData("pos ", armPos);
-                telemetry.addData("target ", target);
+                telemetry.addData("current angle ", Math.toRadians((armPos - 470) / ARM_LIFT_TICKS_PER_DEGREE));
+                telemetry.addData("target pos ", target);
+                telemetry.addData("current pos ", armPos);
+                telemetry.addData("pid ", pid);
+                telemetry.addData("ff ", ff);
                 telemetry.update();
 
 
