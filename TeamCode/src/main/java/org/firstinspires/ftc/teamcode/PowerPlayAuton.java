@@ -80,6 +80,7 @@ public class PowerPlayAuton extends LinearOpMode {
                 PowerPlayAuton.allianceColor, PowerPlayAuton.startingSide,
                 PowerPlayAuton.movementMode, telemetry, elapsedTime);
         IMUPositioning.Initialize(this);
+        robotManager.closeClaw();
 
         /*
          * The INIT-loop:
@@ -165,11 +166,11 @@ public class PowerPlayAuton extends LinearOpMode {
         }
 
         boolean moving = true;
-        /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == left)
         {
             System.out.println("Left");
             robotManager.navigation.setDriveMotorPowers(0, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
+            waitMilliseconds(10);
 
         }
         else if(tagOfInterest.id == middle) {
@@ -182,7 +183,7 @@ public class PowerPlayAuton extends LinearOpMode {
         }
 
         if (moving) {
-            waitMilliseconds(750);
+            waitMilliseconds(650);
             robotManager.navigation.stopMovement(robotManager.robot);
         }
 

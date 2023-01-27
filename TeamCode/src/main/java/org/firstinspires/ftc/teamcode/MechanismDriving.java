@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
+import android.os.Environment;
 import com.qualcomm.robotcore.util.Range;
 
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,14 +18,14 @@ public class MechanismDriving {
        put(Robot.SlidesState.RETRACTED, 0);
        put(Robot.SlidesState.LOW, 4770);
        put(Robot.SlidesState.MEDIUM, 8020);
-       put(Robot.SlidesState.HIGH, 13770);
+       put(Robot.SlidesState.HIGH, 13870);
        put(Robot.SlidesState.UNREADY, 0);
     }};
     public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 0.8; //These are not final values
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
     public static final long CLAW_SERVO_TIME = 500;
     //SPEED INFO: Scale from 0-1 in speed.
-    public static final double CLAW_ROTATOR_FRONT_POS = 0, CLAW_ROTATOR_REAR_POS = 0.8, CLAW_ROTATOR_SIDE_POS = 0.40;
+    public static final double CLAW_ROTATOR_FRONT_POS = 0, CLAW_ROTATOR_REAR_POS = 0.7, CLAW_ROTATOR_SIDE_POS = 0.3;
     // How long it takes for the horseshoe wheels to be guaranteed to have pushed the cone into the horseshoe.
     public static final long HORSESHOE_TIME = 500;
     public static final int EPSILON = 50;  // slide encoder position tolerance;
@@ -80,25 +83,14 @@ public class MechanismDriving {
     /** Returns the target encoder count given the robot's desired slides state.
      */
     public int getTargetSlidesEncoderCount(Robot robot) {
-        int encoderCount;
-        switch (Robot.desiredSlidesState) {
-            case MOVE_UP:
-                encoderCount = robot.slidesMotor.getCurrentPosition() + EPSILON + 1;
-            case MOVE_DOWN:
-                encoderCount = robot.slidesMotor.getCurrentPosition() + EPSILON + 1;
-            default:
-                robot.telemetry.addData("desired slide state", Robot.desiredSlidesState.toString());
-                try {
-                    encoderCount = slidePositions.get(Robot.desiredSlidesState);
-                } catch (Exception e) {
-                    robot.telemetry.addData("desired slide state", Robot.desiredSlidesState.toString());
-                    double start_time = robot.elapsedTime.time();
-                    while (robot.elapsedTime.time()-start_time < 10000) {}
-                    throw e;
-                }
-        }
-        // TODO: this negation was added during the competition but it may not be necessary.
-        return -encoderCount;
+        // Automatically update the target values for joystick slide states based on current position
+        slidePositions.put(Robot.SlidesState.MOVE_UP, -robot.slidesMotor.getCurrentPosition() + EPSILON + 1);
+        slidePositions.put(Robot.SlidesState.MOVE_DOWN, -robot.slidesMotor.getCurrentPosition() - (EPSILON + 1));
+        slidePositions.put(Robot.SlidesState.STOPPED, -robot.slidesMotor.getCurrentPosition());
+        // This is the negation from competition day
+        int encoderCount = -Range.clip(slidePositions.get(Robot.desiredSlidesState), 0, slidePositions.get(Robot.SlidesState.HIGH));
+        robot.telemetry.addData("target slide position", encoderCount);
+        return encoderCount;
     }
 
     /** Sets slide motor powers to move in direction of desired position, if necessary.
@@ -124,7 +116,7 @@ public class MechanismDriving {
                robot.slidesMotor.setPower(-slidesSpeed);
            }
 
-           robot.telemetry.addData("slides: target: ",desiredSlidePosition+" current pos: "+robot.slidesMotor.getCurrentPosition());
+           robot.telemetry.addData("current pos: ", robot.slidesMotor.getCurrentPosition());
 
            // Stop motors when we have reached the desired position
            if (Math.abs(robot.slidesMotor.getCurrentPosition() - desiredSlidePosition) < EPSILON) {
