@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.team1.teleop;
+package org.firstinspires.ftc.teamcode.opModes.test;
 
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -8,17 +8,17 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.PSButtons;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
-import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TeamColour;
+import org.firstinspires.ftc.teamcode.opModes.team1.teleop.Team1GenericTeleOp;
 
-@TeleOp(name="Team 1 Red", group="Team 1")
-public class Team1RedTeleOp extends TeleOpModeBase {
+@TeleOp(name="LAREINCExampleDrive2", group="LaReineC")
+public class LAREINECExampleDriveTrain2 extends TeleOpModeBase {
     Team1GenericTeleOp teleop;
-    
+
     DifferentialDrive drive;
 
-    Joystick leftJoystick;
+    LAREINECJoystick leftJoystick;
 
-    Joystick rightJoystick;
+    LAREINECJoystick rightJoystick;
 
     boolean isDrive;
 
@@ -29,8 +29,8 @@ public class Team1RedTeleOp extends TeleOpModeBase {
 
     @Override
     public void setup() {
-        leftJoystick = new Joystick(Inputs.gamepad1.getLeftX(), Inputs.gamepad1.getLeftY());
-        rightJoystick =  new Joystick(Inputs.gamepad1.getLeftX(), Inputs.gamepad1.getLeftY());
+        leftJoystick = new LAREINECJoystick(Inputs.gamepad1.getLeftX(), Inputs.gamepad1.getLeftY());
+        rightJoystick =  new LAREINECJoystick(Inputs.gamepad1.getLeftX(), Inputs.gamepad1.getLeftY());
         drive = new DifferentialDrive(HardwareMapContainer.motor0, HardwareMapContainer.motor1);
         isDrive = false;
         // Runs once at INIT
@@ -43,7 +43,7 @@ public class Team1RedTeleOp extends TeleOpModeBase {
                 drive.arcadeDrive(leftJoystick.y, leftJoystick.x);
         }
     }
-    
+
     @Override
     public void every_tick() {
         teleop.every_tick();
@@ -76,11 +76,3 @@ public class Team1RedTeleOp extends TeleOpModeBase {
     }
 }
 
-class Joystick {
-    double x;
-    double y;
-    public Joystick(double newX, double newY) {
-        x = newX;
-        y = newY;
-    }
-}
