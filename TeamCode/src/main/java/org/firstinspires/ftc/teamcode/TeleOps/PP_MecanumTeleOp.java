@@ -208,11 +208,11 @@ public class PP_MecanumTeleOp extends OpMode
     public void slides(){
 
         if (gamepad2.right_trigger>0.2){
-            slideControl.setManualSlide(85);
+            slideControl.setManualSlide(120);
         }
 
         if(gamepad2.left_trigger>0.2){
-            slideControl.setManualSlide(-85);
+            slideControl.setManualSlide(-120);
         }
 
     }
