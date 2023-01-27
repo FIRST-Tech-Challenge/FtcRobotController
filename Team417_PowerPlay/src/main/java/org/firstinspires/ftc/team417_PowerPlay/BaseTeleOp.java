@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team417_PowerPlay;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -49,10 +50,18 @@ abstract public class BaseTeleOp extends BaseOpMode {
         double x = stickCurve(gamepad1.left_stick_x, 0.1, 0.1);
         double y = stickCurve(-gamepad1.left_stick_y, 0.1, 0.1);
         double turning = stickCurve(gamepad1.right_stick_x, 0.1, 0.2);
+        y *= 1 - (0.5 * gamepad1.right_trigger);
+        x *= 1 - (0.5 * gamepad1.right_trigger);
+        turning *= 1 - (0.5 * gamepad1.right_trigger);
         mecanumDrive(x, y, turning);
     }
 
     public void newButtonDrive() {
+        // reset arm encoder position
+        if (gamepad2.x && gamepad2.b) {
+            motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
         // manual control for arm
         // gets overridden when either bumper on gamepad2 is pressed
         if (gamepad2.dpad_down) {

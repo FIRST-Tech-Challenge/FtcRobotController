@@ -17,13 +17,13 @@ public class MiddleJunctionParkRightSide extends BaseAutonomous {
                 .forward(5)
                 .build();
         Trajectory pushSignalCone = drive.trajectoryBuilder(clearWall.end(), false)
-                .forward(55)
+                .forward(40)
                 .build();
         Trajectory backToMidJunction = drive.trajectoryBuilder(pushSignalCone.end(), false)
-                .back(31.5)
+                .back(14)
                 .build();
         Trajectory leftToMidJunction = drive.trajectoryBuilder(backToMidJunction.end(), false)
-                .strafeLeft(19)
+                .strafeLeft(14)
                 .build();
         Trajectory clearJunction = drive.trajectoryBuilder(leftToMidJunction.end(), false)
                 .back(3)
@@ -32,10 +32,10 @@ public class MiddleJunctionParkRightSide extends BaseAutonomous {
                 .strafeLeft(12)
                 .build();
         Trajectory parkMiddle = drive.trajectoryBuilder(clearJunction.end(), false)
-                .strafeRight(22)
+                .strafeRight(18)
                 .build();
         Trajectory parkRight = drive.trajectoryBuilder(clearJunction.end(), false)
-                .strafeRight(48)
+                .strafeRight(44)
                 .build();
 
         while (!isStarted() && !isStopRequested()) {

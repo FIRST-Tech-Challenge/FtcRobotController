@@ -64,25 +64,34 @@ public class FSMTest extends BaseAutonomous {
 
         grabberServo.setPosition(GRABBER_CLOSED);
 
+        // Set initial state
         currentState = State.PUSH_SIGNAL_CONE;
         drive.followTrajectoryAsync(pushSignalCone);
-
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
                 case PUSH_SIGNAL_CONE:
-                    if (Math.abs(motorArm.getCurrentPosition() - GROUND_JUNCT_ARM_POSITION) > ARM_ENCODER_TOLERANCE && opModeIsActive()) {
-                        motorArm.setPower((GROUND_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
+                    // Move the arm up to the ground junction position
+                    if (Math.abs(motorArm.getCurrentPosition() - GROUND_JUNCT_ARM_POSITION) >
+                            ARM_ENCODER_TOLERANCE && opModeIsActive()) {
+
+                        motorArm.setPower((GROUND_JUNCT_ARM_POSITION -
+                                motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
                     }
+                    // Once our robot is done following its trajectory, set the arm motor power to
+                    // zero and move onto the next state and follow the next trajectory
                     if (!drive.isBusy()) {
+                        motorArm.setPower(0);
                         currentState = State.SIDE_MID_JUNCTION;
                         drive.followTrajectoryAsync(sideMidJunction);
-                        time.reset();
                     }
                     break;
                 case SIDE_MID_JUNCTION:
                     // MOVE ARM TO MID JUNCTION POSITION
-                    if (Math.abs(motorArm.getCurrentPosition() - MID_JUNCT_ARM_POSITION + 50) > ARM_ENCODER_TOLERANCE && opModeIsActive()) {
-                        motorArm.setPower((MID_JUNCT_ARM_POSITION + 50 - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
+                    if (Math.abs(motorArm.getCurrentPosition() - MID_JUNCT_ARM_POSITION) >
+                            ARM_ENCODER_TOLERANCE && opModeIsActive()) {
+
+                        motorArm.setPower((MID_JUNCT_ARM_POSITION -
+                                motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
                     }
                     if (!drive.isBusy()) {
                         motorArm.setPower(-0.2);

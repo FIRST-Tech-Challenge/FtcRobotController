@@ -41,7 +41,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     public void initializeAuto() {
         initializeHardware();
-        grabberServo.setPosition(GRABBER_HALF_CLOSED);
+        //grabberServo.setPosition(GRABBER_HALF_CLOSED);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -127,8 +127,8 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     public void raiseAndHoldArmMiddleJunctionPosition() {
         motorArm.setPower(0);
-        while ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION)) > ARM_ENCODER_TOLERANCE) && opModeIsActive()) {
-            motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
+        while ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION + 50)) > ARM_ENCODER_TOLERANCE) && opModeIsActive()) {
+            motorArm.setPower((MID_JUNCT_ARM_POSITION + 50 - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
 
         }
         motorArm.setPower(HOLD_ARM_AT_MID_OR_LOW_POS_POWER);

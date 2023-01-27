@@ -17,19 +17,19 @@ public class MiddleJunctionParkLeftSide extends BaseAutonomous {
                 .forward(5)
                 .build();
         Trajectory pushSignalCone = drive.trajectoryBuilder(clearWall.end(), false)
-                .forward(55)
+                .forward(40)
                 .build();
         Trajectory backToMidJunction = drive.trajectoryBuilder(pushSignalCone.end(), false)
-                .back(32)
+                .back(15)
                 .build();
         Trajectory rightToMidJunction = drive.trajectoryBuilder(backToMidJunction.end(), false)
-                .strafeRight(16)
+                .strafeRight(14)
                 .build();
         Trajectory clearJunction = drive.trajectoryBuilder(rightToMidJunction.end(), false)
                 .back(3)
                 .build();
         Trajectory parkLeft = drive.trajectoryBuilder(clearJunction.end(), false)
-                .strafeLeft(48)
+                .strafeLeft(44)
                 .build();
         Trajectory parkMiddle = drive.trajectoryBuilder(clearJunction.end(), false)
                 .strafeLeft(18)
@@ -53,7 +53,7 @@ public class MiddleJunctionParkLeftSide extends BaseAutonomous {
         raiseAndHoldArmMiddleJunctionPosition();
         drive.followTrajectory(rightToMidJunction);
         motorArm.setPower(0);
-        sleep(1300);
+        sleep(2000);
         // open servo
 
         grabberServo.setPosition(GRABBER_OPEN);
