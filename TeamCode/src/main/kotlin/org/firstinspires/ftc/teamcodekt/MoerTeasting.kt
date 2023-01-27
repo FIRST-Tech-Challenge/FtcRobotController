@@ -3,7 +3,7 @@
 package org.firstinspires.ftc.teamcodekt
 
 import ftc.rogue.blacksmith.annotations.ConfigKt
-import ftc.rogue.blacksmith.tast
+import ftc.rogue.blacksmith.internal.tryConfigKtSetup
 import ftc.rogue.blacksmith.util.kt.clamp
 
 @ConfigKt
@@ -15,5 +15,5 @@ var HELLO = 4.toInt().coerceAtLeast(2).clamp<Int>(0, 5)
 var WHELLO = "4"
 
 fun main() {
-    tast()
+    tryConfigKtSetup()
 }

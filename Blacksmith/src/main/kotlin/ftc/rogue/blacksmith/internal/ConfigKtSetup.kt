@@ -1,5 +1,6 @@
-package ftc.rogue.blacksmith
+package ftc.rogue.blacksmith.internal
 
+import android.content.Context
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.reflection.FieldProvider
 import com.acmerobotics.dashboard.config.variable.BasicVariable
@@ -9,16 +10,31 @@ import com.acmerobotics.dashboard.config.variable.VariableType
 import ftc.rogue.blacksmith.annotations.ConfigKt
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ClassGraph.ScanResultProcessor
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil
+import org.firstinspires.ftc.ftccommon.external.OnCreate
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-fun tast() = try {
-    AppUtil.getDefContext() ?: throw RuntimeException("TODO: clean everything up")
+private var configKtClassesAdded = false
+
+@OnCreate
+fun ftcDashboardStartedListener(context: Context) {
+    if (configKtClassesAdded)
+        return
 
     val executor = Executors.newFixedThreadPool(1)
 
+    executor.submit {
+        while (FtcDashboard.getInstance() == null) {
+            Thread.sleep(200)
+        }
+
+        tryConfigKtSetup(executor)
+    }
+}
+
+fun tryConfigKtSetup(executor: ExecutorService) = try {
     val then = ScanResultProcessor { result ->
         val classes = result.getClassesWithAnnotation(ConfigKt::class.java)
 
@@ -44,9 +60,10 @@ fun tast() = try {
             "TeamCode" in it
         }
         .scanAsync(executor, 1, then) {}
-} catch (_: ExceptionInInitializerError) {}
+} catch (_: ExceptionInInitializerError) {
+}
 
-fun createVariableFromClass(configClass: Class<*>): CustomVariable {
+private fun createVariableFromClass(configClass: Class<*>): CustomVariable {
     val customVariable = CustomVariable()
 
     for (field in configClass.declaredFields) {
@@ -59,7 +76,7 @@ fun createVariableFromClass(configClass: Class<*>): CustomVariable {
     return customVariable
 }
 
-fun createVariableFromField(field: Field, parent: Any?): ConfigVariable<*> {
+private fun createVariableFromField(field: Field, parent: Any?): ConfigVariable<*> {
     val fieldClass = field.type
 
     return when (val type = VariableType.fromClass(fieldClass)) {
@@ -75,7 +92,8 @@ fun createVariableFromField(field: Field, parent: Any?): ConfigVariable<*> {
                         nestedField.name,
                         createVariableFromField(nestedField, field[parent])
                     )
-                } catch (_: IllegalAccessException) {}
+                } catch (_: IllegalAccessException) {
+                }
             }
             customVariable
         }

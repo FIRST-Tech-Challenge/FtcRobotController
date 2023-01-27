@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
 import ftc.rogue.blacksmith.annotations.CreateOnStart
+import ftc.rogue.blacksmith.internal.tryConfigKtSetup
 import ftc.rogue.blacksmith.util.getFieldsAnnotatedWith
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
@@ -51,7 +52,7 @@ abstract class BlackOp() : LinearOpMode() {
         Companion.hwMap = hardwareMap
         Companion.mTelemetry = mTelemetry
 
-        tast()
+        tryConfigKtSetup()
 
         Scheduler.emit(STARTING_MSG)
 
