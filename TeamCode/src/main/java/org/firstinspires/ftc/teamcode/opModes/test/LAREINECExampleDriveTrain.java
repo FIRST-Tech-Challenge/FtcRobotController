@@ -43,7 +43,7 @@ public class LAREINECExampleDriveTrain extends TeleOpModeBase { // Ensure you ex
         TelemetryContainer.getTelemetry().addData("Left Joystick - uses coordinates class - y", leftJoystick.y/2);
 
         // Spinning Motor
-        HardwareMapContainer.motor2.set(Inputs.gamepad1.getRightY());
+        HardwareMapContainer.motor2.set(Inputs.gamepad1.getRightX());
     }
 }
 
