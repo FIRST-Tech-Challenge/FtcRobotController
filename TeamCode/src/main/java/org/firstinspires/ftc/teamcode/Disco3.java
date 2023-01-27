@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 @Disabled
-public class Disco extends LinearOpMode {
+public class Disco3 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Declare our motors
@@ -20,18 +20,22 @@ public class Disco extends LinearOpMode {
         DcMotor motorBackRight = hardwareMap.dcMotor.get("rightBack");
         DcMotor armMotor1 = hardwareMap.dcMotor.get("arm1");
         DcMotor armMotor2 = hardwareMap.dcMotor.get("arm2");
+        DcMotor intakeMotor = hardwareMap.dcMotor.get("intake_motor");
 
         Servo intake = hardwareMap.servo.get("intake");
-        DcMotor intakeMotor = hardwareMap.dcMotor.get("intake_motor");
+        Servo axon1 = hardwareMap.servo.get("axon1");
+
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        axon1.setPosition(1);
         waitForStart();
 
         if (isStopRequested()) return;
+
+
 
         while (opModeIsActive()) {
             double y = gamepad1.left_stick_y; // Remember, this is reversed!
@@ -41,15 +45,30 @@ public class Disco extends LinearOpMode {
             double armPower = gamepad2.left_stick_y;
             boolean dpad2Up = gamepad2.dpad_up;
             boolean dpad2Down = gamepad2.dpad_down;
+            double intakePower = -gamepad2.right_stick_y * 0.55;
+            double leftTrigger = gamepad2.left_trigger;
+            double rightTrigger = gamepad2.right_trigger;
 
-            double intakeMotorPos = -gamepad2.right_stick_y;
+            double up = -gamepad2.right_stick_y * 0.5;
+
 
             if (dpad2Up) {
-                intake.setPosition(-1);
+                intake.setPosition(0);
             }
             if (dpad2Down) {
                 intake.setPosition(1);
             }
+
+            if (gamepad2.right_bumper) {
+                axon1.setPosition(0.2);
+            }
+            if (gamepad2.left_bumper) {
+                axon1.setPosition(0.65);
+            }
+
+
+
+
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
@@ -63,27 +82,18 @@ public class Disco extends LinearOpMode {
             motorBackLeft.setPower(backLeftPower);
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
+            intakeMotor.setPower(intakePower);
 
             armMotor1.setPower(armPower);
             armMotor2.setPower(-armPower);
 
-            intakeMotor.setPower(intakeMotorPos);
 
-//            runTo(intakeMotor, intakeMotorPos);
 
             telemetry.addData("armPosition1", armMotor1.getCurrentPosition());
             telemetry.addData("armPosition2", armMotor2.getCurrentPosition());
             telemetry.addData("intake", intake.getPosition());
-            telemetry.addData("arm top supposed", intakeMotorPos);
-            telemetry.addData("arm top real", intakeMotor.getCurrentPosition());
+            telemetry.addData("axon1", axon1.getPosition());
             telemetry.update();
         }
-    }
-
-    private void runTo(DcMotor motor, double pos) {
-        while (Math.abs(motor.getCurrentPosition() - pos) < 20) {
-            motor.setPower(pos/Math.abs(pos));
-        }
-        motor.setPower(0);
     }
 }
