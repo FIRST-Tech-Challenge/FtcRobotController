@@ -1,5 +1,5 @@
 package ftc.rogue.blacksmith.annotations
 
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class CreateOnStart
+annotation class ConfigKt

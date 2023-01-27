@@ -7,7 +7,7 @@ import kotlin.math.sign
 class RogueCompOp : RogueBaseTele() {
     private fun describeDriverControls() = with(driver) {
         right_trigger.whileHigh {
-            powerMulti = 0.275
+            powerMulti = (0.265 * driver.right_trigger())
         }
 
         (right_trigger + left_trigger).whileHigh {
@@ -30,9 +30,6 @@ class RogueCompOp : RogueBaseTele() {
 
         reverseDepositChain.invokeOn(y)
         reverseDepositChain.cancelOn(x)
-
-//        coneLaunchingChain.invokeOn(b)
-//        coneLaunchingChain.cancelOn(x)
 
         // -- MANUAL CLAW CONTROLS --
 
