@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -17,11 +18,13 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
+@Config
 @Autonomous(name = "Power Play Left")
 public class PowerPlayLeft extends LinearOpMode {
 
     enum State {
         SCORE_1,
+        FORWARD,
         BACK_UP_FROM_JUNCTION,
         TURN,
         SCORE_2,
@@ -45,8 +48,8 @@ public class PowerPlayLeft extends LinearOpMode {
 
     int numberOfConesPickedUp = 0;
 
-    public static double xCenterJunction = -5;
-    public static double yCenterJunction = -34;
+    public static double xCenterJunction = -9;
+    public static double yCenterJunction = -36;
 
     public static double xIntermediateStack = -20;
     public static double yIntermediateStack = -12;
@@ -68,7 +71,7 @@ public class PowerPlayLeft extends LinearOpMode {
         PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor sleeveColor = null;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(new Vector2d(-36, -64.25), Math.toRadians(90));
+        Pose2d startPose = new Pose2d(new Vector2d(-37, -64.25), Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
@@ -80,21 +83,25 @@ public class PowerPlayLeft extends LinearOpMode {
 
         Trajectory startToFirstDeposit = drive.trajectoryBuilder(startPose)
                 .splineToConstantHeading(new Vector2d(-12, -62), Math.toRadians(90))
-                .splineTo(new Vector2d(xCenterJunction, yCenterJunction), Math.toRadians(43))
+                .splineTo(new Vector2d(xCenterJunction, yCenterJunction), Math.toRadians(45))
                 .build();
 
-        Trajectory backUpFromJunction = drive.trajectoryBuilder(startToFirstDeposit.end())
-                .back(5)
+        Trajectory forward = drive.trajectoryBuilder(startToFirstDeposit.end())
+                .forward(2.5)
                 .build();
 
-        Trajectory parkRed = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0, 0, Math.toRadians(47))))
-                .lineToLinearHeading(new Pose2d(new Vector2d(-36, -38), Math.toRadians(90)))
+        Trajectory backUpFromJunction = drive.trajectoryBuilder(forward.end())
+                .back(6)
+                .build();
+
+        Trajectory parkRed = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0, 0, Math.toRadians(-45))))
+                .lineToLinearHeading(new Pose2d(new Vector2d(-36, -36), Math.toRadians(90)))
 
                 // .splineToLinearHeading(new Pose2d(new Vector2d(11.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
                 .build();
 
-        Trajectory parkGray = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0, 0, Math.toRadians(47))))
-                .lineToLinearHeading(new Pose2d(new Vector2d(-62, -38), Math.toRadians(90)))
+        Trajectory parkGray = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0, 0, Math.toRadians(-45))))
+                .lineToLinearHeading(new Pose2d(new Vector2d(-62, -36), Math.toRadians(90)))
                 // .strafeTo(new Vector2d(62,-37))
                 .build();
 
@@ -123,12 +130,8 @@ public class PowerPlayLeft extends LinearOpMode {
             switch (currentState) {
                 case SCORE_1:
                     if (!drive.isBusy()) {
-                        sleep(300);
-                        drive.openClaw();
-                        sleep(300);
-                        drive.closeClaw();
-                        currentState = State.BACK_UP_FROM_JUNCTION;
-                        drive.followTrajectoryAsync(backUpFromJunction);
+                       currentState= State.FORWARD;
+                       drive.followTrajectoryAsync(forward);
                     } else {
                         armTarget = ARM_MID_TOP;
                         if (drive.armMotor.getCurrentPosition() > 100) {
@@ -136,6 +139,16 @@ public class PowerPlayLeft extends LinearOpMode {
                             drive.tipFront();
                             drive.closeClaw();
                         }
+                    }
+                    break;
+                case FORWARD:
+                    if (!drive.isBusy()){
+                        sleep(300);
+                        drive.openClaw();
+                        sleep(300);
+                        drive.closeClaw();
+                        currentState = State.BACK_UP_FROM_JUNCTION;
+                        drive.followTrajectoryAsync(backUpFromJunction);
                     }
                     break;
                 case BACK_UP_FROM_JUNCTION:
