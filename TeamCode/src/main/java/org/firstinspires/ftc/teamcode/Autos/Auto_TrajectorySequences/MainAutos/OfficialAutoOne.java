@@ -23,8 +23,8 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	private Claw clawControl;
 
 	public static double xFirstLinear = 63;
-	public static double yFirstLinear = 4;
-	public static double angle = 150;
+	public static double yFirstLinear = 0.85;
+	public static double angle = 147;
 	public static double xSecondToJunction = 53;
 	public static double ySecondToJunction = -4;
 	public static double xThirdToJunction = 54;
@@ -39,6 +39,9 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	public static double xSecondPark = 54;
 	public static double ySecondPark = 0;
 	public static int arm = 925;
+	public static double angleSecond = 180;
+	public static double angleThird = 180;
+	public static int strafeThird = -28;
 
 
 	public void initialize(){
@@ -222,18 +225,17 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 								.forward(28)
 								.build();
 						bot.followTrajectorySequenceAsync(zoneOne);
-					}/*else if(tagUse == 2) {
+					}else if(tagUse == 2) {
 						TrajectorySequence zoneTwo = bot.trajectorySequenceBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
-								.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
+								.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(angleSecond)))
 								.build();
 						bot.followTrajectorySequenceAsync(zoneTwo);
 					}else{
 						Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
-								.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
-								.back(28)
+								.lineToLinearHeading(new Pose2d(48.5 ,-25, Math.toRadians(angleThird)))
 								.build();
 						bot.followTrajectoryAsync(zoneThree);
-					}*/
+					}
 				})
 				.waitSeconds(3)
 
