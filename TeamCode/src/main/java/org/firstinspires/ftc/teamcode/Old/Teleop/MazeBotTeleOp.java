@@ -13,9 +13,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.Old.Robots.FWDRobot;
+
 
 @TeleOp(name = "MazeBotTeleOp")
-@Disabled
 
 public class MazeBotTeleOp extends LinearOpMode {
     DcMotorEx motorLeftFront;
@@ -24,6 +25,8 @@ public class MazeBotTeleOp extends LinearOpMode {
     DcMotorEx motorRightBack;
 
     public void runOpMode() {
+
+        FWDRobot MLO = new FWDRobot(this, true);
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
@@ -45,7 +48,7 @@ public class MazeBotTeleOp extends LinearOpMode {
         while (!isStopRequested()&&getRuntime()<90) {
             float leftStickx = op.gamepad1.left_stick_x;
             float leftSticky = op.gamepad1.left_stick_y;
-            float rightStick = op.gamepad1.right_stick_x*0.5f;
+            float rightStick = -op.gamepad1.right_stick_x*0.5f;
             double leftSticktheta = atan2(leftSticky, leftStickx);
             double leftStickr = sqrt(pow(leftSticky, 2) + pow(leftStickx, 2))*0.5;
             double powera = 0;
@@ -83,11 +86,11 @@ public class MazeBotTeleOp extends LinearOpMode {
 //            motorLeftFront.setPower((power + rightStick) * 0.3);
 //        }
 //        else {
-            motorLeftFront.setPower(powerb * leftStickr - rightStick);
-            motorRightBack.setPower(powerb * leftStickr + rightStick);
+            motorLeftFront.setPower(50*(powerb * leftStickr - rightStick));
+            motorRightBack.setPower(50*(powerb * leftStickr + rightStick));
 
-            motorRightFront.setPower(powera * leftStickr + rightStick);
-            motorLeftBack.setPower(powera * leftStickr - rightStick);
+            motorRightFront.setPower(50*(powera * leftStickr + rightStick));
+            motorLeftBack.setPower(50*(powera * leftStickr - rightStick));
 
 //        }
         }
