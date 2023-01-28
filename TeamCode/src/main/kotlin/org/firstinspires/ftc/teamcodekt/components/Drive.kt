@@ -99,10 +99,10 @@ class Drivetrain {
         val rotY = x * sin(heading) + y * cos(heading)
 
         val powers = doubleArrayOf(
-            rotY + rotX + rx,
-            rotY - rotX - rx,
-            rotY - rotX + rx,
             rotY + rotX - rx,
+            rotY - rotX + rx,
+            rotY - rotX - rx,
+            rotY + rotX + rx,
         )
 
 //        val max = powers.max()

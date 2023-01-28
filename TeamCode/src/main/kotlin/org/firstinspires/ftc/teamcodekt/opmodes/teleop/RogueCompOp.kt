@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import ftc.rogue.blacksmith.util.kt.pow
 import kotlin.math.sign
 import kotlin.math.sqrt
 
@@ -14,10 +15,10 @@ class RogueCompOp : RogueBaseTele() {
         b.onRise(bot.drivetrain::switchMode)
 
         right_trigger(deadzone = .2).whileHigh {
-            powerMulti = (0.275 * sqrt(driver.right_trigger()))
+            powerMulti = 0.3825 * (driver.right_trigger() pow .825)
         }
 
-        (right_trigger + left_trigger).whileHigh {
+        left_trigger.whileHigh {
             powerMulti = -0.1 // Lets robot stop on a dime
         }
     }
