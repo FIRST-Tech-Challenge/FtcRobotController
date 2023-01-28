@@ -25,10 +25,10 @@ public class MechanismDriving {
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
     public static final long CLAW_SERVO_TIME = 500;
     //SPEED INFO: Scale from 0-1 in speed.
-    public static final double CLAW_ROTATOR_FRONT_POS = 0, CLAW_ROTATOR_REAR_POS = 0.7, CLAW_ROTATOR_SIDE_POS = 0.3;
+    public static final double CLAW_ROTATOR_FRONT_POS = 0, CLAW_ROTATOR_REAR_POS = 0.8, CLAW_ROTATOR_SIDE_POS = 0.4;
     // How long it takes for the horseshoe wheels to be guaranteed to have pushed the cone into the horseshoe.
     public static final long HORSESHOE_TIME = 500;
-    public static final int EPSILON = 50;  // slide encoder position tolerance;
+    public static final int EPSILON = 120;  // slide encoder position tolerance;
 
     public static final double SLIDE_RAMP_DIST = 400;
     public static final double SLIDES_MAX_SPEED = 1;
@@ -84,8 +84,8 @@ public class MechanismDriving {
      */
     public int getTargetSlidesEncoderCount(Robot robot) {
         // Automatically update the target values for joystick slide states based on current position
-        slidePositions.put(Robot.SlidesState.MOVE_UP, -robot.slidesMotor.getCurrentPosition() + EPSILON + 1);
-        slidePositions.put(Robot.SlidesState.MOVE_DOWN, -robot.slidesMotor.getCurrentPosition() - (EPSILON + 1));
+        slidePositions.put(Robot.SlidesState.MOVE_UP, -robot.slidesMotor.getCurrentPosition() + EPSILON + 50);
+        slidePositions.put(Robot.SlidesState.MOVE_DOWN, -robot.slidesMotor.getCurrentPosition() - (EPSILON + 50));
         slidePositions.put(Robot.SlidesState.STOPPED, -robot.slidesMotor.getCurrentPosition());
         // This is the negation from competition day
         int encoderCount = -Range.clip(slidePositions.get(Robot.desiredSlidesState), 0, slidePositions.get(Robot.SlidesState.HIGH));

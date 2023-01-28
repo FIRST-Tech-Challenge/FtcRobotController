@@ -170,7 +170,7 @@ public class PowerPlayAuton extends LinearOpMode {
         {
             System.out.println("Left");
             robotManager.navigation.setDriveMotorPowers(0, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
-            waitMilliseconds(10);
+            waitMilliseconds(100);
 
         }
         else if(tagOfInterest.id == middle) {
@@ -183,7 +183,7 @@ public class PowerPlayAuton extends LinearOpMode {
         }
 
         if (moving) {
-            waitMilliseconds(650);
+            waitMilliseconds(675);
             robotManager.navigation.stopMovement(robotManager.robot);
         }
 
