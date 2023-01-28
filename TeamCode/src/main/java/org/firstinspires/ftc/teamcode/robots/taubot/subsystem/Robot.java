@@ -234,7 +234,7 @@ public class Robot implements Subsystem {
                         crane.driverIsDriving();
                         turnDone = false;
                         onPole = false;
-                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-3.5, 0, 20)) {
+                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-4, 0, 20)) {
                             driveTrain.tuck();
                             autonIndex++;
                         }
