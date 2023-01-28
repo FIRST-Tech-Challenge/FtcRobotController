@@ -78,6 +78,9 @@ class AutoHardware(startPose: Pose) {
     val clawServo = KServo("Claw")
         .startAt(ClawConstants.closePos)
 
+    val guideServo = KServo("Guide")
+            .startAt(GuideConstants.homePos)
+
     private val leftEncoder = EncoderFactory(ticksPerUnit)
         .revEncoder
         .build(fl)
