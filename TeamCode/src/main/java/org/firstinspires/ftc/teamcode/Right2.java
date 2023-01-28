@@ -191,8 +191,9 @@ public class Right2 extends LinearOpMode {
             sleep(1000);
             move(.5,40);
             sleep(200);
-            crane(1,250);
+            crane(1,200);
             intake(-1,1300);
+            crane(-1,250);
             move(.5,200);
             //new
             /*

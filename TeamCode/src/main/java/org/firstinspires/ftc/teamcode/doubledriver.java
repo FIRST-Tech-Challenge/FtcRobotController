@@ -6,10 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 @TeleOp
-public class Servotesting extends LinearOpMode {
+public class doubledriver extends LinearOpMode {
 
     private DcMotor frontLeft;
     private DcMotor frontRight;                                         //Declaring Motor varibles 
