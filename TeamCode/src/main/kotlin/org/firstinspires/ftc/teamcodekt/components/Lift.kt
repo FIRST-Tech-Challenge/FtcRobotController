@@ -65,7 +65,7 @@ class Lift {
     }
 
     fun goToAngledMid(){
-        targetHeight = LiftConfig.MID - 200
+        targetHeight = LiftConfig.MID - 190
     }
 
     fun goToAngledLow(){

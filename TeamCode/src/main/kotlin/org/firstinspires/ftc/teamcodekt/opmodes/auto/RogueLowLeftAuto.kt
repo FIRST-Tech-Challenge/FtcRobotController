@@ -14,67 +14,61 @@ class RogueLowLeftAuto : RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(-91, -163, 90)
 
     override fun mainTraj(startPose: Pose2d) =
-        Anvil.formTrajectory(bot.drive, startPose)
-                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(36.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
-//            .preform(0, ::parkTraj)
-                .awaitInitialGoToDeposit()
-                .turn(46)
-                .addTemporalMarker(0) {
-                    bot.lift.height = liftOffsets[0]
-                    bot.wrist.setToBackwardsPos()
-                }
-                .back(70)
-                .strafeRight(4)
-                .addTemporalMarker(90) {
-                    bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-                    bot.claw.close()
-                }
-                .turn(-29)
-                .forward(10)
-                .regularIntakePrep(0)
+            Anvil.formTrajectory(bot.drive, startPose)
+                    .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(36.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
+            .preform(0, ::parkTraj)
+                    .awaitInitialGoToDeposit()
+                    .turn(46)
+                    .addTemporalMarker(0) {
+                        bot.lift.height = liftOffsets[0]-8
+                        bot.wrist.setToBackwardsPos()
+                    }
+                    .back(70)
+                    .strafeRight(4)
+                    .turn(-29)
+                    .forward(10)
+                    .regularIntakePrep(0)
 
 
-                .back(15.25)
-                .awaitRegularIntake()
+                    .back(16.5)
+                    .awaitRegularIntake()
 
-                /*
-                    Loop is arranged a bit strangely - because intaking initially is a bit different, the last
-                    deposit is managed automatically
-                 */
-                .doTimes(4) {
-                    goToDeposit(it+1)
-                    deposit()
-                    regularIntakePrep(it+1)
-                    goToIntake(it+1)
-                    awaitRegularIntake()
-                    waitTime(200)
-                }
-                .goToDeposit(4)
-                .deposit()
+                    /*
+                        Loop is arranged a bit strangely - because intaking initially is a bit different, the last
+                        deposit is managed automatically
+                     */
+                    .doTimes(4) {
+                        goToDeposit(it+1)
+                        deposit()
+                        regularIntakePrep(it+1)
+                        goToIntake(it+1)
+                        awaitRegularIntake()
+                        waitTime(200)
+                    }
+                    .goToDeposit(4)
+                    .deposit()
 
-                .resetBot()
-                .waitTime(1000)
-//                // Final deposit - must be tweaked here
-//                .splineTo(-151+11.8727, -42-7.4189, -32)
+                    .resetBot()
 
-//            .thenRunPreformed(0)
+
+            .thenRunPreformed(0)
 
     private fun Anvil.initialDepositPrep() = this
-        .addTemporalMarker {
-            bot.lift.goToAngledMid()
-            bot.claw.close()
-            bot.arm.setToForwardsAngledPos()
-            bot.wrist.setToForwardsPos()
-        }
+            .addTemporalMarker {
+                bot.lift.goToAngledMid()
+                bot.claw.close()
+                bot.arm.setToForwardsAngledPos()
+                bot.wrist.setToForwardsPos()
+            }
 
     private fun Anvil.awaitInitialGoToDeposit() = this
-        .initialDepositPrep()
-        .forward(132)
-        .turn(-136)
-        .forward(12.5)
-        .waitTime(150)
-        .deposit()
-        .back(12.5)
+            .initialDepositPrep()
+            .forward(132)
+            .turn(-136)
+            .forward(12.5)
+            .waitTime(150)
+            .deposit()
+            .back(12.5)
 
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
@@ -112,91 +106,64 @@ class RogueLowLeftAuto : RogueBaseAuto() {
 
 
     private fun Anvil.regularIntakePrep(iterations: Int) = this
-            .addTemporalMarker(200) {
+            .addTemporalMarker(0) {
                 bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-                bot.claw.close()
+                bot.claw.openForIntakeWide()
             }
 
-        .addTemporalMarker(185) {
-            bot.lift.height = liftOffsets[iterations]
-            bot.wrist.setToBackwardsPos()
-        }
+            .addTemporalMarker(105) {
+                bot.lift.height = liftOffsets[iterations]-15
+                bot.wrist.setToBackwardsPos()
+            }
 
-        .addTemporalMarker(250) {
-            bot.claw.openForIntakeWide()
-        }
+            .addTemporalMarker(60) {
+                bot.intake.disable()
+                bot.claw.openForIntakeWide()
+            }
 
             .waitTime(200)
 
-    private fun Anvil.fastIntakePrep(iterations: Int) = this
-        .addTemporalMarker(185) {
-            bot.lift.height  = liftOffsets[iterations]
-
-            bot.arm.setToBackwardsPos()
-            bot.wrist.setToBackwardsPos()
-
-            bot.claw.openForIntakeNarrow()
-            bot.intake.enable()
-        }
-
     private fun Anvil.awaitRegularIntake() = this
-        .addTemporalMarker {
-            bot.intake.disable()
-            bot.claw.close()
-        }
-
-        .addTemporalMarker(275) {
-            bot.lift.goToAngledLow()
-        }
-
-        .addTemporalMarker(425) {
-            bot.arm.setToForwardsAngledPos()
-            bot.wrist.setToForwardsPos()
-        }
-
-        .waitTime(300)
-
-    private fun Anvil.awaitFastIntake() = this
-        .addTemporalMarker(-75) {
-            bot.intake.disable()
-            bot.claw.close()
-        }
-
-        .addTemporalMarker(15) {
-            bot.arm.setToForwardsPos()
-            bot.lift.goToHigh()
-        }
-
-        .addTemporalMarker(100) {
-            bot.wrist.setToForwardsPos()
-        }
-
-        .waitTime(120)
-
-    private fun Anvil.resetBot() = this
-        .addTemporalMarker {
-            bot.arm.setToRestingPos()
-            bot.wrist.setToRestingPos()
-            bot.lift.goToZero()
-            bot.claw.close()
-        }
-
-    private fun parkTraj(startPose: Pose2d) =
-        Anvil.formTrajectory(bot.drive, startPose) {
-            resetBot()
-
-            when (signalID) {
-                1 -> inReverse {
-                    splineTo(-160, -33, 180)
-                }
-                2 -> inReverse {
-                    splineTo(-95.5, -24, 180)
-                }
-                3 -> {
-                    splineToLinearHeading(-30, -34, 90, -38.375)
-                }
+            .addTemporalMarker {
+                bot.intake.disable()
+                bot.claw.close()
             }
 
-            this
-        }
+            .addTemporalMarker(245) {
+                bot.lift.goToAngledLow()
+            }
+
+            .addTemporalMarker(425) {
+                bot.arm.setToForwardsAngledPos()
+                bot.wrist.setToForwardsPos()
+            }
+
+            .waitTime(300)
+
+    private fun Anvil.resetBot() = this
+            .addTemporalMarker {
+                bot.arm.setToRestingPos()
+                bot.wrist.setToRestingPos()
+                bot.lift.goToZero()
+                bot.claw.close()
+            }
+
+    private fun parkTraj(startPose: Pose2d) =
+            Anvil.formTrajectory(bot.drive, startPose) {
+                resetBot()
+
+                when (signalID) {
+                    1 -> inReverse {
+                        splineTo(-160, -33, 180)
+                    }
+                    2 -> inReverse {
+                        splineTo(-95.5, -24, 180)
+                    }
+                    3 -> {
+                        splineToLinearHeading(-30, -34, 90, -38.375)
+                    }
+                }
+
+                this
+            }
 }
