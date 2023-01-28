@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.hardware.GyroEx;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -19,8 +20,8 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
 /**
  * Description: [Fill in]
  * Hardware:
- *  [motor0] Unused
- *  [motor1] Unused
+ *  [motor0] Left Wheel
+ *  [motor1] Right Wheel
  *  [motor2] Unused
  *  [motor3] Unused
  *  [servo0] Unused
@@ -28,9 +29,11 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
  *  [servo2] Unused
  *  [servo3] Unused
  * Controls:
- *  [Button] Function
+ *  [Left Joystick] Set Heading
+ *  [Right Joystick x] Set Speed towards heading
  */
 @TeleOp(name="Drivetrain Demo [spamtactics]", group="Demo")
+@Disabled
 public class SPAMTACTICSExampleDriveTrain extends TeleOpModeBase { // TODO: Test fully with field if using; we had no field when this was created; sometimes throws an internal error from FTCLib
     // Declare class members here
     //left wheel
