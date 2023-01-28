@@ -561,6 +561,7 @@ public class AprilTagTestAuto extends LinearOpMode
                     liftMotor.setTargetPosition(targetTick);
                     liftMotor.setMode(RUN_TO_POSITION);
                     liftMotor.setPower(.25);
+                    correctionsDone = true;
                 }else{
                     liftMotor.setPower(0);
                 }
