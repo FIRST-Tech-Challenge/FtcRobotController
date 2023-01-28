@@ -18,35 +18,39 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(36.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
 //            .preform(0, ::parkTraj)
                 .awaitInitialGoToDeposit()
-                .turn(45)
+                .turn(46)
                 .addTemporalMarker(0) {
                     bot.lift.height = liftOffsets[0]
                     bot.wrist.setToBackwardsPos()
                 }
                 .back(70)
                 .strafeRight(4)
-                .addTemporalMarker(0) {
+                .addTemporalMarker(90) {
                     bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
+                    bot.claw.close()
                 }
-                .turn(-30)
+                .turn(-29)
+                .forward(10)
+                .regularIntakePrep(0)
 
 
-                .back(5)
+                .back(15.25)
                 .awaitRegularIntake()
 
                 /*
                     Loop is arranged a bit strangely - because intaking initially is a bit different, the last
                     deposit is managed automatically
                  */
-                .doTimes(RogueBaseAuto.NUM_CYCLES-1) {
+                .doTimes(4) {
                     goToDeposit(it+1)
                     deposit()
-                    waitTime(200)
                     regularIntakePrep(it+1)
                     goToIntake(it+1)
                     awaitRegularIntake()
                     waitTime(200)
                 }
+                .goToDeposit(4)
+                .deposit()
 
                 .resetBot()
                 .waitTime(1000)
@@ -66,11 +70,11 @@ class RogueLowLeftAuto : RogueBaseAuto() {
     private fun Anvil.awaitInitialGoToDeposit() = this
         .initialDepositPrep()
         .forward(132)
-        .turn(-135)
-        .forward(13.5)
+        .turn(-136)
+        .forward(12.5)
         .waitTime(150)
         .deposit()
-        .back(13.5)
+        .back(12.5)
 
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
@@ -82,6 +86,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
         1 -> forward(21.5)
         2 -> forward(21.5)
         3 -> forward(21.5)
+        4 -> forward(21.5)
 
         else -> noop
     }
@@ -91,6 +96,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
         1 -> back(21.5)
         2 -> back(21.5)
         3 -> back(21.5)
+        4 -> back(21.5)
         else -> noop
     }.doInReverse()
 
@@ -106,15 +112,21 @@ class RogueLowLeftAuto : RogueBaseAuto() {
 
 
     private fun Anvil.regularIntakePrep(iterations: Int) = this
+            .addTemporalMarker(200) {
+                bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
+                bot.claw.close()
+            }
+
         .addTemporalMarker(185) {
             bot.lift.height = liftOffsets[iterations]
             bot.wrist.setToBackwardsPos()
-            bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
         }
 
-        .addTemporalMarker(325) {
-            bot.claw.openForIntakeKindaWide()
+        .addTemporalMarker(250) {
+            bot.claw.openForIntakeWide()
         }
+
+            .waitTime(200)
 
     private fun Anvil.fastIntakePrep(iterations: Int) = this
         .addTemporalMarker(185) {
