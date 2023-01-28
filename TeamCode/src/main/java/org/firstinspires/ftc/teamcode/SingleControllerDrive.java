@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Single Controller Driving", group="Linear Opmode")
+@TeleOp(name="2022 Single Controller Driving", group="Linear Opmode")
 
 public class SingleControllerDrive extends LinearOpMode {
 
