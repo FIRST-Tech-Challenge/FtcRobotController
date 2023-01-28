@@ -244,6 +244,8 @@ public class PowerPlay_6832 extends OpMode {
         gameState = GameState.TELE_OP;
         gameStateIndex = 1;
 
+        robot.crane.articulate(Crane.Articulation.start);
+
         telemetry.update();
     }
 
@@ -253,7 +255,6 @@ public class PowerPlay_6832 extends OpMode {
 
         //run all driver controls needed in init_loop
         dc.init_loop();
-        robot.crane.articulate(Crane.Articulation.start);
 
         update();
 
@@ -286,6 +287,8 @@ public class PowerPlay_6832 extends OpMode {
             robot.crane.resetCrane(startingPosition);
         }
         robot.crane.updateScoringPattern();
+
+        robot.driveTrain.enableChassisLength();
 
         rumble();
 
