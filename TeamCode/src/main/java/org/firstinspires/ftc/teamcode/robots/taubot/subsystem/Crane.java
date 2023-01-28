@@ -562,7 +562,7 @@ public class Crane implements Subsystem {
                 }
                 Pose2d tempPos = Field.convertToInches(temp.getPosition());
                 if(rightConeStack) {
-                    if (goToFieldCoordinate(tempPos.getX() + 3.5, tempPos.getY() + 1, temp.z() + 3)) {
+                    if (goToFieldCoordinate(tempPos.getX() + 2.5, tempPos.getY(), temp.z() + 3)) {
                         coneCycleStage++;
                         cycleTimer = futureTime(0.9);
                     }

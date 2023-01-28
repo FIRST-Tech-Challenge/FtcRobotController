@@ -234,7 +234,7 @@ public class Robot implements Subsystem {
                         crane.driverIsDriving();
                         turnDone = false;
                         onPole = false;
-                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-5, 0, 30)) {
+                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-3.5, 0, 20)) {
                             driveTrain.tuck();
                             autonIndex++;
                         }
@@ -250,8 +250,7 @@ public class Robot implements Subsystem {
                                 onPole = true;
                             }
                             if(turnDone && onPole){
-                                crane.setGripper(false);
-                                autonTime = futureTime(0.2);
+                                autonTime = futureTime(0.8);
                                 autonIndex++;
                             }
                         } else {
@@ -262,19 +261,27 @@ public class Robot implements Subsystem {
                                 onPole = true;
                             }
                             if(turnDone && onPole){
-                                crane.setGripper(false);
-                                autonTime = futureTime(0.2);
+                                autonTime = futureTime(0.8);
                                 autonIndex++;
                             }
                         }
                         break;
                     case 2:
-                        if (System.nanoTime() >= autonTime && crane.goHome()) {
+                        if(startingPosition.equals(Constants.Position.START_LEFT)){
+                            crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID - 2 , Field.INCHES_PER_GRID - 2.5, 39);
+                        }else{
+                            crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 2, -Field.INCHES_PER_GRID - 1.0, 39);
+                        }
+                        if (System.nanoTime() >= autonTime) {
+                            crane.setGripper(false);
+                            autonTime = futureTime(0.3);
                             autonIndex++;
                         }
                         break;
                     case 3:
-                        autonIndex++;
+                        if(System.nanoTime() >= autonTime && crane.goHome()) {
+                            autonIndex++;
+                        }
                         break;
                     case 4:
                         if (System.nanoTime() >= autonTime) {
@@ -320,7 +327,7 @@ public class Robot implements Subsystem {
                     }
                 } else {
                     if (autonTarget == 0) {
-                        if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID-3, 270, 20))
+                        if (driveTrain.driveUntilDegrees(-0.8 * Field.INCHES_PER_GRID, 270, 20))
                             timeSupervisor++;
                     } else if (autonTarget == 2) {
                         if (driveTrain.driveUntilDegrees(0.8 * Field.INCHES_PER_GRID-3, 270, 20))
@@ -331,13 +338,13 @@ public class Robot implements Subsystem {
             case 3:
                 if(startingPosition.equals(Constants.Position.START_LEFT)){
                     if(autonTarget != 0){
-                        if(driveTrain.turnUntilDegrees(-90)){
+                        if(driveTrain.turnUntilDegrees(180)){
                             timeSupervisor++;
                         }
                     }
                 }else{
                     if(autonTarget != 2){
-                        if(driveTrain.turnUntilDegrees(90)){
+                        if(driveTrain.turnUntilDegrees(180)){
                             timeSupervisor++;
                         }
                     }
@@ -345,7 +352,7 @@ public class Robot implements Subsystem {
                 break;
             case 4:
                 crane.nudgeLeft();
-                crane.setCraneTarget(turret.getTurretPosition().getX() - 2, turret.getTurretPosition().getY(), 26);
+                crane.setCraneTarget(turret.getTurretPosition().getX() - 2, turret.getTurretPosition().getY()-2, 26);
                 crane.articulate(Crane.Articulation.manual);
                 driveTrain.maxTuck();
                 timeSupervisor = 0;
