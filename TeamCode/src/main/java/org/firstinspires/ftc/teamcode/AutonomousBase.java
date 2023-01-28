@@ -76,7 +76,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean     blueAlliance    = true;  // Is alliance BLUE (true) or RED (false)?
     boolean     forceAlliance   = false; // Override vision pipeline? (toggled during init phase of autonomous)
     int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
-    int         fiveStackCycles = 2;     // How many we want to attempt to collect/score? (adjustable during init)
+    int         fiveStackCycles = 3;     // How many we want to attempt to collect/score? (adjustable during init)
     ElapsedTime autonomousTimer = new ElapsedTime();
 
     // gamepad controls for changing autonomous options
@@ -206,12 +206,14 @@ public abstract class AutonomousBase extends LinearOpMode {
         final double DRIVE_OFFSET = 0.04522;
         final int TURRET_CYCLES_AT_POS = 8;
         // minPower=0; kp = 0.0027
-        PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.000, 0.00010, 0.085,
-                (PowerPlaySuperPipeline.MAX_POLE_OFFSET - 4) );
+        PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.000, 0.00010, 0.085, 12 );
 
         double turretPower;
         double turretPowerMax = 0.14;  // maximum we don't want the PID to exceed
         double drivePower;
+
+        double startTime = autonomousTimer.milliseconds();
+        double abortTime = startTime + 3000.0;  // abort after 3 seconds
 
         // If we add back front camera, use boolean to determine which pipeline to use.
 //        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
@@ -250,6 +252,10 @@ public abstract class AutonomousBase extends LinearOpMode {
             telemetry.update();
 
             theLocalPole = alignmentPipeline.getDetectedPole();
+
+            // Do we need to abort?
+            if( autonomousTimer.milliseconds() >= abortTime )
+                break;
         }
         robot.stopMotion();
         robot.setTurretPower(0.0);
@@ -271,13 +277,17 @@ public abstract class AutonomousBase extends LinearOpMode {
         int distanceError;
         int properDistanceCount = 0;
         // This is in CM
-        final int MAX_DISTANCE_ERROR = 2;
+        final int MAX_DISTANCE_ERROR = 1;
 
         theLocalCone = blueCone ? pipelineLow.getDetectedBlueCone() : pipelineLow.getDetectedRedCone();
         // This first reading just triggers the ultrasonic to send out its first ping, need to wait
         // 50 msec for it to get a result.
         robot.fastSonarRange(SONIC_RANGE_FRONT, SONIC_FIRST_PING);
         sleep(50);
+
+        double startTime = autonomousTimer.milliseconds();
+        double abortTime = startTime + 7000.0;  // abort after 7.0 seconds
+
         while (opModeIsActive() && ((theLocalCone.alignedCount <= 3) ||
                 properDistanceCount <= 3)) {
             theLocalCone = blueCone ? pipelineLow.getDetectedBlueCone() : pipelineLow.getDetectedRedCone();
@@ -298,6 +308,9 @@ public abstract class AutonomousBase extends LinearOpMode {
             telemetry.addData("Cone Data", "coneDst %d dstErr %d offset %.2f", coneDistance,
                     distanceError, theLocalCone.centralOffset);
             telemetry.update();
+            // Do we need to abort?
+            if( autonomousTimer.milliseconds() >= abortTime )
+                break;
         }
         robot.stopMotion();
     }

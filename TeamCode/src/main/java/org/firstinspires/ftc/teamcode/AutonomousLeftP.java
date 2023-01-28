@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /* This program is for a damaged robot.  All it does is inspect the beacon sleeve and park. */
 @Autonomous(name="Autonomous _ Left PARK ONLY", group="7592", preselectTeleOp = "Teleop-Left")
-//@Disabled
+@Disabled
 public class AutonomousLeftP extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics

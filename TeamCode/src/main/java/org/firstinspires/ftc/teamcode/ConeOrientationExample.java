@@ -46,7 +46,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
  * of the vision processing to usercode.
  */
 @TeleOp(name="Cone-Test", group="Skunkworks")
-//@Disabled
+@Disabled
 public class ConeOrientationExample extends LinearOpMode
 {
     // Vision stuff

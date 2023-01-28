@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /* This program is for a damaged robot.  All it does is inspect the beacon sleeve and park. */
 @Autonomous(name="Autonomous _ Right PARK ONLY", group="7592", preselectTeleOp = "Teleop-Right")
-//@Disabled
+@Disabled
 public class AutonomousRightP extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
@@ -189,16 +189,16 @@ public class AutonomousRightP extends AutonomousBase {
 
         if( signalZoneLocation == 1 ) {  // RED
             // Strafe one tile to the left
-            autoXpos=-20.0;
+            autoXpos=-29.0;
             driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
         } // signalZoneLocation 1
         else if( signalZoneLocation == 3 ) {  // BLUE
             // Strafe one tile to the right
-            autoXpos=29.0;
+            autoXpos=20.0;
             driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
         } // signalZoneLocation 3
         else { // signalZoneLocation 2  // GREEN
-            autoXpos=4.0;
+            autoXpos=-4.0;
             // This can be part of the final movement
         } // signalZoneLocation 2
 

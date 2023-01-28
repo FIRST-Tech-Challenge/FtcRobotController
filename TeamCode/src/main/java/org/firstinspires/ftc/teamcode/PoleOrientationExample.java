@@ -42,7 +42,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
  * of the vision processing to usercode.
  */
 @TeleOp(name="Pole-Test", group="Skunkworks")
-//@Disabled
+@Disabled
 public class PoleOrientationExample extends LinearOpMode
 {
     final int LOGSIZE = 12;
