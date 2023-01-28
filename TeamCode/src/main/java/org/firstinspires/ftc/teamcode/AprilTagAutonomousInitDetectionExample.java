@@ -91,7 +91,8 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     public double rpm = 340;
     public double diameter = 10; //cm
 
-    public double angleCorrection = 6.43;
+    public double angleCorrectionCW = 8.17;
+    public double angleCorrectionCCW = 11.26;
 
     // Cone information
     public int coneCount = 1;
@@ -130,6 +131,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        setUpHardware();
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -153,6 +155,9 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
+        turnNinety(true);
+        telemetry.addData("angle:",getAngle());
+        telemetry.update();
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -225,47 +230,60 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             telemetry.update();
         }
 
+        /*moveLift(19);
+        waitTime(1);
+        turnNinety(false);
+        while(opModeIsActive()) {
+            telemetry.addData("angle: ", getAngle());
+            telemetry.update();
+        }*/
         if(tagOfInterest == null){
             moveGrabber(true);
             waitTime(.5);
-            moveLiftAndDrive(true,19,17);
+            moveLiftAndDrive(true,19.25,17);
             turnNinety(false);
-            moveLift(9);
+            moveInchAmount(true,.25);
+            sleep(500);
             moveGrabber(false);
-            moveLift(12);
+            moveInchAmount(false,.25);
             turnNinety(true);
-            moveLiftAndDrive(true,41,0);
+            moveLiftAndDrive(true,39.25,0);
+            sleep(100);
             turnNinety(true);
-            for(int i = 0; i < 3; i++){
-                moveToTape(true);
+            /*for(int i = 0; i < 3; i++){
+                moveToTape();
                 pickupCone();
-                moveLiftAndDrive(true,45,MAX_LIFT_POS);
+                moveLiftAndDrive(false,45,MAX_LIFT_POS);
+                sleep(100);
                 turnNinety(false);
                 moveLift(30);
                 moveGrabber(false);
                 moveLift(32);
+                sleep(100);
                 turnNinety(true);
-                moveLiftAndDrive(true,28,0);
-            }
+                moveLiftAndDrive(true,28,8);
+            }*/
         }else{
             moveGrabber(true);
             waitTime(.5);
-            /*moveLift(5);
-            moveInchAmount(true,19);
-            moveLift(17);*/
-            moveLiftAndDrive(true,19,17);
+            moveLiftAndDrive(true,19.25,17);
             turnNinety(false);
-            moveLift(9);
+            moveInchAmount(true,.25);
+            sleep(500);
             moveGrabber(false);
-            moveLift(12);
+            moveInchAmount(false,.25);
             turnNinety(true);
-            moveLiftAndDrive(true,11,0);
+            moveLiftAndDrive(true,12.75,0);
             if(tagOfInterest.id == ID_TAG_OF_INTEREST_1){
+                sleep(100);
                 turnNinety(false);
-                moveInchAmount(true,21);
+                moveInchAmount(true,24);
             }else if(tagOfInterest.id == ID_TAG_OF_INTEREST_3){
+                sleep(100);
+                waitTime(3);
                 turnNinety(true);
-                moveInchAmount(true,23);
+                waitTime(3);
+                moveInchAmount(true,24);
             }
         }
     }
@@ -337,24 +355,24 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
         if(CW) {
             if(originalAngle - 90 < 0 && !(originalAngle < 0)) {
-                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - 90 + angleCorrection + 360)) {
+                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - 90 + angleCorrectionCW + 360)) {
                     leftVelo(.75);
                     rightVelo(-.75);
                 }
             }else{
-                while (opModeIsActive() && getAngle() > originalAngle - 90 + angleCorrection && getAngle() < originalAngle + 5) {
+                while (opModeIsActive() && getAngle() > originalAngle - 90 + angleCorrectionCW && getAngle() < originalAngle + 5) {
                     leftVelo(.75);
                     rightVelo(-.75);
                 }
             }
         }else{
             if(originalAngle + 90 > 360) {
-                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + 90 - angleCorrection - 360)) {
+                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + 90 - angleCorrectionCCW - 360)) {
                     leftVelo(-.75);
                     rightVelo(.75);
                 }
             }else{
-                while (opModeIsActive() && getAngle() < originalAngle + 90 - angleCorrection && getAngle() > originalAngle - 5) {
+                while (opModeIsActive() && getAngle() < originalAngle + 90 - angleCorrectionCCW && getAngle() > originalAngle - 5) {
                     leftVelo(-.75);
                     rightVelo(.75);
                 }
@@ -370,7 +388,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     public void turnToAngle(double targetAngle){
         double originalAngle = getAngle();
         double changeInAngle = optimalAngleChange(targetAngle);
-        double turningCorrection = (angleCorrection / 90) * changeInAngle;
+        double turningCorrection = (angleCorrectionCW / 90) * changeInAngle;
 
         boolean CW = optimalDirection(targetAngle);
 
@@ -449,17 +467,10 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
     /**
      * Drives forward until it reads red or blue tape below it
-     * @param red True or false
      */
-    public void moveToTape(boolean red){
-        if(red){
-            while(opModeIsActive() && color.red() < 1200){
-                motorsOn(.5);
-            }
-        }else{
-            while(opModeIsActive() && color.blue() < 1200){
-                motorsOn(.5);
-            }
+    public void moveToTape(){
+        while(opModeIsActive() && (color.red() < 1200 || color.blue() < 1200)){
+            motorsOn(.5);
         }
         motorsOff();
         moveLift(12);
@@ -527,7 +538,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
         if(forward){
             motorsOn(.75);
-            while(opModeIsActive() && liftMotor.isBusy() || leftBackDrive.getCurrentPosition() < totalTicks){
+            while(opModeIsActive() && (liftMotor.isBusy() || leftBackDrive.getCurrentPosition() < totalTicks)){
                 if(leftBackDrive.getCurrentPosition() > totalTicks){
                     motorsOff();
                 }
@@ -535,7 +546,8 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                     liftMotor.setTargetPosition(targetTick);
                     liftMotor.setMode(RUN_TO_POSITION);
                     liftMotor.setPower(.25);
-                }else{
+                    correctionsDone = true;
+                }else if(!liftMotor.isBusy()){
                     liftMotor.setPower(0);
                 }
             }
