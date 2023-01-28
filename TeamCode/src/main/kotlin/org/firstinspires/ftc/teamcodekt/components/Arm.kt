@@ -25,6 +25,10 @@ class Arm {
         targetAngle = ARM_BACKWARDS
     }
 
+    fun setToForwardsAngledPos() {
+        targetAngle = ARM_FORWARDS - 6.5
+    }
+
     fun setToBackwardsPosButLikeSliiiightlyHigher() {
         targetAngle = 42.5
     }
