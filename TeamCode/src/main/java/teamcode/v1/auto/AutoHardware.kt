@@ -9,6 +9,7 @@ import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
+import teamcode.v1.Hardware
 import teamcode.v1.constants.ArmConstants
 import teamcode.v1.constants.ClawConstants
 import teamcode.v1.constants.LiftConstants
@@ -89,14 +90,11 @@ class AutoHardware(startPose: Pose) {
         .revEncoder
         .build(fr)
 
-    val guideServo = KServo("Guide")
-        .startAt(GuideConstants.homePos)
-
     val odometry = KThreeWheelOdometry(
         leftEncoder,
         rightEncoder,
         auxEncoder,
-        OdoConstants.TRACK_WIDTH,
+        OdoConstants.TRACK_WIDTH / 25.4,
         OdoConstants.PERP_TRACKER,
         startPose
     )
