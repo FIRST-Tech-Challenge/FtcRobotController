@@ -47,14 +47,16 @@ public class PowerPlayRight extends LinearOpMode {
 
     int numberOfConesPickedUp =0;
 
-    public static  double xCenterJunction = 5;
-    public static double yCenterJunction =-34;
+    public static  double xCenterJunction = 7;
+    public static double yCenterJunction =-31;
 
     public static double xIntermediateStack =20;
     public static double yIntermediateStack = -12;
     public static double angleIntermediateStack = 0;
     public static double xStack =56;
     public static double yStack = -8;
+
+    public static int turnJunction = 45;
 
     @Override
     public void runOpMode() {
@@ -77,7 +79,7 @@ public class PowerPlayRight extends LinearOpMode {
         // Trajectory from start to nearest tall pole
         Trajectory startToFirstDeposit = drive.trajectoryBuilder(startPose)
                 .splineToConstantHeading(new Vector2d(12,-62),Math.toRadians(90))
-                .splineTo(new Vector2d(xCenterJunction, yCenterJunction),Math.toRadians(137))
+                .splineTo(new Vector2d(xCenterJunction, yCenterJunction),Math.toRadians(90+turnJunction))
                 .build();
 
         Trajectory backUpFromJunction = drive.trajectoryBuilder(startToFirstDeposit.end())
@@ -105,13 +107,13 @@ public class PowerPlayRight extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(new Vector2d(59,-14),Math.toRadians(0)))
                 .build();
 
-        Trajectory parkRed = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(-47))))
+        Trajectory parkRed = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(turnJunction))))
                 .lineToLinearHeading(new Pose2d(new Vector2d(36,-38),Math.toRadians(90)))
 
                // .splineToLinearHeading(new Pose2d(new Vector2d(11.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
                 .build();
 
-        Trajectory parkGreen = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(-47))))
+        Trajectory parkGreen = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(turnJunction))))
                 .lineToLinearHeading(new Pose2d(new Vector2d(62,-38 ),Math.toRadians(90)))
                // .strafeTo(new Vector2d(62,-37))
                 .build();
@@ -164,7 +166,7 @@ public class PowerPlayRight extends LinearOpMode {
                     if (!drive.isBusy()){
 
                         currentState= State.TURN;
-                        drive.turnAsync(Math.toRadians(-47));
+                        drive.turnAsync(Math.toRadians(-turnJunction));
                     }
                     break;
                 case TURN:
