@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
@@ -26,10 +27,9 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeB
  *
  */
 
-@TeleOp(name="Servo Demo", group="Demo")
-
-// no clue what the thing up there is for
-public class ExampleServoController extends TeleOpModeBase {
+@TeleOp(name="Servo Demo [12sliu]", group="Demo")
+@Disabled
+public class TWELVESLIUExampleServoController extends TeleOpModeBase {
     // TODO: Test
     ServoEx servoex;
     GamepadButton grabButton;
