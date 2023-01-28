@@ -23,8 +23,8 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	private Claw clawControl;
 
 	public static double xFirstLinear = 63;
-	public static double yFirstLinear = 0.85;
-	public static double angle = 147;
+	public static double yFirstLinear = 1.9;
+	public static double angle = 157;
 	public static double xSecondToJunction = 53;
 	public static double ySecondToJunction = -4;
 	public static double xThirdToJunction = 54;
@@ -42,6 +42,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	public static double angleSecond = 180;
 	public static double angleThird = 180;
 	public static int strafeThird = -28;
+	public static double cycleThreeAngle = 147;
 
 
 	public void initialize(){
@@ -193,7 +194,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				})
 				.waitSeconds(0.5)
 
-				.lineToLinearHeading(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
+				.lineToLinearHeading(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(cycleThreeAngle)))
 
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1370);
