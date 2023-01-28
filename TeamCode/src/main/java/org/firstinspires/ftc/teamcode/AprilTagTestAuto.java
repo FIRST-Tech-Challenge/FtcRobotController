@@ -531,6 +531,7 @@ public class AprilTagTestAuto extends LinearOpMode
 
         liftMotor.setPower(1);
 
+        runtime.reset();
         if(forward){
             motorsOn(.75);
             while(opModeIsActive() && (liftMotor.isBusy() || leftBackDrive.getCurrentPosition() < totalTicks)){
@@ -544,6 +545,9 @@ public class AprilTagTestAuto extends LinearOpMode
                     correctionsDone = true;
                 }else if(!liftMotor.isBusy()){
                     liftMotor.setPower(0);
+                }
+                if(runtime.seconds() > 8){
+                    break;
                 }
             }
         }else{
@@ -559,6 +563,9 @@ public class AprilTagTestAuto extends LinearOpMode
                     liftMotor.setPower(.25);
                 }else{
                     liftMotor.setPower(0);
+                }
+                if(runtime.seconds() > 8){
+                    break;
                 }
             }
         }
