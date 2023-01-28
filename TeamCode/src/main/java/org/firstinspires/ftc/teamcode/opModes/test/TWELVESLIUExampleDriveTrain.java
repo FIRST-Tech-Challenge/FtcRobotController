@@ -14,7 +14,7 @@ package org.firstinspires.ftc.teamcode.opModes.test;
         import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 
 
-@TeleOp(name="Drivetrain Demo", group="Demo")
+@TeleOp(name="Drivetrain Demo [12sliu]", group="Demo")
 @Disabled
 public class TWELVESLIUExampleDriveTrain extends TeleOpModeBase {
     DifferentialDrive m_drive;
