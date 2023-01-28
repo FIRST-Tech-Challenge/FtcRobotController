@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.Team.ComplexRobots.Robot;
+import org.firstinspires.ftc.teamcode.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Basic Testing Mecanum TeleOp")
 
@@ -21,7 +22,7 @@ public class BasicTeleOp extends LinearOpMode {
         double powR;
         double powL;
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() && Test.truthy()) {
             accel = gamepad1.left_stick_y;
             rotate = gamepad1.left_stick_x;
             //Determines ratio of motor powers (by sides) using the right stick
