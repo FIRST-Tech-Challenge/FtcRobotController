@@ -531,6 +531,7 @@ public class LeftSideAprilTagAutonomous extends LinearOpMode
 
         liftMotor.setPower(1);
 
+        runtime.reset();
         if(forward){
             motorsOn(.75);
             while(opModeIsActive() && (liftMotor.isBusy() || leftBackDrive.getCurrentPosition() < totalTicks)){
@@ -545,6 +546,9 @@ public class LeftSideAprilTagAutonomous extends LinearOpMode
                 }else if(!liftMotor.isBusy()){
                     liftMotor.setPower(0);
                 }
+                if(runtime.seconds() > 8){
+                    break;
+                }
             }
         }else{
             totalTicks = -totalTicks;
@@ -557,8 +561,12 @@ public class LeftSideAprilTagAutonomous extends LinearOpMode
                     liftMotor.setTargetPosition(targetTick);
                     liftMotor.setMode(RUN_TO_POSITION);
                     liftMotor.setPower(.25);
+                    correctionsDone = true;
                 }else{
                     liftMotor.setPower(0);
+                }
+                if(runtime.seconds() > 8){
+                    break;
                 }
             }
         }
