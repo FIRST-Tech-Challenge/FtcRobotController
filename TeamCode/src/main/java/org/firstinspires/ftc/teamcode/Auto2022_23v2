@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "Auto 2022", group = "Linear Opmode")
+@Autonomous(name = "Auto 20", group = "Linear Opmode")
 //@Disabled
 
 public class Auto2022_23v2 extends LinearOpMode {
@@ -118,7 +118,7 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                if (tfod != null) {
+                /*if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -144,6 +144,12 @@ public class Auto2022_23v2 extends LinearOpMode {
                             hasMoved = true;
                         }
                     }
+                }*/
+                if(!hasMoved){
+                    turnNinety(true);
+                    telemetry.addData("Angle:",getAngle());
+                    telemetry.update();
+                    hasMoved = true;
                 }
 
                 /* Use the code below to test ticks per inch
