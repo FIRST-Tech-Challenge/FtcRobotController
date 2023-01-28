@@ -72,11 +72,12 @@ public class Disco2 extends LinearOpMode {
             armMotor1.setPower(armPower);
             armMotor2.setPower(-armPower);
 
-            if (intakePos > 0.75 && axon1.getPosition() < 1) {
-                nextAxonPos = axonPos + 0.1;
+            if (intakePos > 0.75) {
+                nextAxonPos = axonPos + 0.02;
+                sleep(10);
             }
-            if (intakePos < -0.75 && axon1.getPosition() > -1) {
-                nextAxonPos = axonPos - 0.01;
+            if (intakePos < -0.75) {
+                nextAxonPos = axonPos - 0.1;
             }
 
             axon1.setPosition(nextAxonPos);
