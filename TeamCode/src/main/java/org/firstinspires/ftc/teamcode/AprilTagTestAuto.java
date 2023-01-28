@@ -27,30 +27,25 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENC
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "April Tag Auto", group = "Linear Opmode")
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
+@Autonomous(name = "April Tag Auto for Test", group = "Linear Opmode")
+public class AprilTagTestAuto extends LinearOpMode
 {
     public DcMotorEx leftDrive;
     public DcMotorEx rightDrive;
@@ -250,7 +245,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             moveLiftAndDrive(true,39.25,0);
             sleep(100);
             turnNinety(true);
-            /*for(int i = 0; i < 3; i++){
+            for(int i = 0; i < 3; i++){
                 moveToTape();
                 pickupCone();
                 moveLiftAndDrive(false,45,MAX_LIFT_POS);
@@ -262,7 +257,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                 sleep(100);
                 turnNinety(true);
                 moveLiftAndDrive(true,28,8);
-            }*/
+            }
         }else{
             moveGrabber(true);
             waitTime(.5);
