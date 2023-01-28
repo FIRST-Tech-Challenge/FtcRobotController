@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opModes.test;
 
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,27 +18,29 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
  * Controls:
  *
  *  Left Joystick: Control the drive train in a normal way.
- *  DPad Left and DPad Right: Make drive train go sideways.
+ *  Right Joystick X: Make drive train go sideways.
  *
- *  Triangle: Toggle between normal speed and slow speed.
+ *  Square Toggle between normal speed and slow speed.
+ *  Circle: Toggle between both directions and forward only.
  */
 
 @Disabled
 @TeleOp(name="Side Wheels Drive Train [sbottingota]", group="Demo")
 public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
 
-    //private Telemetry telemetry;
+    private Telemetry telemetry;
     private DifferentialDrive normalDriveTrain;
-    private DifferentialDrive sidewaysDriveTrain;
+    private Motor sidewaysMotor;
 
     private boolean isSlowMode = false;
+    private boolean isForwardOnlyMode = false;
 
     @Override
     public void setup() {
-        //telemetry = TelemetryContainer.getTelemetry();
+        telemetry = TelemetryContainer.getTelemetry();
 
         normalDriveTrain = new DifferentialDrive(HardwareMapContainer.motor0, HardwareMapContainer.motor1);
-        sidewaysDriveTrain = new DifferentialDrive(HardwareMapContainer.motor2, HardwareMapContainer.motor2);
+        sidewaysMotor = HardwareMapContainer.motor2;
     }
 
     // Changes the -1 to 1 inputs that the gamepad returns into 0 to 1 inputs to be put into the arcadeDrive method
@@ -47,37 +50,53 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
 
     @Override
     public void every_tick() {
-        if (Inputs.gamepad1.wasJustPressed(PSButtons.TRIANGLE)) {
+        double normalDriveXInput = Inputs.gamepad1.getLeftX();
+        double normalDriveYInput = Inputs.gamepad1.getLeftY();
+        double sidewaysDriveInput = Inputs.gamepad1.getRightX();
+
+        //if joystick pos is less than this amount from in the middle, the robot doesn't move.
+        final double DEAD_ZONE_SIZE = 0.1D;
+
+        if (Inputs.gamepad1.wasJustPressed(PSButtons.SQUARE)) {
             isSlowMode = !isSlowMode;
         }
 
-        double normalDriveX = Inputs.gamepad1.getLeftX();
-        double normalDriveY = Inputs.gamepad1.getLeftY();
-
-        double sidewaysDriveInput = 0D;
-
-        if (Inputs.gamepad1.isDown(GamepadKeys.Button.DPAD_LEFT)) {
-            sidewaysDriveInput -= 1D;
-        }
-
-        if (Inputs.gamepad1.isDown(GamepadKeys.Button.DPAD_RIGHT)) {
-            sidewaysDriveInput += 1D;
+        if (Inputs.gamepad1.wasJustPressed(PSButtons.CIRCLE)) {
+            isForwardOnlyMode = !isForwardOnlyMode;
         }
 
         if (isSlowMode) {
-            normalDriveX /= 2D;
-            normalDriveY /= 2D;
-
-            sidewaysDriveInput /= 2D;
+            for (double input: new double[]{normalDriveXInput, normalDriveYInput, sidewaysDriveInput}) {
+                input /= 2D;
+            }
         }
 
-        normalDriveX = changeRangeOfGamepadInput(normalDriveX);
-        normalDriveY = changeRangeOfGamepadInput(normalDriveY);
+        if (isForwardOnlyMode) {
+            for (double input: new double[]{normalDriveXInput, normalDriveYInput, sidewaysDriveInput}) {
+                input = Math.min(input, 0D);
+            }
+        }
 
-        sidewaysDriveInput = changeRangeOfGamepadInput(sidewaysDriveInput);
+        //if the following variables are less than DEAD_ZONE_SIZE from 0, set them to be 0
+        for (double input: new double[]{normalDriveXInput, normalDriveYInput, sidewaysDriveInput}) {
+            input = -DEAD_ZONE_SIZE > input || input > DEAD_ZONE_SIZE ? input : 0D;
+        }
 
-        normalDriveTrain.arcadeDrive(normalDriveX, normalDriveY);
+        //sidewaysInput isn't included as motors are meant to have -1 to 1 inputs, not 0-1 inputs
+        for (double input: new double[]{normalDriveXInput, normalDriveYInput}) {
+            input = changeRangeOfGamepadInput(input);
+        }
 
-        sidewaysDriveTrain.tankDrive(sidewaysDriveInput, sidewaysDriveInput);
+        normalDriveTrain.arcadeDrive(normalDriveXInput, normalDriveYInput);
+
+        sidewaysMotor.set(sidewaysDriveInput);
+
+        telemetry.addData("Normal Drive Train X (0 to 1)", normalDriveXInput);
+        telemetry.addData("Normal Drive Train Y (0 to 1)", normalDriveYInput);
+        telemetry.addData("Sideways Motor Value (-1 to 1)", sidewaysDriveInput);
+
+        telemetry.addData("Slow Mode", isSlowMode);
+        telemetry.addData("Forward Only Mode", isForwardOnlyMode);
+        telemetry.addData("Dead Zone Size", DEAD_ZONE_SIZE);
     }
 }
