@@ -20,5 +20,5 @@ object LiftConstants {
     @JvmField var maxVel = 600.0
     @JvmField var maxAccel = 300.0
     @JvmField var disabledPosition = 0.0
-    @JvmField var allowedPositionError = 5.0
+    @JvmField var allowedPositionError = 2.0
 }

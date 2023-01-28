@@ -85,7 +85,6 @@ class AutoHardware(startPose: Pose) {
         .revEncoder
         .build(fl)
     private val rightEncoder = EncoderFactory(ticksPerUnit)
-        .reverse
         .revEncoder
         .build(bl)
     private val auxEncoder = EncoderFactory(ticksPerUnit)

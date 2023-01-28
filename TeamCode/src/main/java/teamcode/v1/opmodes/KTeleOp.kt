@@ -15,10 +15,7 @@ import teamcode.v1.commands.sequences.DepositSequence
 import teamcode.v1.commands.sequences.HomeSequence
 import teamcode.v1.commands.subsystems.ClawCmds
 import teamcode.v1.commands.subsystems.GuideCmds
-import teamcode.v1.constants.ArmConstants
-import teamcode.v1.constants.ClawConstants
-import teamcode.v1.constants.GuideConstants
-import teamcode.v1.constants.LiftConstants
+import teamcode.v1.constants.*
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sign
@@ -37,7 +34,7 @@ open class KTeleOp() : KOpMode(photonEnabled = false) {
 
     private fun scheduleDrive() {
         robot.drive.defaultCommand = object : Cmd() {
-            val fastScalars = NVector(0.9, 0.9, 0.75)
+            val fastScalars = NVector(1.0, 1.0, 0.9)
             val slowScalars = NVector(0.4, 0.4, 0.4)
             val scalars get() = if(slowMode) slowScalars else fastScalars
 
@@ -78,6 +75,9 @@ open class KTeleOp() : KOpMode(photonEnabled = false) {
         gunner.rightTrigger.onPress(InstantCmd({robot.arm.setPos(-270.0)}))
         gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(11.0)}))
         gunner.rightBumper.onPress(InstantCmd({robot.lift.setPos(0.0)}))
+        gunner.dpadLeft.onPress(InstantCmd({robot.whacker.setPos(WhackerConstants.leftPos)}))
+        gunner.dpadRight.onPress(InstantCmd({robot.whacker.setPos(WhackerConstants.rightPos)}))
+        gunner.dpadUp.onPress(InstantCmd({robot.whacker.setPos(WhackerConstants.midPos)}))
     }
 
     private fun scheduleTest() {
@@ -94,5 +94,6 @@ open class KTeleOp() : KOpMode(photonEnabled = false) {
         Logger.addTelemetryData("lift pos", robot.hardware.liftLeadMotor.pos)
         Logger.addTelemetryData("arm power", robot.arm.motor.power)
         Logger.addTelemetryData("lift power", robot.hardware.liftLeadMotor.power)
+        Logger.addTelemetryData("whacker pos", robot.hardware.whackerServo.position)
     }
 }
