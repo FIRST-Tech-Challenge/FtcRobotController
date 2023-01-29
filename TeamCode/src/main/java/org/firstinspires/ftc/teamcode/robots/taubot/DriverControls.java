@@ -54,12 +54,16 @@ public class DriverControls {
             robot.crane.articulate(Crane.Articulation.home);
         }
 
-        if(stickyGamepad1.left_bumper){
-            robot.crane.decNudgeIndex();
+        if(gamepad1.left_bumper){
+            robot.driveTrain.adjustChassisLength(-1);
         }
 
-        if(stickyGamepad1.right_bumper){
-            robot.crane.incNudgeIndex();
+        if(gamepad1.right_bumper){
+            robot.driveTrain.adjustChassisLength(1);
+        }
+
+        if(stickyGamepad1.start){
+            robot.driveTrain.toggleExtension();
         }
 
         if(stickyGamepad1.a) {
@@ -93,6 +97,9 @@ public class DriverControls {
             robot.crane.updateScoringPattern();
         }
 
+        if(notJoystickDeadZone(gamepad1.left_stick_x)){
+            robot.driveTrain.maxTuck();
+        }
 
         if(!gamepad1.dpad_down) {
             if (notJoystickDeadZone(gamepad1.right_stick_x)){
@@ -144,12 +151,12 @@ public class DriverControls {
             robot.crane.articulate(Crane.Articulation.home);
         }
 
-        if(stickyGamepad1.left_bumper){
-            robot.crane.decNudgeIndex();
+        if(gamepad1.left_bumper){
+            robot.driveTrain.adjustChassisLength(-1);
         }
 
-        if(stickyGamepad1.right_bumper){
-            robot.crane.incNudgeIndex();
+        if(gamepad1.right_bumper){
+            robot.driveTrain.adjustChassisLength(1);
         }
 
         if(stickyGamepad1.a) {

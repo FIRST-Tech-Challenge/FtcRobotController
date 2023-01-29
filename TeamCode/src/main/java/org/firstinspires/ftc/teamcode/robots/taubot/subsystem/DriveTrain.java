@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.DISTANCE_SENSOR_TO_FRONT_AXLE;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.MAX_CHASSIS_LENGTH;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.MIN_CHASSIS_LENGTH;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.DISTANCE_SENSOR_TO_FRONT_AXLE;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MAX_CHASSIS_LENGTH;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.*;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
@@ -83,7 +83,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private double targetLeftVelocity, targetRightVelocity;
     private double leftPower, rightPower, chariotPower;
     private boolean useMotorPowers;
-    public static double targetChassisLength = 0.2;
+    public static double targetChassisLength = MIN_CHASSIS_LENGTH;
     private double chassisLength, chassisLengthCorrection;
     private boolean maintainHeadingEnabled, imuOffsetsInitialized;
     private double maintainHeading, maintainHeadingCorrection;
@@ -116,8 +116,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
     //todo the following PID needs initial settings
-    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(0, 0, 0);
-    public static double CHASSIS_LENGTH_TOLERANCE = 1;
+    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(0.15, 0, 0.3);
+    public static double CHASSIS_LENGTH_TOLERANCE = 0.1;
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(4, 0, 0);
     public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0.001, 0, 0);
 
@@ -178,6 +178,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             }
 
         leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            chariotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            chariotMotor.setDirection(DcMotor.Direction.REVERSE);
 
                 imu = hardwareMap.get(BNO055IMU.class, "baseIMU");
                 BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -213,7 +215,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         chassisLengthPID.setInputRange(MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
         chassisLengthPID.setOutputRange(-1, 1);
         chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
-        chassisLengthPID.enable();
+        chassisLengthPID.disable();
 
         if(Objects.isNull(cachePosition)) {
             cachePosition = new Vector2(0, 0);
@@ -230,6 +232,26 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     }
     //end Constructor
 
+    public void toggleExtension(){
+        if(chassisLength > 27.5){
+            setChassisLength(MIN_SAFE_CHASSIS_LENGTH);
+        }else{
+            setChassisLength(MAX_CHASSIS_LENGTH);
+        }
+    }
+
+    public void tuck(){
+        setChassisLength(MIN_SAFE_CHASSIS_LENGTH);
+    }
+
+    public void maxTuck(){
+        setChassisLength(MIN_CHASSIS_LENGTH);
+    }
+
+    public void extend(){
+        setChassisLength(MAX_CHASSIS_LENGTH);
+    }
+
     public void setTargetVelocity(double vel){
         velocityPID.setSetpoint(vel);
     }
@@ -241,6 +263,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public void setTargetHeadingDeg(double vel){
         setTargetHeading(Math.toRadians(vel));
+    }
+
+    public void enableChassisLength(){
+        chassisLengthPID.enable();
     }
 
     double rawHeading;
@@ -258,14 +284,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             double dt = loopTime / 1e9;
             leftPosition += leftVelocity * dt;
             rightPosition += rightVelocity * dt;
-            chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
+            chassisLength = DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
 
 
         } else {
             leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
             //todo - add chassis length distance sensor
-            chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.METER) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
+            chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
 
         }
 
@@ -316,6 +342,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         }
 
         //set the PID for the chassis length / chariot extension
+        chassisLengthPID.setInputRange(MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
         chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
         chassisLengthPID.setInput(chassisLength);
         chassisLengthPID.setSetpoint(targetChassisLength);
@@ -376,10 +403,12 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
             telemetryMap.put("roll", Math.toDegrees(roll));
             telemetryMap.put("pitch", Math.toDegrees(pitch));
-            telemetryMap.put("Chassis Length", chassisLength);
             telemetryMap.put("Chassis Correction", chassisLengthCorrection);
             telemetryMap.put("Motor Input Correction", chariotMotor.getPower());
             telemetryMap.put("Motor Ticks", chariotMotor.getCurrentPosition());
+            telemetryMap.put("Chassis Length", chassisLength);
+            telemetryMap.put("Target Chassis Length", targetChassisLength);
+            telemetryMap.put("PID Error", chassisLengthPID.getError());
 
             telemetryMap.put("left position", leftPosition);
             telemetryMap.put("right position", rightPosition);
@@ -837,8 +866,26 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return chassisLength;
     }
 
+    public static double CHASSIS_ADJUST = 20;
+
+    public void adjustChassisLength(double speed){
+        targetChassisLength += robot.deltaTime*(CHASSIS_ADJUST * speed);
+        if(targetChassisLength < MIN_CHASSIS_LENGTH){
+            targetChassisLength = MIN_CHASSIS_LENGTH;
+        }
+        if(targetChassisLength> MAX_CHASSIS_LENGTH){
+            targetChassisLength = MAX_CHASSIS_LENGTH;
+        }
+    }
+
     public void setChassisLength(double targetChassisLength) {
         this.targetChassisLength = targetChassisLength;
+        if(this.targetChassisLength < MIN_CHASSIS_LENGTH){
+            this.targetChassisLength = MIN_CHASSIS_LENGTH;
+        }
+        if(this.targetChassisLength> MAX_CHASSIS_LENGTH){
+            this.targetChassisLength = MAX_CHASSIS_LENGTH;
+        }
         chassisLengthPID.setSetpoint(targetChassisLength);
     }
 

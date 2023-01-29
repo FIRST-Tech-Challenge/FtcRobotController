@@ -562,7 +562,7 @@ public class Crane implements Subsystem {
                 }
                 Pose2d tempPos = Field.convertToInches(temp.getPosition());
                 if(rightConeStack) {
-                    if (goToFieldCoordinate(tempPos.getX() + 3.5, tempPos.getY() + 1, temp.z() + 3)) {
+                    if (goToFieldCoordinate(tempPos.getX() + 2.5, tempPos.getY(), temp.z() + 3)) {
                         coneCycleStage++;
                         cycleTimer = futureTime(0.9);
                     }
@@ -790,9 +790,6 @@ public class Crane implements Subsystem {
 
     double imuShoulderAngle;
 
-    double deltaTime = 0;
-    long lastTime = 0;
-
     public static boolean antiTipping = true;
     public static boolean robotIsNotTipping = true;
 
@@ -803,8 +800,6 @@ public class Crane implements Subsystem {
 
     @Override
     public void update(Canvas fieldOverlay) {
-        deltaTime = (System.nanoTime()-lastTime)/1e9;
-        lastTime = System.nanoTime();
 
         calculateFieldTargeting(fieldPositionTarget);
         //nudgeDistance = nudgeDistanceSensor.getDistance(DistanceUnit.METER);
@@ -895,11 +890,11 @@ public class Crane implements Subsystem {
     }
 
     public void adjustDistance(double speed){
-        if(robotIsNotTipping)setDistance(targetDistance + deltaTime*(DISTANCE_ADJUST * speed));
+        if(robotIsNotTipping)setDistance(targetDistance + robot.deltaTime*(DISTANCE_ADJUST * speed));
     }
 
     public void adjustHeight(double speed){
-        if(robotIsNotTipping)setHeight(targetHeight + deltaTime*(HEIGHT_ADJUST * speed));
+        if(robotIsNotTipping)setHeight(targetHeight + robot.deltaTime*(HEIGHT_ADJUST * speed));
     }
 
     public void adjustExtend(double speed){
@@ -912,19 +907,19 @@ public class Crane implements Subsystem {
 
     public void adjustX(double speed){
         if(robotIsNotTipping){
-            fieldPositionTarget.x += deltaTime*(DISTANCE_ADJUST * speed);
+            fieldPositionTarget.x += robot.deltaTime*(DISTANCE_ADJUST * speed);
         }
     }
 
     public void adjustY(double speed){
         if(robotIsNotTipping){
-            fieldPositionTarget.y += deltaTime*(DISTANCE_ADJUST * speed);
+            fieldPositionTarget.y += robot.deltaTime*(DISTANCE_ADJUST * speed);
         }
     }
 
     public void adjustZ(double speed){
         if(robotIsNotTipping){
-            fieldPositionTarget.z += deltaTime*(HEIGHT_ADJUST * speed);
+            fieldPositionTarget.z += robot.deltaTime*(HEIGHT_ADJUST * speed);
         }
     }
 
@@ -998,7 +993,7 @@ public class Crane implements Subsystem {
         Pose2d robotPos = robot.driveTrain.getPoseEstimate();
         calculateFieldTargeting(orbit_distance + orbit_radius*Math.sin(orbit_time),-35 + orbit_radius*Math.cos(orbit_time),orbit_height);
 
-        orbit_time += orbit_speed*deltaTime;
+        orbit_time += orbit_speed*robot.deltaTime;
     }
 
     public void setTargetTurretAngle(double target){
@@ -1145,7 +1140,6 @@ public class Crane implements Subsystem {
             telemetryMap.put("Shoulder On Target", shoulderOnTarget());
             telemetryMap.put("Extension On Target", extensionOnTarget());
             telemetryMap.put("Turret On Target", turretOnTarget());
-            telemetryMap.put("Delta Time", deltaTime);
             telemetryMap.put("Shoulder Power", shoulderMotor.getPower());
             telemetryMap.put("Shoulder Current", shoulderMotor.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("Extend Error", extendPID.getError());

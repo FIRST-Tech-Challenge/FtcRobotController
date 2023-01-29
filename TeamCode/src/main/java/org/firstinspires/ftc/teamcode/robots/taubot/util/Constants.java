@@ -19,6 +19,14 @@ public class Constants {
     //----------------------------------------------------------------------------------------------
 
     // driveTrain
+
+    public static double MIN_CHASSIS_LENGTH = 13.9;
+    public static double MIN_SAFE_CHASSIS_LENGTH = 16;
+    public static double MAX_CHASSIS_LENGTH = 39;
+
+    public static final double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
+    public static final double DISTANCE_TARGET_TO_BACK_WHEEL = 8.75;
+
     public static final double TRACK_WIDTH = 13.5;
     public static final double DISTANCE_BETWEEN_WHEELS = TRACK_WIDTH;
 
