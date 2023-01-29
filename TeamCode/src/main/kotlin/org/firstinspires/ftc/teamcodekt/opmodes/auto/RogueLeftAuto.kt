@@ -150,7 +150,7 @@ class RogueLeftAuto : RogueBaseAuto() {
                     splineTo(-160, -33, 180)
                 }
                 2 -> inReverse {
-                    splineTo(-95.5, -24, 180)
+                    splineTo(-95.5, -30, 180)
                 }
                 3 -> {
                     splineToLinearHeading(-30, -34, 90, -38.375)
