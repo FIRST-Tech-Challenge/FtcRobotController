@@ -11,6 +11,7 @@ import com.asiankoala.koawalib.path.*
 import com.asiankoala.koawalib.path.gvf.SimpleGVFController
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import teamcode.v1.auto.AutoRobot
 import teamcode.v1.commands.sequences.DepositSequence
 import teamcode.v1.commands.sequences.HomeSequence
@@ -22,6 +23,7 @@ import teamcode.v1.constants.GuideConstants
 import teamcode.v1.constants.LiftConstants
 import teamcode.v1.vision.AutoOpMode
 
+@Disabled
 @Autonomous(preselectTeleOp = "KTeleOp")
 class ParkBlueClose : AutoOpMode() {
     private val robot by lazy { AutoRobot(startPose) }

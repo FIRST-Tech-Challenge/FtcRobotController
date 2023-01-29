@@ -10,11 +10,7 @@ import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
 import teamcode.v1.Hardware
-import teamcode.v1.constants.ArmConstants
-import teamcode.v1.constants.ClawConstants
-import teamcode.v1.constants.LiftConstants
-import teamcode.v1.constants.OdoConstants
-import teamcode.v1.constants.GuideConstants
+import teamcode.v1.constants.*
 import teamcode.v1.subsystems.KLimitSwitch
 
 class AutoHardware(startPose: Pose) {
@@ -80,6 +76,9 @@ class AutoHardware(startPose: Pose) {
 
     val guideServo = KServo("Guide")
             .startAt(GuideConstants.homePos)
+
+    val whackerServo = KServo("Whacker")
+            .startAt(WhackerConstants.midPos)
 
     private val leftEncoder = EncoderFactory(ticksPerUnit)
         .revEncoder
