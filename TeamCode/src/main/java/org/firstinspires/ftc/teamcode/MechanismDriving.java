@@ -88,7 +88,7 @@ public class MechanismDriving {
         slidePositions.put(Robot.SlidesState.MOVE_DOWN, -robot.slidesMotor.getCurrentPosition() - (EPSILON + 50));
         slidePositions.put(Robot.SlidesState.STOPPED, -robot.slidesMotor.getCurrentPosition());
         // This is the negation from competition day
-        int encoderCount = -Range.clip(slidePositions.get(Robot.desiredSlidesState), 0, slidePositions.get(Robot.SlidesState.HIGH));
+        int encoderCount = -Range.clip(slidePositions.get(Robot.desiredSlidesState), -1000, slidePositions.get(Robot.SlidesState.HIGH));
         robot.telemetry.addData("target slide position", encoderCount);
         return encoderCount;
     }
