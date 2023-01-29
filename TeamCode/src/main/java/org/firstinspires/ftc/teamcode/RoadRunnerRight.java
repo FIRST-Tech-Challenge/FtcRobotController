@@ -23,8 +23,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Locale;
 
-@Autonomous(name = "LeftRoadRunner", group = "")
-public class RoadRunnerTest extends LinearOpMode {
+@Autonomous(name = "RightRoadRunner", group = "")
+public class RoadRunnerRight extends LinearOpMode {
     //test1
 
     private SampleMecanumDrive drive;
@@ -51,7 +51,7 @@ public class RoadRunnerTest extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         arm = hardwareMap.get(DcMotor.class, "arm");
         gripper = hardwareMap.get(Servo.class, "gripper");
-        Pose2d startPose = new Pose2d(-63, 40.5, 0);
+        Pose2d startPose = new Pose2d(-63, -29, 0);
         drive.setPoseEstimate(startPose);
         //TrajectorySequence aSeq = autoSeq(startPose);
 
@@ -81,20 +81,20 @@ public class RoadRunnerTest extends LinearOpMode {
                 //if (currTime - startTime < 500) {
                 //    telemetry.addData("Camera: ", "Waiting to make sure valid data is incoming");
                 //} else {
-                    telemetry.addData("Time Delta: ", (currTime - startTime));
-                    resultROI = modifyPipeline.getResultROI();
-                    if (resultROI == 1) {
-                        telemetry.addData("Resulting ROI: ", "Red");
-                        done = true;
-                    } else if (resultROI == 2) {
-                        telemetry.addData("Resulting ROI: ", "Green");
-                        done = true;
-                    } else if (resultROI == 3) {
-                        telemetry.addData("Resulting ROI: ", "Blue");
-                        done = true;
-                    } else {
-                        telemetry.addData("Resulting ROI: ", "Something went wrong.");
-                    }
+                telemetry.addData("Time Delta: ", (currTime - startTime));
+                resultROI = modifyPipeline.getResultROI();
+                if (resultROI == 1) {
+                    telemetry.addData("Resulting ROI: ", "Red");
+                    done = true;
+                } else if (resultROI == 2) {
+                    telemetry.addData("Resulting ROI: ", "Green");
+                    done = true;
+                } else if (resultROI == 3) {
+                    telemetry.addData("Resulting ROI: ", "Blue");
+                    done = true;
+                } else {
+                    telemetry.addData("Resulting ROI: ", "Something went wrong.");
+                }
                 //}
                 telemetry.update();
                 currTime = System.currentTimeMillis();
@@ -130,8 +130,8 @@ public class RoadRunnerTest extends LinearOpMode {
 
     private void autoSeq() {
         TrajectorySequence seq1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-60, 13, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(-35,13,Math.toRadians(-45)))
+                .lineToLinearHeading(new Pose2d(-60, -13, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-35,-13,Math.toRadians(45)))
                 .build();
         try {
             actuatorUtils.armPole(3,false);
@@ -142,11 +142,11 @@ public class RoadRunnerTest extends LinearOpMode {
         drive.followTrajectorySequence(seq1);
         //sleep(1000);
         TrajectorySequence seq2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-28.5, 6.5, Math.toRadians(-45)))
+                .lineToLinearHeading(new Pose2d(-28.5, -6.5, Math.toRadians(45)))
                 .build();
         drive.followTrajectorySequence(seq2);
         TrajectorySequence seq3 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-35,13, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-35,-13, Math.toRadians(0)))
                 .build();
         try {
             actuatorUtils.gripperOpen(false);
@@ -162,8 +162,8 @@ public class RoadRunnerTest extends LinearOpMode {
             telemetry.update();
         }
         TrajectorySequence seq4 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-13,13, Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(-13, 65, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-13,-13, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-13, -65, Math.toRadians(-90)))
                 .build();
         drive.followTrajectorySequence(seq4);
         for (int i = 0; i < 2 ; i++) {
@@ -175,9 +175,9 @@ public class RoadRunnerTest extends LinearOpMode {
                 telemetry.update();
             }
             TrajectorySequence seq5 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(-13, 52, Math.toRadians(90)))
-                    .lineToLinearHeading(new Pose2d(-13, 48.5, Math.toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(-18, 48.5, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-13, -52, Math.toRadians(-90)))
+                    .lineToLinearHeading(new Pose2d(-13, -48.5, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-18, -48.5, Math.toRadians(180)))
                     //.lineToLinearHeading(new Pose2d(-18, 50, Math.toRadians(180)))
                     //.lineToLinearHeading(new Pose2d(-12, 64.5, Math.toRadians(90)))
                     .build();
@@ -190,8 +190,8 @@ public class RoadRunnerTest extends LinearOpMode {
                 telemetry.update();
             }
             TrajectorySequence seq6 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(-13, 48.5, Math.toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(-13, 65, Math.toRadians(90)))
+                    .lineToLinearHeading(new Pose2d(-13, -48.5, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-13, -65, Math.toRadians(-90)))
                     //.turn(Math.toRadians(-90))
                     .build();
             drive.followTrajectorySequence(seq6);
@@ -199,16 +199,16 @@ public class RoadRunnerTest extends LinearOpMode {
     }
     private void parkSeq(int park) {
         Pose2d pose = drive.getPoseEstimate();
-        if (park == 1) {
+        if (park == 3) {
             return;
         } else if (park == 2) {
-            pose = new Pose2d(-12, 36, Math.toRadians(90));
+            pose = new Pose2d(-12, -36, Math.toRadians(-90));
         } else {
-            pose = new Pose2d(-12, 12, Math.toRadians(90));
+            pose = new Pose2d(-12, -12, Math.toRadians(-90));
         }
         TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(pose)
-                    .build();
+                .lineToLinearHeading(pose)
+                .build();
         drive.followTrajectorySequence(seq);
     }
     private void initOpenCV() {
