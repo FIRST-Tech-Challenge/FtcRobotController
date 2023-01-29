@@ -26,6 +26,10 @@ class Claw {
         targetPos = ClawConfig.INTAKE_WIDE
     }
 
+    fun openForIntakeKindaWide() {
+        targetPos = 0.6
+    }
+
     fun openForDeposit() {
         targetPos = ClawConfig.DEPOSIT
     }

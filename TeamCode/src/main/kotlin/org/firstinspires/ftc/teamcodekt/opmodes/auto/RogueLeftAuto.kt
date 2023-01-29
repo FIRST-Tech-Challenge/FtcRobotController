@@ -61,7 +61,7 @@ class RogueLeftAuto : RogueBaseAuto() {
 
     private fun Anvil.awaitGoToIntake(it: Int) = when (it) {
         0 -> splineTo(-163.9000, -21.250, 180)
-        1 -> splineTo(-163.4375, -22.575, 180)
+        1 -> splineTo(-164, -22.575, 180)
         2 -> splineTo(-162.9100, -22.400, 180)
         3 -> splineTo(-161.9975, -23.575, 180)
         4 -> splineTo(-160.9900, -23.750, 180)
