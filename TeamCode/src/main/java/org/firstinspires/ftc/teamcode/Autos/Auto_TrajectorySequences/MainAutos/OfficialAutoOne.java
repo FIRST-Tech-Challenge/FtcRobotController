@@ -23,8 +23,8 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	private Claw clawControl;
 
 	public static double xFirstLinear = 63;
-	public static double yFirstLinear = 1.9;
-	public static double angle = 157;
+	public static double yFirstLinear = 2.35;
+	public static double angle = 147;
 	public static double xSecondToJunction = 53;
 	public static double ySecondToJunction = -4;
 	public static double xThirdToJunction = 54;
@@ -70,7 +70,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				//If 13.53 V, y = -3.5
 				// Mechanisms deposit preload at high junction with a 0.65 delay
 				.UNSTABLE_addTemporalMarkerOffset(0.75,()->{
-					slideControl.setCustom(2400);
+					slideControl.setCustom(2200);
 					armControl.setExtake();
 					clawControl.toggleWristRotate();
 
@@ -116,7 +116,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				})
 				.waitSeconds(.45)
 				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{ //0.7 old value
-					slideControl.setCustom(2400); // 2nd time at high junction
+					slideControl.setCustom(2200); // 2nd time at high junction
 					armControl.setCustom(arm);
 					clawControl.toggleWristRotate();
 				})
@@ -140,7 +140,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.waitSeconds(0.35) // OLD VALUE: 0.25
 				// GOING TO THE CONE STACK \\
 				.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
-				.forward(28)
+				.forward(31)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
@@ -154,7 +154,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				//GOING TO JUNCTION FOR THIRD TIME
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0.3,()->{
-					slideControl.setCustom(2400);
+					slideControl.setCustom(2200);
 					armControl.setCustom(arm);
 					clawControl.toggleWristRotate();
 				})
@@ -178,7 +178,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.waitSeconds(0.25)
 
 				.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
-				.forward(28)
+				.forward(31)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
@@ -188,7 +188,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				})
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{
-					slideControl.setCustom(2400);
+					slideControl.setCustom(2200);
 					armControl.setCustom(arm);
 					clawControl.toggleWristRotate();
 				})
