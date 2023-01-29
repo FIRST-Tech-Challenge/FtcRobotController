@@ -44,9 +44,12 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
     }
 
     // Changes the -1 to 1 inputs that the gamepad returns into 0 to 1 inputs to be put into the arcadeDrive method
+    /*
     private double changeRangeOfGamepadInput(double input) {
+
         return (input + 1D) / 2D;
     }
+     */
 
     @Override
     public void every_tick() {
@@ -72,9 +75,7 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
         }
 
         if (isForwardOnlyMode) {
-            for (double input: new double[]{normalDriveXInput, normalDriveYInput, sidewaysDriveInput}) {
-                input = Math.min(input, 0D);
-            }
+            normalDriveXInput = 0D;
         }
 
         //if the following variables are less than DEAD_ZONE_SIZE from 0, set them to be 0
@@ -82,18 +83,13 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
             input = -DEAD_ZONE_SIZE > input || input > DEAD_ZONE_SIZE ? input : 0D;
         }
 
-        //sidewaysInput isn't included as motors are meant to have -1 to 1 inputs, not 0-1 inputs
-        for (double input: new double[]{normalDriveXInput, normalDriveYInput}) {
-            input = changeRangeOfGamepadInput(input);
-        }
-
         normalDriveTrain.arcadeDrive(normalDriveXInput, normalDriveYInput);
 
         sidewaysMotor.set(sidewaysDriveInput);
 
-        telemetry.addData("Normal Drive Train X (0 to 1)", normalDriveXInput);
-        telemetry.addData("Normal Drive Train Y (0 to 1)", normalDriveYInput);
-        telemetry.addData("Sideways Motor Value (-1 to 1)", sidewaysDriveInput);
+        telemetry.addData("Normal Drive Train X", normalDriveXInput);
+        telemetry.addData("Normal Drive Train Y", normalDriveYInput);
+        telemetry.addData("Sideways Motor Value", sidewaysDriveInput);
 
         telemetry.addData("Slow Mode", isSlowMode);
         telemetry.addData("Forward Only Mode", isForwardOnlyMode);
