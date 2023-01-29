@@ -34,7 +34,7 @@ open class KTeleOp() : KOpMode(photonEnabled = false) {
 
     private fun scheduleDrive() {
         robot.drive.defaultCommand = object : Cmd() {
-            val fastScalars = NVector(1.0, 1.0, 0.9)
+            val fastScalars = NVector(1.0, 1.0, 0.75)
             val slowScalars = NVector(0.4, 0.4, 0.4)
             val scalars get() = if(slowMode) slowScalars else fastScalars
 

@@ -164,29 +164,29 @@ class Right : AutoOpMode() {
                         )
                         )
                 ),
-                WaitCmd(0.25),
-                ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
-                WaitCmd(0.25),
-                HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 1.0, GuideConstants.telePos),
-                GVFCmd(
-                        robot.drive,
-                        SimpleGVFController(intakePath, 0.6, 20.0, 8.0, 0.4, 3.0, 5.0)
-                ),
-                WaitCmd(0.25),
-                ClawCmds.ClawCloseCmd(robot.claw),
-                WaitCmd(0.5),
-                InstantCmd({robot.lift.setPos(11.0)}),
-                GuideCmds.GuideDepositCmd(robot.guide),
-                WaitCmd(0.25),
-                GVFCmd(
-                        robot.drive,
-                        SimpleGVFController(depositPath, 0.5, 20.0, 15.0, 0.4, 3.0, 5.0),
-                        Pair(
-                                DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 160.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
-                                Vector(-14.0, -66.0)
-                        )
-                        )
-                ),
+//                WaitCmd(0.25),
+//                ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
+//                WaitCmd(0.25),
+//                HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 1.0, GuideConstants.telePos),
+//                GVFCmd(
+//                        robot.drive,
+//                        SimpleGVFController(intakePath, 0.6, 20.0, 8.0, 0.4, 3.0, 5.0)
+//                ),
+//                WaitCmd(0.25),
+//                ClawCmds.ClawCloseCmd(robot.claw),
+//                WaitCmd(0.5),
+//                InstantCmd({robot.lift.setPos(11.0)}),
+//                GuideCmds.GuideDepositCmd(robot.guide),
+//                WaitCmd(0.25),
+//                GVFCmd(
+//                        robot.drive,
+//                        SimpleGVFController(depositPath, 0.5, 20.0, 15.0, 0.4, 3.0, 5.0),
+//                        Pair(
+//                                DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 160.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+//                                Vector(-14.0, -66.0)
+//                        )
+//                        )
+//                ),
                 WaitCmd(0.25),
                 ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
                 WaitCmd(0.25),
