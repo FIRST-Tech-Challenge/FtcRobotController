@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public final class OverflowEncoder implements Encoder {
@@ -53,5 +54,10 @@ public final class OverflowEncoder implements Encoder {
     @Override
     public DcMotorController getController() {
         return encoder.getController();
+    }
+
+    @Override
+    public void setDirection(DcMotorSimple.Direction direction) {
+        encoder.setDirection(direction);
     }
 }

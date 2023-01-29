@@ -36,4 +36,9 @@ public final class RawEncoder implements Encoder {
     public DcMotorController getController() {
         return m.getController();
     }
+
+    @Override
+    public void setDirection(DcMotorSimple.Direction direction) {
+        this.direction = direction;
+    }
 }
