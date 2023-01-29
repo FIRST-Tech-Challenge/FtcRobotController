@@ -17,8 +17,6 @@ import java.util.ArrayList;
 @TeleOp(name="Iron Giant OpMode", group="Challenge")
 public class IronGiantOpMode extends OpMode {
     //autonomous variables
-    //hello :)
-    //this is the ghost of christmas past :)
     public boolean auton = true; // controls if auton will run set to true to run with auton
     public static  boolean testing = false;// turns off normal robot motion
     public static boolean red = true; // team boolean variable red true is red team
@@ -59,25 +57,29 @@ public class IronGiantOpMode extends OpMode {
         telemetry.update();
         robot.motorInit();
         visionInit();
-        if(auton) {
-            autonInit(tagDetected);
-            auton = false;
-        }
     }
 
     @Override
     public void init_loop() {
         aprilTagInitLoop();
         telemetry.update();
+        if (!calibrate && calibrateOn)
+            calibrate = robot.elevatorNClaw.calib();
     }
     @Override
     public void loop() {
+        if(auton) {
+//            autonInit(tagDetected);
+            autonomous.add(new Drive(robot, 1));
+//            autonomous.add(new Turn(robot, 90));
+            auton = false;
+        }
         telemetryOutput();
         if(!testing){
             telemetry.addData("should auton be running? \t", autonomous.hasBehaviors());
             if (!calibrate && calibrateOn)
                 calibrate = robot.elevatorNClaw.calib();
-            if(autonomous.hasBehaviors()) {
+            else if(autonomous.hasBehaviors()) {
                 autonomous.runBehaviors();
             }
             else {
@@ -98,15 +100,18 @@ public class IronGiantOpMode extends OpMode {
                     robot.elevatorNClaw.elevatorMove('x');
                 if(gamepad1.dpad_up)
                 {
-                    autonomous.add(new Turn(robot, 180));
+                    if(robot.driveTrain.robotSpeed == 1)
+                        robot.driveTrain.robotSpeed = .5;
+                    else
+                        robot.driveTrain.robotSpeed = 1;
                 }
                 if(gamepad1.dpad_left)
                 {
-                    autonomous.add(new Turn(robot, 90));
+                    robot.elevatorNClaw.elevatorMove(coneStack.height());
                 }
                 if(gamepad1.dpad_right)
                 {
-                    autonomous.add(new Turn(robot, -90));
+                    robot.elevatorNClaw.elevatorMove(coneStack.height());
                 }
             }
         }
@@ -119,110 +124,139 @@ public class IronGiantOpMode extends OpMode {
     }
     public void autonInit(int tagValue)
     {
-        if(red)
-        {
-            if(!farmCones) {
-                autonomous.add(new Drive(robot, 1.15));
-                autonomous.add(new ClawMove(robot, true));
-                autonomous.add(new Drive(robot, -1));
-                autonomous.add(new Turn(robot, 90));
-                autonomous.add(new Drive(robot, 1));
-                autonomous.add(new Turn(robot, 90));
-                autonomous.add(new Drive(robot, 1));
-                switch (tagValue) {
-                    case 1: {
-                        autonomous.add(new Turn(robot, 90));
-                        autonomous.add(new Drive(robot, 1));
-                        autonomous.add(new Turn(robot, 90));
-                        autonomous.add(new Drive(robot, 1));
-                        break;
-                    }
-                    case 2: {
-                        autonomous.add(new Turn(robot, 90));
-                        autonomous.add(new Drive(robot, 1));
-                        break;
-                    }
-                    case 3: {
-                        autonomous.add(new Turn(robot, 90));
-                        autonomous.add(new Drive(robot, 1));
-                        autonomous.add(new Turn(robot, -90));
-                        autonomous.add(new Drive(robot, 1));
-                        break;
-                    }
+        telemetry.addData("tag",tagValue);
+        if(red) {
+//            if(!farmCones) {
+            switch (tagDetected) {
+                case 3: {
+                    autonomous.clearAuton();
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new ClawMove(robot, true));
+                    autonomous.add(new Drive(robot, -1));
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
                 }
-            }
-            else
-            {
-                autonomous.add(new Turn(robot, 90));
-                autonomous.add(new Drive(robot, 2));
-                autonomous.add(new Turn(robot, 90));
-                getNDepositCone(red);
-                getNDepositCone(red);
-                getNDepositCone(red);
-                switch (tagValue)
-                {
-                    case 1: {
-                        autonomous.add(new Drive(robot, -1));
-                        break;
-                    }
-                    case 3: {
-                        autonomous.add(new Drive(robot, 1));
-                        break;
-                    }
+                case 2: {
+                    autonomous.clearAuton();
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new ClawMove(robot, true));
+                    autonomous.add(new Drive(robot, -1));
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
+
                 }
+                case 1: {
+                    autonomous.clearAuton();
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new ClawMove(robot, true));
+                    autonomous.add(new Drive(robot, -1));
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new Turn(robot, -90));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
+                }
+
+                default: {
+                    autonomous.clearAuton();
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
+                }
+//            }
+//            else
+//            {
+//                autonomous.add(new Turn(robot, 90));
+//                autonomous.add(new Drive(robot, 2));
+//                autonomous.add(new Turn(robot, 90));
+//                getNDepositCone(red);
+//                getNDepositCone(red);
+//                getNDepositCone(red);
+//                switch (tagValue)
+//                {
+//                    case 1: {
+//                        autonomous.add(new Drive(robot, -1));
+//                        break;
+//                    }
+//                    case 3: {
+//                        autonomous.add(new Drive(robot, 1));
+//                        break;
+//                    }
+//                }
+//            }
             }
         }
         else
         {
-            if(!farmCones) {
-                autonomous.add(new Turn(robot, -180));
-                autonomous.add(new Drive(robot, 1.15));
-                autonomous.add(new ClawMove(robot, true));
-                autonomous.add(new Drive(robot, -1));
-                switch (tagValue) {
-                    case 1: {
-                        autonomous.add(new Turn(robot, 90));
-                        autonomous.add(new Drive(robot, 1));
-                        autonomous.add(new Turn(robot, 90));
-                        autonomous.add(new Drive(robot, 1));
-                        break;
-                    }
-                    case 2: {
-                        autonomous.add(new Turn(robot, 90));
-                        autonomous.add(new Drive(robot, 1));
-                        break;
-                    }
-                    case 3: {
-                        autonomous.add(new Turn(robot, 90));
-                        autonomous.add(new Drive(robot, 1));
-                        autonomous.add(new Turn(robot, -90));
-                        autonomous.add(new Drive(robot, 1));
-                        break;
-                    }
+//            if(!farmCones) {
+            switch (tagDetected) {
+                case 3: {
+                    autonomous.clearAuton();
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new ClawMove(robot, true));
+                    autonomous.add(new Drive(robot, -1));
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
                 }
-            }
-            else
-            {
-                autonomous.add(new Turn(robot, -90));
-                autonomous.add(new Drive(robot, 2));
-                autonomous.add(new Turn(robot, -90));
-                getNDepositCone(red);
-                getNDepositCone(red);
-                getNDepositCone(red);
-                switch (tagValue)
-                {
-                    case 1: {
-                        autonomous.add(new Drive(robot, -1));
-                        break;
-                    }
-                    case 3: {
-                        autonomous.add(new Drive(robot, 1));
-                        break;
-                    }
+                case 2: {
+                    autonomous.clearAuton();
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new ClawMove(robot, true));
+                    autonomous.add(new Drive(robot, -1));
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
+
                 }
+                case 1: {
+                    autonomous.clearAuton();
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new ClawMove(robot, true));
+                    autonomous.add(new Drive(robot, -1));
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                    autonomous.add(new Turn(robot, -90));
+                    autonomous.add(new Drive(robot, 1));
+                    break;
+                }
+
+                default: {
+                    autonomous.clearAuton();
+                    autonomous.add(new Turn(robot, 90));
+                    autonomous.add(new Drive(robot, 1));
+                }
+
             }
         }
-    }
+//            else
+//            {
+//                autonomous.add(new Turn(robot, -90));
+//                autonomous.add(new Drive(robot, 2));
+//                autonomous.add(new Turn(robot, -90));
+//                getNDepositCone(red);
+//                getNDepositCone(red);
+//                getNDepositCone(red);
+//                switch (tagValue)
+//                {
+//                    case 1: {
+//                        autonomous.add(new Drive(robot, -1));
+//                        break;
+//                    }
+//                    case 3: {
+//                        autonomous.add(new Drive(robot, 1));
+//                        break;
+//                    }
+//                }
+//            }
+        }
+//    }
     public void getNDepositCone(boolean red)
     {
         int turnToPole;// degrees to the cone pole depending on side

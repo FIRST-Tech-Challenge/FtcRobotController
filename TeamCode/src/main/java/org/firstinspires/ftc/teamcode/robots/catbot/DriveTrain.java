@@ -23,6 +23,7 @@ class DriveTrain {
     private double powerBackRight = 0;
     // Number variables
     private static final float DEADZONE = .1f;
+    double robotSpeed = 1;
     public DriveTrain(Telemetry telemetry, HardwareMap hardwareMap)
     {
         this.telemetry = telemetry;
@@ -74,10 +75,10 @@ class DriveTrain {
         powerFrontRight = r * Math.sin(robotAngle) + rightX;
         powerBackLeft = r * Math.sin(robotAngle) - rightX;
         powerBackRight = r * Math.cos(robotAngle) + rightX;
-        motorFrontLeft.setPower(powerFrontLeft);
-        motorFrontRight.setPower(powerFrontRight);
-        motorBackLeft.setPower(powerBackLeft);
-        motorBackRight.setPower(powerBackRight);
+        motorFrontLeft.setPower(powerFrontLeft*robotSpeed);
+        motorFrontRight.setPower(powerFrontRight*robotSpeed);
+        motorBackLeft.setPower(powerBackLeft*robotSpeed);
+        motorBackRight.setPower(powerBackRight*robotSpeed);
     }
     public void telemetryOutput()
     {

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 class Robot {
-    private Telemetry telemetry;
+    Telemetry telemetry;
     DriveTrain driveTrain;
     ElevatorNClaw elevatorNClaw;
     public Robot(Telemetry telemetry, HardwareMap hardwareMap)

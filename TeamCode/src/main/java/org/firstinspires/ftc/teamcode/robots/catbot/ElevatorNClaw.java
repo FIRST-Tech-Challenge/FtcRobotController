@@ -14,7 +14,7 @@ class ElevatorNClaw {
     private DcMotorEx elevator = null;
     private Servo claw = null;
     public static float DEADZONE = .1f;
-    public static int MAXELEVTICS = 5540;
+    public static int MAXELEVTICS = 5640;
     public static int MINELEVTICS = 0;
     public static int ELEVTICKSPOS1 = MINELEVTICS + 150;
     public static int ELEVTICKSPOS2 = 2400;
@@ -23,7 +23,7 @@ class ElevatorNClaw {
     public static double CLAWOPEN = .5;
     public static double CLAWCLOSE = .2;
     private int currElevTics = 0;
-    public static double MOTORSTALLVALUE = 1.5;
+    public static double MOTORSTALLVALUE = .75;
     private static boolean calibrate;
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
@@ -67,6 +67,7 @@ class ElevatorNClaw {
     }
     public boolean calib(){
         elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        claw.setPosition(CLAWCLOSE);
         telemetry.addData("elevator calibrating...", elevator.getCurrent(CurrentUnit.AMPS));
         if(elevator.getCurrent(CurrentUnit.AMPS) < MOTORSTALLVALUE)
         {
@@ -94,7 +95,7 @@ class ElevatorNClaw {
         elevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         elevator.setTargetPosition(0);
         elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.elevator.setDirection(DcMotorEx.Direction.REVERSE);
+                                this.elevator.setDirection(DcMotorEx.Direction.REVERSE);
     }
     public int getElevatorPosition(){return elevator.getCurrentPosition();}
     public double getClawPosition(){return claw.getPosition();}

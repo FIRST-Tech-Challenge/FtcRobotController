@@ -6,6 +6,7 @@ import java.util.Queue;
 public class Autonomous {
     Queue<Task> behaviors;
     Robot robot;
+//    int tag;
     public Autonomous(Robot robot)
     {
         behaviors = new LinkedList<Task>();
@@ -13,6 +14,7 @@ public class Autonomous {
     }
     public boolean runBehaviors()
     {
+//        robot.telemetry.addData("running to tag", )
         if(behaviors.size() > 0) {
             if (!behaviors.peek().run()) {
                 behaviors.poll();
@@ -30,4 +32,5 @@ public class Autonomous {
     {
         return behaviors.size() > 0;
     }
+    public void clearAuton () { behaviors.clear(); }
 }
