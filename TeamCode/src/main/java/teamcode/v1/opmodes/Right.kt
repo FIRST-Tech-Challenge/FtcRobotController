@@ -37,26 +37,28 @@ class Right : AutoOpMode() {
     private val intakePath1 = HermitePath(
             DEFAULT_HEADING_CONTROLLER,
             Pose(-12.0, -33.5, 240.0.radians),
-            Pose(-15.5, -62.25, 270.0.radians)
+            Pose(-13.5, -62.25, 270.0.radians)
     )
 
     private val intakePath = HermitePath(
             DEFAULT_HEADING_CONTROLLER,
             Pose(-12.0, -33.5, 240.0.radians),
-            Pose(-15.5, -61.25, 270.0.radians)
+            Pose(-13.5, -62.5, 270.0.radians)
     )
 
     private val depositPath = HermitePath(
             FLIPPED_HEADING_CONTROLLER,
             Pose(-16.0, -64.0, 90.0.radians),
             Pose(-16.0, -56.0, 85.0.radians),
-            Pose(-6.5, -33.0, 50.0.radians)
+            Pose(-5.5, -34.0, 50.0.radians)
     )
 
     private val leftPath = HermitePath(
-            DEFAULT_HEADING_CONTROLLER,
-            Pose(-12.0, -33.5, 240.0.radians),
-            Pose(-15.5, -63.0, 270.0.radians)
+        DEFAULT_HEADING_CONTROLLER,
+        Pose(-12.0, -33.5, 270.0.radians),
+        Pose(-20.0, -12.0, 270.0.radians),
+        Pose(-20.0, -12.0, 180.0.radians)
+
     )
 
     private val middlePath = HermitePath(
@@ -68,9 +70,9 @@ class Right : AutoOpMode() {
     )
 
     private val rightPath = HermitePath(
-            {180.0.radians},
-            Pose(-12.0, -33.5, 180.0.radians),
-            Pose(-20.0, -15.0, 180.0.radians)
+        DEFAULT_HEADING_CONTROLLER,
+        Pose(-12.0, -33.5, 240.0.radians),
+        Pose(-13.5, -62.5, 270.0.radians)
     )
 
     override fun mInit() {
@@ -111,9 +113,9 @@ class Right : AutoOpMode() {
                 WaitCmd(0.25),
                 GVFCmd(
                         robot.drive,
-                        SimpleGVFController(depositPath, 0.5, 20.0, 15.0, 0.4, 3.0, 5.0),
+                        SimpleGVFController(depositPath, 0.5, 20.0, 8.0, 0.4, 3.0, 5.0),
                         Pair(
-                                DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 160.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+                                DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 155.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                                 Vector(-14.0, -66.0)
                         )
                         )
@@ -134,9 +136,9 @@ class Right : AutoOpMode() {
                 WaitCmd(0.25),
                 GVFCmd(
                         robot.drive,
-                        SimpleGVFController(depositPath, 0.5, 20.0, 15.0, 0.4, 3.0, 5.0),
+                        SimpleGVFController(depositPath, 0.5, 20.0, 8.0, 0.4, 3.0, 5.0),
                         Pair(
-                                DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 160.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+                                DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 155.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                                 Vector(-14.0, -66.0)
                         )
                         )
@@ -157,9 +159,9 @@ class Right : AutoOpMode() {
                 WaitCmd(0.25),
                 GVFCmd(
                         robot.drive,
-                        SimpleGVFController(depositPath, 0.5, 20.0, 15.0, 0.4, 3.0, 5.0),
+                        SimpleGVFController(depositPath, 0.5, 20.0, 8.0, 0.4, 3.0, 5.0),
                         Pair(
-                                DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 160.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+                                DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 155.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                                 Vector(-14.0, -66.0)
                         )
                         )
@@ -194,11 +196,11 @@ class Right : AutoOpMode() {
                 ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
                 ChooseCmd(
                         GVFCmd(robot.drive,
-                                SimpleGVFController(leftPath, 0.5, 30.0, 6.0, 0.4, 3.0, 5.0)),
+                                SimpleGVFController(leftPath, 0.5, 30.0, 6.0, 0.3, 3.0, 5.0)),
                         ChooseCmd(
                                 GVFCmd(robot.drive,
                                         SimpleGVFController(middlePath, 0.5, 30.0, 6.0, 0.3, 3.0, 5.0)),
-                                GVFCmd(robot.drive, SimpleGVFController(rightPath,0.5, 30.0, 6.0, 0.3, 3.0, 5.0)),
+                                GVFCmd(robot.drive, SimpleGVFController(rightPath,0.5, 30.0, 6.0, 0.4, 3.0, 5.0)),
                         ) { tagOfInterest!!.id == MIDDLE },
                 ) { tagOfInterest!!.id == RIGHT }
         )
