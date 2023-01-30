@@ -109,6 +109,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
      * @param targetPosition target position for slides motors in ticks
      */
     public void driveSlidesAutonomous(int targetPosition) {
+        long startTime = System.currentTimeMillis();
         int error = targetPosition - motorLeftSlides.getCurrentPosition();
         double motorPower;
 
@@ -125,6 +126,12 @@ public abstract class BaseAutonomous extends BaseOpMode {
             } else {
                 motorLeftSlides.setPower(motorPower);
                 motorRightSlides.setPower(motorPower);
+            }
+
+            long currentTime = System.currentTimeMillis();
+
+            if (currentTime - startTime > 3000) {
+                break;
             }
         }
 

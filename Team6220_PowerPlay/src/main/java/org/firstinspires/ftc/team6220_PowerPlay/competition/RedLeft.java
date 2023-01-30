@@ -18,20 +18,6 @@ public class RedLeft extends BaseAutonomous {
         // detect april tag in initialize
         int signal = detectSignal();
 
-        // start streaming at 800 x 600
-        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                robotCamera.startStreaming(Constants.CAMERA_X, Constants.CAMERA_Y, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {}
-        });
-
-        // set pipeline to the one that detect cone stacks
-        robotCamera.setPipeline(robotCameraPipeline);
-
         // grab pre-loaded cone
         driveGrabber(Constants.GRABBER_CLOSE_POSITION);
 
@@ -88,7 +74,5 @@ public class RedLeft extends BaseAutonomous {
                 driveAutonomous(-90, 11);
                 break;
         }
-
-        robotCamera.stopStreaming();
     }
 }
