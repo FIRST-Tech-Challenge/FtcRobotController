@@ -78,9 +78,9 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
     private PIDController armUpPID;
     private PIDController armDownPID;
-    public static double up_Kp = 0, up_Ki = 0, up_Kd = 0;
-    public static double down_Kp = 0, down_Ki = 0, down_Kd = 0;
-    public static double f = 0, l = 0;
+    public static double up_Kp = 0.0055, up_Ki = 0, up_Kd = 0.00025;
+    public static double down_Kp = 0.00025, down_Ki = 0, down_Kd = 0.000005;
+    public static double f = 0.045, l = 0;
     public static int target = 0;
 
     private final double ARM_LIFT_TICKS_PER_DEGREE = 28.0 * 5.23 * 5.23 * 3.61 / 360;
