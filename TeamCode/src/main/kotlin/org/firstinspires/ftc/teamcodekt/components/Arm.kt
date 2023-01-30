@@ -1,5 +1,4 @@
 @file:Config
-@file:JvmName("_ArmConfig")
 
 package org.firstinspires.ftc.teamcodekt.components
 

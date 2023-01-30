@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
-import com.acmerobotics.roadrunner.drive.Drive
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.Anvil
@@ -20,7 +19,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                     .awaitInitialGoToDeposit()
                     .turn(46)
                     .addTemporalMarker(0) {
-                        bot.lift.height = liftOffsets[0]-8
+                        bot.lift.clippedHeight = liftOffsets[0]-8
                         bot.wrist.setToBackwardsPos()
                     }
                     .back(70)
@@ -96,7 +95,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
 
     private fun Anvil.deposit() = this
             .addTemporalMarker(-165) {
-                bot.lift.height -= AutoData.DEPOSIT_DROP_AMOUNT
+                bot.lift.clippedHeight -= AutoData.DEPOSIT_DROP_AMOUNT
             }
 
             .addTemporalMarker(-100) {
@@ -112,7 +111,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
             }
 
             .addTemporalMarker(105) {
-                bot.lift.height = liftOffsets[iterations]-15
+                bot.lift.clippedHeight = liftOffsets[iterations]-15
                 bot.wrist.setToBackwardsPos()
             }
 

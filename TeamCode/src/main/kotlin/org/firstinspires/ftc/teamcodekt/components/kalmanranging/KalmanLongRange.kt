@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcodekt.components.basicranging
+@file:Suppress("PropertyName")
+
+package org.firstinspires.ftc.teamcodekt.components.kalmanranging
 
 import com.acmerobotics.dashboard.config.Config
 import com.outoftheboxrobotics.photoncore.Neutrino.MB1242.MB1242Ex

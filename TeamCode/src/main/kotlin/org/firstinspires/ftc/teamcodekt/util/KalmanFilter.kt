@@ -1,3 +1,5 @@
+@file:Suppress("PrivatePropertyName")
+
 package org.firstinspires.ftc.teamcodekt.util
 
 /**
