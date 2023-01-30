@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode;
-import android.os.Environment;
 import com.qualcomm.robotcore.util.Range;
 
-import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +9,7 @@ import java.util.Map;
 public class MechanismDriving {
 
     private static int desiredSlidePosition;
+    private static int slideZeroPosition;
     public boolean testing=false;
 
     public static final Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
@@ -84,9 +82,9 @@ public class MechanismDriving {
      */
     public int getTargetSlidesEncoderCount(Robot robot) {
         // Automatically update the target values for joystick slide states based on current position
-        slidePositions.put(Robot.SlidesState.MOVE_UP, -robot.slidesMotor.getCurrentPosition() + EPSILON + 50);
-        slidePositions.put(Robot.SlidesState.MOVE_DOWN, -robot.slidesMotor.getCurrentPosition() - (EPSILON + 50));
-        slidePositions.put(Robot.SlidesState.STOPPED, -robot.slidesMotor.getCurrentPosition());
+        slidePositions.put(Robot.SlidesState.MOVE_UP, -robot.slidesMotor1.getCurrentPosition() + EPSILON + 50);
+        slidePositions.put(Robot.SlidesState.MOVE_DOWN, -robot.slidesMotor1.getCurrentPosition() - (EPSILON + 50));
+        slidePositions.put(Robot.SlidesState.STOPPED, -robot.slidesMotor1.getCurrentPosition());
         // This is the negation from competition day
         int encoderCount = -Range.clip(slidePositions.get(Robot.desiredSlidesState), -1000, slidePositions.get(Robot.SlidesState.HIGH));
         robot.telemetry.addData("target slide position", encoderCount);
@@ -104,23 +102,26 @@ public class MechanismDriving {
                setSlidePosition(robot, getTargetSlidesEncoderCount(robot));
 
            // Speed is proportional to the fraction of the ramp distance that we have left.
-           double slidesSpeed = slidesPower * Range.clip(Math.abs(desiredSlidePosition - robot.slidesMotor.getCurrentPosition())/ SLIDE_RAMP_DIST, SLIDE_MIN_SPEED, 1);
+           double slidesSpeed = slidesPower * Range.clip(Math.abs(desiredSlidePosition - robot.slidesMotor1.getCurrentPosition())/ SLIDE_RAMP_DIST, SLIDE_MIN_SPEED, 1);
 
            // If the current position is less than desired position then move it up
-           if (desiredSlidePosition - robot.slidesMotor.getCurrentPosition() > EPSILON) {
-               robot.slidesMotor.setPower(slidesSpeed);
+           if (desiredSlidePosition - robot.slidesMotor1.getCurrentPosition() > EPSILON) {
+               robot.slidesMotor1.setPower(slidesSpeed);
+               robot.slidesMotor2.setPower(slidesSpeed);
            }
 
            // If the current position is above the desired position, move these downwards
-           if (robot.slidesMotor.getCurrentPosition() - desiredSlidePosition > EPSILON) {
-               robot.slidesMotor.setPower(-slidesSpeed);
+           if (robot.slidesMotor1.getCurrentPosition() - desiredSlidePosition > EPSILON) {
+               robot.slidesMotor1.setPower(-slidesSpeed);
+               robot.slidesMotor2.setPower(-slidesSpeed);
            }
 
-           robot.telemetry.addData("current pos: ", robot.slidesMotor.getCurrentPosition());
+           robot.telemetry.addData("current pos: ", robot.slidesMotor1.getCurrentPosition());
 
            // Stop motors when we have reached the desired position
-           if (Math.abs(robot.slidesMotor.getCurrentPosition() - desiredSlidePosition) < EPSILON) {
-               robot.slidesMotor.setPower(0);
+           if (Math.abs(robot.slidesMotor1.getCurrentPosition() - desiredSlidePosition) < EPSILON) {
+               robot.slidesMotor1.setPower(0);
+               robot.slidesMotor2.setPower(0);
                return true;
            }
            return false;
