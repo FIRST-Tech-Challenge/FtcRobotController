@@ -232,6 +232,16 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
 
         // region ARM PRESETS FINITE STATE MACHINE
+            if(armState != ArmState.ARM_WAIT && (gamepad1.left_stick_button || gamepad1.right_stick_button || gamepad2.left_stick_button || gamepad2.right_stick_button)){
+                huskyBot.armExtendMotor.setPower(0);
+                huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
+
+                armState = ArmState.ARM_WAIT;
+            }
+
             switch (armState){
                 case ARM_WAIT:
                     finiteTimer.reset();
