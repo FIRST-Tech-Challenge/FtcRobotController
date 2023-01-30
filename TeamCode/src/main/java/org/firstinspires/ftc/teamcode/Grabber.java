@@ -1,20 +1,20 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 
+import com.qualcomm.robotcore.hardware.Servo;
 public class Grabber {
-    public CRServo Servo1;
-    public CRServo Servo2;
+    public Servo Servo1;
+    public Servo Servo2;
     public void stop() {
-        Servo1.setPower(0);
-        Servo2.setPower(0);
+        Servo1.setPosition(0);
+        Servo2.setPosition(0);
 
     }
-    public void grabber1(float power){
-        Servo1.setPower(power);
+    public void grabber1(float position){
+        Servo1.setPosition(position);
     }
-    public void grabber2(float power){
-        Servo2.setPower(power);
+    public void grabber2(float position){
+        Servo2.setPosition(position);
     }
 
 }

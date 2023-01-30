@@ -14,7 +14,7 @@ public class main extends LinearOpMode {
     composetelemetry composetelemetry = new composetelemetry();
 
     ARM ARM = new ARM();
-    Grabber Grabber = new Grabber();
+     = new Grabber();
 
     @Override
     public void runOpMode() {
