@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-//import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
-//import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
 import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.opencv.core.Core;
@@ -11,6 +9,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -47,12 +46,11 @@ public class AutonDetector extends OpenCvPipeline {
             else if(TeamInfo.teamColor == TeamColor.BLUE) thresh = blueThresh();
         }
 
-        Mat edges = new Mat();
-        Imgproc.Canny(thresh, edges, 100, 200);
+        Imgproc.erode(thresh, thresh, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5)));
 
         List<MatOfPoint> contours = new ArrayList<>();
 
-        Imgproc.findContours(edges, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(thresh, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         contours.removeIf(c -> Imgproc.boundingRect(c).height < 20 || Imgproc.boundingRect(c).area() < 50);
         Imgproc.drawContours(input, contours, -1, new Scalar(255, 255, 255));
 
@@ -66,7 +64,6 @@ public class AutonDetector extends OpenCvPipeline {
 
         contours.clear();
         mat.release();
-        edges.release();
         thresh.release();
 
         return input;
@@ -93,8 +90,8 @@ public class AutonDetector extends OpenCvPipeline {
     }
 
     private Mat blueThresh() {
-        Scalar blue_lowHSV = new Scalar (95,64,20);
-        Scalar blue_highHSV = new Scalar (135,255,255);
+        Scalar blue_lowHSV = new Scalar (110,64,20);
+        Scalar blue_highHSV = new Scalar (130,255,255);
         Mat thresh = new Mat();
         Core.inRange(mat, blue_lowHSV, blue_highHSV, thresh);
 
@@ -103,7 +100,7 @@ public class AutonDetector extends OpenCvPipeline {
 
     private Mat yellowThresh() {
         // yellow
-        Scalar lowHSV = new Scalar (10,64,20);
+        Scalar lowHSV = new Scalar (15,64,20);
         Scalar highHSV = new Scalar (30,255,255);
         Mat thresh = new Mat();
 

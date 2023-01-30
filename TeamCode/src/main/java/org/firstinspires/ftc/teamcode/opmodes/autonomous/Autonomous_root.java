@@ -84,7 +84,7 @@ public class Autonomous_root extends LinearOpMode {
 
             //RIGHT POSITION
             for(int i=0; i<1; i++){
-                chassis.runToAngle(40);
+                chassis.runToAngle(30);
 
                 adjust(chassis, vision, 0);
 
@@ -109,16 +109,19 @@ public class Autonomous_root extends LinearOpMode {
 
                 chassis.runToAngle(-90);
 
-                adjust(chassis, vision, 1);
+                chassis.stop();
+
+                adjust(chassis, vision, 0);
                 chassis.stop();
 
                 chassis.resetEncoder();
-                adjust(chassis, vision, 1);
-                chassis.stop();
+                chassis.runToPosition(-100,-100,-100,-100);
 
-                if(vision.tagId() == RIGHT) chassis.runToPosition(-1200, -1200, -1200, -1200);
-                else if(vision.tagId() == MIDDLE) chassis.runToPosition(100, 100, 100, 100);
-                else if(vision.tagId() == LEFT) chassis.runToPosition(800, 800, 800, 800);
+                chassis.resetEncoder();
+
+                if(vision.tagId() == RIGHT) chassis.runToPosition(-1100, -1100, -1100, -1100);
+                else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
+                else if(vision.tagId() == LEFT) chassis.runToPosition(1000, 1000, 1000, 1000);
             }
             parked = true;
         }
