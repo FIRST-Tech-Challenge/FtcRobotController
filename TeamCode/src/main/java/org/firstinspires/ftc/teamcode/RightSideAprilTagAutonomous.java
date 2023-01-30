@@ -1,3 +1,24 @@
+/*
+ * Copyright (c) 2021 OpenFTC Team
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
@@ -11,38 +32,21 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.List;
+import java.util.ArrayList;
 
-@Autonomous(name = "Auto 20", group = "Linear Opmode")
-//@Disabled
-
-public class Auto2022_23v2 extends LinearOpMode {
-
-    /*
-     * Specify the source for the Tensor Flow Model.
-     * If the TensorFlowLite object model is i--ncluded in the Robot Controller App as an "asset",
-     * the OpMode must to load it using loadModelFromAsset().  However, if a team generated model
-     * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
-     * Here we assume it's an Asset.    Also see method initTfod() below .
-     */
-    //private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/team3666.tflite";
-
-    private static final String[] LABELS = {
-            "1 Bolt",
-            "2 Bulb",
-            "3 Panel"
-    };
-
+@Autonomous(name = "Right Side April Tag Auto", group = "Linear Opmode")
+public class RightSideAprilTagAutonomous extends LinearOpMode
+{
     public DcMotorEx leftDrive;
     public DcMotorEx rightDrive;
     public DcMotorEx leftBackDrive;
@@ -82,7 +86,8 @@ public class Auto2022_23v2 extends LinearOpMode {
     public double rpm = 340;
     public double diameter = 10; //cm
 
-    public double angleCorrection = 6.43;
+    public double angleCorrectionCW = 8.17;
+    public double angleCorrectionCCW = 11.26;
 
     // Cone information
     public int coneCount = 1;
@@ -92,124 +97,189 @@ public class Auto2022_23v2 extends LinearOpMode {
     // General constants
     double oneFootCm = 30.48;
 
-    private static final String VUFORIA_KEY =
-            "AclDUAH/////AAABmYzSWAdyDktyn7LeKaYpXPkeHMDuWfVt+ZWKtbsATYUHu+lKEe6ywQGLZLm5MRmxfQ4UQRSZ8hR7Hx7cwiYcj7DBcqr2CcI/KXvXFnaoaSHonQcH5UjgGwygyR0DRMvRI9Mm+MnWqdwgQuS4eNYgz/vAuNpeGRJmwimGZkb9kb9Uai+RaH2V33PvH4TZepOg//RReZrL33oLxaLEchTHATEKR1xj6NLzHuZVuOTnIaMwPHRrkkK/cyMqaog/be+k2uxxQ2Lxtb2Yb4nHt4n8Rs7ajT/dUSsP/6pZdWmVs7BmIafbHlLFlS/6+1rDbSfOHqEyHFoLDq/hselgdVG2pzEzPcr3ntMwoIAPjiA799i5";
-    private VuforiaLocalizer vuforia;
-    private TFObjectDetector tfod;
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
+    static final double FEET_PER_METER = 3.28084;
+
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+
+    // UNITS ARE METERS
+    double tagsize = 0.166;
+
+    int ID_TAG_OF_INTEREST_1 = 7; // Tags from the 36h11 family
+    int ID_TAG_OF_INTEREST_2 = 9;
+    int ID_TAG_OF_INTEREST_3 = 12;
+
+    AprilTagDetection tagOfInterest = null;
 
     @Override
-    public void runOpMode() {
-        initVuforia();
-        initTfod();
+    public void runOpMode()
+    {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
         setUpHardware();
 
-        if (tfod != null) {
-            tfod.activate();
-            tfod.setZoom(1.0, 16.0/9.0);
-        }
-
-        telemetry.addData(">", "Press Play to start op mode");
-        telemetry.update();
-
-        while(!isStarted() && !isStopRequested()){
-
-        }
-        runtime.reset();
-
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                /*if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
-
-                        // step through the list of recognitions and display image position/size information for each one
-                        // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
-
-                            telemetry.addData("", " ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-                        }
-                        telemetry.update();
-                        if (updatedRecognitions.size() > 0 && !hasMoved) {
-                            moveToZone(updatedRecognitions.get(0).getLabel());
-                            hasMoved = true;
-                        }
-                    }
-                }*/
-                if(!hasMoved){
-                    turnNinety(true);
-                    telemetry.addData("Angle:",getAngle());
-                    telemetry.update();
-                    hasMoved = true;
-                }
-
-                /* Use the code below to test ticks per inch
-                 * Uncomment and run, then find how high the linear slide moved.
-                 * 1730 ticks as of writing this is the amount needed to lift up ten inches.
-                 * Change the liftCorrection variable to account for the difference in distance
-                 * For example: After running the code, the linear slide moved 13 inches.
-                 * Change liftCorrection to .7. This accounts for it being 3 inches over since
-                 * you're taking 3 inches off of the current one inch
-                 */
-
-                /*
-                if(!hasMoved){
-                    liftMotor.setMode(STOP_AND_RESET_ENCODER);
-                    liftMotor.setTargetPosition(1730);
-                    liftMotor.setMode(RUN_TO_POSITION);
-                    liftMotor.setPower(1.0);
-                    hasMoved = true;
-                }
-                 */
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
-        }
-    }
 
-    public void moveToZone(String signal){
-        telemetry.addData("Detected:",signal);
-        /*if(signal.equals("1 Bolt")){ // go to location 1 (left and forward)
-            movePercentOfFoot(true,30.0/12);
-            turnNinety(false);
-            movePercentOfFoot(true,21.0/12);
-        }
+            @Override
+            public void onError(int errorCode)
+            {
 
-        if(signal.equals("2 Bulb")){ // go to location 2 (return to start and forward)
-            movePercentOfFoot(true,30.0/12);
-        }
+            }
+        });
 
-        if(signal.equals("3 Panel")){ // go to location 3 (right and forward)
-            movePercentOfFoot(true,30.0/12);
-            turnNinety(true);
-            movePercentOfFoot(true,23.0/12);
-        }*/
+        telemetry.setMsTransmissionInterval(50);
 
-        moveGrabber(true);
-        waitTime(.5);
-        /*moveLift(5);
-        moveInchAmount(true,19);
-        moveLift(17);*/
-        moveLiftAndDrive(true,17,17);
-        turnNinety(false);
-        moveLift(9);
-        moveGrabber(false);
-        moveLift(12);
+        /*
+         * The INIT-loop:
+         * This REPLACES waitForStart!
+         */
         turnNinety(true);
-        moveLiftAndDrive(true,11,0);
-        if(signal.equals("1 Bolt")){
+        telemetry.addData("angle:",getAngle());
+        telemetry.update();
+        while (!isStarted() && !isStopRequested())
+        {
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+            if(currentDetections.size() != 0)
+            {
+                boolean tagFound = false;
+
+                for(AprilTagDetection tag : currentDetections)
+                {
+                    if(tag.id == ID_TAG_OF_INTEREST_1 || tag.id == ID_TAG_OF_INTEREST_3 || tag.id == ID_TAG_OF_INTEREST_2)
+                    {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                }
+
+                if(tagFound)
+                {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
+                }
+                else
+                {
+                    telemetry.addLine("Don't see tag of interest :(");
+
+                    if(tagOfInterest == null)
+                    {
+                        telemetry.addLine("(The tag has never been seen)");
+                    }
+                    else
+                    {
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                        tagToTelemetry(tagOfInterest);
+                    }
+                }
+
+            }
+            else
+            {
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if(tagOfInterest == null)
+                {
+                    telemetry.addLine("(The tag has never been seen)");
+                }
+                else
+                {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+
+            }
+
+            telemetry.update();
+            sleep(20);
+        }
+
+        /* Update the telemetry */
+        if(tagOfInterest != null)
+        {
+            telemetry.addLine("Tag snapshot:\n");
+            tagToTelemetry(tagOfInterest);
+            telemetry.update();
+        }
+        else
+        {
+            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            telemetry.update();
+        }
+
+        /*moveLift(19);
+        waitTime(1);
+        turnNinety(false);
+        while(opModeIsActive()) {
+            telemetry.addData("angle: ", getAngle());
+            telemetry.update();
+        }*/
+        if(tagOfInterest == null){
+            moveGrabber(true);
+            waitTime(.5);
+            moveLiftAndDrive(true,19.25,17);
             turnNinety(false);
-            moveInchAmount(true,21);
-        }else if(signal.equals("3 Panel")){
+            moveInchAmount(true,.25);
+            sleep(500);
+            moveGrabber(false);
+            moveInchAmount(false,.25);
             turnNinety(true);
-            moveInchAmount(true,23);
+            moveLiftAndDrive(true,39.25,0);
+            sleep(100);
+            turnNinety(true);
+            /*for(int i = 0; i < 3; i++){
+                moveToTape();
+                pickupCone();
+                moveLiftAndDrive(false,45,MAX_LIFT_POS);
+                sleep(100);
+                turnNinety(false);
+                moveLift(30);
+                moveGrabber(false);
+                moveLift(32);
+                sleep(100);
+                turnNinety(true);
+                moveLiftAndDrive(true,28,8);
+            }*/
+        }else{
+            moveGrabber(true);
+            waitTime(.5);
+            moveLiftAndDrive(true,19.25,17);
+            turnNinety(false);
+            moveInchAmount(true,.25);
+            sleep(500);
+            moveGrabber(false);
+            moveInchAmount(false,.25);
+            turnNinety(true);
+            moveLiftAndDrive(true,12.75,0);
+            if(tagOfInterest.id == ID_TAG_OF_INTEREST_1){
+                sleep(100);
+                turnNinety(false);
+                moveInchAmount(true,24);
+            }else if(tagOfInterest.id == ID_TAG_OF_INTEREST_3){
+                sleep(100);
+                waitTime(3);
+                turnNinety(true);
+                waitTime(3);
+                moveInchAmount(true,24);
+            }
         }
     }
 
@@ -253,40 +323,6 @@ public class Auto2022_23v2 extends LinearOpMode {
         liftMotor.setMode(STOP_AND_RESET_ENCODER); // Set to 0 just in case
     }
 
-    /**
-     * Initialize the Vuforia localization engine.
-     */
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-    }
-
-    /**
-     * Initialize the TensorFlow Object Detection engine.
-     */
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 300;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-
-        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
-        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
-    }
-
     public void strafeVelo(boolean isLeft, double maxPercent, double time){
         //Strafe left or right
         int direction = -1;
@@ -314,24 +350,24 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         if(CW) {
             if(originalAngle - 90 < 0 && !(originalAngle < 0)) {
-                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - 90 + angleCorrection + 360)) {
+                while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - 90 + angleCorrectionCW + 360)) {
                     leftVelo(.75);
                     rightVelo(-.75);
                 }
             }else{
-                while (opModeIsActive() && getAngle() > originalAngle - 90 + angleCorrection && getAngle() < originalAngle + 5) {
+                while (opModeIsActive() && getAngle() > originalAngle - 90 + angleCorrectionCW && getAngle() < originalAngle + 5) {
                     leftVelo(.75);
                     rightVelo(-.75);
                 }
             }
         }else{
             if(originalAngle + 90 > 360) {
-                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + 90 - angleCorrection - 360)) {
+                while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + 90 - angleCorrectionCCW - 360)) {
                     leftVelo(-.75);
                     rightVelo(.75);
                 }
             }else{
-                while (opModeIsActive() && getAngle() < originalAngle + 90 - angleCorrection && getAngle() > originalAngle - 5) {
+                while (opModeIsActive() && getAngle() < originalAngle + 90 - angleCorrectionCCW && getAngle() > originalAngle - 5) {
                     leftVelo(-.75);
                     rightVelo(.75);
                 }
@@ -347,7 +383,7 @@ public class Auto2022_23v2 extends LinearOpMode {
     public void turnToAngle(double targetAngle){
         double originalAngle = getAngle();
         double changeInAngle = optimalAngleChange(targetAngle);
-        double turningCorrection = (angleCorrection / 90) * changeInAngle;
+        double turningCorrection = (angleCorrectionCW / 90) * changeInAngle;
 
         boolean CW = optimalDirection(targetAngle);
 
@@ -426,21 +462,14 @@ public class Auto2022_23v2 extends LinearOpMode {
 
     /**
      * Drives forward until it reads red or blue tape below it
-     * @param red True or false
      */
-    public void moveToTape(boolean red){
-        if(red){
-            while(opModeIsActive() && color.red() < 1200){
-                motorsOn(.5);
-            }
-        }else{
-            while(opModeIsActive() && color.blue() < 1200){
-                motorsOn(.5);
-            }
+    public void moveToTape(){
+        while(opModeIsActive() && (color.red() < 1200 || color.blue() < 1200)){
+            motorsOn(.5);
         }
         motorsOff();
         moveLift(12);
-        moveInchAmount(true, 10);
+        moveInchAmount(true, 10.5);
     }
 
     /**
@@ -502,9 +531,10 @@ public class Auto2022_23v2 extends LinearOpMode {
 
         liftMotor.setPower(1);
 
+        runtime.reset();
         if(forward){
             motorsOn(.75);
-            while(opModeIsActive() && liftMotor.isBusy() || leftBackDrive.getCurrentPosition() < totalTicks){
+            while(opModeIsActive() && (liftMotor.isBusy() || leftBackDrive.getCurrentPosition() < totalTicks)){
                 if(leftBackDrive.getCurrentPosition() > totalTicks){
                     motorsOff();
                 }
@@ -512,8 +542,12 @@ public class Auto2022_23v2 extends LinearOpMode {
                     liftMotor.setTargetPosition(targetTick);
                     liftMotor.setMode(RUN_TO_POSITION);
                     liftMotor.setPower(.25);
-                }else{
+                    correctionsDone = true;
+                }else if(!liftMotor.isBusy()){
                     liftMotor.setPower(0);
+                }
+                if(runtime.seconds() > 8){
+                    break;
                 }
             }
         }else{
@@ -527,8 +561,12 @@ public class Auto2022_23v2 extends LinearOpMode {
                     liftMotor.setTargetPosition(targetTick);
                     liftMotor.setMode(RUN_TO_POSITION);
                     liftMotor.setPower(.25);
+                    correctionsDone = true;
                 }else{
                     liftMotor.setPower(0);
+                }
+                if(runtime.seconds() > 8){
+                    break;
                 }
             }
         }
@@ -671,5 +709,16 @@ public class Auto2022_23v2 extends LinearOpMode {
         }
         x2 = 360 - x1;
         return Math.min(x1, x2);
+    }
+
+    void tagToTelemetry(AprilTagDetection detection)
+    {
+        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
