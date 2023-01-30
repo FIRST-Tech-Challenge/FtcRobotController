@@ -119,6 +119,8 @@ public class CVMaster {
     }
 
     public void stopCamera(){
+        webcam.stopRecordingPipeline();
         webcam.stopStreaming();
+        dashboard.stopCameraStream();
     }
 }

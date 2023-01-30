@@ -45,8 +45,10 @@ public class Field {
     double[] currentPosition = {0, 0, 0};
     Trajectory dropTrajectory;
     private Pose2d nexttrajStartPos;
+    boolean doneLookin =false;
     Lock locker;
     Lock needsLocker;
+    Pose2d polePos = new Pose2d(0,0,0);
 
 
     double[][][] poleCoords = {
@@ -94,27 +96,25 @@ public class Field {
 
     //is robot looking at a pole
     public boolean lookingAtPole() {
-
+        doneLookin=false;
         double[] coords = cv.rotatedPolarCoord();
-        minDistPole();
-        Pose2d curntPose = roadrun.getPoseEstimate();//.7,2.5
-        curntPose = new Pose2d(curntPose.getX(), curntPose.getY(), imu.updateAngle());
-        dropPosition[2] = curntPose.getHeading() - coords[0] + cameraPos[2];
-        dropPosition[0] = curntPose.getX() + (coords[1]) * cos(dropPosition[2]) + cameraPos[0] * sin(curntPose.getHeading()) + cameraPos[1] * cos(curntPose.getHeading());
-        dropPosition[1] = curntPose.getY() + (coords[1]) * sin(dropPosition[2]) - cameraPos[1] * sin(curntPose.getHeading()) + cameraPos[0] * cos(curntPose.getHeading());
-        dropPosition[2] = atan2(-(curntPose.getY() - dropPosition[1]), -(curntPose.getX() - dropPosition[0]));
-        op.telemetry.addData("polex", poleValues[0]);
-        op.telemetry.addData("poley", poleValues[1]);
-        op.telemetry.addData("cvtheta", coords[0]);
-        op.telemetry.addData("cvdistance", coords[1]);
-        op.telemetry.addData("cvheight", cv.poleSize());
-        op.telemetry.addData("x", getDropPosition().getX());
-        op.telemetry.addData("y", getDropPosition().getY());
-        op.telemetry.addData("heading", (getDropPosition().getHeading() * 180 / PI));
-//            roadrun.setPoseEstimate(new Pose2d(2 * roadrun.getPoseEstimate().getX() + (coords[1]) * cos(roadrun.getPoseEstimate().getHeading() + coords[0]) - poleCoords[(int) poleValues[0]][(int) poleValues[1]][0],
-//                    2 * roadrun.getPoseEstimate().getY() + (coords[1]) * sin(roadrun.getPoseEstimate().getHeading() + coords[0]) - poleCoords[(int) poleValues[0]][(int) poleValues[1]][1],
-//                    2 * roadrun.getPoseEstimate().getHeading() + coords[0] - poleValues[3]));
-        return true;
+        coords[1]-=9;
+        Pose2d pos = roadrun.getPoseEstimate();
+        pos = new Pose2d(pos.getX(),pos.getY(),pos.getHeading()+PI);
+        polePos = new Pose2d(pos.getX()+cos(pos.getHeading()+coords[0]*PI/180)*coords[1],pos.getY()+sin(pos.getHeading()+coords[0]*PI/180)*coords[1],pos.getHeading()+coords[0]*PI/180);
+        if(abs(coords[0])<7&&abs(coords[1])<10&&abs(coords[1])>2){
+            return true;
+        }
+        return false;
+    }
+    public Pose2d polePos() {
+        return polePos;
+    }
+    public boolean isDoneLookin(){
+        return doneLookin;
+    }
+    public void setDoneLookin(boolean inpu){
+        doneLookin=inpu;
     }
 
     public void closestDropPosition(boolean correct) {

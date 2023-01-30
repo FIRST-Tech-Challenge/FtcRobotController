@@ -58,7 +58,7 @@ import java.util.List;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 1.0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(9, 0, 1.0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0.5);
 
     public static double LATERAL_MULTIPLIER = 1;
@@ -245,6 +245,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         followTrajectorySequenceAsync(trajectorySequence);
         waitForIdle();
     }
+    public void changeTrajectorySequence(TrajectorySequence trajectorySequence) {
+        trajectorySequenceRunner.changeTrajectorySequence(trajectorySequence);
+    }
 
     public void breakFollowing() {
         trajectorySequenceRunner.breakFollowing();
@@ -309,6 +312,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         for (DcMotorEx motor : motors) {
             motor.setPIDFCoefficients(runMode, compensatedCoefficients);
         }
+    }
+    public TrajectorySequence getCurrentTraj(){
+        return trajectorySequenceRunner.getTrajectorySequence();
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {

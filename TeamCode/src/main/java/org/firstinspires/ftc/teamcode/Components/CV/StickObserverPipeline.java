@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.CV;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -17,10 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class StickObserverPipeline extends OpenCvPipeline {
-    double centerOfPole = 0, poleSize = 0, degPerPix = 22.5/320, widTimesDist = 16.007*58, focalLength = 715;
+    public static double  degPerPix = 22.5/320, widTimesDist = 820, focalLength = 715;
+    double centerOfPole = 0, poleSize = 0;
     ArrayList<double[]> frameList;
-    public static double strictLowS = 140;
-    public static double strictHighS = 255;
+    public static double LowS = 130;
+    public static double HighS = 255;
+    public static double LowH = 15;
+    public static double HighH = 32;
+    public static double LowV = 55;
+    public static double HighV = 255;
+
 
 
     public StickObserverPipeline() {
@@ -37,40 +44,40 @@ public class StickObserverPipeline extends OpenCvPipeline {
             return input;
         }
 
-        Scalar lowHSV = new Scalar(20, 70, 80); // lenient lower bound HSV for yellow
-        Scalar highHSV = new Scalar(32, 255, 255); // lenient higher bound HSV for yellow
+        Scalar lowHSV = new Scalar(LowH, LowS, LowV); // lenient lower bound HSV for yellow
+        Scalar highHSV = new Scalar(HighH, HighS, HighV); // lenient higher bound HSV for yellow
 
         Mat thresh = new Mat();
 
         // Get a black and white image of yellow objects
         Core.inRange(mat, lowHSV, highHSV, thresh);
 
-        Mat masked = new Mat();
-        //color the white portion of thresh in with HSV from mat
-        //output into masked
-        Core.bitwise_and(mat, mat, masked, thresh);
-        //calculate average HSV values of the white thresh values
-        Scalar average = Core.mean(masked,thresh);
-
-        Mat scaledMask = new Mat();
-        //scale the average saturation to 150
-        masked.convertTo(scaledMask,-1,150/average.val[1],0);
-
-
-        Mat scaledThresh = new Mat();
-        Scalar strictLowHSV = new Scalar(0, strictLowS, 0); //strict lower bound HSV for yellow
-        Scalar strictHighHSV = new Scalar(255, strictHighS, 255); //strict higher bound HSV for yellow
-        //apply strict HSV filter onto scaledMask to get rid of any yellow other than pole
-        Core.inRange(scaledMask, strictLowHSV,strictHighHSV,scaledThresh);
-
-        Mat finalMask = new Mat();
-        //color in scaledThresh with HSV(for showing result)
-        Core.bitwise_and(mat, mat, finalMask, scaledThresh);
+//        Mat masked = new Mat();
+//        //color the white portion of thresh in with HSV from mat
+//        //output into masked
+//        Core.bitwise_and(mat, mat, masked, thresh);
+//        //calculate average HSV values of the white thresh values
+//        Scalar average = Core.mean(masked,thresh);
+//
+//        Mat scaledMask = new Mat();
+//        //scale the average saturation to 150
+//        masked.convertTo(scaledMask,-1,150/average.val[1],0);
+//
+//
+//        Mat scaledThresh = new Mat();
+//        Scalar strictLowHSV = new Scalar(0, strictLowS, 0); //strict lower bound HSV for yellow
+//        Scalar strictHighHSV = new Scalar(255, strictHighS, 255); //strict higher bound HSV for yellow
+//        //apply strict HSV filter onto scaledMask to get rid of any yellow other than pole
+//        Core.inRange(scaledMask, strictLowHSV,strictHighHSV,scaledThresh);
+//
+//        Mat finalMask = new Mat();
+//        //color in scaledThresh with HSV(for showing result)
+//        Core.bitwise_and(mat, mat, finalMask, scaledThresh);
 
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         //find contours of edges
-        Imgproc.findContours(scaledThresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(thresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
         //rotatedRect because it allows for more accurate bounding rectangles, perfect if pole is slanted
         RotatedRect[] rectangle = new RotatedRect[contours.size()];
@@ -82,26 +89,27 @@ public class StickObserverPipeline extends OpenCvPipeline {
             //find rotatedRect for polygon
             rectangle[i] = Imgproc.minAreaRect(contoursPoly[i]);
         }
-
-        //find index of largest rotatedRect(assumed that it is closest tile)
+//
+//        //find index of largest rotatedRect(assumed that it is closest tile)
         int maxAreaIndex = 0;
         double maxWidth = 0;
         //iterate through each rotatedRect find largest
-        for (int i = 1; i < rectangle.length; i++) {
-            if(rectangle[i].size.height<rectangle[i].size.width){
-                if (rectangle[i].size.height > maxWidth) {
-                    maxAreaIndex = i;
-                    maxWidth = rectangle[i].size.height;
-                }
-            }
-            else{
-                if (rectangle[i].size.width > maxWidth) {
-                    maxAreaIndex = i;
-                    maxWidth = rectangle[i].size.width;
+        for (int i = 0; i < rectangle.length; i++) {
+            if(rectangle[i].size.height/rectangle[i].size.width>2 ||rectangle[i].size.width/rectangle[i].size.height>2) {
+                if (rectangle[i].size.height < rectangle[i].size.width) {
+                    if (rectangle[i].size.height > maxWidth) {
+                        maxAreaIndex = i;
+                        maxWidth = rectangle[i].size.height;
+                    }
+                } else {
+                    if (rectangle[i].size.width > maxWidth) {
+                        maxAreaIndex = i;
+                        maxWidth = rectangle[i].size.width;
+                    }
                 }
             }
         }
-        //if there is a detected largest contour, record information about it
+//        //if there is a detected largest contour, record information about it
         if(rectangle.length>0) {
             if(rectangle[maxAreaIndex].size.height<rectangle[maxAreaIndex].size.width) {
                 poleSize = rectangle[maxAreaIndex].size.height;
@@ -114,7 +122,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
             }
             frameList.add(new double[]{centerOfPole, poleSize});
         }
-        //list of frames to reduce inconsistency, not too many so that it is still real-time
+//        //list of frames to reduce inconsistency, not too many so that it is still real-time
         if(frameList.size()>5) {
             frameList.remove(0);
         }
@@ -122,18 +130,21 @@ public class StickObserverPipeline extends OpenCvPipeline {
         //release all the data
 
         input.release();
-        scaledThresh.copyTo(input);
-        scaledThresh.release();
-        scaledMask.release();
+//        scaledThresh.copyTo(input);
+//        scaledThresh.release();
+//        scaledMask.release();
         mat.release();
-        masked.release();
+        rectangle=null;
+        contoursPoly = null;
+//        masked.release();
+        thresh.copyTo(input);
         thresh.release();
         hierarchy.release();
-        finalMask.release();
-        Scalar lineColor= new Scalar(255,50,50);
-        if(contoursPoly.length>0) {
-            Imgproc.rectangle(input, Imgproc.boundingRect(contoursPoly[maxAreaIndex]), lineColor, 5);
-        }
+//        finalMask.release();
+//        Scalar lineColor= new Scalar(255,50,50);
+//        if(contoursPoly.length>0) {
+//            Imgproc.rectangle(input, Imgproc.boundingRect(contoursPoly[maxAreaIndex]), lineColor, 5);
+//        }
         return input;
     }
 
@@ -160,6 +171,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
     }
 
     public double[] poleRotatedPolarCoord() {
-        return new double[]{atan(centerOfPole()/focalLength), widTimesDist / poleSize()};
+        return new double[]{-atan(centerOfPole()/focalLength)*180/PI, widTimesDist / poleSize()};
     }
 }

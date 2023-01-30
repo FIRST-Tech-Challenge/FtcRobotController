@@ -276,4 +276,10 @@ public class TrajectorySequenceRunner {
         currentTrajectorySequence = null;
         remainingMarkers.clear();
     }
+    public void changeTrajectorySequence(TrajectorySequence trajectorySequence) {
+        currentTrajectorySequence = trajectorySequence;
+    }
+    public TrajectorySequence getTrajectorySequence(){
+        return currentTrajectorySequence;
+    }
 }

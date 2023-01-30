@@ -128,7 +128,18 @@ public class PwPRobot extends BasicRobot {
     public void updateLiftArmStates() {
         liftArm.updateLiftArmStates();
     }
-
+    public void updateTrajectoryWithCam(){
+        if (queuer.queue(true, field.isDoneLookin())) {
+            if(field.lookingAtPole()){
+                Pose2d target = field.polePos();
+                TrajectorySequence trajectory = roadrun.getCurrentTraj();
+                roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
+                        .splineTo(target.vec(), target.getHeading()).build());
+                field.setDoneLookin(true);
+                logger.log("/RobotLogs/GeneralRobot", ""+target+""+field.isDoneLookin());
+            }
+        }
+    }
     public void teleAutoAim(Trajectory trajectory) {
         roadrun.followTrajectoryAsync(trajectory);
     }
@@ -226,7 +237,9 @@ public class PwPRobot extends BasicRobot {
             lift.liftToPosition(tickTarget);
         }
     }
-
+    public void changeTrajectorySequence(TrajectorySequence trajectorySequence){
+        roadrun.changeTrajectorySequence(trajectorySequence);
+    }
     public void liftToPosition(int tickTarget, boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, lift.isDone() || abs(lift.getLiftPosition() - tickTarget) < 50)) {
             lift.liftToPosition(tickTarget);
@@ -500,9 +513,9 @@ public class PwPRobot extends BasicRobot {
             if (regularDrive) {
                 roadrun.setWeightedDrivePower(
                         new Pose2d(
-                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.55 * abs(vals[1]) + 0.05 * pow(abs(vals[1]), 3)),
-                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.55 * abs(vals[0]) + 0.05 * pow(abs(vals[0]), 3)),
-                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.5 * abs(vals[2]))
+                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.6 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2)),
+                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.6 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2)),
+                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.6 * abs(vals[2]))
                         )
                 );
             } else {
