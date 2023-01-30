@@ -98,7 +98,6 @@ public class MechanismDriving {
      * @return whether the slides are in the desired position.
      */
     public boolean updateSlides(Robot robot, double slidesPower) {
-
        if (Robot.desiredSlidesState != Robot.SlidesState.UNREADY) {
            if(!testing)
                setSlidePosition(robot, getTargetSlidesEncoderCount(robot));
@@ -121,6 +120,7 @@ public class MechanismDriving {
            // Stop motors when we have reached the desired position
            if (Math.abs(robot.slidesMotor.getCurrentPosition() - desiredSlidePosition) < EPSILON) {
                robot.slidesMotor.setPower(0);
+
                return true;
            }
            return false;
