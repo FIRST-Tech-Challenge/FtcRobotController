@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcodekt.components
+package org.firstinspires.ftc.teamcodekt.components.basicranging
 
 import com.outoftheboxrobotics.photoncore.Neutrino.MB1242.MB1242Ex
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
