@@ -5,16 +5,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Grabber {
     public Servo Servo1;
     public Servo Servo2;
-    public void stop() {
+    public void open() {
         Servo1.setPosition(0);
         Servo2.setPosition(0);
 
     }
-    public void grabber1(float position){
-        Servo1.setPosition(position);
+    public void Close() {
+        Servo1.setPosition(90);
+        Servo2.setPosition(90);
     }
-    public void grabber2(float position){
-        Servo2.setPosition(position);
-    }
-
 }
