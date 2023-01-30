@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.Grabber;
+
 @TeleOp(name = "donga")
 
 public class main extends LinearOpMode {
@@ -14,7 +16,7 @@ public class main extends LinearOpMode {
     composetelemetry composetelemetry = new composetelemetry();
 
     ARM ARM = new ARM();
-     = new Grabber();
+    Grabber Grabber= new Grabber();
 
     @Override
     public void runOpMode() {
