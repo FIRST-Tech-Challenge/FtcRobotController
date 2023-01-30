@@ -38,7 +38,7 @@ abstract class RogueBaseAuto : BlackOp()                                        
 
         Scheduler.launch                                                                                                                                                                    (
           opmode = this                                                                                                                                                                     )                                                                                                       {
-            bot.updateBaseComponents(0.0)
+            bot.updateBaseComponents()
             bot.drive.update()
             mTelemetry.update()                                                                                                                                                             }}
 

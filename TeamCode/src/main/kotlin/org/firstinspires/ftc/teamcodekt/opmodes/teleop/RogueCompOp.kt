@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import ftc.rogue.blacksmith.util.kt.pow
 import kotlin.math.sign
-import kotlin.math.sqrt
 
 @TeleOp
 class RogueCompOp : RogueBaseTele() {
@@ -58,13 +57,13 @@ class RogueCompOp : RogueBaseTele() {
         val bumpersPressed = left_bumper + right_bumper
 
         (right_stick_y(deadzone = .1) + !bumpersPressed).whileHigh {
-            bot.lift.height += (-codriver.right_stick_y() * 10).toInt()
+            bot.lift.clippedHeight += (-codriver.right_stick_y() * 10).toInt()
         }
 
         // -- MANUAL LIFT RESET --
 
         (bumpersPressed + right_stick_y(deadzone = .1)).whileHigh {
-            bot.lift.rawHeight += (-codriver.right_stick_y() * 2.5).toInt()
+            bot.lift.targetHeight += (-codriver.right_stick_y() * 2.5).toInt()
         }
 
         bumpersPressed.onFall {
