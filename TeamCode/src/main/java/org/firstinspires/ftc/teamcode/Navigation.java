@@ -48,13 +48,14 @@ public class Navigation {
     static final double MOVEMENT_MAX_POWER = 1;
     static final double ROTATION_POWER = 0.6;
     static final double SLOW_MOVEMENT_SCALE_FACTOR = 0.5;
+    static final double MEDIUM_MOVEMENT_SCALE_FACTOR = 0.75;
 
     // INSTANCE ATTRIBUTES
     // ===================
 
     // Speeds relative to one another.
     //                              RL   RR   FL   FR
-    public double[] wheel_speeds = {1.0, 1.0, 1.0, 1.0};
+    public double[] wheel_speeds = {-1.0, -1.0, -1.0, -1.0};
     public double strafePower;  // Tele-Op only
 
     // First position in this ArrayList is the first position that robot is planning to go to.
@@ -130,6 +131,8 @@ public class Navigation {
             strafePower = distance * MOVEMENT_MAX_POWER;
             if (Robot.desiredSlidesState == Robot.SlidesState.HIGH) {
                 strafePower *= SLOW_MOVEMENT_SCALE_FACTOR;
+            } else if (Robot.desiredSlidesState == Robot.SlidesState.MEDIUM) {
+                strafePower *= MEDIUM_MOVEMENT_SCALE_FACTOR;
             }
         }
     }
