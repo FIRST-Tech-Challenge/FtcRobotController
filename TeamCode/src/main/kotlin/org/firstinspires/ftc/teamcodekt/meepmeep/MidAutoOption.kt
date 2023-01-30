@@ -39,20 +39,19 @@ fun main() {
  */
 private fun mainTraj(drive: DriveShim) =
     Anvil.formTrajectory(drive, startPose)
+        .splineTo(-76, -82, 60)
+        .back(20)
+        .turn(30)
+        .splineTo(-91, -44, 115)
+        .splineTo(-150, -31, 180)
 
-            .awaitInitialGocToDeposit()
-            .turn(46)
-            .back(70)
-            .strafeRight(4)
-            .turn(-29)
-            .forward(10)
-            .back(16.5)
 
-            .doTimes(4) {
-                goToDeposit(it+1)
-                goToIntake(it+1)
-                waitTime(200)
-            }
+        .doTimes(5){
+            splineTo(-75, -44, -45).doInReverse()
+            .splineTo(-150, -31, 180)
+        }
+
+
         .build<TrajectorySequence>()
 
 private fun Anvil.awaitInitialGocToDeposit() = this

@@ -128,7 +128,7 @@ class Lift {
         }
 
     private val liftAccel: Double
-        get() {
+        get()  {
             // TODO: Check if this actually works. a bit sus imo but idk might work or be close enough
             if(twoPrevTime == 0L || onePrevTime == 0L)
                 return 0.0
