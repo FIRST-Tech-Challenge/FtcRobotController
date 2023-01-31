@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -23,7 +22,7 @@ public class RobotManager {
 
     public enum AllianceColor {BLUE, RED}
     public enum StartingSide {OUR_COLOR, THEIR_COLOR} //add starting side here later
-    public enum ParkingPosition {LEFT, RIGHT, CENTER}
+    public enum ParkingPosition {LEFT, RIGHT, MIDDLE}
     public Robot robot;
     public AllianceColor allianceColor;
     public StartingSide startingSide;

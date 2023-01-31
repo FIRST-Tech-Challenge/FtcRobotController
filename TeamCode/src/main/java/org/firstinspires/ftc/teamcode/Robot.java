@@ -28,26 +28,6 @@ public class Robot {
     public ClawState desiredClawState;
     public boolean previousSlidesLimitSwitchState = false;
 
-    enum BarcodeScanState {CHECK_SCAN, SCAN}
-
-    public BarcodeScanState barcodeScanState;
-    public enum BarcodeScanResult {LEFT, CENTER, RIGHT};
-
-    static final int MAX_BARCODE_ATTEMPTS = 40;                           // How many times to try scanning the barcode before giving up
-    static final int MIN_BARCODE_REPEAT = MAX_BARCODE_ATTEMPTS / 2 + 1;
-
-    int numBarcodeAttempts;                                               // Amount of current attempts to scan the barcode
-    Map<BarcodeScanResult, Integer> barcodeScanResultMap;                 // An array representing a histogram of the scan results.
-    BarcodeScanResult barcodeScanResult;                                  // Represents the final decided barcode state
-
-    public void resetBarcodeScanMap() {
-        barcodeScanResultMap = new HashMap<BarcodeScanResult, Integer>() {{
-            put(BarcodeScanResult.LEFT, 0);
-            put(BarcodeScanResult.CENTER, 0);
-            put(BarcodeScanResult.RIGHT, 0);
-        }};
-    }
-
     enum MovementMode {NORMAL, FINE, ULTRA_FINE}
     MovementMode movementMode = MovementMode.NORMAL;
     boolean wheelSpeedAdjustment = false;
@@ -62,17 +42,14 @@ public class Robot {
     // Other
     public Telemetry telemetry;
     public ElapsedTime elapsedTime;
-
-    // Positioning
     public PositionManager positionManager;
+    public ComputerVision computerVision;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime elapsedTime) {
         this.telemetry = telemetry;
         this.elapsedTime = elapsedTime;
         positionManager = new PositionManager(hardwareMap, telemetry);
-
-        numBarcodeAttempts = 0;
-        resetBarcodeScanMap();
+        computerVision = new ComputerVision(hardwareMap, telemetry, elapsedTime);
 
         desiredClawRotatorState = ClawRotatorState.FRONT;
         desiredClawState = ClawState.CLOSED;
