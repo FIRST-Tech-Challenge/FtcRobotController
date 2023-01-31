@@ -224,8 +224,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                 huskyBot.armExtendMotor.setPower(0);
                 huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-                huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
+                armLiftTargetPos = huskyBot.armLiftMotor.getCurrentPosition();
 
                 armState = ArmState.ARM_WAIT;
             }
@@ -291,6 +290,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     // Step 2:
                     // Wait until the step 1 is completed
                     // Then change the arm lift's position (up or down based on the target position)
+                    armLiftRunToPos(huskyBot.armLiftMotor.getCurrentPosition());
 
                     if(huskyBot.armExtendMotor.isBusy()){
                         if(finiteTimer.seconds() > 7){
@@ -298,6 +298,8 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
                             huskyBot.armExtendMotor.setPower(0);
                             huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                            armLiftTargetPos = huskyBot.armLiftMotor.getCurrentPosition();
 
                             armState = ArmState.ARM_WAIT;
                             break;
@@ -308,10 +310,6 @@ public class HuskyTeleOpMode extends LinearOpMode {
                         huskyBot.armExtendMotor.setPower(0);
                         huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-                        huskyBot.armLiftMotor.setTargetPosition(armLiftTargetPos);
-                        huskyBot.armLiftMotor.setPower(0.35);
-                        huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
                         armState = ArmState.STEP_3;
                     }
 
@@ -320,13 +318,13 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     // Step 3:
                     // Wait until the step 2 is completed
                     // Then change the arm extender's position (in or out based on the target position)
+                    armLiftRunToPos(armLiftTargetPos);
 
-                    if (huskyBot.armLiftMotor.isBusy()) {
+                    if (Math.abs(huskyBot.armLiftMotor.getCurrentPosition() - armLiftTargetPos) > 100) {
                         if(finiteTimer.seconds() > 7){
                             gamepad1.rumble(1000);
 
-                            huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                            huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
+                            armLiftTargetPos = huskyBot.armLiftMotor.getCurrentPosition();
 
                             armState = ArmState.ARM_WAIT;
                             break;
@@ -334,9 +332,6 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
                         telemetry.addData("Arm State Status", "Arm lift is moving");
                     } else {
-                        huskyBot.armLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                        huskyBot.armLiftMotor.setPower(ARM_LIFT_POWER_AT_REST);
-
                         huskyBot.armExtendMotor.setTargetPosition(armExtendTargetPos);
                         huskyBot.armExtendMotor.setPower(1.0);
                         huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -350,6 +345,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     // Step 4:
                     // Wait until the step 3 is completed
                     // Then change armState to wait (default)
+                    armLiftRunToPos(armLiftTargetPos);
 
                     if (huskyBot.armExtendMotor.isBusy()) {
                         if(finiteTimer.seconds() > 7){
@@ -357,6 +353,8 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
                             huskyBot.armExtendMotor.setPower(0);
                             huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                            armLiftTargetPos = huskyBot.armLiftMotor.getCurrentPosition();
 
                             armState = ArmState.ARM_WAIT;
                             break;
