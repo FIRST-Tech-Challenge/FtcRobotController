@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.units.GlobalUnits
 import org.firstinspires.ftc.teamcode.AutoData
 
 @Autonomous
 class RogueLeftMidAuto : RogueBaseAuto() {
-    override val startPose = GlobalUnits.pos(-72, -163.5, 90)
+    override val startPose = GlobalUnits.pos(-84, -169, 90)
 
     override fun mainTraj(startPose: Pose2d) =
             Anvil.formTrajectory(bot.drive, startPose)

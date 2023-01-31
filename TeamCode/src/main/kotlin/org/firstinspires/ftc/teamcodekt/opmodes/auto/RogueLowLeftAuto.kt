@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcodekt.opmodes.deprecated
+package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
@@ -10,8 +10,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
 
-@Deprecated("Created before league tournament.")
-@Disabled
 @Autonomous
 class RogueLowLeftAuto : RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(-91, -163, 90)
@@ -21,14 +19,14 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                     .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(36.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
             .preform(0, ::parkTraj)
                     .awaitInitialGoToDeposit()
-                    .turn(46)
+                    .turn(50)
                     .addTemporalMarker(0) {
                         bot.lift.clippedHeight = liftOffsets[0]-8
                         bot.wrist.setToBackwardsPos()
                     }
                     .back(70)
-                    .strafeRight(4)
-                    .turn(-29)
+                    .strafeRight(5.5)
+                    .turn(-28)
                     .forward(10)
                     .regularIntakePrep(0)
 
@@ -58,7 +56,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
 
     private fun Anvil.initialDepositPrep() = this
             .addTemporalMarker {
-                bot.lift.goToAngledMid()
+                bot.lift.goToHigh()
                 bot.claw.close()
                 bot.arm.setToForwardsAngledPos()
                 bot.wrist.setToForwardsPos()
@@ -67,7 +65,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
     private fun Anvil.awaitInitialGoToDeposit() = this
             .initialDepositPrep()
             .forward(132)
-            .turn(-136)
+            .turn(-140)
             .forward(12.5)
             .waitTime(150)
             .deposit()
@@ -115,7 +113,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
             }
 
             .addTemporalMarker(105) {
-                bot.lift.clippedHeight = liftOffsets[iterations]-15
+                bot.lift.clippedHeight = liftOffsets[iterations]-10
                 bot.wrist.setToBackwardsPos()
             }
 
@@ -163,7 +161,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                         splineTo(-95.5, -24, 180)
                     }
                     3 -> {
-                        splineToLinearHeading(-30, -34, 90, -38.375)
+                        splineToLinearHeading(-30, -34, -90, -38.375)
                     }
                 }
 

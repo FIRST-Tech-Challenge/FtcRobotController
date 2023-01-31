@@ -132,18 +132,20 @@ class Lift {
     private var onePrevTime = 0L
 
     private fun regenMotionProfile() {
-        if (motionTime == null)
-            motionTime = ElapsedTime(0);
-        motionTime.reset()
-        profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                MotionState(liftHeight.toDouble(), liftVelocity, liftAccel),
-                MotionState(targetHeight.toDouble(), 0.0, 0.0),
-                LIFT_MAX_V, LIFT_MAX_A, LIFT_MAX_J
-        )
-        if (targetHeight < liftHeight)
-            mult = -1
-        else
-            mult = 1
+        try {
+            if (motionTime == null)
+                motionTime = ElapsedTime(0);
+            motionTime.reset()
+            profile = MotionProfileGenerator.generateSimpleMotionProfile(
+                    MotionState(liftHeight.toDouble(), liftVelocity, liftAccel),
+                    MotionState(targetHeight.toDouble(), 0.0, 0.0),
+                    LIFT_MAX_V, LIFT_MAX_A, LIFT_MAX_J
+            )
+        }
+        catch (e: Exception){
+            return
+        }
+
     }
 
     private val liftHeight: Int

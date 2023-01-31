@@ -1,11 +1,14 @@
-package org.firstinspires.ftc.teamcodekt.opmodes.auto
+package org.firstinspires.ftc.teamcodekt.opmodes.deprecated
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.units.GlobalUnits
 import org.firstinspires.ftc.teamcode.AutoData
+import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
 
+@Disabled
 @Autonomous
 class RogueLeftLowAuto: RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(-91, -159, 90)
