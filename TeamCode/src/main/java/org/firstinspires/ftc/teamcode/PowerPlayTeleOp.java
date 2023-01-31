@@ -37,6 +37,7 @@ public class PowerPlayTeleOp extends OpMode {
     @Override
     public void loop() {
         robotManager.readControllerInputs();
+        robotManager.readSensorInputs();
         robotManager.driveMechanisms();
         robotManager.maneuver();
         robotManager.robot.positionManager.updatePosition(robotManager.robot);

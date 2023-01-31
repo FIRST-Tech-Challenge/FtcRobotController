@@ -26,6 +26,7 @@ public class Robot {
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
     public ClawRotatorState desiredClawRotatorState;
     public ClawState desiredClawState;
+    public boolean previousSlidesLimitSwitchState = false;
 
     enum BarcodeScanState {CHECK_SCAN, SCAN}
 

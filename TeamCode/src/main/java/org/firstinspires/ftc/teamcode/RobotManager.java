@@ -164,6 +164,18 @@ public class RobotManager {
         previousStateGamepads.copyGamepads(gamepads);
     }
 
+    /** Updates desired states based on sensor inputs.
+     */
+    public void readSensorInputs() {
+        boolean currentSlidesLimitSwitchState = robot.slidesLimitSwitch.getState();
+        // Only true on the first frame that it is pressed - don't want it to get stuck in STOPPED state.
+        if (currentSlidesLimitSwitchState && !robot.previousSlidesLimitSwitchState) {
+            Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
+            mechanismDriving.setSlideZeroPosition(robot);
+        }
+        robot.previousSlidesLimitSwitchState = currentSlidesLimitSwitchState;
+    }
+
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
      */
     public void driveMechanisms() {

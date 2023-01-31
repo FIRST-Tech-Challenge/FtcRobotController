@@ -1,3 +1,5 @@
+// TODO: two slide motor reduced speed fix, add opModeIsActive() to all while loops, move CV code, move waitMilliseconds()
+
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.util.Range;
 
@@ -13,7 +15,7 @@ public class MechanismDriving {
     public boolean testing=false;
 
     public static final Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
-       put(Robot.SlidesState.RETRACTED, 0);
+       put(Robot.SlidesState.RETRACTED, -1000);
        put(Robot.SlidesState.LOW, 4770);
        put(Robot.SlidesState.MEDIUM, 8020);
        put(Robot.SlidesState.HIGH, 13870);
@@ -79,16 +81,29 @@ public class MechanismDriving {
     }
 
     /** Returns the target encoder count given the robot's desired slides state.
+     *
+     * Contains the negations from competition day.
      */
     public int getTargetSlidesEncoderCount(Robot robot) {
         // Automatically update the target values for joystick slide states based on current position
-        slidePositions.put(Robot.SlidesState.MOVE_UP, -robot.slidesMotor1.getCurrentPosition() + EPSILON + 50);
-        slidePositions.put(Robot.SlidesState.MOVE_DOWN, -robot.slidesMotor1.getCurrentPosition() - (EPSILON + 50));
-        slidePositions.put(Robot.SlidesState.STOPPED, -robot.slidesMotor1.getCurrentPosition());
-        // This is the negation from competition day
+        int currentAvgSlidePos = getAverageSlidePosition(robot);
+        slidePositions.put(Robot.SlidesState.MOVE_UP, -currentAvgSlidePos + EPSILON + 50);
+        slidePositions.put(Robot.SlidesState.MOVE_DOWN, -currentAvgSlidePos - (EPSILON + 50));
+        slidePositions.put(Robot.SlidesState.STOPPED, -currentAvgSlidePos);
         int encoderCount = -Range.clip(slidePositions.get(Robot.desiredSlidesState), -1000, slidePositions.get(Robot.SlidesState.HIGH));
         robot.telemetry.addData("target slide position", encoderCount);
         return encoderCount;
+    }
+
+    /** Sets the zero position to the average of the current encoder counts of the slide motors.
+     */
+    public void setSlideZeroPosition(Robot robot) {
+        int newSlideZeroPosition = getAverageSlidePosition(robot);
+        int zeroPositionDifference = newSlideZeroPosition - slideZeroPosition;
+        for (Map.Entry<Robot.SlidesState, Integer> entry : slidePositions.entrySet()) {
+            slidePositions.put(entry.getKey(), entry.getValue() + zeroPositionDifference);
+        }
+        slideZeroPosition = newSlideZeroPosition;
     }
 
     /** Sets slide motor powers to move in direction of desired position, if necessary.
@@ -122,10 +137,17 @@ public class MechanismDriving {
            if (Math.abs(robot.slidesMotor1.getCurrentPosition() - desiredSlidePosition) < EPSILON) {
                robot.slidesMotor1.setPower(0);
                robot.slidesMotor2.setPower(0);
+               Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
                return true;
            }
            return false;
        }
        return false;
+    }
+
+    /** Returns the average encoder count from the two slides.
+     */
+    private int getAverageSlidePosition(Robot robot) {
+        return (robot.slidesMotor1.getCurrentPosition() + robot.slidesMotor2.getCurrentPosition()) / 2;
     }
 }
