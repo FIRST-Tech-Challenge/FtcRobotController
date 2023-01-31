@@ -90,9 +90,9 @@ public class RobotManager {
             Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
         }
 
-        //if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {
-        //    robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
-        //}
+        if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {
+            robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
+        }
 
         if (getButtonRelease(GamepadWrapper.DriverAction.POSITION_CLAW_FRONT)){
             robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
@@ -107,13 +107,6 @@ public class RobotManager {
         }
 
         // Claw
-//        if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_CLAW)) {
-//            if (robot.desiredClawState == Robot.ClawState.OPEN) {
-//                robot.desiredClawState = Robot.ClawState.CLOSED;
-//            } else {
-//                robot.desiredClawState = Robot.ClawState.OPEN;
-//            }
-//        }
         if (getButtonRelease(GamepadWrapper.DriverAction.CLAW_OPEN)) {
             robot.desiredClawState = Robot.ClawState.OPEN;
         }

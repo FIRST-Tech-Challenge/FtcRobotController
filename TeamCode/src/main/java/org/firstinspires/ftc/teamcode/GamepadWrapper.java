@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  */
 public class GamepadWrapper {
     public enum DriverAction {SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,
-        TURN_ON_ULTRA_FINE_MOVEMENT, TURN_ON_FINE_MOVEMENT, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
-        MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT, MOVE_STRAIGHT_RIGHT, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE,
-        POSITION_CLAW_FRONT, POSITION_CLAW_SIDE, POSITION_CLAW_REAR, CLAW_OPEN, CLAW_CLOSE, TOGGLE_CLAW
+        TOGGLE_WHEEL_SPEED_ADJUSTMENT, MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT,
+        MOVE_STRAIGHT_RIGHT, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE, POSITION_CLAW_FRONT, POSITION_CLAW_SIDE,
+        POSITION_CLAW_REAR, CLAW_OPEN, CLAW_CLOSE
     }
 
     Gamepad gamepad1, gamepad2;
@@ -40,10 +40,8 @@ public class GamepadWrapper {
     public boolean getButtonState(DriverAction driverAction) {
         switch (driverAction) {
             // Gamepad 1 Controls
-            case TURN_ON_FINE_MOVEMENT:
+            case TOGGLE_WHEEL_SPEED_ADJUSTMENT:
                 return gamepad1.left_bumper;
-            case TURN_ON_ULTRA_FINE_MOVEMENT:
-                return gamepad1.right_bumper;
             case MOVE_STRAIGHT_FORWARD:
                 return gamepad1.dpad_up;
             case MOVE_STRAIGHT_BACKWARD:
@@ -72,8 +70,6 @@ public class GamepadWrapper {
                 return gamepad2.b;
             case POSITION_CLAW_REAR:
                 return gamepad2.y;
-//            case TOGGLE_CLAW:
-//                return gamepad2.x;
             case CLAW_OPEN:
                 return gamepad2.left_bumper;
             case CLAW_CLOSE:

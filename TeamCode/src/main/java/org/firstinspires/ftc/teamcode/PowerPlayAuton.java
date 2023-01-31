@@ -196,13 +196,9 @@ public class PowerPlayAuton extends LinearOpMode {
     }
 
     private void waitMilliseconds(long ms) {
-//        try {
-            double start_time = elapsedTime.time();
-            while (elapsedTime.time()-start_time < ms) {
-            }
-//            elapsedTime.wait(ms);
-//        }
-//        catch (InterruptedException e) {}
+        double start_time = elapsedTime.time();
+        while (elapsedTime.time()-start_time < ms && opModeIsActive()) {
+        }
     }
 
     // ANDROID SHARED PREFERENCES

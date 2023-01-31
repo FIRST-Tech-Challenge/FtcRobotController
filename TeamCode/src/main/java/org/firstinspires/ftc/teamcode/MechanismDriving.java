@@ -1,5 +1,3 @@
-// TODO: Add opModeIsActive() to all while loops, move CV code, move waitMilliseconds()
-
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.util.Range;
 
