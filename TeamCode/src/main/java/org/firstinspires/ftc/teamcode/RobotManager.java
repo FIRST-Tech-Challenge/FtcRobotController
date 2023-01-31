@@ -33,15 +33,12 @@ public class RobotManager {
     public ComputerVision computerVision;
 
     protected GamepadWrapper gamepads, previousStateGamepads;
-
-    private Telemetry telemetry;
     public ElapsedTime elapsedTime;
 
     public RobotManager(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2,
                         ArrayList<Position> path, AllianceColor allianceColor, StartingSide startingSide,
                         Navigation.MovementMode movementMode, Telemetry telemetry, ElapsedTime elapsedTime) {
 
-        this.telemetry = telemetry;
         this.elapsedTime = elapsedTime;
         this.allianceColor = allianceColor;
         this.startingSide = startingSide;

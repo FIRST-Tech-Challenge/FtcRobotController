@@ -195,6 +195,10 @@ public class Navigation {
         else if (Math.abs(moveDirection + Math.PI / 2) < Math.PI / 12) {
             moveDirection = -Math.PI / 2;
         }
+
+        // Field-centric navigation
+        moveDirection -= robot.positionManager.position.getRotation();
+
         setDriveMotorPowers(moveDirection, strafePower, turn, robot, false);
     }
 
