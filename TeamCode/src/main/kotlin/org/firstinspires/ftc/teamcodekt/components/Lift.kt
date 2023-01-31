@@ -14,20 +14,22 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.clamp
 import ftc.rogue.blacksmith.util.kt.invoke
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
+import kotlin.math.abs
 
 @JvmField var LIFT_ZERO = 0
 @JvmField var LIFT_LOW = 707
 @JvmField var LIFT_MID = 1140
 @JvmField var LIFT_HIGH = 1590
 
-@JvmField var LIFT_P = 0.0115
+@JvmField var LIFT_P = 0.03
 @JvmField var LIFT_I = 0.0002
 @JvmField var LIFT_D = 0.0002
 
-@JvmField var LIFT_MAX_V = 1300.0
-@JvmField var LIFT_MAX_A = 900.0
-@JvmField var LIFT_MAX_J = 600.0
+@JvmField var LIFT_MAX_V = 29000.0
+@JvmField var LIFT_MAX_A = 20000.0
+@JvmField var LIFT_MAX_J = 20000.0
 
 class Lift {
     private val liftMotor = hwMap<DcMotorSimple>(DeviceNames.LIFT_MOTOR)
@@ -45,6 +47,8 @@ class Lift {
     private var motionTime = ElapsedTime()
 
     var targetHeight = 0
+
+    var mult = 1
 
     var clippedHeight: Int
         get() = targetHeight
@@ -106,16 +110,22 @@ class Lift {
     private var onePrevTime = 0L
 
     private fun regenMotionProfile() {
+        if(motionTime == null)
+            motionTime = ElapsedTime(0);
+        motionTime.reset()
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
             MotionState(liftHeight.toDouble(), liftVelocity, liftAccel),
             MotionState(targetHeight.toDouble(), 0.0, 0.0),
             LIFT_MAX_V, LIFT_MAX_A, LIFT_MAX_J
         )
-        motionTime.reset()
+        if(targetHeight < liftHeight)
+            mult = -1
+        else
+            mult = 1
     }
 
     private val liftHeight: Int
-        get() = liftEncoder.currentPosition
+        get() = -liftEncoder.currentPosition
 
     private val liftVelocity: Double
         get() {
@@ -127,6 +137,7 @@ class Lift {
             return liftEncoder.correctedVelocity
         }
 
+
     private val liftAccel: Double
         get() {
             // TODO: Check if this actually works. a bit sus imo but idk might work or be close enough
@@ -135,6 +146,11 @@ class Lift {
 
             return 1000 * ((onePrevVel - twoPrevVel) / (onePrevTime - twoPrevTime))
         }
+
+    fun printLiftTelem(telemetry: Telemetry){
+        telemetry.addData("Current lift height:", liftHeight)
+        telemetry.addData("Lift target height:", targetHeight)
+    }
 
     private fun ElapsedTime.microseconds(): Double {
         return this.milliseconds() / 1000

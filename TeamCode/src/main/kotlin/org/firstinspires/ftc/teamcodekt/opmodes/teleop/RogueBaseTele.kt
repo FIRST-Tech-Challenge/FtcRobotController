@@ -6,7 +6,6 @@ import com.outoftheboxrobotics.photoncore.PhotonCore
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.listeners.ReforgedGamepad
-import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.chains.*
 import org.firstinspires.ftc.teamcodekt.components.meta.createTeleOpBotComponents
 
@@ -36,6 +35,7 @@ abstract class RogueBaseTele : BlackOp()                                        
           opmode = this                                                                                                                                                                     )                                                                                                       {
             bot.drivetrain.drive(driver.gamepad, powerMulti)
             bot.updateBaseComponents()
+            bot.lift.printLiftTelem(telemetry)
             mTelemetry.update()                                                                                                                                                             }}
 
     abstract fun describeControls()                                                                                                                                                         }

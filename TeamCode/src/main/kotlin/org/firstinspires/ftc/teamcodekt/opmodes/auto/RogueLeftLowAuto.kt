@@ -37,7 +37,6 @@ class RogueLeftLowAuto: RogueBaseAuto() {
                         awaitDeposit()
                     }
 
-                    .build<TrajectorySequence>()
 
     private fun Anvil.awaitDeposit() = this
             .waitTime(350)
