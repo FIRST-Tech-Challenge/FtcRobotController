@@ -236,6 +236,7 @@ public class PoleOrientationExample extends LinearOpMode
         final double DRIVE_OFFSET = 0.04522;
         final int TURRET_CYCLES_AT_POS = 8;
         // minPower=0; kp = 0.0027
+        // These values are no longer valid switching to angle
         PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.000, 0.00010, 0.075,
                 PowerPlaySuperPipeline.MAX_POLE_OFFSET);
 
@@ -251,7 +252,7 @@ public class PoleOrientationExample extends LinearOpMode
         while (opModeIsActive() && ((theLocalPole.alignedCount <= TURRET_CYCLES_AT_POS) ||
                 theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
-            turretPower = pidController.update(0.0, theLocalPole.centralOffset);
+            turretPower = pidController.update(0.0, theLocalPole.centralOffsetDegrees);
             // Ensure we never exceed a safe power
             if( turretPower > +turretPowerMax ) turretPower = +turretPowerMax;
             if( turretPower < -turretPowerMax ) turretPower = -turretPowerMax;

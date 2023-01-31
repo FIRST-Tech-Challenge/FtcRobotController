@@ -339,7 +339,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipelineLow.getDetectedPole());
+        theLocalPole = pipelineLow.getDetectedPole();
         while (opModeIsActive() && (theLocalPole.alignedCount < 2)) {
             performEveryLoop();
             if(theLocalPole.aligned) {
@@ -347,7 +347,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             } else {
                 robot.driveTrainTurn((theLocalPole.centralOffset > 0) ? +0.085 : -0.085);
             }
-            theLocalPole = new PowerPlaySuperPipeline.AnalyzedPole(pipelineLow.getDetectedPole());
+            theLocalPole = pipelineLow.getDetectedPole();
         }
         robot.stopMotion();
         // TODO: can we use this aligned position along the tape to update our known

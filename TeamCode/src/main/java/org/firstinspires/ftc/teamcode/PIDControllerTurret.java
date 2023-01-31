@@ -3,21 +3,21 @@ package org.firstinspires.ftc.teamcode;
 import static java.lang.Math.abs;
 
 public class PIDControllerTurret extends PIDController{
-    public final double kpMin;
-    public final double kpMinDeadZone;
+    public final double kStatic;
+    public final double kStaticDeadZone;
 
     /**
      * Construct the PID controller
      * @param p - Proportional coefficient
      * @param i - Integral coefficient
      * @param d - Derivative coefficient
-     * @param pMin - Minimum power to start turret motion
-     * @param pMinDeadZone - The value close enough to target to cut off minimum power
+     * @param pStatic - Minimum power to start turret motion
+     * @param pStaticDeadZone - The value close enough to target to cut off minimum power
      */
-    public PIDControllerTurret(double p, double i, double d, double pMin, double pMinDeadZone) {
+    public PIDControllerTurret(double p, double i, double d, double pStatic, double pStaticDeadZone) {
         super(p, i, d);
-        kpMin = pMin;
-        kpMinDeadZone = pMinDeadZone;
+        kStatic = pStatic;
+        kStaticDeadZone = pStaticDeadZone;
     }
     /**
      * Update the PID output
@@ -30,12 +30,10 @@ public class PIDControllerTurret extends PIDController{
         // The turret requires a non-zero minimum power just to start moving
         // Augment the PID result with that power (unless we're inside our
         // tolerance, in which case we want to drop to zero power and stop)
-        if(abs(state) <= kpMinDeadZone) {
+        if(abs(state) <= kStaticDeadZone) {
             kpMinValue = 0.0;
-        } else if(state > 0) {
-            kpMinValue = -kpMin;
         } else {
-            kpMinValue = +kpMin;
+            kpMinValue = Math.signum(-state) * kStatic;
         }
 
         return pidValue + kpMinValue;
