@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.AutoData
 
 @Autonomous
 class RogueLeftMidAuto : RogueBaseAuto() {
-    override val startPose = GlobalUnits.pos(-91, -159, 90)
+    override val startPose = GlobalUnits.pos(-72, -163.5, 90)
 
     override fun mainTraj(startPose: Pose2d) =
             Anvil.formTrajectory(bot.drive, startPose)
