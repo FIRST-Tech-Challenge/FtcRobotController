@@ -1,3 +1,4 @@
+@file:Config
 @file:Suppress("MemberVisibilityCanBePrivate")
 
 package org.firstinspires.ftc.teamcodekt.components
@@ -16,15 +17,13 @@ import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 import org.openftc.easyopencv.OpenCvPipeline
 
-@Config
-object CamServoConfig {
-    @JvmField var FORWARDS = 56.5
-}
+@JvmField
+var CAM_FORWARDS = 56.5
 
 class Camera {
     private val camServo = SimpleServo(BlackOp.hwMap, DeviceNames.CAM_SERVO, 0.0, 180.0)
 
-    var targetAngle = CamServoConfig.FORWARDS
+    var targetAngle = CAM_FORWARDS
 
     private val camera: OpenCvCamera
 
@@ -32,7 +31,7 @@ class Camera {
     val poleDetector = BasePoleDetector(BlackOp.mTelemetry)
 
     fun lookForwards() {
-        targetAngle = CamServoConfig.FORWARDS
+        targetAngle = CAM_FORWARDS
     }
 
     fun update() {
@@ -71,7 +70,7 @@ class Camera {
         while (!opmode.opModeIsActive()) {
             val detections = aprilTagDetectionPipeline.detectionsUpdate
 
-            telemetry.addData("FPS",         camera.fps)
+            telemetry.addData("FPS", camera.fps)
             telemetry.addData("Overhead ms", camera.overheadTimeMs)
             telemetry.addData("Pipeline ms", camera.pipelineTimeMs)
 

@@ -58,11 +58,11 @@ private fun mainTraj(drive: DriveShim) =
         .build<TrajectorySequence>()
 
 private fun Anvil.awaitInitialGocToDeposit() = this
-        .forward(132)
-        .turn(-136)
-        .forward(12.5)
-        .waitTime(150)
-        .back(12.5)
+    .forward(132)
+    .turn(-136)
+    .forward(12.5)
+    .waitTime(150)
+    .back(12.5)
 
 private fun Anvil.goToDeposit(it: Int) = when (it) {
     /*

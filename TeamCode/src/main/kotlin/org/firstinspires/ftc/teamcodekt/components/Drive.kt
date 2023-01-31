@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 import java.util.*
 import kotlin.math.*
 
-
 class Drivetrain {
     private val frontLeft  = hwMap<DcMotorEx>(DeviceNames.DRIVE_FL).apply { direction = Direction.REVERSE }
     private val frontRight = hwMap<DcMotorEx>(DeviceNames.DRIVE_FR)

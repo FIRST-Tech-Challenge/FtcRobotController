@@ -39,20 +39,20 @@ fun main() {
  */
 private fun mainTraj(drive: DriveShim) =
     Anvil.formTrajectory(drive, startPose)
+        .awaitInitialGocToDeposit()
+        .turn(46)
+        .back(70)
+        .strafeRight(4)
+        .turn(-29)
+        .forward(10)
+        .back(16.5)
 
-            .awaitInitialGocToDeposit()
-            .turn(46)
-            .back(70)
-            .strafeRight(4)
-            .turn(-29)
-            .forward(10)
-            .back(16.5)
+        .doTimes(4) {
+            goToDeposit(it + 1)
+            goToIntake(it + 1)
+            waitTime(200)
+        }
 
-            .doTimes(4) {
-                goToDeposit(it+1)
-                goToIntake(it+1)
-                waitTime(200)
-            }
         .build<TrajectorySequence>()
 
 private fun Anvil.awaitInitialGocToDeposit() = this
@@ -62,22 +62,18 @@ private fun Anvil.awaitInitialGocToDeposit() = this
         .waitTime(150)
         .back(12.5)
 
+//  The offset values are from sin(32) and cos(32) degrees.
+//  Used to spline in a straight line. This is advantageous to maintain localization better.
 private fun Anvil.goToDeposit(it: Int) = when (it) {
-    /*
-        The offset values are from sin(32) and cos(32) degrees.
-        Used to spline in a straight line. This is advantageous to maintain localization better.
-    */
     0 -> forward(21.5)
     1 -> forward(21.5)
     2 -> forward(21.5)
     3 -> forward(21.5)
     4 -> forward(21.5)
-
-    else -> noop
+    else -> this
 }
 
 private fun Anvil.goToIntake(it: Int) = when (it) {
-
     0 -> back(21.5)
     1 -> back(21.5)
     2 -> back(21.5)
@@ -85,11 +81,3 @@ private fun Anvil.goToIntake(it: Int) = when (it) {
     4 -> back(21.5)
     else -> noop
 }.doInReverse()
-
-private fun Anvil.awaitDeposit() = this
-    // Extra time allowed for depositing - NO REASON TO RUSH IT
-    .waitTime(350)
-
-private fun Anvil.awaitIntake() = this
-    // Extra time allowed for intaking - NO REASON TO RUSH IT
-    .waitTime(350)

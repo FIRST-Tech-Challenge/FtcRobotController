@@ -1,28 +1,27 @@
+@file:Config
+
 package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.controller.PIDFController
 import com.qualcomm.robotcore.hardware.HardwareMap
 
-@Config
-object VoltageScalerConfig {
-    const val TARGET_VOLTAGE = 14.0
-    const val P = 0.0
-    const val I = 0.0
-    const val D = 0.0
-    const val F = 0.0
-}
+@JvmField var TARGET_VOLTAGE = 14.0
+@JvmField var VS_P = 0.0
+@JvmField var VS_I = 0.0
+@JvmField var VS_D = 0.0
+@JvmField var VS_F = 0.0
 
 class VoltageScaler(hwMap: HardwareMap) {
     private val voltagePIDF = PIDFController(
-        VoltageScalerConfig.P, VoltageScalerConfig.I,
-        VoltageScalerConfig.D, VoltageScalerConfig.F
+        VS_P, VS_I,
+        VS_D, VS_F,
     )
 
     private val voltageSensor = hwMap.voltageSensor.iterator().next()
 
     val voltageCorrection: Double
         get() {
-            return voltagePIDF.calculate(voltageSensor.voltage, VoltageScalerConfig.TARGET_VOLTAGE)
+            return voltagePIDF.calculate(voltageSensor.voltage, TARGET_VOLTAGE)
         }
 }

@@ -1,30 +1,28 @@
+@file:Config
+
 package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.motors.CRServo
-import com.qualcomm.robotcore.hardware.HardwareMap
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 
-@Config
-object IntakeConfig {
-    @JvmField var INTAKING = -1.0
-    @JvmField var REVERSED =  1.0
-    @JvmField var DISABLED =  0.0
-}
+@JvmField var INTAKE_INTAKING = -1.0
+@JvmField var INTAKE_REVERSED =  1.0
+@JvmField var INTAKE_DISABLED =  0.0
 
 class Intake {
     private val intakeServo = CRServo(hwMap, DeviceNames.INTAKE_SERVO)
 
     fun enable() {
-        intakeServo.set(IntakeConfig.INTAKING)
+        intakeServo.set(INTAKE_INTAKING)
     }
 
     fun disable() {
-        intakeServo.set(IntakeConfig.DISABLED)
+        intakeServo.set(INTAKE_DISABLED)
     }
 
     fun reverse() {
-        intakeServo.set(IntakeConfig.REVERSED)
+        intakeServo.set(INTAKE_REVERSED)
     }
 }

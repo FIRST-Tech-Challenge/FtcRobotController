@@ -1,3 +1,5 @@
+@file:Config
+
 package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
@@ -5,25 +7,22 @@ import com.arcrobotics.ftclib.hardware.SimpleServo
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 
-@Config
-object ClawConfig {
-    @JvmField var INTAKE_WIDE   = 0.6475
-    @JvmField var INTAKE_NARROW = 0.568
-    @JvmField var DEPOSIT       = 0.666
-    @JvmField var CLOSE         = 0.425
-}
+@JvmField var CLAW_INTAKE_WIDE   = 0.6475
+@JvmField var CLAW_INTAKE_NARROW = 0.568
+@JvmField var CLAW_DEPOSIT       = 0.666
+@JvmField var CLAW_CLOSE         = 0.425
 
 class Claw {
     private val clawServo = SimpleServo(hwMap, DeviceNames.CLAW_SERVO, 0.0, 180.0)
 
-    private var targetPos = ClawConfig.CLOSE
+    private var targetPos = CLAW_CLOSE
 
     fun openForIntakeNarrow() {
-        targetPos = ClawConfig.INTAKE_NARROW
+        targetPos = CLAW_INTAKE_NARROW
     }
 
     fun openForIntakeWide() {
-        targetPos = ClawConfig.INTAKE_WIDE
+        targetPos = CLAW_INTAKE_WIDE
     }
 
     fun openForIntakeKindaWide() {
@@ -31,11 +30,11 @@ class Claw {
     }
 
     fun openForDeposit() {
-        targetPos = ClawConfig.DEPOSIT
+        targetPos = CLAW_DEPOSIT
     }
 
     fun close() {
-        targetPos = ClawConfig.CLOSE
+        targetPos = CLAW_CLOSE
     }
 
     fun update() {

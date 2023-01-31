@@ -16,75 +16,69 @@ import ftc.rogue.blacksmith.util.kt.clamp
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 
-@JvmField var P = 0.0115
-@JvmField var I = 0.0002
-@JvmField var D = 0.0002
+@JvmField var LIFT_ZERO = 0
+@JvmField var LIFT_LOW = 707
+@JvmField var LIFT_MID = 1140
+@JvmField var LIFT_HIGH = 1590
 
-@JvmField var ZERO = 0
-@JvmField var LOW = 707
-@JvmField var MID = 1140
-@JvmField var HIGH = 1590
+@JvmField var LIFT_P = 0.0115
+@JvmField var LIFT_I = 0.0002
+@JvmField var LIFT_D = 0.0002
 
-@JvmField var MAX_V = 1300.0
-@JvmField var MAX_A = 900.0
-@JvmField var MAX_J = 600.0
+@JvmField var LIFT_MAX_V = 1300.0
+@JvmField var LIFT_MAX_A = 900.0
+@JvmField var LIFT_MAX_J = 600.0
 
 class Lift {
     private val liftMotor = hwMap<DcMotorSimple>(DeviceNames.LIFT_MOTOR)
 
-    private val liftPID = PIDFController(PIDCoefficients(P, I, D))
+    private val liftPID = PIDFController(PIDCoefficients(LIFT_P, LIFT_I, LIFT_D))
 
     private val liftEncoder = Motor(hwMap, DeviceNames.LIFT_ENCODER)
         .apply(Motor::resetEncoder)
-
-    private var twoPrevVel = 0.0
-    private var onePrevVel = 0.0
-
-    private var twoPrevTime = 0L
-    private var onePrevTime = 0L
-
-    private var motionTime = ElapsedTime()
 
     private lateinit var profile: MotionProfile
     init {
         regenMotionProfile()
     }
 
+    private var motionTime = ElapsedTime()
+
     var targetHeight = 0
 
     var clippedHeight: Int
         get() = targetHeight
         set(height) {
-            targetHeight = height.clamp(ZERO, HIGH)
+            targetHeight = height.clamp(LIFT_ZERO, LIFT_HIGH)
         }
 
     fun goToZero() {
-        targetHeight = ZERO
+        targetHeight = LIFT_ZERO
         regenMotionProfile()
     }
 
     fun goToLow() {
-        targetHeight = LOW
+        targetHeight = LIFT_LOW
         regenMotionProfile()
     }
 
     fun goToMid() {
-        targetHeight = MID
+        targetHeight = LIFT_MID
         regenMotionProfile()
     }
 
     fun goToHigh() {
-        targetHeight = HIGH
+        targetHeight = LIFT_HIGH
         regenMotionProfile()
     }
 
     fun goToAngledLow() {
-        targetHeight = LOW - 145
+        targetHeight = LIFT_LOW - 145
         regenMotionProfile()
     }
 
     fun goToAngledMid() {
-        targetHeight = MID - 190
+        targetHeight = LIFT_MID - 190
         regenMotionProfile()
     }
 
@@ -105,11 +99,17 @@ class Lift {
         liftEncoder.resetEncoder()
     }
 
+    private var twoPrevVel = 0.0
+    private var onePrevVel = 0.0
+
+    private var twoPrevTime = 0L
+    private var onePrevTime = 0L
+
     private fun regenMotionProfile() {
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
             MotionState(liftHeight.toDouble(), liftVelocity, liftAccel),
             MotionState(targetHeight.toDouble(), 0.0, 0.0),
-            MAX_V, MAX_A, MAX_J
+            LIFT_MAX_V, LIFT_MAX_A, LIFT_MAX_J
         )
         motionTime.reset()
     }
@@ -128,7 +128,7 @@ class Lift {
         }
 
     private val liftAccel: Double
-        get()  {
+        get() {
             // TODO: Check if this actually works. a bit sus imo but idk might work or be close enough
             if(twoPrevTime == 0L || onePrevTime == 0L)
                 return 0.0

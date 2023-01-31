@@ -21,11 +21,10 @@ class RogueTestingOp : RogueBaseTele() {
         coneLaunchingChain.invokeOn(driver.b)
         coneLaunchingChain.cancelOn(driver.x)
 
+        coneUnflipperChain.invokeOn(driver.a)
 
         (driver.left_bumper + driver.right_bumper).onRise {
             bot.drivetrain.resetIMU()
         }
-
-        driver.a.onRise(bot.drivetrain::switchMode)
     }
 }
