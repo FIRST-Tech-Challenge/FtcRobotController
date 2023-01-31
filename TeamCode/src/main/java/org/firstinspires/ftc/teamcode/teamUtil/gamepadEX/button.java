@@ -60,31 +60,12 @@ public class button {
         return !isPressed() && isPressed() != previousState;
     }
 
-    public void actionOnPress(buttonAction buttonAction) {
-        if(onRelease()){
-            buttonAction.buttonAction();
-        }
-    }
-
-    public void actionOnRelease(buttonAction buttonAction) {
-        if(onPress()){
-            buttonAction.buttonAction();
-        }
-    }
-
-    public void actionWhilePressed(buttonAction buttonAction) {
-        if(isPressed()){
-            buttonAction.buttonAction();
-        }
-    }
-
-    public void actionWhileReleased(buttonAction buttonAction) {
-        if(!isPressed()){
-            buttonAction.buttonAction();
-        }
-    }
     public interface buttonAction{
         void buttonAction();
+    }
+
+    public interface buttonCondition{
+        boolean buttonCondition();
     }
 
     public enum debouncingType {

@@ -72,6 +72,12 @@ public class gamepadEX {
         right_trigger
     }
 
+    public void action(button.buttonCondition buttonCondition, button.buttonAction buttonAction){
+        if(buttonCondition.buttonCondition()){
+            buttonAction.buttonAction();
+        }
+    }
+
     public void update(){
         a.update();
         b.update();

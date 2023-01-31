@@ -10,6 +10,8 @@ import org.firstinspires.ftc.teamcode.teamUtil.robotConstants;
 public class arm {
     robotConfig r;
 
+    double jump = 100.68;
+
     Servo arm;
     private double armPos;
 
@@ -28,4 +30,11 @@ public class arm {
         arm.setPosition(armPos);
     }
 
+    public double returnJump(){
+        return jump;
+    }
+
+    public void setJump(double value){
+        jump = value;
+    }
 }

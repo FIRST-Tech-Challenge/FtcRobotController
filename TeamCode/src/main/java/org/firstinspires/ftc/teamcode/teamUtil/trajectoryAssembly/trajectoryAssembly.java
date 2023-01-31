@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teamUtil.trajectoryAssembly;
 
+import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.teamcode.teamUtil.*;
 import org.firstinspires.ftc.teamcode.teamUtil.trajectoryAssembly.trajectoryMarkers.*;
 
@@ -71,6 +73,7 @@ public class trajectoryAssembly {
         pose2D previousRobotPose2D = null;
         angle previousModuleHeading = null;
         boolean firstSegment = true;
+        double initialVelocity = 0;
         for (int i = 1; i < trajectorySegments.size(); i++) {
             double pathTime;
             double maxVelocity = trajectorySegments.get(i).velocity;
@@ -79,10 +82,15 @@ public class trajectoryAssembly {
 
                 double slowDownTime = (maxVelocity)/robotConstants.maxSwerveAcceleration;
                 double slowDownDistance = (maxVelocity)*0.5*slowDownTime;
+                double retainedVelocity = 0;
 
                 if(trajectorySegments.get(i).distance < slowDownDistance + speedUpDistance){
-                    speedUpTime = (speedUpDistance / (speedUpDistance - (((slowDownDistance + speedUpDistance) - trajectorySegments.get(i).distance) * 0.5))) * speedUpTime;
-                    slowDownTime = (slowDownDistance / (slowDownDistance - (((slowDownDistance + speedUpDistance) - trajectorySegments.get(i).distance) * 0.5))) * slowDownTime;
+                    speedUpDistance = (trajectorySegments.get(i).distance / (speedUpDistance + slowDownDistance)) * speedUpDistance;
+                    slowDownDistance = (trajectorySegments.get(i).distance / (speedUpDistance + slowDownDistance)) * slowDownDistance;
+
+                    double newMaxVelocity = Math.sqrt(initialVelocity*initialVelocity + 2 * robotConstants.maxSwerveAcceleration * speedUpDistance);
+                    speedUpTime = (newMaxVelocity-initialVelocity)/robotConstants.maxSwerveAcceleration;
+                    slowDownTime = (newMaxVelocity-retainedVelocity)/robotConstants.maxSwerveAcceleration;
 
                     pathTime = speedUpTime + slowDownTime;
                 }
@@ -114,8 +122,12 @@ public class trajectoryAssembly {
                 double moduleTurnTime =  0;// ((previousModuleHeading.angleShortDifference(angle.atanHandler(trajectorySegments.get(i).endPose2D, previousRobotPose2D))/90)*robotConstants.moduleAngle_kP*robotConstants.moduleMaxAngularVelocity*0.5);
                 */
                 if(trajectorySegments.get(i).distance < slowDownDistance + speedUpDistance){
-                    speedUpTime = (speedUpDistance / (speedUpDistance - (((slowDownDistance + speedUpDistance) - trajectorySegments.get(i).distance) * 0.5))) * speedUpTime;
-                    slowDownTime = (slowDownDistance / (slowDownDistance - (((slowDownDistance + speedUpDistance) - trajectorySegments.get(i).distance) * 0.5))) * slowDownTime;
+                    speedUpDistance = (trajectorySegments.get(i).distance / (speedUpDistance + slowDownDistance)) * speedUpDistance;
+                    slowDownDistance = (trajectorySegments.get(i).distance / (speedUpDistance + slowDownDistance)) * slowDownDistance;
+
+                    double newMaxVelocity = Math.sqrt(initialVelocity*initialVelocity + 2 * robotConstants.maxSwerveAcceleration * speedUpDistance);
+                    speedUpTime = (newMaxVelocity-initialVelocity)/robotConstants.maxSwerveAcceleration;
+                    slowDownTime = (newMaxVelocity-retainedVelocity)/robotConstants.maxSwerveAcceleration;
 
                     pathTime = speedUpTime + slowDownTime;
                 }
@@ -134,6 +146,7 @@ public class trajectoryAssembly {
 
                 speedUpTime = (maxVelocity - retainedVelocity)/robotConstants.maxSwerveAcceleration;
                 speedUpDistance = (maxVelocity - retainedVelocity)*0.5*speedUpTime;
+                initialVelocity = retainedVelocity;
             }
             else {
                 //first segment stuff here
@@ -146,6 +159,7 @@ public class trajectoryAssembly {
 
                 speedUpTime = (maxVelocity)/robotConstants.maxSwerveAcceleration;
                 speedUpDistance = (maxVelocity)*0.5*speedUpTime;
+                initialVelocity = 0;
 
                 firstSegment = false;
             }

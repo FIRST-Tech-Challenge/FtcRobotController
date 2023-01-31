@@ -50,8 +50,12 @@ public class robotConfig {
         configuredSystems[2] = robotConstants.configuredSystems.GAMEPADS;
         System.arraycopy(config, 0, configuredSystems, 3, config.length);
 
+        Telemetry.Item currentSubsystem = telemetry.addData("initialising", "");
+        StringBuilder initialisedSystems = new StringBuilder();
+        Telemetry.Item initialisedSubsystems = telemetry.addData("initialised", initialisedSystems);
+
         for (configuredSystems system : configuredSystems) {
-            telemetry.addLine("initialising: "+system.toString());
+            currentSubsystem.setValue(system.toString());
             telemetry.update();
             switch(system){
                 case MECANUM:
@@ -102,7 +106,8 @@ public class robotConfig {
                     gamepadEX2 = new gamepadEX(opmode.gamepad2);
                     break;
             }
-            telemetry.addLine("initialised: "+system.toString());
+            initialisedSystems.append("\n").append(system.toString());
+            initialisedSubsystems.setValue(initialisedSystems);
             telemetry.update();
         }
 

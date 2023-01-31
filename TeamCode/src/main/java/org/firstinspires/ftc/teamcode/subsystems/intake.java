@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.teamUtil.robotConstants;
 
 public class intake {
     robotConfig r;
-
     Servo intake;
     private double intakePos;
 

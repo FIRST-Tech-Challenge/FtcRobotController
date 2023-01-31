@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.calibrationTests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,7 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.swerveDriveBase;
 import org.firstinspires.ftc.teamcode.teamUtil.angle;
 import org.firstinspires.ftc.teamcode.teamUtil.robotConfig;
 import org.firstinspires.ftc.teamcode.teamUtil.robotConstants;
-
+@Disabled
 @TeleOp(name = "Module Angle Calibration Test", group = "Calibration Tests")
 public class moduleAngleCalibrationTest extends LinearOpMode{
 
@@ -238,14 +239,10 @@ public class moduleAngleCalibrationTest extends LinearOpMode{
     }
 
     String testResultsString(angle finalRotation, int rotationsDone){
-
-
         return Math.abs(finalRotation.value) + "/" + (rotationsDone * 360);
     }
 
     double returnTestResults(angle finalRotation, int rotationsDone){
         return (Math.abs(finalRotation.value)/(rotationsDone*360));
     }
-
-
 }

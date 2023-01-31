@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.teamUtil.robotConstants;
 public class lift {
     robotConfig r;
 
-    private static DcMotorEx lift0 = null;
-    private static DcMotorEx lift1 = null;
+    private static DcMotorEx lift0;
+    private static DcMotorEx lift1;
     private static double liftPos;
 
     private static double currentTime; //needs to be set to runtime.time()
