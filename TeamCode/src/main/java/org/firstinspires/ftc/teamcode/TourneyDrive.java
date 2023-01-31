@@ -30,7 +30,7 @@ public class TourneyDrive extends LinearOpMode {
     static final double MIN_POS2    =     0;
 
     static final double MIN_LIFT_POS = 0;
-    static final double MAX_LIFT_POS = 173 * 34.5;
+    double MAX_LIFT_POS = 173 * 34.5;
 
     double position = 1;
     double position2 = 0;
@@ -39,6 +39,8 @@ public class TourneyDrive extends LinearOpMode {
     double lbAdjust = 0;
     double rAdjust = 0;
     double rbAdjust = 0;
+
+    double heightAdjustmentCount = 0;
 
     @Override
     public void runOpMode() {
@@ -87,7 +89,13 @@ public class TourneyDrive extends LinearOpMode {
         servoGrabber1.setPosition(position);
         servoGrabber2.setPosition(position2);
 
-        waitForStart();
+        while (!isStarted() && !isStopRequested()){
+            telemetry.addData("FL Encoder:", leftFrontDrive.getCurrentPosition());
+            telemetry.addData("BL Encoder:", leftBackDrive.getCurrentPosition());
+            telemetry.addData("FR Encoder:", rightFrontDrive.getCurrentPosition());
+            telemetry.addData("BR Encoder:", rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
@@ -108,6 +116,8 @@ public class TourneyDrive extends LinearOpMode {
 
             double liftFast = -gamepad2.left_stick_y;
             double liftSlow = -gamepad2.right_stick_y;
+
+            boolean raiseMaxHeight = gamepad1.y;
 
             boolean grabberOpen = gamepad2.left_bumper;
             boolean grabberClose = gamepad2.right_bumper;
@@ -177,6 +187,13 @@ public class TourneyDrive extends LinearOpMode {
                 lbAdjust = 0;
                 rAdjust = 0;
                 rbAdjust = 0;
+            }
+
+            if(raiseMaxHeight && heightAdjustmentCount == 0){
+                MAX_LIFT_POS += 17.3;
+                heightAdjustmentCount++;
+            }else{
+                heightAdjustmentCount = 0;
             }
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
