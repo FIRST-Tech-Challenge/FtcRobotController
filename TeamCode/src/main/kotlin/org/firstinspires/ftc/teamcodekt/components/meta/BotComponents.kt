@@ -13,11 +13,11 @@ abstract class BaseBotComponents {
     abstract val wrist: Wrist
     abstract val lift: Lift
 
-    fun updateBaseComponents() {
+    fun updateBaseComponents(useMotionProfiling: Boolean) {
         claw.update()
         arm.update()
         wrist.update()
-        lift.update()
+        lift.update(useMotionProfiling)
     }
 }
 

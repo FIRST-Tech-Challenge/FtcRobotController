@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.units.GlobalUnits
+import org.firstinspires.ftc.teamcode.AutoData
 
 @Autonomous
 class RogueLeftLowAuto: RogueBaseAuto() {
@@ -12,43 +13,92 @@ class RogueLeftLowAuto: RogueBaseAuto() {
     override fun mainTraj(startPose: Pose2d) =
             Anvil.formTrajectory(bot.drive, startPose)
                     .forward(15)
+                    .initialDepositPrep()
                     .turn(180)
                     .inReverse {
                         splineTo(-84.5, -36.5, 90)
-                        turn(44)
+                        turn(49)
                     }
 
-                    .splineTo(-73.2, -47.8, -44)
-                    .awaitDeposit()
+                    .splineTo(-85.2, -35.8, -49)
+                    .deposit()
+
+                    .waitTime(100)
+
+                    .addTemporalMarker(0) {
+                        bot.lift.clippedHeight = liftOffsets[0]
+                    }
 
                     .inReverse {
                         splineTo(-156, -31, 180)
-                        awaitIntake1()
                     }
 
                     .forward(10)
-                    .turn(-28.5)
-                    .strafeRight(12.5)
+                    .turn(-28)
+                    .strafeRight(8)
                     .forward(18)
-                    .awaitDeposit()
 
                     .doTimes(4) {
-                        back(25)
-                        awaitIntake2()
-                        forward(25)
-                        awaitDeposit()
+                        regularIntakePrep(it+1)
+                        back(23)
+                        intake()
+                        waitTime(300)
+                        depositPrep()
+                        forward(23)
+                        deposit()
                     }
 
+    private fun Anvil.initialDepositPrep() = this
+            .addTemporalMarker(400) {
+                bot.lift.goToHigh() // TODO: IN THE FUTURE, CHANGE THIS TO MID - ONLY HAVE A HIGH POLE AT MY HOUSE
+                bot.claw.close()
+                bot.arm.setToForwardsPos()
+                bot.wrist.setToForwardsPos()
+            }
 
-    private fun Anvil.awaitDeposit() = this
-            .waitTime(350)
+    private fun Anvil.depositPrep() = this
+            .addTemporalMarker(400) {
+                bot.claw.close()
+                bot.arm.setToForwardsPos()
+                bot.wrist.setToForwardsPos()
+            }
 
-    // Regular intaking w/ claw open wide
-    private fun Anvil.awaitIntake1() = this
-            .waitTime(350)
+    private fun Anvil.deposit() = this
+            .addTemporalMarker(-165) {
+                bot.lift.clippedHeight -= AutoData.DEPOSIT_DROP_AMOUNT
+            }
 
-    // Intaking w/ claw narrow & intake wheels spinning
-    private fun Anvil.awaitIntake2() = this
-            .waitTime(350)
+            .addTemporalMarker(-100) {
+                bot.claw.openForDeposit()
+            }
+
+    private fun Anvil.regularIntakePrep(iterations: Int) = this
+            .addTemporalMarker(185) {
+                bot.lift.clippedHeight = liftOffsets[iterations]
+                bot.wrist.setToBackwardsPos()
+                bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
+            }
+
+            .addTemporalMarker(325) {
+                bot.claw.openForIntakeWide()
+            }
+
+    private fun Anvil.intake() = this
+            .addTemporalMarker {
+                bot.intake.disable()
+                bot.claw.close()
+            }
+
+            .addTemporalMarker(275) {
+                bot.lift.goToLow()
+            }
+
+            .addTemporalMarker(425) {
+                bot.arm.setToForwardsPos()
+                bot.wrist.setToForwardsPos()
+            }
+
+            .waitTime(300)
+
 
 }

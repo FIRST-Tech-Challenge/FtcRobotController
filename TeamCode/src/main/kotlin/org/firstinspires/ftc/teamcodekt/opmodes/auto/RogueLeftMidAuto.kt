@@ -16,7 +16,6 @@ class RogueLeftMidAuto : RogueBaseAuto() {
                 .turn(180)
                 .inReverse {
                     splineTo(-84.5, -36.5, 90)
-
                     turn(44)
                 }
 
