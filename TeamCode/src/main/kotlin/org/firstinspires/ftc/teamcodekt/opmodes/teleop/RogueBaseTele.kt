@@ -35,7 +35,6 @@ abstract class RogueBaseTele : BlackOp()                                        
           opmode = this                                                                                                                                                                     )                                                                                                       {
             bot.drivetrain.drive(driver.gamepad, powerMulti)
             bot.updateBaseComponents()
-            bot.lift.printLiftTelem(telemetry)
             mTelemetry.update()                                                                                                                                                             }}
 
     abstract fun describeControls()                                                                                                                                                         }

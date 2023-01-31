@@ -12,6 +12,8 @@ class RogueLeftMidAuto : RogueBaseAuto() {
 
     override fun mainTraj(startPose: Pose2d) =
             Anvil.formTrajectory(bot.drive, startPose)
+                .forward(15)
+                .turn(180)
                 .inReverse {
                     splineTo(-84.5, -36.5, 90)
 
