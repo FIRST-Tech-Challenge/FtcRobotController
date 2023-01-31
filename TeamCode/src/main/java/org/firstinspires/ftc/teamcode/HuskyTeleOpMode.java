@@ -67,6 +67,7 @@ public class HuskyTeleOpMode extends LinearOpMode {
         STEP_4
     }
     ArmState armState = ArmState.ARM_WAIT;
+    int follow_point = ARM_LIFT_MIN_POSITION;
 
     int armLiftTargetPos = 0;
     int armExtendTargetPos;
@@ -310,6 +311,8 @@ public class HuskyTeleOpMode extends LinearOpMode {
                         huskyBot.armExtendMotor.setPower(0);
                         huskyBot.armExtendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+                        follow_point = huskyBot.armLiftMotor.getCurrentPosition();
+
                         armState = ArmState.STEP_3;
                     }
 
@@ -318,7 +321,17 @@ public class HuskyTeleOpMode extends LinearOpMode {
                     // Step 3:
                     // Wait until the step 2 is completed
                     // Then change the arm extender's position (in or out based on the target position)
-                    armLiftRunToPos(armLiftTargetPos);
+
+                    // Gradually increment follow_point until it reaches the target position.
+                    int error = follow_point - armLiftTargetPos;
+                    if (error > 30) {
+                        follow_point -= 30;
+                    } else if (error < 30) {
+                        follow_point += 30;
+                    } else {
+                        follow_point = armLiftTargetPos;
+                    }
+                    armLiftRunToPos(follow_point);
 
                     if (Math.abs(huskyBot.armLiftMotor.getCurrentPosition() - armLiftTargetPos) > 100) {
                         if(finiteTimer.seconds() > 7){
@@ -401,6 +414,12 @@ public class HuskyTeleOpMode extends LinearOpMode {
             // Claw Telemetry
             telemetry.addData("Claw Lift", "Right Y: (%.2f), Pos: (%.2f)",gamepad2.right_stick_y, huskyBot.clawLift.getPosition());
             telemetry.addData("Claw Grab", "Pos: (%.2f)", huskyBot.clawGrab.getPosition());
+
+            telemetry.addData("current pos ", huskyBot.armLiftMotor.getCurrentPosition());
+            telemetry.addData("target pos ", armLiftTargetPos);
+            telemetry.addData("follow point ", follow_point);
+            telemetry.addData("vel ", huskyBot.armLiftMotor.getVelocity());
+
             telemetry.update();
         // endregion
 
