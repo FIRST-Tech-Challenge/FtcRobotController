@@ -122,6 +122,8 @@ public class MechanismDriving {
            int slideDiff2 = desiredSlidePosition - robot.slidesMotor2.getCurrentPosition();
            int avgSlideDiff = (slideDiff1 + slideDiff2) / 2;
 
+           robot.telemetry.addData("current pos: ", getAverageSlidePosition(robot));
+
            // Stop motors if we have reached the desired position
            if (Math.abs(avgSlideDiff) < EPSILON) {
                robot.slidesMotor1.setPower(0);
