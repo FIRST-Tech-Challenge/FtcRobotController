@@ -82,6 +82,7 @@ class KalmanFilter {
      * Postcondition: the appropriate filtered value has been returned
      */
     // Filter a measurement: measured value is measurement, controlled input value is u.
+    @JvmOverloads
     fun filter(measurement: Double, u: Double = 0.0): Double {
         if (x.isNaN()) {
             x = 1 / C * measurement

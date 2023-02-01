@@ -4,18 +4,14 @@ package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.outoftheboxrobotics.photoncore.PhotonCore
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
-import ftc.rogue.blacksmith.units.GlobalUnits
 import ftc.rogue.blacksmith.util.kt.LateInitVal
-import org.checkerframework.checker.units.qual.A
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.meta.AutoBotComponents
 import org.firstinspires.ftc.teamcodekt.components.meta.createAutoBotComponents
-import org.firstinspires.ftc.teamcodekt.opmodes.teleop.RogueBaseTele
 import kotlin.properties.Delegates
 
 abstract class RogueBaseAuto : BlackOp()                                                                                                                                                    {
@@ -38,7 +34,7 @@ abstract class RogueBaseAuto : BlackOp()                                        
 
         Scheduler.launch                                                                                                                                                                    (
           opmode = this                                                                                                                                                                     )                                                                                                       {
-            bot.updateBaseComponents(false)
+            bot.updateBaseComponents(true)
             bot.drive.update()
             mTelemetry.update()                                                                                                                                                             }}
 

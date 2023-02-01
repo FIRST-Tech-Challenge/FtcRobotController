@@ -18,28 +18,18 @@ import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 
-@JvmField
-var LIFT_ZERO = 0
-@JvmField
-var LIFT_LOW = 707
-@JvmField
-var LIFT_MID = 1140
-@JvmField
-var LIFT_HIGH = 1590
+@JvmField var LIFT_ZERO = 0
+@JvmField var LIFT_LOW = 707
+@JvmField var LIFT_MID = 1140
+@JvmField var LIFT_HIGH = 1590
 
-@JvmField
-var LIFT_P = 0.026
-@JvmField
-var LIFT_I = 0.0002
-@JvmField
-var LIFT_D = 0.0002
+@JvmField var LIFT_P = 0.026
+@JvmField var LIFT_I = 0.0002
+@JvmField var LIFT_D = 0.0002
 
-@JvmField
-var LIFT_MAX_V = 29000.0
-@JvmField
-var LIFT_MAX_A = 20000.0
-@JvmField
-var LIFT_MAX_J = 20000.0
+@JvmField var LIFT_MAX_V = 29000.0
+@JvmField var LIFT_MAX_A = 20000.0
+@JvmField var LIFT_MAX_J = 20000.0
 
 class Lift {
     private val liftMotor = hwMap<DcMotorSimple>(DeviceNames.LIFT_MOTOR)
