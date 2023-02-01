@@ -206,7 +206,9 @@ public abstract class AutonomousBase extends LinearOpMode {
         final double DRIVE_OFFSET = 0.04522;
         final int TURRET_CYCLES_AT_POS = 8;
         // minPower=0; kp = 0.0027
-        PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.000, 0.00010, 0.085, 12 );
+        // Converting from pixels to degrees
+        PIDControllerTurret pidController = new PIDControllerTurret(0.00008 / 0.15,0.000,
+                0.00010 / 0.15, 0.085, 12 * 0.15);
 
         double turretPower;
         double turretPowerMax = 0.14;  // maximum we don't want the PID to exceed
@@ -223,7 +225,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         while (opModeIsActive() && ((theLocalPole.alignedCount <= TURRET_CYCLES_AT_POS) ||
                 theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
-            turretPower = pidController.update(0.0, theLocalPole.centralOffset);
+            turretPower = pidController.update(0.0, theLocalPole.centralOffsetDegrees);
             // Ensure we never exceed a safe power
             if( turretPower > +turretPowerMax ) turretPower = +turretPowerMax;
             if( turretPower < -turretPowerMax ) turretPower = -turretPowerMax;
@@ -269,7 +271,8 @@ public abstract class AutonomousBase extends LinearOpMode {
         PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
-        final double TURN_SLOPE   = 0.004187;
+        // Convert from pixels to degrees
+        final double TURN_SLOPE   = 0.004187 / 0.15;
         final double TURN_OFFSET  = 0.04522;
         double drivePower;
         double turnPower;
@@ -300,9 +303,9 @@ public abstract class AutonomousBase extends LinearOpMode {
             }
             drivePower = (distanceError > 0) ? (-distanceError * DRIVE_SLOPE - DRIVE_OFFSET) :
                     (-distanceError * DRIVE_SLOPE + DRIVE_OFFSET);
-            turnPower = (theLocalCone.centralOffset > 0) ?
-                    (theLocalCone.centralOffset * TURN_SLOPE + TURN_OFFSET) :
-                    (theLocalCone.centralOffset * TURN_SLOPE - TURN_OFFSET);
+            turnPower = (theLocalCone.centralOffsetDegrees > 0) ?
+                    (theLocalCone.centralOffsetDegrees * TURN_SLOPE + TURN_OFFSET) :
+                    (theLocalCone.centralOffsetDegrees * TURN_SLOPE - TURN_OFFSET);
             driveAndRotate(drivePower, turnPower);
             telemetry.addData("Cone Data", "drvPwr %.2f turnPwr %.2f", drivePower, turnPower);
             telemetry.addData("Cone Data", "coneDst %d dstErr %d offset %.2f", coneDistance,
