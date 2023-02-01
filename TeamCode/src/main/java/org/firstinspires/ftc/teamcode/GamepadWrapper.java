@@ -50,10 +50,16 @@ public class GamepadWrapper {
                 return gamepad1.dpad_left;
             case MOVE_STRAIGHT_RIGHT:
                 return gamepad1.dpad_right;
-            case TURN_COUNTER_CLOCKWISE:
+//            case TURN_COUNTER_CLOCKWISE:
+//                return gamepad1.b;
+//            case TURN_CLOCKWISE:
+//                return gamepad1.x;
+            case POSITION_CLAW_FRONT:
+                return gamepad1.a;
+            case POSITION_CLAW_SIDE:
                 return gamepad1.b;
-            case TURN_CLOCKWISE:
-                return gamepad1.x;
+            case POSITION_CLAW_REAR:
+                return gamepad1.y;
 
             // Gamepad 2 Controls
             case SET_SLIDES_RETRACTED:
@@ -64,12 +70,6 @@ public class GamepadWrapper {
                 return gamepad2.dpad_right;
             case SET_SLIDES_HIGH:
                 return gamepad2.dpad_up;
-            case POSITION_CLAW_FRONT:
-                return gamepad2.a;
-            case POSITION_CLAW_SIDE:
-                return gamepad2.b;
-            case POSITION_CLAW_REAR:
-                return gamepad2.y;
             case CLAW_OPEN:
                 return gamepad2.left_bumper;
             case CLAW_CLOSE:
