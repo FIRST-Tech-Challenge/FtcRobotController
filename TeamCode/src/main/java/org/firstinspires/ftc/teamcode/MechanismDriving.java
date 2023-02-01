@@ -9,7 +9,7 @@ import java.util.Map;
 public class MechanismDriving {
 
     private static int desiredSlidePosition;
-    private static int slideZeroPosition;
+    private static int slideZeroPosition = 0;
     public boolean testing=false;
 
     public static Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{

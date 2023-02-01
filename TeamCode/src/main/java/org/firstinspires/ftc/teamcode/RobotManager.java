@@ -157,6 +157,10 @@ public class RobotManager {
      */
     public void readSensorInputs() {
         boolean currentSlidesLimitSwitchState = robot.slidesLimitSwitch.getState();
+        if (currentSlidesLimitSwitchState) {
+            robot.telemetry.addData("Limit switch state", "pressed");
+        }
+        else {robot.telemetry.addData("Limit switch state", "unpressed");}
         // Only true on the first frame that it is pressed - don't want it to get stuck in STOPPED state.
         if (currentSlidesLimitSwitchState && !robot.previousSlidesLimitSwitchState) {
             Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
@@ -216,7 +220,7 @@ public class RobotManager {
 
     /** Determines the position of the capstone on the barcode.
      */
-    public Robot.ParkingPosition readBarcode() {
+//    public Robot.ParkingPosition readBarcode() {
         // Reset the barcode scanning counters and states
 //        robot.barcodeScanResult = Robot.BarcodeScanResult.WRONG_CAPS;
 //        robot.resetBarcodeScanMap();
@@ -226,21 +230,21 @@ public class RobotManager {
         // TODO: call CV function
 
         // Wait for CV to determine a finalized barcodeScanResult value (this is blocking!)
-        while (robot.barcodeScanState == Robot.BarcodeScanState.SCAN) {
-            try {
-                TimeUnit.MICROSECONDS.sleep(10);
-            }
-            catch (InterruptedException e) {}
-        }
-
-        boolean flipped = (allianceColor == AllianceColor.RED && startingSide == StartingSide.OUR_COLOR) || (allianceColor == AllianceColor.BLUE && startingSide == StartingSide.THEIR_COLOR);
-
-        switch (robot.barcodeScanResult) {
-            case LEFT: return flipped ? Robot.ParkingPosition.OUTSIDE : Robot.ParkingPosition.INSIDE;
-            case RIGHT: return flipped ? Robot.ParkingPosition.INSIDE : Robot.ParkingPosition.OUTSIDE;
-            default: return Robot.ParkingPosition.MIDDLE;
-        }
-    }
+//        while (robot.barcodeScanState == Robot.BarcodeScanState.SCAN) {
+//            try {
+//                TimeUnit.MICROSECONDS.sleep(10);
+//            }
+//            catch (InterruptedException e) {}
+//        }
+//
+//        boolean flipped = (allianceColor == AllianceColor.RED && startingSide == StartingSide.OUR_COLOR) || (allianceColor == AllianceColor.BLUE && startingSide == StartingSide.THEIR_COLOR);
+//
+//        switch (robot.barcodeScanResult) {
+//            case LEFT: return flipped ? Robot.ParkingPosition.OUTSIDE : Robot.ParkingPosition.INSIDE;
+//            case RIGHT: return flipped ? Robot.ParkingPosition.INSIDE : Robot.ParkingPosition.OUTSIDE;
+//            default: return Robot.ParkingPosition.MIDDLE;
+//        }
+//    }
 
     // Each of these methods manually sets the robot state so that a specific task is started, and forces these tasks to
     // be synchronous by repeatedly calling the mechanism driving methods. These are to be used in an autonomous OpMode.
