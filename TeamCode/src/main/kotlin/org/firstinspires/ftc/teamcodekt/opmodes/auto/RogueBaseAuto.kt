@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcodekt.components.meta.createAutoBotComponents
 import org.firstinspires.ftc.teamcodekt.opmodes.teleop.RogueBaseTele
 import kotlin.properties.Delegates
 
-abstract class RogueBaseAuto : BlackOp()                                                                                                                           {
+abstract class RogueBaseAuto : BlackOp()                                                                                                                                                    {
     protected var bot by LateInitVal<AutoBotComponents>()
     protected var signalID by Delegates.notNull<Int>()
 

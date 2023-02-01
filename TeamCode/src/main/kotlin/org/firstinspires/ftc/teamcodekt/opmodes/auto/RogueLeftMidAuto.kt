@@ -36,7 +36,6 @@ class RogueLeftMidAuto : RogueBaseAuto() {
     private fun Anvil.waitPlease() = this
             .waitTime(350)
 
-
     private fun Anvil.initialDepositPrep() = this
         .addTemporalMarker {
             bot.lift.goToHigh()

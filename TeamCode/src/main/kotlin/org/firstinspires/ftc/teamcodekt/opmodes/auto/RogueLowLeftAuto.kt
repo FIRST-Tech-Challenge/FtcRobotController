@@ -48,8 +48,6 @@ class RogueLowLeftAuto : RogueBaseAuto() {
             .goToDeposit(4)
             .deposit()
 
-            .resetBot()
-
             .thenRunPreformed(0)
 
     private fun Anvil.initialDepositPrep() = this

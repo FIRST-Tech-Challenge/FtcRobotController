@@ -11,5 +11,5 @@ object MoerTeasting {
     var hi = 3
 }
 
-var HELLO = 4.toInt().coerceAtLeast(2).clamp<Int>(0, 5)
+var HELLO = 4.0.toInt().coerceAtLeast(2).clamp<Int>(0, 5)
 var WHELLO = "4"

@@ -18,7 +18,7 @@ class ConeUnflipperChain(val bot: TeleOpBotComponents) : Chain {
             bot.lift.targetHeight = 25
             isRunning = true
 
-            after(15).milliseconds {
+            after(30).milliseconds {
                 bot.arm.targetAngle = ARM_BACKWARDS - 7.5
                 bot.wrist.setToRestingPos()
             }

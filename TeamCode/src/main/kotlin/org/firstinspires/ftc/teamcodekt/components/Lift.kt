@@ -4,7 +4,8 @@ package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.control.PIDCoefficients
-import com.acmerobotics.roadrunner.control.PIDFController
+import com.acmerobotics.roadrunner.control.PIDFController as RRPIDFController
+import com.arcrobotics.ftclib.controller.PIDFController as FTCLibPIDFController
 import com.acmerobotics.roadrunner.profile.MotionProfile
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator
 import com.acmerobotics.roadrunner.profile.MotionState
@@ -16,7 +17,6 @@ import ftc.rogue.blacksmith.util.kt.clamp
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
-import kotlin.math.abs
 
 @JvmField
 var LIFT_ZERO = 0
@@ -44,9 +44,9 @@ var LIFT_MAX_J = 20000.0
 class Lift {
     private val liftMotor = hwMap<DcMotorSimple>(DeviceNames.LIFT_MOTOR)
 
-    private val liftPID = PIDFController(PIDCoefficients(LIFT_P, LIFT_I, LIFT_D))
+    private val liftPID = RRPIDFController(PIDCoefficients(LIFT_P, LIFT_I, LIFT_D))
 
-    private val normalPID = com.arcrobotics.ftclib.controller.PIDFController(0.0019, LIFT_I, LIFT_D, 0.0)
+    private val normalPID = FTCLibPIDFController(0.0019, LIFT_I, LIFT_D, 0.0)
 
     private val liftEncoder = Motor(hwMap, DeviceNames.LIFT_ENCODER)
             .apply(Motor::resetEncoder)
@@ -54,12 +54,16 @@ class Lift {
     private lateinit var profile: MotionProfile
 
     init {
-        regenMotionProfile()
+        regenMotionProfile(newTargetHeight = 0)
     }
 
     private var motionTime = ElapsedTime()
 
     var targetHeight = 0
+        set(value) {
+            regenMotionProfile(value)
+            field = value
+        }
 
     var mult = 1
 
@@ -71,39 +75,29 @@ class Lift {
 
     fun goToZero() {
         targetHeight = LIFT_ZERO
-        regenMotionProfile()
     }
 
     fun goToLow() {
         targetHeight = LIFT_LOW
-        regenMotionProfile()
     }
 
     fun goToMid() {
         targetHeight = LIFT_MID
-        regenMotionProfile()
     }
 
     fun goToHigh() {
         targetHeight = LIFT_HIGH
-        regenMotionProfile()
     }
 
     fun goToAngledLow() {
         targetHeight = LIFT_LOW - 145
-        regenMotionProfile()
     }
 
     fun goToAngledMid() {
         targetHeight = LIFT_MID - 190
-        regenMotionProfile()
     }
 
-    fun update() {
-        update(true)
-    }
-
-    fun update(useMotionProfiling: Boolean) {
+    fun update(useMotionProfiling: Boolean = true) {
         if (useMotionProfiling) {
             val state = profile[motionTime.microseconds()]
 
@@ -114,9 +108,10 @@ class Lift {
             }
 
             var correction = liftPID.update(liftHeight.toDouble(), liftVelocity)
-            if(liftHeight < 10 && targetHe
-                    ight == LIFT_ZERO)
+
+            if(liftHeight < 10 && targetHeight == LIFT_ZERO)
                 correction = 0.0
+
             liftMotor.power = correction
         } else {
             val correction = normalPID.calculate(liftHeight.toDouble(), targetHeight.toDouble())
@@ -134,21 +129,14 @@ class Lift {
     private var twoPrevTime = 0L
     private var onePrevTime = 0L
 
-    private fun regenMotionProfile() {
-        try {
-            if (motionTime == null)
-                motionTime = ElapsedTime(0);
-            motionTime.reset()
-            profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                    MotionState(liftHeight.toDouble(), liftVelocity, liftAccel),
-                    MotionState(targetHeight.toDouble(), 0.0, 0.0),
-                    LIFT_MAX_V, LIFT_MAX_A, LIFT_MAX_J
-            )
-        }
-        catch (e: Exception){
-            return
-        }
+    private fun regenMotionProfile(newTargetHeight: Int) {
+        motionTime.reset()
 
+        profile = MotionProfileGenerator.generateSimpleMotionProfile(
+            start = MotionState(liftHeight.toDouble(), liftVelocity, liftAccel),
+            goal  = MotionState(newTargetHeight.toDouble(), 0.0, 0.0),
+            LIFT_MAX_V, LIFT_MAX_A, LIFT_MAX_J
+        )
     }
 
     private val liftHeight: Int
@@ -164,7 +152,6 @@ class Lift {
             return liftEncoder.correctedVelocity
         }
 
-
     private val liftAccel: Double
         get() {
             // TODO: Check if this actually works. a bit sus imo but idk might work or be close enough
@@ -174,7 +161,7 @@ class Lift {
             return 1000 * ((onePrevVel - twoPrevVel) / (onePrevTime - twoPrevTime))
         }
 
-    fun printLiftTelem(telemetry: Telemetry) {
+    fun logData(telemetry: Telemetry) {
         telemetry.addData("Current lift height:", liftHeight)
         telemetry.addData("Lift target height:", targetHeight)
     }

@@ -82,8 +82,8 @@ class KalmanFilter {
      * Postcondition: the appropriate filtered value has been returned
      */
     // Filter a measurement: measured value is measurement, controlled input value is u.
-    fun filter(measurement: Double, u: Double): Double {
-        if (java.lang.Double.isNaN(x)) {
+    fun filter(measurement: Double, u: Double = 0.0): Double {
+        if (x.isNaN()) {
             x = 1 / C * measurement
             cov = 1 / C * Q * (1 / C)
         } else {
@@ -101,47 +101,16 @@ class KalmanFilter {
     }
 
     /**
-     * Feed a new value into the Kalman filter and return what the predicted state is.
-     * @param measurement the measured value
-     * @return the predicted result.
-     * Postcondition: the appropriate filtered value has been returned
+     * The last measurement taken (accurately).
      */
-    // Filter a measurement taken
-    fun filter(measurement: Double): Double {
-        val u = 0.0
-        if (java.lang.Double.isNaN(x)) {
-            x = 1 / C * measurement
-            cov = 1 / C * Q * (1 / C)
-        } else {
-            val predX = A * x + B * u
-            val predCov = A * cov * A + R
-
-            // Kalman gain
-            val K = predCov * C * (1 / (C * predCov * C + Q))
-
-            // Correction
-            x = predX + K * (measurement - C * predX)
-            cov = predCov - K * C * predCov
-        }
-        return x
-    }
-
-    /**
-     * Return the last measurement taken.
-     * @return the last measurement
-     * Postcondition: returns the last measurement accurately
-     */
-    // Return the last measurement taken
-    fun lastMeasurement(): Double {
-        return x
-    }
+    val lastMeasurement: Double
+        get() = x
 
     /**
      * Set the measurement noise
      * @param noise the measurement noise.
      * Postcondition: sets the measurement noise accurately
      */
-    // Set measurement noise
     fun setMeasurementNoise(noise: Double) {
         Q = noise
     }
