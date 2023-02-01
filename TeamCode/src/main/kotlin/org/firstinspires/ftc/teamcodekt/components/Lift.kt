@@ -113,7 +113,10 @@ class Lift {
                 targetAcceleration = state.a
             }
 
-            val correction = liftPID.update(liftHeight.toDouble(), liftVelocity)
+            var correction = liftPID.update(liftHeight.toDouble(), liftVelocity)
+            if(liftHeight < 10 && targetHe
+                    ight == LIFT_ZERO)
+                correction = 0.0
             liftMotor.power = correction
         } else {
             val correction = normalPID.calculate(liftHeight.toDouble(), targetHeight.toDouble())

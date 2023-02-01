@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
+import org.firstinspires.ftc.teamcodekt.util.CycleException
 
 @Autonomous
 class RogueLowLeftAuto : RogueBaseAuto() {
@@ -19,32 +20,31 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                     .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(36.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
             .preform(0, ::parkTraj)
                     .awaitInitialGoToDeposit()
-                    .turn(50)
+                    .turn(57)
                     .addTemporalMarker(0) {
                         bot.lift.clippedHeight = liftOffsets[0]-8
                         bot.wrist.setToBackwardsPos()
                     }
                     .back(70)
-                    .strafeRight(5.5)
                     .turn(-28)
+
+                    .strafeRight(5.5)
                     .forward(10)
                     .regularIntakePrep(0)
+                    .waitTime(300)
 
-
-                    .back(16.5)
+                    .back(10)
                     .awaitRegularIntake()
 
-                    /*
-                        Loop is arranged a bit strangely - because intaking initially is a bit different, the last
-                        deposit is managed automatically
-                     */
-                    .doTimes(4) {
-                        goToDeposit(it+1)
+
+                    .doTimes(5) {
+                        goToDeposit(it)
                         deposit()
-                        regularIntakePrep(it+1)
-                        goToIntake(it+1)
-                        awaitRegularIntake()
+                        regularIntakePrep(it)
+                        goToIntake(it)
                         waitTime(200)
+                        awaitRegularIntake()
+                        waitTime(50)
                     }
                     .goToDeposit(4)
                     .deposit()
@@ -55,7 +55,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
             .thenRunPreformed(0)
 
     private fun Anvil.initialDepositPrep() = this
-            .addTemporalMarker {
+            .addTemporalMarker (300) {
                 bot.lift.goToHigh()
                 bot.claw.close()
                 bot.arm.setToForwardsAngledPos()
@@ -65,7 +65,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
     private fun Anvil.awaitInitialGoToDeposit() = this
             .initialDepositPrep()
             .forward(132)
-            .turn(-140)
+            .turn(-147)
             .forward(12.5)
             .waitTime(150)
             .deposit()
@@ -83,7 +83,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
         3 -> forward(21.5)
         4 -> forward(21.5)
 
-        else -> noop
+        else -> throw CycleException()
     }
     private fun Anvil.goToIntake(it: Int) = when (it) {
 
@@ -92,7 +92,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
         2 -> back(21.5)
         3 -> back(21.5)
         4 -> back(21.5)
-        else -> noop
+        else -> throw CycleException()
     }.doInReverse()
 
     private fun Anvil.deposit() = this
@@ -107,19 +107,15 @@ class RogueLowLeftAuto : RogueBaseAuto() {
 
 
     private fun Anvil.regularIntakePrep(iterations: Int) = this
-            .addTemporalMarker(0) {
+            .addTemporalMarker(50) {
                 bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-                bot.claw.openForIntakeWide()
+                bot.claw.openForIntakeKindaWide()
+                bot.intake.enable()
             }
 
             .addTemporalMarker(105) {
                 bot.lift.clippedHeight = liftOffsets[iterations]-10
                 bot.wrist.setToBackwardsPos()
-            }
-
-            .addTemporalMarker(60) {
-                bot.intake.disable()
-                bot.claw.openForIntakeWide()
             }
 
             .waitTime(200)
