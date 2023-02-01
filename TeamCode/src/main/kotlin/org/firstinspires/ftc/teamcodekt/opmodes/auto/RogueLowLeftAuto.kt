@@ -56,7 +56,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                     .waitTime(300)
 
 
-                    .back(10)
+                    .back(12)
                     .addTemporalMarker(40) {
                         bot.claw.close()
                     }
@@ -75,19 +75,20 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                             bot.claw.openForDeposit()
                         }
                         .addTemporalMarker(250) {
+                            bot.lift.targetHeight = liftOffsets[it]
+                            bot.lift.regenMotionProfile()
                             bot.claw.openForIntakeWide()
                             bot.wrist.setToBackwardsPos()
                             bot.arm.setToBackwardsPos()
                         }
-                        .waitTime(400)
+                        .waitTime(500)
 
                         goToIntake(it)
                         .addTemporalMarker(100) {
                             bot.claw.close()
                         }
                         .addTemporalMarker(200) {
-                            bot.lift.targetHeight = liftOffsets[it+1]
-                            bot.lift.regenMotionProfile()
+                            bot.lift.goToAngledLow()
                         }
                         .addTemporalMarker(300) {
                             bot.arm.setToForwardsPos()
