@@ -373,12 +373,22 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         builderProxy.setVelConstraint(velConstraint)
     }
 
+    // IMPORTANT: These units are NOT auto-converted
+    fun setVelConstraint(maxVel: Number, maxAngularVel: Number, trackWidth: Number) = queueAndReturnThis {
+        builderProxy.setVelConstraint(driveProxy.getVelocityConstraint(maxVel, maxAngularVel, trackWidth))
+    }
+
     fun resetVelConstraint() = queueAndReturnThis {
         builderProxy.resetVelConstraint()
     }
 
     fun setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = queueAndReturnThis {
         builderProxy.setAccelConstraint(accelConstraint)
+    }
+
+    // IMPORTANT: These units are NOT auto-converted
+    fun setAccelConstraint(maxAccel: Number) = queueAndReturnThis {
+        builderProxy.setAccelConstraint(driveProxy.getAccelerationConstraint(maxAccel))
     }
 
     fun resetAccelConstraint() = queueAndReturnThis {
