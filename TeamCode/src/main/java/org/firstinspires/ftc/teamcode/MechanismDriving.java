@@ -13,13 +13,13 @@ public class MechanismDriving {
     public boolean testing=false;
 
     public static Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
-       put(Robot.SlidesState.RETRACTED, -1000);
-       put(Robot.SlidesState.LOW, 4770);
-       put(Robot.SlidesState.MEDIUM, 8020);
-       put(Robot.SlidesState.HIGH, 13870);
+       put(Robot.SlidesState.RETRACTED, -170);
+       put(Robot.SlidesState.LOW, 2874);
+       put(Robot.SlidesState.MEDIUM, 4863);
+       put(Robot.SlidesState.HIGH, 6700);
        put(Robot.SlidesState.UNREADY, 0);
     }};
-    public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 0.8; //These are not final values
+    public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 0.7; //These are not final values
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
     public static final long CLAW_SERVO_TIME = 500;
     //SPEED INFO: Scale from 0-1 in speed.
@@ -45,6 +45,7 @@ public class MechanismDriving {
     /** Sets the claw position to the robot's desired state.
      */
     public void updateClaw(Robot robot) {
+        robot.telemetry.addData("robot desired claw state",robot.desiredClawState);
         switch (robot.desiredClawState) {
             case CLOSED:
                 robot.claw.setPosition(CLAW_CLOSED_POS); //closed
@@ -53,6 +54,8 @@ public class MechanismDriving {
                 robot.claw.setPosition(CLAW_OPEN_POS); //open
                 break;
         }
+        robot.telemetry.addData("robot set claw position",robot.claw.getPosition());
+
     }
 
     /** Sets the claw position to the robot's desired state.

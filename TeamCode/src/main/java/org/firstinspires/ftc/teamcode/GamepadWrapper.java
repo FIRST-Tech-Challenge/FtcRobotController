@@ -110,6 +110,6 @@ class AnalogValues {
         this.gamepad1LeftTrigger = gamepad1.left_trigger;
         this.gamepad1RightTrigger = gamepad1.right_trigger;
         this.gamepad2LeftTrigger = gamepad2.left_trigger;
-        this.gamepad2RightTrigger = gamepad2.left_trigger;
+        this.gamepad2RightTrigger = gamepad2.right_trigger;
     }
 }

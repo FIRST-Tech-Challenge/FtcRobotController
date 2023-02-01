@@ -53,9 +53,9 @@ public class Navigation {
     // INSTANCE ATTRIBUTES
     // ===================
 
-    // Speeds relative to one another.
+    // Speeds relative to one another. RR is positive on purpose!
     //                              RL   RR   FL   FR
-    public double[] wheel_speeds = {-1.0, -1.0, -1.0, -1.0};
+    public double[] wheel_speeds = {-1.0, 1.0, -1.0, -1.0};
     public double strafePower;  // Tele-Op only
 
     // First position in this ArrayList is the first position that robot is planning to go to.
@@ -129,11 +129,11 @@ public class Navigation {
             strafePower = SLOW_MOVEMENT_SCALE_FACTOR;
         } else {
             strafePower = distance * MOVEMENT_MAX_POWER;
-            if (Robot.desiredSlidesState == Robot.SlidesState.HIGH && robot.slidesMotor.getPower() == 0) {
+            if (Robot.desiredSlidesState == Robot.SlidesState.HIGH && robot.slidesMotor1.getPower() == 0) {
                 strafePower *= SLOW_MOVEMENT_SCALE_FACTOR;
-            } else if (Robot.desiredSlidesState == Robot.SlidesState.MEDIUM && robot.slidesMotor.getPower() == 0) {
+            } else if (Robot.desiredSlidesState == Robot.SlidesState.MEDIUM && robot.slidesMotor1.getPower() == 0) {
                 strafePower *= MEDIUM_MOVEMENT_SCALE_FACTOR;
-            } else if (Robot.desiredSlidesState == Robot.SlidesState.LOW && robot.slidesMotor.getPower() == 0) {
+            } else if (Robot.desiredSlidesState == Robot.SlidesState.LOW && robot.slidesMotor1.getPower() == 0) {
                 strafePower *= MEDIUM_MOVEMENT_SCALE_FACTOR; //Scale factor is the same as medium
             }
         }
@@ -199,7 +199,7 @@ public class Navigation {
         }
 
         // Field-centric navigation
-        moveDirection -= robot.positionManager.position.getRotation();
+//        moveDirection -= robot.positionManager.position.getRotation();
 
         setDriveMotorPowers(moveDirection, strafePower, turn, robot, false);
     }

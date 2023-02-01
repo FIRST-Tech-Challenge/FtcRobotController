@@ -24,7 +24,8 @@ public class PowerPlayAuton extends LinearOpMode {
                 PowerPlayAuton.movementMode, telemetry, elapsedTime);
         IMUPositioning.Initialize(this);
         robotManager.robot.computerVision.initialize();
-
+        robotManager.robot.telemetry.addData("does any telemetry work", robotManager.robot.computerVision);
+        robotManager.robot.telemetry.addData("does any PIPELINE work", robotManager.robot.computerVision.aprilTagDetectionPipeline);
         robotManager.closeClaw();
 
         // Repeatedly run CV
