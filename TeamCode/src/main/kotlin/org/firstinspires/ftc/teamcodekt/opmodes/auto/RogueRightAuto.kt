@@ -51,11 +51,11 @@ class RogueRightAuto : RogueBaseAuto() {
         .splineToSplineHeading(82.25, -10.15, 131.95, 115)
 
     private fun Anvil.awaitGoToDeposit(it: Int) = when (it) {
-        0 -> splineToSplineHeading(85.000, -11.750, 140.900, 155)
-        1 -> splineToSplineHeading(84.100, -14.105, 139.925, 155)
-        2 -> splineToSplineHeading(81.350, -14.750, 136.450, 155)
-        3 -> splineToSplineHeading(79.124, -19.575, 134.675, 155)
-        4 -> splineToSplineHeading(80.450, -19.350, 143.975, 155)
+        0 -> splineToSplineHeading(81.000 + 4, -11.750, 140.900, 155)
+        1 -> splineToSplineHeading(80.100 + 4, -14.105, 139.925, 155)
+        2 -> splineToSplineHeading(76.850 + 4.5, -14.750, 136.450, 155)
+        3 -> splineToSplineHeading(74.624 + 4.5, -19.575, 134.675, 155)
+        4 -> splineToSplineHeading(75.950 + 4.5, -19.350, 143.975, 155)
         else -> this
     }
 

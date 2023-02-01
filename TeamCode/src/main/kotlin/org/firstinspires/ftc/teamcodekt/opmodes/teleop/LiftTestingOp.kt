@@ -2,15 +2,12 @@ package org.firstinspires.ftc.teamcodekt.opmodes.teleop
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.AutoData.*
+
 
 @Config
 @TeleOp
 class LiftTestingOp : RogueBaseTele() {
-    @JvmField var h1 = 265
-    @JvmField var h2 = 205
-    @JvmField var h3 = 145
-    @JvmField var h4 = 85
-    @JvmField var h5 = 5
 
     override fun describeControls(): Unit = with(bot) {
         driver.a.onRise(::setHeight1)
@@ -33,23 +30,28 @@ class LiftTestingOp : RogueBaseTele() {
         }
     }
 
-    private fun setHeight1() {
-        bot.lift.targetHeight = h1
+    fun setHeight1(){
+        bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_1
+        bot.lift.regenMotionProfile()
     }
 
-    private fun setHeight2() {
-        bot.lift.targetHeight = h2
+    fun setHeight2(){
+        bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_2
+        bot.lift.regenMotionProfile()
     }
 
-    private fun setHeight3() {
-        bot.lift.targetHeight = h3
+    fun setHeight3(){
+        bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_3
+        bot.lift.regenMotionProfile()
     }
 
-    private fun setHeight4() {
-        bot.lift.targetHeight = h4
+    fun setHeight4(){
+        bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_4
+        bot.lift.regenMotionProfile()
     }
 
-    private fun setHeight5() {
-        bot.lift.targetHeight = h5
+    fun setHeight5(){
+        bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_5
+        bot.lift.regenMotionProfile()
     }
 }

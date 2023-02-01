@@ -16,7 +16,7 @@ class IntakeChain(val bot: TeleOpBotComponents) : Chain {
             bot.claw.openForIntakeNarrow()
             bot.intake.enable()
 
-            bot.arm.setToBackwardsPos()
+            bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
             bot.wrist.setToBackwardsPos()
 
             bot.lift.goToZero()
