@@ -14,14 +14,14 @@ import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
 import org.firstinspires.ftc.teamcodekt.util.CycleException
 
 @Autonomous
-class RogueLowLeftAuto : RogueBaseAuto() {
+class RogueStraightMidLeftAuto : RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(-91, -163, 90)
 
     override fun mainTraj(startPose: Pose2d) =
             Anvil.formTrajectory(bot.drive, startPose)
                     .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(36.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
-            .preform(0, ::parkTraj)
-                    .addTemporalMarker(0){
+                    .preform(0, ::parkTraj)
+                    .addTemporalMarker(0) {
                         bot.claw.close()
                     }
                     .addTemporalMarker(600) {
@@ -34,10 +34,13 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                     .forward(14)
                     .addTemporalMarker(0) {
                         bot.arm.setToForwardsPos()
+                        bot.lift.targetHeight = LIFT_HIGH - 500
+                        bot.lift.regenMotionProfile()
                     }
                     .addTemporalMarker(100) {
                         bot.lift.targetHeight = liftOffsets[0]
                         bot.lift.regenMotionProfile()
+                        bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
                     }
                     .addTemporalMarker(350) {
                         bot.claw.openForDeposit()
@@ -50,26 +53,23 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                     .turn(51.5)
 
                     .back(70)
-                    .turn(-27.5)
 
-                    .strafeRight(6.6)
                     .addTemporalMarker(100) {
-                        bot.arm.setToBackwardsPos()
+                        bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
                         bot.claw.openForIntakeWide()
                     }
                     .forward(10.4)
                     .waitTime(200)
 
-
                     .back(10.4)
                     .addTemporalMarker(30) {
                         bot.claw.close()
                     }
-                    .addTemporalMarker(150) {
-                        bot.arm.setToForwardsPos()
+                    .addTemporalMarker(200) {
+                        bot.arm.setToForwardsAngledPos()
                     }
                     .addTemporalMarker(350) {
-                        bot.lift.goToAngledLow()
+                        bot.lift.goToAngledHigh()
                     }
                     .addTemporalMarker(450) {
                         bot.wrist.setToForwardsPos()
@@ -78,40 +78,50 @@ class RogueLowLeftAuto : RogueBaseAuto() {
 
                     .doTimes(4) {
                         goToDeposit(it)
-                        .addTemporalMarker(100) {
-                            bot.claw.openForDeposit()
-                        }
-                        .addTemporalMarker(250) {
-                            bot.lift.targetHeight = liftOffsets[it+1]
-                            bot.lift.regenMotionProfile()
-                            bot.claw.openForIntakeWide()
-                            bot.wrist.setToBackwardsPos()
-                            bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-                        }
-                        .waitTime(500)
+                                .addTemporalMarker(0) {
+                                    bot.arm.setToForwardsPos()
+                                    bot.lift.targetHeight = LIFT_HIGH - 1000
+                                    bot.lift.regenMotionProfile()
+                                }
+
+                                .addTemporalMarker(100) {
+                                    bot.claw.openForDeposit()
+                                }
+                                .addTemporalMarker(250) {
+                                    bot.lift.targetHeight = liftOffsets[it + 1]
+                                    bot.lift.regenMotionProfile()
+                                    bot.claw.openForIntakeWide()
+                                    bot.wrist.setToBackwardsPos()
+                                    bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
+                                }
+                                .waitTime(500)
 
                         goToIntake(it)
-                        .addTemporalMarker(30) {
-                            bot.claw.close()
-                        }
-                        .addTemporalMarker(140) {
-                            bot.arm.setToForwardsPos()
-                        }
-                        .addTemporalMarker(350) {
-                            bot.lift.goToAngledLow()
-                        }
-                        .addTemporalMarker(415) {
-                            bot.wrist.setToForwardsPos()
-                        }
-                        .waitTime(400)
+                                .addTemporalMarker(30) {
+                                    bot.claw.close()
+                                }
+                                .addTemporalMarker(200) {
+                                    bot.arm.setToForwardsAngledPos()
+                                }
+                                .addTemporalMarker(375) {
+                                    bot.lift.goToAngledHigh()
+                                }
+                                .addTemporalMarker(415) {
+                                    bot.wrist.setToForwardsPos()
+                                }
+                                .waitTime(400)
                     }
                     .goToDeposit(4)
-                    .addTemporalMarker(100) {
+                    .addTemporalMarker(0) {
+                        bot.arm.setToForwardsPos()
+                        bot.lift.targetHeight = LIFT_HIGH - 1000
+                        bot.lift.regenMotionProfile()
+                    }
+                    .addTemporalMarker(225) {
                         bot.claw.openForDeposit()
                     }
-                    .addTemporalMarker(250) {
-                        bot.lift.goToZero()
-                        bot.arm.setToRestingPos()
+                    .addTemporalMarker(450) {
+                        bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
                         bot.wrist.setToBackwardsPos()
                     }
                     .waitTime(500)
@@ -119,7 +129,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                     .resetBot()
 
 
-            .thenRunPreformed(0)
+                    .thenRunPreformed(0)
 
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
@@ -127,25 +137,23 @@ class RogueLowLeftAuto : RogueBaseAuto() {
             The offset values are from sin(32) and cos(32) degrees.
             Used to spline in a straight line. This is advantageous to maintain localization better.
         */
-        0 -> forward(AutoData.LOW_DEPOSIT_1)
-        1 -> forward(AutoData.LOW_DEPOSIT_2)
-        2 -> forward(AutoData.LOW_DEPOSIT_3)
-        3 -> forward(AutoData.LOW_DEPOSIT_4)
-        4 -> forward(AutoData.LOW_DEPOSIT_5)
+        0 -> splineTo(-85.5, -41, -37)
+        1 -> splineTo(-85.5, -41, -35)
+        2 -> splineTo(-85.5, -41, -33)
+        3 -> splineTo(-85.5, -41, -31)
+        4 -> splineTo(-85.5, -41, -30)
 
         else -> throw CycleException()
     }
+
     private fun Anvil.goToIntake(it: Int) = when (it) {
-
-        0 -> back(AutoData.LOW_INTAKE_1)
-        1 -> back(AutoData.LOW_INTAKE_2)
-        2 -> back(AutoData.LOW_INTAKE_3)
-        3 -> back(AutoData.LOW_INTAKE_4)
-        4 -> back(AutoData.LOW_INTAKE_5)
+        0 -> splineTo(-164, -28, 180)
+        1 -> splineTo(-164, -28, 180)
+        2 -> splineTo(-164, -28, 180)
+        3 -> splineTo(-164, -28, 180)
+        4 -> splineTo(-164, -28, 180)
         else -> throw CycleException()
-    }
-
-
+    }.doInReverse()
 
 
     private fun Anvil.resetBot() = this
