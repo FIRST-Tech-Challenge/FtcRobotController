@@ -29,13 +29,16 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.HuskyBot.CLAW_GRAB_CLOSE_POSITION;
 import static org.firstinspires.ftc.teamcode.HuskyBot.CLAW_LIFT_START_POSITION;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "Auto", group = "Auto", preselectTeleOp = "Husky TeleOpMode")
 public class HuskyAuto extends HuskyAutoBase {
@@ -46,40 +49,37 @@ public class HuskyAuto extends HuskyAutoBase {
         waitForStart();
         runtime.reset();
 
-        huskyBot.clawLift.setPosition(1.0);
-
-        this.parkLocation = getParkLocation();
-
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        // Backup Plan Trajectory
-        Trajectory backupPlanTrajA = drive.trajectoryBuilder(new Pose2d())
+        // region TRAJECTORIES
+        // Backup-Plan Trajectory
+        Trajectory backupPlanTrajA = drive.trajectoryBuilder(new Pose2d(-36, -61.00, Math.toRadians(90.00)))
                 .strafeRight(8)
                 .build();
         Trajectory backupPlanTrajB = drive.trajectoryBuilder(backupPlanTrajA.end())
                 .strafeLeft(8)
                 .build();
 
-        // Location 1 Trajectory
-        Trajectory location1TrajA = drive.trajectoryBuilder(new Pose2d())
-                .forward(26)
-                .build();
-        Trajectory location1TrajB = drive.trajectoryBuilder(location1TrajA.end())
-                .strafeLeft(24)
-                .build();
-
-        // Location 2 Trajectory
-        Trajectory location2TrajA = drive.trajectoryBuilder(new Pose2d())
-                .forward(26)
+        // Place-Preloaded-Cone Trajectory
+        TrajectorySequence TRAJ_1 = drive.trajectorySequenceBuilder(new Pose2d(-36.00, -61.00, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(-18.51, -61.03), Math.toRadians(0.00))
+                .splineTo(new Vector2d(-8.91, -37.94), Math.toRadians(65.14))
+                .addDisplacementMarker(() -> {})
+                .waitSeconds(1)
                 .build();
 
-        // Location 3 Trajectory
-        Trajectory location3TrajA = drive.trajectoryBuilder(new Pose2d())
-                .forward(26)
+        // Move-to-Stack Trajectory
+        TrajectorySequence TRAJ_2 = drive.trajectorySequenceBuilder(new Pose2d(-8.91, -37.94, Math.toRadians(39.81)))
+                .splineTo(new Vector2d(-18.97, -11.43), Math.toRadians(172.23))
+                .splineTo(new Vector2d(-57.60, -11.20), Math.toRadians(180.00))
+                .addDisplacementMarker(() -> {})
                 .build();
-        Trajectory location3TrajB = drive.trajectoryBuilder(location3TrajA.end())
-                .strafeRight(24)
-                .build();
+        // endregion
+
+        huskyBot.clawLift.setPosition(1.0);
+        huskyBot.clawGrab.setPosition(CLAW_GRAB_CLOSE_POSITION);
+
+        this.parkLocation = getParkLocation();
 
 
 
@@ -96,19 +96,8 @@ public class HuskyAuto extends HuskyAutoBase {
             this.parkLocation = Location.LOCATION_2;
         }
 
-        switch (this.parkLocation){
-            case LOCATION_1:
-                drive.followTrajectory(location1TrajA);
-                drive.followTrajectory(location1TrajB);
-                break;
-            case LOCATION_2:
-                drive.followTrajectory(location2TrajA);
-                break;
-            case LOCATION_3:
-                drive.followTrajectory(location3TrajA);
-                drive.followTrajectory(location3TrajB);
-                break;
-        }
+        drive.followTrajectorySequence(TRAJ_1);
+        drive.followTrajectorySequence(TRAJ_2);
 
         telemetry.update();
     }
