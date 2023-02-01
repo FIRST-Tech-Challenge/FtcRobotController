@@ -185,13 +185,13 @@ public class Right2 extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithdistanceandcrane(1,32,-1,1600);
+            strafeLeftwithdistanceandcrane(1,31  ,-1,2000);//
             //crane2(1,-7600);
             move(.5,-330);
             sleep(1000);
             move(.5,40);
             sleep(200);
-            crane(1,200);
+            crane(1,200);//
             intake(-1,1300);
             crane(-1,250);
             move(.5,200);

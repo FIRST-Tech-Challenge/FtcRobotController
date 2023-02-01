@@ -183,7 +183,7 @@ public class Left2 extends LinearOpMode {
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithcrane2(1,30,-1,1600);
+            strafeLeftwithcrane2(1,30,-1,2000);
             //strafeLeftwithcrane(1,1950,-1,2300);
             //crane2(1,-7600);
             move(.5,330);
