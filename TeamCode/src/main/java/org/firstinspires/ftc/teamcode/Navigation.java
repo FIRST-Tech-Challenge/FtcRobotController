@@ -129,10 +129,12 @@ public class Navigation {
             strafePower = SLOW_MOVEMENT_SCALE_FACTOR;
         } else {
             strafePower = distance * MOVEMENT_MAX_POWER;
-            if (Robot.desiredSlidesState == Robot.SlidesState.HIGH) {
+            if (Robot.desiredSlidesState == Robot.SlidesState.HIGH && robot.slidesMotor.getPower() == 0) {
                 strafePower *= SLOW_MOVEMENT_SCALE_FACTOR;
-            } else if (Robot.desiredSlidesState == Robot.SlidesState.MEDIUM) {
+            } else if (Robot.desiredSlidesState == Robot.SlidesState.MEDIUM && robot.slidesMotor.getPower() == 0) {
                 strafePower *= MEDIUM_MOVEMENT_SCALE_FACTOR;
+            } else if (Robot.desiredSlidesState == Robot.SlidesState.LOW && robot.slidesMotor.getPower() == 0) {
+                strafePower *= MEDIUM_MOVEMENT_SCALE_FACTOR; //Scale factor is the same as medium
             }
         }
     }
