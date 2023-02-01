@@ -114,8 +114,7 @@ class Lift {
             }
 
             var correction = liftPID.update(liftHeight.toDouble(), liftVelocity)
-            if(liftHeight < 10 && targetHe
-                    ight == LIFT_ZERO)
+            if(liftHeight < 10 && targetHeight == LIFT_ZERO)
                 correction = 0.0
             liftMotor.power = correction
         } else {
@@ -134,7 +133,7 @@ class Lift {
     private var twoPrevTime = 0L
     private var onePrevTime = 0L
 
-    private fun regenMotionProfile() {
+    fun regenMotionProfile() {
         try {
             if (motionTime == null)
                 motionTime = ElapsedTime(0);
