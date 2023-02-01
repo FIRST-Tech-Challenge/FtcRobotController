@@ -74,7 +74,7 @@ public class Disco2 extends LinearOpMode {
 
             if (intakePos > 0.75) {
                 nextAxonPos = axonPos + 0.02;
-                sleep(10);
+                sleep(50);
             }
             if (intakePos < -0.75) {
                 nextAxonPos = axonPos - 0.1;
