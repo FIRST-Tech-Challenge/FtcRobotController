@@ -11,9 +11,7 @@ import TabItem from '@theme/TabItem';
 
 The Blacksmith Library is a collection of tools and such for FTC, which focuses on both readability, *and* brevity,
 aiming to be as intuitive as possible. It allows you to program more declaratively and worry less about common logic
-that only serves to distract you and add bugs to your code.
-
-It is made *with* Kotlin, *for* Kotlin, but it still works *very* well with Java.
+that serve only to distract you and add more potential points of failure.
 
 :::info
 All code documentation provide both Java and Kotlin examples
@@ -23,11 +21,16 @@ All code documentation provide both Java and Kotlin examples
 
 The Blacksmith Library provides a few different things:
  - [The Scheduler API](/scheduler-api/overview) - An API to drastically simplify the creation and maintainability of your OpModes, and make them much cleaner and terser. It provides many methods to hide away a lot of extra logic that you don't need to worry about, such as scheduling when to run certain code.
- ::-[Anvil](/anvi/overview) - A wrapper around [Roadrunner's](https://learnroadrunner.com/) [TrajectorySequenceBuilder](https://learnroadrunner.com/trajectory-sequence.html) which provides a much nicer API for creating trajectories, as well as utilities for creating trajectories on the fly without slowing down your auto.
+ - [Anvil](/anvil/overview) - A wrapper around [Roadrunner's](https://learnroadrunner.com/) [TrajectorySequenceBuilder](https://learnroadrunner.com/trajectory-sequence.html) which provides a much nicer API for creating trajectories, as well as implicit unit conversion and utilities for creating trajectories on the fly without slowing down your auto.
+ - [BlackOp](/blackop/overview) - An extension to the traditional OpMode/LinearOpMode which contains some extra features for a more seamless and carefree development experience
+ - And quite a decent amount of [utilities...](/util/overview)
 
- - And quite a decent amount of [utilities...](/util/math-utils) Especially for [Kotlin!](/util/kt/better-hwmap-get)
+I recommend checking those out for examples of each.
 
-I recommend checking those out for examples of each, but here's a basic example of a TeleOp before and after using Blacksmith:
+**If you use Kotlin (or even if you don't honestly), I highly recommend checking out our codebase in TeamCode to see how
+Blacksmith is used in actual code**
+
+Here's a basic example of a TeleOp before and after using Blacksmith:
 
 <Tabs groupId="programming-language">
   <TabItem value="java" label="Java">
@@ -159,3 +162,5 @@ The performance impact is negligible; CPUs are fast, and you have other things t
 
 This API is simply a couple layers of abstraction on top of the existing FTC SDK, and is in no way computationally
 expensive.
+
+Plus... the majority of the overhead is just at initialization time and clears up fairly quickly

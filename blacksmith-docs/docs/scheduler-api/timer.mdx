@@ -14,10 +14,11 @@ import TabItem from '@theme/TabItem';
 A timer's resolution is tied to the performance of the Scheduler loop. If there's a heavy computation involved,
 the timer may not fire at the exact time it was scheduled for.
 
-For example, if you have a timer set to go off in 50ms, but the loop is busy for an extra 50ms, the timer fire up to
+For example, if you have a timer set to go off in 50ms, but the loop is busy for an extra 50ms, the timer will fire up to
 100ms after it was scheduled.
 
-This is not meant for very precise timing, with its current implementation.
+This is not meant for very precise timing. But then again, without multithreading(which I don't reallly recommend for
+most cases), it's not really possible to get a higher resolution timer anyways. **It's good enough for most use cases.**
 :::
 
 ## Overview
@@ -439,7 +440,7 @@ Not entirely sure why you'd want to do this, but it's there if you need it lol.
       claw.close();
     });
 
-    after(1).second(() -> {
+    after(1).seconds(() -> {
       lift.goToZero();
     });
 
@@ -472,7 +473,7 @@ Not entirely sure why you'd want to do this, but it's there if you need it lol.
       claw.close()
     }
 
-    after(1).second {
+    after(1).seconds {
       lift.goToZero()
     }
 

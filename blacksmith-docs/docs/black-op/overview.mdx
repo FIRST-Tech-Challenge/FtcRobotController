@@ -1,16 +1,21 @@
+---
+sidebar_position: 0
+---
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# BlackOp
+# Overview
 
 An extension of the `LinearOpMode` class that adds a few extra utility features, namely:
 
- - `mTelemetry`, a `Telemetry` object which logs to both the driver station and FTCDashboard
+ - A **global** `mTelemetry`, a `Telemetry` object which logs to both the driver station and FTCDashboard
 
- - `hwMap`, `hardwareMap`, but shorter name
+ - A **global** `hwMap` (`hardwareMap`, but shorter name)
 
  - Broadcasts a message (`BlackOp.STARTING_MSG`) when the runOpMode method is called with [Scheduler.emit](../scheduler-api/scheduler#scheduleremit)
-   - This in turn opens up support for [`createOnGo`](./create-on-go), a *very* nice Kotlin utility function
+   - This in turn opens up support for [`@CreateOnGo`](./create-on-go) ([`createOnGo/evalOnGo`](./create-on-go) for Kotlin),
+   a *very* nice utility feature
 
  - More will come soon as I think of new, helpful utilities
 

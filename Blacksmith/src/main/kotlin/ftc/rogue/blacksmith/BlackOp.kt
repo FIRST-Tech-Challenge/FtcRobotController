@@ -2,12 +2,13 @@
 
 package ftc.rogue.blacksmith
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
-import ftc.rogue.blacksmith.annotations.CreateOnStart
-import ftc.rogue.blacksmith.internal.tryConfigKtSetup
+import ftc.rogue.blacksmith.annotations.CreateOnGo
 import ftc.rogue.blacksmith.util.getFieldsAnnotatedWith
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
@@ -27,7 +28,7 @@ import kotlin.reflect.KProperty
  *
  *  i like cars
  */
-abstract class BlackOp() : LinearOpMode() {
+abstract class BlackOp : LinearOpMode() {
     @JvmField
     protected val mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
@@ -55,9 +56,15 @@ abstract class BlackOp() : LinearOpMode() {
         Scheduler.emit(STARTING_MSG)
 
         this::class.java
-            .getFieldsAnnotatedWith(CreateOnStart::class.java)
-            .forEach {
-                it.set(this, it.type.getConstructor().newInstance())
+            .getFieldsAnnotatedWith(CreateOnGo::class.java)
+            .forEach { field ->
+                val clazz = field.type
+
+                if (clazz.constructors.none { it.parameterTypes.isEmpty() }) {
+                    throw CreationException("Class '${clazz.simpleName}' has no no-arg constructor")
+                }
+
+                field.set(this, clazz.getConstructor().newInstance())
             }
 
         go()
@@ -109,7 +116,7 @@ abstract class BlackOp() : LinearOpMode() {
      */
     @JvmSynthetic
     protected fun <T : Any> evalOnGo(constructor: () -> T) =
-        CreateOnGo(constructor)
+        InternalCreateOnGo(constructor)
 
     /**
      * READ DOCS FOR THIS
@@ -121,7 +128,7 @@ abstract class BlackOp() : LinearOpMode() {
      * READ DOCS FOR THIS
      */
     protected inline fun <reified T : Any> createOnGo(vararg args: () -> Any) =
-        CreateOnGo {
+        InternalCreateOnGo {
             val clazz = T::class.java
 
             val invokedArgs = args.map { it() }.toTypedArray()
@@ -137,7 +144,7 @@ abstract class BlackOp() : LinearOpMode() {
 
     // -- INTERNAL --
 
-    protected inner class CreateOnGo<T : Any> @PublishedApi internal constructor(constructor: () -> T) {
+    protected inner class InternalCreateOnGo<T : Any> @PublishedApi internal constructor(constructor: () -> T) {
         private lateinit var value: T
 
         init {

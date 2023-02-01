@@ -113,17 +113,17 @@ You might have noticed the `onRise` and `onFall`, and may be a little confused r
 
 You can see four distinct words:
  - Low:  The condition is false
- - High: The condition is true
  - Rise: The condition went from false to true
+ - High: The condition is true
  - Fall: The condition went from true to false
 
 Similarly, the Listener class has four subscription methods:
- - `whileLow`
- - `whileHigh`
- - `onRise`
- - `onFall`
+ - `whileHigh - (or whileTrue)`
+ - `whileLow -- (or whileFalse)`
+ - `onRise ---- (or onJustTrue)`
+ - `onFall ---- (or onJustFalse)`
 
-You're a smart cookie; you can probably figure out what they do. If not, it's fine! Just look at the method
+You're (probably) a smart (enough) cookie; you can probably figure out what they mean. If not, it's fine! Just look at the method
 documentation for more detailed examples!
 
 ### The concept of hooking🪝
@@ -588,7 +588,7 @@ If you're using **Kotlin**, *please* read the note in the code above about using
 (gamepadA / { !gamepad1.x }).onRise { ... }
 
 // performs the `onRise` on `gamepadB` only, THEN performs the `and` on the gamepadA with gamepadB
-// aka it won't work right lol
+// aka it's probably not what you intend lol
 // this-will-error
 gamepadA + gamepadB.onRise { ... }
 ```

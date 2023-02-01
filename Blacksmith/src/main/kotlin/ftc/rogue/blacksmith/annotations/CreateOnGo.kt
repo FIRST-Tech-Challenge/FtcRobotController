@@ -2,4 +2,4 @@ package ftc.rogue.blacksmith.annotations
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class CreateOnStart
+annotation class CreateOnGo

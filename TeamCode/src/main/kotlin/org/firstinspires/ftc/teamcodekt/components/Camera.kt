@@ -16,6 +16,7 @@ import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 import org.openftc.easyopencv.OpenCvPipeline
+import kotlin.properties.Delegates
 
 @JvmField
 var CAM_FORWARDS = 56.5
@@ -95,6 +96,45 @@ class Camera {
         }
 
         return lastIntID
+    }
+
+    private var numFramesWithoutDetection by Delegates.notNull<Int>()
+    private var lastIntID by Delegates.notNull<Int>()
+
+    fun readConeAsync() {
+        targetAngle = CAM_FORWARDS
+        update()
+        numFramesWithoutDetection = 0
+        lastIntID = -1
+    }
+
+    fun coneReadUpdate(): Int? {
+        val telemetry = BlackOp.mTelemetry
+
+        val detections = aprilTagDetectionPipeline.detectionsUpdate
+
+        telemetry.addData("FPS", camera.fps)
+        telemetry.addData("Overhead ms", camera.overheadTimeMs)
+        telemetry.addData("Pipeline ms", camera.pipelineTimeMs)
+
+        if (detections.size == 0) {
+            numFramesWithoutDetection++
+
+            if (numFramesWithoutDetection >= THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION) {
+                aprilTagDetectionPipeline.setDecimation(DECIMATION_LOW)
+            }
+        } else {
+            numFramesWithoutDetection = 0
+
+            if (detections[0].pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS) {
+                aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH)
+            }
+
+            lastIntID = detections.last().id
+            telemetry.addLine("\nDetected tag ID=$lastIntID")
+        }
+
+        return lastIntID.takeIf { it > 0 }
     }
 
     companion object {
