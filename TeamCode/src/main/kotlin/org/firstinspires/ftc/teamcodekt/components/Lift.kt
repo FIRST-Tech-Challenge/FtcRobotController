@@ -17,6 +17,7 @@ import ftc.rogue.blacksmith.util.kt.clamp
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 import org.firstinspires.ftc.teamcodekt.util.KalmanFilter
+import kotlin.math.abs
 
 @JvmField
 var LIFT_ZERO = 0
@@ -29,7 +30,7 @@ var LIFT_HIGH = 1590
 
 
 @JvmField
-var NORMAL_LIFT_P = 0.0021
+var NORMAL_LIFT_P = 0.0015
 @JvmField
 var NORMAL_LIFT_I = 0.01
 @JvmField
@@ -113,7 +114,7 @@ class Lift(val usingMotionProfiling: Boolean) {
     }
 
     fun goToAngledHigh() {
-        targetHeight = LIFT_HIGH - 356
+        targetHeight = LIFT_HIGH - 390
     }
 
     fun goToAngledLow() {
@@ -140,8 +141,13 @@ class Lift(val usingMotionProfiling: Boolean) {
                 correction = 0.0
             liftMotor.power = correction
         } else {
-            val correction = liftNormalPID.calculate(liftHeight.toDouble(), targetHeight.toDouble())
-            liftMotor.power = liftFilter.filter(liftMotor.power + correction)
+            if(abs(liftHeight-targetHeight) < 3){
+                liftMotor.power = 0.0
+            }
+            else{
+                val correction = liftNormalPID.calculate(liftHeight.toDouble(), targetHeight.toDouble())
+                liftMotor.power = liftFilter.filter(liftMotor.power + correction)
+            }
         }
     }
 

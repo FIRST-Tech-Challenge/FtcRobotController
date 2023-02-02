@@ -29,7 +29,7 @@ class Arm {
     }
 
     fun setToBackwardsPosButLikeSliiiightlyHigher() {
-        targetAngle = 42.0
+        targetAngle = 47.5
     }
 
     fun setToRestingPos() {

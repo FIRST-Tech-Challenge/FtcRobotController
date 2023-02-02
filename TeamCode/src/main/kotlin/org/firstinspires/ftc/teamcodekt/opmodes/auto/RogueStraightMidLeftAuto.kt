@@ -58,15 +58,23 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
             Used to spline in a straight line. This is advantageous to maintain localization better.
         */
         -1 -> lineToLinearHeading(-85.2, -41.9, -38.5)
-        0 -> splineTo(-86, -40.5, -37)
-        1 -> splineTo(-86, -40.5, -35)
-        2 -> splineTo(-86, -40.5, -30)
-        3 -> splineTo(-86, -39.7, -29)
-        4 -> splineTo(-86, -39.2, -27)
+        0 -> splineTo(-83, -41, -37)
+        1 -> splineTo(-83, -41, -35)
+        2 -> splineTo(-84, -41.1, -30)
+        3 -> splineTo(-84, -40, -29)
+        4 -> splineTo(-84, -39.5, -27)
 
         else -> throw CycleException()
     }
 
+    private fun Anvil.goToIntake(it: Int) = when (it) {
+        0 -> splineTo(-165.2, -24.5, 180)
+        1 -> splineTo(-165.2, -24.5, 180)
+        2 -> splineTo(-164.2, -25, 180)
+        3 -> splineTo(-164.3, -24.1, 180)
+        4 -> splineTo(-164.3, -23.9, 180)
+        else -> throw CycleException()
+    }.doInReverse()
 
     private fun Anvil.awaitRegularIntake() = this
             .addTemporalMarker {
@@ -142,15 +150,6 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
                 bot.claw.openForIntakeNarrow()
                 bot.intake.enable()
             }
-
-    private fun Anvil.goToIntake(it: Int) = when (it) {
-        0 -> splineTo(-165, -24.9, 180)
-        1 -> splineTo(-165, -24.9, 180)
-        2 -> splineTo(-164, -25, 180)
-        3 -> splineTo(-164.1, -24.1, 180)
-        4 -> splineTo(-164.1, -23.9, 180)
-        else -> throw CycleException()
-    }.doInReverse()
 
     private fun Anvil.resetBot() = this
             .addTemporalMarker {
