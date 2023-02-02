@@ -2,24 +2,20 @@ package org.firstinspires.ftc.teamcodekt.opmodes.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.units.GlobalUnits
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
-import org.firstinspires.ftc.teamcodekt.components.LIFT_HIGH
-import org.firstinspires.ftc.teamcodekt.components.meta.createAutoBotComponents
-import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
 import org.firstinspires.ftc.teamcodekt.util.CycleException
 
 @Autonomous
-class RogueStraightMidLeftAuto : RogueBaseAuto() {
+class RogueMidLeftAuto : RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(-91, -163, 90)
 
     override fun mainTraj(startPose: Pose2d) =
             Anvil.formTrajectory(bot.drive, startPose)
-                    .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(43.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
+                    .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(40.0, Math.toRadians(250.0), DriveConstants.TRACK_WIDTH))
                     .preform(0, ::parkTraj)
                     .addTemporalMarker {
                         bot.lift.goToAngledHigh()
@@ -43,7 +39,7 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
                             else -> awaitRegularIntake()
                         }
                         goToDeposit(it)
-                        deposit()
+                        deposit(it)
                     }
 
                     .resetBot()
@@ -53,26 +49,22 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
 
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        /*
-            The offset values are from sin(32) and cos(32) degrees.
-            Used to spline in a straight line. This is advantageous to maintain localization better.
-        */
-        -1 -> lineToLinearHeading(-85.2, -41.9, -38.5)
-        0 -> splineTo(-83, -41, -37)
-        1 -> splineTo(-83, -41, -35)
-        2 -> splineTo(-84, -41.1, -30)
-        3 -> splineTo(-84, -40, -29)
-        4 -> splineTo(-84, -39.5, -27)
+        -1 -> lineToLinearHeading(-83.2, -43.9, -39.5)
+        0 -> splineTo(-81, -43, -38)
+        1 -> splineTo(-81, -43, -36)
+        2 -> splineTo(-82, -43.1, -31)
+        3 -> splineTo(-81, -42, -30)
+        4 -> splineTo(-82, -41.5, -28)
 
         else -> throw CycleException()
     }
 
     private fun Anvil.goToIntake(it: Int) = when (it) {
-        0 -> splineTo(-165.2, -24.5, 180)
-        1 -> splineTo(-165.2, -24.5, 180)
-        2 -> splineTo(-164.2, -25, 180)
-        3 -> splineTo(-164.3, -24.1, 180)
-        4 -> splineTo(-164.3, -23.9, 180)
+        0 -> splineTo(-166.3, -25, 180)
+        1 -> splineTo(-165.9, -24.5, 180)
+        2 -> splineTo(-164.2, -24.8, 180)
+        3 -> splineTo(-165.5, -23.9, 180)
+        4 -> splineTo(-164.3, -23.7, 180)
         else -> throw CycleException()
     }.doInReverse()
 
@@ -119,14 +111,21 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
                 bot.claw.openForDeposit()
             }
 
-    private fun Anvil.deposit() = this
+    private fun Anvil.deposit(iterations: Int) = this
         .addTemporalMarker(-165) {
             bot.lift.targetHeight -= AutoData.DEPOSIT_DROP_AMOUNT
             bot.arm.setToForwardsPos()
         }
-        .addTemporalMarker(-100) {
-            bot.claw.openForDeposit()
+        .addTemporalMarker(-150) {
+            if(iterations == 4)
+                bot.claw.openForDeposit()
+
         }
+        .addTemporalMarker(-100) {
+            if(iterations < 4)
+                bot.claw.openForDeposit()
+        }
+
 
 
     private fun Anvil.regularIntakePrep(iterations: Int) = this
@@ -164,9 +163,12 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
                 resetBot()
 
                 when (signalID) {
-                    1 -> lineToLinearHeading(-160, -33, -90)
-                    2 -> lineToLinearHeading(-95.5, -24, -90)
-                    3 -> lineToLinearHeading(-30, -34, -90)
+                    1 -> {
+                        lineToLinearHeading(-160, -20, -90)
+                        lineToLinearHeading(-95.5, -20, -90)
+                    }
+                    2 -> lineToLinearHeading(-95.5, -20, -90)
+                    3 -> lineToLinearHeading(-30, -20, -90)
                 }
 
                 this

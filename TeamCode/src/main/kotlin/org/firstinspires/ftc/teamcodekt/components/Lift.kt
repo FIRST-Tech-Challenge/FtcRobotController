@@ -114,7 +114,7 @@ class Lift(val usingMotionProfiling: Boolean) {
     }
 
     fun goToAngledHigh() {
-        targetHeight = LIFT_HIGH - 390
+        targetHeight = LIFT_HIGH - 455
     }
 
     fun goToAngledLow() {
