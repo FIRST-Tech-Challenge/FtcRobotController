@@ -40,6 +40,7 @@ abstract class RogueBaseAuto : BlackOp() {
             bot.updateBaseComponents(true)
             bot.drive.update()
             mTelemetry.update()
+            bot.lift.printLiftTelem()
         }
     }
 

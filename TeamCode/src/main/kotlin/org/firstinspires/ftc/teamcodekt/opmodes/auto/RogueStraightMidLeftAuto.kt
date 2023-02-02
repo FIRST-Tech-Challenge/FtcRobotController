@@ -19,19 +19,31 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
 
     override fun mainTraj(startPose: Pose2d) =
             Anvil.formTrajectory(bot.drive, startPose)
-                    .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(36.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
+                    .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(43.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
                     .preform(0, ::parkTraj)
+                    .addTemporalMarker {
+                        bot.lift.goToAngledHigh()
+                        bot.claw.close()
+                        bot.arm.setToForwardsAngledPos()
+                        bot.wrist.setToForwardsPos()
+                    }
 
                     .forward(132)
                     .turn(-141.5)
                     .goToDeposit(-1)
-
-
-                    .doTimes(5) {
+                    .deposit()
+                    .doTimes(NUM_CYCLES) {
+                        when (it) {
+                            LAST_CYCLE -> fastIntakePrep(it)
+                            else -> regularIntakePrep(it)
+                        }
                         goToIntake(it)
-                        waitTime(400)
+                        when (it) {
+                            LAST_CYCLE -> awaitFastIntake()
+                            else -> awaitRegularIntake()
+                        }
                         goToDeposit(it)
-                        waitTime(500)
+                        deposit()
                     }
 
                     .resetBot()
@@ -45,7 +57,7 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
             The offset values are from sin(32) and cos(32) degrees.
             Used to spline in a straight line. This is advantageous to maintain localization better.
         */
-        -1 -> lineToLinearHeading(-85.5, -40.5, -37)
+        -1 -> lineToLinearHeading(-85.3, -41.5, -38.5)
         0 -> splineTo(-86, -40.5, -37)
         1 -> splineTo(-86, -40.5, -35)
         2 -> splineTo(-86, -40.5, -30)
@@ -55,9 +67,76 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
         else -> throw CycleException()
     }
 
+
+    private fun Anvil.awaitRegularIntake() = this
+            .addTemporalMarker {
+                bot.intake.disable()
+                bot.claw.close()
+            }
+
+            .addTemporalMarker(275) {
+                bot.lift.goToAngledHigh()
+            }
+
+            .addTemporalMarker(425) {
+                bot.arm.setToForwardsAngledPos()
+                bot.wrist.setToForwardsPos()
+            }
+
+            .waitTime(300)
+
+    private fun Anvil.awaitFastIntake() = this
+            .addTemporalMarker(-75) {
+                bot.intake.disable()
+                bot.claw.close()
+            }
+
+            .addTemporalMarker(15) {
+                bot.arm.setToForwardsAngledPos()
+                bot.lift.goToAngledHigh()
+            }
+
+            .addTemporalMarker(100) {
+                bot.wrist.setToForwardsPos()
+            }
+
+            .waitTime(120)
+
+    private fun Anvil.deposit() = this
+        .addTemporalMarker(-165) {
+            bot.lift.targetHeight -= AutoData.DEPOSIT_DROP_AMOUNT
+            bot.arm.setToForwardsPos()
+        }
+        .addTemporalMarker(-100) {
+            bot.claw.openForDeposit()
+        }
+
+
+    private fun Anvil.regularIntakePrep(iterations: Int) = this
+            .addTemporalMarker(185) {
+                bot.lift.targetHeight = liftOffsets[iterations]
+                bot.wrist.setToBackwardsPos()
+                bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
+            }
+
+            .addTemporalMarker(325) {
+                bot.claw.openForIntakeWide()
+            }
+
+    private fun Anvil.fastIntakePrep(iterations: Int) = this
+            .addTemporalMarker(185) {
+                bot.lift.targetHeight  = liftOffsets[iterations]
+
+                bot.arm.setToBackwardsPos()
+                bot.wrist.setToBackwardsPos()
+
+                bot.claw.openForIntakeNarrow()
+                bot.intake.enable()
+            }
+
     private fun Anvil.goToIntake(it: Int) = when (it) {
-        0 -> splineTo(-165, -26.75, 180)
-        1 -> splineTo(-165, -25.3, 180)
+        0 -> splineTo(-165, -24.9, 180)
+        1 -> splineTo(-165, -24.9, 180)
         2 -> splineTo(-164, -25, 180)
         3 -> splineTo(-164.1, -24.1, 180)
         4 -> splineTo(-164.1, -23.9, 180)

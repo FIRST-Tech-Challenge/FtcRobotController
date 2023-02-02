@@ -17,7 +17,7 @@ abstract class BaseBotComponents {
         claw.update()
         arm.update()
         wrist.update()
-        lift.update(useMotionProfiling)
+        lift.update()
     }
 }
 
@@ -29,7 +29,7 @@ fun createTeleOpBotComponents() =
         Intake(),
         Arm(),
         Wrist(),
-        Lift()
+        Lift(false)
     )
 
 data class TeleOpBotComponents(
@@ -50,7 +50,7 @@ fun createAutoBotComponents() =
         Intake(),
         Arm(),
         Wrist(),
-        Lift(),
+        Lift(false),
     )
 
 data class AutoBotComponents(

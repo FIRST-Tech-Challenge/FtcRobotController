@@ -29,7 +29,7 @@ class RogueLeftLowAuto: RogueBaseAuto() {
                     .waitTime(100)
 
                     .addTemporalMarker(0) {
-                        bot.lift.clippedHeight = liftOffsets[0]
+                        bot.lift.targetHeight = liftOffsets[0]
                     }
 
                     .inReverse {
@@ -68,7 +68,7 @@ class RogueLeftLowAuto: RogueBaseAuto() {
 
     private fun Anvil.deposit() = this
             .addTemporalMarker(-165) {
-                bot.lift.clippedHeight -= AutoData.DEPOSIT_DROP_AMOUNT
+                bot.lift.targetHeight -= AutoData.DEPOSIT_DROP_AMOUNT
             }
 
             .addTemporalMarker(-100) {
@@ -77,7 +77,7 @@ class RogueLeftLowAuto: RogueBaseAuto() {
 
     private fun Anvil.regularIntakePrep(iterations: Int) = this
             .addTemporalMarker(185) {
-                bot.lift.clippedHeight = liftOffsets[iterations]
+                bot.lift.targetHeight = liftOffsets[iterations]
                 bot.wrist.setToBackwardsPos()
                 bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
             }

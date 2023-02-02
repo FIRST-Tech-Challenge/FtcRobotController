@@ -10,9 +10,9 @@ public class AutoData {
 
     public static int AUTO_INTAKE_LIFT_HEIGHT_1 = 245;
     public static int AUTO_INTAKE_LIFT_HEIGHT_2 = 173;
-    public static int AUTO_INTAKE_LIFT_HEIGHT_3 = 142;
-    public static int AUTO_INTAKE_LIFT_HEIGHT_4 = 99;
-    public static int AUTO_INTAKE_LIFT_HEIGHT_5 = 25;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_3 = 130;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_4 = 50;
+    public static int AUTO_INTAKE_LIFT_HEIGHT_5 = 0;
 
     public static double LOW_DEPOSIT_1 = 20;
     public static double LOW_DEPOSIT_2 = 20;

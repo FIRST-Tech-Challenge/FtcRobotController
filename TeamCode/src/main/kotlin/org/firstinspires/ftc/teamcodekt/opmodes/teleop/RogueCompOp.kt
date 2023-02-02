@@ -59,7 +59,7 @@ class RogueCompOp : RogueBaseTele() {
         val bumpersPressed = left_bumper + right_bumper
 
         (right_stick_y(deadzone = .1) + !bumpersPressed).whileHigh {
-            bot.lift.clippedHeight += (-codriver.right_stick_y() * 10).toInt()
+            bot.lift.targetHeight += (-codriver.right_stick_y() * 10).toInt()
         }
 
         // -- MANUAL LIFT RESET --

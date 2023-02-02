@@ -19,15 +19,17 @@ class RogueLowLeftAuto : RogueBaseAuto() {
 
     override fun mainTraj(startPose: Pose2d) =
             Anvil.formTrajectory(bot.drive, startPose)
-                    .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(36.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
+                    .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(42.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
             .preform(0, ::parkTraj)
                     .addTemporalMarker(0){
                         bot.claw.close()
                     }
-                    .addTemporalMarker(600) {
+                    .addTemporalMarker(400) {
                         bot.lift.goToAngledHigh() // TODO: Change this to mid on real field
-                        bot.arm.setToForwardsAngledPos()
                         bot.wrist.setToForwardsPos()
+                    }
+                    .addTemporalMarker(600){
+                        bot.arm.setToForwardsAngledPos()
                     }
                     .forward(132)
                     .turn(-141.5)
@@ -37,13 +39,13 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                     }
                     .addTemporalMarker(100) {
                         bot.lift.targetHeight = liftOffsets[0]
-                        bot.lift.regenMotionProfile()
                     }
                     .addTemporalMarker(350) {
                         bot.claw.openForDeposit()
                     }
                     .addTemporalMarker(450) {
                         bot.wrist.setToBackwardsPos()
+                        bot.arm.setToRestingPos()
                     }
                     .waitTime(350)
                     .back(14)
@@ -55,7 +57,8 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                     .strafeRight(6.6)
                     .addTemporalMarker(100) {
                         bot.arm.setToBackwardsPos()
-                        bot.claw.openForIntakeWide()
+                        bot.intake.enable()
+                        bot.claw.openForIntakeNarrow()
                     }
                     .forward(10.4)
                     .waitTime(200)
@@ -64,6 +67,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                     .back(10.4)
                     .addTemporalMarker(30) {
                         bot.claw.close()
+                        bot.intake.disable()
                     }
                     .addTemporalMarker(150) {
                         bot.arm.setToForwardsPos()
@@ -83,8 +87,8 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                         }
                         .addTemporalMarker(250) {
                             bot.lift.targetHeight = liftOffsets[it+1]
-                            bot.lift.regenMotionProfile()
-                            bot.claw.openForIntakeWide()
+                            bot.claw.openForIntakeNarrow()
+                            bot.intake.enable()
                             bot.wrist.setToBackwardsPos()
                             bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
                         }
@@ -93,6 +97,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
                         goToIntake(it)
                         .addTemporalMarker(30) {
                             bot.claw.close()
+                            bot.intake.disable()
                         }
                         .addTemporalMarker(140) {
                             bot.arm.setToForwardsPos()

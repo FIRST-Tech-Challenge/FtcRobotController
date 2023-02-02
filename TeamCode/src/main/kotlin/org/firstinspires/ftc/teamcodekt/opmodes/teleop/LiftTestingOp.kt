@@ -32,26 +32,21 @@ class LiftTestingOp : RogueBaseTele() {
 
     fun setHeight1(){
         bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_1
-        bot.lift.regenMotionProfile()
     }
 
     fun setHeight2(){
         bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_2
-        bot.lift.regenMotionProfile()
     }
 
     fun setHeight3(){
         bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_3
-        bot.lift.regenMotionProfile()
     }
 
     fun setHeight4(){
         bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_4
-        bot.lift.regenMotionProfile()
     }
 
     fun setHeight5(){
         bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_5
-        bot.lift.regenMotionProfile()
     }
 }

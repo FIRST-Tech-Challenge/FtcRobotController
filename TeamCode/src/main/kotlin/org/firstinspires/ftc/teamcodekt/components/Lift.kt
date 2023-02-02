@@ -11,12 +11,11 @@ import com.acmerobotics.roadrunner.profile.MotionState
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.util.ElapsedTime
+import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.clamp
 import ftc.rogue.blacksmith.util.kt.invoke
-import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
-import kotlin.math.abs
 
 @JvmField
 var LIFT_ZERO = 0
@@ -27,26 +26,36 @@ var LIFT_MID = 1140
 @JvmField
 var LIFT_HIGH = 1590
 
-@JvmField
-var LIFT_P = 0.026
-@JvmField
-var LIFT_I = 0.0002
-@JvmField
-var LIFT_D = 0.0002
 
 @JvmField
-var LIFT_MAX_V = 29000.0
+var NORMAL_LIFT_P = 0.0005
+@JvmField
+var NORMAL_LIFT_I = 0.0001
+@JvmField
+var NORMAL_LIFT_D = 0.0001
+
+
+@JvmField
+var MOTION_PROFILE_LIFT_P = 0.026
+@JvmField
+var MOTION_PROFILE_LIFT_I = 0.0002
+@JvmField
+var MOTION_PROFILE_LIFT_D = 0.0002
+
+@JvmField
+var LIFT_MAX_V = 20000.0
 @JvmField
 var LIFT_MAX_A = 20000.0
 @JvmField
 var LIFT_MAX_J = 20000.0
 
-class Lift {
+class Lift(private val usingMotionProfiling: Boolean) {
+
     private val liftMotor = hwMap<DcMotorSimple>(DeviceNames.LIFT_MOTOR)
 
-    private val liftPID = PIDFController(PIDCoefficients(LIFT_P, LIFT_I, LIFT_D))
+    private val liftPID = PIDFController(PIDCoefficients(MOTION_PROFILE_LIFT_P, MOTION_PROFILE_LIFT_I, MOTION_PROFILE_LIFT_D))
 
-    private val normalPID = com.arcrobotics.ftclib.controller.PIDFController(0.0019, LIFT_I, LIFT_D, 0.0)
+    private val normalPID = com.arcrobotics.ftclib.controller.PIDFController(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, 0.0)
 
     private val liftEncoder = Motor(hwMap, DeviceNames.LIFT_ENCODER)
             .apply(Motor::resetEncoder)
@@ -54,14 +63,19 @@ class Lift {
     private lateinit var profile: MotionProfile
 
     init {
-        regenMotionProfile()
+        if(usingMotionProfiling)
+            regenMotionProfile(0)
     }
 
     private var motionTime = ElapsedTime()
 
     var targetHeight = 0
+        set(height) {
+            field = height
+            if(usingMotionProfiling)
+                regenMotionProfile(height)
+        }
 
-    var mult = 1
 
     var clippedHeight: Int
         get() = targetHeight
@@ -71,45 +85,35 @@ class Lift {
 
     fun goToZero() {
         targetHeight = LIFT_ZERO
-        regenMotionProfile()
     }
 
     fun goToLow() {
         targetHeight = LIFT_LOW
-        regenMotionProfile()
     }
 
     fun goToMid() {
         targetHeight = LIFT_MID
-        regenMotionProfile()
     }
 
     fun goToHigh() {
         targetHeight = LIFT_HIGH
-        regenMotionProfile()
     }
 
     fun goToAngledHigh() {
-        targetHeight = LIFT_HIGH - 350
-        regenMotionProfile()
+        targetHeight = LIFT_HIGH - 356
     }
 
     fun goToAngledLow() {
-        targetHeight = LIFT_LOW - 190
-        regenMotionProfile()
+        targetHeight = LIFT_LOW - 360
     }
 
     fun goToAngledMid() {
         targetHeight = LIFT_MID - 350
-        regenMotionProfile()
     }
+
 
     fun update() {
-        update(true)
-    }
-
-    fun update(useMotionProfiling: Boolean) {
-        if (useMotionProfiling) {
+        if (usingMotionProfiling) {
             val state = profile[motionTime.microseconds()]
 
             liftPID.apply {
@@ -138,7 +142,7 @@ class Lift {
     private var twoPrevTime = 0L
     private var onePrevTime = 0L
 
-    fun regenMotionProfile() {
+    private fun regenMotionProfile(targetHeight: Int) {
         try {
             if (motionTime == null)
                 motionTime = ElapsedTime(0);
@@ -178,9 +182,9 @@ class Lift {
             return 1000 * ((onePrevVel - twoPrevVel) / (onePrevTime - twoPrevTime))
         }
 
-    fun printLiftTelem(telemetry: Telemetry) {
-        telemetry.addData("Current lift height:", liftHeight)
-        telemetry.addData("Lift target height:", targetHeight)
+    fun printLiftTelem( ) {
+        BlackOp.mTelemetry.addData("Current lift height:", liftHeight)
+        BlackOp.mTelemetry.addData("Lift target height:", targetHeight)
     }
 
     private fun ElapsedTime.microseconds(): Double {
