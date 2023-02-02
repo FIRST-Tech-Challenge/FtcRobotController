@@ -34,7 +34,7 @@ public class SignalDetection extends OpenCvPipeline {
     private Color c;
 
     // Threshold for when element is considered visible
-    static double PERCENT_COLOR_THRESHOLD = 0.4;
+    static double PERCENT_COLOR_THRESHOLD = 0.2;
 
     static Rect RECTANGLE = new Rect(
             new Point(130,80),
@@ -49,6 +49,7 @@ public class SignalDetection extends OpenCvPipeline {
         cameraName = cn;
 
         c = Color.GREEN;
+        color = Color.GREEN;
 
         time = runtime;
     }
@@ -115,9 +116,6 @@ public class SignalDetection extends OpenCvPipeline {
             color = c;
             msUntilDetected = time.now(TimeUnit.MILLISECONDS);
         }
-//        else {
-//            color = null;
-//        }
 
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
 

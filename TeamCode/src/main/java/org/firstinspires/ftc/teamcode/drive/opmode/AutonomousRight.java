@@ -5,6 +5,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -31,18 +33,33 @@ public class AutonomousRight extends LinearOpMode {
     private long msUntilDetected = 0;
     @Override
     public void runOpMode() {
+
+        DcMotor armMotor1 = hardwareMap.dcMotor.get("arm1");
+        DcMotor armMotor2 = hardwareMap.dcMotor.get("arm2");
+
+        Servo intake = hardwareMap.servo.get("intake");
+
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory standardTraj = drive.trajectoryBuilder(new Pose2d())
-                .forward(100)
+        Trajectory Traj1 = drive.trajectoryBuilder(new Pose2d())
+                .back(45)
                 .build();
 
-        Trajectory leftTraj = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(100)
+        Trajectory Traj2 = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(30)
                 .build();
 
-        Trajectory rightTraj = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(100)
+        Trajectory TrajOrange = drive.trajectoryBuilder(new Pose2d())
+                .strafeLeft(30)
+                .build();
+
+        Trajectory TrajPurple = drive.trajectoryBuilder(new Pose2d())
+                .strafeLeft(30)
+                .build();
+
+        Trajectory TrajGreen = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(70)
                 .build();
 
         telemetry.addData("Status", "Initialized");
@@ -93,14 +110,27 @@ public class AutonomousRight extends LinearOpMode {
 
         if(isStopRequested()) return;
 
-        drive.followTrajectory(standardTraj);
+        intake.setPosition(1);
+        drive.followTrajectory(Traj1);
+        drive.followTrajectory(Traj2);
+        armMotor1.setPower(-1);
+        armMotor2.setPower(1);
+        sleep(6000);
+        armMotor1.setPower(-0.3);
+        armMotor2.setPower(0.3);
+        intake.setPosition(-1);
+        armMotor1.setPower(1);
+        armMotor2.setPower(-1);
+
+
+
         switch (color) {
             case ORANGE:
-                drive.followTrajectory(leftTraj);
+                drive.followTrajectory(TrajOrange);
             case PURPLE:
-                // path 2
-            case GREEN:
-                drive.followTrajectory(rightTraj);
+                drive.followTrajectory(TrajPurple);
+            default:
+                drive.followTrajectory(TrajGreen);
         }
     }
 }
