@@ -69,7 +69,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
     }.doInReverse()
 
     private fun Anvil.awaitRegularIntake() = this
-        .addTemporalMarker(-75) {
+        .addTemporalMarker(-100) {
             bot.intake.disable()
         }
         .addTemporalMarker {
@@ -88,7 +88,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
         .waitTime(300)
 
     private fun Anvil.awaitFastIntake() = this
-        .addTemporalMarker(-150){
+        .addTemporalMarker(-175){
             bot.intake.disable()
         }
         .addTemporalMarker(-75) {
@@ -135,11 +135,12 @@ class RogueMidRightAuto : RogueBaseAuto() {
 
     private fun Anvil.regularIntakePrep(iterations: Int) = this
             .addTemporalMarker(185) {
-                if(iterations < 3){
-                    bot.lift.targetHeight = liftOffsets[iterations]+19
-                }
-                else{
-                    bot.lift.targetHeight = liftOffsets[iterations]
+                when(iterations){
+                    1 -> bot.lift.targetHeight = liftOffsets[iterations]+9
+                    2 -> bot.lift.targetHeight = liftOffsets[iterations]+19
+                    3 -> bot.lift.targetHeight = liftOffsets[iterations]-8
+                    else -> bot.lift.targetHeight = liftOffsets[iterations]
+
                 }
 
                 bot.wrist.setToBackwardsPos()
@@ -176,11 +177,12 @@ class RogueMidRightAuto : RogueBaseAuto() {
 
                 when (signalID) {
                     1 -> {
-                        lineToLinearHeading(160, -20, -90)
                         lineToLinearHeading(95.5, -20, -90)
+                        lineToLinearHeading(30, -20, -90)
                     }
                     2 -> lineToLinearHeading(95.5, -20, -90)
-                    3 -> lineToLinearHeading(30, -20, -90)
+                    3 -> lineToLinearHeading(160, -20, -90)
+
                 }
 
                 this
