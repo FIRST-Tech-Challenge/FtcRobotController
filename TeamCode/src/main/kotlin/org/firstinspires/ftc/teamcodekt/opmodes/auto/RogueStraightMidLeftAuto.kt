@@ -29,7 +29,7 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
                     }
 
                     .forward(132)
-                    .turn(-141.5)
+                    .turn(-142.5)
                     .goToDeposit(-1)
                     .initialDeposit()
                     .doTimes(NUM_CYCLES) {
@@ -57,7 +57,7 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
             The offset values are from sin(32) and cos(32) degrees.
             Used to spline in a straight line. This is advantageous to maintain localization better.
         */
-        -1 -> lineToLinearHeading(-85.3, -41.5, -38.5)
+        -1 -> lineToLinearHeading(-85.2, -41.9, -38.5)
         0 -> splineTo(-86, -40.5, -37)
         1 -> splineTo(-86, -40.5, -35)
         2 -> splineTo(-86, -40.5, -30)

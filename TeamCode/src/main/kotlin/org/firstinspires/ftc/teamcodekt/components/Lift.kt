@@ -29,9 +29,7 @@ var LIFT_HIGH = 1590
 
 
 @JvmField
-var NORMAL_LIFT_P = 0.0025
-
-
+var NORMAL_LIFT_P = 0.0021
 @JvmField
 var NORMAL_LIFT_I = 0.01
 @JvmField
@@ -58,13 +56,17 @@ var PROCESS_NOISE = 0.01
 @JvmField
 var MEASUREMENT_NOISE = 0.01
 
+/**
+ * Lift object representing the lift on our V2 robot.
+ * As of 2/2, using normal PIDF with the kalman filter is very good. +-5 encoder tick accuracy
+ */
 class Lift(val usingMotionProfiling: Boolean) {
 
     private val liftMotor = hwMap<DcMotorSimple>(DeviceNames.LIFT_MOTOR)
 
-    private val liftPID = PIDFController(PIDCoefficients(MOTION_PROFILE_LIFT_P, MOTION_PROFILE_LIFT_I, MOTION_PROFILE_LIFT_D))
+    private val liftMotionProfilePID = PIDFController(PIDCoefficients(MOTION_PROFILE_LIFT_P, MOTION_PROFILE_LIFT_I, MOTION_PROFILE_LIFT_D))
 
-    val normalPID = com.arcrobotics.ftclib.controller.PIDFController(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, NORMAL_LIFT_F)
+    val liftNormalPID = com.arcrobotics.ftclib.controller.PIDFController(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, NORMAL_LIFT_F)
 
     val liftFilter = KalmanFilter(PROCESS_NOISE, MEASUREMENT_NOISE)
 
@@ -127,18 +129,18 @@ class Lift(val usingMotionProfiling: Boolean) {
         if (usingMotionProfiling) {
             val state = profile[motionTime.microseconds()]
 
-            liftPID.apply {
+            liftMotionProfilePID.apply {
                 targetPosition = state.x
                 targetVelocity = state.v
                 targetAcceleration = state.a
             }
 
-            var correction = liftPID.update(liftHeight.toDouble(), liftVelocity)
+            var correction = liftMotionProfilePID.update(liftHeight.toDouble(), liftVelocity)
             if(liftHeight < 10 && targetHeight == LIFT_ZERO)
                 correction = 0.0
             liftMotor.power = correction
         } else {
-            val correction = normalPID.calculate(liftHeight.toDouble(), targetHeight.toDouble())
+            val correction = liftNormalPID.calculate(liftHeight.toDouble(), targetHeight.toDouble())
             liftMotor.power = liftFilter.filter(liftMotor.power + correction)
         }
     }
