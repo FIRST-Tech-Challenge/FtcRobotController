@@ -56,7 +56,6 @@ public class ComputerVision {
 //        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         this.aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-        telemetry.addData("initialize being called", aprilTagDetectionPipeline);
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -78,7 +77,6 @@ public class ComputerVision {
     }
 
     public RobotManager.ParkingPosition getParkingPosition() {
-        telemetry.addData("this exists", aprilTagDetectionPipeline);
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
         if(currentDetections.size() != 0)

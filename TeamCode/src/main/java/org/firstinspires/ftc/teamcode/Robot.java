@@ -43,13 +43,11 @@ public class Robot {
     public Telemetry telemetry;
     public ElapsedTime elapsedTime;
     public PositionManager positionManager;
-    public ComputerVision computerVision;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime elapsedTime) {
         this.telemetry = telemetry;
         this.elapsedTime = elapsedTime;
         positionManager = new PositionManager(hardwareMap, telemetry);
-        computerVision = new ComputerVision(hardwareMap, telemetry, elapsedTime);
 
         desiredClawRotatorState = ClawRotatorState.FRONT;
         desiredClawState = ClawState.CLOSED;
