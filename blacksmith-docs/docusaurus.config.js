@@ -47,6 +47,14 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      metadata: [
+        { content: 'Embed Title', property: 'og:title' },
+        { content: 'Site Description', property: 'og:description' },
+        { content: 'https://blacksmithftc.vercel.app/', property: 'og:url' },
+        { content: 'img/logo/blacksmith-logo.svg', property: 'og:image' },
+        { content: '#c1eab6', ['data-react-helmet']: true, name: 'theme-color' },
+        { content: 'summary_large_image', name: 'twitter:card' },
+      ],
       colorMode: {
         defaultMode: 'dark',
       },
