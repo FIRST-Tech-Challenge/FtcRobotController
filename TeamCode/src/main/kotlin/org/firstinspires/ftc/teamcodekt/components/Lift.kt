@@ -95,12 +95,12 @@ class Lift {
     }
 
     fun goToAngledLow() {
-        targetHeight = LIFT_LOW - 145
+        targetHeight = LIFT_LOW - 190
         regenMotionProfile()
     }
 
     fun goToAngledMid() {
-        targetHeight = LIFT_MID - 190
+        targetHeight = LIFT_MID - 350
         regenMotionProfile()
     }
 
