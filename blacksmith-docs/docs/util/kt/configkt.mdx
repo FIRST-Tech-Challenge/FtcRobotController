@@ -1,0 +1,37 @@
+---
+sidebar_position: 3
+title: ConfigKt
+---
+
+import Returns from '../../../src/components/Returns';
+import { TypeLinks } from '../../../src/util/type-links';
+import ParamsList from '../../../src/components/ParamsList';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# @ConfigKt
+
+FTCDashboard's `@Config`, but for Kotlin
+
+Usage examples:
+
+```kt Method 1
+@file:ConfigKt
+
+// package & imports
+
+var MAX_HEIGHT = // ...
+var MIN_HEIGHT = // ...
+
+// ...
+```
+
+```kt Method 2
+@ConfigKt
+object LiftConfig {
+    var MAX_HEIGHT = // ...
+    var MIN_HEIGHT = // ...
+}
+
+// ...
+```

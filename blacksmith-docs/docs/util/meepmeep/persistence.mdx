@@ -1,0 +1,205 @@
+---
+sidebar_position: 0
+---
+
+import Returns from '../../../src/components/Returns';
+import { TypeLinks } from '../../../src/util/type-links';
+import ParamsList from '../../../src/components/ParamsList';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Persistence
+
+An extremely simple API to make MeepMeep reopen the window right where you closed it.
+
+Basic usage:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  public static void main(String[] args) {
+      MeepMeep meepMeep = new MeepMeep(...);
+
+      // Create a persistence object linked to the MeepMeep instance
+      MeepMeepPersistence persistence = new MeepMeepPersistence(meepMeep);
+
+      // Restore the settings from the persistence object to the MeepMeep instance
+      persistence.restore();
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  fun main() {
+      val meepMeep = MeepMeep(...)
+
+      // Create a persistence object linked to the MeepMeep instance
+      val persistence = MeepMeepPersistence(meepMeep)
+
+      // Restore the settings from the persistence object to the MeepMeep instance
+      persistence.restore()
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+## MeepMeepPersistence methods
+
+### Construction
+
+Constructs the persistence object without restoring anything
+
+<ParamsList params={[
+  {
+    name: 'meepMeep',
+    type: 'MeepMeep',
+    desc: 'The MeepMeep instance to restore',
+  },
+  {
+    name: 'saveInterval',
+    type: 'Long',
+    desc: 'How often to autosave the window\'s position (note: leaving it default is fine)',
+    defaultsTo: '1000L'
+  },
+  {
+    name: 'defaultFilePath',
+    type: 'String',
+    desc: 'The file path where the window state should be stored (also recommend leaving default)',
+    defaultsTo: './meepmeep.properties'
+  },
+]}/>
+
+:::tip
+You should gitignore your 'meepmeep.properties' file!
+
+Assuming you leave the path default, you can just find your root-level `.gitignore` file, and add `meepmeep.properties`
+to it!
+
+*(Make sure your folder view is in <ins>Project</ins> view, not <ins>Android</ins> (as seen near top left))*
+
+![](/img/randomassets/persistence_gitignore.png)
+:::
+
+
+### meepMeepPersistence.restore()
+
+Where the magic happens, and really all you need. Restores the `MeepMeep` window's state, thereby reopening it in the
+same place it was closed
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  public static void main(String[] args) {
+      MeepMeep meepMeep = new MeepMeep(...);
+
+      // Restores the previous window state of the meepMeep instance
+      new MeepMeepPersistence(meepMeep)
+          .restore();
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  fun main() {
+      val meepMeep = MeepMeep(...)
+
+      // Restores the previous window state of the meepMeep instance
+      MeepMeepPersistence(meepMeep)
+          .restore()
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+### meepMeepPersistence.save()
+
+Saves the current MeepMeep window state to the given file path. Not sure why you'd ever do this, but have fun!
+
+<ParamsList params={[
+  {
+    name: 'path',
+    type: 'String',
+    desc: 'The file path where the window state should be stored',
+    defaultsTo: 'defaultFilePath'
+  },
+]}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  public static void main(String[] args) {
+      MeepMeep meepMeep = new MeepMeep(...);
+
+      // Saves the window state to ./random_file.properties
+      new MeepMeepPersistence(meepMeep)
+          .save("./random_file.properties");
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  fun main() {
+      val meepMeep = MeepMeep(...)
+
+      // Saves the window state to ./random_file.properties
+      MeepMeepPersistence(meepMeep)
+          .save("./random_file.properties")
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+### meepMeepPersistence.load()
+
+Loads in the stored MeepMeep window state into MeepMeepPersistence. **Note that .restore() still needs to be called after
+loading in a save file**
+
+<ParamsList params={[
+  {
+    name: 'path',
+    type: 'String',
+    desc: 'The file path where the window state should be stored',
+    defaultsTo: 'defaultFilePath'
+  },
+]}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  public static void main(String[] args) {
+      MeepMeep meepMeep = new MeepMeep(...);
+
+      // Loads in some window state from ./random_file.properties
+      new MeepMeepPersistence(meepMeep)
+          .load("./random_file.properties");
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  fun main() {
+      val meepMeep = MeepMeep(...)
+
+      // Loads in some window state from ./random_file.properties
+      MeepMeepPersistence(meepMeep)
+          .load("./random_file.properties")
+  }
+  ```
+
+</TabItem>
+</Tabs>
