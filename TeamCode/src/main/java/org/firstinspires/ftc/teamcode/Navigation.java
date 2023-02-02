@@ -20,7 +20,7 @@ public class Navigation {
 
     static final double STRAFE_RAMP_DISTANCE = 3;  // Inches
     static final double ROTATION_RAMP_DISTANCE = Math.PI / 3;  // Radians
-    static final double MAX_STRAFE_POWER = 0.95;
+    static final double MAX_STRAFE_POWER = 0.4;
     static final double MIN_STRAFE_POWER = 0.5;
     static final double STRAFE_CORRECTION_POWER = 0.3;
     static final double MAX_ROTATION_POWER = 0.5;
@@ -55,7 +55,7 @@ public class Navigation {
 
     // Speeds relative to one another. RR is positive on purpose!
     //                              RL   RR   FL   FR
-    public double[] wheel_speeds = {-1.0, 1.0, -1.0, -1.0};
+    public double[] wheel_speeds = {-1.0, 1.0, -0.97, -1.0};
     public double strafePower;  // Tele-Op only
 
     // First position in this ArrayList is the first position that robot is planning to go to.

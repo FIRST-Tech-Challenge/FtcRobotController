@@ -48,9 +48,7 @@ public class RobotManager {
         navigation = new Navigation(path, allianceColor, startingSide, movementMode);
         mechanismDriving = new MechanismDriving();
 
-//        if (!path.isEmpty()) {
-            computerVision = new ComputerVision(hardwareMap, robot.telemetry, elapsedTime);
-//        }
+        computerVision = new ComputerVision(hardwareMap, robot.telemetry, elapsedTime);
 
         gamepads = new GamepadWrapper(gamepad1, gamepad2);
         previousStateGamepads = new GamepadWrapper();
@@ -64,26 +62,28 @@ public class RobotManager {
      */
     public void readControllerInputs() {
         // Linear slides
-        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
-            if (robot.desiredClawRotatorState == Robot.ClawRotatorState.FRONT)
-                Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
-        }
-        else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
-            Robot.desiredSlidesState = Robot.SlidesState.LOW;
-        }
-        else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_MEDIUM)) {
-            Robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
-        }
-        else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
-            Robot.desiredSlidesState = Robot.SlidesState.HIGH;
-        }
-        else if (gamepads.getAnalogValues().gamepad2LeftStickY > RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
-            Robot.desiredSlidesState = Robot.SlidesState.MOVE_DOWN;
-        }
-        else if (gamepads.getAnalogValues().gamepad2LeftStickY < -RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
-            Robot.desiredSlidesState = Robot.SlidesState.MOVE_UP;
-        } else if (Robot.desiredSlidesState == Robot.SlidesState.MOVE_DOWN || Robot.desiredSlidesState == Robot.SlidesState.MOVE_UP) {
-            Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
+        if (!robot.wheelSpeedAdjustment) {
+            if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
+                if (robot.desiredClawRotatorState == Robot.ClawRotatorState.FRONT)
+                    Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
+            }
+            else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
+                Robot.desiredSlidesState = Robot.SlidesState.LOW;
+            }
+            else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_MEDIUM)) {
+                Robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
+            }
+            else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
+                Robot.desiredSlidesState = Robot.SlidesState.HIGH;
+            }
+            else if (gamepads.getAnalogValues().gamepad2LeftStickY > RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
+                Robot.desiredSlidesState = Robot.SlidesState.MOVE_DOWN;
+            }
+            else if (gamepads.getAnalogValues().gamepad2LeftStickY < -RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
+                Robot.desiredSlidesState = Robot.SlidesState.MOVE_UP;
+            } else if (Robot.desiredSlidesState == Robot.SlidesState.MOVE_DOWN || Robot.desiredSlidesState == Robot.SlidesState.MOVE_UP) {
+                Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
+            }
         }
 
         if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {

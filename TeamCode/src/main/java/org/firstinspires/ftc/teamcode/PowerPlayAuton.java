@@ -23,9 +23,7 @@ public class PowerPlayAuton extends LinearOpMode {
                 PowerPlayAuton.allianceColor, PowerPlayAuton.startingSide,
                 PowerPlayAuton.movementMode, telemetry, elapsedTime);
         IMUPositioning.Initialize(this);
-        robotManager.robot.computerVision.initialize();
-        robotManager.robot.telemetry.addData("does any telemetry work", robotManager.robot.computerVision);
-        robotManager.robot.telemetry.addData("does any PIPELINE work", robotManager.robot.computerVision.aprilTagDetectionPipeline);
+        robotManager.computerVision.initialize();
         robotManager.closeClaw();
 
         // Repeatedly run CV
@@ -39,23 +37,23 @@ public class PowerPlayAuton extends LinearOpMode {
         switch (parkingPosition) {
             case LEFT:
                 robotManager.navigation.setDriveMotorPowers(0, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
-                waitMilliseconds(100);
+                waitMilliseconds(1175);
                 break;
             case MIDDLE:
                 moving = false;
                 break;
             case RIGHT:
                 robotManager.navigation.setDriveMotorPowers(Math.PI, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
+                waitMilliseconds(975);
         }
 
         if (moving) {
-            waitMilliseconds(675);
             robotManager.navigation.stopMovement(robotManager.robot);
         }
 
         // Move forward
         robotManager.navigation.setDriveMotorPowers(-Math.PI / 2, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
-        waitMilliseconds(750);
+        waitMilliseconds(1300);
         robotManager.navigation.stopMovement(robotManager.robot);
 
         while (opModeIsActive()) {}
