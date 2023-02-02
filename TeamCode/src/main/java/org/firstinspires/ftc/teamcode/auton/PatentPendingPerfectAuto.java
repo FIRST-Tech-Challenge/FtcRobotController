@@ -229,13 +229,16 @@ public class PatentPendingPerfectAuto extends LinearOpMode {
                     tagToTelemetry(tagOfInterest);
 
                     if (tagOfInterest.id == RIGHT) {
+                        myEncoderDrive(Direction.BACKWARD, 0.50, 4, 2000);
                         myEncoderDrive(Direction.LEFT, 0.50, 28, 2000);
                         myEncoderDrive(Direction.BACKWARD, 0.50, 44, 2000);
                         sleep(500);
                         myEncoderTurn(0.50, -135);
+                        myEncoderDrive(Direction.FORWARD, 0.50, 3, 2000);
                         //Placeholder for cone
                         sleep(3000);
-                        myEncoderTurn(0.50, 45);
+                        myEncoderDrive(Direction.BACKWARD, 0.50, 3, 2000);
+                        myEncoderTurn(0.50, 30);
                         myEncoderDrive(Direction.FORWARD, 0.50, 40, 2000);
                         //Placeholder for cone
                         sleep(3000);
@@ -247,12 +250,15 @@ public class PatentPendingPerfectAuto extends LinearOpMode {
                         myEncoderDrive(Direction.LEFT, 0.50, 24, 2000);
                         telemetry.addLine("\ntag 1");
                     } else if (tagOfInterest.id == MIDDLE) {
+                        myEncoderDrive(Direction.BACKWARD, 0.50, 4, 2000);
                         myEncoderDrive(Direction.LEFT, 0.50, 28, 2000);
                         myEncoderDrive(Direction.BACKWARD, 0.50, 44, 2000);
                         sleep(500);
                         myEncoderTurn(0.50, -135);
+                        myEncoderDrive(Direction.FORWARD, 0.50, 3, 2000);
                         //Placeholder for cone
                         sleep(3000);
+                        myEncoderDrive(Direction.BACKWARD, 0.50, 3, 2000);
                         myEncoderTurn(0.50, 30);
                         myEncoderDrive(Direction.FORWARD, 0.50, 40, 2000);
                         //Placeholder for cone
@@ -266,12 +272,15 @@ public class PatentPendingPerfectAuto extends LinearOpMode {
                         myEncoderDrive(Direction.FORWARD, 0.50, 24, 2000);
                         telemetry.addLine("\ntag 2");
                     } else if (tagOfInterest.id == LEFT) {
+                        myEncoderDrive(Direction.BACKWARD, 0.50, 4, 2000);
                         myEncoderDrive(Direction.LEFT, 0.50, 28, 2000);
                         myEncoderDrive(Direction.BACKWARD, 0.50, 44, 2000);
                         sleep(500);
                         myEncoderTurn(0.50, -135);
+                        myEncoderDrive(Direction.FORWARD, 0.50, 3, 2000);
                         //Placeholder for cone
                         sleep(3000);
+                        myEncoderDrive(Direction.BACKWARD, 0.50, 3, 2000);
                         myEncoderTurn(0.50, 30);
                         myEncoderDrive(Direction.FORWARD, 0.50, 40, 2000);
                         //Placeholder for cone

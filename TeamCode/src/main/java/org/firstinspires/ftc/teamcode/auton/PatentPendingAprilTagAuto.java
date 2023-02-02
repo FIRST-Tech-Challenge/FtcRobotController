@@ -75,7 +75,7 @@ import java.util.ArrayList;
  */
 
 
-@Autonomous(name="Autonomous: PPAuto", group="Autonomous")
+@Autonomous(name="Autonomous: PPTest", group="Autonomous")
 //@Disabled
 public class PatentPendingAprilTagAuto extends LinearOpMode {
 
@@ -229,15 +229,13 @@ public class PatentPendingAprilTagAuto extends LinearOpMode {
                     tagToTelemetry(tagOfInterest);
 
                    if (tagOfInterest.id == MIDDLE) {
-                        myEncoderDrive(Direction.BACKWARD, 0.50, 23, 2000);
+                       myEncoderTurn(0.50, 360);
                         telemetry.addLine("\ntag 2");
                     } else if (tagOfInterest.id == LEFT) {
-                        myEncoderDrive(Direction.BACKWARD, 0.50, 23, 2000);
-                        myEncoderDrive(Direction.RIGHT, 0.50, 23, 2000);
+                       myEncoderTurn(0.50, 360);
                         telemetry.addLine("\ntag 1");
                     } else if (tagOfInterest.id == RIGHT) {
-                        myEncoderDrive(Direction.BACKWARD, 0.50, 26, 2000);
-                        myEncoderDrive(Direction.LEFT, 0.50, 25, 2000);
+                        myEncoderTurn(0.50, 360);
                         telemetry.addLine("\ntag 3");
                     }
                     // once detected break
