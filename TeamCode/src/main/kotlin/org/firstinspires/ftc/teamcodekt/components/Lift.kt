@@ -55,7 +55,7 @@ class Lift(private val usingMotionProfiling: Boolean) {
 
     private val liftPID = PIDFController(PIDCoefficients(MOTION_PROFILE_LIFT_P, MOTION_PROFILE_LIFT_I, MOTION_PROFILE_LIFT_D))
 
-    private val normalPID = com.arcrobotics.ftclib.controller.PIDFController(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, 0.0)
+    val normalPID = com.arcrobotics.ftclib.controller.PIDFController(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, 0.0)
 
     private val liftEncoder = Motor(hwMap, DeviceNames.LIFT_ENCODER)
             .apply(Motor::resetEncoder)
