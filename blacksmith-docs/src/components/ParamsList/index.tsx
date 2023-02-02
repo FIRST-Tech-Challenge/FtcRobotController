@@ -9,9 +9,10 @@ type ParamItem = {
   desc: string;
   typeLink?: string;
   defaultsTo?: string;
+  isGeneric?: boolean;
 };
 
-function Parameter({ name, type, desc, typeLink, defaultsTo }: ParamItem) {
+function Parameter({ name, type, desc, typeLink, defaultsTo, isGeneric }: ParamItem) {
   const typeStyle = clsx(styles.paramType, typeLink && styles.link);
 
   const handleClick = () => {
@@ -25,10 +26,12 @@ function Parameter({ name, type, desc, typeLink, defaultsTo }: ParamItem) {
     </div>
   );
 
+  const formattedType = (isGeneric) ? `<${type}>` : type
+
   return (
     <li key={name} className={styles.paramList}>
-      <text className={styles.paramName}>{name + ': '}</text>
-      <text className={typeStyle} onClick={handleClick}>{type}</text>
+      {!isGeneric && <text className={styles.paramName}>{name + ': '}</text>}
+      <text className={typeStyle} onClick={handleClick}>{formattedType}</text>
       <text className={styles.paramDesc}>{' - ' + desc}</text>
       {defaultsTo && DefaultsToComponent}
     </li>

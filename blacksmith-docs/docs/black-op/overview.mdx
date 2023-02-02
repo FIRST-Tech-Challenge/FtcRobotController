@@ -14,7 +14,7 @@ An extension of the `LinearOpMode` class that adds a few extra utility features,
  - A **global** `hwMap` (`hardwareMap`, but shorter name)
 
  - Broadcasts a message (`BlackOp.STARTING_MSG`) when the runOpMode method is called with [Scheduler.emit](../scheduler-api/scheduler#scheduleremit)
-   - This in turn opens up support for [`@CreateOnGo`](./create-on-go) ([`createOnGo/evalOnGo`](./create-on-go) for Kotlin),
+   - This in turn opens up support for [`@CreateOnGo`](./create-on-go-java) ([`createOnGo/evalOnGo`](./create-on-go-kt) for Kotlin),
    a *very* nice utility feature
 
  - More will come soon as I think of new, helpful utilities
@@ -27,14 +27,13 @@ It's just like using `LinearOpMode`, just a couple minor differences.
 <TabItem value="java" label="Java">
 
   ```java
-  private DcMotorEx motor;
-
   @TeleOp
   public class MyOpMode extends BlackOp { // BlackOp instead of LinearOpMode
+      @CreateOnGo               // Can use @CreateOnGo to automatically
+      private MyMotor myMotor;  // create objects when go() is called
+
       @Override
       public void go() { // go() instead of runOpMode()
-          motor = hwMap.get(DcMotorEx.class, "motor"); // Can use hwMap instead of hardwareMap
-
           Scheduler.launchOnStart(this) {
               mTelemetry.addData("Hello", "World!"); // Logs to both driver station and FTCDashboard
           }
@@ -54,11 +53,11 @@ It's just like using `LinearOpMode`, just a couple minor differences.
 <TabItem value="kt" label="Kotlin">
 
   ```kotlin
-  private val motor by createOnGo { hwMap<DcMotorEx>("motor") }  // Can use createOnGo()
-      // or (either works)
-  private val motor by createOnGo<DcMotorEx> { hwMap("motor") }  // Can use hwMap instead of hardwareMap
-
+  @TeleOp
   class MyOpMode : BlackOp() { // BlackOp instead of LinearOpMode
+      private val motor by evalOnGo { hwMap<DcMotorEx>("motor") }  // Can use evalOnGo()/createOnGo()
+      // or (either works)
+      private val motor by createOnGo<DcMotorEx> { hwMap("motor") }  // Can use hwMap instead of hardwareMap
 
       override fun go() { // go() instead of runOpMode()
           Scheduler.launchOnStart(this) {

@@ -1,0 +1,94 @@
+import ParamsList from '@site/src/components/ParamsList';
+import Returns from '../../src/components/Returns';
+
+# CreateOnGo (Kt)
+
+:::caution Important
+This only works if you extend the `BlackOp` class. More info about that [here](../../etc/blackop). It's essentially LinearOpMode with
+a few extra utilities, and it's made for use with the Blacksmith Library.
+:::
+
+The BlackOp class two different methods to keep your component creation simple and idiomatic:
+ - `createOnGo`
+ - `evalOnGo`
+
+You know how in a typical OpMode you have to be all like this or something?
+
+```kotlin
+private lateinit var myArm: MyArmClass // Unidiomatic unneccesarily mutable state
+
+override fun init() {
+    myArm = MyArmClass(...) // Ugly and also duplication of the name/class.
+}
+```
+
+With `createOnGo`, you can simply do this instead:
+
+```kotlin
+// Immutable state, no duplication
+private val myArm by createOnGo<MyArmClass>()
+
+// Keep in mind you need to use lambdas though
+private val myClaw by createOnGo<MyClawClass> { param1 }
+
+// for each parameter
+private val myLift by createOnGo<MyLiftClass>({ param1 }, { param2 })
+```
+
+If you need to call a method or have a lot of parameters or do something more advanced, you can use `evalOnGo` instead,
+to call a function which returns the object you want to create at go-time.
+
+```kotlin
+// No need to explicitly say '<DcMotorEx>' here since Kotlin can infer it from the function return type
+private val myThing by evalOnGo {
+    createSomethingThroughAFunction(1, 2, 3, 4, 5, hwMap, anotherFunction(hwMap))
+}
+```
+
+:::warning
+`createOnGo` uses reflection, so it can occasionally be a bit finicky. If you're having issues, try `evalOnGo`.
+
+Make sure that **the argument's types are the same as the desired constructor**, and that **the order is the same**,
+as the method parameters are <ins>**NOT type safe**</ins>
+:::
+
+## `createOnGo`
+
+<ParamsList params={[
+  {
+    type: 'reified T',
+    desc: 'The type you want to construct',
+    isGeneric: true,
+  },
+  {
+    name: 'args',
+    type: 'vararg () -> Any',
+    desc: 'Any number of lambda functions that return the parameters you want to pass to the constructor of the class you want to create. Not evaluated until the OpMode is started'
+  }
+]}/>
+
+<Returns returns={{
+  type: 'T',
+  desc: 'The class constructed by invoking the constructor of said class with the corresponding parameters',
+}}/>
+
+
+## `evalOnGo`
+
+<ParamsList params={[
+  {
+    type: 'T',
+    desc: 'The type you want to construct',
+    isGeneric: true,
+  },
+  {
+    name: 'constructor',
+    type: '() -> T',
+    desc: 'A lambda function that returns the object you want to create. Not evaluated until the OpMode is started'
+  }
+]}/>
+
+<Returns returns={{
+  type: 'T',
+  desc: 'The object returned by the given lambda',
+}}/>

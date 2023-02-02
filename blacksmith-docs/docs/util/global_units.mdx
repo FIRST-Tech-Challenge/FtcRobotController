@@ -1,3 +1,10 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # GlobalUnits
 
 ## Overview
@@ -12,7 +19,8 @@ These default to:
 You can however set them manually in two ways:
 
 :::tip
-I **highly** recommend using the second method, even though it takes a couple extra steps
+I **highly** recommend using the second method, even though it takes a couple extra steps. The first method has some
+**dangers** covered if you scroll down a little.
 :::
 
 :::note
@@ -29,9 +37,9 @@ Calling the `GlobalUnits.setUnits()` method in your code:
 <TabItem value="java" label="Java">
 
   ```java
-  pubic class MyTeleOp extends BlackOp {
+  public class MyTeleOp extends BlackOp {
       @Override
-      public void runOpMode() throws InterruptedException {
+      public void go() {
           // Set just the distanceUnit
           GlobalUnits.setUnits(DistanceUnit.SMOOTS);
 
@@ -49,7 +57,7 @@ Calling the `GlobalUnits.setUnits()` method in your code:
 
   ```kotlin
   class MyTeleOp : BlackOp() {
-      override fun runOpMode() {
+      override fun go() {
           // Set just the distanceUnit
           GlobalUnits.setUnits(DistanceUnit.SMOOTS)
 
@@ -93,10 +101,10 @@ First, find the `Teamcode -> src -> main -> res -> raw` folder
 
 ![](/img/randomassets/global_units1.png)
 
-In the `raw` folder, create a new folder called `blacksmith` and in there, put in a `units.properties` file
+In the `raw` folder, create a new file called `bsm_units.properties` file
 
 :::caution Important
-Make sure **all**    spelling is correct
+Spelling and case-sensitivity is **very** important here.
 :::
 
 ![](/img/randomassets/global_units2.png)
@@ -112,7 +120,7 @@ time=insert_unit_here
 :::danger Very important
 Unit spelling must also be ON POINT.
 
-To get the spellings for each supported unit, find the doc for the designed unit (e.g. [`DistanceUnit`](./units/distance)),
+To get the spellings for each supported unit, find the doc for the designed unit (e.g. [`DistanceUnit`](../etc/units/distance)),
 and copy paste over whichever unit you want (e.g. `centimeters` or `LIGHT_YEARS`)
 
 *Unit names are not case sensitive

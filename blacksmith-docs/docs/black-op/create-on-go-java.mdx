@@ -1,0 +1,62 @@
+import ParamsList from '@site/src/components/ParamsList';
+
+# CreateOnGo (Java)
+
+:::caution Important
+This only works if you extend the `BlackOp` class. More info about that [here](../../etc/blackop). It's essentially LinearOpMode with
+a few extra utilities, and it's made for use with the Blacksmith Library.
+
+**If you're using Kotlin, check out [createOnGo/evalOnGo](./create-on-go-kt) for a more versatile and idiomatic method**
+:::
+
+You know how in a typical OpMode you have to be all like this or something?
+
+```java
+private MyArmClass myArm;
+
+@Override
+public void init() throws InterruptedException {
+    myArm = new MyArmClass(...) // ugly duplication of class names & extra boilerplate smh my head
+}
+```
+
+With `@CreateOnGo`, you can simply do this instead:
+
+```java
+@CreateOnGo
+private MyArmClass myArm; // (Sadly doesn't work with final variables D:)
+```
+
+Yep, that's it. Of course, there is one small teeny weeny itsy-bitsy caveat though:
+
+**The specific class type MUST have a no-args constructor, or it will error.**
+
+:::tip
+On the bright side, BlackOp contains a global `hwMap` and a global `mTelemetry` you can use!
+:::
+
+```java
+public class MyOp extends BlackOp {
+    @CreateOnGo
+    private MyClaw myClaw;
+
+    // this-will-error
+    @CreateOnGo
+    // this-will-error
+    private MyWife maiWaife;
+}
+
+class MyClaw {
+    // Has no-args constructor, so it's valid
+    public MyClaw() { this(BlackOp.hwMap) }
+
+    // It's fine if there's additional multi-arg constructors
+    public MyClaw(HardwareMap hwMap) { ... }
+}
+
+class MyWife {
+    // No no-args constructor, will throw exception when tries to @CreateOnGo
+    // (Also you shouldn't be objectifying women)
+    public MyWife(Tenges cost)
+}
+```

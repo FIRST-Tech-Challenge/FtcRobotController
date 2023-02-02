@@ -2,13 +2,10 @@
 
 package ftc.rogue.blacksmith
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
-import ftc.rogue.blacksmith.annotations.CreateOnGo
 import ftc.rogue.blacksmith.util.getFieldsAnnotatedWith
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
@@ -29,12 +26,6 @@ import kotlin.reflect.KProperty
  *  i like cars
  */
 abstract class BlackOp : LinearOpMode() {
-    @JvmField
-    protected val mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
-
-    @JvmField
-    protected var hwMap = hardwareMap
-
     /**
      * The method to override in place of runOpMode.
      *
@@ -49,23 +40,9 @@ abstract class BlackOp : LinearOpMode() {
         Scheduler.reset()
 
         hwMap = hardwareMap
-
-        Companion.hwMap = hardwareMap
-        Companion.mTelemetry = mTelemetry
+        mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         Scheduler.emit(STARTING_MSG)
-
-        this::class.java
-            .getFieldsAnnotatedWith(CreateOnGo::class.java)
-            .forEach { field ->
-                val clazz = field.type
-
-                if (clazz.constructors.none { it.parameterTypes.isEmpty() }) {
-                    throw CreationException("Class '${clazz.simpleName}' has no no-arg constructor")
-                }
-
-                field.set(this, clazz.getConstructor().newInstance())
-            }
 
         go()
     }
@@ -94,6 +71,9 @@ abstract class BlackOp : LinearOpMode() {
          * **DO NOT CALL/USE DIRECTLY BEFORE A [BlackOp] INSTANCE IS INITIALIZED OR IT WON'T
          * BE THE RIGHT HARDWARE MAP**
          */
+        @JvmStatic
+        fun hwMap() = hwMap
+
         @get:JvmSynthetic
         var hwMap by Delegates.notNull<HardwareMap>()
             private set
@@ -110,6 +90,10 @@ abstract class BlackOp : LinearOpMode() {
     }
 
     // -- KOTLIN ONLY BELOW --
+
+    @Target(AnnotationTarget.FIELD)
+    @Retention(AnnotationRetention.RUNTIME)
+    protected annotation class CreateOnGo
 
     /**
      * READ DOCS FOR THIS
@@ -158,6 +142,19 @@ abstract class BlackOp : LinearOpMode() {
             return value
         }
     }
+
+    private fun injectCreateOnGoFields() = this::class.java
+        .getFieldsAnnotatedWith(CreateOnGo::class.java)
+        .forEach { field ->
+            val clazz = field.type
+
+            if (clazz.constructors.none { it.parameterTypes.isEmpty() }) {
+                throw CreationException("Class '${clazz.simpleName}' has no no-arg constructor")
+            }
+
+            field.isAccessible = true
+            field.set(this, clazz.getConstructor().newInstance())
+        }
 
     @PublishedApi
     internal class CreationException(message: String) : RuntimeException(message)
