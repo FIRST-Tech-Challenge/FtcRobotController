@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.tuning.LogFiles;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.firstinspires.ftc.teamcode.util.Localizer;
 import org.firstinspires.ftc.teamcode.util.LynxFirmwareVersion;
@@ -252,6 +253,8 @@ public final class MecanumDrive {
             rightBack.setPower(feedforward.compute(wheelVels.rightBack) / voltage);
             rightFront.setPower(feedforward.compute(wheelVels.rightFront) / voltage);
 
+            LogFiles.recordTargetPose(txWorldTarget.value());
+
             p.put("x", pose.trans.x);
             p.put("y", pose.trans.y);
             p.put("heading (deg)", Math.toDegrees(pose.rot.log()));
@@ -331,6 +334,8 @@ public final class MecanumDrive {
             rightBack.setPower(feedforward.compute(wheelVels.rightBack) / voltage);
             rightFront.setPower(feedforward.compute(wheelVels.rightFront) / voltage);
 
+            LogFiles.recordTargetPose(txWorldTarget.value());
+
             Canvas c = p.fieldOverlay();
             drawPoseHistory(c);
 
@@ -361,6 +366,8 @@ public final class MecanumDrive {
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
+
+        LogFiles.recordPose(pose);
 
         return incr.velocity().value();
     }

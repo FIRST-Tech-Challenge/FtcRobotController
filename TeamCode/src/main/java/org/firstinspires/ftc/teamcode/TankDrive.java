@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.tuning.LogFiles;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.firstinspires.ftc.teamcode.util.Localizer;
 import org.firstinspires.ftc.teamcode.util.LynxFirmwareVersion;
@@ -281,6 +282,8 @@ public final class TankDrive {
             p.put("yError", error.trans.y);
             p.put("headingError (deg)", Math.toDegrees(error.rot.log()));
 
+            LogFiles.recordTargetPose(txWorldTarget.value());
+
             // only draw when active; only one drive action should be active at a time
             Canvas c = p.fieldOverlay();
             drawPoseHistory(c);
@@ -357,6 +360,8 @@ public final class TankDrive {
                 m.setPower(feedforward.compute(wheelVels.right) / voltage);
             }
 
+            LogFiles.recordTargetPose(txWorldTarget.value());
+
             Canvas c = p.fieldOverlay();
             drawPoseHistory(c);
 
@@ -387,6 +392,8 @@ public final class TankDrive {
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
+
+        LogFiles.recordPose(pose);
 
         return incr.velocity().value();
     }
