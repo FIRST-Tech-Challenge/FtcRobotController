@@ -60,16 +60,16 @@ class RogueMidRightAuto : RogueBaseAuto() {
     }
 
     private fun Anvil.goToIntake(it: Int) = when (it) {
-        0 -> splineTo(163.1, -27.3, 0)
-        1 -> splineTo(162.3, -27.3, 0)
-        2 -> splineTo(162.0, -27.3, 0)
-        3 -> splineTo(161.8, -27.3, 0)
-        4 -> splineTo(162.2, -26.7, 0)
+        0 -> splineTo(162.8, -27.3, 0)
+        1 -> splineTo(162.0, -27.3, 0)
+        2 -> splineTo(161.7, -27.3, 0)
+        3 -> splineTo(161.5, -27.3, 0)
+        4 -> splineTo(161.9, -26.7, 0)
         else -> throw CycleException()
     }.doInReverse()
 
     private fun Anvil.awaitRegularIntake() = this
-        .addTemporalMarker(-100) {
+        .addTemporalMarker(-170) {
             bot.intake.disable()
         }
         .addTemporalMarker {
@@ -88,7 +88,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
         .waitTime(300)
 
     private fun Anvil.awaitFastIntake() = this
-        .addTemporalMarker(-175){
+        .addTemporalMarker(-245){
             bot.intake.disable()
         }
         .addTemporalMarker(-75) {
@@ -138,7 +138,8 @@ class RogueMidRightAuto : RogueBaseAuto() {
                 when(iterations){
                     1 -> bot.lift.targetHeight = liftOffsets[iterations]+9
                     2 -> bot.lift.targetHeight = liftOffsets[iterations]+19
-                    3 -> bot.lift.targetHeight = liftOffsets[iterations]-8
+                    3 -> bot.lift.targetHeight = liftOffsets[iterations]-11
+//                    4 -> bot.lift.targetHeight = liftOffsets[iterations]-14
                     else -> bot.lift.targetHeight = liftOffsets[iterations]
 
                 }
