@@ -77,8 +77,8 @@ abstract class RogueBaseAuto : BlackOp() {
             }
             downWasJustPressed = gamepad1.dpad_down
 
-            val xf = if (x > 0) "+" else "-" + "%4.2f".format(x.absoluteValue)
-            val yf = if (y > 0) "+" else "-" + "%4.2f".format(y.absoluteValue)
+            val xf = (if (x > 0) "+" else "-") + "%4.2f".format(x.absoluteValue)
+            val yf = (if (y > 0) "+" else "-") + "%4.2f".format(y.absoluteValue)
 
             telemetry.addLine("""
                 |

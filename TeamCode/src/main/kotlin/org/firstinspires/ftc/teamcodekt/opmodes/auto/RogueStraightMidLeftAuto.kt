@@ -21,110 +21,18 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
             Anvil.formTrajectory(bot.drive, startPose)
                     .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(36.0, Math.toRadians(260.0), DriveConstants.TRACK_WIDTH))
                     .preform(0, ::parkTraj)
-                    .addTemporalMarker(0) {
-                        bot.claw.close()
-                    }
-                    .addTemporalMarker(600) {
-                        bot.lift.goToAngledHigh() // TODO: Change this to mid on real field
-                        bot.arm.setToForwardsAngledPos()
-                        bot.wrist.setToForwardsPos()
-                    }
+
                     .forward(132)
                     .turn(-141.5)
-                    .forward(14)
-                    .addTemporalMarker(0) {
-                        bot.arm.setToForwardsPos()
-                        bot.lift.targetHeight = LIFT_HIGH - 500
-                        bot.lift.regenMotionProfile()
-                    }
-                    .addTemporalMarker(100) {
-                        bot.lift.targetHeight = liftOffsets[0]
-                        bot.lift.regenMotionProfile()
-                        bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-                    }
-                    .addTemporalMarker(350) {
-                        bot.claw.openForDeposit()
-                    }
-                    .addTemporalMarker(450) {
-                        bot.wrist.setToBackwardsPos()
-                    }
-                    .waitTime(350)
-                    .back(14)
-                    .turn(51.5)
+                    .goToDeposit(-1)
 
-                    .back(70)
 
-                    .addTemporalMarker(100) {
-                        bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-                        bot.claw.openForIntakeWide()
-                    }
-                    .forward(10.4)
-                    .waitTime(200)
-
-                    .back(10.4)
-                    .addTemporalMarker(30) {
-                        bot.claw.close()
-                    }
-                    .addTemporalMarker(200) {
-                        bot.arm.setToForwardsAngledPos()
-                    }
-                    .addTemporalMarker(350) {
-                        bot.lift.goToAngledHigh()
-                    }
-                    .addTemporalMarker(450) {
-                        bot.wrist.setToForwardsPos()
-                    }
-                    .waitTime(400)
-
-                    .doTimes(4) {
-                        goToDeposit(it)
-                                .addTemporalMarker(0) {
-                                    bot.arm.setToForwardsPos()
-                                    bot.lift.targetHeight = LIFT_HIGH - 1000
-                                    bot.lift.regenMotionProfile()
-                                }
-
-                                .addTemporalMarker(100) {
-                                    bot.claw.openForDeposit()
-                                }
-                                .addTemporalMarker(250) {
-                                    bot.lift.targetHeight = liftOffsets[it + 1]
-                                    bot.lift.regenMotionProfile()
-                                    bot.claw.openForIntakeWide()
-                                    bot.wrist.setToBackwardsPos()
-                                    bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-                                }
-                                .waitTime(500)
-
+                    .doTimes(5) {
                         goToIntake(it)
-                                .addTemporalMarker(30) {
-                                    bot.claw.close()
-                                }
-                                .addTemporalMarker(200) {
-                                    bot.arm.setToForwardsAngledPos()
-                                }
-                                .addTemporalMarker(375) {
-                                    bot.lift.goToAngledHigh()
-                                }
-                                .addTemporalMarker(415) {
-                                    bot.wrist.setToForwardsPos()
-                                }
-                                .waitTime(400)
+                        waitTime(400)
+                        goToDeposit(it)
+                        waitTime(500)
                     }
-                    .goToDeposit(4)
-                    .addTemporalMarker(0) {
-                        bot.arm.setToForwardsPos()
-                        bot.lift.targetHeight = LIFT_HIGH - 1000
-                        bot.lift.regenMotionProfile()
-                    }
-                    .addTemporalMarker(225) {
-                        bot.claw.openForDeposit()
-                    }
-                    .addTemporalMarker(450) {
-                        bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
-                        bot.wrist.setToBackwardsPos()
-                    }
-                    .waitTime(500)
 
                     .resetBot()
 
@@ -137,24 +45,24 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
             The offset values are from sin(32) and cos(32) degrees.
             Used to spline in a straight line. This is advantageous to maintain localization better.
         */
-        0 -> splineTo(-85.5, -41, -37)
-        1 -> splineTo(-85.5, -41, -35)
-        2 -> splineTo(-85.5, -41, -33)
-        3 -> splineTo(-85.5, -41, -31)
-        4 -> splineTo(-85.5, -41, -30)
+        -1 -> lineToLinearHeading(-85.5, -40.5, -37)
+        0 -> splineTo(-86, -40.5, -37)
+        1 -> splineTo(-86, -40.5, -35)
+        2 -> splineTo(-86, -40.5, -30)
+        3 -> splineTo(-86, -39.7, -29)
+        4 -> splineTo(-86, -39.2, -27)
 
         else -> throw CycleException()
     }
 
     private fun Anvil.goToIntake(it: Int) = when (it) {
-        0 -> splineTo(-164, -28, 180)
-        1 -> splineTo(-164, -28, 180)
-        2 -> splineTo(-164, -28, 180)
-        3 -> splineTo(-164, -28, 180)
-        4 -> splineTo(-164, -28, 180)
+        0 -> splineTo(-165, -26.75, 180)
+        1 -> splineTo(-165, -25.3, 180)
+        2 -> splineTo(-164, -25, 180)
+        3 -> splineTo(-164.1, -24.1, 180)
+        4 -> splineTo(-164.1, -23.9, 180)
         else -> throw CycleException()
     }.doInReverse()
-
 
     private fun Anvil.resetBot() = this
             .addTemporalMarker {
