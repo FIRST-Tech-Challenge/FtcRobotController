@@ -15,10 +15,10 @@ export default function Home(): JSX.Element {
     <Layout noFooter={true}>
       <Head>
         <title>Blacksmith</title>
-        <meta content='Embed Title' property='og:title'/>
+        <meta content='Blacksmith' property='og:title'/>
         <meta content='An intuitive framework for FTC software development' property='og:description'/>
         <meta content='https://blacksmithftc.vercel.app/' property='og:url'/>
-        <meta content='/img/logo/blacksmith-logo.png' property='og:image'/>
+        <meta content='/img/logo/blacksmith-logo-square.png' property='og:image'/>
         <meta content='#c1eab6' data-react-helmet='true' name='theme-color'/>
         <meta name='twitter:card' content='summary_large_image'/>
       </Head>
