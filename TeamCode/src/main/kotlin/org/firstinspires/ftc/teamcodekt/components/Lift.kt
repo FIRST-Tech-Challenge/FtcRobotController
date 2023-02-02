@@ -16,6 +16,7 @@ import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.clamp
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
+import org.firstinspires.ftc.teamcodekt.util.KalmanFilter
 
 @JvmField
 var LIFT_ZERO = 0
@@ -28,12 +29,15 @@ var LIFT_HIGH = 1590
 
 
 @JvmField
-var NORMAL_LIFT_P = 0.0005
-@JvmField
-var NORMAL_LIFT_I = 0.0001
-@JvmField
-var NORMAL_LIFT_D = 0.0001
+var NORMAL_LIFT_P = 0.0025
 
+
+@JvmField
+var NORMAL_LIFT_I = 0.01
+@JvmField
+var NORMAL_LIFT_D = 0.0002
+@JvmField
+var NORMAL_LIFT_F = 0.00002
 
 @JvmField
 var MOTION_PROFILE_LIFT_P = 0.026
@@ -43,19 +47,26 @@ var MOTION_PROFILE_LIFT_I = 0.0002
 var MOTION_PROFILE_LIFT_D = 0.0002
 
 @JvmField
-var LIFT_MAX_V = 20000.0
+var LIFT_MAX_V = 32000.0
 @JvmField
-var LIFT_MAX_A = 20000.0
+var LIFT_MAX_A = 25000.0
 @JvmField
-var LIFT_MAX_J = 20000.0
+var LIFT_MAX_J = 18000.0
 
-class Lift(private val usingMotionProfiling: Boolean) {
+@JvmField
+var PROCESS_NOISE = 0.01
+@JvmField
+var MEASUREMENT_NOISE = 0.01
+
+class Lift(val usingMotionProfiling: Boolean) {
 
     private val liftMotor = hwMap<DcMotorSimple>(DeviceNames.LIFT_MOTOR)
 
     private val liftPID = PIDFController(PIDCoefficients(MOTION_PROFILE_LIFT_P, MOTION_PROFILE_LIFT_I, MOTION_PROFILE_LIFT_D))
 
-    val normalPID = com.arcrobotics.ftclib.controller.PIDFController(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, 0.0)
+    val normalPID = com.arcrobotics.ftclib.controller.PIDFController(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, NORMAL_LIFT_F)
+
+    val liftFilter = KalmanFilter(PROCESS_NOISE, MEASUREMENT_NOISE)
 
     private val liftEncoder = Motor(hwMap, DeviceNames.LIFT_ENCODER)
             .apply(Motor::resetEncoder)
@@ -128,7 +139,7 @@ class Lift(private val usingMotionProfiling: Boolean) {
             liftMotor.power = correction
         } else {
             val correction = normalPID.calculate(liftHeight.toDouble(), targetHeight.toDouble())
-            liftMotor.power += correction
+            liftMotor.power = liftFilter.filter(liftMotor.power + correction)
         }
     }
 

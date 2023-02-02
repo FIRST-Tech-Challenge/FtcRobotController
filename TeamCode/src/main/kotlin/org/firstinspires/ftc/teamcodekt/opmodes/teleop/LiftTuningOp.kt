@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcodekt.components.NORMAL_LIFT_P
 import kotlin.math.sign
 
 @Config
+@TeleOp
 class LiftTuningOp : RogueBaseTele() {
     override fun describeControls(): Unit = with(bot) {
         driver.dpad_up   .onRise(lift::goToHigh)
@@ -18,20 +19,20 @@ class LiftTuningOp : RogueBaseTele() {
 
         driver.x.onRise {
             NORMAL_LIFT_P += .0001
-            bot.lift.normalPID.setPIDF(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, 0.0)
         }
 
         driver.a.onRise {
             NORMAL_LIFT_P -= .0001
-            bot.lift.normalPID.setPIDF(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, 0.0)
         }
 
         driver.y.onRise {
             NORMAL_LIFT_D += .0001
-            bot.lift.normalPID.setPIDF(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, 0.0)
         }
         driver.b.onRise {
             NORMAL_LIFT_D -= .0001
+        }
+
+        driver.left_bumper.onRise {
             bot.lift.normalPID.setPIDF(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, 0.0)
         }
     }

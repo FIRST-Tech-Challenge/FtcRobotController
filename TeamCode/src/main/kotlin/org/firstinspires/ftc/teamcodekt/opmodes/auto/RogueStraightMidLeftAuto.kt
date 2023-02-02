@@ -31,7 +31,7 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
                     .forward(132)
                     .turn(-141.5)
                     .goToDeposit(-1)
-                    .deposit()
+                    .initialDeposit()
                     .doTimes(NUM_CYCLES) {
                         when (it) {
                             LAST_CYCLE -> fastIntakePrep(it)
@@ -101,6 +101,15 @@ class RogueStraightMidLeftAuto : RogueBaseAuto() {
             }
 
             .waitTime(120)
+
+    private fun Anvil.initialDeposit() = this
+            .addTemporalMarker(-165) {
+                bot.lift.targetHeight -= AutoData.DEPOSIT_DROP_AMOUNT
+                bot.arm.setToForwardsPos()
+            }
+            .addTemporalMarker(-100) {
+                bot.claw.openForDeposit()
+            }
 
     private fun Anvil.deposit() = this
         .addTemporalMarker(-165) {
