@@ -21,31 +21,18 @@
 
 package org.firstinspires.ftc.teamcode.auton;
 
-<<<<<<< HEAD
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-=======
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
->>>>>>> origin/Working_Camera
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-<<<<<<< HEAD
 
 import java.util.ArrayList;
 
 @Autonomous
-=======
-import org.openftc.easyopencv.OpenCvInternalCamera;
-
-import java.util.ArrayList;
-
-@TeleOp
->>>>>>> origin/Working_Camera
 public class AprilTagTry extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -65,11 +52,7 @@ public class AprilTagTry extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-<<<<<<< HEAD
     // Tag ID 18 from the 36h11 family
-=======
-    // Tag ID 1 and 2 from the 36h11 family
->>>>>>> origin/Working_Camera
     int LEFT = 1;
     int MIDDLE = 2;
 
@@ -133,10 +116,6 @@ public class AprilTagTry extends LinearOpMode
 
                     if(tagOfInterest == null)
                     {
-<<<<<<< HEAD
-=======
-//                        telemetry.addLine("(The tag has never been seen)");
->>>>>>> origin/Working_Camera
                         telemetry.addLine("PRIDE");
                     }
                     else
@@ -153,10 +132,6 @@ public class AprilTagTry extends LinearOpMode
 
                 if(tagOfInterest == null)
                 {
-<<<<<<< HEAD
-=======
-//                        telemetry.addLine("(The tag has never been seen)");
->>>>>>> origin/Working_Camera
                     telemetry.addLine("PRIDE");
                 }
                 else
@@ -190,7 +165,6 @@ public class AprilTagTry extends LinearOpMode
         }
 
         /* Actually do something useful */
-<<<<<<< HEAD
 
         if (tagOfInterest == null) {
             telemetry.addLine("RIGHT");
@@ -211,18 +185,6 @@ public class AprilTagTry extends LinearOpMode
         // other code
 
 
-=======
-        if (tagOfInterest.id == LEFT) {
-            //trajectory
-        } else if (tagOfInterest.id == MIDDLE) {
-            //trajectory
-        } else if(tagOfInterest == null) {
-            //trajectory
-        }
-
-        // other code
-
->>>>>>> origin/Working_Camera
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
         while (opModeIsActive()) {sleep(20);}
     }
