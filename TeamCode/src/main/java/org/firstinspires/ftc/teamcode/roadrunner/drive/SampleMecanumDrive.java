@@ -59,7 +59,7 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(9, 0, 1.0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0.5);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0.5);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -69,6 +69,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final boolean ultrasonics = false, touches = false;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
+    private TrajectorySequence trajectorySeq;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
@@ -229,6 +230,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                         .addTrajectory(trajectory)
                         .build()
         );
+
     }
 
     public void followTrajectory(Trajectory trajectory) {
@@ -239,14 +241,19 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
         trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
+        trajectorySeq = trajectorySequence;
     }
 
     public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
         followTrajectorySequenceAsync(trajectorySequence);
         waitForIdle();
+        trajectorySeq = trajectorySequence;
+
     }
     public void changeTrajectorySequence(TrajectorySequence trajectorySequence) {
         trajectorySequenceRunner.changeTrajectorySequence(trajectorySequence);
+        trajectorySeq = trajectorySequence;
+
     }
 
     public void breakFollowing() {
@@ -314,7 +321,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
     }
     public TrajectorySequence getCurrentTraj(){
-        return trajectorySequenceRunner.getTrajectorySequence();
+        return trajectorySeq;
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {

@@ -58,8 +58,8 @@ public class RoadRunStraightTest extends LinearOpMode {
             //1.5,0,0.8
             robot.followTrajectorySequenceAsync(trajSeq2);
             robot.followTrajectorySequenceAsync(trajSeq2);
-//            robot.followTrajectorySequenceAsync(trajSeq2);
-//            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
 
 //            //func
             robot.setFirstLoop(false);

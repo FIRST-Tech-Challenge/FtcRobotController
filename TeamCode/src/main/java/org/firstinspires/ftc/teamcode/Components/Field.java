@@ -96,13 +96,13 @@ public class Field {
 
     //is robot looking at a pole
     public boolean lookingAtPole() {
-        doneLookin=false;
         double[] coords = cv.rotatedPolarCoord();
-        coords[1]-=9;
+//        coords[1]+=5;
+        coords[1] -=2;
         Pose2d pos = roadrun.getPoseEstimate();
-        pos = new Pose2d(pos.getX(),pos.getY(),pos.getHeading()+PI);
-        polePos = new Pose2d(pos.getX()+cos(pos.getHeading()+coords[0]*PI/180)*coords[1],pos.getY()+sin(pos.getHeading()+coords[0]*PI/180)*coords[1],pos.getHeading()+coords[0]*PI/180);
-        if(abs(coords[0])<7&&abs(coords[1])<10&&abs(coords[1])>2){
+        pos = new Pose2d(pos.getX(),pos.getY(),pos.getHeading()+coords[0]*PI/180+PI);
+        polePos = new Pose2d(pos.getX()+cos(pos.getHeading())*coords[1],pos.getY()+sin(pos.getHeading())*coords[1],pos.getHeading());
+        if(abs(coords[0])<10&&abs(coords[1])<10){
             return true;
         }
         return false;

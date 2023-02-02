@@ -21,11 +21,11 @@ public class StickObserverPipeline extends OpenCvPipeline {
     public static double  degPerPix = 22.5/320, widTimesDist = 820, focalLength = 715;
     double centerOfPole = 0, poleSize = 0;
     ArrayList<double[]> frameList;
-    public static double LowS = 130;
+    public static double LowS = 150;
     public static double HighS = 255;
-    public static double LowH = 15;
+    public static double LowH = 18;
     public static double HighH = 32;
-    public static double LowV = 55;
+    public static double LowV = 65;
     public static double HighV = 255;
 
 
@@ -96,15 +96,17 @@ public class StickObserverPipeline extends OpenCvPipeline {
         //iterate through each rotatedRect find largest
         for (int i = 0; i < rectangle.length; i++) {
             if(rectangle[i].size.height/rectangle[i].size.width>2 ||rectangle[i].size.width/rectangle[i].size.height>2) {
-                if (rectangle[i].size.height < rectangle[i].size.width) {
-                    if (rectangle[i].size.height > maxWidth) {
-                        maxAreaIndex = i;
-                        maxWidth = rectangle[i].size.height;
-                    }
-                } else {
-                    if (rectangle[i].size.width > maxWidth) {
-                        maxAreaIndex = i;
-                        maxWidth = rectangle[i].size.width;
+                if(rectangle[i].size.height > 300 || rectangle[i].size.width >300) {
+                    if (rectangle[i].size.height < rectangle[i].size.width) {
+                        if (rectangle[i].size.height > maxWidth) {
+                            maxAreaIndex = i;
+                            maxWidth = rectangle[i].size.height;
+                        }
+                    } else {
+                        if (rectangle[i].size.width > maxWidth) {
+                            maxAreaIndex = i;
+                            maxWidth = rectangle[i].size.width;
+                        }
                     }
                 }
             }
@@ -113,7 +115,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if(rectangle.length>0) {
             if(rectangle[maxAreaIndex].size.height<rectangle[maxAreaIndex].size.width) {
                 poleSize = rectangle[maxAreaIndex].size.height;
-                centerOfPole = rectangle[maxAreaIndex].center.y - 320;
+                centerOfPole = rectangle[maxAreaIndex].center.x - 320;
             }
             else{
                 poleSize = rectangle[maxAreaIndex].size.width;
@@ -121,6 +123,9 @@ public class StickObserverPipeline extends OpenCvPipeline {
 
             }
             frameList.add(new double[]{centerOfPole, poleSize});
+        }
+        else{
+            frameList.add(new double[] {0, 0});
         }
 //        //list of frames to reduce inconsistency, not too many so that it is still real-time
         if(frameList.size()>5) {
@@ -165,7 +170,9 @@ public class StickObserverPipeline extends OpenCvPipeline {
     public double poleSize() {
         double average=0;
         for(int i=0;i<frameList.size();i++){
-            average+=frameList.get(i)[1];
+            if(frameList.get(i)[0]!=0&&frameList.get(i)[1]!=0) {
+                average += frameList.get(i)[1];
+            }
         }
         return average/frameList.size();
     }

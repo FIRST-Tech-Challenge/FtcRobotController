@@ -49,7 +49,7 @@ public class CVMaster {
                 webcam.setPipeline(opencv);
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
-                dashboard.startCameraStream(webcam, 5);
+                dashboard.startCameraStream(webcam, 10);
 
             }
 

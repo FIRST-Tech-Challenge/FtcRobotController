@@ -25,7 +25,7 @@ public class StickObserverTest extends LinearOpMode {
         waitForStart();
         double[] loopStart={0,0};
         while(opModeIsActive()) {
-//                telemetry.addData("cvtheta",robot.cv.rotatedPolarCoord()[0]);
+                telemetry.addData("cvtheta",robot.cv.rotatedPolarCoord()[0]);
                 telemetry.addData("cvdistance",robot.cv.rotatedPolarCoord()[1]);
 //                telemetry.addData("aimTo",robot.roadrun.getPoseEstimate().getHeading() + robot.cv.rotatedPolarCoord()[0]);
                 telemetry.update();

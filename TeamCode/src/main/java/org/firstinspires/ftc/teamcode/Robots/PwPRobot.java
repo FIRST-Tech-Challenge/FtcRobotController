@@ -27,7 +27,6 @@ import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
@@ -123,20 +122,24 @@ public class PwPRobot extends BasicRobot {
         }
     }
     public void done(){
-        queuer.done();
+        field.setDoneLookin(true);queuer.done();
     }
     public void updateLiftArmStates() {
         liftArm.updateLiftArmStates();
     }
     public void updateTrajectoryWithCam(){
         if (queuer.queue(true, field.isDoneLookin())) {
+            field.setDoneLookin(false);
             if(field.lookingAtPole()){
                 Pose2d target = field.polePos();
                 TrajectorySequence trajectory = roadrun.getCurrentTraj();
                 roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
+                                .setReversed(true)
                         .splineTo(target.vec(), target.getHeading()).build());
                 field.setDoneLookin(true);
-                logger.log("/RobotLogs/GeneralRobot", ""+target+""+field.isDoneLookin());
+                logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im done"+roadrun.getPoseEstimate());
+                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedPolarCoord()[0]+","+cv.rotatedPolarCoord()[1]);
+
             }
         }
     }
