@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit
 @Suppress("MemberVisibilityCanBePrivate")
 class MeepMeepPersistence @JvmOverloads constructor(
     private val meepMeep: MeepMeep,
-    val savePeriod: Long = 1000L,
+    val saveInterval: Long = 1000L,
     val defaultFilePath: String = "./meepmeep.properties",
 ) {
     /**
@@ -53,7 +53,7 @@ class MeepMeepPersistence @JvmOverloads constructor(
      * settings when the program is closed normally (via the X button, __not__ the red stop square.)
      */
     init {
-        reload()
+        load()
         startPersistenceThread()
 
         // Add a shutdown hook to save the settings when the program is closed
@@ -83,7 +83,7 @@ class MeepMeepPersistence @JvmOverloads constructor(
         // It is called every 'savePeriod' seconds (defaulting to 2 if unspecified),
         // the time unit being specified by the TimeUnit.SECONDS parameter. It's automatically
         // killed when the program is closed.
-        ScheduledMeepMeepExecutor.EXECUTOR.schedule(::save, savePeriod, TimeUnit.MILLISECONDS)
+        ScheduledMeepMeepExecutor.EXECUTOR.schedule(::save, saveInterval, TimeUnit.MILLISECONDS)
     }
 
     /**
@@ -101,8 +101,8 @@ class MeepMeepPersistence @JvmOverloads constructor(
         ensureFileExistence(path)
 
         // Just saves the x and y coordinates of the MeepMeep GUI to the properties object
-        val x = getWindowFrame().invokeMethod<Int>("getX")
-        val y = getWindowFrame().invokeMethod<Int>("getY")
+        val x = mmWindowFrame.invokeMethod<Int>("getX")
+        val y = mmWindowFrame.invokeMethod<Int>("getY")
 
         properties.setProperty("windows_x", x.toString())
         properties.setProperty("windows_y", y.toString())
@@ -124,7 +124,7 @@ class MeepMeepPersistence @JvmOverloads constructor(
      * @param path The file path to restore the state from
      */
     @JvmOverloads
-    fun reload(path: String = defaultFilePath) {
+    fun load(path: String = defaultFilePath) {
         ensureFileExistence(path)
 
         // Loads in the properties from the given file
@@ -142,7 +142,7 @@ class MeepMeepPersistence @JvmOverloads constructor(
      *
      * **Note:** This does NOT restore the settings from the persistence file, but rather from
      * whatever settings are in the `Properties` object currently.
-     * [MeepMeepPersistence.reload] must be manually called first to restore the settings
+     * [MeepMeepPersistence.load] must be manually called first to restore the settings
      * from the persistence file <u>if the persistence file is manually changed.</u>
      */
     fun restore() {
@@ -151,7 +151,7 @@ class MeepMeepPersistence @JvmOverloads constructor(
         val x = properties.getProperty("windows_x", "0").toInt()
         val y = properties.getProperty("windows_y", "0").toInt()
 
-        getWindowFrame().invokeMethod<Any>("setLocation", x to Integer.TYPE, y to Integer.TYPE)
+        mmWindowFrame.invokeMethod<Any>("setLocation", x to Integer.TYPE, y to Integer.TYPE)
     }
 
     /**
@@ -165,5 +165,6 @@ class MeepMeepPersistence @JvmOverloads constructor(
         File(path).createNewFile()
     }
 
-    private fun getWindowFrame() = meepMeep.invokeMethod<Any>("getWindowFrame")
+    private val mmWindowFrame: Any
+        get() = meepMeep.invokeMethod("getWindowFrame")
 }
