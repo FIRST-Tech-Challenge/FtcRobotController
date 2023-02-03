@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.AR
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
+import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -137,8 +138,24 @@ public class PwPRobot extends BasicRobot {
                                 .setReversed(true)
                         .splineTo(target.vec(), target.getHeading()).build());
                 field.setDoneLookin(true);
-                logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im done"+roadrun.getPoseEstimate());
+                logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im pole"+roadrun.getPoseEstimate());
                 logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedPolarCoord()[0]+","+cv.rotatedPolarCoord()[1]);
+
+            }
+        }
+    }
+    public void updateTrajectoryWithCone(){
+        if (queuer.queue(true, field.isDoneLookin())) {
+            field.setDoneLookin(false);
+            if(field.lookingAtCone()){
+                Pose2d target = field.conePos();
+                TrajectorySequence trajectory = roadrun.getCurrentTraj();
+                roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
+                        .setReversed(false)
+                        .splineToLinearHeading(new Pose2d(target.vec(),toRadians(180)), toRadians(180)).build());
+                field.setDoneLookin(true);
+                logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im cone"+roadrun.getPoseEstimate());
+                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
 
             }
         }
@@ -524,7 +541,7 @@ public class PwPRobot extends BasicRobot {
             } else {
                 Vector2d input = new Vector2d(abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 3)),
                         abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 3)));
-                input = input.rotated(-roadrun.getPoseEstimate().getHeading()-Math.toRadians(90));
+                input = input.rotated(-roadrun.getPoseEstimate().getHeading()- toRadians(90));
                 roadrun.setWeightedDrivePower(
                         new Pose2d(input.getX(),
                                 input.getY(),

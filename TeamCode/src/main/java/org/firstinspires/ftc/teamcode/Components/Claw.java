@@ -31,7 +31,7 @@ public class Claw {
     private final double CLAW_CLOSED_POS = 0.52;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.69;
+    private final double CLAW_OPEN_POS = 0.72;
 
     private final double CLAW_WIDE_POS = 0.72;
 
@@ -46,7 +46,7 @@ public class Claw {
     private double lastOpenTime =-10;
     private double clawPos = 0.45;
     //temporary
-    public final double CLAW_SERVO_SWITCH_TIME = 0.3;
+    public final double CLAW_SERVO_SWITCH_TIME = 0.35;
     boolean shouldUseClawSensor = true;
 
     //States:

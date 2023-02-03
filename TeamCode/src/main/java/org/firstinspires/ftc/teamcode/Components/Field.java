@@ -49,6 +49,7 @@ public class Field {
     Lock locker;
     Lock needsLocker;
     Pose2d polePos = new Pose2d(0,0,0);
+    Pose2d conePos = new Pose2d(0,0,0);
 
 
     double[][][] poleCoords = {
@@ -107,8 +108,23 @@ public class Field {
         }
         return false;
     }
+    public boolean lookingAtCone() {
+        double[] coords = cv.rotatedConarCoord();
+//        coords[1]+=5;
+        coords[1] -=1;
+        Pose2d pos = roadrun.getPoseEstimate();
+        pos = new Pose2d(pos.getX(),pos.getY(),pos.getHeading()+coords[0]*PI/180);
+        conePos = new Pose2d(pos.getX()+cos(pos.getHeading())*coords[1],pos.getY()+sin(pos.getHeading())*coords[1],pos.getHeading());
+        if(abs(coords[0])<20&&abs(coords[1])<20&&abs(coords[1])>1){
+            return true;
+        }
+        return false;
+    }
     public Pose2d polePos() {
         return polePos;
+    }
+    public Pose2d conePos() {
+        return conePos;
     }
     public boolean isDoneLookin(){
         return doneLookin;

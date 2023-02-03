@@ -17,20 +17,20 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 @Config
-public class StickObserverPipeline extends OpenCvPipeline {
-    public static double  degPerPix = 22.5/320, widTimesDist = 820, focalLength = 715;
+public class ConeObserverPipeline extends OpenCvPipeline {
+    public static double  degPerPix = 22.5/320, widTimesDist = 820*4, focalLength = 715;
     double centerOfPole = 0, poleSize = 0;
     ArrayList<double[]> frameList;
-    public static double LowS = 130;
+    public static double LowS = 50;
     public static double HighS = 255;
-    public static double LowH = 18;
-    public static double HighH = 32;
-    public static double LowV = 50;
+    public static double LowH = 100;
+    public static double HighH = 140;
+    public static double LowV = 0;
     public static double HighV = 255;
 
 
 
-    public StickObserverPipeline() {
+    public ConeObserverPipeline() {
         frameList=new ArrayList<>();
     }
 
@@ -52,27 +52,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
         // Get a black and white image of yellow objects
         Core.inRange(mat, lowHSV, highHSV, thresh);
 
-//        Mat masked = new Mat();
-//        //color the white portion of thresh in with HSV from mat
-//        //output into masked
-//        Core.bitwise_and(mat, mat, masked, thresh);
-//        //calculate average HSV values of the white thresh values
-//        Scalar average = Core.mean(masked,thresh);
-//
-//        Mat scaledMask = new Mat();
-//        //scale the average saturation to 150
-//        masked.convertTo(scaledMask,-1,150/average.val[1],0);
-//
-//
-//        Mat scaledThresh = new Mat();
-//        Scalar strictLowHSV = new Scalar(0, strictLowS, 0); //strict lower bound HSV for yellow
-//        Scalar strictHighHSV = new Scalar(255, strictHighS, 255); //strict higher bound HSV for yellow
-//        //apply strict HSV filter onto scaledMask to get rid of any yellow other than pole
-//        Core.inRange(scaledMask, strictLowHSV,strictHighHSV,scaledThresh);
-//
-//        Mat finalMask = new Mat();
-//        //color in scaledThresh with HSV(for showing result)
-//        Core.bitwise_and(mat, mat, finalMask, scaledThresh);
 
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
@@ -95,8 +74,8 @@ public class StickObserverPipeline extends OpenCvPipeline {
         double maxWidth = 0;
         //iterate through each rotatedRect find largest
         for (int i = 0; i < rectangle.length; i++) {
-            if(rectangle[i].size.height/rectangle[i].size.width>2 ||rectangle[i].size.width/rectangle[i].size.height>2) {
-                if(rectangle[i].size.height > 200 || rectangle[i].size.width >200) {
+            if(rectangle[i].size.height/rectangle[i].size.width>1.5 ||rectangle[i].size.width/rectangle[i].size.height>1.5) {
+//                if(rectangle[i].size.height > 300 || rectangle[i].size.width >300) {
                     if (rectangle[i].size.height < rectangle[i].size.width) {
                         if (rectangle[i].size.height > maxWidth) {
                             maxAreaIndex = i;
@@ -107,7 +86,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
                             maxAreaIndex = i;
                             maxWidth = rectangle[i].size.width;
                         }
-                    }
+//                    }
                 }
             }
         }
@@ -135,9 +114,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
         //release all the data
 
         input.release();
-//        scaledThresh.copyTo(input);
-//        scaledThresh.release();
-//        scaledMask.release();
+
         mat.release();
         rectangle=null;
         contoursPoly = null;
@@ -145,21 +122,12 @@ public class StickObserverPipeline extends OpenCvPipeline {
         thresh.copyTo(input);
         thresh.release();
         hierarchy.release();
-//        finalMask.release();
-//        Scalar lineColor= new Scalar(255,50,50);
-//        if(contoursPoly.length>0) {
-//            Imgproc.rectangle(input, Imgproc.boundingRect(contoursPoly[maxAreaIndex]), lineColor, 5);
-//        }
+
         return input;
     }
 
-   public double centerOfPole() {
-        //256.227,257.307,252.9,253.414: 4,11.75|| 18.8 .073
-        //2.5,12.75: 162.7,161.6, 161.7,162.5||  11.09 .068
-        //2,9.5 : 187.45, 187.26|| 11.88  .0648
-         //1,8,7.8 : 273 || 12.99 .047
-        //10.6,22.2 :
-        //4.1,20.6 :
+    public double centerOfCone() {
+
         double average=0;
         for(int i=0;i<frameList.size();i++){
             average+=frameList.get(i)[0];
@@ -167,7 +135,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
         return average/frameList.size();
     }
 
-    public double poleSize() {
+    public double coneSize() {
         double average=0;
         for(int i=0;i<frameList.size();i++){
             if(frameList.get(i)[0]!=0&&frameList.get(i)[1]!=0) {
@@ -177,7 +145,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
         return average/frameList.size();
     }
 
-    public double[] poleRotatedPolarCoord() {
-        return new double[]{-atan(centerOfPole()/focalLength)*180/PI, widTimesDist / poleSize()};
+    public double[] coneRotatedPolarCoord() {
+        return new double[]{-atan(centerOfCone()/focalLength)*180/PI, widTimesDist / coneSize()};
     }
 }
