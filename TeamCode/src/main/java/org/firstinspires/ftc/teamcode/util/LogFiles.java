@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tuning;
+package org.firstinspires.ftc.teamcode.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.TankDrive;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
+import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +41,7 @@ public final class LogFiles {
     public static LogFile log = new LogFile("uninitialized");
 
     public static class LogFile {
-        public int version = 0;
+        public String version = "quickstart2 v0";
 
         public String opModeName;
         public long msInit = System.currentTimeMillis();
@@ -188,6 +189,8 @@ public final class LogFiles {
             Arrays.sort(fs, (a, b) -> Long.compare(b.lastModified(), a.lastModified()));
             for (File f : fs) {
                 sb.append("<li><a href=\"/logs/download?file=");
+                sb.append(f.getName());
+                sb.append("\" download=\"");
                 sb.append(f.getName());
                 sb.append("\">");
                 sb.append(f.getName());
