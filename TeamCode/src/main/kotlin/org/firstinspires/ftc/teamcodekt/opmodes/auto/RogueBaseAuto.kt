@@ -27,14 +27,33 @@ abstract class RogueBaseAuto : BlackOp() {
         private set
 
     final override fun go() {
+        mTelemetry.addLine("Going")
+        mTelemetry.update()
+
         bot = createAutoBotComponents()
+
+        mTelemetry.addLine("Made components")
+        mTelemetry.update()
 
         PhotonCore.enable()
 
+        mTelemetry.addLine("Enabled photon")
+        mTelemetry.update()
+
         val startTraj = mainTraj(startPose)
+
+        mTelemetry.addLine("Made trajectory")
+        mTelemetry.update()
+
         Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
+        mTelemetry.addLine("Setuo trajectory")
+        mTelemetry.update()
+
         customWaitForStart()
+
+        mTelemetry.addLine("Staritng auto")
+        mTelemetry.update()
 
         Scheduler.launch(opmode = this) {
             bot.updateBaseComponents(true)
@@ -45,6 +64,9 @@ abstract class RogueBaseAuto : BlackOp() {
 
     private fun customWaitForStart() {
         bot.camera.readConeAsync()
+
+        mTelemetry.addLine("Starting reading cone")
+        mTelemetry.update()
 
         var rightWasJustPressed = false
         var leftWasJustPressed  = false

@@ -8,6 +8,7 @@ import ftc.rogue.blacksmith.units.GlobalUnits
 import ftc.rogue.blacksmith.util.toCm
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcodekt.util.CycleException
 
 @Autonomous
@@ -16,11 +17,11 @@ class RogueMidLeftAuto : RogueBaseAuto() {
 
     override fun mainTraj(startPose: Pose2d) =
         Anvil.formTrajectory(bot.drive, startPose)
-            .setVelConstraint(maxVel = 40, maxAngularVel = 4.36, DriveConstants.TRACK_WIDTH)
+            .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(40.0, Math.toRadians(250.0), DriveConstants.TRACK_WIDTH))
             .preform(0, ::parkTraj)
 
             .addTemporalMarker {
-                bot.lift.goToAngledMid()
+                bot.lift.goToAngledMidPredeposit()
                 bot.claw.close()
                 bot.arm.setToForwardsAngledPos()
                 bot.wrist.setToForwardsPos()
@@ -54,11 +55,11 @@ class RogueMidLeftAuto : RogueBaseAuto() {
         .lineToLinearHeading(-83.2 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.9 + poleOffset.y.toCm(DistanceUnit.INCHES), -39.5)
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        0 -> splineTo(-81 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.0 + poleOffset.y, -38)
-        1 -> splineTo(-81 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.0 + poleOffset.y.toCm(DistanceUnit.INCHES), -36)
-        2 -> splineTo(-82 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.1 + poleOffset.y.toCm(DistanceUnit.INCHES), -31)
-        3 -> splineTo(-81 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.0 + poleOffset.y.toCm(DistanceUnit.INCHES), -30)
-        4 -> splineTo(-82 + poleOffset.x.toCm(DistanceUnit.INCHES), -41.5 + poleOffset.y.toCm(DistanceUnit.INCHES), -28)
+        0 -> splineTo(-78 + poleOffset.x.toCm(DistanceUnit.INCHES), -44.0 + poleOffset.y, -38)
+        1 -> splineTo(-78 + poleOffset.x.toCm(DistanceUnit.INCHES), -44.0 + poleOffset.y.toCm(DistanceUnit.INCHES), -36)
+        2 -> splineTo(-79 + poleOffset.x.toCm(DistanceUnit.INCHES), -44.1 + poleOffset.y.toCm(DistanceUnit.INCHES), -31)
+        3 -> splineTo(-78 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.0 + poleOffset.y.toCm(DistanceUnit.INCHES), -30)
+        4 -> splineTo(-79 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.5 + poleOffset.y.toCm(DistanceUnit.INCHES), -28)
         else -> throw CycleException()
     }
 
@@ -81,7 +82,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
         }
 
         .addTemporalMarker(275) {
-            bot.lift.goToAngledMid()
+            bot.lift.goToAngledMidButHigher()
         }
 
         .addTemporalMarker(425) {
@@ -92,7 +93,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
         .waitTime(300)
 
     private fun Anvil.awaitFastIntake() = this
-        .addTemporalMarker(-245) {
+        .addTemporalMarker(-275) {
             bot.intake.disable()
         }
 
@@ -102,7 +103,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
 
         .addTemporalMarker(15) {
             bot.arm.setToForwardsAngledPos()
-            bot.lift.goToAngledHigh()
+            bot.lift.goToAngledMidButHigher()
         }
 
         .addTemporalMarker(100) {
@@ -150,7 +151,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
         .addTemporalMarker(185) {
             bot.lift.targetHeight = liftOffsets[iterations]
 
-            bot.arm.setToBackwardsPos()
+            bot.arm.setToBackwardsPosLastCycle()
             bot.wrist.setToBackwardsPos()
 
             bot.claw.openForIntakeNarrow()

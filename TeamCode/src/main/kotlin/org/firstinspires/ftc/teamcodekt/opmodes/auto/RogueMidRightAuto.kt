@@ -17,11 +17,11 @@ class RogueMidRightAuto : RogueBaseAuto() {
 
     override fun mainTraj(startPose: Pose2d) =
         Anvil.formTrajectory(bot.drive, startPose)
-            .setVelConstraint(maxVel = 40, maxAngularVel = 4.36, DriveConstants.TRACK_WIDTH)
+            .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(40.0, Math.toRadians(250.0), DriveConstants.TRACK_WIDTH))
             .preform(0, ::parkTraj)
 
             .addTemporalMarker {
-                bot.lift.goToAngledMid()
+                bot.lift.goToAngledMidPredeposit()
                 bot.claw.close()
                 bot.arm.setToForwardsAngledPos()
                 bot.wrist.setToForwardsPos()
@@ -55,20 +55,20 @@ class RogueMidRightAuto : RogueBaseAuto() {
         .lineToLinearHeading(83.2 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.9 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 39.5)
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        0 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.0 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 38)
-        1 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.0 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 36)
-        2 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.1 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 32.5)
-        3 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 32.5)
-        4 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -47.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 32)
+        0 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.0 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 41)
+        1 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.0 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 39)
+        2 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.1 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 34)
+        3 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 34)
+        4 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -47.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 33.5)
         else -> throw CycleException()
     }
 
     private fun Anvil.goToIntake(it: Int) = when (it) {
-        0 -> splineTo(162.8, -27.3, 0)
-        1 -> splineTo(162.0, -27.3, 0)
-        2 -> splineTo(161.7, -27.3, 0)
-        3 -> splineTo(161.5, -27.3, 0)
-        4 -> splineTo(161.9, -26.7, 0)
+        0 -> splineTo(162.3, -27.3, 0)
+        1 -> splineTo(161.5, -27.3, 0)
+        2 -> splineTo(161.2, -27.3, 0)
+        3 -> splineTo(161.0, -27.3, 0)
+        4 -> splineTo(161.4, -26.7, 0)
         else -> throw CycleException()
     }.doInReverse()
 
@@ -82,7 +82,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
         }
 
         .addTemporalMarker(275) {
-            bot.lift.goToAngledMid()
+            bot.lift.goToAngledMidButHigher()
         }
 
         .addTemporalMarker(425) {
@@ -93,7 +93,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
         .waitTime(300)
 
     private fun Anvil.awaitFastIntake() = this
-        .addTemporalMarker(-245) {
+        .addTemporalMarker(-275) {
             bot.intake.disable()
         }
 
@@ -103,7 +103,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
 
         .addTemporalMarker(15) {
             bot.arm.setToForwardsAngledPos()
-            bot.lift.goToAngledHigh()
+            bot.lift.goToAngledMidButHigher()
         }
 
         .addTemporalMarker(100) {
@@ -136,7 +136,6 @@ class RogueMidRightAuto : RogueBaseAuto() {
         }
     }
 
-
     private fun Anvil.regularIntakePrep(iterations: Int) = this
         .addTemporalMarker(185) {
             when (iterations) {
@@ -159,7 +158,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
         .addTemporalMarker(185) {
             bot.lift.targetHeight = liftOffsets[iterations]
 
-            bot.arm.setToBackwardsPos()
+            bot.arm.setToBackwardsPosLastCycle()
             bot.wrist.setToBackwardsPos()
 
             bot.claw.openForIntakeNarrow()

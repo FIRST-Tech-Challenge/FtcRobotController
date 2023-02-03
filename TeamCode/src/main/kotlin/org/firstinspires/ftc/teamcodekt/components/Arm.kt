@@ -32,6 +32,10 @@ class Arm {
         targetAngle = 42.0
     }
 
+    fun setToBackwardsPosLastCycle() {
+        targetAngle = 39.5
+    }
+
     fun setToRestingPos() {
         targetAngle = ARM_RESTING
     }

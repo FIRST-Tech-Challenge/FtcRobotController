@@ -5,16 +5,15 @@ package org.firstinspires.ftc.teamcodekt.components.chains
 import ftc.rogue.blacksmith.chains.CancellableChain
 import ftc.rogue.blacksmith.listeners.Listener
 import ftc.rogue.blacksmith.listeners.after
-import org.firstinspires.ftc.teamcodekt.components.ANGLED_LIFT_LOW
 import org.firstinspires.ftc.teamcodekt.components.meta.TeleOpBotComponents
 
 class RegularDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
     private var isCancelled = false
 
-    override fun invokeOn(button: Listener) = (button + { bot.lift.targetHeight > (ANGLED_LIFT_LOW - 25) })
+    override fun invokeOn(button: Listener) = (button + { bot.lift.clippedHeight > 500 })
         .onRise {
             isCancelled = false
-            bot.arm.setToForwardsAngledPos()
+            bot.arm.setToForwardsPos()
             bot.wrist.setToForwardsPos()
         }
         .onFall {
@@ -22,11 +21,8 @@ class RegularDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
                 return@onFall
             }
 
-            bot.lift.targetHeight = (bot.lift.targetHeight - 100).coerceAtLeast(0)
-            after(50).milliseconds {
-                if(bot.lift.targetHeight != ANGLED_LIFT_LOW)
-                    bot.arm.setToForwardsPos()
-            }
+            bot.lift.clippedHeight = (bot.lift.clippedHeight - 300).coerceAtLeast(250)
+
             after(190).milliseconds {
                 bot.claw.openForDeposit()
             }

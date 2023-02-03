@@ -24,18 +24,18 @@ import kotlin.math.abs
 @JvmField
 var LIFT_ZERO = 0
 @JvmField
-var LIFT_LOW = 707
+var LIFT_LOW = 707 - 128
 @JvmField
-var LIFT_MID = 1140
+var LIFT_MID = 1140 - 128
 @JvmField
-var LIFT_HIGH = 1590
+var LIFT_HIGH = 1590 - 128
 
 @JvmField
-var ANGLED_LIFT_LOW = 180
+var ANGLED_LIFT_LOW = 120
 @JvmField
 var ANGLED_LIFT_MID = 620
 @JvmField
-var ANGLED_LIFT_HIGH = 1135
+var ANGLED_LIFT_HIGH = 1110
 
 @JvmField
 var NORMAL_LIFT_P = 0.0015
@@ -127,6 +127,14 @@ class Lift(val usingMotionProfiling: Boolean) {
 
     fun goToAngledMid() {
         targetHeight = ANGLED_LIFT_MID
+    }
+
+    fun goToAngledMidPredeposit(){
+        targetHeight = ANGLED_LIFT_MID + 50
+    }
+
+    fun goToAngledMidButHigher() {
+        targetHeight = ANGLED_LIFT_MID+85
     }
 
     fun goToAngledLow() {
