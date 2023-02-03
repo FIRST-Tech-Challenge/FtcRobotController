@@ -324,10 +324,10 @@ public class HuskyTeleOpMode extends LinearOpMode {
 
                     // Gradually increment follow_point until it reaches the target position.
                     int error = follow_point - armLiftTargetPos;
-                    if (error > 30) {
-                        follow_point -= 30;
-                    } else if (error < 30) {
-                        follow_point += 30;
+                    if (error > 50) {
+                        follow_point -= 50;
+                    } else if (error < 50) {
+                        follow_point += 50;
                     } else {
                         follow_point = armLiftTargetPos;
                     }

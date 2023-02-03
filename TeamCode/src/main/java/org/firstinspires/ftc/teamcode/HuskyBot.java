@@ -68,7 +68,7 @@ public class HuskyBot {
 
     // Arm Lift PID Controller Init.
     public static final double up_Kp = 0.0055, up_Ki = 0, up_Kd = 0.00025;
-    public static final double down_Kp = 0.00025, down_Ki = 0, down_Kd = 0.000005;
+    public static final double down_Kp = 0.00038, down_Ki = 0, down_Kd = 0.00001;
     public static PIDController armUpPID = new PIDController(up_Kp, up_Ki, up_Kd);
     public static PIDController armDownPID = new PIDController(down_Kp, down_Ki, down_Kd);
     public static final double f = 0.045, l = 0;
@@ -105,7 +105,7 @@ public class HuskyBot {
     public static final int ARM_LIFT_MAX_POSITION = 910;
     public static final int ARM_LIFT_MIN_POSITION = 20;
 
-    public static final double CLAW_MOVE_INCREMENT = 0.05;
+    public static final double CLAW_MOVE_INCREMENT = 0.025;
     public static final double CLAW_LIFT_MIN_RANGE = 0.0;
     public static final double CLAW_LIFT_MAX_RANGE = 1.0;
     public static final double CLAW_LIFT_START_POSITION = 0.6;   // scaled, see MIN and MAX_RANGE
