@@ -44,7 +44,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "Auto", group = "Auto", preselectTeleOp = "Husky TeleOpMode")
-public class HuskyAuto extends HuskyAutoBase {
+public class  HuskyAuto extends HuskyAutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -70,21 +70,22 @@ public class HuskyAuto extends HuskyAutoBase {
         TrajectorySequence TRAJ_1 = drive.trajectorySequenceBuilder(new Pose2d(-36.00, -64.00, Math.toRadians(90.00)))
                 .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .lineToLinearHeading(new Pose2d(-15.00, -64.00, Math.toRadians(90.00)))
-                .lineToLinearHeading(new Pose2d(-10.00, -36, Math.toRadians(45.00)))
+                .lineToLinearHeading(new Pose2d(-10.00, -36.00, Math.toRadians(45.00)))
+                .lineToLinearHeading(new Pose2d(-10.01, -36.00, Math.toRadians(90.00)))
                 .build();
 
         // Move-to-Park Trajectory
-        TrajectorySequence TRAJ_PARK_1 = drive.trajectorySequenceBuilder(new Pose2d(-10.00, -38.31, Math.toRadians(45.00)))
+        TrajectorySequence TRAJ_PARK_1 = drive.trajectorySequenceBuilder(TRAJ_1.end())
                 .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .lineToLinearHeading(new Pose2d(-62.00, -36.00, Math.toRadians(90.00)))
                 .build();
 
-        TrajectorySequence TRAJ_PARK_2 = drive.trajectorySequenceBuilder(new Pose2d(-10.00, -38.31, Math.toRadians(45.00)))
+        TrajectorySequence TRAJ_PARK_2 = drive.trajectorySequenceBuilder(TRAJ_1.end())
                 .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .lineToLinearHeading(new Pose2d(-36.00, -36.00, Math.toRadians(90.00)))
                 .build();
 
-        TrajectorySequence TRAJ_PARK_3 = drive.trajectorySequenceBuilder(new Pose2d(-10.00, -38.31, Math.toRadians(45.00)))
+        TrajectorySequence TRAJ_PARK_3 = drive.trajectorySequenceBuilder(TRAJ_1.end())
                 .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .lineToLinearHeading(new Pose2d(-12.00, -36.00, Math.toRadians(90.00)))
                 .build();
@@ -115,10 +116,13 @@ public class HuskyAuto extends HuskyAutoBase {
         switch(this.parkLocation) {
             case LOCATION_1:
                 drive.followTrajectorySequence(TRAJ_PARK_1);
+                break;
             case LOCATION_2:
                 drive.followTrajectorySequence(TRAJ_PARK_2);
+                break;
             case LOCATION_3:
                 drive.followTrajectorySequence(TRAJ_PARK_3);
+                break;
         }
 
         telemetry.update();
