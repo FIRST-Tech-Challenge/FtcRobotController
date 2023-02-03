@@ -13,7 +13,7 @@ class RegularDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
     override fun invokeOn(button: Listener) = (button + { bot.lift.targetHeight > 500 })
         .onRise {
             isCancelled = false
-            bot.arm.setToForwardsPos()
+            bot.arm.setToForwardsAngledPos()
             bot.wrist.setToForwardsPos()
         }
         .onFall {
@@ -21,8 +21,10 @@ class RegularDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
                 return@onFall
             }
 
-            bot.lift.targetHeight = (bot.lift.targetHeight - 300).coerceAtLeast(250)
-
+            bot.lift.targetHeight = (bot.lift.targetHeight - 100).coerceAtLeast(0)
+            after(50).milliseconds {
+                bot.arm.setToForwardsPos()
+            }
             after(190).milliseconds {
                 bot.claw.openForDeposit()
             }

@@ -23,10 +23,10 @@ class RogueCompOp : RogueBaseTele() {
     }
 
     private fun describeCodriverControls() = with(codriver) {
-        dpad_up   .onRise(bot.lift::goToHigh)
+        dpad_up   .onRise(bot.lift::goToAngledHigh)
         dpad_down .onRise(bot.lift::goToZero)
-        dpad_right.onRise(bot.lift::goToMid)
-        dpad_left .onRise(bot.lift::goToLow)
+        dpad_right.onRise(bot.lift::goToAngledMid)
+        dpad_left .onRise(bot.lift::goToAngledLow)
 
         // -- TASK CHAINS --
 

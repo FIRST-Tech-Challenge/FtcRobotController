@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 import org.firstinspires.ftc.teamcodekt.util.KalmanFilter
 import kotlin.math.abs
 
+// Too many fields...
+
 @JvmField
 var LIFT_ZERO = 0
 @JvmField
@@ -28,6 +30,12 @@ var LIFT_MID = 1140
 @JvmField
 var LIFT_HIGH = 1590
 
+@JvmField
+var ANGLED_LIFT_LOW = 347
+@JvmField
+var ANGLED_LIFT_MID = 710
+@JvmField
+var ANGLED_LIFT_HIGH = 1135
 
 @JvmField
 var NORMAL_LIFT_P = 0.0015
@@ -114,15 +122,15 @@ class Lift(val usingMotionProfiling: Boolean) {
     }
 
     fun goToAngledHigh() {
-        targetHeight = LIFT_HIGH - 455
-    }
-
-    fun goToAngledLow() {
-        targetHeight = LIFT_LOW - 360
+        targetHeight = ANGLED_LIFT_HIGH
     }
 
     fun goToAngledMid() {
-        targetHeight = LIFT_MID - 350
+        targetHeight = ANGLED_LIFT_MID
+    }
+
+    fun goToAngledLow() {
+        targetHeight = ANGLED_LIFT_LOW
     }
 
 
@@ -146,7 +154,11 @@ class Lift(val usingMotionProfiling: Boolean) {
             }
             else{
                 val correction = liftNormalPID.calculate(liftHeight.toDouble(), targetHeight.toDouble())
-                liftMotor.power = liftFilter.filter(liftMotor.power + correction)
+                val filteredCorrection = liftFilter.filter(liftMotor.power + correction)
+                if(abs(filteredCorrection) < 0.05)
+                    liftMotor.power = 0.0
+                else
+                    liftMotor.power = filteredCorrection
             }
         }
     }

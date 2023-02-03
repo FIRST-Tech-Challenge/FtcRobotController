@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcodekt.opmodes.auto
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import ftc.rogue.blacksmith.Anvil
+import ftc.rogue.blacksmith.units.DistanceUnit
 import ftc.rogue.blacksmith.units.GlobalUnits
+import ftc.rogue.blacksmith.util.toCm
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
@@ -50,14 +52,14 @@ class RogueMidRightAuto : RogueBaseAuto() {
     private fun Anvil.initialGoToDeposit() = this
         .forward(132)
         .turn(142.5)
-        .lineToLinearHeading(83.2 + poleOffset.x, -43.9 + poleOffset.y, 180 + 39.5)
+        .lineToLinearHeading(83.2 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.9 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 39.5)
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        0 -> splineTo(81 + poleOffset.x, -45.0 + poleOffset.y, 180 + 38)
-        1 -> splineTo(81 + poleOffset.x, -45.0 + poleOffset.y, 180 + 36)
-        2 -> splineTo(82 + poleOffset.x, -45.1 + poleOffset.y, 180 + 32.5)
-        3 -> splineTo(82 + poleOffset.x, -45.5 + poleOffset.y, 180 + 32.5)
-        4 -> splineTo(82 + poleOffset.x, -47.5 + poleOffset.y, 180 + 32)
+        0 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.0 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 38)
+        1 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.0 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 36)
+        2 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.1 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 32.5)
+        3 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 32.5)
+        4 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -47.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 32)
         else -> throw CycleException()
     }
 
