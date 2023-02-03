@@ -50,8 +50,8 @@ import java.util.Locale;
  * of multiple poles, switching the viewport output, and communicating the results
  * of the vision processing to usercode.
  */
-@TeleOp(name="Pole-Test", group="Skunkworks")
-@Disabled
+@TeleOp(name="Turret-Test", group="Skunkworks")
+//@Disabled
 public class TurretPIDTester extends LinearOpMode
 {
     final int LOGSIZE = 12;
@@ -135,6 +135,19 @@ public class TurretPIDTester extends LinearOpMode
         }
     } // writeTurretLog()
 
+    /**
+     // pStatic = 0.0860 @ 12.30V
+     // pStatic = 0.0650 @ 13.54V
+     */
+    public double getTurretMinPower() {
+        double result;
+        double voltage = robot.readBatteryExpansionHub();
+        double slope = (0.0860 - 0.0650) / (12300 - 13540);
+        result = slope * (voltage - 13540) + 0.0650;
+
+        return result;
+    }
+
     /*--------------------------------------------------------------------------------------------*/
     /* turretPosInit()                                                                            */
     /* - newAngle = desired turret angle                                                          */
@@ -142,6 +155,11 @@ public class TurretPIDTester extends LinearOpMode
     {
         // Current distance from target (degrees)
         double degreesToGo = newAngle - robot.turretAngle;
+        double pStatic = getTurretMinPower();
+
+        double kp = 0.02;
+        pidController = new PIDControllerTurret(kp, 0.00, 0.00,
+                pStatic, 0.0);
 
         // Are we ALREADY at the specified angle?
         if( Math.abs(degreesToGo) < 1.0 )
@@ -167,8 +185,10 @@ public class TurretPIDTester extends LinearOpMode
 
     } // turretPosInit
 
-    PIDControllerTurret pidController = new PIDControllerTurret(0.00, 0.00, 0.00,
-            0.08, 0.0);
+    // pStatic = 0.0860 @ 12.30V
+    // pStatic = 0.0650 @ 13.54V
+    PIDControllerTurret pidController;
+
     /*--------------------------------------------------------------------------------------------*/
     /* turretPosRun()                                                                             */
     public void turretPIDPosRun( boolean teleopMode )
@@ -182,6 +202,8 @@ public class TurretPIDTester extends LinearOpMode
             double degreesToGoAbs = Math.abs(degreesToGo);
             int waitCycles = (teleopMode) ? 5 : 2;
             double power = pidController.update(turretAngleTarget, robot.turretAngle);
+            telemetry.addData("Set Power", power);
+            telemetry.update();
             robot.turretMotor.setPower(power);
             // Have we achieved the target?
             // (temporarily limit to 16 cycles when verifying any major math changes!)
@@ -229,7 +251,9 @@ public class TurretPIDTester extends LinearOpMode
         {
             turretPIDPosInit(robot.TURRET_ANGLE_CENTER);
             // Execute the automatic turret movement code
-            while(turretMotorAuto) {
+            telemetry.addData("pStatic", pidController.kStatic);
+            telemetry.addData("kp", pidController.kp);
+            while(turretMotorAuto && opModeIsActive()) {
                 performEveryLoop();
             }
 
