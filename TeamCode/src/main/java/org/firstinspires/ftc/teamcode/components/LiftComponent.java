@@ -16,9 +16,9 @@ public class LiftComponent {
      */
     double barLength;
     /**
-     * Encoder counts per rotation of motor
+     * Encoder counts per radian rotation of motor
      */
-    int countsPerRotation;
+    int countsPerRadian;
     /**
      * Initial height of the hand above ground (when bar is horizontal) (m)
      */
@@ -31,12 +31,12 @@ public class LiftComponent {
      * @param countsPerRotation Encoder counts per rotation of motor
      * @param initialHeightOffset Initial height of the hand above ground (when bar is horizontal) (m)
      */
-    public LiftComponent(Motor motor, double barLength, int countsPerRotation, double initialHeightOffset) {
+    public LiftComponent(Motor motor, double barLength, int countsPerRadian, double initialHeightOffset) {
         motor.setRunMode(Motor.RunMode.PositionControl); // So setTargetPosition works
 
         this.motor = motor;
         this.barLength = barLength;
-        this.countsPerRotation = countsPerRotation;
+        this.countsPerRadian = countsPerRadian;
         this.initialHeightOffset = initialHeightOffset;
     }
 
@@ -47,6 +47,6 @@ public class LiftComponent {
     public void setHeight(double height) {
         height -= initialHeightOffset; // Get height relative to starting position
         double angle = Math.asin(height/(2*this.barLength));
-        this.motor.setTargetPosition((int)(countsPerRotation*angle));
+        this.motor.setTargetPosition((int)(countsPerRadian*angle));
     }
 }
