@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opModes.test;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -44,12 +46,10 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
     }
 
     // Changes the -1 to 1 inputs that the gamepad returns into 0 to 1 inputs to be put into the arcadeDrive method
-    /*
-    private double changeRangeOfGamepadInput(double input) {
-
-        return (input + 1D) / 2D;
-    }
-     */
+//    private double changeRangeOfGamepadInput(double input) {
+//
+//        return (input + 1D) / 2D;
+//    }
 
     @Override
     public void every_tick() {
