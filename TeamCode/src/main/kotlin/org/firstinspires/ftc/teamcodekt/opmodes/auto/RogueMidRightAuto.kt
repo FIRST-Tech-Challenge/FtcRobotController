@@ -49,12 +49,12 @@ class RogueMidRightAuto : RogueBaseAuto() {
 
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        -1 -> lineToLinearHeading(83.2, -43.9, 180+39.5)
-        0 -> splineTo(81, -45, 180+38)
-        1 -> splineTo(81, -45, 180+36)
-        2 -> splineTo(82, -45.1, 180+32.5)
-        3 -> splineTo(82, -45.5, 180+32.5)
-        4 -> splineTo(82, -47.5, 180+32)
+        -1 -> lineToLinearHeading(83.2+poleOffset.x, -43.9+poleOffset.y, 180+39.5)
+        0 -> splineTo(81+poleOffset.x, -45+poleOffset.y, 180+38)
+        1 -> splineTo(81+poleOffset.x, -45+poleOffset.y, 180+36)
+        2 -> splineTo(82+poleOffset.x, -45.1+poleOffset.y, 180+32.5)
+        3 -> splineTo(82+poleOffset.x, -45.5+poleOffset.y, 180+32.5)
+        4 -> splineTo(82+poleOffset.x, -47.5+poleOffset.y, 180+32)
 
         else -> throw CycleException()
     }

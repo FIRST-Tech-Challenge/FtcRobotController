@@ -49,12 +49,12 @@ class RogueMidLeftAuto : RogueBaseAuto() {
 
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        -1 -> lineToLinearHeading(-83.2, -43.9, -39.5)
-        0 -> splineTo(-81, -43, -38)
-        1 -> splineTo(-81, -43, -36)
-        2 -> splineTo(-82, -43.1, -31)
-        3 -> splineTo(-81, -42, -30)
-        4 -> splineTo(-82, -41.5, -28)
+        -1 -> lineToLinearHeading(-83.2+poleOffset.x, -43.9+poleOffset.y, -39.5)
+        0 -> splineTo(-81+poleOffset.x, -43+poleOffset.y, -38)
+        1 -> splineTo(-81+poleOffset.x, -43+poleOffset.y, -36)
+        2 -> splineTo(-82+poleOffset.x, -43.1+poleOffset.y, -31)
+        3 -> splineTo(-81+poleOffset.x, -42+poleOffset.y, -30)
+        4 -> splineTo(-82+poleOffset.x, -41.5+poleOffset.y, -28)
 
         else -> throw CycleException()
     }
@@ -69,8 +69,10 @@ class RogueMidLeftAuto : RogueBaseAuto() {
     }.doInReverse()
 
     private fun Anvil.awaitRegularIntake() = this
-            .addTemporalMarker {
+            .addTemporalMarker(-170) {
                 bot.intake.disable()
+            }
+            .addTemporalMarker {
                 bot.claw.close()
             }
 
@@ -86,8 +88,10 @@ class RogueMidLeftAuto : RogueBaseAuto() {
             .waitTime(300)
 
     private fun Anvil.awaitFastIntake() = this
-            .addTemporalMarker(-75) {
+            .addTemporalMarker(-245){
                 bot.intake.disable()
+            }
+            .addTemporalMarker(-75) {
                 bot.claw.close()
             }
 
@@ -109,6 +113,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
             }
             .addTemporalMarker(-100) {
                 bot.claw.openForDeposit()
+                bot.intake.enable()
             }
 
     private fun Anvil.deposit(iterations: Int) = this
@@ -136,7 +141,8 @@ class RogueMidLeftAuto : RogueBaseAuto() {
             }
 
             .addTemporalMarker(325) {
-                bot.claw.openForIntakeWide()
+                bot.claw.openForIntakeNarrow()
+                bot.intake.enable()
             }
 
     private fun Anvil.fastIntakePrep(iterations: Int) = this
