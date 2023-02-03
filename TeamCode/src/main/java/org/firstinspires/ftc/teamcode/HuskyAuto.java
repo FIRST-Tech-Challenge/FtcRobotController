@@ -34,9 +34,12 @@ import static org.firstinspires.ftc.teamcode.HuskyBot.CLAW_LIFT_START_POSITION;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.profile.VelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
@@ -50,10 +53,13 @@ public class HuskyAuto extends HuskyAutoBase {
         runtime.reset();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(-36.00, -64.00, Math.toRadians(90.00));
+        drive.setPoseEstimate(startPose);
+        TrajectoryVelocityConstraint slowVel = SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL*0.8, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
 
         // region TRAJECTORIES
         // Backup-Plan Trajectory
-        Trajectory backupPlanTrajA = drive.trajectoryBuilder(new Pose2d(-36, -61.00, Math.toRadians(90.00)))
+        Trajectory backupPlanTrajA = drive.trajectoryBuilder(startPose)
                 .strafeRight(8)
                 .build();
         Trajectory backupPlanTrajB = drive.trajectoryBuilder(backupPlanTrajA.end())
@@ -61,18 +67,26 @@ public class HuskyAuto extends HuskyAutoBase {
                 .build();
 
         // Place-Preloaded-Cone Trajectory
-        TrajectorySequence TRAJ_1 = drive.trajectorySequenceBuilder(new Pose2d(-36.00, -61.00, Math.toRadians(90.00)))
-                .splineTo(new Vector2d(-18.51, -61.03), Math.toRadians(0.00))
-                .splineTo(new Vector2d(-8.91, -37.94), Math.toRadians(65.14))
-                .addDisplacementMarker(() -> {})
-                .waitSeconds(1)
+        TrajectorySequence TRAJ_1 = drive.trajectorySequenceBuilder(new Pose2d(-36.00, -64.00, Math.toRadians(90.00)))
+                .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .lineToLinearHeading(new Pose2d(-15.00, -64.00, Math.toRadians(90.00)))
+                .lineToLinearHeading(new Pose2d(-10.00, -36, Math.toRadians(45.00)))
                 .build();
 
-        // Move-to-Stack Trajectory
-        TrajectorySequence TRAJ_2 = drive.trajectorySequenceBuilder(new Pose2d(-8.91, -37.94, Math.toRadians(39.81)))
-                .splineTo(new Vector2d(-18.97, -11.43), Math.toRadians(172.23))
-                .splineTo(new Vector2d(-57.60, -11.20), Math.toRadians(180.00))
-                .addDisplacementMarker(() -> {})
+        // Move-to-Park Trajectory
+        TrajectorySequence TRAJ_PARK_1 = drive.trajectorySequenceBuilder(new Pose2d(-10.00, -38.31, Math.toRadians(45.00)))
+                .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .lineToLinearHeading(new Pose2d(-62.00, -36.00, Math.toRadians(90.00)))
+                .build();
+
+        TrajectorySequence TRAJ_PARK_2 = drive.trajectorySequenceBuilder(new Pose2d(-10.00, -38.31, Math.toRadians(45.00)))
+                .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .lineToLinearHeading(new Pose2d(-36.00, -36.00, Math.toRadians(90.00)))
+                .build();
+
+        TrajectorySequence TRAJ_PARK_3 = drive.trajectorySequenceBuilder(new Pose2d(-10.00, -38.31, Math.toRadians(45.00)))
+                .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .lineToLinearHeading(new Pose2d(-12.00, -36.00, Math.toRadians(90.00)))
                 .build();
         // endregion
 
@@ -97,7 +111,15 @@ public class HuskyAuto extends HuskyAutoBase {
         }
 
         drive.followTrajectorySequence(TRAJ_1);
-        drive.followTrajectorySequence(TRAJ_2);
+
+        switch(this.parkLocation) {
+            case LOCATION_1:
+                drive.followTrajectorySequence(TRAJ_PARK_1);
+            case LOCATION_2:
+                drive.followTrajectorySequence(TRAJ_PARK_2);
+            case LOCATION_3:
+                drive.followTrajectorySequence(TRAJ_PARK_3);
+        }
 
         telemetry.update();
     }
