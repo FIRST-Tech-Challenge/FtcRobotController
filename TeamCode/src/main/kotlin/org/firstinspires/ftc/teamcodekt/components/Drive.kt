@@ -34,10 +34,25 @@ class Drivetrain {
         }
     }
 
-    var shouldDriveRC = true
+    private var shouldDriveRC = true
 
-    private val signalRC = "\uD83D\uDFE2".repeat(50)
-    private val signalFC = "\uD83D\uDD34".repeat(50)
+    private val signalRC = """
+        🟩🟩🟩🟩🟩🟩🟩◼️◼️◼️◼️◼️🟩🟩🟩🟩🟩🟩
+        🟩🟩🟩🟩🟩🟩◼️🟫🟫🟫🟫🟫◼️🟩🟩🟩🟩🟩
+        🟩🟩🟩🟩🟩◼️🟫🟫🟫🟫◼️◼️◼️◼️🟩🟩🟩🟩
+        🟩🟩🟩🟩🟩◼️🟫🟫🟫◼️🟦🟦🟦🟦◼️🟩🟩🟩
+        🟩🟩🟩◼️◼️◼️🟫🟫🟫◼️🟦🟦🟦🟦◼️🟩🟩🟩
+        🟩🟩🟩◼️🟫◼️🟫🟫🟫◼️🟦🟦🟦🟦◼️🟩🟩🟩
+        🟩🟩🟩◼️🟫◼️🟫🟫🟫◼️🟦🟦🟦🟦◼️🟩🟩🟩
+        🟩🟩🟩◼️🟫◼️🟫🟫🟫🟫◼️◼️◼️◼️🟩🟩🟩🟩
+        🟩🟩🟩◼️🟫◼️🟫🟫🟫🟫🟫🟫🟫◼️🟩🟩🟩🟩
+        🟩🟩🟩◼️◼️◼️🟫🟫🟫🟫🟫🟫🟫◼️🟩🟩🟩🟩
+        🟩🟩🟩🟩🟩◼️🟫🟫🟫◼️◼️◼️🟫◼️🟩🟩🟩🟩
+        🟩🟩🟩🟩🟩◼️🟫🟫🟫◼️🟩◼️🟫◼️🟩🟩🟩🟩
+        🟩🟩🟩🟩🟩◼️◼️◼️◼️◼️🟩◼️◼️◼️🟩🟩🟩🟩
+    """.trimIndent()
+
+    private val signalFC = signalRC.replace("\uD83D\uDFE9", "\uD83D\uDFE5")
 
     fun drive(gamepad: Gamepad, powerMulti: Double) {
         if (shouldDriveRC) {
@@ -93,7 +108,7 @@ class Drivetrain {
         val (x, _y, rx) = gamepad.getDriveSticks()
         val y = -_y
 
-        val heading = Math.toRadians(-imu.heading + 180)
+        val heading = Math.toRadians(-imu.heading)
         val rotX = x * cos(heading) - y * sin(heading)
         val rotY = x * sin(heading) + y * cos(heading)
 
@@ -104,10 +119,10 @@ class Drivetrain {
             rotY + rotX + rx,
         )
 
-//        val max = powers.max()
-//        if (max > 1) {
-//            powers.mapInPlace { it / max }
-//        }
+        val max = powers.max()
+        if (max > 1) {
+            powers.mapInPlace { it / max }
+        }
 
         val _powerMulti = if (!gamepad.isAnyJoystickTriggered()) 0.0 else powerMulti
 

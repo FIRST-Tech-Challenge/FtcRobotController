@@ -38,8 +38,6 @@ class RogueCompOp : RogueBaseTele() {
         reverseDepositChain.invokeOn(y)
         reverseDepositChain.cancelOn(x)
 
-        coneUnflipperChain.invokeOn(a)
-
         // -- MANUAL CLAW CONTROLS --
 
         left_stick_x.whileHigh {

@@ -81,9 +81,9 @@ abstract class RogueBaseAuto : BlackOp() {
             val yf = (if (y > 0) "+" else "-") + "%4.2f".format(y.absoluteValue)
 
             telemetry.addLine("""
-                |
-                | y = $yf ; — — — x = $xf 
-                |
+                ↑
+                | y = $yf ; ← — → x = $xf 
+                ↓
             """.trimIndent())
 
             telemetry.update()
