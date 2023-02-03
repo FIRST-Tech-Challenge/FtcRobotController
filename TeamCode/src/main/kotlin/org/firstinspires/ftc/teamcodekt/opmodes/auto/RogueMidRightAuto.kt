@@ -21,7 +21,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
             .preform(0, ::parkTraj)
 
             .addTemporalMarker {
-                bot.lift.goToAngledHigh()
+                bot.lift.goToAngledMid()
                 bot.claw.close()
                 bot.arm.setToForwardsAngledPos()
                 bot.wrist.setToForwardsPos()
@@ -82,7 +82,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
         }
 
         .addTemporalMarker(275) {
-            bot.lift.goToAngledHigh()
+            bot.lift.goToAngledMid()
         }
 
         .addTemporalMarker(425) {

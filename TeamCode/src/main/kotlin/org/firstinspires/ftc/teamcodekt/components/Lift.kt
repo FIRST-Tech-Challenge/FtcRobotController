@@ -31,9 +31,9 @@ var LIFT_MID = 1140
 var LIFT_HIGH = 1590
 
 @JvmField
-var ANGLED_LIFT_LOW = 347
+var ANGLED_LIFT_LOW = 180
 @JvmField
-var ANGLED_LIFT_MID = 710
+var ANGLED_LIFT_MID = 620
 @JvmField
 var ANGLED_LIFT_HIGH = 1135
 
