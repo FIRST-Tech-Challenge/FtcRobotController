@@ -46,7 +46,7 @@ public class Navigation {
     // TELEOP CONSTANTS
     // ================
     static final double MOVEMENT_MAX_POWER = 1;
-    static final double ROTATION_POWER = 0.6;
+    static final double ROTATION_POWER = 0.5;
     static final double SLOW_MOVEMENT_SCALE_FACTOR = 0.3;
     static final double MEDIUM_MOVEMENT_SCALE_FACTOR = 0.6;
 
@@ -201,7 +201,7 @@ public class Navigation {
         // Field-centric navigation
 //        moveDirection -= robot.positionManager.position.getRotation();
 
-        setDriveMotorPowers(moveDirection, strafePower, turn, robot, false);
+        setDriveMotorPowers(moveDirection, strafePower, turn * ROTATION_POWER, robot, false);
     }
 
     /** Rotates the robot a number of degrees.
