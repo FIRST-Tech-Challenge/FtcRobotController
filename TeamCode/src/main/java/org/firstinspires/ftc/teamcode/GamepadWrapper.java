@@ -55,11 +55,11 @@ public class GamepadWrapper {
 //            case TURN_CLOCKWISE:
 //                return gamepad1.x;
             case POSITION_CLAW_FRONT:
-                return gamepad1.a;
+                return gamepad1.y;
             case POSITION_CLAW_SIDE:
                 return gamepad1.b;
             case POSITION_CLAW_REAR:
-                return gamepad1.y;
+                return gamepad1.a;
 
             // Gamepad 2 Controls
             case SET_SLIDES_RETRACTED:

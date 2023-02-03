@@ -47,8 +47,8 @@ public class Navigation {
     // ================
     static final double MOVEMENT_MAX_POWER = 1;
     static final double ROTATION_POWER = 0.6;
-    static final double SLOW_MOVEMENT_SCALE_FACTOR = 0.5;
-    static final double MEDIUM_MOVEMENT_SCALE_FACTOR = 0.75;
+    static final double SLOW_MOVEMENT_SCALE_FACTOR = 0.3;
+    static final double MEDIUM_MOVEMENT_SCALE_FACTOR = 0.6;
 
     // INSTANCE ATTRIBUTES
     // ===================
