@@ -40,11 +40,20 @@ inline fun <reified T : Number> maxMagnitudeAbs(vararg xs: Number) = asNumberTyp
 
 
 inline fun <reified T : Number> Number.withDeadzone(deadzone: Number, origin: Number = 0.0) = asNumberType<T> {
-    if (abs(this.toDouble() - origin.toDouble()) < abs(deadzone.toDouble())) origin.toDouble() else this.toDouble()
+    val absDelta = abs(this.toDouble() - origin.toDouble())
+    val absDeadzone = abs(deadzone.toDouble())
+
+    if (absDelta < absDeadzone) {
+        origin.toDouble()
+    } else {
+        this.toDouble()
+    }
 }
+
 
 @JvmSynthetic
 infix fun Number.pow(exponent: Number) = this.toDouble().pow(exponent.toDouble())
+
 
 @PublishedApi
 internal inline fun <reified T : Number> asNumberType(producer: () -> Number) = when (T::class) {
