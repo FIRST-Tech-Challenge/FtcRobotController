@@ -16,6 +16,10 @@ import java.lang.reflect.Modifier
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+// TODO: literally everything
+// all of this needs to be cleaned up, tested, and fixed lol
+// also should prob make my own classpath scanner
+
 private var configKtClassesAdded = false
 
 //@OnCreate

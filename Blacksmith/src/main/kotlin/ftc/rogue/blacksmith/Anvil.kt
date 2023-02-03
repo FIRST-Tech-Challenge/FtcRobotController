@@ -227,19 +227,31 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     // -- Direct path mappings (Splines) --
 
     fun splineTo(x: Number, y: Number, endTangent: Number) = queueAndReturnThis {
-        builderProxy.splineTo( GlobalUnits.vec(x, y), endTangent.toRad() )
+        builderProxy.splineTo(
+            GlobalUnits.vec(x, y),
+            endTangent.toRad(),
+        )
     }
 
     fun splineToConstantHeading(x: Number, y: Number, endTangent: Number) = queueAndReturnThis {
-        builderProxy.splineToConstantHeading(  GlobalUnits.vec(x, y), endTangent.toRad() )
+        builderProxy.splineToConstantHeading(
+            GlobalUnits.vec(x, y),
+            endTangent.toRad(),
+        )
     }
 
     fun splineToLinearHeading(x: Number, y: Number, heading: Number, endTangent: Number) = queueAndReturnThis {
-        builderProxy.splineToLinearHeading( GlobalUnits.pos(x, y, heading), endTangent.toRad() )
+        builderProxy.splineToLinearHeading(
+            GlobalUnits.pos(x, y, heading),
+            endTangent.toRad(),
+        )
     }
 
     fun splineToSplineHeading(x: Number, y: Number, heading: Number, endTangent: Number) = queueAndReturnThis {
-        builderProxy.splineToSplineHeading( GlobalUnits.pos(x, y, heading), endTangent.toRad() )
+        builderProxy.splineToSplineHeading(
+            GlobalUnits.pos(x, y, heading),
+            endTangent.toRad(),
+        )
     }
 
     // -- Advanced mappings --
@@ -271,7 +283,10 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         offset: Number = 0.0,
         action: MarkerCallback
     ) = queueAndReturnThis {
-        builderProxy.UNSTABLE_addTemporalMarkerOffset(offset.toSec(), action)
+        builderProxy.UNSTABLE_addTemporalMarkerOffset(
+            offset.toSec(),
+            action,
+        )
     }
 
     @JvmOverloads
@@ -279,7 +294,10 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         offset: Number = 0.0,
         action: MarkerCallback
     ) = queueAndReturnThis {
-        builderProxy.UNSTABLE_addDisplacementMarkerOffset(offset.toSec(), action)
+        builderProxy.UNSTABLE_addDisplacementMarkerOffset(
+            offset.toSec(),
+            action,
+        )
     }
 
     fun addSpatialMarker(
@@ -287,7 +305,10 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         offsetY: Number,
         action: MarkerCallback
     ) = queueAndReturnThis {
-        builderProxy.addSpatialMarker( GlobalUnits.vec(offsetX, offsetY), action )
+        builderProxy.addSpatialMarker(
+            GlobalUnits.vec(offsetX, offsetY),
+            action,
+        )
     }
 
     // -- Utilities --
@@ -313,6 +334,36 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         setReversed(false)
     }
 
+    /**
+     * Performs the last action in reverse.
+     *
+     * NOTE THAT THIS POPS THE LAST ITEM OFF THE STACK AND REVERTS THAT.
+     *
+     * For example, if you have something like this:
+     * ```java
+     * anvil
+     *     .inReverse((builder) -> {
+     *         builder.whatever(...);
+     *     });
+     * ```
+     * the stack looks like this:
+     *
+     * -> setReversed(false)
+     * -> builder.whatever(...)
+     * -> setReversed(true)
+     *
+     * so if you try to do `.inReverse(() -> ...).doInReverse()`, that doesn't cancel out the
+     * `.inReverse`. The stack would end up looking like this:
+     *
+     * -> setReversed(false)
+     * -> setReversed(false)
+     * -> setReversed(true)
+     * -> builder.whatever(...)
+     * -> setReversed(true)
+     *
+     * the `setReversed(false)` was popped and *that* was reversed, which, as you can probably
+     * guess, is useless & does absolutely nothing.
+     */
     fun doInReverse() = this.apply {
         val thingToDoInReverse = builderDeque.removeLast()
         inReverse {
@@ -320,8 +371,11 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         }
     }
 
-    @JvmField
-    val noop = queueAndReturnThis {}
+    /**
+     * Does absolutly nothing. It's just a no-op.
+     */
+    val noop: Anvil
+        get() = queueAndReturnThis {}
 
     /**
      * Allows for interation with the raw [TrajectorySequenceBuilder] instance to allow for usage
