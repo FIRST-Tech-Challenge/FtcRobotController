@@ -244,7 +244,7 @@ public class PowerPlay_6832 extends OpMode {
         gameState = GameState.TELE_OP;
         gameStateIndex = 1;
 
-        robot.crane.articulate(Crane.Articulation.start);
+        robot.crane.articulate(Crane.Articulation.calibrate);
 
         telemetry.update();
     }

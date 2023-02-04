@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.taubot;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.JOYSTICK_DEADZONE;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.auto;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.robot;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.startingPosition;
@@ -290,7 +289,7 @@ public class DriverControls {
             debugTelemetryEnabled = !debugTelemetryEnabled;
 
         if(stickyGamepad1.dpad_down){
-            robot.crane.articulate(Crane.Articulation.calibate);
+            robot.crane.articulate(Crane.Articulation.calibrate);
         }
         /*
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)

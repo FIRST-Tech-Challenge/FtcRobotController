@@ -340,6 +340,10 @@ public class Field {
         }
     }
 
+    public static double getBearing(Pose2d pos, FieldThing thing){
+        return Math.toDegrees(Math.atan2(thing.y() - pos.getY(), thing.x())-pos.getX());
+    }
+
     public static Pose2d coordinatesToPose(Pose2d coordinate){
         return new Pose2d(
                 coordinate.getX()* INCHES_PER_GRID + INCHES_PER_GRID /2,

@@ -37,18 +37,15 @@ import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DistanceSensorSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
 
-import org.firstinspires.ftc.teamcode.robots.taubot.util.CranePositionMemory;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.PIDController;
-import org.firstinspires.ftc.teamcode.util.Vector2;
 import org.firstinspires.ftc.teamcode.util.Vector3;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Config(value = "PPCrane")
 public class Crane implements Subsystem {
@@ -133,7 +130,7 @@ public class Crane implements Subsystem {
     private Robot robot;
 
 
-    private Articulation articulation = Articulation.manual;
+    private Articulation articulation = Articulation.calibrate;
 
     boolean USE_MOTOR_SMOOTHING = true;
 
@@ -420,7 +417,7 @@ public class Crane implements Subsystem {
         coneStackRight,
         coneStackLeft,
         start,
-        calibate
+        calibrate
     }
 
     public Articulation getArticulation() {
@@ -431,10 +428,10 @@ public class Crane implements Subsystem {
         articulation = target;
 
         switch(articulation){
-            case calibate:
+            case calibrate:
                 if(calibrate()){
-                    articulation = Articulation.manual;
-                    return Articulation.manual;
+                    articulation = Articulation.start;
+                    return Articulation.start;
                 }
                 break;
             case noIK:
@@ -690,9 +687,27 @@ public class Crane implements Subsystem {
         return false;
     }
 
+    FieldThing calcTurnPosition(FieldThing thing, double headingOffset){
+
+        double angle = Math.toDegrees(Math.atan2(thing.y() - turretPos.getY(), thing.x()-turretPos.getX()));
+        double bearing = Math.toRadians(angle + headingOffset);
+
+        double x = getDistance()*Math.sin(bearing);
+        double y = getDistance()*Math.cos(bearing);
+
+        x += turretPos.getX();
+        y += turretPos.getY();
+
+        int z = thing.getHeight();
+
+        return new FieldThing("temp" ,x,y,z);
+    }
+
 
     int pickupConeStage = 0;
     long pickupTimer;
+    FieldThing tempThing = null;
+
     boolean pickupCone(FieldThing obj) {
         switch (pickupConeStage) {
             case 0:
@@ -719,13 +734,14 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 4:
+                //nudgeCenter(true);
+                //tempThing = calcTurnPosition(obj, 3);
                 pickupConeStage++;
                 break;
             case 5:
-                setTargetTurretAngle(calculatedTurretAngle-5);
-                if(turretOnTarget()){
+                //if(goToFieldthing(tempThing)){
                     pickupConeStage++;
-                }
+                //}
                 break;
             case 6:
                 pickupConeStage = 0;
