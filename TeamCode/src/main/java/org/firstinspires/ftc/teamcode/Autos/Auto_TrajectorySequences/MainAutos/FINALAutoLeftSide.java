@@ -16,14 +16,15 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "RedTerminalCycleAuto")
 @Config
-public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
+public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 
 	private Arm armControl;
 	private Slide slideControl;
 	private Claw clawControl;
 
-	public static double xFirstLinear = 63;
-	public static double yFirstLinear = 2.35;
+	public static double xFirstLinear = 64;
+	public static double yFirstLinear = 0.2;
+	public static double angleFirstLinear = 85;
 	public static double angle = 147;
 	public static double xSecondToJunction = 53;
 	public static double ySecondToJunction = -4;
@@ -38,7 +39,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 	public static double angleConeStack = 91.45;
 	public static double xSecondPark = 54;
 	public static double ySecondPark = 0;
-	public static int arm = 925;
+	public static int arm = 935;
 	public static double angleSecond = 180;
 	public static double angleThird = 180;
 	public static int strafeThird = -28;
@@ -76,7 +77,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 
 				})
 				// MOVES TO HIGH JUNCTION FOR FIRST TIME
-				.lineToLinearHeading(new Pose2d(xFirstLinear, yFirstLinear, Math.toRadians(90)))
+				.lineToLinearHeading(new Pose2d(xFirstLinear, yFirstLinear, Math.toRadians(angleFirstLinear)))
 				.waitSeconds(0.5)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1370); // Overrides current target position of slides
@@ -98,7 +99,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					armControl.setIntake();
 				})
 				.waitSeconds(0.25)
-				.strafeLeft(14.5)
+				.strafeLeft(12)
 				.forward(28)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
@@ -140,7 +141,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.waitSeconds(0.35) // OLD VALUE: 0.25
 				// GOING TO THE CONE STACK \\
 				.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
-				.forward(31)
+				.forward(28)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
@@ -155,7 +156,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0.3,()->{
 					slideControl.setCustom(2200);
-					armControl.setCustom(arm);
+					armControl.setCustom(950);
 					clawControl.toggleWristRotate();
 				})
 				.lineToLinearHeading(new Pose2d(xThirdToJunction,yThirdToJunction,Math.toRadians(angle)))
@@ -176,9 +177,8 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 					armControl.setIntake();
 				})
 				.waitSeconds(0.25)
-
 				.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
-				.forward(31)
+				.forward(28)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
@@ -189,7 +189,7 @@ public class OfficialAutoOne extends PowerPlay_AprilTagDetectionDeposit {
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{
 					slideControl.setCustom(2200);
-					armControl.setCustom(arm);
+					armControl.setCustom(950);
 					clawControl.toggleWristRotate();
 				})
 				.waitSeconds(0.5)
