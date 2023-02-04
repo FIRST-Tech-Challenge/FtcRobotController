@@ -37,6 +37,7 @@ public class EnergizeV2Auto_Basic extends LinearOpMode {
     // UNITS ARE METERS
     double tagsize = 0.166;
 
+
     int ID_TAG_OF_INTEREST1 = 1; // Tag ID 1 from the 36h11 family
     int ID_TAG_OF_INTEREST2 = 3; // Tag ID 3 from the 36h11 family
     int ID_TAG_OF_INTEREST3 = 9; // Tag ID 9 from the 36h11 family
@@ -320,6 +321,8 @@ public class EnergizeV2Auto_Basic extends LinearOpMode {
                 leftBackDrive.isBusy() && rightBackDrive.isBusy()) {
 
             // Display info for the driver:
+
+            if ()
             telemetry.addLine("Move Forward");
             telemetry.addData("Target", "%7d :%7d :%7d :%7d", lfPos, rfPos, lrPos, rrPos);
             telemetry.addData("Actual", "%7d :%7d :%7d :%7d", leftFrontDrive.getCurrentPosition(),

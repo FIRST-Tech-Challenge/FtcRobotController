@@ -68,6 +68,9 @@ public class EnergizeV2AutoLeft extends LinearOpMode {
     private int lrPos;
     private int rrPos;
 
+
+
+
     static final double     COUNTS_PER_MOTOR_REV    = 537.7;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 3.78 ;     // For figuring circumference
@@ -251,7 +254,8 @@ public class EnergizeV2AutoLeft extends LinearOpMode {
         //4 and one quarter inch to the nearest line on the left
         //4 and one quarter inches to the tile split on the left
         //
-
+        DriveAndLift(40,medium,LOW_HEIGHT);
+/*
         //close claw
         gripper(close);
         Wait(0.5);
@@ -271,6 +275,7 @@ public class EnergizeV2AutoLeft extends LinearOpMode {
         gripper(open);
         Wait(1.0);
         moveForward(-3,medium);
+ */
         /* Actually do something useful */
         if(tagOfInterest == null)
         {
@@ -371,7 +376,56 @@ public class EnergizeV2AutoLeft extends LinearOpMode {
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
+    private void DriveAndLift(int howMuch, double speed, double targetHeight) {
 
+        lfPos = leftFrontDrive.getCurrentPosition();
+        rfPos = rightFrontDrive.getCurrentPosition();
+        lrPos = leftBackDrive.getCurrentPosition();
+        rrPos = rightBackDrive.getCurrentPosition();
+
+        // Calculate new targets based on input:
+        lfPos += (int) (howMuch * clicksPerInch);
+        rfPos += (int) (howMuch * clicksPerInch);
+        lrPos += (int) (howMuch * clicksPerInch);
+        rrPos += (int) (howMuch * clicksPerInch);
+
+        // Move robot to new position:
+        leftFrontDrive.setTargetPosition(lfPos);
+        rightFrontDrive.setTargetPosition(rfPos);
+        leftBackDrive.setTargetPosition(lrPos);
+        rightBackDrive.setTargetPosition(rrPos);
+
+        while (leftFrontDrive.isBusy()) {
+            if (lfPos > leftFrontDrive.getTargetPosition() / 2 ) {
+                MoveLift(LOW_HEIGHT);
+            }
+        }
+        while (leftBackDrive.isBusy()) {
+            if (lfPos > leftFrontDrive.getTargetPosition() / 2 ) {
+                MoveLift(LOW_HEIGHT);
+            }
+        }
+        while (rightFrontDrive.isBusy()) {
+            if (lfPos > leftFrontDrive.getTargetPosition() / 2 ) {
+                MoveLift(LOW_HEIGHT);
+            }
+        }
+        while (rightBackDrive.isBusy()) {
+            if (lfPos > leftFrontDrive.getTargetPosition() / 2 ) {
+                MoveLift(LOW_HEIGHT);
+            }
+        }
+        // Set the drive Drive run modes to prepare for move to encoder:
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+    }
     private void moveForward(int howMuch, double speed) {
         // "howMuch" is in inches. A negative howMuch moves backward.
 
