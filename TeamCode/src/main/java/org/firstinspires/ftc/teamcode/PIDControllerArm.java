@@ -23,6 +23,6 @@ public class PIDControllerArm extends PIDController {
      * @param state where we currently are, I.E. motor position
      */
     public double update (double target, double state) {
-        return super.update(target, state) + ksin * sin(toRadians(target));
+        return super.update(target, state) + ksin * sin(toRadians(state));
     }
 }

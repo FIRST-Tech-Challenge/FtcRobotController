@@ -41,9 +41,9 @@ import java.util.Locale;
  * of multiple poles, switching the viewport output, and communicating the results
  * of the vision processing to usercode.
  */
-@TeleOp(name="Turret-Test", group="Skunkworks")
+@TeleOp(name="Arm-Test", group="Skunkworks")
 //@Disabled
-public class TurretPIDTester extends LinearOpMode
+public class ArmPIDTester extends LinearOpMode
 {
     final int LOGSIZE = 12;
     double[]  errorHistory = new double[LOGSIZE];
@@ -57,7 +57,7 @@ public class TurretPIDTester extends LinearOpMode
     HardwareSlimbot robot = new HardwareSlimbot();
     boolean aligning = false;
     boolean ranging = false;
-    boolean turretFacingFront = false;
+    boolean liftFacingFront = false;
     boolean lowCameraInitialized = false;
     boolean backCameraInitialized = false;
     double maxPower = 0.0;
@@ -73,28 +73,28 @@ public class TurretPIDTester extends LinearOpMode
         robot.readBulkData();
         robot.turretPosRun(false);
         robot.liftPosRun();
-        turretPIDPosRun(true);
+        liftPIDPosRun(true);
     }
 
-    boolean turretMotorPIDAuto = false;
-    boolean turretMotorLogging = false;
-    boolean turretMotorLogEnable = false;
-    public final static int TURRETMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
-    double turretAngleTarget;
-    int turretMotorCycles = 0;
-    int turretMotorWait   = 0;
-    int turretMotorLogIndex = 0;
-    protected double[]      turretMotorLogTime   = new double[TURRETMOTORLOG_SIZE];  // msec
-    protected double[]      turretMotorLogAngle  = new double[TURRETMOTORLOG_SIZE];  // Angle [degrees]
-    protected double[]      turretMotorLogPwr    = new double[TURRETMOTORLOG_SIZE];  // Power
-    protected double[]      turretMotorLogAmps   = new double[TURRETMOTORLOG_SIZE];  // mAmp
-    protected ElapsedTime turretMotorTimer     = new ElapsedTime();
+    boolean liftMotorPIDAuto = false;
+    boolean liftMotorLogging = false;
+    boolean liftMotorLogEnable = false;
+    public final static int LIFTMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
+    double liftAngleTarget;
+    int liftMotorCycles = 0;
+    int liftMotorWait   = 0;
+    int liftMotorLogIndex = 0;
+    protected double[]      liftMotorLogTime   = new double[LIFTMOTORLOG_SIZE];  // msec
+    protected double[]      liftMotorLogAngle  = new double[LIFTMOTORLOG_SIZE];  // Angle [degrees]
+    protected double[]      liftMotorLogPwr    = new double[LIFTMOTORLOG_SIZE];  // Power
+    protected double[]      liftMotorLogAmps   = new double[LIFTMOTORLOG_SIZE];  // mAmp
+    protected ElapsedTime liftMotorTimer     = new ElapsedTime();
     /*--------------------------------------------------------------------------------------------*/
-    public void writeTurretLog() {
+    public void writeLiftLog() {
         // Are we even logging these events?
-        if( !turretMotorLogging) return;
+        if( !liftMotorLogging) return;
         // Movement must be complete (disable further logging to memory)
-        turretMotorLogEnable = false;
+        liftMotorLogEnable = false;
         // Create a subdirectory based on DATE
         String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         String directoryPath = Environment.getExternalStorageDirectory().getPath() + "//FIRST//TurretMotor//" + dateString;
@@ -103,35 +103,34 @@ public class TurretPIDTester extends LinearOpMode
         directory.mkdirs();
         // Create a filename based on TIME
         String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
-        String filePath = directoryPath + "/" + "turret_" + timeString + ".txt";
+        String filePath = directoryPath + "/" + "lift_" + timeString + ".txt";
         // Open the file
-        FileWriter turretLog;
+        FileWriter liftLog;
         try {
-            turretLog = new FileWriter(filePath, false);
-            turretLog.write("TurretMotor\r\n");
-            turretLog.write("Target Angle," + turretAngleTarget + "\r\n");
+            liftLog = new FileWriter(filePath, false);
+            liftLog.write("LiftMotor\r\n");
+            liftLog.write("Target Angle," + liftAngleTarget + "\r\n");
             // Log Column Headings
-            turretLog.write("msec,pwr,mAmp,angle\r\n");
+            liftLog.write("msec,pwr,mAmp,angle\r\n");
             // Log all the data recorded
-            for( int i=0; i<turretMotorLogIndex; i++ ) {
-                String msecString = String.format("%.3f, ", turretMotorLogTime[i] );
-                String pwrString  = String.format("%.3f, ", turretMotorLogPwr[i]  );
-                String ampString  = String.format("%.0f, ", turretMotorLogAmps[i] );
-                String degString  = String.format("%.2f\r\n", turretMotorLogAngle[i]  );
-                turretLog.write( msecString + pwrString + ampString + degString );
+            for( int i=0; i<liftMotorLogIndex; i++ ) {
+                String msecString = String.format("%.3f, ", liftMotorLogTime[i] );
+                String pwrString  = String.format("%.3f, ", liftMotorLogPwr[i]  );
+                String ampString  = String.format("%.0f, ", liftMotorLogAmps[i] );
+                String degString  = String.format("%.2f\r\n", liftMotorLogAngle[i]  );
+                liftLog.write( msecString + pwrString + ampString + degString );
             }
-            turretLog.flush();
-            turretLog.close();
+            liftLog.flush();
+            liftLog.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    } // writeTurretLog()
+    } // writeLiftLog()
 
     /**
-     // pStatic = 0.0860 @ 12.30V
-     // pStatic = 0.0650 @ 13.54V
+     * pSin
      */
-    public double getTurretMinPower() {
+    public double getLiftMinPower() {
         double result;
         double voltage = robot.readBatteryExpansionHub();
         double slope = (0.0860 - 0.0650) / (12300 - 13540);
@@ -141,16 +140,17 @@ public class TurretPIDTester extends LinearOpMode
     }
 
     /*--------------------------------------------------------------------------------------------*/
-    /* turretPosInit()                                                                            */
-    /* - newAngle = desired turret angle                                                          */
-    public void turretPIDPosInit( double newAngle )
+    /* liftPosInit()                                                                            */
+    /* - newAngle = desired lift angle                                                          */
+    public void liftPIDPosInit( double newAngle )
     {
         // Current distance from target (degrees)
-        double degreesToGo = newAngle - robot.turretAngle;
-        double pStatic = getTurretMinPower();
+        double degreesToGo = newAngle - robot.liftAngle;
+        double pSin = 0.40;
+//        double pSin = getLiftMinPower();
 
-        pidController = new PIDControllerTurret(0.00575, 0.0005, 0.0011,
-                pStatic, 0.0);
+        pidController = new PIDControllerArm(-0.04, 0.000, 0.000,
+                pSin);
 
         // Are we ALREADY at the specified angle?
         if( Math.abs(degreesToGo) <= 1.0 )
@@ -159,57 +159,57 @@ public class TurretPIDTester extends LinearOpMode
         pidController.reset();
 
         // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
-        robot.turretMotor.setPower( 0.0 );
+        robot.liftMotorsSetPower( 0.0 );
 
         // Establish a new target angle & reset counters
-        turretMotorPIDAuto = true;
-        turretAngleTarget = newAngle;
-        turretMotorCycles = 0;
-        turretMotorWait   = 0;
+        liftMotorPIDAuto = true;
+        liftAngleTarget = newAngle;
+        liftMotorCycles = 0;
+        liftMotorWait   = 0;
 
         // If logging instrumentation, begin a new dataset now:
-        if( turretMotorLogging ) {
-            turretMotorLogIndex  = 0;
-            turretMotorLogEnable = true;
-            turretMotorTimer.reset();
+        if( liftMotorLogging ) {
+            liftMotorLogIndex  = 0;
+            liftMotorLogEnable = true;
+            liftMotorTimer.reset();
         }
 
-    } // turretPosInit
+    } // liftPosInit
 
     // pStatic = 0.0860 @ 12.30V
     // pStatic = 0.0650 @ 13.54V
-    PIDControllerTurret pidController;
+    PIDControllerArm pidController;
 
     /*--------------------------------------------------------------------------------------------*/
-    /* turretPosRun()                                                                             */
-    public void turretPIDPosRun( boolean teleopMode )
+    /* liftPosRun()                                                                             */
+    public void liftPIDPosRun( boolean teleopMode )
     {
         // Has an automatic movement been initiated?
-        if(turretMotorPIDAuto) {
+        if(liftMotorPIDAuto) {
             // Keep track of how long we've been doing this
-            turretMotorCycles++;
+            liftMotorCycles++;
             // Current distance from target (angle degrees)
-            double degreesToGo = turretAngleTarget - robot.turretAngle;
+            double degreesToGo = liftAngleTarget - robot.liftAngle;
             double degreesToGoAbs = Math.abs(degreesToGo);
             int waitCycles = (teleopMode) ? 5 : 2;
-            double power = pidController.update(turretAngleTarget, robot.turretAngle);
+            double power = pidController.update(liftAngleTarget, robot.liftAngle);
             telemetry.addData("Set Power", power);
             telemetry.update();
-            robot.turretMotor.setPower(power);
+            robot.liftMotorsSetPower(power);
             if(abs(power) > abs(maxPower)) {
                 maxPower = power;
             }
             // Have we achieved the target?
             // (temporarily limit to 16 cycles when verifying any major math changes!)
             if( degreesToGoAbs <= 1.0 ) {
-                if( ++turretMotorWait >= waitCycles ) {
-                    turretMotorPIDAuto = false;
-                    robot.turretMotor.setPower(0);
-                    writeTurretLog();
+                if( ++liftMotorWait >= waitCycles ) {
+                    liftMotorPIDAuto = false;
+                    robot.liftMotorsSetPower(0);
+                    writeLiftLog();
                 }
             }
-        } // turretMotorAuto
-    } // turretPosRun
+        } // liftMotorAuto
+    } // liftPosRun
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -229,9 +229,9 @@ public class TurretPIDTester extends LinearOpMode
         sleep(300);
         performEveryLoop();
 
-        // Perform setup needed to center turret
+        // Perform setup needed to center lift
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
+        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
         while( robot.turretMotorAuto == true || robot.liftMotorAuto == true) {
             performEveryLoop();
         }
@@ -245,11 +245,11 @@ public class TurretPIDTester extends LinearOpMode
         while (opModeIsActive())
         {
             performEveryLoop();
-            turretPIDPosInit(robot.TURRET_ANGLE_CENTER);
+            liftPIDPosInit(robot.LIFT_ANGLE_HIGH);
             // Execute the automatic turret movement code
-            telemetry.addData("pStatic", pidController.kStatic);
+            telemetry.addData("pSin", pidController.ksin);
             telemetry.addData("kp", pidController.kp);
-            while(turretMotorPIDAuto && opModeIsActive()) {
+            while(liftMotorPIDAuto && opModeIsActive()) {
                 performEveryLoop();
             }
 
@@ -274,7 +274,7 @@ public class TurretPIDTester extends LinearOpMode
 
     /*---------------------------------------------------------------------------------*/
 
-    void logPid(int alignedCount, double turretPower, PIDController pid) {
+    void logPid(int alignedCount, double liftPower, PIDController pid) {
         // Only save "meaningful" entries (not final 15 aligned results with all zeros!)
         if( alignedCount <= 3 ) {
             // Shift all previous instrumentation readings down one entry
@@ -292,10 +292,10 @@ public class TurretPIDTester extends LinearOpMode
             kpHistory[LOGSIZE-1]    = (pid.kp * pid.error);
             kiHistory[LOGSIZE-1]    = (pid.ki * pid.integralSum);
             kdHistory[LOGSIZE-1]    = (pid.kd * pid.derivative);
-            kTHistory[LOGSIZE-1]    = turretPower;
+            kTHistory[LOGSIZE-1]    = liftPower;
         }
 
-        telemetry.addData("turretPower: ", turretPower);
+        telemetry.addData("turretPower: ", liftPower);
         telemetry.addData("PID", "error: %.2f, errorPwr: %.3f", pid.error, (pid.kp*pid.error) );
         telemetry.addData("PID", "integralSum: %.3f, integralSumPwr: %.3f", pid.integralSum, pid.ki*pid.integralSum);
         telemetry.addData("PID", "derivative: %.3f, derivativePwr: %.3f", pid.derivative, pid.kd*pid.derivative);
