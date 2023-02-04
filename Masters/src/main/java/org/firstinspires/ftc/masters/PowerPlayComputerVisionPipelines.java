@@ -37,6 +37,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.ArrayList;
+
 
 public class PowerPlayComputerVisionPipelines {
 
@@ -273,4 +275,165 @@ public class PowerPlayComputerVisionPipelines {
 
         }
     }
+
+    public static class PipeDetectionPipeline extends OpenCvPipeline{
+        Telemetry telemetry;
+        public PipeDetectionPipeline(Telemetry telemetry) {
+            this.telemetry = telemetry;
+        }
+
+        //    All possible regions to be detected in are stored in an enum
+        public enum PipePosition {
+            LEFT5,
+            LEFT4,
+            LEFT3,
+            LEFT2,
+            LEFT1,
+            CENTER,
+            RIGHT1,
+            RIGHT2,
+            RIGHT3,
+            RIGHT4,
+            RIGHT5,
+            SHRUG_NOISES
+        }
+
+
+        /*
+         * Some color constants used for displaying rectangles on the camera stream
+         */
+        static final Scalar BLUE = new Scalar(0, 0, 255);
+//        static final Scalar GREEN = new Scalar(0, 255, 0);
+//        static final Scalar RED = new Scalar(255, 0, 0); e
+
+
+        //        Sizes for subregions of the camera from which our data is extracted (Fiddle until fits width of pipe perfectly; height is less of a concern)
+        static final int REGION_WIDTH = 100;
+        static final int REGION_HEIGHT = 100;
+
+        /*
+         * List for the storage of points, if you're only dealing with a few regions declare them all separately, the freight regions in the other pipeline
+         * are done like this.
+         */
+
+        ArrayList<Point> topLeftPoints = new ArrayList<>();
+        ArrayList<Point> bottomRightPoints = new ArrayList<>();
+
+
+        //        The threshold to which the averages are compared.
+        final int PIPE_PRESENT_THRESHOLD = 140;
+
+
+
+        /*
+         * Empty matrices that data will be stored in
+         */
+
+        Mat LAB = new Mat();
+        Mat A = new Mat();
+        Mat B = new Mat();
+
+        // Volatile since accessed by OpMode thread w/o synchronization
+        public volatile PipePosition position = PipePosition.SHRUG_NOISES;
+
+        /*
+         * This function takes the RGB frame, converts to LAB,
+         * and extracts the A channel to the 'A' variable
+         */
+        void inputToLAB(Mat input) {
+
+            Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
+            Core.extractChannel(LAB, A, 1);
+            Core.extractChannel(LAB, B, 2);
+        }
+
+        //        Done in innit, this was a more complicated formation of subregions for detecting the duck, but essentially
+//        just assign the top left and bottom right points for each region you desire.
+        @Override
+        public void init(Mat firstFrame) {
+
+            topLeftPoints.add(new Point(20,30));
+            bottomRightPoints.add(new Point(topLeftPoints.get(0).x + REGION_WIDTH, topLeftPoints.get(0).y + REGION_HEIGHT));
+
+
+            int tempY = 30;
+            int tempX = 20;
+            /* Previous regions
+            for (int i = 1; i < 33; i++) {
+                if (tempX == 520) {
+                    tempX = 20;
+                    tempY += REGION_HEIGHT;
+                } else {
+                    tempX += 50;
+                }
+                topLeftPoints.add(new Point(tempX,tempY));
+                bottomRightPoints.add(new Point(tempX + REGION_WIDTH, tempY + REGION_HEIGHT));
+            }
+*/
+            inputToLAB(firstFrame);
+
+
+        }
+
+        //        Process frame, takes a matrix input and processes it. I still have no idea WHERE this is called, but it is absolutely essential to CV functioning
+        @Override
+        public Mat processFrame(Mat input) {
+            inputToLAB(input);
+
+//            Declare list of regions
+            ArrayList<Mat> region = new ArrayList<>();
+
+
+//            Put the necessary data from the frame to each region
+            for (int i = 0; i<1; i++) {
+                region.add(B.submat(new Rect(topLeftPoints.get(i), bottomRightPoints.get(i))));
+            }
+
+            ArrayList<Integer> regionAvgs = new ArrayList<>();
+
+            for (int i = 0; i<1; i++) {
+                regionAvgs.add((int) Core.mean(region.get(i)).val[0]);
+            }
+
+//              This is what displays the rectangles to the camera stream on the drive hub
+            for (int i = 0; i<1; i++) {
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        topLeftPoints.get(i), // First point which defines the rectangle
+                        bottomRightPoints.get(i), // Second point which defines the rectangle
+                        BLUE, // The color the rectangle is drawn in
+                        2); // Thickness of the rectangle lines
+
+            }
+
+//            The next several lines determine which region has the highest B average.
+            int indexOfMaximumBAvg = 0;
+
+            for (int i = 0; i<1; i++) {
+                if (regionAvgs.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
+                    indexOfMaximumBAvg = i;
+                }
+            }
+
+//            Display telemetry
+            telemetry.addData("B Averages", regionAvgs);
+            telemetry.addData("Index of highest likelihood.", indexOfMaximumBAvg);
+
+//            Fix indexes (Regions are stacked 11 to a row)
+            if (regionAvgs.get(indexOfMaximumBAvg) >= PIPE_PRESENT_THRESHOLD) {
+                position = PipePosition.values()[indexOfMaximumBAvg];
+            } else {
+                position = PipePosition.SHRUG_NOISES; // Default enum result. Aptly named
+            }
+
+
+            telemetry.addData("Position", position);
+            telemetry.update();
+
+
+            return input;
+        }
+
+    }
+
 }
