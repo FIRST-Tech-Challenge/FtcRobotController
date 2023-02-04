@@ -34,9 +34,9 @@ public class Robot {
 
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     public static final String[] LABELS = {
-            "1 Bolt",
-            "2 Bulb",
-            "3 Panel"
+            "Arrows",
+            "Balloons",
+            "Bars"
     };
 
     private static final String VUFORIA_KEY =
@@ -139,10 +139,10 @@ public class Robot {
             direction = 1;
         }
 
-        double pwr = -0.5;
+        double pwr = -0.6;
 
 
-        while (Math.abs(angleCurrent - angleEnd) > 5) {
+        while (Math.abs(angleCurrent - angleEnd) > 2) {
             chassis.FLMotor.setPower(-pwr * direction);
             chassis.FRMotor.setPower(pwr * direction);
             chassis.BLMotor.setPower(-pwr * direction);
@@ -183,151 +183,169 @@ public class Robot {
     }
 
     public void deliverPreLoad(boolean LR) {
+
+        int TIMEOUT_TO_DELIVER = 500;
+        int TIME_AFTER_GRAB_PRELOAD = 500;
+        double driveSpeed = 0.7;
         /** First swing the arm up and go to the pole. **/
         //Close claw, the arm is already up.
-        claw.servo.setPosition(1);
+        claw.close();
 
-        timeout_ms = 500;
         runtime.reset();
-        while(runtime.milliseconds() < timeout_ms){
+        while(runtime.milliseconds() < TIME_AFTER_GRAB_PRELOAD){
 
         }
 
-        chassis.DriveToPosition(0.8, 0, 70, true);
-
+        if(LR) {
+            chassis.DriveToPosition(driveSpeed, 0, 70, true);
+        } else {
+            chassis.DriveToPosition(driveSpeed,-15,70,true);
+        }
 
         //Drive to the pole
         if(LR) { // True = Left
-            turnRobotToAngle(312);
+            turnRobotToAngle(335);
         }
         else{
-            turnRobotToAngle(45);
+            turnRobotToAngle(40);
         }
+        chassis.stopDriveMotors();
 
-        chassis.DriveToPosition(0.8, 0, 10, true);
+//        if(LR) {
+//            chassis.DriveToPosition(0.8, 0, 10, true);
+//        } else {
+//            chassis.DriveToPosition(0.8,0,5, true);
+//        }
 
         /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
         //Moves the slider to the correct height
-       vSlider.MoveSlider(1, 1000, 2000);
+       vSlider.MoveSlider(1, 1000, 1400);
 
 
-//        //Swings the arm down
-         arm.swingDown();
+        //Swings the arm down
+        arm.swingDown();
          //Arm(false);
 
         // Lower the slider a little bit to catch the cone in pole.
-       vSlider.MoveSlider(1, -500, 100);
+       //vSlider.MoveSlider(1, -500, 100);
 
         //Open and close the claw to drop the cone
         claw.open();
-        timeout_ms = 1500;
         runtime.reset();
-        while ((runtime.milliseconds() < timeout_ms)) {
+        while ((runtime.milliseconds() < TIMEOUT_TO_DELIVER)) {
         }
-        claw.close();
-
-        chassis.DriveToPosition(0.8,0,-5, true);
 
         //Raises slider a little bit to not get caught on the pole
-       vSlider.MoveSlider(1, 1000, 500);
+      // vSlider.MoveSlider(1, 1000, 500);
+
+        claw.close();
+        arm.swingUp();
+
         //lower the slider
-       vSlider.MoveSlider(-1, -1000, 1200);
+       vSlider.MoveSlider(-1, -1000, 800);
 
     }
 
     public void ParkFromMedium(int location, boolean fromFront){
+
+        double driveSpeed = 0.8;
         turnRobotToAngle(175);
+        chassis.stopDriveMotors();
+
         if(fromFront) {
             switch(location){
                 case 1:
-                    chassis.DriveToPosition(0.5, -70, -5, true);
+                    chassis.DriveToPosition(driveSpeed, 75, -25, false);
                     break;
                 case 2:
-                    chassis.DriveToPosition(0.5, 0, -5, true);
+                    chassis.DriveToPosition(driveSpeed, 0, -25, false);
                     break;
                 case 3:
-                    chassis.DriveToPosition(0.5, 70, -5, true);
+                    chassis.DriveToPosition(driveSpeed, -75, -25, false);
                     break;
             }
+
         }
         else {
             switch(location){
                 case 1:
-                    chassis.DriveToPosition(0.5, -80, -5, true);
+                    chassis.DriveToPosition(driveSpeed, 55, -7, true);
                     break;
                 case 2:
-                    chassis.DriveToPosition(0.5, -60, -5, true);
-                    break;
+                    chassis.DriveToPosition(driveSpeed, -5, -7, true);
+                        break;
                 case 3:
-                    chassis.DriveToPosition(0.5, 50, -5, true);
+                    chassis.DriveToPosition(driveSpeed, -75, -7, true);
                     break;
             }
         }
+
+        claw.close();
+        arm.swingDown();
+//        vSlider.MoveSlider(-1, -1000, 100);
+        claw.open();
     }
 
 
 
     public void CycleCone(boolean LR){
-        if(LR){
+
+            int TIMEOUT_TO_GRAB = 500;
+            int TIMEOUT_TO_DELIVER = 500;
             /** First go to the stack of cones **/
-            turnRobotToAngle(360);
-            chassis.DriveToPosition(0.8, 0, 50, true);
+
+            turnRobotToAngle(350);
+            chassis.DriveToPosition(0.8, 0, 60, true);
+
+            if(LR) {
+                turnRobotToAngle(85);
+            } else {
+                turnRobotToAngle(270);
+            }
             /** Now cycle the cones**/
-            turnRobotToAngle(90);
-            //Open the claw
+
+            vSlider.MoveSlider(1,1000,600);
+            //swing down anc Open the claw
+            arm.swingDown();
             claw.open();
-            //Drive forward slightly
-            chassis.DriveToPosition(0.8, 0, 55, true);
+        //Raise slider and Drive forward slightly
+            chassis.DriveToPosition(0.7, 0, 70, true);
+
             //close the claw and grab onto the cone
             claw.close();
+            runtime.reset();
+            while ((runtime.milliseconds() < TIMEOUT_TO_GRAB)) {
+            }
+            // Move the slider so that you don't tip the cones.
+            vSlider.MoveSlider(1,1000,200);
+
             /** Now drive to the medium pole **/
             //Drive to the pole and face it
-            chassis.DriveToPosition(0.8,0,-50, true);
-            turnRobotToAngle(205);
-            chassis.stopDriveMotors();
+            chassis.DriveToPosition(0.8,0,-65, true);
+            if(LR) {
+                turnRobotToAngle(220);
+            } else {
+                turnRobotToAngle(140);
+            }
+           // chassis.stopDriveMotors();
             /** Now deliver the cone **/
             //Move the slider to the right height
-            vSlider.MoveSlider(1, 1000,2400);
+            vSlider.MoveSlider(1, 1000,1000);
+            chassis.DriveToPosition(0.8,0,10,true);
+            //Lower slider to catch on pole
+            vSlider.MoveSlider(1,-1000,400);
             //Open and close claw
             claw.open();
-            timeout_ms = 500;
             runtime.reset();
-            while ((runtime.milliseconds() < timeout_ms)) {
+            while ((runtime.milliseconds() < TIMEOUT_TO_DELIVER)) {
             }
+            //move up to not get caught on the pole
+            vSlider.MoveSlider(1,1000,500);
             claw.close();
+            arm.swingUp();
             //lower slider
-            vSlider.MoveSlider(1, -1000,1200);
+            vSlider.MoveSlider(1, -1000,1000);
         }
-        else{
-            /** First go to the stack of cones **/
-            turnRobotToAngle(360);
-            chassis.DriveToPosition(0.8, 0, 50, true);
-            /** Now cycle the cones**/
-            turnRobotToAngle(270);
-            //Open the claw
-            claw.open();
-            //Drive forward slightly
-            chassis.DriveToPosition(0.8, 0, 55, true);
-            //close the claw and grab onto the cone
-            claw.close();
-            /** Now drive to the medium pole **/
-            //Drive to the pole and face it
-            chassis.DriveToPosition(0.8,0,-50, true);
-            turnRobotToAngle(135);
-            chassis.stopDriveMotors();
-            /** Now deliver the cone **/
-            //Move the slider to the right height
-            vSlider.MoveSlider(1, 1000,2400);
-            //Open and close claw
-            claw.open();
-            timeout_ms = 500;
-            runtime.reset();
-            while ((runtime.milliseconds() < timeout_ms)) {
-            }
-            claw.close();
-            //lower slider
-            vSlider.MoveSlider(1, -1000,1200);
-        }
+//
     }
 
-}

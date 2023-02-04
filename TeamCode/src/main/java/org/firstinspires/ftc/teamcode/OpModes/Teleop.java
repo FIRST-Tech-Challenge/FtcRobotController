@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Helper.Chassis;
 import org.firstinspires.ftc.teamcode.Helper.Robot;
 
-@TeleOp(name = "22-23 TeleOp", group = "LinearOpMode")
+@TeleOp(name = "22-23 TeleOp", group = "TeleOp")
 
 public class Teleop extends LinearOpMode {
 
@@ -19,7 +19,7 @@ public class Teleop extends LinearOpMode {
     Robot robot = new Robot();
 
     //How fast your robot will accelerate.
-    public double acceleration = 0.5;
+    public double acceleration = 0.3;
 
 
     //Motor powers
@@ -57,7 +57,9 @@ public class Teleop extends LinearOpMode {
         while (opModeIsActive()) {
 
             double move_y_axis = gamepad1.left_stick_y;
-            double move_x_axis = -gamepad1.left_stick_x;
+            //double move_x_axis = -gamepad1.left_stick_x
+            // double(gamepad1.dpad_right)-double(gamepad1.dpad_left)
+            double move_x_axis = 0;
             double pivot_turn = -gamepad1.right_stick_x;
 
             //Sets the target power
@@ -106,6 +108,30 @@ public class Teleop extends LinearOpMode {
                 robot.claw.close();
                 robot.arm.swingDown();
             }
+            if(gamepad1.a) {
+                robot.turnRobotToAngle(0);
+            }
+            if(gamepad1.b) {
+                robot.turnRobotToAngle(90);
+            }
+            if(gamepad1.x) {
+                robot.turnRobotToAngle(180);
+            }
+            if(gamepad1.y) {
+                robot.turnRobotToAngle(270);
+            }
+            if(gamepad1.dpad_up) {
+                robot.chassis.DriveToPosition(0.5,0,30, true);
+            }
+            if(gamepad1.dpad_down) {
+                robot.chassis.DriveToPosition(0.5,0,-30, true);
+            }
+            if(gamepad1.dpad_left) {
+                robot.chassis.DriveToPosition(0.5,-30,0, true);
+            }
+            if(gamepad1.dpad_right) {
+                robot.chassis.DriveToPosition(0.5,30,0,true);
+            }
 
 
             telemetry.addData("FL Motor Encoder", robot.chassis.FLMotor.getCurrentPosition());
@@ -121,6 +147,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("Angular Orientation", angle);
             int angleFloat = (int) (robot.modAngle(angle.firstAngle));
             telemetry.addData("Orientation in 0-360", angleFloat);
+            telemetry.addData("Robot Location", "(" + robot.chassis.robotX + ", " + robot.chassis.robotY + ")");
 
             telemetry.update();
 

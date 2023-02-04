@@ -17,7 +17,7 @@ public class Arm {
     int Position;
     double holdingPower;
 
-    private int YEAR = 2021;
+
 
 
     public void init(HardwareMap ahwMap) throws InterruptedException {
@@ -37,7 +37,7 @@ public class Arm {
     public void swingUp(){
         ElapsedTime runtime = new ElapsedTime();
         speed = 0.7;
-        Position = 495;
+        Position = -500;
         timeout_ms = 500;
 
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -59,8 +59,8 @@ public class Arm {
     public void swingDown(){
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        speed = 0.7;
-        Position = 55;
+        speed = 0.3;
+        Position = 0;
 
         motor.setTargetPosition(Position);
         //set the mode to go to the target position

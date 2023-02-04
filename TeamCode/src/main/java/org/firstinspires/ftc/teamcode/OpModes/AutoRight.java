@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Helper.Robot;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Right", group = "Concept")
+@Autonomous(name = "Right", group = "Auto")
 public class AutoRight extends LinearOpMode {
 
 
@@ -80,7 +80,7 @@ public class AutoRight extends LinearOpMode {
 
                     case deliverPreLoad:
                         robot.deliverPreLoad(false);
-                        Step = AutoSteps.cycleCones;
+                        Step = AutoSteps.parkFromMedium;
                         break;
 
                     case cycleCones:

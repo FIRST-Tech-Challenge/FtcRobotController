@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Helper.Robot;
 
-@TeleOp(name = "VSlider Test", group = "LinearOpMode")
+@TeleOp(name = "VSlider Test", group = "TeleOp")
 
 public class VSliderTest extends LinearOpMode {
     //tells you how long the robot has run for

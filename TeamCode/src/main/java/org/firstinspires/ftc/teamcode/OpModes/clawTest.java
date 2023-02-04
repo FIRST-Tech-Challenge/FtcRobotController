@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Helper.Robot;
 
-@TeleOp(name = "Claw Test", group = "LinearOpMode")
+@TeleOp(name = "Claw Test", group = "TeleOp")
 
 public class clawTest extends LinearOpMode {
     //tells you how long the robot has run for

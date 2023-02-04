@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Helper.Robot;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Left", group = "Concept")
+@Autonomous(name = "LeftPreload", group = "Auto")
 public class AutoLeft extends LinearOpMode {
 
 
@@ -61,10 +61,8 @@ public class AutoLeft extends LinearOpMode {
                             } else if (objectLabel == robot.LABELS[2]) {
                                 parkingTarget = 3;
                             }
-//
-//                            telemetry.addData("", " ");
-//                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-//                            telemetry.addData("Robot Location", robot.Location);
+
+                            telemetry.addData("Robot Location", robot.chassis.Location);
                             telemetry.addData("parking target", parkingTarget);
                         }
                         telemetry.update();
@@ -77,19 +75,16 @@ public class AutoLeft extends LinearOpMode {
                         telemetry.update();
                         Step = AutoSteps.deliverPreLoad;
                         break;
-
+                // Deliver preload and park.
                     case deliverPreLoad:
                         robot.deliverPreLoad(true);
-                        Step = AutoSteps.cycleCones;
+                        Step = AutoSteps.parkFromMedium;
                         break;
 
-                    case cycleCones:
-                        robot.CycleCone(true);
-                        Step = AutoSteps.endAuto;
-
                     case parkFromMedium:
-                        robot.ParkFromMedium(parkingTarget, false);
+                        robot.ParkFromMedium(parkingTarget, true);
                         Step = AutoSteps.endAuto;
+                        break;
 
                     case endAuto:
                         telemetry.addData("➡️", "Auto Finished");

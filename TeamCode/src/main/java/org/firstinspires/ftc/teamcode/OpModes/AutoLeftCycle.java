@@ -1,16 +1,18 @@
 
+
 package org.firstinspires.ftc.teamcode.OpModes;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.Helper.Chassis;
 import org.firstinspires.ftc.teamcode.Helper.Robot;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-@Autonomous(name = "Park", group = "Auto")
-public class AutoPark extends LinearOpMode {
+@Autonomous(name = "LeftCycle", group = "Auto")
+public class AutoLeftCycle extends LinearOpMode {
 
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -19,22 +21,19 @@ public class AutoPark extends LinearOpMode {
     Robot robot = new Robot();
 
     public enum AutoSteps {
-        detectSignal, vSlider, deliverPreLoad, CycleThreeCones, park, endAuto
+        detectSignal, deliverPreLoad, cycleCones, parkFromMedium, endAuto
     }
 
     public AutoSteps Step = AutoSteps.detectSignal;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        // Tensorflow object detector requires initialization of hardware map and vuforia.
-        // Following order is important.
-
+        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
+        // first.
         robot.init(hardwareMap);
         robot.initVuforia();
         robot.initTfod();
         robot.initArmClaw();
-
 
 
         /** Wait for the game to begin */
@@ -49,15 +48,11 @@ public class AutoPark extends LinearOpMode {
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = robot.tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
+//                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
 
                         // step through the list of recognitions and display image position/size information for each one
                         // Note: "Image number" refers to the randomized image orientation/number
                         for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
                             String objectLabel = recognition.getLabel();
                             if (objectLabel == robot.LABELS[0]) {
                                 parkingTarget = 1;
@@ -66,11 +61,10 @@ public class AutoPark extends LinearOpMode {
                             } else if (objectLabel == robot.LABELS[2]) {
                                 parkingTarget = 3;
                             }
-                            telemetry.addData("", " ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-                            telemetry.addData("Robot Location", robot.chassis.Location);
+//
+//                            telemetry.addData("", " ");
+//                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+//                            telemetry.addData("Robot Location", robot.Location);
                             telemetry.addData("parking target", parkingTarget);
                         }
                         telemetry.update();
@@ -81,31 +75,22 @@ public class AutoPark extends LinearOpMode {
                     case detectSignal:
                         telemetry.addData("Parking Target ", parkingTarget);
                         telemetry.update();
-                        Step = AutoSteps.park;
+                        Step = AutoSteps.deliverPreLoad;
                         break;
 
-//                    case vSlider:
-//                        robot.MoveSlider(0.8,1000);
-//                        Step = AutoSteps.endAuto;
-//                        break;
-//
-//                    case deliverPreLoad:
-//                        DeliverPreLoad();
-//                        Step = AutoSteps.park;
-//                        break;
-//
-//                    case CycleThreeCones:
-//                        //Drive to the stack
-//                        robot.DriveToPosition(0.8, -35, 60, false);
-//                        robot.turnRobotToAngle(90);
-//                        for(int i = 0; i < 4; i++) {
-//                            CycleCone();
-//                        }
-//                        Step = AutoSteps.park;
-//                        break;
+                    // Deliver preload and park.
+                    case deliverPreLoad:
+                        robot.deliverPreLoad(true);
+                        Step = AutoSteps.cycleCones;
+                        break;
 
-                    case park:
-                        robot.Park(parkingTarget);
+                    case cycleCones:
+                        robot.CycleCone(true);
+                        Step = AutoSteps.parkFromMedium;
+                        break;
+
+                    case parkFromMedium:
+                        robot.ParkFromMedium(parkingTarget, false);
                         Step = AutoSteps.endAuto;
                         break;
 
@@ -119,5 +104,5 @@ public class AutoPark extends LinearOpMode {
     }
 
 
-
 }
+

@@ -10,8 +10,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class VSlider {
     public DcMotor motor;
 
-    private double holdingPower = -0.01;
-
     private ElapsedTime runtime = new ElapsedTime();
 
     int timeout_ms;
@@ -22,7 +20,7 @@ public class VSlider {
     HardwareMap hwMap = null;
 
 
-    //private static LinearOpmode opModeObj;
+    //private static Linear Opmode opModeObj;
 
     public void init(HardwareMap ahwMap) throws InterruptedException {
 
