@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.opModes.test;
 
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -53,20 +52,25 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
 
     @Override
     public void every_tick() {
-        double normalDriveXInput = Inputs.gamepad1.getLeftX();
-        double normalDriveYInput = Inputs.gamepad1.getLeftY();
-        double sidewaysDriveInput = Inputs.gamepad1.getRightX();
+        GamepadEx gamepad = Inputs.gamepad1;
+
+        double normalDriveXInput = gamepad.getLeftX();
+        double normalDriveYInput = gamepad.getLeftY();
+        double sidewaysDriveInput = gamepad.getRightX();
 
         //if joystick pos is less than this amount from in the middle, the robot doesn't move.
-        final double DEAD_ZONE_SIZE = 0.1D;
+        final double DEAD_ZONE_SIZE = 0.2D;
 
-        if (Inputs.gamepad1.wasJustPressed(PSButtons.SQUARE)) {
+        new GamepadButton(gamepad, PSButtons.SQUARE).whenActive(() -> {
             isSlowMode = !isSlowMode;
+        });
+    {
         }
 
-        if (Inputs.gamepad1.wasJustPressed(PSButtons.CIRCLE)) {
+        new GamepadButton(gamepad, PSButtons.CIRCLE).whenActive(() -> {
             isForwardOnlyMode = !isForwardOnlyMode;
-        }
+        });
+
 
         if (isSlowMode) {
             for (double input: new double[]{normalDriveXInput, normalDriveYInput, sidewaysDriveInput}) {
