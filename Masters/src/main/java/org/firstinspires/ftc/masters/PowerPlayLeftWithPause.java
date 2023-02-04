@@ -18,8 +18,8 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Power Play Right")
-public class PowerPlayRight extends LinearOpMode {
+@Autonomous(name = "Power Play Left W/ Pause")
+public class PowerPlayLeftWithPause extends LinearOpMode {
 
     enum State {
         SCORE_1,
@@ -43,30 +43,34 @@ public class PowerPlayRight extends LinearOpMode {
     LiftPIDController liftPIDController;
     ArmPIDController armPIDController;
 
-    int armTarget=0, liftTarget =0;
+    int armTarget = 0, liftTarget = 0;
 
-    int numberOfConesPickedUp =0;
+    int numberOfConesPickedUp = 0;
 
-    public static  double xCenterJunction = 8;
-    public static double yCenterJunction =-33;
+    public static double xCenterJunction = -9;
+    public static double yCenterJunction = -36;
 
-    public static double xIntermediateStack =20;
+    public static double xIntermediateStack = -20;
     public static double yIntermediateStack = -12;
     public static double angleIntermediateStack = 0;
-    public static double xStack =56;
+    public static double xStack = -56;
     public static double yStack = -8;
 
-    public static int turnJunction = 45;
+//
+//    Pose2d westPoleDeposit = new Pose2d(new Vector2d(-14,-14),Math.toRadians(135));
+//    Pose2d coneStack = new Pose2d(new Vector2d(-60,-12),Math.toRadians(180));
+
 
     @Override
     public void runOpMode() {
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         PowerPlayComputerVisionPipelines CV = new PowerPlayComputerVisionPipelines(hardwareMap, telemetry);
         PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor sleeveColor = null;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(new Vector2d(36, -64.25), Math.toRadians(90)); //Start position for roadrunner
+        Pose2d startPose = new Pose2d(new Vector2d(-37, -64.25), Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
@@ -76,10 +80,9 @@ public class PowerPlayRight extends LinearOpMode {
 
         State currentState;
 
-        // Trajectory from start to nearest tall pole
         Trajectory startToFirstDeposit = drive.trajectoryBuilder(startPose)
-                .splineToConstantHeading(new Vector2d(12,-62),Math.toRadians(90))
-                .splineTo(new Vector2d(xCenterJunction, yCenterJunction),Math.toRadians(90+turnJunction))
+                .splineToConstantHeading(new Vector2d(-12, -62), Math.toRadians(90))
+                .splineTo(new Vector2d(xCenterJunction, yCenterJunction), Math.toRadians(45))
                 .build();
 
         Trajectory forward = drive.trajectoryBuilder(startToFirstDeposit.end())
@@ -90,51 +93,26 @@ public class PowerPlayRight extends LinearOpMode {
                 .back(6)
                 .build();
 
-        Trajectory firstDepositToConeStack1 = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(45))))
-                .splineToLinearHeading(new Pose2d(new Vector2d(xIntermediateStack, yIntermediateStack), 0), 0)
+        Trajectory parkRed = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0, 0, Math.toRadians(-45))))
+                .lineToLinearHeading(new Pose2d(new Vector2d(-36, -36), Math.toRadians(90)))
 
-                .build();
-        Trajectory toConeStack2 = drive.trajectoryBuilder(firstDepositToConeStack1.end())
-                .lineTo(new Vector2d(xStack, yStack))
+                // .splineToLinearHeading(new Pose2d(new Vector2d(11.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
                 .build();
 
-//        Trajectory conePickup = drive.trajectoryBuilder(toConeStack2.end())
-//                .lineToConstantHeading(new Vector2d(49, -9))
-//                .build();
-
-        Trajectory scoreNewCone = drive.trajectoryBuilder(toConeStack2.end())
-                .splineToLinearHeading(new Pose2d(new Vector2d(22,-9.5), -45),Math.toRadians(135))
-              //  .splineTo(new Vector2d(30.5,-9.5),Math.toRadians(315))
+        Trajectory parkGray = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0, 0, Math.toRadians(-45))))
+                .lineToLinearHeading(new Pose2d(new Vector2d(-62, -36), Math.toRadians(90)))
+                // .strafeTo(new Vector2d(62,-37))
                 .build();
-
-        Trajectory fromScoreNewConeToConeStack = drive.trajectoryBuilder(scoreNewCone.end())
-                .lineToLinearHeading(new Pose2d(new Vector2d(59,-14),Math.toRadians(0)))
-                .build();
-
-        Trajectory parkRed = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(turnJunction))))
-                .lineToLinearHeading(new Pose2d(new Vector2d(36,-38),Math.toRadians(90)))
-
-               // .splineToLinearHeading(new Pose2d(new Vector2d(11.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
-                .build();
-
-        Trajectory parkGreen = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(turnJunction))))
-                .lineToLinearHeading(new Pose2d(new Vector2d(62,-38 ),Math.toRadians(90)))
-               // .strafeTo(new Vector2d(62,-37))
-                .build();
-
-//        Trajectory parkRed = drive.trajectoryBuilder(scoreNewCone.end())
-//                .splineToLinearHeading(new Pose2d(new Vector2d(23.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
-//                .build();
 
         waitForStart();
-
         drive.closeClaw();
         drive.tipCenter();
+
 
         long startTime = new Date().getTime();
         long time = 0;
 
-        while (time < 200 && opModeIsActive()) {
+        while (time < 6200 && opModeIsActive()) {
             time = new Date().getTime() - startTime;
             sleeveColor = CV.sleevePipeline.color;
 
@@ -146,23 +124,17 @@ public class PowerPlayRight extends LinearOpMode {
         currentState = State.SCORE_1;
         drive.followTrajectoryAsync(startToFirstDeposit);
 
-        while(opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             switch (currentState) {
                 case SCORE_1:
                     if (!drive.isBusy()) {
-                        currentState= State.FORWARD;
-                        drive.followTrajectoryAsync(forward);
-//                        sleep(300);
-//                        drive.openClaw();
-//                        sleep(300);
-//                        drive.closeClaw();
-//                        currentState = State.BACK_UP_FROM_JUNCTION;
-//                        drive.followTrajectoryAsync(backUpFromJunction);
+                       currentState= State.FORWARD;
+                       drive.followTrajectoryAsync(forward);
                     } else {
                         armTarget = ARM_MID_TOP;
-                        if (drive.armMotor.getCurrentPosition()>100){
-                            liftTarget= SLIDE_HIGH;
+                        if (drive.armMotor.getCurrentPosition() > 100) {
+                            liftTarget = SLIDE_HIGH;
                             drive.tipFront();
                             drive.closeClaw();
                         }
@@ -179,32 +151,33 @@ public class PowerPlayRight extends LinearOpMode {
                     }
                     break;
                 case BACK_UP_FROM_JUNCTION:
-                    if (!drive.isBusy()){
+                    if (!drive.isBusy()) {
 
-                        currentState= State.TURN;
-                        drive.turnAsync(Math.toRadians(-turnJunction));
+                        currentState = State.TURN;
+                        drive.turnAsync(Math.toRadians(47));
                     }
                     break;
                 case TURN:
-                    if (!drive.isBusy()){
+                    if (!drive.isBusy()) {
                         liftTarget = 0;
-                       // drive.closeClaw();
-                       // currentState = State.DONE;
+                        // drive.closeClaw();
+                        // currentState = State.DONE;
                         if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.RED) {
-                                drive.followTrajectoryAsync(parkRed);
-                                currentState = State.PARK_RED   ;
-                            } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
-                                drive.followTrajectoryAsync(parkGreen);
-                                currentState = State.PARK_GREEN;
-                            } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
-                                currentState = State.PARK_GRAY;
-                            }
+                            drive.followTrajectoryAsync(parkRed);
+                            currentState = State.PARK_RED;
+                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
+
+                            currentState = State.PARK_GREEN;
+                        } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
+                            drive.followTrajectoryAsync(parkGray);
+                            currentState = State.PARK_GRAY;
+                        }
 //                        currentState= State.PICKUP;
 //                        drive.followTrajectoryAsync(firstDepositToConeStack1);
                     }
                     break;
                 case NEW_CONE_FROM_SCORE_1:
-                    telemetry.addData("Set up to grab new cone","");
+                    telemetry.addData("Set up to grab new cone", "");
                     telemetry.update();
                     if (!drive.isBusy()) {
 
@@ -213,32 +186,32 @@ public class PowerPlayRight extends LinearOpMode {
 //                        drive.closeClaw();
 //
 //                        currentState = State.SCORE_CONE;
-                       drive.followTrajectoryAsync(toConeStack2);
+                        //     drive.followTrajectoryAsync(toConeStack2);
                     } else {
                         //liftTarget = 75;
 
-                            armTarget = 110;
-                            drive.openClaw();
-                            drive.tipCenter();
+                        armTarget = 110;
+                        drive.openClaw();
+                        drive.tipCenter();
 
                     }
                     break;
                 case CONE_STACK1:
-                    if (!drive.isBusy()){
+                    if (!drive.isBusy()) {
                         drive.closeClaw();
                         sleep(300);
-                        currentState= State.PICKUP;
-                        liftTarget=300;
+                        currentState = State.PICKUP;
+                        liftTarget = 300;
                     }
                     break;
                 case PICKUP:
                     drive.closeClaw();
                     //liftTarget = 200;
-                    if (drive.linearSlide.getCurrentPosition()>250){
+                    if (drive.linearSlide.getCurrentPosition() > 250) {
                         currentState = State.SCORE_CONE;
-                        armTarget= ARM_BACK;
+                        armTarget = ARM_BACK;
                         liftTarget = SLIDE_HIGH;
-                        drive.followTrajectoryAsync(scoreNewCone);
+                        // drive.followTrajectoryAsync(scoreNewCone);
                     }
                     break;
 //                case BACK_UP:
@@ -293,12 +266,12 @@ public class PowerPlayRight extends LinearOpMode {
                 case PARK_RED:
                 case PARK_GREEN:
 
-                    liftTarget= 0;
-                    if (drive.linearSlide.getCurrentPosition()<100){
+                    liftTarget = 0;
+                    if (drive.linearSlide.getCurrentPosition() < 100) {
                         armTarget = 0;
                     }
                     if (!drive.isBusy()) {
-                        if (drive.armMotor.getCurrentPosition()<50){
+                        if (drive.armMotor.getCurrentPosition() < 50) {
                             drive.openClaw();
                             drive.tipCenter();
                         }
@@ -331,7 +304,6 @@ public class PowerPlayRight extends LinearOpMode {
                     break;
             }
 
-
             armPIDController.setTarget(armTarget);
             drive.armMotor.setPower(armPIDController.calculateVelocity());
 
@@ -343,18 +315,128 @@ public class PowerPlayRight extends LinearOpMode {
             drive.frontSlide.setPower(power);
             drive.slideOtherer.setPower(power);
 
-          //  telemetry.addData("power ", power);
+            //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);
-            telemetry.addData("arm position", drive.armMotor.getCurrentPosition() );
+            telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
             telemetry.addData("lift target", liftTarget);
             telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
 
             telemetry.update();
 
+//        drive.closeClaw();
+//
+//        drive.setArmServoMiddle();
+//
+//        drive.liftTop();
+//
+//        TrajectorySequence startTo270Pole = drive.trajectorySequenceBuilder(startPose)
+//                .splineToLinearHeading(new Pose2d( new Vector2d(- 11,-54), Math.toRadians(90)), Math.toRadians(90))
+//                .lineToLinearHeading(new Pose2d(new Vector2d(-11,-30.5),Math.toRadians(45)))
+//                .build();
+//        drive.followTrajectorySequence(startTo270Pole);
+//
+//
+//        //use vision to align
+//
+//        //drop cone
+//        drive.liftMiddle();
+//        sleep(1000);
+//        drive.openClaw();
+//        sleep(300);
+//        drive.liftTop();
+//
+//        TrajectorySequence back = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                .back(2)
+//                .build();
+//        drive.followTrajectorySequence(back);
+//        drive.turn(Math.toRadians(45));
+//
+//        drive.setArmServoTop();
+//        drive.liftDown();
+//        while (this.opModeIsActive() && (drive.linearSlide.getCurrentPosition()>200|| drive.frontSlide.getCurrentPosition()>200)){
+//
+//        }
+//        drive.setArmServoBottom();
+//
+//        TrajectorySequence secondCone = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                .splineToLinearHeading(new Pose2d(new Vector2d(-11,-12),Math.toRadians(150)), Math.toRadians(90))
+//                .splineToLinearHeading(new Pose2d(new Vector2d(-50,-12),Math.toRadians(180)), Math.toRadians(180))
+//                .build();
+//        drive.followTrajectorySequence(secondCone);
+//
+//        drive.openClaw();
+//
+//        TrajectorySequence score = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                .splineToLinearHeading(new Pose2d(new Vector2d(-11,-12),Math.toRadians(180)), Math.toRadians(180))
+//                .build();
+//        drive.followTrajectorySequence(score);
+//
+//
+//        TrajectorySequence newCone = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                .splineToLinearHeading(new Pose2d(new Vector2d(-50,-12),Math.toRadians(180)), Math.toRadians(180))
+//                .build();
+//        drive.followTrajectorySequence(newCone);
+//
+//        drive.followTrajectorySequence(score);
+//
+//        drive.followTrajectorySequence(newCone);
+//
+//        drive.followTrajectorySequence(score);
+//
+//        drive.followTrajectorySequence(newCone);
+//
+//        drive.followTrajectorySequence(score);
+//
+//        drive.turn(90);
+//
+//
+//        switch (sleeveColor) {
+//            case GRAY:
+//                //Parking 1
+//                TrajectorySequence park1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                        .strafeTo(new Vector2d(-64, -12))
+//                        .build();
+//                drive.followTrajectorySequence(park1);
+//                break;
+//            case RED:
+//                //Parking 2
+//                TrajectorySequence park2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                        .strafeTo(new Vector2d(-38, -12))
+//                        .build();
+//                drive.followTrajectorySequence(park2);
+//                break;
+//            case GREEN:
+//                //Parking 3
+//                break;
+//            case INDETERMINATE:
+//                break;
+//
+//        }
+//
+//
+//        // sleep(1000);
+//
+//        sleep (200);
+
+
+//        TrajectorySequence toConeStack = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//                .lineToLinearHeading(coneStack)
+//                .build();
+//        drive.followTrajectorySequence(toConeStack);
+//
+//
+//        TrajectorySequence toWestPole = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//                .lineToLinearHeading(westPoleDeposit)
+//                .build();
+//        drive.followTrajectorySequence(toWestPole);
+//
+
+            //park in the correct spot
+//        drive.followTrajectorySequence(toConeStack);
+
+            //put lift down
+
         }
 
-
-
     }
-
 }

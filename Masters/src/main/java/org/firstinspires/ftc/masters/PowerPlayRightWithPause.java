@@ -18,8 +18,8 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Power Play Right")
-public class PowerPlayRight extends LinearOpMode {
+@Autonomous(name = "Power Play Right W/ Pause")
+public class PowerPlayRightWithPause extends LinearOpMode {
 
     enum State {
         SCORE_1,
@@ -134,7 +134,7 @@ public class PowerPlayRight extends LinearOpMode {
         long startTime = new Date().getTime();
         long time = 0;
 
-        while (time < 200 && opModeIsActive()) {
+        while (time < 6200 && opModeIsActive()) {
             time = new Date().getTime() - startTime;
             sleeveColor = CV.sleevePipeline.color;
 
