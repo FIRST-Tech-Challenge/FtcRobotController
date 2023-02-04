@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences.MainAutos;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
@@ -22,29 +21,44 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 	private Slide slideControl;
 	private Claw clawControl;
 
-	public static double xFirstLinear = 64;
+	public static double angle = 140;
+	public static double angleConeStack = 91.45;
+	public static int armPosition = 935;
+
+	////////////// FIRST \\\\\\\\\\\\\\\\\\\\\\
+	public static double xFirstLinear = 63;
 	public static double yFirstLinear = 0.2;
 	public static double angleFirstLinear = 85;
-	public static double angle = 147;
+
+	////////////// SECOND \\\\\\\\\\\\\\\\\\\\\\
 	public static double xSecondToJunction = 53;
 	public static double ySecondToJunction = -4;
+	public static double angleSecond = 180;
+
+	////////////// THIRD \\\\\\\\\\\\\\\\\\\\\\
 	public static double xThirdToJunction = 54;
 	public static double yThirdToJunction = -4;
-	public static double xFourthToJunction = 54;
-	public static double yFourthToJunction = -4;
+	public static double cycleThreeAngle = 140;
+	public static double angleThird = 180;
+
+	////////////// FOURTH \\\\\\\\\\\\\\\\\\\\\\
+	public static double xFourthToJunction = 55;
+	public static double yFourthToJunction = -5;
+
+	////////////// PARK \\\\\\\\\\\\\\\\\\\\\\
 	public static double xParkZoneOne=48.5;
 	public static double yParkZoneOne=26;
-	public static double xParkZoneThree=-46;
-	public static double yParkZoneThree=-25;
-	public static double angleConeStack = 91.45;
+
 	public static double xSecondPark = 54;
 	public static double ySecondPark = 0;
-	public static int arm = 935;
-	public static double angleSecond = 180;
-	public static double angleThird = 180;
-	public static int strafeThird = -28;
-	public static double cycleThreeAngle = 147;
 
+	public static double xParkZoneThree=-46;
+	public static double yParkZoneThree=-25;
+
+
+
+
+	public static int strafeThird = -28;
 
 	public void initialize(){
 		armControl = new Arm(hardwareMap);
@@ -105,11 +119,6 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 					clawControl.toggleAutoOpenClose();
 				})
 
-
-
-
-
-
 				// GOING TO HIGH JUNCTION FOR THE SECOND TIME
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -118,7 +127,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				.waitSeconds(.45)
 				.UNSTABLE_addTemporalMarkerOffset(0.7,()->{ //0.7 old value
 					slideControl.setCustom(2200); // 2nd time at high junction
-					armControl.setCustom(arm);
+					armControl.setCustom(armPosition);
 					clawControl.toggleWristRotate();
 				})
 
