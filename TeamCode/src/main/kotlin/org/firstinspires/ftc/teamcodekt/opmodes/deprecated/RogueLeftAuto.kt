@@ -1,14 +1,18 @@
-package org.firstinspires.ftc.teamcodekt.opmodes.auto
+package org.firstinspires.ftc.teamcodekt.opmodes.deprecated
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.units.GlobalUnits
 import org.firstinspires.ftc.teamcode.AutoData
+import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
 
+@Disabled
+@Deprecated("Depricated before semi-regionals")
 @Autonomous
-class RogueRightAuto : RogueBaseAuto() {
-    override val startPose = GlobalUnits.pos(91, -159, 90)
+class RogueLeftAuto : RogueBaseAuto() {
+    override val startPose = GlobalUnits.pos(-91, -159, 90)
 
     override fun mainTraj(startPose: Pose2d) =
         Anvil.formTrajectory(bot.drive, startPose)
@@ -48,23 +52,23 @@ class RogueRightAuto : RogueBaseAuto() {
         }
 
     private fun Anvil.awaitInitialGoToDeposit() = this
-        .splineToSplineHeading(82.25, -10.15, 131.95, 115)
+        .splineToSplineHeading(-82.5, -12.75, 50, 65)
 
     private fun Anvil.awaitGoToDeposit(it: Int) = when (it) {
-        0 -> splineToSplineHeading(81.000 + 4, -11.750, 140.900, 155)
-        1 -> splineToSplineHeading(80.100 + 4, -14.105, 139.925, 155)
-        2 -> splineToSplineHeading(76.850 + 4.5, -14.750, 136.450, 155)
-        3 -> splineToSplineHeading(74.624 + 4.5, -19.575, 134.675, 155)
-        4 -> splineToSplineHeading(75.950 + 4.5, -19.350, 143.975, 155)
+        0 -> splineToSplineHeading(-85.100, -10.250, 44.250, 25)
+        1 -> splineToSplineHeading(-81.800, -14.905, 53.275, 25)
+        2 -> splineToSplineHeading(-78.750, -15.050, 52.900, 25)
+        3 -> splineToSplineHeading(-81.124, -14.175, 54.625, 25)
+        4 -> splineToSplineHeading(-81.550, -14.550, 51.600, 25)
         else -> this
     }
 
     private fun Anvil.awaitGoToIntake(it: Int) = when (it) {
-        0 -> splineTo(162.5000, -27.850, 0)
-        1 -> splineTo(162.1750, -29.175, 0)
-        2 -> splineTo(161.4100, -32.400, 0)
-        3 -> splineTo(159.2975, -34.675, 0)
-        4 -> splineTo(157.6500, -33.150, 0)
+        0 -> splineTo(-163.9000, -21.250, 180)
+        1 -> splineTo(-164, -22.575, 180)
+        2 -> splineTo(-162.9100, -22.400, 180)
+        3 -> splineTo(-161.9975, -23.575, 180)
+        4 -> splineTo(-160.9900, -23.750, 180)
         else -> noop
     }.doInReverse()
 
@@ -122,12 +126,12 @@ class RogueRightAuto : RogueBaseAuto() {
             bot.claw.close()
         }
 
-        .addTemporalMarker(135) {
+        .addTemporalMarker(15) {
             bot.arm.setToForwardsPos()
             bot.lift.goToHigh()
         }
 
-        .addTemporalMarker(250) {
+        .addTemporalMarker(100) {
             bot.wrist.setToForwardsPos()
         }
 
@@ -146,14 +150,14 @@ class RogueRightAuto : RogueBaseAuto() {
             resetBot()
 
             when (signalID) {
-                1 -> {
-                    splineToLinearHeading(30, -34, 90, 218)
+                1 -> inReverse {
+                    splineTo(-160, -33, 180)
                 }
                 2 -> inReverse {
-                    splineTo(95.5, -30, 0)
+                    splineTo(-95.5, -30, 180)
                 }
-                3 -> inReverse {
-                    splineTo(160, -33, 0)
+                3 -> {
+                    splineToLinearHeading(-30, -34, 90, -38.375)
                 }
             }
 

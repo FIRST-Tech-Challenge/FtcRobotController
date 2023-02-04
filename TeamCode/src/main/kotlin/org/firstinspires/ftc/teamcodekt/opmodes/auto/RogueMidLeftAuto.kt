@@ -55,6 +55,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
         .lineToLinearHeading(-78.75 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.5 + poleOffset.y.toCm(DistanceUnit.INCHES), -49)
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
+        // TODO: Check depositing position on actual field or practice field
         0 -> splineTo(-81.3 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.2 + poleOffset.y.toCm(DistanceUnit.INCHES), -42.25)
         1 -> splineTo(-81.1 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.2 + poleOffset.y.toCm(DistanceUnit.INCHES), -39.0)
         2 -> splineTo(-80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.6 + poleOffset.y.toCm(DistanceUnit.INCHES), -32.8)

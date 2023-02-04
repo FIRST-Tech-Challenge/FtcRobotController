@@ -42,7 +42,7 @@ abstract class BlackOp : LinearOpMode() {
         hwMap = hardwareMap
         mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        mTelemetry.addLine("Set hwMap and telemetyr")
+        mTelemetry.addLine("Set hwMap and telemetry")
         mTelemetry.update()
 
         Scheduler.emit(STARTING_MSG)

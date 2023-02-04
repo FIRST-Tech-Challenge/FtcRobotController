@@ -11,35 +11,36 @@ import org.firstinspires.ftc.teamcodekt.components.NORMAL_LIFT_P
 import org.firstinspires.ftc.teamcodekt.components.chains.*
 import org.firstinspires.ftc.teamcodekt.components.meta.createTeleOpBotComponents
 
-abstract class RogueBaseTele : BlackOp()                                                                                                                                                    {
-    protected val driver   by createOnGo<ReforgedGamepad> { gamepad1 }
+abstract class RogueBaseTele : BlackOp() {
+    protected val driver by createOnGo<ReforgedGamepad> { gamepad1 }
     protected val codriver by createOnGo<ReforgedGamepad> { gamepad2 }
 
     protected var powerMulti = 0.0
 
     protected val bot by evalOnGo(::createTeleOpBotComponents)
 
-    protected val intakeChain         by createOnGo< IntakeChain         > { bot }
-    protected val regularDepositChain by createOnGo< RegularDepositChain > { bot }
-    protected val reverseDepositChain by createOnGo< ReverseDepositChain > { bot }
-    protected val coneLaunchingChain  by createOnGo< ConeLaunchingChain  > { bot }
-    protected val coneUnflipperChain  by createOnGo< ConeUnflipperChain  > { bot }
+    protected val intakeChain by createOnGo<IntakeChain> { bot }
+    protected val regularDepositChain by createOnGo<RegularDepositChain> { bot }
+    protected val reverseDepositChain by createOnGo<ReverseDepositChain> { bot }
+    protected val coneLaunchingChain by createOnGo<ConeLaunchingChain> { bot }
+    protected val coneUnflipperChain by createOnGo<ConeUnflipperChain> { bot }
 
-    final override fun go()                                                                                                                                                                 {
+    final override fun go() {
         PhotonCore.enable()
 
         describeControls()
 
-        Scheduler.beforeEach                                                                                                                                                                {
-            powerMulti = 1.0                                                                                                                                                                }
+        Scheduler.beforeEach {
+            powerMulti = 1.0
+        }
 
-        Scheduler.launchOnStart                                                                                                                                                             (
-          opmode = this                                                                                                                                                                     )                                                                                                       {
+        Scheduler.launchOnStart(
+                opmode = this) {
             bot.drivetrain.drive(driver.gamepad, powerMulti)
             bot.updateBaseComponents(true)
             bot.lift.printLiftTelem()
-            mTelemetry.addData("P", NORMAL_LIFT_P)
-            mTelemetry.addData("D", NORMAL_LIFT_D)
-            mTelemetry.update()                                                                                                                                                             }}
+        }
+    }
 
-    abstract fun describeControls()                                                                                                                                                         }
+    abstract fun describeControls()
+}

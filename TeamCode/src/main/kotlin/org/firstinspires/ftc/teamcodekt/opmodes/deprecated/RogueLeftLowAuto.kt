@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
 
 @Disabled
+@Deprecated("Never fully tested on comp field, plus mid is just better")
 @Autonomous
 class RogueLeftLowAuto: RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(-91, -159, 90)
