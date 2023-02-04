@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -24,12 +26,13 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.Locale;
 
 @Autonomous(name = "RightRoadRunner", group = "")
-public class RoadRunnerRight extends LinearOpMode {
+public class RightRoadRunner extends LinearOpMode {
     //test1
 
     private SampleMecanumDrive drive;
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
     private DcMotor arm = null;
+    private DistanceSensor gripperSensor;
 
     static final float MAX_SPEED = 1.0f;
     static final float MIN_SPEED = 0.4f;
@@ -51,9 +54,12 @@ public class RoadRunnerRight extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         arm = hardwareMap.get(DcMotor.class, "arm");
         gripper = hardwareMap.get(Servo.class, "gripper");
-        Pose2d startPose = new Pose2d(-63, -29, 0);
+        Pose2d startPose = new Pose2d(-63, -31, 0);
         drive.setPoseEstimate(startPose);
         //TrajectorySequence aSeq = autoSeq(startPose);
+
+        gripperSensor  = hardwareMap.get(DistanceSensor .class, "pole_sensor");
+        //Sensor for arm to stop at end of autonomous
 
         //Reverse the arm direction so it moves in the proper direction
         arm.setDirection(DcMotor.Direction.REVERSE);
@@ -68,6 +74,13 @@ public class RoadRunnerRight extends LinearOpMode {
         initOpenCV();
 
         actuatorUtils.gripperClose(false);
+        sleep(3000);
+
+        double[] centerPix = modifyPipeline.getCenterPix();
+        telemetry.addData("Hue",centerPix[0]);
+        telemetry.addData("Sat", centerPix[1]);
+        telemetry.addData("Value", centerPix[2]);
+        telemetry.update();
 
         waitForStart();
         currTime = System.currentTimeMillis();
@@ -96,6 +109,7 @@ public class RoadRunnerRight extends LinearOpMode {
                     telemetry.addData("Resulting ROI: ", "Something went wrong.");
                 }
                 //}
+                
                 telemetry.update();
                 currTime = System.currentTimeMillis();
 
@@ -106,101 +120,160 @@ public class RoadRunnerRight extends LinearOpMode {
         done = false;
 
         //lift arm up
-        actuatorUtils.armPole(4, false);
         while (((currTime - startTime) < 30000) && !done && opModeIsActive()) {
             autoSeq();
             telemetry.addData("IM at ", getHeading());
             telemetry.update();
-//            sleep(5000);
-            parkSeq(resultROI);
-            while (arm.getCurrentPosition() > -20) {
+            if(!isStopRequested())
+                parkSeq(resultROI);
+            //set arm to lowest position
+            while (gripperSensor.getDistance(DistanceUnit.INCH)>2 && !isStopRequested()) {
                 telemetry.addData("ARM Position = ", arm.getCurrentPosition());
                 telemetry.update();
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 arm.setPower(-0.7);
             }
+            //disabling and resetting arm
             arm.setPower(0);
             arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            telemetry.addData("ARM Position = ", arm.getCurrentPosition());
-            telemetry.update();
+            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             currTime = System.currentTimeMillis();
             done = true;
         }
     }
 
+    private actuatorUtils.ArmLevel getNextLevel (int currentLevel)
+    {
+        if (currentLevel == 0)
+            return actuatorUtils.ArmLevel.CONE4;
+        else if (currentLevel == 1)
+            return actuatorUtils.ArmLevel.CONE3;
+        else if (currentLevel == 2)
+            return actuatorUtils.ArmLevel.CONE2;
+        else
+            return actuatorUtils.ArmLevel.CONE1;
+    }
+
     private void autoSeq() {
-        TrajectorySequence seq1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-60, -13, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(-35,-13,Math.toRadians(45)))
-                .build();
+        //Lift arm to high pole
+        if (isStopRequested())
+            return;
         try {
-            actuatorUtils.armPole(3,false);
+            actuatorUtils.armPole(actuatorUtils.ArmLevel.HIGH_POLE,false);
         } catch (InterruptedException e) {
             telemetry.addData(e.getMessage(), "");
             telemetry.update();
         }
+
+        //Sequence to drive to high pole
+        TrajectorySequence seq1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-60, -13, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-27.5,-5.5,Math.toRadians(45)))
+                .build();
+
+        //Driving to high pole
+        if (isStopRequested())
+            return;
         drive.followTrajectorySequence(seq1);
-        //sleep(1000);
-        TrajectorySequence seq2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-28.5, -6.5, Math.toRadians(45)))
-                .build();
-        drive.followTrajectorySequence(seq2);
-        TrajectorySequence seq3 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-35,-13, Math.toRadians(0)))
-                .build();
+
+        //open gripper to drop cone on high pole
+        if (isStopRequested())
+            return;
         try {
             actuatorUtils.gripperOpen(false);
         } catch (InterruptedException e) {
             telemetry.addData(e.getMessage(), "");
             telemetry.update();
         }
-        drive.followTrajectorySequence(seq3);
+
+        //Sequence to back up from high pole
+        TrajectorySequence seq2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-35,-13, Math.toRadians(0)))
+                .build();
+
+        //Drive to backup from high pole
+        if (isStopRequested())
+            return;
+        drive.followTrajectorySequence(seq2);
+
+        //lower arm pole to cone5
+        if (isStopRequested())
+            return;
         try {
-            actuatorUtils.armPole(4,false);
+            actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE5,false);
         } catch (InterruptedException e) {
             telemetry.addData(e.getMessage(), "");
             telemetry.update();
         }
-        TrajectorySequence seq4 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-13,-13, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(-13, -65, Math.toRadians(-90)))
+
+        //Sequence to drive to cone stack
+        TrajectorySequence seq3 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-12,-13, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-11, -65, Math.toRadians(-90)))
                 .build();
-        drive.followTrajectorySequence(seq4);
-        for (int i = 0; i < 2 ; i++) {
-            try {
+
+        //Drive to cone stack
+        if (isStopRequested())
+            return;
+        drive.followTrajectorySequence(seq3);
+
+        //cycling loop
+        for (int i = 0; i < 2 ; i++)
+        {
+            //grab cone from stack and raise to low pole height
+            if (isStopRequested())
+                return;
+            try
+            {
                 actuatorUtils.gripperClose(true);
-                actuatorUtils.armPole(1, false);
+                actuatorUtils.armPole(actuatorUtils.ArmLevel.LOW_POLE, false);
             } catch (InterruptedException e) {
                 telemetry.addData(e.getMessage(), "");
                 telemetry.update();
             }
-            TrajectorySequence seq5 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(-13, -52, Math.toRadians(-90)))
-                    .lineToLinearHeading(new Pose2d(-13, -48.5, Math.toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(-18, -48.5, Math.toRadians(180)))
-                    //.lineToLinearHeading(new Pose2d(-18, 50, Math.toRadians(180)))
-                    //.lineToLinearHeading(new Pose2d(-12, 64.5, Math.toRadians(90)))
+
+            //Sequence to drive to low pole
+            TrajectorySequence seq4 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(-12, -52, Math.toRadians(-90)))
+                    .lineToLinearHeading(new Pose2d(-11, -49.5, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-17, -49.5, Math.toRadians(180)))
                     .build();
-            drive.followTrajectorySequence(seq5);
+
+            //drive to low pole
+            if (isStopRequested())
+                return;
+            drive.followTrajectorySequence(seq4);
+
+            //drop cone and lower arm to next cone height
+            if (isStopRequested())
+                return;
             try {
                 actuatorUtils.gripperOpen(false);
-                actuatorUtils.armPole(4, false);
-            } catch (InterruptedException e) {
+                actuatorUtils.armPole(getNextLevel(i),false);
+            }
+            catch (InterruptedException e)
+            {
                 telemetry.addData(e.getMessage(), "");
                 telemetry.update();
             }
-            TrajectorySequence seq6 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(-13, -48.5, Math.toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(-13, -65, Math.toRadians(-90)))
+
+            //sequence to drive back to cone stack
+            TrajectorySequence seq5 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(-11,-49.5, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-11, -65, Math.toRadians(-90)))
                     //.turn(Math.toRadians(-90))
                     .build();
-            drive.followTrajectorySequence(seq6);
+
+            //drive to cone stack
+            if (isStopRequested())
+                return;
+            drive.followTrajectorySequence(seq5);
         }
     }
     private void parkSeq(int park) {
         Pose2d pose = drive.getPoseEstimate();
         if (park == 3) {
-            return;
+            pose = new Pose2d(-12, -60,Math.toRadians(-90));
         } else if (park == 2) {
             pose = new Pose2d(-12, -36, Math.toRadians(-90));
         } else {
@@ -216,10 +289,7 @@ public class RoadRunnerRight extends LinearOpMode {
                 "cameraMonitorViewId",
                 "id",
                 hardwareMap.appContext.getPackageName());
-        // For a webcam (uncomment below)
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId2);
-        // For a phone camera (uncomment below)
-        // webCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId2);
         webCam.setPipeline(modifyPipeline);
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
