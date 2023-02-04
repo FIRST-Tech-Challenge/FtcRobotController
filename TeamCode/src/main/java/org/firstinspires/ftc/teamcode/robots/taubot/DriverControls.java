@@ -159,20 +159,19 @@ public class DriverControls {
             robot.driveTrain.adjustChassisLength(1);
         }
 
+        if(stickyGamepad1.start){
+            robot.driveTrain.toggleExtension();
+        }
+
         if(stickyGamepad1.a) {
             robot.crane.pickupSequence();
 
         }
 
         if(stickyGamepad1.b){
-            if(robot.crane.isBulbGripped()) {
-                robot.crane.dropSequence();
-                robot.field.incTarget();
-                robot.crane.updateScoringPattern();
-            }else{
-                robot.crane.dropSequence();
-                robot.crane.updateScoringPattern();
-            }
+            robot.crane.dropSequence();
+            robot.field.incTarget();
+            robot.crane.updateScoringPattern();
         }
 
         if(stickyGamepad1.x){
@@ -195,6 +194,10 @@ public class DriverControls {
             robot.crane.updateScoringPattern();
         }
 
+        if(notJoystickDeadZone(gamepad1.left_stick_x)){
+            robot.driveTrain.maxTuck();
+        }
+
         if(!gamepad1.dpad_down) {
             if (notJoystickDeadZone(gamepad1.right_stick_x)){
                 robot.crane.adjustY(-0.4*gamepad1.right_stick_x);
@@ -208,8 +211,8 @@ public class DriverControls {
             if (gamepad1.left_trigger>.05) robot.crane.adjustZ(-0.7*gamepad1.left_trigger);
 
             //manual override of drivetrain
+            robot.driveTrain.gridMove(-0.7 * gamepad1.left_stick_y, -0.7 * gamepad1.left_stick_x);
             if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
-                robot.driveTrain.ManualArcadeDrive(-0.7 * gamepad1.left_stick_y, 0.7 * gamepad1.left_stick_x);
                 robot.crane.driverIsDriving();
             }
             else {
@@ -229,8 +232,8 @@ public class DriverControls {
             if (gamepad1.left_trigger>.05) robot.crane.adjustZ(-gamepad1.left_trigger);
 
             //manual override of drivetrain
+            robot.driveTrain.gridMove(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
             if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
-                robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x);
                 robot.crane.driverIsDriving();
             }
             else {

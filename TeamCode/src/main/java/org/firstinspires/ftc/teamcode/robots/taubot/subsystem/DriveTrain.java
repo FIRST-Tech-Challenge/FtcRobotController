@@ -27,7 +27,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TankVelocityConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -111,7 +110,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //PID LOOPS_______________________________________________________________________
 
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(1.5, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.1, 0.5, 0.3);
     public static double HEADING_PID_TOLERANCE = 1;
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
@@ -261,6 +260,38 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         targetHeading = vel;
     }
 
+    double gridHeading;
+    double gridMagnitude;
+
+    public void gridMove(double y, double x){
+        gridHeading = wrapAngleRad(Math.atan2(x,y));
+
+        gridMagnitude = 0.3*Math.sqrt(Math.pow(y, 2) + Math.pow(x, 2));
+        if(x ==0 && y == 0){
+            gridHeading = wrapAngleRad(0);
+        }
+        if(gridMagnitude  > 0){
+            tuck();
+        }
+
+        setTargetHeading(gridHeading);
+
+        headingPID.enable();
+        headingPID.setInput(heading);
+        headingPID.setPID(HEADING_PID);
+        double correctionHeading = headingPID.performPID();
+
+        double left = -correctionHeading;
+        double right = correctionHeading;
+
+        if(Math.abs(headingPID.getError()) < 0.05) {
+            left += gridMagnitude;
+            right += gridMagnitude;
+        }
+
+        setMotorPowers(left,right);
+    }
+
     public void setTargetHeadingDeg(double vel){
         setTargetHeading(Math.toRadians(vel));
     }
@@ -390,6 +421,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             telemetryMap.put("raw heading", Math.toDegrees(rawHeading));
             telemetryMap.put("raw heading radians", rawHeading);
             telemetryMap.put("heading", Math.toDegrees(heading));
+            telemetryMap.put("grid heading", gridHeading);
+            telemetryMap.put("magnitude", gridMagnitude);
+            telemetryMap.put("errrorr", headingPID.getError());
 
             telemetryMap.put("x vel", poseVelocity.getX());
             telemetryMap.put("y vel", poseVelocity.getY());
