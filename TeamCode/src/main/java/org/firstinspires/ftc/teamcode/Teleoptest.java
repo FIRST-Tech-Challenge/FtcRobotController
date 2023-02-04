@@ -11,18 +11,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 //@Disabled
 public class Teleoptest extends LinearOpMode {
 
-        // Drive motor and arm variables
-        DcMotor lf = null;
-        DcMotor rf = null;
-        DcMotor lb = null;
-        DcMotor rb = null;
-        DcMotor tower1 = null;
-        // Servo Variables
-        Servo clamp = null;
+    // Drive motor and arm variables
+    DcMotor lf = null;
+    DcMotor rf = null;
+    DcMotor lb = null;
+    DcMotor rb = null;
+    DcMotor tower1 = null;
+    // Servo Variables
+    Servo clamp = null;
 
-        double SpinLeft = 0.1;
-        double STOP = 0.5;
-        double SpinRight = 0.9;
+    double SpinLeft = 0.1;
+    double STOP = 0.5;
+    double SpinRight = 0.9;
     private float lfPower;
     private float rfPower;
     private float lbPower;
@@ -37,15 +37,15 @@ public class Teleoptest extends LinearOpMode {
         telemetry.update();
 
         //left front wheel
-        DcMotor lf = hardwareMap.get(DcMotor.class, "lf");
+        lf = hardwareMap.get(DcMotor.class, "lf");
         //right front wheel
-        DcMotor rf = hardwareMap.get(DcMotor.class, "rf");
+        rf = hardwareMap.get(DcMotor.class, "rf");
         //left back wheel
-        DcMotor lb = hardwareMap.get(DcMotor.class, "lb");
+        lb = hardwareMap.get(DcMotor.class, "lb");
         //right back wheel
-        DcMotor rb = hardwareMap.get(DcMotor.class, "rb");
+        rb = hardwareMap.get(DcMotor.class, "rb");
         //arm motor 1
-        DcMotor tower1 = hardwareMap.get(DcMotor.class, "tower1");
+        tower1 = hardwareMap.get(DcMotor.class, "tower1");
         //Clamp
         clamp = hardwareMap.servo.get("clamp");
         telemetry.addData("JServos", "wobble pos (%.2f), claw pos (%.2f)", clamp.getPosition());
@@ -70,49 +70,47 @@ public class Teleoptest extends LinearOpMode {
 
             //clamp (NOTE: 0-right limit, left limit will break it)
             if (gamepad2.a) {
-                clamp.setPosition(0.4);
+                clamp.setPosition(1);
             } else {
-                clamp.setPosition(0.9);
+                clamp.setPosition(0.4);
             }
-                boolean rsPower;
-                boolean lsPower;
-                double lPower;
-                double towerPower;
+            double lfpower;
+            double lbpower;
+            double rfpower;
+            double rbpower;
+            double towerPower;
 
-                //powerMult = 0.8;
-                double deadzone;
-                deadzone = 0.2f;
+            //powerMult = 0.8;
+            double deadzone;
+            deadzone = 0.2f;
 
-                rsPower = gamepad1.dpad_right;
-                lsPower = gamepad1.dpad_left;
-                lPower = gamepad1.left_stick_y;
-                double rPower = gamepad1.right_stick_y;
-               tPower = gamepad2.right_trigger;
-               tdPower = gamepad2.left_trigger;
 
-            if(gamepad1.dpad_right){
+            tPower = gamepad2.right_trigger;
+            tdPower = gamepad2.left_trigger;
+
+            if (gamepad1.dpad_right) {
                 lfPower = -1.0f;
                 rfPower = 1.0f;
                 lbPower = 1.0f;
                 rbPower = -1.0f;
-            }
-            if(gamepad1.dpad_left){
+            } else if (gamepad1.dpad_left) {
                 lfPower = 1.0f;
                 rfPower = -1.0f;
                 lbPower = -1.0f;
                 rbPower = 1.0f;
-            }
-
-
-                lf.setPower(lPower * 0.50);
-                rf.setPower(rPower * 0.50);
-                lb.setPower(lPower * 0.50);
-                rb.setPower(rPower * 0.50);
-                tower1.setPower(tPower * -.85);
-                tower1.setPower(tdPower * .5);
-
-
+            } else {
+                lfPower = gamepad1.left_stick_y;
+                lbPower = gamepad1.left_stick_y;
+                rbPower = gamepad1.right_stick_y;
+                rfPower = gamepad1.right_stick_y;
 
             }
+            tower1.setPower(tPower * -0.90);
+            tower1.setPower(tdPower * 0.5);
+            lf.setPower(lfPower * 0.5);
+            lb.setPower(lbPower * 0.5);
+            rb.setPower(rbPower * 0.5);
+            rf.setPower(rfPower * 0.5);
         }
+    }
 }
