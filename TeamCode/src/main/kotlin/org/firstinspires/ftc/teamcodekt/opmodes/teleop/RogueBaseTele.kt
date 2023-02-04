@@ -6,8 +6,6 @@ import com.outoftheboxrobotics.photoncore.PhotonCore
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.listeners.ReforgedGamepad
-import org.firstinspires.ftc.teamcodekt.components.NORMAL_LIFT_D
-import org.firstinspires.ftc.teamcodekt.components.NORMAL_LIFT_P
 import org.firstinspires.ftc.teamcodekt.components.chains.*
 import org.firstinspires.ftc.teamcodekt.components.meta.createTeleOpBotComponents
 
