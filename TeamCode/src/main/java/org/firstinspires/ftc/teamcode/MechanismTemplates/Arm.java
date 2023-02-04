@@ -11,11 +11,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class Arm {
 
-
-
     private  PIDFController armPIDF;
     private Motor armMotor;
-
 
 
     // Declaring and Initializing PIDF values
@@ -24,7 +21,7 @@ public class Arm {
     public static double armKd = 0.000005;
     public static double armKf = 0.0000001;
     public static double EXTAKE_POS = 950; // 1255 Actual position based on encoder readings; 1155 old val
-    public static double INTAKE_POS = 0; // -42.45391238 was the old value
+    public static double INTAKE_POS = 10;
     private final double MAX = 1350;
 
     //private final VoltageSensor ArmVolt;

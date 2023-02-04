@@ -21,13 +21,16 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 	private Slide slideControl;
 	private Claw clawControl;
 
-	public static double angle = 140;
-	public static double angleConeStack = 91.45;
+	public static double angle = 145;
+	public static double angleConeStack = 90;
+	public static double xConeStack = 50;
+	public static double yConeStack = 28;
 	public static int armPosition = 935;
+	public static double firstStrafe = 14;
 
 	////////////// FIRST \\\\\\\\\\\\\\\\\\\\\\
-	public static double xFirstLinear = 63;
-	public static double yFirstLinear = 0.2;
+	public static double xFirstLinear = 63.5;
+	public static double yFirstLinear = 2;
 	public static double angleFirstLinear = 85;
 
 	////////////// SECOND \\\\\\\\\\\\\\\\\\\\\\
@@ -42,8 +45,8 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 	public static double angleThird = 180;
 
 	////////////// FOURTH \\\\\\\\\\\\\\\\\\\\\\
-	public static double xFourthToJunction = 55;
-	public static double yFourthToJunction = -5;
+	public static double xFourthToJunction = 54;
+	public static double yFourthToJunction = -4;
 
 	////////////// PARK \\\\\\\\\\\\\\\\\\\\\\
 	public static double xParkZoneOne=48.5;
@@ -63,8 +66,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 	public void initialize(){
 		armControl = new Arm(hardwareMap);
 		slideControl = new Slide(hardwareMap);
-		clawControl = new Claw(hardwareMap);
-		OdoPod odoControl = new OdoPod(hardwareMap);
+
 	}
 
 	public void scan(){
@@ -82,6 +84,11 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 		initialize();
 
 		TrajectorySequence junction = bot.trajectorySequenceBuilder(startPose)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl = new Claw(hardwareMap);
+					OdoPod odoControl = new OdoPod(hardwareMap);
+				})
+				.waitSeconds(0.5)
 				//If 13.53 V, y = -3.5
 				// Mechanisms deposit preload at high junction with a 0.65 delay
 				.UNSTABLE_addTemporalMarkerOffset(0.75,()->{
@@ -113,7 +120,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 					armControl.setIntake();
 				})
 				.waitSeconds(0.25)
-				.strafeLeft(12)
+				.strafeLeft(firstStrafe)
 				.forward(28)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
@@ -149,8 +156,8 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				})
 				.waitSeconds(0.35) // OLD VALUE: 0.25
 				// GOING TO THE CONE STACK \\
-				.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
-				.forward(28)
+				.lineToLinearHeading(new Pose2d(xConeStack ,0, Math.toRadians(angleConeStack)))
+				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
@@ -186,8 +193,8 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 					armControl.setIntake();
 				})
 				.waitSeconds(0.25)
-				.lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(91.45)))
-				.forward(28)
+				.lineToLinearHeading(new Pose2d(xConeStack ,0, Math.toRadians(angleConeStack)))
+				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
@@ -255,8 +262,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 
 		waitForStart();
 		bot.followTrajectorySequenceAsync(junction);
-		//bot.followTrajectorySequenceAsync(goToConeStack);
-		//bot.followTrajectorySequence(conesToJunction);
+		//If we move on, how to eat chicken light skin edition will drop
 
 		while(opModeIsActive()  && !isStopRequested()){
 			bot.update();

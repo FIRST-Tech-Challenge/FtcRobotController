@@ -91,6 +91,7 @@ public class PP_MecanumTeleOp extends OpMode
         slideControl = new Slide(hardwareMap);
         clawControl = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
         OdoPod odoControl = new OdoPod(hardwareMap);
+        OdoPod.retract();
     }// INIT()
 
     @Override
@@ -104,7 +105,7 @@ public class PP_MecanumTeleOp extends OpMode
         claw();
         slides();
 
-        OdoPod.retract();
+
         slideControl.update(telemetry);
         gamepad2_dpad_up.update();
         gamepad2_dpad_down.update();
