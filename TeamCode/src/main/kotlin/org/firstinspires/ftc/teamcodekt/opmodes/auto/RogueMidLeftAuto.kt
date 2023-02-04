@@ -51,24 +51,24 @@ class RogueMidLeftAuto : RogueBaseAuto() {
 
     private fun Anvil.initialGoToDeposit() = this
         .forward(132)
-        .turn(-142.5)
-        .lineToLinearHeading(-83.2 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.9 + poleOffset.y.toCm(DistanceUnit.INCHES), -39.5)
+        .turn(-139.5)
+        .lineToLinearHeading(-78.75 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.5 + poleOffset.y.toCm(DistanceUnit.INCHES), -49)
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        0 -> splineTo(-78 + poleOffset.x.toCm(DistanceUnit.INCHES), -44.0 + poleOffset.y, -38)
-        1 -> splineTo(-78 + poleOffset.x.toCm(DistanceUnit.INCHES), -44.0 + poleOffset.y.toCm(DistanceUnit.INCHES), -36)
-        2 -> splineTo(-79 + poleOffset.x.toCm(DistanceUnit.INCHES), -44.1 + poleOffset.y.toCm(DistanceUnit.INCHES), -31)
-        3 -> splineTo(-78 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.0 + poleOffset.y.toCm(DistanceUnit.INCHES), -30)
-        4 -> splineTo(-79 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.5 + poleOffset.y.toCm(DistanceUnit.INCHES), -28)
+        0 -> splineTo(-81.3 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.2 + poleOffset.y.toCm(DistanceUnit.INCHES), -42.25)
+        1 -> splineTo(-81.1 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.2 + poleOffset.y.toCm(DistanceUnit.INCHES), -39.0)
+        2 -> splineTo(-80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.6 + poleOffset.y.toCm(DistanceUnit.INCHES), -32.8)
+        3 -> splineTo(-80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -39.5 + poleOffset.y.toCm(DistanceUnit.INCHES), -32.5)
+        4 -> splineTo(-80.1 + poleOffset.x.toCm(DistanceUnit.INCHES), -39.5 + poleOffset.y.toCm(DistanceUnit.INCHES), -30)
         else -> throw CycleException()
     }
 
     private fun Anvil.goToIntake(it: Int) = when (it) {
-        0 -> splineTo(-166.3, -25, 180)
-        1 -> splineTo(-165.9, -24.5, 180)
-        2 -> splineTo(-164.2, -24.8, 180)
-        3 -> splineTo(-165.5, -23.9, 180)
-        4 -> splineTo(-164.3, -23.7, 180)
+        0 -> splineTo(-161.5, -22.5, 180)
+        1 -> splineTo(-161.3, -22, 180)
+        2 -> splineTo(-160.5, -22.3, 180)
+        3 -> splineTo(-160.4, -21.4, 180)
+        4 -> splineTo(-160.6, -21.2, 180)
         else -> throw CycleException()
     }.doInReverse()
 
@@ -117,7 +117,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
             bot.lift.targetHeight -= AutoData.DEPOSIT_DROP_AMOUNT
             bot.arm.setToForwardsPos()
         }
-        .addTemporalMarker(-100) {
+        .addTemporalMarker(-50) {
             bot.claw.openForDeposit()
             bot.intake.enable()
         }
@@ -128,7 +128,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
             bot.arm.setToForwardsPos()
         }
 
-        val durationOffset = if (iterations < 4) -100 else -150
+        val durationOffset = if (iterations < 4) -50 else -100
 
         addTemporalMarker(durationOffset) {
             bot.claw.openForDeposit()
@@ -137,7 +137,17 @@ class RogueMidLeftAuto : RogueBaseAuto() {
 
     private fun Anvil.regularIntakePrep(iterations: Int) = this
         .addTemporalMarker(185) {
-            bot.lift.targetHeight = liftOffsets[iterations]
+            when (iterations) {
+                0 -> {
+                    bot.lift.targetHeight = liftOffsets[iterations]+12
+                }
+                1 -> {
+                    bot.lift.targetHeight = liftOffsets[iterations]+15
+                }
+                else -> {
+                    bot.lift.targetHeight = liftOffsets[iterations]
+                }
+            }
             bot.wrist.setToBackwardsPos()
             bot.arm.setToBackwardsPosButLikeSliiiightlyHigher()
         }
@@ -164,11 +174,14 @@ class RogueMidLeftAuto : RogueBaseAuto() {
 
             when (signalID) {
                 1 -> {
-                    lineToLinearHeading(-160, -20, -90)
-                    lineToLinearHeading(-95.5, -20, -90)
+                    lineToLinearHeading(-85.5, -16, 90)
+                    lineToLinearHeading(-150, -16, 90)
                 }
-                2 -> lineToLinearHeading(-95.5, -20, -90)
-                3 -> lineToLinearHeading(-30, -20, -90)
+                2 -> lineToLinearHeading(-85.5, -16, 90)
+                3 -> {
+                    lineToLinearHeading(-85.5, -16, 90)
+                    lineToLinearHeading(-30, -16, 90)
+                }
             }
 
             this

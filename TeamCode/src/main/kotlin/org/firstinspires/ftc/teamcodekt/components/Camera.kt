@@ -95,7 +95,7 @@ class Camera {
             telemetry.update()
         }
 
-        return lastIntID
+        return lastIntID.takeIf { it in 1..3 }
     }
 
     private var numFramesWithoutDetection by Delegates.notNull<Int>()
@@ -134,7 +134,7 @@ class Camera {
             telemetry.addLine("\nDetected tag ID=$lastIntID")
         }
 
-        return lastIntID.takeIf { it > 0 }
+        return lastIntID.takeIf { it in 1..3 }
     }
 
     companion object {

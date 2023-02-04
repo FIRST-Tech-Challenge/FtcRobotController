@@ -55,11 +55,11 @@ class RogueMidRightAuto : RogueBaseAuto() {
         .lineToLinearHeading(83.2 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.9 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 39.5)
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        0 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.0 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 41)
-        1 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.0 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 39)
-        2 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.1 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 34)
-        3 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 34)
-        4 -> splineTo(82 + poleOffset.x.toCm(DistanceUnit.INCHES), -47.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 33.5)
+        0 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.0 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 44.5)
+        1 -> splineTo(79.125 + poleOffset.x.toCm(DistanceUnit.INCHES), -44.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 43.5)
+        2 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.1 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 40.5)
+        3 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 40.5)
+        4 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -47.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 33.5)
         else -> throw CycleException()
     }
 
@@ -118,7 +118,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
             bot.arm.setToForwardsPos()
         }
 
-        .addTemporalMarker(-100) {
+        .addTemporalMarker(-50) {
             bot.claw.openForDeposit()
             bot.intake.enable()
         }
@@ -129,7 +129,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
             bot.arm.setToForwardsPos()
         }
 
-        val durationOffset = if (iterations < 4) -100 else -150
+        val durationOffset = if (iterations < 4) -50 else -100
 
         addTemporalMarker(durationOffset) {
             bot.claw.openForDeposit()
@@ -171,11 +171,14 @@ class RogueMidRightAuto : RogueBaseAuto() {
 
             when (signalID) {
                 1 -> {
-                    lineToLinearHeading(95.5, -20, -90)
-                    lineToLinearHeading(30, -20, -90)
+                    lineToLinearHeading(95.5, -23, -90)
+                    lineToLinearHeading(37, -23, -90)
                 }
-                2 -> lineToLinearHeading(95.5, -20, -90)
-                3 -> lineToLinearHeading(160, -20, -90)
+                2 -> lineToLinearHeading(95.5, -23, -90)
+                3 -> {
+                    lineToLinearHeading(95.5, -23, -90)
+                    lineToLinearHeading(150, -23, -90)
+                }
             }
 
             this

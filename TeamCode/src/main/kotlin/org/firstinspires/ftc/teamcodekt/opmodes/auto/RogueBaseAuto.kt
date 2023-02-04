@@ -40,6 +40,11 @@ abstract class RogueBaseAuto : BlackOp() {
         mTelemetry.addLine("Enabled photon")
         mTelemetry.update()
 
+        readPoleOffset()
+
+        mTelemetry.addLine("Read pole ofset")
+        mTelemetry.update()
+
         val startTraj = mainTraj(startPose)
 
         mTelemetry.addLine("Made trajectory")
@@ -50,21 +55,17 @@ abstract class RogueBaseAuto : BlackOp() {
         mTelemetry.addLine("Setuo trajectory")
         mTelemetry.update()
 
-        customWaitForStart()
-
-        mTelemetry.addLine("Staritng auto")
-        mTelemetry.update()
+        signalID = bot.camera.waitForStartWithVision(this) ?: 2
 
         Scheduler.launch(opmode = this) {
             bot.updateBaseComponents(true)
             bot.drive.update()
+            mTelemetry.addLine("Pole offset: x->${poleOffset.x}, y->${poleOffset.y}")
             mTelemetry.update()
         }
     }
 
-    private fun customWaitForStart() {
-        bot.camera.readConeAsync()
-
+    private fun readPoleOffset() {
         mTelemetry.addLine("Starting reading cone")
         mTelemetry.update()
 
@@ -76,9 +77,7 @@ abstract class RogueBaseAuto : BlackOp() {
         var x = 0.0
         var y = 0.0
 
-        while (!opModeIsActive()) {
-            signalID = bot.camera.coneReadUpdate() ?: 2
-
+        while (!gamepad1.a) {
             if (gamepad1.dpad_right && !rightWasJustPressed) {
                 x += .25
             }
