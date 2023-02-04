@@ -125,6 +125,7 @@ public class CompetitionTeleop2023 extends OpMode {
         telemetry.addData("Left Back Motor","Speed: "+ LBPower);
         telemetry.addData("Right Front Motor","Speed: "+RFPower);
         telemetry.addData("Right Back Motor","Speed: "+ RBPower);
+        telemetry.addData("Arm Encoder Height","Height: "+arm.getCurrentPosition());
 
         //Code for gamepad2
         //Toggle auto and manual mode

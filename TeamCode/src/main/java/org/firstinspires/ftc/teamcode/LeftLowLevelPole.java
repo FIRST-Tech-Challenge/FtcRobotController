@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,7 +27,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 //test
 import java.util.List;
 import java.util.Locale;
-
+@Disabled
 @Autonomous(name = "LeftLowLevelPole", group = "")
 public class LeftLowLevelPole extends LinearOpMode {
     //test1
@@ -163,7 +164,7 @@ public class LeftLowLevelPole extends LinearOpMode {
         telemetry.update();
         done = false;
         //lift arm up
-        actuatorUtils.armPole(4);
+        actuatorUtils.armPole(actuatorUtils.ArmLevel.LOW_POLE);
         while (((currTime - startTime) < 30000)&& !done && opModeIsActive()) {
 
             switch (resultROI) {
@@ -172,14 +173,14 @@ public class LeftLowLevelPole extends LinearOpMode {
                     beginAuto();
                     moveUtils.strafeBuddy(-23);
                     moveUtils.goStraight(28f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.armPole(0);
+                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
                     done=true;
                     break;
                 case 2:
                     // Middle
                     beginAuto();
                     moveUtils.goStraight(20f,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.armPole(0);
+                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
                     done=true;
                     break;
                 case 3:
@@ -187,7 +188,7 @@ public class LeftLowLevelPole extends LinearOpMode {
                     beginAuto();
                     moveUtils.strafeBuddy(24);
                     moveUtils.goStraight(28,MAX_SPEED,MIN_SPEED,ACCEL);
-                    actuatorUtils.armPole(0);
+                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
                     done=true;
                     break;
             }
@@ -199,7 +200,7 @@ public class LeftLowLevelPole extends LinearOpMode {
     private void beginAuto() throws InterruptedException {
         moveUtils.goStraight(4f,MAX_SPEED,MIN_SPEED,ACCEL);
         moveUtils.turnCW(56);
-        actuatorUtils.armPole(1);
+        actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
         moveUtils.goStraight(10f,MAX_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
         moveUtils.goStraight(-12f,MAX_SPEED,MIN_SPEED,ACCEL);
