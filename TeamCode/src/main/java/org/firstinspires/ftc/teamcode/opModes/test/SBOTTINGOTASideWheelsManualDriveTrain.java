@@ -30,7 +30,12 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
 public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
 
     private Telemetry telemetry;
-    private DifferentialDrive normalDriveTrain;
+
+    //private DifferentialDrive normalDriveTrain;
+
+    private Motor leftMotor;
+    private Motor rightMotor;
+
     private Motor sidewaysMotor;
 
     private boolean isSlowMode = false;
@@ -40,7 +45,10 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
     public void setup() {
         telemetry = TelemetryContainer.getTelemetry();
 
-        normalDriveTrain = new DifferentialDrive(HardwareMapContainer.motor0, HardwareMapContainer.motor1);
+        //normalDriveTrain = new DifferentialDrive(HardwareMapContainer.motor0, HardwareMapContainer.motor1);
+        leftMotor = HardwareMapContainer.motor0;
+        rightMotor = HardwareMapContainer.motor1;
+
         sidewaysMotor = HardwareMapContainer.motor2;
     }
 
@@ -49,6 +57,11 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
 //
 //        return (input + 1D) / 2D;
 //    }
+
+    private void arcadeDrive(Motor leftMotor, Motor rightMotor, double forwardSpeed, double turnSpeed) {
+        leftMotor.set((forwardSpeed - turnSpeed) / 2D);
+        rightMotor.set((forwardSpeed + turnSpeed) / 2D);
+    }
 
     @Override
     public void every_tick() {
@@ -87,7 +100,7 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
             input = -DEAD_ZONE_SIZE > input || input > DEAD_ZONE_SIZE ? input : 0D;
         }
 
-        normalDriveTrain.arcadeDrive(normalDriveXInput, normalDriveYInput);
+        arcadeDrive(leftMotor, rightMotor, normalDriveXInput, normalDriveYInput);
 
         sidewaysMotor.set(sidewaysDriveInput);
 
