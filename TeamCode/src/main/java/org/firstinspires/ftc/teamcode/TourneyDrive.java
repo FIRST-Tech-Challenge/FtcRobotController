@@ -50,19 +50,13 @@ public class TourneyDrive extends LinearOpMode {
     public enum LiftState{
         LIFT_INIT,
         LIFT_START,
-        LIFT_DOWN_INITIAL,
-        LIFT_DOWN_FINAL,
-        LIFT_LOW_INITIAL,
-        LIFT_LOW_FINAL,
-        LIFT_MEDIUM_INITIAL,
-        LIFT_MEDIUM_FINAL,
-        LIFT_HIGH_INITIAL,
-        LIFT_HIGH_FINAL,
-        LIFT_FINISH
+        LIFT_RAISE,
+        LIFT_CORRECT,
     }
 
     LiftState liftState = LiftState.LIFT_START;
     boolean autoLift = true;
+    double targetPos = 0;
 
     @Override
     public void runOpMode() {
@@ -149,11 +143,14 @@ public class TourneyDrive extends LinearOpMode {
             boolean liftMedium = gamepad2.dpad_right;
             boolean liftHigh = gamepad2.dpad_up;
 
+            boolean grabberOpen = gamepad2.left_bumper;
+            boolean grabberClose = gamepad2.right_bumper;
+
             boolean raiseMaxHeight = gamepad2.y;
             boolean lowerMaxHeight = gamepad2.x;
 
-            boolean grabberOpen = gamepad2.left_bumper;
-            boolean grabberClose = gamepad2.right_bumper;
+            boolean stopAutoLift = gamepad1.y;
+            boolean switchAutoLift = gamepad1.x;
 
             if(liftFast > .05 || liftFast < -.05 || liftSlow > .05 || liftSlow < -.05 && (!(liftMotor.getCurrentPosition() > MAX_LIFT_POS) || !(liftMotor.getCurrentPosition() < MIN_LIFT_POS))){
                 if(liftFast > .05 || liftFast < -.05){
@@ -177,19 +174,58 @@ public class TourneyDrive extends LinearOpMode {
                 liftMotor.setPower(0);
             }
 
-            /*switch(liftState){
+            switch(liftState){
                 case LIFT_INIT:
+                    liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     break;
                 case LIFT_START:
+                    liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     if(liftDown){
                         moveLift(1,MIN_LIFT_POS);
-                        liftState = LiftState.LIFT_DOWN_INITIAL;
-                    }else{
-
+                        liftState = LiftState.LIFT_RAISE;
+                    }else if(liftLow){
+                        moveLift(1,173 * 15);
+                        liftState = LiftState.LIFT_RAISE;
+                    }else if(liftMedium){
+                        moveLift(1,173 * 25);
+                        liftState = LiftState.LIFT_RAISE;
+                    }else if(liftHigh){
+                        moveLift(1,MAX_LIFT_POS);
+                        liftState = LiftState.LIFT_RAISE;
                     }
                     break;
-                case:
-            }*/
+                case LIFT_RAISE:
+                    if(liftMotor.getCurrentPosition() <= targetPos + 173 && liftMotor.getCurrentPosition() >= targetPos - 173){
+                        moveLift(.25,targetPos);
+                        liftState = LiftState.LIFT_CORRECT;
+                    }
+                    break;
+                case LIFT_CORRECT:
+                    if(liftMotor.getCurrentPosition() <= targetPos + 44 && liftMotor.getCurrentPosition() >= targetPos - 44){
+                        liftMotor.setPower(0);
+                        liftState = LiftState.LIFT_START;
+                    }
+                    break;
+                default:
+                    if(autoLift){
+                        liftState = LiftState.LIFT_START;
+                    }else{
+                        liftState = LiftState.LIFT_INIT;
+                    }
+                    break;
+            }
+
+            if (stopAutoLift && liftState != LiftState.LIFT_START) {
+                liftState = LiftState.LIFT_INIT;
+            }
+
+            if(switchAutoLift){
+                if(liftState == LiftState.LIFT_INIT){
+                    liftState = LiftState.LIFT_START;
+                }else{
+                    liftState = LiftState.LIFT_INIT;
+                }
+            }
 
             if(grabberClose){
                 servoGrabber1.setPosition(MAX_POS);
@@ -309,6 +345,7 @@ public class TourneyDrive extends LinearOpMode {
 
     public void moveLift(double power, double height){
         liftMotor.setPower(power);
-        liftMotor.setTargetPosition((int) (173 * height));
+        liftMotor.setTargetPosition((int) (height));
+        targetPos = height;
     }
 }
