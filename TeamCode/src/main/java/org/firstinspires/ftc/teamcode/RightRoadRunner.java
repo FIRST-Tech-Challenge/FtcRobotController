@@ -168,7 +168,8 @@ public class RightRoadRunner extends LinearOpMode {
         //Sequence to drive to high pole
         TrajectorySequence seq1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(-60, -13, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(-27.5,-5.5,Math.toRadians(45)))
+                .lineToLinearHeading(new Pose2d(-35,-13,Math.toRadians(45)))
+                .lineToLinearHeading(new Pose2d(-27.25,-4.75,Math.toRadians(45)))
                 .build();
 
         //Driving to high pole
@@ -209,7 +210,7 @@ public class RightRoadRunner extends LinearOpMode {
         //Sequence to drive to cone stack
         TrajectorySequence seq3 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(-12,-13, Math.toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(-11, -65, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-10, -65.5, Math.toRadians(-90)))
                 .build();
 
         //Drive to cone stack
@@ -235,8 +236,8 @@ public class RightRoadRunner extends LinearOpMode {
             //Sequence to drive to low pole
             TrajectorySequence seq4 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToLinearHeading(new Pose2d(-12, -52, Math.toRadians(-90)))
-                    .lineToLinearHeading(new Pose2d(-11, -49.5, Math.toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(-17, -49.5, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-10, -50, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-16, -50, Math.toRadians(180)))
                     .build();
 
             //drive to low pole
@@ -259,8 +260,8 @@ public class RightRoadRunner extends LinearOpMode {
 
             //sequence to drive back to cone stack
             TrajectorySequence seq5 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(-11,-49.5, Math.toRadians(180)))
-                    .lineToLinearHeading(new Pose2d(-11, -65, Math.toRadians(-90)))
+                    .lineToLinearHeading(new Pose2d(-10,-50, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(-10, -65.5, Math.toRadians(-90)))
                     //.turn(Math.toRadians(-90))
                     .build();
 
