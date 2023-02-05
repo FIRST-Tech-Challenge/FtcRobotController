@@ -21,7 +21,7 @@ import java.util.ArrayList;
 @Autonomous(name = "BlueRightAutoCycleTuned")
 
 
-public class BlueRightAutoCycleTuned extends LinearOpMode {
+public class BlueRightAutoCycleTunedNoCamera extends LinearOpMode {
     private SampleMecanumDrive rBlueRightAutoCycleTunedoadrun;
 
     public static double dummyP = 3;
