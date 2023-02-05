@@ -208,7 +208,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
     }
 
-    // centers the cone on the junction top
+    /**
+     * using a grabber camera pipeline, drives the robot until centered on junction
+     * @param pipeline
+     */
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
 
@@ -229,7 +232,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         stopDriveMotors();
     }
 
-    // moves towards the cone stack while centering on it until the stack fills the entire camera view
+    /**
+     * using robot camera pipeline to guide the robot until in front of a stack
+     * @param pipeline
+     */
     public void centerConeStack(RobotCameraPipeline pipeline) {
         double xOffset, width;
 
@@ -250,7 +256,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         stopDriveMotors();
     }
 
-    // sets all drive motor powers to 0
+    /**
+     * sets all drive motor powers to 0, to make sure robot is actually stopped
+     */
     public void stopDriveMotors() {
         motorFL.setPower(0.0);
         motorFR.setPower(0.0);
@@ -258,6 +266,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBR.setPower(0.0);
     }
 
+    /**
+     * turns the underglow lights green if it detects the top of a junction
+     */
     public void driveLeds() {
         if(blinkinChassis != null) {
             if (grabberCameraPipeline.detected) {

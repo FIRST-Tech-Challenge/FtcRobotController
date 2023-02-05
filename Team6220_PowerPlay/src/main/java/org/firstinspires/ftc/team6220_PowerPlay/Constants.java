@@ -79,4 +79,6 @@ public class Constants {
     public static final int CIRCLE_DETECTOR_CENTER_DETECT_THRESHOLD = 100;
     public static final int CIRCLE_DETECTOR_MIN_RADIUS = 30;
     public static final int CIRCLE_DETECTOR_MAX_RADIUS = 400;
+
+    public static final int DISTANCE_FROM_CENTER = 250; // in pixels
 }
