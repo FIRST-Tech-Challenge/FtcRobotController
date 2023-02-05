@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,22 +24,45 @@ public class TourneyDrive extends LinearOpMode {
     private Servo servoGrabber1 = null;
     private Servo servoGrabber2 = null;
 
+    private CRServo coneFlipper = null;
 
     static final double MAX_POS     =    .52;
     static final double MAX_POS2    =    .48;
     static final double MIN_POS     =     1;
     static final double MIN_POS2    =     0;
 
-    static final double MIN_LIFT_POS = 0;
-    static final double MAX_LIFT_POS = 173 * 34.5;
+    double MIN_LIFT_POS = 0;
+    double MAX_LIFT_POS = 173 * 34.5;
 
     double position = 1;
     double position2 = 0;
+
+    double MAX_FLIPPER_POS = 1;
+    double MIN_FLIPPER_POS = .45;
 
     double lAdjust = 0;
     double lbAdjust = 0;
     double rAdjust = 0;
     double rbAdjust = 0;
+
+    double lastAdjusted = runtime.seconds();
+
+    public enum LiftState{
+        LIFT_INIT,
+        LIFT_START,
+        LIFT_DOWN_INITIAL,
+        LIFT_DOWN_FINAL,
+        LIFT_LOW_INITIAL,
+        LIFT_LOW_FINAL,
+        LIFT_MEDIUM_INITIAL,
+        LIFT_MEDIUM_FINAL,
+        LIFT_HIGH_INITIAL,
+        LIFT_HIGH_FINAL,
+        LIFT_FINISH
+    }
+
+    LiftState liftState = LiftState.LIFT_START;
+    boolean autoLift = true;
 
     @Override
     public void runOpMode() {
@@ -53,6 +77,8 @@ public class TourneyDrive extends LinearOpMode {
         liftMotor  = hardwareMap.get(DcMotor.class, "lift_motor");
         servoGrabber1 = hardwareMap.get(Servo.class, "servo_grabber_one");
         servoGrabber2 = hardwareMap.get(Servo.class, "servo_grabber_two");
+
+        coneFlipper = hardwareMap.get(CRServo.class, "cone_flipper");
 
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -87,7 +113,13 @@ public class TourneyDrive extends LinearOpMode {
         servoGrabber1.setPosition(position);
         servoGrabber2.setPosition(position2);
 
-        waitForStart();
+        while (!isStarted() && !isStopRequested()){
+            telemetry.addData("FL Encoder:", leftFrontDrive.getCurrentPosition());
+            telemetry.addData("BL Encoder:", leftBackDrive.getCurrentPosition());
+            telemetry.addData("FR Encoder:", rightFrontDrive.getCurrentPosition());
+            telemetry.addData("BR Encoder:", rightBackDrive.getCurrentPosition());
+            telemetry.update();
+        }
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
@@ -106,8 +138,19 @@ public class TourneyDrive extends LinearOpMode {
             boolean adjustLeftTurn = gamepad1.left_bumper;
             boolean adjustRightTurn = gamepad1.right_bumper;
 
+            boolean coneFlipUp = gamepad1.a;
+            boolean coneFlipDown = gamepad1.b;
+
             double liftFast = -gamepad2.left_stick_y;
             double liftSlow = -gamepad2.right_stick_y;
+
+            boolean liftDown = gamepad2.dpad_down;
+            boolean liftLow = gamepad2.dpad_left;
+            boolean liftMedium = gamepad2.dpad_right;
+            boolean liftHigh = gamepad2.dpad_up;
+
+            boolean raiseMaxHeight = gamepad2.y;
+            boolean lowerMaxHeight = gamepad2.x;
 
             boolean grabberOpen = gamepad2.left_bumper;
             boolean grabberClose = gamepad2.right_bumper;
@@ -134,12 +177,34 @@ public class TourneyDrive extends LinearOpMode {
                 liftMotor.setPower(0);
             }
 
+            /*switch(liftState){
+                case LIFT_INIT:
+                    break;
+                case LIFT_START:
+                    if(liftDown){
+                        moveLift(1,MIN_LIFT_POS);
+                        liftState = LiftState.LIFT_DOWN_INITIAL;
+                    }else{
+
+                    }
+                    break;
+                case:
+            }*/
+
             if(grabberClose){
                 servoGrabber1.setPosition(MAX_POS);
                 servoGrabber2.setPosition(MAX_POS2);
             }else if(grabberOpen){
                 servoGrabber1.setPosition(MIN_POS);
                 servoGrabber2.setPosition(MIN_POS2);
+            }
+
+            if(coneFlipUp){
+                coneFlipper.setPower(-.75);
+            }else if(coneFlipDown){
+                coneFlipper.setPower(.75);
+            }else{
+                coneFlipper.setPower(0);
             }
 
             if(adjustForward){
@@ -177,6 +242,18 @@ public class TourneyDrive extends LinearOpMode {
                 lbAdjust = 0;
                 rAdjust = 0;
                 rbAdjust = 0;
+            }
+
+            if(raiseMaxHeight && runtime.seconds() >= lastAdjusted + .5){
+                MAX_LIFT_POS += 17.3;
+                MIN_LIFT_POS += 17.3;
+                lastAdjusted = runtime.seconds();
+            }
+
+            if(lowerMaxHeight && runtime.seconds() >= lastAdjusted + .5){
+                MAX_LIFT_POS -= 17.3;
+                MIN_LIFT_POS -= 17.3;
+                lastAdjusted = runtime.seconds();
             }
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -228,5 +305,10 @@ public class TourneyDrive extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
         }
+    }
+
+    public void moveLift(double power, double height){
+        liftMotor.setPower(power);
+        liftMotor.setTargetPosition((int) (173 * height));
     }
 }
