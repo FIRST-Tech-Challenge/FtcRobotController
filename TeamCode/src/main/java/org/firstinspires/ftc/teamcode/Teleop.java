@@ -87,7 +87,6 @@ public abstract class Teleop extends LinearOpMode {
     boolean   liftFrontToBack        = false;  // safer to assume this, since smaller rotation involved if we're wrong
     int       conesOnStack           = AutonomousBase.fiveStackHeight;
     boolean   collectingFromStack    = false;
-    boolean   cyclingOnLeft          = true; // overridden after setAllianceSpecificBehavior()
 
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
@@ -129,7 +128,6 @@ public abstract class Teleop extends LinearOpMode {
         robot.init(hardwareMap,false);
 
         setAllianceSpecificBehavior();
-        cyclingOnLeft = leftAlliance;
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
@@ -868,9 +866,16 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Raise lift to LOW junction
             robot.grabberSpinStop();
-            robot.grabberSetTilt( robot.GRABBER_TILT_GRAB3 );
+            if(collectingFromStack)
+            {
+                robot.grabberSetTilt(robot.GRABBER_TILT_GRAB3);
+                collectingFromStack= false;
+            }
+            else
+            {
+                robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_L );
+            }
             robot.liftPosInit( robot.LIFT_ANGLE_LOW );
-            robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_L );
             liftFrontToBack = true;  // lifting
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
