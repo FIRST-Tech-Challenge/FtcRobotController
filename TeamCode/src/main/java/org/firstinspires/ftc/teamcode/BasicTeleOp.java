@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.Team.ComplexRobots.Robot;
-import org.firstinspires.ftc.teamcode.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Basic Testing Mecanum TeleOp")
 
