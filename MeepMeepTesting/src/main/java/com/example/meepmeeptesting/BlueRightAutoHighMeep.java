@@ -39,6 +39,16 @@ public class BlueRightAutoHighMeep {
 //                                        .splineToLinearHeading(new Pose2d(-44, 11,toRadians(180)), toRadians(180))
 //                                        .splineToSplineHeading(new Pose2d(-42, 11.75,toRadians(180)), toRadians(180))
                                         .splineTo(new Vector2d(-65,12.5), toRadians(180))
+
+
+
+
+
+
+
+
+
+
 //                                        .setReversed(true)
 //                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
 //                                        .setReversed(false)
