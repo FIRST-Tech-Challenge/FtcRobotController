@@ -16,7 +16,7 @@ import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.clamp
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
-import org.firstinspires.ftc.teamcodekt.util.KalmanFilter
+import ftc.rogue.blacksmith.util.KalmanFilter
 import kotlin.math.abs
 
 // Too many fields...

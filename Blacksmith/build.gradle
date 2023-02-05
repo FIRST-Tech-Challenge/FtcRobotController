@@ -1,6 +1,10 @@
+plugins {
+    id 'maven-publish'
+}
+
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.android.library'
 
 android {
     namespace 'ftc.rouge.blacksmith'
@@ -42,14 +46,13 @@ dependencies {
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
-    implementation 'io.github.classgraph:classgraph:4.8.154'
+//    implementation 'io.github.classgraph:classgraph:4.8.154'
+//    implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.20"
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation "io.mockk:mockk:1.13.3"
     testImplementation 'org.junit.jupiter:junit-jupiter'
-
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.20"
 }
 
 tasks.withType(Test) {
@@ -57,3 +60,22 @@ tasks.withType(Test) {
 }
 
 apply from: '../build.dependencies.gradle'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = 'com.github.RR-9527'
+                artifactId = 'blacksmith-ftc'
+                version = '0.1'
+            }
+        }
+    }
+}

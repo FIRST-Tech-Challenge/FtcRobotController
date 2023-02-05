@@ -8,7 +8,9 @@ import com.outoftheboxrobotics.photoncore.PhotonCore
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
+import ftc.rogue.blacksmith.units.DistanceUnit
 import ftc.rogue.blacksmith.util.kt.LateInitVal
+import ftc.rogue.blacksmith.util.toCm
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcodekt.components.*
 import org.firstinspires.ftc.teamcodekt.components.meta.AutoBotComponents
@@ -112,7 +114,7 @@ abstract class RogueBaseAuto : BlackOp() {
             telemetry.update()
         }
 
-        poleOffset = Vector2d(x, y)
+        poleOffset = Vector2d(x.toCm(DistanceUnit.INCHES), y.toCm(DistanceUnit.INCHES))
     }
 
     companion object {

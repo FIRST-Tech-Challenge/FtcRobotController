@@ -52,22 +52,21 @@ class RogueMidLeftAuto : RogueBaseAuto() {
     private fun Anvil.initialGoToDeposit() = this
         .forward(132)
         .turn(-139.5)
-        .lineToLinearHeading(-78.75 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.5 + poleOffset.y.toCm(DistanceUnit.INCHES), -49)
+        .lineToLinearHeading(-78.75 + poleOffset.x, -42.5 + poleOffset.y, -49)
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        // TODO: Check depositing position on actual field or practice field
-        0 -> splineTo(-81.3 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.2 + poleOffset.y.toCm(DistanceUnit.INCHES), -42.25)
-        1 -> splineTo(-81.1 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.2 + poleOffset.y.toCm(DistanceUnit.INCHES), -39.0)
-        2 -> splineTo(-80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -42.6 + poleOffset.y.toCm(DistanceUnit.INCHES), -32.8)
-        3 -> splineTo(-80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -39.5 + poleOffset.y.toCm(DistanceUnit.INCHES), -32.5)
-        4 -> splineTo(-80.1 + poleOffset.x.toCm(DistanceUnit.INCHES), -39.5 + poleOffset.y.toCm(DistanceUnit.INCHES), -30)
+        0 -> splineTo(-81.3 + poleOffset.x, -42.2 + poleOffset.y, -42.3)
+        1 -> splineTo(-81.1 + poleOffset.x, -42.2 + poleOffset.y, -39.0)
+        2 -> splineTo(-80.7 + poleOffset.x, -42.6 + poleOffset.y, -32.8)
+        3 -> splineTo(-80.7 + poleOffset.x, -39.5 + poleOffset.y, -32.5)
+        4 -> splineTo(-80.1 + poleOffset.x, -39.5 + poleOffset.y, -30.0)
         else -> throw CycleException()
     }
 
     private fun Anvil.goToIntake(it: Int) = when (it) {
-        0 -> splineTo(-161.75, -22, 180)
+        0 -> splineTo(-161.8, -22.0, 180)
         1 -> splineTo(-161.3, -21.5, 180)
-        2 -> splineTo(-161, -21.2, 180)
+        2 -> splineTo(-161.0, -21.2, 180)
         3 -> splineTo(-160.4, -20.9, 180)
         4 -> splineTo(-160.6, -20.7, 180)
         else -> throw CycleException()

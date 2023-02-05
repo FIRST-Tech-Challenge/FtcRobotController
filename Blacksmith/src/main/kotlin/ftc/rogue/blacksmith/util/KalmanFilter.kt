@@ -1,6 +1,6 @@
 @file:Suppress("PrivatePropertyName")
 
-package org.firstinspires.ftc.teamcodekt.util
+package ftc.rogue.blacksmith.util
 
 /**
  * A Kalman Filter for 1D data.
@@ -43,7 +43,7 @@ class KalmanFilter {
     /**
      * State variable
      */
-    private var x = Double.NaN
+    private var x = Double.NaN // estimated signal without noise
 
     /**
      * Instead of specifying a deviceCode, make a custom Kalman Filter.
@@ -59,8 +59,6 @@ class KalmanFilter {
         this.A = A
         this.B = B
         this.C = C
-        cov = Double.NaN
-        x = Double.NaN // estimated signal without noise
     }
 
     /**
@@ -101,26 +99,13 @@ class KalmanFilter {
         return x
     }
 
-    /**
-     * The last measurement taken (accurately).
-     */
     val lastMeasurement: Double
         get() = x
 
-    /**
-     * Set the measurement noise
-     * @param noise the measurement noise.
-     * Postcondition: sets the measurement noise accurately
-     */
     fun setMeasurementNoise(noise: Double) {
         Q = noise
     }
 
-    /**
-     * Set the process noise
-     * @param noise the process noise.
-     * Postcondition: sets the process noise accurately
-     */
     fun setProcessNoise(noise: Double) {
         R = noise
     }

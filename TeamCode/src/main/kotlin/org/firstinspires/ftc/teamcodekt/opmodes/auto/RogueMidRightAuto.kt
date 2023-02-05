@@ -52,14 +52,14 @@ class RogueMidRightAuto : RogueBaseAuto() {
     private fun Anvil.initialGoToDeposit() = this
         .forward(132)
         .turn(142.5)
-        .lineToLinearHeading(83.2 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.9 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 40)
+        .lineToLinearHeading(83.2 + poleOffset.x, -43.9 + poleOffset.y, 180 + 40)
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        0 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.2 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 44.5)
-        1 -> splineTo(79.125 + poleOffset.x.toCm(DistanceUnit.INCHES), -44.7 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 43.5)
-        2 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.3 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 40.5)
-        3 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.7 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 40.5)
-        4 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -47.7 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 33.5)
+        0 -> splineTo(81.00 + poleOffset.x, -45.2 + poleOffset.y, 224.5)
+        1 -> splineTo(79.13 + poleOffset.x, -44.7 + poleOffset.y, 223.5)
+        2 -> splineTo(80.70 + poleOffset.x, -45.3 + poleOffset.y, 220.5)
+        3 -> splineTo(80.70 + poleOffset.x, -45.7 + poleOffset.y, 220.5)
+        4 -> splineTo(80.70 + poleOffset.x, -47.7 + poleOffset.y, 213.5)
         else -> throw CycleException()
     }
 
