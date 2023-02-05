@@ -322,6 +322,11 @@ public class PowerPlayLeft extends LinearOpMode {
             telemetry.addData("lift target", liftTarget);
             telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
 
+            PositionStorage.armPosition = drive.armMotor.getCurrentPosition();
+            PositionStorage.liftPosition = drive.linearSlide.getCurrentPosition();
+            PositionStorage.currentPose = drive.getPoseEstimate();
+
+
             telemetry.update();
 
 //        drive.closeClaw();

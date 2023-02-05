@@ -19,7 +19,7 @@ import java.util.Date;
 
 @Config
 @Autonomous(name = "Power Play Left W/ Pause")
-public class PowerPlayLeftWithPause extends LinearOpMode {
+public class  PowerPlayLeftWithPause extends LinearOpMode {
 
     enum State {
         SCORE_1,
@@ -322,6 +322,11 @@ public class PowerPlayLeftWithPause extends LinearOpMode {
             telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
 
             telemetry.update();
+
+            PositionStorage.armPosition = drive.armMotor.getCurrentPosition();
+            PositionStorage.liftPosition = drive.linearSlide.getCurrentPosition();
+            PositionStorage.currentPose = drive.getPoseEstimate();
+
 
 //        drive.closeClaw();
 //

@@ -45,7 +45,7 @@ public class TrajectorySequenceRunner {
 
     private final NanoClock clock;
 
-    private TrajectorySequence currentTrajectorySequence;
+    protected TrajectorySequence currentTrajectorySequence;
     private double currentSegmentStartTime;
     private int currentSegmentIndex;
     private int lastSegmentIndex;
@@ -269,5 +269,9 @@ public class TrajectorySequenceRunner {
 
     public boolean isBusy() {
         return currentTrajectorySequence != null;
+    }
+
+    public void breakFollowing() {
+
     }
 }

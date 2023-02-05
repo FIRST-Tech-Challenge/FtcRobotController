@@ -351,6 +351,11 @@ public class PowerPlayRightWithPause extends LinearOpMode {
 
             telemetry.update();
 
+            PositionStorage.armPosition = drive.armMotor.getCurrentPosition();
+            PositionStorage.liftPosition = drive.linearSlide.getCurrentPosition();
+            PositionStorage.currentPose = drive.getPoseEstimate();
+
+
         }
 
 
