@@ -93,7 +93,7 @@ public class CompetitionTeleop2023 extends OpMode {
 
         //Code for gamepad1
         //Allows the driver to alter speed and make the robot move faster or slower
-        if (gamepad1.y && !changed2) {
+        /*if (gamepad1.y && !changed2) {
             if (PowerFactor == 0.8f) {
                 PowerFactor = 0.3f;
             } else {
@@ -103,7 +103,7 @@ public class CompetitionTeleop2023 extends OpMode {
         } else if (!gamepad1.y) {
             changed2 = false;
         }
-
+*/
         //Code for mecanum wheels
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * PowerFactor;
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
