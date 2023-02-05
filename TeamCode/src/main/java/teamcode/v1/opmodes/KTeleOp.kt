@@ -8,6 +8,7 @@ import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.NVector
 import com.asiankoala.koawalib.math.Pose
+import com.asiankoala.koawalib.math.radians
 import com.asiankoala.koawalib.subsystem.odometry.Odometry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import teamcode.v1.Robot
@@ -22,7 +23,7 @@ import kotlin.math.sign
 
 @TeleOp
 open class KTeleOp() : KOpMode(photonEnabled = false) {
-    private val robot by lazy { Robot(Pose(0.0,0.0,0.0)) }
+    private val robot by lazy { Robot(Pose(-66.0, 40.0, 180.0.radians)) }
     private var slowMode = false
 
     override fun mInit() {

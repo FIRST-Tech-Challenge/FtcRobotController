@@ -1,5 +1,6 @@
 package teamcode.v1.opmodes
 
+import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.command.commands.*
 import com.asiankoala.koawalib.command.group.SequentialGroup
 import com.asiankoala.koawalib.logger.Logger
@@ -18,10 +19,10 @@ import teamcode.v1.commands.sequences.HomeSequence
 import teamcode.v1.commands.subsystems.ClawCmds
 import teamcode.v1.commands.subsystems.GuideCmds
 import teamcode.v1.constants.*
-import teamcode.v1.vision.AutoOpMode
+import teamcode.v1.vision.Enums
 
 @Autonomous(preselectTeleOp = "KTeleOp")
-class Left : AutoOpMode() {
+class Left : KOpMode() {
     private val robot by lazy { AutoRobot(startPose) }
 
     private val startPose = Pose(-66.0, 40.0, 180.0.radians)
@@ -31,52 +32,45 @@ class Left : AutoOpMode() {
     private val path1 = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
         Pose(startPose.x, startPose.y, 0.0),
-        Pose(-10.0, 33.5, 310.0.radians)
+        Pose(-11.0, 31.5, 310.0.radians)
     )
 
     private val intakePath1 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-12.0, 33.5, 120.0.radians),
-        Pose(-13.5, 61.75, 90.0.radians)
+        Pose(-11.0, 31.5, 120.0.radians),
+        Pose(-15.0, 59.75, 90.0.radians)
     )
 
-    private val intakePath = HermitePath(
+    private val intakePath2 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-12.0, 33.5, 120.0.radians),
-        Pose(-13.5, 62.0, 90.0.radians)
+        Pose(-15.0, 31.5, 90.0.radians),
+        Pose(-14.0, 59.75, 90.0.radians)
     )
 
     private val depositPath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
-        Pose(-16.0, 64.0, 270.0.radians),
-        Pose(-16.0, 56.0, 275.0.radians),
-        Pose(-5.5, 34.0, 310.0.radians)
+        Pose(-14.0, 59.0, 270.0.radians),
+        Pose(-14.0, 53.0, 270.0.radians),
+        Pose(-25.0, 34.0, 210.0.radians)
     )
 
     private val leftPath = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-12.0, 33.5, 120.0.radians),
-        Pose(-15.5, 63.0, 90.0.radians)
+        Pose(-14.0, 59.75, 90.0.radians)
     )
 
     private val middlePath = HermitePath(
-        {180.0.radians},
-        Pose(-8.0, 33.5, 180.0.radians),
-        Pose(-16.0, 39.0, 180.0.radians),
-        Pose(-18.0, 39.0, 180.0.radians),
-        Pose(-20.0, 39.0, 180.0.radians)
+        DEFAULT_HEADING_CONTROLLER,
+        Pose(-15.0, 31.5, 90.0.radians),
     )
 
     private val rightPath = HermitePath(
-        DEFAULT_HEADING_CONTROLLER,
-        Pose(-12.0, 33.5, 270.0.radians),
-        Pose(-20.0, 20.0, 270.0.radians),
-        Pose(-20.0, 20.0, 180.0.radians),
-
+        FLIPPED_HEADING_CONTROLLER,
+        Pose(-15.0, 20.0, 270.0.radians)
     )
 
     override fun mInit() {
-        super.mInit()
+        robot.vision.start()
         robot.claw.setPos(ClawConstants.closePos)
         Logger.config = LoggerConfig(
             isLogging = true,
@@ -91,7 +85,7 @@ class Left : AutoOpMode() {
             InstantCmd({robot.lift.setPos(7.0)}),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(path1, 0.6, 20.0, 12.0, 0.6, 3.0, 5.0),
+                SimpleGVFController(path1, 0.6, 20.0, 12.0, 0.6, 1.5, 1.5),
                 Pair(
                     AutoDepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, robot.whacker, 145.0, LiftConstants.highPos, GuideConstants.depositPos, WhackerConstants.rightPos), ProjQuery(
                         Vector(-60.0, 40.0)
@@ -99,121 +93,145 @@ class Left : AutoOpMode() {
                 )
             ),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
-            WaitCmd(0.5),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 4.0, GuideConstants.telePos),
+            WaitCmd(0.25),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 5.0, GuideConstants.telePos),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(intakePath1, 0.6, 20.0, 8.0, 0.4, 3.0, 5.0)
+                SimpleGVFController(intakePath1, 0.6, 20.0, 12.0, 0.5, 1.5, 1.5)
             ),
             WaitCmd(0.25),
             ClawCmds.ClawCloseCmd(robot.claw),
-            WaitCmd(0.5),
-            InstantCmd({robot.lift.setPos(11.0)}),
-            GuideCmds.GuideDepositCmd(robot.guide),
+            WaitCmd(0.25),
+            InstantCmd({robot.lift.setPos(13.0)}),
             WaitCmd(0.25),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(depositPath, 0.5, 20.0, 8.0, 0.4, 3.0, 5.0),
+                SimpleGVFController(depositPath, 0.6, 20.0, 12.0, 0.5, 1.5, 1.5),
                 Pair(
-                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 155.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
-                        Vector(-14.0, 66.0)
+                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 145.0, LiftConstants.midPos, GuideConstants.depositPos), ProjQuery(
+                        Vector(-15.0, 59.0)
                     )
                 )
             ),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 4.0, GuideConstants.telePos),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
+            GVFCmd(
+                robot.drive,
+                SimpleGVFController(intakePath2, 0.6, 20.0, 12.0, 0.5, 1.5, 1.5)
+            ),
+            WaitCmd(0.25),
+            ClawCmds.ClawCloseCmd(robot.claw),
+            WaitCmd(0.25),
+            InstantCmd({robot.lift.setPos(13.0)}),
+            WaitCmd(0.25),
+            GVFCmd(
+                robot.drive,
+                SimpleGVFController(depositPath, 0.6, 20.0, 12.0, 0.5, 1.5, 1.5),
+                Pair(
+                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 145.0, LiftConstants.midPos, GuideConstants.depositPos), ProjQuery(
+                        Vector(-15.0, 59.0)
+                    )
+                )
+            ),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
             HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 3.0, GuideConstants.telePos),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(intakePath, 0.6, 20.0, 8.0, 0.4, 3.0, 5.0)
+                SimpleGVFController(intakePath2, 0.6, 20.0, 12.0, 0.5, 1.5, 1.5)
             ),
             WaitCmd(0.25),
             ClawCmds.ClawCloseCmd(robot.claw),
-            WaitCmd(0.5),
-            InstantCmd({robot.lift.setPos(11.0)}),
-            GuideCmds.GuideDepositCmd(robot.guide),
+            WaitCmd(0.25),
+            InstantCmd({robot.lift.setPos(13.0)}),
             WaitCmd(0.25),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(depositPath, 0.5, 20.0, 8.0, 0.4, 3.0, 5.0),
+                SimpleGVFController(depositPath, 0.6, 20.0, 12.0, 0.5, 1.5, 1.5),
                 Pair(
-                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 155.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
-                        Vector(-14.0, 66.0)
+                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 145.0, LiftConstants.midPos, GuideConstants.depositPos), ProjQuery(
+                        Vector(-15.0, 59.0)
                     )
                 )
             ),
-            WaitCmd(0.25),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
             HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 2.0, GuideConstants.telePos),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(intakePath, 0.6, 20.0, 8.0, 0.4, 3.0, 5.0)
+                SimpleGVFController(intakePath2, 0.6, 20.0, 12.0, 0.5, 1.5, 1.5)
             ),
             WaitCmd(0.25),
             ClawCmds.ClawCloseCmd(robot.claw),
-            WaitCmd(0.5),
-            InstantCmd({robot.lift.setPos(11.0)}),
-            GuideCmds.GuideDepositCmd(robot.guide),
+            WaitCmd(0.25),
+            InstantCmd({robot.lift.setPos(13.0)}),
             WaitCmd(0.25),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(depositPath, 0.5, 20.0, 8.0, 0.4, 3.0, 5.0),
+                SimpleGVFController(depositPath, 0.6, 20.0, 12.0, 0.5, 1.5, 1.5),
                 Pair(
-                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 155.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
-                        Vector(-14.0, 66.0)
+                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 145.0, LiftConstants.midPos, GuideConstants.depositPos), ProjQuery(
+                        Vector(-15.0, 59.0)
                     )
                 )
             ),
-//                WaitCmd(0.25),
-//                ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
-//                WaitCmd(0.25),
-//                HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 1.0, GuideConstants.telePos),
-//                GVFCmd(
-//                        robot.drive,
-//                        SimpleGVFController(intakePath, 0.6, 20.0, 8.0, 0.4, 3.0, 5.0)
-//                ),
-//                WaitCmd(0.25),
-//                ClawCmds.ClawCloseCmd(robot.claw),
-//                WaitCmd(0.5),
-//                InstantCmd({robot.lift.setPos(11.0)}),
-//                GuideCmds.GuideDepositCmd(robot.guide),
-//                WaitCmd(0.25),
-//                GVFCmd(
-//                        robot.drive,
-//                        SimpleGVFController(depositPath, 0.5, 20.0, 15.0, 0.4, 3.0, 5.0),
-//                        Pair(
-//                                DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 160.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
-//                                Vector(-14.0, 66.0)
-//                        )
-//                        )
-//                ),
-            WaitCmd(0.25),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, -1.0, GuideConstants.telePos),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 1.0, GuideConstants.telePos),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
+            GVFCmd(
+                robot.drive,
+                SimpleGVFController(intakePath2, 0.6, 20.0, 12.0, 0.5, 1.5, 1.5)
+            ),
+            WaitCmd(0.25),
+            ClawCmds.ClawCloseCmd(robot.claw),
+            WaitCmd(0.25),
+            InstantCmd({robot.lift.setPos(13.0)}),
+            WaitCmd(0.25),
+            GVFCmd(
+                robot.drive,
+                SimpleGVFController(depositPath, 0.6, 20.0, 12.0, 0.5, 1.5, 1.5),
+                Pair(
+                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 145.0, LiftConstants.midPos, GuideConstants.depositPos), ProjQuery(
+                        Vector(-15.0, 59.0)
+                    )
+                )
+            ),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
+            WaitCmd(0.25),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.homePos, -1.0, GuideConstants.telePos),
+            GVFCmd(
+                robot.drive,
+                SimpleGVFController(middlePath, 0.6, 20.0, 6.0, 0.5, 1.5, 1.5)
+            ),
             ChooseCmd(
                 GVFCmd(robot.drive,
-                    SimpleGVFController(rightPath, 0.5, 30.0, 6.0, 0.4, 3.0, 5.0)),
+                    SimpleGVFController(rightPath, 0.6, 20.0, 6.0, 0.5, 1.5, 1.5)),
                 ChooseCmd(
                     GVFCmd(robot.drive,
-                        SimpleGVFController(middlePath, 0.5, 30.0, 6.0, 0.3, 3.0, 5.0)),
-                    GVFCmd(robot.drive, SimpleGVFController(leftPath,0.5, 30.0, 6.0, 0.3, 3.0, 5.0)),
-                ) { tagOfInterest!!.id == MIDDLE },
-            ) { tagOfInterest!!.id == RIGHT }
+                        SimpleGVFController(middlePath, 0.6, 20.0, 6.0, 0.5, 1.5, 1.5)),
+                    GVFCmd(robot.drive, SimpleGVFController(leftPath,0.6, 20.0, 6.0, 0.5, 1.5, 1.5)),
+                ) { robot.vision.zone == Enums.Zones.MIDDLE },
+            ) { robot.vision.zone == Enums.Zones.RIGHT }
         )
         mainCommand.schedule()
     }
 
-    override fun mLoop() {
-        super.mLoop()
-        Logger.addTelemetryData("arm pos", robot.arm.motor.pos)
+    override fun mInitLoop() {
+        Logger.addTelemetryData("zone", robot.vision.zone)
     }
 
-    override fun mStop() {
-        super.mStop()
-        ClawCmds.ClawCloseCmd(robot.claw)
+    override fun mStart() {
+        robot.vision.stop()
+        robot.vision.unregister()
+    }
+
+    override fun mLoop() {
+        Logger.addTelemetryData("arm pos", robot.arm.motor.pos)
     }
 }

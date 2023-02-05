@@ -66,7 +66,6 @@ class Hardware(startPose: Pose) {
             FFGains(kS = ArmConstants.kS, kV = ArmConstants.kV, kA = ArmConstants.kA, kCos = ArmConstants.kCos),
             MotionConstraints(ArmConstants.maxVel, ArmConstants.maxAccel, ArmConstants.maxDeccel),
             allowedPositionError = ArmConstants.allowedPositionError,
-            disabledPosition = ArmConstants.disabledPosition
         )
         .build()
 

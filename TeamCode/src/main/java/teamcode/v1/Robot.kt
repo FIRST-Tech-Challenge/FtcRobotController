@@ -23,7 +23,7 @@ class Robot(startPose: Pose) {
     val lift = Lift(hardware.liftLeadMotor, hardware.liftSecondMotor)
 
     init {
-        arm.setPos(-71.0)
+        arm.setPos(-65.0)
         lift.setPos(0.0)
     }
 }
