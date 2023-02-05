@@ -65,11 +65,11 @@ class RogueMidLeftAuto : RogueBaseAuto() {
     }
 
     private fun Anvil.goToIntake(it: Int) = when (it) {
-        0 -> splineTo(-161.5, -22.5, 180)
-        1 -> splineTo(-161.3, -22, 180)
-        2 -> splineTo(-160.5, -22.3, 180)
-        3 -> splineTo(-160.4, -21.4, 180)
-        4 -> splineTo(-160.6, -21.2, 180)
+        0 -> splineTo(-161.75, -22, 180)
+        1 -> splineTo(-161.3, -21.5, 180)
+        2 -> splineTo(-161, -21.2, 180)
+        3 -> splineTo(-160.4, -20.9, 180)
+        4 -> splineTo(-160.6, -20.7, 180)
         else -> throw CycleException()
     }.doInReverse()
 
@@ -118,7 +118,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
             bot.lift.targetHeight -= AutoData.DEPOSIT_DROP_AMOUNT
             bot.arm.setToForwardsPos()
         }
-        .addTemporalMarker(-50) {
+        .addTemporalMarker(50) {
             bot.claw.openForDeposit()
             bot.intake.enable()
         }
@@ -129,7 +129,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
             bot.arm.setToForwardsPos()
         }
 
-        val durationOffset = if (iterations < 4) -50 else -100
+        val durationOffset = if (iterations < 4) -20 else -70
 
         addTemporalMarker(durationOffset) {
             bot.claw.openForDeposit()
@@ -175,12 +175,12 @@ class RogueMidLeftAuto : RogueBaseAuto() {
 
             when (signalID) {
                 1 -> {
-                    lineToLinearHeading(-85.5, -16, 90)
+                    lineToLinearHeading(-92.5, -21, 90)
                     lineToLinearHeading(-150, -16, 90)
                 }
-                2 -> lineToLinearHeading(-85.5, -16, 90)
+                2 -> lineToLinearHeading(-92.5, -21, 90)
                 3 -> {
-                    lineToLinearHeading(-85.5, -16, 90)
+                    lineToLinearHeading(-92.5, -21, 90)
                     lineToLinearHeading(-30, -16, 90)
                 }
             }

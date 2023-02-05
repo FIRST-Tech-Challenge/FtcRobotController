@@ -38,7 +38,7 @@ var ANGLED_LIFT_MID = 620
 var ANGLED_LIFT_HIGH = 1110
 
 @JvmField
-var NORMAL_LIFT_P = 0.0015
+var NORMAL_LIFT_P = 0.00185
 @JvmField
 var NORMAL_LIFT_I = 0.01
 @JvmField
@@ -134,7 +134,7 @@ class Lift(val usingMotionProfiling: Boolean) {
     }
 
     fun goToAngledMidButHigher() {
-        targetHeight = ANGLED_LIFT_MID+85
+        targetHeight = ANGLED_LIFT_MID + 85
     }
 
     fun goToAngledLow() {

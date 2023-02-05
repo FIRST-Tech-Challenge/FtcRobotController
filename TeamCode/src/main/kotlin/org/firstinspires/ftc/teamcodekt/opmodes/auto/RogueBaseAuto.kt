@@ -52,9 +52,11 @@ abstract class RogueBaseAuto : BlackOp() {
 
         Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
-        mTelemetry.addLine("Setuo trajectory")
+        mTelemetry.addLine("Setup trajectory")
         mTelemetry.update()
 
+        bot.camera.targetAngle = CAM_FORWARDS
+        bot.camera.update()
         signalID = bot.camera.waitForStartWithVision(this) ?: 2
 
         Scheduler.launch(opmode = this) {

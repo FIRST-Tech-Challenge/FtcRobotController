@@ -52,23 +52,23 @@ class RogueMidRightAuto : RogueBaseAuto() {
     private fun Anvil.initialGoToDeposit() = this
         .forward(132)
         .turn(142.5)
-        .lineToLinearHeading(83.2 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.9 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 39.5)
+        .lineToLinearHeading(83.2 + poleOffset.x.toCm(DistanceUnit.INCHES), -43.9 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 40)
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        0 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.0 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 44.5)
-        1 -> splineTo(79.125 + poleOffset.x.toCm(DistanceUnit.INCHES), -44.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 43.5)
-        2 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.1 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 40.5)
-        3 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 40.5)
-        4 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -47.5 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 33.5)
+        0 -> splineTo(81 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.2 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 44.5)
+        1 -> splineTo(79.125 + poleOffset.x.toCm(DistanceUnit.INCHES), -44.7 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 43.5)
+        2 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.3 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 40.5)
+        3 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -45.7 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 40.5)
+        4 -> splineTo(80.7 + poleOffset.x.toCm(DistanceUnit.INCHES), -47.7 + poleOffset.y.toCm(DistanceUnit.INCHES), 180 + 33.5)
         else -> throw CycleException()
     }
 
     private fun Anvil.goToIntake(it: Int) = when (it) {
-        0 -> splineTo(162.3, -27.3, 0)
-        1 -> splineTo(161.5, -27.3, 0)
-        2 -> splineTo(161.2, -27.3, 0)
-        3 -> splineTo(161.0, -27.3, 0)
-        4 -> splineTo(161.4, -26.7, 0)
+        0 -> splineTo(162.3, -27.9, 0)
+        1 -> splineTo(161.5, -27.9, 0)
+        2 -> splineTo(161.2, -27.9, 0)
+        3 -> splineTo(161.0, -27.9, 0)
+        4 -> splineTo(161.4, -27.4, 0)
         else -> throw CycleException()
     }.doInReverse()
 
