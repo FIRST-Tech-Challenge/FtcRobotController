@@ -4,4 +4,40 @@ sidebar_position: 1
 
 # Installation
 
-yes
+Getting Blacksmith into your project is simple and it can be incrementally adopted (i.e. you don't have to immediately
+convert your whole project to Blacksmith)
+
+To add it, first, open your root level `build.dependencies.gradle` file
+
+Then, in the `dependencies` block, add the following:
+```groovy
+implementation 'com.github.RR-9527:robot-code-v2:0.1'
+```
+
+And under the `repositories` block:
+```groovy
+ maven { url = 'https://jitpack.io' }
+ maven { url = 'https://maven.brott.dev/' }
+```
+
+All together, it should look something like this (pic from a brand-new project):
+![](/img/randomassets/installation_example.png)
+
+Then, open your root level `build.common.gradle` file, scroll down, find `minSdkVersion 23`, and change it to `minSdkVersion 24`
+
+In Android Studio, it should look like:
+![](/img/randomassets/installation_sdk_ver.png)
+
+Finally, it should ask you if you want to sync the gradle files; click `Sync Now`
+![](/img/randomassets/installation_sync.png)
+
+:::info
+If that doesn't show up, just click on `File > Sync Project with Gradle Files`
+
+![](/img/randomassets/installation_sync_backup.png)
+:::
+
+:::tip
+Once you're done with this, I **highly** recommend setting up [GlobalUnits (click me)](./util/global-units). It's not required per
+se, but it makes Blacksmith much more convenient.
+:::

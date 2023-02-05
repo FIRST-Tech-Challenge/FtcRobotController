@@ -115,7 +115,7 @@ const config = {
         ],
       },
       prism: {
-        additionalLanguages: ['java', 'kotlin', 'brainfuck'],
+        additionalLanguages: ['java', 'kotlin', 'brainfuck', 'groovy'],
         theme: require('prism-react-renderer/themes/github'),
         darkTheme: require('prism-react-renderer/themes/vsDark'),
         magicComments: [
