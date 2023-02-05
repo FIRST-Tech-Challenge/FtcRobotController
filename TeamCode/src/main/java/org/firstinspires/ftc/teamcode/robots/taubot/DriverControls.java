@@ -333,6 +333,24 @@ public class DriverControls {
             auto.visionProvider.update();
     }
 
+    public void UnderarmControls(){
+        if(notJoystickDeadZone(gamepad2.right_stick_x)){
+            robot.underarm.adjustY(gamepad2.right_stick_x);
+        }
+
+        if(notJoystickDeadZone(gamepad2.right_stick_y)){
+            robot.underarm.adjustX(gamepad2.right_stick_y);
+        }
+
+        if(notJoystickDeadZone(gamepad2.right_stick_y)){
+            robot.underarm.adjustX(gamepad2.right_stick_y);
+        }
+
+        if (gamepad1.right_trigger>.05) robot.underarm.adjustZ(gamepad1.right_trigger);
+        if (gamepad1.left_trigger>.05) robot.underarm.adjustZ(-gamepad1.left_trigger);
+
+    }
+
     public void UnderarmTesting(){
         if(Math.abs(gamepad1.left_stick_y) > 0.05){
             robot.underarm.adjustShoulder(gamepad1.left_stick_y);
@@ -346,9 +364,6 @@ public class DriverControls {
         if(Math.abs(gamepad1.left_stick_x) > 0.05){
             robot.underarm.adjustTurret(gamepad1.left_stick_x);
         }
-
-        if (stickyGamepad1.b) robot.underarm.articulate(UnderArm.Articulation.HOME);
-        if (stickyGamepad1.a) robot.underarm.articulate(UnderArm.Articulation.TRANSFER);
 
 
     }

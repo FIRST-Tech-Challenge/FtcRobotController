@@ -631,7 +631,7 @@ public class Crane implements Subsystem {
                 setTargetTurretAngle(calculatedTurretAngle);
                 goTargetInd++;
                 break;
-            case 1:
+            case 1: //waits for shoulder and turret to finish moving to target then sets the extension to go to its target
                 if(shoulderOnTarget() && extensionOnTarget() && turretOnTarget()){
                     setExtendTargetPos(calculatedLength);
                     setShoulderTargetAngle(calculatedAngle);
@@ -639,7 +639,7 @@ public class Crane implements Subsystem {
                     goTargetInd++;
                 }
                 break;
-            case 2:
+            case 2: //checks if all are on target
                 if(shoulderOnTarget() && extensionOnTarget() && turretOnTarget()){
                     goToTimer = futureTime(0.4);
                     goTargetInd++;
@@ -658,7 +658,7 @@ public class Crane implements Subsystem {
         return false;
     }
 
-    public static Vector3 home = new Vector3(2, 0 ,26);
+    public static Vector3 home = new Vector3(2, 0 ,18);
 
     int homeInd;
 
@@ -970,7 +970,8 @@ public class Crane implements Subsystem {
         fieldPositionTarget = new Vector3(x,y,z);
     }
 
-    public boolean calculateFieldTargeting(Vector3 vec){
+    public boolean
+    calculateFieldTargeting(Vector3 vec){
         return calculateFieldTargeting(vec.x,vec.y,vec.z);
     }
 
