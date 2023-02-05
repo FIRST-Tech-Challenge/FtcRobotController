@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Team.OpModes;
 //Kirill was here :)
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.Team.ComplexRobots.Robot;
+import org.firstinspires.ftc.teamcode.Team.ComplexRobots.Robot;
 
 @TeleOp
 public class FieldCentricStrafeTest extends LinearOpMode {

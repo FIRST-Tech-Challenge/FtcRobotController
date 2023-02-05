@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.Team.OpModes.PreSeason;
+package org.firstinspires.ftc.teamcode.Team.OpModes.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.Team.ComplexRobots.Robot;
-import org.firstinspires.ftc.Team.Enums.Direction;
+import org.firstinspires.ftc.teamcode.Team.ComplexRobots.Robot;
+import org.firstinspires.ftc.teamcode.Team.Enums.Direction;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Basic Test Autonomous")
 public class BasicAuto extends LinearOpMode {
