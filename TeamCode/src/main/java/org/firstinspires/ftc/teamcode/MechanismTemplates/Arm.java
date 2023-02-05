@@ -47,6 +47,17 @@ public class Arm {
       //  ArmVolt= hardwareMap.voltageSensor.get("ARM");
     }
 
+    public Arm(HardwareMap hardwareMap, boolean isTeleOp){
+        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_84); // Pin 0 on control hub -> pin 1 control hub
+        armMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        armMotor.setRunMode(Motor.RunMode.VelocityControl);
+
+        armMotor.resetEncoder(); // We want the arm to start at a position of 0
+
+        double[] PIDF_COEFF = {armKp, armKi, armKd, armKf};
+        armPIDF = new PIDFController(PIDF_COEFF[0], PIDF_COEFF[1], PIDF_COEFF[2], PIDF_COEFF[3]);
+    }
+
     public void update(Telemetry telemetry){
 
        /* if(ArmVolt.getVoltage()>brokenVolt){
@@ -88,9 +99,10 @@ public class Arm {
         targetPos=custom;
     }
 
-    public void manualArm(int increment){
-        double targetManual = armMotor.getCurrentPosition()+increment;
-        if(targetManual <= MAX && targetManual >= INTAKE_POS)
-            targetPos = targetManual;
+    public void panick(boolean bool){
+        if (bool) {
+            armMotor.resetEncoder();
+            targetPos = -50;
+        }
     }
 }

@@ -21,16 +21,16 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 	private Slide slideControl;
 	private Claw clawControl;
 
-	public static double angle = 145;
-	public static double angleConeStack = 90;
-	public static double xConeStack = 50;
-	public static double yConeStack = 28;
+	public static double angle = 150;
+	public static double angleConeStack = 95;
+	public static double xConeStack = 51.5;
+	public static double yConeStack = 29.5;
 	public static int armPosition = 935;
-	public static double firstStrafe = 14;
+	public static double firstStrafe = 17;
 
 	////////////// FIRST \\\\\\\\\\\\\\\\\\\\\\
-	public static double xFirstLinear = 63.5;
-	public static double yFirstLinear = 2;
+	public static double xFirstLinear = 65;
+	public static double yFirstLinear = 2.5;
 	public static double angleFirstLinear = 85;
 
 	////////////// SECOND \\\\\\\\\\\\\\\\\\\\\\
@@ -45,8 +45,8 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 	public static double angleThird = 180;
 
 	////////////// FOURTH \\\\\\\\\\\\\\\\\\\\\\
-	public static double xFourthToJunction = 54;
-	public static double yFourthToJunction = -4;
+	public static double xFourthToJunction = 53;
+	public static double yFourthToJunction = -3;
 
 	////////////// PARK \\\\\\\\\\\\\\\\\\\\\\
 	public static double xParkZoneOne=48.5;
@@ -180,7 +180,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1370);
 				})
-				.waitSeconds(.35)
+				.waitSeconds(.6)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
@@ -215,21 +215,20 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(1370);
 				})
-				.waitSeconds(.35)
+				.waitSeconds(.5)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.15)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setIntakeOrGround();
+					armControl.setIntake();
+				})
+				.waitSeconds(0.25)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 
 					clawControl.toggleWristRotate();
 
-				})
-				.waitSeconds(0.25)
-
-				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setIntakeOrGround();
-					armControl.setIntake();
 				})
 				.waitSeconds(0.25)
 
@@ -249,7 +248,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 						bot.followTrajectorySequenceAsync(zoneTwo);
 					}else{
 						Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(xFourthToJunction,yFourthToJunction,Math.toRadians(angle)))
-								.lineToLinearHeading(new Pose2d(48.5 ,-25, Math.toRadians(angleThird)))
+								.lineToLinearHeading(new Pose2d(48.5 ,-23, Math.toRadians(angleThird)))
 								.build();
 						bot.followTrajectoryAsync(zoneThree);
 					}

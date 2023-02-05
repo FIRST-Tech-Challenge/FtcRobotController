@@ -34,6 +34,7 @@ public class PP_MecanumTeleOp extends OpMode
     SignalEdgeDetector gamepad2_Y = new SignalEdgeDetector(() -> gamepad2.y);
 
 
+
     // Declaring mechanism objects
     private Arm armControl;
     private Slide slideControl;
@@ -87,7 +88,7 @@ public class PP_MecanumTeleOp extends OpMode
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        armControl = new Arm(hardwareMap);
+        armControl = new Arm(hardwareMap,true);
         slideControl = new Slide(hardwareMap);
         clawControl = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
         OdoPod odoControl = new OdoPod(hardwareMap);
@@ -200,6 +201,7 @@ public class PP_MecanumTeleOp extends OpMode
 
         }
 
+        armControl.panick(gamepad2_dpad_down.isRisingEdge());
     }
 
     public void claw() {
