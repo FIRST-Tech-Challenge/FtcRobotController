@@ -21,12 +21,12 @@ import java.util.ArrayList;
 @Autonomous(name = "BlueRightAutoCycleTuned")
 
 
-public class BlueRightAutoCycleTuned extends LinearOpMode {
-    private SampleMecanumDrive roadrun;
+public class BlueRightAutoCycleTunedNoCamera extends LinearOpMode {
+    private SampleMecanumDrive rBlueRightAutoCycleTunedoadrun;
 
     public static double dummyP = 3;
 
-    public static double dropX = -25, dropY = 1, dropA = toRadians(140), dropET = toRadians(310);
+    public static double dropX = -30, dropY = 2, dropA = toRadians(130), dropET = toRadians(310);
 
     public static double pickupX1 = -45.5, pickupY1 = 11.75, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
     public static double pickupX2 = -62.9, pickupY2 = 11.75, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
@@ -44,7 +44,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
 //        robot.cv.observeSleeve();
         TrajectorySequence initialtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29.6, 62.25, toRadians(90)))
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(-35, 25,90), toRadians(270))
+                .splineToSplineHeading(new Pose2d(-38, 25,90), toRadians(270))
                 .splineToSplineHeading(new Pose2d(-29.4, 3.2, toRadians(140)), toRadians(320))
                 .addTemporalMarker(robot::done)
                 .build();
@@ -52,29 +52,29 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(-63, 11.75,toRadians(180)), toRadians(180))
 //                .addTemporalMarker(robot::done)
                 .build();
-        TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29.4, 3.2, toRadians(135)))
+        TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29.4, 3.2, toRadians(140)))
 //                .splineToSplineHeading(new Pose2d(-45, 11.75, toRadians(180)), toRadians(178))
 //                .splineToSplineHeading(new Pose2d(-45, 11,toRadians(180)), toRadians(180))
 //                .splineTo(new Vector2d(-48,11), toRadians(180))
-                .splineTo(new Vector2d(-48,13), toRadians(180))
-                .splineToSplineHeading(new Pose2d(-63,13,toRadians(180)), toRadians(180))
+//                .splineTo(new Vector2d(-48,13), toRadians(180))
+                .splineToLinearHeading(new Pose2d(-62,11,toRadians(180)), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
         ArrayList<TrajectorySequence> dropTrajectory = new ArrayList<>();
         for(int i=0;i<5;i++){
-            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(-65,11,Math.toRadians(180)))
+            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(-62,11,Math.toRadians(180)))
                     .setReversed(true)
-//                    .splineToSplineHeading(new Pose2d(-38,9,toRadians(130)),toRadians(320))
-                    .splineToSplineHeading(new Pose2d(dropX-(i+1)*0., dropY-(i+1)*0., Math.toRadians(130)), Math.toRadians(310))
+                    .splineToLinearHeading(new Pose2d(-38,10,toRadians(150)),toRadians(330))
+                    .splineToLinearHeading(new Pose2d(dropX-(i+1)*0., dropY-(i+1)*0., dropA), dropET)
                     .addTemporalMarker(robot::done)
                     .build());
         }
-        TrajectorySequence pickupTrajectory2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, toRadians(140)))
+        TrajectorySequence pickupTrajectory2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
 //                .splineToSplineHeading(new Pose2d(-52.4, 5+(robot.getVoltage()-12)/1.5,toRadians(180)), toRadians(180))
 //                .splineToSplineHeading(new Pose2d(-45, 11,toRadians(180)), toRadians(180))
 //                .splineTo(new Vector2d(-50,11), toRadians(179))
-                .splineTo(new Vector2d(-48,13), toRadians(179))
-                .splineTo(new Vector2d(-63,13), toRadians(180))
+//                .splineToSplineHeading(new Pose2d(-48,13, toRadians(180)), toRadians(180))
+                .splineToLinearHeading(new Pose2d(-62,11, toRadians(180)), toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence parkTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
@@ -83,7 +83,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
         TrajectorySequence park1trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
                 .splineToLinearHeading(new Pose2d(dropX-4,dropY+7, toRadians(185)),toRadians(dropA))
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(-12,12,toRadians(180)), toRadians(0))
+                .splineToLinearHeading(new Pose2d(-12,9,toRadians(180)), toRadians(0))
                 .build();
         TrajectorySequence park2trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
                 .setReversed(false)
@@ -151,7 +151,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
             robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue(), true);
             robot.delay(0.5);
             robot.raiseLiftArmToOuttake(true);
-            robot.delay(0.15);
+//            robot.delay(0.15);
             robot.openClaw(false);
             for (int i = 0; i < 4; i++) {
                 robot.delay(0.8);
@@ -179,7 +179,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
                 robot.liftToPosition(LIFT_HIGH_JUNCTION);
                 robot.delay(0.3+0.005*(3-i));
                 robot.raiseLiftArmToOuttake(true);
-                robot.delay(0.15);
+//                robot.delay(0.15);
                 robot.openClaw(false);
             }
             robot.delay(0.8);

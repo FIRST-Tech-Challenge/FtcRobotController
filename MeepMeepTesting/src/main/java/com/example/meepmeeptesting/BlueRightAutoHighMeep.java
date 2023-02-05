@@ -27,9 +27,7 @@ public class BlueRightAutoHighMeep {
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-29.6, 62.25, toRadians(60)))
                                         .setReversed(true).splineTo(new Vector2d(-36, 40), toRadians(260))
-//                                        .splineTo(new Vector2d(-36, 27), toRadians(280))
-                                        .splineTo(new Vector2d(-35, 16), toRadians(310))
-                                        .addTemporalMarker(()->{})
+                                        .splineTo(new Vector2d(-36, 20), toRadians(270))
                                         .splineToSplineHeading(new Pose2d(-29.2, 6.4, toRadians(140)), toRadians(310))
                                         .setReversed(false)
                                         .splineToSplineHeading(new Pose2d(-65, 12.5, toRadians(180)), toRadians(180))
@@ -41,6 +39,16 @@ public class BlueRightAutoHighMeep {
 //                                        .splineToLinearHeading(new Pose2d(-44, 11,toRadians(180)), toRadians(180))
 //                                        .splineToSplineHeading(new Pose2d(-42, 11.75,toRadians(180)), toRadians(180))
                                         .splineTo(new Vector2d(-65,12.5), toRadians(180))
+
+
+
+
+
+
+
+
+
+
 //                                        .setReversed(true)
 //                                        .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET)
 //                                        .setReversed(false)
