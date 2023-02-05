@@ -45,22 +45,22 @@ public class Signal extends LinearOpMode {
 
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
 
-            tower1.setPower(0);
+            tower1.setPower(-0.1);
             lf.setPower(0);
             rf.setPower(0);
             lb.setPower(0);
             rb.setPower(0);
-            clamp.setPosition(0);
+            clamp.setPosition(1);
 
             sleep(20000); // Wait for 20 Seconds
 
 
-            tower1.setPower(0);
+            tower1.setPower(-0.1);
             lf.setPower(-.6 * sidemult);
             rf.setPower(.6 * sidemult);
             lb.setPower(.6 * sidemult);
             rb.setPower(-.6 * sidemult);
-            clamp.setPosition(.53);
+            clamp.setPosition(1);
 
             sleep(1000);
     }
