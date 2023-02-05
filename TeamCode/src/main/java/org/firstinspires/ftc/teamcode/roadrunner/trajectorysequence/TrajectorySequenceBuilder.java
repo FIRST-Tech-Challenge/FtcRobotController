@@ -314,7 +314,7 @@ public class TrajectorySequenceBuilder {
         return this;
     }
 
-    private TrajectorySequenceBuilder setTangentOffset(double offset) {
+    public TrajectorySequenceBuilder setTangentOffset(double offset) {
         setAbsoluteTangent = false;
 
         this.tangentOffset = offset;

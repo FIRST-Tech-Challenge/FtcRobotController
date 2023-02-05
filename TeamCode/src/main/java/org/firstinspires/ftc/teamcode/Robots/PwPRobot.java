@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
@@ -60,6 +61,12 @@ public class PwPRobot extends BasicRobot {
         voltage = voltageSensor.getVoltage();
         RFMotor.kP*= 13/ voltageSensor.getVoltage();
         RFMotor.kA*= 13/ voltageSensor.getVoltage();
+        DriveConstants.TRACK_WIDTH *= 12.7/ voltageSensor.getVoltage();
+        DriveConstants.kV *= 12.7/ voltageSensor.getVoltage();
+        DriveConstants.kA *= 12.7/ voltageSensor.getVoltage();
+        DriveConstants.kStatic *= 12.7/ voltageSensor.getVoltage();
+
+
 //        DriveConstants.MAX_ANG_ACCEL *= 12.8/voltageSensor.getVoltage();
 //        DriveConstants.MAX_ANG_VEL *= 12.8/voltageSensor.getVoltage();
 
@@ -237,7 +244,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void liftToPosition(Lift.LiftConstants targetJunction) {
-        if (queuer.queue(true, lift.isDone() || abs(lift.getLiftPosition() - targetJunction.getValue()) < 20)) {
+        if (queuer.queue(true, lift.isDone()&&lift.getLiftTarget()!= targetJunction.getValue() || abs(lift.getLiftPosition() - targetJunction.getValue()) < 50)) {
             lift.liftToPosition(targetJunction);
         }
     }
@@ -253,7 +260,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void liftToPosition(int tickTarget) {
-        if (queuer.queue(true, lift.isDone() || abs(lift.getLiftPosition() - tickTarget) < 50)) {
+        if (queuer.queue(true, lift.isDone()&&lift.getLiftTarget()!= tickTarget || abs(lift.getLiftPosition() - tickTarget) < 50)) {
             lift.liftToPosition(tickTarget);
         }
     }
@@ -533,9 +540,9 @@ public class PwPRobot extends BasicRobot {
             if (regularDrive) {
                 roadrun.setWeightedDrivePower(
                         new Pose2d(
-                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.6 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2)),
-                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.6 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2)),
-                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.6 * abs(vals[2]))
+                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.55 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2)),
+                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.55 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2)),
+                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.7 * abs(vals[2]))
                         )
                 );
             } else {
@@ -587,7 +594,7 @@ public class PwPRobot extends BasicRobot {
                 claw.closeClawRaw();
             }
         }
-        claw.closeClaw();
+//        claw.closeClaw();
         if (op.getRuntime() - claw.getLastTime() > .4 && op.getRuntime() - claw.getLastTime() < .7 && CLAW_CLOSED.getStatus()) {
             liftArm.raiseLiftArmToOuttake();
         }
@@ -600,7 +607,7 @@ public class PwPRobot extends BasicRobot {
 
 
         //will only close when detect cone
-        //claw.closeClaw
+        claw.closeClaw();
         op.telemetry.addData("stacklevel", lift.getStackLevel());
         if (gp.updateSequence()) {
             field.autoMovement();
