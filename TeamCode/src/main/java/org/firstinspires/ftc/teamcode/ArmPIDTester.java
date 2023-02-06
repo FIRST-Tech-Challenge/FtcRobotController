@@ -128,13 +128,17 @@ public class ArmPIDTester extends LinearOpMode
     } // writeLiftLog()
 
     /**
-     * pSin
+     * @param p1 Power required to almost move
+     * @param v1 Voltage at which power was applied in mV
+     * @param p2 Power required to almost move
+     * @param v2 Votlage at which power was applied in mV
+     * @return Linear interpolated value
      */
-    public double getLiftMinPower() {
+    public double getInterpolatedMinPower(double p1, double v1, double p2, double v2) {
         double result;
         double voltage = robot.readBatteryExpansionHub();
-        double slope = (0.0860 - 0.0650) / (12300 - 13540);
-        result = slope * (voltage - 13540) + 0.0650;
+        double slope = (p1 - p2) / (v1 - v2);
+        result = slope * (voltage - v2) + p2;
 
         return result;
     }
@@ -146,11 +150,21 @@ public class ArmPIDTester extends LinearOpMode
     {
         // Current distance from target (degrees)
         double degreesToGo = newAngle - robot.liftAngle;
-        double pSin = 0.40;
-//        double pSin = getLiftMinPower();
+        double pSinLift = 0.007;
+        double pStaticLift = 0.320;
+        double pSinLower = 0.007;
+        double pStaticLower = 0.110;
+        // Voltage doesn't seem as important on the arm minimum. Probably don't have to do
+        // interpolated voltage. For example 0.13 power was not able to move arm at low voltage
+        // and also could not at fresh battery voltage. 0.131 was able to at low voltage.
+        // pStaticLower 0.130 @ 12.54V
+        // pStaticLift 0.320 @ 12.81V
+//        double pSin = getInterpolatedMinPower();
 
-        pidController = new PIDControllerArm(-0.04, 0.000, 0.000,
-                pSin);
+//        pidController = new PIDControllerWormArm(-0.04, 0.000, 0.000,
+//                pSin, pStatic);
+        pidController = new PIDControllerWormArm(-0.1, 0.000, -0.007,
+                pSinLift, pStaticLift, -0.030, 0.000, -0.007, pSinLower, pStaticLower);
 
         // Are we ALREADY at the specified angle?
         if( Math.abs(degreesToGo) <= 1.0 )
@@ -176,9 +190,9 @@ public class ArmPIDTester extends LinearOpMode
 
     } // liftPosInit
 
-    // pStatic = 0.0860 @ 12.30V
-    // pStatic = 0.0650 @ 13.54V
-    PIDControllerArm pidController;
+    // pStaticLower = 0.0 @ V
+    // pStaticLower = 0.0 @ V
+    PIDControllerWormArm pidController;
 
     /*--------------------------------------------------------------------------------------------*/
     /* liftPosRun()                                                                             */
@@ -194,6 +208,14 @@ public class ArmPIDTester extends LinearOpMode
             int waitCycles = (teleopMode) ? 5 : 2;
             double power = pidController.update(liftAngleTarget, robot.liftAngle);
             telemetry.addData("Set Power", power);
+            telemetry.addData("p", pidController.pidCurrent.kp);
+            telemetry.addData("i", pidController.pidCurrent.ki);
+            telemetry.addData("d", pidController.pidCurrent.kd);
+            telemetry.addData("sin", pidController.ksinCurrent);
+            telemetry.addData("static", pidController.kStaticCurrent);
+            telemetry.addData("error", pidController.pidCurrent.error);
+            telemetry.addData("target", liftAngleTarget);
+            telemetry.addData("state", robot.liftAngle);
             telemetry.update();
             robot.liftMotorsSetPower(power);
             if(abs(power) > abs(maxPower)) {
@@ -231,8 +253,8 @@ public class ArmPIDTester extends LinearOpMode
 
         // Perform setup needed to center lift
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
-        while( robot.turretMotorAuto == true || robot.liftMotorAuto == true) {
+        robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
+        while( !isStopRequested() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
             performEveryLoop();
         }
         robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
@@ -245,10 +267,11 @@ public class ArmPIDTester extends LinearOpMode
         while (opModeIsActive())
         {
             performEveryLoop();
-            liftPIDPosInit(robot.LIFT_ANGLE_HIGH);
+            liftPIDPosInit( robot.LIFT_ANGLE_ASTART );
             // Execute the automatic turret movement code
-            telemetry.addData("pSin", pidController.ksin);
-            telemetry.addData("kp", pidController.kp);
+            telemetry.addData("pSinLift", pidController.ksinLift);
+            telemetry.addData("pStaticLift", pidController.kStaticLift);
+            telemetry.addData("kpLift", pidController.pidLift.kp);
             while(liftMotorPIDAuto && opModeIsActive()) {
                 performEveryLoop();
             }

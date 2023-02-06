@@ -128,14 +128,17 @@ public class TurretPIDTester extends LinearOpMode
     } // writeTurretLog()
 
     /**
-     // pStatic = 0.0860 @ 12.30V
-     // pStatic = 0.0650 @ 13.54V
+     * @param p1 Power required to almost move
+     * @param v1 Voltage at which power was applied in mV
+     * @param p2 Power required to almost move
+     * @param v2 Votlage at which power was applied in mV
+     * @return Linear interpolated value
      */
-    public double getTurretMinPower() {
+    public double getInterpolatedMinPower(double p1, double v1, double p2, double v2) {
         double result;
         double voltage = robot.readBatteryExpansionHub();
-        double slope = (0.0860 - 0.0650) / (12300 - 13540);
-        result = slope * (voltage - 13540) + 0.0650;
+        double slope = (p1 - p2) / (v1 - v2);
+        result = slope * (voltage - v2) + p2;
 
         return result;
     }
@@ -147,10 +150,14 @@ public class TurretPIDTester extends LinearOpMode
     {
         // Current distance from target (degrees)
         double degreesToGo = newAngle - robot.turretAngle;
-        double pStatic = getTurretMinPower();
+        // pStatic = 0.0860 @ 12.30V 1
+        // pStatic = 0.0650 @ 13.54V 2
+        double pStatic = getInterpolatedMinPower(0.0860, 12300, 0.0650, 13540);
 
         pidController = new PIDControllerTurret(0.00575, 0.0005, 0.0011,
-                pStatic, 0.0);
+                pStatic);
+//        pidController = new PIDControllerTurret(0.009, 0.0005, 0.0000,
+//                pStatic, 0.0);
 
         // Are we ALREADY at the specified angle?
         if( Math.abs(degreesToGo) <= 1.0 )
@@ -194,6 +201,11 @@ public class TurretPIDTester extends LinearOpMode
             int waitCycles = (teleopMode) ? 5 : 2;
             double power = pidController.update(turretAngleTarget, robot.turretAngle);
             telemetry.addData("Set Power", power);
+            telemetry.addData("KP", pidController.kp);
+            telemetry.addData("KI", pidController.ki);
+            telemetry.addData("KD", pidController.kd);
+            telemetry.addData("StaticP", pidController.kpMinValue);
+            telemetry.addData("Angle", robot.turretAngle);
             telemetry.update();
             robot.turretMotor.setPower(power);
             if(abs(power) > abs(maxPower)) {
@@ -213,6 +225,11 @@ public class TurretPIDTester extends LinearOpMode
 
     @Override
     public void runOpMode() throws InterruptedException {
+        double oldTime;
+        double newTime;
+        double target = 20.0;
+        ElapsedTime oldWay = new ElapsedTime();
+        ElapsedTime newWay = new ElapsedTime();
         telemetry.addLine("Robot initializing, wait for completion.");
         telemetry.update();
 
@@ -225,7 +242,7 @@ public class TurretPIDTester extends LinearOpMode
         telemetry.addLine("Hardware initialized...");
         telemetry.update();
 
-        robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
         sleep(300);
         performEveryLoop();
 
@@ -235,12 +252,38 @@ public class TurretPIDTester extends LinearOpMode
         while( robot.turretMotorAuto == true || robot.liftMotorAuto == true) {
             performEveryLoop();
         }
-        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
 
         telemetry.addLine("Turret positioned, ready to start.");
         telemetry.update();
 
         waitForStart();
+
+        oldWay.reset();
+        robot.turretPosInit( target );
+        while( opModeIsActive() && robot.turretMotorAuto == true ) {
+            performEveryLoop();
+        }
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        while( opModeIsActive() && robot.turretMotorAuto == true ) {
+            performEveryLoop();
+        }
+        oldTime = oldWay.milliseconds();
+
+        newWay.reset();
+        turretPIDPosInit( target );
+        while( opModeIsActive() && turretMotorPIDAuto == true ) {
+            performEveryLoop();
+        }
+        turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
+        while( opModeIsActive() && turretMotorPIDAuto == true ) {
+            performEveryLoop();
+        }
+        newTime = newWay.milliseconds();
+
+        telemetry.addData("Old Timer", oldTime);
+        telemetry.addData("New Timer", newTime);
+        telemetry.update();
+        sleep(10000);
 
         while (opModeIsActive())
         {

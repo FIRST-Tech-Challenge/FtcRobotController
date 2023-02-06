@@ -4,7 +4,7 @@ import static java.lang.Math.abs;
 
 public class PIDControllerTurret extends PIDController{
     public final double kStatic;
-    public final double kStaticDeadZone;
+    public double kpMinValue;
 
     /**
      * Construct the PID controller
@@ -12,12 +12,10 @@ public class PIDControllerTurret extends PIDController{
      * @param i - Integral coefficient
      * @param d - Derivative coefficient
      * @param pStatic - Minimum power to start turret motion
-     * @param pStaticDeadZone - The value close enough to target to cut off minimum power
      */
-    public PIDControllerTurret(double p, double i, double d, double pStatic, double pStaticDeadZone) {
+    public PIDControllerTurret(double p, double i, double d, double pStatic) {
         super(p, i, d);
         kStatic = pStatic;
-        kStaticDeadZone = pStaticDeadZone;
     }
     /**
      * Update the PID output
@@ -25,17 +23,11 @@ public class PIDControllerTurret extends PIDController{
      * @param state where we currently are, I.E. motor position
      */
     public double update (double target, double state) {
-        double kpMinValue;
         double pidValue = super.update(target, state);
         // The turret requires a non-zero minimum power just to start moving
         // Augment the PID result with that power (unless we're inside our
         // tolerance, in which case we want to drop to zero power and stop)
-        if(abs(state) <= kStaticDeadZone) {
-            kpMinValue = 0.0;
-        } else {
-            kpMinValue = Math.signum(-state) * kStatic;
-        }
 
-        return pidValue + kpMinValue;
+        return pidValue + Math.signum(super.error) * kStatic;
     }
 }
