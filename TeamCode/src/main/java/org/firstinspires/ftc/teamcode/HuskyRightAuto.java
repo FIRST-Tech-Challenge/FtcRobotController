@@ -40,8 +40,8 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "LEFT Auto", group = "Auto", preselectTeleOp = "Husky TeleOpMode")
-public class HuskyLeftAuto extends HuskyAutoBase {
+@Autonomous(name = "RIGHT Auto", group = "Auto", preselectTeleOp = "Husky TeleOpMode")
+public class HuskyRightAuto extends HuskyAutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -50,7 +50,7 @@ public class HuskyLeftAuto extends HuskyAutoBase {
         runtime.reset();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-35.50, -64.00, Math.toRadians(90.00));
+        Pose2d startPose = new Pose2d(35.50, -64.00, Math.toRadians(90.00));
         drive.setPoseEstimate(startPose);
         TrajectoryVelocityConstraint slowVel = SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL*0.8, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
 
@@ -64,26 +64,26 @@ public class HuskyLeftAuto extends HuskyAutoBase {
                 .build();
 
         // Place-Preloaded-Cone Trajectory
-        TrajectorySequence TRAJ_1 = drive.trajectorySequenceBuilder(new Pose2d(-36.00, -64.00, Math.toRadians(90.00)))
+        TrajectorySequence TRAJ_1 = drive.trajectorySequenceBuilder(new Pose2d(35.50, -64.00, Math.toRadians(90.00)))
                 .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .lineToLinearHeading(new Pose2d(-60.00, -64.00, Math.toRadians(90.00)))
-                .lineToLinearHeading(new Pose2d(-60.00, -38.00, Math.toRadians(90.00)))
+                .lineToLinearHeading(new Pose2d(60.00, -64.00, Math.toRadians(90.00)))
+                .lineToLinearHeading(new Pose2d(60.00, -38.00, Math.toRadians(90.00)))
                 .build();
 
         // Move-to-Park Trajectory
         TrajectorySequence TRAJ_PARK_1 = drive.trajectorySequenceBuilder(TRAJ_1.end())
                 .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .lineToLinearHeading(new Pose2d(-62.00, -38.00, Math.toRadians(90.00)))
+                .lineToLinearHeading(new Pose2d(12.00, -38.00, Math.toRadians(90.00)))
                 .build();
 
         TrajectorySequence TRAJ_PARK_2 = drive.trajectorySequenceBuilder(TRAJ_1.end())
                 .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .lineToLinearHeading(new Pose2d(-36.00, -38.00, Math.toRadians(90.00)))
+                .lineToLinearHeading(new Pose2d(36.00, -38.00, Math.toRadians(90.00)))
                 .build();
 
         TrajectorySequence TRAJ_PARK_3 = drive.trajectorySequenceBuilder(TRAJ_1.end())
                 .setConstraints(slowVel, SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .lineToLinearHeading(new Pose2d(-12.00, -38.00, Math.toRadians(90.00)))
+                .lineToLinearHeading(new Pose2d(62.00, -38.00, Math.toRadians(90.00)))
                 .build();
         // endregion
 
