@@ -139,10 +139,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
     }
 
-    /**
-     * detect signal on signal sleeve using apriltags
-     * creates a new camera and stops steaming at the end of the method
-     */
+    // detects signal on signal sleeve using april tags
     public int detectSignal() {
         final int ID_TAG_OF_INTEREST_0 = 0; // tag 0 from the 36h11 family
         final int ID_TAG_OF_INTEREST_1 = 1; // tag 1 from the 36h11 family
