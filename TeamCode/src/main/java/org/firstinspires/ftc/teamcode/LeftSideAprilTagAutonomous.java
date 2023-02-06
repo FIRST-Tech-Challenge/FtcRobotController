@@ -24,6 +24,8 @@ package org.firstinspires.ftc.teamcode;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -618,6 +620,7 @@ public class LeftSideAprilTagAutonomous extends LinearOpMode
      * Pauses all movement for the specified time in seconds
      * @param time How many seconds
      */
+    @SuppressWarnings("StatementWithEmptyBody")
     public void waitTime(double time){ // Waits for time (seconds)
         runtime.reset();
         while(opModeIsActive() && runtime.seconds()<time){
@@ -713,6 +716,7 @@ public class LeftSideAprilTagAutonomous extends LinearOpMode
         return Math.min(x1, x2);
     }
 
+    @SuppressLint("DefaultLocale")
     void tagToTelemetry(AprilTagDetection detection)
     {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
