@@ -5,7 +5,7 @@ package ftc.rogue.blacksmith.internal.proxies
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint
-import ftc.rogue.blacksmith.util.invokeMethodI
+import ftc.rogue.blacksmith.internal.invokeMethodI
 import java.util.*
 
 @PublishedApi

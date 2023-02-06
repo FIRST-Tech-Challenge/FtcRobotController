@@ -7,6 +7,9 @@ import com.acmerobotics.roadrunner.trajectory.MarkerCallback
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint
+import ftc.rogue.blacksmith.internal.AnvilLaunchConfig1
+import ftc.rogue.blacksmith.internal.AnvilRunConfig
+import ftc.rogue.blacksmith.internal.invokeMethodRethrowing
 import ftc.rogue.blacksmith.internal.proxies._SampleMecanumDrive
 import ftc.rogue.blacksmith.units.GlobalUnits
 import ftc.rogue.blacksmith.util.*
@@ -186,7 +189,8 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     @PublishedApi
     internal lateinit var builtTrajectory: Any
 
-    private val builderDeque = ArrayDeque<() -> Unit>()
+    @PublishedApi
+    internal val builderDeque = ArrayDeque<() -> Unit>()
 
     // -- Direct path mappings (Basic) --
 
@@ -212,8 +216,16 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     // -- Direct path mappings (Lines) --
 
-    fun lineToConstantHeading(x: Number, y: Number) = queueAndReturnThis {
-        builderProxy.strafeTo( GlobalUnits.vec(x, y) )
+    fun lineTo(x: Number, y: Number) = queueAndReturnThis {
+        builderProxy.lineTo( GlobalUnits.vec(x, y) )
+    }
+
+    fun strafeTo(x: Number, y: Number): Anvil {
+        return lineTo(x, y)
+    }
+
+    fun lineToConstantHeading(x: Number, y: Number): Anvil {
+        return lineTo(x, y)
     }
 
     fun lineToLinearHeading(x: Number, y: Number, heading: Number) = queueAndReturnThis {
@@ -374,6 +386,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     /**
      * Does absolutly nothing. It's just a no-op.
      */
+    @get:JvmName("noop")
     val noop: Anvil
         get() = queueAndReturnThis {}
 
@@ -459,167 +472,45 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     // -- Building, creating, running --
 
-    /**
-     * Preforming creates a new [TrajectorySequence] via [Anvil] in parallel to the current
-     * trajectory using coroutines (like multi-threading). This allows for the on-the-fly creation
-     * of trajectories without slowing down your auto as TrajectorySequences may take a notable
-     * amount of time to build, especially if they're long (as in they cover a not insignificant
-     * distance).
-     *
-     * A key (of [Any] type) is required to identify the trajectory. Using a key allows you to
-     * preform multiple trajectories concurrently, and conditionally execute one later.
-     *
-     * *This should be called as early in the trajectory sequence as possible to maximize
-     * the concurrent building time.*
-     *
-     * Usage example:
-     * ```kotlin
-     * fun goToPole(startPose: Pose2d): Anvil =
-     *     Anvil.formTrajectory(drive, startPose)
-     *         .preform(key = 0, ::depositCone) // Starts when actual traj reaches this point
-     *
-     *         .forward(24.0) // The 'depositCone' trajectory is being built concurrently
-     *         .turn(90.0) // while these are being executed
-     *
-     *         .thenRunAsync(key = 0) // This will run after the both goes forwards and turns
-     */
-    @JvmOverloads
-    inline fun preform(
-        key: Any,
-        crossinline nextTrajectory: (Pose2d) -> Anvil,
-        crossinline nextStartPose: () -> Pose2d = ::getEndPose
-    ): Anvil {
-        addTemporalMarker {
-            preformedTrajectories[key] = builderScope.async { nextTrajectory( nextStartPose() ).build() }
-        }
-        return this
-    }
-
-    /**
-     * Runs a preformed trajectory when the current trajectory reaches this function.
-     *
-     * Usage example:
-     * ```kotlin
-     * anvil
-     *     .preform(key, ...)
-     *     .forward(...)  // Goes forwards like normal
-     *     .thenRunPreformed(key) // Runs the preformed trajectory after going forwards
-     *     .back(...)  // This is ignored as the drive switches trajectories
-     *
-     */
-    @JvmOverloads
-    fun thenRunPreformed(
-        key: Any,
-        async: Boolean = true,
-    ) = this.apply {
-        thenRunPreformedIf(key, async) { true }
-    }
-
-    /**
-     * Conditionally runs a preformed trajectory when the current trajectory reaches this function.
-     * This is useful for loops or conditional trajectories.
-     *
-     * The given lambda is only evaluated when the trajectory reaches this point.
-     *
-     * Usage example:
-     * ```kotlin
-     * anvil
-     *     .preform(key, ...)
-     *     .forward(...)  // Goes forwards like normal
-     *     .thenRunPreformedIf(key) { false }  // Doesn't go anything as the condition is false
-     *     .back(...)  // Goes back like normal
-     */
-    @JvmOverloads
-    inline fun thenRunPreformedIf(
-        key: Any,
-        async: Boolean = true,
-        crossinline predicate: () -> Boolean
-    ): Anvil {
-        addTemporalMarker {
-            if (key !in preformedTrajectories) {
-                throw IllegalArgumentException("No preformed trajectory with key '$key'")
-            }
-
-//            val followerFunction: (Any) -> Unit = if (async) {    Does anyone know why
-//                driveProxy::followTrajectorySequenceAsync         this crashes it?
-//            } else {
-//                driveProxy::followTrajectorySequence              org.jetbrains.kotlin.backend.common.BackendException:
-//            }                                                     Backend Internal error: Exception during psi2ir
-
-//            The root cause java.lang.NullPointerException was thrown at:
-//            org.jetbrains.kotlin.psi2ir.generators.ReflectionReferencesGenerator.generateCallableReference(ReflectionReferencesGenerator.kt:75)
-//            null: KtCallableReferenceExpression: driveProxy::followTrajectorySequenceAsync
-
-            if (predicate()) {
-                run( runBlocking { preformedTrajectories[key]?.await() }!!, async )
-            }
-        }
-        return this
-    }
-
-    /**
-     * Syntactic sugar for:
-     * ```
-     * anvil
-     *     .thenRunPreformedIf(key) { condition }
-     *     .thenRunPreformedIf(key) { !condition }
-     */
-    @JvmOverloads
-    inline fun thenBranchPreformed(
-        trueKey: Any,
-        elseKey: Any,
-        async: Boolean = true,
-        crossinline predicate: () -> Boolean,
-    ) = this.apply {
-        thenRunPreformedIf(trueKey, async) { predicate() }
-        thenRunPreformed(elseKey, async)
-    }
-
     @JvmOverloads
     inline fun thenRun(
         crossinline nextTrajectory: (Pose2d) -> Anvil,
         crossinline nextStartPose: () -> Pose2d = ::getEndPose,
-        async: Boolean = true,
-    ) = this.apply {
-        thenRunIf(nextTrajectory, nextStartPose, async) { true }
-    }
-
-    @JvmOverloads
-    inline fun thenRunIf(
-        crossinline nextTrajectory: (Pose2d) -> Anvil,
-        crossinline nextStartPose: () -> Pose2d = ::getEndPose,
-        async: Boolean = true,
-        crossinline predicate: () -> Boolean,
+        crossinline runConfig: AnvilRunConfig.() -> AnvilRunConfig = { AnvilRunConfig() }
     ): Anvil {
-        addTemporalMarker {
-            if (predicate()) {
-                nextTrajectory( nextStartPose() ).build<Any>()
-                run(builtTrajectory, async)
+        val config = runConfig(AnvilRunConfig())
+        val key = Any()
+
+        if (!config.buildsSynchronously) {
+            builderDeque.addFirst {
+                builderProxy.UNSTABLE_addTemporalMarkerOffset(0.0) {
+                    preformedTrajectories[key] = builderScope.async { nextTrajectory( nextStartPose() ).build() }
+                }
             }
         }
-        return this
-    }
 
-    @JvmOverloads
-    inline fun thenBranch(
-        crossinline trueAction: (Pose2d) -> Anvil,
-        crossinline elseAction: (Pose2d) -> Anvil,
-        async: Boolean = true,
-        crossinline predicate: () -> Boolean,
-    ) = this.apply {
-        thenRunIf(trueAction, async = async) { predicate() }
-        thenRun(elseAction, async = async)
-    }
+        addTemporalMarker {
+            if (!config.predicate()) return@addTemporalMarker
 
-    fun flush() {
-        for (i in builderDeque.indices) {
-            builderDeque.removeFirst().invoke()
+            val nextTrajectoryBuilt = if (config.buildsSynchronously) {
+                nextTrajectory( nextStartPose() ).build()
+            } else {
+                runBlocking { preformedTrajectories[key]?.await() }!!
+            }
+
+            if (config.buildsSynchronously) {
+                run( nextTrajectoryBuilt, !config.runsSynchronously )
+            }
         }
+
+        return this
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> build(): T {
-        flush()
+        for (i in builderDeque.indices) {
+            builderDeque.removeFirst().invoke()
+        }
         return (builderProxy.build() as T).also { builtTrajectory = it }
     }
 
@@ -644,17 +535,5 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         }
 
         return builtTrajectory.invokeMethodRethrowing("end")
-    }
-
-    class AnvilLaunchConfig1 internal constructor() {
-        private var async = true
-
-        fun onSchedulerLaunch() = AnvilLaunchConfig2().also {
-            Scheduler.on(Scheduler.STARTING_MSG) { start(async) }
-        }
-
-        inner class AnvilLaunchConfig2 internal constructor() {
-            fun synchronously() { async = false }
-        }
     }
 }

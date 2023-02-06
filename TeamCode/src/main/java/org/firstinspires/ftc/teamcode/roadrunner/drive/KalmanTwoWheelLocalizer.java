@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import ftc.rogue.blacksmith.util.KalmanFilter;
+import ftc.rogue.blacksmith.util.kalman.KalmanFilter;
 
 import java.util.Arrays;
 import java.util.List;

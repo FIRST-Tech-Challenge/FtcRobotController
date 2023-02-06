@@ -1,7 +1,7 @@
 package ftc.rogue.blacksmith.meepmeep
 
 import com.noahbres.meepmeep.MeepMeep
-import ftc.rogue.blacksmith.util.invokeMethod
+import ftc.rogue.blacksmith.internal.invokeMethod
 import java.io.*
 import java.util.*
 import java.util.concurrent.TimeUnit

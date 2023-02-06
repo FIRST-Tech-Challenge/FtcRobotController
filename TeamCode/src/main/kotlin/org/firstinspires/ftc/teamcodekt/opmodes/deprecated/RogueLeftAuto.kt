@@ -9,15 +9,13 @@ import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
 
 @Disabled
-@Deprecated("Depricated before semi-regionals")
+@Deprecated("Deprecated before semi-regionals")
 @Autonomous
 class RogueLeftAuto : RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(-91, -159, 90)
 
     override fun mainTraj(startPose: Pose2d) =
         Anvil.formTrajectory(bot.drive, startPose)
-            .preform(0, ::parkTraj)
-
             .initialDepositPrep()
 
             .awaitInitialGoToDeposit()
@@ -41,7 +39,8 @@ class RogueLeftAuto : RogueBaseAuto() {
 
                 deposit()
             }
-            .thenRunPreformed(0)
+
+            .thenRun(::parkTraj)
 
     private fun Anvil.initialDepositPrep() = this
         .addTemporalMarker {

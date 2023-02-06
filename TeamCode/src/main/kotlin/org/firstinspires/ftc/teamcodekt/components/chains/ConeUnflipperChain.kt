@@ -1,3 +1,5 @@
+@file:Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+
 package org.firstinspires.ftc.teamcodekt.components.chains
 
 import com.acmerobotics.dashboard.config.Config

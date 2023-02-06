@@ -32,10 +32,9 @@ abstract class RogueBaseTele : BlackOp() {
             powerMulti = 1.0
         }
 
-        Scheduler.launchOnStart(
-                opmode = this) {
+        Scheduler.launchOnStart(opmode = this) {
             bot.drivetrain.drive(driver.gamepad, powerMulti)
-            bot.updateBaseComponents(true)
+            bot.updateBaseComponents()
             bot.lift.printLiftTelem()
         }
     }

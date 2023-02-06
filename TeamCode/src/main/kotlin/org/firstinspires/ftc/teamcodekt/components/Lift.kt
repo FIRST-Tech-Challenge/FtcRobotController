@@ -16,68 +16,49 @@ import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.clamp
 import ftc.rogue.blacksmith.util.kt.invoke
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
-import ftc.rogue.blacksmith.util.KalmanFilter
+import ftc.rogue.blacksmith.util.kalman.KalmanFilter
 import kotlin.math.abs
 
 // Too many fields...
 
-@JvmField
-var LIFT_ZERO = 0
-@JvmField
-var LIFT_LOW = 707 - 128
-@JvmField
-var LIFT_MID = 1140 - 128
-@JvmField
-var LIFT_HIGH = 1590 - 128
+@JvmField var LIFT_ZERO = 0
+@JvmField var LIFT_LOW = 707 - 128
+@JvmField var LIFT_MID = 1140 - 128
+@JvmField var LIFT_HIGH = 1590 - 128
 
-@JvmField
-var ANGLED_LIFT_LOW = 120
-@JvmField
-var ANGLED_LIFT_MID = 620
-@JvmField
-var ANGLED_LIFT_HIGH = 1110
+@JvmField var ANGLED_LIFT_LOW = 120
+@JvmField var ANGLED_LIFT_MID = 620
+@JvmField var ANGLED_LIFT_HIGH = 1110
 
-@JvmField
-var NORMAL_LIFT_P = 0.00185
-@JvmField
-var NORMAL_LIFT_I = 0.01
-@JvmField
-var NORMAL_LIFT_D = 0.0002
-@JvmField
-var NORMAL_LIFT_F = 0.00002
+@JvmField var NORMAL_LIFT_P = 0.00185
+@JvmField var NORMAL_LIFT_I = 0.01
+@JvmField var NORMAL_LIFT_D = 0.0002
+@JvmField var NORMAL_LIFT_F = 0.00002
 
-@JvmField
-var MOTION_PROFILE_LIFT_P = 0.026
-@JvmField
-var MOTION_PROFILE_LIFT_I = 0.0002
-@JvmField
-var MOTION_PROFILE_LIFT_D = 0.0002
+@JvmField var MOTION_PROFILE_LIFT_P = 0.026
+@JvmField var MOTION_PROFILE_LIFT_I = 0.0002
+@JvmField var MOTION_PROFILE_LIFT_D = 0.0002
 
-@JvmField
-var LIFT_MAX_V = 32000.0
-@JvmField
-var LIFT_MAX_A = 25000.0
-@JvmField
-var LIFT_MAX_J = 18000.0
+@JvmField var LIFT_MAX_V = 32000.0
+@JvmField var LIFT_MAX_A = 25000.0
+@JvmField var LIFT_MAX_J = 18000.0
 
-@JvmField
-var PROCESS_NOISE = 0.01
-@JvmField
-var MEASUREMENT_NOISE = 0.01
+@JvmField var PROCESS_NOISE = 0.01
+@JvmField var MEASUREMENT_NOISE = 0.01
 
 /**
  * Lift object representing the lift on our V2 robot.
  * As of 2/2, using normal PIDF with the kalman filter is very good. +-5 encoder tick accuracy
  */
-class Lift(val usingMotionProfiling: Boolean) {
+class Lift(private val usingMotionProfiling: Boolean) {
 
     private val liftMotor = hwMap<DcMotorSimple>(DeviceNames.LIFT_MOTOR)
 
     private val liftMotionProfilePID = PIDFController(PIDCoefficients(MOTION_PROFILE_LIFT_P, MOTION_PROFILE_LIFT_I, MOTION_PROFILE_LIFT_D))
 
-    val liftNormalPID = com.arcrobotics.ftclib.controller.PIDFController(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, NORMAL_LIFT_F)
+    private val liftNormalPID = com.arcrobotics.ftclib.controller.PIDFController(NORMAL_LIFT_P, NORMAL_LIFT_I, NORMAL_LIFT_D, NORMAL_LIFT_F)
 
-    val liftFilter = KalmanFilter(PROCESS_NOISE, MEASUREMENT_NOISE)
+    private val liftFilter = KalmanFilter(PROCESS_NOISE, MEASUREMENT_NOISE)
 
     private val liftEncoder = Motor(hwMap, DeviceNames.LIFT_ENCODER)
             .apply(Motor::resetEncoder)
@@ -85,8 +66,9 @@ class Lift(val usingMotionProfiling: Boolean) {
     private lateinit var profile: MotionProfile
 
     init {
-        if(usingMotionProfiling)
+        if (usingMotionProfiling) {
             regenMotionProfile(0)
+        }
     }
 
     private var motionTime = ElapsedTime()
@@ -94,10 +76,11 @@ class Lift(val usingMotionProfiling: Boolean) {
     var targetHeight = 0
         set(height) {
             field = height
-            if(usingMotionProfiling)
-                regenMotionProfile(height)
-        }
 
+            if (usingMotionProfiling) {
+                regenMotionProfile(field)
+            }
+        }
 
     var clippedHeight: Int
         get() = targetHeight
@@ -140,8 +123,7 @@ class Lift(val usingMotionProfiling: Boolean) {
     fun goToAngledLow() {
         targetHeight = ANGLED_LIFT_LOW
     }
-
-
+    
     fun update() {
         if (usingMotionProfiling) {
             val state = profile[motionTime.microseconds()]
@@ -183,19 +165,15 @@ class Lift(val usingMotionProfiling: Boolean) {
 
     private fun regenMotionProfile(targetHeight: Int) {
         try {
-            if (motionTime == null)
-                motionTime = ElapsedTime(0);
             motionTime.reset()
             profile = MotionProfileGenerator.generateSimpleMotionProfile(
                     MotionState(liftHeight.toDouble(), liftVelocity, liftAccel),
                     MotionState(targetHeight.toDouble(), 0.0, 0.0),
                     LIFT_MAX_V, LIFT_MAX_A, LIFT_MAX_J
             )
-        }
-        catch (e: Exception){
+        } catch (_: Exception){
             return
         }
-
     }
 
     private val liftHeight: Int
@@ -210,7 +188,6 @@ class Lift(val usingMotionProfiling: Boolean) {
             onePrevTime = System.currentTimeMillis()
             return liftEncoder.correctedVelocity
         }
-
 
     private val liftAccel: Double
         get() {

@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcodekt.components.kalmanranging
 import com.qualcomm.robotcore.hardware.AnalogInput
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.invoke
-import ftc.rogue.blacksmith.util.KalmanFilter
+import ftc.rogue.blacksmith.util.kalman.KalmanFilter
 import kotlin.math.sqrt
 
 class KalmanShortRange(name: String) {

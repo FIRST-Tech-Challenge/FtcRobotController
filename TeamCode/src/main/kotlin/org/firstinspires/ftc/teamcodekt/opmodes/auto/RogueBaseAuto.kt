@@ -8,6 +8,7 @@ import com.outoftheboxrobotics.photoncore.PhotonCore
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
+import ftc.rogue.blacksmith.util.SignalEdgeDetector
 import ftc.rogue.blacksmith.units.DistanceUnit
 import ftc.rogue.blacksmith.util.kt.LateInitVal
 import ftc.rogue.blacksmith.util.toCm
@@ -62,7 +63,7 @@ abstract class RogueBaseAuto : BlackOp() {
         signalID = bot.camera.waitForStartWithVision(this) ?: 2
 
         Scheduler.launch(opmode = this) {
-            bot.updateBaseComponents(true)
+            bot.updateBaseComponents()
             bot.drive.update()
             mTelemetry.addLine("Pole offset: x->${poleOffset.x}, y->${poleOffset.y}")
             mTelemetry.update()
@@ -73,34 +74,34 @@ abstract class RogueBaseAuto : BlackOp() {
         mTelemetry.addLine("Starting reading cone")
         mTelemetry.update()
 
-        var rightWasJustPressed = false
-        var leftWasJustPressed  = false
-        var upWasJustPressed    = false
-        var downWasJustPressed  = false
+        val rightSED = SignalEdgeDetector { gamepad1.dpad_right }
+        val leftSED  = SignalEdgeDetector { gamepad1.dpad_left  }
+        val upSED    = SignalEdgeDetector { gamepad1.dpad_up    }
+        val downSED  = SignalEdgeDetector { gamepad1.dpad_down  }
 
         var x = 0.0
         var y = 0.0
 
         while (!gamepad1.a) {
-            if (gamepad1.dpad_right && !rightWasJustPressed) {
+            if (rightSED.risingEdge()) {
                 x += .25
             }
-            rightWasJustPressed = gamepad1.dpad_right
+            rightSED.update()
 
-            if (gamepad1.dpad_left && !leftWasJustPressed) {
+            if (leftSED.risingEdge()) {
                 x -= .25
             }
-            leftWasJustPressed = gamepad1.dpad_left
+            leftSED.update()
 
-            if (gamepad1.dpad_up && !upWasJustPressed) {
+            if (upSED.risingEdge()) {
                 y += .25
             }
-            upWasJustPressed = gamepad1.dpad_up
+            upSED.update()
 
-            if (gamepad1.dpad_down && !downWasJustPressed) {
+            if (downSED.risingEdge()) {
                 y -= .25
             }
-            downWasJustPressed = gamepad1.dpad_down
+            downSED.update()
 
             val xf = (if (x > 0) "+" else "-") + "%4.2f".format(x.absoluteValue)
             val yf = (if (y > 0) "+" else "-") + "%4.2f".format(y.absoluteValue)

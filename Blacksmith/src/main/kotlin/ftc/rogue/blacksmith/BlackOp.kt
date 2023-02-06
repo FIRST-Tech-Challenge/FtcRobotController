@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
-import ftc.rogue.blacksmith.util.getFieldsAnnotatedWith
+import ftc.rogue.blacksmith.internal.getFieldsAnnotatedWith
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 

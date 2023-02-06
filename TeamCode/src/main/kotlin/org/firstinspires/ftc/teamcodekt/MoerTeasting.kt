@@ -3,7 +3,6 @@
 //package org.firstinspires.ftc.teamcodekt
 //
 //import ftc.rogue.blacksmith.annotations.ConfigKt
-//import ftc.rogue.blacksmith.internal.tryConfigKtSetup
 //import ftc.rogue.blacksmith.util.kt.clamp
 //
 //@ConfigKt

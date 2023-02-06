@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.outoftheboxrobotics.photoncore.Neutrino.MB1242.MB1242Ex
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
-import ftc.rogue.blacksmith.util.KalmanFilter
+import ftc.rogue.blacksmith.util.kalman.KalmanFilter
 import kotlin.math.sqrt
 
 @Config

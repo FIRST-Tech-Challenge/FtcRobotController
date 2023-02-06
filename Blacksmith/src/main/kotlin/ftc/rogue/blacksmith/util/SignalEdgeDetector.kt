@@ -1,6 +1,6 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
-package ftc.rogue.blacksmith.internal
+package ftc.rogue.blacksmith.util
 
 /**
  * Evaluates a condition, and checks if the state of the condition is on the rising edge, falling

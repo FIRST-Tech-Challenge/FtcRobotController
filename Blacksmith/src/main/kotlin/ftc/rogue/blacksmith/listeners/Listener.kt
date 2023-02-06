@@ -3,7 +3,7 @@
 package ftc.rogue.blacksmith.listeners
 
 import ftc.rogue.blacksmith.Scheduler
-import ftc.rogue.blacksmith.internal.SignalEdgeDetector
+import ftc.rogue.blacksmith.util.SignalEdgeDetector
 import ftc.rogue.blacksmith.util.runOnce
 
 /**

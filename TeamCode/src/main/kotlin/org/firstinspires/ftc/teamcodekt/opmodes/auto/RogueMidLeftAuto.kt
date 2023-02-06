@@ -18,7 +18,6 @@ class RogueMidLeftAuto : RogueBaseAuto() {
     override fun mainTraj(startPose: Pose2d) =
         Anvil.formTrajectory(bot.drive, startPose)
             .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(40.0, Math.toRadians(250.0), DriveConstants.TRACK_WIDTH))
-            .preform(0, ::parkTraj)
 
             .addTemporalMarker {
                 bot.lift.goToAngledMidPredeposit()
@@ -47,7 +46,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
                 deposit(it)
             }
 
-            .thenRunPreformed(0)
+            .thenRun(::parkTraj)
 
     private fun Anvil.initialGoToDeposit() = this
         .forward(132)

@@ -1,6 +1,6 @@
 @file:Suppress("PrivatePropertyName")
 
-package ftc.rogue.blacksmith.util
+package ftc.rogue.blacksmith.util.kalman
 
 /**
  * A Kalman Filter for 1D data.

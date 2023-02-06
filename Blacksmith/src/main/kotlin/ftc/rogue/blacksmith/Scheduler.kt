@@ -1,6 +1,7 @@
 package ftc.rogue.blacksmith
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.util.ElapsedTime
 import ftc.rogue.blacksmith.listeners.Listener
 import org.firstinspires.ftc.robotcore.external.Telemetry
 
@@ -189,7 +190,7 @@ object Scheduler {
     fun time(opmode: LinearOpMode, telemetry: Telemetry, afterEach: Runnable = Runnable {}) {
         emit(STARTING_MSG)
 
-        var startTime = System.currentTimeMillis()
+        val elapsedTime = ElapsedTime()
 
         while (opmode.opModeIsActive() && !opmode.isStopRequested) {
             updateListenersSet()
@@ -198,12 +199,10 @@ object Scheduler {
             tick()
             afterEach.run()
 
-            val endTime = System.currentTimeMillis()
-
-            telemetry.addData("Loop time (ms)", endTime - startTime)
+            telemetry.addData("Loop time (ms)", elapsedTime.milliseconds())
             telemetry.update()
 
-            startTime = System.currentTimeMillis()
+            elapsedTime.reset()
         }
     }
 

@@ -16,8 +16,6 @@ class RogueRightAuto : RogueBaseAuto() {
 
     override fun mainTraj(startPose: Pose2d) =
         Anvil.formTrajectory(bot.drive, startPose)
-            .preform(0, ::parkTraj)
-
             .initialDepositPrep()
 
             .awaitInitialGoToDeposit()
@@ -41,7 +39,7 @@ class RogueRightAuto : RogueBaseAuto() {
 
                 deposit()
             }
-            .thenRunPreformed(0)
+            .thenRun(::parkTraj)
 
     private fun Anvil.initialDepositPrep() = this
         .addTemporalMarker {

@@ -1,5 +1,6 @@
 package ftc.rogue.blacksmith.internal
 
+import ftc.rogue.blacksmith.util.SignalEdgeDetector
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
