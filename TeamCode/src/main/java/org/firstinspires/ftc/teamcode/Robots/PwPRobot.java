@@ -542,7 +542,7 @@ public class PwPRobot extends BasicRobot {
                         new Pose2d(
                                 abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.55 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2)),
                                 abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.55 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2)),
-                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.7 * abs(vals[2]))
+                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.8 * abs(vals[2]))
                         )
                 );
             } else {
@@ -594,7 +594,7 @@ public class PwPRobot extends BasicRobot {
                 claw.closeClawRaw();
             }
         }
-//        claw.closeClaw();
+        claw.closeClaw();
         if (op.getRuntime() - claw.getLastTime() > .4 && op.getRuntime() - claw.getLastTime() < .7 && CLAW_CLOSED.getStatus()) {
             liftArm.raiseLiftArmToOuttake();
         }

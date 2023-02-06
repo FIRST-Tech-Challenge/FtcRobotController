@@ -157,14 +157,14 @@ public class RFMotor extends Motor {
     public double getResistance() {
         double resistance = 0;
         resistance -= 150 + 0.4 * position - 0.00012 * position * position;
-        resistance -= velocity * 0.940 * pow(abs(position) + 1, -.12);
+        resistance -= velocity * 0.3 * pow(abs(position) + 1, -.12);
         return resistance;
     }
 
     public void getAvgResistance() {
         double resistances = 0;
         resistances -= 130 + 0.39 * position/* - 0.000135* position * position*/;
-        resistances -= velocity * 0.9 * pow(abs(position) + 1, -.13);
+        resistances -= velocity * 0.2 * pow(abs(position) + 1, -.13);
         resistance = resistances;
         resistances -= 130 + 0.39 * targetPos/* - 0.000135 * targetPos * targetPos*/;
         avgResistance = resistances / 2;

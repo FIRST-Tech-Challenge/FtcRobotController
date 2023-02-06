@@ -20,7 +20,7 @@ public class LiftArm {
     private final double LIFT_ARM_CYCLE_POS = 0.955;
 
     private final double LIFT_ARM_OUTTAKE_POS = 0.16;
-    public static double LIFT_ARM_FLIP_POS = 0.93;
+    public static double LIFT_ARM_FLIP_POS = 0.925;
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
