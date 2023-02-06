@@ -121,25 +121,25 @@ public class TourneyDrive extends LinearOpMode {
             boolean adjustLeftTurn = gamepad1.left_bumper;
             boolean adjustRightTurn = gamepad1.right_bumper;
 
-            boolean coneFlipUp = gamepad1.a;
-            boolean coneFlipDown = gamepad1.b;
-
             double liftFast = -gamepad2.left_stick_y;
             double liftSlow = -gamepad2.right_stick_y;
+
+            boolean raiseMaxHeight = gamepad2.a;
+            boolean lowerMaxHeight = gamepad2.b;
 
             boolean liftDown = gamepad2.dpad_down;
             boolean liftLow = gamepad2.dpad_left;
             boolean liftMedium = gamepad2.dpad_right;
             boolean liftHigh = gamepad2.dpad_up;
 
+            boolean stopAutoLift = gamepad2.y;
+            boolean switchAutoLift = gamepad2.x;
+
             boolean grabberOpen = gamepad2.left_bumper;
             boolean grabberClose = gamepad2.right_bumper;
 
-            boolean raiseMaxHeight = gamepad2.y;
-            boolean lowerMaxHeight = gamepad2.x;
-
-            boolean stopAutoLift = gamepad1.y;
-            boolean switchAutoLift = gamepad1.x;
+            float coneFlipUp = gamepad2.right_trigger;
+            float coneFlipDown = gamepad2.left_trigger;
 
             if(liftFast > .05 || liftFast < -.05 || liftSlow > .05 || liftSlow < -.05 && (!(liftMotor.getCurrentPosition() > MAX_LIFT_POS) || !(liftMotor.getCurrentPosition() < MIN_LIFT_POS))){
                 if(liftFast > .05 || liftFast < -.05){
@@ -224,9 +224,9 @@ public class TourneyDrive extends LinearOpMode {
                 servoGrabber2.setPosition(MIN_POS2);
             }
 
-            if(coneFlipUp){
+            if(coneFlipUp > .05){
                 coneFlipper.setPower(-.75);
-            }else if(coneFlipDown){
+            }else if(coneFlipDown > .05){
                 coneFlipper.setPower(.75);
             }else{
                 coneFlipper.setPower(0);
