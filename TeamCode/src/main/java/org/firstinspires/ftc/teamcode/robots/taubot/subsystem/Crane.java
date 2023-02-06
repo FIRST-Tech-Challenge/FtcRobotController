@@ -417,17 +417,35 @@ public class Crane implements Subsystem {
         coneStackRight,
         coneStackLeft,
         start,
-        calibrate
+        calibrate,
+        transfer,
+        robotDriving
     }
 
     public Articulation getArticulation() {
         return articulation;
     }
 
+    public static double TRANSFER_SHOULDER_ANGLE = 30;
+    public static double TRANSFER_ARM_LENGTH = 0.05;
+
+    public static double SAFE_SHOULDER_ANGLE = 30;
+    public static double SAFE_ARM_LENGTH = 0.05;
+
     public Articulation articulate(Articulation target){
         articulation = target;
 
         switch(articulation){
+            case robotDriving: //if the robot is driving all cranes should go into a safe position
+                setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
+                setExtendTargetPos(SAFE_ARM_LENGTH);
+                robot.turret.articulate(Turret.Articulation.home); //turret will not move AT ALL from home position no mater the target
+                break;
+            case transfer: //
+                robot.turret.articulate(Turret.Articulation.transfer); //turret will not move AT ALL from transfer position no mater what target is given
+                setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
+                setExtendTargetPos(TRANSFER_ARM_LENGTH);
+                break;
             case calibrate:
                 if(calibrate()){
                     articulation = Articulation.start;
@@ -489,6 +507,14 @@ public class Crane implements Subsystem {
                 return target;
         }
         return target;
+    }
+
+    public boolean atTransferPosition(){
+        //checks if current angle is within error of the transfer angles
+        if(Math.abs(TRANSFER_SHOULDER_ANGLE-getShoulderAngle()) < SHOULDER_ERROR_MAX && Math.abs(TRANSFER_ARM_LENGTH-getExtendMeters()) < EXTENSION_ERROR_MAX && Turret.distanceBetweenAngles(robot.turret.getHeading(),180 + Math.toDegrees(robot.driveTrain.getRawHeading())) < TURRET_ERROR_MAX){
+            return true;
+        }
+        return false;
     }
 
     public boolean craneStart(){
@@ -607,7 +633,7 @@ public class Crane implements Subsystem {
 
 
     public boolean shoulderOnTarget(){
-        return Math.abs(shoulderTargetAngle-shoulderAngle) < SHOULDER_ERROR_MAX;
+        return Math.abs(getShoulderTargetAngle()-getShoulderAngle()) < SHOULDER_ERROR_MAX;
     }
 
     public boolean extensionOnTarget(){
@@ -667,7 +693,6 @@ public class Crane implements Subsystem {
         calculateFieldTargeting(fieldPositionTarget);
         switch (homeInd){
             case 0:
-                holdFieldPosition = false;
                 setExtendTargetPos(craneLengthOffset+0.1);
                 homeInd++;
                 break;
@@ -864,12 +889,6 @@ public class Crane implements Subsystem {
         robot.turret.setTargetHeading(targetTurretAngle);
         if(robotIsNotTipping) {
 
-            if(driverDrivingRobot){
-                fieldPositionTarget = deltaGripperPosition.add(robotPosition);
-            }else{
-                deltaGripperPosition = fieldPositionTarget.subtract(robotPosition);
-            }
-
             if (shoulderActivePID)
                 movePIDShoulder(SHOULDER_PID.kP, SHOULDER_PID.kI, SHOULDER_PID.kD, shoulderAngle, shoulderTargetAngle);
             else
@@ -889,17 +908,6 @@ public class Crane implements Subsystem {
     }
 
     Vector3 deltaGripperPosition = new Vector3(7,0,8);
-
-    boolean holdFieldPosition = true;
-    boolean driverDrivingRobot = false;
-
-    public void driverIsDriving(){
-        driverDrivingRobot = true;
-    }
-
-    public void driverNotDriving(){
-        driverDrivingRobot = false;
-    }
 
     public void adjustTurretAngle(double speed){
         if(robotIsNotTipping)targetTurretAngle = robot.turret.getHeading() + (TURRET_ADJUST * speed);

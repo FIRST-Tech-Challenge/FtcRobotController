@@ -231,7 +231,7 @@ public class Robot implements Subsystem {
                     case 0:
                         //drive to general parking location
                         crane.articulate(Crane.Articulation.noIK);
-                        crane.driverIsDriving();
+                        driverIsDriving();
                         turnDone = false;
                         onPole = false;
                         if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-4, 0, 20)) {
@@ -241,7 +241,7 @@ public class Robot implements Subsystem {
                         break;
                     case 1:
                         //drop cone at nearest high pole
-                        crane.driverNotDriving();
+                        driverNotDriving();
                         if (startingPosition.equals(Constants.Position.START_LEFT)) {
                             if (!turnDone && driveTrain.turnUntilDegrees(90)) {
                                 turnDone = true;
@@ -368,6 +368,7 @@ public class Robot implements Subsystem {
     public enum Articulation {
         MANUAL,
         AUTON,
+        ROBOTDRIVE,
 
         // misc. articulations
         INIT,
@@ -391,13 +392,51 @@ public class Robot implements Subsystem {
         DOUBLE_DUCK_DUMP_AND_SET_CRANE_FOR_TRANSFER
     }
 
-    public boolean articulate(Articulation articulation) {
-        if(articulation.equals(Articulation.MANUAL))
-            return true;
+    public Articulation articulate(Articulation articulation) {
         this.articulation = articulation;
-        if(articulationMap.get(articulation).execute()) {
-            this.articulation = Articulation.MANUAL;
-            return true;
+
+        switch (this.articulation){
+            case MANUAL:
+                break;
+            case TRANSFER:
+                if(transfer()){
+                    articulation = Articulation.MANUAL;
+                }
+                break;
+            case ROBOTDRIVE:
+                crane.articulate(Crane.Articulation.robotDriving); //keeps crane in safe position
+                underarm.articulate(UnderArm.Articulation.home); //keeps underarm in safe position
+                break;
+        }
+
+        return this.articulation;
+    }
+
+    public void driverIsDriving(){
+        articulate(Articulation.ROBOTDRIVE);
+    }
+
+    public void driverNotDriving(){
+        articulate(Articulation.MANUAL);
+    }
+
+    int transferStage = 0;
+    public boolean transfer(){
+
+        switch (transferStage) {
+            case 0:
+                underarm.articulate(UnderArm.Articulation.transfer); //tell underarm to go to transfer angle
+                crane.articulate(Crane.Articulation.transfer); //tells crane to go to transfer position
+                transferStage++;
+                break;
+            case 1:
+                if(crane.atTransferPosition()){
+                    transferStage++;
+                }
+                break;
+            case 2:
+                return true;
+                //todo add transfer of cone from underarm to crane
         }
         return false;
     }

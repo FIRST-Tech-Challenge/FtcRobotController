@@ -91,6 +91,8 @@ public class UnderArm implements Subsystem {
             turretServo = hardwareMap.get(ServoImplEx.class, "turretServo");
             ((ServoImplEx) turretServo).setPwmRange(axonRange);
         }
+
+        articulation = Articulation.noIK;
     }
 
     Vector3 fieldPositionTarget;
@@ -99,29 +101,33 @@ public class UnderArm implements Subsystem {
         transfer,
         home,
         manual,
-        noIK
+        noIK,
+        fold
     }
+
+    public static double FOLDPOS_SHOULDER_ANGLE = 0;
+    public static double FOLDPOS_ELBOW_ANGLE = 0;
+    public static double FOLDPOS_TURRET_ANGLE = 0;
 
     public Articulation articulate(Articulation target){
         articulation = target;
 
         switch(articulation){
-            case transfer:
-                if(goToTransfer()){
-                    articulation = Articulation.home;
-                    return Articulation.home;
-                }
+            case fold: //PROB NOT NEEDED but added just in case
+                setShoulderTargetAngle(FOLDPOS_SHOULDER_ANGLE);
+                setElbowTargetAngle(FOLDPOS_ELBOW_ANGLE);
+                setTurretTargetAngle(FOLDPOS_TURRET_ANGLE);
                 break;
-            case home:
-                if(goHome()){
-                    articulation = Articulation.manual;
-                    return Articulation.manual;
-                }
+            case transfer: //transfer position
+                goToTransfer();
                 break;
-            case manual:
+            case home: //safe position for transiting the field
+                goHome();
+                break;
+            case manual: //normal IK intake mode
                 holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
                 break;
-            case noIK:
+            case noIK: //no targets are set
 
                 break;
         }
@@ -152,6 +158,7 @@ public class UnderArm implements Subsystem {
 
         switch (homeStage) {
             case 0: //sets home position
+                robot.driveTrain.tuck();
                 setTurretTargetAngle(0);
                 setElbowTargetAngle(0);
                 setShoulderTargetAngle(0);
@@ -163,6 +170,7 @@ public class UnderArm implements Subsystem {
                     homeStage = 0;
                     return true;
                 }
+                break;
         }
 
         return false;
@@ -176,6 +184,7 @@ public class UnderArm implements Subsystem {
     public boolean goToTransfer(){
         switch (transferStage) {
             case 0: //sets home position
+                robot.driveTrain.tuck();
                 setTurretTargetAngle(0);
                 setElbowTargetAngle(TRANSFER_ELBOW_ANGLE);
                 setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
@@ -187,6 +196,7 @@ public class UnderArm implements Subsystem {
                     transferStage = 0;
                     return true;
                 }
+                break;
         }
 
         return false;

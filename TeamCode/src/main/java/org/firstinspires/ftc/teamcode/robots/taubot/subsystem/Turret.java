@@ -69,6 +69,8 @@ public class Turret implements Subsystem {
         parametersIMUTurret.loggingEnabled = true;
         parametersIMUTurret.loggingTag = "turretIMU";
         turretIMU.initialize(parametersIMUTurret);
+
+        articulation = Articulation.runToAngle;
     }
 
     double offsetHeading;
@@ -107,10 +109,37 @@ public class Turret implements Subsystem {
         }
     }
 
+    Articulation articulation;
+
+    public enum Articulation{
+        runToAngle,
+        home,
+        transfer
+    }
+
+    public Articulation articulate(Articulation target){
+        articulation = target;
+
+        switch (articulation){
+            case runToAngle: //normal run to a target angle mode
+                turretPID.setInput(-distanceBetweenAngles(heading,targetHeading));
+                break;
+            case home: //home position is facing facing back of robot not towards underarm
+                turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
+                break;
+            case transfer: //transfer position is facing facing back of robot not towards underarm
+                turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
+        }
+
+        return articulation;
+    }
+
     public double getError(){
         return -distanceBetweenAngles(heading,targetHeading);
     }
     public void update(Canvas fieldOverlay) {
+
+        articulate(articulation);
 
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         //offset = heading - initialHeading
@@ -120,10 +149,11 @@ public class Turret implements Subsystem {
         turretPID.setPID(TURRET_PID);
         turretPID.setTolerance(TURRET_TOLERANCE);
         turretPID.setSetpoint(0);
-        turretPID.setInput(-distanceBetweenAngles(heading,targetHeading));
         correction = turretPID.performPID();
         error = turretPID.getError();
         //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
+
+
         if(Crane.robotIsNotTipping) {
             motor.setPower(correction);
         }
