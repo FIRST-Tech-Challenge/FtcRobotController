@@ -2,6 +2,7 @@ package teamcode.v1
 
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.drive.KMecanumOdoDrive
+import teamcode.v1.constants.ArmConstants
 import teamcode.v1.subsystems.*
 
 class Robot(startPose: Pose) {
@@ -23,7 +24,7 @@ class Robot(startPose: Pose) {
     val lift = Lift(hardware.liftLeadMotor, hardware.liftSecondMotor)
 
     init {
-        arm.setPos(-65.0)
+        arm.setPos(ArmConstants.groundPos)
         lift.setPos(0.0)
     }
 }
