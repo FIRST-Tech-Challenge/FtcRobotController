@@ -13,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.teamcode.R;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
@@ -31,6 +30,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // servos
     public static ServoImplEx servoGrabber;
+    public static RevBlinkinLedDriver blinkinChassis;
 
     // OpenCV
     public static OpenCvCamera robotCamera;
@@ -102,6 +102,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         PwmControl.PwmRange maxRange = new PwmControl.PwmRange(500, 2500, 20000);
         servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
         servoGrabber.setPwmRange(maxRange);
+
+        try {
+            blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
+        } catch (Exception e) {}
 
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -201,7 +205,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
     }
 
-    // centers the cone on the junction top
+    /**
+     * uses the grabber camera to guide the robot so it can center on the top of the junction
+     * @param pipeline the GrabberCameraPipeline being used by the grabber camera
+     */
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
 
@@ -222,7 +229,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         stopDriveMotors();
     }
 
-    // moves towards the cone stack while centering on it until the stack fills the entire camera view
+    /**
+     * uses the robot camera to guide the robot so it can drive forward while centering on the stack
+     * @param pipeline the RobotCameraPipeline being used by the robot camera
+     */
     public void centerConeStack(RobotCameraPipeline pipeline) {
         double xOffset, width;
 
@@ -249,5 +259,18 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorFR.setPower(0.0);
         motorBL.setPower(0.0);
         motorBR.setPower(0.0);
+    }
+
+    /**
+     * turns the LEDs green if it detects the top of a junction, otherwise they are rainbow colors
+     */
+    public void driveLEDs() {
+        if (blinkinChassis != null) {
+            if (grabberCameraPipeline.detected) {
+                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            } else {
+                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
+            }
+        }
     }
 }
