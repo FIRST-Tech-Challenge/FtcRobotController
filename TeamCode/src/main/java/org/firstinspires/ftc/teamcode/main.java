@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,7 +12,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class main extends LinearOpMode {
 
-    movement movement = new movement();
+    movement movement = new movement(hardwareMap.get(DcMotor.class, "Motor1"),hardwareMap.get(DcMotor.class, "Motor2"),hardwareMap.get(DcMotor.class, "Motor3"),hardwareMap.get(DcMotor.class, "Motor4"));
+
     sensor sensor = new sensor();
     composetelemetry composetelemetry = new composetelemetry();
 
@@ -20,10 +23,7 @@ public class main extends LinearOpMode {
     @Override
     public void runOpMode() {
         //initialize motors
-        movement.Motor1 = hardwareMap.get(DcMotor.class, "Motor1");
-        movement.Motor2 = hardwareMap.get(DcMotor.class, "Motor2");
-        movement.Motor3 = hardwareMap.get(DcMotor.class, "Motor3");
-        movement.Motor4 = hardwareMap.get(DcMotor.class, "Motor4");
+
 
         ARM.Motor5 = hardwareMap.get(DcMotor.class, "Motor5");
         ARM.Motor6 = hardwareMap.get(DcMotor.class, "Motor6");
@@ -32,6 +32,8 @@ public class main extends LinearOpMode {
         sensor.imu = hardwareMap.get(BNO055IMU.class, "imu");
         sensor.sensorIntitialize();
         sensor.imu.initialize(sensor.parameters);
+
+        waitForStart();
 
         while (opModeIsActive()){
             gamepader();
@@ -46,5 +48,13 @@ public class main extends LinearOpMode {
         } else {
             movement.stop();
         }
+        telemetry.addData("RightY", gamepad1.right_stick_y);
+        telemetry.addData("RightX", gamepad1.right_stick_x);
+        telemetry.addData("Motor 1", movement.Motor1);
+        telemetry.addData("Motor 2", movement.Motor2);
+        telemetry.addData("Motor 3", movement.Motor3);
+        telemetry.addData("Motor 4", movement.Motor4);
+        movement.telmotor();
+        telemetry.update();
     }
 }

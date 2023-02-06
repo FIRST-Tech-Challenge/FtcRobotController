@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
+
 //import com.qualcomm.robotcore.hardware.HardwareDevice;
 //import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -10,6 +13,13 @@ public class movement {
     public DcMotor Motor2;
     public DcMotor Motor3;
     public DcMotor Motor4;
+
+    public movement(DcMotor m1, DcMotor m2, DcMotor m3, DcMotor m4) {
+        Motor1 = m1;
+        Motor2 = m2;
+        Motor3 = m3;
+        Motor4 = m4;
+    }
 
     //stop movement
     public void stop(){
@@ -46,5 +56,12 @@ public class movement {
         Motor2.setPower(power);
         Motor3.setPower(power);
         Motor4.setPower(power);
+    }
+    public void telmotor(){
+        telemetry.addData("Motor 1", Motor1);
+        telemetry.addData("Motor 2", Motor2);
+        telemetry.addData("Motor 3", Motor3);
+        telemetry.addData("Motor 4", Motor4);
+        telemetry.update();
     }
 }
