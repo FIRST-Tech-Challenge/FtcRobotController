@@ -1,0 +1,102 @@
+---
+sidebar_position: 1
+title: Kalman Filter Object
+---
+
+# Kalman Filter Object
+
+## Overview
+
+Kalamn Filters will allow you to reduce the nondeterministic noise you receieve in your measurements, and make your autonomous more accurate.
+Nondeterministic error is the error that is not constant, which is often enough to make your autos suck.
+The parameters for a Kalman filter are `R` and `Q`, the process noise and measurement noise. These are in whatever units you use for the measurement.
+
+### But just what are these measurments and how do I tune it?
+The process noise (`R`) is how much noise is in the actual system.
+[insert pic 1]
+This characterizes the system, *it's what's actually happening in the real world*. This can be caused by a ever-so-slight jitter in the motor or fluctuations in battery voltage, or any number of things actually.
+
+The measurement noise (`Q`) is how much noise is in the system output. This is caused due to slight inaccuracies that are inherent in all sensors/systems, and can become pretty significant over time.
+[insert pic 2].
+
+To tune these, first look at a graph of the system output on FTCDashboard. You can view it by adding the output data to multiple telemetry:
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  mTelemetry.addData("System state", system.getState());
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  mTelemetry.addData("System state", system.getState())
+  ```
+
+Then, look at the data and measure the amplitude(half the distance from peak to valley of the error) of the noise while running a simple program on the system that you know what the output should be. 
+What makes the tuning process difficult is that amplitude is comprised of *both* the measurement error and system error so... yea not that easy :(
+
+However, you can assume a 50/50 split and assign the process noise to half of the amplitude and measurement noise to the same as well. From there, try adjusting each value in both directions to try and optimize further.
+If using this technique, generally the best direction to start is increasing the noise values.
+
+Or, you could just guess based on the range of the numbers you'll be dealing with - Kalman filters are incredibly powerful, and if you know your system well enough you should be able to reduce system state error by several factors.
+It's not as calculated as the previous strategy, but it should work pretty well too.
+
+### Just show me how to use it already...
+
+Here's how to implement one:
+
+</TabItem>
+</Tabs>
+
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  KalmanFilter systemKF = new KalmanFilter(R, Q);
+  system.setState(systemKF.filter(system.getState()));
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  val systemKF = KalmanFilter(R, Q)
+  system.setState(systemKF.filter(system.getState()))
+  ```
+
+</TabItem>
+</Tabs>
+
+Okay, so yes lots of nested functions here but all that's really going on is that the Kalman filter is being updated with the current system's measured state in `systemKF.filter(system.getState())` and the new system state is just being set to whatever that output is.
+
+It's pretty simple, nothing too crazy here. Feel free to use `@Config` or `@ConfigKt` to tune these in dashboard easier, while looking at the plot of the system state.
+
+### Use Case Example:
+
+Below is some modified lift code from Power Play, in which a PIDF controller is determining the amount of correction to apply to the lift motor power in order to correct the error between `liftHeight` (the current system state) and `targetHeight`, but the new motor power including the correction is passed through a Kalman filter, that then sets the motor power to the filtered value.
+You can apply this approach to all your mechanisms to improve the accuracy and decrease jitter in your mechanisms! Sometimes, PIDF can be very challenging (or actually impossible) to tune given different systems, and so this approach can help you come up with a working solution!
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+                double correction = liftNormalPID.calculate(liftHeight, targetHeight);
+                double filteredCorrection = liftFilter.filter(liftMotor.power + correction);
+                liftMotor.power = filteredCorrection;
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+                val correction = liftNormalPID.calculate(liftHeight, targetHeight)
+                val filteredCorrection = liftFilter.filter(liftMotor.power + correction)
+                liftMotor.power = filteredCorrection
+  ```
+
+</TabItem>
+</Tabs>
