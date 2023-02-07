@@ -7,7 +7,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder
 import com.noahbres.meepmeep.roadrunner.DriveShim
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence
 import ftc.rogue.blacksmith.Anvil
-import ftc.rogue.blacksmith.meepmeep.MeepMeepPersistence
+import ftc.rogue.blacksmith.util.meepmeep.MeepMeepPersistence
 import ftc.rogue.blacksmith.units.GlobalUnits
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.*
 import org.firstinspires.ftc.teamcodekt.opmodes.auto.RogueBaseAuto
@@ -38,7 +38,7 @@ fun main() {
  * - Tiernan
  */
 private fun mainTraj(drive: DriveShim) =
-    Anvil.formTrajectory(drive, startPose)
+    Anvil.forgeTrajectory(drive, startPose)
         .splineTo(-76, -82, 60)
         .back(20)
         .turn(30)

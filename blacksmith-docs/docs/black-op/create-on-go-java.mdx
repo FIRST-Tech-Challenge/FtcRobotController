@@ -29,7 +29,9 @@ private MyArmClass myArm; // (Sadly doesn't work with final variables D:)
 
 Yep, that's it. Of course, there is one small teeny weeny itsy-bitsy caveat though:
 
-**The specific class type MUST have a no-args constructor, or it will error.**
+**The specific class type MUST have either <ins>a no-args constructor</ins>, or <ins>a constructor that takes in only a HardwareMap</ins>, or it _will_ error.**
+
+If you want to use a constructor that takes in a HardwareMap only (e.g. SampleMecanumDrive), you must do `@CreateOnGo(passHwMap = true)` instead.
 
 :::tip
 On the bright side, BlackOp contains a global `hwMap` and a global `mTelemetry` you can use!
@@ -40,6 +42,9 @@ public class MyOp extends BlackOp {
     @CreateOnGo
     private MyClaw myClaw;
 
+    @CreateOnGo(passHwMap = true)
+    private SampleMecanumDrive drive;
+
     // this-will-error
     @CreateOnGo
     // this-will-error
@@ -48,15 +53,26 @@ public class MyOp extends BlackOp {
 
 class MyClaw {
     // Has no-args constructor, so it's valid
-    public MyClaw() { this(BlackOp.hwMap) }
+    public MyClaw() {
+        this(BlackOp.hwMap())
+    }
 
     // It's fine if there's additional multi-arg constructors
     public MyClaw(HardwareMap hwMap) { ... }
 }
 
+class SampleMecanumDrive {
+    // ...
+
+    // This is fine, just be sure to pass in 'passHwMap = true' to @CreateOnGo
+    public SampleMecanumDrive(HardwareMap hardwareMap) { ... }
+
+    // ...
+}
+
 class MyWife {
     // No no-args constructor, will throw exception when tries to @CreateOnGo
-    // (Also you shouldn't be objectifying women)
-    public MyWife(Tenges cost)
+    // (Also you shouldn't be objectifying women smh)
+    public MyWife(Tenges cost) { ... }
 }
 ```

@@ -15,7 +15,7 @@ class RogueLeftLowAuto : RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(-91, -159, 90)
 
     override fun mainTraj(startPose: Pose2d) =
-        Anvil.formTrajectory(bot.drive, startPose)
+        Anvil.forgeTrajectory(bot.drive, startPose)
             .forward(15)
             .initialDepositPrep()
             .turn(180)

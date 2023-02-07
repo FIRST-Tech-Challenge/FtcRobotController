@@ -7,7 +7,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder
 import com.noahbres.meepmeep.roadrunner.DriveShim
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence
 import ftc.rogue.blacksmith.Anvil
-import ftc.rogue.blacksmith.meepmeep.MeepMeepPersistence
+import ftc.rogue.blacksmith.util.meepmeep.MeepMeepPersistence
 import ftc.rogue.blacksmith.units.GlobalUnits
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.*
 
@@ -32,7 +32,7 @@ fun main() {
 }
 
 private fun mainTraj(drive: DriveShim) =
-    Anvil.formTrajectory(drive, startPose)
+    Anvil.forgeTrajectory(drive, startPose)
         .inReverse {
             splineTo(-84.5, -36.5, 90)
 

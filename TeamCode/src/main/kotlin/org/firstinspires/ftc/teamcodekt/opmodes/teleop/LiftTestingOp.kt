@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.AutoData.*
 @Disabled
 @TeleOp
 class LiftTestingOp : RogueBaseTele() {
-
     override fun describeControls(): Unit = with(bot) {
         driver.a.onRise(::setHeight1)
         driver.b.onRise(::setHeight2)
@@ -32,23 +31,23 @@ class LiftTestingOp : RogueBaseTele() {
         }
     }
 
-    fun setHeight1(){
+    private fun setHeight1(){
         bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_1
     }
 
-    fun setHeight2(){
+    private fun setHeight2(){
         bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_2
     }
 
-    fun setHeight3(){
+    private fun setHeight3(){
         bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_3
     }
 
-    fun setHeight4(){
+    private fun setHeight4(){
         bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_4
     }
 
-    fun setHeight5(){
+    private fun setHeight5(){
         bot.lift.targetHeight = AUTO_INTAKE_LIFT_HEIGHT_5
     }
 }

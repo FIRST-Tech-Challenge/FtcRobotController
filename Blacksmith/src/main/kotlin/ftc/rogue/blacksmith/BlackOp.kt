@@ -42,13 +42,7 @@ abstract class BlackOp : LinearOpMode() {
         hwMap = hardwareMap
         mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        mTelemetry.addLine("Set hwMap and telemetry")
-        mTelemetry.update()
-
         Scheduler.emit(STARTING_MSG)
-
-        mTelemetry.addLine("Emited start mg")
-        mTelemetry.update()
 
         go()
     }
@@ -99,7 +93,9 @@ abstract class BlackOp : LinearOpMode() {
 
     @Target(AnnotationTarget.FIELD)
     @Retention(AnnotationRetention.RUNTIME)
-    protected annotation class CreateOnGo
+    protected annotation class CreateOnGo(
+        val passHwMap: Boolean = false
+    )
 
     /**
      * READ DOCS FOR THIS
@@ -159,7 +155,12 @@ abstract class BlackOp : LinearOpMode() {
             }
 
             field.isAccessible = true
-            field.set(this, clazz.getConstructor().newInstance())
+
+            if (field.getAnnotation(CreateOnGo::class.java)?.passHwMap == true) {
+                field.set(this, clazz.getConstructor().newInstance(hwMap))
+            } else {
+                field.set(this, clazz.getConstructor().newInstance())
+            }
         }
 
     @PublishedApi

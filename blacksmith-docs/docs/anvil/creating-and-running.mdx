@@ -1,0 +1,105 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ParamsList from '../../src/components/ParamsList';
+import Returns from '../../src/components/Returns';
+
+# Creating/running trajectories
+
+## Overview
+
+Blacksmith provides a relatively simple yet versatile way to create and run TrajectorySequences. There are three main parts:
+ - Creating trajectories
+ - Building/running the initial trajectory
+ - Building/running subsequent trajectories
+
+## Creating trajectories
+
+### Anvil.forgeTrajectory()
+
+Anvil.forgeTrajectory is the entry point into creating Anvil trajectories.
+
+<ParamsList params={[
+  {
+    name: 'drive',
+    type: 'SampleMecanumDrive',
+    desc: 'The SampleMecanumDrive that will run the trajectories',
+  },
+  {
+    name: 'startPose',
+    type: 'Pose2d',
+    desc: 'The starting position of the robot',
+  }
+]}/>
+
+:::warning
+Even though Anvil.forgeTrajectory() is supposed to take a SampleMecanumDrive instance as it's first argument, it's actually
+typed as 'Object', meaning you can pass in any object you want, which you aren't supposed to.
+
+If that doesn't make much sense, just keep this in mind: **Make sure you're passing in a SampleMecanumDrive instance, and
+not some other object by accident**
+:::
+
+<Returns returns={{
+  type: 'Anvil',
+  desc: 'A new Anvil instance to build upon',
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  /* There are two ways to format your trajectory creation */
+
+  // First way is the builder pattern
+  public Anvil myFirstAnvilTrajectory(Pose2d startPose) {
+      return Anvil.forgeTrajectory(sampleMecanumDrive, startPose)
+          .forward(...) // You can easily chain methods this way
+          .turn(...)    // to form a clean builder syntax
+          .back(...);
+  }
+
+  // Alternatively, you can use a lambda
+  public Anvil mySecondAnvilTrajectory(Pose2d startPose) {
+      return Anvil.forgeTrajectory(sampleMecanumDrive, startPose, (anvil) -> {
+          anvil             // This way can allow you to break up the methods with
+              .forward(...) // other logic or computations, like below
+              .turn(...);   // (You can still chain methods like this though)
+
+          double x = someComputationWithAReallyLongNameForNoReason();
+
+          anvil.back(x);
+      });
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  /* There are two ways to format your trajectory creation */
+
+  // First way is the builder pattern
+  fun myFirstAnvilTrajectory(startPose: Pose2d) =
+      Anvil.forgeTrajectory(sampleMecanumDrive, startPose)
+          .forward(...) // You can easily chain methods this way
+          .turn(...)    // to form a clean builder syntax
+          .back(...)
+
+  // Alternatively, you can use a lambda w/ receiver
+  fun mySecondAnvilTrajectory(startPose: Pose2d) =
+      Anvil.forgeTrajectory(sampleMecanumDrive, startPose, (anvil) -> {
+          forward(...) // This way can allow you to break up the methods with
+          turn(...)    // other logic or computations, like below
+                       // (You can still chain methods like this though)
+          val x = someComputationWithAReallyLongNameForNoReason()
+
+          anvil.back(x)
+      })
+  ```
+
+</TabItem>
+</Tabs>

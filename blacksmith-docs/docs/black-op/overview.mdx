@@ -35,7 +35,7 @@ It's just like using `LinearOpMode`, just a couple minor differences.
       @Override
       public void go() { // go() instead of runOpMode()
           Scheduler.launchOnStart(this) {
-              mTelemetry.addData("Hello", "World!"); // Logs to both driver station and FTCDashboard
+              mTelemetry().addData("Hello", "World!"); // Logs to both driver station and FTCDashboard
           }
       }
   }
@@ -44,6 +44,10 @@ It's just like using `LinearOpMode`, just a couple minor differences.
       static {
           Scheduler.on(BlackOp.STARTING_MSG, () -> {
               // This will fire once when the op mode is started
+
+              // Also, you can globally access a hwMap and an mTelemetry
+              BlackOp.hwMap()
+              BlackOp.mTelemetry().addLine("Hi!")
           });
       }
   }
@@ -70,6 +74,10 @@ It's just like using `LinearOpMode`, just a couple minor differences.
       init {
           Scheduler.on(BlackOp.STARTING_MSG) {
               // This will fire once when the op mode is started
+
+              // Also, you can globally access a hwMap and an mTelemetry
+              BlackOp.hwMap
+              BlackOp.mTelemetry.addLine("Hi!")
           }
       }
   }

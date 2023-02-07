@@ -123,8 +123,7 @@ abstract class RogueBaseAuto : BlackOp() {
         const val LAST_CYCLE = NUM_CYCLES - 1
 
         @JvmStatic
-        protected val
-            liftOffsets = intArrayOf(
+        protected val liftOffsets = intArrayOf(
             AutoData.AUTO_INTAKE_LIFT_HEIGHT_1,
             AutoData.AUTO_INTAKE_LIFT_HEIGHT_2,
             AutoData.AUTO_INTAKE_LIFT_HEIGHT_3,

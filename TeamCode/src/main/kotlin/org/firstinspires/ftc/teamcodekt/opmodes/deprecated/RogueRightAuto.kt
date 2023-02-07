@@ -15,7 +15,7 @@ class RogueRightAuto : RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(91, -159, 90)
 
     override fun mainTraj(startPose: Pose2d) =
-        Anvil.formTrajectory(bot.drive, startPose)
+        Anvil.forgeTrajectory(bot.drive, startPose)
             .initialDepositPrep()
 
             .awaitInitialGoToDeposit()
@@ -144,7 +144,7 @@ class RogueRightAuto : RogueBaseAuto() {
         }
 
     private fun parkTraj(startPose: Pose2d) =
-        Anvil.formTrajectory(bot.drive, startPose) {
+        Anvil.forgeTrajectory(bot.drive, startPose) {
             resetBot()
 
             when (signalID) {

@@ -6,3 +6,135 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Overview
+
+:::info
+Anvil assumes that you are at least somewhat familiar with Roadrunner's [TrajectorySequenceBuilders](https://learnroadrunner.com/trajectory-sequence.html).
+The Anvil docs will only cover in detail special methods that the normal TrajectorySequenceBuilder API does not have.
+To learn more about TrajectorySequences & Roadrunner in general, check out [learnroadrunner.com](https://learnroadrunner.com)
+:::
+
+## What is Anvil?
+
+Anvil is a wrapper around Roadrunner `v0.5.x`'s [TrajectorySequenceBuilder](https://learnroadrunner.com/trajectory-sequence.html)
+that provides a *much* nicer API, providing utilities to heavily speed up both your auto and your development time!
+
+:::warning Warning
+**Anvil does not yet support `v1.0.0+`** as it is not yet truly battle tested, and for that reason, I do not yet trust it.
+:::
+
+## Features
+
+ - Intuitive and cleaner methods for building and running TrajectorySequences
+
+ - Implicit unit conversion- program your auto in any units you want by changing just a couple lines!
+
+ - Trajectory generation is implicitly done in background threads unless otherwise specified
+   - Trajectories normally take a while to create on the fly, so it slows down your auto when done in the main thread
+   - Using background threads (or rather coroutines) prevents your auto from being bogged down when generating however
+     many trajectories you'd like!
+
+ - Works together with other parts of Blacksmith for even more conciseness and practicality
+
+## Example
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java title="BaseAuto.java"
+  abstract class BaseAuto extends BlackOp {
+      @CreateOnGo
+      protected AutoBotComponents bot;
+
+      @CreateOnGo(passHwMap = true)
+      protected SampleMecanumDrive drive;
+
+      protected Pose2d startPose;
+      protected abstract Anvil mainTraj(Pose2d startPose);
+
+      @Override
+      public void go() {
+          Anvil startTraj = mainTraj(startPose);
+
+          Anvil
+              .startAutoWith(startTraj)
+              .onSchedulerLaunch();
+
+          Scheduler.launchOnStart(this, () -> {
+              drive.update();
+              bot.update();
+          });
+      }
+  }
+  ```
+
+  ```java title="AutoDemo.java"
+  @Autonomous
+  class AutoDemo extends BaseAuto {
+      public AutoDemo() {
+          startPose = GlobalUnits.pos(x, y, r);
+      }
+
+      @Override
+      protected Anvil mainTraj(Pose2d startPose) {
+          return Anvil.forgeTrajectory(drive, startPose)
+              .forward(10)
+              .addTemporalMarker(100, () -> {
+                  /* Do something */
+              })
+              .back(10)
+              .thenRun(this::parkTraj);
+      }
+
+      private Anvil parkTraj(Pose2d startPose) {
+          /* Create and return parking trajectory */
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin title="BaseAuto.kt"
+  abstract class BaseAuto : BlackOp() {
+      protected val bot by evalOnGo(::createAutoBotComponents)
+      protected val drive by createOnGo<SampleMechanumDrive> { hwMap }
+
+      protected abstract val startPose: Pose2d
+      protected abstract fun mainTraj(startPose: Pose2d): Anvil
+
+      override fun go() {
+          val startTraj = mainTraj(startPose)
+
+          Anvil
+              .startAutoWith(startTraj)
+              .onSchedulerLaunch()
+
+          Scheduler.launchOnStart(opmode = this) {
+              drive.update()
+              bot.update()
+          }
+      }
+  }
+  ```
+
+  ```kotlin title="AutoDemo.kt"
+  @Autonomous
+  class AutoDemo : BaseAuto() {
+      override val startPose = GlobalUnits.pos(x, y, r);
+
+      override fun mainTraj(Pose2d startPose) =
+          Anvil.forgeTrajectory(drive, startPose)
+              .forward(10)
+              .addTemporalMarker(100) {
+                  /* Do something */
+              }
+              .back(10)
+              .thenRun(::parkTraj);
+
+      fun parkTraj(Pose2d startPose) =
+          /* Create and return parking trajectory */
+  }
+  ```
+
+</TabItem>
+</Tabs>

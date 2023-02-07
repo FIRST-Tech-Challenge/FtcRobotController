@@ -7,8 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.MarkerCallback
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint
-import ftc.rogue.blacksmith.internal.AnvilLaunchConfig1
-import ftc.rogue.blacksmith.internal.AnvilRunConfig
+import ftc.rogue.blacksmith.internal.*
 import ftc.rogue.blacksmith.internal.invokeMethodRethrowing
 import ftc.rogue.blacksmith.internal.proxies._SampleMecanumDrive
 import ftc.rogue.blacksmith.units.GlobalUnits
@@ -42,7 +41,7 @@ import kotlinx.coroutines.*
  *
  * fun goForwardAndRaiseLift(startPose: Pose2d): Anvil {
  *    // Here pass in the SampleMechanumDrive
- *    return Anvil.formTrajectory(drive, startPose)
+ *    return Anvil.forgeTrajectory(drive, startPose)
  *      // Concurrently creates the trajectory while still running the rest of the auto
  *      // This is useful for creating trajectories on the fly without stalling
  *      // the auto while the trajectory is being created.
@@ -64,7 +63,7 @@ import kotlinx.coroutines.*
  *
  * // Note that you can just use Kotlin's single expression functions to make this even cleaner:
  * fun goBackwardAndLowerLift(startPose: Pose2d): Anvil =
- *    Anvil.formTrajectory(drive, startPose)
+ *    Anvil.forgeTrajectory(drive, startPose)
  *      .preform(key = "cycle again", ::goForwardAndRaiseLift, startPose))
  *      .preform(key = "park", ::park, startPose)
  *
@@ -81,7 +80,7 @@ import kotlinx.coroutines.*
  *
  * // There's a version of the builder API that accepts a builder lambda as well:
  * fun park(startPose: Pose2d): Anvil =
- *   Anvil.formTrajectory(drive, startPose) {
+ *   Anvil.forgeTrajectory(drive, startPose) {
  *      when (coneSignalNum) {
  *          1 -> forward(.1)
  *          2 -> forward(10)
@@ -107,13 +106,13 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          * Usage example:
          * ```kotlin
          * fun trajectory1(): Anvil =
-         *     Anvil.formTrajectory(drive, startPose) {
+         *     Anvil.forgeTrajectory(drive, startPose) {
          *         forward(24) // Note there are no '.'s, this uses
          *         turn(90) // Kotlin's 'lambda with reciever' syntax
          *     }
          *
          * fun trajectory2(): Anvil =
-         *     Anvil.formTrajectory(drive, startPose)
+         *     Anvil.forgeTrajectory(drive, startPose)
          *         .forward(24) // Also usable without a lambda
          *         .turn(90) // (hi mom)
          * ```
@@ -126,7 +125,7 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
          */
         @JvmStatic
         @JvmOverloads
-        inline fun formTrajectory(
+        inline fun forgeTrajectory(
             drive: Any,
             startPose: Pose2d,
             builder: Anvil.() -> Anvil = { this }
@@ -173,24 +172,18 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         }
 
         // Private coroutine scope used for async trajectory creation, dw about it
-        @PublishedApi
-        internal val builderScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+        private val builderScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     }
 
-    @PublishedApi
-    internal val driveProxy = _SampleMecanumDrive(drive)
+    private val driveProxy = _SampleMecanumDrive(drive)
 
-    @PublishedApi
-    internal val builderProxy = this.driveProxy.getBuilderProxy(startPose)
+    private val builderProxy = driveProxy.getBuilderProxy(startPose)
 
-    @PublishedApi
-    internal val preformedTrajectories = mutableMapOf<Any, Deferred<Any>>()
+    private val preforgedTrajectories = mutableMapOf<Any, Deferred<Any>>()
 
-    @PublishedApi
-    internal lateinit var builtTrajectory: Any
+    private lateinit var builtTrajectory: Any
 
-    @PublishedApi
-    internal val builderDeque = ArrayDeque<() -> Unit>()
+    private val builderDeque = ArrayDeque<BuilderAction>()
 
     // -- Direct path mappings (Basic) --
 
@@ -340,9 +333,13 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      *         builder.splineTo(...);  |          splineTo(...)
      *     });                         |       }
      */
-    inline fun inReverse(crossinline pathsToDoInReverse: Anvil.() -> Unit) = this.apply {
+    fun inReverse(pathsToDoInReverse: AnvilConsumer) = this.apply {
         setReversed(true)
-        pathsToDoInReverse(this)
+
+        with(pathsToDoInReverse) {
+            this@Anvil.consume()
+        }
+
         setReversed(false)
     }
 
@@ -360,18 +357,24 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      * ```
      * the stack looks like this:
      *
-     * -> setReversed(false)
-     * -> builder.whatever(...)
      * -> setReversed(true)
+     *
+     * -> builder.whatever(...)
+     *
+     * -> setReversed(false)
      *
      * so if you try to do `.inReverse(() -> ...).doInReverse()`, that doesn't cancel out the
      * `.inReverse`. The stack would end up looking like this:
      *
-     * -> setReversed(false)
-     * -> setReversed(false)
      * -> setReversed(true)
+     *
+     * -> setReversed(true)
+     *
+     * -> setReversed(false)
+     *
      * -> builder.whatever(...)
-     * -> setReversed(true)
+     *
+     * -> setReversed(false)
      *
      * the `setReversed(false)` was popped and *that* was reversed, which, as you can probably
      * guess, is useless & does absolutely nothing.
@@ -409,8 +412,10 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      *     }
      */
     @Suppress("UNCHECKED_CAST")
-    inline fun <T> withRawBuilder(crossinline builder: T.() -> Unit) = queueAndReturnThis {
-        builder(builderProxy.internalBuilder as T)
+    fun <T> withRawBuilder(builder: Consumer<T>) = queueAndReturnThis {
+        with(builder) {
+            (builderProxy.internalBuilder as T).consume()
+        }
     }
 
     /**
@@ -426,8 +431,12 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
      *         builder.back(...);       |          back(...)
      *     });                          |       }
      */
-    inline fun doTimes(times: Int, pathsToDo: Anvil.(Int) -> Unit) = this.apply {
-        repeat(times) { pathsToDo(this, it) }
+    fun doTimes(times: Int, pathsToDo: AnvilCycle) = this.apply {
+        repeat(times) { iterationNum ->
+            with(pathsToDo) {
+                this@Anvil.doCycle(iterationNum)
+            }
+        }
     }
 
     // -- Constraints --
@@ -440,7 +449,9 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         builderProxy.setVelConstraint(velConstraint)
     }
 
-    // IMPORTANT: These units are NOT auto-converted
+    /**
+     * __IMPORTANT:__ These units are NOT auto-converted
+     */
     fun setVelConstraint(maxVel: Number, maxAngularVel: Number, trackWidth: Number) = queueAndReturnThis {
         builderProxy.setVelConstraint(driveProxy.getVelocityConstraint(maxVel, maxAngularVel, trackWidth))
     }
@@ -453,7 +464,9 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
         builderProxy.setAccelConstraint(accelConstraint)
     }
 
-    // IMPORTANT: These units are NOT auto-converted
+    /**
+     * __IMPORTANT:__ These units are NOT auto-converted
+     */
     fun setAccelConstraint(maxAccel: Number) = queueAndReturnThis {
         builderProxy.setAccelConstraint(driveProxy.getAccelerationConstraint(maxAccel))
     }
@@ -473,18 +486,21 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
     // -- Building, creating, running --
 
     @JvmOverloads
-    inline fun thenRun(
-        crossinline nextTrajectory: (Pose2d) -> Anvil,
-        crossinline nextStartPose: () -> Pose2d = ::getEndPose,
-        crossinline runConfig: AnvilRunConfig.() -> AnvilRunConfig = { AnvilRunConfig() }
+    fun thenRun(
+        nextTrajectory: (Pose2d) -> Anvil,
+        configBuilder: AnvilConfigBuilder = AnvilRunConfig.DEFAULT
     ): Anvil {
-        val config = runConfig(AnvilRunConfig())
+        val config = AnvilRunConfig()
+        configBuilder.run { AnvilRunConfig().build() }
+
+        val nextStartPoseSupplier = config.startPoseSupplier ?: ::getEndPose
+
         val key = Any()
 
         if (!config.buildsSynchronously) {
             builderDeque.addFirst {
                 builderProxy.UNSTABLE_addTemporalMarkerOffset(0.0) {
-                    preformedTrajectories[key] = builderScope.async { nextTrajectory( nextStartPose() ).build() }
+                    preforgedTrajectories[key] = builderScope.async { nextTrajectory( nextStartPoseSupplier() ).build() }
                 }
             }
         }
@@ -493,9 +509,9 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
             if (!config.predicate()) return@addTemporalMarker
 
             val nextTrajectoryBuilt = if (config.buildsSynchronously) {
-                nextTrajectory( nextStartPose() ).build()
+                nextTrajectory( nextStartPoseSupplier() ).build()
             } else {
-                runBlocking { preformedTrajectories[key]?.await() }!!
+                runBlocking { preforgedTrajectories[key]?.await() }!!
             }
 
             if (config.buildsSynchronously) {
@@ -516,20 +532,17 @@ class Anvil(drive: Any, private val startPose: Pose2d) {
 
     // -- Internal --
 
-    @PublishedApi
-    internal fun queueAndReturnThis(builderAction: () -> Unit) = this.apply {
+    private fun queueAndReturnThis(builderAction: BuilderAction) = this.apply {
         builderDeque += builderAction
     }
 
-    @PublishedApi
-    internal fun run(trajectory: Any, async: Boolean) = if (async) {
+    private fun run(trajectory: Any, async: Boolean) = if (async) {
         driveProxy.followTrajectorySequenceAsync(trajectory)
     } else {
         driveProxy.followTrajectorySequence(trajectory)
     }
 
-    @PublishedApi
-    internal fun getEndPose(): Pose2d {
+    private fun getEndPose(): Pose2d {
         if (!::builtTrajectory.isInitialized) {
             throw IllegalStateException("No trajectory has been built yet")
         }

@@ -1,4 +1,4 @@
-package ftc.rogue.blacksmith.meepmeep
+package ftc.rogue.blacksmith.util.meepmeep
 
 import com.noahbres.meepmeep.MeepMeep
 import ftc.rogue.blacksmith.internal.invokeMethod

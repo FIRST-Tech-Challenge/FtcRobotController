@@ -48,7 +48,7 @@ internal class AnvilTest {
             .setReversed(false)
             .build()
 
-        val actual = Anvil.formTrajectory(drive, Pose2d()) {
+        val actual = Anvil.forgeTrajectory(drive, Pose2d()) {
             forward(5.0)
             turn(PI)
             addTemporalMarker(1.0) {

@@ -20,7 +20,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(-91, -163, 90)
 
     override fun mainTraj(startPose: Pose2d) =
-        Anvil.formTrajectory(bot.drive, startPose)
+        Anvil.forgeTrajectory(bot.drive, startPose)
             .setVelConstraint(
                 SampleMecanumDrive.getVelocityConstraint(
                     42.0,
@@ -168,7 +168,7 @@ class RogueLowLeftAuto : RogueBaseAuto() {
         }
 
     private fun parkTraj(startPose: Pose2d) =
-        Anvil.formTrajectory(bot.drive, startPose) {
+        Anvil.forgeTrajectory(bot.drive, startPose) {
             resetBot()
 
             when (signalID) {

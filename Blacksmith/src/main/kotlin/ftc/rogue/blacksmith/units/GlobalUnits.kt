@@ -44,17 +44,25 @@ object GlobalUnits {
 
     @JvmStatic
     @JvmOverloads
-    fun pos(x: Number = 0, y: Number = 0, heading: Number = 0) = Pose2d(x.toIn(), y.toIn(), heading.toRad())
+    fun pos(x: Number = 0, y: Number = 0, heading: Number = 0): Pose2d {
+        return Pose2d(x.toIn(), y.toIn(), heading.toRad())
+    }
 
     @JvmStatic
     @JvmOverloads
-    fun vec(x: Number = 0, y: Number = 0) = Vector2d(x.toIn(), y.toIn())
+    fun vec(x: Number = 0, y: Number = 0): Vector2d {
+        return Vector2d(x.toIn(), y.toIn())
+    }
 
     @JvmStatic
-    fun pos(pose2d: Pose2d) = Pose2d(pose2d.x.toIn(), pose2d.y.toIn(), pose2d.heading.toRad())
+    fun pos(pose2d: Pose2d): Pose2d {
+        return Pose2d(pose2d.x.toIn(), pose2d.y.toIn(), pose2d.heading.toRad())
+    }
 
     @JvmStatic
-    fun vec(vector2d: Vector2d) = Vector2d(vector2d.x.toIn(), vector2d.y.toIn())
+    fun vec(vector2d: Vector2d): Vector2d {
+        return Vector2d(vector2d.x.toIn(), vector2d.y.toIn())
+    }
 
     private const val UNITS_FILE_NAME = "bsm_units"
     private const val FULL_SAVE_PATH = "./TeamCode/src/main/res/raw/$UNITS_FILE_NAME.properties"
