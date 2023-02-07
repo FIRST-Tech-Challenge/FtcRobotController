@@ -97,7 +97,7 @@ import kotlinx.coroutines.*
  * @see Scheduler
  * @see TrajectorySequenceBuilder
  */
-class Anvil(drive: Any, @get:JvmSynthetic internal val startPose: Pose2d) {
+class Anvil(drive: Any, startPose: Pose2d) {
     companion object {
         @JvmStatic
         @JvmOverloads
@@ -113,130 +113,127 @@ class Anvil(drive: Any, @get:JvmSynthetic internal val startPose: Pose2d) {
         fun startAutoWith(instance: Anvil): AnvilRunner {
             return AnvilRunner().startAutoWith(instance)
         }
-
-        // Private coroutine scope used for async trajectory creation, dw about it
-        private val builderScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     }
 
     @PublishedApi
     @get:JvmSynthetic
-    internal val internal = AnvilInternal(drive, startPose)
+    internal val internal = AnvilInternal(this, drive, startPose)
 
     // -- Direct path mappings (Basic) --
 
-    fun forward(distance: Number) = action {
+    fun forward(distance: Number) = apply {
         internal._forward(distance)
     }
 
-    fun back(distance: Number) = action {
+    fun back(distance: Number) = apply {
         internal._back(distance)
     }
 
-    fun turn(angle: Number) = action {
+    fun turn(angle: Number) = apply {
         internal._turn(angle)
     }
 
-    fun strafeLeft(distance: Number) = action {
+    fun strafeLeft(distance: Number) = apply {
         internal._strafeLeft(distance)
     }
 
-    fun strafeRight(distance: Number) = action {
+    fun strafeRight(distance: Number) = apply {
         internal._strafeRight(distance)
     }
 
     // -- Direct path mappings (Lines) --
 
-    fun lineTo(x: Number, y: Number) = action {
+    fun lineTo(x: Number, y: Number) = apply {
         internal._lineTo(x, y)
     }
 
-    fun strafeTo(x: Number, y: Number) = action {
+    fun strafeTo(x: Number, y: Number) = apply {
         internal._lineTo(x, y)
     }
 
-    fun lineToConstantHeading(x: Number, y: Number) = action {
+    fun lineToConstantHeading(x: Number, y: Number) = apply {
         internal._lineTo(x, y)
     }
 
-    fun lineToLinearHeading(x: Number, y: Number, heading: Number) = action {
+    fun lineToLinearHeading(x: Number, y: Number, heading: Number) = apply {
         internal._lineToLinearHeading(x, y, heading)
     }
 
-    fun lineToSplineHeading(x: Number, y: Number, heading: Number) = action {
+    fun lineToSplineHeading(x: Number, y: Number, heading: Number) = apply {
         internal._lineToSplineHeading(x, y, heading)
     }
 
     // -- Direct path mappings (Splines) --
 
-    fun splineTo(x: Number, y: Number, endTangent: Number) = action {
+    fun splineTo(x: Number, y: Number, endTangent: Number) = apply {
         internal._splineTo(x, y, endTangent)
     }
 
-    fun splineToConstantHeading(x: Number, y: Number, endTangent: Number) = action {
+    fun splineToConstantHeading(x: Number, y: Number, endTangent: Number) = apply {
         internal._splineToConstantHeading(x, y, endTangent)
     }
 
-    fun splineToLinearHeading(x: Number, y: Number, heading: Number, endTangent: Number) = action {
+    fun splineToLinearHeading(x: Number, y: Number, heading: Number, endTangent: Number) = apply {
         internal._splineToLinearHeading(x, y, heading, endTangent)
     }
 
-    fun splineToSplineHeading(x: Number, y: Number, heading: Number, endTangent: Number) = action {
+    fun splineToSplineHeading(x: Number, y: Number, heading: Number, endTangent: Number) = apply {
         internal._splineToSplineHeading(x, y, heading, endTangent)
     }
 
     // -- Advanced mappings --
 
-    fun waitTime(time: Number) = action {
+    fun waitTime(time: Number) = apply {
         internal._waitTime(time)
     }
 
-    fun setReversed(reversed: Boolean) = action {
+    fun setReversed(reversed: Boolean) = apply {
         internal._setReversed(reversed)
     }
 
-    fun setTangent(tangent: Number) = action {
+    fun setTangent(tangent: Number) = apply {
         internal._setTangent(tangent)
     }
 
-    fun addTrajectory(trajectory: Trajectory) = action {
+    fun addTrajectory(trajectory: Trajectory) = apply {
         internal._addTrajectory(trajectory)
     }
 
-    fun addTrajectory(trajectory: () -> Trajectory) = action {
+    fun addTrajectory(trajectory: () -> Trajectory) = apply {
         internal._addTrajectory(trajectory)
     }
 
     // -- Markers --
 
     @JvmOverloads
-    fun addTemporalMarker(offset: Number = 0.0, action: MarkerCallback) = action {
+    fun addTemporalMarker(offset: Number = 0.0, action: MarkerCallback) = apply {
         internal._addTemporalMarker(offset, action)
     }
 
     @JvmOverloads
-    fun addDisplacementMarker(offset: Number = 0.0, action: MarkerCallback) = action {
+    fun addDisplacementMarker(offset: Number = 0.0, action: MarkerCallback) = apply {
         internal._addDisplacementMarker(offset, action)
     }
 
-    fun addSpatialMarker(offsetX: Number, offsetY: Number, action: MarkerCallback) = action {
+    fun addSpatialMarker(offsetX: Number, offsetY: Number, action: MarkerCallback) = apply {
         internal._addSpatialMarker(offsetX, offsetY, action)
     }
 
     // -- Utilities --
 
-    fun setPoseEstimateNow(pose: Pose2d) = action {
+    fun setPoseEstimateNow(pose: Pose2d) = apply {
         internal.setPoseEstimate(pose)
     }
 
-    fun setPoseEstimateInTemporalMarker(pose: Pose2d) = action {
+    fun setPoseEstimateInTemporalMarker(pose: Pose2d) = apply {
         internal.__setPoseEstimateInTemporalMarker(pose)
     }
 
-    fun inReverse(pathsToDoInReverse: AnvilConsumer) = action {
-        internal.__inReverse(instance = this, pathsToDoInReverse)
+    fun inReverse(pathsToDoInReverse: AnvilConsumer) = apply {
+        internal.__inReverse(pathsToDoInReverse)
     }
 
-    fun doInReverse() = action {
+    fun doInReverse() = apply {
         internal.`$doInReverse`()
     }
 
@@ -244,56 +241,55 @@ class Anvil(drive: Any, @get:JvmSynthetic internal val startPose: Pose2d) {
     val noop: Anvil
         get() = also { internal._noop() }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T> withRawBuilder(builder: Consumer<T>) = action {
+    fun <T> withRawBuilder(builder: Consumer<T>) = apply {
         internal._withRawBuilder(builder)
     }
 
-    fun doTimes(times: Int, pathsToDo: AnvilCycle) = action {
+    fun doTimes(times: Int, pathsToDo: AnvilCycle) = apply {
         internal.doTimes(instance = this, times, pathsToDo)
     }
 
     // -- Constraints --
 
-    fun resetConstraints() = action {
+    fun resetConstraints() = apply {
         internal._resetConstraints()
     }
 
-    fun setVelConstraint(velConstraint: TrajectoryVelocityConstraint) = action {
+    fun setVelConstraint(velConstraint: TrajectoryVelocityConstraint) = apply {
         internal._setVelConstraint(velConstraint)
     }
 
     /**
      * __IMPORTANT:__ These units are NOT auto-converted
      */
-    fun setVelConstraint(maxVel: Number, maxAngularVel: Number, trackWidth: Number) = action {
+    fun setVelConstraint(maxVel: Number, maxAngularVel: Number, trackWidth: Number) = apply {
         internal._setVelConstraint(maxVel, maxAngularVel, trackWidth)
     }
 
-    fun resetVelConstraint() = action {
+    fun resetVelConstraint() = apply {
         internal._resetVelConstraint()
     }
 
-    fun setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = action {
+    fun setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = apply {
         internal._setAccelConstraint(accelConstraint)
     }
 
     /**
      * __IMPORTANT:__ These units are NOT auto-converted
      */
-    fun setAccelConstraint(maxAccel: Number) = action {
+    fun setAccelConstraint(maxAccel: Number) = apply {
         internal._setAccelConstraint(maxAccel)
     }
 
-    fun resetAccelConstraint() = action {
+    fun resetAccelConstraint() = apply {
         internal._resetAccelConstraint()
     }
 
-    fun setTurnConstraint(maxAngVel: Number, maxAngAccel: Number) = action {
+    fun setTurnConstraint(maxAngVel: Number, maxAngAccel: Number) = apply {
         internal._setTurnConstraint(maxAngVel, maxAngAccel)
     }
 
-    fun resetTurnConstraint() = action {
+    fun resetTurnConstraint() = apply {
         internal._resetTurnConstraint()
     }
 
@@ -303,7 +299,7 @@ class Anvil(drive: Any, @get:JvmSynthetic internal val startPose: Pose2d) {
     fun thenRun(
         nextTrajectory: (Pose2d) -> Anvil,
         configBuilder: AnvilRunConfigBuilder = AnvilRunConfig.DEFAULT
-    ) = action {
+    ) = apply {
         internal.`$thenRun`(nextTrajectory, configBuilder)
     }
 
@@ -313,7 +309,7 @@ class Anvil(drive: Any, @get:JvmSynthetic internal val startPose: Pose2d) {
 
     // -- Internal --
 
-    private inline fun action(action: BuilderAction) = apply {
+    private inline fun apply(action: BuilderAction) = also {
         action()
     }
 }

@@ -30,36 +30,15 @@ abstract class RogueBaseAuto : BlackOp() {
         private set
 
     final override fun go() {
-        mTelemetry.addLine("Going")
-        mTelemetry.update()
-
         bot = createAutoBotComponents()
-
-        mTelemetry.addLine("Made components")
-        mTelemetry.update()
 
         PhotonCore.enable()
 
-        mTelemetry.addLine("Enabled photon")
-        mTelemetry.update()
-
         readPoleOffset()
 
-        mTelemetry.addLine("Read pole ofset")
-        mTelemetry.update()
-
         val startTraj = mainTraj(startPose)
-
-        mTelemetry.addLine("Made trajectory")
-        mTelemetry.update()
-
         Anvil.startAutoWith(startTraj).onSchedulerLaunch()
 
-        mTelemetry.addLine("Setup trajectory")
-        mTelemetry.update()
-
-        bot.camera.targetAngle = CAM_FORWARDS
-        bot.camera.update()
         signalID = bot.camera.waitForStartWithVision(this) ?: 2
 
         Scheduler.launch(opmode = this) {

@@ -11,12 +11,23 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint
 import ftc.rogue.blacksmith.internal.getMethod
+import ftc.rogue.blacksmith.internal.invokeMethodI
 import ftc.rogue.blacksmith.internal.invokeMethodRethrowing
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
 @PublishedApi
-internal class _TrajectorySequenceBuilder(val internalBuilder: Any) {
+internal class _TrajectorySequenceBuilder(
+    driveProxy: _SampleMecanumDrive,
+    startPose: Pose2d,
+) {
+    @get:JvmSynthetic
+    internal val internalBuilder: Any
+
+    init {
+        internalBuilder = driveProxy.invokeMethodI("trajectorySequenceBuilder", startPose)
+    }
+
     // -- START MACHINE GENERATED CODE --
 
     fun lineTo(endPosition: Vector2d) = returnThisAndRethrow {

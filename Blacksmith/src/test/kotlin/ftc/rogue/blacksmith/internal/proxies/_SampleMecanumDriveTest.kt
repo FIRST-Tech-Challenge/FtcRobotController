@@ -18,17 +18,6 @@ internal class _SampleMecanumDriveTest {
     private val _drive = _SampleMecanumDrive(drive)
 
     @Test
-    fun `proxy correctly returns builder proxy`() {
-        every { drive.trajectorySequenceBuilder(any()) } returns newBuilder()
-
-        assertDoesNotThrow {
-            _drive.getBuilderProxy(Pose2d())
-        }
-
-        verify { drive.trajectorySequenceBuilder(any()) }
-    }
-
-    @Test
     fun `proxy correctly calls followTrajectorySequenceAsync`() {
         every { drive.followTrajectorySequenceAsync(any()) } just Runs
 

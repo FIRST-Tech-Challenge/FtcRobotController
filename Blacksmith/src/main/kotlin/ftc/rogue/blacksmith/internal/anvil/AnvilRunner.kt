@@ -23,7 +23,7 @@ class AnvilRunner internal constructor() {
 
     @JvmSynthetic
     internal fun startAutoWith(instance: Anvil) = this.also {
-        initialTrajectory = instance.setPoseEstimateNow(instance.startPose).build()
+        initialTrajectory = instance.setPoseEstimateNow(instance.internal.startPose).build()
         initialInstance = instance
     }
 }

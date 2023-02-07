@@ -11,13 +11,22 @@ import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.internal.*
 import ftc.rogue.blacksmith.internal.invokeMethodRethrowing
 import ftc.rogue.blacksmith.internal.proxies._SampleMecanumDrive
+import ftc.rogue.blacksmith.internal.proxies._TrajectorySequenceBuilder
 import ftc.rogue.blacksmith.units.GlobalUnits
 import ftc.rogue.blacksmith.util.toIn
 import ftc.rogue.blacksmith.util.toRad
 import ftc.rogue.blacksmith.util.toSec
 import kotlinx.coroutines.*
 
+/**
+ * **PREFIXES:**
+ * - '_' -> Directly adds to the end of the deque
+ * - '__' -> Calls other functions that adds to the deque
+ * - '$' -> Directly modifies the deque or something else special
+ * - else -> Doesn't touch the deque
+ */
 class AnvilInternal(
+    private val instance: Anvil,
     drive: Any,
     @get:JvmSynthetic internal val startPose: Pose2d,
 ) {
@@ -27,7 +36,7 @@ class AnvilInternal(
 
     private val driveProxy = _SampleMecanumDrive(drive)
 
-    private val builderProxy = driveProxy.getBuilderProxy(startPose)
+    private val builderProxy = _TrajectorySequenceBuilder(driveProxy, startPose)
 
     private val builderDeque = ArrayDeque<BuilderAction>()
 
@@ -177,7 +186,7 @@ class AnvilInternal(
         }
     }
 
-    fun __inReverse(instance: Anvil, pathsToDoInReverse: AnvilConsumer) {
+    fun __inReverse(pathsToDoInReverse: AnvilConsumer) {
         _setReversed(true)
 
         with(pathsToDoInReverse) {
@@ -190,13 +199,14 @@ class AnvilInternal(
     fun `$doInReverse`() {
         val thingToDoInReverse = builderDeque.removeLast()
 
-        _setReversed(true)
-        add { thingToDoInReverse() }
-        _setReversed(false)
+        __inReverse {
+            thingToDoInReverse()
+        }
     }
 
     fun _noop() = add {}
 
+    @Suppress("UNCHECKED_CAST")
     fun <T> _withRawBuilder(builder: Consumer<T>) = add {
         with(builder) {
             (builderProxy.internalBuilder as T).consume()
@@ -292,11 +302,12 @@ class AnvilInternal(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "unused")
     fun <T : Any> `$build`(): T {
         for (i in builderDeque.indices) {
             builderDeque.removeFirst().invoke()
         }
+
         return (builderProxy.build() as T).also { builtTrajectory = it }
     }
 }

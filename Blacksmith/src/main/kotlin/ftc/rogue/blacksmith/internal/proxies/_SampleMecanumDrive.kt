@@ -11,11 +11,6 @@ import java.util.*
 
 @PublishedApi
 internal class _SampleMecanumDrive(private val drive: Any) {
-    fun getBuilderProxy(startPose: Pose2d) =
-        _TrajectorySequenceBuilder(
-            drive.invokeMethodI("trajectorySequenceBuilder", startPose)
-        )
-
     fun followTrajectorySequence(builder: Any) {
         drive.invokeMethodI<Any?>("followTrajectorySequence", builder)
     }
