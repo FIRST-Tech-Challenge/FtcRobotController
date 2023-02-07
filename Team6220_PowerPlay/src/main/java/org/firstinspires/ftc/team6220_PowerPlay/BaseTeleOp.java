@@ -29,6 +29,10 @@ public abstract class BaseTeleOp extends BaseOpMode {
     int junction = 0;
     int[] junctions = {0, 0};
 
+
+    /**
+     * Drives the robot relative to the driver's POV instead of the robot's, makes driving significantly more intuitive
+     */
     public void driveFieldCentric() {
         currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         headingDegrees = currentAngle - startAngle;
@@ -59,6 +63,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
         driveWithIMU(xPower, yPower, tPower);
     }
 
+    /**
+     * Drives grabber to preset positions based on gamepad inputs
+     */
     public void driveGrabberWithController() {
         if (gamepad2.x) {
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
@@ -69,6 +76,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
         }
     }
 
+    /**
+     * Drives slides to preset positions based on gamepad inputs
+     */
     public void driveSlidesWithController() {
         slideTargetPosition += (int) (-gamepad2.left_stick_y * 25);
 
@@ -176,6 +186,9 @@ public abstract class BaseTeleOp extends BaseOpMode {
         junctions[1] = junction;
     }
 
+    /**
+     * resets the IMU if the field-centric driving or angle correction
+     */
     public void resetIMU() {
         if (gamepad1.left_bumper && gamepad1.right_bumper) {
             startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;

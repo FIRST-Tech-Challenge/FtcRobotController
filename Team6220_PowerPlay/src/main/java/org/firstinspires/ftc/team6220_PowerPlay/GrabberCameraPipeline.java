@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GrabberCameraPipeline extends OpenCvPipeline {
+    //Fields and stuff
     public double xPosition = Constants.CAMERA_CENTER_X;
     public double yPosition = Constants.CAMERA_CENTER_Y;
     public boolean detected = false;
@@ -55,6 +56,7 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
             double distanceFromCenter = Math.sqrt(Math.pow(Math.abs((xPosition - Constants.CAMERA_CENTER_X)), 2) + Math.pow(Math.abs((yPosition - Constants.CAMERA_CENTER_Y)), 2));
             // determine if the detected area is close enough to the center
             // this is done to avoid detecting the wheels which are also black
+            //TODO: add a check to determine that the box is relatively square, to prevent detecting other robots or black objects on the field other than the junctions
             if (distanceFromCenter < Constants.DISTANCE_FROM_CENTER) {
                 Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
 
