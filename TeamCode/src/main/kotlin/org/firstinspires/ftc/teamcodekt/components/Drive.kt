@@ -3,11 +3,11 @@
 package org.firstinspires.ftc.teamcodekt.components
 
 import com.arcrobotics.ftclib.hardware.RevIMU
-import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction
 import com.qualcomm.robotcore.hardware.Gamepad
+import com.qualcomm.robotcore.util.ElapsedTime
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
 import ftc.rogue.blacksmith.util.kt.invoke
@@ -36,7 +36,7 @@ class Drivetrain {
 
     private var shouldDriveRC = true
 
-    private val signalRC = """
+    private val green = """
         🟩🟩🟩🟩🟩🟩🟩◼️◼️◼️◼️◼️🟩🟩🟩🟩🟩🟩
         🟩🟩🟩🟩🟩🟩◼️🟫🟫🟫🟫🟫◼️🟩🟩🟩🟩🟩
         🟩🟩🟩🟩🟩◼️🟫🟫🟫🟫◼️◼️◼️◼️🟩🟩🟩🟩
@@ -52,16 +52,25 @@ class Drivetrain {
         🟩🟩🟩🟩🟩◼️◼️◼️◼️◼️🟩◼️◼️◼️🟩🟩🟩🟩
     """.trimIndent()
 
-    private val signalFC = signalRC.replace("\uD83D\uDFE9", "\uD83D\uDFE5")
+    private val red = green.replace("\uD83D\uDFE9", "\uD83D\uDFE5")
+
+    private val elapsedTime = ElapsedTime()
+
+    private var currentColor = red
 
     fun drive(gamepad: Gamepad, powerMulti: Double) {
+        if (elapsedTime.milliseconds() > 1000) {
+            currentColor = if (currentColor === red) green else red
+            elapsedTime.reset()
+        }
+
         if (shouldDriveRC) {
             driveRC(gamepad, powerMulti)
-            BlackOp.mTelemetry.addLine(signalRC)
         } else {
             driveFC(gamepad, powerMulti)
-            BlackOp.mTelemetry.addLine(signalFC)
         }
+
+        BlackOp.mTelemetry.addLine(currentColor)
     }
 
     fun switchMode() {

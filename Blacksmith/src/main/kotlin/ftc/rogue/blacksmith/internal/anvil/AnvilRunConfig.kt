@@ -1,8 +1,7 @@
-package ftc.rogue.blacksmith.internal
+package ftc.rogue.blacksmith.internal.anvil
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import ftc.rogue.blacksmith.Anvil
-import ftc.rogue.blacksmith.Scheduler
+import ftc.rogue.blacksmith.internal.AnvilRunConfigBuilder
 
 class AnvilRunConfig internal constructor() {
     @get:JvmSynthetic internal var buildsSynchronously = false
@@ -39,19 +38,6 @@ class AnvilRunConfig internal constructor() {
 
     companion object {
         @JvmField
-        val DEFAULT = AnvilConfigBuilder { AnvilRunConfig() }
-    }
-}
-
-class AnvilLaunchConfig1 internal constructor() {
-    private var async = true
-
-    fun onSchedulerLaunch(): AnvilLaunchConfig2 {
-        Scheduler.on(Scheduler.STARTING_MSG) { Anvil.start(async) }
-        return AnvilLaunchConfig2()
-    }
-
-    inner class AnvilLaunchConfig2 internal constructor() {
-        fun synchronously() { async = false }
+        val DEFAULT = AnvilRunConfigBuilder { AnvilRunConfig() }
     }
 }

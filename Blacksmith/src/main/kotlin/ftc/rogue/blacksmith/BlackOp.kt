@@ -6,8 +6,8 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
+import ftc.rogue.blacksmith.internal.NotNull
 import ftc.rogue.blacksmith.internal.getFieldsAnnotatedWith
-import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
 /**
@@ -60,7 +60,7 @@ abstract class BlackOp : LinearOpMode() {
         fun mTelemetry() = mTelemetry
 
         @get:JvmSynthetic
-        var mTelemetry by Delegates.notNull<MultipleTelemetry>()
+        var mTelemetry by NotNull<MultipleTelemetry>(errorMsg = "Can't access mTelemetry before a BlackOp instance is initalized!")
             private set
 
         /**
@@ -75,7 +75,7 @@ abstract class BlackOp : LinearOpMode() {
         fun hwMap() = hwMap
 
         @get:JvmSynthetic
-        var hwMap by Delegates.notNull<HardwareMap>()
+        var hwMap by NotNull<HardwareMap>(errorMsg = "Can't access hwMap before a BlackOp instance is initalized!")
             private set
 
         /**
@@ -102,19 +102,19 @@ abstract class BlackOp : LinearOpMode() {
      */
     @JvmSynthetic
     protected fun <T : Any> evalOnGo(constructor: () -> T) =
-        InternalCreateOnGo(constructor)
+        CreateOnGoInternal(constructor)
 
     /**
      * READ DOCS FOR THIS
      */
     protected inline fun <reified T : Any> createOnGo(noinline arg: () -> Any) =
-        createOnGo<T>(*arrayOf(arg)) // Need to do spread on array or type checker errors
+        createOnGo<T>(*arrayOf(arg)) // Ignore warning, need to do spread else type checker errors
 
     /**
      * READ DOCS FOR THIS
      */
     protected inline fun <reified T : Any> createOnGo(vararg args: () -> Any) =
-        InternalCreateOnGo {
+        CreateOnGoInternal {
             val clazz = T::class.java
 
             val invokedArgs = args.map { it() }.toTypedArray()
@@ -130,7 +130,7 @@ abstract class BlackOp : LinearOpMode() {
 
     // -- INTERNAL --
 
-    protected inner class InternalCreateOnGo<T : Any> @PublishedApi internal constructor(constructor: () -> T) {
+    protected inner class CreateOnGoInternal<T : Any> @PublishedApi internal constructor(constructor: () -> T) {
         private lateinit var value: T
 
         init {

@@ -1,8 +1,9 @@
 package ftc.rogue.blacksmith.internal
 
 import ftc.rogue.blacksmith.Anvil
+import ftc.rogue.blacksmith.internal.anvil.AnvilRunConfig
 
-fun interface AnvilConfigBuilder {
+fun interface AnvilRunConfigBuilder {
     fun AnvilRunConfig.build()
 }
 
@@ -16,6 +17,4 @@ fun interface AnvilCycle {
     fun Anvil.doCycle(iteration: Int)
 }
 
-fun interface BuilderAction {
-    operator fun invoke()
-}
+typealias BuilderAction = () -> Unit

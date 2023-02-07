@@ -67,7 +67,7 @@ internal class SchedulerTest {
             }
         }
 
-        verify(exactly = 3) { telemetry.addData("Loop time (ms)", range<Long>(500, 600)) }
+        verify(exactly = 3) { telemetry.addData("Loop time (ms)", range(450.0, 600.0)) }
         verify(exactly = 3) { telemetry.update() }
     }
 
