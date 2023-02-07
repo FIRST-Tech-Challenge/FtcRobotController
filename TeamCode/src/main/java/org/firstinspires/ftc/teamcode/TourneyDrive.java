@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class TourneyDrive extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
-    private final ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
     private DcMotor liftMotor = null;
 
@@ -64,7 +64,7 @@ public class TourneyDrive extends LinearOpMode {
         CRServo coneFlipper = hardwareMap.get(CRServo.class, "cone_flipper");
 
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -141,78 +141,85 @@ public class TourneyDrive extends LinearOpMode {
             float coneFlipUp = gamepad2.right_trigger;
             float coneFlipDown = gamepad2.left_trigger;
 
-            if(liftFast > .05 || liftFast < -.05 || liftSlow > .05 || liftSlow < -.05 && (!(liftMotor.getCurrentPosition() > MAX_LIFT_POS) || !(liftMotor.getCurrentPosition() < MIN_LIFT_POS))){
-                if(liftFast > .05 || liftFast < -.05){
-                    if(liftFast > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS){
+            if(!autoLift) {
+                if (liftFast > .05 || liftFast < -.05 || liftSlow > .05 || liftSlow < -.05 && (!(liftMotor.getCurrentPosition() > MAX_LIFT_POS) || !(liftMotor.getCurrentPosition() < MIN_LIFT_POS))) {
+                    if (liftFast > .05 || liftFast < -.05) {
+                        if (liftFast > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS) {
                             liftMotor.setPower(1);
-                    }else if(liftFast < -.05 && liftMotor.getCurrentPosition() > MIN_LIFT_POS){
+                        } else if (liftFast < -.05 && liftMotor.getCurrentPosition() > MIN_LIFT_POS) {
                             liftMotor.setPower(-1);
-                    }else{
-                        liftMotor.setPower(0);
+                        } else {
+                            liftMotor.setPower(0);
+                        }
+                    } else {
+                        if (liftSlow > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS) {
+                            liftMotor.setPower(.5);
+                        } else if (liftSlow < -.05 && liftMotor.getCurrentPosition() > MIN_LIFT_POS) {
+                            liftMotor.setPower(-.4);
+                        } else {
+                            liftMotor.setPower(0);
+                        }
                     }
-                }else{
-                    if(liftSlow > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS){
-                        liftMotor.setPower(.5);
-                    }else if(liftSlow < -.05 && liftMotor.getCurrentPosition() > MIN_LIFT_POS){
-                        liftMotor.setPower(-.4);
-                    }else{
-                        liftMotor.setPower(0);
-                    }
+                } else {
+                    liftMotor.setPower(0);
                 }
-            }else{
-                liftMotor.setPower(0);
             }
 
-            switch(liftState){
-                case LIFT_INIT:
-                    liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    break;
-                case LIFT_START:
-                    liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    if(liftDown){
-                        moveLift(1,MIN_LIFT_POS);
-                        liftState = LiftState.LIFT_RAISE;
-                    }else if(liftLow){
-                        moveLift(1,173 * 15);
-                        liftState = LiftState.LIFT_RAISE;
-                    }else if(liftMedium){
-                        moveLift(1,173 * 25);
-                        liftState = LiftState.LIFT_RAISE;
-                    }else if(liftHigh){
-                        moveLift(1,MAX_LIFT_POS);
-                        liftState = LiftState.LIFT_RAISE;
-                    }
-                    break;
-                case LIFT_RAISE:
-                    if(liftMotor.getCurrentPosition() <= targetPos + 173 && liftMotor.getCurrentPosition() >= targetPos - 173){
-                        moveLift(.25,targetPos);
-                        liftState = LiftState.LIFT_CORRECT;
-                    }
-                    break;
-                case LIFT_CORRECT:
-                    if(liftMotor.getCurrentPosition() <= targetPos + 44 && liftMotor.getCurrentPosition() >= targetPos - 44){
-                        liftMotor.setPower(0);
-                        liftState = LiftState.LIFT_START;
-                    }
-                    break;
-                default:
-                    if(autoLift){
-                        liftState = LiftState.LIFT_START;
-                    }else{
-                        liftState = LiftState.LIFT_INIT;
-                    }
-                    break;
+            if(autoLift) {
+                switch (liftState) {
+                    case LIFT_INIT:
+                        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        break;
+                    case LIFT_START:
+                        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        if (liftDown) {
+                            moveLift(1, MIN_LIFT_POS);
+                            liftState = LiftState.LIFT_RAISE;
+                        } else if (liftLow) {
+                            moveLift(1, 173 * 15);
+                            liftState = LiftState.LIFT_RAISE;
+                        } else if (liftMedium) {
+                            moveLift(1, 173 * 25);
+                            liftState = LiftState.LIFT_RAISE;
+                        } else if (liftHigh) {
+                            moveLift(1, MAX_LIFT_POS);
+                            liftState = LiftState.LIFT_RAISE;
+                        }
+                        break;
+                    case LIFT_RAISE:
+                        if (liftMotor.getCurrentPosition() <= targetPos + 173 && liftMotor.getCurrentPosition() >= targetPos - 173) {
+                            moveLift(.25, targetPos);
+                            liftState = LiftState.LIFT_CORRECT;
+                        }
+                        break;
+                    case LIFT_CORRECT:
+                        if (liftMotor.getCurrentPosition() <= targetPos + 17.3 && liftMotor.getCurrentPosition() >= targetPos - 17.3) {
+                            liftMotor.setPower(0);
+                            liftState = LiftState.LIFT_START;
+                        }
+                        break;
+                    default:
+                        if (autoLift) {
+                            liftState = LiftState.LIFT_START;
+                        } else {
+                            liftState = LiftState.LIFT_INIT;
+                        }
+                        break;
+                }
             }
 
             if (stopAutoLift && liftState != LiftState.LIFT_START) {
                 liftState = LiftState.LIFT_INIT;
+                autoLift = false;
             }
 
             if(switchAutoLift){
                 if(liftState == LiftState.LIFT_INIT){
                     liftState = LiftState.LIFT_START;
+                    autoLift = true;
                 }else{
                     liftState = LiftState.LIFT_INIT;
+                    autoLift = false;
                 }
             }
 
@@ -332,8 +339,17 @@ public class TourneyDrive extends LinearOpMode {
         }
     }
 
+    /**
+     * Move lift to a set height in ticks
+     * @param power Percent of how fast to move
+     * @param height Height to go to in ticks
+     */
     public void moveLift(double power, double height){
-        liftMotor.setPower(power);
+        if(height > liftMotor.getCurrentPosition()){
+            liftMotor.setPower(power);
+        }else{
+            liftMotor.setPower(-power);
+        }
         liftMotor.setTargetPosition((int) (height));
         targetPos = height;
     }
