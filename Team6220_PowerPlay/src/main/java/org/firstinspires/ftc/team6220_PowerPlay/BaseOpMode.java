@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.R;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
@@ -102,10 +103,12 @@ public abstract class BaseOpMode extends LinearOpMode {
         PwmControl.PwmRange maxRange = new PwmControl.PwmRange(500, 2500, 20000);
         servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
         servoGrabber.setPwmRange(maxRange);
-
         try {
             blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
-        } catch (Exception e) {}
+        }
+        catch (Exception e) {
+
+        }
 
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -206,8 +209,8 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * uses the grabber camera to guide the robot so it can center on the top of the junction
-     * @param pipeline the GrabberCameraPipeline being used by the grabber camera
+     * using a grabber camera pipeline, drives the robot until centered on junction
+     * @param pipeline
      */
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
@@ -223,15 +226,15 @@ public abstract class BaseOpMode extends LinearOpMode {
                 break;
             }
 
-        // while the cone isn't centered over the junction
+            // while the cone isn't centered over the junction
         } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
 
         stopDriveMotors();
     }
 
     /**
-     * uses the robot camera to guide the robot so it can drive forward while centering on the stack
-     * @param pipeline the RobotCameraPipeline being used by the robot camera
+     * using robot camera pipeline to guide the robot until in front of a stack
+     * @param pipeline
      */
     public void centerConeStack(RobotCameraPipeline pipeline) {
         double xOffset, width;
@@ -253,7 +256,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         stopDriveMotors();
     }
 
-    // sets all drive motor powers to 0
+    /**
+     * sets all drive motor powers to 0, to make sure robot is actually stopped
+     */
     public void stopDriveMotors() {
         motorFL.setPower(0.0);
         motorFR.setPower(0.0);
@@ -261,9 +266,11 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBR.setPower(0.0);
     }
 
-    // turns the LEDs green if it detects the top of a junction, otherwise they are rainbow colors
-    public void driveLEDs() {
-        if (blinkinChassis != null) {
+    /**
+     * turns the underglow lights green if it detects the top of a junction
+     */
+    public void driveLeds() {
+        if(blinkinChassis != null) {
             if (grabberCameraPipeline.detected) {
                 blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
             } else {
