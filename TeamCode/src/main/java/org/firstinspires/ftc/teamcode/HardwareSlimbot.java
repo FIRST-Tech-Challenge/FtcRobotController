@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.MILLIAMPS;
+import static java.lang.Math.abs;
 import static java.lang.Thread.sleep;
 
 import android.os.Environment;
@@ -695,6 +696,167 @@ public class HardwareSlimbot
        leftSpinServo.setPower(  0.0 );
        rightSpinServo.setPower( 0.0 );
     } // grabberSpinStop
+
+    /**
+     * @param p1 Power required to almost move
+     * @param v1 Voltage at which power was applied in mV
+     * @param p2 Power required to almost move
+     * @param v2 Votlage at which power was applied in mV
+     * @return Linear interpolated value
+     */
+    public double getInterpolatedMinPower(double p1, double v1, double p2, double v2) {
+        double result;
+        double voltage = readBatteryExpansionHub();
+        double slope = (p1 - p2) / (v1 - v2);
+        result = slope * (voltage - v2) + p2;
+
+        return result;
+    }
+
+    // pStatic = 0.0860 @ 12.30V
+    // pStatic = 0.0650 @ 13.54V
+    PIDControllerTurret turretPidController;
+    public boolean turretMotorPIDAuto = false;
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* turretPIDPosInit()                                                                            */
+    /* - newAngle = desired turret angle                                                          */
+    public void turretPIDPosInit( double newAngle )
+    {
+        // Current distance from target (degrees)
+        double degreesToGo = newAngle - turretAngle;
+        // pStatic = 0.0860 @ 12.30V 1
+        // pStatic = 0.0650 @ 13.54V 2
+        double pStatic = getInterpolatedMinPower(0.0860, 12300, 0.0650, 13540);
+
+        turretPidController = new PIDControllerTurret(0.00575, 0.0005, 0.0011,
+                pStatic);
+
+        // Are we ALREADY at the specified angle?
+        if( Math.abs(degreesToGo) <= 1.0 )
+            return;
+
+        turretPidController.reset();
+
+        // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
+        turretMotor.setPower( 0.0 );
+
+        // Establish a new target angle & reset counters
+        turretMotorPIDAuto = true;
+        turretAngleTarget = newAngle;
+        turretMotorCycles = 0;
+        turretMotorWait   = 0;
+
+        // If logging instrumentation, begin a new dataset now:
+        if( turretMotorLogging ) {
+            turretMotorLogIndex  = 0;
+            turretMotorLogEnable = true;
+            turretMotorTimer.reset();
+        }
+
+    } // turretPIDPosInit
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* turretPIDPosRun()                                                                             */
+    public void turretPIDPosRun( boolean teleopMode )
+    {
+        // Has an automatic movement been initiated?
+        if(turretMotorPIDAuto) {
+            // Keep track of how long we've been doing this
+            turretMotorCycles++;
+            // Current distance from target (angle degrees)
+            double degreesToGo = turretAngleTarget - turretAngle;
+            double degreesToGoAbs = Math.abs(degreesToGo);
+            int waitCycles = (teleopMode) ? 5 : 2;
+            double power = turretPidController.update(turretAngleTarget, turretAngle);
+            turretMotor.setPower(power);
+            // Have we achieved the target?
+            // (temporarily limit to 16 cycles when verifying any major math changes!)
+            if( degreesToGoAbs <= 1.0 ) {
+                if( ++turretMotorWait >= waitCycles ) {
+                    turretMotorPIDAuto = false;
+                    turretMotor.setPower(0);
+                    writeTurretLog();
+                }
+            }
+        } // turretMotorPIDAuto
+    } // turretPIDPosRun
+
+    // pStaticLower = 0.0 @ V
+    // pStaticLower = 0.0 @ V
+    PIDControllerWormArm liftPidController;
+    public boolean liftMotorPIDAuto = false;
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* liftPIDPosInit()                                                                            */
+    /* - newAngle = desired lift angle                                                          */
+    public void liftPIDPosInit( double newAngle )
+    {
+        // Current distance from target (degrees)
+        double degreesToGo = newAngle - liftAngle;
+        double pSinLift = 0.007;
+        double pStaticLift = 0.320;
+        double pSinLower = 0.007;
+        double pStaticLower = 0.110;
+        // Voltage doesn't seem as important on the arm minimum. Probably don't have to do
+        // interpolated voltage. For example 0.13 power was not able to move arm at low voltage
+        // and also could not at fresh battery voltage. 0.131 was able to at low voltage.
+        // pStaticLower 0.130 @ 12.54V
+        // pStaticLift 0.320 @ 12.81V
+//        double pSin = getInterpolatedMinPower();
+
+        liftPidController = new PIDControllerWormArm(-0.1, 0.000, -0.007,
+                pSinLift, pStaticLift, -0.030, 0.000, -0.007, pSinLower, pStaticLower);
+
+        // Are we ALREADY at the specified angle?
+        if( Math.abs(degreesToGo) <= 1.0 )
+            return;
+
+        liftPidController.reset();
+
+        // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
+        liftMotorsSetPower( 0.0 );
+
+        // Establish a new target angle & reset counters
+        liftMotorPIDAuto = true;
+        liftAngleTarget = newAngle;
+        liftMotorCycles = 0;
+        liftMotorWait   = 0;
+
+        // If logging instrumentation, begin a new dataset now:
+        if( liftMotorLogging ) {
+            liftMotorLogIndex  = 0;
+            liftMotorLogEnable = true;
+            liftMotorTimer.reset();
+        }
+
+    } // liftPIDPosInit
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* liftPIDPosRun()                                                                             */
+    public void liftPIDPosRun( boolean teleopMode )
+    {
+        // Has an automatic movement been initiated?
+        if(liftMotorPIDAuto) {
+            // Keep track of how long we've been doing this
+            liftMotorCycles++;
+            // Current distance from target (angle degrees)
+            double degreesToGo = liftAngleTarget - liftAngle;
+            double degreesToGoAbs = Math.abs(degreesToGo);
+            int waitCycles = (teleopMode) ? 5 : 2;
+            double power = liftPidController.update(liftAngleTarget, liftAngle);
+            liftMotorsSetPower(power);
+            // Have we achieved the target?
+            // (temporarily limit to 16 cycles when verifying any major math changes!)
+            if( degreesToGoAbs <= 1.0 ) {
+                if( ++liftMotorWait >= waitCycles ) {
+                    liftMotorPIDAuto = false;
+                    liftMotorsSetPower(0);
+                    writeLiftLog();
+                }
+            }
+        } // liftMotorPIDAuto
+    } // liftPIDPosRun
 
     /*--------------------------------------------------------------------------------------------*/
     /* liftPosInit()                                                                              */

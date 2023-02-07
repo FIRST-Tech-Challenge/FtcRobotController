@@ -73,7 +73,8 @@ public class TurretPIDTester extends LinearOpMode
         robot.readBulkData();
         robot.turretPosRun(false);
         robot.liftPosRun();
-        turretPIDPosRun(true);
+        robot.turretPIDPosRun(false);
+        robot.liftPIDPosRun( false );
     }
 
     boolean turretMotorPIDAuto = false;
@@ -127,101 +128,85 @@ public class TurretPIDTester extends LinearOpMode
         }
     } // writeTurretLog()
 
-    /**
-     * @param p1 Power required to almost move
-     * @param v1 Voltage at which power was applied in mV
-     * @param p2 Power required to almost move
-     * @param v2 Votlage at which power was applied in mV
-     * @return Linear interpolated value
-     */
-    public double getInterpolatedMinPower(double p1, double v1, double p2, double v2) {
-        double result;
-        double voltage = robot.readBatteryExpansionHub();
-        double slope = (p1 - p2) / (v1 - v2);
-        result = slope * (voltage - v2) + p2;
-
-        return result;
-    }
-
+    ElapsedTime intakeTimer = new ElapsedTime();
     /*--------------------------------------------------------------------------------------------*/
-    /* turretPosInit()                                                                            */
-    /* - newAngle = desired turret angle                                                          */
-    public void turretPIDPosInit( double newAngle )
-    {
-        // Current distance from target (degrees)
-        double degreesToGo = newAngle - robot.turretAngle;
-        // pStatic = 0.0860 @ 12.30V 1
-        // pStatic = 0.0650 @ 13.54V 2
-        double pStatic = getInterpolatedMinPower(0.0860, 12300, 0.0650, 13540);
+    private void scoreCone() {
 
-        pidController = new PIDControllerTurret(0.00575, 0.0005, 0.0011,
-                pStatic);
-//        pidController = new PIDControllerTurret(0.009, 0.0005, 0.0000,
-//                pStatic, 0.0);
+        // Start ejecting the cone
+        intakeTimer.reset();
+        // Wait for sensor to indicate it's clear (or we timeout)
+        while( opModeIsActive() ) {
+            performEveryLoop();
+            // Ensure we eject for at least 250 msec before using sensor (in case sensor fails)
+            boolean bottomSensorClear = robot.bottomConeSensor.getState() && (intakeTimer.milliseconds() > 250);
+            // Also have a max timeout in case sensor fails
+            boolean maxEjectTimeReached = (intakeTimer.milliseconds() >= 400);
+            // Is cycle complete?
+            if( bottomSensorClear || maxEjectTimeReached) break;
+        }
+        // Stop the ejector
+        robot.grabberSetTilt( robot.GRABBER_TILT_GRAB3 );
 
-        // Are we ALREADY at the specified angle?
-        if( Math.abs(degreesToGo) <= 1.0 )
-            return;
+    } // scoreCone
 
-        pidController.reset();
+    public void performOldLift() {
+        // Now reverse the lift to raise off the cone stack
+        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
+        while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
+            performEveryLoop();
+        }
+        // halt lift motors
+        robot.liftMotorsSetPower( 0.0 );
 
-        // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
-        robot.turretMotor.setPower( 0.0 );
-
-        // Establish a new target angle & reset counters
-        turretMotorPIDAuto = true;
-        turretAngleTarget = newAngle;
-        turretMotorCycles = 0;
-        turretMotorWait   = 0;
-
-        // If logging instrumentation, begin a new dataset now:
-        if( turretMotorLogging ) {
-            turretMotorLogIndex  = 0;
-            turretMotorLogEnable = true;
-            turretMotorTimer.reset();
+        // Perform setup to center turret and raise lift to scoring position
+        robot.turretPosInit( robot.TURRET_ANGLE_5STACK_L);
+        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
+        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
+        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
+        while( opModeIsActive() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
+            performEveryLoop();
         }
 
-    } // turretPosInit
+        scoreCone();
 
-    // pStatic = 0.0860 @ 12.30V
-    // pStatic = 0.0650 @ 13.54V
-    PIDControllerTurret pidController;
+        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
+        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
+        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+            performEveryLoop();
+        }
+        robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+        while( opModeIsActive() && ((robot.liftMotorAuto == true)) ) {
+            performEveryLoop();
+        }
+    }
 
-    /*--------------------------------------------------------------------------------------------*/
-    /* turretPosRun()                                                                             */
-    public void turretPIDPosRun( boolean teleopMode )
-    {
-        // Has an automatic movement been initiated?
-        if(turretMotorPIDAuto) {
-            // Keep track of how long we've been doing this
-            turretMotorCycles++;
-            // Current distance from target (angle degrees)
-            double degreesToGo = turretAngleTarget - robot.turretAngle;
-            double degreesToGoAbs = Math.abs(degreesToGo);
-            int waitCycles = (teleopMode) ? 5 : 2;
-            double power = pidController.update(turretAngleTarget, robot.turretAngle);
-            telemetry.addData("Set Power", power);
-            telemetry.addData("KP", pidController.kp);
-            telemetry.addData("KI", pidController.ki);
-            telemetry.addData("KD", pidController.kd);
-            telemetry.addData("StaticP", pidController.kpMinValue);
-            telemetry.addData("Angle", robot.turretAngle);
-            telemetry.update();
-            robot.turretMotor.setPower(power);
-            if(abs(power) > abs(maxPower)) {
-                maxPower = power;
-            }
-            // Have we achieved the target?
-            // (temporarily limit to 16 cycles when verifying any major math changes!)
-            if( degreesToGoAbs <= 1.0 ) {
-                if( ++turretMotorWait >= waitCycles ) {
-                    turretMotorPIDAuto = false;
-                    robot.turretMotor.setPower(0);
-                    writeTurretLog();
-                }
-            }
-        } // turretMotorAuto
-    } // turretPosRun
+    public void performNewLift() {
+        // Now reverse the lift to raise off the cone stack
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH );
+        while( opModeIsActive() && (robot.liftAngle <= robot.LIFT_ANGLE_MOTORS) ) {
+            performEveryLoop();
+        }
+        robot.turretPIDPosInit( 118.0 );
+
+        // Perform setup to center turret and raise lift to scoring position
+        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
+        while( opModeIsActive() && ( robot.turretMotorPIDAuto == true || robot.liftMotorPIDAuto == true )) {
+            performEveryLoop();
+        }
+
+        scoreCone();
+
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_5STACK );
+        while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
+            performEveryLoop();
+        }
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_COLLECT );
+        while( opModeIsActive() && ((robot.liftMotorPIDAuto == true)) ) {
+            performEveryLoop();
+        }
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -242,14 +227,14 @@ public class TurretPIDTester extends LinearOpMode
         telemetry.addLine("Hardware initialized...");
         telemetry.update();
 
-        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
+        robot.grabberSetTilt( robot.GRABBER_TILT_GRAB3 );
         sleep(300);
         performEveryLoop();
 
         // Perform setup needed to center turret
         robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
-        while( robot.turretMotorAuto == true || robot.liftMotorAuto == true) {
+        robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+        while( !isStopRequested() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
             performEveryLoop();
         }
 
@@ -259,25 +244,11 @@ public class TurretPIDTester extends LinearOpMode
         waitForStart();
 
         oldWay.reset();
-        robot.turretPosInit( target );
-        while( opModeIsActive() && robot.turretMotorAuto == true ) {
-            performEveryLoop();
-        }
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        while( opModeIsActive() && robot.turretMotorAuto == true ) {
-            performEveryLoop();
-        }
+        performOldLift();
         oldTime = oldWay.milliseconds();
 
         newWay.reset();
-        turretPIDPosInit( target );
-        while( opModeIsActive() && turretMotorPIDAuto == true ) {
-            performEveryLoop();
-        }
-        turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
-        while( opModeIsActive() && turretMotorPIDAuto == true ) {
-            performEveryLoop();
-        }
+        performNewLift();
         newTime = newWay.milliseconds();
 
         telemetry.addData("Old Timer", oldTime);
@@ -288,10 +259,10 @@ public class TurretPIDTester extends LinearOpMode
         while (opModeIsActive())
         {
             performEveryLoop();
-            turretPIDPosInit(robot.TURRET_ANGLE_CENTER);
+            robot.turretPIDPosInit(robot.TURRET_ANGLE_CENTER);
             // Execute the automatic turret movement code
-            telemetry.addData("pStatic", pidController.kStatic);
-            telemetry.addData("kp", pidController.kp);
+            telemetry.addData("pStatic", robot.turretPidController.kStatic);
+            telemetry.addData("kp", robot.turretPidController.kp);
             while(turretMotorPIDAuto && opModeIsActive()) {
                 performEveryLoop();
             }

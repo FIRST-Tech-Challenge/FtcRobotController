@@ -73,7 +73,8 @@ public class ArmPIDTester extends LinearOpMode
         robot.readBulkData();
         robot.turretPosRun(false);
         robot.liftPosRun();
-        liftPIDPosRun(true);
+        robot.turretPIDPosRun(false);
+        robot.liftPIDPosRun(false);
     }
 
     boolean liftMotorPIDAuto = false;
@@ -143,96 +144,6 @@ public class ArmPIDTester extends LinearOpMode
         return result;
     }
 
-    /*--------------------------------------------------------------------------------------------*/
-    /* liftPosInit()                                                                            */
-    /* - newAngle = desired lift angle                                                          */
-    public void liftPIDPosInit( double newAngle )
-    {
-        // Current distance from target (degrees)
-        double degreesToGo = newAngle - robot.liftAngle;
-        double pSinLift = 0.007;
-        double pStaticLift = 0.320;
-        double pSinLower = 0.007;
-        double pStaticLower = 0.110;
-        // Voltage doesn't seem as important on the arm minimum. Probably don't have to do
-        // interpolated voltage. For example 0.13 power was not able to move arm at low voltage
-        // and also could not at fresh battery voltage. 0.131 was able to at low voltage.
-        // pStaticLower 0.130 @ 12.54V
-        // pStaticLift 0.320 @ 12.81V
-//        double pSin = getInterpolatedMinPower();
-
-//        pidController = new PIDControllerWormArm(-0.04, 0.000, 0.000,
-//                pSin, pStatic);
-        pidController = new PIDControllerWormArm(-0.1, 0.000, -0.007,
-                pSinLift, pStaticLift, -0.030, 0.000, -0.007, pSinLower, pStaticLower);
-
-        // Are we ALREADY at the specified angle?
-        if( Math.abs(degreesToGo) <= 1.0 )
-            return;
-
-        pidController.reset();
-
-        // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
-        robot.liftMotorsSetPower( 0.0 );
-
-        // Establish a new target angle & reset counters
-        liftMotorPIDAuto = true;
-        liftAngleTarget = newAngle;
-        liftMotorCycles = 0;
-        liftMotorWait   = 0;
-
-        // If logging instrumentation, begin a new dataset now:
-        if( liftMotorLogging ) {
-            liftMotorLogIndex  = 0;
-            liftMotorLogEnable = true;
-            liftMotorTimer.reset();
-        }
-
-    } // liftPosInit
-
-    // pStaticLower = 0.0 @ V
-    // pStaticLower = 0.0 @ V
-    PIDControllerWormArm pidController;
-
-    /*--------------------------------------------------------------------------------------------*/
-    /* liftPosRun()                                                                             */
-    public void liftPIDPosRun( boolean teleopMode )
-    {
-        // Has an automatic movement been initiated?
-        if(liftMotorPIDAuto) {
-            // Keep track of how long we've been doing this
-            liftMotorCycles++;
-            // Current distance from target (angle degrees)
-            double degreesToGo = liftAngleTarget - robot.liftAngle;
-            double degreesToGoAbs = Math.abs(degreesToGo);
-            int waitCycles = (teleopMode) ? 5 : 2;
-            double power = pidController.update(liftAngleTarget, robot.liftAngle);
-            telemetry.addData("Set Power", power);
-            telemetry.addData("p", pidController.pidCurrent.kp);
-            telemetry.addData("i", pidController.pidCurrent.ki);
-            telemetry.addData("d", pidController.pidCurrent.kd);
-            telemetry.addData("sin", pidController.ksinCurrent);
-            telemetry.addData("static", pidController.kStaticCurrent);
-            telemetry.addData("error", pidController.pidCurrent.error);
-            telemetry.addData("target", liftAngleTarget);
-            telemetry.addData("state", robot.liftAngle);
-            telemetry.update();
-            robot.liftMotorsSetPower(power);
-            if(abs(power) > abs(maxPower)) {
-                maxPower = power;
-            }
-            // Have we achieved the target?
-            // (temporarily limit to 16 cycles when verifying any major math changes!)
-            if( degreesToGoAbs <= 1.0 ) {
-                if( ++liftMotorWait >= waitCycles ) {
-                    liftMotorPIDAuto = false;
-                    robot.liftMotorsSetPower(0);
-                    writeLiftLog();
-                }
-            }
-        } // liftMotorAuto
-    } // liftPosRun
-
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.addLine("Robot initializing, wait for completion.");
@@ -267,11 +178,11 @@ public class ArmPIDTester extends LinearOpMode
         while (opModeIsActive())
         {
             performEveryLoop();
-            liftPIDPosInit( robot.LIFT_ANGLE_ASTART );
+            robot.liftPIDPosInit( robot.LIFT_ANGLE_ASTART );
             // Execute the automatic turret movement code
-            telemetry.addData("pSinLift", pidController.ksinLift);
-            telemetry.addData("pStaticLift", pidController.kStaticLift);
-            telemetry.addData("kpLift", pidController.pidLift.kp);
+            telemetry.addData("pSinLift", robot.liftPidController.ksinLift);
+            telemetry.addData("pStaticLift", robot.liftPidController.kStaticLift);
+            telemetry.addData("kpLift", robot.liftPidController.pidLift.kp);
             while(liftMotorPIDAuto && opModeIsActive()) {
                 performEveryLoop();
             }
