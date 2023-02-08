@@ -52,20 +52,25 @@ public abstract class BaseAutonomous extends BaseOpMode {
             eBL = motorBL.getCurrentPosition();
             eBR = motorBR.getCurrentPosition();
 
+            // robot turns slightly to correct for small changes in heading
             currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             tPower = (currentAngle - startAngle) * Constants.HEADING_CORRECTION_KP_AUTONOMOUS;
 
+            // vector rotation to make robot capable of moving in any direction while maintaining heading
             xPower = Math.cos(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
             yPower = Math.sin(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
 
+            // gives a power to each motor to make the robot move in the specified direction
             motorFL.setPower(yPower + xPower + tPower);
             motorFR.setPower(yPower - xPower - tPower);
             motorBL.setPower(yPower - xPower + tPower);
             motorBR.setPower(yPower + xPower - tPower);
 
+            // calculates x-position and y-position based on drive encoder ticks
             xPosition = (eFL - eFR - eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;
             yPosition = (eFL + eFR + eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;
 
+            // calculates traveled and remaining distance using the pythagorean theorem
             traveledDistance = Math.sqrt(Math.pow(xPosition, 2) + Math.pow(yPosition, 2));
             remainingDistance = targetDistance - traveledDistance;
         }
@@ -74,27 +79,32 @@ public abstract class BaseAutonomous extends BaseOpMode {
     }
 
     /**
-     * this method will allow the robot to turn to a specified absolute angle using the IMU
-     * @param targetAngle absolute angle robot should turn to
+     * allows the robot to turn to a specified absolute angle using the IMU
+     * @param targetHeading absolute angle robot should turn to
      */
-    public void turnToAngle(double targetAngle) {
+    public void turnToAngle(double targetHeading) {
         double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        double angleError = targetAngle - currentAngle + startAngle;
+        double angleError = targetHeading - currentAngle + startAngle;
         double motorPower;
 
+        // while robot hasn't reached target heading
         while (Math.abs(angleError) >= Constants.ROBOT_HEADING_TOLERANCE_DEGREES && opModeIsActive()) {
             currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            angleError = targetAngle - currentAngle + startAngle;
+            angleError = targetHeading - currentAngle + startAngle;
 
+            // prevents angle from gong above 180 degrees and below -180 degrees
+            // makes sure robot takes most optimal path to get to the target heading
             if (angleError > 180.0) {
                 angleError -= 360.0;
             } else if (angleError < -180.0) {
                 angleError += 360.0;
             }
 
+            // proportional motor power based on angle error
             motorPower = angleError * -Constants.TURNING_KP;
             motorPower = Math.max(Math.min(Math.abs(motorPower), Constants.MAXIMUM_TURN_POWER_AUTONOMOUS), Constants.MINIMUM_TURN_POWER) * Math.signum(motorPower);
 
+            // gives a power to each motor to make the robot pivot
             motorFL.setPower(motorPower);
             motorFR.setPower(-motorPower);
             motorBL.setPower(motorPower);
@@ -105,7 +115,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
     }
 
     /**
-     * this method will allow the slides to move to a specified target position
+     * allows the slides to move to a specified target position - for autonomous only
      * @param targetPosition target position for slides motors in ticks
      */
     public void driveSlidesAutonomous(int targetPosition) {
@@ -122,7 +132,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             if (error < 0) {
                 motorLeftSlides.setPower(-1.0);
                 motorRightSlides.setPower(-1.0);
-                // slides going up - proportional control
+            // slides going up - proportional control
             } else {
                 motorLeftSlides.setPower(motorPower);
                 motorRightSlides.setPower(motorPower);
@@ -130,11 +140,13 @@ public abstract class BaseAutonomous extends BaseOpMode {
 
             long currentTime = System.currentTimeMillis();
 
+            // breaks out of the while loop if it has been running for 3 seconds
             if (currentTime - startTime > 3000) {
                 break;
             }
         }
 
+        // feedforward constant to counteract gravity
         motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
         motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
     }

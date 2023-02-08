@@ -23,17 +23,27 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
     int slideTargetPosition = 0;
 
+    // variables to keep track of cone stack height
     int stack = 0;
     int[] stacks = {0, 0};
 
+    // variables to keep track of junction height
     int junction = 0;
     int[] junctions = {0, 0};
 
+
+    /**
+     * allows the driver to drive the robot field-centric
+     * this is more intuitive for the driver and makes it easier to maneuver around the field
+     */
     public void driveFieldCentric() {
+        // gets the opposite of the heading of the robot
+        // the opposite is needed because the imu returns physics coordinates but the vector rotation uses the opposite coordinates
         currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         headingDegrees = currentAngle - startAngle;
         negativeHeadingRadians = Math.toRadians(-headingDegrees);
 
+        // changes the reference angle so the robot can "snap" to a grid angle
         if (gamepad1.dpad_up) {
             originalAngle = startAngle;
         } else if (gamepad1.dpad_right) {
@@ -44,14 +54,19 @@ public abstract class BaseTeleOp extends BaseOpMode {
             originalAngle = startAngle + 180;
         }
 
+        // stick curve applied on the joystick input
         x = (Constants.DRIVE_CURVE_FACTOR * gamepad1.left_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.left_stick_x, 3)) * Constants.MAXIMUM_DRIVE_POWER_TELEOP;
         y = (Constants.DRIVE_CURVE_FACTOR * -gamepad1.left_stick_y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(-gamepad1.left_stick_y, 3)) * Constants.MAXIMUM_DRIVE_POWER_TELEOP;
         t = (Constants.DRIVE_CURVE_FACTOR * gamepad1.right_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.right_stick_x, 3)) * Constants.MAXIMUM_TURN_POWER_TELEOP;
 
+        // vector rotation - main field centric code
         xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
         yRotatedVector = x * Math.sin(negativeHeadingRadians) + y * Math.cos(negativeHeadingRadians);
+
+        // ratio so that max power to any motor is 1 and the proportion of power to other motors is preserved
         ratio = 1 / Math.max(Math.abs(xRotatedVector) + Math.abs(yRotatedVector) + Math.abs(t), 1);
 
+        // sets motor powers to powers given by vector rotation/ratio
         xPower = xRotatedVector * ratio;
         yPower = yRotatedVector * ratio;
         tPower = t * ratio;
@@ -59,6 +74,12 @@ public abstract class BaseTeleOp extends BaseOpMode {
         driveWithIMU(xPower, yPower, tPower);
     }
 
+    /**
+     * allows the driver to operate the grabber to 3 positions:
+     *      x - closes the grabber
+     *      a - partially opens the grabber
+     *      b - fully opens the grabber
+     */
     public void driveGrabberWithController() {
         if (gamepad2.x) {
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
@@ -69,16 +90,26 @@ public abstract class BaseTeleOp extends BaseOpMode {
         }
     }
 
+    /**
+     * allows the driver to operate the slides using the left joystick, dpad, and bumpers
+     *      the left joystick is for fine control
+     *      the dpad is for for raising and lowering the slides to cone stack heights
+     *      the bumpers are for raising and lowering the slides to junction heights
+     */
     public void driveSlidesWithController() {
+        // joystick control
         slideTargetPosition += (int) (-gamepad2.left_stick_y * 25);
 
+        // cone stack positions - increase position by one if dpad up is just pressed
         if (gamepad2.dpad_up && stacks[0] == stacks[1]) {
             stack++;
 
+            // don't let dpad control take slides above highest cone height in cone stack
             if (stack >= 4) {
                 stack = 4;
             }
 
+            // set slide target position to the chosen cone stack height
             switch (stack) {
                 case 1:
                     slideTargetPosition = Constants.SLIDE_STACK_ONE;
@@ -93,13 +124,17 @@ public abstract class BaseTeleOp extends BaseOpMode {
                     slideTargetPosition = Constants.SLIDE_STACK_FOUR;
                     break;
             }
+
+        // cone stack positions - decrease position by one if dpad down is just pressed
         } else if (gamepad2.dpad_down && stacks[0] == stacks[1]) {
             stack--;
 
+            // don't let dpad control take slides below ground height
             if (stack <= 0) {
                 stack = 0;
             }
 
+            // set slide target position to the chosen cone stack height
             switch (stack) {
                 case 0:
                     slideTargetPosition = Constants.SLIDE_BOTTOM;
@@ -116,13 +151,16 @@ public abstract class BaseTeleOp extends BaseOpMode {
             }
         }
 
+        // junction positions - increase position by one if right bumper is just pressed
         if (gamepad2.right_bumper && junctions[0] == junctions[1]) {
             junction++;
 
+            // don't let bumper control take slides above high junction height
             if (junction >= 3) {
                 junction = 3;
             }
 
+            // set slide target position to the chosen junction height
             switch (junction) {
                 case 1:
                     slideTargetPosition = Constants.SLIDE_LOW;
@@ -134,13 +172,17 @@ public abstract class BaseTeleOp extends BaseOpMode {
                     slideTargetPosition = Constants.SLIDE_HIGH;
                     break;
             }
+
+        // junction positions - decrease position by one if left bumper is just pressed
         } else if (gamepad2.left_bumper && junctions[0] == junctions[1]) {
             junction--;
 
+            // don't let bumper control take slides below ground height
             if (junction <= 0) {
                 junction = 0;
             }
 
+            // set slide target position to the chosen junction height
             switch (junction) {
                 case 0:
                     slideTargetPosition = Constants.SLIDE_BOTTOM;
@@ -157,25 +199,33 @@ public abstract class BaseTeleOp extends BaseOpMode {
         // don't let target position go below slide bottom position
         if (slideTargetPosition <= Constants.SLIDE_BOTTOM) {
             slideTargetPosition = Constants.SLIDE_BOTTOM;
-            // don't let target position go above slide top position
+
+        // don't let target position go above slide top position
         } else if (slideTargetPosition >= Constants.SLIDE_TOP) {
             slideTargetPosition = Constants.SLIDE_TOP;
         }
 
         driveSlides(slideTargetPosition);
 
+        // makes sure that the cone stack positions are only updated when the dpad is just pressed
         if (!gamepad2.dpad_down && !gamepad2.dpad_up) {
             stacks[0] = stacks[1];
         }
 
+        // makes sure that the junction positions are only updated when the bumpers are just pressed
         if (!gamepad2.left_bumper && !gamepad2.right_bumper) {
             junctions[0] = junctions[1];
         }
 
+        // updates previous and current bumper positions
         stacks[1] = stack;
         junctions[1] = junction;
     }
 
+    /**
+     * allows the driver to align with a wall and reset the absolute and reference angles
+     * pressing both bumpers resets the angles - used if IMU drift gets too bad
+     */
     public void resetIMU() {
         if (gamepad1.left_bumper && gamepad1.right_bumper) {
             startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;

@@ -129,6 +129,13 @@ public abstract class BaseOpMode extends LinearOpMode {
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
 
+    /**
+     * drives the robot with the IMU
+     * when not turning, the robot maintains a constant heading
+     * @param xPower the motor power for moving in the x-direction
+     * @param yPower the motor power for moving in the y-direction
+     * @param tPower the motor power for pivoting
+     */
     public void driveWithIMU(double xPower, double yPower, double tPower) {
         // read imu when turning (when t != 0)
         boolean isTurning = tPower != 0;
