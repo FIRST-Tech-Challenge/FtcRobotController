@@ -114,6 +114,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        // sleep to allow the IMU to initialize before the absolute angles are measured
         sleep(3000);
 
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
