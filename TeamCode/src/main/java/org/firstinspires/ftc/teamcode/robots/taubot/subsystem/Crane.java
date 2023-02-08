@@ -705,6 +705,9 @@ public class Crane implements Subsystem {
                 break;
             case 2:
                 if(shoulderOnTarget() && extensionOnTarget()){
+                    robot.articulate(Robot.Articulation.MANUAL);
+                    robot.underarm.articulate(UnderArm.Articulation.manual);
+                    robot.turret.articulate(Turret.Articulation.runToAngle);
                     homeInd = 0;
                     return true;
                 }

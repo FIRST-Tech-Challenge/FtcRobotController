@@ -435,6 +435,7 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 2:
+                transferStage = 0;
                 return true;
                 //todo add transfer of cone from underarm to crane
         }

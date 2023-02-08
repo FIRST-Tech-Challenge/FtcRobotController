@@ -57,6 +57,8 @@ public class UnderArm implements Subsystem {
     public static double WRIST_DEG_MAX = 180;
     public static double TURRET_DEG_MAX = 45;
 
+    public static double UNDERARM_HEIGHT = 7; //height of rotation of shoulder motor   INCHES
+
     //these 5 config variables won't have any effect if changed in dashboard since they are currently assigned at compile
 
     public static double P = 0.995;
@@ -93,9 +95,16 @@ public class UnderArm implements Subsystem {
         }
 
         articulation = Articulation.noIK;
+        fieldPositionTarget = getUnderArmPosition(); //crane default IK starting point is
     }
 
-    Vector3 fieldPositionTarget;
+    Vector3 undeArmPosition = new Vector3(0,0,0);
+
+    public Vector3 getUnderArmPosition(){
+        return undeArmPosition;        //returns the calculated underarm position
+    }
+
+    Vector3 fieldPositionTarget = new Vector3(0,0,0);
 
     public enum Articulation {
         transfer,
@@ -208,8 +217,6 @@ public class UnderArm implements Subsystem {
     double calculatedShoulderAngle;
     double calculatedElbowAngle;
 
-    Pose2d turretPos = new Pose2d();
-
     public static double shoulderHeight = 0.25;
 
     public static double ARM_LENGTH = 10;
@@ -219,11 +226,11 @@ public class UnderArm implements Subsystem {
 
         z /= INCHES_PER_METER;
 
-        calculatedTurretAngle = Math.toDegrees(Math.atan2(y - turretPos.getY(), x-turretPos.getX()));
+        calculatedTurretAngle = Math.toDegrees(Math.atan2(y - undeArmPosition.y, x-undeArmPosition.x));
 
         calculatedHeight = z-shoulderHeight;
 
-        calculatedDistance = (Math.sqrt(Math.pow(y - turretPos.getY(),2) + Math.pow(x - turretPos.getX(),2)))/INCHES_PER_METER;
+        calculatedDistance = (Math.sqrt(Math.pow(y - undeArmPosition.y,2) + Math.pow(x - undeArmPosition.x,2)))/INCHES_PER_METER;
 
         double virtualLength = Math.sqrt( Math.pow(x,2) + Math.pow(y,2) );
 
@@ -268,6 +275,14 @@ public class UnderArm implements Subsystem {
     @Override
     public void update(Canvas fieldOverlay) {
 
+        Pose2d robotPosInches = robot.driveTrain.getPoseEstimate();
+        double headingRad = robot.driveTrain.getRawHeading();
+        double underArmLengthInches = robot.driveTrain.getChassisLength();
+
+        undeArmPosition =  new Vector3(robotPosInches.getX()+underArmLengthInches*Math.cos(headingRad),
+                robotPosInches.getY()+underArmLengthInches*Math.sin(headingRad),
+                UNDERARM_HEIGHT); //calculates and sets the position of underarm in world coordinates
+
         chariotDistance = robot.driveTrain.getChassisLength();
 
         articulate(articulation);
@@ -305,6 +320,11 @@ public class UnderArm implements Subsystem {
             telemetryMap.put("Shoulder Target Angle", shoulderTargetAngle);
             telemetryMap.put("Elbow Target Angle", elbowTargetAngle);
             telemetryMap.put("Wrist Target Angle", wristTargetAngle);
+            telemetryMap.put("Under Arm Pos X", undeArmPosition.x);
+            telemetryMap.put("Under Arm Pos Y", undeArmPosition.y);
+            telemetryMap.put("Under Arm Target X", fieldPositionTarget.x);
+            telemetryMap.put("Under Arm Target Y", fieldPositionTarget.y);
+            telemetryMap.put("Under Arm Target Z", fieldPositionTarget.z);
 
             telemetryMap.put("Elbow Target PWM", elbowServoValue(elbowTargetAngle));
             telemetryMap.put("Wrist Target PWM", wristServoValue(wristTargetAngle));

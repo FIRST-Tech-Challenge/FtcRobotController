@@ -339,15 +339,18 @@ public class PowerPlay_6832 extends OpMode {
                                 break;
                             case 2:
                                 dc.joystickDrive();
+                                dc.UnderarmControls();
                                 break;
 
                         }
                         break;
                     case TEST:
                         dc.joystickDrive();
+                        dc.UnderarmControls();
                         break;
                     case DEMO:
                         dc.joystickDriveDemoMode();
+                        dc.UnderarmControls();
                         break;
                     case UNDERARM_TEST:
                         dc.UnderarmTesting();

@@ -14,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.notJoystic
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.UnderArm;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.StickyGamepad;
@@ -151,11 +152,11 @@ public class DriverControls {
         }
 
         if(gamepad1.left_bumper){
-            robot.driveTrain.adjustChassisLength(-1);
+            robot.crane.incNudgeIndex();
         }
 
         if(gamepad1.right_bumper){
-            robot.driveTrain.adjustChassisLength(1);
+            robot.crane.decNudgeIndex();
         }
 
         if(stickyGamepad1.start){
@@ -334,6 +335,35 @@ public class DriverControls {
     }
 
     public void UnderarmControls(){
+
+        if(gamepad2.left_bumper){
+            robot.driveTrain.adjustChassisLength(-1);
+        }
+
+        if(gamepad2.right_bumper){
+            robot.driveTrain.adjustChassisLength(1);
+        }
+
+        if(stickyGamepad2.start){
+            robot.underarm.articulate(UnderArm.Articulation.manual);
+        }
+
+        if(stickyGamepad2.x){
+            robot.underarm.articulate(UnderArm.Articulation.noIK);
+        }
+
+        if(stickyGamepad2.y){
+            robot.underarm.articulate(UnderArm.Articulation.transfer);
+        }
+
+        if(stickyGamepad2.a){
+            robot.articulate(Robot.Articulation.TRANSFER);
+        }
+
+        if(stickyGamepad2.b){
+            robot.articulate(Robot.Articulation.MANUAL);
+        }
+
         if(notJoystickDeadZone(gamepad2.right_stick_x)){
             robot.underarm.adjustY(gamepad2.right_stick_x);
         }
