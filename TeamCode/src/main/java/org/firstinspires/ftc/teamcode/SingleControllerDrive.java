@@ -20,16 +20,16 @@ public class SingleControllerDrive extends LinearOpMode {
     static final double MIN_POS     =     1;
     static final double MIN_POS2    =     0;
 
-    static final double MIN_LIFT_POS = 0;
+    double MIN_LIFT_POS = 0;
     double MAX_LIFT_POS = 173 * 34.5;
 
-    double position = 1;
-    double position2 = 0;
+    double position  =   1;
+    double position2 =   0;
 
-    double lAdjust = 0;
-    double lbAdjust = 0;
-    double rAdjust = 0;
-    double rbAdjust = 0;
+    double lAdjust  =   0;
+    double lbAdjust =   0;
+    double rAdjust  =   0;
+    double rbAdjust =   0;
 
     double heightAdjustmentCount = 0;
 
@@ -99,8 +99,6 @@ public class SingleControllerDrive extends LinearOpMode {
 
             double liftUp = gamepad1.right_trigger;
             double liftDown = gamepad1.left_trigger;
-
-            boolean raiseMaxHeight = gamepad1.y;
 
             boolean liftUpSlow = gamepad1.b;
             boolean liftDownSlow = gamepad1.a;
@@ -177,13 +175,6 @@ public class SingleControllerDrive extends LinearOpMode {
                 lbAdjust = 0;
                 rAdjust = 0;
                 rbAdjust = 0;
-            }
-
-            if(raiseMaxHeight && heightAdjustmentCount == 0){
-                MAX_LIFT_POS += 17.3;
-                heightAdjustmentCount++;
-            }else{
-                heightAdjustmentCount = 0;
             }
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
