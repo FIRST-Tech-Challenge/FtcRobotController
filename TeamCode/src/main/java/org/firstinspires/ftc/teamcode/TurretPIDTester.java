@@ -184,7 +184,7 @@ public class TurretPIDTester extends LinearOpMode
     public void performNewLift() {
         // Now reverse the lift to raise off the cone stack
         robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH );
-        while( opModeIsActive() && (robot.liftAngle <= robot.LIFT_ANGLE_MOTORS) ) {
+        while( opModeIsActive() && (robot.liftAngle >= robot.LIFT_ANGLE_MOTORS) ) {
             performEveryLoop();
         }
         robot.turretPIDPosInit( 118.0 );
