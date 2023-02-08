@@ -79,6 +79,7 @@ public class EnergizeV2AutoLeft extends LinearOpMode {
     private double fast = 0.6; // Fast speed
     private double medium = 0.3; // Medium speed
     private double slow = 0.1; // Slow speed
+    private double speed;
     private double clicksPerDeg = clicksPerInch / 4.99; // empirically measured
 
     private final double MAX_POWER = 0.75;
@@ -254,7 +255,7 @@ public class EnergizeV2AutoLeft extends LinearOpMode {
         //4 and one quarter inch to the nearest line on the left
         //4 and one quarter inches to the tile split on the left
         //
-        DriveAndLift(40,medium,LOW_HEIGHT);
+        DriveAndLift(5,medium,HIGH_HEIGHT);
 /*
         //close claw
         gripper(close);
@@ -378,6 +379,12 @@ public class EnergizeV2AutoLeft extends LinearOpMode {
     }
     private void DriveAndLift(int howMuch, double speed, double targetHeight) {
 
+
+        double leftFrontPower = speed;
+        double leftBackPower = speed;
+        double rightFrontPower = speed;
+        double rightBackPower = speed;
+
         lfPos = leftFrontDrive.getCurrentPosition();
         rfPos = rightFrontDrive.getCurrentPosition();
         lrPos = leftBackDrive.getCurrentPosition();
@@ -395,26 +402,33 @@ public class EnergizeV2AutoLeft extends LinearOpMode {
         leftBackDrive.setTargetPosition(lrPos);
         rightBackDrive.setTargetPosition(rrPos);
 
-        while (leftFrontDrive.isBusy()) {
-            if (lfPos > leftFrontDrive.getTargetPosition() / 2 ) {
-                MoveLift(LOW_HEIGHT);
-            }
+        //else if (leftFrontPower == 0.0 && leftBackPower == 0.0 && rightFrontPower == 0.0 && rightBackPower == 0.0) {
+        //    MoveLift(targetHeight);
+        //}
+        while (leftFrontDrive.isBusy() && leftBackDrive.isBusy() && rightFrontDrive.isBusy() && rightBackDrive.isBusy()) {
+                MoveLift(targetHeight);
         }
+            //else if (leftFrontPower == 0.0 && leftBackPower == 0.0 && rightFrontPower == 0.0 && rightBackPower == 0.0) {
+             //    MoveLift(targetHeight);
+            //}
+
+        /*
         while (leftBackDrive.isBusy()) {
-            if (lfPos > leftFrontDrive.getTargetPosition() / 2 ) {
-                MoveLift(LOW_HEIGHT);
+            if (lrPos > leftBackDrive.getTargetPosition() / 2 ) {
+                MoveLift(targetHeight);
             }
         }
         while (rightFrontDrive.isBusy()) {
-            if (lfPos > leftFrontDrive.getTargetPosition() / 2 ) {
-                MoveLift(LOW_HEIGHT);
+            if (rfPos > rightFrontDrive.getTargetPosition() / 2 ) {
+                MoveLift(targetHeight);
             }
         }
         while (rightBackDrive.isBusy()) {
-            if (lfPos > leftFrontDrive.getTargetPosition() / 2 ) {
-                MoveLift(LOW_HEIGHT);
+            if (rrPos > rightBackDrive.getTargetPosition() / 2 ) {
+                MoveLift(targetHeight);
             }
         }
+        */
         // Set the drive Drive run modes to prepare for move to encoder:
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
