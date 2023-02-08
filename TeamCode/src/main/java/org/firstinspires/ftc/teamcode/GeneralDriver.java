@@ -22,7 +22,7 @@ public class GeneralDriver extends BaseTele {
         hdw.createHardware();
         robotWheel = new MecanumWheels();
 
-        double powerDrivePercentage = 0.7 ;
+        double powerDrivePercentage = 0.55 ;
 
         telemetry.addData("[>]", "All set?");
         telemetry.update();
@@ -35,20 +35,6 @@ public class GeneralDriver extends BaseTele {
         while (opModeIsActive()) {
             //hdw.checkAndGrabCone();
 
-            if (gamepad1.dpad_right && gamepad1.x) {
-                sleep (400);
-                if ( hdw.iseMode()) {
-                    hdw.seteMode(false);
-                    telemetry.addLine("eMode off (Limits on slide)");
-                    telemetry.update();
-
-                } else {
-                    hdw.seteMode(true);
-                    telemetry.addLine("eMode on (No limits on slide)");
-                    telemetry.update();
-
-                }
-            }
             if (gamepad1.left_bumper) {
                 hdw.goToHeight(Hardware2022.SlideHeight.Mid);
             }

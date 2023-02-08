@@ -62,7 +62,7 @@ public abstract class BaseAuto extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                webCam.startStreaming(1280,720, OpenCvCameraRotation.UPSIDE_DOWN);
+                webCam.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -127,7 +127,7 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        hdw.moveXAxis( -24.0, 0.3);
+        hdw.moveXAxis( -25.0, 0.3);
         hdw.moveYAxis(34.0, -0.3);
     }
 
@@ -143,7 +143,7 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 3 ", this.currentSide);
         telemetry.update();
         //Move right
-        hdw.moveXAxis( 24.0, 0.3);
+        hdw.moveXAxis( 25.0, 0.3);
         hdw.moveYAxis(34, 0.3);
 
     }

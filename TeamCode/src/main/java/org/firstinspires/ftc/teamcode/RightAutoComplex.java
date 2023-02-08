@@ -12,10 +12,10 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware2022;
 @Autonomous(name = "RightAutoComplex")
 public class RightAutoComplex extends BaseAuto {
 
-        @Override
-        void parkTerminal() {
-            hdw.moveXAxis(30, 0.5);
-        }
+    @Override
+    void parkTerminal() {
+        hdw.moveXAxis(-30, 0.5);
+    }
 
     @Override
     void scoreMidPole () {
@@ -30,10 +30,10 @@ public class RightAutoComplex extends BaseAuto {
         Log.d("9010", "before turn heading: " + initHeading);
 
         hdw.turn (45);
-        hdw.moveYAxis(12, 0.3);
+        hdw.moveYAxis(13, 0.3);
         hdw.dropCone();
         hdw.goToHeight(Hardware2022.SlideHeight.Mid);
-        hdw.moveYAxis(-7, -0.3);
+        hdw.moveYAxis(-8, -0.3);
 
         //Turn back to init heading.
         orientation = hdw.imu.getRobotYawPitchRollAngles();
@@ -45,8 +45,8 @@ public class RightAutoComplex extends BaseAuto {
 
         orientation = hdw.imu.getRobotYawPitchRollAngles();
         currentHeading = orientation.getYaw(AngleUnit.DEGREES);
-        Log.d("9010", "after trun back heading (Init) : " + currentHeading);
-
+        Log.d("9010", "before turn heading: " + initHeading);
+        Log.d("9010", "after trun back heading : " + currentHeading);
 
     }
 
@@ -55,7 +55,7 @@ public class RightAutoComplex extends BaseAuto {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        hdw.moveXAxis( -24.0, 0.3);
+        hdw.moveXAxis( -25.0, 0.3);
         hdw.goToHeight(Hardware2022.SlideHeight.Ground);
     }
 
@@ -63,8 +63,9 @@ public class RightAutoComplex extends BaseAuto {
     void parkZone2( ) {
         telemetry.addData("Park zone 2 ", this.currentSide);
         telemetry.update();
-        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
         //Stay in place
+        hdw.moveXAxis(-2.0, -0.3);
+        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
 
     }
 
@@ -73,7 +74,7 @@ public class RightAutoComplex extends BaseAuto {
         telemetry.addData("Park zone 3 ", this.currentSide);
         telemetry.update();
         //Move right
-        hdw.moveXAxis( 24.0, 0.3);
+        hdw.moveXAxis( 23.0, 0.3);
         hdw.goToHeight(Hardware2022.SlideHeight.Ground);
 
     }

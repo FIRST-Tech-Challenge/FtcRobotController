@@ -30,10 +30,10 @@ public class LeftAutoComplex extends BaseAuto {
         Log.d("9010", "before turn heading: " + initHeading);
 
         hdw.turn (-45);
-        hdw.moveYAxis(12, 0.3);
+        hdw.moveYAxis(13, 0.3);
         hdw.dropCone();
         hdw.goToHeight(Hardware2022.SlideHeight.Mid);
-        hdw.moveYAxis(-7, -0.3);
+        hdw.moveYAxis(-8, -0.2);
 
         //Turn back to init heading.
         orientation = hdw.imu.getRobotYawPitchRollAngles();
@@ -45,7 +45,8 @@ public class LeftAutoComplex extends BaseAuto {
 
         orientation = hdw.imu.getRobotYawPitchRollAngles();
         currentHeading = orientation.getYaw(AngleUnit.DEGREES);
-        Log.d("9010", "after trun back heading (Init) : " + currentHeading);
+        Log.d("9010", "before turn heading: " + initHeading);
+        Log.d("9010", "after trun back heading : " + currentHeading);
 
     }
 
@@ -54,7 +55,8 @@ public class LeftAutoComplex extends BaseAuto {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        hdw.moveXAxis( -24.0, 0.3);
+        hdw.moveYAxis(-3, -0.3);
+        hdw.moveXAxis( -25.0, 0.3);
         hdw.goToHeight(Hardware2022.SlideHeight.Ground);
     }
 
@@ -62,8 +64,9 @@ public class LeftAutoComplex extends BaseAuto {
     void parkZone2( ) {
         telemetry.addData("Park zone 2 ", this.currentSide);
         telemetry.update();
-        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
         //Stay in place
+        hdw.moveXAxis(-2.0, -0.3);
+        hdw.goToHeight(Hardware2022.SlideHeight.Ground);
 
     }
 
@@ -72,7 +75,8 @@ public class LeftAutoComplex extends BaseAuto {
         telemetry.addData("Park zone 3 ", this.currentSide);
         telemetry.update();
         //Move right
-        hdw.moveXAxis( 24.0, 0.3);
+        hdw.moveYAxis(-3.0, -0.3);
+        hdw.moveXAxis( 22.0, 0.3);
         hdw.goToHeight(Hardware2022.SlideHeight.Ground);
 
     }

@@ -28,7 +28,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
     double meanVal =0.0;
 
     //Adjustable parameters here.
-    double sleev1Peak = 50;
+    double sleev1Peak = 60;
     double sleev2Peak = 100.0 ;
     double sleev3Peak = 150.0;
 
@@ -38,7 +38,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
 
     //Range for too dark part of pic
     Scalar darkL = new Scalar(0, 0, 0 );
-    Scalar darkH = new Scalar(179, 255, 50 );
+    Scalar darkH = new Scalar(179, 255, 120 );
 
     QRCodeDetector decoder = new QRCodeDetector();
     SleeveSide sideDetected = SleeveSide.Unkown;
@@ -142,7 +142,8 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                     //Apply mask to input image, and copy to new image.
                     Mat result  = new Mat(croppedQR.size(), CvType.CV_8UC3, new Scalar(255, 255, 255));
                     croppedQR.copyTo(result, tobeRemove);
-                    Imgcodecs.imwrite("c:/sdcard/FIRST/crop-removed.jpg",result );
+                    Imgcodecs.imwrite("/sdcard/FIRST/crop-removed.jpg",result );
+                    Log.d("9010", result.dump());
 
                     Mat hsvResult = new Mat();
                     Imgproc.cvtColor(result, hsvResult, Imgproc.COLOR_RGB2HSV);
@@ -232,17 +233,17 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                 if ( debug) {
                     //System.out.println("data is: " + hue );
                 }
-                if ( hue> 0 && hue < 180 ) {
-                    //System.out.println("hue : " + hue + " Posiiton: " + h + "," + w  );
+                if ( hue> 0 && hue < 165 ) {
+                    Log.d("9010","hue : " + hue + " Posiiton: " + h + "," + w  );
                     total += hue;
                     count ++;
                 }
 
-            }
+             }
         }
 
         if ( debug) {
-            //System.out.println("Count is: " + count );
+            Log.d("9010","Count is: " + count );
 
         }
         return total/count;

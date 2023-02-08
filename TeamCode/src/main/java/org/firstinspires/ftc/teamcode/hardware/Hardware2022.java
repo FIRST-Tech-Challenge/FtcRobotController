@@ -39,10 +39,10 @@ public class Hardware2022 {
     private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in X Axis
 
     //Encoder value of VSlide height in Cone mode,
-    private final int CONE_SLIDE_LOW = 2600  ;
+    private final int CONE_SLIDE_LOW = 1600;
     //Get accurate reading for auto
-    private final int CONE_SLIDE_MID = 3400 ;
-    private final int CONE_SLIDE_HIGH = 5500 ;
+    private final int CONE_SLIDE_MID = 3000;
+    private final int CONE_SLIDE_HIGH = 4030;
 
     private boolean debug = true;
     private Telemetry telemetry;
@@ -50,9 +50,9 @@ public class Hardware2022 {
 
 
     //PID control parameter for turning.
-    private double kP =0.0;
-    private double kI = 0.0;
-    private double kD = 0.0;
+    private double kP =0.15;
+    private double kI = 0.1;
+    private double kD = 0.005;
     private double kF = 0.0;
 
 
@@ -323,10 +323,7 @@ public class Hardware2022 {
         double difference = regulateDegree( currentHeading - endHeading   );
         Log.d("9010", "Difference: " + difference );
 
-        kP = 0.2;
-        kI = 0.2 ;
-        kD = 0;
-        kF = 0;
+
 
         PIDFController pidfCrtler  = new PIDFController(kP, kI, kD, kF);
         Log.d("9010", "Kp: " + kP + "  kI: " + kI + " kD: " + kD );
@@ -343,7 +340,7 @@ public class Hardware2022 {
             currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             //Calculate new distance
             difference = regulateDegree(  currentHeading - endHeading );
-            double velocityCaculated = pidfCrtler.calculate(difference)/5;
+            double velocityCaculated = pidfCrtler.calculate(difference)/10;
 
             Log.d("9010", "=====================");
             Log.d("9010", "Difference: " + difference);
@@ -357,10 +354,10 @@ public class Hardware2022 {
         }
 
 
-        wheelFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wheelFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wheelBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wheelBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //wheelFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //wheelFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //wheelBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //wheelBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheelFrontRight.setVelocity(0);
         wheelFrontLeft.setVelocity(0);
         wheelBackRight.setVelocity(0);
@@ -405,22 +402,13 @@ public class Hardware2022 {
             Log.d("9010", "vSlide position " + vSlide.getCurrentPosition());
         }
 
-        if ( ( (vSlide.getCurrentPosition() - vsldieInitPosition)  <= CONE_SLIDE_HIGH
-                && power > 0 )
-               ||  ( (vSlide.getCurrentPosition() - vsldieInitPosition)  >= 0  && power < 0 )
-               ||  eMode ) {
-            //telemetry.addLine().addData("We have power!", power );
-            //telemetry.update();
-            //Only give power when moving up, or moving down,but touch is not pushed.
-            if (power > 0 || (power < 0 && clawTouch.getState() == true)) {
-                vSlide.setVelocity(power * ANGULAR_RATE);
-            } else {
-                vSlide.setVelocity(0);
-            }
-            //Thread.sleep(100);
+        if (power > 0 || (power < 0 && clawTouch.getState() == true)) {
+            vSlide.setVelocity(power * ANGULAR_RATE);
+
         } else {
             vSlide.setVelocity(0);
         }
+        //Thread.sleep(100);
 
     }
 
@@ -432,7 +420,7 @@ public class Hardware2022 {
             targetPosition = CONE_SLIDE_LOW;
         }
         if (height.equals(SlideHeight.Mid)) {
-            targetPosition = CONE_SLIDE_MID + 1000;
+            targetPosition = CONE_SLIDE_MID;
         }
         if (height.equals(SlideHeight.High)) {
             targetPosition = CONE_SLIDE_HIGH;
@@ -510,8 +498,7 @@ public class Hardware2022 {
         Log.d("9010", "slideStartPostion:  " + slideStartPostion);
         Log.d("9010", "Travel:  " + travel);
 
-        while (clawTouch.getState()==true && ( vSlide.getCurrentPosition() - vsldieInitPosition  >= 0)
-         && ( travel < 2000 )) {
+        while (clawTouch.getState()==true && ( travel < 900 )) {
             vSlide.setVelocity(power * ANGULAR_RATE);
             travel = slideStartPostion - vSlide.getCurrentPosition();
             //Log.d("9010", "postion:  " + vSlide.getCurrentPosition());
