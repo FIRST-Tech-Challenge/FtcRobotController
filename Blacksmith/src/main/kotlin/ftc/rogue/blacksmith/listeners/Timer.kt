@@ -4,6 +4,20 @@ package ftc.rogue.blacksmith.listeners
 
 import ftc.rogue.blacksmith.units.TimeUnit
 
+// -----------------------------------------------------------------------------------------------
+// Dear reader-
+//
+// Put bluntly, this class is hideous.
+//
+// I implore you to not look too far into it's implementation for fear of gaining an obsessive
+// want to pour copious amounts of bleach into your own eyes.
+//
+// This has been your first and only warning.
+// Just read the docs instead.
+//
+// Godspeed.
+// -----------------------------------------------------------------------------------------------
+
 /**
  * A timer that can be used to schedule actions to be performed at a specific time.
  *
@@ -39,7 +53,11 @@ import ftc.rogue.blacksmith.units.TimeUnit
  * @see Listener
  * @see ReforgedGamepad
  */
-class Timer @JvmOverloads constructor(length: Long, startPending: Boolean = false, unit: TimeUnit = TimeUnit.MILLISECONDS) {
+class Timer @JvmOverloads constructor(
+    length: Long,
+    startPending: Boolean = false,
+    unit: TimeUnit = TimeUnit.MILLISECONDS
+) {
     private val listener0 = Listener { !isPending && System.currentTimeMillis() - startTime >= unit.toMs(length) }
 
     private val listener1 = Listener { System.currentTimeMillis() - startTime >= unit.toMs(length) }

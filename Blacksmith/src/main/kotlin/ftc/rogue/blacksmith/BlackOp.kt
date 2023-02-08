@@ -11,6 +11,8 @@ import ftc.rogue.blacksmith.internal.getFieldsAnnotatedWith
 import kotlin.reflect.KProperty
 
 /**
+ * [**LINK TO OFFICIAL DOCS (click on me) (please read) (I like cars)**](https://blacksmithftc.vercel.app/black-op/overview)
+ *
  * A nicer version of LinearOpMode, please read docs about this class if you wish to use it,
  * which I recommend, *especially* if you use Kotlin.
  *

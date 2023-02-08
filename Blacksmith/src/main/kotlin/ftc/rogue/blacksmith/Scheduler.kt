@@ -2,10 +2,14 @@ package ftc.rogue.blacksmith
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.ElapsedTime
-import ftc.rogue.blacksmith.listeners.Listener
+import ftc.rogue.blacksmith.internal.DoubleConsumer
+import ftc.rogue.blacksmith.internal.consume
+import ftc.rogue.blacksmith.listeners.*
 import org.firstinspires.ftc.robotcore.external.Telemetry
 
 /**
+ * [**LINK TO OFFICIAL DOCS (click on me) (please read) (I like cars)**](https://blacksmithftc.vercel.app/scheduler-api/overview)
+ *
  * A component that simplifies the process of scheduling actions to be performed at a
  * specific time or condition, for use in a [LinearOpMode]. It seeks to transform teleop code
  * into a declarative haven, where the robot's actions are defined in a set of [actions][Runnable]
@@ -58,13 +62,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
  *     ReforgedGamepad gamepadx1 = new ReforgedGamepad(gamepad1);
  *     gamepadx1.a.onHigh(this::doSomething);
  *
- *     // Usage of scheduler through the raw API
- *     Scheduler.getOrCreateListener("someCondition", someCondition == true)
+ *     // Creating a listener through the raw API
+ *     new Listener(() -> someConditionAbc123)
  *         .onRise(this::doSumpthinElse)
  *         .onFall(this::doYetAnotherThing);
  *
- *     // Runs the code while the OpMode is active.
- *     Scheduler.launch(this, () -> {
+ *     // Runs the code when OpMode starts & while the OpMode is active.
+ *     Scheduler.launchOnStart(this, () -> {
  *         // Optional block of code to be run after the above listeners
  *         // This parameter may be omitted if unnecessary.
  *         updateSomething();
@@ -77,7 +81,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
  * @author KG
  *
  * @see Listener
- * @see Condition
  * @see ReforgedGamepad
  * @see Timer
  */
@@ -186,8 +189,7 @@ object Scheduler {
      * @param afterEach An optional block of code to run every tick, after the listeners have ran.
      */
     @JvmStatic
-    @JvmOverloads
-    fun time(opmode: LinearOpMode, telemetry: Telemetry, afterEach: Runnable = Runnable {}) {
+    fun time(opmode: LinearOpMode, afterEach: DoubleConsumer) {
         emit(STARTING_MSG)
 
         val elapsedTime = ElapsedTime()
@@ -197,10 +199,10 @@ object Scheduler {
 
             beforeEach.run()
             tick()
-            afterEach.run()
 
-            telemetry.addData("Loop time (ms)", elapsedTime.milliseconds())
-            telemetry.update()
+            elapsedTime.milliseconds().let {
+                afterEach.consume(it)
+            }
 
             elapsedTime.reset()
         }

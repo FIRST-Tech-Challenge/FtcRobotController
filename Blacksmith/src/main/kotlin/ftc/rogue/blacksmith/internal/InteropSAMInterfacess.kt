@@ -9,12 +9,23 @@ fun interface AnvilRunConfigBuilder {
 
 typealias AnvilConsumer = Consumer<Anvil>
 
+typealias DoubleConsumer = Consumer<Double>
+
 fun interface Consumer<T> {
     fun T.consume()
+}
+
+@JvmSynthetic
+fun <T> Consumer<T>.consume(scope: T) {
+    scope.consume()
 }
 
 fun interface AnvilCycle {
     fun Anvil.doCycle(iteration: Int)
 }
 
-typealias BuilderAction = () -> Unit
+@JvmSynthetic
+fun AnvilCycle.consume(instance: Anvil, iteration: Int) {
+    instance.doCycle(iteration)
+}
+

@@ -13,8 +13,10 @@ import Returns from '../../src/components/Returns';
 
 Blacksmith provides a relatively simple yet versatile way to create and run TrajectorySequences. There are three main parts:
  - Creating trajectories
- - Building/running the initial trajectory
- - Building/running subsequent trajectories
+ - Running the initial trajectory
+ - Running subsequent trajectories
+
+Or, if you want, you can just 'build a TrajectorySequence' and use that how you'd like.
 
 ## Creating trajectories
 
@@ -64,14 +66,14 @@ not some other object by accident**
 
   // Alternatively, you can use a lambda
   public Anvil mySecondAnvilTrajectory(Pose2d startPose) {
-      return Anvil.forgeTrajectory(sampleMecanumDrive, startPose, (anvil) -> {
-          anvil             // This way can allow you to break up the methods with
+      return Anvil.forgeTrajectory(sampleMecanumDrive, startPose, (instance) -> {
+          instance          // This way can allow you to break up the methods with
               .forward(...) // other logic or computations, like below
               .turn(...);   // (You can still chain methods like this though)
 
           double x = someComputationWithAReallyLongNameForNoReason();
 
-          anvil.back(x);
+          instance.back(x);
       });
   }
   ```
@@ -103,3 +105,438 @@ not some other object by accident**
 
 </TabItem>
 </Tabs>
+
+## Running the initial trajectory
+
+Running the first trajectory to kickstart your auto is a bit different than running the rest of
+the trajectories in your auto.
+
+You first need to start with actually creating your Anvil instance, as shown before. We can just
+call the method with a start pose to create it, like so:
+
+```java
+Anvil myFirstCreatedAnvilTrajectory = myFirstAnvilTrajectory(myStartPose);
+```
+
+This is 'created', but not 'built', in that it can still be modified and tweaked (i.e., you can still do
+something like:)
+
+```java
+myFirstCreatedAnvilTrajectory
+    .turn(720) /* GlobalUnits is setup so you can use degrees or whatever unit you want */
+    .whateverElse(...);
+```
+
+Now that we have it, in our 'main' method (`go` if you're using BlackOp, `runOpMode` if you're using
+LinearOpMode, etc.) we can do this, to tell Anvil what the initial trajectory is:
+```java
+@Override
+public void `go/runOpMode`() {
+    Anvil myFirstCreatedAnvilTrajectory = // ...
+
+    Anvil // (Doesn't actually start the auto yet, just tells Anvil what to start it with)
+        .startAutoWith(myFirstCreatedAnvilTrajectory)
+}
+```
+
+If you want to use the Scheduler API for your auto, you can do the following, which tells Anvil to
+start the auto the second the Scheduler starts looping.
+
+```java
+// ...
+Anvil
+    .startAutoWith(myFirstCreatedAnvilTrajectory)
+    .onSchedulerLaunch()
+// ...
+```
+
+If you don't want to use the scheduler, you can do the following whenever to start
+the auto. Note that it takes a parameter called 'runAsync', which is a boolean that tells Anvil if
+you want to run this trajectory [asynchronously](https://learnroadrunner.com/advanced.html#async-following)
+or not
+
+```java
+AnvilRunner runner = Anvil.startAutoWith(myFirstCreatedAnvilTrajectory)
+
+// ...
+
+runner.start(true/false)
+```
+
+:::caution
+Using .onSchedulerLaunch() implicitly runs the trajectories asynchronously.
+
+**Trajectories running asynchronously must be updated in a loop with `sampleMecanumDrive.update()`**
+:::
+
+### Putting it all together
+
+<Tabs groupId="programming-language">
+<TabItem value="java_s" label="Java w/ Scheduler">
+
+  ```java
+  public class MyAutoWithScheduler extends BlackOp {
+      /* Declare your components here (I recommend @CreateOnGo) */
+
+      @Override
+      public void go() {
+          Anvil myFirstCreatedAnvilTrajectory = myFirstAnvilTrajectory(myStartPose);
+
+          Anvil
+              .startAutoWith(myFirstCreatedAnvilTrajectory)
+              .onSchedulerLaunch();
+
+          // ...
+
+          Scheduler.launchOnStart(this, () -> {
+              sampleMecanumDrive.update()
+              // Other stuff to call each loop
+          });
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt_s" label="Kotlin w/ Scheduler">
+
+  ```kotlin
+  class MyAutoWithScheduler : BlackOp() {
+      /* Declare your components here (I recommend createOnGo) */
+
+      override fun go() {
+          val myFirstCreatedAnvilTrajectory = myFirstAnvilTrajectory(myStartPose);
+
+          Anvil
+              .startAutoWith(myFirstCreatedAnvilTrajectory)
+              .onSchedulerLaunch()
+
+          // ...
+
+          Scheduler.launchOnStart(opmode = this) {
+              sampleMecanumDrive.update()
+              // Other stuff to call each loop
+          }
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="java_nos" label="Java w/out Scheduler">
+
+  ```java
+  public class MyAutoWithScheduler extends LinearOpMode {
+      /* Declare your components here */
+
+      @Override
+      public void runOpMode() throws InterruptedException {
+          /* Initialize your components here */
+
+          Anvil myFirstCreatedAnvilTrajectory = myFirstAnvilTrajectory(myStartPose);
+
+          AnvilRunner runner = Anvil
+              .startAutoWith(myFirstCreatedAnvilTrajectory);
+
+          // ...
+
+          waitForStart();
+
+          runner.start(true); // Starts the traj asynchronously
+          while (opModeIsActive() && !isStopRequested()) {
+              sampleMecanumDrive.update();
+          }
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt_nos" label="Kotlin w/out Scheduler">
+
+  ```kotlin
+  class MyAutoWithScheduler : LinearOpMode() {
+      /* Declare your components here */
+
+      override fun runOpMode() {
+          /* Initialize your components here */
+
+          Anvil myFirstCreatedAnvilTrajectory = myFirstAnvilTrajectory(myStartPose)
+
+          val runner = Anvil
+              .startAutoWith(myFirstCreatedAnvilTrajectory)
+
+          // ...
+
+          waitForStart()
+
+          runner.start(true); // Starts the traj asynchronously
+          while (opModeIsActive() && !isStopRequested {
+              sampleMecanumDrive.update()
+          }
+      }
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+## Running subsequent trajectories
+
+Say that you have your main trajectory, but after you finish your main trajectory, you want to park.
+But, because you have to read a signal cone with a camera to know where to park, there isn't time
+to build the trajectory during initialization.
+
+Normally, building a trajectory takes a while, and can bog down your auto... but with Anvil, it's
+super easy to build it in a background thread... in fact, that's what it does by default!
+
+Lets say you have a main trajectory like this:
+
+```java
+public Anvil myMainTrajectory(Pose2d startPose) {
+    return Anvil.forgeTrajectory(sampleMecanumDrive, startPose)
+        .forward(...) // You can easily chain methods this way
+        .turn(...)    // to form a clean builder syntax
+        .back(...);
+}
+```
+
+and a parking trajectory like this:
+
+```java
+public Anvil myParkTrajectory(Pose2d startPose) {
+    return Anvil.forgeTrajectory(sampleMecanumDrive, startPose, (instance) -> {
+        if (mySignalId == 1) {
+            instance.forward(10);
+        } else {
+            instance.back(10);
+        }
+    });
+}
+```
+
+How would we run `myParkTrajectory` right after `myMainTrajectory`? Easy:
+
+```java
+public Anvil myMainTrajectory(Pose2d startPose) {
+    return Anvil.forgeTrajectory(sampleMecanumDrive, startPose)
+        // ...
+        .back(...)
+        .thenRun(this::myParkTrajectory);
+}
+```
+
+Yes, it's really that simple. We just pass in a lambda or a [method reference](https://javatechonline.com/method-reference-java-8/)
+to the next Anvil trajectory to run.
+
+The trajectory is implicitly created in a background thread without any extra code, and automatically
+runs when the trajectory reaches `.thenRun()`
+
+(`.thenRun()` is called in a `temporalMarker` behind the scenes)
+
+:::danger Warning
+The method in question MUST take in a single `Pose2d` parameter and MUST return an `Anvil` instance.
+
+The startPose passed to the function by Anvil is by default the **end pose of the previous trajectory**.
+
+If you want to use a different start pose, read on to the [Run options](#run-options) section
+:::
+
+But what if you want to, say, run the new trajectory synchronously, or conditionally, or something?
+Well Blacksmith promises versatility, and Anvil provides.
+
+### Run options
+
+When calling `.thenRun()`, you can pass in an optional lambda which takes in a `AnvilRunConfig` object
+which you can then set to your liking:
+
+```java
+// ...
+.thenRun(this::nextTraj, (config) -> config
+    // Defaults to 'true' if called without a param
+    // Defaults to 'false' if not called at all
+    .buildSynchronously(true/false)
+
+    // Defaults to 'true' if called without a param
+    // Defaults to 'false' if not called at all
+    .runSynchronously(true/false)
+
+    // Trajectory only runs if this returns true
+    // Defaults to '() -> true' if not called at all
+    .runOnlyIf(() -> true/false)
+
+    // Sets the Pose2d to pass to the trajectory
+    // Defaults to the endPose of the parent trajectory if not called at all
+    .setStartPose(() -> Pose2d()));
+```
+
+:::info
+For Kotlin users, this, of course, is a lambda with a receiver, so you don't need the dots
+:::
+
+:::tip
+If you're calling a lot of `thenRun`s with the same options, I recommend creating a global variable like so:
+
+```java
+private AnvilRunConfig myConfig = (config) -> config
+    .x()
+    .y()
+    .z();
+```
+
+and just passing it in like `.thenRun(this::nextTraj, myConfig)`
+:::
+
+:::info
+This is the default config if no custom config is passed in:
+
+```java
+config
+    .buildSynchronously(false) // Builds in background thread
+    .runSynchronously(false) // Runs async
+    .onlyRunIf(() -> true) // Always runs
+    .setStartPose(() -> getEndPose()); // Start pose is parent's end pose
+```
+:::
+
+:::info
+Just to make it clear, you don't have to call all 4 methods. You can just call 1 method if you'd
+like.
+:::
+
+### Putting it all together
+
+<Tabs groupId="programming-language">
+<TabItem value="java_rc" label="Java w/ Run config">
+
+  ```java
+  public class MyAuto extends MyBaseAuto {
+      @Override
+      public Anvil myMainTrajectory(Pose2d startPose) {
+          return Anvil.forgeTrajectory(sampleMecanumDrive, startPose)
+              .forward(...)
+              .turn(...)
+              .back(...)
+              .thenRun(this::myParkTrajectory);
+      }
+
+      public Anvil myParkTrajectory(Pose2d startPose) {
+          return Anvil.forgeTrajectory(sampleMecanumDrive, startPose, (instance) -> {
+              if (mySignalId == 1) {
+                  instance.forward(10);
+              } else {
+                  instance.back(10);
+              }
+          });
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt_rc" label="Kotlin w/ Run config">
+
+  ```kotlin
+  class MyAuto : MyBaseAuto() {
+      override fun myMainTrajectory(Pose2d startPose) =
+          Anvil.forgeTrajectory(sampleMecanumDrive, startPose)
+              .forward(...)
+              .turn(...)
+              .back(...)
+              .thenRun(this::myParkTrajectory)
+
+      fun myParkTrajectory(Pose2d startPose) =
+          Anvil.forgeTrajectory(sampleMecanumDrive, startPose) {
+              if (mySignalId == 1) {
+                  forward(10)
+              } else {
+                  back(10)
+              }
+          }
+  }
+  ```
+
+</TabItem>
+<TabItem value="java_norc" label="Java w/out Run config">
+
+  ```java
+  public class MyAuto extends MyBaseAuto {
+      @Override
+      public Anvil myMainTrajectory(Pose2d startPose) {
+          return Anvil.forgeTrajectory(sampleMecanumDrive, startPose)
+              .forward(...)
+              .turn(...)
+              .back(...)                            // Runs the parkTraj synchronously
+              .thenRun(this::myParkTrajectory, (config) -> config.runSynchronously());
+      }
+
+      public Anvil myParkTrajectory(Pose2d startPose) {
+          return Anvil.forgeTrajectory(sampleMecanumDrive, startPose, (instance) -> {
+              if (mySignalId == 1) {
+                  instance.forward(10);
+              } else {
+                  instance.back(10);
+              }
+          });
+      }
+  }
+  ```
+
+</TabItem>
+<TabItem value="kt_norc" label="Kotlin w/out Run config">
+
+  ```kotlin
+  class MyAuto : MyBaseAuto() {
+      override fun myMainTrajectory(Pose2d startPose) =
+          Anvil.forgeTrajectory(sampleMecanumDrive, startPose)
+              .forward(...)
+              .turn(...)
+              .back(...)           // Runs the parkTraj synchronously
+              .thenRun(this::myParkTrajectory) { runSynchronously() }
+
+      fun myParkTrajectory(Pose2d startPose) =
+          Anvil.forgeTrajectory(sampleMecanumDrive, startPose) {
+              if (mySignalId == 1) {
+                  forward(10)
+              } else {
+                  back(10)
+              }
+          }
+  }
+  ```
+
+</TabItem>
+</Tabs>
+
+## Just building a TrajectorySequence
+
+If you just wanna build a TrajectorySequence without worrying about any other Anvil nonsense, that's
+easy as well.
+
+Just
+
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  // (Referencing the first section's method)
+  Anvil myFirstTrajectoryCreated = myFirstAnvilTrajectory(new Pose2d())
+
+  TrajectorySequence ts = myFirstTrajectoryCreated.<TrajectorySequence>build()
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  // (Referencing the first section's method)
+  val myFirstTrajectoryCreated = myFirstAnvilTrajectory(Pose2d())
+
+  val ts = myFirstTrajectoryCreated.build<TrajectorySequence>()
+  ```
+  **Make sure you're passing in the right class, or it will throw a ClassCastException at runtime**
+
+</TabItem>
+</Tabs>
+
+You notice how you have to pass in the `<TrajectorySequence>`? Yeah, that's mandatory, don't
+forget it.
+
+**Make sure you're passing in the right class, or it will throw a ClassCastException at runtime**

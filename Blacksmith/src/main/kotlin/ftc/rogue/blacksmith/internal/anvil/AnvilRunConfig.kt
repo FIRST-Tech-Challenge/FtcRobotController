@@ -16,13 +16,15 @@ class AnvilRunConfig internal constructor() {
     @get:JvmSynthetic internal var startPoseSupplier: (() -> Pose2d)? = null
         private set
 
-    fun buildSynchronously(): AnvilRunConfig {
-        buildsSynchronously = true
+    @JvmOverloads
+    fun buildSynchronously(yes: Boolean = true): AnvilRunConfig {
+        buildsSynchronously = yes
         return this
     }
 
-    fun runSynchronously(): AnvilRunConfig {
-        runsSynchronously = true
+    @JvmOverloads
+    fun runSynchronously(yes: Boolean = true): AnvilRunConfig {
+        runsSynchronously = yes
         return this
     }
 

@@ -25,11 +25,13 @@ import kotlinx.coroutines.*
  * - '$' -> Directly modifies the deque or something else special
  * - else -> Doesn't touch the deque
  */
-class AnvilInternal(
-    private val instance: Anvil,
-    drive: Any,
-    @get:JvmSynthetic internal val startPose: Pose2d,
-) {
+class AnvilInternal
+    internal constructor(
+        private val instance: Anvil,
+        drive: Any,
+        @get:JvmSynthetic internal val startPose: Pose2d,
+    ) {
+
     companion object {
         private val builderScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     }
@@ -38,13 +40,13 @@ class AnvilInternal(
 
     private val builderProxy = _TrajectorySequenceBuilder(driveProxy, startPose)
 
-    private val builderDeque = ArrayDeque<BuilderAction>()
+    private val builderDeque = ArrayDeque<() -> Unit>()
 
     private val preforgedTrajectories = mutableMapOf<Any, Deferred<Any>>()
 
     private lateinit var builtTrajectory: Any
 
-    private fun add(builderAction: BuilderAction) {
+    private fun add(builderAction: () -> Unit) {
         builderDeque += builderAction
     }
 
@@ -188,11 +190,7 @@ class AnvilInternal(
 
     fun __inReverse(pathsToDoInReverse: AnvilConsumer) {
         _setReversed(true)
-
-        with(pathsToDoInReverse) {
-            instance.consume()
-        }
-
+        pathsToDoInReverse.consume(instance)
         _setReversed(false)
     }
 
@@ -208,16 +206,14 @@ class AnvilInternal(
 
     @Suppress("UNCHECKED_CAST")
     fun <T> _withRawBuilder(builder: Consumer<T>) = add {
-        with(builder) {
-            (builderProxy.internalBuilder as T).consume()
+        (builderProxy.internalBuilder as T).let {
+            builder.consume(it)
         }
     }
 
-    fun doTimes(instance: Anvil, times: Int, pathsToDo: AnvilCycle) {
-        repeat(times) { iterationNum ->
-            with(pathsToDo) {
-                instance.doCycle(iterationNum)
-            }
+    fun doTimes(times: Int, pathsToDo: AnvilCycle) {
+        repeat(times) { iteration ->
+            pathsToDo.consume(instance, iteration)
         }
     }
 

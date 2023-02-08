@@ -6,7 +6,7 @@ import ftc.rogue.blacksmith.units.AngleUnit.DEGREES
 import ftc.rogue.blacksmith.util.toRad
 
 class KalmanTwoWheelLocalizer(
-    private val localizer: TwoTrackingWheelLocalizer
+    private val localizer: TwoTrackingWheelLocalizer,
 ) : TwoTrackingWheelLocalizer(localizer.getWheelPoses()) {
 
     // Remember heading is in radians
@@ -47,10 +47,40 @@ class KalmanTwoWheelLocalizer(
             ?: 0.0
     }
 
+    fun setHeadingFilterCoeffs(R: Double, Q: Double) = apply {
+        headingFilter.setProcessNoise(R)
+        headingFilter.setMeasurementNoise(Q)
+    }
+
+    fun setWheelPos1FilterCoeffs(R: Double, Q: Double) = apply {
+        wheelPos1Filter.setProcessNoise(R)
+        wheelPos1Filter.setMeasurementNoise(Q)
+    }
+
+    fun setWheelPos2FilterCoeffs(R: Double, Q: Double) = apply {
+        wheelPos2Filter.setProcessNoise(R)
+        wheelPos2Filter.setMeasurementNoise(Q)
+    }
+
+    fun setHeadingVelocityFilterCoeffs(R: Double, Q: Double) = apply {
+        headingVelocityFilter.setProcessNoise(R)
+        headingVelocityFilter.setMeasurementNoise(Q)
+    }
+
+    fun setWheelPos1VelocityFilterCoeffs(R: Double, Q: Double) = apply {
+        wheelPos1VelocityFilter.setProcessNoise(R)
+        wheelPos1VelocityFilter.setMeasurementNoise(Q)
+    }
+
+    fun setWheelPos2VelocityFilterCoeffs(R: Double, Q: Double) = apply {
+        wheelPos2VelocityFilter.setProcessNoise(R)
+        wheelPos2VelocityFilter.setMeasurementNoise(Q)
+    }
+
     // -- INTERNAL --
 
     companion object {
-        private fun Any.getWheelPoses(): List<Pose2d> {
+        private fun TwoTrackingWheelLocalizer.getWheelPoses(): List<Pose2d> {
             val parallelX = this::class.java.getField("PARALLEL_X").get(null) as Double
             val parallelY = this::class.java.getField("PARALLEL_Y").get(null) as Double
             val perpendicularX = this::class.java.getField("PERPENDICULAR_X").get(null) as Double

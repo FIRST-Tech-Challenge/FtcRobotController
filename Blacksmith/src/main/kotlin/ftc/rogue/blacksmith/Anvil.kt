@@ -15,93 +15,84 @@ import ftc.rogue.blacksmith.util.*
 import kotlinx.coroutines.*
 
 /**
- * A WIP component that wraps around the [TrajectorySequenceBuilder] to provide a much cleaner API
- * with powerful features such as preforming trajectories in parallel for quick creation on the fly.
- * Works well with the [Scheduler] API.
+ * [**LINK TO OFFICIAL DOCS (click on me) (please read) (I like cars)**](https://blacksmithftc.vercel.app/anvil/overview)
  *
- * Usage example:
- * ```kotlin
- * override fun runOpMode() {
- *     val startPose = Pose2d(91.toIn(), (-159).toIn(), 90.toRad())
- *     val startTraj = goForwardAndRaiseLift(startPose)
+ * A component that wraps around the [TrajectorySequenceBuilder] to provide a much cleaner API
+ * with powerful features such as building trajectories in parallel for quick creation on the fly,
+ * and implicitly converting units to any one you like! Program your auto in furlongs and arcseconds
+ * if you'd like.
  *
- *     // Starts auto + sets drive's pose estimate to the startPose
- *     // Uses `drive.followTrajectorySequenceAsync` to run the trajectory in parallel,
- *     // so it should be updated every loop (Scheduler recommended for this).
- *     Anvil.startAsyncAutoWith(startTraj)
+ * Works well with the [Scheduler API][Scheduler].
  *
- *     // Of course, you don't need to use Scheduler, but it's cool
- *     Scheduler.launch(this) {
- *         drive.update()
- *         // Other PID stuff and such...
+ * Basic example:
+ * ```java
+ * /* BaseAuto.java */
+ *
+ * abstract class BaseAuto extends BlackOp {
+ *     @CreateOnGo
+ *     protected AutoBotComponents bot;
+ *
+ *     @CreateOnGo(passHwMap = true)
+ *     protected SampleMecanumDrive drive;
+ *
+ *     protected Pose2d startPose;
+ *     protected abstract Anvil mainTraj(Pose2d startPose);
+ *
+ *     @Override
+ *     public void go() {
+ *         Anvil startTraj = mainTraj(startPose);
+ *
+ *         Anvil
+ *              .startAutoWith(startTraj)
+ *              .onSchedulerLaunch();
+ *
+ *         Scheduler.launchOnStart(this, () -> {
+ *             drive.update();
+ *             bot.update();
+ *         });
  *     }
  * }
  *
- * var cycles = 0
+ * /* AutoDemo.java */
  *
- * fun goForwardAndRaiseLift(startPose: Pose2d): Anvil {
- *    // Here pass in the SampleMechanumDrive
- *    return Anvil.forgeTrajectory(drive, startPose)
- *      // Concurrently creates the trajectory while still running the rest of the auto
- *      // This is useful for creating trajectories on the fly without stalling
- *      // the auto while the trajectory is being created.
+ * @Autonomous
+ * class AutoDemo extends BaseAuto {
+ *     public AutoDemo() {
+ *         startPose = GlobalUnits.pos(x, y, r);
+ *     }
  *
- *      // The `key` can be anything (comparable), it just needs to be unique for each
- *      // trajectory in this specific Anvil instance.
- *      .preform(key = 0, ::goBackwardAndLowerLift, startPose)
+ *     @Override
+ *     protected Anvil mainTraj(Pose2d startPose) {
+ *         return Anvil.forgeTrajectory(drive, startPose)
+ *             .forward(10)
+ *             .addTemporalMarker(100, () -> {
+ *                 // Do something
+ *             })
+ *             .back(10)
+ *             .thenRun(this::parkTraj);
+ *     }
  *
- *      .temporalMarker {
- *          // ...
- *      }
- *      .forward(24)
- *
- *      // We can then use the key to run the next trajectory after the sequence is done
- *      // .runAsync simply creates a temporal marker that runs the given trajectory at the
- *      // end of this sequence.
- *      .runAsync(key = 0)
+ *     private Anvil parkTraj(Pose2d startPose) {
+ *         // Create and return parking trajectory
+ *     }
  * }
- *
- * // Note that you can just use Kotlin's single expression functions to make this even cleaner:
- * fun goBackwardAndLowerLift(startPose: Pose2d): Anvil =
- *    Anvil.forgeTrajectory(drive, startPose)
- *      .preform(key = "cycle again", ::goForwardAndRaiseLift, startPose))
- *      .preform(key = "park", ::park, startPose)
- *
- *      .temporalMarker {
- *          // ...
- *      }
- *      .back(24)
- *
- *      // You can conditionally run trajectories with this method, just pass
- *      // in a lambda that evaluates to a boolean.
- *      // Useful for creating loops or conditional sequences.
- *      .runAsyncIf(key = "cycle again") { cycles++ < 5 }
- *      .runAsync(key = "park")
- *
- * // There's a version of the builder API that accepts a builder lambda as well:
- * fun park(startPose: Pose2d): Anvil =
- *   Anvil.forgeTrajectory(drive, startPose) {
- *      when (coneSignalNum) {
- *          1 -> forward(.1)
- *          2 -> forward(10)
- *          else -> forward(20)
- *      }
- *   }
  * ```
- *
- * @param drive The [SampleMecanumDrive] to use for the trajectory
- * @param startPose The starting pose of the trajectory
  *
  * @author KG
  *
  * @see Scheduler
  * @see TrajectorySequenceBuilder
  */
-class Anvil(drive: Any, startPose: Pose2d) {
+class Anvil
+    internal constructor (
+        drive: Any,
+        startPose: Pose2d,
+    ) {
+
     companion object {
         @JvmStatic
         @JvmOverloads
-        inline fun forgeTrajectory(
+        fun forgeTrajectory(
             drive: Any,
             startPose: Pose2d,
             builder: Anvil.() -> Anvil = { this }
@@ -246,7 +237,7 @@ class Anvil(drive: Any, startPose: Pose2d) {
     }
 
     fun doTimes(times: Int, pathsToDo: AnvilCycle) = apply {
-        internal.doTimes(instance = this, times, pathsToDo)
+        internal.doTimes(times, pathsToDo)
     }
 
     // -- Constraints --
@@ -309,7 +300,6 @@ class Anvil(drive: Any, startPose: Pose2d) {
 
     // -- Internal --
 
-    private inline fun apply(action: BuilderAction) = also {
-        action()
-    }
+    private inline fun apply(action: () -> Unit) =
+        also { action() }
 }

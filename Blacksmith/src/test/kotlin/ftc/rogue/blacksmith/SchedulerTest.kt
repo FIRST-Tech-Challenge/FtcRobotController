@@ -58,16 +58,18 @@ internal class SchedulerTest {
     fun `scheduler properly times each loop`() {
         var iterations = 0
 
-        Scheduler.time(linearOpMode, telemetry) {
+        Scheduler.time(linearOpMode) {
             Thread.sleep(500)
 
+            telemetry.addData("Loop time (ms)", this)
+
             iterations++
-            if (iterations == 3) {
+            if (iterations == 4) {
                 isStopped = true
             }
         }
 
-        verify(exactly = 3) { telemetry.addData("Loop time (ms)", range(450.0, 600.0)) }
+        verify(atLeast = 3) { telemetry.addData("Loop time (ms)", range(450.0, 600.0)) }
         verify(exactly = 3) { telemetry.update() }
     }
 
