@@ -266,6 +266,9 @@ public class AutonomousRight extends AutonomousBase {
         double newCycleTimeout  = 21500.0;  // 21.5 sec elapsed (don't start another when less than 8.5 sec left)
         double poleAlignTimeout = 26000.0;  // 26.0 sec elapsed (
         while (opModeIsActive() && (autonomousTimer.milliseconds() <= newCycleTimeout) && (fiveStackCycles > 0)) {
+            // TODO do we want to cycle these steps while the collector detection is false? What are the
+            // possible error modes that could cause us issue, like trying to double collect a cone
+            // when we have one, that for some reason isn't detecting?
             if (opModeIsActive()) {
                 telemetry.addData("Skill", "moveToConeStack (%.1f)",
                         autonomousTimer.milliseconds()/1000.0 );
@@ -294,6 +297,7 @@ public class AutonomousRight extends AutonomousBase {
                 telemetry.update();
                 collectCone();  // decrements fiveStackHeight!
             }
+            // TODO end cycle while intake is false
 
             if (opModeIsActive()) {
                 telemetry.addData("Skill", "moveToTallJunctionFromStack (%.1f)",
