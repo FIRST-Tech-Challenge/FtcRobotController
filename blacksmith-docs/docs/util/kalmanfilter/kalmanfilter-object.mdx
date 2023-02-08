@@ -3,6 +3,9 @@ sidebar_position: 1
 title: Kalman Filter Object
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Kalman Filter Object
 
 ## Overview
@@ -84,19 +87,20 @@ You can apply this approach to all your mechanisms to improve the accuracy and d
 <TabItem value="java" label="Java">
 
   ```java
-                double correction = liftNormalPID.calculate(liftHeight, targetHeight);
-                double filteredCorrection = liftFilter.filter(liftMotor.power + correction);
-                liftMotor.power = filteredCorrection;
+double correction = liftNormalPID.calculate(liftHeight, targetHeight);
+double filteredCorrection = liftFilter.filter(liftMotor.power + correction);
+liftMotor.power = filteredCorrection;
   ```
 
 </TabItem>
 <TabItem value="kt" label="Kotlin">
 
   ```kotlin
-                val correction = liftNormalPID.calculate(liftHeight, targetHeight)
-                val filteredCorrection = liftFilter.filter(liftMotor.power + correction)
-                liftMotor.power = filteredCorrection
+val correction = liftNormalPID.calculate(liftHeight, targetHeight)
+val filteredCorrection = liftFilter.filter(liftMotor.power + correction)
+liftMotor.power = filteredCorrection
   ```
 
 </TabItem>
 </Tabs>
+
