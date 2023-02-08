@@ -8,6 +8,7 @@ import com.outoftheboxrobotics.photoncore.PhotonCore
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
+import ftc.rogue.blacksmith.listeners.Listener
 import ftc.rogue.blacksmith.util.SignalEdgeDetector
 import ftc.rogue.blacksmith.units.DistanceUnit
 import ftc.rogue.blacksmith.util.kt.LateInitVal
@@ -53,34 +54,24 @@ abstract class RogueBaseAuto : BlackOp() {
         mTelemetry.addLine("Starting reading cone")
         mTelemetry.update()
 
-        val rightSED = SignalEdgeDetector { gamepad1.dpad_right }
-        val leftSED  = SignalEdgeDetector { gamepad1.dpad_left  }
-        val upSED    = SignalEdgeDetector { gamepad1.dpad_up    }
-        val downSED  = SignalEdgeDetector { gamepad1.dpad_down  }
+        val rightSED = Listener { gamepad1.dpad_right }
+        val leftSED  = Listener { gamepad1.dpad_left  }
+        val upSED    = Listener { gamepad1.dpad_up    }
+        val downSED  = Listener { gamepad1.dpad_down  }
 
         var x = 0.0
         var y = 0.0
 
         while (!gamepad1.a) {
-            if (rightSED.risingEdge()) {
-                x += .25
-            }
-            rightSED.update()
+            rightSED.onRise { x += .25 }
 
-            if (leftSED.risingEdge()) {
-                x -= .25
-            }
-            leftSED.update()
+            leftSED.onRise  { x -= .25 }
 
-            if (upSED.risingEdge()) {
-                y += .25
-            }
-            upSED.update()
+            upSED.onRise    { y += .25 }
 
-            if (downSED.risingEdge()) {
-                y -= .25
-            }
-            downSED.update()
+            downSED.onRise  { y -= .25 }
+
+            Scheduler.manuallyUpdateListeners()
 
             val xf = (if (x > 0) "+" else "-") + "%4.2f".format(x.absoluteValue)
             val yf = (if (y > 0) "+" else "-") + "%4.2f".format(y.absoluteValue)

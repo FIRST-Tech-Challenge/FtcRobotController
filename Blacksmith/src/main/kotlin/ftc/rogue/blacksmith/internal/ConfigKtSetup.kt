@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.reflection.ClasspathScanner
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig
 import ftc.rogue.blacksmith.annotations.ConfigKt
-import org.firstinspires.ftc.ftccommon.external.OnCreate
 import java.util.concurrent.Executors
 
 // TODO: literally everything
@@ -14,7 +13,7 @@ import java.util.concurrent.Executors
 
 private var configKtClassesAdded = false
 
-@OnCreate
+//@OnCreate
 fun ftcDashboardStartedListener(context: Context) {
     if (configKtClassesAdded)
         return

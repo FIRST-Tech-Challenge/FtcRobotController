@@ -207,6 +207,12 @@ object Scheduler {
     }
 
     @JvmStatic
+    fun manuallyUpdateListeners() {
+        updateListenersSet()
+        tick()
+    }
+
+    @JvmStatic
     fun reset() {
         listeners.clear()
         beforeEach = Runnable {}
