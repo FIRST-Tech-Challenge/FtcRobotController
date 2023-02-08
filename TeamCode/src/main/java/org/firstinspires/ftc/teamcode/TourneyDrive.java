@@ -26,13 +26,13 @@ public class TourneyDrive extends LinearOpMode {
     double MIN_LIFT_POS = 0;
     double MAX_LIFT_POS = 173 * 34.5;
 
-    double position = 1;
-    double position2 = 0;
+    double position     =   1;
+    double position2    =   0;
 
-    double lAdjust = 0;
-    double lbAdjust = 0;
-    double rAdjust = 0;
-    double rbAdjust = 0;
+    double lAdjust  =   0;
+    double lbAdjust =   0;
+    double rAdjust  =   0;
+    double rbAdjust =   0;
 
     double lastAdjusted = runtime.seconds();
 
