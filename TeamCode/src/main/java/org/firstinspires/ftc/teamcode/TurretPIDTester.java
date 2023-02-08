@@ -149,7 +149,7 @@ public class TurretPIDTester extends LinearOpMode
 
     } // scoreCone
 
-    public void performOldLift() {
+    public void performAutoOldLift() {
         // Now reverse the lift to raise off the cone stack
         robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
         while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
@@ -181,7 +181,7 @@ public class TurretPIDTester extends LinearOpMode
         }
     }
 
-    public void performNewLift() {
+    public void performAutoNewLift() {
         // Now reverse the lift to raise off the cone stack
         robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH );
         while( opModeIsActive() && (robot.liftAngle >= robot.LIFT_ANGLE_MOTORS) ) {
@@ -208,6 +208,50 @@ public class TurretPIDTester extends LinearOpMode
         }
     }
 
+    public void performTeleOldLift() {
+        // Now reverse the lift to raise off the cone stack
+        // Perform setup to center turret and raise lift to scoring position
+        robot.turretPosInit( -50.5 );
+        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_B );
+        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
+        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
+        while( opModeIsActive() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
+            performEveryLoop();
+        }
+
+        scoreCone();
+
+        robot.turretPosInit( 21.9 );
+        robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
+        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+            performEveryLoop();
+        }
+    }
+
+    public void performTeleNewLift() {
+        // Now reverse the lift to raise off the cone stack
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH );
+        while( opModeIsActive() && (robot.liftAngle >= robot.LIFT_ANGLE_MOTORS) ) {
+            performEveryLoop();
+        }
+        robot.turretPIDPosInit( 129.5 );
+
+        // Perform setup to center turret and raise lift to scoring position
+        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
+        while( opModeIsActive() && ( robot.turretMotorPIDAuto == true || robot.liftMotorPIDAuto == true )) {
+            performEveryLoop();
+        }
+
+        scoreCone();
+
+        robot.turretPIDPosInit( 21.9 );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_COLLECT );
+        while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
+            performEveryLoop();
+        }
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
         double oldTime;
@@ -230,9 +274,17 @@ public class TurretPIDTester extends LinearOpMode
         robot.grabberSetTilt( robot.GRABBER_TILT_GRAB3 );
         sleep(300);
         performEveryLoop();
+        // Is the driver assisting with COLLECTION? (rotate turret toward substation)
+//            robot.turretPosInit( +21.9 );
+        // Driver must be assisting with SCORING? (rotate turret toward junction pole)
+//            robot.turretPosInit( -50.5 );
+        // Is the driver assisting with COLLECTION? (rotate turret toward substation)
+//            robot.turretPosInit( -21.9 );
+        // Driver must be assisting with SCORING? (rotate turret toward junction pole)
+//            robot.turretPosInit( +50.5 );
 
         // Perform setup needed to center turret
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.turretPosInit( 21.9 );
         robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
         while( !isStopRequested() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
             performEveryLoop();
@@ -244,11 +296,11 @@ public class TurretPIDTester extends LinearOpMode
         waitForStart();
 
         oldWay.reset();
-        performOldLift();
+        performTeleOldLift();
         oldTime = oldWay.milliseconds();
 
         newWay.reset();
-        performNewLift();
+        performTeleNewLift();
         newTime = newWay.milliseconds();
 
         telemetry.addData("Old Timer", oldTime);
