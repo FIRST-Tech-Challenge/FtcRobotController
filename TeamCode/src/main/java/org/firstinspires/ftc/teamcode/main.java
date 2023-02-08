@@ -6,13 +6,21 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import java.util.ArrayList;
+import java.util.List;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 @TeleOp(name = "donga")
 
 public class main extends LinearOpMode {
+    ArrayList<DcMotor> movement_motors = new ArrayList<>();
+    movement movement = new movement(movement_motors);
 
-    movement movement = new movement(hardwareMap.get(DcMotor.class, "Motor1"),hardwareMap.get(DcMotor.class, "Motor2"),hardwareMap.get(DcMotor.class, "Motor3"),hardwareMap.get(DcMotor.class, "Motor4"));
+
+
+
+//    movement movement = new movement(hardwareMap.get(DcMotor.class, "Motor1"),hardwareMap.get(DcMotor.class, "Motor2"),hardwareMap.get(DcMotor.class, "Motor3"),hardwareMap.get(DcMotor.class, "Motor4"));
 
     sensor sensor = new sensor();
     composetelemetry composetelemetry = new composetelemetry();
@@ -22,6 +30,23 @@ public class main extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+        /**
+         * Initialize hardware here.
+         */
+        DcMotor motor1, motor2, motor3, motor4;
+        motor1 = hardwareMap.dcMotor.get("motor1");
+        motor2 = hardwareMap.dcMotor.get("motor2");
+        motor3 = hardwareMap.dcMotor.get("motor3");
+        motor4 = hardwareMap.dcMotor.get("motor4");
+
+
+        // Put hardware into a global list
+        movement_motors.add(motor1);
+        movement_motors.add(motor2);
+        movement_motors.add(motor3);
+        movement_motors.add(motor4);
+
         //initialize motors
 
 

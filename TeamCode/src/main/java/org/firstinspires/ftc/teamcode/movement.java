@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import java.util.ArrayList;
+
 //import com.qualcomm.robotcore.hardware.HardwareDevice;
 //import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -14,11 +16,11 @@ public class movement {
     public DcMotor Motor3;
     public DcMotor Motor4;
 
-    public movement(DcMotor m1, DcMotor m2, DcMotor m3, DcMotor m4) {
-        Motor1 = m1;
-        Motor2 = m2;
-        Motor3 = m3;
-        Motor4 = m4;
+    public movement(ArrayList<DcMotor> motors) {
+        Motor1 = motors.get(0);
+        Motor2 = motors.get(1);
+        Motor3 = motors.get(2);
+        Motor4 = motors.get(3);
     }
 
     //stop movement
