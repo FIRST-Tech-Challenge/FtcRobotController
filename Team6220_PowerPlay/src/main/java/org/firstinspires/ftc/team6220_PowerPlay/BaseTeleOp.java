@@ -23,14 +23,15 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
     int slideTargetPosition = 0;
 
+    // todo - fix to make less confusing
     // variables to keep track of cone stack height
     int stack = 0;
     int[] stacks = {0, 0};
 
+    // todo - fix to make less confusing
     // variables to keep track of junction height
     int junction = 0;
     int[] junctions = {0, 0};
-
 
     /**
      * allows the driver to drive the robot field-centric
@@ -207,17 +208,17 @@ public abstract class BaseTeleOp extends BaseOpMode {
 
         driveSlides(slideTargetPosition);
 
-        // makes sure that the cone stack positions are only updated when the dpad is just pressed
+        // makes sure that the previous cone stack positions are only updated when the dpad is just pressed
         if (!gamepad2.dpad_down && !gamepad2.dpad_up) {
             stacks[0] = stacks[1];
         }
 
-        // makes sure that the junction positions are only updated when the bumpers are just pressed
+        // makes sure that the previous junction positions are only updated when the bumpers are just pressed
         if (!gamepad2.left_bumper && !gamepad2.right_bumper) {
             junctions[0] = junctions[1];
         }
 
-        // updates previous and current bumper positions
+        // updates current stack/junction positions
         stacks[1] = stack;
         junctions[1] = junction;
     }

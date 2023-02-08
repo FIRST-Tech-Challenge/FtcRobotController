@@ -27,6 +27,8 @@ public class Constants {
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;
 
+    public static final int MIN_SLIDE_ERROR_FULL_POWER = -200;
+
     public static final int ROBOT_HEADING_TOLERANCE_DEGREES = 1;
     public static final int ROBOT_SLIDE_TOLERANCE_TICKS = 20;
 

@@ -145,7 +145,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // set original angle
             turnFlag = true;
 
-            // otherwise read imu for correction
+        // otherwise read imu for correction
         } else {
             // obtain the current angle's error from the original angle
             double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
@@ -194,19 +194,19 @@ public abstract class BaseOpMode extends LinearOpMode {
         // slides not yet at target position
         if (Math.abs(error) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS) {
             // slides going down - joystick
-            if (error < 0 && error > -200) {
+            if (error < 0 && error > Constants.MIN_SLIDE_ERROR_FULL_POWER) {
                 motorLeftSlides.setPower(-0.3);
                 motorRightSlides.setPower(-0.3);
-                // slides going down - bumpers
-            } else if (error < -200) {
+            // slides going down - bumpers
+            } else if (error < Constants.MIN_SLIDE_ERROR_FULL_POWER) {
                 motorLeftSlides.setPower(-1.0);
                 motorRightSlides.setPower(-1.0);
-                // slides going up - proportional control
+            // slides going up - proportional control
             } else {
                 motorLeftSlides.setPower(motorPower);
                 motorRightSlides.setPower(motorPower);
             }
-            // slides at target position
+        // slides at target position
         } else {
             motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
             motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
@@ -255,7 +255,7 @@ public abstract class BaseOpMode extends LinearOpMode {
                 driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.2, Constants.CONE_CENTERING_KP * Math.signum(xOffset));
             }
 
-            // while far enough that the cone stack doesn't fill the entire camera view
+        // while far enough that the cone stack doesn't fill the entire camera view
         } while (width < Constants.CONE_WIDTH);
 
         stopDriveMotors();
