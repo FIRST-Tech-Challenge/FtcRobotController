@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
-@Autonomous
-public class encoder_for1foot extends LinearOpMode {
+@Disabled
+public class moveEncoderTest extends LinearOpMode {
 
     private DcMotor crane;
     private DcMotor frontLeft;
