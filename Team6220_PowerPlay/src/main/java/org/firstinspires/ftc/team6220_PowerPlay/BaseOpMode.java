@@ -261,7 +261,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         stopDriveMotors();
     }
 
-    // sets all drive motor powers to 0
+    /**
+     * sets all drive motor powers to 0
+     */
     public void stopDriveMotors() {
         motorFL.setPower(0.0);
         motorFR.setPower(0.0);
@@ -269,7 +271,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBR.setPower(0.0);
     }
 
-    // turns the LEDs green if it detects the top of a junction, otherwise they are rainbow colors
+    /**
+     * turns the LEDs green if it detects the top of a junction, otherwise they are rainbow colors
+     */
+
     public void driveLEDs() {
         if (blinkinChassis != null) {
             if (grabberCameraPipeline.detected) {
