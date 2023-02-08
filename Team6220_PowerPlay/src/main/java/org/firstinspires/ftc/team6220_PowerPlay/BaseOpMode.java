@@ -274,7 +274,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     /**
      * turns the LEDs green if it detects the top of a junction, otherwise they are rainbow colors
      */
-
     public void driveLEDs() {
         if (blinkinChassis != null) {
             if (grabberCameraPipeline.detected) {
