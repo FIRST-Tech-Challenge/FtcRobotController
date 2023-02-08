@@ -15,87 +15,35 @@ public class TestOpMode extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    private DcMotorEx liftMotor = null;
-    private Servo servoGrabber1 = null;
-    private Servo servoGrabber2 = null;
-
-    static final double MIN_LIFT_POS =  0;
-    static final double MAX_LIFT_POS =  5000;
-
-    static final double MAX_POS     =    .5;
-    static final double MAX_POS2    =    .50;
-    static final double MIN_POS     =     1;
-    static final double MIN_POS2    =     0;
-
-    double direction = 0;
-    double position = 1;
-    double position2 = 0;
-
     @Override
     public void runOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        liftMotor  = hardwareMap.get(DcMotorEx.class, "lift_motor");
-        servoGrabber1 = hardwareMap.get(Servo.class, "servo_grabber_one");
-        servoGrabber2 = hardwareMap.get(Servo.class, "servo_grabber_two");
-
-        liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        CRServo lServo = hardwareMap.get(CRServo.class, "right_spinner");
+        CRServo rServo = hardwareMap.get(CRServo.class, "left_spinner");
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        servoGrabber1.setPosition(position);
-        servoGrabber2.setPosition(position2);
 
         waitForStart();
         runtime.reset();
 
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double lift = -gamepad2.left_stick_y;
-            double grabber = -gamepad2.right_stick_y;
+            double spin = -gamepad1.left_stick_y;
 
-            if(lift > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS){
-                liftMotor.setPower(1);
+            if (spin > .05){
+                lServo.setPower(1);
+                rServo.setPower(-1);
+            }else if(spin < -.05){
+                lServo.setPower(-.25);
+                rServo.setPower(.25);
             }else{
-                liftMotor.setPower(0);
+                lServo.setPower(0);
+                rServo.setPower(0);
             }
-            if(lift < -.05 && liftMotor.getCurrentPosition() > MIN_LIFT_POS){
-                liftMotor.setPower(-.4);
-            }else{
-                liftMotor.setPower(0);
-            }
-
-            if(grabber>.1 || grabber<-.1){
-                if(grabber<.05){
-                    direction = .1;
-                }else{
-                    direction = -.1;
-                }
-            }else{
-                direction = 0;
-            }
-
-            position+=direction;
-            position2+= -direction;
-
-            if(position < MAX_POS || position2 > MAX_POS2){
-                position=MAX_POS;
-                position2=MAX_POS2;
-            }
-
-            if(position > MIN_POS || position2 < MIN_POS2){
-                position=MIN_POS;
-                position2=MIN_POS2;
-            }
-
-            servoGrabber1.setPosition(position);
-            servoGrabber2.setPosition(position2);
-            telemetry.addData("Status", "Direction: " + direction);
-            telemetry.update();
         }
     }
 
