@@ -35,8 +35,11 @@ To tune these, first look at a graph of the system output on FTCDashboard. You c
 <TabItem value="kt" label="Kotlin">
 
   ```kotlin
-  mTelemetry.addData("System state", system.getState())
+  mTelemetry.addData("System state", system.state)
   ```
+</TabItem>
+</Tabs>
+
 
 Then, look at the data and measure the amplitude(half the distance from peak to valley of the error) of the noise while running a simple program on the system that you know what the output should be. 
 What makes the tuning process difficult is that amplitude is comprised of *both* the measurement error and system error so... yea not that easy :(
@@ -51,10 +54,6 @@ It's not as calculated as the previous strategy, but it should work pretty well 
 
 Here's how to implement one:
 
-</TabItem>
-</Tabs>
-
-
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">
 
@@ -68,7 +67,7 @@ Here's how to implement one:
 
   ```kotlin
   val systemKF = KalmanFilter(R, Q)
-  system.setState(systemKF.filter(system.getState()))
+  system.setState(systemKF.filter(system.state))
   ```
 
 </TabItem>
@@ -89,7 +88,7 @@ You can apply this approach to all your mechanisms to improve the accuracy and d
   ```java
 double correction = liftNormalPID.calculate(liftHeight, targetHeight);
 double filteredCorrection = liftFilter.filter(liftMotor.power + correction);
-liftMotor.power = filteredCorrection;
+liftMotor.set(filteredCorrection);
   ```
 
 </TabItem>
