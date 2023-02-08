@@ -208,10 +208,10 @@ public class TurretPIDTester extends LinearOpMode
         }
     }
 
-    public void performTeleOldLift() {
+    public void performTeleOldLift(double collectAngle, double scoreAngle) {
         // Now reverse the lift to raise off the cone stack
         // Perform setup to center turret and raise lift to scoring position
-        robot.turretPosInit( -50.5 );
+        robot.turretPosInit( scoreAngle );
         robot.liftPosInit( robot.LIFT_ANGLE_HIGH_B );
         robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
@@ -221,7 +221,7 @@ public class TurretPIDTester extends LinearOpMode
 
         scoreCone();
 
-        robot.turretPosInit( 21.9 );
+        robot.turretPosInit( collectAngle );
         robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
@@ -229,13 +229,13 @@ public class TurretPIDTester extends LinearOpMode
         }
     }
 
-    public void performTeleNewLift() {
+    public void performTeleNewLift(double collectAngle, double scoreAngle) {
         // Now reverse the lift to raise off the cone stack
         robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH );
         while( opModeIsActive() && (robot.liftAngle >= robot.LIFT_ANGLE_MOTORS) ) {
             performEveryLoop();
         }
-        robot.turretPIDPosInit( 129.5 );
+        robot.turretPIDPosInit( scoreAngle );
 
         // Perform setup to center turret and raise lift to scoring position
         robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
@@ -245,7 +245,7 @@ public class TurretPIDTester extends LinearOpMode
 
         scoreCone();
 
-        robot.turretPIDPosInit( 21.9 );
+        robot.turretPIDPosInit( collectAngle );
         robot.liftPIDPosInit( robot.LIFT_ANGLE_COLLECT );
         while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
             performEveryLoop();
@@ -274,14 +274,6 @@ public class TurretPIDTester extends LinearOpMode
         robot.grabberSetTilt( robot.GRABBER_TILT_GRAB3 );
         sleep(300);
         performEveryLoop();
-        // Is the driver assisting with COLLECTION? (rotate turret toward substation)
-//            robot.turretPosInit( +21.9 );
-        // Driver must be assisting with SCORING? (rotate turret toward junction pole)
-//            robot.turretPosInit( -50.5 );
-        // Is the driver assisting with COLLECTION? (rotate turret toward substation)
-//            robot.turretPosInit( -21.9 );
-        // Driver must be assisting with SCORING? (rotate turret toward junction pole)
-//            robot.turretPosInit( +50.5 );
 
         // Perform setup needed to center turret
         robot.turretPosInit( 21.9 );
@@ -296,11 +288,17 @@ public class TurretPIDTester extends LinearOpMode
         waitForStart();
 
         oldWay.reset();
-        performTeleOldLift();
+        // Right
+        performTeleOldLift( 21.9, -50.5 );
+        // Left
+        //performTeleOldLift ( -21.9, 50.5 );
         oldTime = oldWay.milliseconds();
 
         newWay.reset();
-        performTeleNewLift();
+        // Right
+        performTeleNewLift( 21.9, 129.5 );
+        // Left
+        //performTeleNewLift ( -21.9, -129.5 );
         newTime = newWay.milliseconds();
 
         telemetry.addData("Old Timer", oldTime);
