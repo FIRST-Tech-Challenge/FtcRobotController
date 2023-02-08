@@ -26,10 +26,10 @@ public class SingleControllerDrive extends LinearOpMode {
     double position  =   1;
     double position2 =   0;
 
-    double lAdjust  =   0;
-    double lbAdjust =   0;
-    double rAdjust  =   0;
-    double rbAdjust =   0;
+    double lAdjust   =   0;
+    double lbAdjust  =   0;
+    double rAdjust   =   0;
+    double rbAdjust  =   0;
 
     double heightAdjustmentCount = 0;
 
