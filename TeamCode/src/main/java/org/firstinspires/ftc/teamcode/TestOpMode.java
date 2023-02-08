@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
-@TeleOp(name="LinearSlide", group="Linear Opmode")
+@TeleOp(name="Testing", group="Linear Opmode")
 
-public class LinearSlide extends LinearOpMode {
+public class TestOpMode extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -30,12 +30,6 @@ public class LinearSlide extends LinearOpMode {
     double direction = 0;
     double position = 1;
     double position2 = 0;
-
-    public void waitTime(double time){
-        runtime.reset();
-        while(runtime.seconds()<time){
-        }
-    }
 
     @Override
     public void runOpMode() {
@@ -102,6 +96,12 @@ public class LinearSlide extends LinearOpMode {
             servoGrabber2.setPosition(position2);
             telemetry.addData("Status", "Direction: " + direction);
             telemetry.update();
+        }
+    }
+
+    public void waitTime(double time){
+        runtime.reset();
+        while(runtime.seconds()<time){
         }
     }
 }
