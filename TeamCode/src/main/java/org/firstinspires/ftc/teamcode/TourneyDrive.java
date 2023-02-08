@@ -121,6 +121,9 @@ public class TourneyDrive extends LinearOpMode {
             boolean adjustLeftTurn = gamepad1.left_bumper;
             boolean adjustRightTurn = gamepad1.right_bumper;
 
+            float coneFlipUp = gamepad1.right_trigger;
+            float coneFlipDown = gamepad1.left_trigger;
+
             double liftFast = -gamepad2.left_stick_y;
             double liftSlow = -gamepad2.right_stick_y;
 
@@ -137,9 +140,6 @@ public class TourneyDrive extends LinearOpMode {
 
             boolean grabberOpen = gamepad2.left_bumper;
             boolean grabberClose = gamepad2.right_bumper;
-
-            float coneFlipUp = gamepad2.right_trigger;
-            float coneFlipDown = gamepad2.left_trigger;
 
             if(!autoLift) {
                 if (liftFast > .05 || liftFast < -.05 || liftSlow > .05 || liftSlow < -.05 && (!(liftMotor.getCurrentPosition() > MAX_LIFT_POS) || !(liftMotor.getCurrentPosition() < MIN_LIFT_POS))) {
