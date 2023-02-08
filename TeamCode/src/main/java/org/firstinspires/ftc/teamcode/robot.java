@@ -3,6 +3,7 @@ import static java.lang.Thread.sleep;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -37,7 +38,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import static java.lang.Thread.sleep;
 import com.qualcomm.robotcore.hardware.CRServo;
 import java.util.ArrayList;
-
+@Disabled
 public class robot {
     DcMotor frontLeft;
     DcMotor frontRight;
