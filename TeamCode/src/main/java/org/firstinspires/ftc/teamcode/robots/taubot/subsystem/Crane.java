@@ -103,6 +103,17 @@ public class Crane implements Subsystem {
     public static double BULB_OPEN_POS = 1500;
     public static double BULB_CLOSED_POS = 1750;
 
+    public static double TRANSFER_SHOULDER_ANGLE = 30;
+    public static double TRANSFER_ARM_LENGTH = 0.05;
+
+    public static double SAFE_SHOULDER_ANGLE = 30;
+    public static double SAFE_ARM_LENGTH = 0.05;
+
+    public static double NUDGE_CENTER_LEFT = 1950;
+    public static double NUDGE_CENTER_RIGHT = 2020;
+    public static double NUDGE_LEFT_POS = 1000;  //home position - stowed up
+    public static double NUDGE_RIGHT_POS = 2400;
+
     public static final double DISTANCE_SENSOR_TO_ELBOW = 0.33;
     public static final double GRIPPER_HEIGHT = 0.23;
     public static final double Y_LEEWAY = 0.05;
@@ -297,11 +308,6 @@ public class Crane implements Subsystem {
     double shoulderPwr = 1;
     double shoulderTargetAngle = 0;
 
-    public static double NUDGE_CENTER_LEFT = 1950;
-    public static double NUDGE_CENTER_RIGHT = 2020;
-    public static double NUDGE_LEFT_POS = 1000;  //home position - stowed up
-    public static double NUDGE_RIGHT_POS = 2400;
-
     //keeps track of current nudge position
     public static int nudgeIndex = 1;
 
@@ -425,12 +431,6 @@ public class Crane implements Subsystem {
     public Articulation getArticulation() {
         return articulation;
     }
-
-    public static double TRANSFER_SHOULDER_ANGLE = 30;
-    public static double TRANSFER_ARM_LENGTH = 0.05;
-
-    public static double SAFE_SHOULDER_ANGLE = 30;
-    public static double SAFE_ARM_LENGTH = 0.05;
 
     public Articulation articulate(Articulation target){
         articulation = target;

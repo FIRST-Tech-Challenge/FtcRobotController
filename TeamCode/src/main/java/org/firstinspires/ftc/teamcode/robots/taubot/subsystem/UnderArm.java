@@ -3,16 +3,13 @@ package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.ELBOW_TO_WRIST;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.HIGH_TIER_SHIPPING_HUB_HEIGHT;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.INCHES_PER_METER;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.SHOULDER_AXLE_TO_GROUND_HEIGHT;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.SHOULDER_TO_ELBOW;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.*;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -20,11 +17,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
-import org.apache.commons.math3.stat.descriptive.moment.VectorialCovariance;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
-import org.firstinspires.ftc.teamcode.statemachine.Stage;
-import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
-import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.util.Vector3;
 
 import java.util.LinkedHashMap;
@@ -56,6 +49,11 @@ public class UnderArm implements Subsystem {
     public static double ELBOW_DEG_MAX = 140;
     public static double WRIST_DEG_MAX = 180;
     public static double TURRET_DEG_MAX = 45;
+
+    public static double LASSO_CLOSED = 1500;
+    public static double LASSO_OPEN = 1500;
+
+    boolean lassoGripped = false;
 
     public static double UNDERARM_HEIGHT = 7; //height of rotation of shoulder motor   INCHES
 
@@ -298,6 +296,22 @@ public class UnderArm implements Subsystem {
         elbowServo.setPosition(servoNormalizeExtended(elbowServoValue(elbowTargetAngle)));
         wristServo.setPosition(servoNormalizeExtended(wristServoValue(wristTargetAngle)));
         turretServo.setPosition(servoNormalizeExtended(turretServoValue(turretTargetAngle)));
+    }
+
+    public void grip(){
+        lassoServo.setPosition(servoNormalize(LASSO_CLOSED));
+    }
+
+    public void release(){
+        lassoServo.setPosition(servoNormalize(LASSO_OPEN));
+    }
+
+    public void toggleLasso(){
+        if(lassoGripped){
+            release();
+        }else{
+            grip();
+        }
     }
 
     @Override

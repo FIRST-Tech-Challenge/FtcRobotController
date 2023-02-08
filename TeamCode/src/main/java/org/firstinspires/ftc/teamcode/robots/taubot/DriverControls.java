@@ -345,15 +345,7 @@ public class DriverControls {
         }
 
         if(stickyGamepad2.start){
-            robot.underarm.articulate(UnderArm.Articulation.manual);
-        }
-
-        if(stickyGamepad2.x){
-            robot.underarm.articulate(UnderArm.Articulation.noIK);
-        }
-
-        if(stickyGamepad2.y){
-            robot.underarm.articulate(UnderArm.Articulation.transfer);
+            robot.underarm.toggleLasso();
         }
 
         if(stickyGamepad2.a){
