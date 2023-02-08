@@ -176,10 +176,10 @@ public class TourneyDrive extends LinearOpMode {
                             moveLift(1, MIN_LIFT_POS);
                             liftState = LiftState.LIFT_RAISE;
                         } else if (liftLow) {
-                            moveLift(1, 173 * 15);
+                            moveLift(1, (173 * 15) + MIN_LIFT_POS);
                             liftState = LiftState.LIFT_RAISE;
                         } else if (liftMedium) {
-                            moveLift(1, 173 * 25);
+                            moveLift(1, (173 * 25)+ MIN_LIFT_POS);
                             liftState = LiftState.LIFT_RAISE;
                         } else if (liftHigh) {
                             moveLift(1, MAX_LIFT_POS);
