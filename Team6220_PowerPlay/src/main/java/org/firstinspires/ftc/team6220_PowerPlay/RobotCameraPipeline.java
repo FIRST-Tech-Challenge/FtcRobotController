@@ -25,7 +25,10 @@ public class RobotCameraPipeline extends OpenCvPipeline {
     private Scalar lowerRange;
     private Scalar upperRange;
 
-    // method used to set the ranges for the pipeline
+    /**
+     * method used to set the ranges for the pipeline
+      */
+
     public void setRanges(Scalar lowerRange, Scalar upperRange) {
         this.lowerRange = lowerRange;
         this.upperRange = upperRange;
