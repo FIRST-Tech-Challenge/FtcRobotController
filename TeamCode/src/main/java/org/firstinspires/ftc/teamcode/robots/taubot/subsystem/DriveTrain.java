@@ -716,9 +716,12 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return false;
     }
 
+    public static double HEADING_DEGREE_TOLERANCE = 4;
+
     //request a turn in degrees units
     public boolean turnUntilDegrees(double turnAngle) {
-        return turnUntil(Math.toRadians(wrapAngle(turnAngle)));
+        setTargetHeadingDeg(turnAngle);
+        return Math.abs(Utils.distanceBetweenAngles(Math.toDegrees(heading),turnAngle)) < HEADING_PID_TOLERANCE;
     }
 
     //see isDriving();

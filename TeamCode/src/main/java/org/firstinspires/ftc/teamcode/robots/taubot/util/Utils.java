@@ -47,6 +47,11 @@ public class Utils {
         return (Math.abs(target-value) <= error);
     }
 
+    public static double distanceBetweenAngles(double currentAngle, double targetAngle){
+        double result = wrapAngle(targetAngle - currentAngle);
+        if(result >180) return result - 360;
+        return result;
+    }
 
     public static int servoToPWM(double setting){
         return (int)((setting * 2000)+500);
