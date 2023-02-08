@@ -128,7 +128,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
             frameList.add(new double[] {0, 0});
         }
 //        //list of frames to reduce inconsistency, not too many so that it is still real-time
-        if(frameList.size()>3) {
+        if(frameList.size()>4) {
             frameList.remove(0);
         }
 
@@ -169,7 +169,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
 
     public double poleSize() {
         double average=0;
-        for(int i=0;i<frameList.size();i++){
+        for(int i=0;i<frameList.size()-1;i++){
             if(frameList.get(i)[0]!=0&&frameList.get(i)[1]!=0) {
                 average += frameList.get(i)[1];
             }
