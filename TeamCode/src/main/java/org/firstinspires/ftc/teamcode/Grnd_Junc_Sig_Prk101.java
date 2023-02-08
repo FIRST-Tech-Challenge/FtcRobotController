@@ -47,58 +47,76 @@ public class Grnd_Junc_Sig_Prk101 extends LinearOpMode {
 
            tower1.setPower(.5);
             lf.setPower(0.5);
-            rf.setPower(-0.5);
+            rf.setPower(0.5);
             lb.setPower(0.5);
-            rb.setPower(-0.5);
+            rb.setPower(0.5);
             clamp.setPosition(0.4);
 
             sleep(750); // forward, lift arm
 
 
-            tower1.setPower(-.5);
-            lf.setPower(0 * sidemult);
-            rf.setPower(0 * sidemult);
-            lb.setPower(0 * sidemult);
-            rb.setPower(0 * sidemult);
+            tower1.setPower(0);
+            lf.setPower(0);
+            rf.setPower(0);
+            lb.setPower(0);
+            rb.setPower(0);
             clamp.setPosition(0.4);
 
-            sleep(500); // backwards, lower arm
+            sleep(500); // wait
 
-            tower1.setPower(0.5);
+            tower1.setPower(-0.5);
             lf.setPower(0);
             rf.setPower(0);
             lb.setPower(0);
             rb.setPower(0);
             clamp.setPosition(1);
 
-            sleep(500); // lift arm
+            sleep(500); // lower arm and open clamp
 
             tower1.setPower(0.5);
-            lf.setPower(-0.5);
-            rf.setPower(0.5);
-            lb.setPower(-0.5);
-            rb.setPower(0.5);
+            lf.setPower(0);
+            rf.setPower(0);
+            lb.setPower(0);
+            rb.setPower(0);
             clamp.setPosition(0.4);
 
-            sleep(500); // Back away from low junction
+            sleep(500); // raise arm and close clamp
 
             tower1.setPower(-0.5);
             lf.setPower(-0.5);
+            rf.setPower(-0.5);
+            lb.setPower(-0.5);
+            rb.setPower(-0.5);
+            clamp.setPosition(0.4);
+
+            sleep(500); // back up and lower arm
+
+            tower1.setPower(0);
+            lf.setPower(0);
+            rf.setPower(0);
+            lb.setPower(0);
+            rb.setPower(0);
+            clamp.setPosition(0.4);
+
+            sleep(500); // wait
+
+            tower1.setPower(0);
+            lf.setPower(-0.5);
             rf.setPower(0.5);
             lb.setPower(0.5);
             rb.setPower(-0.5);
             clamp.setPosition(0.4);
 
-            sleep(500); // Strafe right and lower arm
+            sleep(500); // strafe right and scan cone
 
             tower1.setPower(0);
-            lf.setPower(0.5);
-            rf.setPower(-0.5);
-            lb.setPower(0.5);
-            rb.setPower(-0.5);
+            lf.setPower(0);
+            rf.setPower(0);
+            lb.setPower(0);
+            rb.setPower(0);
             clamp.setPosition(0.4);
 
-            sleep(500); // Forward and scan cone
+            sleep(500); // wait
 
             tower1.setPower(0);
             lf.setPower(0.5);
@@ -110,10 +128,10 @@ public class Grnd_Junc_Sig_Prk101 extends LinearOpMode {
             sleep(750); // Park in designated parking space */
 
             tower1.setPower(0);
-            lf.setPower(0.5);
-            rf.setPower(0.5);
-            lb.setPower(0.5);
-            rb.setPower(0.5);
+            lf.setPower(0);
+            rf.setPower(0);
+            lb.setPower(0);
+            rb.setPower(0);
             clamp.setPosition(0);
 
             sleep(250); //park
