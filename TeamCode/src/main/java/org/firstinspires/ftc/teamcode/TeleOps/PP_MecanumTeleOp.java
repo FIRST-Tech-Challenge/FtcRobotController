@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
@@ -21,7 +20,7 @@ import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 public class PP_MecanumTeleOp extends OpMode
 {
     //"MC ABHI IS ON THE REPO!!!"
-    public final double TURN_PRECESION = 0.65;
+    public final double TURN_PRECISION = 0.65;
 
     // Declaring drivetrain motors
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
@@ -122,7 +121,7 @@ public class PP_MecanumTeleOp extends OpMode
         double x = gamepad1.left_stick_x;
         double rx = -gamepad1.right_stick_x*0.75;
         if(precisionToggle)
-            rx *= TURN_PRECESION;
+            rx *= TURN_PRECISION;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
@@ -193,10 +192,6 @@ public class PP_MecanumTeleOp extends OpMode
             clawControl.wristInExtakePosition = false;
             armControl.setIntake();
             slideControl.setIntakeOrGround();
-
-        }
-
-        if(!armControl.isActive){
 
         }
 
