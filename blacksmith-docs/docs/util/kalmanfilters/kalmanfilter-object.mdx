@@ -9,8 +9,13 @@ import TabItem from '@theme/TabItem';
 # Kalman Filter Object
 
 ## Overview
+A Kalman filter is a mathematical tool used for estimating the state of a system based on noisy and incomplete information. It's often used in navigation systems, like GPS, as well as in control systems, like self-driving cars.
 
-Kalamn Filters will allow you to reduce the nondeterministic noise you receieve in your measurements, and make your autonomous more accurate.
+Imagine you're driving a car and you have a GPS device that tells you your location. However, the GPS signal is sometimes lost and the readings are also a bit noisy, so you don't always know exactly where you are. The Kalman filter can help estimate your location by combining the noisy GPS readings with other information, like the speed and direction of the car, to give you a more accurate estimate of your location.
+
+The filter does this by making use of two things: a prediction of what the state of the system (in this case, your location) will be in the future, and an update step that takes into account the new information and adjusts the prediction. This process is repeated over and over again, so that the estimate of the state of the system gets more and more accurate as time goes on.
+
+Kalamn Filters will allow you to reduce the nondeterministic error you get in your measurements, and make your autonomous more accurate.
 Nondeterministic error is the error that is not constant, which is often enough to make your autos suck.
 The parameters for a Kalman filter are `R` and `Q`, the process noise and measurement noise. These are in whatever units you use for the measurement.
 

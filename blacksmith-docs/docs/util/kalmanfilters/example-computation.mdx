@@ -1,0 +1,25 @@
+---
+sidebar_position: 3
+title: Example Kalman Filter Computation
+---
+
+# Kalman Filter Example
+
+## Your description doesn't make any sense. How the heck do they *really* work?
+
+Consider a system that is tracking the position of an object in two dimensions, X and Y. The object is moving in a straight line and its position is measured by a noisy sensor. The measurements are contaminated with random noise, so the position estimates produced by the sensor are not accurate. The goal of a Kalman filter is to produce an estimate of the true position of the object that is as accurate as possible, given the noisy measurements.
+
+Let's say the true position of the object at time t = 0 is X = 10, Y = 15. The position measurement produced by the sensor at time t = 0 is X_measured = 9.8, Y_measured = 14.9. The noise in the measurement can be modeled as a Gaussian random variable with mean 0 and standard deviation 0.5.
+
+The Kalman filter uses a two-step process to estimate the true position of the object: prediction and update.
+
+- Prediction: The Kalman filter predicts the position of the object at time t = 1 based on the previous estimate and the motion model of the object. The motion model describes how the position of the object changes over time. In this example, the motion model is a simple linear model that assumes the object is moving with constant velocity in a straight line. Let's denote the previous estimate of the position of the object as X_prev = 10, Y_prev = 15. The prediction step produces a new estimate of the position, X_predicted = X_prev + velocity_X, Y_predicted = Y_prev + velocity_Y.
+- Update: The Kalman filter updates the prediction with the measurement produced by the sensor at time t = 1 to produce a new estimate of the position.
+
+Let's denote the measurement produced by the sensor at time t = 1 as X_measured = 9.9, Y_measured = 14.8. The update step computes the Kalman gain, which is a weight that determines how much the measurement should influence the prediction. The Kalman gain is computed using the measurement noise and the estimated error covariance, which is a matrix that describes the uncertainty in the prediction.
+
+The updated estimate of the position is X_estimate = X_predicted + Kalman_gain * (X_measured - X_predicted), Y_estimate = Y_predicted + Kalman_Gain * (Y_measured - Y_predicted).
+
+This process is repeated at each time step to produce a sequence of estimates of the true position of the object. As the measurement noise decreases, the Kalman gain decreases, and the estimate becomes more closely aligned with the prediction.
+
+This is just a simple example of how a Kalman filter works, but it illustrates the basic idea of how the filter uses a prediction and an update to produce an estimate of the true state of a system that is subject to measurement noise.
