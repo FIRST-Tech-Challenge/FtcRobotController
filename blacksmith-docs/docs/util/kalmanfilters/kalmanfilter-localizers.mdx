@@ -18,21 +18,15 @@ Anywhere from 5-35 for the wheel position and velocity filters is reasonable, an
 
 Edit the following fields in `KalmanTwoWheelLocalizer` or `KalmanThreeWheelLocalizer`:
 
-<Tabs groupId="programming-language">
-<TabItem value="kotlin" label="Kotlin">
+```kotlin
+  private val headingFilter = KalmanFilter(0.25, 0.125)
+  private val wheelPos1Filter = KalmanFilter(9.0, 11.0)
+  private val wheelPos2Filter = KalmanFilter(9.0, 11.0)
+  private val headingVelocityFilter = KalmanFilter(0.500, 0.225)
+  private val wheelPos1VelocityFilter = KalmanFilter(8.0, 7.0)
+  private val wheelPos2VelocityFilter = KalmanFilter(8.0, 7.0)
+```
 
-  ```kotlin
-    private val headingFilter = KalmanFilter(0.25, 0.125)
-    private val wheelPos1Filter = KalmanFilter(9.0, 11.0)
-    private val wheelPos2Filter = KalmanFilter(9.0, 11.0)
-    private val headingVelocityFilter = KalmanFilter(0.500, 0.225)
-    private val wheelPos1VelocityFilter = KalmanFilter(8.0, 7.0)
-    private val wheelPos2VelocityFilter = KalmanFilter(8.0, 7.0)
-  ```
-
-</TabItem>
-
-</Tabs>
 
 ## Kalman Two Wheel Localization
 
@@ -42,14 +36,9 @@ To use your two wheel Kalman localizer, edit the fields as seen above in `Kalman
 Make sure to edit BOTH `SampleMecanumDrive` and `SampleMecanumDriveCancellable`, otherwise it may not be put into effect! If you're using some other drive object, change the localizer there.
 :::
 
-<Tabs groupId="programming-language">
-<TabItem value="kotlin" label="Kotlin">
-
-  ```kotlin
-     setLocalizer(new KalmanTwoWheelLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this)));
-  ```
-</TabItem>
-</Tabs>
+```kotlin
+    setLocalizer(new KalmanTwoWheelLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this)));
+```
 
 ## Kalman Three Wheel Localization
 
@@ -60,11 +49,8 @@ Make sure to edit BOTH `SampleMecanumDrive` and `SampleMecanumDriveCancellable`,
 To use your three wheel Kalman localizer, edit the fields as seen above in `KalmanThreeWheelLocalizer` and change the `setLocalizer` line in `SampleMecanumDrive` and `SampleMecanumDriveCancellable` to the following:
 It's pretty much the same thing as for the two wheel localizer but with a few name changes.
 
-<Tabs groupId="programming-language">
-<TabItem value="kotlin" label="Kotlin">
 
-  ```Kotlin
-     setLocalizer(new KalmanThreeWheelLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, this)));
-  ```
-</TabItem>
-</Tabs>
+```kotlin
+    setLocalizer(new KalmanThreeWheelLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, this)));
+```
+
