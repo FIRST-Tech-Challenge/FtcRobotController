@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Power Play TeleOp", group = "competition")
+//@TeleOp(name="Power Play TeleOp", group = "competition")
 public class PowerPlayTeleopBase extends LinearOpMode {
 
 

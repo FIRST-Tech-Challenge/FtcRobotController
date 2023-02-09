@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
@@ -24,6 +23,7 @@ public class PowerPlayRight extends LinearOpMode {
 
     enum State {
         SCORE_1,
+        FORWARD,
         BACK_UP_FROM_JUNCTION,
         TURN,
         SCORE_2,
@@ -47,8 +47,8 @@ public class PowerPlayRight extends LinearOpMode {
 
     int numberOfConesPickedUp =0;
 
-    public static  double xCenterJunction = 7;
-    public static double yCenterJunction =-31;
+    public static  double xCenterJunction = 8;
+    public static double yCenterJunction =-33;
 
     public static double xIntermediateStack =20;
     public static double yIntermediateStack = -12;
@@ -82,8 +82,12 @@ public class PowerPlayRight extends LinearOpMode {
                 .splineTo(new Vector2d(xCenterJunction, yCenterJunction),Math.toRadians(90+turnJunction))
                 .build();
 
-        Trajectory backUpFromJunction = drive.trajectoryBuilder(startToFirstDeposit.end())
-                .back(5)
+        Trajectory forward = drive.trajectoryBuilder(startToFirstDeposit.end())
+                .forward(2.5)
+                .build();
+
+        Trajectory backUpFromJunction = drive.trajectoryBuilder(forward.end())
+                .back(6)
                 .build();
 
         Trajectory firstDepositToConeStack1 = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(45))))
@@ -147,12 +151,14 @@ public class PowerPlayRight extends LinearOpMode {
             switch (currentState) {
                 case SCORE_1:
                     if (!drive.isBusy()) {
-                        sleep(300);
-                        drive.openClaw();
-                        sleep(300);
-                        drive.closeClaw();
-                        currentState = State.BACK_UP_FROM_JUNCTION;
-                        drive.followTrajectoryAsync(backUpFromJunction);
+                        currentState= State.FORWARD;
+                        drive.followTrajectoryAsync(forward);
+//                        sleep(300);
+//                        drive.openClaw();
+//                        sleep(300);
+//                        drive.closeClaw();
+//                        currentState = State.BACK_UP_FROM_JUNCTION;
+//                        drive.followTrajectoryAsync(backUpFromJunction);
                     } else {
                         armTarget = ARM_MID_TOP;
                         if (drive.armMotor.getCurrentPosition()>100){
@@ -160,6 +166,16 @@ public class PowerPlayRight extends LinearOpMode {
                             drive.tipFront();
                             drive.closeClaw();
                         }
+                    }
+                    break;
+                case FORWARD:
+                    if (!drive.isBusy()){
+                        sleep(300);
+                        drive.openClaw();
+                        sleep(300);
+                        drive.closeClaw();
+                        currentState = State.BACK_UP_FROM_JUNCTION;
+                        drive.followTrajectoryAsync(backUpFromJunction);
                     }
                     break;
                 case BACK_UP_FROM_JUNCTION:
@@ -334,6 +350,10 @@ public class PowerPlayRight extends LinearOpMode {
             telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
 
             telemetry.update();
+
+            PositionStorage.armPosition = drive.armMotor.getCurrentPosition();
+            PositionStorage.liftPosition = drive.linearSlide.getCurrentPosition();
+            PositionStorage.currentPose = drive.getPoseEstimate();
 
         }
 
