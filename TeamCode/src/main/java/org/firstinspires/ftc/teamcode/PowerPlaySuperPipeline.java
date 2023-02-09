@@ -196,6 +196,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         detectRedCone = redConeDetection;
         detectBlueCone = blueConeDetection;
 
+        thePole.analyzedFrame = new Mat();
+        theRedCone.analyzedFrame = new Mat();
+        theBlueCone.analyzedFrame = new Mat();
+        theRedTape.analyzedFrame = new Mat();
+        theBlueTape.analyzedFrame = new Mat();
+
         CENTERED_OBJECT = new FourPointRect(new Point(center - 24, 0.0), new Point(center + 24, 0.0),
                 new Point(center - 24, 239.0), new Point(center + 24, 239.0));
         /*
@@ -242,6 +248,46 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         detectPole = enabled;
     }
 
+    // Call these functions to save the image associated with the detected object.
+    public void saveConeAutoImage(AnalyzedCone detectedCone) {
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String filePath = directory + "/" + "ConeImage_" + timeString + ".png";
+        saveImage(filePath, detectedCone.analyzedFrame);
+    }
+    public void saveTapeAutoImage(AnalyzedTape detectedTape) {
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String filePath = directory + "/" + "TapeImage_" + timeString + ".png";
+        saveImage(filePath, detectedTape.analyzedFrame);
+    }
+    public void savePoleAutoImage(AnalyzedPole detectedPole) {
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String filePath = directory + "/" + "PoleImage_" + timeString + ".png";
+        saveImage(filePath, detectedPole.analyzedFrame);
+    }
+
+    protected void saveImage(String filePath, Mat image) {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    Imgproc.cvtColor(finalAutoImage, finalAutoImage, Imgproc.COLOR_RGB2BGR);
+                    Imgcodecs.imwrite(filePath, finalAutoImage);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                finally
+                {
+                    finalAutoImage.release();
+                }
+            }
+        }).start();
+    }
+
     public void saveLastAutoImage(boolean blueAlliance, boolean leftSide) {
         // Create a subdirectory based on DATE
         String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
@@ -265,27 +311,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         baseDir.mkdirs();
 
         String filePath = directory + "/" + "AutoImage_" + timeString + ".png";
-
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    Imgproc.cvtColor(finalAutoImage, finalAutoImage, Imgproc.COLOR_RGB2BGR);
-                    Imgcodecs.imwrite(filePath, finalAutoImage);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                finally
-                {
-                    finalAutoImage.release();
-                }
-            }
-        }).start();
+        saveImage(filePath, finalAutoImage);
     }
 
     /*
@@ -400,6 +426,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             highDistanceOffsetCm = 0;
             aligned = false;
             properDistanceHigh = false;
+            analyzedFrame = null;
         }
 
         public AnalyzedPole clone() {
@@ -413,6 +440,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             cloneBaby.highDistanceOffsetCm = highDistanceOffsetCm;
             cloneBaby.aligned = aligned;
             cloneBaby.properDistanceHigh = properDistanceHigh;
+            if (analyzedFrame != null) {
+                cloneBaby.analyzedFrame = new Mat();
+                analyzedFrame.copyTo(cloneBaby.analyzedFrame);
+            }
 
             return cloneBaby;
         }
@@ -425,6 +456,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         double highDistanceOffsetCm;
         boolean aligned;
         boolean properDistanceHigh;
+        Mat analyzedFrame;
     }
 
     static final double MAX_CONE_OFFSET = 1.5;  // 10 +/- pixels
@@ -436,6 +468,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             centralOffset = 0;
             centralOffsetDegrees = 0;
             aligned = false;
+            analyzedFrame = null;
         }
 
         public AnalyzedCone clone() {
@@ -446,6 +479,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             cloneBaby.centralOffset = centralOffset;
             cloneBaby.centralOffsetDegrees = centralOffsetDegrees;
             cloneBaby.aligned = aligned;
+            if (analyzedFrame != null) {
+                cloneBaby.analyzedFrame = new Mat();
+                analyzedFrame.copyTo(cloneBaby.analyzedFrame);
+            }
 
             return cloneBaby;
         }
@@ -455,6 +492,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         double centralOffset;
         double centralOffsetDegrees;
         boolean aligned;
+        Mat analyzedFrame;
     }
 
     static final double MAX_TAPE_OFFSET = 1.5;
@@ -467,6 +505,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             centralOffsetDegrees = 0;
             aligned = false;
             angle = 0.0;
+            analyzedFrame = null;
         };
         public AnalyzedTape clone() {
             AnalyzedTape cloneBaby = new AnalyzedTape();
@@ -477,6 +516,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             cloneBaby.centralOffsetDegrees = centralOffsetDegrees;
             cloneBaby.aligned = aligned;
             cloneBaby.angle = angle;
+            if (analyzedFrame != null) {
+                cloneBaby.analyzedFrame = new Mat();
+                analyzedFrame.copyTo(cloneBaby.analyzedFrame);
+            }
 
             return cloneBaby;
         }
@@ -486,6 +529,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         double centralOffsetDegrees;
         boolean aligned;
         double angle;
+        Mat analyzedFrame;
     }
 
     // For detecting poles
@@ -769,6 +813,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 } else {
                     thePole.properDistanceHighCount = 0;
                 }
+                input.copyTo(thePole.analyzedFrame);
             }
         }
         if(detectBlueCone) {
@@ -780,6 +825,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theBlueCone.alignedCount = 0;
                     drawFourPointRect(theBlueCone.corners, input, RED);
                 }
+                input.copyTo(theBlueCone.analyzedFrame);
             }
             synchronized(lockBlueTape) {
                 if (theBlueTape.aligned) {
@@ -789,6 +835,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theBlueTape.alignedCount = 0;
                     drawFourPointRect(theBlueTape.corners, input, RED);
                 }
+                input.copyTo(theBlueTape.analyzedFrame);
             }
         }
         if(detectRedCone) {
@@ -799,7 +846,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 } else {
                     theRedCone.alignedCount = 0;
                     drawFourPointRect(theRedCone.corners, input, RED);
-               }
+                }
+                input.copyTo(theRedCone.analyzedFrame);
             }
             synchronized(lockRedTape) {
                 if (theRedTape.aligned) {
@@ -809,6 +857,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theRedTape.alignedCount = 0;
                     drawFourPointRect(theRedTape.corners, input, RED);
                 }
+                input.copyTo(theRedTape.analyzedFrame);
             }
         }
         drawFourPointRect(CENTERED_OBJECT, input, BLUE);
