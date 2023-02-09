@@ -167,10 +167,11 @@ Runs a block of code *before* all the Listeners and the `afterEach` block (the o
 
 ### Scheduler.time ⏰
 
-Utility method **for development purposes only,** which prints its loop times to the given Telemetry to roughly
-benchmark performance. Does not average, only prints the raw time each cycle.
+Utility method for roughly benchmarking performance. Does not average, only prints the raw time
+each cycle.
 
-Prints in the format `Loop time (ms): <loop time>`
+The 'afterEach' block now takes in a double representing the time in ms that you can now do whatever
+you want with
 
 <ParamsList params={[
   {
@@ -180,14 +181,8 @@ Prints in the format `Loop time (ms): <loop time>`
     typeLink: TypeLinks.LINEAR_OP_MODE,
   },
   {
-    name: 'telemetry',
-    type: 'Telemetry',
-    desc: 'The Telemetry object to log the times to - NOTE: will be updated at end of loop',
-    typeLink: TypeLinks.TELEMETRY,
-  },
-  {
     name: 'afterEach',
-    type: 'Runnable',
+    type: '(Double) -> Unit',
     desc: 'An optional block of code to run every tick, after the listeners have ran',
     typeLink: TypeLinks.LAMBDA,
     defaultsTo: '() -> {}'
@@ -204,9 +199,9 @@ Prints in the format `Loop time (ms): <loop time>`
 
       waitForStart();
 
-      Scheduler.time(this, telemetry, () -> {
-          // Loop code, such as PIDs
-          // Run at the end of every loop
+      Scheduler.time(this, (loopTime) -> {
+          telemetry.addData("LoopTime (ms)", loopTime)
+          telemetry.update()
       });
   }
   ```
@@ -220,9 +215,9 @@ Prints in the format `Loop time (ms): <loop time>`
 
       waitForStart()
 
-      Scheduler.time(this, telemetry) {
-          // Loop code, such as PIDs
-          // Run at the end of every loop
+      Scheduler.time(this) {
+          telemetry.addData("LoopTime (ms)", it)
+          telemetry.update()
       }
   }
   ```

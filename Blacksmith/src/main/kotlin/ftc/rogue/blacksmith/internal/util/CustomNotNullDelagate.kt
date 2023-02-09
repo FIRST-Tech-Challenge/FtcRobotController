@@ -1,4 +1,4 @@
-package ftc.rogue.blacksmith.internal
+package ftc.rogue.blacksmith.internal.util
 
 import kotlin.reflect.KProperty
 

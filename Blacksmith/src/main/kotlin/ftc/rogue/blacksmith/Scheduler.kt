@@ -1,9 +1,8 @@
 package ftc.rogue.blacksmith
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.util.ElapsedTime
-import ftc.rogue.blacksmith.internal.DoubleConsumer
-import ftc.rogue.blacksmith.internal.consume
+import ftc.rogue.blacksmith.internal.util.DoubleConsumer
+import ftc.rogue.blacksmith.internal.scheduler.SchedulerInternal
 import ftc.rogue.blacksmith.listeners.*
 import org.firstinspires.ftc.robotcore.external.Telemetry
 
@@ -87,22 +86,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 object Scheduler {
     const val STARTING_MSG = 2350948905823L
 
-    /**
-     * The [Listeners][Listener] subscribed to this [Scheduler]. Updated on every tick.
-     */
-    private val listeners = mutableSetOf<Listener>()
-
-    /**
-     * A block of code to run before each tick.
-     */
-    private var beforeEach = Runnable {}
-
-    /**
-     * Sets a block of code to run before each tick.
-     */
     @JvmStatic
     fun beforeEach(block: Runnable) {
-        beforeEach = block
+        internal.beforeEach = block
     }
 
     /**
@@ -132,22 +118,13 @@ object Scheduler {
     @JvmStatic
     @JvmOverloads
     fun launch(opmode: LinearOpMode, afterEach: Runnable = Runnable {}) {
-        emit(STARTING_MSG)
-
-        while (opmode.opModeIsActive() && !opmode.isStopRequested) {
-            updateListenersSet()
-
-            beforeEach.run()
-            tick()
-            afterEach.run()
-        }
+        internal.launch(opmode, afterEach)
     }
 
     @JvmStatic
     @JvmOverloads
     fun launchOnStart(opmode: LinearOpMode, afterEach: Runnable = Runnable {}) {
-        opmode.waitForStart()
-        launch(opmode, afterEach)
+        internal.launchOnStart(opmode, afterEach)
     }
 
         /**
@@ -190,65 +167,38 @@ object Scheduler {
      */
     @JvmStatic
     fun time(opmode: LinearOpMode, afterEach: DoubleConsumer) {
-        emit(STARTING_MSG)
-
-        val elapsedTime = ElapsedTime()
-
-        while (opmode.opModeIsActive() && !opmode.isStopRequested) {
-            updateListenersSet()
-
-            beforeEach.run()
-            tick()
-
-            elapsedTime.milliseconds().let {
-                afterEach.consume(it)
-            }
-
-            elapsedTime.reset()
-        }
+        internal.time(opmode, afterEach)
     }
-
-    @JvmStatic
-    fun manuallyUpdateListeners() {
-        updateListenersSet()
-        tick()
-    }
-
-    @JvmStatic
-    fun reset() {
-        listeners.clear()
-        beforeEach = Runnable {}
-    }
-
-    private val messages = mutableMapOf<Any, MutableList<Runnable>>()
 
     @JvmStatic
     fun on(message: Any, callback: Runnable) {
-        messages.getOrPut(message, ::ArrayList) += callback
+        internal.on(message, callback)
     }
 
     @JvmStatic
     fun emit(message: Any) {
-        messages[message]?.forEach(Runnable::run)
+        internal.emit(message)
     }
 
-    private val listenersToAdd = mutableSetOf<Listener>()
-    private val listenersToRemove = mutableSetOf<Listener>()
+    @JvmStatic
+    fun manuallyUpdateListeners() {
+        internal.manuallyUpdateListeners()
+    }
 
+    @JvmStatic
+    fun reset() {
+        internal.reset()
+    }
+
+    private val internal = SchedulerInternal()
+
+    @JvmSynthetic
     internal fun hookListener(listener: Listener) {
-        listenersToAdd += listener
+        internal.hookListener(listener)
     }
 
+    @JvmSynthetic
     internal fun unhookListener(listener: Listener) {
-        listenersToRemove += listener
+        internal.unhookListener(listener)
     }
-
-    private fun updateListenersSet() {
-        listeners += listenersToAdd
-        listenersToAdd.clear()
-        listeners -= listenersToRemove
-        listenersToRemove.clear()
-    }
-
-    private fun tick() = listeners.forEach(Listener::tick)
 }

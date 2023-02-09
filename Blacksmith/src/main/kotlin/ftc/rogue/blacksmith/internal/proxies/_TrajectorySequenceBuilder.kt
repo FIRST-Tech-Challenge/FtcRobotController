@@ -10,9 +10,9 @@ import com.acmerobotics.roadrunner.trajectory.TimeProducer
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint
-import ftc.rogue.blacksmith.internal.getMethod
-import ftc.rogue.blacksmith.internal.invokeMethodI
-import ftc.rogue.blacksmith.internal.invokeMethodRethrowing
+import ftc.rogue.blacksmith.internal.util.getMethod
+import ftc.rogue.blacksmith.internal.util.invokeMethodI
+import ftc.rogue.blacksmith.internal.util.invokeMethodRethrowing
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 

@@ -1,7 +1,7 @@
 package ftc.rogue.blacksmith.internal.anvil
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import ftc.rogue.blacksmith.internal.AnvilRunConfigBuilder
+import ftc.rogue.blacksmith.internal.util.AnvilRunConfigBuilder
 
 class AnvilRunConfig internal constructor() {
     @get:JvmSynthetic internal var buildsSynchronously = false

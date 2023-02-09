@@ -1,6 +1,7 @@
 package ftc.rogue.blacksmith.util
 
 import ftc.rogue.blacksmith.internal.*
+import ftc.rogue.blacksmith.internal.util.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested

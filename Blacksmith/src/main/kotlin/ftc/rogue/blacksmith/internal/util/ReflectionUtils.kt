@@ -1,4 +1,4 @@
-package ftc.rogue.blacksmith.internal
+package ftc.rogue.blacksmith.internal.util
 
 import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException

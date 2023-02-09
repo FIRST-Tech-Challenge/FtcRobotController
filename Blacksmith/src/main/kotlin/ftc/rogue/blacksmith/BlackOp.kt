@@ -6,8 +6,10 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
-import ftc.rogue.blacksmith.internal.NotNull
-import ftc.rogue.blacksmith.internal.getFieldsAnnotatedWith
+import ftc.rogue.blacksmith.internal.blackop.CreateOnGoInternal
+import ftc.rogue.blacksmith.internal.blackop.injectCreateOnGoFields
+import ftc.rogue.blacksmith.internal.util.NotNull
+import ftc.rogue.blacksmith.internal.util.getFieldsAnnotatedWith
 import kotlin.reflect.KProperty
 
 /**
@@ -45,6 +47,8 @@ abstract class BlackOp : LinearOpMode() {
         mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         Scheduler.emit(STARTING_MSG)
+
+        injectCreateOnGoFields()
 
         go()
     }
@@ -93,12 +97,6 @@ abstract class BlackOp : LinearOpMode() {
 
     // -- KOTLIN ONLY BELOW --
 
-    @Target(AnnotationTarget.FIELD)
-    @Retention(AnnotationRetention.RUNTIME)
-    protected annotation class CreateOnGo(
-        val passHwMap: Boolean = false
-    )
-
     /**
      * READ DOCS FOR THIS
      */
@@ -110,61 +108,11 @@ abstract class BlackOp : LinearOpMode() {
      * READ DOCS FOR THIS
      */
     protected inline fun <reified T : Any> createOnGo(noinline arg: () -> Any) =
-        createOnGo<T>(*arrayOf(arg)) // Ignore warning, need to do spread else type checker errors
+        CreateOnGoInternal<T>(*arrayOf(arg)) // Needs array spread or type checker errors
 
     /**
      * READ DOCS FOR THIS
      */
     protected inline fun <reified T : Any> createOnGo(vararg args: () -> Any) =
-        CreateOnGoInternal {
-            val clazz = T::class.java
-
-            val invokedArgs = args.map { it() }.toTypedArray()
-            val argTypes = invokedArgs.map { it::class.java }.toTypedArray()
-
-            val constructor = clazz.constructors.find { constructor ->
-                constructor.parameterTypes contentEquals argTypes
-            }
-
-            constructor?.newInstance(*invokedArgs) as? T
-                ?: throw CreationException("No constructor found for $clazz with args $argTypes")
-        }
-
-    // -- INTERNAL --
-
-    protected inner class CreateOnGoInternal<T : Any> @PublishedApi internal constructor(constructor: () -> T) {
-        private lateinit var value: T
-
-        init {
-            Scheduler.on(STARTING_MSG) { value = constructor() }
-        }
-
-        operator fun getValue(thisRef: Any, property: KProperty<*>): T {
-            if (!::value.isInitialized) {
-                throw IllegalStateException("createOnGo value is uninitialized (OpMode not started yet)")
-            }
-            return value
-        }
-    }
-
-    private fun injectCreateOnGoFields() = this::class.java
-        .getFieldsAnnotatedWith(CreateOnGo::class.java)
-        .forEach { field ->
-            val clazz = field.type
-
-            if (clazz.constructors.none { it.parameterTypes.isEmpty() }) {
-                throw CreationException("Class '${clazz.simpleName}' has no no-arg constructor")
-            }
-
-            field.isAccessible = true
-
-            if (field.getAnnotation(CreateOnGo::class.java)?.passHwMap == true) {
-                field.set(this, clazz.getConstructor().newInstance(hwMap))
-            } else {
-                field.set(this, clazz.getConstructor().newInstance())
-            }
-        }
-
-    @PublishedApi
-    internal class CreationException(message: String) : RuntimeException(message)
+        CreateOnGoInternal<T>(*args)
 }
