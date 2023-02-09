@@ -36,8 +36,8 @@ class Left : KOpMode() {
 
     private val intakePath1 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-11.0, 31.5, 120.0.radians),
-        Pose(-14.5, 60.0, 90.0.radians)
+        Pose(-11.5, 32.5, 120.0.radians),
+        Pose(-14.5, 60.25, 90.0.radians)
     )
 
     private val intakePath2 = HermitePath(
@@ -49,7 +49,8 @@ class Left : KOpMode() {
     private val intakePath3 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
         Pose(-15.0, 31.5, 90.0.radians),
-        Pose(-13.5, 59.75, 90.0.radians)
+        Pose(-14.25, 45.75, 83.0.radians),
+        Pose(-13.75, 60.0, 83.0.radians)
     )
 
     private val depositPath = HermitePath(
@@ -61,20 +62,21 @@ class Left : KOpMode() {
 
     private val leftPath = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-13.0, 31.5, 90.0.radians),
-        Pose(-14.0, 58.5, 95.0.radians)
+        Pose(-15.0, 31.5, 80.0.radians),
+        Pose(-13.5, 58.5, 80.0.radians)
     )
 
     private val middlePath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
-        Pose(-13.0, 59.5, 270.0.radians),
-        Pose(-15.0, 37.0, 265.0.radians),
+        Pose(-13.5, 58.5, 270.0.radians),
+        Pose(-15.0, 38.0, 270.0.radians),
+
     )
 
     private val rightPath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
-        Pose(-13.0, 59.5, 270.0.radians),
-        Pose(-15.0, 7.0, 265.0.radians)
+        Pose(-13.5, 58.5, 270.0.radians),
+        Pose(-15.0, 14.0, 270.0.radians)
 
     )
 
@@ -112,7 +114,7 @@ class Left : KOpMode() {
             WaitCmd(0.25),
             ClawCmds.ClawCloseCmd(robot.claw),
             WaitCmd(0.25),
-            InstantCmd({robot.lift.setPos(13.0)}),
+            InstantCmd({robot.lift.setPos(10.0)}),
             WaitCmd(0.25),
             GVFCmd(
                 robot.drive,
@@ -134,7 +136,7 @@ class Left : KOpMode() {
             WaitCmd(0.25),
             ClawCmds.ClawCloseCmd(robot.claw),
             WaitCmd(0.25),
-            InstantCmd({robot.lift.setPos(13.0)}),
+            InstantCmd({robot.lift.setPos(9.5)}),
             WaitCmd(0.25),
             GVFCmd(
                 robot.drive,
@@ -156,7 +158,7 @@ class Left : KOpMode() {
             WaitCmd(0.25),
             ClawCmds.ClawCloseCmd(robot.claw),
             WaitCmd(0.25),
-            InstantCmd({robot.lift.setPos(13.0)}),
+            InstantCmd({robot.lift.setPos(9.0)}),
             WaitCmd(0.25),
             GVFCmd(
                 robot.drive,
@@ -169,7 +171,7 @@ class Left : KOpMode() {
             ),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 2.0, GuideConstants.telePos),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 1.5, GuideConstants.telePos),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
@@ -178,7 +180,7 @@ class Left : KOpMode() {
             WaitCmd(0.25),
             ClawCmds.ClawCloseCmd(robot.claw),
             WaitCmd(0.25),
-            InstantCmd({robot.lift.setPos(13.0)}),
+            InstantCmd({robot.lift.setPos(8.5)}),
             WaitCmd(0.25),
             GVFCmd(
                 robot.drive,
@@ -191,7 +193,7 @@ class Left : KOpMode() {
             ),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 1.0, GuideConstants.telePos),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 0.5, GuideConstants.telePos),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
@@ -200,7 +202,7 @@ class Left : KOpMode() {
             WaitCmd(0.25),
             ClawCmds.ClawCloseCmd(robot.claw),
             WaitCmd(0.25),
-            InstantCmd({robot.lift.setPos(13.0)}),
+            InstantCmd({robot.lift.setPos(8.0)}),
             WaitCmd(0.25),
             GVFCmd(
                 robot.drive,
@@ -213,7 +215,7 @@ class Left : KOpMode() {
             ),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, -76.0, -1.0, GuideConstants.telePos),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, -80.0, -1.0, GuideConstants.telePos),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(robot.drive,
                 SimpleGVFController(leftPath, 0.6, 20.0, 6.0, 0.6, 1.5, 1.5)),

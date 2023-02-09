@@ -8,7 +8,7 @@ object ArmConstants {
     @JvmField var homePos = -68.0
     @JvmField var autoHomePos = 217.2
     @JvmField var intervalPos = -50.0
-    @JvmField var groundPos = -62.0
+    @JvmField var groundPos = -68.0
     @JvmField var lowPos = 170.0
     @JvmField var midPos = 150.0
     @JvmField var highPos = 150.0

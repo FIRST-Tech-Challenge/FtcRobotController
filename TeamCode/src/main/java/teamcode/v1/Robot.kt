@@ -23,6 +23,10 @@ class Robot(startPose: Pose) {
     val whacker = Whacker(hardware.whackerServo)
     val lift = Lift(hardware.liftLeadMotor, hardware.liftSecondMotor)
 
+    var isStacking = false
+    var stack = 5
+    val stackHeight get() = (stack - 1) - 0.5
+
     init {
         arm.setPos(ArmConstants.groundPos)
         lift.setPos(0.0)

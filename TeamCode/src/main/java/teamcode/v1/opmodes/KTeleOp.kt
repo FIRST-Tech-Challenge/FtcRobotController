@@ -1,32 +1,33 @@
 package teamcode.v1.opmodes
 
 import com.asiankoala.koawalib.command.KOpMode
+import com.asiankoala.koawalib.command.commands.ChooseCmd
 import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.InstantCmd
-import com.asiankoala.koawalib.command.commands.LoopCmd
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.NVector
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
-import com.asiankoala.koawalib.subsystem.odometry.Odometry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import teamcode.v1.Robot
 import teamcode.v1.commands.sequences.DepositSequence
 import teamcode.v1.commands.sequences.HomeSequence
+import teamcode.v1.commands.sequences.StackSeq
 import teamcode.v1.commands.subsystems.ClawCmds
-import teamcode.v1.commands.subsystems.GuideCmds
 import teamcode.v1.constants.*
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sign
 
 @TeleOp
-open class KTeleOp() : KOpMode(photonEnabled = false) {
+open class KTeleOp : KOpMode(photonEnabled = false) {
     private val robot by lazy { Robot(Pose(-66.0, 40.0, 180.0.radians)) }
     private var slowMode = false
 
     override fun mInit() {
+        InstantCmd({robot.lift.setPos(1.0)})
         Logger.config = LoggerConfig.DASHBOARD_CONFIG
         scheduleDrive()
         scheduleCycling()
@@ -64,21 +65,23 @@ open class KTeleOp() : KOpMode(photonEnabled = false) {
     }
 
     private fun scheduleCycling() {
-        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, LiftConstants.homePos, GuideConstants.telePos))
+        driver.rightBumper.onPress(ChooseCmd(StackSeq(robot),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 0.0, GuideConstants.telePos)
+        ) { robot.isStacking })
         driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.highPos, LiftConstants.highPos, GuideConstants.depositPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
         driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.midPos, LiftConstants.midPos, GuideConstants.depositPos))
         driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.lowPos, LiftConstants.lowPos, GuideConstants.lowPos))
         driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos))
-        driver.x.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 3.0, GuideConstants.telePos))
-        driver.b.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 5.0, GuideConstants.telePos))
+        driver.x.onPress(InstantCmd({robot.stack = min(robot.stack + 1, 5)}))
+        driver.b.onPress(InstantCmd({robot.stack = max(robot.stack - 1, 0) }))
+
         gunner.leftTrigger.onPress(InstantCmd({robot.lift.setPos(-15.5)}))
         gunner.rightTrigger.onPress(InstantCmd({robot.arm.setPos(-270.0)}))
         gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(11.0)}))
         gunner.rightBumper.onPress(InstantCmd({robot.lift.setPos(0.0)}))
-        gunner.dpadLeft.onPress(InstantCmd({robot.whacker.setPos(WhackerConstants.leftPos)}))
-        gunner.dpadRight.onPress(InstantCmd({robot.whacker.setPos(WhackerConstants.rightPos)}))
-        gunner.dpadUp.onPress(InstantCmd({robot.whacker.setPos(WhackerConstants.midPos)}))
+        gunner.dpadLeft.onPress(InstantCmd({robot.isStacking = true}))
+        gunner.dpadRight.onPress(InstantCmd({robot.isStacking = false}))
     }
 
     private fun scheduleTest() {
@@ -94,6 +97,7 @@ open class KTeleOp() : KOpMode(photonEnabled = false) {
         Logger.addTelemetryData("arm pos", robot.hardware.armMotor.pos)
         Logger.addTelemetryData("lift pos", robot.hardware.liftLeadMotor.pos)
         Logger.addTelemetryData("arm power", robot.arm.motor.power)
+        Logger.addTelemetryData("is stacking?", robot.isStacking)
         Logger.addTelemetryData("lift power", robot.hardware.liftLeadMotor.power)
         Logger.addTelemetryData("whacker pos", robot.hardware.whackerServo.position)
     }
