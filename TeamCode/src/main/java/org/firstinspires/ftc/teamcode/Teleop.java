@@ -85,11 +85,12 @@ public abstract class Teleop extends LinearOpMode {
     double    liftTarget             = 0.0;
     boolean   liftTargetUpward       = false;
     boolean   liftFrontToBack        = false;  // safer to assume this, since smaller rotation involved if we're wrong
-    int       conesOnStack           = AutonomousBase.fiveStackHeight;
     boolean   collectingFromStack    = false;
 
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
+
+    int       conesOnStack           = robot.fiveStackHeight;
 
     //Files to access the algorithm constants
     File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
@@ -637,10 +638,6 @@ public abstract class Teleop extends LinearOpMode {
             robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
         }
         //===================================================================
-        else if( gamepad1_touchpad_now && !gamepad1_touchpad_last)
-        {
-            cyclingOnLeft = !cyclingOnLeft;
-        }
         // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
         else if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
         {
@@ -721,10 +718,7 @@ public abstract class Teleop extends LinearOpMode {
         {   // Lower lift to COLLECT position and adjust collector tilt horizontal
             robot.grabberSpinStop();
             // Were we previously collecting from the stack?
-            if(collectingFromStack)
-            {
-                collectingFromStack = false;
-            }
+            collectingFromStack = false;
             robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
             needFlip       = false;  // collector upright for grabbing
             grabberTarget1 = robot.GRABBER_TILT_GRAB;
@@ -868,14 +862,14 @@ public abstract class Teleop extends LinearOpMode {
             robot.grabberSpinStop();
             if(collectingFromStack)
             {
-                robot.grabberSetTilt(robot.GRABBER_TILT_GRAB3);
-                collectingFromStack= false;
+                grabberTarget1 = robot.GRABBER_TILT_GRAB3;
             }
             else
             {
-                robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_L );
+                grabberTarget1 = robot.GRABBER_TILT_FRONT_L;
             }
             robot.liftPosInit( robot.LIFT_ANGLE_LOW );
+            grabberTarget2 = robot.GRABBER_TILT_FRONT_L;
             liftFrontToBack = true;  // lifting
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
