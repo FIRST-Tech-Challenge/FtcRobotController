@@ -16,16 +16,6 @@ Doing this reduces the drift of the robot and should help make your autonomous m
 Each set of Kalman noise fields per localizer is the same. A rough approximation like the one below (that's what we used) should be fine. Note to pay attention to the range of numbers you're dealing with!
 Anywhere from 5-35 for the wheel position and velocity filters is reasonable, and 0.10-0.75 is reasonable for the heading filters. I'd reccomend starting with a low number and gradually increasing until you notice adverse affects, if any.
 
-Edit the following fields in `KalmanTwoWheelLocalizer` or `KalmanThreeWheelLocalizer`:
-
-```kotlin
-  private val headingFilter = KalmanFilter(0.25, 0.125)
-  private val wheelPos1Filter = KalmanFilter(9.0, 11.0)
-  private val wheelPos2Filter = KalmanFilter(9.0, 11.0)
-  private val headingVelocityFilter = KalmanFilter(0.500, 0.225)
-  private val wheelPos1VelocityFilter = KalmanFilter(8.0, 7.0)
-  private val wheelPos2VelocityFilter = KalmanFilter(8.0, 7.0)
-```
 
 
 ## Kalman Two Wheel Localization
@@ -36,9 +26,17 @@ To use your two wheel Kalman localizer, edit the fields as seen above in `Kalman
 Make sure to edit BOTH `SampleMecanumDrive` and `SampleMecanumDriveCancellable`, otherwise it may not be put into effect! If you're using some other drive object, change the localizer there.
 :::
 
-```kotlin
-    setLocalizer(new KalmanTwoWheelLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this)));
+```java
+    setLocalizer(new KalmanTwoWheelLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this))
+      .setHeadingFilterCoeffs(R0, Q0)
+      .setWheelPos1FilterCoeffs(R1, Q1)
+      .setWheelPos2FilterCoeffs(R2, Q2)
+      .setHeadingVelocityFilterCoeffs(R3, Q3)
+      .setWheelPos1VelocityFilterCoeffs(R4, Q4)
+      .setWheelPos2VelocityFilterCoeffs(R5, Q5));
 ```
+
+Of course, set `R0`-`R5` and `Q0`-`Q5` to whatever values you have tuned.
 
 ## Kalman Three Wheel Localization
 
@@ -50,7 +48,14 @@ To use your three wheel Kalman localizer, edit the fields as seen above in `Kalm
 It's pretty much the same thing as for the two wheel localizer but with a few name changes.
 
 
-```kotlin
-    setLocalizer(new KalmanThreeWheelLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, this)));
+```java
+    setLocalizer(new KalmanThreeWheelLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, this))
+      .setHeadingFilterCoeffs(R0, Q0)
+      .setWheelPos1FilterCoeffs(R1, Q1)
+      .setWheelPos2FilterCoeffs(R2, Q2)
+      .setHeadingVelocityFilterCoeffs(R3, Q3)
+      .setWheelPos1VelocityFilterCoeffs(R4, Q4)
+      .setWheelPos2VelocityFilterCoeffs(R5, Q5));
 ```
 
+Of course, set `R0`-`R5` and `Q0`-`Q5` to whatever values you have tuned.
