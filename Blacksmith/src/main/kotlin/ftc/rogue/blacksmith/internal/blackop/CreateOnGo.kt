@@ -58,18 +58,14 @@ fun BlackOp.injectCreateOnGoFields() = this::class.java
     .forEach { field ->
         val clazz = field.type
 
-        val containsNoArgConstructor = clazz.constructors
-            .none { it.parameterTypes.isEmpty() }
+        val shouldPassHwMap = field.getAnnotation(CreateOnGo::class.java)?.passHwMap == true
 
-        if (!containsNoArgConstructor) {
-            throw CreationException("Class '${clazz.simpleName}' has no no-arg constructor")
+        val instance = if (shouldPassHwMap) {
+            clazz.getConstructor().newInstance(BlackOp.hwMap)
+        } else {
+            clazz.getConstructor().newInstance()
         }
 
         field.isAccessible = true
-
-        if (field.getAnnotation(CreateOnGo::class.java)?.passHwMap == true) {
-            field.set(this, clazz.getConstructor().newInstance(BlackOp.hwMap))
-        } else {
-            field.set(this, clazz.getConstructor().newInstance())
-        }
+        field.set(this, instance)
     }
