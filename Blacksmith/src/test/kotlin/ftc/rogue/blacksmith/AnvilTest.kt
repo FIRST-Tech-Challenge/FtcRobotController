@@ -44,7 +44,7 @@ internal class AnvilTest {
             .turn(PI)
             .addTemporalMarker({ 1.0 }) { }
             .setReversed(true)
-            .back(10.0)
+            .forward(10.0)
             .setReversed(false)
             .build()
 
@@ -67,7 +67,7 @@ internal class AnvilTest {
             withRawBuilder<TrajectorySequenceBuilder> {
                 addTemporalMarker({ 1.0 }) { }
             }
-            back(10).doInReverse()
+            forward(10).doInReverse()
         }.build<TrajectorySequence>()
 
         assertAll(

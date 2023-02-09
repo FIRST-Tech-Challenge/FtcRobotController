@@ -22,6 +22,10 @@ internal class _SampleMecanumDrive(private val drive: Any) {
         drive.invokeMethodI<Any?>("setPoseEstimate", pose)
     }
 
+    fun trajectorySequenceBuilder(startPose: Pose2d): Any {
+        return drive.invokeMethodI("trajectorySequenceBuilder", startPose)
+    }
+
     fun getVelocityConstraint(maxVel: Number, maxAngularVel: Number, trackWidth: Number): TrajectoryVelocityConstraint {
         return drive::class.java.getMethod("getVelocityConstraint", Double::class.java, Double::class.java, Double::class.java)
             .let {

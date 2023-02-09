@@ -41,10 +41,9 @@ class SchedulerInternal {
             tick()
 
             elapsedTime.milliseconds().let {
+                elapsedTime.reset()
                 afterEach.consume(it)
             }
-
-            elapsedTime.reset()
         }
     }
 

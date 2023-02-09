@@ -12,25 +12,26 @@ import kotlin.reflect.KProperty
 internal class CreationException(message: String) : RuntimeException(message)
 
 @PublishedApi
-internal inline fun <reified T> CreateOnGoInternal(vararg args: () -> Any) = CreateOnGoInternal {
-    val clazz = T::class.java
+internal inline fun <reified T> CreateOnGoInternal(vararg args: () -> Any) =
+    CreateOnGoInternal {
+        val clazz = T::class.java
 
-    val invokedArgs = args
-        .map { it() }
-        .toTypedArray()
+        val invokedArgs = args
+            .map { it() }
+            .toTypedArray()
 
-    val argTypes = invokedArgs
-        .map { it::class.java }
-        .toTypedArray()
+        val argTypes = invokedArgs
+            .map { it::class.java }
+            .toTypedArray()
 
-    val constructor = clazz.constructors
-        .find { constructor ->
-            constructor.parameterTypes contentEquals argTypes
-        }
+        val constructor = clazz.constructors
+            .find { constructor ->
+                constructor.parameterTypes contentEquals argTypes
+            }
 
-    constructor?.newInstance(*invokedArgs) as? T
-        ?: throw CreationException("No constructor found for $clazz with args $argTypes")
-}
+        constructor?.newInstance(*invokedArgs) as? T
+            ?: throw CreationException("No constructor found for $clazz with args $argTypes")
+    }
 
 class CreateOnGoInternal<T : Any>
     @PublishedApi

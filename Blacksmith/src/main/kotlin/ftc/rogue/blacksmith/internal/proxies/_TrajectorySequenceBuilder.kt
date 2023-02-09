@@ -11,7 +11,6 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint
 import ftc.rogue.blacksmith.internal.util.getMethod
-import ftc.rogue.blacksmith.internal.util.invokeMethodI
 import ftc.rogue.blacksmith.internal.util.invokeMethodRethrowing
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -25,7 +24,7 @@ internal class _TrajectorySequenceBuilder(
     internal val internalBuilder: Any
 
     init {
-        internalBuilder = driveProxy.invokeMethodI("trajectorySequenceBuilder", startPose)
+        internalBuilder = driveProxy.trajectorySequenceBuilder(startPose)
     }
 
     // -- START MACHINE GENERATED CODE --

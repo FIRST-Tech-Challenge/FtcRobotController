@@ -47,7 +47,7 @@ class AnvilInternal
 
     private lateinit var builtTrajectory: Any
 
-    private fun add(builderAction: () -> Unit) {
+    private fun enqueue(builderAction: () -> Unit) {
         builderDeque += builderAction
     }
 
@@ -68,64 +68,64 @@ class AnvilInternal
 
     // -- Direct path mappings (Basic) --
 
-    fun _forward(distance: Number) = add {
+    fun _forward(distance: Number) = enqueue {
         builderProxy.forward(distance.toIn())
     }
 
-    fun _back(distance: Number) = add {
+    fun _back(distance: Number) = enqueue {
         builderProxy.back(distance.toIn())
     }
 
-    fun _turn(angle: Number) = add {
+    fun _turn(angle: Number) = enqueue {
         builderProxy.turn(angle.toRad())
     }
 
-    fun _strafeLeft(distance: Number) = add {
+    fun _strafeLeft(distance: Number) = enqueue {
         builderProxy.strafeLeft(distance.toIn())
     }
 
-    fun _strafeRight(distance: Number) = add {
+    fun _strafeRight(distance: Number) = enqueue {
         builderProxy.strafeRight(distance.toIn())
     }
 
     // -- Direct path mappings (Lines) --
 
-    fun _lineTo(x: Number, y: Number) = add {
+    fun _lineTo(x: Number, y: Number) = enqueue {
         builderProxy.lineTo( GlobalUnits.vec(x, y) )
     }
 
-    fun _lineToLinearHeading(x: Number, y: Number, heading: Number) = add {
+    fun _lineToLinearHeading(x: Number, y: Number, heading: Number) = enqueue {
         builderProxy.lineToLinearHeading( GlobalUnits.pos(x, y, heading) )
     }
 
-    fun _lineToSplineHeading(x: Number, y: Number, heading: Number) = add {
+    fun _lineToSplineHeading(x: Number, y: Number, heading: Number) = enqueue {
         builderProxy.lineToSplineHeading( GlobalUnits.pos(x, y, heading) )
     }
 
     // -- Direct path mappings (Splines) --
 
-    fun _splineTo(x: Number, y: Number, endTangent: Number) = add {
+    fun _splineTo(x: Number, y: Number, endTangent: Number) = enqueue {
         builderProxy.splineTo(
             GlobalUnits.vec(x, y),
             endTangent.toRad(),
         )
     }
 
-    fun _splineToConstantHeading(x: Number, y: Number, endTangent: Number) = add {
+    fun _splineToConstantHeading(x: Number, y: Number, endTangent: Number) = enqueue {
         builderProxy.splineToConstantHeading(
             GlobalUnits.vec(x, y),
             endTangent.toRad(),
         )
     }
 
-    fun _splineToLinearHeading(x: Number, y: Number, heading: Number, endTangent: Number) = add {
+    fun _splineToLinearHeading(x: Number, y: Number, heading: Number, endTangent: Number) = enqueue {
         builderProxy.splineToLinearHeading(
             GlobalUnits.pos(x, y, heading),
             endTangent.toRad(),
         )
     }
 
-    fun _splineToSplineHeading(x: Number, y: Number, heading: Number, endTangent: Number) = add {
+    fun _splineToSplineHeading(x: Number, y: Number, heading: Number, endTangent: Number) = enqueue {
         builderProxy.splineToSplineHeading(
             GlobalUnits.pos(x, y, heading),
             endTangent.toRad(),
@@ -134,43 +134,43 @@ class AnvilInternal
 
     // -- Advanced mappings --
 
-    fun _waitTime(time: Number) = add {
+    fun _waitTime(time: Number) = enqueue {
         builderProxy.waitSeconds(time.toSec())
     }
 
-    fun _setReversed(reversed: Boolean) = add {
+    fun _setReversed(reversed: Boolean) = enqueue {
         builderProxy.setReversed(reversed)
     }
 
-    fun _setTangent(tangent: Number) = add {
+    fun _setTangent(tangent: Number) = enqueue {
         builderProxy.setTangent(tangent.toDouble())
     }
 
-    fun _addTrajectory(trajectory: Trajectory) = add {
+    fun _addTrajectory(trajectory: Trajectory) = enqueue {
         builderProxy.addTrajectory(trajectory)
     }
 
-    fun _addTrajectory(trajectory: () -> Trajectory) = add {
+    fun _addTrajectory(trajectory: () -> Trajectory) = enqueue {
         builderProxy.addTrajectory(trajectory())
     }
 
     // -- Markers --
 
-    fun _addTemporalMarker(offset: Number, action: MarkerCallback) = add {
+    fun _addTemporalMarker(offset: Number, action: MarkerCallback) = enqueue {
         builderProxy.UNSTABLE_addTemporalMarkerOffset(
             offset.toSec(),
             action,
         )
     }
 
-    fun _addDisplacementMarker(offset: Number, action: MarkerCallback) = add {
+    fun _addDisplacementMarker(offset: Number, action: MarkerCallback) = enqueue {
         builderProxy.UNSTABLE_addDisplacementMarkerOffset(
             offset.toSec(),
             action,
         )
     }
 
-    fun _addSpatialMarker(offsetX: Number, offsetY: Number, action: MarkerCallback) = add {
+    fun _addSpatialMarker(offsetX: Number, offsetY: Number, action: MarkerCallback) = enqueue {
         builderProxy.addSpatialMarker(
             GlobalUnits.vec(offsetX, offsetY),
             action,
@@ -199,14 +199,14 @@ class AnvilInternal
         val thingToDoInReverse = builderDeque.removeLast()
 
         __inReverse {
-            thingToDoInReverse()
+            enqueue(thingToDoInReverse)
         }
     }
 
-    fun _noop() = add {}
+    fun _noop() = enqueue {}
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> _withRawBuilder(builder: Consumer<T>) = add {
+    fun <T> _withRawBuilder(builder: Consumer<T>) = enqueue {
         (builderProxy.internalBuilder as T).let {
             builder.consume(it)
         }
@@ -220,45 +220,45 @@ class AnvilInternal
 
     // -- Constraints --
 
-    fun _resetConstraints() = add {
+    fun _resetConstraints() = enqueue {
         builderProxy.resetConstraints()
     }
 
-    fun _setVelConstraint(velConstraint: TrajectoryVelocityConstraint) = add {
+    fun _setVelConstraint(velConstraint: TrajectoryVelocityConstraint) = enqueue {
         builderProxy.setVelConstraint(velConstraint)
     }
 
     /**
      * __IMPORTANT:__ These units are NOT auto-converted
      */
-    fun _setVelConstraint(maxVel: Number, maxAngularVel: Number, trackWidth: Number) = add {
+    fun _setVelConstraint(maxVel: Number, maxAngularVel: Number, trackWidth: Number) = enqueue {
         builderProxy.setVelConstraint(driveProxy.getVelocityConstraint(maxVel, maxAngularVel, trackWidth))
     }
 
-    fun _resetVelConstraint() = add {
+    fun _resetVelConstraint() = enqueue {
         builderProxy.resetVelConstraint()
     }
 
-    fun _setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = add {
+    fun _setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = enqueue {
         builderProxy.setAccelConstraint(accelConstraint)
     }
 
     /**
      * __IMPORTANT:__ These units are NOT auto-converted
      */
-    fun _setAccelConstraint(maxAccel: Number) = add {
+    fun _setAccelConstraint(maxAccel: Number) = enqueue {
         builderProxy.setAccelConstraint(driveProxy.getAccelerationConstraint(maxAccel))
     }
 
-    fun _resetAccelConstraint() = add {
+    fun _resetAccelConstraint() = enqueue {
         builderProxy.resetAccelConstraint()
     }
 
-    fun _setTurnConstraint(maxAngVel: Number, maxAngAccel: Number) = add {
+    fun _setTurnConstraint(maxAngVel: Number, maxAngAccel: Number) = enqueue {
         builderProxy.setTurnConstraint(maxAngVel.toDouble(), maxAngAccel.toDouble())
     }
 
-    fun _resetTurnConstraint() = add {
+    fun _resetTurnConstraint() = enqueue {
         builderProxy.resetTurnConstraint()
     }
 
