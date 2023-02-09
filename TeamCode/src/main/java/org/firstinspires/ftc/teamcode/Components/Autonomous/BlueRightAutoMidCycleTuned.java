@@ -30,12 +30,12 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
 
     public static double dummyP = 3;
 
-    public static double dropX = -30, dropY = 19.5, dropA = toRadians(210), dropET = toRadians(30);
+    public static double dropX = -29.5, dropY = 20, dropA = toRadians(210), dropET = toRadians(30);
 
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
-    public static double pickupX2 = -62, pickupY2 = 11.75, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
+    public static double pickupX2 = -62, pickupY2 = 13, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
 
-    double[] stackPos = {400,330,235,80,0};
+    double[] stackPos = {440,330,245,100,0};
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
@@ -49,13 +49,13 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
         TrajectorySequence initialtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29.6, 63.25, toRadians(90)))
                 .setReversed(true)
                 .splineToSplineHeading(new Pose2d(-32, 51, toRadians(70)), toRadians(250))
-                .splineToSplineHeading(new Pose2d(-34, 14, toRadians(190)), toRadians(270))
-                .lineToLinearHeading(new Pose2d(-30,18, toRadians(225)))
+                .splineToSplineHeading(new Pose2d(-34, 9, toRadians(225)), toRadians(270))
+                .lineToLinearHeading(new Pose2d(-28,17, toRadians(225)))
                 .addTemporalMarker(robot::done)
                 .build();
-        TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-30,18, toRadians(225)))
+        TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-28,17, toRadians(225)))
                 .setReversed(false)
-                .splineToSplineHeading(new Pose2d(pickupX2+5,pickupY2-0.5,toRadians(180)),toRadians(180))
+                .splineToSplineHeading(new Pose2d(pickupX2+5-0.5,pickupY2-0.5,toRadians(180)),toRadians(180))
 //                .splineToSplineHeading()
                 .splineToSplineHeading(new Pose2d(pickupX2-0.5,pickupY2-0.5,pickupA2),pickupET2)
 //                .addTemporalMarker(()->{robot.done(); robot.roadrun.breakFollowing();})
@@ -72,7 +72,7 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
             dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(pickupX2-0.5, pickupY2-0.5, pickupA2))
                     .setReversed(true)
 //                .splineToSplineHeading(new Pose2d(pickupX2+15, pickupY2,pickupA2),0)
-                    .splineToSplineHeading(new Pose2d(dropX+(i+1)*0.2,dropY-(i+1)*0.6,dropA),dropET)
+                    .splineToSplineHeading(new Pose2d(dropX+(i+1)*0.4,dropY-(i+1)*0.7,dropA),dropET)
 //                    .UNSTABLE_addTemporalMarkerOffset(0.4,robot::done)
                             .addTemporalMarker(robot::done)
                     .build());
@@ -88,12 +88,13 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
                 .build();
         TrajectorySequence park1trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY, dropA))
                 .setReversed(false)
-                .splineToSplineHeading(new Pose2d(-50, 10, toRadians(180)), toRadians(180))
-                .setReversed(true)
-                .lineTo(new Vector2d(-10, 9))
+//                .splineToSplineHeading(new Pose2d(-50, 10, toRadians(180)), toRadians(180))
+//                .setReversed(true)
+//                .lineTo(new Vector2d(-10, 9))
+                .splineToLinearHeading(new Pose2d(-10,9,toRadians(270)), toRadians(135))
                 .build();
         Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dropX,dropY, dropA))
-                .splineToSplineHeading(new Pose2d(-35, 16, toRadians(180)), toRadians(180))
+                .lineToLinearHeading(new Pose2d(-33, 13, toRadians(180)))
                 .build();
         TrajectorySequence park3trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY, dropA))
                 .setReversed(false)
