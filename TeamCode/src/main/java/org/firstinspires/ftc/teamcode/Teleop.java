@@ -685,6 +685,7 @@ public abstract class Teleop extends LinearOpMode {
                 needCycleReset = false;
             }
         }
+
         // Check if gamepad1 LEFT TRIGGER has a value >= 0.5
         else if ( gamepad1_r_trigger_now && !gamepad1_r_trigger_last )
         {
