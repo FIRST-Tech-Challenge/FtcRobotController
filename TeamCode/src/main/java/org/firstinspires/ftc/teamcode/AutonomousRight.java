@@ -277,7 +277,7 @@ public class AutonomousRight extends AutonomousBase {
             }
 
             if (opModeIsActive()) {
-                switch(robot.fiveStackHeight) {
+                switch(fiveStackHeight) {
                     case 5:  cycleDistance = 28; break;
                     case 4:  cycleDistance = 28; break;
                     case 3:  cycleDistance = 28; break;
@@ -436,7 +436,7 @@ public class AutonomousRight extends AutonomousBase {
         robot.grabberSetTilt( robot.GRABBER_TILT_GRAB2 );
 
         // Determine the correct lift-angle height based on how many cones remain
-        switch( robot.fiveStackHeight ) {
+        switch( fiveStackHeight ) {
             case 5  : liftAngle5stack = 103.0; break;
             case 4  : liftAngle5stack = 106.0; break;
             case 3  : liftAngle5stack = 110.0; break;
@@ -480,7 +480,7 @@ public class AutonomousRight extends AutonomousBase {
         robot.liftMotorsSetPower( 0.0 );
 
         // Reduce the remaining cone-count
-        robot.fiveStackHeight--;
+        fiveStackHeight--;
     } // collectCone
 
     /*--------------------------------------------------------------------------------------------*/
