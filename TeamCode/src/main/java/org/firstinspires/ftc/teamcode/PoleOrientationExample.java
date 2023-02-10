@@ -237,8 +237,7 @@ public class PoleOrientationExample extends LinearOpMode
         final int TURRET_CYCLES_AT_POS = 8;
         // minPower=0; kp = 0.0027
         // These values are no longer valid switching to angle
-        PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.000, 0.00010, 0.075,
-                PowerPlaySuperPipeline.MAX_POLE_OFFSET);
+        PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.000, 0.00010, 0.075);
 
         double turretPower;
         double turretPowerMax = 0.14;  // maximum we don't want the PID to exceed

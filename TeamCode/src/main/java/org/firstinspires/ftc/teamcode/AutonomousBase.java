@@ -207,7 +207,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         // minPower=0; kp = 0.0027
         // Converting from pixels to degrees
         PIDControllerTurret pidController = new PIDControllerTurret(0.00008 / 0.15,0.000,
-                0.00010 / 0.15, 0.085, 12 * 0.15);
+                0.00010 / 0.15, 0.085);
 
         double turretPower;
         double turretPowerMax = 0.14;  // maximum we don't want the PID to exceed
