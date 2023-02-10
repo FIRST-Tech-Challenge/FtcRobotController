@@ -27,11 +27,11 @@ public class MeepMeepTesting {
                 .setConstraints(50, 40, 4 * PI, 2 * PI, 11)
                 .setConstraints(60, 60, toRadians(180), toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(42.85, 63.25, Math.toRadians(90)))
+                                drive.trajectorySequenceBuilder(new Pose2d(40.9, 62.25, Math.toRadians(90)))
                                         .setReversed(true)
-                                        .splineTo(new Vector2d(38, 51), toRadians(255))
-                                        .splineTo(new Vector2d(36, 20), toRadians(270))
-                                        .splineToSplineHeading(new Pose2d(28, 4.4, toRadians(40)), toRadians(230))
+                                        .splineTo(new Vector2d(38, 51), toRadians(260))
+                                        .splineToSplineHeading(new Pose2d(33, 22,toRadians(90)), toRadians(270))
+                                        .splineToSplineHeading(new Pose2d(29.4, 4.4, toRadians(40)), toRadians(230))
 
                 .build()
                 );

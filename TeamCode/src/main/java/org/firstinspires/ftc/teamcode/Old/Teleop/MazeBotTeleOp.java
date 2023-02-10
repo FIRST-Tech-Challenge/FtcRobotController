@@ -8,6 +8,7 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Old.Robots.FWDRobot;
 
-
+@Disabled
 @TeleOp(name = "MazeBotTeleOp")
 
 public class MazeBotTeleOp extends LinearOpMode {
@@ -50,7 +51,7 @@ public class MazeBotTeleOp extends LinearOpMode {
             float leftSticky = op.gamepad1.left_stick_y;
             float rightStick = gamepad1.right_stick_x;
             double leftSticktheta = atan2(leftSticky, leftStickx);
-            double leftStickr = sqrt(pow(leftSticky, 2) + pow(leftStickx, 2))*0.5;
+            double leftStickr = sqrt(pow(leftSticky, 2) + pow(leftStickx, 2));
             double powera = 0;
             double powerb = 0;
             double angle = atan2(leftSticky,leftStickx);
@@ -86,7 +87,8 @@ public class MazeBotTeleOp extends LinearOpMode {
 //            motorLeftFront.setPower((power + rightStick) * 0.3);
 //        }
 //        else {
-            if(powera>powerb){
+            if(abs(powera)>abs(powerb)
+            ){
                 powerb*=1/abs(powera);
                 powera*=1/abs(powera);
             }

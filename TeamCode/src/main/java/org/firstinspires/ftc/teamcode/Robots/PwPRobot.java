@@ -540,9 +540,9 @@ public class PwPRobot extends BasicRobot {
             if (regularDrive) {
                 roadrun.setWeightedDrivePower(
                         new Pose2d(
-                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.55 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2)),
-                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.55 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2)),
-                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.8 * abs(vals[2]))
+                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.6 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2.4)),
+                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.6 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2.4)),
+                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.75 * abs(vals[2]))
                         )
                 );
             } else {
