@@ -109,6 +109,11 @@ public class HardwareSlimbot
     public double       TURRET_ANGLE_MIN    = -170.0;   // absolute encoder angles at maximum rotation LEFT
     public double       TURRET_ANGLE_5STACK_L = -62.0;
     public double       TURRET_ANGLE_5STACK_R = +77.0;
+    public double       TURRET_ANGLE_CYCLE_R  = 129.5;
+    public double       TURRET_ANGLE_CYCLE_L  = -129.5;
+    public double       TURRET_ANGLE_COLLECT_R = 21.9;
+    public double       TURRET_ANGLE_COLLECT_L = -21.9;
+
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -860,6 +865,24 @@ public class HardwareSlimbot
             }
         } // liftMotorPIDAuto
     } // liftPIDPosRun
+    public void performCycle(double scoreAngle)
+    {
+        // Now reverse the lift to raise off the cone stack
+        liftPIDPosInit( LIFT_ANGLE_HIGH );
+
+        turretPIDPosInit( scoreAngle );
+
+        // Perform setup to center turret and raise lift to scoring position
+        grabberSetTilt( GRABBER_TILT_FRONT_H );
+    }
+    public void resetCycle(double collectAngle)
+    {
+        liftPIDPosInit(LIFT_ANGLE_COLLECT);
+
+        turretPIDPosInit( collectAngle );
+
+        grabberSetTilt(GRABBER_TILT_GRAB);
+    }
 
     /*--------------------------------------------------------------------------------------------*/
     /* liftPosInit()                                                                              */
@@ -976,6 +999,8 @@ public class HardwareSlimbot
             e.printStackTrace();
         }
     } // writeLiftLog()
+
+
 
     /*--------------------------------------------------------------------------------------------*/
     /* turretPosInit()                                                                            */
