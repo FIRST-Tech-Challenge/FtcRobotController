@@ -22,7 +22,7 @@ public class GeneralDriver extends BaseTele {
         hdw.createHardware();
         robotWheel = new MecanumWheels();
 
-        double powerDrivePercentage = 0.55 ;
+        double powerDrivePercentage = 0.55;
 
         telemetry.addData("[>]", "All set?");
         telemetry.update();
@@ -46,23 +46,37 @@ public class GeneralDriver extends BaseTele {
                 hdw.goToHeight(Hardware2022.SlideHeight.Low);
             }
 
+            if (gamepad1.dpad_right && gamepad1.x) {
+                sleep(400);
+                if (hdw.iseMode()) {
+                    hdw.seteMode(false);
+                    telemetry.addLine("eMode off (Limits on slide)");
+                    telemetry.update();
 
-            //hdw.freeLowerVerticalSlide(gamepad1.left_trigger);
-            hdw.freeMoveVerticalSlide(gamepad1.right_trigger - gamepad1.left_trigger);
+                } else {
+                    hdw.seteMode(true);
+                    telemetry.addLine("eMode on (No limits on slide)");
+                    telemetry.update();
+                }
 
-            //Wheel takes input of gampad 1  ,  turbo is the power factor. Range 0-1 , 1 is 100%
-            robotWheel.joystick(gamepad1, 1);
+            }
 
-            /* Set the calcuated velocity to wheels according to the gampad input */
-            double frontLeftVelocity = robotWheel.wheelFrontLeftPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
-            double backLeftVelocity = robotWheel.wheelBackLeftPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
-            double frontRightVelocity = robotWheel.wheelFrontRightPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
-            double backRightVelocity = robotWheel.wheelBackRightPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
+                //hdw.freeLowerVerticalSlide(gamepad1.left_trigger);
+                hdw.freeMoveVerticalSlide(gamepad1.right_trigger - gamepad1.left_trigger);
 
-            hdw.wheelFrontLeft.setVelocity(frontLeftVelocity);
-            hdw.wheelBackLeft.setVelocity(backLeftVelocity);
-            hdw.wheelFrontRight.setVelocity(frontRightVelocity);
-            hdw.wheelBackRight.setVelocity(backRightVelocity);
+                //Wheel takes input of gampad 1  ,  turbo is the power factor. Range 0-1 , 1 is 100%
+                robotWheel.joystick(gamepad1, 1);
+
+                /* Set the calcuated velocity to wheels according to the gampad input */
+                double frontLeftVelocity = robotWheel.wheelFrontLeftPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
+                double backLeftVelocity = robotWheel.wheelBackLeftPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
+                double frontRightVelocity = robotWheel.wheelFrontRightPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
+                double backRightVelocity = robotWheel.wheelBackRightPower * powerDrivePercentage * Hardware2022.ANGULAR_RATE;
+
+                hdw.wheelFrontLeft.setVelocity(frontLeftVelocity);
+                hdw.wheelBackLeft.setVelocity(backLeftVelocity);
+                hdw.wheelFrontRight.setVelocity(frontRightVelocity);
+                hdw.wheelBackRight.setVelocity(backRightVelocity);
 
             /*
             telemetry.addData("Front left set ",frontLeftVelocity );
@@ -82,8 +96,9 @@ public class GeneralDriver extends BaseTele {
             telemetry.update();
             */
 
+            }
+
         }
 
     }
 
-}

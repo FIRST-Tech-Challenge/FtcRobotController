@@ -50,7 +50,7 @@ public class Hardware2022 {
 
 
     //PID control parameter for turning.
-    private double kP =0.15;
+    private double kP = 0.15;
     private double kI = 0.1;
     private double kD = 0.005;
     private double kF = 0.0;
@@ -402,9 +402,18 @@ public class Hardware2022 {
             Log.d("9010", "vSlide position " + vSlide.getCurrentPosition());
         }
 
-        if (power > 0 || (power < 0 && clawTouch.getState() == true)) {
-            vSlide.setVelocity(power * ANGULAR_RATE);
+        if ( ( (vSlide.getCurrentPosition() - vsldieInitPosition)  <= CONE_SLIDE_HIGH && power > 0 )
+                ||  ( (vSlide.getCurrentPosition() - vsldieInitPosition)  >= 0  && power < 0 ) ||  eMode ) {
+            //telemetry.addLine().addData("We have power!", power );
+            //telemetry.update();
+            //Only give power when moving up, or moving down,but touch is not pushed.
+            if (power > 0 || (power < 0 && clawTouch.getState() == true)) {
+                vSlide.setVelocity(power * ANGULAR_RATE);
+            }
 
+            else {
+                vSlide.setVelocity(0);
+            }
         } else {
             vSlide.setVelocity(0);
         }
