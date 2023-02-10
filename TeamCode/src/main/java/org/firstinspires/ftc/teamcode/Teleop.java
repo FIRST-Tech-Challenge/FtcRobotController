@@ -748,15 +748,9 @@ public abstract class Teleop extends LinearOpMode {
                 conesOnStack++;
             }
 
-            switch(conesOnStack)
-            {
-                case 5  : liftTarget = 103.0; break;
-                case 4  : liftTarget = 106.0; break;
-                case 3  : liftTarget = 110.0; break;
-                case 2  : liftTarget = 111.0; break; // TODO: Not measured
-                case 1  : liftTarget = 111.0; break; // TODO: Not measured
-                default : liftTarget = 111.0;
-            }
+            // Sets lift position to a height dependent on how many cones are left on the stack
+            liftTarget = robot.coneStackHeights[conesOnStack -1];
+
             liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
             liftCycleCount = LIFT_CYCLECOUNT_START;
             liftFrontToBack = false;  // lowering (BackToFront)

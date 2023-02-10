@@ -155,6 +155,8 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_MED_B   = -70.0;   // lift position for MEDIUM junction (BACK Teleop)
     public double       LIFT_ANGLE_MIN     = -72.0;   //* absolute encoder angle at maximum rotation REAR
 
+    public double[]     coneStackHeights   = {111.0, 111.0, 110.0, 106.0, 103.0}; // lift positions for each cone on stack
+
     // there are additional LIFT_ANGLE_xxx settings in collectCone() in AutonomousLeft and AutonomousRight!
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture

@@ -436,14 +436,8 @@ public class AutonomousRight extends AutonomousBase {
         robot.grabberSetTilt( robot.GRABBER_TILT_GRAB2 );
 
         // Determine the correct lift-angle height based on how many cones remain
-        switch( fiveStackHeight ) {
-            case 5  : liftAngle5stack = 103.0; break;
-            case 4  : liftAngle5stack = 106.0; break;
-            case 3  : liftAngle5stack = 110.0; break;
-            case 2  : liftAngle5stack = 111.0; break; // TODO: Not measured
-            case 1  : liftAngle5stack = 111.0; break; // TODO: Not measured
-            default : liftAngle5stack = 111.0;
-        } // switch()
+        liftAngle5stack = robot.coneStackHeights[fiveStackHeight -1];
+
 
         // Lower the lift to the desired height (and ensure we're centered)
         robot.liftPosInit( liftAngle5stack );
