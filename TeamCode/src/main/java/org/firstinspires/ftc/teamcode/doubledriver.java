@@ -91,9 +91,9 @@ public class doubledriver extends LinearOpMode {
             }
 
 
-            frontLeft.setPower(throttle);
+            frontLeft.setPower(throttle*.91);
             frontRight.setPower(throttle);
-            backLeft.setPower(throttle);
+            backLeft.setPower(throttle*.91);
             backRight.setPower(throttle);
 
             frontLeft.setPower(-turn);

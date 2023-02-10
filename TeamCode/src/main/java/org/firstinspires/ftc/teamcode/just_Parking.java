@@ -180,8 +180,7 @@ public class just_Parking extends LinearOpMode {
 
 
         if (opModeIsActive()) {//start of queue for autonnums movment
-           move(.8,215);
-
+           move(.8,-1000);
 
             switch (location){//determine where to park
                 case 0:
@@ -190,7 +189,7 @@ public class just_Parking extends LinearOpMode {
                     break;
                 case 1:
                     gyroTurning(-90);
-                    move(.4,1000);
+                    move(.4,900);
                     sleep(30000);
                     break;
                 case 2:
@@ -199,7 +198,7 @@ public class just_Parking extends LinearOpMode {
                     break;
                 case 3:
                     gyroTurning(90);
-                    move(.4,1000);
+                    move(.4,900);
                     sleep(30000);
                     break;
             }
