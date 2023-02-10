@@ -196,7 +196,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         }
         // Update motor power settings:
         robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
-        robot.setTurretPower(turretPower);
+        robot.turretMotorSetPower(turretPower);
     } // driveAndRotateTurretAngle
 
     void alignToPole(boolean turretFacingFront) {
@@ -243,7 +243,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             }
             if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
                 robot.stopMotion();
-                robot.setTurretPower(0);
+                robot.turretMotorSetPower(0);
             } else {
                 driveAndRotateTurretAngle(drivePower, turretPower, turretFacingFront);
             }
@@ -260,7 +260,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 break;
         }
         robot.stopMotion();
-        robot.setTurretPower(0.0);
+        robot.turretMotorSetPower(0.0);
     } // alignToPole
 
     /*

@@ -270,7 +270,7 @@ public class PoleOrientationExample extends LinearOpMode
             }
             if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
                 robot.stopMotion();
-                robot.setTurretPower(0);
+                robot.turretMotorSetPower(0);
             } else {
                 driveAndRotateTurretAngle(drivePower, turretPower, turretFacingFront);
             }
@@ -278,7 +278,7 @@ public class PoleOrientationExample extends LinearOpMode
             theLocalPole = alignmentPipeline.getDetectedPole();
         }
         robot.stopMotion();
-        robot.setTurretPower(0.0);
+        robot.turretMotorSetPower(0.0);
     } // alignToPole
 
     /**
@@ -329,6 +329,6 @@ public class PoleOrientationExample extends LinearOpMode
         }
         // Update motor power settings:
         robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
-        robot.setTurretPower(turretPower);
+        robot.turretMotorSetPower(turretPower);
     } // driveAndRotateTurretAngle
 }
