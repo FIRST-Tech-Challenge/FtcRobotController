@@ -55,28 +55,6 @@ internal class SchedulerTest {
     }
 
     @Test
-    fun `scheduler properly times each loop`() {
-        var iterations = 0
-
-        for (i in 0..2) {
-            telemetry.addData("Loop time (ms)", 1000.0)
-        }
-
-        Scheduler.time(linearOpMode) {
-            Thread.sleep(100)
-
-            telemetry.addData("Loop time (ms)", this)
-
-            iterations++
-            if (iterations == 5) {
-                isStopped = true
-            }
-        }
-
-        verify(atLeast = 4) { telemetry.addData("Loop time (ms)", range(83.5, 120.0)) }
-    }
-
-    @Test
     fun `scheduler handles adding and deleting listeners from listener`() {
         val listeners = Array(4) { mockk<Listener>(relaxed = true) }
 

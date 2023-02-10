@@ -42,7 +42,7 @@ that provides a *much* nicer API, providing utilities to heavily speed up both y
 
   ```java title="BaseAuto.java"
   abstract class BaseAuto extends BlackOp {
-      @CreateOnGo
+      @CreateOnGo // Using BlackOp's CreateOnGo for cleaner object creation
       protected AutoBotComponents bot;
 
       @CreateOnGo(passHwMap = true)
@@ -71,6 +71,8 @@ that provides a *much* nicer API, providing utilities to heavily speed up both y
   @Autonomous
   class AutoDemo extends BaseAuto {
       public AutoDemo() {
+          // We can use GlobalUnits.pos() to create a Pose2d of our own desired units that
+          // automatically converts to inches/radians for us
           startPose = GlobalUnits.pos(x, y, r);
       }
 
@@ -96,8 +98,9 @@ that provides a *much* nicer API, providing utilities to heavily speed up both y
 
   ```kotlin title="BaseAuto.kt"
   abstract class BaseAuto : BlackOp() {
+      // Using BlackOp's createOnGo/evalOnGo for cleaner object creation
       protected val bot by evalOnGo(::createAutoBotComponents)
-      protected val drive by createOnGo<SampleMechanumDrive> { hwMap }
+      protected val drive by createOnGo<SampleMecanumDrive> { hwMap }
 
       protected abstract val startPose: Pose2d
       protected abstract fun mainTraj(startPose: Pose2d): Anvil
@@ -120,6 +123,8 @@ that provides a *much* nicer API, providing utilities to heavily speed up both y
   ```kotlin title="AutoDemo.kt"
   @Autonomous
   class AutoDemo : BaseAuto() {
+      // We can use GlobalUnits.pos() to create a Pose2d of our own desired units that
+      // automatically converts to inches/radians for us
       override val startPose = GlobalUnits.pos(x, y, r);
 
       override fun mainTraj(Pose2d startPose) =

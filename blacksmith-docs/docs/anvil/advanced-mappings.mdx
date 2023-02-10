@@ -1,0 +1,127 @@
+---
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ParamsList from '../../src/components/ParamsList';
+import Returns from '../../src/components/Returns';
+
+# Advanced mappings
+
+:::info
+All of these methods autoconvert to inches/radians/seconds behind the scenes, from the units set up
+in [GlobalUnits](../util/global-units).
+
+For example, if GlobalUnits is set-up as inches/degrees/milliseconds, you can do something like
+`.turn(90)` to turn 90 degrees, and it does `Math.toRadians(90)` automatically.
+:::
+
+These mappings consist of slightly more "advanced" mappings for lack of a better word. I guess
+they're just mappings that didn't fit into a specific category lol
+
+All of these functions return the Anvil instance to allow for method chaining (like so)
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...);
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...)
+  ```
+
+</TabItem>
+</Tabs>
+
+:::tip
+Click on the 'Roadrunner mapping' link to go to the LearnRoadRunner docs for the method! Heavy credit
+goes to the Roadrunner/LearnRoadRunner team fo their great library and documentation.
+:::
+
+### anvil.waitTime()
+
+[Roadrunner mapping (waitSeconds)](https://learnroadrunner.com/trajectory-sequence.html#waitseconds-seconds)
+
+Allows for simple wait segments. Not much to it. This is useful for running actions in between
+trajectories. Markers can be run during wait segments.
+
+Time unit (e.g. milliseconds or centuries or something) can be specified in [GlobalUnits](../util/global-units)
+
+**Defaults to seconds*
+
+<ParamsList params={[
+  {
+    name: 'time',
+    type: 'Number',
+    desc: 'The amount of time to wait',
+  },
+]}/>
+
+### anvil.setReversed()
+
+[Roadrunner mapping (setReversed)](https://learnroadrunner.com/trajectory-sequence.html#setreversed-boolean)
+
+Allows you set run your trajectory with the bot facing backwards.
+
+<ParamsList params={[
+  {
+    name: 'enabled',
+    type: 'Boolean',
+    desc: 'Whether or not to set the subsequent paths reversed',
+  },
+]}/>
+
+### anvil.setTangent()
+
+[Roadrunner mapping (setTangent)](https://learnroadrunner.com/trajectory-sequence.html#settangent-double)
+
+Allows you to set a heading tangent on a trajectory, allowing you to follow a trajectory at
+arbitrary heading tangents.
+
+<ParamsList params={[
+  {
+    name: 'tangent',
+    type: 'Double',
+    desc: '¡Ze tangent!',
+  },
+]}/>
+
+### anvil.addTrajectory() (#1)
+
+[Roadrunner mapping (addTrajectory)](https://learnroadrunner.com/trajectory-sequence.html#addtrajectory-trajectory)
+
+Pushes a new Trajectory segment onto the sequence.
+
+<ParamsList params={[
+  {
+    name: 'trajectory',
+    type: 'Trajectory',
+    desc: 'The trajectory to add',
+  },
+]}/>
+
+### anvil.addTrajectory() (#2)
+
+[Roadrunner mapping (addTrajectory)](https://learnroadrunner.com/trajectory-sequence.html#addtrajectory-trajectory)
+
+Pushes the returned Trajectory segment onto the sequence.
+
+<ParamsList params={[
+  {
+    name: 'trajectory',
+    type: '() -> Trajectory',
+    desc: 'A function which returns trajectory to add',
+  },
+]}/>

@@ -9,6 +9,14 @@ import Returns from '../../src/components/Returns';
 
 # Pathing mappings
 
+:::info
+All of these methods autoconvert to inches/radians/seconds behind the scenes, from the units set up
+in [GlobalUnits](../util/global-units).
+
+For example, if GlobalUnits is set-up as inches/degrees/milliseconds, you can do something like
+`.turn(90)` to turn 90 degrees, and it does `Math.toRadians(90)` automatically.
+:::
+
 These are the mappings from Anvil to the normal TrajectorySequenceBuilder functions that have to do
 with pathing, such as lines, splines, and raw movements.
 
@@ -36,9 +44,6 @@ All of these functions return the Anvil instance to allow for method chaining (l
 
 </TabItem>
 </Tabs>
-
-All numbers are auto-converted to different units behind the scenes depending on what [GlobalUnits](../util/global-units)
-is set to. By default, it's `inches`, `radians`, and `seconds`.
 
 They also all take just numbers, and convert them to the poses/vectors behind the scenes, allowing
 for a much cleaner API, and thus a much better developer experience.

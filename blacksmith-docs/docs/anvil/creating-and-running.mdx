@@ -331,10 +331,22 @@ runs when the trajectory reaches `.thenRun()`
 
 (`.thenRun()` is called in a `temporalMarker` behind the scenes)
 
-:::danger Warning
+:::danger Be aware
 The method in question MUST take in a single `Pose2d` parameter and MUST return an `Anvil` instance.
 
-The startPose passed to the function by Anvil is by default the **end pose of the previous trajectory**.
+The startPose passed to the function by Anvil is by default the **pose of the parent trajectory
+at the place `.thenRun()` is called**.
+
+For example:
+```java
+Anvil.forgeTrajectory(drive, new Pose2d()) // Starts at 0, 0, 0
+    .forward(10) // Goes to 0, 10, 0
+
+    // The startPose passed to 'otherTrajectory' will be 0, 10, 0
+    .thenRun(this::otherTrajectory)
+
+    .back(10) // Goes back to 0, 0, 0
+```
 
 If you want to use a different start pose, read on to the [Run options](#run-options) section
 :::
@@ -363,7 +375,8 @@ which you can then set to your liking:
     .runOnlyIf(() -> true/false)
 
     // Sets the Pose2d to pass to the trajectory
-    // Defaults to the endPose of the parent trajectory if not called at all
+    // Defaults to the position of the parent trajectory at the time of calling
+    // .thenRun()
     .setStartPose(() -> Pose2d()));
 ```
 
@@ -392,7 +405,7 @@ config
     .buildSynchronously(false) // Builds in background thread
     .runSynchronously(false) // Runs async
     .onlyRunIf(() -> true) // Always runs
-    .setStartPose(() -> getEndPose()); // Start pose is parent's end pose
+    .setStartPose(() -> getCurrentEndPose()); // Start pose is parent's current pose
 ```
 :::
 
@@ -510,7 +523,6 @@ If you just wanna build a TrajectorySequence without worrying about any other An
 easy as well.
 
 Just
-
 
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">

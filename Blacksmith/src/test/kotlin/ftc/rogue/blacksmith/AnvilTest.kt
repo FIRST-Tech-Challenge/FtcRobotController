@@ -43,6 +43,11 @@ internal class AnvilTest {
             .turn(PI)
             .turn(PI)
             .addTemporalMarker({ 1.0 }) { }
+            .addTrajectory(
+                drive.trajectoryBuilder(Pose2d())
+                    .forward(10.0)
+                    .build()
+            )
             .setReversed(true)
             .forward(10.0)
             .setReversed(false)
@@ -66,6 +71,11 @@ internal class AnvilTest {
             }
             withRawBuilder<TrajectorySequenceBuilder> {
                 addTemporalMarker({ 1.0 }) { }
+            }
+            addTrajectory {
+                drive.trajectoryBuilder(Pose2d())
+                    .forward(10.0)
+                    .build()
             }
             forward(10).doInReverse()
         }.build<TrajectorySequence>()

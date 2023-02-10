@@ -1,0 +1,65 @@
+---
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ParamsList from '../../src/components/ParamsList';
+import Returns from '../../src/components/Returns';
+
+# Custom mappings
+
+These are a collection of methods that aren't in the TrajectorySequenceBuilder, but they are
+really quite nice and useful.
+
+All of these functions return the Anvil instance to allow for method chaining (like so)
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...);
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...)
+  ```
+
+</TabItem>
+</Tabs>
+
+## anvil.doTimes()
+
+<ParamsList params={[
+  {
+    name: 'times',
+    type: 'Number',
+    desc: 'The amount of times to do the given actions',
+  },
+  {
+    name: 'pathsToDo',
+    type: '(Anvil, Int) -> Void',
+    desc: 'The actions to do',
+  },
+]}/>
+
+## anvil.inReverse()
+
+## anvil.withRawBuilder()
+
+## anvil.noop()
+
+## anvil.setPoseEstimateNow()
+
+## anvil.setPoseEstimateInTemporalMarker()
+
+## anvil.doInReverse()

@@ -251,6 +251,9 @@ class Anvil
         internal._resetConstraints()
     }
 
+    /**
+     * __IMPORTANT:__ These units are NOT auto-converted
+     */
     fun setVelConstraint(velConstraint: TrajectoryVelocityConstraint) = tap {
         internal._setVelConstraint(velConstraint)
     }
@@ -266,6 +269,9 @@ class Anvil
         internal._resetVelConstraint()
     }
 
+    /**
+     * __IMPORTANT:__ These units are NOT auto-converted
+     */
     fun setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = tap {
         internal._setAccelConstraint(accelConstraint)
     }
@@ -281,6 +287,9 @@ class Anvil
         internal._resetAccelConstraint()
     }
 
+    /**
+     * __IMPORTANT:__ These units are NOT auto-converted
+     */
     fun setTurnConstraint(maxAngVel: Number, maxAngAccel: Number) = tap {
         internal._setTurnConstraint(maxAngVel, maxAngAccel)
     }
