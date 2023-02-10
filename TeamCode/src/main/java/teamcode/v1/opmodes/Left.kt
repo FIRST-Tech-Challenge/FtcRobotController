@@ -105,7 +105,7 @@ class Left : KOpMode() {
             ),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 5.5, GuideConstants.telePos),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 6.0, GuideConstants.telePos),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
@@ -125,9 +125,10 @@ class Left : KOpMode() {
                     )
                 )
             ),
-            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 4.5, GuideConstants.telePos),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
+            WaitCmd(0.1),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 5.0, GuideConstants.telePos),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
@@ -147,9 +148,10 @@ class Left : KOpMode() {
                     )
                 )
             ),
-            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 3.0, GuideConstants.telePos),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
+            WaitCmd(0.1),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 3.5, GuideConstants.telePos),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
@@ -169,9 +171,10 @@ class Left : KOpMode() {
                     )
                 )
             ),
-            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 1.5, GuideConstants.telePos),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
+            WaitCmd(0.1),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 2.0, GuideConstants.telePos),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
@@ -191,9 +194,10 @@ class Left : KOpMode() {
                     )
                 )
             ),
-            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 0.5, GuideConstants.telePos),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
+            WaitCmd(0.1),
+            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 1.0, GuideConstants.telePos),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
@@ -213,8 +217,9 @@ class Left : KOpMode() {
                     )
                 )
             ),
-            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.25),
+            ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
+            WaitCmd(0.1),
             HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, -80.0, -1.0, GuideConstants.telePos),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             GVFCmd(robot.drive,
