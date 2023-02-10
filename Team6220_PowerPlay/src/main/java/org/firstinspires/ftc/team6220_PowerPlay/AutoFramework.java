@@ -1,21 +1,36 @@
-package org.firstinspires.ftc.team6220_PowerPlay.competition;
+package org.firstinspires.ftc.team6220_PowerPlay;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.team6220_PowerPlay.AutoFramework;
-import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
-import org.firstinspires.ftc.team6220_PowerPlay.Constants;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraRotation;
+abstract public class AutoFramework extends BaseAutonomous {
 
-@Autonomous(name = "RedLeft")
-public class RedLeft extends AutoFramework {
+    /**
+     * @param AutoSelector Assign to 0 or 1, corresponding to BlueLeft/RedLeft, or BlueRight/RedRight respectively
+     * @throws InterruptedException If you haven't added a config for that autonomous
+     */
+    public void runAuto(int AutoSelector) throws InterruptedException {
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-        runAuto(0);
 
-        /*// initialize motors, servos, imu, cameras, etc.
+        //set values here
+        int driveCourse;
+        int targetDistance = 11;
+        int[] signalArray;
+        switch (AutoSelector) {
+
+            //BlueLeft & RedLeft
+            case 0:
+                signalArray = new int[] {90, 33, 90, 11, -90, 11};
+                driveCourse = -90;
+                break;
+            //BlueRight & RedRight
+            case 1:
+                signalArray = new int[] {90, 11, -90, 11, -90, 33};
+                driveCourse = 90;
+                break;
+            default:
+                throw new IllegalArgumentException("you gotta edit AutoFramework to do that");
+        }
+
+        // initialize motors, servos, imu, cameras, etc.
         initialize();
 
         // detect april tag in initialize
@@ -37,7 +52,7 @@ public class RedLeft extends AutoFramework {
         driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
         // strafe right to face high junction
-        driveAutonomous(-90, 11);
+        driveAutonomous(driveCourse, targetDistance);
 
         // sleep to make sure robot has stopped moving
         sleep(500);
@@ -61,23 +76,24 @@ public class RedLeft extends AutoFramework {
         driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
 
         // park in correct signal position
+
+
+
         switch (signal) {
             // strafe left to park in zone 1
             case 0:
-                driveAutonomous(90, 33);
+                driveAutonomous(signalArray[0], signalArray[1]);
                 break;
 
             // strafe left to park in zone 2
             case 1:
-                driveAutonomous(90, 11);
+                driveAutonomous(signalArray[2], signalArray[3]);
                 break;
 
             // strafe right to park in zone 3
             case 2:
-                driveAutonomous(-90, 11);
+                driveAutonomous(signalArray[4], signalArray[5]);
                 break;
-
-         */
         }
-
+    }
 }

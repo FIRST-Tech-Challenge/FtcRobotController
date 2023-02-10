@@ -2,17 +2,20 @@ package org.firstinspires.ftc.team6220_PowerPlay.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.team6220_PowerPlay.AutoFramework;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "BlueLeft")
-public class BlueLeft extends BaseAutonomous {
+public class BlueLeft extends AutoFramework {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // initialize motors, servos, imu, cameras, etc.
+        runAuto(0);
+
+        /*// initialize motors, servos, imu, cameras, etc.
         initialize();
 
         // detect april tag in initialize
@@ -73,6 +76,9 @@ public class BlueLeft extends BaseAutonomous {
             case 2:
                 driveAutonomous(-90, 11);
                 break;
+
+
+         */
         }
-    }
+
 }
