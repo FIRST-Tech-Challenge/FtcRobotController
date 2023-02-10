@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Claw {
     public Servo servo;
 
-    public double OPEN = 0;
-    public double CLOSE = 0.8;
+    public double OPEN = 0.8;
+    public double CLOSE = 0;
 
     HardwareMap hwMap = null;
 

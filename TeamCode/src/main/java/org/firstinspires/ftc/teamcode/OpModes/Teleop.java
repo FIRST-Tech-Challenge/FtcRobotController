@@ -108,30 +108,6 @@ public class Teleop extends LinearOpMode {
                 robot.claw.close();
                 robot.arm.swingDown();
             }
-            if(gamepad1.a) {
-                robot.turnRobotToAngle(0);
-            }
-            if(gamepad1.b) {
-                robot.turnRobotToAngle(90);
-            }
-            if(gamepad1.x) {
-                robot.turnRobotToAngle(180);
-            }
-            if(gamepad1.y) {
-                robot.turnRobotToAngle(270);
-            }
-            if(gamepad1.dpad_up) {
-                robot.chassis.DriveToPosition(0.5,0,30, true);
-            }
-            if(gamepad1.dpad_down) {
-                robot.chassis.DriveToPosition(0.5,0,-30, true);
-            }
-            if(gamepad1.dpad_left) {
-                robot.chassis.DriveToPosition(0.5,-30,0, true);
-            }
-            if(gamepad1.dpad_right) {
-                robot.chassis.DriveToPosition(0.5,30,0,true);
-            }
 
 
             telemetry.addData("FL Motor Encoder", robot.chassis.FLMotor.getCurrentPosition());

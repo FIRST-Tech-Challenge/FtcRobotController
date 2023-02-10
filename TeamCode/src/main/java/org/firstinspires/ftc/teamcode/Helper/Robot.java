@@ -197,9 +197,9 @@ public class Robot {
         }
 
         if(LR) {
-            chassis.DriveToPosition(driveSpeed, 0, 70, true);
+            chassis.DriveToPosition(driveSpeed, 0, 64, true);
         } else {
-            chassis.DriveToPosition(driveSpeed,-15,70,true);
+            chassis.DriveToPosition(driveSpeed,-15,68,true);
         }
 
         //Drive to the pole
@@ -219,7 +219,7 @@ public class Robot {
 
         /** Next, move the slider to the right height, swing the arm down, drop the cone, swing the arm back up, and lower the slider. **/
         //Moves the slider to the correct height
-       vSlider.MoveSlider(1, 1000, 1400);
+       vSlider.MoveSlider(1, 1000, 1200);
 
 
         //Swings the arm down
@@ -249,33 +249,40 @@ public class Robot {
     public void ParkFromMedium(int location, boolean fromFront){
 
         double driveSpeed = 0.8;
-        turnRobotToAngle(175);
+        turnRobotToAngle(180);
         chassis.stopDriveMotors();
 
         if(fromFront) {
+            //avoid collision with pole
+            //chassis.DriveToPosition(driveSpeed, 0, 5, false);
+
             switch(location){
                 case 1:
                     chassis.DriveToPosition(driveSpeed, 75, -25, false);
                     break;
                 case 2:
-                    chassis.DriveToPosition(driveSpeed, 0, -25, false);
+                    chassis.DriveToPosition(driveSpeed, 5, -25, false);
                     break;
                 case 3:
-                    chassis.DriveToPosition(driveSpeed, -75, -25, false);
+                    chassis.DriveToPosition(driveSpeed, 0, -5, true);
+                    chassis.DriveToPosition(driveSpeed, -70, -25, false);
                     break;
             }
 
         }
         else {
+            // avoid collision with pole
+            chassis.DriveToPosition(0.8, 0, -7, true);
+
             switch(location){
                 case 1:
-                    chassis.DriveToPosition(driveSpeed, 55, -7, true);
+                    chassis.DriveToPosition(driveSpeed, 62, 35, false);
                     break;
                 case 2:
-                    chassis.DriveToPosition(driveSpeed, -5, -7, true);
+                    chassis.DriveToPosition(driveSpeed, 5, 35, false);
                         break;
                 case 3:
-                    chassis.DriveToPosition(driveSpeed, -75, -7, true);
+                    chassis.DriveToPosition(driveSpeed, -75, 35, false);
                     break;
             }
         }
@@ -292,48 +299,55 @@ public class Robot {
 
             int TIMEOUT_TO_GRAB = 500;
             int TIMEOUT_TO_DELIVER = 500;
-            /** First go to the stack of cones **/
+            double driveSpeed = 0.8;
 
+            // turn the robot and drive to next tile.
             turnRobotToAngle(350);
-            chassis.DriveToPosition(0.8, 0, 60, true);
+            chassis.DriveToPosition(0.8, 0, 50, true);
 
             if(LR) {
-                turnRobotToAngle(85);
+                turnRobotToAngle(75);
             } else {
                 turnRobotToAngle(270);
             }
             /** Now cycle the cones**/
 
-            vSlider.MoveSlider(1,1000,600);
+            vSlider.MoveSlider(1,1000,500);
             //swing down anc Open the claw
             arm.swingDown();
             claw.open();
-        //Raise slider and Drive forward slightly
-            chassis.DriveToPosition(0.7, 0, 70, true);
+
+            //drive to the cones.
+            chassis.DriveToPosition(0.7, 0, 54, true);
 
             //close the claw and grab onto the cone
             claw.close();
             runtime.reset();
             while ((runtime.milliseconds() < TIMEOUT_TO_GRAB)) {
             }
-            // Move the slider so that you don't tip the cones.
-            vSlider.MoveSlider(1,1000,200);
 
-            /** Now drive to the medium pole **/
+            // Move the slider so that you don't tip the cones.
+            vSlider.MoveSlider(1,1000,350);
+
+            /** Now drive back to the medium pole **/
             //Drive to the pole and face it
-            chassis.DriveToPosition(0.8,0,-65, true);
-            if(LR) {
-                turnRobotToAngle(220);
+            chassis.DriveToPosition(0.7,0,-55, true);
+
+            // Lift the arm
+          vSlider.MoveSlider(1, 1000,1100);
+
+          if(LR) {
+                turnRobotToAngle(205);
             } else {
                 turnRobotToAngle(140);
             }
-           // chassis.stopDriveMotors();
+
+            chassis.stopDriveMotors();
             /** Now deliver the cone **/
             //Move the slider to the right height
-            vSlider.MoveSlider(1, 1000,1000);
-            chassis.DriveToPosition(0.8,0,10,true);
+            //chassis.DriveToPosition(0.8,0,10,true);
             //Lower slider to catch on pole
-            vSlider.MoveSlider(1,-1000,400);
+            vSlider.MoveSlider(1,-1000,450);
             //Open and close claw
             claw.open();
             runtime.reset();
@@ -345,7 +359,10 @@ public class Robot {
             arm.swingUp();
             //lower slider
             vSlider.MoveSlider(1, -1000,1000);
-        }
+
+            // Move back to avoid colision with the
+
+    }
 //
     }
 
