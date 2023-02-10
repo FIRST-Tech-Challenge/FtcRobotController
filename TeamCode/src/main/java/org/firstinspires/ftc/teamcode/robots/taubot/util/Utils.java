@@ -20,7 +20,7 @@ public class Utils {
      * @return
      */
     public static double servoNormalize(double pulse) {
-        //todo, these numbers go back to Modern Robotics Hardare
+        //todo, these numbers go back to Modern Robotics Hardware
         //todo, REV expansion hubs have a range of 500 to 2500ms
         //todo, but we can't change this unless we're ready to re-calibrate all servo settings
         return (pulse - 750.0) / 1500.0;

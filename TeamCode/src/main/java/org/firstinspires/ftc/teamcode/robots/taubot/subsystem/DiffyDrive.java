@@ -10,8 +10,6 @@ import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 
-import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,19 +47,24 @@ public abstract class DiffyDrive extends Drive {
 
         @Override
         public void update() {
+            //gets wheel positions and stores them in wheelPositions
             List<Double> wheelPositions = drive.getWheelPositions();
+            //if extheading isn't needed, it's set to (basically) null
+            //extheading is a roadrunner class, does the sameish thing, just in kotlin
             double externalHeading = useExternalHeading ? drive.getExternalHeading() : Double.NaN;
             if(!lastWheelPositions.isEmpty()) {
                 List<Double> wheelDeltas = new ArrayList<>();
                 for(int i = 0; i < wheelPositions.size(); i++) {
+                    //stores change in wheel positions
                     wheelDeltas.add(wheelPositions.get(i) - lastWheelPositions.get(i));
                 }
-
+                //displacement - avg change in wheel pos
                 double displacement = (wheelDeltas.get(0) + wheelDeltas.get(1)) / 2;
                 double heading = useExternalHeading ?
 
                         //Vance, I changed this!! 
                         //wrapAngleRad(poseEstimate.getHeading() + wrapAngleRad(externalHeading - lastExternalHeading))
+                        //calculates angle robot's facing (heading) based on changes in L and R wheel
                         externalHeading :
                         wrapAngleRad(poseEstimate.getHeading() + wrapAngleRad((-wheelDeltas.get(0) + wheelDeltas.get(1)) / TRACK_WIDTH));
                 poseEstimate = new Pose2d(
@@ -70,7 +73,7 @@ public abstract class DiffyDrive extends Drive {
                         heading
                 );
             }
-
+            //calcs and stores velocities of each wheel
             List<Double> wheelVelocities = drive.getWheelVelocities();
             double externalHeadingVel = drive.getExternalHeadingVelocity();
             if(wheelVelocities != null) {
@@ -78,7 +81,7 @@ public abstract class DiffyDrive extends Drive {
                             new Pose2d((wheelVelocities.get(0) + wheelVelocities.get(1)) / 2, 0, externalHeadingVel) :
                             new Pose2d((wheelVelocities.get(0) + wheelVelocities.get(1)) / 2, 0, (-wheelVelocities.get(0) + wheelVelocities.get(1)) / TRACK_WIDTH);
             }
-
+            //updates Last vars to reset for next loop
             lastWheelPositions = wheelPositions;
             lastExternalHeading = externalHeading;
         }
