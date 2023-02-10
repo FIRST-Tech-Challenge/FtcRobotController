@@ -88,7 +88,7 @@ public class PP_MecanumTeleOp extends OpMode
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        armControl = new Arm(hardwareMap,true);
+        armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
         clawControl = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
         OdoPod odoControl = new OdoPod(hardwareMap);
@@ -109,7 +109,6 @@ public class PP_MecanumTeleOp extends OpMode
 
         slideControl.update(telemetry);
         gamepad2_dpad_up.update();
-        gamepad2_dpad_down.update();
         gamepad2_A.update();
         gamepad2_B.update();
         gamepad2_X.update();
@@ -196,12 +195,6 @@ public class PP_MecanumTeleOp extends OpMode
             slideControl.setIntakeOrGround();
 
         }
-
-        if(!armControl.isActive){
-
-        }
-
-        armControl.panick(gamepad2_dpad_down.isRisingEdge());
     }
 
     public void claw() {
