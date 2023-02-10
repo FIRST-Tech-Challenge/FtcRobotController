@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint
 import ftc.rogue.blacksmith.internal.util.getMethod
+import ftc.rogue.blacksmith.internal.util.invokeMethod
 import ftc.rogue.blacksmith.internal.util.invokeMethodRethrowing
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -218,6 +219,10 @@ internal class _TrajectorySequenceBuilder(
 
     fun build(): Any {
         return internalBuilder.invokeMethodRethrowing("build")
+    }
+
+    fun getSequenceSegments(): List<Any> {
+        return internalBuilder.invokeMethod("getSequenceSegments")
     }
 
     private fun getMethod(name: String, vararg args: Class<*>): Method {

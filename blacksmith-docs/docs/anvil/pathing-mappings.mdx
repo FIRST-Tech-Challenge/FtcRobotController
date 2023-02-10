@@ -1,0 +1,312 @@
+---
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ParamsList from '../../src/components/ParamsList';
+import Returns from '../../src/components/Returns';
+
+# Pathing mappings
+
+These are the mappings from Anvil to the normal TrajectorySequenceBuilder functions that have to do
+with pathing, such as lines, splines, and raw movements.
+
+All of these functions return the Anvil instance to allow for method chaining (like so)
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...);
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...)
+  ```
+
+</TabItem>
+</Tabs>
+
+All numbers are auto-converted to different units behind the scenes depending on what [GlobalUnits](../util/global-units)
+is set to. By default, it's `inches`, `radians`, and `seconds`.
+
+They also all take just numbers, and convert them to the poses/vectors behind the scenes, allowing
+for a much cleaner API, and thus a much better developer experience.
+
+:::tip
+Click on the 'Roadrunner mapping' link to go to the LearnRoadRunner docs for the method! Heavy credit
+goes to the Roadrunner/LearnRoadRunner team fo their great library and documentation.
+:::
+
+## Raw movements
+
+### anvil.forward()
+
+[Roadrunner mapping (forward)](https://learnroadrunner.com/trajectorybuilder-functions.html#forward-distance-double)
+
+<ParamsList params={[
+  {
+    name: 'distance',
+    type: 'Number',
+    desc: 'Makes robot go forwards by (distance * unitConversion) inches',
+  },
+]}/>
+
+### anvil.back()
+
+[Roadrunner mapping (back)](https://learnroadrunner.com/trajectorybuilder-functions.html#back-distance-double)
+
+<ParamsList params={[
+  {
+    name: 'distance',
+    type: 'Number',
+    desc: 'Makes robot go backwards by (distance * unitConversion) inches',
+  },
+]}/>
+
+### anvil.turn()
+
+[Roadrunner mapping (turn)](https://learnroadrunner.com/trajectory-sequence.html#turn-radians)
+
+<ParamsList params={[
+  {
+    name: 'angle',
+    type: 'Number',
+    desc: 'Makes robot go turn by (angle * unitConversion) radians. Relative to unit circle',
+  },
+]}/>
+
+### anvil.strafeLeft()
+
+[Roadrunner mapping (strafeLeft)](https://learnroadrunner.com/trajectorybuilder-functions.html#strafeleft-distance-double)
+
+<ParamsList params={[
+  {
+    name: 'distance',
+    type: 'Number',
+    desc: 'Makes robot strafe left by (distance * unitConversion) inches',
+  },
+]}/>
+
+### anvil.strafeRight()
+
+[Roadrunner mapping (strafeRight)](https://learnroadrunner.com/trajectorybuilder-functions.html#straferight-distance-double)
+
+<ParamsList params={[
+  {
+    name: 'distance',
+    type: 'Number',
+    desc: 'Makes robot strafe right by (distance * unitConversion) inches',
+  },
+]}/>
+
+## Lines
+
+### anvil.lineTo()
+
+[Roadrunner mapping (lineTo)](https://learnroadrunner.com/trajectorybuilder-functions.html#lineto-endposition-vector2d)
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'x component of the end vector',
+  },
+  {
+    name: 'y',
+    type: 'Number',
+    desc: 'y component of the end vector',
+  },
+]}/>
+
+### anvil.strafeTo()
+
+[Roadrunner mapping (strafeTo)](https://learnroadrunner.com/trajectorybuilder-functions.html#strafeto-endposition-vector2d)
+
+Functionally equivalent to [lineTo](#anvillineto)
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'x component of the end vector',
+  },
+  {
+    name: 'y',
+    type: 'Number',
+    desc: 'y component of the end vector',
+  },
+]}/>
+
+### anvil.lineToConstantHeading()
+
+[Roadrunner mapping (lineToConstantHeading)](https://learnroadrunner.com/trajectorybuilder-functions.html#linetoconstantheading-endposition-vector2d)
+
+Functionally equivalent to [lineTo](#anvillineto)
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'x component of the end vector',
+  },
+  {
+    name: 'y',
+    type: 'Number',
+    desc: 'y component of the end vector',
+  },
+]}/>
+
+### anvil.lineToLinearHeading()
+
+[Roadrunner mapping (lineToLinearHeading)](https://learnroadrunner.com/trajectorybuilder-functions.html#linetolinearheading-endpose-pose2d)
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'x component of the end pose',
+  },
+  {
+    name: 'y',
+    type: 'Number',
+    desc: 'y component of the end pose',
+  },
+  {
+    name: 'heading',
+    type: 'Number',
+    desc: 'Specified end heading',
+  },
+]}/>
+
+### anvil.lineToSplineHeading()
+
+[Roadrunner mapping (lineToSplineHeading)](https://learnroadrunner.com/trajectorybuilder-functions.html#linetosplineheading-endpose-pose2d)
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'x component of the end pose',
+  },
+  {
+    name: 'y',
+    type: 'Number',
+    desc: 'y component of the end pose',
+  },
+  {
+    name: 'heading',
+    type: 'Number',
+    desc: 'Specified end heading',
+  },
+]}/>
+
+## Splines
+
+### anvil.splineTo()
+
+[Roadrunner mapping (splineTo)](https://learnroadrunner.com/trajectorybuilder-functions.html#splineto-endposition-vector2d-endtangent-double)
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'x component of the end vector',
+  },
+  {
+    name: 'y',
+    type: 'Number',
+    desc: 'y component of the end vector',
+  },
+  {
+    name: 'endTangent',
+    type: 'Number',
+    desc: 'End tangent of the spline',
+  },
+]}/>
+
+### anvil.splineToConstantHeading()
+
+[Roadrunner mapping (splineToConstantHeading)](https://learnroadrunner.com/trajectorybuilder-functions.html#splinetoconstantheading-endposition-vector2d-endtangent-double)
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'x component of the end vector',
+  },
+  {
+    name: 'y',
+    type: 'Number',
+    desc: 'y component of the end vector',
+  },
+  {
+    name: 'endTangent',
+    type: 'Number',
+    desc: 'End tangent of the spline',
+  },
+]}/>
+
+### anvil.splineToLinearHeading()
+
+[Roadrunner mapping (splineToLinearHeading)](https://learnroadrunner.com/trajectorybuilder-functions.html#splinetolinearheading-endpose-pose2d-endtangent-double)
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'x component of the end vector',
+  },
+  {
+    name: 'y',
+    type: 'Number',
+    desc: 'y component of the end vector',
+  },
+  {
+    name: 'heading',
+    type: 'Number',
+    desc: 'Specified end heading',
+  },
+  {
+    name: 'endTangent',
+    type: 'Number',
+    desc: 'End tangent of the spline',
+  },
+]}/>
+
+### anvil.splineToSplineHeading()
+
+[Roadrunner mapping (splineToSplineHeading)](https://learnroadrunner.com/trajectorybuilder-functions.html#splinetosplineheading-endpose-pose2d-endtangent-double)
+
+<ParamsList params={[
+  {
+    name: 'x',
+    type: 'Number',
+    desc: 'x component of the end vector',
+  },
+  {
+    name: 'y',
+    type: 'Number',
+    desc: 'y component of the end vector',
+  },
+  {
+    name: 'heading',
+    type: 'Number',
+    desc: 'Specified end heading',
+  },
+  {
+    name: 'endTangent',
+    type: 'Number',
+    desc: 'End tangent of the spline',
+  },
+]}/>

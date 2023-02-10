@@ -48,7 +48,7 @@ private fun mainTraj(drive: DriveShim) =
                 awaitIntake()
             }
 
-            splineTo(-73.2, -47.8, -44)
+            splineTo(-73.2, -14.8, 44)
             awaitDeposit()
         }
 

@@ -40,7 +40,7 @@ function Parameter({ name, type, desc, typeLink, defaultsTo, isGeneric }: ParamI
 
 export default function ParamsList({ params }: { params: ParamItem[] }): JSX.Element {
   return (
-    <div className={'margin-bottom--md'}>
+    <div style={{ marginTop: '-15px' }} className={'margin-bottom--md'}>
       <div className={clsx('tabs__item', 'tabs__item--active', styles.paramHeader)}>
         Params
       </div>

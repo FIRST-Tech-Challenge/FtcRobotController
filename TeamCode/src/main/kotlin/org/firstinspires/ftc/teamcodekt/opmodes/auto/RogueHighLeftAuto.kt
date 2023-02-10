@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcodekt.util.CycleException
 
 @Autonomous
-class RogueMidLeftAuto : RogueBaseAuto() {
+class RogueHighLeftAuto : RogueBaseAuto() {
     override val startPose = GlobalUnits.pos(-91, -163, 90)
 
     override fun mainTraj(startPose: Pose2d) =
@@ -51,15 +51,15 @@ class RogueMidLeftAuto : RogueBaseAuto() {
 
     private fun Anvil.initialGoToDeposit() = this
         .forward(132)
-        .turn(-139.5)
-        .lineToLinearHeading(-78.75 + poleOffset.x, -42.5 + poleOffset.y, -49)
+        .turn(-49.5)
+        .lineToLinearHeading(-78.75 + poleOffset.x, -15.5 + poleOffset.y, 49)
 
     private fun Anvil.goToDeposit(it: Int) = when (it) {
-        0 -> splineTo(-81.3 + poleOffset.x, -42.2 + poleOffset.y, -42.3)
-        1 -> splineTo(-81.1 + poleOffset.x, -42.2 + poleOffset.y, -39.0)
-        2 -> splineTo(-80.7 + poleOffset.x, -42.6 + poleOffset.y, -32.8)
-        3 -> splineTo(-80.7 + poleOffset.x, -39.5 + poleOffset.y, -32.5)
-        4 -> splineTo(-80.1 + poleOffset.x, -39.5 + poleOffset.y, -30.0)
+        0 -> splineTo(-81.3 + poleOffset.x, -12.2 + poleOffset.y, 42.3)
+        1 -> splineTo(-81.1 + poleOffset.x, -12.2 + poleOffset.y, 39.0)
+        2 -> splineTo(-80.7 + poleOffset.x, -12.6 + poleOffset.y, 32.8)
+        3 -> splineTo(-80.7 + poleOffset.x, -09.5 + poleOffset.y, 32.5)
+        4 -> splineTo(-80.1 + poleOffset.x, -09.5 + poleOffset.y, 30.0)
         else -> throw CycleException()
     }
 
@@ -82,7 +82,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
         }
 
         .addTemporalMarker(275) {
-            bot.lift.goToAngledMidButHigher()
+            bot.lift.goToAngledMidPredeposit()
         }
 
         .addTemporalMarker(425) {
@@ -103,7 +103,7 @@ class RogueMidLeftAuto : RogueBaseAuto() {
 
         .addTemporalMarker(15) {
             bot.arm.setToForwardsAngledPos()
-            bot.lift.goToAngledMidButHigher()
+            bot.lift.goToAngledMidPredeposit()
         }
 
         .addTemporalMarker(100) {

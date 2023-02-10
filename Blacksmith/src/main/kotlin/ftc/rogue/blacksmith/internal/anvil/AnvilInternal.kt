@@ -66,6 +66,14 @@ class AnvilInternal
         return builtTrajectory.invokeMethodRethrowing("end")
     }
 
+    private fun getCurrentEndPose(): Pose2d {
+        val sequenceSegments = builderProxy.getSequenceSegments()
+
+        return sequenceSegments
+            .last()
+            .invokeMethod("getEndPose")
+    }
+
     // -- Direct path mappings (Basic) --
 
     fun _forward(distance: Number) = enqueue {
@@ -272,14 +280,15 @@ class AnvilInternal
         val config = AnvilRunConfig()
         configBuilder.run { AnvilRunConfig().build() }
 
-        val nextStartPoseSupplier = config.startPoseSupplier ?: ::getEndPose
+        val nextStartPose = config.startPoseSupplier?.invoke()
+            ?: getCurrentEndPose()
 
         val key = Any()
 
         if (!config.buildsSynchronously) {
             builderDeque.addFirst {
                 builderProxy.UNSTABLE_addTemporalMarkerOffset(0.0) {
-                    preforgedTrajectories[key] = builderScope.async { nextTrajectory( nextStartPoseSupplier() ).build() }
+                    preforgedTrajectories[key] = builderScope.async { nextTrajectory( nextStartPose ).build() }
                 }
             }
         }
@@ -287,19 +296,18 @@ class AnvilInternal
         _addTemporalMarker(0.0) {
             if (!config.predicate()) return@_addTemporalMarker
 
-            val nextTrajectoryBuilt = if (config.buildsSynchronously) {
-                nextTrajectory( nextStartPoseSupplier() ).build()
-            } else {
-                runBlocking { preforgedTrajectories[key]?.await() }!!
-            }
+            val nextTrajectoryBuilt =
+                if (config.buildsSynchronously) {
+                    nextTrajectory(nextStartPose).build()
+                } else {
+                    runBlocking { preforgedTrajectories[key]?.await() }!!
+                }
 
-            if (config.buildsSynchronously) {
-                run( nextTrajectoryBuilt, !config.runsSynchronously )
-            }
+            run( nextTrajectoryBuilt, !config.runsSynchronously )
         }
     }
 
-    @Suppress("UNCHECKED_CAST", "unused")
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> `$build`(): T {
         for (i in builderDeque.indices) {
             builderDeque.removeFirst().invoke()

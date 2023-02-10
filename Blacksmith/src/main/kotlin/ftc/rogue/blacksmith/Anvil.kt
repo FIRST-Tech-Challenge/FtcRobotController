@@ -88,6 +88,7 @@ import kotlinx.coroutines.*
  * @see TrajectorySequenceBuilder
  */
 class Anvil
+    @PublishedApi
     internal constructor (
         drive: Any,
         startPose: Pose2d,
@@ -96,7 +97,7 @@ class Anvil
     companion object {
         @JvmStatic
         @JvmOverloads
-        fun forgeTrajectory(
+        inline fun forgeTrajectory(
             drive: Any,
             startPose: Pose2d,
             builder: Anvil.() -> Anvil = { this }
@@ -116,119 +117,119 @@ class Anvil
 
     // -- Direct path mappings (Basic) --
 
-    fun forward(distance: Number) = apply {
+    fun forward(distance: Number) = tap {
         internal._forward(distance)
     }
 
-    fun back(distance: Number) = apply {
+    fun back(distance: Number) = tap {
         internal._back(distance)
     }
 
-    fun turn(angle: Number) = apply {
+    fun turn(angle: Number) = tap {
         internal._turn(angle)
     }
 
-    fun strafeLeft(distance: Number) = apply {
+    fun strafeLeft(distance: Number) = tap {
         internal._strafeLeft(distance)
     }
 
-    fun strafeRight(distance: Number) = apply {
+    fun strafeRight(distance: Number) = tap {
         internal._strafeRight(distance)
     }
 
     // -- Direct path mappings (Lines) --
 
-    fun lineTo(x: Number, y: Number) = apply {
+    fun lineTo(x: Number, y: Number) = tap {
         internal._lineTo(x, y)
     }
 
-    fun strafeTo(x: Number, y: Number) = apply {
+    fun strafeTo(x: Number, y: Number) = tap {
         internal._lineTo(x, y)
     }
 
-    fun lineToConstantHeading(x: Number, y: Number) = apply {
+    fun lineToConstantHeading(x: Number, y: Number) = tap {
         internal._lineTo(x, y)
     }
 
-    fun lineToLinearHeading(x: Number, y: Number, heading: Number) = apply {
+    fun lineToLinearHeading(x: Number, y: Number, heading: Number) = tap {
         internal._lineToLinearHeading(x, y, heading)
     }
 
-    fun lineToSplineHeading(x: Number, y: Number, heading: Number) = apply {
+    fun lineToSplineHeading(x: Number, y: Number, heading: Number) = tap {
         internal._lineToSplineHeading(x, y, heading)
     }
 
     // -- Direct path mappings (Splines) --
 
-    fun splineTo(x: Number, y: Number, endTangent: Number) = apply {
+    fun splineTo(x: Number, y: Number, endTangent: Number) = tap {
         internal._splineTo(x, y, endTangent)
     }
 
-    fun splineToConstantHeading(x: Number, y: Number, endTangent: Number) = apply {
+    fun splineToConstantHeading(x: Number, y: Number, endTangent: Number) = tap {
         internal._splineToConstantHeading(x, y, endTangent)
     }
 
-    fun splineToLinearHeading(x: Number, y: Number, heading: Number, endTangent: Number) = apply {
+    fun splineToLinearHeading(x: Number, y: Number, heading: Number, endTangent: Number) = tap {
         internal._splineToLinearHeading(x, y, heading, endTangent)
     }
 
-    fun splineToSplineHeading(x: Number, y: Number, heading: Number, endTangent: Number) = apply {
+    fun splineToSplineHeading(x: Number, y: Number, heading: Number, endTangent: Number) = tap {
         internal._splineToSplineHeading(x, y, heading, endTangent)
     }
 
     // -- Advanced mappings --
 
-    fun waitTime(time: Number) = apply {
+    fun waitTime(time: Number) = tap {
         internal._waitTime(time)
     }
 
-    fun setReversed(reversed: Boolean) = apply {
+    fun setReversed(reversed: Boolean) = tap {
         internal._setReversed(reversed)
     }
 
-    fun setTangent(tangent: Number) = apply {
+    fun setTangent(tangent: Number) = tap {
         internal._setTangent(tangent)
     }
 
-    fun addTrajectory(trajectory: Trajectory) = apply {
+    fun addTrajectory(trajectory: Trajectory) = tap {
         internal._addTrajectory(trajectory)
     }
 
-    fun addTrajectory(trajectory: () -> Trajectory) = apply {
+    fun addTrajectory(trajectory: () -> Trajectory) = tap {
         internal._addTrajectory(trajectory)
     }
 
     // -- Markers --
 
     @JvmOverloads
-    fun addTemporalMarker(offset: Number = 0.0, action: MarkerCallback) = apply {
+    fun addTemporalMarker(offset: Number = 0.0, action: MarkerCallback) = tap {
         internal._addTemporalMarker(offset, action)
     }
 
     @JvmOverloads
-    fun addDisplacementMarker(offset: Number = 0.0, action: MarkerCallback) = apply {
+    fun addDisplacementMarker(offset: Number = 0.0, action: MarkerCallback) = tap {
         internal._addDisplacementMarker(offset, action)
     }
 
-    fun addSpatialMarker(offsetX: Number, offsetY: Number, action: MarkerCallback) = apply {
+    fun addSpatialMarker(offsetX: Number, offsetY: Number, action: MarkerCallback) = tap {
         internal._addSpatialMarker(offsetX, offsetY, action)
     }
 
     // -- Utilities --
 
-    fun setPoseEstimateNow(pose: Pose2d) = apply {
+    fun setPoseEstimateNow(pose: Pose2d) = tap {
         internal.setPoseEstimate(pose)
     }
 
-    fun setPoseEstimateInTemporalMarker(pose: Pose2d) = apply {
+    fun setPoseEstimateInTemporalMarker(pose: Pose2d) = tap {
         internal.__setPoseEstimateInTemporalMarker(pose)
     }
 
-    fun inReverse(pathsToDoInReverse: AnvilConsumer) = apply {
+    fun inReverse(pathsToDoInReverse: AnvilConsumer) = tap {
         internal.__inReverse(pathsToDoInReverse)
     }
 
-    fun doInReverse() = apply {
+    fun doInReverse() = tap {
         internal.`$doInReverse`()
     }
 
@@ -236,55 +237,55 @@ class Anvil
     val noop: Anvil
         get() = also { internal._noop() }
 
-    fun <T> withRawBuilder(builder: Consumer<T>) = apply {
+    fun <T> withRawBuilder(builder: Consumer<T>) = tap {
         internal._withRawBuilder(builder)
     }
 
-    fun doTimes(times: Int, pathsToDo: AnvilCycle) = apply {
+    fun doTimes(times: Int, pathsToDo: AnvilCycle) = tap {
         internal.doTimes(times, pathsToDo)
     }
 
     // -- Constraints --
 
-    fun resetConstraints() = apply {
+    fun resetConstraints() = tap {
         internal._resetConstraints()
     }
 
-    fun setVelConstraint(velConstraint: TrajectoryVelocityConstraint) = apply {
+    fun setVelConstraint(velConstraint: TrajectoryVelocityConstraint) = tap {
         internal._setVelConstraint(velConstraint)
     }
 
     /**
      * __IMPORTANT:__ These units are NOT auto-converted
      */
-    fun setVelConstraint(maxVel: Number, maxAngularVel: Number, trackWidth: Number) = apply {
+    fun setVelConstraint(maxVel: Number, maxAngularVel: Number, trackWidth: Number) = tap {
         internal._setVelConstraint(maxVel, maxAngularVel, trackWidth)
     }
 
-    fun resetVelConstraint() = apply {
+    fun resetVelConstraint() = tap {
         internal._resetVelConstraint()
     }
 
-    fun setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = apply {
+    fun setAccelConstraint(accelConstraint: TrajectoryAccelerationConstraint) = tap {
         internal._setAccelConstraint(accelConstraint)
     }
 
     /**
      * __IMPORTANT:__ These units are NOT auto-converted
      */
-    fun setAccelConstraint(maxAccel: Number) = apply {
+    fun setAccelConstraint(maxAccel: Number) = tap {
         internal._setAccelConstraint(maxAccel)
     }
 
-    fun resetAccelConstraint() = apply {
+    fun resetAccelConstraint() = tap {
         internal._resetAccelConstraint()
     }
 
-    fun setTurnConstraint(maxAngVel: Number, maxAngAccel: Number) = apply {
+    fun setTurnConstraint(maxAngVel: Number, maxAngAccel: Number) = tap {
         internal._setTurnConstraint(maxAngVel, maxAngAccel)
     }
 
-    fun resetTurnConstraint() = apply {
+    fun resetTurnConstraint() = tap {
         internal._resetTurnConstraint()
     }
 
@@ -294,7 +295,7 @@ class Anvil
     fun thenRun(
         nextTrajectory: (Pose2d) -> Anvil,
         configBuilder: AnvilRunConfigBuilder = AnvilRunConfig.DEFAULT
-    ) = apply {
+    ) = tap {
         internal.`$thenRun`(nextTrajectory, configBuilder)
     }
 
@@ -304,6 +305,6 @@ class Anvil
 
     // -- Internal --
 
-    private inline fun apply(action: () -> Unit) =
+    private inline fun tap(action: () -> Unit) =
         also { action() }
 }

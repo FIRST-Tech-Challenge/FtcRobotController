@@ -123,7 +123,7 @@ something like:)
 
 ```java
 myFirstCreatedAnvilTrajectory
-    .turn(720) /* GlobalUnits is setup so you can use degrees or whatever unit you want */
+    .turn(720) /* Set up GlobalUnits so you can use degrees or whatever unit you want */
     .whateverElse(...);
 ```
 
@@ -268,7 +268,7 @@ Using .onSchedulerLaunch() implicitly runs the trajectories asynchronously.
           waitForStart()
 
           runner.start(true); // Starts the traj asynchronously
-          while (opModeIsActive() && !isStopRequested {
+          while (opModeIsActive() && !isStopRequested) {
               sampleMecanumDrive.update()
           }
       }
@@ -404,7 +404,7 @@ like.
 ### Putting it all together
 
 <Tabs groupId="programming-language">
-<TabItem value="java_rc" label="Java w/ Run config">
+<TabItem value="java_norc" label="Java w/out Run config">
 
   ```java
   public class MyAuto extends MyBaseAuto {
@@ -430,7 +430,7 @@ like.
   ```
 
 </TabItem>
-<TabItem value="kt_rc" label="Kotlin w/ Run config">
+<TabItem value="kt_norc" label="Kotlin w/out Run config">
 
   ```kotlin
   class MyAuto : MyBaseAuto() {
@@ -453,7 +453,7 @@ like.
   ```
 
 </TabItem>
-<TabItem value="java_norc" label="Java w/out Run config">
+<TabItem value="java_rc" label="Java w/ Run config">
 
   ```java
   public class MyAuto extends MyBaseAuto {
@@ -479,7 +479,7 @@ like.
   ```
 
 </TabItem>
-<TabItem value="kt_norc" label="Kotlin w/out Run config">
+<TabItem value="kt_rc" label="Kotlin w/ Run config">
 
   ```kotlin
   class MyAuto : MyBaseAuto() {

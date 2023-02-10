@@ -33,7 +33,7 @@ abstract class BlackOp : LinearOpMode() {
     /**
      * The method to override in place of runOpMode.
      *
-     * goo goo ga ga.
+     * goo.
      */
     abstract fun go()
 
@@ -46,10 +46,9 @@ abstract class BlackOp : LinearOpMode() {
         hwMap = hardwareMap
         mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        Scheduler.emit(STARTING_MSG)
-
         injectCreateOnGoFields()
 
+        Scheduler.emit(STARTING_MSG)
         go()
     }
 

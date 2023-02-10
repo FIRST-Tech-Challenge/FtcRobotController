@@ -6,6 +6,7 @@ import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.units.DistanceUnit
 import ftc.rogue.blacksmith.units.GlobalUnits
 import ftc.rogue.blacksmith.util.toCm
+import ftc.rogue.blacksmith.util.toRad
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
@@ -17,7 +18,7 @@ class RogueMidRightAuto : RogueBaseAuto() {
 
     override fun mainTraj(startPose: Pose2d) =
         Anvil.forgeTrajectory(bot.drive, startPose)
-            .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(40.0, Math.toRadians(250.0), DriveConstants.TRACK_WIDTH))
+            .setVelConstraint(40, 250.toRad(), DriveConstants.TRACK_WIDTH)
 
             .addTemporalMarker {
                 bot.lift.goToAngledMidPredeposit()

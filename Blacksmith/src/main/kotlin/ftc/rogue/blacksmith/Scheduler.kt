@@ -127,44 +127,6 @@ object Scheduler {
         internal.launchOnStart(opmode, afterEach)
     }
 
-        /**
-     * Starts the [Scheduler], and runs the program in the given [afterEach] until the [LinearOpMode]
-     * is no longer active. The loop time is then calculated, and send to the [Telemetry] object.
-     *
-     * __Note 1:__ this method is for development and optimization purposes only, _and should not
-     * be used in final code_.
-     *
-     * __Note 2:__ This method automatically calls [Telemetry.update] after the loop time is
-     * calculated; _you should not call [Telemetry.update] yourself when using this_.
-     *
-     * Java usage example:
-     * ```java
-     * @Override
-     * public void runOpMode() throws InterruptedException {
-     *    // Instantiate listeners...
-     *
-     *    waitForStart();
-     *
-     *    Scheduler.time(this, telemetry, () -> {
-     *        updateSomething();
-     *        updateTelemetry(telemetry);
-     *    });
-     * }
-     *
-     * //or
-     *
-     * @Override
-     * public void runOpMode() throws InterruptedException {
-     *    // Instantiate listeners...
-     *
-     *    waitForStart();
-     *
-     *    Scheduler.this(this, telemetry);
-     * }
-     * ```
-     * @param opmode The [LinearOpMode] to run the [Scheduler] in.
-     * @param afterEach An optional block of code to run every tick, after the listeners have ran.
-     */
     @JvmStatic
     fun time(opmode: LinearOpMode, afterEach: DoubleConsumer) {
         internal.time(opmode, afterEach)
