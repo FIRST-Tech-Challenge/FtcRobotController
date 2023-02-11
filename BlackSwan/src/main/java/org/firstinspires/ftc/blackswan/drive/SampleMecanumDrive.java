@@ -31,11 +31,13 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -46,6 +48,7 @@ import org.firstinspires.ftc.blackswan.util.LynxModuleUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -75,11 +78,25 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final DcMotorEx rightFront;
     private final List<DcMotorEx> motors;
 
+    private final Servo clawservo;
+
+    private final DcMotorEx linearslide;
+
+    private final Servo arm;
+
     private final BNO055IMU imu;
     private final VoltageSensor batteryVoltageSensor;
 
+    LinearOpMode opMode;
+
     public SampleMecanumDrive(HardwareMap hardwareMap) {
+        this(hardwareMap, null);
+    }
+
+    public SampleMecanumDrive(HardwareMap hardwareMap, LinearOpMode opMode) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+
+        this.opMode = opMode;
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
@@ -127,6 +144,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        linearslide = hardwareMap.get(DcMotorEx.class, "linearSlide");
+        clawservo = hardwareMap.get(Servo.class, "daclaw");
+        arm = hardwareMap.get(Servo.class, "spinster");
+
+        linearslide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearslide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -185,6 +209,40 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void turn(double angle) {
         turnAsync(angle);
         waitForIdle();
+    }
+
+    public void liftDaBoi(){
+        linearslide.setTargetPosition(5800);
+        linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearslide.setPower(.5);
+    }
+
+    public void lowerDaBoi(){
+        linearslide.setTargetPosition(0);
+        linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearslide.setPower(.7);
+    }
+
+    public void closeClaw(){
+        clawservo.setPosition(.5);
+    }
+
+    public void setArm(){
+        arm.setPosition(0);
+    }
+
+
+    public void pause(int millis) {
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        while (time < millis && opMode.opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+        }
+    }
+
+    public void openClaw(){
+        clawservo.setPosition(.2);
     }
 
     public void followTrajectoryAsync(Trajectory trajectory) {
