@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name = "donga")
 
 public class main extends LinearOpMode {
-    movement movement = new movement();
+    movement movement = null;
 
 
 
@@ -46,6 +46,10 @@ public class main extends LinearOpMode {
         movement_motors.add(motor2);
         movement_motors.add(motor3);
         movement_motors.add(motor4);
+        
+        movement = new Movement(movement_motors);
+        
+        
 
         //initialize motors
 
