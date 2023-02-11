@@ -39,19 +39,19 @@ class Left : KOpMode() {
     private val intakePath1 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
         Pose(-11.5, 32.5, 120.0.radians),
-        Pose(-14.0, 60.5, 90.0.radians)
+        Pose(-13.5, 60.5, 90.0.radians)
     )
 
     private val intakePath2 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
         Pose(-15.0, 31.5, 90.0.radians),
-        Pose(-13.0, 60.5, 90.0.radians)
+        Pose(-12.5, 60.5, 90.0.radians)
     )
 
     private val intakePath3 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
         Pose(-15.0, 31.5, 90.0.radians),
-        Pose(-12.0, 60.0, 90.0.radians)
+        Pose(-11.5, 60.0, 90.0.radians)
     )
 
     private val depositPath = HermitePath(
@@ -64,19 +64,19 @@ class Left : KOpMode() {
     private val leftPath = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
         Pose(-15.0, 31.5, 90.0.radians),
-        Pose(-12.5, 58.5, 90.0.radians)
+        Pose(-12.5, 58.0, 90.0.radians)
     )
 
     private val middlePath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
         Pose(-12.5, 58.5, 270.0.radians),
-        Pose(-15.0, 37.0, 270.0.radians),
+        Pose(-14.0, 37.0, 270.0.radians),
     )
 
     private val rightPath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
         Pose(-12.5, 58.5, 270.0.radians),
-        Pose(-15.0, 13.5, 270.0.radians)
+        Pose(-14.0, 13.5, 270.0.radians)
 
     )
 
