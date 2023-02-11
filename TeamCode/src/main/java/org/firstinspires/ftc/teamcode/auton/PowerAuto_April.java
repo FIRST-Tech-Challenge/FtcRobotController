@@ -310,7 +310,7 @@ public class PowerAuto_April extends LinearOpMode {
         //Drive to junction
         gyroDrive(0.4, 3, 0, 15.0);
         gyroStrafe(STRAFE_SPEED, 20, 0, 15.0);
-        gyroDrive(0.5, 47, 0, 15.0);
+        gyroDrive(0.5, 48, 0, 15.0);
         sleep(200);
 
 
@@ -379,16 +379,16 @@ public class PowerAuto_April extends LinearOpMode {
             robot.Gray.setPower(0);
             robot.Green.setPower(0);
             //sleep(500);
-/*
+
         //Third Cone Code Starts Here
 
-        //gyroDrive(DRIVE_SPEED,-3,180,15.0);
+        gyroDrive(DRIVE_SPEED,-3,180,15.0);
         gyroTurn(TURN_SPEED, 90);
         /*while (!robot.touch.isPressed()) {
             robot.LiftMotor.setPower(-0.8);
-        }
-        robot.LiftMotor.setPower(0);*/
-        /*sleep(200);
+        }*/
+        /*robot.LiftMotor.setPower(0);
+        sleep(200);
         //Pick up cone stack
         liftDrive(-0.6, 700, false);
         gyroDrive(DRIVE_SPEED, 8, 90, 15.0);
@@ -417,8 +417,8 @@ public class PowerAuto_April extends LinearOpMode {
         robot.Green.setPower(0);
         //sleep(500);*/
 
-        gyroDrive(DRIVE_SPEED,-2,180,15.0);
-        gyroTurn(DRIVE_SPEED, 90);
+        //gyroDrive(DRIVE_SPEED,-2,180,15.0);
+        //gyroTurn(DRIVE_SPEED, 90);
         while (!robot.touch.isPressed()) {
             robot.LiftMotor.setPower(-0.8);
         }
@@ -905,7 +905,7 @@ public class PowerAuto_April extends LinearOpMode {
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
 
                 if (!robot.touch3.isPressed()) {
-                    robot.LiftMotor.setPower(1.0);
+                    robot.LiftMotor.setPower(0.6);
                 }
                 else if (robot.touch3.isPressed()) {
                     robot.LiftMotor.setPower(0);
