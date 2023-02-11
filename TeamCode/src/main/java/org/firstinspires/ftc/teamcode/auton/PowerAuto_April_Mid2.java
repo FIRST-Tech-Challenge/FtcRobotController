@@ -29,147 +29,36 @@
 
 package org.firstinspires.ftc.teamcode.auton;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.NewHardwareMap;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import java.util.Date;
-import org.firstinspires.ftc.robotcore.external.State;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.NewHardwareMap;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
-import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.FRONT;
-
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-import java.util.Vector;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
-//import com.qualcomm.robotcore.robot.Robot;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.RobotLog;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
-import java.util.concurrent.locks.Lock;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-
-import java.lang.Math.*;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 
-
-/**
- * This 2020-2021 OpMode illustrates the basics of using the Vuforia localizer to determine
- * positioning and orientation of robot on the ULTIMATE GOAL FTC field.
- * The code is structured as a LinearOpMode
- *
- * When images are located, Vuforia is able to determine the position and orientation of the
- * image relative to the camera.  This sample code then combines that information with a
- * knowledge of where the target images are on the field, to determine the location of the camera.
- *
- * From the Audience perspective, the Red Alliance station is on the right and the
- * Blue Alliance Station is on the left.
-
- * There are a total of five image targets for the ULTIMATE GOAL game.
- * Three of the targets are placed in the center of the Red Alliance, Audience (Front),
- * and Blue Alliance perimeter walls.
- * Two additional targets are placed on the perimeter wall, one in front of each Tower Goal.
- * Refer to the Field Setup manual for more specific location details
- *
- * A final calculation then uses the location of the camera on the robot to determine the
- * robot's location and orientation on the field.
- *
- * @see VuforiaLocalizer
- * @see VuforiaTrackableDefaultListener
- * see  ultimategoal/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
- *
- * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
- * is explained below.
- */
+//Start of Program
 @Disabled
-@Autonomous(name="PowerAuto_Test", group ="Concept", preselectTeleOp="Power_TeleOp")
+@Autonomous(name="PowerAuto_Blue_Mid", group ="Concept", preselectTeleOp="Power_TeleOp")
 
-public class PowerAuto_Test extends LinearOpMode {
-    private ElapsedTime runtime = new ElapsedTime();
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
-
-
-    private static final String[] LABELS = {
-            "1 Bolt", //yoda
-            "2 Bulb", //stormtrooper
-            "3 Panel" //tie fighter
-    };
-
-    /*
-     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-     * web site at https://developer.vuforia.com/license-manager.
-     *
-     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-     * random data. As an example, here is a example of a fragment of a valid key:
-     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-     * Once you've obtained a license key, copy the string from the Vuforia web site
-     * and paste it in to your code on the next line, between the double quotes.
-     */
-    private static final String VUFORIA_KEY =
-            "Aa/n2JX/////AAABmS4qOc3rA0BbhY8eFeyaC9YC7jI+cXpqw/nsNuQ6xqHa6GXor3NmLRaRozXHNXMCSwqIH4pQNYBPYvsur4XEuCmq8uEciP6ybVn2U2VZpe16pOkECunnIut6zpoKwz286I+I3aZxgxUsCF0ER3S2bbugrV0HyA8d9jzkaYe9lSuTWTovzhvQhM7Qdso9uI5iZphRyH8qqg6zdYf9WfzQZJ4I2WTVDTd9ZPrB9jM6M2q8rUm9Sh0P//fx0N/tphz9EWXW0p8/UtRC82crWOnW7b7ZMl3Ud+K+AJxVC/PxOcbkbAAF2Fbr6y9mQ7ptrbfy+4U26isGqXbR9JzAQLp/MrJDP0k0zNqZA4u/275QkyLi";
-
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
-    private VuforiaLocalizer vuforia;
-
-    /**
-     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
-     * Detection engine.
-     */
-    private TFObjectDetector tfod;
-
-    /**
-     * This is the webcam we are to use. As with other hardware devices such as motors and
-     * servos, this device is identified using the robot configuration tool in the FTC application.
-     */
-    WebcamName webcamName = null;
+public class PowerAuto_April_Mid2 extends LinearOpMode {
 
     /* Declare OpMode members. */
     NewHardwareMap robot =   new NewHardwareMap();
@@ -177,15 +66,13 @@ public class PowerAuto_Test extends LinearOpMode {
     Orientation             lastAngles = new Orientation();
     double                  globalAngle, correction;
 
+    private ElapsedTime     runtime = new ElapsedTime();
     static final double     PI = Math.PI;
     static final double     COUNTS_PER_MOTOR_REV    = 537.6;    // eg: TETRIX Motor Encoder
-    static final double     COUNTS_PER_MOTOR_REV_LIFT = 520;
     static final double     DRIVE_GEAR_REDUCTION    = 1.0;     // This is < 1.0 if geared UP 0.025
     static final double     WHEEL_DIAMETER_INCHES   = 3.78;     // For figuring circumference
-    static final double     WHEEL_DIAMETER_INCHES_LIFT = 1.40;
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * PI);
-    static final double     COUNTS_PER_INCH_LIFT    = (COUNTS_PER_MOTOR_REV_LIFT * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_INCHES_LIFT * PI);
     static final double     DRIVE_SPEED             = 0.8;
     static final double     STRAFE_SPEED            = 0.6;
     static final double     TURN_SPEED              = 0.25;
@@ -207,33 +94,66 @@ public class PowerAuto_Test extends LinearOpMode {
     private float cameraNumber = 0;
     private int positionNum = 3;
     private int sleepNum = 0;
-    /*private int xSubtract = 8;
-    private double deliverSS = 0;
-    private double pos = 0;
-    private double depotNum = 0;
-    private double newDeliver = 0;*/
     private boolean sight = false;
     private int drive = 20;
     public double sensorNum = 40;
     public double sensorNumIn = 0;
 
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
+    static final double FEET_PER_METER = 3.28084;
+
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+
+    // UNITS ARE METERS
+    double tagsize = 0.166;
+
+    // Tag ID 1,2,3 from the 36h11 family
+    /*EDIT IF NEEDED!!!*/
+
+    int LEFT = 4;
+    int MIDDLE = 2;
+    int RIGHT = 5;
+
+    AprilTagDetection tagOfInterest = null;
+
 
     @Override public void runOpMode() {   //driver presses Init button
-        VuforiaLocalizer.Parameters vparameters = new VuforiaLocalizer.Parameters();
 
-        vparameters.vuforiaLicenseKey = VUFORIA_KEY;
-        vparameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+            aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(vparameters);
+            camera.setPipeline(aprilTagDetectionPipeline);
+            camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+            {
+                @Override
+                public void onOpened()
+                {
+                    camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                }
 
-        initTfod();
+                @Override
+                public void onError(int errorCode)
+                {
 
+                }
+            });
+
+            telemetry.setMsTransmissionInterval(50);
         robot.init(hardwareMap);
 
         //robot.CameraPan.setPosition(robot.CameraOne);
 
-        robot.FreightArm.setPosition(0.9);
+        //robot.FreightArm.setPosition(0.9);
 
         //IMU initialization
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -242,12 +162,6 @@ public class PowerAuto_Test extends LinearOpMode {
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled      = false;
-
-
-        /*// get a reference to our digitalTouch object.
-        digitalTouch = hardwareMap.get(DigitalChannel.class, "LiftDownLimit");
-        // set the digital channel to input.
-        digitalTouch.setMode(DigitalChannel.Mode.INPUT);*/
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
         robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -281,93 +195,96 @@ public class PowerAuto_Test extends LinearOpMode {
         robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.BmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
-        if (tfod != null) {
-            tfod.activate();
+            /*******************************************************************
+             *                                                                  *
+             *                                                                  *
+             *                 Image and Signal Determination                   *
+             *                                                                  *
+             *                                                                  *
+             *******************************************************************/
 
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 16/9).
-            tfod.setZoom(1.0, 16.0/9.0);
-        }
+        //New WaitForStart Function
 
-        waitForStart();
+            while (!isStarted() && !isStopRequested())
+            {
+                ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-        RobotLog.d("LOGGING START");
-        /*******************************************************************
-         *                                                                  *
-         *                                                                  *
-         *                 Image and Signal Determination                   *
-         *                                                                  *
-         *                                                                  *
-         *******************************************************************/
+                if(currentDetections.size() != 0)
+                {
+                    boolean tagFound = false;
 
-        //TFod detection code
-        /*    if (opModeIsActive()) {
-            while (opModeIsActive() && (stackCameraStop)) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
-
-                        // step through the list of recognitions and display image position/size information for each one
-                        // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                            double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                            double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-
-                            telemetry.addData(""," ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
-                            if (recognition.getLabel().equals("1 Bolt")) {
-                                  telemetry.addData("Image", "1 Bolt");
-                                  targetZone = 1;
-                              } else if (recognition.getLabel().equals("2 Bulb")) {
-                                  telemetry.addData("Image", "2 Bulb");
-                                  targetZone = 2;
-                              } else if (recognition.getLabel().equals("3 Panel")){
-                                  telemetry.addData("Image", "3 Panel");
-                                  targetZone = 3;
-                              }
-
+                    for(AprilTagDetection tag : currentDetections)
+                    {
+                        if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
+                        {
+                            tagOfInterest = tag;
+                            tagFound = true;
+                            break;
                         }
-                        telemetry.update();
                     }
+
+                    if(tagFound)
+                    {
+                        telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                        tagToTelemetry(tagOfInterest);
+                    }
+                    else
+                    {
+                        telemetry.addLine("Don't see tag of interest :(");
+
+                        if(tagOfInterest == null)
+                        {
+                            telemetry.addLine("(The tag has never been seen)");
+                        }
+                        else
+                        {
+                            telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                            tagToTelemetry(tagOfInterest);
+                        }
+                    }
+
+                }
+                else
+                {
+                    telemetry.addLine("Don't see tag of interest :(");
+
+                    if(tagOfInterest == null)
+                    {
+                        telemetry.addLine("(The tag has never been seen)");
+                    }
+                    else
+                    {
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                        tagToTelemetry(tagOfInterest);
+                    }
+
                 }
 
-
-               cameraNumber += 1;
-               if (cameraNumber == 50000) {
-                    stackCameraStop = false;
-                    cameraNumber = 0;
-                      }
+                telemetry.update();
+                sleep(20);
             }
-        }
-        if (tfod != null) {
-            tfod.shutdown();
-        }*/
 
-        /*while(opModeIsActive()) {
-        // generic DistanceSensor methods.
-        telemetry.addData("deviceName",robot.sensorRange.getDeviceName() );
-        telemetry.addData("range", String.format("%.01f cm", robot.sensorRange.getDistance(DistanceUnit.CM)));
-        telemetry.addData("range", String.format("%.01f in", robot.sensorRange.getDistance(DistanceUnit.INCH)));
 
-        RobotLog.d("%.01f cm,%.01f in,",robot.sensorRange.getDistance(DistanceUnit.CM),robot.sensorRange.getDistance(DistanceUnit.INCH));
 
-        telemetry.update();
-        }*/
+
+
+            if(tagOfInterest != null)
+            {
+                telemetry.addLine("Tag snapshot:\n");
+                tagToTelemetry(tagOfInterest);
+                telemetry.update();
+            }
+            else
+            {
+                telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+                telemetry.update();
+            }
+
+        robot.LiftMotor.setPower(1.0);
+        sleep(200);
+        robot.LiftMotor.setPower(0);
+
+        RobotLog.d("LOGGING START");
 
         /******************************************************************
          *                                                                 *
@@ -379,21 +296,139 @@ public class PowerAuto_Test extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
+        //Arm positions are 0.9 for closed and 0.5 for open
+        //Drive to junction
+        gyroDrive(0.4, 3, 0, 15.0);
+        gyroStrafe(STRAFE_SPEED, -30, 0, 15.0);
+        gyroDriveLU(0.5, 23, 0, 15.0);
+        sleep(200);
 
-        /*gyroSensorStrafe(0.2, -15, 0, 15.0);
-        gyroStrafe(0.4, -4, 0, 15.0);
-        gyroDrive(0.4, sensorNumIn-4, 0, 15.0);
-        robot.Gray.setPower(1);
-        robot.Green.setPower(-1);
+
+        while (!robot.touch3.isPressed()) {
+            robot.LiftMotor.setPower(1.0);
+        }
+        robot.LiftMotor.setPower(0.05);
+
+        //Detect the Junction
+        gyroSensorStrafe(0.2, -25, 0, 15.0);
+        //gyroStrafe(0.4, -4, 0, 15.0);
+
+        sensorNum = robot.sensorRange.getDistance(DistanceUnit.INCH);
+        sensorNumIn = 6.5 - sensorNum;
+        gyroStrafe(0.2, -2, 0, 15.0);
+        gyroDrive(0.4, sensorNumIn, 0, 15.0);
+
+
+        sleep(200);
+        liftDrive(-0.5, 400, true);
+
+        //Deliver Cone
+        robot.Gray.setPower(-1);
+        robot.Green.setPower(1);
         sleep(1000);
         robot.Gray.setPower(0);
-        robot.Green.setPower(0);*/
-        //runtime.reset();
-        /*TestThread t = new TestThread(this, runtime);
-        t.start();*/
+        robot.Green.setPower(0);
+        //sleep(500);
 
-        liftEncoderDrive(0.8, 10, 15.0);
+        //Drive to Cone Stack
+        gyroDrive(DRIVE_SPEED, -2, 0, 15.0);
+        gyroStrafe(STRAFE_SPEED, -20, 0, 15.0);
+        gyroDrive(DRIVE_SPEED, 24, 0, 15.0);
+        gyroTurn(TURN_SPEED, -90);
 
+            /*while (!robot.touch.isPressed()) {
+                robot.LiftMotor.setPower(-0.8);
+            }
+            robot.LiftMotor.setPower(0);*/
+
+        gyroDriveLD(DRIVE_SPEED, 28, -90, 15.0);
+        while (!robot.touch.isPressed()) {
+            robot.LiftMotor.setPower(-0.8);
+        }
+        robot.LiftMotor.setPower(0);
+
+        //Pick up cone stack
+        liftDrive(1.0, 230, false);
+        //gyroDrive(0.5, 8, 90, 15.0);
+        robot.Gray.setPower(1);
+        robot.Green.setPower(-1);
+        gyroDrive(0.4, 7, -90, 15.0);
+        sleep(500);
+        robot.Gray.setPower(0);
+        robot.Green.setPower(0);
+        //sleep(500);
+        liftDrive(0.6, 800, true);
+        gyroDrive(0.5, -11, -90, 15.0);
+
+        //Deliver the second cone
+        gyroTurn(TURN_SPEED, -180);
+        sleep(100);
+        //robot.LiftMotor.setPower(-0.5);
+        //sleep(10);
+
+        //Deliver Cone
+        robot.Gray.setPower(-1);
+        robot.Green.setPower(1);
+        sleep(500);
+        robot.Gray.setPower(0);
+        robot.Green.setPower(0);
+        //sleep(500);
+
+        //Third Cone Code Starts Here
+
+        //gyroDrive(DRIVE_SPEED,-3,180,15.0);
+        gyroTurn(TURN_SPEED, -90);
+        /*while (!robot.touch.isPressed()) {
+            robot.LiftMotor.setPower(-0.8);
+        }*/
+        robot.LiftMotor.setPower(0);
+        sleep(200);
+        //Pick up cone stack
+        liftDrive(-0.6, 700, false);
+        gyroDrive(DRIVE_SPEED, 8, -90, 15.0);
+        robot.Gray.setPower(1);
+        robot.Green.setPower(-1);
+        gyroDrive(0.4, 5, -90, 15.0);
+        sleep(500);
+        robot.Gray.setPower(0);
+        robot.Green.setPower(0);
+        //sleep(500);
+        liftDrive(0.6, 950, true);
+        gyroDrive(0.5, -11, -90, 15.0);
+
+        //Deliver the third cone
+        gyroTurn(TURN_SPEED, -180);
+        //gyroDrive(DRIVE_SPEED,2,180,15.0);
+        sleep(100);
+        //robot.LiftMotor.setPower(-0.5);
+        //sleep(10);
+
+        //Deliver Cone
+        robot.Gray.setPower(-1);
+        robot.Green.setPower(1);
+        sleep(500);
+        robot.Gray.setPower(0);
+        robot.Green.setPower(0);
+        //sleep(500);*/
+
+        gyroDrive(DRIVE_SPEED,-2,-180,15.0);
+        gyroTurn(DRIVE_SPEED, -90);
+        /*while (!robot.touch.isPressed()) {
+            robot.LiftMotor.setPower(-0.8);
+        }
+        robot.LiftMotor.setPower(0);*/
+
+        //Drive to Target Zone
+
+        if(tagOfInterest.id == LEFT){
+            gyroDriveLD(DRIVE_SPEED, 9, -90, 15.0);
+        }
+        else if(tagOfInterest.id == MIDDLE){
+            gyroDriveLD(DRIVE_SPEED, -12, -90, 15.0);
+        }
+        else if(tagOfInterest.id == RIGHT){
+            gyroDriveLD(DRIVE_SPEED, -34, -90, 15.0);
+        }
 
 
     }
@@ -406,40 +441,16 @@ public class PowerAuto_Test extends LinearOpMode {
      *                                                                 *
      *                                                                 *
      *******************************************************************/
-     /*class TestThread extends Thread {
-         private LinearOpMode opMode;
-         TestThread(LinearOpMode opmode, DistanceSensor sensorRange) {
-             opMode = opmode;
-         }
-        public void run() {
-         while(opMode.opModeIsActive()){
-             telemetry.addData("Status", "Run Time: " + runtime.toString());
-             telemetry.update();
-         }
-     }
-     }*/
-    /**
-     * Initialize the TensorFlow Object Detection engine.
-     */
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 300;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-
-        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
-        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
-    }
-
-    public void gyroTelem() {
-        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
-        telemetry.update();
-    }
+        void tagToTelemetry(AprilTagDetection detection)
+        {
+            telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+            telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+            telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+            telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+            telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+            telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+            telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+        }
 
     public void liftDrive(double power, int time, boolean hold) {
         robot.LiftMotor.setPower(power);
@@ -450,6 +461,11 @@ public class PowerAuto_Test extends LinearOpMode {
         else{
             robot.LiftMotor.setPower(0);
         }
+    }
+
+    public void gyroTelem() {
+        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
+        telemetry.update();
     }
 
     public void driveStraight(double speed,double inches,double timeoutS){                                                                                                                                                                                              //:(
@@ -471,36 +487,6 @@ public class PowerAuto_Test extends LinearOpMode {
         turnLeft (speed, -degrees, timeoutS);
     }
 
-    public void drivePower(double speed, int timer, double timeoutS){
-        robot.FmotorLeft.setPower(-speed*0.5);
-        robot.FmotorRight.setPower(-speed*0.5);
-        robot.BmotorLeft.setPower(-speed*0.5);
-        robot.BmotorRight.setPower(-speed*0.5);
-        sleep(timer);
-        robot.FmotorLeft.setPower(0);
-        robot.FmotorRight.setPower(0);
-        robot.BmotorLeft.setPower(0);
-        robot.BmotorRight.setPower(0);
-    }
-
-
-    public void fPull (double speed,int timer, double timeoutS){
-        robot.FmotorLeft.setPower(-speed*0.25);
-        robot.FmotorRight.setPower(-speed);
-        robot.BmotorLeft.setPower(-speed*0.25);
-        robot.BmotorRight.setPower(-speed);
-        sleep(timer);
-        robot.FmotorLeft.setPower(0);
-        robot.FmotorRight.setPower(0);
-        robot.BmotorLeft.setPower(0);
-        robot.BmotorRight.setPower(0);
-    }
-
-    /*public void motorLift (double power,int timer) {
-        Shooter.setPower(power);
-        sleep(timer);
-        Shooter.setPower(0.0);
-    }*/
 
     /*
      *  Method to perfmorm a relative move, based on encoder counts.
@@ -614,7 +600,7 @@ public class PowerAuto_Test extends LinearOpMode {
         }
     }
 
-    public void liftEncoderDrive(double speed, double LMotorInches, double timeoutS) {                                                                                                                                                                                                                 // :)
+    public void liftDrive(double speed, double LMotorInches, double timeoutS) {                                                                                                                                                                                                                 // :)
 
         int LMotorTarget;
 
@@ -622,12 +608,7 @@ public class PowerAuto_Test extends LinearOpMode {
         robot.LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Determine new target position, and pass to motor controller
-        LMotorTarget  = (int)(LMotorInches * COUNTS_PER_INCH_LIFT);
-
-        //FLeftTarget  = robot.FmotorLeft.getCurrentPosition() + (int)(FLeftInches * COUNTS_PER_INCH);
-        //FRightTarget = robot.FmotorRight.getCurrentPosition() + (int)(FRightInches * COUNTS_PER_INCH);
-        //BLeftTarget = robot.BmotorLeft.getCurrentPosition() + (int)(BLeftInches * COUNTS_PER_INCH);
-        //BRightTarget = robot.BmotorRight.getCurrentPosition() + (int)(BRightInches * COUNTS_PER_INCH);
+        LMotorTarget  = (int)(-LMotorInches * COUNTS_PER_INCH);
 
         robot.LiftMotor.setTargetPosition(LMotorTarget);
 
@@ -638,37 +619,6 @@ public class PowerAuto_Test extends LinearOpMode {
         //runtime.reset();
         robot.LiftMotor.setPower(Math.abs(speed));
 
-
-            /*if (FLeftInches <0 && FRightInches <0) { //Backwards
-                robot.BmotorLeft.setPower(-speed);
-                robot.BmotorRight.setPower(-speed);
-            }else if (FLeftInches <0 && FRightInches >0) { //Left
-                robot.BmotorLeft.setPower(-speed);
-                robot.BmotorRight.setPower(speed);
-            }else if (FLeftInches >0 && FRightInches <0) { //Right
-                robot.BmotorLeft.setPower(speed);
-                robot.BmotorRight.setPower(-speed);
-            }else{                                        //Forwards
-                robot.BmotorLeft.setPower(speed);
-                robot.BmotorRight.setPower(speed);
-            }*/
-
-        // keep looping while we are still active, and there is time left, and both motors are running.
-        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-        // its target position, the motion will stop.  This is "safer" in the event that the robot will
-        // always end the motion as soon as possible.
-        // However, if you require that BOTH motors have finished their moves before the robot continues
-        // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (robot.LiftMotor.isBusy() )) {
-
-                // Display it for the driver.
-                telemetry.addData("Target: ", "to %7d", LMotorTarget);
-                telemetry.addData("Postion:", "at %7d", robot.LiftMotor.getCurrentPosition());
-                telemetry.update();
-                RobotLog.d("%7d %7d", LMotorTarget,robot.LiftMotor.getCurrentPosition());
-            }
 
         // Stop all motion;
         robot.LiftMotor.setPower(0);
@@ -718,6 +668,222 @@ public class PowerAuto_Test extends LinearOpMode {
             robot.FmotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.FmotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.BmotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // start motion.
+            runtime.reset();
+            //speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+            robot.FmotorLeft.setPower(Math.abs(speed));
+            robot.FmotorRight.setPower(Math.abs(speed));
+            robot.BmotorLeft.setPower(Math.abs(speed));
+            robot.BmotorRight.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
+
+                // adjust relative speed based on heading error.
+                error = getError(angle);
+                steer = getSteer(error, P_DRIVE_COEFF);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    steer *= -1.0;
+
+                leftSpeed = speed - steer;
+                rightSpeed = speed + steer;
+
+                // Normalize speeds if either one exceeds +/- 1.0;
+                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+                if (max > 1.0)
+                {
+                    leftSpeed /= max;
+                    rightSpeed /= max;
+                }
+
+                robot.FmotorLeft.setPower(leftSpeed);
+                robot.BmotorLeft.setPower(leftSpeed);
+                robot.FmotorRight.setPower(rightSpeed);
+                robot.BmotorRight.setPower(rightSpeed);
+
+                // Display drive status for the driver.
+                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
+                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
+                        robot.BmotorLeft.getCurrentPosition(), robot.BmotorRight.getCurrentPosition());
+
+                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                telemetry.update();
+                RobotLog.d("%7d,%7d,%7d,%7d,%7d,", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
+                        robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
+                        robot.BmotorRight.getCurrentPosition());
+            }
+
+            RobotLog.d("GD STOP");
+            // Stop all motion;
+            robot.FmotorLeft.setPower(0);
+            robot.FmotorRight.setPower(0);
+            robot.BmotorLeft.setPower(0);
+            robot.BmotorRight.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.FmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.FmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+    public void gyroDriveLD ( double speed,
+                            double distance,
+                            double angle, double timeoutS) {
+
+        RobotLog.d("GD START");
+        int FLeftTarget;
+        int FRightTarget;
+        int BRightTarget;
+        int BLeftTarget;
+        double  max;
+        double  error;
+        double  steer;
+        double  leftSpeed;
+        double  rightSpeed;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.BmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.BmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            // Determine new target position, and pass to motor controller
+            FLeftTarget  = (int)(-distance * COUNTS_PER_INCH);
+            FRightTarget = (int)(-distance * COUNTS_PER_INCH);
+            BLeftTarget = (int)(-distance * COUNTS_PER_INCH);
+            BRightTarget = (int)(-distance * COUNTS_PER_INCH);
+
+            // Set Target and Turn On RUN_TO_POSITION
+            robot.FmotorLeft.setTargetPosition(FLeftTarget);
+            robot.FmotorRight.setTargetPosition(FRightTarget);
+            robot.BmotorLeft.setTargetPosition(BLeftTarget);
+            robot.BmotorRight.setTargetPosition(BRightTarget);
+
+            robot.FmotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.FmotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.BmotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // start motion.
+            runtime.reset();
+            //speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+            robot.FmotorLeft.setPower(Math.abs(speed));
+            robot.FmotorRight.setPower(Math.abs(speed));
+            robot.BmotorLeft.setPower(Math.abs(speed));
+            robot.BmotorRight.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
+
+                if (!robot.touch.isPressed()) {
+                    robot.LiftMotor.setPower(-0.8);
+                }
+                else if (robot.touch.isPressed()) {
+                    robot.LiftMotor.setPower(0);
+                };
+
+                // adjust relative speed based on heading error.
+                error = getError(angle);
+                steer = getSteer(error, P_DRIVE_COEFF);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    steer *= -1.0;
+
+                leftSpeed = speed - steer;
+                rightSpeed = speed + steer;
+
+                // Normalize speeds if either one exceeds +/- 1.0;
+                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+                if (max > 1.0)
+                {
+                    leftSpeed /= max;
+                    rightSpeed /= max;
+                }
+
+                robot.FmotorLeft.setPower(leftSpeed);
+                robot.BmotorLeft.setPower(leftSpeed);
+                robot.FmotorRight.setPower(rightSpeed);
+                robot.BmotorRight.setPower(rightSpeed);
+
+                // Display drive status for the driver.
+                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
+                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
+                        robot.BmotorLeft.getCurrentPosition(), robot.BmotorRight.getCurrentPosition());
+
+                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                telemetry.update();
+                RobotLog.d("%7d,%7d,%7d,%7d,%7d,", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
+                        robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
+                        robot.BmotorRight.getCurrentPosition());
+            }
+
+            RobotLog.d("GD STOP");
+            // Stop all motion;
+            robot.FmotorLeft.setPower(0);
+            robot.FmotorRight.setPower(0);
+            robot.BmotorLeft.setPower(0);
+            robot.BmotorRight.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.FmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.FmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+    public void gyroDriveLU ( double speed,
+                              double distance,
+                              double angle, double timeoutS) {
+
+        RobotLog.d("GD START");
+        int FLeftTarget;
+        int FRightTarget;
+        int BRightTarget;
+        int BLeftTarget;
+        double  max;
+        double  error;
+        double  steer;
+        double  leftSpeed;
+        double  rightSpeed;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.BmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.BmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            // Determine new target position, and pass to motor controller
+            FLeftTarget  = (int)(-distance * COUNTS_PER_INCH);
+            FRightTarget = (int)(-distance * COUNTS_PER_INCH);
+            BLeftTarget = (int)(-distance * COUNTS_PER_INCH);
+            BRightTarget = (int)(-distance * COUNTS_PER_INCH);
+
+            // Set Target and Turn On RUN_TO_POSITION
+            robot.FmotorLeft.setTargetPosition(FLeftTarget);
+            robot.FmotorRight.setTargetPosition(FRightTarget);
+            robot.BmotorLeft.setTargetPosition(BLeftTarget);
+            robot.BmotorRight.setTargetPosition(BRightTarget);
+
+            robot.FmotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.FmotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.BmotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);;
 
             // start motion.
@@ -732,6 +898,13 @@ public class PowerAuto_Test extends LinearOpMode {
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
+
+                if (!robot.touch3.isPressed()) {
+                    robot.LiftMotor.setPower(0.6);
+                }
+                else if (robot.touch3.isPressed()) {
+                    robot.LiftMotor.setPower(0);
+                };
 
                 // adjust relative speed based on heading error.
                 error = getError(angle);
@@ -1003,24 +1176,16 @@ public class PowerAuto_Test extends LinearOpMode {
                 robot.BmotorRight.setPower(backSpeed);
 
                 // Display drive status for the driver.
-                    /*telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                    telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
-                    telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),
-                            robot.FmotorRight.getCurrentPosition(), robot.BmotorLeft.getCurrentPosition(),
-                            robot.BmotorRight.getCurrentPosition());
-                    telemetry.addData("Speed",   "%5.2f:%5.2f",  frontSpeed, backSpeed);
-                    telemetry.update();
-                    RobotLog.d("%7d,%7d,%7d,%7d,%7d,", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
-                                                             robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
-                                                             robot.BmotorRight.getCurrentPosition());*/
-
-                telemetry.addData("deviceName",robot.sensorRange.getDeviceName() );
-                telemetry.addData("range", String.format("%.01f cm", robot.sensorRange.getDistance(DistanceUnit.CM)));
-                telemetry.addData("range", String.format("%.01f in", robot.sensorRange.getDistance(DistanceUnit.INCH)));
-
-                RobotLog.d("%.01f cm,%.01f in,",robot.sensorRange.getDistance(DistanceUnit.CM),robot.sensorRange.getDistance(DistanceUnit.INCH));
-
+                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
+                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),
+                        robot.FmotorRight.getCurrentPosition(), robot.BmotorLeft.getCurrentPosition(),
+                        robot.BmotorRight.getCurrentPosition());
+                telemetry.addData("Speed",   "%5.2f:%5.2f",  frontSpeed, backSpeed);
                 telemetry.update();
+                RobotLog.d("%7d,%7d,%7d,%7d,%7d,", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
+                        robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
+                        robot.BmotorRight.getCurrentPosition());
             }
 
             RobotLog.d("GS STOP");
@@ -1037,7 +1202,6 @@ public class PowerAuto_Test extends LinearOpMode {
             robot.BmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
-
 
     public void gyroSensorStrafe ( double speed,
                                    double distance,
@@ -1091,7 +1255,7 @@ public class PowerAuto_Test extends LinearOpMode {
             //sensorNum = robot.sensorRange.getDistance(DistanceUnit.CM);
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() && (sensorNum > 30 ) &&
+            while (opModeIsActive() && (sensorNum > 20 ) &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
 
@@ -1131,16 +1295,16 @@ public class PowerAuto_Test extends LinearOpMode {
                                                              robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
                                                              robot.BmotorRight.getCurrentPosition());*/
 
-                telemetry.addData("deviceName",robot.sensorRange.getDeviceName() );
-                telemetry.addData("range", String.format("%.01f cm", robot.sensorRange.getDistance(DistanceUnit.CM)));
-                telemetry.addData("range", String.format("%.01f in", robot.sensorRange.getDistance(DistanceUnit.INCH)));
+                //telemetry.addData("deviceName",robot.sensorRange.getDeviceName() );
+                //telemetry.addData("range", String.format("%.01f cm", robot.sensorRange.getDistance(DistanceUnit.CM)));
+                //telemetry.addData("range", String.format("%.01f in", robot.sensorRange.getDistance(DistanceUnit.INCH)));
 
                 sensorNum = robot.sensorRange.getDistance(DistanceUnit.CM);
-                sensorNumIn = robot.sensorRange.getDistance(DistanceUnit.INCH);
+                sensorNumIn = (sensorNum/2.54);
 
                 RobotLog.d("%.01f cm,%.01f in,",robot.sensorRange.getDistance(DistanceUnit.CM),robot.sensorRange.getDistance(DistanceUnit.INCH));
 
-                telemetry.update();
+                //telemetry.update();
             }
 
             RobotLog.d("GS STOP");

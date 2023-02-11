@@ -155,8 +155,8 @@ public class Power_TeleOp extends OpMode
         double power =  gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
         double turn  =  gamepad1.right_stick_x;
-        double left    = Range.clip(power - turn, -0.8, 0.8);
-        double right   = Range.clip(power + turn, -0.8, 0.8) ;
+        double left    = Range.clip(power - turn, -0.7, 0.7);
+        double right   = Range.clip(power + turn, -0.7, 0.7) ;
 
         // scale the joystick value to make it easier to control
         // the robot more precisely at slower speeds.
@@ -205,18 +205,29 @@ public class Power_TeleOp extends OpMode
         }
 
         // Lift Motor Control
-        if ((gamepad1.right_bumper) && (!robot.touch3.isPressed())){
+        if ((gamepad1.right_bumper) && (gamepad1.right_trigger) > 0.25 && (!robot.touch.isPressed())) {
+            robot.LiftMotor.setPower(-1.0);
+        }
+        else if ((gamepad1.right_bumper) && (!robot.touch3.isPressed()) && (gamepad1.right_trigger) < 0.25){
             robot.LiftMotor.setPower(1.0);   // Lift UP
-        }else if ((gamepad1.right_trigger) > 0.25 && (!robot.touch.isPressed())) {
+        }else if ((gamepad1.right_trigger) > 0.25 && (!robot.touch.isPressed()) && (!gamepad1.right_bumper)) {
             robot.LiftMotor.setPower(-0.5);  // Lift DOWN
-        }/*else if (gamepad1.x && !x_pressed){  //Only toggle on leading edge
+        }/*else if (gamepad1.x && !x_pressed && (!robot.touch.isPressed())){  //Only toggle on leading edge
 
-            robot.LiftMotor.setPower(-0.8);
+            robot.LiftMotor.setPower(-1.0);
 
         }*/else{
             robot.LiftMotor.setPower(0.0);
             //x_pressed = true;
         }
+
+        /*if(gamepad1.y && !y_pressed) {
+                robot.LiftMotor.setPower(-1.0);
+        }
+
+        if (robot.touch.isPressed()) {
+            robot.LiftMotor.setPower(0);
+        }*/
 
         //Reset button toggles
         //if (!gamepad1.a) a_pressed = false;
