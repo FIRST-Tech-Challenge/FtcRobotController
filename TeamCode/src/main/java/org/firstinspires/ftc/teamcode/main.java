@@ -47,7 +47,7 @@ public class main extends LinearOpMode {
         movement_motors.add(motor3);
         movement_motors.add(motor4);
         
-        movement = new Movement(movement_motors);
+        movement = new movement(movement_motors);
         
         
 
