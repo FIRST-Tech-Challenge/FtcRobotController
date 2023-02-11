@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -23,7 +22,7 @@ public class RobotManager {
 
     public enum AllianceColor {BLUE, RED}
     public enum StartingSide {OUR_COLOR, THEIR_COLOR} //add starting side here later
-    public enum ParkingPosition {LEFT, RIGHT, CENTER}
+    public enum ParkingPosition {LEFT, RIGHT, MIDDLE}
     public Robot robot;
     public AllianceColor allianceColor;
     public StartingSide startingSide;
@@ -33,15 +32,12 @@ public class RobotManager {
     public ComputerVision computerVision;
 
     protected GamepadWrapper gamepads, previousStateGamepads;
-
-    private Telemetry telemetry;
     public ElapsedTime elapsedTime;
 
     public RobotManager(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2,
                         ArrayList<Position> path, AllianceColor allianceColor, StartingSide startingSide,
                         Navigation.MovementMode movementMode, Telemetry telemetry, ElapsedTime elapsedTime) {
 
-        this.telemetry = telemetry;
         this.elapsedTime = elapsedTime;
         this.allianceColor = allianceColor;
         this.startingSide = startingSide;
@@ -52,9 +48,7 @@ public class RobotManager {
         navigation = new Navigation(path, allianceColor, startingSide, movementMode);
         mechanismDriving = new MechanismDriving();
 
-//        if (!path.isEmpty()) {
-//            computerVision = new ComputerVision(hardwareMap, new AutonPipeline(robot, telemetry, allianceColor));
-//        }
+        computerVision = new ComputerVision(hardwareMap, robot.telemetry, elapsedTime);
 
         gamepads = new GamepadWrapper(gamepad1, gamepad2);
         previousStateGamepads = new GamepadWrapper();
@@ -68,31 +62,33 @@ public class RobotManager {
      */
     public void readControllerInputs() {
         // Linear slides
-        if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
-            if (robot.desiredClawRotatorState == Robot.ClawRotatorState.FRONT)
-                Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
-        }
-        else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
-            Robot.desiredSlidesState = Robot.SlidesState.LOW;
-        }
-        else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_MEDIUM)) {
-            Robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
-        }
-        else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
-            Robot.desiredSlidesState = Robot.SlidesState.HIGH;
-        }
-        else if (gamepads.getAnalogValues().gamepad2LeftStickY > RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
-            Robot.desiredSlidesState = Robot.SlidesState.MOVE_DOWN;
-        }
-        else if (gamepads.getAnalogValues().gamepad2LeftStickY < -RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
-            Robot.desiredSlidesState = Robot.SlidesState.MOVE_UP;
-        } else if (Robot.desiredSlidesState == Robot.SlidesState.MOVE_DOWN || Robot.desiredSlidesState == Robot.SlidesState.MOVE_UP) {
-            Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
+        if (!robot.wheelSpeedAdjustment) {
+            if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
+                if (robot.desiredClawRotatorState == Robot.ClawRotatorState.FRONT)
+                    Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
+            }
+            else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
+                Robot.desiredSlidesState = Robot.SlidesState.LOW;
+            }
+            else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_MEDIUM)) {
+                Robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
+            }
+            else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
+                Robot.desiredSlidesState = Robot.SlidesState.HIGH;
+            }
+            else if (gamepads.getAnalogValues().gamepad2LeftStickY > RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
+                Robot.desiredSlidesState = Robot.SlidesState.MOVE_DOWN;
+            }
+            else if (gamepads.getAnalogValues().gamepad2LeftStickY < -RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
+                Robot.desiredSlidesState = Robot.SlidesState.MOVE_UP;
+            } else if (Robot.desiredSlidesState == Robot.SlidesState.MOVE_DOWN || Robot.desiredSlidesState == Robot.SlidesState.MOVE_UP) {
+                Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
+            }
         }
 
-        //if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {
-        //    robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
-        //}
+        if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_WHEEL_SPEED_ADJUSTMENT)) {
+            robot.wheelSpeedAdjustment = !robot.wheelSpeedAdjustment;
+        }
 
         if (getButtonRelease(GamepadWrapper.DriverAction.POSITION_CLAW_FRONT)){
             robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
@@ -107,13 +103,6 @@ public class RobotManager {
         }
 
         // Claw
-//        if (getButtonRelease(GamepadWrapper.DriverAction.TOGGLE_CLAW)) {
-//            if (robot.desiredClawState == Robot.ClawState.OPEN) {
-//                robot.desiredClawState = Robot.ClawState.CLOSED;
-//            } else {
-//                robot.desiredClawState = Robot.ClawState.OPEN;
-//            }
-//        }
         if (getButtonRelease(GamepadWrapper.DriverAction.CLAW_OPEN)) {
             robot.desiredClawState = Robot.ClawState.OPEN;
         }
@@ -162,6 +151,22 @@ public class RobotManager {
         robot.telemetry.addData("Target slides state", Robot.desiredSlidesState.toString());
 
         previousStateGamepads.copyGamepads(gamepads);
+    }
+
+    /** Updates desired states based on sensor inputs.
+     */
+    public void readSensorInputs() {
+        boolean currentSlidesLimitSwitchState = robot.slidesLimitSwitch.getState();
+        if (currentSlidesLimitSwitchState) {
+            robot.telemetry.addData("Limit switch state", "pressed");
+        }
+        else {robot.telemetry.addData("Limit switch state", "unpressed");}
+        // Only true on the first frame that it is pressed - don't want it to get stuck in STOPPED state.
+        if (currentSlidesLimitSwitchState && !robot.previousSlidesLimitSwitchState) {
+            Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
+            mechanismDriving.setSlideZeroPosition(robot);
+        }
+        robot.previousSlidesLimitSwitchState = currentSlidesLimitSwitchState;
     }
 
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
@@ -215,7 +220,7 @@ public class RobotManager {
 
     /** Determines the position of the capstone on the barcode.
      */
-    public Robot.ParkingPosition readBarcode() {
+//    public Robot.ParkingPosition readBarcode() {
         // Reset the barcode scanning counters and states
 //        robot.barcodeScanResult = Robot.BarcodeScanResult.WRONG_CAPS;
 //        robot.resetBarcodeScanMap();
@@ -225,21 +230,21 @@ public class RobotManager {
         // TODO: call CV function
 
         // Wait for CV to determine a finalized barcodeScanResult value (this is blocking!)
-        while (robot.barcodeScanState == Robot.BarcodeScanState.SCAN) {
-            try {
-                TimeUnit.MICROSECONDS.sleep(10);
-            }
-            catch (InterruptedException e) {}
-        }
-
-        boolean flipped = (allianceColor == AllianceColor.RED && startingSide == StartingSide.OUR_COLOR) || (allianceColor == AllianceColor.BLUE && startingSide == StartingSide.THEIR_COLOR);
-
-        switch (robot.barcodeScanResult) {
-            case LEFT: return flipped ? Robot.ParkingPosition.OUTSIDE : Robot.ParkingPosition.INSIDE;
-            case RIGHT: return flipped ? Robot.ParkingPosition.INSIDE : Robot.ParkingPosition.OUTSIDE;
-            default: return Robot.ParkingPosition.MIDDLE;
-        }
-    }
+//        while (robot.barcodeScanState == Robot.BarcodeScanState.SCAN) {
+//            try {
+//                TimeUnit.MICROSECONDS.sleep(10);
+//            }
+//            catch (InterruptedException e) {}
+//        }
+//
+//        boolean flipped = (allianceColor == AllianceColor.RED && startingSide == StartingSide.OUR_COLOR) || (allianceColor == AllianceColor.BLUE && startingSide == StartingSide.THEIR_COLOR);
+//
+//        switch (robot.barcodeScanResult) {
+//            case LEFT: return flipped ? Robot.ParkingPosition.OUTSIDE : Robot.ParkingPosition.INSIDE;
+//            case RIGHT: return flipped ? Robot.ParkingPosition.INSIDE : Robot.ParkingPosition.OUTSIDE;
+//            default: return Robot.ParkingPosition.MIDDLE;
+//        }
+//    }
 
     // Each of these methods manually sets the robot state so that a specific task is started, and forces these tasks to
     // be synchronous by repeatedly calling the mechanism driving methods. These are to be used in an autonomous OpMode.

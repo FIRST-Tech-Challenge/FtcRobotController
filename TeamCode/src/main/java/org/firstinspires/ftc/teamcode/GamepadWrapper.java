@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  */
 public class GamepadWrapper {
     public enum DriverAction {SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,
-        TURN_ON_ULTRA_FINE_MOVEMENT, TURN_ON_FINE_MOVEMENT, TOGGLE_WHEEL_SPEED_ADJUSTMENT,
-        MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT, MOVE_STRAIGHT_RIGHT, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE,
-        POSITION_CLAW_FRONT, POSITION_CLAW_SIDE, POSITION_CLAW_REAR, CLAW_OPEN, CLAW_CLOSE, TOGGLE_CLAW
+        TOGGLE_WHEEL_SPEED_ADJUSTMENT, MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT,
+        MOVE_STRAIGHT_RIGHT, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE, POSITION_CLAW_FRONT, POSITION_CLAW_SIDE,
+        POSITION_CLAW_REAR, CLAW_OPEN, CLAW_CLOSE
     }
 
     Gamepad gamepad1, gamepad2;
@@ -40,10 +40,8 @@ public class GamepadWrapper {
     public boolean getButtonState(DriverAction driverAction) {
         switch (driverAction) {
             // Gamepad 1 Controls
-            case TURN_ON_FINE_MOVEMENT:
+            case TOGGLE_WHEEL_SPEED_ADJUSTMENT:
                 return gamepad1.left_bumper;
-            case TURN_ON_ULTRA_FINE_MOVEMENT:
-                return gamepad1.right_bumper;
             case MOVE_STRAIGHT_FORWARD:
                 return gamepad1.dpad_up;
             case MOVE_STRAIGHT_BACKWARD:
@@ -52,10 +50,16 @@ public class GamepadWrapper {
                 return gamepad1.dpad_left;
             case MOVE_STRAIGHT_RIGHT:
                 return gamepad1.dpad_right;
-            case TURN_COUNTER_CLOCKWISE:
+//            case TURN_COUNTER_CLOCKWISE:
+//                return gamepad1.b;
+//            case TURN_CLOCKWISE:
+//                return gamepad1.x;
+            case POSITION_CLAW_FRONT:
+                return gamepad1.y;
+            case POSITION_CLAW_SIDE:
                 return gamepad1.b;
-            case TURN_CLOCKWISE:
-                return gamepad1.x;
+            case POSITION_CLAW_REAR:
+                return gamepad1.a;
 
             // Gamepad 2 Controls
             case SET_SLIDES_RETRACTED:
@@ -66,14 +70,6 @@ public class GamepadWrapper {
                 return gamepad2.dpad_right;
             case SET_SLIDES_HIGH:
                 return gamepad2.dpad_up;
-            case POSITION_CLAW_FRONT:
-                return gamepad2.a;
-            case POSITION_CLAW_SIDE:
-                return gamepad2.b;
-            case POSITION_CLAW_REAR:
-                return gamepad2.y;
-//            case TOGGLE_CLAW:
-//                return gamepad2.x;
             case CLAW_OPEN:
                 return gamepad2.left_bumper;
             case CLAW_CLOSE:
@@ -114,6 +110,6 @@ class AnalogValues {
         this.gamepad1LeftTrigger = gamepad1.left_trigger;
         this.gamepad1RightTrigger = gamepad1.right_trigger;
         this.gamepad2LeftTrigger = gamepad2.left_trigger;
-        this.gamepad2RightTrigger = gamepad2.left_trigger;
+        this.gamepad2RightTrigger = gamepad2.right_trigger;
     }
 }

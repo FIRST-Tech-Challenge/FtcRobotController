@@ -20,7 +20,7 @@ public class Navigation {
 
     static final double STRAFE_RAMP_DISTANCE = 3;  // Inches
     static final double ROTATION_RAMP_DISTANCE = Math.PI / 3;  // Radians
-    static final double MAX_STRAFE_POWER = 0.95;
+    static final double MAX_STRAFE_POWER = 0.4;
     static final double MIN_STRAFE_POWER = 0.5;
     static final double STRAFE_CORRECTION_POWER = 0.3;
     static final double MAX_ROTATION_POWER = 0.5;
@@ -46,16 +46,16 @@ public class Navigation {
     // TELEOP CONSTANTS
     // ================
     static final double MOVEMENT_MAX_POWER = 1;
-    static final double ROTATION_POWER = 0.6;
-    static final double SLOW_MOVEMENT_SCALE_FACTOR = 0.5;
-    static final double MEDIUM_MOVEMENT_SCALE_FACTOR = 0.75;
+    static final double ROTATION_POWER = 0.5;
+    static final double SLOW_MOVEMENT_SCALE_FACTOR = 0.3;
+    static final double MEDIUM_MOVEMENT_SCALE_FACTOR = 0.6;
 
     // INSTANCE ATTRIBUTES
     // ===================
 
-    // Speeds relative to one another.
+    // Speeds relative to one another. RR is positive on purpose!
     //                              RL   RR   FL   FR
-    public double[] wheel_speeds = {-1.0, -1.0, -1.0, -1.0};
+    public double[] wheel_speeds = {-1.0, 1.0, -0.97, -1.0};
     public double strafePower;  // Tele-Op only
 
     // First position in this ArrayList is the first position that robot is planning to go to.
@@ -129,11 +129,11 @@ public class Navigation {
             strafePower = SLOW_MOVEMENT_SCALE_FACTOR;
         } else {
             strafePower = distance * MOVEMENT_MAX_POWER;
-            if (Robot.desiredSlidesState == Robot.SlidesState.HIGH && robot.slidesMotor.getPower() == 0) {
+            if (Robot.desiredSlidesState == Robot.SlidesState.HIGH && robot.slidesMotor1.getPower() == 0) {
                 strafePower *= SLOW_MOVEMENT_SCALE_FACTOR;
-            } else if (Robot.desiredSlidesState == Robot.SlidesState.MEDIUM && robot.slidesMotor.getPower() == 0) {
+            } else if (Robot.desiredSlidesState == Robot.SlidesState.MEDIUM && robot.slidesMotor1.getPower() == 0) {
                 strafePower *= MEDIUM_MOVEMENT_SCALE_FACTOR;
-            } else if (Robot.desiredSlidesState == Robot.SlidesState.LOW && robot.slidesMotor.getPower() == 0) {
+            } else if (Robot.desiredSlidesState == Robot.SlidesState.LOW && robot.slidesMotor1.getPower() == 0) {
                 strafePower *= MEDIUM_MOVEMENT_SCALE_FACTOR; //Scale factor is the same as medium
             }
         }
@@ -197,7 +197,11 @@ public class Navigation {
         else if (Math.abs(moveDirection + Math.PI / 2) < Math.PI / 12) {
             moveDirection = -Math.PI / 2;
         }
-        setDriveMotorPowers(moveDirection, strafePower, turn, robot, false);
+
+        // Field-centric navigation
+//        moveDirection -= robot.positionManager.position.getRotation();
+
+        setDriveMotorPowers(moveDirection, strafePower, turn * ROTATION_POWER, robot, false);
     }
 
     /** Rotates the robot a number of degrees.

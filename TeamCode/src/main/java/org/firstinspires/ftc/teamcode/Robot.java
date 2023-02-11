@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,26 +26,7 @@ public class Robot {
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
     public ClawRotatorState desiredClawRotatorState;
     public ClawState desiredClawState;
-
-    enum BarcodeScanState {CHECK_SCAN, SCAN}
-
-    public BarcodeScanState barcodeScanState;
-    public enum BarcodeScanResult {LEFT, CENTER, RIGHT};
-
-    static final int MAX_BARCODE_ATTEMPTS = 40;                           // How many times to try scanning the barcode before giving up
-    static final int MIN_BARCODE_REPEAT = MAX_BARCODE_ATTEMPTS / 2 + 1;
-
-    int numBarcodeAttempts;                                               // Amount of current attempts to scan the barcode
-    Map<BarcodeScanResult, Integer> barcodeScanResultMap;                 // An array representing a histogram of the scan results.
-    BarcodeScanResult barcodeScanResult;                                  // Represents the final decided barcode state
-
-    public void resetBarcodeScanMap() {
-        barcodeScanResultMap = new HashMap<BarcodeScanResult, Integer>() {{
-            put(BarcodeScanResult.LEFT, 0);
-            put(BarcodeScanResult.CENTER, 0);
-            put(BarcodeScanResult.RIGHT, 0);
-        }};
-    }
+    public boolean previousSlidesLimitSwitchState = false;
 
     enum MovementMode {NORMAL, FINE, ULTRA_FINE}
     MovementMode movementMode = MovementMode.NORMAL;
@@ -54,14 +35,13 @@ public class Robot {
     HashMap<RobotConfig.DriveMotors, DcMotor> driveMotors = new HashMap<RobotConfig.DriveMotors, DcMotor>();
 
     // Hardware
-    public DcMotor slidesMotor;
+    public DcMotor slidesMotor1, slidesMotor2;
     public Servo clawRotator, claw, clawIndicator;
+    public DigitalChannel slidesLimitSwitch;
 
     // Other
     public Telemetry telemetry;
     public ElapsedTime elapsedTime;
-
-    // Positioning
     public PositionManager positionManager;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime elapsedTime) {
@@ -69,16 +49,16 @@ public class Robot {
         this.elapsedTime = elapsedTime;
         positionManager = new PositionManager(hardwareMap, telemetry);
 
-        numBarcodeAttempts = 0;
-        resetBarcodeScanMap();
-
         desiredClawRotatorState = ClawRotatorState.FRONT;
         desiredClawState = ClawState.CLOSED;
 
-        slidesMotor = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR));
+        slidesMotor1 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_1));
+        slidesMotor2 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_2));
         clawRotator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_ROTATOR));
         claw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW));
         clawIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_INDICATOR));
+
+        slidesLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.SLIDES_LIMIT));
 
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
             driveMotors.put(motor, hardwareMap.get(DcMotor.class, RobotConfig.DriveMotorNames.get(motor)));
@@ -92,15 +72,19 @@ public class Robot {
 //            Objects.requireNonNull(driveMotors.get(motor)).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        slidesMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        slidesMotor1.setDirection(DcMotor.Direction.FORWARD);
+        slidesMotor2.setDirection(DcMotor.Direction.REVERSE);
 
         if (desiredSlidesState == SlidesState.UNREADY) {//if the slides have yet to be initialised then reset the encoders for the slides and set the slide state to retracted
             this.telemetry.addData("desired string state", desiredSlidesState.toString());
-            slidesMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            slidesMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            slidesMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slidesMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            slidesMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slidesMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             desiredSlidesState = SlidesState.RETRACTED;
         }
-        slidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slidesMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slidesMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /** Returns the position of the robot.
@@ -115,12 +99,17 @@ public class Robot {
  *  pertaining to the robot's state.
  */
 class RobotConfig {
-    enum Motors {SLIDES_MOTOR}
+    enum Switches {SLIDES_LIMIT}
+    enum Motors {SLIDES_MOTOR_1, SLIDES_MOTOR_2}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
     enum Servos {CLAW_ROTATOR, CLAW, CLAW_INDICATOR}
 
+    public static final Map<Switches, String> SwitchNames = new HashMap<Switches, String>() {{
+        put(Switches.SLIDES_LIMIT, "slides_limit");
+    }};
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
-        put(Motors.SLIDES_MOTOR, "slides_motor");
+        put(Motors.SLIDES_MOTOR_1, "slides_motor_1");
+        put(Motors.SLIDES_MOTOR_2, "slides_motor_2");
     }};
 
     public static final Map<DriveMotors, String> DriveMotorNames = new HashMap<DriveMotors, String>() {{

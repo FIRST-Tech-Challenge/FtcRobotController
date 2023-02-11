@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode;
-import android.os.Environment;
 import com.qualcomm.robotcore.util.Range;
 
-import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,16 +9,17 @@ import java.util.Map;
 public class MechanismDriving {
 
     private static int desiredSlidePosition;
+    private static int slideZeroPosition = 0;
     public boolean testing=false;
 
-    public static final Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
-       put(Robot.SlidesState.RETRACTED, 0);
-       put(Robot.SlidesState.LOW, 4770);
-       put(Robot.SlidesState.MEDIUM, 8020);
-       put(Robot.SlidesState.HIGH, 13870);
+    public static Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
+       put(Robot.SlidesState.RETRACTED, -170);
+       put(Robot.SlidesState.LOW, 2874);
+       put(Robot.SlidesState.MEDIUM, 4863);
+       put(Robot.SlidesState.HIGH, 6700);
        put(Robot.SlidesState.UNREADY, 0);
     }};
-    public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 0.8; //These are not final values
+    public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 0.7; //These are not final values
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
     public static final long CLAW_SERVO_TIME = 500;
     //SPEED INFO: Scale from 0-1 in speed.
@@ -33,6 +31,7 @@ public class MechanismDriving {
     public static final double SLIDE_RAMP_DIST = 400;
     public static final double SLIDES_MAX_SPEED = 1;
     public static final double SLIDE_MIN_SPEED = 0.4;
+    public static final double SLIDE_REDUCED_SPEED_COEF = 0.7;
 
 
     public static final int slidesAdjustmentSpeed = 2;
@@ -46,6 +45,7 @@ public class MechanismDriving {
     /** Sets the claw position to the robot's desired state.
      */
     public void updateClaw(Robot robot) {
+        robot.telemetry.addData("robot desired claw state",robot.desiredClawState);
         switch (robot.desiredClawState) {
             case CLOSED:
                 robot.claw.setPosition(CLAW_CLOSED_POS); //closed
@@ -54,6 +54,8 @@ public class MechanismDriving {
                 robot.claw.setPosition(CLAW_OPEN_POS); //open
                 break;
         }
+        robot.telemetry.addData("robot set claw position",robot.claw.getPosition());
+
     }
 
     /** Sets the claw position to the robot's desired state.
@@ -81,16 +83,29 @@ public class MechanismDriving {
     }
 
     /** Returns the target encoder count given the robot's desired slides state.
+     *
+     * Contains the negations from competition day.
      */
     public int getTargetSlidesEncoderCount(Robot robot) {
         // Automatically update the target values for joystick slide states based on current position
-        slidePositions.put(Robot.SlidesState.MOVE_UP, -robot.slidesMotor.getCurrentPosition() + EPSILON + 50);
-        slidePositions.put(Robot.SlidesState.MOVE_DOWN, -robot.slidesMotor.getCurrentPosition() - (EPSILON + 50));
-        slidePositions.put(Robot.SlidesState.STOPPED, -robot.slidesMotor.getCurrentPosition());
-        // This is the negation from competition day
+        int currentAvgSlidePos = getAverageSlidePosition(robot);
+        slidePositions.put(Robot.SlidesState.MOVE_UP, -currentAvgSlidePos + EPSILON + 50);
+        slidePositions.put(Robot.SlidesState.MOVE_DOWN, -currentAvgSlidePos - (EPSILON + 50));
+        slidePositions.put(Robot.SlidesState.STOPPED, -currentAvgSlidePos);
         int encoderCount = -Range.clip(slidePositions.get(Robot.desiredSlidesState), -1000, slidePositions.get(Robot.SlidesState.HIGH));
         robot.telemetry.addData("target slide position", encoderCount);
         return encoderCount;
+    }
+
+    /** Sets the zero position to the average of the current encoder counts of the slide motors.
+     */
+    public void setSlideZeroPosition(Robot robot) {
+        int newSlideZeroPosition = getAverageSlidePosition(robot);
+        int zeroPositionDifference = newSlideZeroPosition - slideZeroPosition;
+        for (Map.Entry<Robot.SlidesState, Integer> entry : slidePositions.entrySet()) {
+            slidePositions.put(entry.getKey(), entry.getValue() + zeroPositionDifference);
+        }
+        slideZeroPosition = newSlideZeroPosition;
     }
 
     /** Sets slide motor powers to move in direction of desired position, if necessary.
@@ -98,33 +113,61 @@ public class MechanismDriving {
      * @return whether the slides are in the desired position.
      */
     public boolean updateSlides(Robot robot, double slidesPower) {
+
        if (Robot.desiredSlidesState != Robot.SlidesState.UNREADY) {
            if(!testing)
                setSlidePosition(robot, getTargetSlidesEncoderCount(robot));
 
-           // Speed is proportional to the fraction of the ramp distance that we have left.
-           double slidesSpeed = slidesPower * Range.clip(Math.abs(desiredSlidePosition - robot.slidesMotor.getCurrentPosition())/ SLIDE_RAMP_DIST, SLIDE_MIN_SPEED, 1);
+           robot.telemetry.addData("slide 1 current pos: ", robot.slidesMotor1.getCurrentPosition());
+           robot.telemetry.addData("slide 2 current pos: ", robot.slidesMotor2.getCurrentPosition());
 
-           // If the current position is less than desired position then move it up
-           if (desiredSlidePosition - robot.slidesMotor.getCurrentPosition() > EPSILON) {
-               robot.slidesMotor.setPower(slidesSpeed);
-           }
+           int slideDiff1 = desiredSlidePosition - robot.slidesMotor1.getCurrentPosition();
+           int slideDiff2 = desiredSlidePosition - robot.slidesMotor2.getCurrentPosition();
+           int avgSlideDiff = (slideDiff1 + slideDiff2) / 2;
 
-           // If the current position is above the desired position, move these downwards
-           if (robot.slidesMotor.getCurrentPosition() - desiredSlidePosition > EPSILON) {
-               robot.slidesMotor.setPower(-slidesSpeed);
-           }
+           robot.telemetry.addData("current pos: ", getAverageSlidePosition(robot));
 
-           robot.telemetry.addData("current pos: ", robot.slidesMotor.getCurrentPosition());
-
-           // Stop motors when we have reached the desired position
-           if (Math.abs(robot.slidesMotor.getCurrentPosition() - desiredSlidePosition) < EPSILON) {
-               robot.slidesMotor.setPower(0);
-
+           // Stop motors if we have reached the desired position
+           if (Math.abs(avgSlideDiff) < EPSILON) {
+               robot.slidesMotor1.setPower(0);
+               robot.slidesMotor2.setPower(0);
+               Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
                return true;
            }
-           return false;
+
+           // Slides need to be moved
+           // Speed is proportional to the fraction of the ramp distance that we have left
+           double slidesSpeed = slidesPower * clipAbsVal(avgSlideDiff / SLIDE_RAMP_DIST, SLIDE_MIN_SPEED, 1);
+           double reducedSlidesSpeed = clipAbsVal(SLIDE_REDUCED_SPEED_COEF * slidesSpeed, SLIDE_MIN_SPEED, 1);
+
+           // Slow down whichever motor is ahead
+           if (Math.abs(slideDiff1) > Math.abs(slideDiff2)) {
+               robot.slidesMotor2.setPower(reducedSlidesSpeed);
+               robot.slidesMotor1.setPower(slidesSpeed);
+           } else if (Math.abs(slideDiff2) > Math.abs(slideDiff1)) {
+               robot.slidesMotor1.setPower(reducedSlidesSpeed);
+               robot.slidesMotor2.setPower(slidesSpeed);
+           } else {
+               robot.slidesMotor1.setPower(slidesSpeed);
+               robot.slidesMotor2.setPower(slidesSpeed);
+           }
        }
        return false;
+    }
+
+    /** Returns the average encoder count from the two slides.
+     */
+    private int getAverageSlidePosition(Robot robot) {
+        return (robot.slidesMotor1.getCurrentPosition() + robot.slidesMotor2.getCurrentPosition()) / 2;
+    }
+
+    /** Performs Range.clip based on absolute value. Min and max should be positive.
+     */
+    private double clipAbsVal(double num, double min, double max) {
+        double clippedAbsVal = Range.clip(Math.abs(num), min, max);
+        if (num < 0) {
+            return -clippedAbsVal;
+        }
+        return clippedAbsVal;
     }
 }
