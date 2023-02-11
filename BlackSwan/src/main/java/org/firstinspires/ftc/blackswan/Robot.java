@@ -25,7 +25,6 @@ public class Robot {
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
     DcMotor linearSlide;
     Servo clawservo;
-    RevColorSensorV3 colorSensorL, colorSensorR;
     BNO055IMU imu;
     LinearOpMode opMode;
 
@@ -50,8 +49,6 @@ public class Robot {
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        colorSensorL = hardwareMap.get(RevColorSensorV3.class, "colorSensorL");
-        colorSensorR = hardwareMap.get(RevColorSensorV3.class, "colorSensorR");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -222,6 +219,19 @@ public class Robot {
         motorFrontRight.setMode(runMode);
         motorBackLeft.setMode(runMode);
         motorBackRight.setMode(runMode);
+    }
+
+
+    public void liftDaBoi(){
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setTargetPosition(1750);
+        linearSlide.setPower(.5);
+    }
+
+    public void lowerDaBoi(){
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setTargetPosition(0);
+        linearSlide.setPower(.5);
     }
 
     public void pause(int millis) {

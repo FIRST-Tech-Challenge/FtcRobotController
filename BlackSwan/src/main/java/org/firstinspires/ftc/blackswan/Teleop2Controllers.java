@@ -77,10 +77,10 @@ public class Teleop2Controllers extends LinearOpMode {
             if (gamepad2.a) {
                 clawservo.setPosition(closeClaw);
             }
-            if (gamepad2.right_stick_button && linearslide.getCurrentPosition() > 1000){
+            if (gamepad2.left_bumper && linearslide.getCurrentPosition() > 1000){
                 daSpinster.setPosition(rotateClaw);
             }
-            if (gamepad2.left_stick_button && linearslide.getCurrentPosition() > 1000){
+            if (gamepad2.right_bumper && linearslide.getCurrentPosition() > 1000){
                 daSpinster.setPosition(unRotateClaw);
             }
             telemetry.addData("GamepadX", x);
