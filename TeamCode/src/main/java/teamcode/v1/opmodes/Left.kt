@@ -76,7 +76,7 @@ class Left : KOpMode() {
     private val rightPath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
         Pose(-12.5, 58.5, 270.0.radians),
-        Pose(-14.0, 13.5, 270.0.radians)
+        Pose(-14.0, 14.5, 270.0.radians)
 
     )
 
