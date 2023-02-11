@@ -1,0 +1,285 @@
+---
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ParamsList from '../../src/components/ParamsList';
+import Returns from '../../src/components/Returns';
+
+# Custom mappings
+
+These are a collection of methods that aren't in the TrajectorySequenceBuilder, but they are
+really quite nice and useful.
+
+All of these functions return the Anvil instance to allow for method chaining (like so)
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...);
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...)
+  ```
+
+</TabItem>
+</Tabs>
+
+## anvil.doTimes()
+
+Performs the actions in the lambda 'x' times.
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(...)
+      .doTimes(3, (anvil, iterationNum) -> {
+          // Keep in mind iterationNum starts from 0 (so it's 0, 1, 2 here)
+          anvil.forward(iterationNum * 3);
+
+          anvil.addTemporalMarker(() -> {
+              telemetry.addLine("Hi " + iterationNum);
+          });
+      });
+
+  // Equiv. to:
+
+  Anvil.forgeTrajectory(...)
+      .forward(0)
+      .addTemporalMarker(() -> {
+          telemetry.addLine("Hi 0");
+      });
+      .forward(10)
+      .addTemporalMarker(() -> {
+          telemetry.addLine("Hi 1");
+      });
+      .forward(20)
+      .addTemporalMarker(() -> {
+          telemetry.addLine("Hi 2");
+      });
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(...)
+      // Lambda w/ receiver ofc
+      .doTimes(3) { iterationNum ->
+          // Keep in mind iterationNum starts from 0 (so it's 0, 1, 2 here)
+          forward(iterationNum * 3)
+
+          addTemporalMarker {
+              telemetry.addLine("Hi $iterationNum")
+          }
+      }
+
+  // Equiv. to:
+
+  Anvil.forgeTrajectory(...)
+      .forward(0)
+      .addTemporalMarker {
+          telemetry.addLine("Hi 0")
+      }
+      .forward(10)
+      .addTemporalMarker {
+          telemetry.addLine("Hi 1")
+      }
+      .forward(20)
+      .addTemporalMarker {
+          telemetry.addLine("Hi 2")
+      }
+  ```
+
+</TabItem>
+</Tabs>
+
+<ParamsList params={[
+  {
+    name: 'times',
+    type: 'Number',
+    desc: 'The amount of times to do the given actions',
+  },
+  {
+    name: 'pathsToDo',
+    type: '(Anvil, Int) -> Void',
+    desc: 'The actions to do. Consumes the anvil instance, as well as an int which is the current iteration number. Starts at 0',
+  },
+]}/>
+
+## anvil.inReverse()
+
+Performs the actions in the lambda in reverse. Note that roadrunner can be a bit "unintuitive" for lack
+of a better phrase when it comes to reversing, I can not fix any quirks with this you may run in to.
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(...)
+      .inReverse((anvil) -> {
+          anvil.forward(10);
+          anvil.splineTo(0, 0, 180);
+      });
+
+  // Equiv to:
+
+  Anvil.forgeTrajectory(...)
+      .setReversed(true)
+      .forward(10)
+      .splineTo(0, 0, 180)
+      .setReversed(false);
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(...)
+      // Lambda w/ receiver ofc
+      .inReverse {
+          anvil.forward(10);
+          anvil.splineTo(0, 0, 180)
+      }
+
+  // Equiv to:
+
+  Anvil.forgeTrajectory(...)
+      .setReversed(true)
+      .forward(10)
+      .splineTo(0, 0, 180)
+      .setReversed(false)
+  ```
+
+</TabItem>
+</Tabs>
+
+:::warning Gotcha
+The following does **not** run the spline forwards like normal.
+
+```java
+.inReverse((anvil) -> {
+    .inReverse((anvil) -> {
+        anvil.splineTo(0, 0, 180);
+    });
+});
+```
+
+It is equivalent to the following, which, as you can see, does nothing special.
+
+```java
+anvil.setReversed(true)
+anvil.setReversed(true)
+anvil.splineTo(0, 0, 180);
+anvil.setReversed(false)
+anvil.setReversed(false);
+```
+:::
+
+<ParamsList params={[
+  {
+    name: 'pathsToDoInReverse',
+    type: '(Anvil) -> Void',
+    desc: 'The paths to do in reverse',
+  },
+]}/>
+
+## anvil.setPoseEstimateNow()
+
+Just does `sampleMecanumDrive.setPoseEstimate(pose2d)`. That's it. Nothing special about it.
+
+## anvil.setPoseEstimateInTemporalMarker()
+
+Equivalent to-
+
+```java
+UNSTABLE_addTemporalMarker(0, () -> {
+    sampleMecanumDrive.setPoseEstimate(pose2d);
+});
+```
+
+## anvil.noop()
+
+Does nothing and just returns itself. Literally. Like, it does absolutely nothing.
+
+```java
+Anvil.forgeTrajectory(...)
+    .forward(10)
+    .noop() // Does nothing
+    .back(10);
+```
+
+ok you might be wondering why this may exist so uh [TODO write & link page about how Anvil works]
+also can be useful if using something like 'doInReverse()'
+
+Also, if you're in Kotlin, you can just use it as `noop` (i.e. as a property accessor instead of a function)
+
+## anvil.withRawBuilder()
+
+This is a very niche one, but it basically just allows you to access the raw TrajectorySequenceBuilder
+and use it directly there instead of interacting with it through Anvil.
+
+Directly using the raw TrajectorySequenceBuilder does not auto convert units for you or anything.
+It allows you to access methods that Anvil doesn't support as well.
+
+Usage example- (**Note that you need to pass in the class in the <\>s**)
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(...)
+    .<TrajectorySequenceBuilder>withRawBuilder((builder) -> {
+        // Allows you to access methods Anvil doesn't support
+        // 10 is in inches, the unit is not autoconverted if it's set to cm or something
+        builder.forward(10, velConstraint, accelConstraint);
+    });
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(...)
+    .withRawBuilder<TrajectorySequenceBuilder> {
+        // Allows you to access methods Anvil doesn't support
+        // 10 is in inches, the unit is not autoconverted if it's set to cm or something
+        builder.forward(10, velConstraint, accelConstraint)
+    }
+  ```
+
+</TabItem>
+</Tabs>
+
+<ParamsList params={[
+  {
+    type: 'T',
+    desc: 'The TrajectorySequenceBuilder class',
+    isGeneric: true,
+  },
+  {
+    name: 'builder',
+    type: '(T) -> Unit',
+    desc: 'The lambda that accepts and modifies the raw TrajectorySequenceBuilder'
+  }
+]}/>
+
+## anvil.doInReverse()
+
+Pops the last thing off the builder deque and reverses it. Can be finicky, maybe don't use if you
+don't understand the basics of how Anvil works under the hood.
+
+TODO: write page about how anvil works under the hood
