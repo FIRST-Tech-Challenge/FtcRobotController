@@ -14,13 +14,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Power Play Left")
-public class PowerPlayLeft extends LinearOpMode {
+@Autonomous(name = "Power Play Left W/ Pause")
+public class  PowerPlayLeftWithPause extends LinearOpMode {
 
     enum State {
         SCORE_1,
@@ -113,7 +112,7 @@ public class PowerPlayLeft extends LinearOpMode {
         long startTime = new Date().getTime();
         long time = 0;
 
-        while (time < 200 && opModeIsActive()) {
+        while (time < 6200 && opModeIsActive()) {
             time = new Date().getTime() - startTime;
             sleeveColor = CV.sleevePipeline.color;
 
@@ -322,12 +321,12 @@ public class PowerPlayLeft extends LinearOpMode {
             telemetry.addData("lift target", liftTarget);
             telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
 
+            telemetry.update();
+
             PositionStorage.armPosition = drive.armMotor.getCurrentPosition();
             PositionStorage.liftPosition = drive.linearSlide.getCurrentPosition();
             PositionStorage.currentPose = drive.getPoseEstimate();
 
-
-            telemetry.update();
 
 //        drive.closeClaw();
 //

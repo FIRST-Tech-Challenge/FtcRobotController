@@ -30,7 +30,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.checkerframework.checker.units.qual.A;
 
 @Config
-@TeleOp(name="Power Play TeleOp DO NOT USE", group = "test")
+@TeleOp(name="Power Play TeleOp COLORADO", group = "competition")
 public class PowerPlayTeleopTry extends LinearOpMode {
 
 
@@ -69,6 +69,9 @@ public class PowerPlayTeleopTry extends LinearOpMode {
     boolean trigger = false;
 
     int stackIncrement=0;
+
+    int liftOffset;
+    int armOffset;
 
 
     @Override
@@ -240,8 +243,8 @@ public class PowerPlayTeleopTry extends LinearOpMode {
       if (gamepad2.dpad_up && gamepad2.left_trigger>0.1){
                 previousState = currentState;
                 currentState = STATE.BACK_HIGH;
-                armSelection = ARM_BACK;
-                slideSelection= SLIDE_HIGH;
+                armSelection = ARM_BACK - armOffset;
+                slideSelection= SLIDE_HIGH - liftOffset;
 
                 if (previousState == STATE.ZERO){
                     armTarget= armSelection;
@@ -256,11 +259,11 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
                 previousState = currentState;
                 currentState = STATE.HIGH;
-                armSelection = ARM_MID_TOP;
-                slideSelection= SLIDE_HIGH;
+                armSelection = ARM_MID_TOP - armOffset;
+                slideSelection= SLIDE_HIGH - liftOffset;
 
                 if (previousState == STATE.ZERO){
-                    armTarget= ARM_MID_TOP;
+                    armTarget= ARM_MID_TOP - armOffset;
                 } else {
                     slideTarget= slideSelection;
                     armTarget = armSelection;
@@ -273,8 +276,8 @@ public class PowerPlayTeleopTry extends LinearOpMode {
             if (gamepad2.dpad_right && gamepad2.left_trigger>0.1){
                 previousState = currentState;
                 currentState = STATE.BACK_MID;
-                slideSelection = SLIDE_MIDDLE;
-                armSelection = ARM_BACK;
+                slideSelection = SLIDE_MIDDLE - liftOffset;
+                armSelection = ARM_BACK - armOffset;
                 if (previousState == STATE.ZERO){
                     armTarget = armSelection;
                 } else {
@@ -287,12 +290,12 @@ public class PowerPlayTeleopTry extends LinearOpMode {
             else if (gamepad2.dpad_right) {
                 previousState = currentState;
                 currentState = STATE.MID;
-                slideSelection = SLIDE_MIDDLE;
-                armSelection = ARM_MID_TOP;
+                slideSelection = SLIDE_MIDDLE - liftOffset;
+                armSelection = ARM_MID_TOP - armOffset;
                 if (previousState == STATE.ZERO){
-                    armTarget = ARM_MID_TOP;
+                    armTarget = ARM_MID_TOP -armOffset;
                 } else {
-                    armTarget = ARM_MID_TOP;
+                    armTarget = ARM_MID_TOP - armOffset;
                     slideTarget = slideSelection;
                 }
                 set=false;
@@ -303,13 +306,13 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
                 previousState = currentState;
                 currentState = STATE.BOTTOM;
-                armSelection = ARM_BOTTOM_JUNCTION;
-                slideSelection= SLIDE_BOTTOM;
+                armSelection = ARM_BOTTOM_JUNCTION - armOffset;
+                slideSelection= SLIDE_BOTTOM - liftOffset;
 
                 if (previousState == STATE.ZERO){
-                    armTarget = ARM_BOTTOM_JUNCTION;
+                    armTarget = ARM_BOTTOM_JUNCTION -armOffset;
                 } else {
-                    armTarget = ARM_BOTTOM_JUNCTION;
+                    armTarget = ARM_BOTTOM_JUNCTION - armOffset;
                     slideTarget = SLIDE_BOTTOM;
                 }
                 set=false;
@@ -320,8 +323,8 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 if (currentState!=STATE.ZERO) {
                     previousState = currentState;
                     currentState = STATE.ZERO;
-                    armSelection = ARM_BOTTOM;
-                    slideSelection = SLIDE_BOTTOM;
+                    armSelection = ARM_BOTTOM -armOffset;
+                    slideSelection = SLIDE_BOTTOM - liftOffset;
                     if (previousState == STATE.BOTTOM) {
                         armTarget = armSelection;
                     } else {
@@ -367,7 +370,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 trigger = true;
                 previousState = currentState;
                 currentState = STATE.CONE;
-                armTarget = ARM_CONE_STACK;
+                armTarget = ARM_CONE_STACK - armOffset;
                 slideSelection += SLIDE_CONE_INCREMENT;
             } else {
                 trigger = false;
