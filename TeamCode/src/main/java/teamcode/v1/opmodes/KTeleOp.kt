@@ -65,23 +65,19 @@ open class KTeleOp : KOpMode(photonEnabled = false) {
     }
 
     private fun scheduleCycling() {
-        driver.rightBumper.onPress(ChooseCmd(StackSeq(robot),
-            HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 0.0, GuideConstants.telePos)
-        ) { robot.isStacking })
+        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 0.0, GuideConstants.telePos))
         driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.highPos, LiftConstants.highPos, GuideConstants.depositPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
         driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.midPos, LiftConstants.midPos, GuideConstants.depositPos))
         driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.lowPos, LiftConstants.lowPos, GuideConstants.lowPos))
         driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos))
-        driver.x.onPress(InstantCmd({robot.stack = min(robot.stack + 1, 5)}))
-        driver.b.onPress(InstantCmd({robot.stack = max(robot.stack - 1, 0) }))
+        driver.x.onPress(InstantCmd({ robot.lift.setPos(3.0)}))
+        driver.b.onPress(InstantCmd({ robot.lift.setPos(5.0)}))
 
         gunner.leftTrigger.onPress(InstantCmd({robot.lift.setPos(-15.5)}))
         gunner.rightTrigger.onPress(InstantCmd({robot.arm.setPos(-270.0)}))
         gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(11.0)}))
         gunner.rightBumper.onPress(InstantCmd({robot.lift.setPos(0.0)}))
-        gunner.dpadLeft.onPress(InstantCmd({robot.isStacking = true}))
-        gunner.dpadRight.onPress(InstantCmd({robot.isStacking = false}))
     }
 
     private fun scheduleTest() {
@@ -97,7 +93,6 @@ open class KTeleOp : KOpMode(photonEnabled = false) {
         Logger.addTelemetryData("arm pos", robot.hardware.armMotor.pos)
         Logger.addTelemetryData("lift pos", robot.hardware.liftLeadMotor.pos)
         Logger.addTelemetryData("arm power", robot.arm.motor.power)
-        Logger.addTelemetryData("is stacking?", robot.isStacking)
         Logger.addTelemetryData("lift power", robot.hardware.liftLeadMotor.power)
         Logger.addTelemetryData("whacker pos", robot.hardware.whackerServo.position)
     }
