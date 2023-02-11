@@ -22,8 +22,8 @@ public class RobotEx {
     protected FtcDashboard dashboard;
     protected Telemetry dashboardTelemetry;
 
-    protected GamepadEx driverOp;
-    protected GamepadEx toolOp;
+    protected GamepadExEx driverOp;
+    protected GamepadExEx toolOp;
 
     protected MecanumDriveSubsystem drive = null;
     protected MecanumDriveCommand driveCommand = null;
@@ -41,16 +41,17 @@ public class RobotEx {
 
     protected TelemetrySubsystem telemetryEx;
 
-    public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                   GamepadEx toolOp) {
+    public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+                   GamepadExEx toolOp) {
         this(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false,
                 false, false, false, false, true);
     }
 
-    public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                   GamepadEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower,
+    public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+                   GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower,
                    Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
                    Boolean rearRightInvert, Boolean useBalancingController) {
+        initCommon(hardwareMap, telemetry);
         this.initCamera = initCamera;
         if (type == OpModeType.TELEOP) {
             initTele(hardwareMap, telemetry, driverOp, toolOp, useCameraFollower, frontLeftInvert,
@@ -62,12 +63,14 @@ public class RobotEx {
         }
     }
 
-    public void initAuto(HardwareMap hardwareMap, Telemetry telemetry) {
-        /////////////////////////////////////// FTC Dashboard //////////////////////////////////////
+    public void initCommon(HardwareMap hardwareMap, Telemetry telemetry) {
+        /////////////////////////////////////// Telemetries //////////////////////////////////////
         dashboard = FtcDashboard.getInstance();
         dashboardTelemetry = dashboard.getTelemetry();
         this.telemetry = telemetry;
+    }
 
+    public void initAuto(HardwareMap hardwareMap, Telemetry telemetry) {
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
         gyro = new IMUSubsystem(hardwareMap, this.telemetry, dashboardTelemetry);
         CommandScheduler.getInstance().registerSubsystem(gyro);
@@ -83,18 +86,12 @@ public class RobotEx {
         initMechanismsAutonomous(hardwareMap);
     }
 
-    public void initTele(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                         GamepadEx toolOp, Boolean useCameraFollower, Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
+    public void initTele(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+                         GamepadExEx toolOp, Boolean useCameraFollower, Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
                          Boolean rearRightInvert, Boolean useBalancingController) {
         ///////////////////////////////////////// Gamepads /////////////////////////////////////////
         this.driverOp = driverOp;
         this.toolOp = toolOp;
-
-        /////////////////////////////////////// Telemetries //////////////////////////////////////
-        dashboard = FtcDashboard.getInstance();
-        dashboardTelemetry = dashboard.getTelemetry();
-        this.telemetry = telemetry;
-        this.telemetryEx = new TelemetrySubsystem(this.telemetry, this.dashboardTelemetry);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
         gyro = new IMUSubsystem(hardwareMap, this.telemetry, dashboardTelemetry);

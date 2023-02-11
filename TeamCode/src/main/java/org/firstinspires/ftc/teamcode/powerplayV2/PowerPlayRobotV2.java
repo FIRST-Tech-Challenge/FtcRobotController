@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.freightfrenzy.BucketCommand;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.ConeCollection;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.ResetSliderBasket;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.SlidersGroup;
+import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
 import org.firstinspires.ftc.teamcode.robotbase.RobotEx;
 
 public class PowerPlayRobotV2 extends RobotEx {
@@ -35,15 +36,14 @@ public class PowerPlayRobotV2 extends RobotEx {
 
     private int index = 0;
 
-    public PowerPlayRobotV2(HardwareMap hardwareMap, Telemetry telemetry, Gamepad driverOp,
-                            Gamepad toolOp) {
-        super(hardwareMap, telemetry, driverOp, toolOp, false, true,
-                true, true, true, true,
-                true);
+    public PowerPlayRobotV2(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+                            GamepadExEx toolOp) {
+        super(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, true,
+                true, true, true, true, true);
     }
 
     @Override
-    public void initMechanisms(HardwareMap hardwareMap) {
+    public void initMechanismsTeleOp(HardwareMap hardwareMap) {
         claw = new ClawSubsystem(hardwareMap);
         elevator = new ElevatorSubsystem(hardwareMap);
         frontSlider = new FrontSliderSubsystem(hardwareMap);

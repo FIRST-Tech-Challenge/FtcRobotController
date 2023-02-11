@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
 import org.firstinspires.ftc.teamcode.robotbase.RobotEx;
 
 public class PowerPlayRobot extends RobotEx {
@@ -18,8 +19,8 @@ public class PowerPlayRobot extends RobotEx {
     private ArmSubsystem arm;
     private ConeDetectorSubsystem cone_detector;
 
-    public PowerPlayRobot(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                          GamepadEx toolOp) {
+    public PowerPlayRobot(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+                          GamepadExEx toolOp) {
         super(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, true,
                 true, true, true, true, true);
     }

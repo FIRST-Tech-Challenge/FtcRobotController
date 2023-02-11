@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.powerplay.PowerPlayRobot;
+import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
 
 
 @TeleOp(name = "PowerPlay", group = "TeleOP")
@@ -13,7 +14,10 @@ public class PowerPlayTeleOp extends CommandOpMode {
 
     @Override
     public void initialize() {
-        robot = new PowerPlayRobot(hardwareMap, telemetry, gamepad1, gamepad2);
+        GamepadExEx driverOp = new GamepadExEx(gamepad1);
+        GamepadExEx toolOp = new GamepadExEx(gamepad2);
+
+        robot = new PowerPlayRobot(hardwareMap, telemetry, driverOp, toolOp);
     }
 
     @Override
