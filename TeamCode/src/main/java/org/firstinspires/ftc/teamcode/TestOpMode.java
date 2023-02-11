@@ -34,10 +34,10 @@ public class TestOpMode extends LinearOpMode {
         while (opModeIsActive()) {
             double spin = -gamepad1.left_stick_y;
 
-            if (spin > .05){
+            if (spin > .2){
                 lServo.setPower(1);
                 rServo.setPower(-1);
-            }else if(spin < -.05){
+            }else if(spin < -.2){
                 lServo.setPower(-.25);
                 rServo.setPower(.25);
             }else{
