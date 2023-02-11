@@ -28,6 +28,7 @@ public class actuatorUtils {
 
     enum ArmLevel
     {
+        ZERO,
         CONE1,
         CONE2,
         CONE3,
@@ -92,7 +93,7 @@ public class actuatorUtils {
         gripper.setPosition(.6); //Position that grabs cone tightly
         if (liftUp == true) {
             if (doSleep)
-                sleep(500);
+                sleep(250);
             arm.setTargetPosition(minEncode); //Lifts arm up so we can move w/o drag
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
@@ -140,7 +141,7 @@ public class actuatorUtils {
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
             if (doSleep)
-                sleep(2500);
+                sleep(500);
         }
         else if(desiredHeight == ArmLevel.MED_POLE)
         {
@@ -201,6 +202,14 @@ public class actuatorUtils {
             if (doSleep)
                 sleep(3000);
         }
+        else if (desiredHeight == ArmLevel.ZERO) {
+            arm.setTargetPosition(0);
+            //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(armPower);
+            if (doSleep)
+                sleep(3000);
+               }
     }
 
     //Method to move arm to cone collection heights
